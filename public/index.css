@@ -1,0 +1,168 @@
+@import url(/typography.css);
+
+* {
+	outline: none !important;
+	box-sizing: border-box;
+}
+
+:root {
+	--color-primary: #ff55ff;
+	--color-primary-1: #382847;
+	--color-primary-2: #62326d;
+	--color-primary-5: #dd44dd;
+	--color-primary-6: #ffd4ff;
+	--color-primary-faded: #ff55ff77;
+	--color-secondary: #5555ff;
+	--color-secondary-1: #212847;
+	--color-secondary-2: #2c326d;
+	--color-secondary-6: #e3e3ff;
+	--color-tertiary: #55ffff;
+	--color-tertiary-1: #214047;
+	--color-tertiary-2: #2c326d;
+	--color-tertiary-6: #e3e3ff;
+	--color-positive: #53db53;
+	--color-positive-1: #21402f;
+	--color-positive-2: #2c6837;
+	--color-positive-6: #e3ffe3;
+	--color-caution: #ffc555;
+	--color-caution-1: #2f312d;
+	--color-caution-2: #524a34;
+	--color-caution-6: #ffefcf;
+	--color-negative: #ff5555;
+	--color-negative-1: #38282f;
+	--color-negative-2: #623237;
+	--color-negative-6: #ffd4d4;
+	--color-foreground: #ffffff;
+	--color-foreground-1: #242e38;
+	--color-foreground-2: #29343d;
+	--color-foreground-3: #333e47;
+	--color-foreground-4: #5e6d7a;
+	--color-foreground-5: #8594a1;
+	--color-foreground-6: #d3dee8;
+	--color-background: #0e171f;
+
+	--font-family-sans-serif: Inter;
+	--font-family-monospace: monospace;
+	--border-radius: 50px;
+}
+
+
+body {
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: white;
+	text-align: left;
+	background-color: #0e171f;
+}
+
+html {
+	font-family: sans-serif;
+	line-height: 1.15;
+	height: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	-ms-overflow-style: scrollbar;
+	-webkit-tap-highlight-color: transparent;
+}
+
+code {
+	font-family: monospace;
+	font-size: 0.95rem;
+}
+
+main, section {
+	display: block;
+}
+
+body, input, textarea, button {
+	font-family: "Inter";
+	font-feature-settings: "ss01", "ss02", "cv01", "cv03";
+}
+
+button {
+	color: white;
+	background: transparent;
+	font-size: 1rem;
+	padding: 1rem 1.5rem;
+	border: 1px solid var(--color-foreground);
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	min-width: 8rem;
+}
+button:hover {
+	color: var(--color-background);
+	background-color: var(--color-foreground);
+}
+button.waiting {
+	cursor: wait;
+}
+button.secondary {
+	color: var(--color-secondary);
+	border-color: var(--color-secondary);
+}
+button.primary {
+	color: var(--color-primary);
+	border-color: var(--color-primary);
+}
+button.primary:hover {
+	color: var(--color-background);
+	background-color: var(--color-primary);
+}
+button.primary[disabled] {
+	color: var(--color-primary-faded) !important;
+	border-color: var(--color-primary-faded) !important;
+	background-color: transparent;
+}
+button[disabled] {
+	cursor: not-allowed !important;
+}
+button[data-waiting] {
+	cursor: wait !important;
+}
+
+button.text {
+	color: var(--color-foreground-6);
+	background-color: transparent;
+	border: none;
+	min-width: 3rem;
+}
+button.text:hover {
+	color: var(--color-background);
+	background-color: var(--color-foreground);
+}
+
+button.small {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	min-width: 6rem;
+}
+
+a {
+	color: var(--color-secondary);
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+}
+
+input[type="text"], button {
+	line-height: 1.5em;
+}
+input[type="text"] {
+	outline: none;
+	border: none;
+	font-size: 1rem;
+	color: var(--color-foreground);
+	background: transparent;
+	border: 1px solid var(--color-secondary);
+	border-radius: var(--border-radius);
+	padding: 1rem 1.5rem;
+	margin: 1rem;
+}
+input[type="text"]::placeholder {
+	color: var(--color-secondary);
+}
+input.wide {
+	width: 44ch;
+}
