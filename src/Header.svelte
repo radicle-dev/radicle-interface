@@ -1,4 +1,4 @@
-<script lang="js">
+<script lang="javascript">
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
   import { ethers } from "ethers";

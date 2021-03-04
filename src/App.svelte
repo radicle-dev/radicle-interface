@@ -1,15 +1,17 @@
 <script lang="javascript">
   import { ethers } from 'ethers';
   import { get } from 'svelte/store';
+  import { Router, Link, Route } from "svelte-routing";
   import { getConfig } from './config.js';
   import { session } from './session.js';
 
   import Vesting from './base/vesting/Vesting.svelte';
   import Header from './Header.svelte';
 
+  export let url = "";
+
   let contractAddress = "";
   let info = null;
-  let app = Vesting;
 
   function handleKeydown(event) {
     if (event.key === 'Enter') {
@@ -36,6 +38,8 @@
 <div class="app">
   <Header/>
   <div class="wrapper">
-    <svelte:component this={app}/>
+    <Router url="{url}">
+      <Route path="vesting" component={Vesting} />
+    </Router>
   </div>
 </div>

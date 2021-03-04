@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ethers": "^5.0.31",
-    "svelte": "^3.32.3"
+    "svelte": "^3.32.3",
+    "svelte-routing": "^1.5.0"
   }
 }
