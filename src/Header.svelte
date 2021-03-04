@@ -2,9 +2,8 @@
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
   import { ethers } from "ethers";
-  import { STATE, state, error } from "./state.js";
-  import { ERROR } from "./error.js";
   import { CONNECTION, session, connectWallet, disconnectWallet, shortAddress } from "./session.js";
+  import { error } from './error.js';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
 

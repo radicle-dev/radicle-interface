@@ -11,4 +11,3 @@ export const STATE = {
 };
 
 export const state = writable(STATE.IDLE);
-export const error = writable(null);

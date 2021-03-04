@@ -166,3 +166,40 @@ input[type="text"]::placeholder {
 input.wide {
 	width: 44ch;
 }
+
+.modal {
+	padding: 2rem;
+	border: 1px solid var(--color-secondary);
+	box-shadow: 8px 8px 64px var(--color-secondary-2);
+	min-width: 480px;
+	text-align: center;
+}
+.modal-title {
+	font-size: 1.75rem;
+	margin-bottom: 1rem;
+	color: var(--color-secondary);
+	text-align: center;
+}
+.modal-body {
+	margin: 3rem 0;
+}
+.modal-actions {
+	margin-top: 2rem;
+	text-align: center;
+}
+
+table {
+	table-layout: fixed;
+	border-collapse: collapse;
+	width: 100%;
+	max-width: 480px;
+}
+td {
+	text-align: left;
+}
+td.label {
+	color: var(--color-secondary);
+}
+td strong {
+	font-weight: 600;
+}
