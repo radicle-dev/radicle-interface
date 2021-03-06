@@ -6,6 +6,7 @@
   import { session } from './session.js';
 
   import Vesting from './base/vesting/Vesting.svelte';
+  import Register from './base/register/Register.svelte';
   import Header from './Header.svelte';
 
   export let url = "";
@@ -35,11 +36,22 @@
 </style>
 
 <svelte:window on:keydown={handleKeydown} />
-<div class="app">
-  <Header/>
-  <div class="wrapper">
-    <Router url="{url}">
-      <Route path="vesting" component={Vesting} />
-    </Router>
+{#await getConfig()}
+  <!-- Loading wallet -->
+{:then config}
+  <div class="app">
+    <Header/>
+    <div class="wrapper">
+      <Router url="{url}">
+        <Route path="vesting">
+          <Vesting {config} />
+        </Route>
+        <Route path="register">
+          <Register {config} />
+        </Route>
+      </Router>
+    </div>
   </div>
-</div>
+{:catch err}
+  <!-- Show error -->
+{/await}
