@@ -2,6 +2,7 @@
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
   import { ethers } from "ethers";
+  import { link } from "svelte-routing";
   import { CONNECTION, session, connectWallet, disconnectWallet, shortAddress } from "./session.js";
   import { error } from './error.js';
   import Logo from './Logo.svelte';
@@ -23,6 +24,21 @@
     margin: 0;
     padding: 1rem;
   }
+  header .nav {
+    display: inline-block;
+    height: 100%;
+    margin-right: 0.5rem;
+  }
+  header .nav a {
+    display: inline-block;
+    padding: 0.5rem 0.5rem;
+    margin-right: 1.5rem;
+    font-weight: 500;
+    color: var(--color-foreground-6);
+  }
+  header .nav a:hover {
+    color: var(--color-foreground);
+  }
   .error {
     text-align: center;
     color: var(--color-negative);
@@ -40,6 +56,7 @@
   }
   .address {
     margin-left: 2rem;
+    width: 9.75rem;
   }
   .indicator {
     font-size: 0.5rem;
@@ -58,8 +75,13 @@
 <header>
   <Logo style="margin-top: -1rem" />
 
-  {#if $session.address}
-    <div>
+  <div>
+    <span class="nav">
+      <a use:link href="/register/">Register</a>
+      <a use:link href="/vesting/">Vesting</a>
+    </span>
+
+    {#if $session.address}
       <span class="balance">
         {formatBalance($session.tokenBalance)} <strong>RAD</strong>
       </span>
@@ -75,8 +97,8 @@
           {shortAddress($session.address)}
         {/if}
       </button>
-    </div>
-  {:else}
-    <Connect className="small" />
-  {/if}
+    {:else}
+      <Connect className="small" />
+    {/if}
+  </div>
 </header>
