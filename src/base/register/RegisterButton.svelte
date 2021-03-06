@@ -1,9 +1,9 @@
 <script lang="javascript">
-  import {get} from 'svelte/store';
-  import {STATE, state} from './state.js';
-  import {registrar, registerName} from './registrar.js';
-  import {error} from '../../error.js';
-  import {session} from '../../session.js';
+  import { get } from 'svelte/store';
+  import { STATE, state } from './state.js';
+  import { registrar, registerName } from './registrar.js';
+  import { error } from '../../error.js';
+  import { session } from '../../session.js';
   import Connect from '../../Connect.svelte';
 
   export let subdomain = "";
