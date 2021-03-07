@@ -1,6 +1,7 @@
 <script lang="javascript">
   import { ethers } from 'ethers';
-  import { get } from 'svelte/store';
+  import { get, derived } from 'svelte/store';
+  import { session } from '@app/session.js';
   import { STATE, state } from './state.js';
   import { getInfo } from './vesting.js';
 
@@ -14,6 +15,12 @@
     info = await getInfo(contractAddress, config);
     state.set(STATE.IDLE);
   }
+
+  function withdrawVested() {}
+
+  let isBeneficiary = derived(session, (s) => {
+    return info && (info.beneficiary === s.address);
+  });
 </script>
 
 <style>
@@ -49,6 +56,11 @@
         </table>
       </div>
       <div class="modal-actions">
+        {#if $isBeneficiary}
+          <button on:click={withdrawVested} class="primary small">
+            Withdraw
+          </button>
+        {/if}
         <button on:click={() => info = null} class="small">
           Back
         </button>

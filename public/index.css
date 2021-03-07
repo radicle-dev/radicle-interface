@@ -187,6 +187,12 @@ input.wide {
 	margin-top: 2rem;
 	text-align: center;
 }
+.modal-actions > button {
+	margin-right: 1rem;
+}
+.modal-actions > button:last-child {
+	margin-right: 0;
+}
 
 table {
 	table-layout: fixed;
