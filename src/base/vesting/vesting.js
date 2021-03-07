@@ -20,7 +20,6 @@ const tokenAbi = [
 export async function getInfo(address, config) {
   const contract = new ethers.Contract(address, abi, config.provider);
   const signer = config.provider.getSigner();
-  const userAddr = await signer.getAddress();
 
   const token = await contract.token();
   const beneficiary = await contract.beneficiary();
