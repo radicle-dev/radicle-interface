@@ -1,10 +1,11 @@
 <script lang="javascript">
   import { get } from 'svelte/store';
+  import { error } from '@app/error.js';
+  import { session } from '@app/session.js';
   import { STATE, state } from './state.js';
   import { registrar, registerName } from './registrar.js';
-  import { error } from '../../error.js';
-  import { session } from '../../session.js';
-  import Connect from '../../Connect.svelte';
+
+  import Connect from '@app/Connect.svelte';
 
   export let subdomain = "";
   export let config = null;

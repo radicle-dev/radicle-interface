@@ -2,8 +2,8 @@
 // TODO: Two registration actions with same label
 import { ethers } from "ethers";
 import { STATE, state } from './state.js';
-import { approveSpender, updateBalance } from '../../session.js';
-import { ERROR } from '../../error.js';
+import { approveSpender, updateBalance } from '@app/session.js';
+import { ERROR } from '@app/error.js';
 
 const registrarAbi = [
   {"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"commitment","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"CommitmentMade","type":"event"},

@@ -4,6 +4,9 @@ module.exports = {
     public: '/',
     src: '/dist',
   },
+  alias: {
+    '@app': './src',
+  },
   plugins: [
     '@snowpack/plugin-svelte'
   ],

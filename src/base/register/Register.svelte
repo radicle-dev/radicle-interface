@@ -1,10 +1,11 @@
 <script lang="javascript">
   import { ethers } from 'ethers';
   import { get } from 'svelte/store';
-  import { STATE, state } from './state.js';
-  import { error } from '../../error.js';
-  import { session } from '../../session.js';
+  import { error } from '@app/error.js';
+  import { session } from '@app/session.js';
   import { registrar, registerName, registrationFee } from './registrar.js';
+  import { STATE, state } from './state.js';
+
   import RegisterButton from './RegisterButton.svelte';
 
   export let config = null;
