@@ -6,8 +6,9 @@ export const STATE = {
   LOADING: 1,
   FOUND: 2,
   NOT_FOUND: 3,
-  WITHDRAWING: 4,
-  WITHDRAWN: 5,
+  WITHDRAWING_SIGN: 4,
+  WITHDRAWING: 5,
+  WITHDRAWN: 6,
 };
 
 export const state = writable(STATE.IDLE);

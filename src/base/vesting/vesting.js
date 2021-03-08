@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { STATE, state } from "./state.js";
 
 const abi = [
   "function token() view returns (address)",
@@ -16,6 +17,20 @@ const abi = [
 const tokenAbi = [
   "function symbol() view returns (string)",
 ];
+
+export async function withdrawVested(address, config) {
+  const contract = new ethers.Contract(address, abi, config.provider);
+  const signer = config.provider.getSigner();
+
+  state.set(STATE.WITHDRAWING_SIGN);
+
+  let tx = await contract.connect(signer).withdrawVested();
+
+  state.set(STATE.WITHDRAWING);
+  await tx.wait();
+  // TODO: Update balance.
+  state.set(STATE.WITHDRAWN);
+}
 
 export async function getInfo(address, config) {
   const contract = new ethers.Contract(address, abi, config.provider);

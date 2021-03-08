@@ -1,25 +1,23 @@
 <script lang="javascript">
   import { ethers } from 'ethers';
-  import { get, derived } from 'svelte/store';
+  import { get, derived, writable } from 'svelte/store';
   import { session } from '@app/session.js';
   import { STATE, state } from './state.js';
-  import { getInfo } from './vesting.js';
+  import { getInfo, withdrawVested } from './vesting.js';
 
   export let config = null;
 
   let contractAddress = "";
-  let info = null;
+  const info = writable(null);
 
   async function loadContract(config) {
     state.set(STATE.LOADING);
-    info = await getInfo(contractAddress, config);
+    info.set(await getInfo(contractAddress, config));
     state.set(STATE.IDLE);
   }
 
-  function withdrawVested() {}
-
-  let isBeneficiary = derived(session, (s) => {
-    return info && (info.beneficiary === s.address);
+  let isBeneficiary = derived([session, info], ([$s, $i]) => {
+    return $i && ($i.beneficiary === $s.address);
   });
 </script>
 
@@ -42,26 +40,36 @@
 </style>
 
 <main>
-  {#if info}
+  {#if $info}
     <div class="modal">
       <div class="modal-title">
         {contractAddress}
       </div>
       <div class="modal-body">
         <table>
-          <tr><td class="label">Beneficiary</td><td>{info.beneficiary}</td></tr>
-          <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
-          <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
-          <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
+          <tr><td class="label">Beneficiary</td><td>{$info.beneficiary}</td></tr>
+          <tr><td class="label">Allocation</td><td>{$info.totalVesting} <strong>{$info.symbol}</strong></td></tr>
+          <tr><td class="label">Withdrawn</td><td>{$info.withdrawn} <strong>{$info.symbol}</strong></td></tr>
+          <tr><td class="label">Withdrawable</td><td>{$info.withdrawableBalance} <strong>{$info.symbol}</strong></td></tr>
         </table>
       </div>
       <div class="modal-actions">
         {#if $isBeneficiary}
-          <button on:click={withdrawVested} class="primary small">
-            Withdraw
-          </button>
+          {#if $state === STATE.WITHDRAWING_SIGN}
+            <button disabled data-waiting class="primary small">
+              Waiting for signature...
+            </button>
+          {:else if $state === STATE.WITHDRAWING}
+            <button disabled data-waiting class="primary small">
+              Withdrawing...
+            </button>
+          {:else}
+            <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
+              Withdraw
+            </button>
+          {/if}
         {/if}
-        <button on:click={() => info = null} class="small">
+        <button on:click={() => $info = null} class="small">
           Back
         </button>
       </div>
