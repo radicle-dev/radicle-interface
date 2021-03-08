@@ -3,6 +3,7 @@
   // TODO: Link to correct network on etherscan
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
+  import { formatBalance } from "@app/utils";
   import { CONNECTION, session, connectWallet, disconnectWallet, shortAddress } from "./session.js";
   import { error } from './error.js';
   import Logo from './Logo.svelte';
@@ -10,10 +11,6 @@
 
   let sessionButton = null;
   let sessionButtonHover = false;
-
-  function formatBalance(balance) {
-    return ethers.utils.commify(ethers.utils.formatUnits(balance));
-  }
 </script>
 
 <style>

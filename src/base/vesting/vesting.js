@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { formatBalance } from "@app/utils";
 import { STATE, state } from "./state.js";
 
 const abi = [
@@ -49,12 +50,9 @@ export async function getInfo(address, config) {
     token: token,
     symbol: symbol,
     beneficiary: beneficiary,
-    totalVesting: format(total),
-    withdrawableBalance: format(withdrawable),
-    withdrawn: format(withdrawn),
+    totalVesting: formatBalance(total),
+    withdrawableBalance: formatBalance(withdrawable),
+    withdrawn: formatBalance(withdrawn),
   };
 }
 
-function format(n) {
-  return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
-}
