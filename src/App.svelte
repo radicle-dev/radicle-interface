@@ -2,12 +2,12 @@
   import { ethers } from 'ethers';
   import { get } from 'svelte/store';
   import { Router, Link, Route } from "svelte-routing";
-  import { getConfig } from './config.js';
-  import { session } from './session.js';
+  import { getConfig } from '@app/config.js';
+  import { session } from '@app/session.js';
 
-  import Vesting from './base/vesting/Vesting.svelte';
-  import Register from './base/register/Register.svelte';
-  import Header from './Header.svelte';
+  import Vesting from '@app/base/vesting/Vesting.svelte';
+  import Register from '@app/base/register/Register.svelte';
+  import Header from '@app/Header.svelte';
 
   export let url = "";
 
