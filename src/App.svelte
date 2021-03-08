@@ -11,9 +11,6 @@
 
   export let url = "";
 
-  let contractAddress = "";
-  let info = null;
-
   function handleKeydown(event) {
     if (event.key === 'Enter') {
       document.querySelector('button.primary').click();
