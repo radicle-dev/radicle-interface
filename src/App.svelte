@@ -10,7 +10,9 @@
   import Register from '@app/base/register/Register.svelte';
   import Header from '@app/Header.svelte';
 
-  export let url = "register";
+  const defaultPath = "register";
+  const path = window.location.pathname;
+  export let url = path === "/" ? defaultPath : path;
 
   function handleKeydown(event) {
     if (event.key === 'Enter') {
