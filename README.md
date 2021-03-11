@@ -1,6 +1,6 @@
-# Radicle Vesting
+# Radicle Interface
 
-> ✨ Interact with your Radicle Vesting contract!
+> ✨ Interact with Radicle.
 
 ## Available Scripts
 
