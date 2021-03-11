@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { formatBalance } from "@app/utils";
+import { refreshBalance } from "@app/session";
 import { STATE, state } from "./state.js";
 
 const abi = [
@@ -29,7 +30,7 @@ export async function withdrawVested(address, config) {
 
   state.set(STATE.WITHDRAWING);
   await tx.wait();
-  // TODO: Update balance.
+  refreshBalance(config);
   state.set(STATE.WITHDRAWN);
 }
 

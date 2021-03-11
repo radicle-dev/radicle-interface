@@ -1,4 +1,5 @@
 <script lang="javascript">
+  // TODO: Navigating directly to /vesting doesn't work.
   import { ethers } from 'ethers';
   import { get } from 'svelte/store';
   import { Router, Link, Route } from "svelte-routing";

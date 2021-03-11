@@ -1,6 +1,7 @@
 <script lang="javascript">
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
+  import { derived } from "svelte/store";
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
   import { formatBalance } from "@app/utils";
@@ -11,6 +12,9 @@
 
   let sessionButton = null;
   let sessionButtonHover = false;
+
+  const address = derived(session, $s => { return $s.address });
+  const tokenBalance = derived(session, $s => { return $s.tokenBalance });
 </script>
 
 <style>
@@ -78,9 +82,9 @@
       <a use:link href="/vesting/">Vesting</a>
     </span>
 
-    {#if $session.address}
+    {#if $address}
       <span class="balance">
-        {formatBalance($session.tokenBalance)} <strong>RAD</strong>
+        {formatBalance($tokenBalance)} <strong>RAD</strong>
       </span>
 
       <button class="address outline small" bind:this={sessionButton}
@@ -91,7 +95,7 @@
         {#if sessionButtonHover}
           Disconnect
         {:else}
-          {shortAddress($session.address)}
+          {shortAddress($address)}
         {/if}
       </button>
     {:else}

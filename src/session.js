@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import { ethers } from "ethers";
 import { getConfig } from "./config.js";
 
@@ -10,6 +10,10 @@ export const CONNECTION = {
 
 export const session = writable({
   connection: CONNECTION.DISCONNECTED,
+});
+
+session.subscribe(s => {
+  console.log("Session", s);
 });
 
 const tokenAbi = [
@@ -65,6 +69,24 @@ export async function updateBalance(n) {
     s.tokenBalance = s.tokenBalance.add(n);
     return s;
   });
+}
+
+export async function refreshBalance(config) {
+  const addr = get(session).address;
+
+  if (addr) {
+    try {
+      const token = new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
+      const tokenBalance = await token.balanceOf(addr);
+      console.log("new balance", tokenBalance);
+
+      session.update((s) => {
+        s.tokenBalance = tokenBalance;
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 export function disconnectWallet() {

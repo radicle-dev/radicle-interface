@@ -12,3 +12,7 @@ export const STATE = {
 };
 
 export const state = writable(STATE.IDLE);
+
+state.subscribe(s => {
+  console.log("State", s);
+});

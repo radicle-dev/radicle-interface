@@ -1,14 +1,15 @@
-<script lang="js">
-  import {CONNECTION, session, connectWallet} from "./session.js";
+<script lang="javascript">
+  import { derived } from "svelte/store";
+  import { CONNECTION, session, connectWallet } from "./session.js";
+
   export let caption = "Connect";
   export let className = "";
   export let style = "";
 
-  let connecting = false;
   let walletUnavailable = !window.ethereum;
 
-  session.subscribe((sess) => {
-    connecting = sess.connection === CONNECTION.CONNECTING;
+  const connecting = derived(session, $s => {
+    return $s.connection === CONNECTION.CONNECTING;
   });
 </script>
 
@@ -19,10 +20,10 @@
   on:click={connectWallet}
   {style}
   class="connect {className}"
-  disabled={connecting || walletUnavailable}
-  data-waiting={connecting || null}
+  disabled={$connecting || walletUnavailable}
+  data-waiting={$connecting || null}
 >
-  {#if connecting}
+  {#if $connecting}
     Connecting...
   {:else}
     {caption}
