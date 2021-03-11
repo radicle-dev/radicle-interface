@@ -1,7 +1,7 @@
 <script lang="javascript">
   import { ethers } from 'ethers';
   import { get, derived, writable } from 'svelte/store';
-  import { session } from '@app/session.js';
+  import { session, shortAddress } from '@app/session.js';
   import { STATE, state } from './state.js';
   import { getInfo, withdrawVested } from './vesting.js';
 
@@ -13,6 +13,11 @@
   async function loadContract(config) {
     state.set(STATE.LOADING);
     info.set(await getInfo(contractAddress, config));
+    state.set(STATE.IDLE);
+  }
+
+  function reset() {
+    $info = null;
     state.set(STATE.IDLE);
   }
 
@@ -46,12 +51,16 @@
         {contractAddress}
       </div>
       <div class="modal-body">
-        <table>
-          <tr><td class="label">Beneficiary</td><td>{$info.beneficiary}</td></tr>
-          <tr><td class="label">Allocation</td><td>{$info.totalVesting} <strong>{$info.symbol}</strong></td></tr>
-          <tr><td class="label">Withdrawn</td><td>{$info.withdrawn} <strong>{$info.symbol}</strong></td></tr>
-          <tr><td class="label">Withdrawable</td><td>{$info.withdrawableBalance} <strong>{$info.symbol}</strong></td></tr>
-        </table>
+        {#if $state === STATE.WITHDRAWN}
+          Tokens successfully withdrawn to {shortAddress($info.beneficiary)}.
+        {:else}
+          <table>
+            <tr><td class="label">Beneficiary</td><td>{$info.beneficiary}</td></tr>
+            <tr><td class="label">Allocation</td><td>{$info.totalVesting} <strong>{$info.symbol}</strong></td></tr>
+            <tr><td class="label">Withdrawn</td><td>{$info.withdrawn} <strong>{$info.symbol}</strong></td></tr>
+            <tr><td class="label">Withdrawable</td><td>{$info.withdrawableBalance} <strong>{$info.symbol}</strong></td></tr>
+          </table>
+        {/if}
       </div>
       <div class="modal-actions">
         {#if $isBeneficiary}
@@ -63,13 +72,13 @@
             <button disabled data-waiting class="primary small">
               Withdrawing...
             </button>
-          {:else}
+          {:else if $state === STATE.IDLE}
             <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
               Withdraw
             </button>
           {/if}
         {/if}
-        <button on:click={() => $info = null} class="small">
+        <button on:click={reset} class="small">
           Back
         </button>
       </div>

@@ -82,6 +82,7 @@ export async function refreshBalance(config) {
 
       session.update((s) => {
         s.tokenBalance = tokenBalance;
+        return s;
       });
     } catch (e) {
       console.error(e);
