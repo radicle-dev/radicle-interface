@@ -9,7 +9,7 @@
   import Register from '@app/base/register/Register.svelte';
   import Header from '@app/Header.svelte';
 
-  export let url = "";
+  export let url = "register";
 
   function handleKeydown(event) {
     if (event.key === 'Enter') {
