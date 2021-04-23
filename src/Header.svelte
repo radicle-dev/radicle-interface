@@ -6,7 +6,7 @@
   import { link } from "svelte-routing";
   import { formatBalance } from "@app/utils";
   import { CONNECTION, session, connectWallet, disconnectWallet, shortAddress } from "./session.js";
-  import { error } from './error.js';
+  import { error, ERROR } from './error.js';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
 

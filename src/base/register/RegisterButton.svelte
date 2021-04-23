@@ -7,8 +7,8 @@
 
   import Connect from '@app/Connect.svelte';
 
-  export let subdomain = "";
-  export let config = null;
+  export let subdomain;
+  export let config;
 
   async function register() {
     let sess = get(session);

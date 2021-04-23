@@ -8,7 +8,7 @@
 
   import RegisterButton from './RegisterButton.svelte';
 
-  export let config = null;
+  export let config;
 
   let subdomain = "";
 
@@ -123,7 +123,7 @@
         <div class="available">The name <span class="domain">{subdomain}</span> is not available for registration.</div>
       {/if}
       <div class="modal-actions">
-        <RegisterButton {subdomain} />
+        <RegisterButton {subdomain} {config} />
       </div>
     </div>
   {/if}
