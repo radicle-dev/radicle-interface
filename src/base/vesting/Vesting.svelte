@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import { get, derived, writable } from 'svelte/store';
   import { ethers } from 'ethers';
-  import { session, shortAddress } from '@app/session.js';
-  import { STATE, state } from './state.js';
-  import { getInfo, withdrawVested } from './vesting.js';
+  import { session, shortAddress } from '@app/session';
+  import { State, state } from './state';
+  import { getInfo, withdrawVested } from './vesting';
 
   let input;
 
@@ -12,20 +12,20 @@
     input.focus();
   });
 
-  export let config = null;
+  export let config;
 
   let contractAddress = "";
   const info = writable(null);
 
   async function loadContract(config) {
-    state.set(STATE.LOADING);
+    state.set(State.Loading);
     info.set(await getInfo(contractAddress, config));
-    state.set(STATE.IDLE);
+    state.set(State.Idle);
   }
 
   function reset() {
     $info = null;
-    state.set(STATE.IDLE);
+    state.set(State.Idle);
   }
 
   let isBeneficiary = derived([session, info], ([$s, $i]) => {
@@ -58,7 +58,7 @@
         {contractAddress}
       </div>
       <div class="modal-body">
-        {#if $state === STATE.WITHDRAWN}
+        {#if $state === State.Withdrawn}
           Tokens successfully withdrawn to {shortAddress($info.beneficiary)}.
         {:else}
           <table>
@@ -71,15 +71,15 @@
       </div>
       <div class="modal-actions">
         {#if $isBeneficiary}
-          {#if $state === STATE.WITHDRAWING_SIGN}
+          {#if $state === State.WithdrawingSign}
             <button disabled data-waiting class="primary small">
               Waiting for signature...
             </button>
-          {:else if $state === STATE.WITHDRAWING}
+          {:else if $state === State.Withdrawing}
             <button disabled data-waiting class="primary small">
               Withdrawing...
             </button>
-          {:else if $state === STATE.IDLE}
+          {:else if $state === State.Idle}
             <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
               Withdraw
             </button>
@@ -101,7 +101,7 @@
             size="40"
             placeholder=""
             class="subdomain"
-            disabled={$state === STATE.LOADING}
+            disabled={$state === State.Loading}
             type="text"
             bind:this={input}
             bind:value={contractAddress}
@@ -111,8 +111,8 @@
       <button
         on:click={() => loadContract(config)}
         class="primary"
-        data-waiting={$state === STATE.LOADING || null}
-        disabled={$state === STATE.LOADING}
+        data-waiting={$state === State.Loading || null}
+        disabled={$state === State.Loading}
       >
         Load
       </button>
