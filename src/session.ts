@@ -1,15 +1,21 @@
-import { get, writable } from "svelte/store";
+import { get, writable, Writable } from "svelte/store";
 import { ethers } from "ethers";
-import { getConfig } from "./config.js";
+import { getConfig } from "./config";
 
-export const CONNECTION = {
-  DISCONNECTED: 0,
-  CONNECTING: 1,
-  CONNECTED: 2
+export enum Connection {
+  Disconnected,
+  Connecting,
+  Connected
+}
+
+export type Session = {
+  connection: Connection
+  address?: string
+  tokenBalance?: any
 };
 
-export const session = writable({
-  connection: CONNECTION.DISCONNECTED,
+export const session: Writable<Session> = writable({
+  connection: Connection.Disconnected,
 });
 
 session.subscribe(s => {
@@ -23,7 +29,7 @@ const tokenAbi = [
 ];
 
 export async function connectWallet() {
-  session.set({ connection: CONNECTION.CONNECTING });
+  session.set({ connection: Connection.Connecting });
 
   // TODO: This hangs on Brave, if you have to unlock your wallet..
   try {
@@ -44,7 +50,7 @@ export async function connectWallet() {
     session.set({
       address: addr,
       tokenBalance: tokenBalance,
-      connection: CONNECTION.CONNECTED
+      connection: Connection.Connected
     });
   } catch (e) {
     console.error(e);

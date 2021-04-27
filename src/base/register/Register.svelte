@@ -1,16 +1,22 @@
-<script lang="javascript">
-  import { ethers } from 'ethers';
+<script lang="typescript">
+  import { onMount } from 'svelte';
   import { get } from 'svelte/store';
-  import { error } from '@app/error.js';
-  import { session } from '@app/session.js';
-  import { registrar, registerName, registrationFee } from './registrar.js';
-  import { STATE, state } from './state.js';
+  import { ethers } from 'ethers';
+  import { error } from '@app/error';
+  import { session } from '@app/session';
+  import { registrar, registerName, registrationFee } from './registrar';
+  import { State, state } from './state';
 
   import RegisterButton from './RegisterButton.svelte';
 
   export let config;
 
   let subdomain = "";
+  let input;
+
+  onMount(() => {
+    input.focus();
+  });
 
   async function getFee(cfg) {
     let fee = await registrationFee(cfg);
@@ -25,8 +31,8 @@
   }
   input.subdomain {
     margin-right: 0;
-    border-radius-top-right: 0;
-    border-radius-bottom-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     border-radius: var(--border-radius) 0 0 var(--border-radius);
     border-right: none;
   }
@@ -77,13 +83,10 @@
     border: 1px solid var(--color-secondary);
     border-left: none;
   }
-  .register {
-    margin: 1rem;
-  }
 </style>
 
 <main>
-  {#if $state === STATE.IDLE  || $state === STATE.CHECKING_AVAILABILITY}
+  {#if $state === State.Idle  || $state === State.CheckingAvailability}
     <div class="input-caption">
       Register a <strong>radicle.eth</strong> name
     </div>
@@ -91,11 +94,12 @@
       <span class="name">
         <div>
           <input
-            autofocus
+            bind:this={input}
+            bind:value={subdomain}
             placeholder=""
             class="subdomain"
-            disabled={$state === STATE.CHECKING_AVAILABILITY}
-            type="text" bind:value={subdomain}
+            disabled={$state === State.CheckingAvailability}
+            type="text"
           />
           <span class="root">.radicle.eth</span>
         </div>
@@ -107,11 +111,11 @@
       <div class="modal-title">
         {subdomain}.radicle.eth
       </div>
-      {#if $state === STATE.REGISTERED}
+      {#if $state === State.Registered}
         <div class="available">The name <span class="domain">{subdomain}</span> has been successfully registered to {$session.address}.</div>
-      {:else if $state === STATE.NAME_AVAILABLE}
+      {:else if $state === State.NameAvailable}
         <div class="available">The name <span class="domain">{subdomain}</span> is available for registration.</div>
-      {:else if $state === STATE.APPROVING}
+      {:else if $state === State.Approving}
         <div class="available">
           Approving Radicle for {#await getFee(config)}
             ?
@@ -119,7 +123,7 @@
             {fee}
           {/await} <strong>RAD</strong>...
         </div>
-      {:else if $state == STATE.NAME_UNAVAILABLE}
+      {:else if $state == State.NameUnavailable}
         <div class="available">The name <span class="domain">{subdomain}</span> is not available for registration.</div>
       {/if}
       <div class="modal-actions">

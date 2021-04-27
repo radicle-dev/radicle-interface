@@ -1,12 +1,12 @@
-<script lang="javascript">
+<script lang="typescript">
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
   import { derived } from "svelte/store";
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
   import { formatBalance } from "@app/utils";
-  import { CONNECTION, session, connectWallet, disconnectWallet, shortAddress } from "./session.js";
-  import { error, ERROR } from './error.js';
+  import { session, disconnectWallet, shortAddress } from "./session";
+  import { error, ERROR } from './error';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
 
@@ -58,10 +58,6 @@
   .address {
     margin-left: 2rem;
     width: 9.75rem;
-  }
-  .indicator {
-    font-size: 0.5rem;
-    margin-left: 0.5rem;
   }
 </style>
 

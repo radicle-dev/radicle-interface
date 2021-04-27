@@ -1,10 +1,10 @@
-<script lang="javascript">
+<script lang="typescript">
   // TODO: Navigating directly to /vesting doesn't work.
   import { ethers } from 'ethers';
   import { get } from 'svelte/store';
   import { Router, Link, Route } from "svelte-routing";
-  import { getConfig } from '@app/config.js';
-  import { session } from '@app/session.js';
+  import { getConfig } from '@app/config';
+  import { session } from '@app/session';
 
   import Vesting from '@app/base/vesting/Vesting.svelte';
   import Register from '@app/base/register/Register.svelte';
@@ -16,16 +16,12 @@
 
   function handleKeydown(event) {
     if (event.key === 'Enter') {
-      document.querySelector('button.primary').click();
+      (document.querySelector('button.primary') as HTMLElement).click();
     }
   }
 </script>
 
 <style>
-  main {
-    padding-top: 2rem;
-    align-self: center;
-  }
   .wrapper {
     display: flex;
     align-items: center;

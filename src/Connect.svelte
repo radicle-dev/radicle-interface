@@ -1,6 +1,6 @@
-<script lang="javascript">
+<script lang="typescript">
   import { derived } from "svelte/store";
-  import { CONNECTION, session, connectWallet } from "./session.js";
+  import { Connection, session, connectWallet } from "./session";
 
   export let caption = "Connect";
   export let className = "";
@@ -8,8 +8,8 @@
 
   let walletUnavailable = !window.ethereum;
 
-  const connecting = derived(session, $s => {
-    return $s.connection === CONNECTION.CONNECTING;
+  const connecting = derived(session, ($s) => {
+    return $s.connection === Connection.Connecting;
   });
 </script>
 

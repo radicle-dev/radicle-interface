@@ -1,9 +1,9 @@
-<script lang="javascript">
+<script lang="typescript">
   import { get } from 'svelte/store';
-  import { error } from '@app/error.js';
-  import { session } from '@app/session.js';
-  import { STATE, state } from './state.js';
-  import { registrar, registerName } from './registrar.js';
+  import { error } from '@app/error';
+  import { session } from '@app/session';
+  import { State, state } from './state';
+  import { registrar, registerName } from './registrar';
 
   import Connect from '@app/Connect.svelte';
 
@@ -27,16 +27,16 @@
   async function checkAvailability() {
     registrar(config).available(subdomain).then(isAvailable => {
       if (isAvailable) {
-        state.set(STATE.NAME_AVAILABLE);
+        state.set(State.NameAvailable);
       } else {
-        state.set(STATE.NAME_UNAVAILABLE);
+        state.set(State.NameUnavailable);
       }
     });
-    state.set(STATE.CHECKING_AVAILABILITY);
+    state.set(State.CheckingAvailability);
   }
 
   function cancel() {
-    state.set(STATE.IDLE);
+    state.set(State.Idle);
     error.set(null);
   }
 </script>
@@ -47,16 +47,16 @@
   }
 </style>
 
-{#if $state >= STATE.NAME_AVAILABLE && $state < STATE.REGISTERED}
+{#if $state >= State.NameAvailable && $state < State.Registered}
   {#if $session.address}
-    <button on:click={register} disabled={$state > STATE.NAME_AVAILABLE} class="primary register">
-      {#if $state === STATE.APPROVING}
+    <button on:click={register} disabled={$state > State.NameAvailable} class="primary register">
+      {#if $state === State.Approving}
         Approving...
-      {:else if $state === STATE.COMMITTING}
+      {:else if $state === State.Committing}
         Committing...
-      {:else if $state === STATE.WAITING_TO_REGISTER}
+      {:else if $state === State.WaitingToRegister}
         Waiting...
-      {:else if $state === STATE.REGISTERING}
+      {:else if $state === State.Registering}
         Registering...
       {:else}
         Begin registration &rarr;
@@ -68,19 +68,19 @@
   <button on:click={cancel} class="cancel text">
     Cancel
   </button>
-{:else if $state === STATE.REGISTERED}
-  <button on:click={() => state.set(STATE.IDLE)}>
+{:else if $state === State.Registered}
+  <button on:click={() => state.set(State.Idle)}>
     Done
   </button>
-{:else if $state === STATE.NAME_UNAVAILABLE}
-  <button on:click={() => state.set(STATE.IDLE)}>
+{:else if $state === State.NameUnavailable}
+  <button on:click={() => state.set(State.Idle)}>
     Back
   </button>
 {:else if subdomain == ""}
   <button disabled class="primary register">
     Check
   </button>
-{:else if $state === STATE.CHECKING_AVAILABILITY}
+{:else if $state === State.CheckingAvailability}
   <button disabled class="primary register" data-waiting>
     Check
   </button>

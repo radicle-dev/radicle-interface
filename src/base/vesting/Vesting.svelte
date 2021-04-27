@@ -1,9 +1,16 @@
-<script lang="javascript">
-  import { ethers } from 'ethers';
+<script lang="typescript">
+  import { onMount } from 'svelte';
   import { get, derived, writable } from 'svelte/store';
+  import { ethers } from 'ethers';
   import { session, shortAddress } from '@app/session.js';
   import { STATE, state } from './state.js';
   import { getInfo, withdrawVested } from './vesting.js';
+
+  let input;
+
+  onMount(() => {
+    input.focus();
+  });
 
   export let config = null;
 
@@ -91,12 +98,13 @@
       <span class="name">
         <div>
           <input
-            autofocus
             size="40"
             placeholder=""
             class="subdomain"
             disabled={$state === STATE.LOADING}
-            type="text" bind:value={contractAddress}
+            type="text"
+            bind:this={input}
+            bind:value={contractAddress}
           />
         </div>
       </span>

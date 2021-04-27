@@ -1,0 +1,23 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "include": [
+    "src",
+    "types"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ],
+  "compilerOptions": {
+    "target": "es2019",
+    "types": [
+      "svelte"
+    ],
+    "moduleResolution": "node",
+    "paths": {
+      "@app/*": ["./src/*"]
+    }
+  },
+  "strict": true,
+  "skipLibCheck": true,
+  "allowSyntheticDefaultImports": true
+}

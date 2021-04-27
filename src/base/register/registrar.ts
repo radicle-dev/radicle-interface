@@ -1,9 +1,9 @@
 // TODO: Show "look at your wallet" / "confirm tx" before state change.
 // TODO: Two registration actions with same label
 import { ethers } from "ethers";
-import { STATE, state } from './state.js';
-import { approveSpender, updateBalance } from '@app/session.js';
-import { ERROR } from '@app/error.js';
+import { State, state } from './state';
+import { approveSpender, updateBalance } from '@app/session';
+import { ERROR } from '@app/error';
 
 const registrarAbi = [
   {"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"commitment","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"CommitmentMade","type":"event"},
@@ -44,7 +44,7 @@ export async function registerName(name, owner, config) {
 }
 
 async function approveRegistrar(owner, config) {
-  state.set(STATE.APPROVING);
+  state.set(State.Approving);
 
   const amount = await registrationFee(config);
   await approveSpender(config.registrar.address, amount, config);
@@ -68,7 +68,7 @@ async function commitAndRegister(name, owner, config) {
 }
 
 async function commit(commitment, fee, minAge, config) {
-  state.set(STATE.COMMITTING);
+  state.set(State.Committing);
 
   const signer = config.provider.getSigner();
   const tx = await registrar(config)
@@ -80,12 +80,12 @@ async function commit(commitment, fee, minAge, config) {
   updateBalance(fee.mul(-1));
 
   // TODO: Getting "commitment too new"
-  state.set(STATE.WAITING_TO_REGISTER);
+  state.set(State.WaitingToRegister);
   await tx.wait(minAge + 1);
 }
 
 async function register(name, owner, salt, config) {
-  state.set(STATE.REGISTERING);
+  state.set(State.Registering);
 
   const signer = config.provider.getSigner();
   const tx = await registrar(config).connect(signer).register(
@@ -96,7 +96,7 @@ async function register(name, owner, salt, config) {
   try {
     await tx.wait();
     window.localStorage.clear();
-    state.set(STATE.REGISTERED);
+    state.set(State.Registered);
   } catch (e) {
     throw { type: ERROR.TRANSACTION_FAILED, hash: tx.hash };
   }
@@ -106,7 +106,7 @@ function makeCommitment(name, owner, salt) {
   let bytes = ethers.utils.concat([
     ethers.utils.toUtf8Bytes(name),
     ethers.utils.getAddress(owner),
-    ethers.BigNumber.from(salt),
+    ethers.BigNumber.from(salt).toHexString(),
   ]);
   return ethers.utils.keccak256(bytes);
 }

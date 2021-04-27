@@ -8,7 +8,8 @@ module.exports = {
     '@app': './src',
   },
   plugins: [
-    '@snowpack/plugin-svelte'
+    '@snowpack/plugin-svelte',
+    '@snowpack/plugin-typescript',
   ],
   routes: [
     /* Enable an SPA Fallback in development: */
