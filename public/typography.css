@@ -1,42 +1,42 @@
 @font-face {
-  font-family: "Inter";
+	font-family: "Inter";
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-  src: url("fonts/Inter-Regular.otf");
+	src: url("fonts/Inter-Regular.woff");
 }
 
 @font-face {
-  font-family: "Inter";
+	font-family: "Inter";
 	font-style: bold;
 	font-weight: 600;
 	font-display: swap;
-  src: url("fonts/Inter-SemiBold.otf");
+	src: url("fonts/Inter-SemiBold.otf");
 }
 
 @font-face {
-  font-family: "Inter";
+	font-family: "Inter";
 	font-style: bold;
 	font-weight: 700;
 	font-display: swap;
-  src: url("fonts/Inter-Bold.otf");
+	src: url("fonts/Inter-Bold.otf");
 }
 
 @font-face {
-  font-family: "Source Code Pro";
+	font-family: "Source Code Pro";
 	font-style: bold;
 	font-weight: 600;
-  src: url("fonts/SourceCodePro-Semibold.otf");
+	src: url("fonts/SourceCodePro-Semibold.otf");
 }
 
 @font-face {
-  font-family: "Source Code Pro";
+	font-family: "Source Code Pro";
 	font-style: bold;
 	font-weight: 700;
-  src: url("fonts/SourceCodePro-Bold.otf");
+	src: url("fonts/SourceCodePro-Bold.otf");
 }
 
 :root {
-  --typeface: "Inter";
-  --typeface-mono: "Source Code Pro";
+	--typeface: "Inter";
+	--typeface-mono: "Source Code Pro";
 }
