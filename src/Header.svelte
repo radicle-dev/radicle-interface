@@ -5,8 +5,8 @@
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
   import { formatBalance } from "@app/utils";
-  import { session, disconnectWallet, shortAddress } from "./session";
-  import { error, ERROR } from './error';
+  import { error, Failure } from '@app/error';
+  import { session, disconnectWallet, shortAddress } from "@app/session";
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
 
@@ -62,7 +62,7 @@
 </style>
 
 {#if $error}
-  {#if $error.type === ERROR.TRANSACTION_FAILED}
+  {#if $error.type === Failure.TransactionFailed}
     <div class="error">
       <strong>Error:</strong> Transaction <a href="https://etherscan.io/tx/{$error.hash}">{$error.hash}</a> failed.
     </div>

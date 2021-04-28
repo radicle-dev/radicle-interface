@@ -3,7 +3,7 @@
 import { ethers } from "ethers";
 import { State, state } from './state';
 import { approveSpender, updateBalance } from '@app/session';
-import { ERROR } from '@app/error';
+import { Failure } from '@app/error';
 
 const registrarAbi = [
   {"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"commitment","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"CommitmentMade","type":"event"},
@@ -98,7 +98,7 @@ async function register(name, owner, salt, config) {
     window.localStorage.clear();
     state.set(State.Registered);
   } catch (e) {
-    throw { type: ERROR.TRANSACTION_FAILED, hash: tx.hash };
+    throw { type: Failure.TransactionFailed, hash: tx.hash };
   }
 }
 
