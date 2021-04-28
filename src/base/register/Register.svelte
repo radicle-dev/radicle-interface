@@ -128,7 +128,7 @@
         <span class="root">.radicle.eth</span>
       </div>
     </span>
-    {#if inputValue === ""}
+    {#if !inputValue}
       <button disabled class="primary register">
         Check
       </button>
