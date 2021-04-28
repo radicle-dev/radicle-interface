@@ -70,7 +70,7 @@
 {/if}
 
 <header>
-  <Logo style="margin-top: -1rem" />
+  <Logo />
 
   <div>
     <span class="nav">
