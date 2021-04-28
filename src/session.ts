@@ -99,9 +99,3 @@ export async function refreshBalance(config) {
 export function disconnectWallet() {
   location.reload();
 }
-
-export function shortAddress(addr) {
-  return addr.substring(0, 6)
-    + '...'
-    + addr.substring(addr.length - 4, addr.length);
-}

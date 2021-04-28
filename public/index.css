@@ -44,6 +44,7 @@
 	--font-family-sans-serif: Inter;
 	--font-family-monospace: monospace;
 	--border-radius: 50px;
+	--box-shadow-color: var(--color-secondary-2);
 }
 
 
@@ -91,7 +92,7 @@ button {
 	min-width: 8rem;
 }
 button:hover {
-	color: var(--color-background);
+	color: var(--color-background) !important;
 	background-color: var(--color-foreground);
 }
 button.waiting {
@@ -101,12 +102,14 @@ button.secondary {
 	color: var(--color-secondary);
 	border-color: var(--color-secondary);
 }
+button.secondary:hover {
+	background-color: var(--color-secondary);
+}
 button.primary {
 	color: var(--color-primary);
 	border-color: var(--color-primary);
 }
 button.primary:hover {
-	color: var(--color-background);
 	background-color: var(--color-primary);
 }
 button.primary[disabled] {
@@ -128,7 +131,6 @@ button.text {
 	min-width: 3rem;
 }
 button.text:hover {
-	color: var(--color-background);
 	background-color: var(--color-foreground);
 }
 
@@ -170,18 +172,21 @@ input.wide {
 .modal {
 	padding: 2rem;
 	border: 1px solid var(--color-secondary);
-	box-shadow: 8px 8px 64px var(--color-secondary-2);
+	background: var(--color-background);
+	box-shadow: 8px 8px 64px var(--box-shadow-color);
 	min-width: 480px;
+	max-width: 720px;
 	text-align: center;
 }
 .modal-title {
 	font-size: 1.75rem;
-	margin-bottom: 1rem;
+	margin-bottom: 2rem;
 	color: var(--color-secondary);
 	text-align: center;
 }
 .modal-body {
-	margin: 3rem 0;
+	margin-top: 2em;
+	margin-bottom: 3em;
 }
 .modal-actions {
 	margin-top: 2rem;
@@ -192,6 +197,19 @@ input.wide {
 }
 .modal-actions > button:last-child {
 	margin-right: 0;
+}
+
+.error {
+	color: var(--color-negative);
+	border-color: var(--color-negative);
+	--box-shadow-color: var(--color-negative-2);
+}
+.highlight {
+	color: var(--color-secondary);
+}
+
+button.error:hover {
+	background-color: var(--color-negative);
 }
 
 table {

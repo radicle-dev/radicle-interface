@@ -7,11 +7,12 @@
   import { session } from '@app/session';
 
   import Vesting from '@app/base/vesting/Vesting.svelte';
-  import Register from '@app/base/register/Register.svelte';
+  import Register from '@app/base/register/Routes.svelte';
   import Header from '@app/Header.svelte';
 
   const defaultPath = "register";
   const path = window.location.pathname;
+  const query = new URLSearchParams(window.location.search);
   export let url = path === "/" ? defaultPath : path;
 
   function handleKeydown(event) {
@@ -42,9 +43,7 @@
         <Route path="vesting">
           <Vesting {config} />
         </Route>
-        <Route path="register">
-          <Register {config} />
-        </Route>
+        <Register {config} {query} />
       </Router>
     </div>
   </div>

@@ -4,9 +4,9 @@
   import { derived } from "svelte/store";
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
-  import { formatBalance } from "@app/utils";
+  import { formatBalance, formatAddress } from "@app/utils";
   import { error, Failure } from '@app/error';
-  import { session, disconnectWallet, shortAddress } from "@app/session";
+  import { session, disconnectWallet } from "@app/session";
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
 
@@ -43,9 +43,8 @@
   .error {
     text-align: center;
     color: var(--color-negative);
-    background-color: var(--color-negative-2);
+    border: 1px solid var(--color-negative);
     padding: 0.5rem;
-    border-radius: var(--border-radius);
   }
   .error a {
     color: var(--color-negative);
@@ -64,7 +63,11 @@
 {#if $error}
   {#if $error.type === Failure.TransactionFailed}
     <div class="error">
-      <strong>Error:</strong> Transaction <a href="https://etherscan.io/tx/{$error.hash}">{$error.hash}</a> failed.
+      {#if $error.message}
+        <strong>Error:</strong> {$error.message}
+      {:else if $error.txHash}
+        <strong>Error:</strong> Transaction <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a> failed.
+      {/if}
     </div>
   {/if}
 {/if}
@@ -91,7 +94,7 @@
         {#if sessionButtonHover}
           Disconnect
         {:else}
-          {shortAddress($address)}
+          {formatAddress($address)}
         {/if}
       </button>
     {:else}

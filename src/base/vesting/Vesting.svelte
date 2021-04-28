@@ -2,7 +2,8 @@
   import { onMount } from 'svelte';
   import { get, derived, writable } from 'svelte/store';
   import { ethers } from 'ethers';
-  import { session, shortAddress } from '@app/session';
+  import { session } from '@app/session';
+  import { formatAddress } from '@app/utils';
   import { State, state } from './state';
   import { getInfo, withdrawVested } from './vesting';
 
@@ -59,7 +60,7 @@
       </div>
       <div class="modal-body">
         {#if $state === State.Withdrawn}
-          Tokens successfully withdrawn to {shortAddress($info.beneficiary)}.
+          Tokens successfully withdrawn to {formatAddress($info.beneficiary)}.
         {:else}
           <table>
             <tr><td class="label">Beneficiary</td><td>{$info.beneficiary}</td></tr>

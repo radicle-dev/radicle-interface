@@ -34,12 +34,16 @@ export async function registerName(name, owner, config) {
   let commitmentJson = window.localStorage.getItem('commitment');
   let commitment = commitmentJson && JSON.parse(commitmentJson);
 
-  // Try to recover an existing commitment.
-  if (commitment && commitment.name === name && commitment.owner === owner) {
-    await register(name, owner, commitment.salt, config);
-  } else {
-    await approveRegistrar(owner, config);
-    await commitAndRegister(name, owner, config);
+  try {
+    // Try to recover an existing commitment.
+    if (commitment && commitment.name === name && commitment.owner === owner) {
+      await register(name, owner, commitment.salt, config);
+    } else {
+      await approveRegistrar(owner, config);
+      await commitAndRegister(name, owner, config);
+    }
+  } catch (e) {
+    throw { type: Failure.TransactionFailed, message: e.message, hash: e.txHash };
   }
 }
 
@@ -93,13 +97,9 @@ async function register(name, owner, salt, config) {
   );
   console.log("Sent", tx);
 
-  try {
-    await tx.wait();
-    window.localStorage.clear();
-    state.set(State.Registered);
-  } catch (e) {
-    throw { type: Failure.TransactionFailed, hash: tx.hash };
-  }
+  await tx.wait();
+  window.localStorage.clear();
+  state.set(State.Registered);
 }
 
 function makeCommitment(name, owner, salt) {
