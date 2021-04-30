@@ -8,6 +8,7 @@
 
   import Vesting from '@app/base/vesting/Vesting.svelte';
   import Register from '@app/base/register/Routes.svelte';
+  import Orgs from '@app/base/orgs/Routes.svelte';
   import Header from '@app/Header.svelte';
 
   const defaultPath = "register";
@@ -44,6 +45,7 @@
           <Vesting {config} />
         </Route>
         <Register {config} {query} />
+        <Orgs {config} {query} />
       </Router>
     </div>
   </div>

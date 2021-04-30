@@ -13,6 +13,7 @@
 	--color-primary-6: #ffd4ff;
 	--color-primary-faded: #ff55ff77;
 	--color-secondary: #5555ff;
+	--color-secondary-faded: #5555ff77;
 	--color-secondary-1: #212847;
 	--color-secondary-2: #2c326d;
 	--color-secondary-6: #e3e3ff;
@@ -91,7 +92,7 @@ button {
 	cursor: pointer;
 	min-width: 8rem;
 }
-button:hover {
+button:not([disabled]):hover {
 	color: var(--color-background) !important;
 	background-color: var(--color-foreground);
 }
@@ -102,7 +103,11 @@ button.secondary {
 	color: var(--color-secondary);
 	border-color: var(--color-secondary);
 }
-button.secondary:hover {
+button.secondary[disabled] {
+	color: var(--color-secondary-faded);
+	border-color: var(--color-secondary-faded);
+}
+button.secondary:not([disabled]):hover {
 	background-color: var(--color-secondary);
 }
 button.primary {
@@ -175,7 +180,7 @@ input.wide {
 	background: var(--color-background);
 	box-shadow: 8px 8px 64px var(--box-shadow-color);
 	min-width: 480px;
-	max-width: 720px;
+	max-width: 760px;
 	text-align: center;
 }
 .modal-title {
@@ -185,6 +190,8 @@ input.wide {
 	text-align: center;
 }
 .modal-body {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
 	margin-top: 2em;
 	margin-bottom: 3em;
 }
@@ -192,11 +199,21 @@ input.wide {
 	margin-top: 2rem;
 	text-align: center;
 }
-.modal-actions > button {
+.modal-actions button {
 	margin-right: 1rem;
 }
-.modal-actions > button:last-child {
+.modal-actions button:last-child {
 	margin-right: 0;
+}
+.modal.error .modal-title {
+	color: var(--color-negative);
+}
+.modal.error .modal-actions button {
+	color: var(--color-negative);
+	border-color: var(--color-negative);
+}
+.modal.error .modal-actions button:hover {
+	background-color: var(--color-negative);
 }
 
 .error {
@@ -214,12 +231,12 @@ button.error:hover {
 
 table {
 	table-layout: fixed;
-	border-collapse: collapse;
-	width: 100%;
-	max-width: 480px;
+	border-collapse: separate;
+	border-spacing: 2rem 0;
 }
 td {
 	text-align: left;
+	text-overflow: ellipsis;
 }
 td.label {
 	color: var(--color-secondary);

@@ -1,7 +1,14 @@
 <script lang="typescript">
-  export let floating = false;
+  import { createEventDispatcher } from 'svelte';
 
-  let className = floating ? "modal-floating" : "";
+  export let floating = false;
+  export let error = null;
+
+  let dispatch = createEventDispatcher();
+
+  const onClose = () => {
+    dispatch('close');
+  };
 </script>
 
 <style>
@@ -29,16 +36,34 @@
   <div class="modal-overlay"></div>
 {/if}
 
-<div class={className}>
-  <div class="modal">
+<div class:modal-floating={floating}>
+  <div class="modal" class:error={error}>
     <div class="modal-title">
-      <slot name="title"></slot>
+      {#if error}
+        Error
+      {:else}
+        <slot name="title"></slot>
+      {/if}
     </div>
     <div class="modal-body">
-      <slot name="body"></slot>
+      {#if error}
+        {#if error === Object(error) && error.message}
+          <strong>Error:</strong> {error.message}
+        {:else}
+          {error}
+        {/if}
+      {:else}
+        <slot name="body"></slot>
+      {/if}
     </div>
     <div class="modal-actions">
-      <slot name="actions"></slot>
+      {#if error}
+        <button on:click={onClose}>
+          Dismiss
+        </button>
+      {:else}
+        <slot name="actions"></slot>
+      {/if}
     </div>
   </div>
 </div>

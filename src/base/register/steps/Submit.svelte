@@ -35,16 +35,12 @@
 </script>
 
 <style>
-  .available {
-    line-height: 1.75em;
-    padding: 2rem;
-  }
   .domain {
     color: var(--color-secondary);
   }
 </style>
 
-<div class="modal {error ? 'error' : ''}">
+<div class="modal" class:error={error}>
   {#if error}
     <div class="modal-title error">
       Transaction failed
