@@ -8,9 +8,7 @@
 
   let walletUnavailable = !window.ethereum;
 
-  const connecting = derived(session, ($s) => {
-    return $s.connection === Connection.Connecting;
-  });
+  $: connecting = $session.connection === Connection.Connecting;
 </script>
 
 <style>
@@ -20,10 +18,10 @@
   on:click={connectWallet}
   {style}
   class="connect {className}"
-  disabled={$connecting || walletUnavailable}
-  data-waiting={$connecting || null}
+  disabled={connecting || walletUnavailable}
+  data-waiting={connecting || null}
 >
-  {#if $connecting}
+  {#if connecting}
     Connecting...
   {:else}
     {caption}

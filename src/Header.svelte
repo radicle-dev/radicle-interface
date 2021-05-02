@@ -13,8 +13,8 @@
   let sessionButton = null;
   let sessionButtonHover = false;
 
-  const address = derived(session, $s => { return $s.address });
-  const tokenBalance = derived(session, $s => { return $s.tokenBalance });
+  $: address = $session.address;
+  $: tokenBalance = $session.tokenBalance;
 </script>
 
 <style>
@@ -82,9 +82,9 @@
       <a use:link href="/vesting/">Vesting</a>
     </span>
 
-    {#if $address}
+    {#if address}
       <span class="balance">
-        {formatBalance($tokenBalance)} <strong>RAD</strong>
+        {formatBalance(tokenBalance)} <strong>RAD</strong>
       </span>
 
       <button class="address outline small" bind:this={sessionButton}
@@ -95,7 +95,7 @@
         {#if sessionButtonHover}
           Disconnect
         {:else}
-          {formatAddress($address)}
+          {formatAddress(address)}
         {/if}
       </button>
     {:else}
