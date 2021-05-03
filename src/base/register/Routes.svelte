@@ -4,6 +4,7 @@
   import Begin from '@app/base/register/steps/Begin.svelte';
   import Submit from '@app/base/register/steps/Submit.svelte';
 
+  export let session;
   export let config;
   export let query;
 </script>
@@ -17,5 +18,5 @@
 </Route>
 
 <Route path="register/:name/submit" let:params>
-  <Submit {config} subdomain={params.name} {query} />
+  <Submit {config} subdomain={params.name} {query} {session} />
 </Route>

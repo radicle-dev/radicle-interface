@@ -1,20 +1,26 @@
 <script lang="typescript">
   // TODO: Shorten tx hash
   // TODO: Link to correct network on etherscan
+  // TODO: There's a bug where sometimes on first load, the 'Connect' button
+  //       won't display the address even though we're connected.
   import { derived } from "svelte/store";
   import { ethers } from "ethers";
   import { link } from "svelte-routing";
   import { formatBalance, formatAddress } from "@app/utils";
   import { error, Failure } from '@app/error';
-  import { session, disconnectWallet } from "@app/session";
+  import { disconnectWallet } from "@app/session";
+  import type { Session } from '@app/session';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
+
+  export let session: Session | null;
+  export let config;
 
   let sessionButton = null;
   let sessionButtonHover = false;
 
-  $: address = $session.address;
-  $: tokenBalance = $session.tokenBalance;
+  $: address = session && session.address;
+  $: tokenBalance = session && session.tokenBalance;
 </script>
 
 <style>
@@ -99,7 +105,7 @@
         {/if}
       </button>
     {:else}
-      <Connect className="small" />
+      <Connect className="small" {config} />
     {/if}
   </div>
 </header>

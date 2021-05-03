@@ -37,7 +37,7 @@
 {/if}
 
 <div class:modal-floating={floating}>
-  <div class="modal" class:error={error}>
+  <div class="modal" class:error>
     <div class="modal-title">
       {#if error}
         Error

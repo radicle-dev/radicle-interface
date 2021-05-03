@@ -1,36 +1,38 @@
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
-  import { session } from '@app/session';
   import Modal from '@app/Modal.svelte';
   import { Org } from '@app/base/orgs/Org';
+  import type { Config } from '@app/config';
 
-  export let config;
-  export let owner;
+  export let config: Config;
+  export let owner: string;
 
   enum State {
     Idle,
-    Waiting,
+    Signing,
+    Pending,
     Success,
   }
 
   let state = State.Idle;
   let error = null;
+  let org = null;
 
   const dispatch = createEventDispatcher();
   const createOrg = async () => {
-    state = State.Waiting;
+    state = State.Signing;
 
-    console.log("creating org");
     try {
       let tx = await Org.create(owner, config);
+      state = State.Pending;
+
       let receipt = await tx.wait();
-      console.log(receipt);
-      let org = Org.fromReceipt(receipt);
-      console.log(org);
+      org = Org.fromReceipt(receipt);
       state = State.Success;
     } catch (e) {
-      state = State.Idle;
       console.error(e);
+
+      state = State.Idle;
       error = e;
     }
   };
@@ -38,23 +40,45 @@
 
 <Modal floating {error} on:close>
   <span slot="title">
-    Create an Org
+    {#if !org}
+      Create an Org
+    {:else}
+      Success
+    {/if}
   </span>
+
   <span slot="body">
     <table>
-      <tr><td class="label">Owner</td><td>{owner}</td></tr>
+      <tr><td class="label">Member</td><td>{owner}</td></tr>
+      {#if org}
+        <tr><td class="label">Address</td><td>{org.address}</td></tr>
+        <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
+      {/if}
     </table>
   </span>
-  <span slot="actions">
-    <button
-      on:click={createOrg}
-      class="primary"
-      data-waiting={state === State.Waiting || null}
-      disabled={state !== State.Idle}
-    >Create</button>
 
-    <button on:click={() => dispatch('close')} class="text">
-      Cancel
-    </button>
+  <span slot="actions">
+    {#if !org}
+      <button
+        on:click={createOrg}
+        class="primary"
+        data-waiting={[State.Signing, State.Pending].includes(state) || null}
+        disabled={state !== State.Idle}
+      >
+        {#if state === State.Pending}
+          Creating...
+        {:else}
+          Create
+        {/if}
+      </button>
+
+      <button on:click={() => dispatch('close')} class="text">
+        Cancel
+      </button>
+    {:else}
+      <button on:click={() => dispatch('close')}>
+        Done
+      </button>
+    {/if}
   </span>
 </Modal>

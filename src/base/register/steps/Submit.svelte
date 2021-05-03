@@ -3,17 +3,17 @@
   import { get } from 'svelte/store';
   import { navigate } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { session } from '@app/session';
   import { registrar, registerName, registrationFee } from '../registrar';
   import { State, state } from '../state';
+  import type { Session } from '@app/session';
 
   export let config;
   export let subdomain;
   export let query;
+  export let session: Session;
 
   let error = null;
-  let s = get(session);
-  let registrationOwner = query.get("owner") || s.address;
+  let registrationOwner = query.get("owner") || session.address;
 
   async function getFee(cfg) {
     let fee = await registrationFee(cfg);
@@ -87,7 +87,7 @@
     </div>
   {:else if $state === State.Registered}
     <div class="modal-body">
-      The name <span class="domain">{subdomain}</span> has been successfully registered to {$session.address}.
+      The name <span class="domain">{subdomain}</span> has been successfully registered to {session.address}.
     </div>
     <div class="modal-actions">
       <button on:click={() => state.set(State.Idle)} class="primary register">

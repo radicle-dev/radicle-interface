@@ -38,13 +38,13 @@
   <!-- Loading wallet -->
 {:then config}
   <div class="app">
-    <Header/>
+    <Header session={$session} {config} />
     <div class="wrapper">
       <Router url="{url}">
         <Route path="vesting">
-          <Vesting {config} />
+          <Vesting {config} session={$session} />
         </Route>
-        <Register {config} {query} />
+        <Register {config} {query} session={$session} />
         <Orgs {config} {query} />
       </Router>
     </div>

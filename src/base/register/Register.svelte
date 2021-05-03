@@ -1,10 +1,9 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
-  import { Router, Link, Route, navigate } from "svelte-routing";
+  import { navigate } from "svelte-routing";
   import { ethers } from 'ethers';
   import { error } from '@app/error';
-  import { session } from '@app/session';
   import { registrar } from './registrar';
 
   import Modal from '@app/Modal.svelte';

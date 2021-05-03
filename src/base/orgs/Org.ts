@@ -37,6 +37,9 @@ export class Org {
       orgFactoryAbi,
       config.signer
     );
-    return await orgFactory.createOrg([owner], 1);
+
+    return orgFactory.createOrg([owner], 1, {
+      gasLimit: config.gasLimits.createOrg
+    });
   }
 }

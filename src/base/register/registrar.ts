@@ -2,7 +2,7 @@
 // TODO: Two registration actions with same label
 import { ethers } from "ethers";
 import { State, state } from './state';
-import { approveSpender, updateBalance } from '@app/session';
+import * as session from '@app/session';
 import { Failure } from '@app/error';
 
 const registrarAbi = [
@@ -51,7 +51,7 @@ async function approveRegistrar(owner, config) {
   state.set(State.Approving);
 
   const amount = await registrationFee(config);
-  await approveSpender(config.registrar.address, amount, config);
+  await session.approveSpender(config.registrar.address, amount, config);
 }
 
 async function commitAndRegister(name, owner, config) {
@@ -81,7 +81,7 @@ async function commit(commitment, fee, minAge, config) {
     .catch(e => console.error(e));
 
   await tx.wait(1);
-  updateBalance(fee.mul(-1));
+  session.state.updateBalance(fee.mul(-1));
 
   // TODO: Getting "commitment too new"
   state.set(State.WaitingToRegister);

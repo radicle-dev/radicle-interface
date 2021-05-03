@@ -2,8 +2,8 @@
   import { navigate } from 'svelte-routing';
   import { error } from '@app/error';
   import { formatAddress } from '@app/utils';
-  import { session } from '@app/session';
   import { registrar } from '../registrar';
+  import { session } from '@app/session';
 
   import Connect from '@app/Connect.svelte';
 
@@ -18,7 +18,7 @@
   export let query;
 
   let state = State.Initial;
-  $: registrationOwner = query.get("owner") || $session.address;
+  $: registrationOwner = query.get("owner") || ($session && $session.address);
 
   async function begin() {
     state = State.CheckingAvailability;
@@ -64,12 +64,12 @@
         Back
       </button>
     {:else}
-      {#if $session.address}
+      {#if $session}
         <button on:click={begin} class="primary register">
           Begin registration &rarr;
         </button>
       {:else}
-        <Connect caption="Connect to register" className="primary" />
+        <Connect caption="Connect to register" className="primary" {config} />
       {/if}
 
       <button on:click={() => navigate("/register")} class="text">

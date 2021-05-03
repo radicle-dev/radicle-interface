@@ -10,10 +10,12 @@ export type Config = {
   registrar: { address: string },
   radToken: { address: string },
   orgFactory: { address: string },
+  gasLimits: { createOrg: number },
   provider: ethers.providers.JsonRpcProvider,
   signer: ethers.Signer,
 };
 
+// TODO: Move to JSON.
 const addresses = {
   homestead: {
     registrar: {
@@ -34,9 +36,14 @@ const addresses = {
       address: "0x59b5eee36f5fa52400A136Fd4630Ee2bF126a4C0",
     },
     orgFactory: {
-      address: "0xe30aA5594FFB52B6bF5bbB21eB7e71Ac525bB028",
+      address: "0xF3D04e874D07d680e8b26332eEae5b9B1c263121",
     },
   }
+};
+
+/// Gas limits for various transactions.
+const gasLimits = {
+  createOrg: 1_000_000,
 };
 
 function isMetamaskInstalled(): boolean {
@@ -58,6 +65,7 @@ export async function getConfig(): Promise<Config> {
         orgFactory: cfg.orgFactory,
         provider: provider,
         signer: provider.getSigner(),
+        gasLimits: gasLimits,
       };
     } else {
       throw `Wrong network: ${network.name}`;

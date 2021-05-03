@@ -1,21 +1,23 @@
 <script lang="typescript">
   import { derived } from "svelte/store";
-  import { Connection, session, connectWallet } from "./session";
+  import { Connection } from "@app/session";
+  import { state } from '@app/session';
 
+  export let config;
   export let caption = "Connect";
   export let className = "";
   export let style = "";
 
   let walletUnavailable = !window.ethereum;
 
-  $: connecting = $session.connection === Connection.Connecting;
+  $: connecting = $state.connection === Connection.Connecting;
 </script>
 
 <style>
 </style>
 
 <button
-  on:click={connectWallet}
+  on:click={() => state.connect(config)}
   {style}
   class="connect {className}"
   disabled={connecting || walletUnavailable}

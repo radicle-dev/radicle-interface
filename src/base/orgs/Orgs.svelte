@@ -12,19 +12,19 @@
   }
 
   export let config;
-  export let query;
+  export const query = {};
 
   let modal = null;
   let state = State.Idle;
 
-  $: owner = $session.address;
+  $: owner = $session && $session.address;
 </script>
 
 <style>
 </style>
 
 <main>
-  <button on:click={() => modal = CreateOrg} disabled={!owner} data-disabled-tooltip="No!" class="secondary">
+  <button on:click={() => modal = CreateOrg} disabled={!owner} class="secondary">
     Create an Org
   </button>
 </main>

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { formatBalance } from "@app/utils";
-import { refreshBalance } from "@app/session";
+import * as session from "@app/session";
 import { State, state } from "./state";
 
 const abi = [
@@ -30,7 +30,7 @@ export async function withdrawVested(address, config) {
 
   state.set(State.Withdrawing);
   await tx.wait();
-  refreshBalance(config);
+  session.state.refreshBalance(config);
   state.set(State.Withdrawn);
 }
 
