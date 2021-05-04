@@ -1,6 +1,8 @@
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
   import Modal from '@app/Modal.svelte';
+  import Error from '@app/Error.svelte';
+  import type { Err } from '@app/error';
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
 
@@ -15,7 +17,7 @@
   }
 
   let state = State.Idle;
-  let error: Error | null = null;
+  let error: Err | null = null;
   let org: Org | null = null;
 
   const dispatch = createEventDispatcher();
@@ -38,56 +40,60 @@
   };
 </script>
 
-<Modal floating {error} on:close>
-  <span slot="title">
-    {#if !org}
-      Create an Org
-    {:else}
-      🎉
-    {/if}
-  </span>
+{#if error}
+  <Error {error} floating on:close />
+{:else}
+  <Modal floating on:close>
+    <span slot="title">
+      {#if !org}
+        Create an Org
+      {:else}
+        🎉
+      {/if}
+    </span>
 
-  <span slot="subtitle">
-    {#if org}
-      <strong>Your org was successfully created.</strong>
-    {/if}
-  </span>
+    <span slot="subtitle">
+      {#if org}
+        <strong>Your org was successfully created.</strong>
+      {/if}
+    </span>
 
-  <span slot="body">
-    {#if org}
-      <table>
-        <tr><td class="label">Address</td><td>{org.address}</td></tr>
-        <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
-      </table>
-    {:else}
-      <table>
-        <tr><td class="label">Member</td><td>{owner}</td></tr>
-      </table>
-    {/if}
-  </span>
+    <span slot="body">
+      {#if org}
+        <table>
+          <tr><td class="label">Address</td><td>{org.address}</td></tr>
+          <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
+        </table>
+      {:else}
+        <table>
+          <tr><td class="label">Member</td><td>{owner}</td></tr>
+        </table>
+      {/if}
+    </span>
 
-  <span slot="actions">
-    {#if !org}
-      <button
-        on:click={createOrg}
-        class="primary"
-        data-waiting={[State.Signing, State.Pending].includes(state) || null}
-        disabled={state !== State.Idle}
-      >
-        {#if state === State.Pending}
-          Creating...
-        {:else}
-          Create
-        {/if}
-      </button>
+    <span slot="actions">
+      {#if !org}
+        <button
+          on:click={createOrg}
+          class="primary"
+          data-waiting={[State.Signing, State.Pending].includes(state) || null}
+          disabled={state !== State.Idle}
+        >
+          {#if state === State.Pending}
+            Creating...
+          {:else}
+            Create
+          {/if}
+        </button>
 
-      <button on:click={() => dispatch('close')} class="text">
-        Cancel
-      </button>
-    {:else}
-      <button on:click={() => dispatch('close')}>
-        Done
-      </button>
-    {/if}
-  </span>
-</Modal>
+        <button on:click={() => dispatch('close')} class="text">
+          Cancel
+        </button>
+      {:else}
+        <button on:click={() => dispatch('close')}>
+          Done
+        </button>
+      {/if}
+    </span>
+  </Modal>
+{/if}

@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let floating = false;
-  export let error: Error | null = null;
+  export let error = false;
   export let subtle = false;
 
   let dispatch = createEventDispatcher();
@@ -40,36 +40,16 @@
 <div class:modal-floating={floating}>
   <div class="modal" class:error class:modal-subtle={subtle}>
     <div class="modal-title">
-      {#if error}
-        Error
-      {:else}
-        <slot name="title"></slot>
-      {/if}
+      <slot name="title"></slot>
     </div>
     <div class="modal-subtitle">
-      {#if !error}
-        <slot name="subtitle"></slot>
-      {/if}
+      <slot name="subtitle"></slot>
     </div>
     <div class="modal-body">
-      {#if error}
-        {#if error === Object(error) && error.message}
-          <strong>Error:</strong> {error.message}
-        {:else}
-          {error}
-        {/if}
-      {:else}
-        <slot name="body"></slot>
-      {/if}
+      <slot name="body"></slot>
     </div>
     <div class="modal-actions">
-      {#if error}
-        <button on:click={onClose}>
-          Dismiss
-        </button>
-      {:else}
-        <slot name="actions"></slot>
-      {/if}
+      <slot name="actions"></slot>
     </div>
   </div>
 </div>

@@ -11,3 +11,7 @@ export enum State {
 }
 
 export const state = writable(State.Idle);
+
+state.subscribe(s => {
+  console.log("regiter.state", s);
+});

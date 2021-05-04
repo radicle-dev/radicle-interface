@@ -195,11 +195,12 @@ input.wide {
 }
 .modal-title {
 	font-size: 1.75rem;
+	line-height: 1.75rem;
 	margin-bottom: 2rem;
 	color: var(--color-secondary);
 	text-align: center;
 	text-overflow: ellipsis;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 .modal-body {
 	overflow-x: hidden;

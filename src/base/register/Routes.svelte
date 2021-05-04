@@ -1,10 +1,12 @@
 <script lang="typescript">
-  import { Route } from "svelte-routing";
+  import { Route, navigate } from "svelte-routing";
   import Register from '@app/base/register/Register.svelte';
   import Begin from '@app/base/register/steps/Begin.svelte';
   import Submit from '@app/base/register/steps/Submit.svelte';
+  import Error from '@app/Error.svelte';
   import type { Config } from '@app/config';
   import type { Session } from '@app/session';
+  import { Failure } from '@app/error';
 
   export let session: Session | null;
   export let config: Config;
@@ -19,8 +21,13 @@
   <Begin {config} subdomain={params.name} {query} />
 </Route>
 
-{#if session}
-  <Route path="register/:name/submit" let:params>
+<Route path="register/:name/submit" let:params>
+  {#if session}
     <Submit {config} subdomain={params.name} {query} {session} />
-  </Route>
-{/if}
+  {:else}
+    <Error
+      message={"You must connect your wallet to register"}
+      on:close={() => navigate("/register")}
+    />
+  {/if}
+</Route>
