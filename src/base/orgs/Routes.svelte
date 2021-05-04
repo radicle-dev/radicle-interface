@@ -1,6 +1,7 @@
 <script lang="typescript">
   import { Route } from "svelte-routing";
   import Orgs from '@app/base/orgs/Orgs.svelte';
+  import Profile from '@app/base/orgs/Profile.svelte';
   import type { Config } from '@app/config';
 
   export let config: Config;
@@ -8,4 +9,8 @@
 
 <Route path="/orgs">
   <Orgs {config} />
+</Route>
+
+<Route path="/orgs/:address" let:params>
+  <Profile {config} address={params.address} />
 </Route>
