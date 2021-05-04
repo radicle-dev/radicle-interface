@@ -7,6 +7,7 @@ declare global {
 }
 
 export type Config = {
+  network: { name: string, chainId: number },
   registrar: { address: string },
   radToken: { address: string },
   orgFactory: { address: string },
@@ -60,6 +61,7 @@ export async function getConfig(): Promise<Config> {
 
     if (cfg) {
       return {
+        network,
         registrar: cfg.registrar,
         radToken: cfg.radToken,
         orgFactory: cfg.orgFactory,

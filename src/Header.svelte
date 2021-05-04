@@ -84,8 +84,10 @@
   <div>
     <span class="nav">
       <a use:link href="/register/">Register</a>
-      <a use:link href="/orgs/">Orgs</a>
       <a use:link href="/vesting/">Vesting</a>
+      {#if config.network.name === 'ropsten'}
+        <a use:link href="/orgs/">Orgs</a>
+      {/if}
     </span>
 
     {#if address}
