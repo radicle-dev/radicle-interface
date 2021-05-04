@@ -18,6 +18,9 @@
 {:then org}
   {#if org}
     <div>
+      <h1>
+        {org.address}
+      </h1>
       <table>
         <tr><td class="label">Address</td><td>{org.address}</td></tr>
         <tr><td class="label">Safe</td><td>{org.safe}</td></tr>

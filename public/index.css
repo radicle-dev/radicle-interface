@@ -259,3 +259,13 @@ td.label {
 td strong {
 	font-weight: 600;
 }
+
+h1 {
+	font-size: 1.75rem;
+	margin-bottom: 2rem;
+	font-weight: normal;
+	color: var(--color-secondary);
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+}
