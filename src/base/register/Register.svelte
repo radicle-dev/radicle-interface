@@ -1,10 +1,8 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import { get } from 'svelte/store';
   import { navigate } from "svelte-routing";
-  import { ethers } from 'ethers';
-  import { error } from '@app/error';
   import { registrar } from './registrar';
+  import type { Config } from '@app/config';
 
   import Modal from '@app/Modal.svelte';
 
@@ -15,20 +13,20 @@
     NameUnavailable,
   }
 
-  export let config;
+  export let config: Config;
 
   let state = State.Idle;
-  let inputValue;
-  let inputElement;
+  let inputValue: string;
+  let inputElement: HTMLElement;
 
   onMount(() => {
     inputElement.focus();
   });
 
-  function checkAvailability(name) {
+  function checkAvailability(name: string) {
     state = State.CheckingAvailability;
 
-    registrar(config).available(name).then(isAvailable => {
+    registrar(config).available(name).then((isAvailable: boolean) => {
       if (isAvailable) {
         state = State.NameAvailable;
         navigate(`/register/${name}`);

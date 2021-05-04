@@ -3,8 +3,6 @@
   // TODO: Link to correct network on etherscan
   // TODO: There's a bug where sometimes on first load, the 'Connect' button
   //       won't display the address even though we're connected.
-  import { derived } from "svelte/store";
-  import { ethers } from "ethers";
   import { link } from "svelte-routing";
   import { formatBalance, formatAddress } from "@app/utils";
   import { error, Failure } from '@app/error';

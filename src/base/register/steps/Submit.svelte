@@ -3,19 +3,20 @@
   import { get } from 'svelte/store';
   import { navigate } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { registrar, registerName, registrationFee } from '../registrar';
+  import { registerName, registrationFee } from '../registrar';
   import { State, state } from '../state';
   import type { Session } from '@app/session';
+  import type { Config } from '@app/config';
 
-  export let config;
-  export let subdomain;
-  export let query;
+  export let config: Config;
+  export let subdomain: string;
+  export let query: Record<string, any>;
   export let session: Session;
 
-  let error = null;
+  let error: Error | null = null;
   let registrationOwner = query.get("owner") || session.address;
 
-  async function getFee(cfg) {
+  async function getFee(cfg: Config) {
     let fee = await registrationFee(cfg);
     return ethers.utils.formatUnits(fee);
   }

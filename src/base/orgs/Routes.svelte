@@ -4,7 +4,6 @@
   import type { Config } from '@app/config';
 
   export let config: Config;
-  export let query;
 </script>
 
 <Route path="/orgs">

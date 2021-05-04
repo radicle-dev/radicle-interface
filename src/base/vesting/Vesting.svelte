@@ -1,26 +1,25 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import { get, derived, writable } from 'svelte/store';
-  import type { Writable } from 'svelte/store';
-  import { ethers } from 'ethers';
   import { formatAddress } from '@app/utils';
   import { State, state } from './state';
   import { getInfo, withdrawVested } from './vesting';
+  import type { VestingInfo } from './vesting';
   import type { Session } from '@app/session';
+  import type { Config } from '@app/config';
 
-  let input;
+  let input: HTMLElement;
 
   onMount(() => {
     input.focus();
   });
 
-  export let config;
-  export let session: Session;
+  export let config: Config;
+  export let session: Session | null;
 
   let contractAddress = "";
-  let info = null;
+  let info: VestingInfo | null = null;
 
-  async function loadContract(config) {
+  async function loadContract(config: Config) {
     state.set(State.Loading);
     info = await getInfo(contractAddress, config);
     state.set(State.Idle);

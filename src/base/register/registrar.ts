@@ -45,7 +45,7 @@ export async function registerName(name: string, owner: string, config: Config) 
       await commitAndRegister(name, owner, config);
     }
   } catch (e) {
-    throw { type: Failure.TransactionFailed, message: e.message, hash: e.txHash };
+    throw { type: Failure.TransactionFailed, message: e.message, txHash: e.txHash };
   }
 }
 

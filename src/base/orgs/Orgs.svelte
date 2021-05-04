@@ -1,22 +1,12 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
-  import { get } from 'svelte/store';
-  import { Router, Link, Route, navigate } from "svelte-routing";
-  import { ethers } from 'ethers';
-  import { error } from '@app/error';
+  import type { SvelteComponent } from 'svelte';
   import { session } from '@app/session';
   import CreateOrg from '@app/base/orgs/CreateOrg.svelte';
   import type { Config } from '@app/config';
 
-  enum State {
-    Idle,
-  }
-
   export let config: Config;
-  export const query = {};
 
-  let modal = null;
-  let state = State.Idle;
+  let modal: typeof SvelteComponent | null = null;
 
   $: owner = $session && $session.address;
 </script>
@@ -30,4 +20,4 @@
   </button>
 </main>
 
-<svelte:component this="{modal}" {owner} {config} on:close={() => modal = null} />
+<svelte:component this={modal} {owner} {config} on:close={() => modal = null} />

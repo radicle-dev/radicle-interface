@@ -1,9 +1,9 @@
 <script lang="typescript">
-  import { derived } from "svelte/store";
   import { Connection } from "@app/session";
   import { state } from '@app/session';
+  import type { Config } from '@app/config';
 
-  export let config;
+  export let config: Config;
   export let caption = "Connect";
   export let className = "";
   export let style = "";

@@ -3,10 +3,12 @@
   import Register from '@app/base/register/Register.svelte';
   import Begin from '@app/base/register/steps/Begin.svelte';
   import Submit from '@app/base/register/steps/Submit.svelte';
+  import type { Config } from '@app/config';
+  import type { Session } from '@app/session';
 
-  export let session;
-  export let config;
-  export let query;
+  export let session: Session | null;
+  export let config: Config;
+  export let query: Record<string, any>;
 </script>
 
 <Route path="register">
@@ -17,6 +19,8 @@
   <Begin {config} subdomain={params.name} {query} />
 </Route>
 
-<Route path="register/:name/submit" let:params>
-  <Submit {config} subdomain={params.name} {query} {session} />
-</Route>
+{#if session}
+  <Route path="register/:name/submit" let:params>
+    <Submit {config} subdomain={params.name} {query} {session} />
+  </Route>
+{/if}

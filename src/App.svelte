@@ -1,8 +1,6 @@
 <script lang="typescript">
   // TODO: Navigating directly to /vesting doesn't work.
-  import { ethers } from 'ethers';
-  import { get } from 'svelte/store';
-  import { Router, Link, Route } from "svelte-routing";
+  import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
   import { session } from '@app/session';
 
@@ -16,7 +14,7 @@
   const query = new URLSearchParams(window.location.search);
   export let url = path === "/" ? defaultPath : path;
 
-  function handleKeydown(event) {
+  function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       (document.querySelector('button.primary') as HTMLElement).click();
     }
@@ -45,10 +43,10 @@
           <Vesting {config} session={$session} />
         </Route>
         <Register {config} {query} session={$session} />
-        <Orgs {config} {query} />
+        <Orgs {config} />
       </Router>
     </div>
   </div>
-{:catch err}
+{:catch}
   <!-- Show error -->
 {/await}

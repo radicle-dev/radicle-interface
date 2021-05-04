@@ -21,6 +21,15 @@ const tokenAbi = [
   "function symbol() view returns (string)",
 ];
 
+export interface VestingInfo {
+  token: string,
+  symbol: string,
+  beneficiary: string,
+  totalVesting: string,
+  withdrawableBalance: string,
+  withdrawn: string
+}
+
 export async function withdrawVested(address: string, config: Config) {
   const contract = new ethers.Contract(address, abi, config.provider);
   const signer = config.provider.getSigner();
@@ -35,7 +44,7 @@ export async function withdrawVested(address: string, config: Config) {
   state.set(State.Withdrawn);
 }
 
-export async function getInfo(address: string, config: Config) {
+export async function getInfo(address: string, config: Config): Promise<VestingInfo> {
   const contract = new ethers.Contract(address, abi, config.provider);
   const signer = config.provider.getSigner();
 

@@ -1,9 +1,9 @@
 <script lang="typescript">
   import { navigate } from 'svelte-routing';
-  import { error } from '@app/error';
   import { formatAddress } from '@app/utils';
   import { registrar } from '../registrar';
   import { session } from '@app/session';
+  import type { Config } from '@app/config';
 
   import Connect from '@app/Connect.svelte';
 
@@ -13,9 +13,9 @@
     NameUnavailable,
   }
 
-  export let config;
-  export let subdomain;
-  export let query;
+  export let config: Config;
+  export let subdomain: string;
+  export let query: Record<string, any>;
 
   let state = State.Initial;
   $: registrationOwner = query.get("owner") || ($session && $session.address);
