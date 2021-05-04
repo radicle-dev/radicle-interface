@@ -46,6 +46,11 @@
         <slot name="title"></slot>
       {/if}
     </div>
+    <div class="modal-subtitle">
+      {#if !error}
+        <slot name="subtitle"></slot>
+      {/if}
+    </div>
     <div class="modal-body">
       {#if error}
         {#if error === Object(error) && error.message}

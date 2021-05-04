@@ -43,18 +43,27 @@
     {#if !org}
       Create an Org
     {:else}
-      Success
+      🎉
+    {/if}
+  </span>
+
+  <span slot="subtitle">
+    {#if org}
+      <strong>Your org was successfully created.</strong>
     {/if}
   </span>
 
   <span slot="body">
-    <table>
-      <tr><td class="label">Member</td><td>{owner}</td></tr>
-      {#if org}
+    {#if org}
+      <table>
         <tr><td class="label">Address</td><td>{org.address}</td></tr>
         <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
-      {/if}
-    </table>
+      </table>
+    {:else}
+      <table>
+        <tr><td class="label">Member</td><td>{owner}</td></tr>
+      </table>
+    {/if}
   </span>
 
   <span slot="actions">
