@@ -21,6 +21,20 @@
       <table>
         <tr><td class="label">Address</td><td>{org.address}</td></tr>
         <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
+        <tr>
+          <td class="label">Name</td>
+          <td>
+            {#await org.resolveAddress(config)}
+              <Loading small />
+            {:then name}
+              {#if name}
+                {name}
+              {:else}
+                <span class="subtle">Not registered</span>
+              {/if}
+            {/await}
+          </td>
+        </tr>
       </table>
     </div>
   {:else}

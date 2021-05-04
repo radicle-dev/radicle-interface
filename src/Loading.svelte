@@ -1,6 +1,10 @@
+<script lang="typescript">
+  export let small = false;
+</script>
+
 <style>
   .spinner {
-    margin: 100px auto 0;
+    margin: auto 0;
     width: 70px;
     text-align: center;
   }
@@ -14,6 +18,15 @@
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+
+  .spinner.small > div {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .spinner.small {
+    width: 35px;
   }
 
   .spinner .bounce1 {
@@ -42,7 +55,7 @@
   }
 </style>
 
-<div class="spinner">
+<div class="spinner" class:small>
   <div class="bounce1"></div>
   <div class="bounce2"></div>
   <div class="bounce3"></div>

@@ -42,6 +42,7 @@
 	--color-foreground-6: #d3dee8;
 	--color-background: #0b131a;
 	--color-glow: #5555ff22;
+	--color-subtle: #777;
 
 	--font-family-sans-serif: Inter, sans-serif;
 	--font-family-monospace: monospace;
@@ -233,6 +234,10 @@ input.wide {
 }
 .highlight {
 	color: var(--color-secondary);
+}
+.subtle {
+	color: var(--color-subtle);
+	font-style: italic;
 }
 
 button.error:hover {

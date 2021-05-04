@@ -14,10 +14,17 @@ const orgAbi = ["function owner() view returns (address)"];
 export class Org {
   address: string
   safe: string
+  name: string | null
 
   constructor(address: string, safe: string) {
     this.address = address;
     this.safe = safe;
+    this.name = null;
+  }
+
+  async resolveAddress(config: Config): Promise<string> {
+    this.name = await config.provider.lookupAddress(this.address);
+    return this.name;
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {
