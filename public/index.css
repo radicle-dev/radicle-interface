@@ -41,6 +41,7 @@
 	--color-foreground-5: #8594a1;
 	--color-foreground-6: #d3dee8;
 	--color-background: #0b131a;
+	--color-glow: #5555ff22;
 
 	--font-family-sans-serif: Inter, sans-serif;
 	--font-family-monospace: monospace;
@@ -175,7 +176,7 @@ input.wide {
 }
 
 .modal {
-	padding: 2rem;
+	padding: 2rem 3rem;
 	border: 1px solid var(--color-secondary);
 	background: var(--color-background);
 	box-shadow: 8px 8px 64px var(--box-shadow-color);
@@ -183,17 +184,26 @@ input.wide {
 	max-width: 760px;
 	text-align: center;
 }
+.modal.modal-subtle {
+	border: none;
+	box-shadow: none;
+	background: radial-gradient(
+		var(--color-glow) 0%,
+		transparent 70%
+	);
+}
 .modal-title {
 	font-size: 1.75rem;
 	margin-bottom: 2rem;
 	color: var(--color-secondary);
 	text-align: center;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
 }
 .modal-body {
 	overflow-x: hidden;
 	text-overflow: ellipsis;
-	margin-top: 2em;
-	margin-bottom: 3em;
+	margin: 3rem 0;
 }
 .modal-actions {
 	margin-top: 2rem;

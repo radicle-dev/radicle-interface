@@ -3,6 +3,7 @@
 
   export let floating = false;
   export let error: Error | null = null;
+  export let subtle = false;
 
   let dispatch = createEventDispatcher();
 
@@ -37,7 +38,7 @@
 {/if}
 
 <div class:modal-floating={floating}>
-  <div class="modal" class:error>
+  <div class="modal" class:error class:modal-subtle={subtle}>
     <div class="modal-title">
       {#if error}
         Error

@@ -35,15 +35,19 @@ export class Org {
   static async get(
     address: string,
     config: Config,
-  ): Promise<Org> {
+  ): Promise<Org | null> {
     const org = new ethers.Contract(
       address,
       orgAbi,
       config.provider
     );
-    let safe = await org.owner();
 
-    return new Org(address, safe);
+    try {
+      let safe = await org.owner();
+      return new Org(address, safe);
+    } catch (_) {
+      return null;
+    }
   }
 
   static async create(
