@@ -13,15 +13,15 @@
       "svelte"
     ],
     "moduleResolution": "node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    "importsNotUsedAsValues": "error",
+    "skipLibCheck": true,
     "paths": {
       "@app/*": ["./src/*"]
     }
   },
-  "noEmit": true,
-  "resolveJsonModule": true,
-  "useDefineForClassFields": true,
-  "strict": true,
-  "skipLibCheck": true,
-  "allowSyntheticDefaultImports": true,
-  "importsNotUsedAsValues": "error"
+  "noEmit": true
 }

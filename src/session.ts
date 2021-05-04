@@ -1,3 +1,4 @@
+// TODO: Handle wallet account change.
 import { get, writable, derived, Writable } from "svelte/store";
 import { ethers } from "ethers";
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
