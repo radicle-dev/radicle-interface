@@ -12,11 +12,12 @@
   import type { Session } from '@app/session';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
+  import type { Config } from '@app/config';
 
   export let session: Session | null;
-  export let config;
+  export let config: Config;
 
-  let sessionButton = null;
+  let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
 
   $: address = session && session.address;

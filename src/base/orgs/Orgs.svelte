@@ -6,12 +6,13 @@
   import { error } from '@app/error';
   import { session } from '@app/session';
   import CreateOrg from '@app/base/orgs/CreateOrg.svelte';
+  import type { Config } from '@app/config';
 
   enum State {
     Idle,
   }
 
-  export let config;
+  export let config: Config;
   export const query = {};
 
   let modal = null;

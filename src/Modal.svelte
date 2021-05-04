@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let floating = false;
-  export let error = null;
+  export let error: Error | null = null;
 
   let dispatch = createEventDispatcher();
 

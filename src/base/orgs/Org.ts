@@ -20,12 +20,16 @@ export class Org {
     this.safe = safe;
   }
 
-  static fromReceipt(receipt: ContractReceipt): Org {
-    let event = receipt.events.find(e => e.event === 'OrgCreated');
-    let address = event.args[0];
-    let safe = event.args[1];
+  static fromReceipt(receipt: ContractReceipt): Org | null {
+    let event = receipt.events?.find(e => e.event === 'OrgCreated');
 
-    return new Org(address, safe);
+    if (event && event.args) {
+      let address = event.args[0];
+      let safe = event.args[1];
+
+      return new Org(address, safe);
+    }
+    return null;
   }
 
   static async create(

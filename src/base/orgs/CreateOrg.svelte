@@ -15,8 +15,8 @@
   }
 
   let state = State.Idle;
-  let error = null;
-  let org = null;
+  let error: Error | null = null;
+  let org: Org | null = null;
 
   const dispatch = createEventDispatcher();
   const createOrg = async () => {

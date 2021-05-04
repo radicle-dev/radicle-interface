@@ -1,6 +1,7 @@
 // TODO: Handle wallet account change.
 import { get, writable, derived, Writable } from "svelte/store";
 import { ethers } from "ethers";
+import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import type { Config } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
@@ -62,7 +63,7 @@ export const createState = (initial: State) => {
       }
     },
 
-    updateBalance: n => {
+    updateBalance: (n: BigNumber) => {
       store.update((s) => {
         assert(s.connection === Connection.Connected);
         s.session.tokenBalance = s.session.tokenBalance.add(n);
@@ -70,7 +71,7 @@ export const createState = (initial: State) => {
       });
     },
 
-    refreshBalance: async (config) => {
+    refreshBalance: async (config: Config) => {
       let state = get(store);
       assert(state.connection === Connection.Connected);
       const addr = state.session.address;
@@ -102,6 +103,9 @@ export const createState = (initial: State) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
+            assert(s.session.tx !== null);
+            assert(s.session.tx.state === 'signing');
+
             s.session.tx = { state: 'pending', hash: tx.hash };
             return s;
           default:
@@ -114,6 +118,7 @@ export const createState = (initial: State) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
+            assert(s.session.tx !== null);
             assert(s.session.tx.state === 'pending');
 
             if (tx.status === 1) {
@@ -159,7 +164,7 @@ const tokenAbi = [
   "function allowance(address, address) view returns (uint256)",
 ];
 
-export async function approveSpender(spender, amount, config) {
+export async function approveSpender(spender: string, amount: BigNumber, config: Config) {
   const token = new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
   const signer = config.provider.getSigner();
   const addr = await signer.getAddress();

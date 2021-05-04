@@ -1,9 +1,11 @@
 // TODO: Show "look at your wallet" / "confirm tx" before state change.
 // TODO: Two registration actions with same label
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { State, state } from './state';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
+import type { Config } from '@app/config';
 
 const registrarAbi = [
   {"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"commitment","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"CommitmentMade","type":"event"},
@@ -20,15 +22,15 @@ const registrarAbi = [
   {"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"valid","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}
 ];
 
-export function registrar(config) {
+export function registrar(config: Config) {
   return new ethers.Contract(config.registrar.address, registrarAbi, config.provider);
 }
 
-export async function registrationFee(config) {
+export async function registrationFee(config: Config) {
   return await registrar(config).registrationFeeRad();
 }
 
-export async function registerName(name, owner, config) {
+export async function registerName(name: string, owner: string, config: Config) {
   if (! name) return;
 
   let commitmentJson = window.localStorage.getItem('commitment');
@@ -47,14 +49,14 @@ export async function registerName(name, owner, config) {
   }
 }
 
-async function approveRegistrar(owner, config) {
+async function approveRegistrar(owner: string, config: Config) {
   state.set(State.Approving);
 
   const amount = await registrationFee(config);
   await session.approveSpender(config.registrar.address, amount, config);
 }
 
-async function commitAndRegister(name, owner, config) {
+async function commitAndRegister(name: string, owner: string, config: Config) {
   let salt = ethers.utils.randomBytes(32);
   let minAge = (await registrar(config).minCommitmentAge()).toNumber();
   let fee = await registrationFee(config);
@@ -71,14 +73,14 @@ async function commitAndRegister(name, owner, config) {
   await register(name, owner, salt, config);
 }
 
-async function commit(commitment, fee, minAge, config) {
+async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config) {
   state.set(State.Committing);
 
   const signer = config.provider.getSigner();
   const tx = await registrar(config)
     .connect(signer)
     .commit(commitment, { gasLimit: 150000 })
-    .catch(e => console.error(e));
+    .catch((e: Error) => console.error(e));
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
@@ -88,7 +90,7 @@ async function commit(commitment, fee, minAge, config) {
   await tx.wait(minAge + 1);
 }
 
-async function register(name, owner, salt, config) {
+async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
   state.set(State.Registering);
 
   const signer = config.provider.getSigner();
@@ -102,7 +104,7 @@ async function register(name, owner, salt, config) {
   state.set(State.Registered);
 }
 
-function makeCommitment(name, owner, salt) {
+function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
   let bytes = ethers.utils.concat([
     ethers.utils.toUtf8Bytes(name),
     ethers.utils.getAddress(owner),

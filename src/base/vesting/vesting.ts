@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { formatBalance } from "@app/utils";
 import * as session from "@app/session";
 import { State, state } from "./state";
+import type { Config } from "@app/config";
 
 const abi = [
   "function token() view returns (address)",
@@ -20,7 +21,7 @@ const tokenAbi = [
   "function symbol() view returns (string)",
 ];
 
-export async function withdrawVested(address, config) {
+export async function withdrawVested(address: string, config: Config) {
   const contract = new ethers.Contract(address, abi, config.provider);
   const signer = config.provider.getSigner();
 
@@ -34,7 +35,7 @@ export async function withdrawVested(address, config) {
   state.set(State.Withdrawn);
 }
 
-export async function getInfo(address, config) {
+export async function getInfo(address: string, config: Config) {
   const contract = new ethers.Contract(address, abi, config.provider);
   const signer = config.provider.getSigner();
 
