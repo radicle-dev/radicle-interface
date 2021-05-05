@@ -1,4 +1,6 @@
 <script lang="typescript">
+  // TODO: Should check for availability here, before saying a name is available.
+  // Perhaps the availability check should be moved out of the 'submit' step then.
   import { navigate } from 'svelte-routing';
   import { formatAddress } from '@app/utils';
   import { registrar } from '../registrar';
@@ -38,7 +40,7 @@
 
 <div class="modal">
   <div class="modal-title">
-    {subdomain}.radicle.eth
+    {subdomain}.{config.registrar.domain}
   </div>
 
   <div class="modal-body">

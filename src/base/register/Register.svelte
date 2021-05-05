@@ -95,7 +95,7 @@
   {#if state === State.NameUnavailable}
     <Modal floating>
       <span slot="title">
-        {inputValue}.radicle.eth
+        {inputValue}.{config.registrar.domain}
       </span>
       <span slot="body">
         The name <span class="highlight">{inputValue}</span> is not available for registration.
@@ -109,7 +109,7 @@
   {/if}
 
   <div class="input-caption">
-    Register a <strong>radicle.eth</strong> name
+    Register a <strong>{config.registrar.domain}</strong> name
   </div>
   <div class="input-main">
     <span class="name">
@@ -122,7 +122,7 @@
           disabled={state === State.CheckingAvailability}
           type="text"
         />
-        <span class="root">.radicle.eth</span>
+        <span class="root">.{config.registrar.domain}</span>
       </div>
     </span>
     {#if !inputValue}

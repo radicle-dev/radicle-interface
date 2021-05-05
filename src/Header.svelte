@@ -41,6 +41,7 @@
     margin-right: 1.5rem;
     font-weight: 500;
     color: var(--color-foreground-6);
+    border: none;
   }
   header .nav a:hover {
     color: var(--color-foreground);

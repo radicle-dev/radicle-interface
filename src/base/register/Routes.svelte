@@ -3,10 +3,10 @@
   import Register from '@app/base/register/Register.svelte';
   import Begin from '@app/base/register/steps/Begin.svelte';
   import Submit from '@app/base/register/steps/Submit.svelte';
+  import Registration from '@app/base/register/Registration.svelte';
   import Error from '@app/Error.svelte';
   import type { Config } from '@app/config';
   import type { Session } from '@app/session';
-  import { Failure } from '@app/error';
 
   export let session: Session | null;
   export let config: Config;
@@ -30,4 +30,8 @@
       on:close={() => navigate("/register")}
     />
   {/if}
+</Route>
+
+<Route path="registrations/:name" let:params>
+  <Registration {config} subdomain={params.name} />
 </Route>

@@ -146,13 +146,25 @@ button.small {
 	padding-bottom: 0.5rem;
 	min-width: 6rem;
 }
+button.tiny {
+	min-width: 0;
+	padding: 0.125rem 0.75rem;
+}
 
 a {
 	color: var(--color-secondary);
 	text-decoration: none;
 }
 a:hover {
-	text-decoration: none;
+	color: var(--color-secondary-faded);
+	border-bottom-color: var(--color-secondary-faded);
+}
+a.primary {
+	color: var(--color-primary);
+}
+a.primary:hover {
+	color: var(--color-primary-faded);
+	border-bottom-color: var(--color-primary-faded);
 }
 
 input[type="text"], button {
@@ -240,6 +252,12 @@ input.wide {
 	color: var(--color-subtle);
 	font-style: italic;
 }
+.label {
+	color: var(--color-secondary);
+}
+.bold {
+	font-weight: bold;
+}
 
 button.error:hover {
 	background-color: var(--color-negative);
@@ -254,9 +272,6 @@ td {
 	text-align: left;
 	text-overflow: ellipsis;
 }
-td.label {
-	color: var(--color-secondary);
-}
 td strong {
 	font-weight: 600;
 }
@@ -269,4 +284,8 @@ h1 {
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
+}
+
+p {
+	margin: 0.5rem 0;
 }

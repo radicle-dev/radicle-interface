@@ -22,6 +22,28 @@ const registrarAbi = [
   {"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"valid","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}
 ];
 
+interface Registration {
+  name: string
+  owner: string
+  address: string | null
+}
+
+export async function getRegistration(label: string, config: Config): Promise<Registration | null> {
+  if (await registrar(config).available(label)) {
+    // If the name is available, ie. not registered, we don't return anything.
+    return null;
+  }
+  const name =`${label}.${config.registrar.domain}`;
+  const address = await config.provider.resolveName(name);
+  const owner = await getOwner(name, config);
+
+  return {
+    name,
+    owner,
+    address
+  };
+}
+
 export function registrar(config: Config) {
   return new ethers.Contract(config.registrar.address, registrarAbi, config.provider);
 }
@@ -111,4 +133,20 @@ function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
     ethers.BigNumber.from(salt).toHexString(),
   ]);
   return ethers.utils.keccak256(bytes);
+}
+
+async function getOwner(name: string, config: Config): Promise<string> {
+  const ensAbi = [
+    "function owner(bytes32 node) view returns (address)"
+  ];
+
+  let ensAddr = config.provider.network.ensAddress;
+  if (! ensAddr) {
+    throw new Error("ENS address is not defined");
+  }
+
+  let registry = new ethers.Contract(ensAddr, ensAbi, config.provider);
+  let owner = await registry.owner(ethers.utils.namehash(name));
+
+  return owner;
 }

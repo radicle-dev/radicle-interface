@@ -1,15 +1,7 @@
 <script lang="typescript">
-  import { createEventDispatcher } from 'svelte';
-
   export let floating = false;
   export let error = false;
   export let subtle = false;
-
-  let dispatch = createEventDispatcher();
-
-  const onClose = () => {
-    dispatch('close');
-  };
 </script>
 
 <style>
