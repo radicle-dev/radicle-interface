@@ -9,7 +9,7 @@ declare global {
 
 export type Config = {
   network: { name: string, chainId: number },
-  registrar: { address: string },
+  registrar: { address: string, domain: string },
   radToken: { address: string },
   orgFactory: { address: string },
   gasLimits: { createOrg: number },

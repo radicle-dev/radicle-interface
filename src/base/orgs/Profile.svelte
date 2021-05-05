@@ -1,4 +1,5 @@
 <script lang="typescript">
+  import { ethers } from 'ethers';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import { Org } from './Org';
@@ -7,6 +8,10 @@
 
   export let address: string;
   export let config: Config;
+
+  if (! ethers.utils.isAddress(address)) {
+    address = `${address}.${config.registrar.domain}`;
+  }
 
   const back = () => {
     navigate("/orgs");
@@ -27,7 +32,7 @@
         <tr>
           <td class="label">Name</td>
           <td>
-            {#await org.resolveAddress(config)}
+            {#await org.lookupAddress(config)}
               <Loading small />
             {:then name}
               {#if name}

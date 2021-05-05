@@ -14,17 +14,18 @@ const orgAbi = ["function owner() view returns (address)"];
 export class Org {
   address: string
   safe: string
-  name: string | null
 
   constructor(address: string, safe: string) {
     this.address = address;
     this.safe = safe;
-    this.name = null;
   }
 
-  async resolveAddress(config: Config): Promise<string> {
-    this.name = await config.provider.lookupAddress(this.address);
-    return this.name;
+  async lookupAddress(config: Config): Promise<string> {
+    return await config.provider.lookupAddress(this.address);
+  }
+
+  async resolveName(config: Config): Promise<string> {
+    return await config.provider.resolveName(this.address);
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {
@@ -52,7 +53,8 @@ export class Org {
     try {
       let safe = await org.owner();
       return new Org(address, safe);
-    } catch (_) {
+    } catch (e) {
+      console.error(e);
       return null;
     }
   }
