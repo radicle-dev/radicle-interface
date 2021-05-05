@@ -206,9 +206,9 @@ input.wide {
 }
 
 .error {
-	color: var(--color-negative);
-	border-color: var(--color-negative);
-	--box-shadow-color: var(--color-negative-2);
+	color: var(--color-negative) !important;
+	border-color: var(--color-negative) !important;
+	--box-shadow-color: var(--color-negative-2) !important;
 }
 .highlight {
 	color: var(--color-secondary);
