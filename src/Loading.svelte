@@ -1,5 +1,7 @@
 <script lang="typescript">
   export let small = false;
+  export let color = "secondary";
+  export let center = false;
 </script>
 
 <style>
@@ -7,6 +9,9 @@
     margin: auto 0;
     width: 70px;
     text-align: center;
+  }
+  .spinner.center {
+    margin: auto auto;
   }
 
   .spinner > div {
@@ -55,8 +60,8 @@
   }
 </style>
 
-<div class="spinner" class:small>
-  <div class="bounce1"></div>
-  <div class="bounce2"></div>
-  <div class="bounce3"></div>
+<div class="spinner" class:small class:center>
+  <div class="bounce1" style="background-color: var(--color-{color})"></div>
+  <div class="bounce2" style="background-color: var(--color-{color})"></div>
+  <div class="bounce3" style="background-color: var(--color-{color})"></div>
 </div>

@@ -6,6 +6,7 @@
   import { State, state } from '../state';
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
+  import Loading from '@app/Loading.svelte';
 
   export let config: Config;
   export let subdomain: string;
@@ -32,11 +33,7 @@
   });
 </script>
 
-<style>
-  .domain {
-    color: var(--color-secondary);
-  }
-</style>
+<style></style>
 
 <div class="modal" class:error={error}>
   {#if error}
@@ -67,34 +64,33 @@
       {/await} <strong>RAD</strong>...
     </div>
     <div class="modal-actions">
-      <button disabled class="primary register">
-        Approving...
-      </button>
+      <Loading small center />
     </div>
   {:else if $state === State.Committing}
+    <div class="modal-body">
+      Committing...
+    </div>
     <div class="modal-actions">
-      <button disabled class="primary register">
-        Committing...
-      </button>
+      <Loading small center />
     </div>
   {:else if $state === State.WaitingToRegister}
     <div class="modal-body">
-      <!-- TODO -->
+      Waiting for commitment time...
     </div>
     <div class="modal-actions">
-      <button disabled class="primary register">
-        Waiting...
-      </button>
+      <Loading small center />
     </div>
   {:else if $state === State.Registering}
+    <div class="modal-body">
+      Registering name...
+    </div>
     <div class="modal-actions">
-      <button disabled class="primary register">
-        Registering...
-      </button>
+      <Loading small center />
     </div>
   {:else if $state === State.Registered}
     <div class="modal-body">
-      The name <span class="domain">{subdomain}</span> has been successfully registered to {registrationOwner}.
+      The name <strong>{subdomain}</strong> has been successfully registered to
+      <strong>{registrationOwner}</strong>.
     </div>
     <div class="modal-actions">
       <button on:click={() => state.set(State.Idle)} class="primary register">
