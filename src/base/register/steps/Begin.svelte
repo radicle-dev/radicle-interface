@@ -8,6 +8,7 @@
   import type { Config } from '@app/config';
 
   import Connect from '@app/Connect.svelte';
+  import Modal from '@app/Modal.svelte';
 
   enum State {
     Initial,
@@ -38,12 +39,12 @@
 <style>
 </style>
 
-<div class="modal">
-  <div class="modal-title">
+<Modal>
+  <span slot="title">
     {subdomain}.{config.registrar.domain}
-  </div>
+  </span>
 
-  <div class="modal-body">
+  <span slot="body">
     {#if state === State.Initial || state === State.CheckingAvailability}
       {#if registrationOwner}
         The name <span class="highlight">{subdomain}</span> is available for registration
@@ -54,9 +55,9 @@
     {:else if state === State.NameUnavailable}
       The name <span class="highlight">{subdomain}</span> is not available for registration.
     {/if}
-  </div>
+  </span>
 
-  <div class="modal-actions">
+  <span slot="actions">
     {#if state === State.CheckingAvailability}
       <button disabled class="primary register">
         Checking availability...
@@ -78,5 +79,5 @@
         Cancel
       </button>
     {/if}
-  </div>
-</div>
+  </span>
+</Modal>

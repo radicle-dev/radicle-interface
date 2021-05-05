@@ -9,6 +9,8 @@
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
+  import Modal from '@app/Modal.svelte';
+  import Err from '@app/Error.svelte';
 
   export let config: Config;
   export let subdomain: string;
@@ -37,67 +39,47 @@
 
 <style></style>
 
-<div class="modal" class:error={error}>
-  {#if error}
-    <div class="modal-title error">
-      Transaction failed
-    </div>
-  {:else}
-    <div class="modal-title">
-      {subdomain}.radicle.eth
-    </div>
-  {/if}
+{#if error}
+  <Err
+    title="Transaction failed"
+    message={error.message}
+    on:close={() => navigate('/register')}
+  />
+{:else}
+  <Modal>
+    <span slot="title">
+      {subdomain}.{config.registrar.domain}
+    </span>
 
-  {#if error}
-    <div class="modal-body error">
-      <strong>Error:</strong> {error.message}
-    </div>
-    <div class="modal-actions">
-      <button on:click={() => navigate("/register")} class="error">
-        Back
-      </button>
-    </div>
-  {:else if $state === State.Approving}
-    <div class="modal-body">
-      Approving Registry for {#await getFee(config)}
-        ?
-      {:then fee}
-        {fee}
-      {/await} <strong>RAD</strong>...
-    </div>
-    <div class="modal-actions">
-      <Loading small center />
-    </div>
-  {:else if $state === State.Committing}
-    <div class="modal-body">
-      Committing...
-    </div>
-    <div class="modal-actions">
-      <Loading small center />
-    </div>
-  {:else if $state === State.WaitingToRegister}
-    <div class="modal-body">
-      Waiting for commitment time...
-    </div>
-    <div class="modal-actions">
-      <Loading small center />
-    </div>
-  {:else if $state === State.Registering}
-    <div class="modal-body">
-      Registering name...
-    </div>
-    <div class="modal-actions">
-      <Loading small center />
-    </div>
-  {:else if $state === State.Registered}
-    <div class="modal-body">
-      The name <strong>{subdomain}</strong> has been successfully registered to
-      <strong>{registrationOwner}</strong>.
-    </div>
-    <div class="modal-actions">
-      <button on:click={() => state.set(State.Idle)} class="primary register">
-        Done
-      </button>
-    </div>
-  {/if}
-</div>
+    <span slot="body">
+      {#if $state === State.Approving}
+        Approving Registry for {#await getFee(config)}
+          ?
+        {:then fee}
+          {fee}
+        {/await} <strong>RAD</strong>...
+      {:else if $state === State.Committing}
+        Committing...
+      {:else if $state === State.WaitingToRegister}
+        Waiting for commitment time...
+      {:else if $state === State.Registering}
+        Registering name...
+      {:else if $state === State.Registered}
+        The name <strong>{subdomain}</strong> has been successfully registered to
+        <strong>{registrationOwner}</strong>.
+      {/if}
+    </span>
+
+    <span slot="actions">
+      {#if $state === State.Registered}
+        <button on:click={() => state.set(State.Idle)} class="primary register">
+          Done
+        </button>
+      {:else}
+        <div class="modal-actions">
+          <Loading small center />
+        </div>
+      {/if}
+    </span>
+  </Modal>
+{/if}
