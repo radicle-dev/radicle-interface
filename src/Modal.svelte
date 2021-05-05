@@ -23,6 +23,41 @@
     z-index: 200;
     background-color: rgba(0, 0, 0, .75);
   }
+  .modal {
+      padding: 2rem 3rem;
+      border: 1px solid var(--color-secondary);
+      background: var(--color-background);
+      box-shadow: 8px 8px 64px var(--box-shadow-color);
+      min-width: 480px;
+      max-width: 760px;
+      text-align: center;
+  }
+  .modal.modal-subtle {
+      border: none;
+      box-shadow: none;
+      background: radial-gradient(
+          var(--color-glow) 0%,
+          transparent 70%
+      );
+  }
+  .modal-title {
+      font-size: 1.75rem;
+      line-height: 1.75rem;
+      margin-bottom: 2rem;
+      color: var(--color-secondary);
+      text-align: center;
+      text-overflow: ellipsis;
+      overflow: hidden;
+  }
+  .modal-body {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      margin: 3rem 0;
+  }
+  .modal-actions {
+      margin-top: 2rem;
+      text-align: center;
+  }
 </style>
 
 {#if floating}
