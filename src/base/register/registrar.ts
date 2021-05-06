@@ -22,7 +22,7 @@ const registrarAbi = [
   {"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"valid","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}
 ];
 
-interface Registration {
+export interface Registration {
   name: string
   owner: string
   address: string | null

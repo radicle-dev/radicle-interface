@@ -1,12 +1,18 @@
 <script lang="typescript">
   import { getRegistration } from './registrar';
+  import type { Registration } from './registrar';
   import type { Config } from '@app/config';
+  import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Link from '@app/Link.svelte';
   import Modal from '@app/Modal.svelte';
 
   export let subdomain: string;
   export let config: Config;
+
+  $: isOwner = (registration: Registration): boolean => {
+    return registration.owner === ($session && $session.address);
+  };
 </script>
 
 <style>
@@ -38,16 +44,16 @@
           {/if}
         </div>
         <div>
-          {#if !registration.address}
-            <button class="tiny primary">
-              Set
-            </button>
-          {/if}
+          <button class="tiny primary" disabled={!isOwner(registration)}>
+            Set
+          </button>
         </div>
         <!-- Owner -->
         <div class="label">Owner</div>
         <div>{registration.owner}</div>
-        <div><button class="tiny secondary">Transfer</button></div>
+        <div>
+          <button class="tiny secondary" disabled={!isOwner(registration)}>Transfer</button>
+        </div>
       </div>
     </main>
   {:else}
