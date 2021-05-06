@@ -6,9 +6,27 @@
   import Loading from '@app/Loading.svelte';
   import Link from '@app/Link.svelte';
   import Modal from '@app/Modal.svelte';
+  import Form from '@app/Form.svelte';
+  import type { Field } from '@app/Form.svelte';
 
   export let subdomain: string;
   export let config: Config;
+
+  let editable = false;
+  let fields: Field[] = [];
+
+  const loadRegistration = getRegistration(subdomain, config)
+    .then(registration => {
+      if (registration) {
+        fields = [
+          { label: "Address", type: "text", placeholder: "Not set",
+            value: registration.address, editable: true },
+          { label: "Owner", type: "text", placeholder: "",
+            value: registration.owner, editable: false },
+        ];
+      }
+      return registration;
+    });
 
   $: isOwner = (registration: Registration): boolean => {
     return registration.owner === ($session && $session.address);
@@ -16,45 +34,34 @@
 </script>
 
 <style>
-  .fields {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-gap: 1.5rem;
+  main > header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-bottom: 2rem;
   }
-  .fields > div {
-    justify-self: start;
-    align-self: center;
+  main > header > * {
+    margin: 0 1rem 0 0;
   }
 </style>
 
-{#await getRegistration(subdomain, config)}
+{#await loadRegistration}
   <Loading />
 {:then registration}
   {#if registration}
     <main>
-      <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
-      <div class="fields">
-        <!-- Address -->
-        <div class="label">Address</div>
-        <div>
-          {#if registration.address}
-            {registration.address}
-          {:else}
-            <span class="subtle">Not set</span>
-          {/if}
-        </div>
-        <div>
-          <button class="tiny primary" disabled={!isOwner(registration)}>
-            Set
-          </button>
-        </div>
-        <!-- Owner -->
-        <div class="label">Owner</div>
-        <div>{registration.owner}</div>
-        <div>
-          <button class="tiny secondary" disabled={!isOwner(registration)}>Transfer</button>
-        </div>
-      </div>
+      <header>
+        <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
+        <button
+          class="tiny primary" class:active={editable} disabled={!isOwner(registration)}
+          on:click={() => editable = !editable}>
+            Edit
+        </button>
+        <button class="tiny secondary" disabled={!isOwner(registration)}>
+          Transfer
+        </button>
+      </header>
+      <Form {editable} {fields} />
     </main>
   {:else}
     <Modal subtle>

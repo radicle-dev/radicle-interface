@@ -116,7 +116,8 @@ button.primary {
 	color: var(--color-primary);
 	border-color: var(--color-primary);
 }
-button.primary:hover {
+button.primary:hover, button.primary.active {
+	color: var(--color-background);
 	background-color: var(--color-primary);
 }
 button.primary[disabled] {
