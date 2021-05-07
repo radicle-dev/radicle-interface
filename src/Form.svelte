@@ -1,21 +1,21 @@
 <script context="module" lang="typescript">
   export interface Field {
-    label: string,
+    name: string,
     value: string | null,
     placeholder?: string,
-    type: string,
     editable: boolean
   }
 </script>
 
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
+  import { capitalize } from '@app/utils';
 
   export let fields: Field[];
   export let editable = false ;
 
   const dispatch = createEventDispatcher();
-  const save = () => dispatch('save');
+  const save = () => dispatch('save', fields);
   const cancel = () => dispatch('cancel');
 </script>
 
@@ -78,12 +78,12 @@
 <div class="fields">
   {#each fields as field}
     <div class="label">
-      {field.label}
+      {capitalize(field.name)}
     </div>
     <div>
-      <input class="field" placeholder={field.placeholder}
-             disabled={!field.editable || !editable}
-             type={field.type} value={field.value} />
+      <input name={field.name} class="field" placeholder={field.placeholder}
+             disabled={!field.editable || !editable} bind:value={field.value}
+             type="text" />
     </div>
   {/each}
 </div>

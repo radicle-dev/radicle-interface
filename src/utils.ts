@@ -10,3 +10,8 @@ export function formatAddress(addr: string) {
     + '...'
     + addr.substring(addr.length - 4, addr.length);
 }
+
+export function capitalize(s: string) {
+  if (s === "") return s;
+  return s[0].toUpperCase() + s.substr(1);
+}

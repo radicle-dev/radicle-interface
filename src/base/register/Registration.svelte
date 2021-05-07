@@ -19,16 +19,18 @@
     .then(registration => {
       if (registration) {
         fields = [
-          { label: "Address", type: "text", placeholder: "Not set",
+          { name: "address", placeholder: "Not set",
             value: registration.address, editable: true },
-          { label: "Owner", type: "text", placeholder: "",
+          { name: "owner", placeholder: "",
             value: registration.owner, editable: false },
         ];
       }
       return registration;
     });
 
-  const save = () => {};
+  const save = (event: { detail: Field[] }) => {
+    console.log("Save", event.detail);
+  };
 
   $: isOwner = (registration: Registration): boolean => {
     return registration.owner === ($session && $session.address);
