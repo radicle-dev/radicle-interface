@@ -28,6 +28,8 @@
       return registration;
     });
 
+  const save = () => {};
+
   $: isOwner = (registration: Registration): boolean => {
     return registration.owner === ($session && $session.address);
   };
@@ -61,7 +63,7 @@
           Transfer
         </button>
       </header>
-      <Form {editable} {fields} />
+      <Form {editable} {fields} on:save={save} on:cancel={() => editable = false} />
     </main>
   {:else}
     <Modal subtle>

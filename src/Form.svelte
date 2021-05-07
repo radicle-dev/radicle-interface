@@ -9,8 +9,14 @@
 </script>
 
 <script lang="typescript">
+  import { createEventDispatcher } from 'svelte';
+
   export let fields: Field[];
   export let editable = false ;
+
+  const dispatch = createEventDispatcher();
+  const save = () => dispatch('save');
+  const cancel = () => dispatch('cancel');
 </script>
 
 <style>
@@ -55,6 +61,18 @@
   .label {
     border: 1px solid transparent;
   }
+
+  .actions {
+    margin-top: 2rem;
+    text-align: center;
+    visibility: hidden;
+  }
+  .actions button {
+    margin-left: 1rem;
+  }
+  .actions.editable {
+    visibility: visible;
+  }
 </style>
 
 <div class="fields">
@@ -68,4 +86,13 @@
              type={field.type} value={field.value} />
     </div>
   {/each}
+</div>
+
+<div class="actions" class:editable>
+  <button on:click={cancel} class="small">
+    Cancel
+  </button>
+  <button on:click={save} class="small primary">
+    Save
+  </button>
 </div>
