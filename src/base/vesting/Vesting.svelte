@@ -6,6 +6,7 @@
   import type { VestingInfo } from './vesting';
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
+  import Modal from '@app/Modal.svelte';
 
   let input: HTMLElement;
 
@@ -53,11 +54,11 @@
 
 <main>
   {#if info}
-    <div class="modal">
-      <div class="modal-title">
+    <Modal>
+      <span slot="title">
         {contractAddress}
-      </div>
-      <div class="modal-body">
+      </span>
+      <span slot="body">
         {#if $state === State.Withdrawn}
           Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
         {:else}
@@ -68,8 +69,8 @@
             <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
           </table>
         {/if}
-      </div>
-      <div class="modal-actions">
+      </span>
+      <span slot="actions">
         {#if isBeneficiary}
           {#if $state === State.WithdrawingSign}
             <button disabled data-waiting class="primary small">
@@ -88,8 +89,8 @@
         <button on:click={reset} class="small">
           Back
         </button>
-      </div>
-    </div>
+      </span>
+    </Modal>
   {:else}
     <div class="input-caption">
       Enter your Radicle <strong>vesting contract</strong> address
