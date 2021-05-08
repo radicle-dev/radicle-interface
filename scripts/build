@@ -1,0 +1,4 @@
+#!/bin/sh
+
+snowpack build
+cp _redirects build/_redirects
