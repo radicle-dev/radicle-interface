@@ -1,6 +1,7 @@
 import * as ethers from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
+import { assert } from '@app/error';
 
 import type { Config } from '@app/config';
 
@@ -16,16 +17,14 @@ export class Org {
   safe: string
 
   constructor(address: string, safe: string) {
+    assert(ethers.utils.isAddress(address), "address must be valid");
+
     this.address = address;
     this.safe = safe;
   }
 
   async lookupAddress(config: Config): Promise<string> {
     return await config.provider.lookupAddress(this.address);
-  }
-
-  async resolveName(config: Config): Promise<string> {
-    return await config.provider.resolveName(this.address);
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {
@@ -49,10 +48,11 @@ export class Org {
       orgAbi,
       config.provider
     );
+    const resolved = await org.resolvedAddress;
 
     try {
       let safe = await org.owner();
-      return new Org(address, safe);
+      return new Org(resolved, safe);
     } catch (e) {
       console.error(e);
       return null;

@@ -18,37 +18,47 @@
   };
 </script>
 
+<style>
+  .fields {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 1rem;
+  }
+  .fields > div {
+    justify-self: start;
+    align-self: center;
+  }
+</style>
+
 {#await Org.get(address, config)}
-  <Loading/>
+  <Loading />
 {:then org}
   {#if org}
     <div>
       <h1>
-        {org.address}
+        {address}
       </h1>
-      <table>
-        <tr><td class="label">Address</td><td>{org.address}</td></tr>
-        <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
-        <tr>
-          <td class="label">Name</td>
-          <td>
-            {#await org.lookupAddress(config)}
-              <Loading small />
-            {:then name}
-              {#if name}
-                {name}
-              {:else}
-                <span class="subtle">Not registered</span>
-              {/if}
-            {/await}
-          </td>
-        </tr>
-      </table>
+      <div class="fields">
+        <div class="label">Address</div><div>{org.address}</div>
+        <div class="label">Safe</div><div>{org.safe}</div>
+        <div class="label">Name</div>
+        <div>
+          {#await org.lookupAddress(config)}
+            <Loading small />
+          {:then name}
+            {#if name}
+              {name}
+            {:else}
+              <span class="subtle">Not registered</span>
+            {/if}
+          {/await}
+        </div>
+      </div>
     </div>
   {:else}
     <Modal subtle>
       <span slot="title">🏜️</span>
-      <span slot="body">Sorry, <span class="highlight">{address}</span> is not an Org address.</span>
+      <span slot="body">Sorry, <span class="highlight">{address}</span> does not resolve to an Org address.</span>
       <span slot="actions">
         <button on:click={back}>
           Back
