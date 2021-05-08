@@ -2,6 +2,7 @@
 // TODO: Two registration actions with same label
 import { ethers } from 'ethers';
 import type { BigNumber } from 'ethers';
+import type { EnsResolver } from '@ethersproject/providers';
 import { State, state } from './state';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
@@ -26,21 +27,36 @@ export interface Registration {
   name: string
   owner: string
   address: string | null
+  url: string | null
+  avatar: string | null
+  twitter: string | null
+  github: string | null
+  resolver: EnsResolver
 }
 
 export async function getRegistration(label: string, config: Config): Promise<Registration | null> {
-  if (await registrar(config).available(label)) {
-    // If the name is available, ie. not registered, we don't return anything.
+  const name =`${label}.${config.registrar.domain}`;
+  const resolver = await config.provider.getResolver(name);
+  if (! resolver) {
     return null;
   }
-  const name =`${label}.${config.registrar.domain}`;
-  const address = await config.provider.resolveName(name);
+
   const owner = await getOwner(name, config);
+  const address = await resolver.getAddress();
+  const avatar = await resolver.getText('avatar');
+  const url = await resolver.getText('url');
+  const twitter = await resolver.getText('vnd.twitter');
+  const github = await resolver.getText('vnd.github');
 
   return {
     name,
+    url,
+    avatar,
     owner,
-    address
+    address,
+    twitter,
+    github,
+    resolver,
   };
 }
 

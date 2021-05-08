@@ -27,7 +27,8 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    height: 24rem;
+    min-height: 24rem;
+    padding-top: 6rem;
   }
 </style>
 

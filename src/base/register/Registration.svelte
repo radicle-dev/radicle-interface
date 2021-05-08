@@ -1,5 +1,7 @@
 <script lang="typescript">
   import { getRegistration } from './registrar';
+  import { setRecords } from './resolver';
+  import type { EnsRecord } from './resolver';
   import type { Registration } from './registrar';
   import type { Config } from '@app/config';
   import { session } from '@app/session';
@@ -8,28 +10,49 @@
   import Modal from '@app/Modal.svelte';
   import Form from '@app/Form.svelte';
   import type { Field } from '@app/Form.svelte';
+  import { assert } from '@app/error';
 
   export let subdomain: string;
   export let config: Config;
 
   let editable = false;
   let fields: Field[] = [];
+  let registration: Registration | null = null;
 
   const loadRegistration = getRegistration(subdomain, config)
-    .then(registration => {
-      if (registration) {
+    .then(r => {
+      if (r) {
         fields = [
-          { name: "address", placeholder: "Not set",
-            value: registration.address, editable: true },
           { name: "owner", placeholder: "",
-            value: registration.owner, editable: false },
+            value: r.owner, editable: false },
+          { name: "address", placeholder: "Not set",
+            value: r.address, editable: true },
+          { name: "avatar", placeholder: "Not set",
+            value: r.avatar, editable: true },
+          { name: "twitter", placeholder: "Not set",
+            value: r.twitter, editable: true },
+          { name: "github", placeholder: "Not set",
+            value: r.github, editable: true },
         ];
+        registration = r;
       }
-      return registration;
+      return r;
     });
 
-  const save = (event: { detail: Field[] }) => {
-    console.log("Save", event.detail);
+  const save = async (event: { detail: Field[] }) => {
+    assert(registration, "registration was found");
+
+    const recs: EnsRecord[] = event.detail
+      .filter(r => r.editable && r.value !== null)
+      .map(f => {
+        assert(f.value !== null);
+        return { name: f.name, value: f.value }
+      });
+
+    const tx = await setRecords(subdomain, recs, registration.resolver, config);
+    // TODO: Disable button and fields
+    await tx.wait();
+    // TODO: Reload registration
   };
 
   $: isOwner = (registration: Registration): boolean => {

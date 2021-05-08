@@ -1,8 +1,8 @@
 <script context="module" lang="typescript">
   export interface Field {
-    name: string,
-    value: string | null,
-    placeholder?: string,
+    name: string
+    value: string | null
+    placeholder?: string
     editable: boolean
   }
 </script>
