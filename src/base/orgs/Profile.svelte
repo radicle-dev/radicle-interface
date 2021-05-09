@@ -6,11 +6,13 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
 
-  export let address: string;
+  export let id: string;
   export let config: Config;
 
-  if (! ethers.utils.isAddress(address)) {
-    address = `${address}.${config.registrar.domain}`;
+  let address: string;
+
+  if (! ethers.utils.isAddress(id)) {
+    address = `${id}.${config.registrar.domain}`;
   }
 
   const back = () => {
@@ -40,8 +42,8 @@
       </h1>
       <div class="fields">
         <div class="label">Address</div><div>{org.address}</div>
-        <div class="label">Safe</div><div>{org.safe}</div>
-        <div class="label">Name</div>
+        <div class="label">Owner</div><div>{org.safe}</div>
+        <div class="label">Reverse Entry</div>
         <div>
           {#await org.lookupAddress(config)}
             <Loading small />
