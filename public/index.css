@@ -222,7 +222,7 @@ input.wide {
 	color: var(--color-secondary);
 }
 .bold {
-	font-weight: bold;
+	font-weight: bold !important;
 }
 
 button.error:hover {
@@ -242,14 +242,16 @@ td strong {
 	font-weight: 600;
 }
 
-h1 {
+h1, .title {
 	font-size: 1.75rem;
-	margin-bottom: 2rem;
 	font-weight: normal;
 	color: var(--color-secondary);
 	text-align: left;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
+}
+h1 {
+	margin-bottom: 2rem;
 }
 
 p {

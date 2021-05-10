@@ -2,6 +2,7 @@
   export interface Field {
     name: string
     value: string | null
+    label?: string
     placeholder?: string
     editable: boolean
   }
@@ -78,7 +79,7 @@
 <div class="fields">
   {#each fields as field}
     <div class="label">
-      {capitalize(field.name)}
+      {field.label || capitalize(field.name)}
     </div>
     <div>
       <input name={field.name} class="field" placeholder={field.placeholder}

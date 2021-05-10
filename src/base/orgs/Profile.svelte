@@ -2,6 +2,8 @@
   import { ethers } from 'ethers';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
+  import type { Registration } from '@app/base/register/registrar';
+  import { getRegistration } from '@app/base/register/registrar';
   import { Org } from './Org';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -11,13 +13,31 @@
   export let config: Config;
 
   let address = `${name}.${config.registrar.domain}`;
+  let registration: Registration | null = null;
 
-  const back = () => {
-    navigate("/orgs");
-  };
+  getRegistration(name, config).then(r => {
+    registration = r;
+  });
+
+  const back = () => navigate("/orgs");
 </script>
 
 <style>
+  main > header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-bottom: 2rem;
+  }
+  main > header > * {
+    margin: 0 1rem 0 0;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+  }
   .fields {
     display: grid;
     grid-template-columns: auto auto;
@@ -30,6 +50,13 @@
   .actions {
     margin-top: 2rem;
   }
+  .avatar {
+    width: 64px;
+    height: 64px;
+  }
+  .avatar.placeholder {
+    border: 1px solid var(--color-secondary);
+  }
 </style>
 
 {#await Org.get(address, config)}
@@ -38,7 +65,19 @@
   {#if org}
     <main>
       <header>
-        <h1 class="bold">{address}</h1>
+        {#if registration && registration.avatar}
+          <div class="avatar">
+            <img src={registration.avatar} alt="avatar" />
+          </div>
+        {:else}
+          <div class="avatar placeholder"></div>
+        {/if}
+        <div class="info">
+          <span class="title bold">{address}</span>
+          {#if registration && registration.url}
+            <a class="url" href={registration.url}>{registration.url}</a>
+          {/if}
+        </div>
       </header>
 
       <div class="fields">

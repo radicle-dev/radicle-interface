@@ -27,6 +27,8 @@
             value: r.owner, editable: false },
           { name: "address", placeholder: "Not set",
             value: r.address, editable: true },
+          { name: "url", label: "URL", placeholder: "Not set",
+            value: r.url, editable: true },
           { name: "avatar", placeholder: "Not set",
             value: r.avatar, editable: true },
           { name: "twitter", placeholder: "Not set",
