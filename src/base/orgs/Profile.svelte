@@ -14,9 +14,11 @@
 
   let address = `${name}.${config.registrar.domain}`;
   let registration: Registration | null = null;
+  let loading = true;
 
   getRegistration(name, config).then(r => {
     registration = r;
+    loading = false;
   });
 
   const back = () => navigate("/orgs");
@@ -54,9 +56,6 @@
     width: 64px;
     height: 64px;
   }
-  .avatar.placeholder {
-    border: 1px solid var(--color-secondary);
-  }
 </style>
 
 {#await Org.get(address, config)}
@@ -69,13 +68,16 @@
           <div class="avatar">
             <img src={registration.avatar} alt="avatar" />
           </div>
-        {:else}
-          <div class="avatar placeholder"></div>
         {/if}
         <div class="info">
           <span class="title bold">{address}</span>
           {#if registration && registration.url}
             <a class="url" href={registration.url}>{registration.url}</a>
+          {/if}
+        </div>
+        <div>
+          {#if loading}
+            <Loading small />
           {/if}
         </div>
       </header>
