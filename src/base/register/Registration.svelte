@@ -12,9 +12,18 @@
   import type { Field } from '@app/Form.svelte';
   import { assert } from '@app/error';
 
+  enum State {
+    Idle,
+    Signing,
+    Pending,
+    Success,
+    Failed,
+  }
+
   export let subdomain: string;
   export let config: Config;
 
+  let state = State.Idle;
   let editable = false;
   let fields: Field[] = [];
   let registration: Registration | null = null;
@@ -51,10 +60,16 @@
         return { name: f.name, value: f.value }
       });
 
-    const tx = await setRecords(subdomain, recs, registration.resolver, config);
-    // TODO: Disable button and fields
-    await tx.wait();
-    // TODO: Reload registration
+    try {
+      state = State.Signing;
+      const tx = await setRecords(subdomain, recs, registration.resolver, config);
+      state = State.Pending;
+      await tx.wait();
+      state = State.Success;
+    } catch (e) {
+      console.error(e);
+      state = State.Failed;
+    }
   };
 
   $: isOwner = (registration: Registration): boolean => {
@@ -78,20 +93,42 @@
   <Loading />
 {:then registration}
   {#if registration}
-    <main>
-      <header>
-        <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
-        <button
-          class="tiny primary" class:active={editable} disabled={!isOwner(registration)}
-          on:click={() => editable = !editable}>
-            Edit
-        </button>
-        <button class="tiny secondary" disabled={!isOwner(registration)}>
-          Transfer
-        </button>
-      </header>
-      <Form {editable} {fields} on:save={save} on:cancel={() => editable = false} />
-    </main>
+    {#if state === State.Idle}
+      <main>
+        <header>
+          <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
+          <button
+            class="tiny primary" class:active={editable} disabled={!isOwner(registration)}
+            on:click={() => editable = !editable}>
+              Edit
+          </button>
+          <button class="tiny secondary" disabled={!isOwner(registration)}>
+            Transfer
+          </button>
+        </header>
+        <Form {editable} {fields} on:save={save} on:cancel={() => editable = false} />
+      </main>
+    {:else}
+      <Modal floating>
+        <span slot="title">
+          Transaction
+        </span>
+        <span slot="body">
+          {#if state === State.Signing}
+            <p>Please confirm the transaction in your wallet...</p>
+          {:else if state === State.Pending}
+            <p>Transaction submitted. Waiting for inclusion...</p>
+          {:else if state === State.Success}
+            Success!
+          {/if}
+        </span>
+        <span slot="actions">
+          {#if [State.Signing, State.Pending].includes(state)}
+            <Loading center small />
+          {/if}
+        </span>
+      </Modal>
+    {/if}
   {:else}
     <Modal subtle>
       <span slot="title">
