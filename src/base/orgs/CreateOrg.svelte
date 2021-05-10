@@ -62,7 +62,7 @@
       {#if org}
         <table>
           <tr><td class="label">Address</td><td>{org.address}</td></tr>
-          <tr><td class="label">Safe</td><td>{org.safe}</td></tr>
+          <tr><td class="label">Owner</td><td>{org.safe}</td></tr>
         </table>
       {:else}
         <table>

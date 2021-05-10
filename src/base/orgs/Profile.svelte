@@ -5,15 +5,12 @@
   import { Org } from './Org';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
+  import Error from '@app/Error.svelte';
 
-  export let id: string;
+  export let name: string;
   export let config: Config;
 
-  let address: string;
-
-  if (! ethers.utils.isAddress(id)) {
-    address = `${id}.${config.registrar.domain}`;
-  }
+  let address = `${name}.${config.registrar.domain}`;
 
   const back = () => {
     navigate("/orgs");
@@ -69,5 +66,5 @@
     </Modal>
   {/if}
 {:catch err}
-  {err}
+  <Error error={err} />
 {/await}

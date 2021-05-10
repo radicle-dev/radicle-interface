@@ -11,6 +11,6 @@
   <Orgs {config} />
 </Route>
 
-<Route path="/orgs/:id" let:params>
-  <Profile {config} id={params.id} />
+<Route path="/orgs/:name" let:params>
+  <Profile {config} name={params.name} />
 </Route>

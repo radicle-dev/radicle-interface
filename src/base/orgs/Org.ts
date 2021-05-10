@@ -48,10 +48,10 @@ export class Org {
       orgAbi,
       config.provider
     );
-    const resolved = await org.resolvedAddress;
 
     try {
-      let safe = await org.owner();
+      const safe = await org.owner();
+      const resolved = await org.resolvedAddress;
       return new Org(resolved, safe);
     } catch (e) {
       console.error(e);
