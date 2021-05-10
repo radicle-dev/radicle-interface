@@ -8,6 +8,7 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
+  import Icon from '@app/Icon.svelte';
 
   export let name: string;
   export let config: Config;
@@ -56,6 +57,15 @@
     width: 64px;
     height: 64px;
   }
+  .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .url {
+    display: flex; /* Ensures correct vertical positioning of icons */
+    margin-right: 1rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
@@ -71,9 +81,23 @@
         {/if}
         <div class="info">
           <span class="title bold">{address}</span>
-          {#if registration && registration.url}
-            <a class="url" href={registration.url}>{registration.url}</a>
-          {/if}
+          <div class="links">
+            {#if registration}
+              {#if registration.url}
+                <a class="url" href={registration.url}>{registration.url}</a>
+              {/if}
+              {#if registration.twitter}
+                <a class="url" href={registration.twitter}>
+                  <Icon name="twitter" />
+                </a>
+              {/if}
+              {#if registration.github}
+                <a class="url" href={registration.github}>
+                  <Icon name="github" />
+                </a>
+              {/if}
+            {/if}
+          </div>
         </div>
         <div>
           {#if loading}
