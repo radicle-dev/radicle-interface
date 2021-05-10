@@ -27,16 +27,20 @@
     justify-self: start;
     align-self: center;
   }
+  .actions {
+    margin-top: 2rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
   <Loading />
 {:then org}
   {#if org}
-    <div>
-      <h1>
-        {address}
-      </h1>
+    <main>
+      <header>
+        <h1 class="bold">{address}</h1>
+      </header>
+
       <div class="fields">
         <div class="label">Address</div><div>{org.address}</div>
         <div class="label">Owner</div><div>{org.safe}</div>
@@ -53,7 +57,13 @@
           {/await}
         </div>
       </div>
-    </div>
+
+      <div class="actions">
+        <button on:click={() => navigate(`/registrations/${name}`)} class="tiny secondary">
+          View registration &rarr;
+        </button>
+      </div>
+    </main>
   {:else}
     <Modal subtle>
       <span slot="title">🏜️</span>
