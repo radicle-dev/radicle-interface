@@ -13,7 +13,8 @@
   import { capitalize } from '@app/utils';
 
   export let fields: Field[];
-  export let editable = false ;
+  export let editable = false;
+  export let disabled = false;
 
   const dispatch = createEventDispatcher();
   const save = () => dispatch('save', fields);
@@ -83,17 +84,17 @@
     </div>
     <div>
       <input name={field.name} class="field" placeholder={field.placeholder}
-             disabled={!field.editable || !editable} bind:value={field.value}
+             disabled={!field.editable || !editable || disabled} bind:value={field.value}
              type="text" />
     </div>
   {/each}
 </div>
 
 <div class="actions" class:editable>
-  <button on:click={cancel} class="small">
+  <button on:click={cancel} {disabled} class="small">
     Cancel
   </button>
-  <button on:click={save} class="small primary">
+  <button on:click={save} {disabled} class="small primary">
     Save
   </button>
 </div>
