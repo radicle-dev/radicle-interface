@@ -42,7 +42,7 @@
   }
   .modal-title {
     font-size: 1.75rem;
-    line-height: 1.75rem;
+    line-height: 2.625rem;
     margin-bottom: 2rem;
     color: var(--color-secondary);
     text-align: center;
@@ -72,9 +72,11 @@
     <div class="modal-subtitle">
       <slot name="subtitle"></slot>
     </div>
-    <div class="modal-body">
-      <slot name="body"></slot>
-    </div>
+    {#if $$slots.body}
+      <div class="modal-body">
+        <slot name="body"></slot>
+      </div>
+    {/if}
     <div class="modal-actions">
       <slot name="actions"></slot>
     </div>
