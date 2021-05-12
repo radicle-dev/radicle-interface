@@ -18,22 +18,30 @@
     Success,
   }
 
+  enum Governance {
+    BDFL = "bdfl",
+    Quorum = "quorum",
+  }
+
   const orgTypes = [
-    { label: "Single signer", value: "bdfl" },
-    { label: "Quorum", value: "dao" },
+    { label: "Single signer", value: Governance.BDFL },
+    { label: "Quorum", value: Governance.Quorum },
   ];
 
   let state = State.Idle;
   let error: Err | null = null;
   let org: Org | null = null;
-  let governance: string = "bdfl";
+  let governance = Governance.BDFL;
 
   const dispatch = createEventDispatcher();
   const createOrg = async () => {
     state = State.Signing;
 
     try {
-      let tx = await Org.create(owner, config);
+      let tx = governance === Governance.Quorum
+        ? await Org.createMultiSig([owner], 1, config)
+        : await Org.create(owner, config);
+
       state = State.Pending;
 
       let receipt = await tx.wait();
@@ -48,7 +56,10 @@
   };
 
   const onGovernanceChanged = (event: { detail: string }) => {
-    governance = event.detail;
+    switch (event.detail) {
+      case "bdfl": governance = Governance.BDFL; break;
+      case "quorum":  governance = Governance.Quorum; break;
+    }
   };
 </script>
 
@@ -90,7 +101,7 @@
       {:else if state === State.Signing}
         <div class="highlight">Confirm transaction in your wallet</div>
       {:else if state === State.Pending}
-        <div class="highlight">Waiting for transaction to be processed</div>
+        <div class="highlight">Waiting for transaction to be processed...</div>
       {/if}
     </span>
 

@@ -6,6 +6,7 @@ import { assert } from '@app/error';
 import type { Config } from '@app/config';
 
 const orgFactoryAbi = [
+  "function createOrg(address) returns (address)",
   "function createOrg(address[], uint256) returns (address)",
   "event OrgCreated(address, address)",
 ];
@@ -59,6 +60,22 @@ export class Org {
     }
   }
 
+  static async createMultiSig(
+    owners: [string],
+    threshold: number,
+    config: Config,
+  ): Promise<TransactionResponse> {
+    const orgFactory = new ethers.Contract(
+      config.orgFactory.address,
+      orgFactoryAbi,
+      config.signer
+    );
+
+    return orgFactory['createOrg(address[],uint256)'](owners, threshold, {
+      gasLimit: config.gasLimits.createOrg
+    });
+  }
+
   static async create(
     owner: string,
     config: Config,
@@ -69,7 +86,7 @@ export class Org {
       config.signer
     );
 
-    return orgFactory.createOrg([owner], 1, {
+    return orgFactory['createOrg(address)'](owner, {
       gasLimit: config.gasLimits.createOrg
     });
   }
