@@ -1,7 +1,7 @@
 <script lang="typescript">
   import type { SvelteComponent } from 'svelte';
   import { session } from '@app/session';
-  import CreateOrg from '@app/base/orgs/CreateOrg.svelte';
+  import Create from '@app/base/orgs/Create.svelte';
   import type { Config } from '@app/config';
 
   export let config: Config;
@@ -15,7 +15,7 @@
 </style>
 
 <main>
-  <button on:click={() => modal = CreateOrg} disabled={!owner} class="secondary">
+  <button on:click={() => modal = Create} disabled={!owner} class="secondary">
     Create an Org
   </button>
 </main>
