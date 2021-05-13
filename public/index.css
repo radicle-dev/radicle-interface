@@ -154,12 +154,13 @@ button.tiny {
 }
 
 a {
-	color: var(--color-secondary);
+	color: #d0d0d0;
 	text-decoration: none;
+	border-bottom: 1px solid #444;
 }
 a:hover {
-	color: var(--color-secondary-faded);
-	border-bottom-color: var(--color-secondary-faded);
+	color: #e0e0e0;
+	border-bottom-color: #e0e0e0;
 }
 a.primary {
 	color: var(--color-primary);

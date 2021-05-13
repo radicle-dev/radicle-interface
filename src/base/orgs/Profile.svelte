@@ -55,6 +55,9 @@
     justify-content: center;
     align-items: left;
   }
+  .info a {
+    border: none;
+  }
   .fields {
     display: grid;
     grid-template-columns: 1fr 8fr;
@@ -93,7 +96,7 @@
           </div>
         {/if}
         <div class="info">
-          <span class="title bold">{label || address}</span>
+          <span class="title bold">{registration ? label : address}</span>
           <div class="links">
             {#if registration}
               {#if registration.url}
