@@ -11,7 +11,10 @@ const orgFactoryAbi = [
   "event OrgCreated(address, address)",
 ];
 
-const orgAbi = ["function owner() view returns (address)"];
+const orgAbi = [
+  "function owner() view returns (address)",
+  "function setName(string, address) returns (bytes32)",
+];
 
 export class Org {
   address: string
@@ -26,6 +29,16 @@ export class Org {
 
   async lookupAddress(config: Config): Promise<string> {
     return await config.provider.lookupAddress(this.address);
+  }
+
+  async setName(name: string, config: Config): Promise<TransactionResponse> {
+    const org = new ethers.Contract(
+      this.address,
+      orgAbi,
+      config.signer
+    );
+    return org.setName(name, config.provider.network.ensAddress,
+      { gasLimit: 200_000 });
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {

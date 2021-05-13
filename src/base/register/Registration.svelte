@@ -27,8 +27,9 @@
   let editable = false;
   let fields: Field[] = [];
   let registration: Registration | null = null;
+  let name = `${subdomain}.${config.registrar.domain}`;
 
-  const loadRegistration = getRegistration(subdomain, config)
+  const loadRegistration = getRegistration(name, config)
     .then(r => {
       if (r) {
         fields = [

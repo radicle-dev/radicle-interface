@@ -34,8 +34,7 @@ export interface Registration {
   resolver: EnsResolver
 }
 
-export async function getRegistration(label: string, config: Config): Promise<Registration | null> {
-  const name =`${label}.${config.registrar.domain}`;
+export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
   const resolver = await config.provider.getResolver(name);
   if (! resolver) {
     return null;

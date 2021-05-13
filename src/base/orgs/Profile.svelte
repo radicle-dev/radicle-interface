@@ -1,28 +1,42 @@
 <script lang="typescript">
-  import { ethers } from 'ethers';
+  import { onMount } from 'svelte';
+  import { Link } from 'svelte-routing';
+  import type { SvelteComponent } from 'svelte';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/register/registrar';
   import { getRegistration } from '@app/base/register/registrar';
+  import { parseEnsLabel } from '@app/utils';
   import { Org } from './Org';
+  import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
+  import SetName from '@app/ens/SetName.svelte';
 
-  export let name: string;
+  export let address: string;
   export let config: Config;
 
-  let address = `${name}.${config.registrar.domain}`;
   let registration: Registration | null = null;
-  let loading = true;
-
-  getRegistration(name, config).then(r => {
-    registration = r;
-    loading = false;
-  });
+  let name: string | null = null;
 
   const back = () => navigate("/orgs");
+
+  onMount(async () => {
+    name = await config.provider.lookupAddress(address);
+    registration = await getRegistration(name, config);
+  });
+
+  let setNameForm: typeof SvelteComponent | null = null;
+  const setName = () => {
+    setNameForm = SetName;
+  };
+
+  $: label = name && parseEnsLabel(name, config);
+  $: isOwner = (org: Org): boolean => {
+    return org.safe === ($session && $session.address);
+  };
 </script>
 
 <style>
@@ -43,15 +57,14 @@
   }
   .fields {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 8fr;
     grid-gap: 1rem;
   }
   .fields > div {
     justify-self: start;
     align-self: center;
-  }
-  .actions {
-    margin-top: 2rem;
+    height: 2rem;
+    line-height: 2rem;
   }
   .avatar {
     width: 64px;
@@ -60,7 +73,7 @@
   .links {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
   }
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
@@ -80,7 +93,7 @@
           </div>
         {/if}
         <div class="info">
-          <span class="title bold">{address}</span>
+          <span class="title bold">{label || address}</span>
           <div class="links">
             {#if registration}
               {#if registration.url}
@@ -99,34 +112,27 @@
             {/if}
           </div>
         </div>
-        <div>
-          {#if loading}
-            <Loading small />
-          {/if}
-        </div>
       </header>
 
       <div class="fields">
         <div class="label">Address</div><div>{org.address}</div>
         <div class="label">Owner</div><div>{org.safe}</div>
-        <div class="label">Reverse Entry</div>
+        <div class="label">Name</div>
         <div>
           {#await org.lookupAddress(config)}
             <Loading small />
           {:then name}
             {#if name}
-              {name}
+              <Link to={`/registrations/${label}`}>{name}</Link>
+            {:else if isOwner(org)}
+              <button class="tiny primary" on:click={setName}>
+                Set
+              </button>
             {:else}
-              <span class="subtle">Not registered</span>
+              <span class="subtle">Not set</span>
             {/if}
           {/await}
         </div>
-      </div>
-
-      <div class="actions">
-        <button on:click={() => navigate(`/registrations/${name}`)} class="tiny secondary">
-          View registration &rarr;
-        </button>
       </div>
     </main>
   {:else}
@@ -140,6 +146,7 @@
       </span>
     </Modal>
   {/if}
+  <svelte:component this={setNameForm} {org} {config} on:close={() => setNameForm = null} />
 {:catch err}
   <Error error={err} />
 {/await}

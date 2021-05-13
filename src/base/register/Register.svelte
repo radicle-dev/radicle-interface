@@ -1,10 +1,10 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
   import { navigate } from "svelte-routing";
   import { registrar } from './registrar';
   import type { Config } from '@app/config';
 
   import Modal from '@app/Modal.svelte';
+  import DomainInput from '@app/ens/DomainInput.svelte';
 
   enum State {
     Idle,
@@ -17,11 +17,6 @@
 
   let state = State.Idle;
   let inputValue: string;
-  let inputElement: HTMLElement;
-
-  onMount(() => {
-    inputElement.focus();
-  });
 
   function checkAvailability(name: string) {
     state = State.CheckingAvailability;
@@ -42,16 +37,6 @@
     padding-top: 2rem;
     align-self: center;
   }
-  input.subdomain {
-    margin-right: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    border-right: none;
-  }
-  input.subdomain[disabled] {
-    color: var(--color-secondary);
-  }
   div.input-caption {
     font-size: 1.25rem;
     text-align: left;
@@ -68,26 +53,6 @@
   }
   .name {
     margin: 1rem;
-  }
-  .name div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  .name input {
-    margin: 0;
-  }
-  span.root {
-    line-height: 1.5em;
-    margin: 1rem;
-    margin-left: 0;
-    margin-right: 0;
-	padding: 1rem 2rem;
-    color: var(--color-secondary);
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    border: 1px solid var(--color-secondary);
-    border-left: none;
   }
 </style>
 
@@ -113,17 +78,13 @@
   </div>
   <div class="input-main">
     <span class="name">
-      <div>
-        <input
-          bind:this={inputElement}
-          bind:value={inputValue}
-          placeholder=""
-          class="subdomain"
-          disabled={state === State.CheckingAvailability}
-          type="text"
-        />
-        <span class="root">.{config.registrar.domain}</span>
-      </div>
+      <DomainInput
+        bind:value={inputValue}
+        autofocus
+        placeholder=""
+        disabled={state === State.CheckingAvailability}
+        root={config.registrar.domain}
+      />
     </span>
     {#if !inputValue}
       <button disabled class="primary register">
