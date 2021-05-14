@@ -3,7 +3,6 @@ import { derived, writable } from "svelte/store";
 export enum State {
   Failed = -1,
   Idle,
-  Approving,
   Committing,
   WaitingToRegister,
   Registering,

@@ -23,3 +23,8 @@ export function parseEnsLabel(name: string, config: Config) {
   let domain = config.registrar.domain.replace(".", "\\.");
   return name.replace(new RegExp(`\\.${domain}$`), "");
 }
+
+// Return the current unix time.
+export function unixTime(): number {
+  return Math.floor(Date.now() / 1000);
+}

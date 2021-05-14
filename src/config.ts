@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import config from "@app/config.json";
 
 declare global {
@@ -14,7 +15,7 @@ export type Config = {
   orgFactory: { address: string },
   gasLimits: { createOrg: number },
   provider: ethers.providers.JsonRpcProvider,
-  signer: ethers.Signer,
+  signer: ethers.Signer & TypedDataSigner,
 };
 
 /// Gas limits for various transactions.

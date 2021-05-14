@@ -162,6 +162,9 @@ const tokenAbi = [
   "function balanceOf(address) view returns (uint256)",
   "function approve(address, uint256) returns (bool)",
   "function allowance(address, address) view returns (uint256)",
+  "function DOMAIN_SEPARATOR() view returns (bytes32)",
+  "function name() pure returns (string)",
+  "function nonces(address) view returns (uint256)",
 ];
 
 export async function approveSpender(spender: string, amount: BigNumber, config: Config) {
@@ -175,6 +178,10 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
     let tx = await token.connect(signer).approve(spender, amount);
     await tx.wait();
   }
+}
+
+export function token(config: Config): ethers.Contract {
+  return new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
 }
 
 export function disconnectWallet() {

@@ -54,13 +54,7 @@
     </span>
 
     <span slot="body">
-      {#if $state === State.Approving}
-        Approving Registry for {#await getFee(config)}
-          ?
-        {:then fee}
-          {fee}
-        {/await} <strong>RAD</strong>...
-      {:else if $state === State.Committing}
+      {#if $state === State.Committing}
         Committing...
       {:else if $state === State.WaitingToRegister}
         Waiting for commitment time...

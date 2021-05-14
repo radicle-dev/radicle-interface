@@ -3,17 +3,19 @@
 import { ethers } from 'ethers';
 import type { BigNumber } from 'ethers';
 import type { EnsResolver } from '@ethersproject/providers';
+import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { State, state } from './state';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
 import type { Config } from '@app/config';
+import { unixTime } from '@app/utils';
+import { assert } from '@app/error';
 
 const registrarAbi = [
-  'function rad() returns (address)',
-  'function radNode() returns (bytes32)',
-  'function minCommitmentAge() returns (uint256)',
-  'function registrationFeeRad() returns (uint256)',
-  'function commit(bytes32)',
+  'function rad() view returns (address)',
+  'function radNode() view returns (bytes32)',
+  'function minCommitmentAge() view returns (uint256)',
+  'function registrationFeeRad() view returns (uint256)',
   'function commitWithPermit(bytes32, address, uint256, uint256, uint8, bytes32, bytes32)',
   'function register(string, address, uint256)',
   'function valid(string) pure returns (bool)',
@@ -75,19 +77,11 @@ export async function registerName(name: string, owner: string, config: Config) 
     if (commitment && commitment.name === name && commitment.owner === owner) {
       await register(name, owner, commitment.salt, config);
     } else {
-      await approveRegistrar(owner, config);
       await commitAndRegister(name, owner, config);
     }
   } catch (e) {
     throw { type: Failure.TransactionFailed, message: e.message, txHash: e.txHash };
   }
-}
-
-async function approveRegistrar(owner: string, config: Config) {
-  state.set(State.Approving);
-
-  const amount = await registrationFee(config);
-  await session.approveSpender(config.registrar.address, amount, config);
 }
 
 async function commitAndRegister(name: string, owner: string, config: Config) {
@@ -110,10 +104,23 @@ async function commitAndRegister(name: string, owner: string, config: Config) {
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config) {
   state.set(State.Committing);
 
-  const signer = config.provider.getSigner();
+  const owner = config.signer;
+  const ownerAddr = await owner.getAddress();
+  const spender = config.registrar.address;
+  const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
+  const token = session.token(config);
+  const signature = await permitSignature(owner, token, spender, fee, deadline);
   const tx = await registrar(config)
-    .connect(signer)
-    .commit(commitment, { gasLimit: 150000 })
+    .connect(config.signer)
+    .commitWithPermit(
+      commitment,
+      ownerAddr,
+      fee,
+      deadline,
+      signature.v,
+      signature.r,
+      signature.s,
+      { gasLimit: 150000 })
     .catch((e: Error) => console.error(e));
 
   await tx.wait(1);
@@ -122,6 +129,45 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
   // TODO: Getting "commitment too new"
   state.set(State.WaitingToRegister);
   await tx.wait(minAge + 1);
+}
+
+async function permitSignature(
+  owner: ethers.Signer & TypedDataSigner,
+  token: ethers.Contract,
+  spenderAddr: string,
+  value: ethers.BigNumberish,
+  deadline: ethers.BigNumberish,
+): Promise<ethers.Signature> {
+  assert(owner.provider);
+
+  const ownerAddr = await owner.getAddress();
+  const nonce = await token.nonces(ownerAddr);
+  const chainId = (await owner.provider.getNetwork()).chainId;
+
+  const domain = {
+    name: await token.name(),
+    chainId,
+    verifyingContract: token.address,
+  };
+  const types = {
+    Permit: [
+      { "name": "owner", "type": "address" },
+      { "name": "spender", "type": "address" },
+      { "name": "value", "type": "uint256" },
+      { "name": "nonce", "type": "uint256" },
+      { "name": "deadline", "type": "uint256" }
+    ]
+  };
+  const values = {
+    "owner": ownerAddr,
+    "spender": spenderAddr,
+    "value": value,
+    "nonce": nonce,
+    "deadline": deadline
+  };
+  const sig = await owner._signTypedData(domain, types, values);
+
+  return ethers.utils.splitSignature(sig);
 }
 
 async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
