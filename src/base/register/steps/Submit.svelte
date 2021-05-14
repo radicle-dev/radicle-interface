@@ -25,6 +25,8 @@
     return ethers.utils.formatUnits(fee);
   }
 
+  const done = () => navigate(`/registrations/${subdomain}`)
+
   onMount(async () => {
     try {
       await registerName(subdomain, registrationOwner, config);
@@ -72,7 +74,7 @@
 
     <span slot="actions">
       {#if $state === State.Registered}
-        <button on:click={() => state.set(State.Idle)} class="primary register">
+        <button on:click={done} class="primary register">
           Done
         </button>
       {:else}
