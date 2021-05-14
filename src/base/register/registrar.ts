@@ -9,18 +9,15 @@ import { Failure } from '@app/error';
 import type { Config } from '@app/config';
 
 const registrarAbi = [
-  {"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"commitment","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"CommitmentMade","type":"event"},
-  {"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"available","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"bytes32","name":"commitment","type":"bytes32"}],"name":"commit","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[],"name":"commitments","outputs":[{"internalType":"contract Commitments","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-  {"inputs":[],"name":"ens","outputs":[{"internalType":"contract ENS","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-  {"inputs":[],"name":"minCommitmentAge","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"bytes32","name":"parent","type":"bytes32"},{"internalType":"bytes32","name":"label","type":"bytes32"}],"name":"namehash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},
-  {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"salt","type":"uint256"}],"name":"register","outputs":[],"stateMutability":"nonpayable","type":"function"},
-  {"inputs":[],"name":"registrationFeeRad","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-  {"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"valid","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}
+  'function rad() returns (address)',
+  'function radNode() returns (bytes32)',
+  'function minCommitmentAge() returns (uint256)',
+  'function registrationFeeRad() returns (uint256)',
+  'function commit(bytes32)',
+  'function commitWithPermit(bytes32, address, uint256, uint256, uint8, bytes32, bytes32)',
+  'function register(string, address, uint256)',
+  'function valid(string) pure returns (bool)',
+  'function available(string) view returns (bool)',
 ];
 
 export interface Registration {
