@@ -33,7 +33,7 @@
   header .nav {
     display: inline-block;
     height: 100%;
-    margin-right: 0.5rem;
+    margin-left: 1.5rem;
   }
   header .nav a {
     display: inline-block;
@@ -45,6 +45,10 @@
   }
   header .nav a:hover {
     color: var(--color-foreground);
+  }
+  header .left {
+    display: flex;
+    align-items: center;
   }
   .error {
     text-align: center;
@@ -79,17 +83,18 @@
 {/if}
 
 <header>
-  <Logo />
-
-  <div>
-    <span class="nav">
+  <div class="left">
+    <Logo />
+    <div class="nav">
       <a use:link href="/register/">Register</a>
       <a use:link href="/vesting/">Vesting</a>
       {#if config.network.name === 'ropsten'}
         <a use:link href="/orgs/">Orgs</a>
       {/if}
-    </span>
+    </div>
+  </div>
 
+  <div>
     {#if address}
       <span class="balance">
         {formatBalance(tokenBalance)} <strong>RAD</strong>
