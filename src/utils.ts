@@ -18,13 +18,25 @@ export function capitalize(s: string) {
 }
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
-// returns the label, eg. 'cloudhead'.
-export function parseEnsLabel(name: string, config: Config) {
+// returns the label, eg. 'cloudhead', otherwise `null`.
+export function parseEnsLabel(name: string, config: Config): string | null {
   let domain = config.registrar.domain.replace(".", "\\.");
-  return name.replace(new RegExp(`\\.${domain}$`), "");
+  let label = name.replace(new RegExp(`\\.${domain}$`), "");
+
+  return label;
 }
 
 // Return the current unix time.
 export function unixTime(): number {
   return Math.floor(Date.now() / 1000);
 }
+
+// Check whether the input is a Radicle ID.
+export function isRadicleId(input: string): boolean {
+  return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
+}
+
+export function getSearchParam(key: string, location: RouteLocation): string | null {
+  let params = new URLSearchParams(location.search);
+  return params.get(key);
+};

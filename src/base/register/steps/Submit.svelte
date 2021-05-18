@@ -3,8 +3,7 @@
   // TODO: When transfering name, warn about transfering to org.
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
-  import { ethers } from 'ethers';
-  import { registerName, registrationFee } from '../registrar';
+  import { registerName } from '../registrar';
   import { State, state } from '../state';
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
@@ -14,16 +13,11 @@
 
   export let config: Config;
   export let subdomain: string;
-  export let query: Record<string, any>;
+  export let owner: string | null;
   export let session: Session;
 
   let error: Error | null = null;
-  let registrationOwner = query.get("owner") || session.address;
-
-  async function getFee(cfg: Config) {
-    let fee = await registrationFee(cfg);
-    return ethers.utils.formatUnits(fee);
-  }
+  let registrationOwner = owner || session.address;
 
   const done = () => navigate(`/registrations/${subdomain}`)
 

@@ -41,6 +41,8 @@
     margin-right: 1.5rem;
     font-weight: 500;
     color: var(--color-foreground-6);
+  }
+  header a {
     border: none;
   }
   header .nav a:hover {
@@ -84,7 +86,7 @@
 
 <header>
   <div class="left">
-    <Logo />
+    <a use:link href="/"><Logo /></a>
     <div class="nav">
       <a use:link href="/register/">Register</a>
       <a use:link href="/vesting/">Vesting</a>

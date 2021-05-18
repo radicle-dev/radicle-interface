@@ -18,10 +18,10 @@
 
   export let config: Config;
   export let subdomain: string;
-  export let query: Record<string, any>;
+  export let owner: string | null;
 
   let state = State.Initial;
-  $: registrationOwner = query.get("owner") || ($session && $session.address);
+  $: registrationOwner = owner || ($session && $session.address);
 
   async function begin() {
     state = State.CheckingAvailability;
