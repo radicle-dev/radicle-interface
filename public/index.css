@@ -224,6 +224,9 @@ input.wide {
 	color: var(--color-subtle);
 	font-style: italic;
 }
+.faded {
+	color: var(--color-subtle);
+}
 .label {
 	color: var(--color-secondary);
 }

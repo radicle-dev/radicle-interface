@@ -51,3 +51,11 @@ export function getSearchParam(key: string, location: RouteLocation): string | n
   let params = new URLSearchParams(location.search);
   return params.get(key);
 }
+
+// Get the explorer link of an address, eg. Etherscan.
+export function explorerLink(addr: string, config: Config): string {
+  if (config.network.name == "ropsten") {
+    return `https://ropsten.etherscan.io/address/${addr}`;
+  }
+  return `https://etherscan.io/address/${addr}`;
+}

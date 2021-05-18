@@ -6,7 +6,7 @@
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/register/registrar';
   import { getRegistration } from '@app/base/register/registrar';
-  import { parseEnsLabel } from '@app/utils';
+  import { parseEnsLabel, explorerLink } from '@app/utils';
   import { Org } from './Org';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
@@ -144,6 +144,10 @@
       <span slot="body">
         <p class="highlight"><strong>{address}</strong></p>
         <p>Sorry, there is no Org at this address.</p>
+        <p>
+          <a href={explorerLink(address, config)} target="_blank">View in explorer</a>
+          <span class="faded">↗</span>
+        </p>
       </span>
       <span slot="actions">
         <button on:click={back}>
