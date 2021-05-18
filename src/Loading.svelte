@@ -60,7 +60,6 @@
   }
 
   .fade-in {
-    opacity: 0;
     animation: fadeIn 1.5s;
     animation-timing-function: ease-in;
     -webkit-animation: fadeIn 1.5s;

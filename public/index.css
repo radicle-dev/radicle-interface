@@ -164,6 +164,7 @@ a:hover {
 }
 a.primary {
 	color: var(--color-primary);
+	border-bottom-color: var(--color-primary-faded);
 }
 a.primary:hover {
 	color: var(--color-primary-faded);
