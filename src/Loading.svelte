@@ -58,9 +58,26 @@
       transform: scale(1.0);
     }
   }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 1.5s;
+    animation-timing-function: ease-in;
+    -webkit-animation: fadeIn 1.5s;
+    -webkit-animation-timing-function: ease-in;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0 }
+    100% { opacity: 1 }
+  }
+  @-webkit-keyframes fadeIn {
+    0% { opacity: 0 }
+    100% { opacity: 1 }
+  }
 </style>
 
-<div class="spinner" class:small class:center>
+<div class="spinner fade-in" class:small class:center>
   <div class="bounce1" style="background-color: var(--color-{color})"></div>
   <div class="bounce2" style="background-color: var(--color-{color})"></div>
   <div class="bounce3" style="background-color: var(--color-{color})"></div>
