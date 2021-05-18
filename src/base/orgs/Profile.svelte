@@ -141,7 +141,10 @@
   {:else}
     <Modal subtle>
       <span slot="title">🏜️</span>
-      <span slot="body">Sorry, <span class="highlight">{address}</span> does not resolve to an Org address.</span>
+      <span slot="body">
+        <p class="highlight"><strong>{address}</strong></p>
+        <p>Sorry, there is no Org at this address.</p>
+      </span>
       <span slot="actions">
         <button on:click={back}>
           Back
