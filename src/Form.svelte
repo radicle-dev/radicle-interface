@@ -10,7 +10,8 @@
 
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
-  import { capitalize } from '@app/utils';
+  import { link } from 'svelte-routing';
+  import { capitalize, isUrl, isAddress } from '@app/utils';
 
   export let fields: Field[];
   export let editable = false;
@@ -32,22 +33,17 @@
     align-self: center;
   }
 
-  input.field {
-    padding: 0;
-    margin: 0;
-    border: none;
-  }
-  input.field {
-    padding: 0.25rem 1rem;
-    border-radius: 1rem;
-    border: 1px dashed transparent;
+  .field {
     width: 28rem;
+    border: 1px dashed transparent;
+    padding: 0.25rem 1rem;
+    margin: 0;
+  }
+
+  input.field {
+    border-radius: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  input.field[disabled] {
-    color: var(--color-foreground);
-    font-style: normal;
   }
   input.field::placeholder {
     color: var(--color-subtle);
@@ -58,6 +54,10 @@
   }
   input.field:not([disabled]) {
     border-color: var(--color-secondary) !important;
+  }
+
+  span.field {
+    display: inline-block;
   }
 
   .label {
@@ -83,9 +83,20 @@
       {field.label || capitalize(field.name)}
     </div>
     <div>
-      <input name={field.name} class="field" placeholder={field.placeholder}
-             disabled={!field.editable || !editable || disabled} bind:value={field.value}
-             type="text" />
+      {#if field.value && (!field.editable || !editable || disabled)}
+        <span class="field">
+          {#if isUrl(field.value)}
+            <a href="{field.value}" target="_blank">{field.value}</a>
+          {:else if isAddress(field.value)}
+            <a use:link href={`/resolve?q=${field.value}`} class="address">{field.value}</a>
+          {:else}
+            {field.value}
+          {/if}
+        </span>
+      {:else}
+        <input name={field.name} class="field" placeholder={field.placeholder}
+               bind:value={field.value} type="text" />
+      {/if}
     </div>
   {/each}
 </div>

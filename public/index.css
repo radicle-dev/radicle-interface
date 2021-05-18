@@ -159,8 +159,8 @@ a {
 	border-bottom: 1px solid #444;
 }
 a:hover {
-	color: #e0e0e0;
-	border-bottom-color: #e0e0e0;
+	color: var(--color-foreground);
+	border-bottom-color: var(--color-foreground);
 }
 a.primary {
 	color: var(--color-primary);
@@ -168,6 +168,9 @@ a.primary {
 a.primary:hover {
 	color: var(--color-primary-faded);
 	border-bottom-color: var(--color-primary-faded);
+}
+a.address {
+	border-bottom-color: transparent;
 }
 
 input[type="text"], button {

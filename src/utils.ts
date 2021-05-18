@@ -36,7 +36,18 @@ export function isRadicleId(input: string): boolean {
   return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
 }
 
+// Check whether the input is a URL.
+export function isUrl(input: string): boolean {
+  return /^https?:\/\//.test(input);
+}
+
+// Check whether the input is an Ethereum address.
+export function isAddress(input: string): boolean {
+  return ethers.utils.isAddress(input);
+}
+
+// Get search parameters from location.
 export function getSearchParam(key: string, location: RouteLocation): string | null {
   let params = new URLSearchParams(location.search);
   return params.get(key);
-};
+}
