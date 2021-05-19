@@ -70,6 +70,14 @@
     margin-left: 2rem;
     width: 9.75rem;
   }
+  .network {
+    color: var(--color-tertiary);
+    background-color: var(--color-tertiary-background);
+    line-height: 1.5em;
+    padding: 0.5rem 1rem;
+    margin: 0 2rem;
+    border-radius: var(--border-radius);
+  }
 </style>
 
 {#if $error}
@@ -97,6 +105,12 @@
   </div>
 
   <div>
+    {#if config.network.name == 'ropsten'}
+      <span class="network">Ropsten</span>
+    {:else if config.network.name == 'rinkeby'}
+      <span class="network">Rinkeby</span>
+    {/if}
+
     {#if address}
       <span class="balance">
         {formatBalance(tokenBalance)} <strong>RAD</strong>
