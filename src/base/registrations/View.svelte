@@ -92,7 +92,7 @@
 </style>
 
 {#await loadRegistration}
-  <Loading />
+  <Loading fadeIn />
 {:then registration}
   {#if registration}
     {#if state === State.Idle}

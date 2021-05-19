@@ -6,29 +6,12 @@
   import Modal from '@app/Modal.svelte';
   import DomainInput from '@app/ens/DomainInput.svelte';
 
-  enum State {
-    Idle,
-    CheckingAvailability,
-    NameAvailable,
-    NameUnavailable,
-  }
-
   export let config: Config;
 
-  let state = State.Idle;
-  let inputValue: string;
+  let label: string;
 
-  function checkAvailability(name: string) {
-    state = State.CheckingAvailability;
-
-    registrar(config).available(name).then((isAvailable: boolean) => {
-      if (isAvailable) {
-        state = State.NameAvailable;
-        navigate(`/registrations/${name}/form`);
-      } else {
-        state = State.NameUnavailable;
-      }
-    });
+  function register() {
+    navigate(`/registrations/${label}/form`);
   }
 </script>
 
@@ -57,47 +40,21 @@
 </style>
 
 <main>
-  {#if state === State.NameUnavailable}
-    <Modal floating>
-      <span slot="title">
-        {inputValue}.{config.registrar.domain}
-      </span>
-      <span slot="body">
-        The name <span class="highlight">{inputValue}</span> is not available for registration.
-      </span>
-      <span slot="actions">
-        <button on:click={() => state = State.Idle} class="secondary">
-          Back
-        </button>
-      </span>
-    </Modal>
-  {/if}
-
   <div class="input-caption">
     Register a <strong>{config.registrar.domain}</strong> name
   </div>
   <div class="input-main">
     <span class="name">
       <DomainInput
-        bind:value={inputValue}
+        bind:value={label}
         autofocus
         placeholder=""
-        disabled={state === State.CheckingAvailability}
         root={config.registrar.domain}
       />
     </span>
-    {#if !inputValue}
-      <button disabled class="primary register">
-        Check
-      </button>
-    {:else if state === State.CheckingAvailability}
-      <button disabled class="primary register" data-waiting>
-        Check
-      </button>
-    {:else}
-      <button on:click={() => checkAvailability(inputValue)} class="primary register">
-        Check
-      </button>
-    {/if}
+
+    <button disabled={!label} class="primary register" on:click={register}>
+      Check
+    </button>
   </div>
 </main>

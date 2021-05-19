@@ -86,7 +86,7 @@
 </style>
 
 {#await Org.get(address, config)}
-  <Loading />
+  <Loading fadeIn />
 {:then org}
   {#if org}
     <main>

@@ -2,6 +2,7 @@
   export let small = false;
   export let color = "secondary";
   export let center = false;
+  export let fadeIn = false;
 </script>
 
 <style>
@@ -76,7 +77,7 @@
   }
 </style>
 
-<div class="spinner fade-in" class:small class:center>
+<div class="spinner" class:fade-in={fadeIn} class:small class:center>
   <div class="bounce1" style="background-color: var(--color-{color})"></div>
   <div class="bounce2" style="background-color: var(--color-{color})"></div>
   <div class="bounce3" style="background-color: var(--color-{color})"></div>
