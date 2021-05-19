@@ -74,6 +74,11 @@
     }
   };
 
+  const done = () => {
+    // Reload page to load updates to the registration.
+    location.reload();
+  };
+
   $: isOwner = (registration: Registration): boolean => {
     return registration.owner === ($session && $session.address);
   };
@@ -113,20 +118,25 @@
     {:else}
       <Modal floating>
         <span slot="title">
-          Transaction
+          <div>🧾</div>
+          <div>Update registration</div>
         </span>
-        <span slot="body">
+        <span slot="subtitle">
           {#if state === State.Signing}
-            <p>Please confirm the transaction in your wallet...</p>
+            <p>Please confirm the transaction in your wallet</p>
           {:else if state === State.Pending}
-            <p>Transaction submitted. Waiting for inclusion...</p>
+            <p>Transaction is being processed by the network...</p>
           {:else if state === State.Success}
-            Success!
+            <p>Your registration was successfully updated.</p>
           {/if}
         </span>
         <span slot="actions">
           {#if [State.Signing, State.Pending].includes(state)}
             <Loading center small />
+          {:else if state === State.Success}
+            <button on:click={done}>
+              Done
+            </button>
           {/if}
         </span>
       </Modal>
