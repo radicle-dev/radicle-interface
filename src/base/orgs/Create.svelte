@@ -91,11 +91,11 @@
 {:else} <!-- Org creation flow -->
   <Modal floating on:close>
     <span slot="title">
-      ✨
+      <div>🎪</div>
+      <span>Create an Org</span>
     </span>
 
     <span slot="subtitle">
-      <h3>Create an Org</h3>
       {#if state === State.Idle}
         <div class="highlight">Select a governance model</div>
       {:else if state === State.Signing}
