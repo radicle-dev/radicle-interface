@@ -1,10 +1,10 @@
 // TODO: Show "look at your wallet" / "confirm tx" before state change.
 // TODO: Two registration actions with same label
 import { ethers } from 'ethers';
+import { writable } from 'svelte/store';
 import type { BigNumber } from 'ethers';
 import type { EnsResolver } from '@ethersproject/providers';
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { State, state } from './state';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
 import type { Config } from '@app/config';
@@ -32,6 +32,23 @@ export interface Registration {
   github: string | null
   resolver: EnsResolver
 }
+
+export enum State {
+  Failed = -1,
+  Connecting,
+  Committing,
+  WaitingToRegister,
+  Registering,
+  Registered,
+}
+
+export const state = writable(State.Connecting);
+
+window.registrarState = state;
+
+state.subscribe((s: State) => {
+  console.log("regiter.state", s);
+});
 
 export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
   const resolver = await config.provider.getResolver(name);

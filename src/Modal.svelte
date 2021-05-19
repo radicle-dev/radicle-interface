@@ -41,13 +41,16 @@
     );
   }
   .modal-title {
-    font-size: 1.75rem;
+    font-size: 1.25rem;
+    font-weight: bold;
     line-height: 2.625rem;
-    margin-bottom: 2rem;
-    color: var(--color-secondary);
+    margin-bottom: 1rem;
     text-align: center;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+  .modal-subtitle {
+    color: var(--color-secondary);
   }
   .modal-body {
     overflow-x: hidden;
@@ -55,6 +58,7 @@
     margin: 3rem 0;
   }
   .modal-actions {
+    padding-top: 0.5rem;
     margin-top: 2rem;
     text-align: center;
   }

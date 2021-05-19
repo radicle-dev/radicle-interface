@@ -9,8 +9,7 @@
   import Modal from '@app/Modal.svelte';
   import Err from '@app/Error.svelte';
 
-  import { registerName } from './registrar';
-  import { State, state } from './state';
+  import { registerName, State, state } from './registrar';
 
   export let config: Config;
   export let subdomain: string;
@@ -20,7 +19,8 @@
   let error: Error | null = null;
   let registrationOwner = owner || session.address;
 
-  const done = () => navigate(`/registrations/${subdomain}`)
+  const view = () => navigate(`/registrations/${subdomain}`)
+  const done = () => navigate(`/registrations`)
 
   onMount(async () => {
     try {
@@ -28,7 +28,7 @@
     } catch (e) {
       console.error("Error", e);
 
-      state.set(State.Idle);
+      state.set(State.Failed);
       error = e;
     }
   });
@@ -45,31 +45,38 @@
 {:else}
   <Modal>
     <span slot="title">
+      {#if $state === State.Registered}
+        <div>🎉</div>
+      {/if}
       {subdomain}.{config.registrar.domain}
     </span>
 
-    <span slot="body">
-      {#if $state === State.Committing}
+    <span slot="subtitle">
+      {#if $state === State.Connecting}
+        Connecting...
+      {:else if $state === State.Committing}
         Committing...
       {:else if $state === State.WaitingToRegister}
         Waiting for commitment time...
       {:else if $state === State.Registering}
         Registering name...
-      {:else if $state === State.Registered}
-        The name <strong>{subdomain}</strong> has been successfully registered to
-        <strong>{registrationOwner}</strong>.
+      {/if}
+    </span>
+
+    <span slot="body">
+      {#if $state === State.Registered}
+        The name has been successfully registered to
+        <span class="highlight">{registrationOwner}</span>.
+      {:else}
+        <Loading small center />
       {/if}
     </span>
 
     <span slot="actions">
       {#if $state === State.Registered}
-        <button on:click={done} class="primary register">
-          Done
+        <button on:click={view} class="register">
+          View
         </button>
-      {:else}
-        <div class="modal-actions">
-          <Loading small center />
-        </div>
       {/if}
     </span>
   </Modal>

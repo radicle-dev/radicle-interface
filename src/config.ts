@@ -5,6 +5,7 @@ import config from "@app/config.json";
 declare global {
   interface Window {
     ethereum: any;
+    registrarState: any;
   }
 }
 
