@@ -44,16 +44,17 @@
     border-radius: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-color: var(--color-secondary) !important;
   }
   input.field::placeholder {
     color: var(--color-subtle);
     font-style: italic;
   }
-  input.field:not([disabled])::placeholder {
+  input.field::placeholder {
     color: transparent;
   }
-  input.field:not([disabled]) {
-    border-color: var(--color-secondary) !important;
+  input.field[disabled] {
+    color: var(--color-secondary);
   }
 
   span.field {
@@ -83,19 +84,23 @@
       {field.label || capitalize(field.name)}
     </div>
     <div>
-      {#if field.value && (!field.editable || !editable || disabled)}
+      {#if field.editable && editable}
+        <input name={field.name} class="field" placeholder={field.placeholder}
+               bind:value={field.value} type="text" {disabled} />
+      {:else}
         <span class="field">
-          {#if isUrl(field.value)}
-            <a href="{field.value}" target="_blank">{field.value}</a>
-          {:else if isAddress(field.value)}
-            <a use:link href={`/resolve?q=${field.value}`} class="address">{field.value}</a>
+          {#if field.value}
+            {#if isUrl(field.value)}
+              <a href="{field.value}" target="_blank">{field.value}</a>
+            {:else if isAddress(field.value)}
+              <a use:link href={`/resolver/query?q=${field.value}`} class="address">{field.value}</a>
+            {:else}
+              {field.value}
+            {/if}
           {:else}
-            {field.value}
+            <span class="subtle">{field.placeholder}</span>
           {/if}
         </span>
-      {:else}
-        <input name={field.name} class="field" placeholder={field.placeholder}
-               bind:value={field.value} type="text" />
       {/if}
     </div>
   {/each}
