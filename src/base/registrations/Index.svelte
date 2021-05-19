@@ -24,7 +24,7 @@
     registrar(config).available(name).then((isAvailable: boolean) => {
       if (isAvailable) {
         state = State.NameAvailable;
-        navigate(`/register/${name}`);
+        navigate(`/registrations/${name}/form`);
       } else {
         state = State.NameUnavailable;
       }

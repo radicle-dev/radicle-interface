@@ -3,12 +3,13 @@
   // Perhaps the availability check should be moved out of the 'submit' step then.
   import { navigate } from 'svelte-routing';
   import { formatAddress } from '@app/utils';
-  import { registrar } from '../registrar';
   import { session } from '@app/session';
   import type { Config } from '@app/config';
 
   import Connect from '@app/Connect.svelte';
   import Modal from '@app/Modal.svelte';
+
+  import { registrar } from './registrar';
 
   enum State {
     Initial,
@@ -27,7 +28,7 @@
     state = State.CheckingAvailability;
 
     if (await registrar(config).available(subdomain)) {
-      navigate(`/register/${subdomain}/submit?${
+      navigate(`/registrations/${subdomain}/submit?${
         registrationOwner ? new URLSearchParams({ owner: registrationOwner }) : ''
       }`);
     } else {
@@ -63,7 +64,7 @@
         Checking availability...
       </button>
     {:else if state === State.NameUnavailable}
-      <button on:click={() => navigate("/register")} class="">
+      <button on:click={() => navigate("/registrations")} class="">
         Back
       </button>
     {:else}
@@ -75,7 +76,7 @@
         <Connect caption="Connect to register" className="primary" {config} />
       {/if}
 
-      <button on:click={() => navigate("/register")} class="text">
+      <button on:click={() => navigate("/registrations")} class="text">
         Cancel
       </button>
     {/if}

@@ -3,13 +3,14 @@
   // TODO: When transfering name, warn about transfering to org.
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
-  import { registerName } from '../registrar';
-  import { State, state } from '../state';
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Err from '@app/Error.svelte';
+
+  import { registerName } from './registrar';
+  import { State, state } from './state';
 
   export let config: Config;
   export let subdomain: string;
@@ -39,7 +40,7 @@
   <Err
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate('/register')}
+    on:close={() => navigate('/registrations')}
   />
 {:else}
   <Modal>

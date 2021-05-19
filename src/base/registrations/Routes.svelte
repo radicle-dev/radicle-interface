@@ -1,9 +1,9 @@
 <script lang="typescript">
   import { Route, navigate } from "svelte-routing";
-  import Register from '@app/base/register/Register.svelte';
-  import Begin from '@app/base/register/steps/Begin.svelte';
-  import Submit from '@app/base/register/steps/Submit.svelte';
-  import Registration from '@app/base/register/Registration.svelte';
+  import Index from '@app/base/registrations/Index.svelte';
+  import New from '@app/base/registrations/New.svelte';
+  import Submit from '@app/base/registrations/Submit.svelte';
+  import View from '@app/base/registrations/View.svelte';
   import Error from '@app/Error.svelte';
   import type { Config } from '@app/config';
   import type { Session } from '@app/session';
@@ -13,25 +13,25 @@
   export let config: Config;
 </script>
 
-<Route path="register">
-  <Register {config} />
+<Route path="registrations">
+  <Index {config} />
 </Route>
 
-<Route path="register/:name" let:params let:location>
-  <Begin {config} subdomain={params.name} owner={getSearchParam("owner", location)} />
+<Route path="registrations/:name/form" let:params let:location>
+  <New {config} subdomain={params.name} owner={getSearchParam("owner", location)} />
 </Route>
 
-<Route path="register/:name/submit" let:params let:location>
+<Route path="registrations/:name/submit" let:params let:location>
   {#if session}
     <Submit {config} subdomain={params.name} owner={getSearchParam("owner", location)} {session} />
   {:else}
     <Error
       message={"You must connect your wallet to register"}
-      on:close={() => navigate("/register")}
+      on:close={() => navigate("/registrations")}
     />
   {/if}
 </Route>
 
 <Route path="registrations/:name" let:params>
-  <Registration {config} subdomain={params.name} />
+  <View {config} subdomain={params.name} />
 </Route>

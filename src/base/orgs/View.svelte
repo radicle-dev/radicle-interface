@@ -4,8 +4,8 @@
   import type { SvelteComponent } from 'svelte';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/register/registrar';
-  import { getRegistration } from '@app/base/register/registrar';
+  import type { Registration } from '@app/base/registrations/registrar';
+  import { getRegistration } from '@app/base/registrations/registrar';
   import { parseEnsLabel, explorerLink } from '@app/utils';
   import { Org } from './Org';
   import { session } from '@app/session';
@@ -14,6 +14,7 @@
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
   import SetName from '@app/ens/SetName.svelte';
+  import * as utils from '@app/utils';
 
   export let address: string;
   export let config: Config;
@@ -144,10 +145,12 @@
       <span slot="body">
         <p class="highlight"><strong>{address}</strong></p>
         <p>Sorry, there is no Org at this address.</p>
-        <p>
-          <a href={explorerLink(address, config)} target="_blank">View in explorer</a>
-          <span class="faded">↗</span>
-        </p>
+        {#if utils.isAddress(address)}
+          <p>
+            <a href={explorerLink(address, config)} target="_blank">View in explorer</a>
+            <span class="faded">↗</span>
+          </p>
+        {/if}
       </span>
       <span slot="actions">
         <button on:click={back}>

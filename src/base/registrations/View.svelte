@@ -29,6 +29,7 @@
   let registration: Registration | null = null;
   let name = `${subdomain}.${config.registrar.domain}`;
 
+  // TODO: Handle failure (network error)
   const loadRegistration = getRegistration(name, config)
     .then(r => {
       if (r) {
@@ -141,7 +142,7 @@
       </span>
 
       <span slot="actions">
-        <Link to={`/register/${subdomain}`} primary>Register &rarr;</Link>
+        <Link to={`/registrations/${subdomain}/form`} primary>Register &rarr;</Link>
       </span>
     </Modal>
   {/if}

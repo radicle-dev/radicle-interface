@@ -4,9 +4,12 @@
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as utils from '@app/utils';
+  import Error from '@app/Error.svelte';
 
   export let config: Config;
   export let query: string | null;
+
+  let error = false;
 
   onMount(() => {
     if (query) {
@@ -18,10 +21,22 @@
         alert("Radicle IDs are not yet supported");
       } else {
         let label = utils.parseEnsLabel(query, config);
-        navigate(`/registrations/${label}`, { replace: true });
+        if (label.includes(".")) {
+          error = true;
+        } else {
+          navigate(`/registrations/${label}`, { replace: true });
+        }
       }
     } else {
       navigate('/');
     }
   });
 </script>
+
+<main>
+  {#if error}
+    <Error on:close={() => navigate('/')}>
+      Invalid query string “{query}”
+    </Error>
+  {/if}
+</main>

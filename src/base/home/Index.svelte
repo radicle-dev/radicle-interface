@@ -3,7 +3,7 @@
 
   let input: string = "";
   const search = () => {
-    navigate(`/resolve?${
+    navigate(`/resolver/query?${
       new URLSearchParams({ q: input })
     }`);
   };

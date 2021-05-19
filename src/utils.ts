@@ -19,7 +19,7 @@ export function capitalize(s: string) {
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
 // returns the label, eg. 'cloudhead', otherwise `null`.
-export function parseEnsLabel(name: string, config: Config): string | null {
+export function parseEnsLabel(name: string, config: Config): string {
   let domain = config.registrar.domain.replace(".", "\\.");
   let label = name.replace(new RegExp(`\\.${domain}$`), "");
 

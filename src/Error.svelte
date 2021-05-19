@@ -24,7 +24,9 @@
   </span>
 
   <span slot="body">
-    <strong>Error:</strong> {body}
+    <slot>
+      <strong>Error:</strong> {body}
+    </slot>
   </span>
 
   <span slot="actions">

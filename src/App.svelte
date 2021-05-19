@@ -4,11 +4,11 @@
   import { getConfig } from '@app/config';
   import { session } from '@app/session';
 
-  import Home from '@app/base/home/Home.svelte';
-  import Vesting from '@app/base/vesting/Vesting.svelte';
-  import Register from '@app/base/register/Routes.svelte';
+  import Home from '@app/base/home/Index.svelte';
+  import Vesting from '@app/base/vesting/Index.svelte';
+  import Registrations from '@app/base/registrations/Routes.svelte';
   import Orgs from '@app/base/orgs/Routes.svelte';
-  import Resolve from '@app/base/resolve/Routes.svelte';
+  import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
 
   function handleKeydown(event: KeyboardEvent) {
@@ -43,9 +43,9 @@
         <Route path="vesting">
           <Vesting {config} session={$session} />
         </Route>
-        <Register {config} session={$session} />
+        <Registrations {config} session={$session} />
         <Orgs {config} />
-        <Resolve {config} />
+        <Resolver {config} />
       </Router>
     </div>
   </div>
