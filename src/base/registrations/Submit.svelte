@@ -20,7 +20,6 @@
   let registrationOwner = owner || session.address;
 
   const view = () => navigate(`/registrations/${subdomain}`)
-  const done = () => navigate(`/registrations`)
 
   onMount(async () => {
     try {

@@ -1,9 +1,7 @@
 <script lang="typescript">
   import { navigate } from "svelte-routing";
-  import { registrar } from './registrar';
   import type { Config } from '@app/config';
 
-  import Modal from '@app/Modal.svelte';
   import DomainInput from '@app/ens/DomainInput.svelte';
 
   export let config: Config;

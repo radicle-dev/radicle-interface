@@ -1,8 +1,6 @@
 <script lang="typescript">
-  import { getRegistration } from './registrar';
-  import { setRecords } from './resolver';
-  import type { EnsRecord } from './resolver';
-  import type { Registration } from './registrar';
+  import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
@@ -11,72 +9,72 @@
   import Form from '@app/Form.svelte';
   import type { Field } from '@app/Form.svelte';
   import { assert } from '@app/error';
+  import Error from '@app/Error.svelte';
 
-  enum State {
-    Idle,
-    Signing,
-    Pending,
-    Success,
+  import { getRegistration } from './registrar';
+  import type { EnsRecord } from './resolver';
+  import type { Registration } from './registrar';
+  import Update from './Update.svelte';
+
+  enum Status {
+    Loading,
+    Found,
+    NotFound,
     Failed,
   }
+
+  type State =
+      { status: Status.Loading }
+    | { status: Status.NotFound }
+    | { status: Status.Found, registration: Registration }
+    | { status: Status.Failed, error: string };
 
   export let subdomain: string;
   export let config: Config;
 
-  let state = State.Idle;
+  let state: State = { status: Status.Loading };
   let editable = false;
   let fields: Field[] = [];
-  let registration: Registration | null = null;
   let name = `${subdomain}.${config.registrar.domain}`;
+  let updateRecords: EnsRecord[] | null = null;
 
-  // TODO: Handle failure (network error)
-  const loadRegistration = getRegistration(name, config)
-    .then(r => {
-      if (r) {
-        fields = [
-          { name: "owner", placeholder: "",
-            value: r.owner, editable: false },
-          { name: "address", placeholder: "Not set",
-            value: r.address, editable: true },
-          { name: "url", label: "URL", placeholder: "Not set",
-            value: r.url, editable: true },
-          { name: "avatar", placeholder: "Not set",
-            value: r.avatar, editable: true },
-          { name: "twitter", placeholder: "Not set",
-            value: r.twitter, editable: true },
-          { name: "github", placeholder: "Not set",
-            value: r.github, editable: true },
-        ];
-        registration = r;
-      }
-      return r;
+  onMount(() => {
+    getRegistration(name, config)
+      .then(r => {
+        if (r) {
+          fields = [
+            { name: "owner", placeholder: "",
+              value: r.owner, editable: false },
+            { name: "address", placeholder: "Not set",
+              value: r.address, editable: true },
+            { name: "url", label: "URL", placeholder: "Not set",
+              value: r.url, editable: true },
+            { name: "avatar", placeholder: "Not set",
+              value: r.avatar, editable: true },
+            { name: "twitter", placeholder: "Not set",
+              value: r.twitter, editable: true },
+            { name: "github", placeholder: "Not set",
+              value: r.github, editable: true },
+          ];
+          state = { status: Status.Found, registration: r };
+        } else {
+          state = { status: Status.NotFound };
+        }
+        return r;
+      }).catch(err => {
+        state = { status: Status.Failed, error: err };
+      });
     });
 
-  const save = async (event: { detail: Field[] }) => {
-    assert(registration, "registration was found");
+  const onSave = async (event: { detail: Field[] }) => {
+    assert(state.status === Status.Found, "registration must be found");
 
-    const recs: EnsRecord[] = event.detail
+    updateRecords = event.detail
       .filter(r => r.editable && r.value !== null)
       .map(f => {
         assert(f.value !== null);
         return { name: f.name, value: f.value }
       });
-
-    try {
-      state = State.Signing;
-      const tx = await setRecords(subdomain, recs, registration.resolver, config);
-      state = State.Pending;
-      await tx.wait();
-      state = State.Success;
-    } catch (e) {
-      console.error(e);
-      state = State.Failed;
-    }
-  };
-
-  const done = () => {
-    // Reload page to load updates to the registration.
-    location.reload();
   };
 
   $: isOwner = (registration: Registration): boolean => {
@@ -96,64 +94,44 @@
   }
 </style>
 
-{#await loadRegistration}
+{#if state.status === Status.Loading}
   <Loading fadeIn />
-{:then registration}
-  {#if registration}
-    {#if state === State.Idle}
-      <main>
-        <header>
-          <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
-          <button
-            class="tiny primary" class:active={editable} disabled={!isOwner(registration)}
-            on:click={() => editable = !editable}>
-              Edit
-          </button>
-          <button class="tiny secondary" disabled={!isOwner(registration)}>
-            Transfer
-          </button>
-        </header>
-        <Form {editable} {fields} on:save={save} on:cancel={() => editable = false} />
-      </main>
-    {:else}
-      <Modal floating>
-        <span slot="title">
-          <div>🧾</div>
-          <div>Update registration</div>
-        </span>
-        <span slot="subtitle">
-          {#if state === State.Signing}
-            <p>Please confirm the transaction in your wallet</p>
-          {:else if state === State.Pending}
-            <p>Transaction is being processed by the network...</p>
-          {:else if state === State.Success}
-            <p>Your registration was successfully updated.</p>
-          {/if}
-        </span>
-        <span slot="actions">
-          {#if [State.Signing, State.Pending].includes(state)}
-            <Loading center small />
-          {:else if state === State.Success}
-            <button on:click={done}>
-              Done
-            </button>
-          {/if}
-        </span>
-      </Modal>
-    {/if}
-  {:else}
-    <Modal subtle>
-      <span slot="title">
-        {subdomain}.{config.registrar.domain}
-      </span>
+{:else if state.status === Status.Failed}
+  <Error title="Registration could not be loaded" on:close={() => navigate('/registrations')}>
+    {state.error}
+  </Error>
+{:else if state.status === Status.NotFound}
+  <Modal subtle>
+    <span slot="title">
+      {subdomain}.{config.registrar.domain}
+    </span>
 
-      <span slot="body">
-        <p>The name <strong>{subdomain}</strong> is not registered.</p>
-      </span>
+    <span slot="body">
+      <p>The name <strong>{subdomain}</strong> is not registered.</p>
+    </span>
 
-      <span slot="actions">
-        <Link to={`/registrations/${subdomain}/form`} primary>Register &rarr;</Link>
-      </span>
-    </Modal>
+    <span slot="actions">
+      <Link to={`/registrations/${subdomain}/form`} primary>Register &rarr;</Link>
+    </span>
+  </Modal>
+{:else if state.status === Status.Found}
+  <main>
+    <header>
+      <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
+      <button
+        class="tiny primary" class:active={editable} disabled={!isOwner(state.registration)}
+        on:click={() => editable = !editable}>
+          Edit
+      </button>
+      <button class="tiny secondary" disabled={!isOwner(state.registration)}>
+        Transfer
+      </button>
+    </header>
+    <Form {editable} {fields} on:save={onSave} on:cancel={() => editable = false} />
+  </main>
+
+  {#if updateRecords}
+    <Update {config} {subdomain} on:close={() => updateRecords = null}
+            registration={state.registration} records={updateRecords} />
   {/if}
-{/await}
+{/if}
