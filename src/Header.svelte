@@ -15,8 +15,6 @@
   export let session: Session | null;
   export let config: Config | null;
 
-  console.log(config);
-
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
 
