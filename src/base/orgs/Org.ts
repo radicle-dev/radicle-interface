@@ -32,6 +32,8 @@ export class Org {
   }
 
   async setName(name: string, config: Config): Promise<TransactionResponse> {
+    assert(config.signer);
+
     const org = new ethers.Contract(
       this.address,
       orgAbi,
@@ -78,6 +80,8 @@ export class Org {
     threshold: number,
     config: Config,
   ): Promise<TransactionResponse> {
+    assert(config.signer);
+
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
       orgFactoryAbi,
@@ -93,6 +97,8 @@ export class Org {
     owner: string,
     config: Config,
   ): Promise<TransactionResponse> {
+    assert(config.signer);
+
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
       orgFactoryAbi,

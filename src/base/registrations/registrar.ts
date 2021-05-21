@@ -84,6 +84,8 @@ export async function registrationFee(config: Config) {
 }
 
 export async function registerName(name: string, owner: string, config: Config) {
+  assert(config.signer);
+
   if (! name) return;
 
   let commitmentJson = window.localStorage.getItem('commitment');
@@ -119,6 +121,8 @@ async function commitAndRegister(name: string, owner: string, config: Config) {
 }
 
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config) {
+  assert(config.signer);
+
   state.set(State.Committing);
 
   const owner = config.signer;
@@ -188,10 +192,10 @@ async function permitSignature(
 }
 
 async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
+  assert(config.signer);
   state.set(State.Registering);
 
-  const signer = config.provider.getSigner();
-  const tx = await registrar(config).connect(signer).register(
+  const tx = await registrar(config).connect(config.signer).register(
     name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 }
   );
   console.log("Sent", tx);
