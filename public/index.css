@@ -35,6 +35,7 @@
 	--color-negative-2: #623237;
 	--color-negative-6: #ffd4d4;
 	--color-foreground: #ffffff;
+	--color-foreground-faded: #777788;
 	--color-foreground-1: #242e38;
 	--color-foreground-2: #29343d;
 	--color-foreground-3: #333e47;
@@ -44,7 +45,6 @@
 	--color-background: #0b131a;
 	--color-glow: #5555ff22;
 	--color-glow-error: #ff555522;
-	--color-subtle: #777;
 
 	--font-family-sans-serif: Inter, sans-serif;
 	--font-family-monospace: monospace;
@@ -87,11 +87,11 @@ body, input, textarea, button {
 }
 
 button {
-	color: white;
+	color: var(--color-foreground-6);
 	background: transparent;
 	font-size: 1rem;
 	padding: 1rem 1.5rem;
-	border: 1px solid var(--color-foreground);
+	border: 1px solid var(--color-foreground-6);
 	border-radius: var(--border-radius);
 	cursor: pointer;
 	min-width: 8rem;
@@ -129,6 +129,8 @@ button.primary[disabled] {
 }
 button[disabled] {
 	cursor: not-allowed !important;
+	color: var(--color-foreground-faded);
+	border-color: var(--color-foreground-faded);
 }
 button[data-waiting] {
 	cursor: wait !important;
@@ -223,11 +225,11 @@ input.wide {
 	color: var(--color-secondary);
 }
 .subtle {
-	color: var(--color-subtle);
+	color: var(--color-foreground-faded);
 	font-style: italic;
 }
 .faded {
-	color: var(--color-subtle);
+	color: var(--color-foreground-faded);
 }
 .label {
 	color: var(--color-secondary);

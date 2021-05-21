@@ -95,7 +95,7 @@
 </style>
 
 {#if state.status === Status.Loading}
-  <Loading fadeIn />
+  <Loading />
 {:else if state.status === Status.Failed}
   <Error title="Registration could not be loaded" on:close={() => navigate('/registrations')}>
     {state.error}
