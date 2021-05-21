@@ -19,7 +19,8 @@ module.exports = {
     {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
   optimize: {
-    "bundle": true,
+    /* Setting `bundle: true` breaks .json imports in snowpack 3.5.0 */
+    "bundle": false,
   },
   packageOptions: {
     polyfillNode: true,
