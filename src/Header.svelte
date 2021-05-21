@@ -13,7 +13,9 @@
   import type { Config } from '@app/config';
 
   export let session: Session | null;
-  export let config: Config;
+  export let config: Config | null;
+
+  console.log(config);
 
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
@@ -78,6 +80,13 @@
     margin: 0 2rem;
     border-radius: var(--border-radius);
   }
+  .network.unavailable {
+    color: #888;
+    background-color: #ffffff11;
+  }
+  .network:last-child {
+    margin-right: 0;
+  }
 </style>
 
 {#if $error}
@@ -98,17 +107,21 @@
     <div class="nav">
       <a use:link href="/registrations">Register</a>
       <a use:link href="/vesting/">Vesting</a>
-      {#if config.network.name === 'ropsten'}
+      {#if config && config.network.name === 'ropsten'}
         <a use:link href="/orgs/">Orgs</a>
       {/if}
     </div>
   </div>
 
   <div>
-    {#if config.network.name == 'ropsten'}
+    {#if config && config.network.name == 'ropsten'}
       <span class="network">Ropsten</span>
-    {:else if config.network.name == 'rinkeby'}
+    {:else if config && config.network.name == 'rinkeby'}
       <span class="network">Rinkeby</span>
+    {:else if config && config.network.name == 'homestead'}
+      <!-- Don't show anything -->
+    {:else}
+      <span class="network unavailable">No Network</span>
     {/if}
 
     {#if address}
@@ -127,7 +140,7 @@
           {formatAddress(address)}
         {/if}
       </button>
-    {:else}
+    {:else if config}
       <Connect className="small" {config} />
     {/if}
   </div>

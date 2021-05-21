@@ -40,6 +40,12 @@
       transparent 70%
     );
   }
+  .modal.modal-subtle.error {
+    background: radial-gradient(
+      var(--color-glow-error) 0%,
+      transparent 70%
+    );
+  }
   .modal-title {
     font-size: 1.25rem;
     font-weight: bold;

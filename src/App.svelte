@@ -10,6 +10,8 @@
   import Orgs from '@app/base/orgs/Routes.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
+  import Loading from '@app/Loading.svelte';
+  import Modal from '@app/Modal.svelte';
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
@@ -30,10 +32,11 @@
 </style>
 
 <svelte:window on:keydown={handleKeydown} />
-{#await getConfig()}
-  <!-- Loading wallet -->
-{:then config}
-  <div class="app">
+<div class="app">
+  {#await getConfig()}
+    <!-- Loading wallet -->
+    <Loading center />
+  {:then config}
     <Header session={$session} {config} />
     <div class="wrapper">
       <Router>
@@ -48,7 +51,18 @@
         <Resolver {config} />
       </Router>
     </div>
-  </div>
-{:catch}
-  <!-- Show error -->
-{/await}
+  {:catch err}
+    <div class="wrapper">
+      <Modal error subtle>
+        <span slot="title">
+          <h3>👻</h3>
+          <div>Error connecting to network</div>
+        </span>
+
+        <span slot="body">
+          {err}
+        </span>
+      </Modal>
+    </div>
+  {/await}
+</div>

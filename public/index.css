@@ -43,6 +43,7 @@
 	--color-foreground-6: #d3dee8;
 	--color-background: #0b131a;
 	--color-glow: #5555ff22;
+	--color-glow-error: #ff555522;
 	--color-subtle: #777;
 
 	--font-family-sans-serif: Inter, sans-serif;

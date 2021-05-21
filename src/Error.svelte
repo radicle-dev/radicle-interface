@@ -10,11 +10,12 @@
   export let subtitle: string = "";
   export let message: string = "";
   export let floating = false;
+  export let subtle = false;
 
   let body = message || (error && error.message) || "";
 </script>
 
-<Modal on:close error {floating}>
+<Modal on:close error {floating} {subtle}>
   <span slot="title">
     {title}
   </span>

@@ -70,7 +70,7 @@
   <Modal floating>
     <div slot="title">
       {#if mismatchError}
-        🦉
+        👻
       {:else}
         🖊️
       {/if}
