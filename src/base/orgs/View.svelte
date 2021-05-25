@@ -152,7 +152,7 @@
         </div>
         <div>
           {#if isOwner(org)}
-            <button class="tiny primary" on:click={setName}>
+            <button class="tiny secondary" on:click={setName}>
               Set
             </button>
           {/if}
