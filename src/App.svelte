@@ -14,6 +14,7 @@
   import Modal from '@app/Modal.svelte';
 
   function handleKeydown(event: KeyboardEvent) {
+    // TODO: Fix this when there's a modal.
     if (event.key === 'Enter') {
       (document.querySelector('button.primary') as HTMLElement).click();
     }

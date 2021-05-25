@@ -2,6 +2,7 @@
   export let floating = false;
   export let error = false;
   export let subtle = false;
+  export let small = false;
 </script>
 
 <style>
@@ -57,6 +58,9 @@
   }
   .modal-subtitle {
     color: var(--color-secondary);
+    max-width: 90%;
+    margin: 0 auto;
+    line-height: 1.5;
   }
   .modal-body {
     overflow-x: hidden;
@@ -68,6 +72,9 @@
     margin-top: 2rem;
     text-align: center;
   }
+  .modal-small .modal-subtitle {
+    color: var(--color-foreground);
+  }
 </style>
 
 {#if floating}
@@ -75,14 +82,14 @@
 {/if}
 
 <div class:modal-floating={floating}>
-  <div class="modal" class:error class:modal-subtle={subtle}>
+  <div class="modal" class:error class:modal-subtle={subtle} class:modal-small={small}>
     <div class="modal-title">
       <slot name="title"></slot>
     </div>
     <div class="modal-subtitle">
       <slot name="subtitle"></slot>
     </div>
-    {#if $$slots.body}
+    {#if $$slots.body && !small}
       <div class="modal-body">
         <slot name="body"></slot>
       </div>

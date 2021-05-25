@@ -7,7 +7,6 @@
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
   import { parseEnsLabel, explorerLink } from '@app/utils';
-  import { Org } from './Org';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -15,6 +14,9 @@
   import Icon from '@app/Icon.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import * as utils from '@app/utils';
+
+  import { Org } from './Org';
+  import TransferOwnership from './TransferOwnership.svelte';
 
   export let address: string;
   export let config: Config;
@@ -32,6 +34,11 @@
   let setNameForm: typeof SvelteComponent | null = null;
   const setName = () => {
     setNameForm = SetName;
+  };
+
+  let transferOwnerForm: typeof SvelteComponent | null = null;
+  const transferOwnership = () => {
+    transferOwnerForm = TransferOwnership;
   };
 
   $: label = name && parseEnsLabel(name, config);
@@ -61,8 +68,8 @@
   }
   .fields {
     display: grid;
-    grid-template-columns: 1fr 8fr;
-    grid-gap: 1rem;
+    grid-template-columns: 1fr 4fr 2fr;
+    grid-gap: 1rem 2rem;
   }
   .fields > div {
     justify-self: start;
@@ -119,8 +126,18 @@
       </header>
 
       <div class="fields">
-        <div class="label">Address</div><div>{org.address}</div>
+        <!-- Address -->
+        <div class="label">Address</div><div>{org.address}</div><div></div>
+        <!-- Owner -->
         <div class="label">Owner</div><div>{org.safe}</div>
+        <div>
+          {#if isOwner(org)}
+            <button class="tiny secondary" on:click={transferOwnership}>
+              Transfer
+            </button>
+          {/if}
+        </div>
+        <!-- Name -->
         <div class="label">Name</div>
         <div>
           {#await org.lookupAddress(config)}
@@ -128,14 +145,17 @@
           {:then name}
             {#if name}
               <Link to={`/registrations/${label}`}>{name}</Link>
-            {:else if isOwner(org)}
-              <button class="tiny primary" on:click={setName}>
-                Set
-              </button>
             {:else}
               <span class="subtle">Not set</span>
             {/if}
           {/await}
+        </div>
+        <div>
+          {#if isOwner(org)}
+            <button class="tiny primary" on:click={setName}>
+              Set
+            </button>
+          {/if}
         </div>
       </div>
     </main>
@@ -160,6 +180,7 @@
     </Modal>
   {/if}
   <svelte:component this={setNameForm} {org} {config} on:close={() => setNameForm = null} />
+  <svelte:component this={transferOwnerForm} {org} {config} on:close={() => transferOwnerForm = null} />
 {:catch err}
   <Error error={err} />
 {/await}

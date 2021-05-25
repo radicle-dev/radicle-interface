@@ -78,7 +78,7 @@
 
     <div slot="subtitle">
       {#if mismatchError}
-        <div class="rror">
+        <div class="error">
           The name <strong>{name}.{config.registrar.domain}</strong> does not
           resolve to <strong>{formatAddress(org.address)}</strong>. Please update
           The ENS record for {name}.{config.registrar.domain} to

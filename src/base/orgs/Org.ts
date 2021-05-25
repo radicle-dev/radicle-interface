@@ -13,6 +13,7 @@ const orgFactoryAbi = [
 
 const orgAbi = [
   "function owner() view returns (address)",
+  "function setOwner(address)",
   "function setName(string, address) returns (bytes32)",
 ];
 
@@ -41,6 +42,17 @@ export class Org {
     );
     return org.setName(name, config.provider.network.ensAddress,
       { gasLimit: 200_000 });
+  }
+
+  async setOwner(address: string, config: Config): Promise<TransactionResponse> {
+    assert(config.signer);
+
+    const org = new ethers.Contract(
+      this.address,
+      orgAbi,
+      config.signer
+    );
+    return org.setOwner(address);
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {

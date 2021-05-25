@@ -10,6 +10,7 @@
     margin: auto 0;
     width: 70px;
     text-align: center;
+    cursor: wait;
   }
   .spinner.center {
     margin: auto auto;
