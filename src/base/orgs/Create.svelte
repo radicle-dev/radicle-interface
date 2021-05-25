@@ -1,5 +1,6 @@
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
   import type { Err } from '@app/error';
@@ -83,7 +84,7 @@
     </span>
 
     <span slot="actions">
-      <button on:click={() => dispatch('close')}>
+      <button on:click={() => navigate(`/orgs/${org.address}`)}>
         Done
       </button>
     </span>

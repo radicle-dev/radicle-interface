@@ -26,7 +26,7 @@
 
   onMount(async () => {
     name = await config.provider.lookupAddress(address);
-    registration = await getRegistration(name, config);
+    if (name) registration = await getRegistration(name, config);
   });
 
   let setNameForm: typeof SvelteComponent | null = null;

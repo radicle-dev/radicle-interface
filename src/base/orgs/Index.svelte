@@ -4,12 +4,18 @@
   import { session } from '@app/session';
   import Create from '@app/base/orgs/Create.svelte';
   import type { Config } from '@app/config';
+  import Error from '@app/Error.svelte';
 
   export let config: Config;
 
   let modal: typeof SvelteComponent = Create;
-
-  $: owner = $session && $session.address;
+  let owner: string | null = $session && $session.address;
 </script>
 
-<svelte:component this={modal} {owner} {config} on:close={() => navigate('/')} />
+{#if owner}
+  <svelte:component this={modal} {owner} {config} on:close={() => navigate('/')} />
+{:else}
+  <Error on:close={() => window.history.back()}>
+    Not connected.
+  </Error>
+{/if}
