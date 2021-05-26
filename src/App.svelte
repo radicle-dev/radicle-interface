@@ -31,6 +31,7 @@
     justify-content: center;
     min-height: 24rem;
     padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 </style>
 
