@@ -123,7 +123,7 @@
         on:click={() => editable = !editable}>
           Edit
       </button>
-      <button class="tiny secondary" disabled={!isOwner(state.registration)}>
+      <button class="tiny secondary" disabled>
         Transfer
       </button>
     </header>
