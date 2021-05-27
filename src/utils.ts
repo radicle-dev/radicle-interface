@@ -9,9 +9,13 @@ export function formatBalance(n: BigNumber) {
 }
 
 export function formatAddress(addr: string) {
-  return addr.substring(0, 6)
+  return formatHash(addr);
+}
+
+export function formatHash(hash: string) {
+  return hash.substring(0, 6)
     + '...'
-    + addr.substring(addr.length - 4, addr.length);
+    + hash.substring(hash.length - 4, hash.length);
 }
 
 export function capitalize(s: string) {
