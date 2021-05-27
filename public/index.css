@@ -61,6 +61,7 @@ body {
 	color: white;
 	text-align: left;
 	background-color: var(--color-background);
+	-webkit-font-smoothing: antialiased;
 }
 
 html {
@@ -71,6 +72,15 @@ html {
 	-ms-text-size-adjust: 100%;
 	-ms-overflow-style: scrollbar;
 	-webkit-tap-highlight-color: transparent;
+}
+
+::-moz-selection {
+	background: var(--color-primary);
+	color: var(--color-background);
+}
+::selection {
+	background: var(--color-primary);
+	color: var(--color-background);
 }
 
 code {
