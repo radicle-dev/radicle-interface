@@ -13,6 +13,7 @@
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
   import SetName from '@app/ens/SetName.svelte';
+  import Project from '@app/base/projects/Widget.svelte';
   import * as utils from '@app/utils';
 
   import { Org } from './Org';
@@ -90,6 +91,9 @@
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
   }
+  .projects {
+    margin-top: 2rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
@@ -157,6 +161,20 @@
             </button>
           {/if}
         </div>
+      </div>
+
+      <div class="projects">
+        {#await org.getProjects(config)}
+          <Loading center />
+        {:then projects}
+          {#each projects as project}
+            <Project {project} />
+          {/each}
+        {:catch err}
+          <div class="error">
+            Error loading projects: {err}.
+          </div>
+        {/await}
       </div>
     </main>
   {:else}

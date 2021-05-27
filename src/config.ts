@@ -20,6 +20,7 @@ export class Config {
   registrar: { address: string, domain: string };
   radToken: { address: string };
   orgFactory: { address: string };
+  orgs: { subgraph: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
@@ -41,6 +42,7 @@ export class Config {
     this.registrar = cfg.registrar;
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
+    this.orgs = cfg.orgs;
     this.provider = provider;
     this.signer = signer;
     this.gasLimits = gasLimits;

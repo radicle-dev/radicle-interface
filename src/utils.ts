@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 import type { BigNumber } from "ethers";
+import multibase from 'multibase';
 import type { Config } from '@app/config';
+import { assert } from '@app/error';
 
 export function formatBalance(n: BigNumber) {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
@@ -58,4 +60,48 @@ export function explorerLink(addr: string, config: Config): string {
     return `https://ropsten.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
+}
+
+// Query a subgraph.
+export async function querySubgraph(
+  query: string,
+  variables: Record<string, any>,
+  config: Config
+): Promise<any> {
+  const response = await fetch(config.orgs.subgraph, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    })
+  });
+  const json = await response.json()
+
+  return json.data;
+}
+
+// Create a Radicle ID from a root hash.
+export function formatRadicleId(hash: Uint8Array): string {
+  // Remove any zero-padding from the byte array. SHA1 is 20 bytes long.
+  const sha1Bytes = 20;
+  const suffix = hash.slice(hash.length - sha1Bytes);
+
+  // Create a multihash by adding prefix 17 for SHA-1 and 20 for the hash length.
+  const multihash = new Uint8Array([17, 20, ...suffix]);
+  const payload = multibase.encode("base32z", multihash);
+
+  return `rad:git:${new TextDecoder().decode(payload)}`;
+}
+
+// Create a project hash from a hash and format.
+export function formatProjectHash(hash: Uint8Array, format: number): string {
+  assert(format === 0x0, "Only SHA1 commit hashes are supported");
+
+  // Remove any zero-padding from the byte array. SHA1 is 20 bytes long.
+  const sha1Bytes = 20;
+  const suffix = hash.slice(hash.length - sha1Bytes);
+  return ethers.utils.hexlify(suffix).replace(/^0x/, '');
 }

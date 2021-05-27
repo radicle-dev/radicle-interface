@@ -2,8 +2,19 @@ import * as ethers from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
 import { assert } from '@app/error';
-
+import * as utils from '@app/utils';
 import type { Config } from '@app/config';
+import type { Project } from '@app/base/projects/Project';
+
+const GetProjects = `
+  query GetProjects($org: ID!) {
+    projects(where: { org: $org }) {
+      id
+      stateHash
+      stateHashFormat
+    }
+  }
+`;
 
 const orgFactoryAbi = [
   "function createOrg(address) returns (address)",
@@ -24,7 +35,7 @@ export class Org {
   constructor(address: string, safe: string) {
     assert(ethers.utils.isAddress(address), "address must be valid");
 
-    this.address = address;
+    this.address = address.toLowerCase(); // Don't store address checksum.
     this.safe = safe;
   }
 
@@ -53,6 +64,25 @@ export class Org {
       config.signer
     );
     return org.setOwner(address);
+  }
+
+  async getProjects(config: Config): Promise<Array<Project>> {
+    const result = await utils.querySubgraph(GetProjects, { org: this.address }, config);
+    let projects: Project[] = [];
+
+    for (let p of result.projects) {
+      try {
+        p.id = utils.formatRadicleId(ethers.utils.arrayify(p.id));
+        p.stateHash = utils.formatProjectHash(
+          ethers.utils.arrayify(p.stateHash),
+          p.stateHashFormat
+        );
+        projects.push(p);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return projects;
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {

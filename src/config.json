@@ -21,6 +21,9 @@
     },
     "orgFactory": {
       "address": "0xe1814B14430CF14f0950A29FF26217115B815676"
+    },
+    "orgs": {
+      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten"
     }
   }
 }
