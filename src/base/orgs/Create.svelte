@@ -128,7 +128,7 @@
         </button>
 
         <button on:click={() => dispatch('close')} class="text">
-          Cancel
+          Back
         </button>
       {/if}
     </span>

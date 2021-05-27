@@ -24,7 +24,7 @@
   let registration: Registration | null = null;
   let name: string | null = null;
 
-  const back = () => navigate("/orgs");
+  const back = () => window.history.back();
 
   onMount(async () => {
     name = await config.provider.lookupAddress(address);

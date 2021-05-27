@@ -13,7 +13,7 @@
 </script>
 
 {#if owner}
-  <svelte:component this={modal} {owner} {config} on:close={() => navigate('/')} />
+  <svelte:component this={modal} {owner} {config} on:close={() => window.history.back()} />
 {:else}
   <Error on:close={() => window.history.back()}>
     Not connected.
