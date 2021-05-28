@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { Link } from 'svelte-routing';
   import type { SvelteComponent } from 'svelte';
-  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
