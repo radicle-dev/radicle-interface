@@ -24,6 +24,7 @@ export class Config {
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
+  seed: { url: string };
 
   constructor(
     network: { name: string, chainId: number },
@@ -46,6 +47,7 @@ export class Config {
     this.provider = provider;
     this.signer = signer;
     this.gasLimits = gasLimits;
+    this.seed = config.seed;
   }
 }
 

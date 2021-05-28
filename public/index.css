@@ -249,6 +249,10 @@ input.wide {
 	font-weight: bold !important;
 }
 
+span.small {
+	font-size: 0.75rem;
+}
+
 button.error:hover {
 	background-color: var(--color-negative);
 }

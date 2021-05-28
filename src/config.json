@@ -25,5 +25,8 @@
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten"
     }
+  },
+  "seed": {
+    "url": "http://sprout.radicle.xyz"
   }
 }

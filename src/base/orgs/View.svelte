@@ -168,7 +168,7 @@
           <Loading center />
         {:then projects}
           {#each projects as project}
-            <Project {project} />
+            <Project {project} {config} />
           {/each}
         {:catch err}
           <div class="error">
