@@ -12,6 +12,7 @@
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
+  import Blocky from '@app/Blocky.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import * as utils from '@app/utils';
@@ -102,11 +103,13 @@
   {#if org}
     <main>
       <header>
-        {#if registration && registration.avatar}
-          <div class="avatar">
+        <div class="avatar">
+          {#if registration && registration.avatar}
             <img src={registration.avatar} alt="avatar" />
-          </div>
-        {/if}
+          {:else}
+            <Blocky address={org.address} />
+          {/if}
+        </div>
         <div class="info">
           <span class="title bold">{registration ? label : address}</span>
           <div class="links">

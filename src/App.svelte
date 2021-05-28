@@ -39,7 +39,9 @@
 <div class="app">
   {#await getConfig()}
     <!-- Loading wallet -->
-    <Loading center />
+    <div class="wrapper">
+      <Loading center />
+    </div>
   {:then config}
     <Header session={$session} {config} />
     <div class="wrapper">

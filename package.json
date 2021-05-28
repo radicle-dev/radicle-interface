@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@snowpack/plugin-typescript": "^1.2.1",
+    "ethereum-blockies": "^0.1.1",
     "ethers": "^5.0.31",
     "multibase": "^4.0.4",
     "svelte": "^3.32.3",
