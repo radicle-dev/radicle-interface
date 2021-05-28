@@ -1,6 +1,7 @@
 <script type="typescript">
   import { onMount } from 'svelte';
   import type { Config } from '@app/config';
+  import Loading from '@app/Loading.svelte';
 
   import { getMetadata } from './Project';
   import type { Project, Meta } from './Project';
@@ -9,18 +10,20 @@
 
   type State =
       { status: Status.Loading }
-    | { status: Status.Loaded, meta: Meta | null }
+    | { status: Status.Loaded }
     | { status: Status.Error, error: string };
 
   export let project: Project;
   export let config: Config;
 
   let state: State = { status: Status.Loading };
+  let meta: Meta | null = null;
 
   onMount(async () => {
     try {
-      const meta = await getMetadata(project.id, config);
-      state = { status: Status.Loaded, meta };
+      const result = await getMetadata(project.id, config);
+      state = { status: Status.Loaded };
+      meta = result;
     } catch (err) {
       state = { status: Status.Error, error: err.message };
     }
@@ -41,16 +44,25 @@
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
   }
+  article .id {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>
 
 <article>
-  {#if state.status == Status.Loaded && state.meta}
-    <div class="name">{state.meta.name}</div>
-    <div class="description">{state.meta.description}</div>
+  {#if meta}
+    <div class="name">{meta.name}</div>
+    <div class="description">{meta.description}</div>
     <div class="id">{project.id}</div>
     <div class="anchor">commit {project.stateHash}</div>
   {:else}
-    <div class="id">{project.id}</div>
+    <div class="id">
+      <span>{project.id}</span>
+      {#if state.status == Status.Loading}
+        <Loading small />
+      {/if}
+    </div>
     <div class="anchor">commit {project.stateHash}</div>
     {#if state.status == Status.Error}
       <span class="faded small"><strong>Error</strong>: {state.error}</span>
