@@ -95,6 +95,9 @@
   .projects {
     margin-top: 2rem;
   }
+  .projects .project {
+    margin-bottom: 1rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
@@ -171,7 +174,9 @@
           <Loading center />
         {:then projects}
           {#each projects as project}
-            <Project {project} {config} />
+            <div class="project">
+              <Project {project} {config} />
+            </div>
           {/each}
         {:catch err}
           <div class="error">
