@@ -12,7 +12,7 @@
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
-  import Blocky from '@app/Blocky.svelte';
+  import Blockies from '@app/Blockies.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import * as utils from '@app/utils';
@@ -110,7 +110,7 @@
           {#if registration && registration.avatar}
             <img src={registration.avatar} alt="avatar" />
           {:else}
-            <Blocky address={org.address} />
+            <Blockies address={org.address} />
           {/if}
         </div>
         <div class="info">

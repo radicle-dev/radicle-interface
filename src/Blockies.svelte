@@ -1,17 +1,17 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import blockies from 'ethereum-blockies';
+  import { createIcon } from '@app/blockies';
 
   export let address: string;
 
   let container: HTMLElement;
 
   onMount(() => {
-    const seed = address;
-    const avatar = blockies.create({
+    const seed = address.toLowerCase();
+    const avatar = createIcon({
       seed,
       size: 8,
-      scale: 16
+      scale: 16,
     });
     container.style.backgroundImage = `url(${avatar.toDataURL()})`;
   });
@@ -27,5 +27,4 @@
   }
 </style>
 
-<div class="icon" bind:this={container}>
-</div>
+<div class="icon" bind:this={container}></div>
