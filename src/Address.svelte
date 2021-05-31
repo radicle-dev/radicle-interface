@@ -1,4 +1,5 @@
 <script lang="typescript">
+  import { onMount } from 'svelte';
   import { ethers } from 'ethers';
   import { explorerLink } from '@app/utils';
   import Blockies from '@app/Blockies.svelte';
@@ -8,6 +9,16 @@
   export let config: Config;
 
   let checksumAddress = ethers.utils.getAddress(address);
+  let isContract = false;
+  let isOrg = false;
+
+  onMount(async () => {
+    let code = await config.provider.getCode(address);
+    let bytes = ethers.utils.arrayify(code);
+
+    isContract = bytes.length > 0;
+    isOrg = ethers.utils.keccak256(bytes) === config.orgs.contractHash;
+  });
 </script>
 
 <style>
@@ -31,4 +42,9 @@
 <div class="address">
   <span class="icon"><Blockies address={address} /></span>
   <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
+  {#if isOrg}
+    <span class="badge">org</span>
+  {:else if isContract}
+    <span class="badge">contract</span>
+  {/if}
 </div>

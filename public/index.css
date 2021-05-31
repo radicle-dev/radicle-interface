@@ -36,6 +36,7 @@
 	--color-negative-6: #ffd4d4;
 	--color-foreground: #ffffff;
 	--color-foreground-faded: #777788;
+	--color-foreground-background: #77778811;
 	--color-foreground-1: #242e38;
 	--color-foreground-2: #29343d;
 	--color-foreground-3: #333e47;
@@ -247,6 +248,18 @@ input.wide {
 }
 .bold {
 	font-weight: bold !important;
+}
+.badge {
+	color: var(--color-foreground-faded);
+	background: var(--color-foreground-background);
+	border-radius: var(--border-radius);
+	padding: 0.125rem 0.5rem;
+	margin: 0 0.5rem;
+	font-size: 0.75rem;
+}
+.badge.tertiary {
+	color: var(--color-tertiary);
+	background: var(--color-tertiary-background);
 }
 
 span.small {

@@ -20,7 +20,7 @@ export class Config {
   registrar: { address: string, domain: string };
   radToken: { address: string };
   orgFactory: { address: string };
-  orgs: { subgraph: string };
+  orgs: { subgraph: string, contractHash: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
