@@ -1,5 +1,6 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
+  import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
   import { explorerLink } from '@app/utils';
   import Blockies from '@app/Blockies.svelte';
@@ -41,10 +42,13 @@
 
 <div class="address">
   <span class="icon"><Blockies address={address} /></span>
-  <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
   {#if isOrg}
+    <a use:link href={`/orgs/${address}`}>{checksumAddress}</a>
     <span class="badge">org</span>
   {:else if isContract}
+    <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
     <span class="badge">contract</span>
+  {:else}
+    <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
   {/if}
 </div>
