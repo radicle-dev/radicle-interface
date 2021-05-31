@@ -67,7 +67,7 @@
 {#if error}
   <Error {error} floating on:close />
 {:else if org} <!-- Org created -->
-  <Modal floating on:close>
+  <Modal on:close>
     <span slot="title">
       🎉
     </span>
@@ -90,7 +90,7 @@
     </span>
   </Modal>
 {:else} <!-- Org creation flow -->
-  <Modal floating on:close>
+  <Modal on:close>
     <span slot="title">
       <div>🎪</div>
       <span>Create an Org</span>
