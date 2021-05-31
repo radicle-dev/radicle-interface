@@ -1,0 +1,34 @@
+<script lang="typescript">
+  import { ethers } from 'ethers';
+  import { explorerLink } from '@app/utils';
+  import Blockies from '@app/Blockies.svelte';
+  import type { Config } from '@app/config';
+
+  export let address: string;
+  export let config: Config;
+
+  let checksumAddress = ethers.utils.getAddress(address);
+</script>
+
+<style>
+  .address {
+    display: flex;
+    align-items: center;
+  }
+  .icon {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    min-width: 1rem;
+    min-height: 1rem;
+  }
+  .address a {
+    border-bottom: none;
+  }
+</style>
+
+<div class="address">
+  <span class="icon"><Blockies address={address} /></span>
+  <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
+</div>

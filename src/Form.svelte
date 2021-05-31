@@ -12,10 +12,13 @@
   import { createEventDispatcher } from 'svelte';
   import { link } from 'svelte-routing';
   import { capitalize, isUrl, isAddress } from '@app/utils';
+  import Address from '@app/Address.svelte';
+  import type { Config } from '@app/config';
 
   export let fields: Field[];
   export let editable = false;
   export let disabled = false;
+  export let config: Config;
 
   const dispatch = createEventDispatcher();
   const save = () => dispatch('save', fields);
@@ -93,7 +96,7 @@
             {#if isUrl(field.value)}
               <a href="{field.value}" target="_blank">{field.value}</a>
             {:else if isAddress(field.value)}
-              <a use:link href={`/resolver/query?q=${field.value}`} class="address">{field.value}</a>
+              <Address address={field.value} {config} />
             {:else}
               {field.value}
             {/if}

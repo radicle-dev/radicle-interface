@@ -127,7 +127,7 @@
         Transfer
       </button>
     </header>
-    <Form {editable} {fields} on:save={onSave} on:cancel={() => editable = false} />
+    <Form {config} {editable} {fields} on:save={onSave} on:cancel={() => editable = false} />
   </main>
 
   {#if updateRecords}

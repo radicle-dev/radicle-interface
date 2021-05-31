@@ -62,6 +62,8 @@ export function getSearchParam(key: string, location: RouteLocation): string | n
 export function explorerLink(addr: string, config: Config): string {
   if (config.network.name == "ropsten") {
     return `https://ropsten.etherscan.io/address/${addr}`;
+  } else if (config.network.name == "rinkeby") {
+    return `https://rinkeby.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
 }

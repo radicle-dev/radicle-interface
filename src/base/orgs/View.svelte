@@ -14,6 +14,7 @@
   import Blockies from '@app/Blockies.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import Project from '@app/base/projects/Widget.svelte';
+  import Address from '@app/Address.svelte';
   import * as utils from '@app/utils';
 
   import { Org } from './Org';
@@ -136,9 +137,12 @@
 
       <div class="fields">
         <!-- Address -->
-        <div class="label">Address</div><div>{org.address}</div><div></div>
+        <div class="label">Address</div>
+        <div><Address {config} address={org.address} /></div>
+        <div></div>
         <!-- Owner -->
-        <div class="label">Owner</div><div>{org.safe}</div>
+        <div class="label">Owner</div>
+        <div><Address {config} address={org.safe} /></div>
         <div>
           {#if isOwner(org)}
             <button class="tiny secondary" on:click={transferOwnership}>
