@@ -39,23 +39,56 @@
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
+  article .description {
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+  }
   article .anchor {
     color: var(--color-secondary);
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
   }
-  article .id {
+  article .id, article .anchor {
     display: flex;
     justify-content: space-between;
+  }
+  article .id .urn {
+    visibility: hidden;
+    color: var(--color-foreground-faded);
+    font-weight: normal;
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
+  }
+  article:hover .id .urn {
+    visibility: visible;
+  }
+  article .emoji {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.5rem;
   }
 </style>
 
 <article>
   {#if meta}
-    <div class="name">{meta.name}</div>
+    <div class="id">
+      <span class="name">{meta.name}</span><span class="urn">{project.id}</span>
+    </div>
     <div class="description">{meta.description}</div>
-    <div class="id">{project.id}</div>
-    <div class="anchor">commit {project.stateHash}</div>
+    <div class="anchor">
+      <span>commit {project.stateHash}</span>
+      <span>
+        {#each meta.maintainers as user}
+          <span class="emoji" style={`background-color: rgb(${user.avatar.background.r}, ${user.avatar.background.g}, ${user.avatar.background.b})`}>
+            {user.avatar.emoji}
+          </span>
+        {/each}
+      </span>
+    </div>
   {:else}
     <div class="id">
       <span>{project.id}</span>

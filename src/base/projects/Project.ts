@@ -22,8 +22,7 @@ export async function getMetadata(urn: string, config: Config): Promise<Meta | n
     method: 'GET',
     headers: {
       'Accept': 'application/json',
-    },
-    mode: 'no-cors'
+    }
   });
 
   if (! response.ok) {
