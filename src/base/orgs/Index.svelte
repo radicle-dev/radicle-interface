@@ -59,7 +59,7 @@
     {#each orgs as org}
       <div class="org">
         <Link to={`/orgs/${org.address}`}>
-          <Blockies address={org.address} />
+          <Blockies glowOnHover address={org.address} />
         </Link>
       </div>
     {/each}

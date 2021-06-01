@@ -3,6 +3,7 @@
   import { createIcon } from '@app/blockies';
 
   export let address: string;
+  export let glowOnHover = false;
 
   let container: HTMLElement;
 
@@ -27,6 +28,9 @@
     background-repeat: no-repeat;
     border-radius: 50%;
   }
+  .icon.glowOnHover:hover {
+    box-shadow: 0 0 3rem var(--color-secondary);
+  }
 </style>
 
-<div class="icon" bind:this={container}></div>
+<div class="icon" bind:this={container} class:glowOnHover></div>
