@@ -48,7 +48,7 @@
   header .nav a:hover {
     color: var(--color-foreground);
   }
-  header .left {
+  header .left, header .right {
     display: flex;
     align-items: center;
   }
@@ -70,12 +70,15 @@
     margin-left: 2rem;
     width: 9.75rem;
   }
+  .connect {
+    display: inline-block;
+    margin-left: 2rem;
+  }
   .network {
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     line-height: 1.5em;
     padding: 0.5rem 1rem;
-    margin: 0 2rem;
     border-radius: var(--border-radius);
   }
   .network.unavailable {
@@ -84,6 +87,21 @@
   }
   .network:last-child {
     margin-right: 0;
+  }
+
+  .balance {
+    margin-left: 2rem;
+  }
+
+  @media(max-width: 800px) {
+    .balance {
+      display: none;
+    }
+  }
+  @media(max-width: 720px) {
+    .network {
+      display: none;
+    }
   }
 </style>
 
@@ -109,7 +127,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="right">
     {#if config && config.network.name == 'ropsten'}
       <span class="network">Ropsten</span>
     {:else if config && config.network.name == 'rinkeby'}
@@ -137,7 +155,9 @@
         {/if}
       </button>
     {:else if config}
-      <Connect className="small" {config} />
+      <span class="connect">
+        <Connect className="small" {config} />
+      </span>
     {/if}
   </div>
 </header>
