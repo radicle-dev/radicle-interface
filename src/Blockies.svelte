@@ -21,6 +21,8 @@
   .icon {
     width: 100%;
     height: 100%;
+    min-width: 1rem;
+    min-height: 1rem;
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 50%;

@@ -67,7 +67,7 @@
 {#if error}
   <Error {error} floating on:close />
 {:else if org} <!-- Org created -->
-  <Modal on:close>
+  <Modal floating on:close>
     <span slot="title">
       🎉
     </span>
@@ -90,7 +90,7 @@
     </span>
   </Modal>
 {:else} <!-- Org creation flow -->
-  <Modal on:close>
+  <Modal floating on:close>
     <span slot="title">
       <div>🎪</div>
       <span>Create an Org</span>
@@ -128,7 +128,7 @@
         </button>
 
         <button on:click={() => dispatch('close')} class="text">
-          Back
+          Close
         </button>
       {/if}
     </span>

@@ -16,6 +16,16 @@ const GetProjects = `
   }
 `;
 
+// TODO: Add timestamps to org creation.
+const GetOrgs = `
+  query GetOrgs {
+    orgs {
+      id
+      owner
+    }
+  }
+`;
+
 const orgFactoryAbi = [
   "function createOrg(address) returns (address)",
   "function createOrg(address[], uint256) returns (address)",
@@ -83,6 +93,21 @@ export class Org {
       }
     }
     return projects;
+  }
+
+  static async getAll(config: Config): Promise<Array<Org>> {
+    const result = await utils.querySubgraph(GetOrgs, {}, config);
+    console.log(result);
+    let orgs: Org[] = [];
+
+    for (let o of result.orgs) {
+      try {
+        orgs.push(new Org(o.id, o.owner));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return orgs;
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {

@@ -73,7 +73,7 @@ export async function querySubgraph(
   query: string,
   variables: Record<string, any>,
   config: Config
-): Promise<any> {
+): Promise<null | any> {
   const response = await fetch(config.orgs.subgraph, {
     method: 'POST',
     headers: {
@@ -84,7 +84,14 @@ export async function querySubgraph(
       variables,
     })
   });
-  const json = await response.json()
+  const json = await response.json();
+
+  if (json.errors) {
+    for (let e of json.errors) {
+      console.error("querySubgraph:", e.message);
+    }
+    return null;
+  }
 
   return json.data;
 }
