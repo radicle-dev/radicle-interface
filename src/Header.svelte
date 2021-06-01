@@ -105,9 +105,7 @@
     <div class="nav">
       <a use:link href="/registrations">Register</a>
       <a use:link href="/vesting/">Vesting</a>
-      {#if session && config && config.signer && config.network.name === 'ropsten'}
-        <a use:link href="/orgs/">Orgs</a>
-      {/if}
+      <a use:link href="/orgs/">Orgs</a>
     </div>
   </div>
 
