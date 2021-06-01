@@ -4,6 +4,7 @@
   import { ethers } from 'ethers';
   import { explorerLink } from '@app/utils';
   import Blockies from '@app/Blockies.svelte';
+  import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
 
   export let address: string;
@@ -38,6 +39,10 @@
   .address a {
     border-bottom: none;
   }
+  .loading {
+    margin-left: 1rem;
+    width: 4rem;
+  }
 </style>
 
 <div class="address">
@@ -50,5 +55,6 @@
     <span class="badge">contract</span>
   {:else}
     <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
+    <div class="loading"><Loading small /></div>
   {/if}
 </div>
