@@ -1,5 +1,6 @@
 <script lang="typescript">
   import type { SvelteComponent } from 'svelte';
+  import { Link } from 'svelte-routing';
   import { session } from '@app/session';
   import Create from '@app/base/orgs/Create.svelte';
   import { Org } from '@app/base/orgs/Org';
@@ -56,7 +57,11 @@
       </button>
     </header>
     {#each orgs as org}
-      <div class="org"><Blockies address={org.address} /></div>
+      <div class="org">
+        <Link to={`/orgs/${org.address}`}>
+          <Blockies address={org.address} />
+        </Link>
+      </div>
     {/each}
   {/await}
 </main>
