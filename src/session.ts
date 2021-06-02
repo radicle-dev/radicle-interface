@@ -1,4 +1,3 @@
-// TODO: Handle wallet account change.
 import { get, writable, derived, Writable } from "svelte/store";
 import { ethers } from "ethers";
 import type { BigNumber } from 'ethers';
@@ -143,6 +142,17 @@ export const createState = (initial: State) => {
         }
       });
     },
+    setChangedAccount: ([address]: string[]) => {
+      store.update(s => {
+        switch (s.connection) {
+          case Connection.Connected:
+            s.session.address = address; 
+            return s;
+          default:
+            return s;
+        }
+      })
+    }
   };
 };
 
@@ -153,6 +163,9 @@ export const session = derived(state, s => {
   }
   return null;
 });
+
+// Updates state when user changes accounts
+window.ethereum?.on("accountsChanged", state.setChangedAccount);
 
 state.subscribe(s => {
   console.log("session.state", s);
