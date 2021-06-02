@@ -165,7 +165,7 @@ export const session = derived(state, s => {
 });
 
 // Updates state when user changes accounts
-window.ethereum?.on("accountsChanged", state.setChangedAccount)
+window.ethereum?.on("accountsChanged", state.setChangedAccount);
 
 state.subscribe(s => {
   console.log("session.state", s);
