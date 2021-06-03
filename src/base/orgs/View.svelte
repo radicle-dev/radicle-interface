@@ -102,6 +102,14 @@
     margin-top: 2rem;
   }
   .members .member {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+  }
+  .members .member a {
+    border-bottom: none;
+  }
+  .members .member-icon {
     width: 2rem;
     height: 2rem;
     margin-right: 1rem;
@@ -186,7 +194,12 @@
         {:then members}
           {#each members as address}
             <div class="member">
-              <Blockies {address} />
+              <div class="member-icon">
+                <Blockies {address} />
+              </div>
+              <a href={explorerLink(address, config)} target="_blank" class="member">
+                {utils.formatAddress(address)}
+              </a>
             </div>
           {/each}
         {/await}
