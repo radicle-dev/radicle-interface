@@ -97,8 +97,5 @@
       {/if}
     </div>
     <div class="anchor">commit {project.stateHash}</div>
-    {#if state.status == Status.Error}
-      <span class="faded small"><strong>Error</strong>: {state.error}</span>
-    {/if}
   {/if}
 </article>
