@@ -5,7 +5,6 @@
   import Create from '@app/base/orgs/Create.svelte';
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
-  import Error from '@app/Error.svelte';
   import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
 

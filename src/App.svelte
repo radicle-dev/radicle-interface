@@ -1,5 +1,4 @@
 <script lang="typescript">
-  // TODO: Navigating directly to /vesting doesn't work.
   import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
   import { session } from '@app/session';

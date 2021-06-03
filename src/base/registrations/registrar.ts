@@ -1,5 +1,4 @@
 // TODO: Show "look at your wallet" / "confirm tx" before state change.
-// TODO: Two registration actions with same label
 import { ethers } from 'ethers';
 import { writable } from 'svelte/store';
 import type { BigNumber } from 'ethers';
@@ -147,7 +146,6 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
 
-  // TODO: Getting "commitment too new"
   state.set(State.WaitingToRegister);
   await tx.wait(minAge + 1);
 }

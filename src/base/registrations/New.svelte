@@ -1,6 +1,4 @@
 <script lang="typescript">
-  // TODO: Should check for availability here, before saying a name is available.
-  // Perhaps the availability check should be moved out of the 'submit' step then.
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
   import { formatAddress } from '@app/utils';
