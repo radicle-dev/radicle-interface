@@ -45,7 +45,7 @@
 
   $: label = name && parseEnsLabel(name, config);
   $: isOwner = (org: Org): boolean => {
-    return org.safe === ($session && $session.address);
+    return org.owner === ($session && $session.address);
   };
 </script>
 
@@ -150,7 +150,7 @@
         <div></div>
         <!-- Owner -->
         <div class="label">Owner</div>
-        <div><Address resolve {config} address={org.safe} /></div>
+        <div><Address resolve {config} address={org.owner} /></div>
         <div>
           {#if isOwner(org)}
             <button class="tiny secondary" on:click={transferOwnership}>

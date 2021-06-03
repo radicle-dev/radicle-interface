@@ -40,13 +40,13 @@ const orgAbi = [
 
 export class Org {
   address: string
-  safe: string
+  owner: string
 
-  constructor(address: string, safe: string) {
+  constructor(address: string, owner: string) {
     assert(ethers.utils.isAddress(address), "address must be valid");
 
     this.address = address.toLowerCase(); // Don't store address checksum.
-    this.safe = safe;
+    this.owner = owner;
   }
 
   async lookupAddress(config: Config): Promise<string> {
@@ -77,7 +77,7 @@ export class Org {
   }
 
   async getMembers(config: Config): Promise<Array<string>> {
-    const safe = await utils.getSafe(this.safe, config);
+    const safe = await utils.getSafe(this.owner, config);
     if (safe) {
       return safe.owners;
     }
@@ -123,9 +123,9 @@ export class Org {
 
     if (event && event.args) {
       let address = event.args[0];
-      let safe = event.args[1];
+      let owner = event.args[1];
 
-      return new Org(address, safe);
+      return new Org(address, owner);
     }
     return null;
   }
@@ -141,9 +141,9 @@ export class Org {
     );
 
     try {
-      const safe = await org.owner();
+      const owner = await org.owner();
       const resolved = await org.resolvedAddress;
-      return new Org(resolved, safe);
+      return new Org(resolved, owner);
     } catch (e) {
       console.error(e);
       return null;

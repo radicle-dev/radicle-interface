@@ -79,7 +79,7 @@
     <span slot="body">
       <table>
         <tr><td class="label">Address</td><td>{org.address}</td></tr>
-        <tr><td class="label">Owner</td><td>{org.safe}</td></tr>
+        <tr><td class="label">Owner</td><td>{org.owner}</td></tr>
       </table>
     </span>
 
