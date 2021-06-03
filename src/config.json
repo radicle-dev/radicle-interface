@@ -11,7 +11,8 @@
       "address": "0x0000000000000000000000000000000000000000"
     },
     "safe": {
-      "api": "https://safe-transaction.gnosis.io/api/v1"
+      "api": "https://safe-transaction.gnosis.io/api/v1",
+      "viewer": "https://gnosis-safe.io/app/#/safes"
     }
   },
   "ropsten": {
@@ -30,7 +31,8 @@
       "contractHash": "0xc5bd5bc3cbcb709540df530c5ad2a9d91463ebb891a789286872938d963c12e9"
     },
     "safe": {
-      "api": null
+      "api": null,
+      "viewer": null
     }
   },
   "rinkeby": {
@@ -49,7 +51,8 @@
       "contractHash": "0xc5bd5bc3cbcb709540df530c5ad2a9d91463ebb891a789286872938d963c12e9"
     },
     "safe": {
-      "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1"
+      "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1",
+      "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
     }
   },
   "seed": {

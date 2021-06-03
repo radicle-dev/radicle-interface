@@ -25,7 +25,7 @@ export class Config {
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
   seed: { url: string };
-  safe: { api: string | null };
+  safe: { api: string | null, viewer: string | null };
 
   constructor(
     network: { name: string, chainId: number },

@@ -81,6 +81,14 @@ export function explorerLink(addr: string, config: Config): string {
   return `https://etherscan.io/address/${addr}`;
 }
 
+// Get the Gnosis Safe link of an address, eg. Etherscan.
+export function safeLink(addr: string, config: Config): string {
+  if (config.safe.viewer) {
+    return `${config.safe.viewer}/${addr}`;
+  }
+  return explorerLink(addr, config);
+}
+
 // Query a subgraph.
 export async function querySubgraph(
   query: string,

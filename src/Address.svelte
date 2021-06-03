@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { explorerLink } from '@app/utils';
+  import { explorerLink, safeLink } from '@app/utils';
   import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
@@ -53,12 +53,13 @@
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
     <span class="badge">org</span>
+  {:else if addressType === AddressType.Safe}
+    <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
+    <span class="badge">safe</span>
   {:else}
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {#if addressType === AddressType.Contract}
       <span class="badge">contract</span>
-    {:else if addressType === AddressType.Safe}
-      <span class="badge">safe</span>
     {:else if addressType === AddressType.EOA}
       <!-- Don't show anything for EOAs -->
     {:else}
