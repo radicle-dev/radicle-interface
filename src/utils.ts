@@ -127,16 +127,16 @@ export function formatProjectHash(hash: Uint8Array, format: number): string {
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
-    let code = await config.provider.getCode(address);
-    let bytes = ethers.utils.arrayify(code);
+  let code = await config.provider.getCode(address);
+  let bytes = ethers.utils.arrayify(code);
 
-    if (bytes.length > 0) {
-      if (ethers.utils.keccak256(bytes) === config.orgs.contractHash) {
-        return AddressType.Org;
-      }
-      return AddressType.Contract;
+  if (bytes.length > 0) {
+    if (ethers.utils.keccak256(bytes) === config.orgs.contractHash) {
+      return AddressType.Org;
     }
-    return AddressType.EOA;
+    return AddressType.Contract;
+  }
+  return AddressType.EOA;
 }
 
 // Resolve a label under the radicle domain.
