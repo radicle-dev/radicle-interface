@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
+  import Blockies from '@app/Blockies.svelte';
 
   import { getMetadata } from './Project';
   import type { Project, Meta } from './Project';
@@ -33,9 +34,10 @@
 <style>
   article {
     padding: 1rem;
-    border: 1px solid var(--color-secondary);
+    border: 1px solid var(--color-secondary-faded);
   }
   article .id {
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
@@ -62,7 +64,7 @@
   article:hover .id .urn {
     visibility: visible;
   }
-  article .emoji {
+  article .avatar {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,8 +85,8 @@
       <span>commit {project.stateHash}</span>
       <span>
         {#each meta.maintainers as user}
-          <span class="emoji" style={`background-color: rgb(${user.avatar.background.r}, ${user.avatar.background.g}, ${user.avatar.background.b})`}>
-            {user.avatar.emoji}
+          <span class="avatar">
+            <Blockies address={user.urn} />
           </span>
         {/each}
       </span>
