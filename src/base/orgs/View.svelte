@@ -142,7 +142,7 @@
         <div></div>
         <!-- Owner -->
         <div class="label">Owner</div>
-        <div><Address {config} address={org.safe} /></div>
+        <div><Address resolve {config} address={org.safe} /></div>
         <div>
           {#if isOwner(org)}
             <button class="tiny secondary" on:click={transferOwnership}>

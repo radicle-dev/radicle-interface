@@ -10,13 +10,20 @@
 
   export let address: string;
   export let config: Config;
+  export let resolve = false;
 
   let checksumAddress = ethers.utils.getAddress(address);
   let addressType: AddressType | null = null;
+  let addressName: string | null = null;
 
-  onMount(async () => {
-    addressType = await identifyAddress(address, config);
+  onMount(() => {
+    identifyAddress(address, config).then(typ => addressType = typ);
+    if (resolve) {
+      config.provider.lookupAddress(address).then(name => addressName = name);
+    }
   });
+
+  $: addressLabel = addressName || checksumAddress;
 </script>
 
 <style>
@@ -44,10 +51,10 @@
 <div class="address">
   <span class="icon"><Blockies address={address} /></span>
   {#if addressType === AddressType.Org}
-    <a use:link href={`/orgs/${address}`}>{checksumAddress}</a>
+    <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
     <span class="badge">org</span>
   {:else}
-    <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
+    <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {#if addressType === AddressType.Contract}
       <span class="badge">contract</span>
     {:else if addressType === AddressType.EOA}
