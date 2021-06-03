@@ -10,17 +10,6 @@ import type { Config } from '@app/config';
 import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
 
-const registrarAbi = [
-  'function rad() view returns (address)',
-  'function radNode() view returns (bytes32)',
-  'function minCommitmentAge() view returns (uint256)',
-  'function registrationFeeRad() view returns (uint256)',
-  'function commitWithPermit(bytes32, address, uint256, uint256, uint8, bytes32, bytes32)',
-  'function register(string, address, uint256)',
-  'function valid(string) pure returns (bool)',
-  'function available(string) view returns (bool)',
-];
-
 export interface Registration {
   name: string
   owner: string
@@ -75,7 +64,7 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
 }
 
 export function registrar(config: Config) {
-  return new ethers.Contract(config.registrar.address, registrarAbi, config.provider);
+  return new ethers.Contract(config.registrar.address, config.abi.registrar, config.provider);
 }
 
 export async function registrationFee(config: Config) {
@@ -213,16 +202,12 @@ function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
 }
 
 async function getOwner(name: string, config: Config): Promise<string> {
-  const ensAbi = [
-    "function owner(bytes32 node) view returns (address)"
-  ];
-
   let ensAddr = config.provider.network.ensAddress;
   if (! ensAddr) {
     throw new Error("ENS address is not defined");
   }
 
-  let registry = new ethers.Contract(ensAddr, ensAbi, config.provider);
+  let registry = new ethers.Contract(ensAddr, config.abi.ens, config.provider);
   let owner = await registry.owner(ethers.utils.namehash(name));
 
   return owner;

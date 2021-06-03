@@ -4,22 +4,6 @@ import * as session from "@app/session";
 import { State, state } from "./state";
 import type { Config } from "@app/config";
 
-const abi = [
-  "function token() view returns (address)",
-  "function totalVestingAmount() view returns (uint256)",
-  "function vestingStartTime() view returns (uint256)",
-  "function vestingPeriod() view returns (uint256)",
-  "function cliffPeriod() view returns (uint256)",
-  "function beneficiary() view returns (address)",
-  "function interrupted() view returns (bool)",
-  "function withdrawn() view returns (uint256)",
-  "function withdrawableBalance() view returns (uint256)",
-  "function withdrawVested()",
-];
-
-const tokenAbi = [
-  "function symbol() view returns (string)",
-];
 
 export interface VestingInfo {
   token: string,
@@ -31,7 +15,7 @@ export interface VestingInfo {
 }
 
 export async function withdrawVested(address: string, config: Config) {
-  const contract = new ethers.Contract(address, abi, config.provider);
+  const contract = new ethers.Contract(address, config.abi.vesting, config.provider);
   const signer = config.provider.getSigner();
 
   state.set(State.WithdrawingSign);
@@ -45,7 +29,7 @@ export async function withdrawVested(address: string, config: Config) {
 }
 
 export async function getInfo(address: string, config: Config): Promise<VestingInfo> {
-  const contract = new ethers.Contract(address, abi, config.provider);
+  const contract = new ethers.Contract(address, config.abi.vesting, config.provider);
   const signer = config.provider.getSigner();
 
   const token = await contract.token();
@@ -54,7 +38,7 @@ export async function getInfo(address: string, config: Config): Promise<VestingI
   const withdrawn = await contract.withdrawn();
   const total = await contract.totalVestingAmount();
 
-  const tokenContract = new ethers.Contract(token, tokenAbi, config.provider);
+  const tokenContract = new ethers.Contract(token, config.abi.token, config.provider);
   const symbol = await tokenContract.symbol();
 
   return {
