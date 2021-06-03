@@ -82,7 +82,7 @@
     </div>
     <div class="description">{meta.description}</div>
     <div class="anchor">
-      <span>commit {project.stateHash}</span>
+      <span>commit {project.anchor.stateHash}</span>
       <span>
         {#each meta.maintainers as user}
           <span class="avatar">
@@ -98,6 +98,6 @@
         <Loading small />
       {/if}
     </div>
-    <div class="anchor">commit {project.stateHash}</div>
+    <div class="anchor">commit {project.anchor.stateHash}</div>
   {/if}
 </article>

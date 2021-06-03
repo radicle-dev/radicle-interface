@@ -2,8 +2,10 @@ import type { Config } from '@app/config';
 
 export interface Project {
   id: string
-  stateHash: string
-  stateHashFormat: string
+  anchor: {
+    stateHash: string
+    stateHashFormat: string
+  }
 }
 
 export interface User {

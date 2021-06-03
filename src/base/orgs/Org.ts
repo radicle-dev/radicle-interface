@@ -10,8 +10,10 @@ const GetProjects = `
   query GetProjects($org: ID!) {
     projects(where: { org: $org }) {
       id
-      stateHash
-      stateHashFormat
+      anchor {
+        stateHash
+        stateHashFormat
+      }
     }
   }
 `;
@@ -79,9 +81,9 @@ export class Org {
     for (let p of result.projects) {
       try {
         p.id = utils.formatRadicleId(ethers.utils.arrayify(p.id));
-        p.stateHash = utils.formatProjectHash(
-          ethers.utils.arrayify(p.stateHash),
-          p.stateHashFormat
+        p.anchor.stateHash = utils.formatProjectHash(
+          ethers.utils.arrayify(p.anchor.stateHash),
+          p.anchor.stateHashFormat
         );
         projects.push(p);
       } catch (e) {
@@ -93,7 +95,6 @@ export class Org {
 
   static async getAll(config: Config): Promise<Array<Org>> {
     const result = await utils.querySubgraph(GetOrgs, {}, config);
-    console.log(result);
     let orgs: Org[] = [];
 
     for (let o of result.orgs) {
