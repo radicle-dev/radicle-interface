@@ -6,20 +6,16 @@
   import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
+  import { identifyAddress, AddressType } from '@app/utils';
 
   export let address: string;
   export let config: Config;
 
   let checksumAddress = ethers.utils.getAddress(address);
-  let isContract = false;
-  let isOrg = false;
+  let addressType: AddressType | null = null;
 
   onMount(async () => {
-    let code = await config.provider.getCode(address);
-    let bytes = ethers.utils.arrayify(code);
-
-    isContract = bytes.length > 0;
-    isOrg = ethers.utils.keccak256(bytes) === config.orgs.contractHash;
+    addressType = await identifyAddress(address, config);
   });
 </script>
 
@@ -47,14 +43,17 @@
 
 <div class="address">
   <span class="icon"><Blockies address={address} /></span>
-  {#if isOrg}
+  {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{checksumAddress}</a>
     <span class="badge">org</span>
-  {:else if isContract}
-    <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
-    <span class="badge">contract</span>
   {:else}
     <a href={explorerLink(address, config)} target="_blank">{checksumAddress}</a>
-    <div class="loading"><Loading small /></div>
+    {#if addressType === AddressType.Contract}
+      <span class="badge">contract</span>
+    {:else if addressType === AddressType.EOA}
+      <!-- Don't show anything for EOAs -->
+    {:else}
+      <div class="loading"><Loading small /></div>
+    {/if}
   {/if}
 </div>

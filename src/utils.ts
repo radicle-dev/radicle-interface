@@ -4,6 +4,12 @@ import multibase from 'multibase';
 import type { Config } from '@app/config';
 import { assert } from '@app/error';
 
+export enum AddressType {
+  Contract,
+  Org,
+  EOA,
+}
+
 export function formatBalance(n: BigNumber) {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
 }
@@ -117,4 +123,18 @@ export function formatProjectHash(hash: Uint8Array, format: number): string {
   const sha1Bytes = 20;
   const suffix = hash.slice(hash.length - sha1Bytes);
   return ethers.utils.hexlify(suffix).replace(/^0x/, '');
+}
+
+// Identify an address by checking whether it's a contract or an externally-owned address.
+export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
+    let code = await config.provider.getCode(address);
+    let bytes = ethers.utils.arrayify(code);
+
+    if (bytes.length > 0) {
+      if (ethers.utils.keccak256(bytes) === config.orgs.contractHash) {
+        return AddressType.Org;
+      }
+      return AddressType.Contract;
+    }
+    return AddressType.EOA;
 }
