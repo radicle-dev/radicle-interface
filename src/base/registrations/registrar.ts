@@ -67,6 +67,10 @@ export function registrar(config: Config) {
   return new ethers.Contract(config.registrar.address, config.abi.registrar, config.provider);
 }
 
+export function radToken(config: Config) {
+  return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
+}
+
 export async function registrationFee(config: Config) {
   return await registrar(config).registrationFeeRad();
 }
@@ -87,7 +91,7 @@ export async function registerName(name: string, owner: string, config: Config) 
       await commitAndRegister(name, owner, config);
     }
   } catch (e) {
-    throw { type: Failure.TransactionFailed, message: e.message, txHash: e.txHash };
+    throw { type: e.type || Failure.TransactionFailed, message: e.message, txHash: e.txHash };
   }
 }
 
@@ -95,6 +99,11 @@ async function commitAndRegister(name: string, owner: string, config: Config) {
   let salt = ethers.utils.randomBytes(32);
   let minAge = (await registrar(config).minCommitmentAge()).toNumber();
   let fee = await registrationFee(config);
+  // Avoids gas spent by the owner, trying to commit to a name and not having
+  // enough RAD balance
+  if ((await radToken(config).balanceOf(owner)).lt(fee)) {
+    throw { type: Failure.InsufficientBalance, message: "Not enough RAD funds" };
+  }
 
   await commit(makeCommitment(name, owner, salt), fee, minAge, config);
   // Save commitment in local storage in case the user refreshes or closes
