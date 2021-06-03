@@ -55,7 +55,7 @@
     <span class="badge">org</span>
   {:else if addressType === AddressType.Safe}
     <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
-    <span class="badge">safe</span>
+    <span class="badge safe">safe</span>
   {:else}
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {#if addressType === AddressType.Contract}
