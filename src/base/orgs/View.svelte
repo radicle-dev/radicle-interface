@@ -98,6 +98,14 @@
   .projects .project {
     margin-bottom: 1rem;
   }
+  .members {
+    margin-top: 2rem;
+  }
+  .members .member {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
@@ -170,6 +178,18 @@
             </button>
           {/if}
         </div>
+      </div>
+
+      <div class="members">
+        {#await org.getMembers(config)}
+          <Loading center />
+        {:then members}
+          {#each members as address}
+            <div class="member">
+              <Blockies {address} />
+            </div>
+          {/each}
+        {/await}
       </div>
 
       <div class="projects">

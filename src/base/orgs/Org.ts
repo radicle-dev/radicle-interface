@@ -76,6 +76,14 @@ export class Org {
     return org.setOwner(address);
   }
 
+  async getMembers(config: Config): Promise<Array<string>> {
+    const safe = await utils.getSafe(this.safe, config);
+    if (safe) {
+      return safe.owners;
+    }
+    return [];
+  }
+
   async getProjects(config: Config): Promise<Array<Project>> {
     const result = await utils.querySubgraph(GetProjects, { org: this.address }, config);
     let projects: Project[] = [];
