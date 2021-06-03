@@ -7,7 +7,14 @@ import { assert } from '@app/error';
 export enum AddressType {
   Contract,
   Org,
+  Safe,
   EOA,
+}
+
+export interface Safe {
+  address: string
+  owners: string[]
+  threshold: number
 }
 
 export function formatBalance(n: BigNumber) {
@@ -127,6 +134,11 @@ export function formatProjectHash(hash: Uint8Array, format: number): string {
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
+  let safe = await getSafe(address, config);
+  if (safe) {
+    return AddressType.Safe;
+  }
+
   let code = await config.provider.getCode(address);
   let bytes = ethers.utils.arrayify(code);
 
@@ -142,4 +154,27 @@ export async function identifyAddress(address: string, config: Config): Promise<
 // Resolve a label under the radicle domain.
 export async function resolveLabel(label: string, config: Config): Promise<string | null> {
   return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+}
+
+// Get a Gnosis Safe at an address.
+export async function getSafe(address: string, config: Config): Promise<Safe | null> {
+  if (! config.safe.api) return null;
+
+  const response = await fetch(`${config.safe.api}/safes/${address}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    }
+  });
+
+  if (! response.ok) {
+    return null;
+  }
+  const json = await response.json();
+
+  return {
+    address: json.address,
+    owners: json.owners,
+    threshold: json.threshold
+  };
 }

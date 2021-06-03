@@ -25,6 +25,7 @@ export class Config {
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
   seed: { url: string };
+  safe: { api: string | null };
 
   constructor(
     network: { name: string, chainId: number },
@@ -44,6 +45,7 @@ export class Config {
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
     this.orgs = cfg.orgs;
+    this.safe = cfg.safe;
     this.provider = provider;
     this.signer = signer;
     this.gasLimits = gasLimits;

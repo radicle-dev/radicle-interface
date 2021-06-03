@@ -57,6 +57,8 @@
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {#if addressType === AddressType.Contract}
       <span class="badge">contract</span>
+    {:else if addressType === AddressType.Safe}
+      <span class="badge">safe</span>
     {:else if addressType === AddressType.EOA}
       <!-- Don't show anything for EOAs -->
     {:else}
