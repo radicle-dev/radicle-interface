@@ -138,3 +138,8 @@ export async function identifyAddress(address: string, config: Config): Promise<
     }
     return AddressType.EOA;
 }
+
+// Resolve a label under the radicle domain.
+export async function resolveLabel(label: string, config: Config): Promise<string | null> {
+  return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+}

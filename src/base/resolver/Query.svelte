@@ -11,7 +11,7 @@
 
   let error = false;
 
-  onMount(() => {
+  onMount(async () => {
     if (query) {
       if (ethers.utils.isAddress(query)) {
         // Go to org.
@@ -24,7 +24,14 @@
         if (label.includes(".")) {
           error = true;
         } else {
-          navigate(`/registrations/${label}`, { replace: true });
+          // Jump straight to org, if the ENS entry points to an org. Otherwise just go to the
+          // registration.
+          const address = await utils.resolveLabel(label, config);
+          if (address && await utils.identifyAddress(address, config) === utils.AddressType.Org) {
+            navigate(`/orgs/${address}`, { replace: true });
+          } else {
+            navigate(`/registrations/${label}`, { replace: true });
+          }
         }
       }
     } else {
