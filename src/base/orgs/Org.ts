@@ -26,18 +26,6 @@ const GetOrgs = `
   }
 `;
 
-const orgFactoryAbi = [
-  "function createOrg(address) returns (address)",
-  "function createOrg(address[], uint256) returns (address)",
-  "event OrgCreated(address, address)",
-];
-
-const orgAbi = [
-  "function owner() view returns (address)",
-  "function setOwner(address)",
-  "function setName(string, address) returns (bytes32)",
-];
-
 export class Org {
   address: string
   owner: string
@@ -58,7 +46,7 @@ export class Org {
 
     const org = new ethers.Contract(
       this.address,
-      orgAbi,
+      config.abi.org,
       config.signer
     );
     return org.setName(name, config.provider.network.ensAddress,
@@ -70,7 +58,7 @@ export class Org {
 
     const org = new ethers.Contract(
       this.address,
-      orgAbi,
+      config.abi.org,
       config.signer
     );
     return org.setOwner(address);
@@ -136,7 +124,7 @@ export class Org {
   ): Promise<Org | null> {
     const org = new ethers.Contract(
       address,
-      orgAbi,
+      config.abi.org,
       config.provider
     );
 
@@ -159,7 +147,7 @@ export class Org {
 
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
-      orgFactoryAbi,
+      config.abi.orgFactory,
       config.signer
     );
 
@@ -176,7 +164,7 @@ export class Org {
 
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
-      orgFactoryAbi,
+      config.abi.orgFactory,
       config.signer
     );
 

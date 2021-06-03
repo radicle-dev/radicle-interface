@@ -26,6 +26,7 @@ export class Config {
   signer: ethers.Signer & TypedDataSigner | null;
   seed: { url: string };
   safe: { api: string | null, viewer: string | null };
+  abi: { [contract:string]: string[] }
 
   constructor(
     network: { name: string, chainId: number },
@@ -50,6 +51,7 @@ export class Config {
     this.signer = signer;
     this.gasLimits = gasLimits;
     this.seed = config.seed;
+    this.abi = config.abi;
   }
 }
 

@@ -47,7 +47,7 @@ export const createState = (initial: State) => {
         console.error(e);
       }
 
-      const token = new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
+      const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
       const signer = config.provider.getSigner();
       const address = await signer.getAddress();
 
@@ -76,7 +76,7 @@ export const createState = (initial: State) => {
       const addr = state.session.address;
 
       try {
-        const token = new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
+        const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
         const tokenBalance = await token.balanceOf(addr);
 
         state.session.tokenBalance = tokenBalance;
@@ -171,17 +171,8 @@ state.subscribe(s => {
   console.log("session.state", s);
 });
 
-const tokenAbi = [
-  "function balanceOf(address) view returns (uint256)",
-  "function approve(address, uint256) returns (bool)",
-  "function allowance(address, address) view returns (uint256)",
-  "function DOMAIN_SEPARATOR() view returns (bytes32)",
-  "function name() pure returns (string)",
-  "function nonces(address) view returns (uint256)",
-];
-
 export async function approveSpender(spender: string, amount: BigNumber, config: Config) {
-  const token = new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
+  const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
   const signer = config.provider.getSigner();
   const addr = await signer.getAddress();
 
@@ -194,7 +185,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function token(config: Config): ethers.Contract {
-  return new ethers.Contract(config.radToken.address, tokenAbi, config.provider);
+  return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
 }
 
 export function disconnectWallet() {
