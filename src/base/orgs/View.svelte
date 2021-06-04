@@ -100,11 +100,12 @@
   }
   .members {
     margin-top: 2rem;
+    display: flex;
   }
   .members .member {
     display: flex;
     align-items: center;
-    margin-right: 2rem;
+    margin-right: 1.5rem;
   }
   .members .member a {
     border-bottom: none;
