@@ -115,6 +115,10 @@
     height: 2rem;
     margin-right: 1rem;
   }
+  .error {
+    background-color: var(--color-negative-background);
+    padding: 1rem;
+  }
 </style>
 
 {#await Org.get(address, config)}
