@@ -186,3 +186,13 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
     threshold: json.threshold
   };
 }
+
+// Get token balances for an address.
+export async function getTokens(address: string, config: Config):
+  Promise<Array<{ tokenName: string, tokenLogo: string }>>
+{
+  const result = await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
+
+  // TODO
+  return [];
+}

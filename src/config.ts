@@ -26,20 +26,15 @@ export class Config {
   signer: ethers.Signer & TypedDataSigner | null;
   seed: { url: string };
   safe: { api: string | null, viewer: string | null };
-  abi: { [contract:string]: string[] }
+  abi: { [contract: string]: string[] }
+  tokens: string[];
 
   constructor(
     network: { name: string, chainId: number },
-    provider: ethers.providers.JsonRpcProvider
+    provider: ethers.providers.JsonRpcProvider,
+    signer: ethers.Signer & TypedDataSigner | null,
   ) {
     let cfg = (<Record<string, any>> config)[network.name];
-    let signer = null;
-
-    try {
-      signer = provider.getSigner();
-    } catch (e) {
-      console.log(e.message);
-    }
 
     this.network = network;
     this.registrar = cfg.registrar;
@@ -52,6 +47,7 @@ export class Config {
     this.gasLimits = gasLimits;
     this.seed = config.seed;
     this.abi = config.abi;
+    this.tokens = cfg.tokens;
   }
 }
 
@@ -67,18 +63,25 @@ function isMetamaskInstalled(): boolean {
 
 export async function getConfig(): Promise<Config> {
   let config: Config;
+  const alchemyApiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
 
   if (isMetamaskInstalled()) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const network = await provider.ready;
+    // If we have Metamask, use it as the signer, but try to use Alchemy
+    // as the provider.
+    const metamask = new ethers.providers.Web3Provider(window.ethereum);
+    const network = await metamask.ready;
+    const provider = alchemyApiKey ?
+        new ethers.providers.AlchemyProvider(network.name, alchemyApiKey)
+      : metamask;
 
-    config = new Config(network, provider);
+    config = new Config(network, provider, metamask.getSigner());
   } else {
+    // If we don't have Metamask, we use Alchemy as the provider, and we don't
+    // provide a signer. We default to Homestead.
     const network = { name: "homestead", chainId: 1 };
-    const apiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
-    const provider = new ethers.providers.AlchemyProvider(network.name, apiKey);
+    const provider = new ethers.providers.AlchemyProvider(network.name, alchemyApiKey);
 
-    config = new Config(network, provider);
+    config = new Config(network, provider, null);
   }
   console.log(config);
 

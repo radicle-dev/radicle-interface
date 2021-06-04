@@ -13,7 +13,8 @@
     "safe": {
       "api": "https://safe-transaction.gnosis.io/api/v1",
       "viewer": "https://gnosis-safe.io/app/#/safes"
-    }
+    },
+    "tokens": []
   },
   "ropsten": {
     "registrar": {
@@ -33,7 +34,8 @@
     "safe": {
       "api": null,
       "viewer": null
-    }
+    },
+    "tokens": []
   },
   "rinkeby": {
     "registrar": {
@@ -53,7 +55,8 @@
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
-    }
+    },
+    "tokens": []
   },
   "seed": {
     "url": "https://sprout.radicle.xyz"
