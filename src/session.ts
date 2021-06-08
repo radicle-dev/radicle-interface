@@ -164,6 +164,8 @@ export const session = derived(state, s => {
   return null;
 });
 
+window.ethereum?.on('chainChanged', () => location.reload());
+
 // Updates state when user changes accounts
 window.ethereum?.on("accountsChanged", state.setChangedAccount);
 
