@@ -25,7 +25,7 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-    padding: 1rem;
+    padding: 1.5rem;
   }
   header .nav {
     display: inline-block;

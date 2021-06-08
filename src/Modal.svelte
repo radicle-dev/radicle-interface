@@ -81,7 +81,7 @@
   <div class="modal-overlay"></div>
 {/if}
 
-<div class:modal-floating={floating}>
+<div class:modal-floating={floating} class="centered">
   <div class="modal" class:error class:modal-subtle={subtle} class:modal-small={small}>
     <div class="modal-title">
       <slot name="title"></slot>

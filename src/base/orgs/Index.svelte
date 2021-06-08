@@ -20,7 +20,7 @@
 <style>
   main {
     width: 100%;
-    padding: 0 3rem;
+    padding: 5rem 3rem;
     display: block;
     align-items: space-between;
     justify-content: space-between;
@@ -43,14 +43,20 @@
     margin: 3rem;
     display: inline-block;
   }
+
+  .loading {
+    padding: 3rem 0;
+  }
 </style>
 
 <main>
   {#await Org.getAll(config)}
-    <Loading center />
+    <div class="loading">
+      <Loading center />
+    </div>
   {:then orgs}
     <header>
-      <span><strong>Orgs</strong> on the Radicle network.</span>
+      <span><strong>Orgs</strong> of the Radicle network.</span>
       <button class="create small secondary" on:click={onCreate} disabled={!account}>
         Create
       </button>

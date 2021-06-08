@@ -23,14 +23,16 @@
 </script>
 
 <style>
+  .app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
   .wrapper {
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: center;
-    min-height: 24rem;
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+    height: 100%;
   }
 </style>
 

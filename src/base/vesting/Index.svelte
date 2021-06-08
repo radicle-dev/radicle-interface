@@ -52,7 +52,7 @@
   }
 </style>
 
-<main>
+<main class="centered">
   {#if info}
     <Modal>
       <span slot="title">

@@ -55,14 +55,18 @@
 	--font-family-monospace: monospace;
 	--border-radius: 50px;
 	--box-shadow-color: var(--color-secondary-2);
+	--content-max-width: 1920px;
+	--content-min-width: 480px;
 }
-
 
 body {
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.5;
 	min-width: 580px;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 	color: white;
 	text-align: left;
 	background-color: var(--color-background);
@@ -269,6 +273,15 @@ input.wide {
 .badge.safe {
 	color: var(--color-yellow);
 	background: var(--color-yellow-background);
+}
+
+.centered {
+	height: 100%;
+	padding-top: 5rem;
+	padding-bottom: 24vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 span.small {

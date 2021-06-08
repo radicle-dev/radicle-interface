@@ -14,10 +14,6 @@
 </script>
 
 <style>
-  main {
-    padding-top: 2rem;
-    align-self: center;
-  }
   div.input-caption {
     font-size: 1.25rem;
     text-align: left;
@@ -37,7 +33,7 @@
   }
 </style>
 
-<main>
+<main class="centered">
   <div class="input-caption">
     Register a <strong>{config.registrar.domain}</strong> name
   </div>

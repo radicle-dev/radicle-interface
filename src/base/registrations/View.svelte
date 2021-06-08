@@ -83,6 +83,9 @@
 </script>
 
 <style>
+  main {
+    padding: 5rem 0;
+  }
   main > header {
     display: flex;
     align-items: center;
