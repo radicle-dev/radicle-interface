@@ -5,6 +5,7 @@
   import type { Config } from '@app/config';
   import * as utils from '@app/utils';
   import Error from '@app/Error.svelte';
+  import Loading from '@app/Loading.svelte';
 
   export let config: Config;
   export let query: string | null;
@@ -40,10 +41,12 @@
   });
 </script>
 
-<main>
+<main class="centered">
   {#if error}
     <Error on:close={() => navigate('/')}>
       Invalid query string “{query}”
     </Error>
+  {:else}
+    <Loading center />
   {/if}
 </main>
