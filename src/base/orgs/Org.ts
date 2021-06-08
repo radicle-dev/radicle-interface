@@ -4,7 +4,7 @@ import type { ContractReceipt } from '@ethersproject/contracts';
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Config } from '@app/config';
-import type { Project } from '@app/base/projects/Project';
+import type { Project } from '@app/project';
 
 const GetProjects = `
   query GetProjects($org: ID!) {
@@ -13,6 +13,7 @@ const GetProjects = `
       anchor {
         stateHash
         stateHashFormat
+        timestamp
       }
     }
   }

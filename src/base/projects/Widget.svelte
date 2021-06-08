@@ -1,11 +1,9 @@
 <script type="typescript">
   import { onMount } from 'svelte';
   import type { Config } from '@app/config';
+  import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Blockies from '@app/Blockies.svelte';
-
-  import { getMetadata } from './Project';
-  import type { Project, Meta } from './Project';
 
   enum Status { Loading, Loaded, Error }
 
@@ -14,15 +12,15 @@
     | { status: Status.Loaded }
     | { status: Status.Error, error: string };
 
-  export let project: Project;
+  export let project: proj.Project;
   export let config: Config;
 
   let state: State = { status: Status.Loading };
-  let meta: Meta | null = null;
+  let meta: proj.Meta | null = null;
 
   onMount(async () => {
     try {
-      const result = await getMetadata(project.id, config);
+      const result = await proj.getMetadata(project.id, config);
       state = { status: Status.Loaded };
       meta = result;
     } catch (err) {

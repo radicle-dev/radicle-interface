@@ -135,7 +135,7 @@
       <span class="network unavailable">No Network</span>
     {/if}
 
-    {#if address}
+    {#if address && tokenBalance}
       <span class="balance">
         {formatBalance(tokenBalance)} <strong>RAD</strong>
       </span>

@@ -58,9 +58,6 @@
     },
     "tokens": []
   },
-  "seed": {
-    "url": "https://sprout.radicle.xyz"
-  },
   "abi": {
     "registrar": [
       "function rad() view returns (address)",

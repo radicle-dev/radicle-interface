@@ -16,7 +16,7 @@
 
 @font-face {
 	font-family: "Inter";
-	font-style: bold;
+	font-style: bolder;
 	font-weight: 700;
 	font-display: swap;
 	src: url("fonts/Inter-Bold.otf");

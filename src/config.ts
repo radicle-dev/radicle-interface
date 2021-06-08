@@ -11,6 +11,7 @@ declare global {
   interface ImportMeta {
     env: {
       RADICLE_ALCHEMY_API_KEY: string | null,
+      RADICLE_HTTP_API: string | null,
     }
   }
 }
@@ -24,9 +25,9 @@ export class Config {
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
-  seed: { url: string };
   safe: { api: string | null, viewer: string | null };
   abi: { [contract: string]: string[] }
+  seed: { api: string | null };
   tokens: string[];
 
   constructor(
@@ -34,13 +35,15 @@ export class Config {
     provider: ethers.providers.JsonRpcProvider,
     signer: ethers.Signer & TypedDataSigner | null,
   ) {
-    let cfg = (<Record<string, any>> config)[network.name];
-    
+    const cfg = (<Record<string, any>> config)[network.name];
+    const api = import.meta.env.RADICLE_HTTP_API;
+
     if (!cfg) {
       throw `Network ${network.name} is not supported`;
     }
 
     this.network = network;
+    this.seed = { api };
     this.registrar = cfg.registrar;
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
@@ -49,7 +52,6 @@ export class Config {
     this.provider = provider;
     this.signer = signer;
     this.gasLimits = gasLimits;
-    this.seed = config.seed;
     this.abi = config.abi;
     this.tokens = cfg.tokens;
   }

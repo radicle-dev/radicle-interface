@@ -1,0 +1,55 @@
+<script lang="typescript">
+  import Loading from '@app/Loading.svelte';
+
+  export let active: boolean;
+  export let loading: boolean;
+  export let name: string;
+</script>
+
+<style>
+  .file {
+    color: var(--color-foreground-90);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    line-height: 1.5em;
+    margin: 0.125rem 0;
+    padding: 0.25rem;
+    width: 100%;
+  }
+
+  .file:hover {
+    background-color: var(--color-foreground-background);
+  }
+
+  .file.active {
+    color: var(--color-foreground) !important;
+    background-color: var(--color-foreground-background);
+  }
+
+  .spinner {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+  }
+
+  .name {
+    margin-left: 0.25rem;
+    user-select: none;
+    white-space: nowrap;
+  }
+</style>
+
+<div class="file" class:active on:click>
+  {#if loading}
+    <div class="spinner">
+      <Loading small />
+    </div>
+  {:else}
+    <!-- Nothing -->
+  {/if}
+  <span class="name">{name}</span>
+</div>
