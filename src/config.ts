@@ -35,6 +35,10 @@ export class Config {
     signer: ethers.Signer & TypedDataSigner | null,
   ) {
     let cfg = (<Record<string, any>> config)[network.name];
+    
+    if (!cfg) {
+      throw `Network ${network.name} is not supported`;
+    }
 
     this.network = network;
     this.registrar = cfg.registrar;
