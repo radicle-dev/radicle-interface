@@ -25,12 +25,15 @@ export type State =
 
 export interface Session {
   address: string
-  tokenBalance: any
+  tokenBalance: BigNumber
   tx: TxState
 }
 
-export const createState = (initial: State) => {
+export const loadState = (initial: State) => {
   const store = writable<State>(initial)
+
+  const session = window.localStorage.getItem("session");
+  if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) })
 
   return {
     subscribe: store.subscribe,
@@ -52,11 +55,12 @@ export const createState = (initial: State) => {
       const address = await signer.getAddress();
 
       try {
-        const tokenBalance = await token.balanceOf(address);
+        const tokenBalance: BigNumber = await token.balanceOf(address);
         store.set({
           connection: Connection.Connected,
           session: { address, tokenBalance, tx: null }
         });
+        window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance, tx: null }));
       } catch (e) {
         console.error(e);
       }
@@ -77,7 +81,7 @@ export const createState = (initial: State) => {
 
       try {
         const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
-        const tokenBalance = await token.balanceOf(addr);
+        const tokenBalance: BigNumber = await token.balanceOf(addr);
 
         state.session.tokenBalance = tokenBalance;
         store.set(state);
@@ -146,7 +150,13 @@ export const createState = (initial: State) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
-            s.session.address = address; 
+            // In case of locking Metamask the accountsChanged event returns undefined.
+            // To prevent out of sync state, the wallet gets disconnected.
+            if (address === undefined) disconnectWallet();
+            else {
+              s.session.address = address; 
+              window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }))
+            }
             return s;
           default:
             return s;
@@ -156,7 +166,7 @@ export const createState = (initial: State) => {
   };
 };
 
-export const state = createState({ connection: Connection.Disconnected });
+export const state = loadState({ connection: Connection.Disconnected });
 export const session = derived(state, s => {
   if (s.connection === Connection.Connected) {
     return s.session;
@@ -189,5 +199,6 @@ export function token(config: Config): ethers.Contract {
 }
 
 export function disconnectWallet() {
+  window.localStorage.removeItem("session");
   location.reload();
 }
