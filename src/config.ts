@@ -36,8 +36,8 @@ export class Config {
   ) {
     let cfg = (<Record<string, any>> config)[network.name];
     
-    if(!config.hasOwnProperty(network.name.toLowerCase())) {
-      throw `Network ${network.name} is not supported`
+    if (!cfg) {
+      throw `Network ${network.name} is not supported`;
     }
 
     this.network = network;
