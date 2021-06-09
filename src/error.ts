@@ -9,6 +9,7 @@ export interface Err {
 export enum Failure {
   TransactionFailed = 1,
   NotAuthenticated = 2,
+  InsufficientBalance = 3,
 }
 
 export const error = writable<Err | null>(null);
