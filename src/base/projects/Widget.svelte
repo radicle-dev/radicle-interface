@@ -1,5 +1,6 @@
 <script type="typescript">
   import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -27,12 +28,24 @@
       state = { status: Status.Error, error: err.message };
     }
   });
+
+  const onClick = () => {
+    if (meta) {
+      navigate(`/projects/${project.id}/${project.anchor.stateHash}`);
+    }
+  };
 </script>
 
 <style>
   article {
     padding: 1rem;
     border: 1px solid var(--color-secondary-faded);
+  }
+  article.has-meta {
+    cursor: pointer;
+  }
+  article.has-meta:hover {
+    border-color: var(--color-secondary);
   }
   article .id {
     font-size: 1rem;
@@ -73,7 +86,7 @@
   }
 </style>
 
-<article>
+<article on:click={onClick} class:has-meta={meta}>
   {#if meta}
     <div class="id">
       <span class="name">{meta.name}</span><span class="urn">{project.id}</span>
