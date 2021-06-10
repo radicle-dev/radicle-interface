@@ -33,4 +33,4 @@
   }
 </style>
 
-<div class="icon" bind:this={container} class:glowOnHover></div>
+<div class="icon" bind:this={container} class:glowOnHover title={address}></div>
