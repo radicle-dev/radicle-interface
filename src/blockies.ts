@@ -106,7 +106,7 @@ export interface Options {
   spotcolor?: string
 }
 
-export function createIcon(opts: Options) {
+export function createIcon(opts: Options): HTMLCanvasElement {
   opts = opts || {};
   const size = opts.size || 8;
   const scale = opts.scale || 4;

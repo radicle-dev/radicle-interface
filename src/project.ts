@@ -65,8 +65,9 @@ export interface Tree {
 }
 
 export async function getMetadata(urn: string, config: Config): Promise<Meta | null> {
-  const api = import.meta.env.RADICLE_HTTP_API;
-  const response = await fetch(`${api}/v1/projects/${urn}`, {
+  if (! config.seed.api) return null;
+
+  const response = await fetch(`${config.seed.api}/v1/projects/${urn}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',

@@ -17,21 +17,21 @@ export interface Safe {
   threshold: number
 }
 
-export function formatBalance(n: BigNumber) {
+export function formatBalance(n: BigNumber): string {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
 }
 
-export function formatAddress(addr: string) {
+export function formatAddress(addr: string): string {
   return formatHash(addr);
 }
 
-export function formatHash(hash: string) {
+export function formatHash(hash: string): string {
   return hash.substring(0, 6)
     + '...'
     + hash.substring(hash.length - 4, hash.length);
 }
 
-export function capitalize(s: string) {
+export function capitalize(s: string): string {
   if (s === "") return s;
   return s[0].toUpperCase() + s.substr(1);
 }
@@ -191,7 +191,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
 export async function getTokens(address: string, config: Config):
   Promise<Array<{ tokenName: string, tokenLogo: string }>>
 {
-  const result = await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
+  await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
 
   // TODO
   return [];

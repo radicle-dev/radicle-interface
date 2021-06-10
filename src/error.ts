@@ -34,14 +34,14 @@ class AssertionError extends Error {
   }
 }
 
-export function assert(value: any, message?: string): asserts value {
+export function assert(value: unknown, message?: string): asserts value {
   if (! value) {
     throw new AssertionError(message);
   }
 }
 
-export function assertEq(actual: any, expected: any, message?: string) {
+export function assertEq(actual: unknown, expected: unknown, message?: string): void {
   if (actual !== expected) {
-    throw new AssertionError(`assertion failed: expected '${expected}', got '${actual}'`);
+    throw new AssertionError(`assertion failed: expected '${expected}', got '${actual}': ${message}`);
   }
 }

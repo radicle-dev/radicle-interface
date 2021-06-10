@@ -1,4 +1,4 @@
-import { get, writable, derived, Writable } from "svelte/store";
+import { get, writable, derived, Readable } from "svelte/store";
 import { ethers } from "ethers";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
@@ -29,7 +29,18 @@ export interface Session {
   tx: TxState
 }
 
-export const loadState = (initial: State) => {
+export interface Store extends Readable<State> {
+  connect(config: Config): Promise<void>;
+  updateBalance(n: BigNumber): void;
+  refreshBalance(config: Config): Promise<void>;
+
+  setTxSigning(): void;
+  setTxPending(tx: TransactionResponse): void;
+  setTxConfirmed(tx: TransactionReceipt): void;
+  setChangedAccount([address]: string[]): void;
+}
+
+export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
 
   const session = window.localStorage.getItem("session");
@@ -45,7 +56,7 @@ export const loadState = (initial: State) => {
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
       try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
       } catch (e) {
         console.error(e);
       }
@@ -154,7 +165,7 @@ export const loadState = (initial: State) => {
             // To prevent out of sync state, the wallet gets disconnected.
             if (address === undefined) disconnectWallet();
             else {
-              s.session.address = address; 
+              s.session.address = address;
               window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }));
             }
             return s;
@@ -183,7 +194,7 @@ state.subscribe(s => {
   console.log("session.state", s);
 });
 
-export async function approveSpender(spender: string, amount: BigNumber, config: Config) {
+export async function approveSpender(spender: string, amount: BigNumber, config: Config): Promise<void> {
   const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
   const signer = config.provider.getSigner();
   const addr = await signer.getAddress();
@@ -200,7 +211,7 @@ export function token(config: Config): ethers.Contract {
   return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
 }
 
-export function disconnectWallet() {
+export function disconnectWallet(): void {
   window.localStorage.removeItem("session");
   location.reload();
 }
