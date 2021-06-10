@@ -71,6 +71,9 @@ export async function getTree(
   path: string,
   config: Config
 ): Promise<any | null> {
+  if (path === "/") {
+    path = "";
+  }
   return api.get(`projects/${urn}/tree/${commit}/${path}`, config);
 }
 
