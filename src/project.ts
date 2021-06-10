@@ -1,6 +1,8 @@
 import type { Config } from '@app/config';
 import * as api from '@app/api';
 
+export type Urn = string;
+
 export interface Project {
   id: string;
   anchor: {
@@ -8,15 +10,10 @@ export interface Project {
   };
 }
 
-export interface Person {
-  urn: string;
-  avatar: { emoji: string; background: { r: number; g: number; b: number } };
-}
-
 export interface Meta {
   name: string;
   description: string;
-  maintainers: Person[];
+  maintainers: Urn[];
 }
 
 export interface Author {

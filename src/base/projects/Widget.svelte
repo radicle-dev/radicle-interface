@@ -82,9 +82,9 @@
     <div class="anchor">
       <span>commit {project.anchor.stateHash}</span>
       <span>
-        {#each meta.maintainers as user}
+        {#each meta.maintainers as urn}
           <span class="avatar">
-            <Blockies address={user.urn} />
+            <Blockies address={urn} />
           </span>
         {/each}
       </span>
