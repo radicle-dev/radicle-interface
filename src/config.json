@@ -8,7 +8,11 @@
       "address": "0x31c8EAcBFFdD875c74b94b077895Bd78CF1E64A3"
     },
     "orgFactory": {
-      "address": "0x0000000000000000000000000000000000000000"
+      "address": "0x7c4D590168A9019995e072f9c1eCfc1fc356bEd4"
+    },
+    "orgs": {
+      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs",
+      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
     },
     "safe": {
       "api": "https://safe-transaction.gnosis.io/api/v1",
@@ -29,7 +33,7 @@
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten",
-      "contractHash": "0xc5bd5bc3cbcb709540df530c5ad2a9d91463ebb891a789286872938d963c12e9"
+      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
     },
     "safe": {
       "api": null,
@@ -50,7 +54,7 @@
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby",
-      "contractHash": "0xc5bd5bc3cbcb709540df530c5ad2a9d91463ebb891a789286872938d963c12e9"
+      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
     },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1",
