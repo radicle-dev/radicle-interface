@@ -30,22 +30,22 @@ export interface Session {
 }
 
 export const loadState = (initial: State) => {
-  const store = writable<State>(initial)
+  const store = writable<State>(initial);
 
   const session = window.localStorage.getItem("session");
-  if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) })
+  if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
   return {
     subscribe: store.subscribe,
     connect: async (config: Config) => {
-      let state = get(store);
+      const state = get(store);
 
       assertEq(state.connection, Connection.Disconnected);
       store.set({ connection: Connection.Connecting });
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
       try {
-        let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       } catch (e) {
         console.error(e);
       }
@@ -75,7 +75,7 @@ export const loadState = (initial: State) => {
     },
 
     refreshBalance: async (config: Config) => {
-      let state = get(store);
+      const state = get(store);
       assert(state.connection === Connection.Connected);
       const addr = state.session.address;
 
@@ -155,13 +155,13 @@ export const loadState = (initial: State) => {
             if (address === undefined) disconnectWallet();
             else {
               s.session.address = address; 
-              window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }))
+              window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }));
             }
             return s;
           default:
             return s;
         }
-      })
+      });
     }
   };
 };
@@ -191,7 +191,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
   const allowance = await token.allowance(addr, spender);
 
   if (allowance < amount) {
-    let tx = await token.connect(signer).approve(spender, amount);
+    const tx = await token.connect(signer).approve(spender, amount);
     await tx.wait();
   }
 }

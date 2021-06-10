@@ -76,8 +76,8 @@ export async function getConfig(): Promise<Config> {
     // as the provider.
     const metamask = new ethers.providers.Web3Provider(window.ethereum);
     const network = await metamask.ready;
-    const provider = alchemyApiKey ?
-        new ethers.providers.AlchemyProvider(network.name, alchemyApiKey)
+    const provider = alchemyApiKey
+      ? new ethers.providers.AlchemyProvider(network.name, alchemyApiKey)
       : metamask;
 
     config = new Config(network, provider, metamask.getSigner());

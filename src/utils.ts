@@ -39,8 +39,8 @@ export function capitalize(s: string) {
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
 // returns the label, eg. 'cloudhead', otherwise `null`.
 export function parseEnsLabel(name: string, config: Config): string {
-  let domain = config.registrar.domain.replace(".", "\\.");
-  let label = name.replace(new RegExp(`\\.${domain}$`), "");
+  const domain = config.registrar.domain.replace(".", "\\.");
+  const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
   return label;
 }
@@ -67,7 +67,7 @@ export function isAddress(input: string): boolean {
 
 // Get search parameters from location.
 export function getSearchParam(key: string, location: RouteLocation): string | null {
-  let params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(location.search);
   return params.get(key);
 }
 
@@ -108,7 +108,7 @@ export async function querySubgraph(
   const json = await response.json();
 
   if (json.errors) {
-    for (let e of json.errors) {
+    for (const e of json.errors) {
       console.error("querySubgraph:", e.message);
     }
     return null;
@@ -142,13 +142,13 @@ export function formatProjectHash(hash: Uint8Array, format: number): string {
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
-  let safe = await getSafe(address, config);
+  const safe = await getSafe(address, config);
   if (safe) {
     return AddressType.Safe;
   }
 
-  let code = await config.provider.getCode(address);
-  let bytes = ethers.utils.arrayify(code);
+  const code = await config.provider.getCode(address);
+  const bytes = ethers.utils.arrayify(code);
 
   if (bytes.length > 0) {
     if (ethers.utils.keccak256(bytes) === config.orgs.contractHash) {

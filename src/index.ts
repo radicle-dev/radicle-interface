@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-let app = new App({
+const app = new App({
   target: document.body,
 });
 
