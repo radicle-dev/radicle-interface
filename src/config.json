@@ -25,7 +25,7 @@
       "address": "0x59b5eee36f5fa52400A136Fd4630Ee2bF126a4C0"
     },
     "orgFactory": {
-      "address": "0xe1814B14430CF14f0950A29FF26217115B815676"
+      "address": "0xc074cDd9541960B0AA72D90c8bC642F6ae9C4032"
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten",
@@ -46,7 +46,7 @@
       "address": "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea"
     },
     "orgFactory": {
-      "address": "0xe30aA5594FFB52B6bF5bbB21eB7e71Ac525bB028"
+      "address": "0x57962Eb188146A4942c44545a97478d64dc9e4A5"
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby",

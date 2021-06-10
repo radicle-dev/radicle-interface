@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import type { BigNumber } from "ethers";
 import multibase from 'multibase';
+import multihashes from 'multihashes';
 import type { Config } from '@app/config';
 import { assert } from '@app/error';
 
@@ -131,13 +132,9 @@ export function formatRadicleId(hash: Uint8Array): string {
 }
 
 // Create a project hash from a hash and format.
-export function formatProjectHash(hash: Uint8Array, format: number): string {
-  assert(format === 0x0, "Only SHA1 commit hashes are supported");
-
-  // Remove any zero-padding from the byte array. SHA1 is 20 bytes long.
-  const sha1Bytes = 20;
-  const suffix = hash.slice(hash.length - sha1Bytes);
-  return ethers.utils.hexlify(suffix).replace(/^0x/, '');
+export function formatProjectHash(multihash: Uint8Array): string {
+  const decoded = multihashes.decode(multihash);
+  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, '');
 }
 
 // Identify an address by checking whether it's a contract or an externally-owned address.

@@ -18,6 +18,7 @@
     "ethereum-blockies": "^0.1.1",
     "ethers": "^5.0.31",
     "multibase": "^4.0.4",
+    "multihashes": "^4.0.2",
     "svelte": "^3.32.3",
     "svelte-routing": "^1.6.0"
   }

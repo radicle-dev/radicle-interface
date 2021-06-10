@@ -11,8 +11,7 @@ const GetProjects = `
     projects(where: { org: $org }) {
       id
       anchor {
-        stateHash
-        stateHashFormat
+        stateMultihash
         timestamp
       }
     }
@@ -81,12 +80,15 @@ export class Org {
 
     for (const p of result.projects) {
       try {
-        p.id = utils.formatRadicleId(ethers.utils.arrayify(p.id));
-        p.anchor.stateHash = utils.formatProjectHash(
-          ethers.utils.arrayify(p.anchor.stateHash),
-          p.anchor.stateHashFormat
-        );
-        projects.push(p);
+        const proj: Project = {
+          id: utils.formatRadicleId(ethers.utils.arrayify(p.id)),
+          anchor: {
+            stateHash: utils.formatProjectHash(
+              ethers.utils.arrayify(p.anchor.stateMultihash),
+            )
+          },
+        };
+        projects.push(proj);
       } catch (e) {
         console.error(e);
       }

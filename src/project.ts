@@ -4,7 +4,6 @@ export interface Project {
   id: string;
   anchor: {
     stateHash: string;
-    stateHashFormat: string;
   };
 }
 
