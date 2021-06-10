@@ -1,4 +1,5 @@
 import type { Config } from '@app/config';
+import * as api from '@app/api';
 
 export interface Project {
   id: string;
@@ -65,20 +66,7 @@ export interface Tree {
 }
 
 export async function getMetadata(urn: string, config: Config): Promise<Meta | null> {
-  if (! config.seed.api) return null;
-
-  const response = await fetch(`${config.seed.api}/v1/projects/${urn}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-
-  if (! response.ok) {
-    return null;
-  }
-
-  return await response.json();
+  return api.get(`projects/${urn}`, config);
 }
 
 export async function getTree(
@@ -87,18 +75,7 @@ export async function getTree(
   path: string,
   config: Config
 ): Promise<any | null> {
-  if (! config.seed.api) return null;
-
-  const response = await fetch(`${config.seed.api}/v1/projects/${urn}/tree/${commit}/${path}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-  if (! response.ok) {
-    return null;
-  }
-  return response.json();
+  return api.get(`projects/${urn}/tree/${commit}/${path}`, config);
 }
 
 export async function getBlob(
@@ -107,18 +84,7 @@ export async function getBlob(
   path: string,
   config: Config
 ): Promise<Blob | null> {
-  if (! config.seed.api) return null;
-
-  const response = await fetch(`${config.seed.api}/v1/projects/${urn}/blob/${commit}/${path}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-  if (! response.ok) {
-    return null;
-  }
-  return response.json();
+  return api.get(`projects/${urn}/blob/${commit}/${path}`, config);
 }
 
 export async function getReadme(
@@ -126,16 +92,5 @@ export async function getReadme(
   commit: string,
   config: Config
 ): Promise<Blob | null> {
-  if (! config.seed.api) return null;
-
-  const response = await fetch(`${config.seed.api}/v1/projects/${urn}/readme/${commit}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-  if (! response.ok) {
-    return null;
-  }
-  return response.json();
+  return api.get(`projects/${urn}/readme/${commit}`, config);
 }
