@@ -13,20 +13,20 @@ export enum Connection {
 
 export type TxState =
     { state: 'signing' }
-  | { state: 'pending', hash: string }
-  | { state: 'success', hash: string, blockHash: string, blockNumber: number }
-  | { state: 'fail', hash: string, blockHash: string, blockNumber: number, error: string }
+  | { state: 'pending'; hash: string }
+  | { state: 'success'; hash: string; blockHash: string; blockNumber: number }
+  | { state: 'fail'; hash: string; blockHash: string; blockNumber: number; error: string }
   | null;
 
 export type State =
     { connection: Connection.Disconnected }
   | { connection: Connection.Connecting }
-  | { connection: Connection.Connected, session: Session };
+  | { connection: Connection.Connected; session: Session };
 
 export interface Session {
-  address: string
-  tokenBalance: BigNumber
-  tx: TxState
+  address: string;
+  tokenBalance: BigNumber;
+  tx: TxState;
 }
 
 export interface Store extends Readable<State> {

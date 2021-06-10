@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
 
 export interface Err {
-  type: Failure,
-  txHash?: string,
-  message?: string,
+  type: Failure;
+  txHash?: string;
+  message?: string;
 }
 
 export enum Failure {

@@ -98,12 +98,12 @@ function createCanvas(
 }
 
 export interface Options {
-  seed: string
-  size: number
-  scale: number
-  color?: string
-  bgcolor?: string
-  spotcolor?: string
+  seed: string;
+  size: number;
+  scale: number;
+  color?: string;
+  bgcolor?: string;
+  spotcolor?: string;
 }
 
 export function createIcon(opts: Options): HTMLCanvasElement {

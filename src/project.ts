@@ -1,22 +1,22 @@
 import type { Config } from '@app/config';
 
 export interface Project {
-  id: string
+  id: string;
   anchor: {
-    stateHash: string
-    stateHashFormat: string
-  }
+    stateHash: string;
+    stateHashFormat: string;
+  };
 }
 
 export interface Person {
-  urn: string
-  avatar: { emoji: string, background: { r: number, g: number, b: number } }
+  urn: string;
+  avatar: { emoji: string; background: { r: number; g: number; b: number } };
 }
 
 export interface Meta {
-  name: string
-  description: string
-  maintainers: Person[]
+  name: string;
+  description: string;
+  maintainers: Person[];
 }
 
 export interface Author {

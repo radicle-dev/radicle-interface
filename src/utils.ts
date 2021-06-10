@@ -12,9 +12,9 @@ export enum AddressType {
 }
 
 export interface Safe {
-  address: string
-  owners: string[]
-  threshold: number
+  address: string;
+  owners: string[];
+  threshold: number;
 }
 
 export function formatBalance(n: BigNumber): string {
@@ -189,7 +189,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
 
 // Get token balances for an address.
 export async function getTokens(address: string, config: Config):
-  Promise<Array<{ tokenName: string, tokenLogo: string }>>
+  Promise<Array<{ tokenName: string; tokenLogo: string }>>
 {
   await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
 
