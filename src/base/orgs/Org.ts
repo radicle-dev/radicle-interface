@@ -1,5 +1,5 @@
 import * as ethers from 'ethers';
-import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
+import type { TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
 import { assert } from '@app/error';
 import * as utils from '@app/utils';

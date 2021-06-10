@@ -63,19 +63,19 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
   };
 }
 
-export function registrar(config: Config) {
+export function registrar(config: Config): ethers.Contract {
   return new ethers.Contract(config.registrar.address, config.abi.registrar, config.provider);
 }
 
-export function radToken(config: Config) {
+export function radToken(config: Config): ethers.Contract {
   return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
 }
 
-export async function registrationFee(config: Config) {
+export async function registrationFee(config: Config): Promise<BigNumber> {
   return await registrar(config).registrationFeeRad();
 }
 
-export async function registerName(name: string, owner: string, config: Config) {
+export async function registerName(name: string, owner: string, config: Config): Promise<void> {
   assert(config.signer);
 
   if (! name) return;
@@ -95,7 +95,7 @@ export async function registerName(name: string, owner: string, config: Config) 
   }
 }
 
-async function commitAndRegister(name: string, owner: string, config: Config) {
+async function commitAndRegister(name: string, owner: string, config: Config): Promise<void> {
   const salt = ethers.utils.randomBytes(32);
   const minAge = (await registrar(config).minCommitmentAge()).toNumber();
   const fee = await registrationFee(config);
@@ -117,7 +117,7 @@ async function commitAndRegister(name: string, owner: string, config: Config) {
   await register(name, owner, salt, config);
 }
 
-async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config) {
+async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
   assert(config.signer);
 
   state.set(State.Committing);
