@@ -6,12 +6,12 @@ import type { Config } from "@app/config";
 
 
 export interface VestingInfo {
-  token: string,
-  symbol: string,
-  beneficiary: string,
-  totalVesting: string,
-  withdrawableBalance: string,
-  withdrawn: string
+  token: string;
+  symbol: string;
+  beneficiary: string;
+  totalVesting: string;
+  withdrawableBalance: string;
+  withdrawn: string;
 }
 
 export async function withdrawVested(address: string, config: Config) {
@@ -20,7 +20,7 @@ export async function withdrawVested(address: string, config: Config) {
 
   state.set(State.WithdrawingSign);
 
-  let tx = await contract.connect(signer).withdrawVested();
+  const tx = await contract.connect(signer).withdrawVested();
 
   state.set(State.Withdrawing);
   await tx.wait();

@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import type { Config } from '@app/config';
 import { assert } from '@app/error';
 
-export type EnsRecord = { name: string, value: string };
+export type EnsRecord = { name: string; value: string };
 
 export async function setRecords(name: string, records: EnsRecord[], resolver: EnsResolver, config: Config): Promise<TransactionResponse> {
   assert(config.signer);
@@ -12,10 +12,10 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
   const resolverContract = new ethers.Contract(resolver.address, config.abi.resolver, config.signer);
   const node = ethers.utils.namehash(`${name}.${config.registrar.domain}`);
 
-  let calls = [];
+  const calls = [];
   const iface = new ethers.utils.Interface(config.abi.resolver);
 
-  for (let r of records) {
+  for (const r of records) {
     switch (r.name) {
       case "address":
         calls.push(

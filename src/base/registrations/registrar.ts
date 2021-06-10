@@ -11,14 +11,14 @@ import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
 
 export interface Registration {
-  name: string
-  owner: string
-  address: string | null
-  url: string | null
-  avatar: string | null
-  twitter: string | null
-  github: string | null
-  resolver: EnsResolver
+  name: string;
+  owner: string;
+  address: string | null;
+  url: string | null;
+  avatar: string | null;
+  twitter: string | null;
+  github: string | null;
+  resolver: EnsResolver;
 }
 
 export enum State {
@@ -80,8 +80,8 @@ export async function registerName(name: string, owner: string, config: Config) 
 
   if (! name) return;
 
-  let commitmentJson = window.localStorage.getItem('commitment');
-  let commitment = commitmentJson && JSON.parse(commitmentJson);
+  const commitmentJson = window.localStorage.getItem('commitment');
+  const commitment = commitmentJson && JSON.parse(commitmentJson);
 
   try {
     // Try to recover an existing commitment.
@@ -96,9 +96,9 @@ export async function registerName(name: string, owner: string, config: Config) 
 }
 
 async function commitAndRegister(name: string, owner: string, config: Config) {
-  let salt = ethers.utils.randomBytes(32);
-  let minAge = (await registrar(config).minCommitmentAge()).toNumber();
-  let fee = await registrationFee(config);
+  const salt = ethers.utils.randomBytes(32);
+  const minAge = (await registrar(config).minCommitmentAge()).toNumber();
+  const fee = await registrationFee(config);
   // Avoids gas spent by the owner, trying to commit to a name and not having
   // enough RAD balance
   if ((await radToken(config).balanceOf(owner)).lt(fee)) {
@@ -202,7 +202,7 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
 }
 
 function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
-  let bytes = ethers.utils.concat([
+  const bytes = ethers.utils.concat([
     ethers.utils.toUtf8Bytes(name),
     ethers.utils.getAddress(owner),
     ethers.BigNumber.from(salt).toHexString(),
@@ -211,13 +211,13 @@ function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
 }
 
 async function getOwner(name: string, config: Config): Promise<string> {
-  let ensAddr = config.provider.network.ensAddress;
+  const ensAddr = config.provider.network.ensAddress;
   if (! ensAddr) {
     throw new Error("ENS address is not defined");
   }
 
-  let registry = new ethers.Contract(ensAddr, config.abi.ens, config.provider);
-  let owner = await registry.owner(ethers.utils.namehash(name));
+  const registry = new ethers.Contract(ensAddr, config.abi.ens, config.provider);
+  const owner = await registry.owner(ethers.utils.namehash(name));
 
   return owner;
 }

@@ -9,7 +9,7 @@ export enum State {
   WithdrawingSign = 4,
   Withdrawing = 5,
   Withdrawn = 6,
-};
+}
 
 export const state = writable(State.Idle);
 

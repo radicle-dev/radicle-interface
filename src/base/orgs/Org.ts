@@ -77,9 +77,9 @@ export class Org {
 
   async getProjects(config: Config): Promise<Array<Project>> {
     const result = await utils.querySubgraph(GetProjects, { org: this.address }, config);
-    let projects: Project[] = [];
+    const projects: Project[] = [];
 
-    for (let p of result.projects) {
+    for (const p of result.projects) {
       try {
         p.id = utils.formatRadicleId(ethers.utils.arrayify(p.id));
         p.anchor.stateHash = utils.formatProjectHash(
@@ -96,9 +96,9 @@ export class Org {
 
   static async getAll(config: Config): Promise<Array<Org>> {
     const result = await utils.querySubgraph(GetOrgs, {}, config);
-    let orgs: Org[] = [];
+    const orgs: Org[] = [];
 
-    for (let o of result.orgs) {
+    for (const o of result.orgs) {
       try {
         orgs.push(new Org(o.id, o.owner));
       } catch (e) {
@@ -109,11 +109,11 @@ export class Org {
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {
-    let event = receipt.events?.find(e => e.event === 'OrgCreated');
+    const event = receipt.events?.find(e => e.event === 'OrgCreated');
 
     if (event && event.args) {
-      let address = event.args[0];
-      let owner = event.args[1];
+      const address = event.args[0];
+      const owner = event.args[1];
 
       return new Org(address, owner);
     }
