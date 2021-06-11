@@ -10,6 +10,11 @@ export interface Project {
   };
 }
 
+export interface Info {
+  head: string;
+  meta: Meta;
+}
+
 export interface Meta {
   name: string;
   description: string;
@@ -61,7 +66,7 @@ export interface Tree {
   path: string;
 }
 
-export async function getMetadata(urn: string, config: Config): Promise<Meta | null> {
+export async function getInfo(urn: string, config: Config): Promise<Info | null> {
   return api.get(`projects/${urn}`, config);
 }
 

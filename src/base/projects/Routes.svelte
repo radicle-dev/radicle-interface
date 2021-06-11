@@ -17,3 +17,7 @@
 <Route path="/projects/:urn/:commit" let:params>
   <View {config} urn={params.urn} commit={params.commit} path="/" />
 </Route>
+
+<Route path="/projects/:urn" let:params>
+  <View {config} urn={params.urn} commit={null} path="/" />
+</Route>

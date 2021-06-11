@@ -5,35 +5,23 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
 
-  import Tree from './Tree.svelte';
-  import Blob from './Blob.svelte';
+  import Browser from './Browser.svelte';
+
+  enum State {
+    Loading,
+  };
 
   export let urn: string;
-  export let commit: string;
+  export let commit: string | null;
   export let config: Config;
   export let path: string;
 
-  let meta: "loading" | proj.Meta | null = null;
-  let blob: Promise<proj.Blob | null> | null = null;
-
-  const fetchTree = async (path: string) => {
-    return proj.getTree(urn, commit, path, config);
-  };
-
-  const onSelect = async ({ detail: path }: { detail: string }) => {
-    navigate(`/projects/${urn}/${commit}/${path}`);
-  };
+  let project: State.Loading | proj.Info | null = null;
 
   onMount(async () => {
-    meta = "loading";
-    meta = await proj.getMetadata(urn, config);
+    project = State.Loading;
+    project = await proj.getInfo(urn, config);
   });
-
-  $: if (path === "/") {
-    blob = proj.getReadme(urn, commit, config);
-  } else {
-    blob = proj.getBlob(urn, commit, path, config);
-  }
 </script>
 
 <style>
@@ -68,76 +56,24 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
-
-  .center-content {
-    margin: 0 auto;
-    max-width: var(--content-max-width);
-    min-width: var(--content-min-width);
-  }
-
-  .container {
-    display: flex;
-    width: inherit;
-    margin-bottom: 4rem;
-    padding: 0 2rem 0 8rem;
-  }
-
-  .column-left {
-    display: flex;
-    flex-direction: column;
-    padding-right: 1rem;
-  }
-
-  .column-right {
-    display: flex;
-    flex-direction: column;
-    padding-left: 1rem;
-    min-width: var(--content-min-width);
-    width: 100%;
-  }
-
-  .source-tree {
-    overflow-x: auto;
-  }
 </style>
 
 <main>
-  <header>
-    {#if meta === "loading"}
+  {#if project === State.Loading}
+    <header>
       <Loading small />
-    {:else if meta}
-      <div class="title bold">{meta.name}</div>
+    </header>
+  {:else if project}
+    <header>
+      <div class="title bold">{project.meta.name}</div>
       <div class="urn">{urn}</div>
-      <div class="description">{meta.description}</div>
-    {/if}
-    <div class="anchor">
-      commit {commit}
-    </div>
-  </header>
-  <div class="container center-content">
-    <div class="column-left">
-      <div class="source-tree">
-        {#await proj.getTree(urn, commit, "/", config)}
-          Loading..
-        {:then tree}
-          <Tree {tree} {path} {fetchTree} on:select={onSelect} />
-        {:catch err}
-          {err}
-        {/await}
+      <div class="description">{project.meta.description}</div>
+      <div class="anchor">
+        commit {commit || project.head}
       </div>
-    </div>
-    <div class="column-right">
-      {#await blob}
-        <Loading small center />
-      {:then blob}
-        {#if blob}
-          <Blob {blob} />
-        {:else}
-          <!-- Project has no README -->
-        {/if}
-      {:catch}
-        <!-- TODO: Handle error -->
-      {/await}
-    </div>
-  </div>
+    </header>
+    <Browser {urn} commit={commit || project.head} {path} {config} />
+  {:else}
+    <!-- Not found -->
+  {/if}
 </main>
