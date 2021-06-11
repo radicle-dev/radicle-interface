@@ -40,6 +40,7 @@
   article {
     padding: 1rem;
     border: 1px solid var(--color-secondary-faded);
+    border-radius: 0.25rem;
   }
   article.has-info {
     cursor: pointer;
