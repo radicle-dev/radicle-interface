@@ -94,6 +94,7 @@
     ],
     "org": [
       "function owner() view returns (address)",
+      "function anchors(bytes32) view returns (bytes, uint8)",
       "function setOwner(address)",
       "function setName(string, address) returns (bytes32)"
     ],

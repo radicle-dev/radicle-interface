@@ -13,6 +13,7 @@
   };
 
   export let urn: string;
+  export let org: string | null = null;
   export let commit: string | null = null;
   export let config: Config;
   export let path: string;
@@ -76,7 +77,7 @@
       <div class="urn">{urn}</div>
       <div class="description">{project.meta.description}</div>
     </header>
-    <Browser {urn} commit={commit || project.head} {path} {onSelect} {config} />
+    <Browser {urn} {org} commit={commit || project.head} {path} {onSelect} {config} />
   {:else}
     <Modal subtle>
       <span slot="title">🏜️</span>

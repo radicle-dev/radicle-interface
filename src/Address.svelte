@@ -6,13 +6,17 @@
   import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
-  import { identifyAddress, AddressType } from '@app/utils';
+  import { identifyAddress, formatAddress, AddressType } from '@app/utils';
 
   export let address: string;
   export let config: Config;
   export let resolve = false;
+  export let noBadge = false;
+  export let compact = false;
 
-  let checksumAddress = ethers.utils.getAddress(address);
+  let checksumAddress = compact
+    ? formatAddress(address)
+    : ethers.utils.getAddress(address);
   let addressType: AddressType | null = null;
   let addressName: string | null = null;
 
@@ -30,6 +34,9 @@
   .address {
     display: flex;
     align-items: center;
+  }
+  .address.no-badge .badge {
+    display: none;
   }
   .icon {
     display: inline-block;
@@ -51,7 +58,7 @@
   }
 </style>
 
-<div class="address">
+<div class="address" class:no-badge={noBadge}>
   <span class="icon"><Blockies address={address} /></span>
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
@@ -65,7 +72,7 @@
       <span class="badge">contract</span>
     {:else if addressType === AddressType.EOA}
       <!-- Don't show anything for EOAs -->
-    {:else}
+    {:else if !noBadge}
       <div class="loading"><Loading small /></div>
     {/if}
   {/if}

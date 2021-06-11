@@ -2,6 +2,8 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
+  import Address from '@app/Address.svelte';
+  import { Org } from '@app/base/orgs/Org';
 
   import Tree from './Tree.svelte';
   import Blob from './Blob.svelte';
@@ -11,6 +13,7 @@
   export let config: Config;
   export let path: string;
   export let onSelect: (event: { detail: string }) => void;
+  export let org: string | null = null;
 
   let blob: Promise<proj.Blob | null> | null = null;
 
@@ -23,14 +26,16 @@
   } else {
     blob = proj.getBlob(urn, commit, path, config);
   }
+  $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
 </script>
 
 <style>
   main > header {
     padding: 0 8rem;
     margin-bottom: 2rem;
+    display: flex;
   }
-  .anchor {
+  .commit {
     display: inline-block;
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
@@ -38,6 +43,20 @@
     background-color: var(--color-secondary-background);
     padding: 0.75rem;
     border-radius: 0.25rem;
+  }
+
+  .anchor {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+    display: inline-block;
+    color: var(--color-positive);
+    background-color: var(--color-positive-background);
+    border-radius: 0.25rem;
+    margin-left: 0.75rem;
+    display: flex;
+  }
+  .anchor-label {
+    margin-right: 0.5rem;
   }
 
   .center-content {
@@ -91,9 +110,21 @@
     Loading..
   {:then tree}
     <header>
-      <div class="anchor">
+      <div class="commit">
         commit {commit}
       </div>
+      {#if org}
+        {#await getAnchor}
+          <Loading small margins />
+        {:then anchor}
+          {#if anchor === commit}
+            <span class="anchor">
+              <span class="anchor-label">anchor</span>
+              <Address address={org} compact resolve noBadge {config} />
+            </span>
+          {/if}
+        {/await}
+      {/if}
     </header>
     <div class="container center-content">
       {#if tree.entries.length}

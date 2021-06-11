@@ -96,6 +96,26 @@ export class Org {
     return projects;
   }
 
+  static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
+    const org = new ethers.Contract(
+      orgAddr,
+      config.abi.org,
+      config.provider
+    );
+    const unpadded = utils.parseRadicleId(urn);
+    const id = ethers.utils.zeroPad(unpadded, 32);
+
+    try {
+      const result = await org.anchors(id);
+      const anchor = utils.formatProjectHash(ethers.utils.arrayify(result[0]));
+
+      return anchor;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
   static async getAll(config: Config): Promise<Array<Org>> {
     const result = await utils.querySubgraph(GetOrgs, {}, config);
     const orgs: Org[] = [];

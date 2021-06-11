@@ -135,6 +135,15 @@ export function formatRadicleId(hash: Uint8Array): string {
   return `rad:git:${new TextDecoder().decode(payload)}`;
 }
 
+// Parse a Radicle Id (URN).
+export function parseRadicleId(urn: string): Uint8Array {
+  const encoded = urn.replace(/^rad:[a-z]+:/, "");
+  const multihash = multibase.decode(encoded);
+  const hash = multihashes.decode(multihash);
+
+  return hash.digest;
+}
+
 // Create a project hash from a hash and format.
 export function formatProjectHash(multihash: Uint8Array): string {
   const decoded = multihashes.decode(multihash);
