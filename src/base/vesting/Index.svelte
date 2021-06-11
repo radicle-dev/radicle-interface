@@ -53,70 +53,72 @@
 </style>
 
 <main class="centered">
-  {#if info}
-    <Modal>
-      <span slot="title">
-        {contractAddress}
-      </span>
-      <span slot="body">
-        {#if $state === State.Withdrawn}
-          Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
-        {:else}
-          <table>
-            <tr><td class="label">Beneficiary</td><td>{info.beneficiary}</td></tr>
-            <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
-            <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
-            <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
-          </table>
-        {/if}
-      </span>
-      <span slot="actions">
-        {#if isBeneficiary}
-          {#if $state === State.WithdrawingSign}
-            <button disabled data-waiting class="primary small">
-              Waiting for signature...
-            </button>
-          {:else if $state === State.Withdrawing}
-            <button disabled data-waiting class="primary small">
-              Withdrawing...
-            </button>
-          {:else if $state === State.Idle}
-            <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
-              Withdraw
-            </button>
+  <div>
+    {#if info}
+      <Modal>
+        <span slot="title">
+          {contractAddress}
+        </span>
+        <span slot="body">
+          {#if $state === State.Withdrawn}
+            Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
+          {:else}
+            <table>
+              <tr><td class="label">Beneficiary</td><td>{info.beneficiary}</td></tr>
+              <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
+              <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
+              <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
+            </table>
           {/if}
-        {/if}
-        <button on:click={reset} class="small">
-          Back
+        </span>
+        <span slot="actions">
+          {#if isBeneficiary}
+            {#if $state === State.WithdrawingSign}
+              <button disabled data-waiting class="primary small">
+                Waiting for signature...
+              </button>
+            {:else if $state === State.Withdrawing}
+              <button disabled data-waiting class="primary small">
+                Withdrawing...
+              </button>
+            {:else if $state === State.Idle}
+              <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
+                Withdraw
+              </button>
+            {/if}
+          {/if}
+          <button on:click={reset} class="small">
+            Back
+          </button>
+        </span>
+      </Modal>
+    {:else}
+      <div class="input-caption">
+        Enter your Radicle <strong>vesting contract</strong> address
+      </div>
+      <div class="input-main">
+        <span class="name">
+          <div>
+            <input
+              size="40"
+              placeholder=""
+              class="subdomain"
+              disabled={$state === State.Loading}
+              type="text"
+              bind:this={input}
+              bind:value={contractAddress}
+            />
+          </div>
+        </span>
+        <button
+          on:click={() => loadContract(config)}
+          class="primary"
+          data-waiting={$state === State.Loading || null}
+          disabled={$state === State.Loading}
+        >
+          Load
         </button>
-      </span>
-    </Modal>
-  {:else}
-    <div class="input-caption">
-      Enter your Radicle <strong>vesting contract</strong> address
-    </div>
-    <div class="input-main">
-      <span class="name">
-        <div>
-          <input
-            size="40"
-            placeholder=""
-            class="subdomain"
-            disabled={$state === State.Loading}
-            type="text"
-            bind:this={input}
-            bind:value={contractAddress}
-          />
-        </div>
-      </span>
-      <button
-        on:click={() => loadContract(config)}
-        class="primary"
-        data-waiting={$state === State.Loading || null}
-        disabled={$state === State.Loading}
-      >
-        Load
-      </button>
-    </div>
-  {/if}
+      </div>
+    {/if}
+  </div>
 </main>

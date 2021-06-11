@@ -34,21 +34,23 @@
 </style>
 
 <main class="centered">
-  <div class="input-caption">
-    Register a <strong>{config.registrar.domain}</strong> name
-  </div>
-  <div class="input-main">
-    <span class="name">
-      <DomainInput
-        bind:value={label}
-        autofocus
-        placeholder=""
-        root={config.registrar.domain}
-      />
-    </span>
+  <div>
+    <div class="input-caption">
+      Register a <strong>{config.registrar.domain}</strong> name
+    </div>
+    <div class="input-main">
+      <span class="name">
+        <DomainInput
+          bind:value={label}
+          autofocus
+          placeholder=""
+          root={config.registrar.domain}
+        />
+      </span>
 
-    <button disabled={!label} class="primary register" on:click={register}>
-      Check
-    </button>
+      <button disabled={!label} class="primary register" on:click={register}>
+        Check
+      </button>
+    </div>
   </div>
 </main>

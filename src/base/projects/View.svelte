@@ -4,6 +4,7 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
+  import Modal from '@app/Modal.svelte';
 
   import Browser from './Browser.svelte';
 
@@ -28,10 +29,15 @@
       navigate(`/projects/${urn}/head/${path}`);
     }
   };
+  const back = () => window.history.back();
 
   onMount(async () => {
-    project = State.Loading;
-    project = await proj.getInfo(urn, config);
+    try {
+      project = State.Loading;
+      project = await proj.getInfo(urn, config);
+    } catch {
+      project = null;
+    }
   });
 </script>
 
@@ -72,6 +78,17 @@
     </header>
     <Browser {urn} commit={commit || project.head} {path} {onSelect} {config} />
   {:else}
-    <!-- Not found -->
+    <Modal subtle>
+      <span slot="title">🏜️</span>
+      <span slot="body">
+        <p class="highlight"><strong>{urn}</strong></p>
+        <p>This project was not found.</p>
+      </span>
+      <span slot="actions">
+        <button on:click={back}>
+          Back
+        </button>
+      </span>
+    </Modal>
   {/if}
 </main>
