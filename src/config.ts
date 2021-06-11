@@ -59,7 +59,7 @@ export class Config {
 
 /// Gas limits for various transactions.
 const gasLimits = {
-  createOrg: 1_000_000,
+  createOrg: 1_200_000,
 };
 
 function isMetamaskInstalled(): boolean {
