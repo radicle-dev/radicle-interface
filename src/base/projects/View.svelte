@@ -1,6 +1,6 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
+  import { Link, navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -17,6 +17,9 @@
   export let path: string;
 
   let project: State.Loading | proj.Info | null = null;
+  let projectRoot = commit
+    ? `/projects/${urn}/${commit}`
+    : `/projects/${urn}`;
 
   const onSelect = ({ detail: path }: { detail: string }) => {
     if (commit) {
@@ -61,7 +64,9 @@
     </header>
   {:else if project}
     <header>
-      <div class="title bold">{project.meta.name}</div>
+      <div class="title bold">
+        <Link to={projectRoot}>{project.meta.name}</Link>
+      </div>
       <div class="urn">{urn}</div>
       <div class="description">{project.meta.description}</div>
     </header>
