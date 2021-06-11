@@ -38,24 +38,12 @@
     padding: 4rem 0;
   }
   main > header {
-    margin-bottom: 4rem;
     padding: 0 8rem;
   }
   .title {
     font-size: 2.25rem;
     margin-bottom: 0.5rem;
   }
-
-  .anchor {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-family: var(--font-family-monospace);
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
-    padding: 0.75rem;
-    border-radius: 0.25rem;
-  }
-
   .urn {
     font-family: var(--font-family-monospace);
     font-size: 0.75rem;
@@ -76,9 +64,6 @@
       <div class="title bold">{project.meta.name}</div>
       <div class="urn">{urn}</div>
       <div class="description">{project.meta.description}</div>
-      <div class="anchor">
-        commit {commit || project.head}
-      </div>
     </header>
     <Browser {urn} commit={commit || project.head} {path} {onSelect} {config} />
   {:else}

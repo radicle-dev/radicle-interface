@@ -118,10 +118,6 @@
     height: 2rem;
     margin-right: 1rem;
   }
-  .error {
-    background-color: var(--color-negative-background);
-    padding: 1rem;
-  }
 </style>
 
 {#await Org.get(address, config)}
@@ -223,7 +219,7 @@
             </div>
           {/each}
         {:catch err}
-          <div class="error">
+          <div class="error error-message">
             Error loading projects: {err}.
           </div>
         {/await}

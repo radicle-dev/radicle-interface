@@ -29,6 +29,20 @@
 </script>
 
 <style>
+  main > header {
+    padding: 0 8rem;
+    margin-bottom: 2rem;
+  }
+  .anchor {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-family: var(--font-family-monospace);
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-background);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+  }
+
   .center-content {
     margin: 0 auto;
     max-width: var(--content-max-width);
@@ -61,31 +75,42 @@
   }
 </style>
 
-<div class="container center-content">
-  {#if commit}
-    <div class="column-left">
-      <div class="source-tree">
-        {#await proj.getTree(urn, commit, "/", config)}
-          Loading..
-        {:then tree}
-          <Tree {tree} {path} {fetchTree} on:select={onSelect} />
-        {:catch err}
-          {err}
-        {/await}
+<main>
+  {#await proj.getTree(urn, commit, "/", config)}
+    Loading..
+  {:then tree}
+    <header>
+      <div class="anchor">
+        commit {commit}
+      </div>
+    </header>
+    <div class="container center-content">
+      {#if commit}
+        <div class="column-left">
+          <div class="source-tree">
+            <Tree {tree} {path} {fetchTree} on:select={onSelect} />
+          </div>
+        </div>
+        <div class="column-right">
+          {#await blob}
+            <Loading small center />
+          {:then blob}
+            {#if blob}
+              <Blob {blob} />
+            {:else}
+              <!-- Project has no README -->
+            {/if}
+          {:catch}
+            <!-- TODO: Handle error -->
+          {/await}
+        </div>
+      {/if}
+    </div>
+  {:catch err}
+    <div class="container center-content">
+      <div class="error error-message text-small">
+        API request to <code class="text-small">{err.url}</code> failed
       </div>
     </div>
-    <div class="column-right">
-      {#await blob}
-        <Loading small center />
-      {:then blob}
-        {#if blob}
-          <Blob {blob} />
-        {:else}
-          <!-- Project has no README -->
-        {/if}
-      {:catch}
-        <!-- TODO: Handle error -->
-      {/await}
-    </div>
-  {/if}
-</div>
+  {/await}
+</main>

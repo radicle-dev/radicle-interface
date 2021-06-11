@@ -98,6 +98,10 @@ html {
 	color: var(--color-background);
 }
 
+.error::selection, .error ::selection {
+	background: var(--color-negative);
+}
+
 code {
 	font-family: monospace;
 	font-size: 0.95rem;
@@ -247,6 +251,10 @@ input.wide {
 	border-color: var(--color-negative) !important;
 	--box-shadow-color: var(--color-negative-2) !important;
 }
+.error-message {
+	background-color: var(--color-negative-background);
+	padding: 1rem;
+}
 .highlight {
 	color: var(--color-secondary);
 }
@@ -290,7 +298,7 @@ input.wide {
 	justify-content: center;
 }
 
-span.small {
+span.small, .text-small {
 	font-size: 0.75rem;
 }
 

@@ -3,15 +3,36 @@ import type { Config } from '@app/config';
 export async function get(path: string, config: Config): Promise<any | null> {
   if (! config.seed.api) return null;
 
-  const response = await fetch(`${config.seed.api}/v1/${path}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
+  const url = `${config.seed.api}/v1/${path}`;
 
-  if (! response.ok) {
-    return null;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+
+    if (! response.ok) {
+      return null;
+    }
+    return response.json();
+  } catch {
+    throw new ApiError(url, "API request failed");
   }
-  return response.json();
+}
+
+class ApiError extends Error {
+  url: string;
+
+  constructor(url: string, message: string) {
+    super(message);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ApiError);
+    }
+
+    this.name = "ApiError";
+    this.url = url;
+  }
 }
