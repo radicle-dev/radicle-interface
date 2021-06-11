@@ -115,9 +115,15 @@
             <div class="error error-message file-not-found">
               <header>
                 <div class="icon">🍂</div>
-                <div><code>{path}</code></div>
+                {#if path != "/"}
+                  <div><code>{path}</code></div>
+                {/if}
               </header>
-              This file could not be loaded.
+              {#if path == "/"}
+                The README could not be loaded.
+              {:else}
+                This path could not be loaded.
+              {/if}
             </div>
           {/await}
         </div>
