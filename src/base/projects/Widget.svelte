@@ -17,20 +17,20 @@
   export let config: Config;
 
   let state: State = { status: Status.Loading };
-  let meta: proj.Meta | null = null;
+  let info: proj.Info | null = null;
 
   onMount(async () => {
     try {
-      const result = await proj.getMetadata(project.id, config);
+      const result = await proj.getInfo(project.id, config);
       state = { status: Status.Loaded };
-      meta = result;
+      info = result;
     } catch (err) {
       state = { status: Status.Error, error: err.message };
     }
   });
 
   const onClick = () => {
-    if (meta) {
+    if (info) {
       navigate(`/projects/${project.id}/${project.anchor.stateHash}`);
     }
   };
@@ -41,10 +41,10 @@
     padding: 1rem;
     border: 1px solid var(--color-secondary-faded);
   }
-  article.has-meta {
+  article.has-info {
     cursor: pointer;
   }
-  article.has-meta:hover {
+  article.has-info:hover {
     border-color: var(--color-secondary);
   }
   article .id {
@@ -53,7 +53,7 @@
     margin-bottom: 0.5rem;
   }
   article .description {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-size: 0.75rem;
   }
   article .anchor {
@@ -86,16 +86,16 @@
   }
 </style>
 
-<article on:click={onClick} class:has-meta={meta}>
-  {#if meta}
+<article on:click={onClick} class:has-info={info}>
+  {#if info}
     <div class="id">
-      <span class="name">{meta.name}</span><span class="urn">{project.id}</span>
+      <span class="name">{info.meta.name}</span><span class="urn">{project.id}</span>
     </div>
-    <div class="description">{meta.description}</div>
+    <div class="description">{info.meta.description}</div>
     <div class="anchor">
       <span>commit {project.anchor.stateHash}</span>
       <span>
-        {#each meta.maintainers as urn}
+        {#each info.meta.maintainers as urn}
           <span class="avatar">
             <Blockies address={urn} />
           </span>

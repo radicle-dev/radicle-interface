@@ -1,6 +1,4 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -14,7 +12,6 @@
   export let path: string;
   export let onSelect: (event: { detail: string }) => void;
 
-  let info: "loading" | proj.Info | null = null;
   let blob: Promise<proj.Blob | null> | null = null;
 
   const fetchTree = async (path: string) => {
@@ -114,7 +111,7 @@
             {:else}
               <!-- Project has no README -->
             {/if}
-          {:catch err}
+          {:catch}
             <div class="error error-message">
               <header>
                 <div class="icon">🍂</div>
