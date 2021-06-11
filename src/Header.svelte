@@ -39,9 +39,6 @@
     font-weight: 500;
     color: var(--color-foreground-6);
   }
-  header a {
-    border: none;
-  }
   header .nav a:hover {
     color: var(--color-foreground);
   }

@@ -233,7 +233,7 @@
         <p>Sorry, there is no Org at this address.</p>
         {#if utils.isAddress(address)}
           <p>
-            <a href={explorerLink(address, config)} target="_blank">View in explorer</a>
+            <a href={explorerLink(address, config)} class="link" target="_blank">View in explorer</a>
             <span class="faded">↗</span>
           </p>
         {/if}

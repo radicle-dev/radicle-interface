@@ -40,7 +40,10 @@
     min-height: 1rem;
   }
   .address a {
-    border-bottom: none;
+    color: var(--color-foreground-90);
+  }
+  .address a:hover {
+    color: var(--color-foreground);
   }
   .loading {
     margin-left: 1rem;

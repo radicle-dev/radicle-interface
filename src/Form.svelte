@@ -93,7 +93,7 @@
         <span class="field">
           {#if field.value}
             {#if isUrl(field.value)}
-              <a href="{field.value}" target="_blank">{field.value}</a>
+              <a class="link" href="{field.value}" target="_blank">{field.value}</a>
             {:else if isAddress(field.value)}
               <Address address={field.value} {config} />
             {:else}
