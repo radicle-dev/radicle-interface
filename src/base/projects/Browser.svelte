@@ -46,14 +46,16 @@
   }
 
   .anchor {
-    font-size: 0.75rem;
-    padding: 0.75rem;
-    display: inline-block;
-    color: var(--color-positive);
-    background-color: var(--color-positive-background);
-    border-radius: 0.25rem;
     margin-left: 0.75rem;
     display: flex;
+  }
+  .anchor-widget {
+    display: flex;
+    padding: 0.75rem;
+    color: var(--color-yellow);
+    background-color: var(--color-yellow-background);
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
   }
   .anchor-label {
     margin-right: 0.5rem;
@@ -113,18 +115,20 @@
       <div class="commit">
         commit {commit}
       </div>
-      {#if org}
-        {#await getAnchor}
-          <Loading small margins />
-        {:then anchor}
-          {#if anchor === commit}
-            <span class="anchor">
-              <span class="anchor-label">anchor</span>
-              <Address address={org} compact resolve noBadge {config} />
-            </span>
-          {/if}
-        {/await}
-      {/if}
+      <div class="anchor">
+        {#if org}
+          {#await getAnchor}
+            <Loading small margins />
+          {:then anchor}
+            {#if anchor === commit}
+              <span class="anchor-widget">
+                <span class="anchor-label">anchor</span>
+                <Address address={org} compact resolve noBadge {config} />
+              </span>
+            {/if}
+          {/await}
+        {/if}
+      </div>
     </header>
     <div class="container center-content">
       {#if tree.entries.length}

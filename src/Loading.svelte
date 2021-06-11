@@ -12,6 +12,9 @@
     width: 70px;
     text-align: center;
     cursor: wait;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
   }
   .spinner.center {
     margin: auto auto;
