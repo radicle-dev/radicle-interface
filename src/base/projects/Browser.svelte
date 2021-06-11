@@ -71,16 +71,16 @@
     overflow-x: auto;
   }
 
-  .error-message {
+  .file-not-found {
     text-align: center;
-    padding-bottom: 2rem;
     border-radius: 0.25rem;
+    padding-bottom: 2rem;
   }
-  .error-message header {
+  .file-not-found header {
     padding: 1rem 0;
     font-weight: bold;
   }
-  .error-message .icon {
+  .file-not-found .icon {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
@@ -96,7 +96,7 @@
       </div>
     </header>
     <div class="container center-content">
-      {#if commit}
+      {#if tree.entries.length}
         <div class="column-left">
           <div class="source-tree">
             <Tree {tree} {path} {fetchTree} on:select={onSelect} />
@@ -112,7 +112,7 @@
               <!-- Project has no README -->
             {/if}
           {:catch}
-            <div class="error error-message">
+            <div class="error error-message file-not-found">
               <header>
                 <div class="icon">🍂</div>
                 <div><code>{path}</code></div>

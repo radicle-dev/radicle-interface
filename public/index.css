@@ -257,6 +257,9 @@ input.wide {
 }
 .error-message {
 	background-color: var(--color-negative-background);
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
 	padding: 1rem;
 }
 .highlight {
