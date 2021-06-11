@@ -12,11 +12,19 @@
   };
 
   export let urn: string;
-  export let commit: string | null;
+  export let commit: string | null = null;
   export let config: Config;
   export let path: string;
 
   let project: State.Loading | proj.Info | null = null;
+
+  const onSelect = ({ detail: path }: { detail: string }) => {
+    if (commit) {
+      navigate(`/projects/${urn}/${commit}/${path}`);
+    } else {
+      navigate(`/projects/${urn}/head/${path}`);
+    }
+  };
 
   onMount(async () => {
     project = State.Loading;
@@ -72,7 +80,7 @@
         commit {commit || project.head}
       </div>
     </header>
-    <Browser {urn} commit={commit || project.head} {path} {config} />
+    <Browser {urn} commit={commit || project.head} {path} {onSelect} {config} />
   {:else}
     <!-- Not found -->
   {/if}

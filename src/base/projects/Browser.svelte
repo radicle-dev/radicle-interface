@@ -12,16 +12,13 @@
   export let commit: string;
   export let config: Config;
   export let path: string;
+  export let onSelect: (event: { detail: string }) => void;
 
   let info: "loading" | proj.Info | null = null;
   let blob: Promise<proj.Blob | null> | null = null;
 
   const fetchTree = async (path: string) => {
     return proj.getTree(urn, commit, path, config);
-  };
-
-  const onSelect = async ({ detail: path }: { detail: string }) => {
-    navigate(`/projects/${urn}/${commit}/${path}`);
   };
 
   $: if (path === "/") {
