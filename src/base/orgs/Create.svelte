@@ -8,6 +8,7 @@
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
   import Options from '@app/Options.svelte';
+  import Address from '@app/Address.svelte';
 
   export let config: Config;
   export let owner: string;
@@ -64,6 +65,20 @@
   };
 </script>
 
+<style>
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+    grid-gap: 0.5rem 2rem;
+  }
+  .fields > span {
+    justify-self: start;
+    align-self: center;
+    height: 2rem;
+    line-height: 2rem;
+  }
+</style>
+
 {#if error}
   <Error {error} floating on:close />
 {:else if org} <!-- Org created -->
@@ -77,10 +92,13 @@
     </span>
 
     <span slot="body">
-      <table>
-        <tr><td class="label">Address</td><td>{org.address}</td></tr>
-        <tr><td class="label">Owner</td><td>{org.owner}</td></tr>
-      </table>
+      <div class="fields">
+        <span class="label">Address</span>
+        <span><Address address={org.address} {config} /></span>
+
+        <span class="label">Owner</span>
+        <span><Address address={org.owner} {config} /></span>
+      </div>
     </span>
 
     <span slot="actions">
