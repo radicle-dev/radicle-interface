@@ -109,7 +109,7 @@
 
 <main>
   {#await proj.getTree(urn, commit, "/", config)}
-    Loading..
+    <!-- Loading -->
   {:then tree}
     <header>
       <div class="commit">
