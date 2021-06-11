@@ -73,6 +73,20 @@
   .source-tree {
     overflow-x: auto;
   }
+
+  .error-message {
+    text-align: center;
+    padding-bottom: 2rem;
+    border-radius: 0.25rem;
+  }
+  .error-message header {
+    padding: 1rem 0;
+    font-weight: bold;
+  }
+  .error-message .icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 </style>
 
 <main>
@@ -100,8 +114,14 @@
             {:else}
               <!-- Project has no README -->
             {/if}
-          {:catch}
-            <!-- TODO: Handle error -->
+          {:catch err}
+            <div class="error error-message">
+              <header>
+                <div class="icon">🍂</div>
+                <div><code>{path}</code></div>
+              </header>
+              This file could not be loaded.
+            </div>
           {/await}
         </div>
       {/if}
