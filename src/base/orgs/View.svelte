@@ -45,7 +45,7 @@
 
   $: label = name && parseEnsLabel(name, config);
   $: isOwner = (org: Org): boolean => {
-    return org.owner === ($session && $session.address);
+    return $session ? utils.isAddressEqual(org.owner, $session.address) : false;
   };
 </script>
 

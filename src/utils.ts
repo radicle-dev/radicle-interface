@@ -18,12 +18,16 @@ export interface Safe {
   threshold: number;
 }
 
+export function isAddressEqual(left: string, right: string): boolean {
+  return left.toLowerCase() === right.toLowerCase();
+}
+
 export function formatBalance(n: BigNumber): string {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
 }
 
 export function formatAddress(addr: string): string {
-  return formatHash(addr);
+  return formatHash(ethers.utils.getAddress(addr));
 }
 
 export function formatHash(hash: string): string {

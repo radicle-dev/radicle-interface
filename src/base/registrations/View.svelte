@@ -10,6 +10,7 @@
   import type { Field } from '@app/Form.svelte';
   import { assert } from '@app/error';
   import Error from '@app/Error.svelte';
+  import { isAddressEqual } from '@app/utils';
 
   import { getRegistration } from './registrar';
   import type { EnsRecord } from './resolver';
@@ -78,7 +79,7 @@
   };
 
   $: isOwner = (registration: Registration): boolean => {
-    return registration.owner === ($session && $session.address);
+    return $session ? isAddressEqual(registration.owner, $session.address) : false;
   };
 </script>
 
