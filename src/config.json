@@ -79,6 +79,7 @@
       "function allowance(address, address) view returns (uint256)",
       "function DOMAIN_SEPARATOR() view returns (bytes32)",
       "function name() pure returns (string)",
+      "function symbol() pure returns (string)",
       "function nonces(address) view returns (uint256)"
     ],
     "resolver": [
