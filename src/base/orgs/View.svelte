@@ -215,7 +215,7 @@
         {:then projects}
           {#each projects as project}
             <div class="project">
-              <Project {project} {config} />
+              <Project {project} org={org.address} {config} />
             </div>
           {/each}
         {:catch err}

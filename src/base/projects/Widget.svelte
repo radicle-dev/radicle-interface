@@ -15,6 +15,7 @@
 
   export let project: proj.Project;
   export let config: Config;
+  export let org: string | undefined;
 
   let state: State = { status: Status.Loading };
   let info: proj.Info | null = null;
@@ -31,7 +32,13 @@
 
   const onClick = () => {
     if (info) {
-      navigate(`/projects/${project.id}/${project.anchor.stateHash}`);
+      navigate(
+        proj.path({
+          urn: project.id,
+          org,
+          commit: project.anchor.stateHash,
+        })
+      );
     }
   };
 </script>

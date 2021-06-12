@@ -13,22 +13,16 @@
   };
 
   export let urn: string;
-  export let org: string | null = null;
-  export let commit: string | null = null;
+  export let org: string | undefined;
+  export let commit: string | undefined;
   export let config: Config;
   export let path: string;
 
   let project: State.Loading | proj.Info | null = null;
-  let projectRoot = commit
-    ? `/projects/${urn}/${commit}`
-    : `/projects/${urn}`;
+  let projectRoot = proj.path({ urn, org, commit });
 
   const onSelect = ({ detail: path }: { detail: string }) => {
-    if (commit) {
-      navigate(`/projects/${urn}/${commit}/${path}`);
-    } else {
-      navigate(`/projects/${urn}/head/${path}`);
-    }
+    navigate(proj.path({ urn, org, commit, path }));
   };
   const back = () => window.history.back();
 

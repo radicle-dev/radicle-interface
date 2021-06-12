@@ -98,3 +98,26 @@ export async function getReadme(
 ): Promise<Blob | null> {
   return api.get(`projects/${urn}/readme/${commit}`, config);
 }
+
+export function path(
+  opts: { urn: string, org?: string, commit?: string, path?: string }
+): string {
+  let { urn, org, commit, path } = opts;
+  let result = [];
+
+  if (org) {
+    result.push("orgs", org);
+  }
+  result.push("projects", urn);
+
+  if (commit) {
+    result.push(commit);
+  } else if (path) {
+    result.push("head");
+  }
+
+  if (path) {
+    result.push(path);
+  }
+  return "/" + result.join("/");
+}
