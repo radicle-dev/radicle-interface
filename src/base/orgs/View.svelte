@@ -1,4 +1,5 @@
 <script lang="typescript">
+  import * as ethers from 'ethers';
   import { onMount } from 'svelte';
   import { Link } from 'svelte-routing';
   import type { SvelteComponent } from 'svelte';
@@ -134,7 +135,9 @@
           {/if}
         </div>
         <div class="info">
-          <span class="title bold">{registration ? label : address}</span>
+          <span class="title bold">
+            {registration ? label : ethers.utils.getAddress(address)}
+          </span>
           <div class="links">
             {#if registration}
               {#if registration.url}
