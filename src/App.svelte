@@ -7,6 +7,7 @@
   import Vesting from '@app/base/vesting/Index.svelte';
   import Registrations from '@app/base/registrations/Routes.svelte';
   import Orgs from '@app/base/orgs/Routes.svelte';
+  import Users from '@app/base/users/Routes.svelte';
   import Projects from '@app/base/projects/Routes.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
@@ -61,6 +62,7 @@
         </Route>
         <Registrations {config} session={$session} />
         <Orgs {config} />
+        <Users {config} />
         <Projects {config} />
         <Resolver {config} />
       </Router>

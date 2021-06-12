@@ -2,8 +2,7 @@
   import { onMount } from 'svelte';
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { explorerLink, safeLink } from '@app/utils';
-  import Blockies from '@app/Blockies.svelte';
+  import { safeLink } from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
   import { identifyAddress, formatAddress, AddressType } from '@app/utils';
@@ -17,14 +16,16 @@
   let checksumAddress = compact
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
+  let loading: boolean = true;
   let addressType: AddressType | null = null;
   let addressName: string | null = null;
 
-  onMount(() => {
-    identifyAddress(address, config).then(typ => addressType = typ);
+  onMount(async () => {
     if (resolve) {
-      config.provider.lookupAddress(address).then(name => addressName = name);
+      addressName = await config.provider.lookupAddress(address);
     }
+    addressType = await identifyAddress(address, config);
+    loading = false;
   });
 
   $: addressLabel = addressName || checksumAddress;
@@ -38,14 +39,6 @@
   .address.no-badge .badge {
     display: none;
   }
-  .icon {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.5rem;
-    min-width: 1rem;
-    min-height: 1rem;
-  }
   .address a {
     color: var(--color-foreground-90);
   }
@@ -58,8 +51,10 @@
   }
 </style>
 
-<div class="address" class:no-badge={noBadge}>
-  <span class="icon"><Blockies address={address} /></span>
+{#if loading}
+  <Loading fadeIn/>
+{:else}
+<div class="address" title={address} class:no-badge={noBadge}>
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
     <span class="badge">org</span>
@@ -67,7 +62,7 @@
     <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge safe">safe</span>
   {:else}
-    <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
+    <a href={`/users/${address}`} target="_blank">{addressLabel}</a>
     {#if addressType === AddressType.Contract}
       <span class="badge">contract</span>
     {:else if addressType === AddressType.EOA}
@@ -77,3 +72,4 @@
     {/if}
   {/if}
 </div>
+{/if}
