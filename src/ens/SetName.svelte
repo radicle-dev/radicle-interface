@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import Modal from '@app/Modal.svelte';
   import type { Config } from '@app/config';
-  import { formatAddress } from '@app/utils';
+  import { formatAddress, isAddressEqual } from '@app/utils';
   import DomainInput from '@app/ens/DomainInput.svelte';
   import type { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
@@ -31,7 +31,7 @@
     let domain = `${name}.${config.registrar.domain}`;
     let resolved = await config.provider.resolveName(domain);
 
-    if (resolved === org.address) {
+    if (isAddressEqual(resolved, org.address)) {
       state = State.Signing;
       try {
         let tx = await org.setName(domain, config);
