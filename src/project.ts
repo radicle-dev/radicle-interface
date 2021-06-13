@@ -66,7 +66,7 @@ export interface Tree {
   path: string;
 }
 
-export async function getInfo(urn: string, config: Config): Promise<Info | null> {
+export async function getInfo(urn: string, config: Config): Promise<Info> {
   return api.get(`projects/${urn}`, config);
 }
 
@@ -75,7 +75,7 @@ export async function getTree(
   commit: string,
   path: string,
   config: Config
-): Promise<any | null> {
+): Promise<any> {
   if (path === "/") {
     path = "";
   }
@@ -87,7 +87,7 @@ export async function getBlob(
   commit: string,
   path: string,
   config: Config
-): Promise<Blob | null> {
+): Promise<Blob> {
   return api.get(`projects/${urn}/blob/${commit}/${path}`, config);
 }
 
@@ -95,7 +95,7 @@ export async function getReadme(
   urn: string,
   commit: string,
   config: Config
-): Promise<Blob | null> {
+): Promise<Blob> {
   return api.get(`projects/${urn}/readme/${commit}`, config);
 }
 

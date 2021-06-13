@@ -15,17 +15,13 @@
   export let onSelect: (event: { detail: string }) => void;
   export let org: string | null = null;
 
-  let blob: Promise<proj.Blob | null> | null = null;
-
   const fetchTree = async (path: string) => {
     return proj.getTree(urn, commit, path, config);
   };
 
-  $: if (path === "/") {
-    blob = proj.getReadme(urn, commit, config);
-  } else {
-    blob = proj.getBlob(urn, commit, path, config);
-  }
+  $: getBlob = path === "/"
+    ? proj.getReadme(urn, commit, config)
+    : proj.getBlob(urn, commit, path, config);
   $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
 </script>
 
@@ -138,14 +134,10 @@
           </div>
         </div>
         <div class="column-right">
-          {#await blob}
+          {#await getBlob}
             <Loading small center />
           {:then blob}
-            {#if blob}
-              <Blob {blob} />
-            {:else}
-              <!-- Project has no README -->
-            {/if}
+            <Blob {blob} />
           {:catch}
             <div class="error error-message file-not-found">
               <header>
@@ -167,6 +159,8 @@
   {:catch err}
     <div class="container center-content">
       <div class="error error-message text-small">
+        <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+             to fetch - this needs a change to the backend. -->
         API request to <code class="text-small">{err.url}</code> failed
       </div>
     </div>

@@ -13,8 +13,8 @@
   };
 
   export let urn: string;
-  export let org: string | undefined;
-  export let commit: string | undefined;
+  export let org: string = "";
+  export let commit: string = "";
   export let config: Config;
   export let path: string;
 

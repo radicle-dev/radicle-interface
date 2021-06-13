@@ -1,25 +1,27 @@
 import type { Config } from '@app/config';
 
-export async function get(path: string, config: Config): Promise<any | null> {
-  if (! config.seed.api) return null;
+export async function get(path: string, config: Config): Promise<any> {
+  if (! config.seed.api)
+    throw new Error("Seed HTTP API unavailable");
 
   const url = `${config.seed.api}/v1/${path}`;
 
+  let response = null;
   try {
-    const response = await fetch(url, {
+    response = await fetch(url, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       }
     });
-
-    if (! response.ok) {
-      return null;
-    }
-    return response.json();
-  } catch {
+  } catch (err) {
     throw new ApiError(url, "API request failed");
   }
+
+  if (! response.ok) {
+    throw new ApiError(url, "Not found");
+  }
+  return response.json();
 }
 
 class ApiError extends Error {
