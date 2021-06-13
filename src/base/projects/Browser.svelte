@@ -39,11 +39,13 @@
     background-color: var(--color-secondary-background);
     padding: 0.75rem;
     border-radius: 0.25rem;
+    min-width: max-content;
   }
 
   .anchor {
-    margin-left: 0.75rem;
     display: flex;
+    margin-left: 0.75rem;
+    min-width: max-content;
   }
   .anchor-widget {
     display: flex;
