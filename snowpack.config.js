@@ -32,6 +32,6 @@ module.exports = {
     output: "dashboard"
   },
   buildOptions: {
-    /* ... */
+    sourcemap: true,
   },
 };

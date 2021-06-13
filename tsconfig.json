@@ -12,6 +12,7 @@
     "types": [
       "svelte"
     ],
+    "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
     "resolveJsonModule": true,
