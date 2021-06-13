@@ -1,10 +1,21 @@
 import type { Config } from '@app/config';
 
-export async function get(path: string, config: Config): Promise<any> {
+export async function get(
+  path: string,
+  params: Record<string, any>,
+  config: Config
+): Promise<any> {
   if (! config.seed.api)
     throw new Error("Seed HTTP API unavailable");
 
-  const url = `${config.seed.api}/v1/${path}`;
+  const query: Record<string, string> = {};
+  for (const [key, val] of Object.entries(params)) {
+    query[key] = val.toString();
+  }
+
+  const search = new URLSearchParams(query).toString();
+  const baseUrl = `${config.seed.api}/v1/${path}`;
+  const url = search ? `${baseUrl}?${search}` : baseUrl;
 
   let response = null;
   try {

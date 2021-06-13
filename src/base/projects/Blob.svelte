@@ -8,12 +8,6 @@
 </script>
 
 <style>
-  .file-source {
-    border: 1px solid var(--color-foreground-level-3);
-    border-radius: 0.5rem;
-    min-width: var(--content-min-width);
-  }
-
   header .file-header {
     display: flex;
     height: 3rem;

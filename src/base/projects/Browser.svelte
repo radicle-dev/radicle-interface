@@ -4,9 +4,11 @@
   import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
   import { Org } from '@app/base/orgs/Org';
+  import * as utils from '@app/utils';
 
   import Tree from './Tree.svelte';
   import Blob from './Blob.svelte';
+  import Readme from './Readme.svelte';
 
   export let urn: string;
   export let commit: string;
@@ -19,9 +21,10 @@
     return proj.getTree(urn, commit, path, config);
   };
 
+  $: isMarkdownPath = utils.isMarkdownPath(path);
   $: getBlob = path === "/"
     ? proj.getReadme(urn, commit, config)
-    : proj.getBlob(urn, commit, path, config);
+    : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, config);
   $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
 </script>
 
@@ -139,7 +142,11 @@
           {#await getBlob}
             <Loading small center />
           {:then blob}
-            <Blob {blob} />
+            {#if utils.isMarkdownPath(blob.path)}
+              <Readme content={blob.content} />
+            {:else}
+              <Blob {blob} />
+            {/if}
           {:catch}
             <div class="error error-message file-not-found">
               <header>

@@ -206,3 +206,8 @@ export async function getTokens(address: string, config: Config):
   // TODO
   return [];
 }
+
+// Check whether the given path has a markdown file extension.
+export function isMarkdownPath(path: string): boolean {
+  return /\.(md|mkd|markdown)$/i.test(path);
+}

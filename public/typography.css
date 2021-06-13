@@ -35,8 +35,3 @@
 	font-weight: 700;
 	src: url("fonts/SourceCodePro-Bold.otf");
 }
-
-:root {
-	--typeface: "Inter";
-	--typeface-mono: "Source Code Pro";
-}

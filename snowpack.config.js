@@ -19,6 +19,7 @@ module.exports = {
     /* Enable an SPA Fallback in development: */
     {"match": "routes", "src": ".*", "dest": "/index.html"},
     {"match": "all", "src": "/projects/.*", "dest": "/index.html"},
+    {"match": "all", "src": "/orgs/.*/projects/.*", "dest": "/index.html"},
   ],
   optimize: {
     /* Setting `bundle: true` breaks .json imports in snowpack 3.5.0 */

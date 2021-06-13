@@ -46,6 +46,7 @@
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
 	--color-foreground-background: #77778811;
+	--color-foreground-background-subtle: #7777880a;
 	--color-foreground-1: #242e38;
 	--color-foreground-2: #29343d;
 	--color-foreground-3: #333e47;
@@ -57,9 +58,9 @@
 	--color-glow-error: #ff555522;
 
 	--font-family-sans-serif: Inter, sans-serif;
+	--font-family-monospace: monospace;
 	--font-weight-medium: 600;
 	--font-weight-bold: 700;
-	--font-family-monospace: monospace;
 	--border-radius: 50px;
 	--box-shadow-color: var(--color-secondary-2);
 	--content-max-width: 1920px;

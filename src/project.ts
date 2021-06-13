@@ -67,7 +67,7 @@ export interface Tree {
 }
 
 export async function getInfo(urn: string, config: Config): Promise<Info> {
-  return api.get(`projects/${urn}`, config);
+  return api.get(`projects/${urn}`, {}, config);
 }
 
 export async function getTree(
@@ -79,16 +79,17 @@ export async function getTree(
   if (path === "/") {
     path = "";
   }
-  return api.get(`projects/${urn}/tree/${commit}/${path}`, config);
+  return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, config);
 }
 
 export async function getBlob(
   urn: string,
   commit: string,
   path: string,
+  options: { highlight: boolean },
   config: Config
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/blob/${commit}/${path}`, config);
+  return api.get(`projects/${urn}/blob/${commit}/${path}`, options, config);
 }
 
 export async function getReadme(
@@ -96,7 +97,7 @@ export async function getReadme(
   commit: string,
   config: Config
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/readme/${commit}`, config);
+  return api.get(`projects/${urn}/readme/${commit}`, {}, config);
 }
 
 export function path(
