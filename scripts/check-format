@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Checks local /node_modules,
+# if not found will download that package and execute it.
+# Does not modify files, informs bad code format
+npx eslint .
