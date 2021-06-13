@@ -2,7 +2,7 @@ import { get, writable, derived, Readable } from "svelte/store";
 import { ethers } from "ethers";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
-import type { Config } from "@app/config";
+import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
 
 export enum Connection {
@@ -188,7 +188,11 @@ export const session = derived(state, s => {
 window.ethereum?.on('chainChanged', () => location.reload());
 
 // Updates state when user changes accounts
-window.ethereum?.on("accountsChanged", state.setChangedAccount);
+window.ethereum?.on("accountsChanged", async (address: string[]) => {
+  const config = await getConfig();
+  state.setChangedAccount(address);
+  state.refreshBalance(config);
+});
 
 state.subscribe(s => {
   console.log("session.state", s);
