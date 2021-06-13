@@ -1,5 +1,4 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
   import { Link, navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
@@ -8,32 +7,19 @@
 
   import Browser from './Browser.svelte';
 
-  enum State {
-    Loading,
-  };
-
   export let urn: string;
   export let org: string = "";
   export let commit: string = "";
   export let config: Config;
   export let path: string;
 
-  let project: State.Loading | proj.Info | null = null;
+  let getProject = proj.getInfo(urn, config);
   let projectRoot = proj.path({ urn, org, commit });
 
   const onSelect = ({ detail: path }: { detail: string }) => {
     navigate(proj.path({ urn, org, commit, path }));
   };
   const back = () => window.history.back();
-
-  onMount(async () => {
-    try {
-      project = State.Loading;
-      project = await proj.getInfo(urn, config);
-    } catch {
-      project = null;
-    }
-  });
 </script>
 
 <style>
@@ -59,11 +45,11 @@
 </style>
 
 <main>
-  {#if project === State.Loading}
+  {#await getProject}
     <header>
       <Loading small />
     </header>
-  {:else if project}
+  {:then project}
     <header>
       <div class="title bold">
         <Link to={projectRoot}>{project.meta.name}</Link>
@@ -72,7 +58,7 @@
       <div class="description">{project.meta.description}</div>
     </header>
     <Browser {urn} {org} commit={commit || project.head} {path} {onSelect} {config} />
-  {:else}
+  {:catch}
     <Modal subtle>
       <span slot="title">🏜️</span>
       <span slot="body">
@@ -85,5 +71,5 @@
         </button>
       </span>
     </Modal>
-  {/if}
+  {/await}
 </main>
