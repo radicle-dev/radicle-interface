@@ -1,7 +1,21 @@
 <script lang="typescript">
+  import { onMount } from "svelte";
   import marked from "marked";
 
   export let content: string;
+
+  let container: HTMLElement;
+
+  onMount(() => {
+    // Don't underline <a> tags that contain images.
+    let elems = container.querySelectorAll("a");
+
+    for (let e of elems) {
+      if (e.firstElementChild instanceof HTMLImageElement) {
+        e.classList.add("no-underline");
+      }
+    }
+  });
 </script>
 
 <style>
@@ -11,23 +25,25 @@
 
   .markdown :global(h1) {
     font-family: var(--typeface-medium);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: var(--font-weight-medium);
-    padding: 1rem 0;
-    margin: 0 0 0.5rem;
+    padding: 1rem 0 0.75rem 0;
+    margin: 0 0 0.75rem;
+    border-bottom: 1px solid var(--color-foreground-subtle);
   }
 
   .markdown :global(h2) {
-    font-size: 1.5rem;
-    font-weight: var(--font-weight-medium);
-    padding: 0.75rem 0;
-    margin: 1.8rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: normal;
+    padding: 0.25rem 0;
+    margin: 2rem 0 0.5rem;
+    border-bottom: 1px dashed var(--color-foreground-subtle);
   }
 
   .markdown :global(h3) {
-    font-weight: var(--font-weight-medium);
-    font-size: 1.25rem;
-    padding: 0.65rem 0;
+    font-size: 1.125rem;
+    font-weight: normal;
+    padding: 0.5rem 0;
     margin: 1.75rem 0 0.25rem;
   }
 
@@ -42,17 +58,18 @@
     font-weight: var(--font-weight-medium);
     font-size: 0.875rem;
     padding: 0.35rem 0;
-    margin: 1.35rem 0 0.125rem;
+    margin: 1.25rem 0 0.125rem;
   }
 
   .markdown :global(h6) {
     font-weight: var(--font-weight-medium);
     font-size: 0.75rem;
     padding: 0.25rem 0;
-    margin: 1.25rem 0 0.125rem;
+    margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(p) {
+    line-height: 1.625;
     margin-top: 0;
     margin-bottom: 0.625rem;
   }
@@ -70,9 +87,6 @@
     font-family: var(--font-family-monospace);
     font-size: 1rem;
     color: var(--color-light);
-    background-color: var(--color-foreground-background);
-    padding: 1px 0.25rem;
-    border-radius: 0.25rem;
   }
 
   .markdown :global(pre code) {
@@ -96,11 +110,16 @@
   }
 
   .markdown :global(a), .markdown :global(a > code) {
-    color: var(--color-tertiary-faded);
-    text-decoration: none;
+    background: none;
+    padding: 0;
+    color: var(--color-foreground);
   }
-  .markdown :global(a:hover) {
-    text-decoration: underline;
+  .markdown :global(a) {
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-foreground-90);
+  }
+  .markdown :global(a.no-underline) {
+    border-bottom: none;
   }
 
   .markdown :global(hr) {
@@ -126,7 +145,7 @@
 </style>
 
 {#if content}
-  <div class="markdown">
+  <div class="markdown" bind:this={container}>
     {@html marked(content)}
   </div>
 {/if}
