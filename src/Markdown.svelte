@@ -47,23 +47,23 @@
 
   .markdown :global(h3) {
     font-size: 1.125rem;
-    font-weight: normal;
+    font-weight: var(--font-weight-medium);
     padding: 0.5rem 0;
-    margin: 1.75rem 0 0.25rem;
+    margin: 1rem 0 0.25rem;
   }
 
   .markdown :global(h4) {
     font-weight: var(--font-weight-medium);
     font-size: 1rem;
     padding: 0.5rem 0;
-    margin: 1.5rem 0 0.125rem;
+    margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(h5) {
     font-weight: var(--font-weight-medium);
     font-size: 0.875rem;
     padding: 0.35rem 0;
-    margin: 1.25rem 0 0.125rem;
+    margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(h6) {
@@ -77,6 +77,16 @@
     line-height: 1.625;
     margin-top: 0;
     margin-bottom: 0.625rem;
+  }
+
+  .markdown :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .markdown :global(blockquote) {
+    font-style: italic;
+    padding: 0.625rem 0;
+    margin: 0;
   }
 
   .markdown :global(strong) {

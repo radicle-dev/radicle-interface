@@ -135,10 +135,10 @@
         commit {commit}
       </div>
       <div class="stat">
-        <strong>{tree.stats.commits}</strong> commits
+        <strong>{tree.stats.commits}</strong> commit(s)
       </div>
       <div class="stat">
-        <strong>{tree.stats.contributors}</strong> contributors
+        <strong>{tree.stats.contributors}</strong> contributor(s)
       </div>
       <div class="anchor">
         {#if org}
