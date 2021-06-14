@@ -4,6 +4,7 @@
   export let center = false;
   export let fadeIn = false;
   export let margins = false;
+  export let condensed = false;
 </script>
 
 <style>
@@ -34,6 +35,11 @@
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   }
 
+  .spinner.condensed > div {
+    -webkit-animation: sk-bouncedelay-condensed 0.7s infinite linear both;
+    animation: sk-bouncedelay-condensed 0.7s infinite linear both;
+  }
+
   .spinner.small > div {
     width: 0.5rem;
     height: 0.5rem;
@@ -51,6 +57,21 @@
   .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+  }
+
+  @-webkit-keyframes sk-bouncedelay-condensed {
+    0%, 100% { -webkit-transform: scale(0.2) }
+    50% { -webkit-transform: scale(1.0) }
+  }
+
+  @keyframes sk-bouncedelay-condensed {
+    0%, 100% {
+      -webkit-transform: scale(0.2);
+      transform: scale(0.2);
+    } 50% {
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
   }
 
   @-webkit-keyframes sk-bouncedelay {
@@ -85,8 +106,10 @@
   }
 </style>
 
-<div class="spinner" class:fade-in={fadeIn} class:small class:center class:margins>
+<div class="spinner" class:fade-in={fadeIn} class:small class:center class:margins class:condensed>
   <div class="bounce1" style="background-color: var(--color-{color})"></div>
-  <div class="bounce2" style="background-color: var(--color-{color})"></div>
-  <div class="bounce3" style="background-color: var(--color-{color})"></div>
+  {#if !condensed}
+    <div class="bounce2" style="background-color: var(--color-{color})"></div>
+    <div class="bounce3" style="background-color: var(--color-{color})"></div>
+  {/if}
 </div>

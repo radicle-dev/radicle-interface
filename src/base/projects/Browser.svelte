@@ -11,13 +11,49 @@
   import Blob from './Blob.svelte';
   import Readme from './Readme.svelte';
 
+  enum Status {
+    Idle,
+    Loading,
+    Loaded,
+  }
+
+  type State =
+      { status: Status.Idle }
+    | { status: Status.Loading; path: string }
+    | { status: Status.Loaded; path: string; blob: proj.Blob };
+
   export let urn: string;
   export let commit: string;
   export let config: Config;
   export let path: string;
   export let org = "";
 
-  const onSelect = ({ detail: path }: { detail: string }) => {
+  // When the component is loaded the first time, the blob is yet to be loaded.
+  let state: State = { status: Status.Idle };
+
+  const loadBlob = async (path: string): Promise<proj.Blob> => {
+    if (state.status == Status.Loaded && state.path === path) {
+      return state.blob;
+    }
+
+    const isMarkdownPath = utils.isMarkdownPath(path);
+    const promise = path === "/"
+      ? proj.getReadme(urn, commit, config)
+      : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, config);
+
+    state = { status: Status.Loading, path };
+    state = { status: Status.Loaded, path, blob: await promise };
+
+    return state.blob;
+  };
+
+  const onSelect = async ({ detail: path }: { detail: string }) => {
+    // Ensure we don't spend any time in a "loading" state. This means
+    // the loading spinner won't be shown, and instead the blob will be
+    // displayed once loaded.
+    const blob = await loadBlob(path);
+    getBlob = new Promise(resolve => resolve(blob));
+
     navigate(proj.path({ urn, org, commit, path }));
   };
 
@@ -25,11 +61,11 @@
     return proj.getTree(urn, commit, path, config);
   };
 
-  $: isMarkdownPath = utils.isMarkdownPath(path);
-  $: getBlob = path === "/"
-    ? proj.getReadme(urn, commit, config)
-    : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, config);
+  // This is reactive to respond to path changes that don't originate from this
+  // component, eg. when using the browser's "back" button.
+  $: getBlob = loadBlob(path);
   $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
+  $: loading = state.status == Status.Loading ? state.path : null;
 </script>
 
 <style>
@@ -167,7 +203,7 @@
       {#if tree.entries.length}
         <div class="column-left">
           <div class="source-tree">
-            <Tree {tree} {path} {fetchTree} on:select={onSelect} />
+            <Tree {tree} {path} {fetchTree} {loading} on:select={onSelect} />
           </div>
         </div>
         <div class="column-right">

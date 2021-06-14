@@ -12,7 +12,7 @@
     border-radius: 0.25rem;
     cursor: pointer;
     display: flex;
-    flex: 1;
+    justify-content: space-between;
     line-height: 1.5em;
     margin: 0.125rem 0;
     padding: 0.25rem;
@@ -44,12 +44,10 @@
 </style>
 
 <div class="file" class:active on:click>
-  {#if loading}
-    <div class="spinner">
-      <Loading small />
-    </div>
-  {:else}
-    <!-- Nothing -->
-  {/if}
   <span class="name">{name}</span>
+  <div class="spinner">
+    {#if loading}
+      <Loading small condensed />
+    {/if}
+  </div>
 </div>

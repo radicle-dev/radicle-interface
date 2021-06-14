@@ -10,6 +10,7 @@
   export let fetchTree: (path: string) => Promise<Tree>;
   export let path: string;
   export let tree: Tree;
+  export let loading: string | null = null;
 
   const dispatch = createEventDispatcher();
   const onSelect = ({ detail: path }: { detail: string }): void => {
@@ -29,7 +30,7 @@
   {:else}
     <File
       active={entry.path === path}
-      loading={false}
+      loading={entry.path === loading}
       name={entry.info.name}
       on:click={() => onSelect({ detail: entry.path })}
     />
