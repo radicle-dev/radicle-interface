@@ -3,6 +3,7 @@
 
   export let blob: Blob;
 
+  const lastCommit = blob.info.lastCommit;
   const lines = (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
 </script>
@@ -12,7 +13,8 @@
     display: flex;
     height: 3rem;
     align-items: center;
-    padding: 0 1rem;
+    justify-content: space-between;
+    padding: 0 0.5rem 0 1rem;
     color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
     border-color: var(--color-foreground-subtle);
@@ -23,6 +25,19 @@
 
   header .file-name {
     font-weight: normal;
+  }
+
+  .last-commit {
+    padding: 0.5rem;
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-background);
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+  }
+  .last-commit .hash {
+    font-weight: bold;
+    font-family: var(--font-family-monospace);
+    margin-right: 0.25rem;
   }
 
   .line-numbers {
@@ -56,10 +71,14 @@
 <div>
   <div class="file-source">
     <header>
-      <div class="file-header" data-cy="file-header">
+      <div class="file-header">
         <span class="file-name">
           <span>{blob.path.split("/").join(" / ")}</span>
         </span>
+        <div class="last-commit" title="{lastCommit.author.name}">
+          <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
+          {lastCommit.summary}
+        </div>
       </div>
     </header>
     <div class="container">

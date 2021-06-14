@@ -69,7 +69,7 @@ export interface Blob {
   html?: boolean;
   content: string;
   path: string;
-  info: Info;
+  info: EntryInfo;
 }
 
 export async function getInfo(urn: string, config: Config): Promise<Info> {

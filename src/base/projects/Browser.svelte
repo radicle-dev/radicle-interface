@@ -49,7 +49,7 @@
     font-family: var(--font-family-monospace);
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .anchor {
@@ -57,7 +57,7 @@
   }
   .anchor-widget {
     display: flex;
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
@@ -76,7 +76,7 @@
 
   .stat {
     font-family: var(--font-family-monospace);
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     background: var(--color-foreground-background);
   }
 
