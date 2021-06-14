@@ -1,4 +1,5 @@
 <script lang="typescript">
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -14,8 +15,11 @@
   export let commit: string;
   export let config: Config;
   export let path: string;
-  export let onSelect: (event: { detail: string }) => void;
-  export let org: string | null = null;
+  export let org = "";
+
+  const onSelect = ({ detail: path }: { detail: string }) => {
+    navigate(proj.path({ urn, org, commit, path }));
+  };
 
   const fetchTree = async (path: string) => {
     return proj.getTree(urn, commit, path, config);

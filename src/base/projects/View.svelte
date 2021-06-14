@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { Link, navigate } from 'svelte-routing';
+  import { Link } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -17,9 +17,6 @@
   let getProject = proj.getInfo(urn, config);
   let projectRoot = proj.path({ urn, org, commit });
 
-  const onSelect = ({ detail: path }: { detail: string }) => {
-    navigate(proj.path({ urn, org, commit, path }));
-  };
   const back = () => window.history.back();
 </script>
 
@@ -73,7 +70,7 @@
       <div class="urn">{urn}</div>
       <div class="description">{project.meta.description}</div>
     </header>
-    <Browser {urn} {org} commit={commit || project.head} {path} {onSelect} {config} />
+    <Browser {urn} {org} commit={commit || project.head} {path} {config} />
   {:catch}
     <Modal subtle>
       <span slot="title">🏜️</span>
