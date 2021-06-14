@@ -5,6 +5,8 @@
   import { safeLink } from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
+  import type { Registration } from '@app/base/registrations/registrar';
+  import { getRegistration } from '@app/base/registrations/registrar';
   import { identifyAddress, formatAddress, AddressType } from '@app/utils';
 
   export let address: string;
@@ -17,12 +19,14 @@
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
   let loading: boolean = true;
+  let registration: Registration | null = null;
   let addressType: AddressType | null = null;
   let addressName: string | null = null;
 
   onMount(async () => {
     if (resolve) {
       addressName = await config.provider.lookupAddress(address);
+      if (addressName) registration = await getRegistration(addressName, config);
     }
     addressType = await identifyAddress(address, config);
     loading = false;
