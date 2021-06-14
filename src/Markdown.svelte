@@ -23,11 +23,16 @@
     color: var(--color-foreground);
   }
 
+  .markdown :global(*:first-child) {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
   .markdown :global(h1) {
     font-family: var(--typeface-medium);
     font-size: 1.5rem;
     font-weight: var(--font-weight-medium);
-    padding: 1rem 0 0.75rem 0;
+    padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
     border-bottom: 1px solid var(--color-foreground-subtle);
   }
