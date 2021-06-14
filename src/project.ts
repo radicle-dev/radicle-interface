@@ -103,8 +103,8 @@ export async function getReadme(
 export function path(
   opts: { urn: string, org?: string, commit?: string, path?: string }
 ): string {
-  let { urn, org, commit, path } = opts;
-  let result = [];
+  const { urn, org, commit, path } = opts;
+  const result = [];
 
   if (org) {
     result.push("orgs", org);

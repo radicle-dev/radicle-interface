@@ -65,7 +65,7 @@
       }).catch(err => {
         state = { status: Status.Failed, error: err };
       });
-    });
+  });
 
   const onSave = async (event: { detail: Field[] }) => {
     assert(state.status === Status.Found, "registration must be found");

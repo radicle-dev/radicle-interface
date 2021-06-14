@@ -8,8 +8,8 @@
   import Browser from './Browser.svelte';
 
   export let urn: string;
-  export let org: string = "";
-  export let commit: string = "";
+  export let org = "";
+  export let commit = "";
   export let config: Config;
   export let path: string;
 

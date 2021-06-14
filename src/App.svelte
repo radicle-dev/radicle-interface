@@ -15,7 +15,7 @@
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      let elems = document.querySelectorAll('button.primary') as NodeListOf<HTMLElement>;
+      let elems = document.querySelectorAll<HTMLElement>('button.primary');
       if (elems.length == 1) { // We only allow this when there's one primary button.
         elems[0].click();
       }

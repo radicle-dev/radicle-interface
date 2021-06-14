@@ -27,6 +27,6 @@ module.exports = {
     indent: ["error", 2, { "SwitchCase": 1 }]
   },
   settings: {
-    "svelte3/typescript": true, 
+    "svelte3/typescript": true,
   },
 };

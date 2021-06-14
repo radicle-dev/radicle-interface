@@ -7,8 +7,8 @@
 
   export let error: Err | null = null;
   export let title = "Error";
-  export let subtitle: string = "";
-  export let message: string = "";
+  export let subtitle = "";
+  export let message = "";
   export let floating = false;
   export let subtle = false;
 

@@ -1,7 +1,7 @@
 <script lang="typescript">
   import { navigate } from 'svelte-routing';
 
-  let input: string = "";
+  let input = "";
   const search = () => {
     navigate(`/resolver/query?${
       new URLSearchParams({ q: input })

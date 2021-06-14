@@ -3,7 +3,7 @@
 
   export let options: { label: string, value: string }[];
   export let name: string;
-  export let selected: string = "";
+  export let selected = "";
   export let disabled = false;
 
   const dispatch = createEventDispatcher();

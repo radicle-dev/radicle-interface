@@ -21,7 +21,7 @@
     Failed,
   }
 
-  let name: string = "";
+  let name = "";
   let state = State.Idle;
   let mismatchError = false; // Set if the name entered does not resolve to the address.
 

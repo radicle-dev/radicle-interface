@@ -3,7 +3,6 @@ import type { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
 import type { Config } from '@app/config';
-import { assert } from '@app/error';
 
 export enum AddressType {
   Contract,

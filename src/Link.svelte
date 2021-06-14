@@ -4,7 +4,7 @@
   export let to: string;
   export let primary = false;
 
-  function getProps(_props: any) {
+  function getProps(/* props: any */) {
     if (primary) {
       return { "class": "primary" };
     }
