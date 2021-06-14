@@ -5,8 +5,9 @@ export async function get(
   params: Record<string, any>,
   config: Config
 ): Promise<any> {
-  if (! config.seed.api)
+  if (! config.seed.api) {
     throw new Error("Seed HTTP API unavailable");
+  }
 
   const query: Record<string, string> = {};
   for (const [key, val] of Object.entries(params)) {

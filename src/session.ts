@@ -163,8 +163,9 @@ export const loadState = (initial: State): Store => {
           case Connection.Connected:
             // In case of locking Metamask the accountsChanged event returns undefined.
             // To prevent out of sync state, the wallet gets disconnected.
-            if (address === undefined) disconnectWallet();
-            else {
+            if (address === undefined) {
+              disconnectWallet();
+            } else {
               s.session.address = address;
               window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }));
             }

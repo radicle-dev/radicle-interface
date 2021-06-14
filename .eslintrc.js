@@ -23,8 +23,17 @@ module.exports = {
     }
   ],
   rules: {
-    indent: ["error", 2, { "SwitchCase": 1 }],
-    semi: "off", // We use the typescript-specific rule as it's more accurate.
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "semi": "off", // We use the typescript-specific rule as it's more accurate.
+    "curly": ["error", "multi-line", "consistent"],
+    "keyword-spacing": ["error"],
+    "no-trailing-spaces": ["error"],
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always",
+    }],
+    "eol-last": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [
