@@ -4,6 +4,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
+  import Blockies from '@app/Blockies.svelte';
 
   import Browser from './Browser.svelte';
 
@@ -33,6 +34,9 @@
   .title {
     font-size: 2.25rem;
     margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .urn {
     font-family: var(--font-family-monospace);
@@ -41,6 +45,11 @@
   }
   .description {
     margin: 1rem 0 1.5rem 0;
+  }
+  .maintainer {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
   }
 </style>
 
@@ -53,6 +62,13 @@
     <header>
       <div class="title bold">
         <Link to={projectRoot}>{project.meta.name}</Link>
+        <span class="maintainers">
+          {#each project.meta.maintainers as user}
+            <span class="maintainer">
+              <Blockies address={user} />
+            </span>
+          {/each}
+        </span>
       </div>
       <div class="urn">{urn}</div>
       <div class="description">{project.meta.description}</div>
