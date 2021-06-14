@@ -30,33 +30,37 @@
 
 <style>
   main > header {
+    font-size: 0.75rem;
     padding: 0 8rem;
     margin-bottom: 2rem;
     display: flex;
+    align-items: center;
+    justify-content: left;
+
   }
-  .commit {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-family: var(--font-family-monospace);
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
-    padding: 0.75rem;
+  main > header > * {
+    margin-right: 0.75rem;
     border-radius: 0.25rem;
     min-width: max-content;
   }
 
+  .commit {
+    display: inline-block;
+    font-family: var(--font-family-monospace);
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-background);
+    padding: 0.75rem;
+  }
+
   .anchor {
     display: flex;
-    margin-left: 0.75rem;
-    min-width: max-content;
   }
   .anchor-widget {
     display: flex;
     padding: 0.75rem;
+    border-radius: 0.25rem;
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
-    font-size: 0.75rem;
-    border-radius: 0.25rem;
   }
   .anchor-widget.not-anchored {
     color: var(--color-foreground-faded);
@@ -68,6 +72,12 @@
   }
   .anchor-label:last-child {
     margin-right: 0;
+  }
+
+  .stat {
+    font-family: var(--font-family-monospace);
+    padding: 0.75rem;
+    background: var(--color-foreground-background);
   }
 
   .center-content {
@@ -123,6 +133,12 @@
     <header>
       <div class="commit">
         commit {commit}
+      </div>
+      <div class="stat">
+        <strong>{tree.stats.commits}</strong> commits
+      </div>
+      <div class="stat">
+        <strong>{tree.stats.contributors}</strong> contributors
       </div>
       <div class="anchor">
         {#if org}

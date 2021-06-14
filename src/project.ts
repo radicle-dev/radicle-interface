@@ -21,6 +21,18 @@ export interface Meta {
   maintainers: Urn[];
 }
 
+export interface Tree {
+  path: string;
+  info: EntryInfo;
+  entries: Array<Entry>;
+  stats: Stats;
+}
+
+export interface Stats {
+  commits: number;
+  contributors: number;
+}
+
 export interface Author {
   avatar: string;
   email: string;
@@ -41,7 +53,7 @@ export interface CommitHeader {
   summary: string;
 }
 
-export interface Info {
+export interface EntryInfo {
   name: string;
   objectType: ObjectType;
   lastCommit: CommitHeader;
@@ -49,7 +61,7 @@ export interface Info {
 
 export interface Entry {
   path: string;
-  info: Info;
+  info: EntryInfo;
 }
 
 export interface Blob {
@@ -58,12 +70,6 @@ export interface Blob {
   content: string;
   path: string;
   info: Info;
-}
-
-export interface Tree {
-  entries: Entry[];
-  info: Info;
-  path: string;
 }
 
 export async function getInfo(urn: string, config: Config): Promise<Info> {
@@ -75,7 +81,7 @@ export async function getTree(
   commit: string,
   path: string,
   config: Config
-): Promise<any> {
+): Promise<Tree> {
   if (path === "/") {
     path = "";
   }
