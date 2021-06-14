@@ -19,7 +19,7 @@
   let error: Error | null = null;
   let registrationOwner = owner || session.address;
 
-  const view = () => navigate(`/registrations/${subdomain}`)
+  const view = () => navigate(`/registrations/${subdomain}`);
 
   onMount(async () => {
     try {

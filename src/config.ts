@@ -26,7 +26,7 @@ export class Config {
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
   safe: { api: string | null; viewer: string | null };
-  abi: { [contract: string]: string[] }
+  abi: { [contract: string]: string[] };
   seed: { api: string | null };
   tokens: string[];
 

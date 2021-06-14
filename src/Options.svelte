@@ -1,7 +1,7 @@
 <script lang="typescript">
   import { createEventDispatcher } from 'svelte';
 
-  export let options: { label: string, value: string }[];
+  export let options: { label: string; value: string }[];
   export let name: string;
   export let selected = "";
   export let disabled = false;

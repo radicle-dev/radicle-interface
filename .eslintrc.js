@@ -23,8 +23,22 @@ module.exports = {
     }
   ],
   rules: {
+    indent: ["error", 2, { "SwitchCase": 1 }],
+    semi: "off", // We use the typescript-specific rule as it's more accurate.
     "@typescript-eslint/no-explicit-any": "off",
-    indent: ["error", 2, { "SwitchCase": 1 }]
+    "@typescript-eslint/semi": ["error"],
+    "@typescript-eslint/member-delimiter-style": [
+      "warn", {
+        "multiline": {
+          "delimiter": "semi",
+          "requireLast": true,
+        },
+        "singleline": {
+          "delimiter": "semi",
+          "requireLast": false,
+        }
+      }
+    ]
   },
   settings: {
     "svelte3/typescript": true,

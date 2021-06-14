@@ -11,7 +11,7 @@
   type State =
       { status: Status.Loading }
     | { status: Status.Loaded }
-    | { status: Status.Error, error: string };
+    | { status: Status.Error; error: string };
 
   export let project: proj.Project;
   export let config: Config;

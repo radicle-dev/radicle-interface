@@ -27,8 +27,8 @@
   type State =
       { status: Status.Loading }
     | { status: Status.NotFound }
-    | { status: Status.Found, registration: Registration }
-    | { status: Status.Failed, error: string };
+    | { status: Status.Found; registration: Registration }
+    | { status: Status.Failed; error: string };
 
   export let subdomain: string;
   export let config: Config;
@@ -74,7 +74,7 @@
       .filter(r => r.editable && r.value !== null)
       .map(f => {
         assert(f.value !== null);
-        return { name: f.name, value: f.value }
+        return { name: f.name, value: f.value };
       });
   };
 

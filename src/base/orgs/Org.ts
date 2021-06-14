@@ -29,8 +29,8 @@ const GetOrgs = `
 `;
 
 export class Org {
-  address: string
-  owner: string
+  address: string;
+  owner: string;
 
   constructor(address: string, owner: string) {
     assert(ethers.utils.isAddress(address), "address must be valid");

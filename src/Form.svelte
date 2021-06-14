@@ -1,10 +1,10 @@
 <script context="module" lang="typescript">
   export interface Field {
-    name: string
-    value: string | null
-    label?: string
-    placeholder?: string
-    editable: boolean
+    name: string;
+    value: string | null;
+    label?: string;
+    placeholder?: string;
+    editable: boolean;
   }
 </script>
 

@@ -18,7 +18,7 @@
       { status: Status.Signing }
     | { status: Status.Pending }
     | { status: Status.Success }
-    | { status: Status.Failed, error: string };
+    | { status: Status.Failed; error: string };
 
   export let subdomain: string;
   export let config: Config;
