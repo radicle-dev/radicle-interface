@@ -53,13 +53,21 @@
   .anchor-widget {
     display: flex;
     padding: 0.75rem;
-    color: var(--color-yellow);
-    background-color: var(--color-yellow-background);
+    color: var(--color-tertiary);
+    background-color: var(--color-tertiary-background);
     font-size: 0.75rem;
     border-radius: 0.25rem;
   }
+  .anchor-widget.not-anchored {
+    color: var(--color-foreground-faded);
+    background-color: var(--color-foreground-background);
+  }
   .anchor-label {
+    font-family: var(--font-family-monospace);
     margin-right: 0.5rem;
+  }
+  .anchor-label:last-child {
+    margin-right: 0;
   }
 
   .center-content {
@@ -123,8 +131,12 @@
           {:then anchor}
             {#if anchor === commit}
               <span class="anchor-widget">
-                <span class="anchor-label">anchor</span>
+                <span class="anchor-label">anchored</span>
                 <Address address={org} compact resolve noBadge {config} />
+              </span>
+            {:else}
+              <span class="anchor-widget not-anchored">
+                <span class="anchor-label">not anchored 🔓</span>
               </span>
             {/if}
           {/await}
