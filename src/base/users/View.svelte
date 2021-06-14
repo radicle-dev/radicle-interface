@@ -1,25 +1,49 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
   import Icon from '@app/Icon.svelte';
-  import Blockies from '@app/Blockies.svelte';
+  import Modal from '@app/Modal.svelte';
   import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
+  import Link from '@app/Link.svelte';
   import Avatar from '@app/Avatar.svelte';
+  import Error from '@app/Error.svelte';
+
+  enum Status {
+    Loading,
+    Found,
+    NotFound,
+    Failed,
+  }
+
+  type State =
+      { status: Status.Loading }
+    | { status: Status.NotFound }
+    | { status: Status.Found, registration: Registration }
+    | { status: Status.Failed, error: string };
 
   export let address: string;
   export let config: Config;
 
-  let loading: boolean = true;
-  let registration: Registration | null = null;
   let name: string | null = null;
-
+  let state: State = { status: Status.Loading };
+  
   onMount(async () => {
     name = await config.provider.lookupAddress(address);
-    if (name) registration = await getRegistration(name, config);
-    loading = false;
+    getRegistration(name, config)
+      .then(r => {
+        if (r) {
+          state = { status: Status.Found, registration: r };
+        } else {
+          state = { status: Status.NotFound };
+        }
+        return r;
+      }).catch(err => {
+        state = { status: Status.Failed, error: err };
+    });
   });
 </script>
 
@@ -60,34 +84,52 @@
   }
 </style>
 
-{#if loading}
+{#if state.status === Status.Loading}
   <Loading fadeIn />
-{:else}
+{:else if state.status === Status.Failed}
+  <Error title="User could not be loaded" on:close={() => navigate('/')}>
+    {state.error}
+  </Error>
+{:else if state.status === Status.NotFound}
+  <Modal subtle>
+    <span slot="title">
+      {address}
+    </span>
+
+    <span slot="body">
+      <p>The address <strong>{address}</strong> is not registered.</p>
+    </span>
+
+    <span slot="actions">
+      <Link to={`/`} primary>Back to home &rarr;</Link>
+    </span>
+  </Modal>
+{:else if state.status === Status.Found}
   <main>
     <header>
       <div class="avatar">
         <Avatar icon={false} source={state.registration?.avatar ?? address} />
-      </div>
+      </div> 
       <div class="info">
-        <span class="title bold"><Address {address} {config} resolve/></span>
+        <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
         <div class="links">
-          {#if registration}
-            {#if registration.url}
-              <a class="url" href={registration.url}>{registration.url}</a>
+          {#if state.registration}
+            {#if state.registration.url}
+              <a class="url" href={state.registration.url}>{state.registration.url}</a>
             {/if}
-            {#if registration.twitter}
-              <a class="url" href={registration.twitter}>
+            {#if state.registration.twitter}
+              <a class="url" href={state.registration.twitter}>
                 <Icon name="twitter" />
               </a>
             {/if}
-            {#if registration.github}
-              <a class="url" href={registration.github}>
+            {#if state.registration.github}
+              <a class="url" href={state.registration.github}>
                 <Icon name="github" />
               </a>
             {/if}
           {/if}
         </div>
       </div>
-    </header>
+    </header> 
   </main>
 {/if}
