@@ -7,6 +7,7 @@
   import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
+  import Avatar from '@app/Avatar.svelte';
 
   export let address: string;
   export let config: Config;
@@ -48,9 +49,6 @@
     width: 64px;
     height: 64px;
   }
-  .avatar img {
-    border-radius: 50%; /* Allowing to maintain the circular design of the avatars */
-  }
   .links {
     display: flex;
     align-items: center;
@@ -68,11 +66,7 @@
   <main>
     <header>
       <div class="avatar">
-        {#if registration && registration.avatar}
-          <img class="avatar" src={registration.avatar} alt="avatar" />
-        {:else}
-          <Blockies {address} />
-        {/if}
+        <Avatar icon={false} source={state.registration?.avatar ?? address} />
       </div>
       <div class="info">
         <span class="title bold"><Address {address} {config} resolve/></span>

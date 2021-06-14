@@ -6,6 +6,7 @@
   import Loading from '@app/Loading.svelte';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
+  import Avatar from "@app/Avatar.svelte";
   import { getRegistration } from '@app/base/registrations/registrar';
   import { identifyAddress, formatAddress, AddressType } from '@app/utils';
 
@@ -13,6 +14,7 @@
   export let config: Config;
   export let resolve = false;
   export let noBadge = false;
+  export let noAvatar = false;
   export let compact = false;
 
   let checksumAddress = compact
@@ -39,6 +41,7 @@
   .address {
     display: flex;
     align-items: center;
+    height: 100%;
   }
   .address.no-badge .badge {
     display: none;
@@ -59,6 +62,9 @@
   <Loading fadeIn/>
 {:else}
 <div class="address" title={address} class:no-badge={noBadge}>
+  {#if !noAvatar}
+    <Avatar source={registration?.avatar ?? address} />
+  {/if}
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
     <span class="badge">org</span>
