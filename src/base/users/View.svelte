@@ -5,45 +5,20 @@
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
   import Icon from '@app/Icon.svelte';
-  import Modal from '@app/Modal.svelte';
   import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
-  import Link from '@app/Link.svelte';
   import Avatar from '@app/Avatar.svelte';
   import Error from '@app/Error.svelte';
 
-  enum Status {
-    Loading,
-    Found,
-    NotFound,
-    Failed,
-  }
-
-  type State =
-      { status: Status.Loading }
-    | { status: Status.NotFound }
-    | { status: Status.Found, registration: Registration }
-    | { status: Status.Failed, error: string };
-
   export let address: string;
   export let config: Config;
-
-  let name: string | null = null;
-  let state: State = { status: Status.Loading };
+  
+  let addressName: string | null = null;
+  let getInfo: Promise<Registration | null>;
   
   onMount(async () => {
-    name = await config.provider.lookupAddress(address);
-    getRegistration(name, config)
-      .then(r => {
-        if (r) {
-          state = { status: Status.Found, registration: r };
-        } else {
-          state = { status: Status.NotFound };
-        }
-        return r;
-      }).catch(err => {
-        state = { status: Status.Failed, error: err };
-    });
+    addressName = await config.provider.lookupAddress(address);
+    getInfo = getRegistration(addressName, config);
   });
 </script>
 
@@ -84,52 +59,34 @@
   }
 </style>
 
-{#if state.status === Status.Loading}
+{#await getInfo}
   <Loading fadeIn />
-{:else if state.status === Status.Failed}
-  <Error title="User could not be loaded" on:close={() => navigate('/')}>
-    {state.error}
-  </Error>
-{:else if state.status === Status.NotFound}
-  <Modal subtle>
-    <span slot="title">
-      {address}
-    </span>
-
-    <span slot="body">
-      <p>The address <strong>{address}</strong> is not registered.</p>
-    </span>
-
-    <span slot="actions">
-      <Link to={`/`} primary>Back to home &rarr;</Link>
-    </span>
-  </Modal>
-{:else if state.status === Status.Found}
+{:then info}
   <main>
     <header>
       <div class="avatar">
-        <Avatar icon={false} source={state.registration?.avatar ?? address} />
+        <Avatar source={info?.avatar ?? address} />
       </div> 
       <div class="info">
         <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
         <div class="links">
-          {#if state.registration}
-            {#if state.registration.url}
-              <a class="url" href={state.registration.url}>{state.registration.url}</a>
-            {/if}
-            {#if state.registration.twitter}
-              <a class="url" href={state.registration.twitter}>
-                <Icon name="twitter" />
-              </a>
-            {/if}
-            {#if state.registration.github}
-              <a class="url" href={state.registration.github}>
-                <Icon name="github" />
-              </a>
-            {/if}
+          {#if info?.url}
+            <a class="url" href={info.url}>{info.url}</a>
+          {/if}
+          {#if info?.twitter}
+            <a class="url" href={info.twitter}>
+              <Icon name="twitter" />
+            </a>
+          {/if}
+          {#if info?.github}
+            <a class="url" href={info.github}>
+              <Icon name="github" />
+            </a>
           {/if}
         </div>
       </div>
     </header> 
   </main>
-{/if}
+{:catch error}
+  <Error {error} title="User could not be loaded" on:close={() => navigate('/')} />
+{/await}

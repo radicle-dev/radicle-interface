@@ -1,14 +1,15 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { safeLink } from '@app/utils';
+  import { safeLink, identifyAddress, formatAddress, AddressType } from '@app/utils';
   import Loading from '@app/Loading.svelte';
+  import Avatar from "@app/Avatar.svelte";
+  import Error from '@app/Error.svelte';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
-  import Avatar from "@app/Avatar.svelte";
   import { getRegistration } from '@app/base/registrations/registrar';
-  import { identifyAddress, formatAddress, AddressType } from '@app/utils';
 
   export let address: string;
   export let config: Config;
@@ -20,21 +21,18 @@
   let checksumAddress = compact
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
-  let loading: boolean = true;
-  let registration: Registration | null = null;
   let addressType: AddressType | null = null;
   let addressName: string | null = null;
+  let getInfo: Promise<Registration | null>;
 
   onMount(async () => {
+    identifyAddress(address, config).then((t: AddressType) => addressType = t);
     if (resolve) {
       addressName = await config.provider.lookupAddress(address);
-      if (addressName) registration = await getRegistration(addressName, config);
+      getInfo = getRegistration(addressName, config);
     }
-    addressType = await identifyAddress(address, config);
-    loading = false;
   });
-
-  $: addressLabel = addressName || checksumAddress;
+  $: addressLabel = addressName ?? checksumAddress;
 </script>
 
 <style>
@@ -58,12 +56,12 @@
   }
 </style>
 
-{#if loading}
-  <Loading fadeIn/>
-{:else}
+{#await getInfo}
+  <Loading fadeIn />
+{:then info}
 <div class="address" title={address} class:no-badge={noBadge}>
   {#if !noAvatar}
-    <Avatar source={registration?.avatar ?? address} />
+      <Avatar inline source={info?.avatar ?? address} />
   {/if}
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
@@ -80,6 +78,7 @@
     {:else if !noBadge}
       <div class="loading"><Loading small /></div>
     {/if}
-  {/if}
 </div>
-{/if}
+{:catch error}
+  <Error {error} title="Address could not be loaded" on:close={() => navigate('/')} />
+{/await}
