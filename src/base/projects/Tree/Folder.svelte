@@ -53,6 +53,11 @@
     padding-left: 0.5rem;
     margin: 0;
   }
+
+  .loading {
+    display: inline-block;
+    padding: 0.5rem 0;
+  }
 </style>
 
 <div class="folder" on:click={onClick}>
@@ -62,7 +67,7 @@
 <div class="container">
   {#if expanded}
     {#await tree}
-      <Loading small center />
+      <span class="loading"><Loading small margins /></span>
     {:then tree}
       {#if tree}
         {#each tree.entries as entry (entry.path)}
