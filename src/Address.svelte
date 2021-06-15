@@ -59,26 +59,25 @@
 {#await getInfo}
   <Loading fadeIn />
 {:then info}
-<div class="address" title={address} class:no-badge={noBadge}>
-  {#if !noAvatar}
+  <div class="address" title={address} class:no-badge={noBadge}>
+    {#if !noAvatar}
       <Avatar inline source={info?.avatar ?? address} />
-  {/if}
-  {#if addressType === AddressType.Org}
-    <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
-    <span class="badge">org</span>
-  {:else if addressType === AddressType.Safe}
-    <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
-    <span class="badge safe">safe</span>
-  {:else}
-    <a href={`/users/${address}`} target="_blank">{addressLabel}</a>
-    {#if addressType === AddressType.Contract}
+    {/if}
+    {#if addressType === AddressType.Org}
+      <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
+      <span class="badge">org</span>
+    {:else if addressType === AddressType.Safe}
+      <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
+      <span class="badge safe">safe</span>
+    {:else if addressType === AddressType.Contract}
+      <a href={`/orgs/${address}`} target="_blank">{addressLabel}</a>
       <span class="badge">contract</span>
     {:else if addressType === AddressType.EOA}
-      <!-- Don't show anything for EOAs -->
+      <a href={`/users/${address}`} target="_blank">{addressLabel}</a>
     {:else if !noBadge}
       <div class="loading"><Loading small /></div>
     {/if}
-</div>
+  </div>
 {:catch error}
   <Error {error} title="Address could not be loaded" on:close={() => navigate('/')} />
 {/await}
