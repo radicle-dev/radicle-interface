@@ -6,6 +6,7 @@
   const lastCommit = blob.info.lastCommit;
   const lines = (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
+  const parentDir = blob.path.split("/").slice(0, -1).join("/");
 </script>
 
 <style>
@@ -25,6 +26,8 @@
 
   header .file-name {
     font-weight: normal;
+    white-space: nowrap;
+    margin-right: 1rem;
   }
 
   .last-commit {
@@ -33,6 +36,9 @@
     background-color: var(--color-secondary-background);
     font-size: 0.75rem;
     border-radius: 0.25rem;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .last-commit .hash {
     font-weight: bold;
@@ -73,7 +79,7 @@
     <header>
       <div class="file-header">
         <span class="file-name">
-          <span>{blob.path.split("/").join(" / ")}</span>
+          <span class="faded">{parentDir}/</span><span>{blob.info.name}</span>
         </span>
         <div class="last-commit" title="{lastCommit.author.name}">
           <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
