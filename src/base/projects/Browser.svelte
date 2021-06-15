@@ -31,7 +31,7 @@
 <style>
   main > header {
     font-size: 0.75rem;
-    padding: 0 8rem;
+    padding: 0 2rem 0 8rem;
     margin-bottom: 2rem;
     display: flex;
     align-items: center;

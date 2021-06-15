@@ -29,7 +29,7 @@
     padding: 4rem 0;
   }
   main > header {
-    padding: 0 8rem;
+    padding: 0 2rem 0 8rem;
   }
   .title {
     font-size: 2.25rem;
