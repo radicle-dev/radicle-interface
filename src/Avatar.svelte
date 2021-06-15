@@ -1,16 +1,16 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
   import { createIcon } from '@app/blockies';
-  import { isAddress } from './utils';
+  import { isAddress } from '@app/utils';
   
   export let source: string;
-  export let icon: boolean = true;
+  export let inline = false;
   export let glowOnHover = false;
 
   let container: HTMLElement;
 
   onMount(() => {
-    if(isAddress(source)) {
+    if (isAddress(source)) {
       const seed = source.toLowerCase();
       const avatar = createIcon({
         seed,
@@ -35,7 +35,7 @@
   .avatar.glowOnHover:hover {
     box-shadow: 0 0 3rem var(--color-secondary);
   }
-  .icon {
+  .inline {
     display: inline-block;
     width: 1rem;
     height: 1rem;
@@ -44,7 +44,7 @@
 </style>
 
 {#if isAddress(source)}
-  <div class="avatar" class:icon bind:this={container} class:glowOnHover title={source}/>
+  <div class="avatar" class:inline bind:this={container} class:glowOnHover title={source}/>
 {:else}
-  <img class="avatar" class:icon src={source} class:glowOnHover alt="avatar"/>
+  <img class="avatar" class:inline src={source} class:glowOnHover alt="avatar"/>
 {/if}
