@@ -6,7 +6,7 @@
   const lastCommit = blob.info.lastCommit;
   const lines = (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
-  const parentDir = blob.path.split("/").slice(0, -1).join("/");
+  const parentDir = blob.path.match(/^.*\/|/)?.values().next().value;
 </script>
 
 <style>
@@ -79,7 +79,7 @@
     <header>
       <div class="file-header">
         <span class="file-name">
-          <span class="faded">{parentDir}/</span><span>{blob.info.name}</span>
+          <span class="faded">{parentDir}</span><span>{blob.info.name}</span>
         </span>
         <div class="last-commit" title="{lastCommit.author.name}">
           <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
