@@ -1,7 +1,7 @@
 <script lang="typescript">
   import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
-  import { state, session } from '@app/session';
+  import { Connection, state, session } from '@app/session';
 
   import Home from '@app/base/home/Index.svelte';
   import Vesting from '@app/base/vesting/Index.svelte';
@@ -15,7 +15,9 @@
   import Modal from '@app/Modal.svelte';
 
   const loadConfig = getConfig().then(cfg => {
-    state.refreshBalance(cfg);
+    if ($state.connection === Connection.Connected) {
+      state.refreshBalance(cfg);
+    }
     return cfg;
   });
 
