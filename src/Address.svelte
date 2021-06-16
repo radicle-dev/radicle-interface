@@ -27,7 +27,9 @@
     identifyAddress(address, config).then((t: AddressType) => addressType = t);
     if (resolve) {
       addressName = await config.provider.lookupAddress(address);
-      info = await getRegistration(addressName, config);
+      if (addressName) {
+        info = await getRegistration(addressName, config);
+      }
     }
   });
   $: addressLabel = addressName ?? checksumAddress;
