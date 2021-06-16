@@ -1,5 +1,4 @@
 import { get, writable, derived, Readable } from "svelte/store";
-import { ethers } from "ethers";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
@@ -61,12 +60,11 @@ export const loadState = (initial: State): Store => {
         console.error(e);
       }
 
-      const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
       const signer = config.provider.getSigner();
       const address = await signer.getAddress();
 
       try {
-        const tokenBalance: BigNumber = await token.balanceOf(address);
+        const tokenBalance: BigNumber = await config.token.balanceOf(address);
         store.set({
           connection: Connection.Connected,
           session: { address, tokenBalance, tx: null }
@@ -91,8 +89,7 @@ export const loadState = (initial: State): Store => {
       const addr = state.session.address;
 
       try {
-        const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
-        const tokenBalance: BigNumber = await token.balanceOf(addr);
+        const tokenBalance: BigNumber = await config.token.balanceOf(addr);
 
         state.session.tokenBalance = tokenBalance;
         store.set(state);
@@ -200,20 +197,15 @@ state.subscribe(s => {
 });
 
 export async function approveSpender(spender: string, amount: BigNumber, config: Config): Promise<void> {
-  const token = new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
   const signer = config.provider.getSigner();
   const addr = await signer.getAddress();
 
-  const allowance = await token.allowance(addr, spender);
+  const allowance = await config.token.allowance(addr, spender);
 
   if (allowance < amount) {
-    const tx = await token.connect(signer).approve(spender, amount);
+    const tx = await config.token.connect(signer).approve(spender, amount);
     await tx.wait();
   }
-}
-
-export function token(config: Config): ethers.Contract {
-  return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
 }
 
 export function disconnectWallet(): void {

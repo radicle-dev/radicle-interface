@@ -67,10 +67,6 @@ export function registrar(config: Config): ethers.Contract {
   return new ethers.Contract(config.registrar.address, config.abi.registrar, config.provider);
 }
 
-export function radToken(config: Config): ethers.Contract {
-  return new ethers.Contract(config.radToken.address, config.abi.token, config.provider);
-}
-
 export async function registrationFee(config: Config): Promise<BigNumber> {
   return await registrar(config).registrationFeeRad();
 }
@@ -101,7 +97,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
   const fee = await registrationFee(config);
   // Avoids gas spent by the owner, trying to commit to a name and not having
   // enough RAD balance
-  if ((await radToken(config).balanceOf(owner)).lt(fee)) {
+  if ((await config.token.balanceOf(owner)).lt(fee)) {
     throw { type: Failure.InsufficientBalance, message: "Not enough RAD funds" };
   }
 
@@ -126,7 +122,7 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
   const ownerAddr = await owner.getAddress();
   const spender = config.registrar.address;
   const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
-  const token = session.token(config);
+  const token = config.token;
   const signature = await permitSignature(owner, token, spender, fee, deadline);
   const tx = await registrar(config)
     .connect(config.signer)

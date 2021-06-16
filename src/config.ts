@@ -29,6 +29,7 @@ export class Config {
   abi: { [contract: string]: string[] };
   seed: { api: string | null };
   tokens: string[];
+  token: ethers.Contract;
 
   constructor(
     network: { name: string; chainId: number },
@@ -54,6 +55,11 @@ export class Config {
     this.gasLimits = gasLimits;
     this.abi = config.abi;
     this.tokens = cfg.tokens;
+    this.token = new ethers.Contract(
+      this.radToken.address,
+      this.abi.token,
+      this.provider,
+    );
   }
 }
 
