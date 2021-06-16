@@ -11,7 +11,7 @@ const GetProjects = `
     projects(where: { org: $org }) {
       id
       anchor {
-        stateMultihash
+        multihash
         timestamp
       }
     }
@@ -84,7 +84,7 @@ export class Org {
           id: utils.formatRadicleId(ethers.utils.arrayify(p.id)),
           anchor: {
             stateHash: utils.formatProjectHash(
-              ethers.utils.arrayify(p.anchor.stateMultihash),
+              ethers.utils.arrayify(p.anchor.multihash),
             )
           },
         };
@@ -106,8 +106,8 @@ export class Org {
     const id = ethers.utils.zeroPad(unpadded, 32);
 
     try {
-      const result = await org.anchors(id);
-      const anchor = utils.formatProjectHash(ethers.utils.arrayify(result[0]));
+      const [,hash] = await org.anchors(id);
+      const anchor = utils.formatProjectHash(ethers.utils.arrayify(hash));
 
       return anchor;
     } catch (e) {

@@ -8,11 +8,11 @@
       "address": "0x31c8EAcBFFdD875c74b94b077895Bd78CF1E64A3"
     },
     "orgFactory": {
-      "address": "0x7c4D590168A9019995e072f9c1eCfc1fc356bEd4"
+      "address": "0xa15bEb4876F20018b6b4A4116B7560c5fcC9336e"
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs",
-      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
+      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74"
     },
     "safe": {
       "api": "https://safe-transaction.gnosis.io/api/v1",
@@ -29,11 +29,11 @@
       "address": "0x59b5eee36f5fa52400A136Fd4630Ee2bF126a4C0"
     },
     "orgFactory": {
-      "address": "0xc074cDd9541960B0AA72D90c8bC642F6ae9C4032"
+      "address": "0xf36fbaB8BA78683D23c5021bfcE8A5c88731200F"
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten",
-      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
+      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74"
     },
     "safe": {
       "api": null,
@@ -50,11 +50,11 @@
       "address": "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea"
     },
     "orgFactory": {
-      "address": "0x57962Eb188146A4942c44545a97478d64dc9e4A5"
+      "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"
     },
     "orgs": {
       "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby",
-      "contractHash": "0x0ab2c41a698802e4cd5c9c69aa24410e15e0a7726a1061b0adb5bd80eea37f9d"
+      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74"
     },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1",
@@ -94,7 +94,7 @@
     ],
     "org": [
       "function owner() view returns (address)",
-      "function anchors(bytes32) view returns (bytes, uint8)",
+      "function anchors(bytes32) view returns (uint32, bytes)",
       "function setOwner(address)",
       "function setName(string, address) returns (bytes32)"
     ],
