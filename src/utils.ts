@@ -177,7 +177,8 @@ export async function resolveLabel(label: string, config: Config): Promise<strin
 export async function isSafe(address: string, config: Config): Promise<boolean> {
   if (! config.safe.api) return false;
 
-  const response = await fetch(`${config.safe.api}/safes/${address}`, { method: 'HEAD' });
+  const addr = ethers.utils.getAddress(address);
+  const response = await fetch(`${config.safe.api}/safes/${addr}`, { method: 'HEAD' });
 
   return response.ok;
 }
@@ -186,7 +187,8 @@ export async function isSafe(address: string, config: Config): Promise<boolean> 
 export async function getSafe(address: string, config: Config): Promise<Safe | null> {
   if (! config.safe.api) return null;
 
-  const response = await fetch(`${config.safe.api}/safes/${address}`, {
+  const addr = ethers.utils.getAddress(address);
+  const response = await fetch(`${config.safe.api}/safes/${addr}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
