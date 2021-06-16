@@ -151,7 +151,7 @@ export function formatProjectHash(multihash: Uint8Array): string {
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
-  const safe = await getSafe(address, config);
+  const safe = await isSafe(address, config);
   if (safe) {
     return AddressType.Safe;
   }
@@ -171,6 +171,15 @@ export async function identifyAddress(address: string, config: Config): Promise<
 // Resolve a label under the radicle domain.
 export async function resolveLabel(label: string, config: Config): Promise<string | null> {
   return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+}
+
+// Check whether a Gnosis Safe exists at an address.
+export async function isSafe(address: string, config: Config): Promise<boolean> {
+  if (! config.safe.api) return false;
+
+  const response = await fetch(`${config.safe.api}/safes/${address}`, { method: 'HEAD' });
+
+  return response.ok;
 }
 
 // Get a Gnosis Safe at an address.
