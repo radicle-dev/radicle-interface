@@ -36,7 +36,10 @@
   }
 
   .field {
+    display: flex;
+    align-items: center;
     width: 28rem;
+    height: 2.125rem;
     border: 1px dashed transparent;
     padding: 0.25rem 1rem;
     margin: 0;
@@ -57,10 +60,6 @@
   }
   input.field[disabled] {
     color: var(--color-secondary);
-  }
-
-  span.field {
-    display: inline-block;
   }
 
   .label {
