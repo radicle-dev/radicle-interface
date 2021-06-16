@@ -264,7 +264,7 @@ input.wide {
 	overflow-x: hidden;
 	padding: 1rem;
 }
-.highlight {
+.highlight, .secondary, .label {
 	color: var(--color-secondary);
 }
 .subtle {
@@ -273,9 +273,6 @@ input.wide {
 }
 .faded {
 	color: var(--color-foreground-faded);
-}
-.label {
-	color: var(--color-secondary);
 }
 .bold {
 	font-weight: bold !important;

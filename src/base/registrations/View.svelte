@@ -106,7 +106,8 @@
   </Error>
 {:else if state.status === Status.NotFound}
   <Modal subtle>
-    <span slot="title">
+    <span slot="title" class="secondary">
+      <div>🍄</div>
       {subdomain}.{config.registrar.domain}
     </span>
 

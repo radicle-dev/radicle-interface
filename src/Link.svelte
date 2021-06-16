@@ -6,9 +6,9 @@
 
   function getProps(/* props: any */) {
     if (primary) {
-      return { "class": "primary" };
+      return { "class": "primary link" };
     }
-    return {};
+    return { "class": "link" };
   }
 </script>
 
