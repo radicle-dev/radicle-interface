@@ -4,7 +4,7 @@
   export let blob: Blob;
 
   const lastCommit = blob.info.lastCommit;
-  const lines = (blob.content.match(/\n/g) || []).length;
+  const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
   const parentDir = blob.path.match(/^.*\/|/)?.values().next().value;
 </script>
@@ -65,6 +65,21 @@
     border-top-style: dashed;
   }
 
+  .binary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 16rem;
+    background-color: var(--color-foreground-background);
+    color: var(--color-foreground-90);
+    font-family: var(--font-family-monospace);
+  }
+  .binary > * {
+    margin-bottom: 1rem;
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -89,7 +104,10 @@
     </header>
     <div class="container">
       {#if blob.binary}
-        👀 Binary content
+        <div class="binary">
+          <div>👀</div>
+          <span class="small">Binary content</span>
+        </div>
       {:else}
         <pre class="line-numbers">
           {@html lineNumbers.join("\n")}
