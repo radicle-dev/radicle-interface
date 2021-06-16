@@ -31,6 +31,7 @@
     display: inline-block;
     height: 100%;
     margin-left: 1.5rem;
+    white-space: nowrap;
   }
   header .nav a {
     display: inline-block;
@@ -85,6 +86,7 @@
 
   .balance {
     margin-left: 2rem;
+    white-space: nowrap;
   }
 
   @media(max-width: 800px) {
