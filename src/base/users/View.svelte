@@ -1,24 +1,21 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
   import Icon from '@app/Icon.svelte';
-  import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
-  import Error from '@app/Error.svelte';
 
   export let address: string;
   export let config: Config;
   
   let addressName: string | null = null;
-  let getInfo: Promise<Registration | null>;
+  let info: Registration | null;
   
   onMount(async () => {
     addressName = await config.provider.lookupAddress(address);
-    getInfo = getRegistration(addressName, config);
+    info = await getRegistration(addressName, config);
   });
 </script>
 
@@ -59,16 +56,13 @@
   }
 </style>
 
-{#await getInfo}
-  <Loading fadeIn />
-{:then info}
-  <main>
-    <header>
-      <div class="avatar">
-        <Avatar source={info?.avatar ?? address} />
-      </div> 
-      <div class="info">
-        <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
+<main>
+  <header>
+    <div class="avatar">
+      <Avatar source={info?.avatar ?? address} />
+    </div> 
+    <div class="info">
+      <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
         <div class="links">
           {#if info?.url}
             <a class="url" href={info.url}>{info.url}</a>
@@ -87,6 +81,3 @@
       </div>
     </header> 
   </main>
-{:catch error}
-  <Error {error} title="User could not be loaded" on:close={() => navigate('/')} />
-{/await}
