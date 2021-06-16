@@ -1,7 +1,7 @@
 <script lang="typescript">
   import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
-  import { session } from '@app/session';
+  import { state, session } from '@app/session';
 
   import Home from '@app/base/home/Index.svelte';
   import Vesting from '@app/base/vesting/Index.svelte';
@@ -12,6 +12,11 @@
   import Header from '@app/Header.svelte';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
+
+  const loadConfig = getConfig().then(cfg => {
+    state.refreshBalance(cfg);
+    return cfg;
+  });
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
@@ -39,7 +44,7 @@
 
 <svelte:window on:keydown={handleKeydown} />
 <div class="app">
-  {#await getConfig()}
+  {#await loadConfig}
     <!-- Loading wallet -->
     <div class="wrapper">
       <Loading center />

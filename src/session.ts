@@ -41,8 +41,8 @@ export interface Store extends Readable<State> {
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-
   const session = window.localStorage.getItem("session");
+
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
   return {
