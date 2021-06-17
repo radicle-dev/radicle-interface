@@ -14,7 +14,8 @@ const config: UserConfig = {
     },
   },
   build: {
-    outDir: "build"
+    outDir: "build",
+    sourcemap: true
   }
 };
 
