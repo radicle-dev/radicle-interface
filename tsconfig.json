@@ -10,7 +10,8 @@
     "target": "es2020",
     "module": "es2020",
     "types": [
-      "svelte"
+      "svelte",
+      "vite/client"
     ],
     "sourceMap": true,
     "moduleResolution": "node",
