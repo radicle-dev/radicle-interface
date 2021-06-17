@@ -13,6 +13,9 @@ const config: UserConfig = {
       "@app": path.resolve("./src"),
     },
   },
+  build: {
+    outDir: "build"
+  }
 };
 
 export default config;
