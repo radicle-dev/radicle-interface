@@ -1,0 +1,11 @@
+name: check-build
+on: [push]
+
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm ci
+      - run: npm run build 
