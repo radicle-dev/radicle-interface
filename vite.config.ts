@@ -1,6 +1,6 @@
 import path from "path";
 import { UserConfig } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import svelte from "@sveltejs/vite-plugin-svelte";
 
 // https://vitejs.dev/config/
 const config: UserConfig = {
