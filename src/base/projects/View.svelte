@@ -43,10 +43,16 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
+  .maintainers {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .maintainer {
     display: inline-block;
     width: 1rem;
     height: 1rem;
+    margin-left: 0.5rem;
   }
 </style>
 
