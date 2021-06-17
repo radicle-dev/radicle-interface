@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { navigate } from 'svelte-routing';
   import Modal from '@app/Modal.svelte';

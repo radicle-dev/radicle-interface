@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Route } from "svelte-routing";
   import View from '@app/base/users/View.svelte';
   import type { Config } from '@app/config';

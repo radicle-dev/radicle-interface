@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Link } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';

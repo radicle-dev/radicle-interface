@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Connection } from "@app/session";
   import { state } from '@app/session';
   import type { Config } from '@app/config';

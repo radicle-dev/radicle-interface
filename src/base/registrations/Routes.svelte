@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Route, navigate } from "svelte-routing";
   import Index from '@app/base/registrations/Index.svelte';
   import New from '@app/base/registrations/New.svelte';

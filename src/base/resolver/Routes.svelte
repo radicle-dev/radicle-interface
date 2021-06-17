@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Route } from "svelte-routing";
   import Resolve from '@app/base/resolver/Query.svelte';
   import type { Config } from '@app/config';

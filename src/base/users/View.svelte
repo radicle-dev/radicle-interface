@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { onMount } from 'svelte';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';

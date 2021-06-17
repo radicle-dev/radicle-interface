@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   // TODO: Shorten tx hash
   import { link } from "svelte-routing";
   import { formatBalance, formatAddress } from "@app/utils";

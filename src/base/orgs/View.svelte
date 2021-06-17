@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import * as ethers from 'ethers';
   import { onMount } from 'svelte';
   import { Link } from 'svelte-routing';

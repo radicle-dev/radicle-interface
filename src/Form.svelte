@@ -1,4 +1,4 @@
-<script context="module" lang="typescript">
+<script context="module" lang="ts">
   export interface Field {
     name: string;
     value: string | null;
@@ -8,7 +8,7 @@
   }
 </script>
 
-<script lang="typescript">
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { capitalize, isUrl, isAddress } from '@app/utils';
   import Address from '@app/Address.svelte';
