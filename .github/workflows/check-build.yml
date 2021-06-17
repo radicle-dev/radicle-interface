@@ -1,5 +1,5 @@
 name: check-build
-on: [push]
+on: [push, pull_request]
 
 jobs:
   check-format:

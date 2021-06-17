@@ -1,5 +1,5 @@
 name: svelte-check 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   check-format:
