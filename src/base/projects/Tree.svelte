@@ -22,6 +22,7 @@
   {#if entry.info.objectType === ObjectType.Tree}
     <Folder
       {fetchTree}
+      {loading}
       name={entry.info.name}
       prefix={`${entry.path}/`}
       currentPath={path}

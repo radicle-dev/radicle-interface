@@ -11,6 +11,7 @@
   export let name: string;
   export let prefix: string;
   export let currentPath: string;
+  export let loading: string | null = null;
 
   let expanded = currentPath.indexOf(prefix) === 0;
   let tree: Promise<Tree> | null = expanded ? fetchTree(prefix) : null;
@@ -81,7 +82,7 @@
           {:else}
             <File
               active={entry.path === currentPath}
-              loading={false}
+              loading={entry.path === loading}
               name={entry.info.name}
               on:click={() => {
                 onSelectFile({ detail: entry.path });
