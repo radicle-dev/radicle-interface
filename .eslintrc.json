@@ -1,28 +1,28 @@
-module.exports = {
-  env: {
-    browser: true,
-    node: true,
+{
+  "env": {
+    "browser": true,
+    "node": true
   },
-  extends: [
+  "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: "module",
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
-  plugins: [
+  "plugins": [
     "svelte3",
     "@typescript-eslint"
   ],
-  overrides: [
+  "overrides": [
     {
-      files: ["*.svelte"],
-      processor: "svelte3/svelte3",
+      "files": ["*.svelte"],
+      "processor": "svelte3/svelte3"
     }
   ],
-  rules: {
+  "rules": {
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": "off", // We use the typescript-specific rule as it's more accurate.
     "curly": ["error", "multi-line", "consistent"],
@@ -31,7 +31,7 @@ module.exports = {
     "space-before-function-paren": ["error", {
       "anonymous": "always",
       "named": "never",
-      "asyncArrow": "always",
+      "asyncArrow": "always"
     }],
     "eol-last": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
@@ -40,16 +40,16 @@ module.exports = {
       "warn", {
         "multiline": {
           "delimiter": "semi",
-          "requireLast": true,
+          "requireLast": true
         },
         "singleline": {
           "delimiter": "semi",
-          "requireLast": false,
+          "requireLast": false
         }
       }
     ]
   },
-  settings: {
-    "svelte3/typescript": true,
-  },
-};
+  "settings": {
+    "svelte3/typescript": true
+  }
+}
