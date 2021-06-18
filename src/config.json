@@ -44,10 +44,10 @@
   "rinkeby": {
     "registrar": {
       "domain": "radicle.eth",
-      "address": "0x0000000000000000000000000000000000000000"
+      "address": "0x80b68878442b6510D768Be1bd88712710B86eAcD"
     },
     "radToken": {
-      "address": "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea"
+      "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948"
     },
     "orgFactory": {
       "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"
