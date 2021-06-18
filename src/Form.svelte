@@ -43,6 +43,7 @@
     border: 1px dashed transparent;
     padding: 0.25rem 1rem;
     margin: 0;
+    white-space: nowrap;
   }
 
   input.field {

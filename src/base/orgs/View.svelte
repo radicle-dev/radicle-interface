@@ -1,8 +1,8 @@
 <script lang="ts">
   import * as ethers from 'ethers';
   import { onMount } from 'svelte';
-  import { Link } from 'svelte-routing';
   import type { SvelteComponent } from 'svelte';
+  import Link from '@app/Link.svelte';
   import type { Config } from '@app/config';
   import type { Registration } from '@app/base/registrations/registrar';
   import { getRegistration } from '@app/base/registrations/registrar';
