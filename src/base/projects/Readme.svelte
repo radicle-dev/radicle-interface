@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import Markdown from '@app/Markdown.svelte';
   export let content: string;
 </script>

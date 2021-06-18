@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import Modal from '@app/Modal.svelte';
   import type { Config } from '@app/config';

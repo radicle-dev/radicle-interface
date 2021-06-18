@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Link } from "svelte-routing";
 
   export let to: string;

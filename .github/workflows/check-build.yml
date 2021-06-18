@@ -1,4 +1,4 @@
-name: check-format
+name: check-build
 on: [push, pull_request]
 
 jobs:
@@ -10,5 +10,4 @@ jobs:
         with:
           node-version: '14'
       - run: npm ci
-      - run: ./scripts/check-format
-        shell: bash
+      - run: npm run build 

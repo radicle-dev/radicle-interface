@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
   import { Connection, state, session } from '@app/session';

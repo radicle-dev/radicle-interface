@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { onMount } from 'svelte';
   import { createIcon } from '@app/blockies';
   import { isAddress } from '@app/utils';

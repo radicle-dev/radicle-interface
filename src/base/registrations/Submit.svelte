@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   // TODO: When name is registered, prompt user to edit records.
   // TODO: When transfering name, warn about transfering to org.
   import { onMount } from 'svelte';

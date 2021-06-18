@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   export let small = false;
   export let color = "secondary";
   export let center = false;

@@ -8,12 +8,6 @@ declare global {
     registrarState: any;
   }
 
-  interface ImportMeta {
-    env: {
-      RADICLE_ALCHEMY_API_KEY: string | null;
-      RADICLE_HTTP_API: string | null;
-    };
-  }
 }
 
 export class Config {
@@ -27,7 +21,7 @@ export class Config {
   signer: ethers.Signer & TypedDataSigner | null;
   safe: { api: string | null; viewer: string | null };
   abi: { [contract: string]: string[] };
-  seed: { api: string | null };
+  seed: { api?: string };
   tokens: string[];
   token: ethers.Contract;
 
@@ -37,7 +31,7 @@ export class Config {
     signer: ethers.Signer & TypedDataSigner | null,
   ) {
     const cfg = (<Record<string, any>> config)[network.name];
-    const api = import.meta.env.RADICLE_HTTP_API;
+    const api = config.radicle.api;
 
     if (!cfg) {
       throw `Network ${network.name} is not supported`;

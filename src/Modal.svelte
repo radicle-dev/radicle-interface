@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   export let floating = false;
   export let error = false;
   export let subtle = false;

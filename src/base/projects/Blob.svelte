@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import type { Blob } from "@app/project";
 
   export let blob: Blob;

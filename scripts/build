@@ -1,4 +1,4 @@
 #!/bin/sh
 
-snowpack build
+vite build
 cp _redirects build/_redirects

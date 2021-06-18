@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import { setRecords } from './resolver';
   import type { EnsRecord } from './resolver';

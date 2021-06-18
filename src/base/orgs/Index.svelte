@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import type { SvelteComponent } from 'svelte';
   import { Link } from 'svelte-routing';
   import { session } from '@app/session';

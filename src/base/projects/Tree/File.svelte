@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
   import Loading from '@app/Loading.svelte';
 
   export let active: boolean;
