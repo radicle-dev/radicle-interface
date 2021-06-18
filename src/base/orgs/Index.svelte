@@ -1,17 +1,15 @@
 <script lang="ts">
   import type { SvelteComponent } from 'svelte';
-  import { Link } from 'svelte-routing';
   import { session } from '@app/session';
   import Create from '@app/base/orgs/Create.svelte';
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
-  import Blockies from '@app/Blockies.svelte';
   import Loading from '@app/Loading.svelte';
+  import List from './List.svelte';
 
   export let config: Config;
 
   const onCreate = () => modal = Create;
-
   let modal: typeof SvelteComponent | null = null;
 
   $: account = $session && $session.address;
@@ -33,15 +31,18 @@
     align-items: center;
   }
 
-  button.create {
-    margin-left: 1.5rem;
+  .my-orgs {
+    margin-bottom: 3rem;
+  }
+  .orgs-empty {
+    margin-left: 3rem;
+    padding: 1rem 0 2rem 0;
+    font-style: italic;
+    color: var(--color-foreground-faded);
   }
 
-  .org {
-    width: 3rem;
-    height: 3rem;
-    margin: 3rem;
-    display: inline-block;
+  button.create {
+    margin-left: 1.5rem;
   }
 
   .loading {
@@ -50,24 +51,39 @@
 </style>
 
 <main>
+  {#if account}
+    <div class="my-orgs">
+      <header>
+        <span>My <strong>Orgs</strong></span>
+        <button class="create small secondary" on:click={onCreate} disabled={!account}>
+          Create
+        </button>
+      </header>
+
+      {#await Org.getOrgsByMember(account, config)}
+        <div class="loading">
+          <Loading center />
+        </div>
+      {:then orgs}
+        <List {orgs}>
+          <div class="orgs-empty">Orgs you are a member of show up here.</div>
+        </List>
+      {/await}
+    </div>
+  {/if}
+
+  <header>
+    <span><strong>Orgs</strong> of the Radicle network</span>
+  </header>
+
   {#await Org.getAll(config)}
     <div class="loading">
       <Loading center />
     </div>
   {:then orgs}
-    <header>
-      <span><strong>Orgs</strong> of the Radicle network.</span>
-      <button class="create small secondary" on:click={onCreate} disabled={!account}>
-        Create
-      </button>
-    </header>
-    {#each orgs as org}
-      <div class="org">
-        <Link to={`/orgs/${org.address}`}>
-          <Blockies glowOnHover address={org.address} />
-        </Link>
-      </div>
-    {/each}
+    <List {orgs}>
+      <div class="orgs-empty">There are no orgs.</div>
+    </List>
   {/await}
 </main>
 

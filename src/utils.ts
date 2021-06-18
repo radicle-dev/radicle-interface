@@ -95,11 +95,11 @@ export function safeLink(addr: string, config: Config): string {
 
 // Query a subgraph.
 export async function querySubgraph(
+  url: string,
   query: string,
   variables: Record<string, any>,
-  config: Config
 ): Promise<null | any> {
-  const response = await fetch(config.orgs.subgraph, {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

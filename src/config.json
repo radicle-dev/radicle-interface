@@ -16,6 +16,7 @@
     },
     "safe": {
       "api": "https://safe-transaction.gnosis.io/api/v1",
+      "subgraph": null,
       "viewer": "https://gnosis-safe.io/app/#/safes"
     },
     "tokens": []
@@ -37,6 +38,7 @@
     },
     "safe": {
       "api": null,
+      "subgraph": null,
       "viewer": null
     },
     "tokens": []
@@ -58,6 +60,7 @@
     },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io/api/v1",
+      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/gnosis-safe-rinkeby",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
     },
     "tokens": []

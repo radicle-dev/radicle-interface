@@ -18,12 +18,31 @@ const GetProjects = `
   }
 `;
 
-// TODO: Add timestamps to org creation.
 const GetOrgs = `
   query GetOrgs {
     orgs {
       id
       owner
+    }
+  }
+`;
+
+const GetSafes = `
+  query GetSafes($owners: [String!]!) {
+    wallets(where: { owners_contains: $owners }) {
+      id
+      owners
+    }
+  }
+`;
+
+const GetOrgsByOwner = `
+  query GetOrgsByOwner($owners: [String!]!) {
+    orgs(where: { owner_in: $owners }) {
+      id
+      owner
+      creator
+      timestamp
     }
   }
 `;
@@ -75,7 +94,9 @@ export class Org {
   }
 
   async getProjects(config: Config): Promise<Array<Project>> {
-    const result = await utils.querySubgraph(GetProjects, { org: this.address }, config);
+    const result = await utils.querySubgraph(
+      config.orgs.subgraph, GetProjects, { org: this.address }
+    );
     const projects: Project[] = [];
 
     for (const p of result.projects) {
@@ -117,7 +138,7 @@ export class Org {
   }
 
   static async getAll(config: Config): Promise<Array<Org>> {
-    const result = await utils.querySubgraph(GetOrgs, {}, config);
+    const result = await utils.querySubgraph(config.orgs.subgraph, GetOrgs, {});
     const orgs: Org[] = [];
 
     for (const o of result.orgs) {
@@ -160,6 +181,19 @@ export class Org {
       console.error(e);
       return null;
     }
+  }
+
+  static async getOrgsByMember(memberAddr: string, config: Config): Promise<Org[]> {
+    const safeResult = await utils.querySubgraph(
+      config.safe.subgraph, GetSafes, { owners: [memberAddr] }
+    );
+    const wallets: { id: string }[] = safeResult.wallets;
+    const owners = wallets.map(wallet => wallet.id).concat([memberAddr]);
+    const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners });
+
+    return orgsResult.orgs.map((o: { id: string; owner: string }) => {
+      return new Org(o.id, o.owner);
+    });
   }
 
   static async createMultiSig(
