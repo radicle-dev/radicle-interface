@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
+import CeramicClient from "@ceramicnetwork/http-client";
+import { IDX } from "@ceramicstudio/idx";
 import config from "@app/config.json";
 
 declare global {
@@ -27,6 +29,8 @@ export class Config {
   };
   abi: { [contract: string]: string[] };
   seed: { api?: string };
+  idx: { client: IDX };
+  ceramic: { client: CeramicClient };
   tokens: string[];
   token: ethers.Contract;
 
@@ -42,6 +46,9 @@ export class Config {
       throw `Network ${network.name} is not supported`;
     }
 
+    const ceramic = new CeramicClient(config.ceramic.api);
+    const idx = new IDX({ ceramic });
+
     this.network = network;
     this.seed = { api };
     this.registrar = cfg.registrar;
@@ -56,6 +63,8 @@ export class Config {
     this.signer = signer;
     this.gasLimits = gasLimits;
     this.abi = config.abi;
+    this.idx = { client: idx };
+    this.ceramic = { client: ceramic };
     this.tokens = cfg.tokens;
     this.token = new ethers.Contract(
       this.radToken.address,

@@ -65,6 +65,7 @@
     },
     "tokens": []
   },
+  "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
   "radicle": { "api": "" },
   "abi": {
     "registrar": [

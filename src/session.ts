@@ -36,7 +36,7 @@ export interface Store extends Readable<State> {
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
-  setChangedAccount([address]: string[]): void;
+  setChangedAccount(address: string): void;
 }
 
 export const loadState = (initial: State): Store => {
@@ -154,7 +154,8 @@ export const loadState = (initial: State): Store => {
         }
       });
     },
-    setChangedAccount: ([address]: string[]) => {
+
+    setChangedAccount: (address: string) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
@@ -164,7 +165,7 @@ export const loadState = (initial: State): Store => {
               disconnectWallet();
             } else {
               s.session.address = address;
-              window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance: s.session.tokenBalance, tx: s.session.tx }));
+              window.localStorage.setItem("session", JSON.stringify({ ...s.session }));
             }
             return s;
           default:
@@ -183,10 +184,15 @@ export const session = derived(state, s => {
   return null;
 });
 
-window.ethereum?.on('chainChanged', () => location.reload());
+window.ethereum?.on('chainChanged', () => {
+  // We disconnect the wallet to avoid out of sync state
+  // between the account address and IDX DIDs
+  disconnectWallet();
+  location.reload();
+});
 
 // Updates state when user changes accounts
-window.ethereum?.on("accountsChanged", async (address: string[]) => {
+window.ethereum?.on("accountsChanged", async ([address]: string) => {
   const config = await getConfig();
   state.setChangedAccount(address);
   state.refreshBalance(config);

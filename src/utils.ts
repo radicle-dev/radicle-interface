@@ -5,6 +5,14 @@ import multihashes from 'multihashes';
 import EthersSafe from "@gnosis.pm/safe-core-sdk";
 import type { Config } from '@app/config';
 import { assert } from '@app/error';
+import type { Registration } from "@app/base/registrations/registrar";
+import { getRegistration } from '@app/base/registrations/registrar';
+import type { BasicProfile } from "@ceramicstudio/idx-constants";
+
+export interface Profile {
+  ens: Registration | null;
+  idx: BasicProfile | null;
+}
 
 export enum AddressType {
   Contract,
@@ -32,6 +40,10 @@ export function isAddressEqual(left: string, right: string): boolean {
 
 export function formatBalance(n: BigNumber): string {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
+}
+
+export function formatCAIP10Address(address: string, protocol: string, impl: number): string {
+  return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
 export function formatAddress(addr: string): string {
@@ -71,6 +83,11 @@ export function isRadicleId(input: string): boolean {
 // Check whether the input is a URL.
 export function isUrl(input: string): boolean {
   return /^https?:\/\//.test(input);
+}
+
+// Check whether the input is a DID
+export function isDid(input: string): boolean {
+  return /^did:[a-zA-Z0-9]+:[a-zA-Z0-9]+$/.test(input);
 }
 
 // Check whether the input is an Ethereum address.
@@ -180,6 +197,38 @@ export async function identifyAddress(address: string, config: Config): Promise<
 // Resolve a label under the radicle domain.
 export async function resolveLabel(label: string, config: Config): Promise<string | null> {
   return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+}
+
+export async function lookupAddress(address: string, config: Config): Promise<Profile>  {
+  const profile: Profile = { ens: null, idx: null };
+
+  try {
+    const [ens, idx] = await Promise.allSettled([
+      resolveEnsProfile(address, config),
+      resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config)
+    ]);
+
+    if (ens.status == "fulfilled") profile.ens = ens.value;
+    if (idx.status == "fulfilled") profile.idx = idx.value;
+  } catch (error) {
+    console.error(error);
+  }
+
+  return profile;
+}
+
+// Resolves an IDX profile or return null
+export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
+  return config.idx.client.get<BasicProfile>("basicProfile", caip10);
+}
+
+// Resolves an ENS profile or return null
+export async function resolveEnsProfile(address: string, config: Config): Promise<Registration | null> {
+  const label = await config.provider.lookupAddress(address);
+  if (label && await resolveLabel(parseEnsLabel(label, config), config)) {
+    return await getRegistration(label, config);
+  }
+  return null;
 }
 
 // Check whether a Gnosis Safe exists at an address.
