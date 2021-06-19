@@ -3,17 +3,17 @@
   import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
 
-  import Home from "@app/base/home/Index.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
-  import Orgs from "@app/base/orgs/Routes.svelte";
-  import Users from "@app/base/users/Routes.svelte";
+  import Home from '@app/base/home/Index.svelte';
+  import Vesting from '@app/base/vesting/Index.svelte';
+  import Registrations from '@app/base/registrations/Routes.svelte';
+  import Orgs from '@app/base/orgs/Routes.svelte';
+  import Users from '@app/base/users/Routes.svelte';
   import IDX from "@app/base/idx/Routes.svelte";
-  import Projects from "@app/base/projects/Routes.svelte";
-  import Resolver from "@app/base/resolver/Routes.svelte";
-  import Header from "@app/Header.svelte";
-  import Loading from "@app/Components/Loading.svelte";
-  import Modal from "@app/Components/Modal/Modal.svelte";
+  import Projects from '@app/base/projects/Routes.svelte';
+  import Resolver from '@app/base/resolver/Routes.svelte';
+  import Header from '@app/Header.svelte';
+  import Loading from '@app/Loading.svelte';
+  import Modal from '@app/Modal.svelte';
 
   const loadConfig = getConfig().then((cfg) => {
     if ($state.connection === Connection.Connected) {

@@ -287,7 +287,7 @@ export const loadState = (initial: State): Store => {
     },
 
     setChangedAccount: (address: string) => {
-      store.update((s) => {
+      store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
             // In case of locking Metamask the accountsChanged event returns undefined.
@@ -296,7 +296,7 @@ export const loadState = (initial: State): Store => {
               disconnectWallet();
             } else {
               s.session.address = address;
-              saveSession(s.session);
+              window.localStorage.setItem("session", JSON.stringify({ ...s.session }));
             }
             return s;
           default:
@@ -319,7 +319,7 @@ export const session = derived(state, (s) => {
   return null;
 });
 
-window.ethereum?.on("chainChanged", () => {
+window.ethereum?.on('chainChanged', () => {
   // We disconnect the wallet to avoid out of sync state
   // between the account address and IDX DIDs
   disconnectWallet();
