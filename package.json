@@ -21,6 +21,11 @@
     "vite-plugin-rewrite-all": "^0.1.2"
   },
   "dependencies": {
+    "@ceramicnetwork/blockchain-utils-linking": "^1.0.2",
+    "@ceramicnetwork/http-client": "^1.0.6",
+    "@ceramicnetwork/stream-caip10-link": "^1.0.6",
+    "@ceramicstudio/idx": "^0.12.1",
+    "@ceramicstudio/idx-constants": "^1.0.0",
     "@gnosis.pm/safe-core-sdk": "^0.2.0",
     "@gnosis.pm/safe-core-sdk-types": "^0.1.1",
     "@gnosis.pm/safe-service-client": "^0.1.0-alpha.0",
