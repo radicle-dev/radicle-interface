@@ -45,6 +45,7 @@
 	--color-foreground-90: #dddddd;
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
+	--color-foreground-subtler: #333344;
 	--color-foreground-background: #77778811;
 	--color-foreground-background-subtle: #7777880a;
 	--color-foreground-1: #242e38;
@@ -56,6 +57,7 @@
 	--color-background: #0b131a;
 	--color-glow: #5555ff22;
 	--color-glow-error: #ff555522;
+	--color-scrollbar: var(--color-foreground-subtler);
 
 	--font-family-sans-serif: Inter, sans-serif;
 	--font-family-monospace: monospace;
@@ -65,6 +67,7 @@
 	--box-shadow-color: var(--color-secondary-2);
 	--content-max-width: 1920px;
 	--content-min-width: 480px;
+	--scrollbar-width: 0.5rem;
 }
 
 body {
@@ -79,6 +82,9 @@ body {
 	text-align: left;
 	background-color: var(--color-background);
 	-webkit-font-smoothing: antialiased;
+	scrollbar-width: thin;
+	scrollbar-height: thin;
+	scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 html {
@@ -98,6 +104,26 @@ html {
 ::selection {
 	background: var(--color-primary);
 	color: var(--color-background);
+}
+
+/* Chrome/Edge/Safari scrollbar */
+*::-webkit-scrollbar {
+	width: var(--scrollbar-width);
+	height: var(--scrollbar-width);
+}
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+	background: transparent;
+	border-radius: 4px;
+}
+*::-webkit-scrollbar-corner {
+	background: transparent;
+}
+*:hover::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+	background-color: var(--color-scrollbar);
 }
 
 .error::selection, .error ::selection {
