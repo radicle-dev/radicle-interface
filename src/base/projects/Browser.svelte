@@ -122,8 +122,6 @@
 
   .center-content {
     margin: 0 auto;
-    max-width: var(--content-max-width);
-    min-width: var(--content-min-width);
   }
 
   .container {

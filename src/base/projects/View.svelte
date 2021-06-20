@@ -23,6 +23,8 @@
 <style>
   main {
     width: 100%;
+    max-width: var(--content-max-width);
+    min-width: var(--content-min-width);
     padding: 4rem 0;
   }
   main > header {
