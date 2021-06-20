@@ -162,6 +162,15 @@
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
+
+  @media (max-width: 800px) {
+    main > header, .container {
+      padding-left: 2rem;
+    }
+    .stat {
+      display: none;
+    }
+  }
 </style>
 
 <main>

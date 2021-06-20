@@ -30,6 +30,13 @@
   main > header {
     padding: 0 2rem 0 8rem;
   }
+
+  @media (max-width: 800px) {
+    main > header {
+      padding-left: 2rem;
+    }
+  }
+
   .title {
     font-size: 2.25rem;
     margin-bottom: 0.5rem;
