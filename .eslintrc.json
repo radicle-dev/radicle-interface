@@ -24,7 +24,7 @@
   ],
   "rules": {
     "indent": ["error", 2, { "SwitchCase": 1 }],
-    "semi": "off", // We use the typescript-specific rule as it's more accurate.
+    "semi": "off",
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
     "no-trailing-spaces": ["error"],
@@ -34,6 +34,36 @@
       "asyncArrow": "always"
     }],
     "eol-last": ["error"],
+    "key-spacing": ["error"],
+    "@typescript-eslint/type-annotation-spacing": ["error"],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "enumMember",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "objectLiteralProperty",
+        "format": ["PascalCase", "camelCase"]
+      },
+      {
+        "selector": "default",
+        "format": ["camelCase"],
+        "leadingUnderscore": "allow",
+        "trailingUnderscore": "allow"
+      },
+      {
+        "selector": "variable",
+        "modifiers": ["const"],
+        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow",
+        "trailingUnderscore": "allow"
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"]
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [

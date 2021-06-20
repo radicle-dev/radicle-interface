@@ -4,8 +4,8 @@ import svelte from "@sveltejs/vite-plugin-svelte";
 import rewriteAll from "vite-plugin-rewrite-all";
 
 const config: UserConfig = {
-  optimizeDeps:{
-    exclude:['svelte-routing']
+  optimizeDeps: {
+    exclude: ['svelte-routing']
   },
   plugins: [svelte(), rewriteAll()],
   resolve: {
