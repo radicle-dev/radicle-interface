@@ -65,7 +65,7 @@
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);
   $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
-  $: loading = state.status == Status.Loading ? state.path : null;
+  $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>
 
 <style>
@@ -210,7 +210,7 @@
       {#if tree.entries.length}
         <div class="column-left">
           <div class="source-tree">
-            <Tree {tree} {path} {fetchTree} {loading} on:select={onSelect} />
+            <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
           </div>
         </div>
         <div class="column-right">
