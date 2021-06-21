@@ -31,7 +31,7 @@
     let domain = `${name}.${config.registrar.domain}`;
     let resolved = await config.provider.resolveName(domain);
 
-    if (isAddressEqual(resolved, org.address)) {
+    if (resolved && isAddressEqual(resolved, org.address)) {
       state = State.Signing;
       try {
         let tx = await org.setName(domain, config);
@@ -66,25 +66,39 @@
       </button>
     </div>
   </Modal>
+{:else if mismatchError}
+  <Modal floating error>
+    <div slot="title">
+      👻
+    </div>
+
+    <div slot="body">
+      <div class="error">
+        The name <strong>{name}.{config.registrar.domain}</strong> does not
+        resolve to <strong>{formatAddress(org.address)}</strong>. Please update
+        The ENS record for {name}.{config.registrar.domain} to
+        point to the correct address and try again.
+      </div>
+    </div>
+
+    <div slot="actions">
+      <button class="secondary" on:click={() => mismatchError = false}>
+        Back
+      </button>
+
+      <button class="text" on:click={() => dispatch('close')}>
+        Cancel
+      </button>
+    </div>
+  </Modal>
 {:else}
   <Modal floating>
     <div slot="title">
-      {#if mismatchError}
-        👻
-      {:else}
-        🖊️
-      {/if}
+      🖊️
     </div>
 
     <div slot="subtitle">
-      {#if mismatchError}
-        <div class="error">
-          The name <strong>{name}.{config.registrar.domain}</strong> does not
-          resolve to <strong>{formatAddress(org.address)}</strong>. Please update
-          The ENS record for {name}.{config.registrar.domain} to
-          point to the correct address.
-        </div>
-      {:else if state == State.Signing}
+      {#if state == State.Signing}
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
         Transaction is being processed by the network...
