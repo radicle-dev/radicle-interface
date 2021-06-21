@@ -11,7 +11,7 @@ simple guidelines.
   access to this configuraiton.
 * Write properly formatted comments: they should be english sentences, eg:
 
-    // Return the current UNIX time.
+      // Return the current UNIX time.
 
 * Make sure all commits are signed off, using `git commit -s`.
 * Follow the guidelines when proposing code changes (see below).
