@@ -3,7 +3,7 @@
     "start": "vite",
     "serve": "vite preview",
     "build": "scripts/build",
-    "check": "svelte-check",
+    "check": "scripts/check",
     "test": "echo \"This template does not include a test runner by default.\" && exit 1"
   },
   "type": "module",
