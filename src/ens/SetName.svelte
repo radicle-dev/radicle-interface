@@ -6,6 +6,7 @@
   import DomainInput from '@app/ens/DomainInput.svelte';
   import type { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
+  import Error from '@app/Error.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -23,6 +24,7 @@
 
   let name = "";
   let state = State.Idle;
+  let error: string | null = null;
   let mismatchError = false; // Set if the name entered does not resolve to the address.
 
   const onSubmit = async () => {
@@ -41,6 +43,7 @@
       } catch (e) {
         console.error(e);
         state = State.Failed;
+        error = e.message;
       }
     } else {
       state = State.Idle;
@@ -91,6 +94,8 @@
       </button>
     </div>
   </Modal>
+{:else if state === State.Failed && error}
+  <Error floating title="Transaction failed" message={error} on:close />
 {:else}
   <Modal floating>
     <div slot="title">
