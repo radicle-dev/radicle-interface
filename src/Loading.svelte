@@ -8,6 +8,12 @@
 </script>
 
 <style>
+  .container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
   .spinner {
     margin: auto 0;
     width: 70px;
@@ -106,10 +112,12 @@
   }
 </style>
 
-<div class="spinner" class:fade-in={fadeIn} class:small class:center class:margins class:condensed>
-  <div class="bounce1" style="background-color: var(--color-{color})"></div>
-  {#if !condensed}
-    <div class="bounce2" style="background-color: var(--color-{color})"></div>
-    <div class="bounce3" style="background-color: var(--color-{color})"></div>
-  {/if}
+<div class="container">
+  <div class="spinner" class:fade-in={fadeIn} class:small class:center class:margins class:condensed>
+    <div class="bounce1" style="background-color: var(--color-{color})"></div>
+    {#if !condensed}
+      <div class="bounce2" style="background-color: var(--color-{color})"></div>
+      <div class="bounce3" style="background-color: var(--color-{color})"></div>
+    {/if}
+  </div>
 </div>
