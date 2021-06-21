@@ -1,8 +1,8 @@
-name: svelte-check 
+name: svelte-check
 on: [push, pull_request]
 
 jobs:
-  check-format:
+  svelte-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -10,4 +10,4 @@ jobs:
         with:
           node-version: '14'
       - run: npm ci
-      - run: npm run check 
+      - run: npm run check
