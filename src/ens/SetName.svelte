@@ -7,6 +7,7 @@
   import type { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
   import Error from '@app/Error.svelte';
+  import * as utils from '@app/utils';
 
   const dispatch = createEventDispatcher();
 
@@ -34,11 +35,16 @@
     let resolved = await config.provider.resolveName(domain);
 
     if (resolved && isAddressEqual(resolved, org.address)) {
-      state = State.Signing;
       try {
-        let tx = await org.setName(domain, config);
-        state = State.Pending;
-        await tx.wait();
+        if (utils.isSafe(org.owner, config)) {
+          state = State.Signing;
+          await org.setNameMultisig(domain, config);
+        } else {
+          state = State.Signing;
+          let tx = await org.setName(domain, config);
+          state = State.Pending;
+          await tx.wait();
+        }
         state = State.Success;
       } catch (e) {
         console.error(e);

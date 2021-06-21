@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
+import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import config from "@app/config.json";
 
 declare global {
@@ -7,7 +8,6 @@ declare global {
     ethereum: any;
     registrarState: any;
   }
-
 }
 
 export class Config {
@@ -19,7 +19,12 @@ export class Config {
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | null;
-  safe: { api: string | null; subgraph: string; viewer: string | null };
+  safe: {
+    api?: string;
+    client?: SafeServiceClient;
+    subgraph: string;
+    viewer: string | null;
+  };
   abi: { [contract: string]: string[] };
   seed: { api?: string };
   tokens: string[];
@@ -44,6 +49,9 @@ export class Config {
     this.orgFactory = cfg.orgFactory;
     this.orgs = cfg.orgs;
     this.safe = cfg.safe;
+    this.safe.client = this.safe.api
+      ? new SafeServiceClient(this.safe.api)
+      : undefined;
     this.provider = provider;
     this.signer = signer;
     this.gasLimits = gasLimits;

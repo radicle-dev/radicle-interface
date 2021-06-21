@@ -2,7 +2,9 @@ import { ethers } from "ethers";
 import type { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
+import EthersSafe from "@gnosis.pm/safe-core-sdk";
 import type { Config } from '@app/config';
+import { assert } from '@app/error';
 
 export enum AddressType {
   Contract,
@@ -15,6 +17,13 @@ export interface Safe {
   address: string;
   owners: string[];
   threshold: number;
+}
+
+export interface SafeTransaction {
+    to: string;
+    value: string;
+    data: string;
+    operation: number;
 }
 
 export function isAddressEqual(left: string, right: string): boolean {
@@ -178,7 +187,7 @@ export async function isSafe(address: string, config: Config): Promise<boolean> 
   if (! config.safe.api) return false;
 
   const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/safes/${addr}`, { method: 'HEAD' });
+  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, { method: 'HEAD' });
 
   return response.ok;
 }
@@ -188,7 +197,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
   if (! config.safe.api) return null;
 
   const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/safes/${addr}`, {
+  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -220,4 +229,35 @@ export async function getTokens(address: string, config: Config):
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
+}
+
+// Propose a Gnosis Safe multi-sig transaction.
+export async function proposeSafeTransaction(
+  safeTx: SafeTransaction,
+  safeAddress: string,
+  config: Config
+): Promise<void> {
+  assert(config.signer);
+  assert(config.safe.client);
+
+  const safeSdk = await EthersSafe.create({
+    ethers, safeAddress, providerOrSigner: config.signer,
+  });
+  const estimation = await config.safe.client.estimateSafeTransaction(
+    safeAddress,
+    safeTx
+  );
+  const transaction = await safeSdk.createTransaction({
+    ...safeTx,
+    safeTxGas: Number(estimation.safeTxGas),
+  });
+  const safeTxHash = await safeSdk.getTransactionHash(transaction);
+  const signature = await safeSdk.signTransactionHash(safeTxHash);
+
+  await config.safe.client.proposeTransaction(
+    safeAddress,
+    transaction.data,
+    safeTxHash,
+    signature
+  );
 }

@@ -45,8 +45,14 @@
   };
 
   $: label = name && parseEnsLabel(name, config);
-  $: isOwner = (org: Org): boolean => {
-    return $session ? utils.isAddressEqual(org.owner, $session.address) : false;
+  $: isAuthorized = async (org: Org): Promise<boolean> => {
+    if ($session) {
+      if (utils.isAddressEqual(org.owner, $session.address)) {
+        return true;
+      }
+      return await org.isMember($session.address, config);
+    }
+    return false;
   };
 </script>
 
@@ -171,17 +177,21 @@
         <div class="label">Owner</div>
         <div><Address resolve {config} address={org.owner} /></div>
         <div>
-          {#if isOwner(org)}
-            <button class="tiny secondary" on:click={transferOwnership}>
-              Transfer
-            </button>
-          {/if}
+          {#await isAuthorized(org)}
+            <!-- Loading -->
+          {:then authorized}
+            {#if authorized}
+              <button class="tiny secondary" on:click={transferOwnership}>
+                Transfer
+              </button>
+            {/if}
+          {/await}
         </div>
         <!-- Name -->
         <div class="label">Name</div>
         <div>
           {#await org.lookupAddress(config)}
-            <Loading small />
+            <div class="loading"><Loading small /></div>
           {:then name}
             {#if name}
               <Link to={`/registrations/${label}`}>{name}</Link>
@@ -191,11 +201,15 @@
           {/await}
         </div>
         <div>
-          {#if isOwner(org)}
-            <button class="tiny secondary" on:click={setName}>
-              Set
-            </button>
-          {/if}
+          {#await isAuthorized(org)}
+            <!-- Loading -->
+          {:then authorized}
+            {#if authorized}
+              <button class="tiny secondary" on:click={setName}>
+                Set
+              </button>
+            {/if}
+          {/await}
         </div>
       </div>
 

@@ -1,6 +1,8 @@
 import * as ethers from 'ethers';
 import type { TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
+import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
+
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Config } from '@app/config';
@@ -74,6 +76,36 @@ export class Org {
       { gasLimit: 200_000 });
   }
 
+  async setNameMultisig(name: string, config: Config): Promise<void> {
+    assert(config.signer);
+    assert(config.safe.client);
+
+    const safeAddress = ethers.utils.getAddress(this.owner);
+    const orgAddress = ethers.utils.getAddress(this.address);
+    const org = new ethers.Contract(
+      this.address,
+      config.abi.org,
+      config.signer
+    );
+    const unsignedTx = await org.populateTransaction.setName(
+      name,
+      config.provider.network.ensAddress,
+    );
+
+    const txData = unsignedTx.data;
+    if (! txData) {
+      throw new Error("Org::setNameMultisig: Could not generate transaction for `setName` call");
+    }
+
+    const safeTx = {
+      to: orgAddress,
+      value: ethers.constants.Zero.toString(),
+      data: txData,
+      operation: OperationType.Call,
+    };
+    await utils.proposeSafeTransaction(safeTx, safeAddress, config);
+  }
+
   async setOwner(address: string, config: Config): Promise<TransactionResponse> {
     assert(config.signer);
 
@@ -91,6 +123,11 @@ export class Org {
       return safe.owners;
     }
     return [];
+  }
+
+  async isMember(address: string, config: Config): Promise<boolean> {
+    const members = await this.getMembers(config);
+    return members.includes(ethers.utils.getAddress(address));
   }
 
   async getProjects(config: Config): Promise<Array<Project>> {
