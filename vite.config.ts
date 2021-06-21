@@ -11,6 +11,8 @@ const config: UserConfig = {
   resolve: {
     alias: {
       "@app": path.resolve("./src"),
+      // Polyfill for Node.js "stream" library.
+      "stream": path.resolve("./src/polyfills/stream.ts"),
     },
   },
   build: {
