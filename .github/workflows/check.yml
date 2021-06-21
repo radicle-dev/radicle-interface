@@ -1,8 +1,8 @@
-name: svelte-check
+name: check
 on: [push, pull_request]
 
 jobs:
-  svelte-check:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
