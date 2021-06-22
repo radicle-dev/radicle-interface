@@ -51,7 +51,7 @@
     font-size: 1.25rem;
     font-weight: bold;
     line-height: 2.625rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-align: center;
     text-overflow: ellipsis;
     overflow: hidden;
