@@ -21,12 +21,12 @@
     Pending,
     Success,
     Failed,
+    Mismatch,
   }
 
   let name = "";
   let state = State.Idle;
   let error: string | null = null;
-  let mismatchError = false; // Set if the name entered does not resolve to the address.
 
   const onSubmit = async () => {
     state = State.Checking;
@@ -52,8 +52,7 @@
         error = e.message;
       }
     } else {
-      state = State.Idle;
-      mismatchError = true;
+      state = State.Mismatch;
     }
   };
 </script>
@@ -75,31 +74,13 @@
       </button>
     </div>
   </Modal>
-{:else if mismatchError}
-  <Modal floating error>
-    <div slot="title">
-      👻
-    </div>
-
-    <div slot="body">
-      <div class="error">
-        The name <strong>{name}.{config.registrar.domain}</strong> does not
-        resolve to <strong>{formatAddress(org.address)}</strong>. Please update
-        The ENS record for {name}.{config.registrar.domain} to
-        point to the correct address and try again.
-      </div>
-    </div>
-
-    <div slot="actions">
-      <button class="secondary" on:click={() => mismatchError = false}>
-        Back
-      </button>
-
-      <button class="text" on:click={() => dispatch('close')}>
-        Cancel
-      </button>
-    </div>
-  </Modal>
+{:else if state === State.Mismatch}
+  <Error floating title="🖊️" action="Okay" on:close>
+    The name <strong>{name}.{config.registrar.domain}</strong> does not
+    resolve to <strong>{formatAddress(org.address)}</strong>. Please update
+    The ENS record for {name}.{config.registrar.domain} to
+    point to the correct address and try again.
+  </Error>
 {:else if state === State.Failed && error}
   <Error floating title="Transaction failed" message={error} on:close />
 {:else}
@@ -120,7 +101,7 @@
 
     <div slot="body">
       {#if state === State.Idle || state === State.Checking}
-        <DomainInput root={config.registrar.domain} on:input={() => mismatchError = false}
+        <DomainInput root={config.registrar.domain}
           autofocus disabled={state !== State.Idle} bind:value={name} />
       {:else}
         <Loading small center />
