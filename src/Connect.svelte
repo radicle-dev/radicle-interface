@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Connection } from "@app/session";
-  import { state } from '@app/session';
-  import type { Config } from '@app/config';
-
+  import { state } from "@app/session";
+  import type { Config } from "@app/config";
+  import Modal from "@app/Modal.svelte";
   export let config: Config;
   export let caption = "Connect";
   export let className = "";
@@ -10,14 +10,24 @@
 
   let walletUnavailable = !window.ethereum;
 
+  let isModalOpen = false;
+
+  const onClickConnect = () => {
+    isModalOpen = !isModalOpen;
+    // state.connect(config);
+  };
+
   $: connecting = $state.connection === Connection.Connecting;
 </script>
 
-<style>
-</style>
+{#if isModalOpen}
+  <Modal on:close floating={isModalOpen}>
+    <p slot="body" />
+  </Modal>
+{/if}
 
 <button
-  on:click={() => state.connect(config)}
+  on:click={onClickConnect}
   {style}
   class="connect {className}"
   disabled={connecting || walletUnavailable}
@@ -29,3 +39,6 @@
     {caption}
   {/if}
 </button>
+
+<style>
+</style>

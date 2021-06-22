@@ -1,7 +1,9 @@
 import { ethers } from "ethers";
-import type { TypedDataSigner } from '@ethersproject/abstract-signer';
+import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import config from "@app/config.json";
+import WalletConnect from "@walletconnect/client";
+import QRCodeModal from "@walletconnect/qrcode-modal";
 
 declare global {
   interface Window {
@@ -18,7 +20,7 @@ export class Config {
   orgs: { subgraph: string; contractHash: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
-  signer: ethers.Signer & TypedDataSigner | null;
+  signer: (ethers.Signer & TypedDataSigner) | null;
   safe: {
     api?: string;
     client?: SafeServiceClient;
@@ -33,9 +35,9 @@ export class Config {
   constructor(
     network: { name: string; chainId: number },
     provider: ethers.providers.JsonRpcProvider,
-    signer: ethers.Signer & TypedDataSigner | null,
+    signer: (ethers.Signer & TypedDataSigner) | null
   ) {
-    const cfg = (<Record<string, any>> config)[network.name];
+    const cfg = (<Record<string, any>>config)[network.name];
     const api = config.radicle.api;
 
     if (!cfg) {
@@ -60,7 +62,7 @@ export class Config {
     this.token = new ethers.Contract(
       this.radToken.address,
       this.abi.token,
-      this.provider,
+      this.provider
     );
   }
 }
@@ -69,6 +71,33 @@ export class Config {
 const gasLimits = {
   createOrg: 1_200_000,
 };
+
+function connectWalletConnect() {
+  //Create a connector
+  const connector = new WalletConnect({
+    bridge: "https://bridge.walletconnect.org", // Required
+    qrcodeModal: QRCodeModal,
+  });
+  //return connector;
+
+  // Check if connection is already established
+  if (!connector.connected) {
+    // create new session
+    connector.createSession();
+  }
+
+  // Subscribe to connection events
+  connector.on("connect", (error, payload) => {
+    if (error) {
+      throw error;
+    }
+
+    // Get provided accounts and chainId
+    console.log(payload.params[0], "connector params");
+  });
+
+  return connector;
+}
 
 function isMetamaskInstalled(): boolean {
   const { ethereum } = window;
@@ -93,7 +122,10 @@ export async function getConfig(): Promise<Config> {
     // If we don't have Metamask, we use Alchemy as the provider, and we don't
     // provide a signer. We default to Homestead.
     const network = { name: "homestead", chainId: 1 };
-    const provider = new ethers.providers.AlchemyProvider(network.name, alchemyApiKey);
+    const provider = new ethers.providers.AlchemyProvider(
+      network.name,
+      alchemyApiKey
+    );
 
     config = new Config(network, provider, null);
   }
