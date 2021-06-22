@@ -22,7 +22,7 @@
 
 {#if isModalOpen}
   <Modal on:close floating={isModalOpen}>
-    <p slot="body" />
+    <p slot="body">Wallet connect modal stays here</p>
   </Modal>
 {/if}
 
