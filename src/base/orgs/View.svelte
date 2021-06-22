@@ -45,9 +45,12 @@
   };
 
   $: label = name && parseEnsLabel(name, config);
+  $: isOwner = (org: Org): boolean => $session
+    ? utils.isAddressEqual(org.owner, $session.address)
+    : false;
   $: isAuthorized = async (org: Org): Promise<boolean> => {
     if ($session) {
-      if (utils.isAddressEqual(org.owner, $session.address)) {
+      if (isOwner(org)) {
         return true;
       }
       return await org.isMember($session.address, config);
@@ -177,15 +180,11 @@
         <div class="label">Owner</div>
         <div><Address resolve {config} address={org.owner} /></div>
         <div>
-          {#await isAuthorized(org)}
-            <!-- Loading -->
-          {:then authorized}
-            {#if authorized}
-              <button class="tiny secondary" on:click={transferOwnership}>
-                Transfer
-              </button>
-            {/if}
-          {/await}
+          {#if isOwner(org)}
+            <button class="tiny secondary" on:click={transferOwnership}>
+              Transfer
+            </button>
+          {/if}
         </div>
         <!-- Name -->
         <div class="label">Name</div>
