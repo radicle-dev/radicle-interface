@@ -37,7 +37,7 @@
 
 <style>
   .address {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     height: 100%;
   }
@@ -53,6 +53,7 @@
   .loading {
     margin-left: 1rem;
     width: 4rem;
+    height: 1.5rem;
   }
 </style>
 

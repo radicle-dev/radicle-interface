@@ -7,6 +7,7 @@
   import type { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
   import Error from '@app/Error.svelte';
+  import Address from '@app/Address.svelte';
   import * as utils from '@app/utils';
 
   const dispatch = createEventDispatcher();
@@ -17,9 +18,16 @@
   enum State {
     Idle,
     Checking,
+
+    // Single-sig states.
     Signing,
     Pending,
     Success,
+
+    // Multi-sig states.
+    Proposing,
+    Proposed,
+
     Failed,
     Mismatch,
   }
@@ -37,15 +45,16 @@
     if (resolved && isAddressEqual(resolved, org.address)) {
       try {
         if (utils.isSafe(org.owner, config)) {
-          state = State.Signing;
+          state = State.Proposing;
           await org.setNameMultisig(domain, config);
+          state = State.Proposed;
         } else {
           state = State.Signing;
           let tx = await org.setName(domain, config);
           state = State.Pending;
           await tx.wait();
+          state = State.Success;
         }
-        state = State.Success;
       } catch (e) {
         console.error(e);
         state = State.Failed;
@@ -74,6 +83,24 @@
       </button>
     </div>
   </Modal>
+{:else if state === State.Proposed}
+  <Modal floating>
+    <div slot="title">
+      🪴
+    </div>
+
+    <div slot="subtitle">
+      <p>The transaction to set the ENS name for <strong>{formatAddress(org.address)}</strong>
+      to <strong>{name}.{config.registrar.domain}</strong> was proposed to:</p>
+      <p><Address address={org.owner} {config} compact /></p>
+    </div>
+
+    <div slot="actions">
+      <button class="small" on:click={() => dispatch('close')}>
+        Done
+      </button>
+    </div>
+  </Modal>
 {:else if state === State.Mismatch}
   <Error floating title="🖊️" action="Okay" on:close>
     The name <strong>{name}.{config.registrar.domain}</strong> does not
@@ -94,6 +121,10 @@
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
         Transaction is being processed by the network...
+      {:else if state == State.Proposing}
+        Proposal is being submitted to the safe
+        <strong>{formatAddress(org.owner)}</strong>,
+        please sign the transaction in your wallet.
       {:else}
         Set an ENS name for <strong>{formatAddress(org.address)}</strong>
       {/if}
