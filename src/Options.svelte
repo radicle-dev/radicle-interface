@@ -1,7 +1,8 @@
 <script lang="ts">
+  import marked from "marked";
   import { createEventDispatcher } from 'svelte';
 
-  export let options: { label: string; value: string }[];
+  export let options: { label: string; value: string; description?: string[] }[];
   export let name: string;
   export let selected = "";
   export let disabled = false;
@@ -33,6 +34,24 @@
     margin-right: 0.75rem;
     display: inline-block;
   }
+  .options .description {
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+    max-width: 24rem;
+  }
+  .options .description:last-child {
+    margin-bottom: 0;
+  }
+  .description :global(a) {
+    text-decoration: underline;
+  }
+  .description :global(em) {
+    font-style: italic;
+  }
+  .description :global(strong) {
+    font-weight: var(--font-weight-medium);
+  }
 </style>
 
 <main>
@@ -44,6 +63,11 @@
                on:click={() => dispatch('changed', option.value)}>
         {option.label}
       </label>
+      {#if option.description}
+        <div class="description">
+          {@html marked(option.description.join("\n"))}
+        </div>
+      {/if}
     {/each}
   </div>
 </main>

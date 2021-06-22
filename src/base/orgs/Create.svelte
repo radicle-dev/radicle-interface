@@ -6,6 +6,7 @@
   import type { Err } from '@app/error';
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
+  import { formatAddress } from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import Options from '@app/Options.svelte';
   import Address from '@app/Address.svelte';
@@ -26,8 +27,21 @@
   }
 
   const orgTypes = [
-    { label: "Single signer", value: Governance.BDFL },
-    { label: "Quorum", value: Governance.Quorum },
+    { label: "Single-signature",
+      description: [
+        `Creates an org with you (${formatAddress(owner)}) as the only owner.`,
+        `Org transactions such as anchoring can be signed and executed directly from your wallet.`
+      ],
+      value: Governance.BDFL
+    },
+    { label: "Multi-signature",
+      description: [
+        "Creates an org with a multi-signature contract as its owner.",
+        "A [Gnosis Safe](https://gnosis-safe.io) contract is deployed for your org and assigned as the owner.",
+        "Org transactions such as anchoring have to be approved by a quorum of signers."
+      ],
+      value: Governance.Quorum
+    },
   ];
 
   let state = State.Idle;
