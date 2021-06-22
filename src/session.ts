@@ -147,6 +147,8 @@ export const loadState = (initial: State): Store => {
         };
         config = new Config(network, provider, signer);
 
+        console.log(config, "config value");
+
         store.set({ connection: Connection.Connected, session });
 
         saveSession({ ...session, tokenBalance: null });

@@ -12,10 +12,9 @@
 
   export let session: Session | null;
   export let config: Config | null;
-
+console.log(config, "confg")
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
-
   $: address = session && session.address;
   $: tokenBalance = session && session.tokenBalance;
 </script>
