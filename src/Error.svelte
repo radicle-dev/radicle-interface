@@ -11,6 +11,7 @@
   export let message = "";
   export let floating = false;
   export let subtle = false;
+  export let action = floating ? "Close" : "Back";
 
   let body = message || (error && error.message) || "";
 </script>
@@ -32,7 +33,7 @@
 
   <span slot="actions">
     <button on:click={() => dispatch('close')}>
-      Back
+      {action}
     </button>
   </span>
 </Modal>

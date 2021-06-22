@@ -10,7 +10,11 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff">
     <link rel="preload" href="/fonts/Inter-SemiBold.otf" as="font" type="font/otf">
-
+    <script type="text/javascript">
+      // Workaround to get `global` to work in old-school transitive
+      // dependencies.
+      window.global = window;
+    </script>
     <title>Radicle Interface</title>
   </head>
   <body>
