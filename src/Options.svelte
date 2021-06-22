@@ -38,7 +38,6 @@
     color: var(--color-secondary);
     font-size: 0.875rem;
     margin-bottom: 2rem;
-    max-width: 24rem;
   }
   .options .description:last-child {
     margin-bottom: 0;

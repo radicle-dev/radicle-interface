@@ -6,7 +6,6 @@
   import type { Err } from '@app/error';
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
-  import { formatAddress } from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import Options from '@app/Options.svelte';
   import Address from '@app/Address.svelte';
@@ -29,16 +28,16 @@
   const orgTypes = [
     { label: "Single-signature",
       description: [
-        `Creates an org with you (${formatAddress(owner)}) as the only owner.`,
+        `Creates an org with the specified address as the only owner.`,
         `Org transactions such as anchoring can be signed and executed directly from your wallet.`
       ],
       value: Governance.BDFL
     },
     { label: "Multi-signature",
       description: [
-        "Creates an org with a multi-signature contract as its owner.",
-        "A [Gnosis Safe](https://gnosis-safe.io) contract is deployed for your org and assigned as the owner.",
-        "Org transactions such as anchoring have to be approved by a quorum of signers."
+        "Creates an org with a multi-signature contract as its owner, and the specified address as its only member.",
+        "A [Gnosis Safe](https://gnosis-safe.io) contract will be deployed for your org.",
+        "Transactions such as anchoring have to be approved by a quorum of signers."
       ],
       value: Governance.Quorum
     },
@@ -91,6 +90,25 @@
     height: 2rem;
     line-height: 2rem;
   }
+  .configuration {
+    max-width: 35rem;
+    text-align: left;
+  }
+  .governance {
+    background-color: var(--color-secondary-background);
+    border-radius: 1rem;
+    padding: 1rem 1rem 0rem 1rem;
+    margin-bottom: 2rem;
+  }
+  label[for="address"] {
+    margin-left: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--color-secondary);
+  }
+  input[name="address"] {
+    margin: 0.5rem 0 0 0;
+    width: 100%;
+  }
 </style>
 
 {#if error}
@@ -140,9 +158,16 @@
 
     <span slot="body">
       {#if state === State.Idle}
-        <Options name="governance" disabled={state !== State.Idle}
-                 selected="{governance}" options={orgTypes}
-                 on:changed={onGovernanceChanged} />
+        <div class="configuration">
+          <div class="governance">
+            <Options name="governance" disabled={state !== State.Idle}
+                     selected="{governance}" options={orgTypes}
+                     on:changed={onGovernanceChanged} />
+          </div>
+
+          <label class="input" for="address">Org owner or member Ethereum address</label>
+          <input name="address" class="small" type="text" maxlength="42" bind:value={owner} />
+        </div>
       {:else}
         <Loading center small />
       {/if}

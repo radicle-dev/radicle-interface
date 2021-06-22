@@ -257,8 +257,16 @@ input[type="text"] {
 input[type="text"]::placeholder {
 	color: var(--color-secondary);
 }
+input[type="text"].small {
+	font-size: 0.875rem;
+}
 input.wide {
 	width: 44ch;
+}
+
+label.input {
+	text-align: left;
+	display: block;
 }
 
 .modal-actions button {
