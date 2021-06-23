@@ -67,14 +67,13 @@
       });
   });
 
-  const onSave = async (event: { detail: Field[] }) => {
+  const onSave = async (event: { detail: { name: string; value: string | null }[] }) => {
     assert(state.status === Status.Found, "registration must be found");
 
     updateRecords = event.detail
-      .filter(r => r.editable && r.value !== null)
+      .filter(f => f.value !== null)
       .map(f => {
-        assert(f.value !== null);
-        return { name: f.name, value: f.value };
+        return { name: f.name, value: f.value as string };
       });
   };
 
