@@ -88,14 +88,12 @@
       });
   });
 
-  const onSave = async (event: {
-    detail: { name: string; value: string | null }[];
-  }) => {
+  const onSave = async (event: { detail: { name: string; value: string | null }[] }) => {
     assert(state.status === Status.Found, "registration must be found");
 
     updateRecords = event.detail
-      .filter((f) => f.value !== null)
-      .map((f) => {
+      .filter(f => f.value !== null)
+      .map(f => {
         return { name: f.name, value: f.value as string };
       });
   };

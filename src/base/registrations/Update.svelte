@@ -27,10 +27,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let state: State = {
-    status: Status.Failed,
-    error: "Error registering, something happened.",
-  };
+  let state: State = { status: Status.Failed, error: "Error registering, something happened." };
 
   onMount(async () => {
     try {
