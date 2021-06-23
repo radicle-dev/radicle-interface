@@ -146,7 +146,7 @@
   }
 
   .source-tree {
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .file-not-found {
