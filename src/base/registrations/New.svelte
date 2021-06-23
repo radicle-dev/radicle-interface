@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
-  import { formatAddress } from '@app/utils';
+  import { formatAddress, formatBalance } from '@app/utils';
   import { session } from '@app/session';
   import type { Config } from '@app/config';
 
@@ -9,7 +9,7 @@
   import Modal from '@app/Modal.svelte';
   import Loading from '@app/Loading.svelte';
 
-  import { registrar } from './registrar';
+  import { registrar, registrationFee } from './registrar';
 
   enum State {
     CheckingAvailability,
@@ -21,6 +21,7 @@
   export let subdomain: string;
   export let owner: string | null;
 
+  let fee: string;
   let state = State.CheckingAvailability;
   $: registrationOwner = owner || ($session && $session.address);
 
@@ -31,7 +32,14 @@
   }
 
   onMount(async () => {
-    if (await registrar(config).available(subdomain)) {
+    const [_fee, isAvailable] = await Promise.all([
+      registrationFee(config),
+      registrar(config).available(subdomain),
+    ]);
+
+    fee = formatBalance(_fee);
+
+    if (isAvailable) {
       state = State.NameAvailable;
     } else {
       state = State.NameUnavailable;
@@ -39,18 +47,25 @@
   });
 </script>
 
-<Modal>
+<Modal narrow>
   <span slot="title">
+    <div>🌐</div>
+    <span>Register a name</span>
+  </span>
+
+  <span slot="subtitle">
     {subdomain}.{config.registrar.domain}
   </span>
 
   <span slot="body">
     {#if state === State.NameAvailable}
       {#if registrationOwner}
-        The name <span class="highlight">{subdomain}</span> is available for registration
-        under account <span class="highlight">{formatAddress(registrationOwner)}</span>.
+        The name <strong>{subdomain}</strong> is available for registration
+        under account <strong>{formatAddress(registrationOwner)}</strong>
+        for <strong>{fee} RAD</strong>.
       {:else}
-        The name <span class="highlight">{subdomain}</span> is available for registration.
+        The name <strong>{subdomain}</strong> is available
+        for <strong>{fee} RAD</strong>.
       {/if}
     {:else if state === State.NameUnavailable}
       The name <span class="highlight">{subdomain}</span> is not available for registration.
