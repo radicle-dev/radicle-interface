@@ -3,6 +3,7 @@
   export let error = false;
   export let subtle = false;
   export let small = false;
+  export let narrow = false;
 </script>
 
 <style>
@@ -32,6 +33,9 @@
     min-width: 480px;
     max-width: 760px;
     text-align: center;
+  }
+  .modal.modal-narrow {
+    max-width: 600px;
   }
   .modal.modal-subtle {
     border: none;
@@ -82,7 +86,10 @@
 {/if}
 
 <div class:modal-floating={floating} class="centered">
-  <div class="modal" class:error class:modal-subtle={subtle} class:modal-small={small}>
+  <div class="modal" class:error
+       class:modal-subtle={subtle}
+       class:modal-narrow={narrow}
+       class:modal-small={small}>
     <div class="modal-title">
       <slot name="title"></slot>
     </div>
