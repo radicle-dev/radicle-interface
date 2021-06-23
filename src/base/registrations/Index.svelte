@@ -6,11 +6,12 @@
 
   export let config: Config;
 
-  let label: string;
+  let input = "";
 
   function register() {
     navigate(`/registrations/${label}/form`);
   }
+  $: label = input.trim();
 </script>
 
 <style>
@@ -41,7 +42,7 @@
     <div class="input-main">
       <span class="name">
         <DomainInput
-          bind:value={label}
+          bind:value={input}
           autofocus
           placeholder=""
           root={config.registrar.domain}
