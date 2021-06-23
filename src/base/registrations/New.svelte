@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
-  import { formatAddress, formatBalance } from "@app/utils";
-  import { session } from "@app/session";
-  import type { Config } from "@app/config";
+  import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
+  import { formatAddress, formatBalance } from '@app/utils';
+  import { session } from '@app/session';
+  import type { Config } from '@app/config';
 
   import Connect from "@app/Components/Wallet/Connect.svelte";
   import Modal from "@app/Components/Modal/Modal.svelte";
   import Loading from "@app/Components/Loading.svelte";
   import Message from "@app/Message.svelte";
 
-  import { registrar, registrationFee } from "./registrar";
+  import { registrar, registrationFee } from './registrar';
 
   enum State {
     CheckingAvailability,
@@ -39,22 +39,17 @@
   }
 
   onMount(async () => {
-    try {
-      const [_fee, isAvailable] = await Promise.all([
-        registrationFee(config),
-        registrar(config).available(subdomain),
-      ]);
+    const [_fee, isAvailable] = await Promise.all([
+      registrationFee(config),
+      registrar(config).available(subdomain),
+    ]);
 
-      fee = formatBalance(_fee);
+    fee = formatBalance(_fee);
 
-      if (isAvailable) {
-        state = State.NameAvailable;
-      } else {
-        state = State.NameUnavailable;
-      }
-    } catch (err) {
-      state = State.CheckingFailed;
-      error = err.message;
+    if (isAvailable) {
+      state = State.NameAvailable;
+    } else {
+      state = State.NameUnavailable;
     }
   });
 </script>
@@ -76,8 +71,8 @@
         under account <strong>{formatAddress(registrationOwner)}</strong>
         for <strong>{fee} RAD</strong>.
       {:else}
-        The name <strong>{subdomain}</strong> is available for
-        <strong>{fee} RAD</strong>.
+        The name <strong>{subdomain}</strong> is available
+        for <strong>{fee} RAD</strong>.
       {/if}
     {:else if state === State.NameUnavailable}
       The name <span class="highlight">{subdomain}</span> is not available for registration.
