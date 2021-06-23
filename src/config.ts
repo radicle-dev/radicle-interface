@@ -72,33 +72,6 @@ const gasLimits = {
   createOrg: 1_200_000,
 };
 
-function connectWalletConnect() {
-  //Create a connector
-  const connector = new WalletConnect({
-    bridge: "https://bridge.walletconnect.org", // Required
-    qrcodeModal: QRCodeModal,
-  });
-  //return connector;
-
-  // Check if connection is already established
-  if (!connector.connected) {
-    // create new session
-    connector.createSession();
-  }
-
-  // Subscribe to connection events
-  connector.on("connect", (error, payload) => {
-    if (error) {
-      throw error;
-    }
-
-    // Get provided accounts and chainId
-    console.log(payload.params[0], "connector params");
-  });
-
-  return connector;
-}
-
 function isMetamaskInstalled(): boolean {
   const { ethereum } = window;
   return Boolean(ethereum && ethereum.isMetaMask);
