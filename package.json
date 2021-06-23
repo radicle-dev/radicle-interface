@@ -28,7 +28,6 @@
     "@types/marked": "^2.0.3",
     "@walletconnect/client": "^1.4.1",
     "@walletconnect/qrcode-modal": "^1.4.1",
-    "@walletconnect/web3-provider": "^1.4.1",
     "buffer": "^6.0.3",
     "ethereum-blockies": "^0.1.1",
     "ethers": "^5.0.31",
