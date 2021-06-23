@@ -67,7 +67,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [
-      "warn", {
+      "error", {
         "multiline": {
           "delimiter": "semi",
           "requireLast": true

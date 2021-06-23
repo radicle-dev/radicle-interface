@@ -19,8 +19,16 @@
   export let disabled = false;
   export let config: Config;
 
+  const cleanup = (fields: Field[]): { name: string; value: string | null }[] => {
+    return fields.filter(field => field.editable).map(field => {
+      return {
+        name: field.name,
+        value: field.value && field.value.trim(),
+      };
+    });
+  };
   const dispatch = createEventDispatcher();
-  const save = () => dispatch('save', fields);
+  const save = () => dispatch('save', cleanup(fields));
   const cancel = () => dispatch('cancel');
 </script>
 
