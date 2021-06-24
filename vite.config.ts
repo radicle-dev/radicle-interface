@@ -17,6 +17,10 @@ const config: UserConfig = {
       "enc-utils": path.resolve("./src/polyfills/enc-utils.js"),
     },
   },
+  define: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    "process.env": { READABLE_STREAM: "disable" }
+  },
   build: {
     outDir: "build",
     sourcemap: true
