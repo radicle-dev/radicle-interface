@@ -39,17 +39,22 @@
   }
 
   onMount(async () => {
-    const [_fee, isAvailable] = await Promise.all([
-      registrationFee(config),
-      registrar(config).available(subdomain),
-    ]);
+    try {
+      const [_fee, isAvailable] = await Promise.all([
+        registrationFee(config),
+        registrar(config).available(subdomain),
+      ]);
 
-    fee = formatBalance(_fee);
+      fee = formatBalance(_fee);
 
-    if (isAvailable) {
-      state = State.NameAvailable;
-    } else {
-      state = State.NameUnavailable;
+      if (isAvailable) {
+        state = State.NameAvailable;
+      } else {
+        state = State.NameUnavailable;
+      }
+    } catch (err) {
+      state = State.CheckingFailed;
+      error = err.message;
     }
   });
 </script>
@@ -80,8 +85,7 @@
       <Loading small center />
     {:else if state === State.CheckingFailed && error}
       <Message error>
-        <strong>Error:</strong>
-        {error}
+        <strong>Error:</strong> {error}
       </Message>
     {/if}
   </span>
