@@ -45,11 +45,16 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
   }
 
   const owner = await getOwner(name, config);
-  const address = await resolver.getAddress();
-  const avatar = await resolver.getText('avatar');
-  const url = await resolver.getText('url');
-  const twitter = await resolver.getText('vnd.twitter');
-  const github = await resolver.getText('vnd.github');
+  const meta = await Promise.allSettled([
+    resolver.getAddress(),
+    resolver.getText('avatar'),
+    resolver.getText('url'),
+    resolver.getText('vnd.twitter'),
+    resolver.getText('vnd.github'),
+  ]);
+
+  const [address, avatar, url, twitter, github] =
+    meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
     name,
