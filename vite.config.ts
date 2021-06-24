@@ -15,6 +15,10 @@ const config: UserConfig = {
       "stream": path.resolve("./src/polyfills/stream.ts"),
     },
   },
+  define: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    "process.env": { READABLE_STREAM: "disable" }
+  },
   build: {
     outDir: "build",
     sourcemap: true
