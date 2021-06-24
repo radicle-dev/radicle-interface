@@ -8,11 +8,13 @@
   import Connect from '@app/Connect.svelte';
   import Modal from '@app/Modal.svelte';
   import Loading from '@app/Loading.svelte';
+  import Message from '@app/Message.svelte';
 
   import { registrar, registrationFee } from './registrar';
 
   enum State {
     CheckingAvailability,
+    CheckingFailed,
     NameAvailable,
     NameUnavailable,
   }
@@ -23,6 +25,7 @@
 
   let fee: string;
   let state = State.CheckingAvailability;
+  let error: string | null = null;
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
@@ -32,17 +35,22 @@
   }
 
   onMount(async () => {
-    const [_fee, isAvailable] = await Promise.all([
-      registrationFee(config),
-      registrar(config).available(subdomain),
-    ]);
+    try {
+      const [_fee, isAvailable] = await Promise.all([
+        registrationFee(config),
+        registrar(config).available(subdomain),
+      ]);
 
-    fee = formatBalance(_fee);
+      fee = formatBalance(_fee);
 
-    if (isAvailable) {
-      state = State.NameAvailable;
-    } else {
-      state = State.NameUnavailable;
+      if (isAvailable) {
+        state = State.NameAvailable;
+      } else {
+        state = State.NameUnavailable;
+      }
+    } catch (err) {
+      state = State.CheckingFailed;
+      error = err.message;
     }
   });
 </script>
@@ -71,6 +79,10 @@
       The name <span class="highlight">{subdomain}</span> is not available for registration.
     {:else if state === State.CheckingAvailability}
       <Loading small center />
+    {:else if state === State.CheckingFailed && error}
+      <Message error>
+        <strong>Error:</strong> {error}
+      </Message>
     {/if}
   </span>
 
@@ -87,7 +99,7 @@
       <button on:click={() => navigate("/registrations")} class="text">
         Cancel
       </button>
-    {:else if state === State.NameUnavailable}
+    {:else if state === State.NameUnavailable || state === State.CheckingFailed}
       <button on:click={() => navigate("/registrations")} class="">
         Back
       </button>
