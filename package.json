@@ -36,6 +36,7 @@
     "ethereum-blockies": "^0.1.1",
     "ethers": "^5.0.31",
     "eventemitter3": "4.0.7",
+    "events": "^3.3.0",
     "marked": "^2.0.7",
     "multibase": "^4.0.4",
     "multihashes": "^4.0.2",
