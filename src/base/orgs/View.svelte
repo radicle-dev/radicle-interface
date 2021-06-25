@@ -16,6 +16,7 @@
   import SetName from '@app/ens/SetName.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import Address from '@app/Address.svelte';
+  import Message from '@app/Message.svelte';
   import * as utils from '@app/utils';
 
   import { Org } from './Org';
@@ -239,9 +240,9 @@
             </div>
           {/each}
         {:catch err}
-          <div class="error error-message">
-            Error loading projects: {err}.
-          </div>
+          <Message error>
+            <strong>Error: </strong> failed to load projects: {err.message}.
+          </Message>
         {/await}
       </div>
     </main>
