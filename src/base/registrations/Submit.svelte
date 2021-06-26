@@ -66,11 +66,7 @@
         The name has been successfully registered to
         <span class="highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
-        <BlockTimer
-          {config}
-          startBlock={$state.commitmentBlock}
-          duration={$state.minAge}
-        />
+        <BlockTimer {config} startBlock={$state.commitmentBlock} duration={$state.minAge} />
       {:else}
         <Loading small center />
       {/if}
@@ -78,7 +74,9 @@
 
     <span slot="actions">
       {#if $state.connection === State.Registered}
-        <button on:click={view} class="register"> View </button>
+        <button on:click={view} class="register">
+          View
+        </button>
       {/if}
     </span>
   </Modal>
