@@ -296,7 +296,7 @@ export const loadState = (initial: State): Store => {
               disconnectWallet();
             } else {
               s.session.address = address;
-              window.localStorage.setItem("session", JSON.stringify({ ...s.session }));
+              saveSession(s.session);
             }
             return s;
           default:
@@ -359,11 +359,7 @@ export function disconnectWallet(): void {
 }
 
 function saveSession(session: Session): void {
-  window.localStorage.setItem(
-    "session",
-    JSON.stringify({
-      ...session,
-      tokenBalance: null,
-    })
-  );
+  window.localStorage.setItem("session", JSON.stringify({
+    ...session, tokenBalance: null
+  }));
 }
