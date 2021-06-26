@@ -8,6 +8,7 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Err from '@app/Error.svelte';
+  import BlockTimer from "@app/BlockTimer.svelte";
 
   import { registerName, State, state } from './registrar';
 
@@ -27,13 +28,19 @@
     } catch (e) {
       console.error("Error", e);
 
-      state.set(State.Failed);
+      state.set({ connection: State.Failed });
       error = e;
     }
   });
 </script>
 
-<style></style>
+<style>
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
 
 {#if error}
   <Err
@@ -44,35 +51,37 @@
 {:else}
   <Modal>
     <span slot="title">
-      {#if $state === State.Registered}
+      {#if $state.connection === State.Registered}
         <div>🎉</div>
       {/if}
       {subdomain}.{config.registrar.domain}
     </span>
 
     <span slot="subtitle">
-      {#if $state === State.Connecting}
+      {#if $state.connection === State.Connecting}
         Connecting...
-      {:else if $state === State.Committing}
+      {:else if $state.connection === State.Committing}
         Committing...
-      {:else if $state === State.WaitingToRegister}
+      {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         Waiting for commitment time...
-      {:else if $state === State.Registering}
+      {:else if $state.connection === State.Registering}
         Registering name...
       {/if}
     </span>
 
-    <span slot="body">
-      {#if $state === State.Registered}
+    <span slot="body" class="loader">
+      {#if $state.connection === State.Registered}
         The name has been successfully registered to
-        <span class="highlight">{registrationOwner}</span>.
+        <span class="highlight">{registrationOwner}</span>
+      {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
+        <BlockTimer {config} startBlock={$state.commitmentBlock} duration={$state.minAge} />
       {:else}
         <Loading small center />
       {/if}
     </span>
 
     <span slot="actions">
-      {#if $state === State.Registered}
+      {#if $state.connection === State.Registered}
         <button on:click={view} class="register">
           View
         </button>
