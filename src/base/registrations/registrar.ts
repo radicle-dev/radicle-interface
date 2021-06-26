@@ -30,12 +30,21 @@ export enum State {
   Registered,
 }
 
-export const state = writable(State.Connecting);
+export type Connection =
+    { connection: State.Failed }
+  | { connection: State.Connecting }
+  | { connection: State.Committing }
+  | { connection: State.WaitingToRegister; commitmentBlock: number; minAge: number }
+  | { connection: State.Registering }
+  | { connection: State.Registered };
+
+
+export const state = writable<Connection>({ connection: State.Connecting });
 
 window.registrarState = state;
 
-state.subscribe((s: State) => {
-  console.log("regiter.state", s);
+state.subscribe((s: Connection) => {
+  console.log("register.state", s);
 });
 
 export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
@@ -121,7 +130,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
   assert(config.signer);
 
-  state.set(State.Committing);
+  state.set({ connection: State.Committing });
 
   const owner = config.signer;
   const ownerAddr = await owner.getAddress();
@@ -144,8 +153,12 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
-
-  state.set(State.WaitingToRegister);
+  const receipt = await config.provider.getTransactionReceipt(tx.hash);
+  state.set({
+    connection: State.WaitingToRegister,
+    commitmentBlock: receipt.blockNumber,
+    minAge
+  });
   await tx.wait(minAge + 1);
 }
 
@@ -190,7 +203,7 @@ async function permitSignature(
 
 async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
   assert(config.signer);
-  state.set(State.Registering);
+  state.set({ connection: State.Registering });
 
   const tx = await registrar(config).connect(config.signer).register(
     name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 }
@@ -199,7 +212,7 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
 
   await tx.wait();
   window.localStorage.clear();
-  state.set(State.Registered);
+  state.set({ connection: State.Registered });
 }
 
 function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
