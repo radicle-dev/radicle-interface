@@ -44,7 +44,7 @@
 
     if (resolved && isAddressEqual(resolved, org.address)) {
       try {
-        if (utils.isSafe(org.owner, config)) {
+        if (await utils.isSafe(org.owner, config)) {
           state = State.Proposing;
           await org.setNameMultisig(domain, config);
           state = State.Proposed;
