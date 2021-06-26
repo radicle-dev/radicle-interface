@@ -1,6 +1,9 @@
 import { get, writable, derived, Readable } from "svelte/store";
-import type { BigNumber } from 'ethers';
-import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
+import type { BigNumber } from "ethers";
+import type {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
 import { Config, getConfig } from "@app/config";
 import WalletConnect from "@walletconnect/client";
 import { Unreachable, assert, assertEq } from "@app/error";
@@ -8,24 +11,30 @@ import { Unreachable, assert, assertEq } from "@app/error";
 export enum Connection {
   Disconnected,
   Connecting,
-  Connected
+  Connected,
 }
 
 export type TxState =
-    { state: 'signing' }
-  | { state: 'pending'; hash: string }
-  | { state: 'success'; hash: string; blockHash: string; blockNumber: number }
-  | { state: 'fail'; hash: string; blockHash: string; blockNumber: number; error: string }
+  | { state: "signing" }
+  | { state: "pending"; hash: string }
+  | { state: "success"; hash: string; blockHash: string; blockNumber: number }
+  | {
+      state: "fail";
+      hash: string;
+      blockHash: string;
+      blockNumber: number;
+      error: string;
+    }
   | null;
 
 export type State =
-    { connection: Connection.Disconnected }
+  | { connection: Connection.Disconnected }
   | { connection: Connection.Connecting }
   | { connection: Connection.Connected; session: Session };
 
 export interface Session {
   address: string;
-  tokenBalance: BigNumber;
+  tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
 
@@ -49,7 +58,11 @@ export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
   const session = window.localStorage.getItem("session");
 
-  if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
+  if (session)
+    store.set({
+      connection: Connection.Connected,
+      session: JSON.parse(session),
+    });
 
   return {
     subscribe: store.subscribe,
@@ -61,33 +74,38 @@ export const loadState = (initial: State): Store => {
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: "eth_requestAccounts" });
       } catch (e) {
         console.error(e);
       }
 
-      if (config?.provider.getSigner()){
+      if (config?.provider.getSigner()) {
         const signer = config?.provider.getSigner();
         console.log(signer);
       }
-      const address =  payload;
+      const address = payload;
 
       try {
         const tokenBalance: BigNumber = await config?.token.balanceOf(address);
+        const session = { address, tokenBalance, tx: null };
         store.set({
           connection: Connection.Connected,
-          session: { address, tokenBalance, tx: null }
+          session,
         });
-        window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance, tx: null }));
+        saveSession({ ...session, tokenBalance: null });
       } catch (e) {
         console.error(e);
       }
     },
 
     updateBalance: (n: BigNumber) => {
-      store.update((s) => {
+      store.update((s: State) => {
         assert(s.connection === Connection.Connected);
-        s.session.tokenBalance = s.session.tokenBalance.add(n);
+        if (s.session.tokenBalance) {
+          // If the token balance is loaded, we can update it, otherwise
+          // we let it finish loading.
+          s.session.tokenBalance = s.session.tokenBalance.add(n);
+        }
         return s;
       });
     },
@@ -108,10 +126,10 @@ export const loadState = (initial: State): Store => {
     },
 
     setTxSigning: () => {
-      store.update(s => {
+      store.update((s) => {
         switch (s.connection) {
           case Connection.Connected:
-            s.session.tx = { state: 'signing' };
+            s.session.tx = { state: "signing" };
             return s;
           default:
             throw new Unreachable();
@@ -120,13 +138,13 @@ export const loadState = (initial: State): Store => {
     },
 
     setTxPending: (tx: TransactionResponse) => {
-      store.update(s => {
+      store.update((s) => {
         switch (s.connection) {
           case Connection.Connected:
             assert(s.session.tx !== null);
-            assert(s.session.tx.state === 'signing');
+            assert(s.session.tx.state === "signing");
 
-            s.session.tx = { state: 'pending', hash: tx.hash };
+            s.session.tx = { state: "pending", hash: tx.hash };
             return s;
           default:
             throw new Unreachable();
@@ -135,26 +153,26 @@ export const loadState = (initial: State): Store => {
     },
 
     setTxConfirmed: (tx: TransactionReceipt) => {
-      store.update(s => {
+      store.update((s) => {
         switch (s.connection) {
           case Connection.Connected:
             assert(s.session.tx !== null);
-            assert(s.session.tx.state === 'pending');
+            assert(s.session.tx.state === "pending");
 
             if (tx.status === 1) {
               s.session.tx = {
-                state: 'success',
-                hash: s.session.tx.hash,
-                blockHash: tx.blockHash,
-                blockNumber: tx.blockNumber
-              };
-            } else {
-              s.session.tx = {
-                state: 'fail',
+                state: "success",
                 hash: s.session.tx.hash,
                 blockHash: tx.blockHash,
                 blockNumber: tx.blockNumber,
-                error: "Failed"
+              };
+            } else {
+              s.session.tx = {
+                state: "fail",
+                hash: s.session.tx.hash,
+                blockHash: tx.blockHash,
+                blockNumber: tx.blockNumber,
+                error: "Failed",
               };
             }
             return s;
@@ -165,7 +183,7 @@ export const loadState = (initial: State): Store => {
     },
 
     setChangedAccount: (address: string) => {
-      store.update(s => {
+      store.update((s) => {
         switch (s.connection) {
           case Connection.Connected:
             // In case of locking Metamask the accountsChanged event returns undefined.
@@ -174,26 +192,26 @@ export const loadState = (initial: State): Store => {
               disconnectWallet();
             } else {
               s.session.address = address;
-              window.localStorage.setItem("session", JSON.stringify({ ...s.session }));
+              saveSession(s.session);
             }
             return s;
           default:
             return s;
         }
       });
-    }
+    },
   };
 };
 
 export const state = loadState({ connection: Connection.Disconnected });
-export const session = derived(state, s => {
+export const session = derived(state, (s) => {
   if (s.connection === Connection.Connected) {
     return s.session;
   }
   return null;
 });
 
-window.ethereum?.on('chainChanged', () => {
+window.ethereum?.on("chainChanged", () => {
   // We disconnect the wallet to avoid out of sync state
   // between the account address and IDX DIDs
   disconnectWallet();
@@ -207,11 +225,15 @@ window.ethereum?.on("accountsChanged", async ([address]: string) => {
   state.refreshBalance(config);
 });
 
-state.subscribe(s => {
+state.subscribe((s) => {
   console.log("session.state", s);
 });
 
-export async function approveSpender(spender: string, amount: BigNumber, config: Config): Promise<void> {
+export async function approveSpender(
+  spender: string,
+  amount: BigNumber,
+  config: Config
+): Promise<void> {
   const signer = config.provider.getSigner();
   const addr = await signer.getAddress();
 
@@ -224,9 +246,19 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function disconnectWallet(): void {
-  if (connector.connected){
+  if (connector.connected) {
     connector.killSession();
   }
   window.localStorage.removeItem("session");
   location.reload();
+}
+
+function saveSession(session: Session): void {
+  window.localStorage.setItem(
+    "session",
+    JSON.stringify({
+      ...session,
+      tokenBalance: null,
+    })
+  );
 }

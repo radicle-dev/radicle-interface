@@ -5,6 +5,7 @@
   import { error, Failure } from '@app/error';
   import { disconnectWallet } from "@app/session";
   import type { Session } from '@app/session';
+  import Loading from '@app/Loading.svelte';
   import Logo from './Logo.svelte';
   import Connect from './Connect.svelte';
   import type { Config } from '@app/config';
@@ -134,9 +135,13 @@
       <span class="network unavailable">No Network</span>
     {/if}
 
-    {#if address && tokenBalance}
+    {#if address}
       <span class="balance">
-        {formatBalance(tokenBalance)} <strong>RAD</strong>
+        {#if tokenBalance}
+          {formatBalance(tokenBalance)} <strong>RAD</strong>
+        {:else}
+          <Loading small />
+        {/if}
       </span>
 
       <button class="address outline small" bind:this={sessionButton}
