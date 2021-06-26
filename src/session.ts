@@ -24,7 +24,7 @@ export type State =
 
 export interface Session {
   address: string;
-  tokenBalance: BigNumber;
+  tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
 
@@ -65,20 +65,25 @@ export const loadState = (initial: State): Store => {
 
       try {
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
+        const session = { address, tokenBalance, tx: null };
         store.set({
           connection: Connection.Connected,
-          session: { address, tokenBalance, tx: null }
+          session,
         });
-        window.localStorage.setItem("session", JSON.stringify({ address, tokenBalance, tx: null }));
+        saveSession({ ...session, tokenBalance: null });
       } catch (e) {
         console.error(e);
       }
     },
 
     updateBalance: (n: BigNumber) => {
-      store.update((s) => {
+      store.update((s: State) => {
         assert(s.connection === Connection.Connected);
-        s.session.tokenBalance = s.session.tokenBalance.add(n);
+        if (s.session.tokenBalance) {
+          // If the token balance is loaded, we can update it, otherwise
+          // we let it finish loading.
+          s.session.tokenBalance = s.session.tokenBalance.add(n);
+        }
         return s;
       });
     },
@@ -165,7 +170,7 @@ export const loadState = (initial: State): Store => {
               disconnectWallet();
             } else {
               s.session.address = address;
-              window.localStorage.setItem("session", JSON.stringify({ ...s.session }));
+              saveSession(s.session);
             }
             return s;
           default:
@@ -217,4 +222,10 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 export function disconnectWallet(): void {
   window.localStorage.removeItem("session");
   location.reload();
+}
+
+function saveSession(session: Session): void {
+  window.localStorage.setItem("session", JSON.stringify({
+    ...session, tokenBalance: null
+  }));
 }
