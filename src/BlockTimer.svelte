@@ -15,16 +15,15 @@
 <style>
   .parent {
     text-align: center;
-    height: 20px;
-    width: 290px;
-    border-radius: 5px;
+    height: 0.5rem;
+    width: 100%;
+    border-radius: 0.25rem;
     background-color: var(--color-secondary-background);
   }
   .loader {
-    color: #fff;
-    height: 20px;
+    height: 0.5rem;
     width: 0px;
-    border-radius: 5px;
+    border-radius: 0.25rem;
     background-color: var(--color-secondary);
   }
 </style>
