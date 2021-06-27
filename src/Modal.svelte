@@ -28,11 +28,18 @@
   .modal {
     padding: 2rem 3rem;
     border: 1px solid var(--color-secondary);
+    font-family: var(--font-family-sans-serif);
     background: var(--color-background);
     box-shadow: 8px 8px 64px var(--box-shadow-color);
     min-width: 480px;
     max-width: 760px;
     text-align: center;
+  }
+  .modal.error .modal-title,
+  .modal.error .modal-subtitle,
+  .modal.error .modal-body,
+  .modal.error .modal-actions {
+    color: var(--color-negative);
   }
   .modal.modal-narrow {
     max-width: 600px;
@@ -52,6 +59,7 @@
     );
   }
   .modal-title {
+    color: var(--color-foreground);
     font-size: 1.25rem;
     font-weight: bold;
     line-height: 2.625rem;
@@ -62,11 +70,14 @@
   }
   .modal-subtitle {
     color: var(--color-secondary);
+    font-size: 1rem;
     max-width: 90%;
     margin: 0 auto;
     line-height: 1.5;
   }
   .modal-body {
+    color: var(--color-foreground);
+    font-size: 1rem;
     overflow-x: hidden;
     text-overflow: ellipsis;
     margin: 3rem 0;
