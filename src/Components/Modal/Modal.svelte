@@ -35,6 +35,12 @@
     max-width: 760px;
     text-align: center;
   }
+  .modal.error .modal-title,
+  .modal.error .modal-subtitle,
+  .modal.error .modal-body,
+  .modal.error .modal-actions {
+    color: var(--color-negative);
+  }
   .modal.modal-narrow {
     max-width: 600px;
   }
