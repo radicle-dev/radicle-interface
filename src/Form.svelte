@@ -4,6 +4,7 @@
     value: string | null;
     label?: string;
     placeholder?: string;
+    resolve: boolean;
     editable: boolean;
   }
 </script>
@@ -105,7 +106,7 @@
                 <a class="link" href="{field.value}" target="_blank">{field.value}</a>
               </span>
             {:else if isAddress(field.value)}
-              <Address address={field.value} {config} />
+              <Address resolve={field.resolve} address={field.value} {config} />
             {:else}
               {field.value}
             {/if}

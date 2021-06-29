@@ -65,7 +65,7 @@
           <Loading center />
         </div>
       {:then orgs}
-        <List {orgs}>
+        <List {config} {orgs}>
           <div class="orgs-empty">Orgs you are a member of show up here.</div>
         </List>
       {/await}
@@ -81,7 +81,7 @@
       <Loading center />
     </div>
   {:then orgs}
-    <List {orgs}>
+    <List {config} {orgs}>
       <div class="orgs-empty">There are no orgs.</div>
     </List>
   {/await}

@@ -67,6 +67,7 @@
   },
   "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
   "radicle": { "api": "" },
+  "ipfs": { "gateway": "https://ipfs.io/ipfs/" },
   "abi": {
     "registrar": [
       "function rad() view returns (address)",

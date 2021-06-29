@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { createIcon } from '@app/blockies';
-  import { isAddress } from '@app/utils';
+  import { isAddress, isRadicleId } from '@app/utils';
   
   export let source: string;
   export let inline = false;
@@ -10,7 +10,7 @@
   let container: HTMLElement;
 
   onMount(() => {
-    if (isAddress(source)) {
+    if (isAddress(source) || isRadicleId(source)) {
       const seed = source.toLowerCase();
       const avatar = createIcon({
         seed,
@@ -43,7 +43,7 @@
   }
 </style>
 
-{#if isAddress(source)}
+{#if isAddress(source) || isRadicleId(source)}
   <div class="avatar" class:inline bind:this={container} class:glowOnHover title={source}/>
 {:else}
   <img class="avatar" class:inline src={source} class:glowOnHover alt="avatar"/>

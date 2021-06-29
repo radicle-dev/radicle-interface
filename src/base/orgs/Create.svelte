@@ -130,7 +130,7 @@
         <span><Address address={org.address} {config} /></span>
 
         <span class="label">Owner</span>
-        <span><Address address={org.owner} {config} /></span>
+        <span><Address resolve address={org.owner} {config} /></span>
       </div>
     </span>
 

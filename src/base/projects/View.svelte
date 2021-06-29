@@ -4,7 +4,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
-  import Blockies from '@app/Blockies.svelte';
+  import Avatar from '@app/Avatar.svelte';
 
   import Browser from './Browser.svelte';
 
@@ -77,7 +77,7 @@
         <span class="maintainers">
           {#each project.meta.maintainers as user}
             <span class="maintainer">
-              <Blockies address={user} />
+              <Avatar source={user} />
             </span>
           {/each}
         </span>

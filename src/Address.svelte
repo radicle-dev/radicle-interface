@@ -2,12 +2,11 @@
   import { onMount } from 'svelte';
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType } from '@app/utils';
+  import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType, parseEnsLabel } from '@app/utils';
+  import { Profile } from '@app/profile';
   import Loading from '@app/Loading.svelte';
   import Avatar from "@app/Avatar.svelte";
   import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/registrations/registrar';
-  import { getRegistration } from '@app/base/registrations/registrar';
 
   export let address: string;
   export let config: Config;
@@ -15,24 +14,21 @@
   export let noBadge = false;
   export let noAvatar = false;
   export let compact = false;
+  // This property allows components eg. Header.svelte to pass a resolved profile object.
+  export let profile: Profile | null = null;
 
   let checksumAddress = compact
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
   let addressType: AddressType | null = null;
-  let addressName: string | null = null;
-  let info: Registration | null;
 
   onMount(async () => {
     identifyAddress(address, config).then((t: AddressType) => addressType = t);
-    if (resolve) {
-      addressName = await config.provider.lookupAddress(address);
-      if (addressName) {
-        info = await getRegistration(addressName, config);
-      }
+    if (resolve && !profile) {
+      Profile.get(address, config).then(p => profile = p);
     }
   });
-  $: addressLabel = addressName ?? checksumAddress;
+  $: addressLabel = profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
 </script>
 
 <style>
@@ -59,7 +55,7 @@
 
 <div class="address" title={address} class:no-badge={noBadge}>
   {#if !noAvatar}
-    <Avatar inline source={info?.avatar ?? address} />
+    <Avatar inline source={profile?.avatar ?? address} />
   {/if}
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>

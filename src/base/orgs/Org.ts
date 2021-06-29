@@ -60,10 +60,6 @@ export class Org {
     this.owner = owner;
   }
 
-  async lookupAddress(config: Config): Promise<string> {
-    return await config.provider.lookupAddress(this.address);
-  }
-
   async setName(name: string, config: Config): Promise<TransactionResponse> {
     assert(config.signer);
 

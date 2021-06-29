@@ -15,21 +15,28 @@
   onMount(async () => {
     if (query) {
       if (ethers.utils.isAddress(query)) {
-        // Go to org.
-        navigate(`/orgs/${query}`, { replace: true });
+        const addressType = query && await utils.identifyAddress(query, config);
+        if (addressType === utils.AddressType.Org) {
+          navigate(`/orgs/${query}`, { replace: true });
+        } else if (addressType === utils.AddressType.EOA) {
+          navigate(`/users/${query}`, { replace: true });
+        }
       } else if (utils.isRadicleId(query)) {
         // Go to Radicle entity.
         alert("Radicle IDs are not yet supported");
       } else {
         let label = utils.parseEnsLabel(query, config);
-        if (label.includes(".")) {
+        if (label?.includes(".")) {
           error = true;
         } else {
-          // Jump straight to org, if the ENS entry points to an org. Otherwise just go to the
-          // registration.
+          // Jump straight to org, if the ENS entry points to an org. Otherwise it checks if the
+          // address type is an EOA and jumps to the user page else it just goes to the registration.
           const address = await utils.resolveLabel(label, config);
-          if (address && await utils.identifyAddress(address, config) === utils.AddressType.Org) {
+          const addressType = address && await utils.identifyAddress(address, config);
+          if (addressType === utils.AddressType.Org) {
             navigate(`/orgs/${address}`, { replace: true });
+          } else if (addressType === utils.AddressType.EOA) {
+            navigate(`/users/${address}`, { replace: true });
           } else {
             navigate(`/registrations/${label}`, { replace: true });
           }

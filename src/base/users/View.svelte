@@ -1,22 +1,13 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/registrations/registrar';
-  import { getRegistration } from '@app/base/registrations/registrar';
   import Icon from '@app/Icon.svelte';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
+  import { Profile } from '@app/profile';
+  import Loading from '@app/Loading.svelte';
 
   export let address: string;
   export let config: Config;
-  
-  let addressName: string | null = null;
-  let info: Registration | null;
-  
-  onMount(async () => {
-    addressName = await config.provider.lookupAddress(address);
-    info = await getRegistration(addressName, config);
-  });
 </script>
 
 <style>
@@ -56,24 +47,27 @@
   }
 </style>
 
-<main>
-  <header>
-    <div class="avatar">
-      <Avatar source={info?.avatar ?? address} />
-    </div> 
-    <div class="info">
-      <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
+{#await Profile.get(address, config)}
+  <Loading fadeIn />
+{:then profile}
+  <main>
+    <header>
+      <div class="avatar">
+        <Avatar source={profile.avatar ?? address} />
+      </div> 
+      <div class="info">
+        <span class="title bold"><Address compact noAvatar {address} {config} resolve/></span>
         <div class="links">
-          {#if info?.url}
-            <a class="url" href={info.url}>{info.url}</a>
+          {#if profile.url}
+            <a class="url" href={profile.url}>{profile.url}</a>
           {/if}
-          {#if info?.twitter}
-            <a class="url" href={info.twitter}>
+          {#if profile.twitter}
+            <a class="url" href={profile.twitter}>
               <Icon name="twitter" />
             </a>
           {/if}
-          {#if info?.github}
-            <a class="url" href={info.github}>
+          {#if profile.github}
+            <a class="url" href={profile.github}>
               <Icon name="github" />
             </a>
           {/if}
@@ -81,3 +75,4 @@
       </div>
     </header> 
   </main>
+{/await}

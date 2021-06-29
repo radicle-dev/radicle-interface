@@ -2,10 +2,9 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import Modal from '@app/Modal.svelte';
   import type { Config } from '@app/config';
-  import { formatAddress } from '@app/utils';
+  import { formatAddress, isAddress } from "@app/utils";
   import Loading from '@app/Loading.svelte';
   import { assert } from '@app/error';
-  import * as utils from '@app/utils';
 
   import type { Org } from './Org';
 
@@ -38,7 +37,7 @@
   const onSubmit = async () => {
     assert(newOwner);
 
-    if (! utils.isAddress(newOwner)) {
+    if (! isAddress(newOwner)) {
       state = State.Failed;
       error = `"${newOwner}" is not a valid Ethereum address.`;
       return;
@@ -58,7 +57,7 @@
   };
 </script>
 
-{#if state === State.Success}
+{#if state === State.Success && newOwner}
   <Modal floating small>
     <div slot="title">
       ✅

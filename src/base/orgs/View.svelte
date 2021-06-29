@@ -1,39 +1,28 @@
 <script lang="ts">
-  import * as ethers from 'ethers';
-  import { onMount } from 'svelte';
   import type { SvelteComponent } from 'svelte';
   import Link from '@app/Link.svelte';
   import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/registrations/registrar';
-  import { getRegistration } from '@app/base/registrations/registrar';
   import { parseEnsLabel, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
-  import Blockies from '@app/Blockies.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import Address from '@app/Address.svelte';
+  import Avatar from '@app/Avatar.svelte';
   import Message from '@app/Message.svelte';
   import * as utils from '@app/utils';
 
-  import { Org } from './Org';
-  import TransferOwnership from './TransferOwnership.svelte';
+  import { Org } from '@app/base/orgs/Org';
+  import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
+  import { Profile } from '@app/profile';
 
   export let address: string;
   export let config: Config;
 
-  let registration: Registration | null = null;
-  let name: string | null = null;
-
   const back = () => window.history.back();
-
-  onMount(async () => {
-    name = await config.provider.lookupAddress(address);
-    if (name) registration = await getRegistration(name, config);
-  });
 
   let setNameForm: typeof SvelteComponent | null = null;
   const setName = () => {
@@ -44,8 +33,6 @@
   const transferOwnership = () => {
     transferOwnerForm = TransferOwnership;
   };
-
-  $: label = name && parseEnsLabel(name, config);
   $: isOwner = (org: Org): boolean => $session
     ? utils.isAddressEqual(org.owner, $session.address)
     : false;
@@ -97,11 +84,6 @@
     width: 64px;
     height: 64px;
   }
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-  }
   .links {
     display: flex;
     align-items: center;
@@ -119,15 +101,13 @@
   }
   .members {
     margin-top: 2rem;
+    align-items: center;
     display: flex;
   }
   .members .member {
     display: flex;
     align-items: center;
     margin-right: 1.5rem;
-  }
-  .members .member a {
-    border-bottom: none;
   }
   .members .member-icon {
     width: 2rem;
@@ -141,33 +121,32 @@
 {:then org}
   {#if org}
     <main>
+      {#await Profile.get(address, config)}
+        <Loading fadeIn />
+      {:then profile}
       <header>
         <div class="avatar">
-          {#if registration && registration.avatar}
-            <img src={registration.avatar} alt="avatar" />
-          {:else}
-            <Blockies address={org.address} />
-          {/if}
+          <Avatar source={profile.avatar ?? address} />
         </div>
         <div class="info">
           <span class="title bold">
-            {registration ? label : ethers.utils.getAddress(address)}
+            {parseEnsLabel(profile.name, config) ?? address}
           </span>
           <div class="links">
-            {#if registration}
-              {#if registration.url}
-                <a class="url" href={registration.url}>{registration.url}</a>
-              {/if}
-              {#if registration.twitter}
-                <a class="url" href={registration.twitter}>
-                  <Icon name="twitter" />
-                </a>
-              {/if}
-              {#if registration.github}
-                <a class="url" href={registration.github}>
-                  <Icon name="github" />
-                </a>
-              {/if}
+            {#if profile.url}
+              <a class="url" href={profile.url}>
+                {profile.url}
+              </a>
+            {/if}
+            {#if profile.twitter}
+              <a class="url" href={profile.twitter}>
+                <Icon name="twitter" />
+              </a>
+            {/if}
+            {#if profile.github}
+              <a class="url" href={profile.github}>
+                <Icon name="github" />
+              </a>
             {/if}
           </div>
         </div>
@@ -191,15 +170,11 @@
         <!-- Name -->
         <div class="label">Name</div>
         <div>
-          {#await org.lookupAddress(config)}
-            <div class="loading"><Loading small /></div>
-          {:then name}
-            {#if name}
-              <Link to={`/registrations/${label}`}>{name}</Link>
-            {:else}
-              <span class="subtle">Not set</span>
-            {/if}
-          {/await}
+          {#if profile.name}
+            <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+          {:else}
+            <span class="subtle">Not set</span>
+          {/if}
         </div>
         <div>
           {#await isAuthorized(org)}
@@ -214,38 +189,43 @@
         </div>
       </div>
 
-      <div class="members">
-        {#await org.getMembers(config)}
-          <Loading center />
-        {:then members}
-          {#each members as address}
-            <div class="member">
-              <div class="member-icon">
-                <Blockies {address} />
-              </div>
-              <a href={explorerLink(address, config)} target="_blank" class="member">
-                {utils.formatAddress(address)}
-              </a>
+      {#await org.getMembers(config)}
+        <Loading center />
+      {:then members}
+        {#if members.length > 0}
+          <div class="members">
+            {#each members as address}
+              {#await Profile.get(address, config)}
+                <Loading small center />
+              {:then profile}
+                <div class="member">
+                  <div class="member-icon">
+                    <Avatar source={profile.avatar ?? address} />
+                  </div>
+                  <Address {address} compact resolve noAvatar {config} />
+                </div>
+                {/await}
+              {/each}
             </div>
-          {/each}
+          {/if}
         {/await}
-      </div>
 
-      <div class="projects">
-        {#await org.getProjects(config)}
-          <Loading center />
-        {:then projects}
-          {#each projects as project}
-            <div class="project">
-              <Project {project} org={org.address} {config} />
-            </div>
-          {/each}
-        {:catch err}
-          <Message error>
-            <strong>Error: </strong> failed to load projects: {err.message}.
-          </Message>
-        {/await}
-      </div>
+        <div class="projects">
+          {#await org.getProjects(config)}
+            <Loading center />
+          {:then projects}
+            {#each projects as project}
+              <div class="project">
+                <Project {project} org={org.address} {config} />
+              </div>
+            {/each}
+          {:catch err}
+            <Message error>
+              <strong>Error: </strong> failed to load projects: {err.message}.
+            </Message>
+          {/await}
+        </div>
+      {/await}
     </main>
   {:else}
     <Modal subtle>
