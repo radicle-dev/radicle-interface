@@ -11,7 +11,6 @@
 
   let walletUnavailable = !window.ethereum;
 
-  let isModalOpen = false;
   const TEST_PROVIDER_OPTS = {
     chainId: config.walletConnect.testChainId,
     qrcode: true,
@@ -23,7 +22,7 @@
 
 
   const onClickConnect = async () => {
-    isModalOpen = !isModalOpen;
+    
 
     const provider = new WCEthereumProvider(TEST_PROVIDER_OPTS);
 
@@ -38,7 +37,6 @@
 
   $: connecting = $state.connection === Connection.Connecting;
 
-  $: isModalOpen = !isModalOpen;
 </script>
 
 <!-- {#if isModalOpen}
