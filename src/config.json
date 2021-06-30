@@ -24,7 +24,7 @@
   "ropsten": {
     "walletConnect" : {
       "testChainId" : 3,
-      "sessionRpcHost" : "https://rinkeby.infura.io/v3/e9c4665d91a343e295308d5995ff5a72",
+      "sessionRpcHost" : "https://ropsten.infura.io/v3/e9c4665d91a343e295308d5995ff5a72",
       "bridge": "https://bridge.walletconnect.org"
     },
     "registrar": {
@@ -55,6 +55,11 @@
     },
     "radToken": {
       "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948"
+    },
+    "walletConnect" : {
+      "testChainId" : 4,
+      "sessionRpcHost" : "https://rinkeby.infura.io/v3/e9c4665d91a343e295308d5995ff5a72",
+      "bridge": "https://bridge.walletconnect.org"
     },
     "orgFactory": {
       "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"

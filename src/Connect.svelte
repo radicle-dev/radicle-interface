@@ -23,7 +23,7 @@
 
 
   const onClickConnect = async () => {
-    //isModalOpen = !isModalOpen;
+    isModalOpen = !isModalOpen;
 
     const provider = new WCEthereumProvider(TEST_PROVIDER_OPTS);
 
@@ -37,6 +37,8 @@
   };
 
   $: connecting = $state.connection === Connection.Connecting;
+
+  $: isModalOpen = !isModalOpen;
 </script>
 
 <!-- {#if isModalOpen}
