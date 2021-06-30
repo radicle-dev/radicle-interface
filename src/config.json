@@ -22,6 +22,11 @@
     "tokens": []
   },
   "ropsten": {
+    "walletConnect" : {
+      "testChainId" : 3,
+      "sessionRpcHost" : "https://rinkeby.infura.io/v3/e9c4665d91a343e295308d5995ff5a72",
+      "bridge": "https://bridge.walletconnect.org"
+    },
     "registrar": {
       "domain": "rad.eth",
       "address": "0xb31441c140E92Ca20A0141D68b13b10ca051e40a"
@@ -116,4 +121,5 @@
     ],
     "ens": ["function owner(bytes32 node) view returns (address)"]
   }
+ 
 }

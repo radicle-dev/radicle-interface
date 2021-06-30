@@ -2,8 +2,6 @@ import { ethers } from "ethers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import config from "@app/config.json";
-import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
 
 declare global {
   interface Window {
@@ -15,6 +13,7 @@ declare global {
 export class Config {
   network: { name: string; chainId: number };
   registrar: { address: string; domain: string };
+  walletConnect: {testChainId: number; sessionRpcHost: string; bridge: string};
   radToken: { address: string };
   orgFactory: { address: string };
   orgs: { subgraph: string; contractHash: string };
@@ -47,6 +46,7 @@ export class Config {
     this.network = network;
     this.seed = { api };
     this.registrar = cfg.registrar;
+    this.walletConnect = cfg.walletConnect;
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
     this.orgs = cfg.orgs;
