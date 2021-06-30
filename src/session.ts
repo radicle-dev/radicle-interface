@@ -218,7 +218,9 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function disconnectWallet(): void {
-  connector.killSession();
+  if (connector.connected){
+    connector.killSession();
+  }
   window.localStorage.removeItem("session");
   location.reload();
 }
