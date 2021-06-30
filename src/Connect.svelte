@@ -47,6 +47,7 @@ const connector = new WalletConnect({
 
     // Check if connection is already established
 if (!connector.connected) {
+  
   // create new session
   connector.createSession();
 }
@@ -59,9 +60,10 @@ connector.on("connect", (error, payload) => {
 
   // Get provided accounts and chainId
   const { accounts, chainId } = payload.params[0];
-  state.connect(config)
 
-  console.log(accounts, chainId)
+  state.connect(config, accounts[0])
+
+ 
 });
   };
 

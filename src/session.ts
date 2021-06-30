@@ -2,6 +2,7 @@ import { get, writable, derived, Readable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
+import WalletConnect from "@walletconnect/client";
 import { Unreachable, assert, assertEq } from "@app/error";
 
 export enum Connection {
@@ -29,7 +30,7 @@ export interface Session {
 }
 
 export interface Store extends Readable<State> {
-  connect(config: Config): Promise<void>;
+  connect(config: Config, payload: string): Promise<void>;
   updateBalance(n: BigNumber): void;
   refreshBalance(config: Config): Promise<void>;
 
@@ -38,6 +39,11 @@ export interface Store extends Readable<State> {
   setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount([address]: string[]): void;
 }
+
+//initialize connector
+const connector = new WalletConnect({
+  bridge: "https://bridge.walletconnect.org", // Required
+});
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
@@ -212,6 +218,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function disconnectWallet(): void {
+  connector.killSession();
   window.localStorage.removeItem("session");
   location.reload();
 }
