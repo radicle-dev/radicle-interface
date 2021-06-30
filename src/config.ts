@@ -102,7 +102,6 @@ export async function getConfig(): Promise<Config> {
 
     config = new Config(network, provider, null);
   }
-  console.log(config);
 
   return config;
 }

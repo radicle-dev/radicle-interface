@@ -59,6 +59,7 @@ connector.on("connect", (error, payload) => {
 
   // Get provided accounts and chainId
   const { accounts, chainId } = payload.params[0];
+  state.connect(config)
 
   console.log(accounts, chainId)
 });

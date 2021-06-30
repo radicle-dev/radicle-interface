@@ -47,7 +47,7 @@ export const loadState = (initial: State): Store => {
 
   return {
     subscribe: store.subscribe,
-    connect: async (config: Config) => {
+    connect: async (config?: Config, payload?: any) => {
       const state = get(store);
 
       assertEq(state.connection, Connection.Disconnected);
@@ -60,11 +60,14 @@ export const loadState = (initial: State): Store => {
         console.error(e);
       }
 
-      const signer = config.provider.getSigner();
-      const address = await signer.getAddress();
+      if (config?.provider.getSigner()){
+        const signer = config?.provider.getSigner();
+        console.log(signer);
+      }
+      const address =  payload;
 
       try {
-        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+        const tokenBalance: BigNumber = await config?.token.balanceOf(address);
         store.set({
           connection: Connection.Connected,
           session: { address, tokenBalance, tx: null }
