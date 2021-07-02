@@ -11,8 +11,8 @@ import type { Project } from '@app/project';
 const GetProjects = `
   query GetProjects($org: ID!) {
     projects(where: { org: $org }) {
-      id
       anchor {
+        objectId
         multihash
         timestamp
       }
@@ -139,7 +139,7 @@ export class Org {
     for (const p of result.projects) {
       try {
         const proj: Project = {
-          id: utils.formatRadicleId(ethers.utils.arrayify(p.id)),
+          id: utils.formatRadicleId(ethers.utils.arrayify(p.anchor.objectId)),
           anchor: {
             stateHash: utils.formatProjectHash(
               ethers.utils.arrayify(p.anchor.multihash),
