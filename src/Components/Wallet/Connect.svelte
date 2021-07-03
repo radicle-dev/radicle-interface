@@ -1,9 +1,8 @@
 <script lang="ts">
   import { Connection } from "@app/session";
   import { state } from "@app/session";
-  import WCEthereumProvider from "@app/WalletConnectProvider";
   import type { Config } from "@app/config";
-  import Modal from "@app/Modal.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
   export let config: Config;
   export let caption = "Connect";
   export let className = "";
@@ -11,32 +10,11 @@
 
   let walletUnavailable = !window.ethereum;
 
-  const TEST_PROVIDER_OPTS = {
-    chainId: config.walletConnect.testChainId,
-    qrcode: true,
-    bridge:config.walletConnect.bridge,
-    rpc: {
-      [config.walletConnect.testChainId]: config.walletConnect.sessionRpcHost,
-    },
+  const onClickMetamask = async () => {
+    state.connectMetamask(config);
   };
-
-
-  const onClickConnect = async () => {
-    
-
-    const provider = new WCEthereumProvider(TEST_PROVIDER_OPTS);
-
-    const providerAccounts = await provider.enable();
-    // state.connect(config);
-    console.log(providerAccounts, "provider accounts");
-
-  state.connect(config, providerAccounts[0])
-
- 
-  };
-
+  console.log(state);
   $: connecting = $state.connection === Connection.Connecting;
-
 </script>
 
 <!-- {#if isModalOpen}
@@ -46,7 +24,7 @@
 {/if} -->
 
 <button
-  on:click={onClickConnect}
+  on:click={() => state.connectWalletConnect(config)}
   {style}
   class="connect {className}"
   disabled={connecting || walletUnavailable}

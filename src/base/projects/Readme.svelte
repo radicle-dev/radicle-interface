@@ -1,7 +1,11 @@
 <script lang="ts">
-  import Markdown from '@app/Markdown.svelte';
+  import Markdown from "@app/Components/Markdown.svelte";
   export let content: string;
 </script>
+
+<article>
+  <Markdown {content} />
+</article>
 
 <style>
   article {
@@ -10,7 +14,3 @@
     border-radius: 0.5rem;
   }
 </style>
-
-<article>
-  <Markdown {content} />
-</article>

@@ -10,6 +10,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "1.0.0-next.10",
     "@tsconfig/svelte": "^1.0.10",
+    "@types/big.js": "^6.1.1",
     "@types/node": "^15.12.2",
     "@typescript-eslint/eslint-plugin": "^4.26.1",
     "@typescript-eslint/parser": "^4.26.1",
@@ -38,6 +39,7 @@
     "@walletconnect/signer-connection": "^1.4.2-rc.2",
     "@walletconnect/types": "^1.4.2-rc.2",
     "@walletconnect/utils": "^1.4.2-rc.2",
+    "big.js": "^6.1.1",
     "buffer": "^6.0.3",
     "eip1193-provider": "1.0.1",
     "ethereum-blockies": "^0.1.1",

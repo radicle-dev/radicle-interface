@@ -1,16 +1,16 @@
 <script lang="ts">
   // TODO: When name is registered, prompt user to edit records.
   // TODO: When transfering name, warn about transfering to org.
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import type { Session } from '@app/session';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
-  import Err from '@app/Error.svelte';
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import type { Session } from "@app/session";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Components/Loading.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
+  import Err from "@app/Error.svelte";
   import BlockTimer from "@app/BlockTimer.svelte";
 
-  import { registerName, State, state } from './registrar';
+  import { registerName, State, state } from "./registrar";
 
   export let config: Config;
   export let subdomain: string;
@@ -34,19 +34,11 @@
   });
 </script>
 
-<style>
-  .loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-</style>
-
 {#if error}
   <Err
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate('/registrations')}
+    on:close={() => navigate("/registrations")}
   />
 {:else}
   <Modal>
@@ -74,7 +66,11 @@
         The name has been successfully registered to
         <span class="highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
-        <BlockTimer {config} startBlock={$state.commitmentBlock} duration={$state.minAge} />
+        <BlockTimer
+          {config}
+          startBlock={$state.commitmentBlock}
+          duration={$state.minAge}
+        />
       {:else}
         <Loading small center />
       {/if}
@@ -82,10 +78,16 @@
 
     <span slot="actions">
       {#if $state.connection === State.Registered}
-        <button on:click={view} class="register">
-          View
-        </button>
+        <button on:click={view} class="register"> View </button>
       {/if}
     </span>
   </Modal>
 {/if}
+
+<style>
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>

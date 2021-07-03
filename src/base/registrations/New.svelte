@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import { formatAddress, formatBalance } from '@app/utils';
-  import { session } from '@app/session';
-  import type { Config } from '@app/config';
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import { formatAddress, formatBalance } from "@app/utils";
+  import { session } from "@app/session";
+  import type { Config } from "@app/config";
 
-  import Connect from '@app/Connect.svelte';
-  import Modal from '@app/Modal.svelte';
-  import Loading from '@app/Loading.svelte';
-  import Message from '@app/Message.svelte';
+  import Connect from "@app/Components/Wallet/Connect.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
+  import Loading from "@app/Components/Loading.svelte";
+  import Message from "@app/Message.svelte";
 
-  import { registrar, registrationFee } from './registrar';
+  import { registrar, registrationFee } from "./registrar";
 
   enum State {
     CheckingAvailability,
@@ -29,9 +29,13 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(`/registrations/${subdomain}/submit?${
-      registrationOwner ? new URLSearchParams({ owner: registrationOwner }) : ''
-    }`);
+    navigate(
+      `/registrations/${subdomain}/submit?${
+        registrationOwner
+          ? new URLSearchParams({ owner: registrationOwner })
+          : ""
+      }`
+    );
   }
 
   onMount(async () => {
@@ -72,8 +76,8 @@
         under account <strong>{formatAddress(registrationOwner)}</strong>
         for <strong>{fee} RAD</strong>.
       {:else}
-        The name <strong>{subdomain}</strong> is available
-        for <strong>{fee} RAD</strong>.
+        The name <strong>{subdomain}</strong> is available for
+        <strong>{fee} RAD</strong>.
       {/if}
     {:else if state === State.NameUnavailable}
       The name <span class="highlight">{subdomain}</span> is not available for registration.
@@ -81,7 +85,8 @@
       <Loading small center />
     {:else if state === State.CheckingFailed && error}
       <Message error>
-        <strong>Error:</strong> {error}
+        <strong>Error:</strong>
+        {error}
       </Message>
     {/if}
   </span>

@@ -1,23 +1,51 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/registrations/registrar';
-  import { getRegistration } from '@app/base/registrations/registrar';
-  import Icon from '@app/Icon.svelte';
-  import Address from '@app/Address.svelte';
-  import Avatar from '@app/Avatar.svelte';
+  import { onMount } from "svelte";
+  import type { Config } from "@app/config";
+  import type { Registration } from "@app/base/registrations/registrar";
+  import { getRegistration } from "@app/base/registrations/registrar";
+  import Icon from "@app/Components/Icon.svelte";
+  import Address from "@app/Address.svelte";
+  import Avatar from "@app/Components/Avatar.svelte";
 
   export let address: string;
   export let config: Config;
-  
+
   let addressName: string | null = null;
   let info: Registration | null;
-  
+
   onMount(async () => {
     addressName = await config.provider.lookupAddress(address);
     info = await getRegistration(addressName, config);
   });
 </script>
+
+<main>
+  <header>
+    <div class="avatar">
+      <Avatar source={info?.avatar ?? address} />
+    </div>
+    <div class="info">
+      <span class="title bold"
+        ><Address noAvatar {address} {config} resolve /></span
+      >
+      <div class="links">
+        {#if info?.url}
+          <a class="url" href={info.url}>{info.url}</a>
+        {/if}
+        {#if info?.twitter}
+          <a class="url" href={info.twitter}>
+            <Icon name="twitter" />
+          </a>
+        {/if}
+        {#if info?.github}
+          <a class="url" href={info.github}>
+            <Icon name="github" />
+          </a>
+        {/if}
+      </div>
+    </div>
+  </header>
+</main>
 
 <style>
   main {
@@ -55,29 +83,3 @@
     margin-right: 1rem;
   }
 </style>
-
-<main>
-  <header>
-    <div class="avatar">
-      <Avatar source={info?.avatar ?? address} />
-    </div> 
-    <div class="info">
-      <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
-        <div class="links">
-          {#if info?.url}
-            <a class="url" href={info.url}>{info.url}</a>
-          {/if}
-          {#if info?.twitter}
-            <a class="url" href={info.twitter}>
-              <Icon name="twitter" />
-            </a>
-          {/if}
-          {#if info?.github}
-            <a class="url" href={info.github}>
-              <Icon name="github" />
-            </a>
-          {/if}
-        </div>
-      </div>
-    </header> 
-  </main>

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { formatAddress } from '@app/utils';
-  import { State, state } from './state';
-  import { getInfo, withdrawVested } from './vesting';
-  import type { VestingInfo } from './vesting';
-  import type { Session } from '@app/session';
-  import type { Config } from '@app/config';
-  import Modal from '@app/Modal.svelte';
+  import { onMount } from "svelte";
+  import { formatAddress } from "@app/utils";
+  import { State, state } from "./state";
+  import { getInfo, withdrawVested } from "./vesting";
+  import type { VestingInfo } from "./vesting";
+  import type { Session } from "@app/session";
+  import type { Config } from "@app/config";
+  import Modal from "@app/Components/Modal/Modal.svelte";
 
   let input: HTMLElement;
 
@@ -31,26 +31,8 @@
     state.set(State.Idle);
   }
 
-  $: isBeneficiary = info && session && (info.beneficiary === session.address);
+  $: isBeneficiary = info && session && info.beneficiary === session.address;
 </script>
-
-<style>
-  div.input-caption {
-    font-size: 1.25rem;
-    text-align: left;
-    margin-left: 1.5rem;
-    padding-left: 1.5rem;
-    margin-bottom: 1rem;
-    color: var(--color-secondary);
-  }
-  div.input-main {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    margin-left: 1.5rem;
-    color: var(--color-secondary);
-  }
-</style>
 
 <main class="centered">
   <div>
@@ -64,10 +46,25 @@
             Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
           {:else}
             <table>
-              <tr><td class="label">Beneficiary</td><td>{info.beneficiary}</td></tr>
-              <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
-              <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
-              <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
+              <tr
+                ><td class="label">Beneficiary</td><td>{info.beneficiary}</td
+                ></tr
+              >
+              <tr
+                ><td class="label">Allocation</td><td
+                  >{info.totalVesting} <strong>{info.symbol}</strong></td
+                ></tr
+              >
+              <tr
+                ><td class="label">Withdrawn</td><td
+                  >{info.withdrawn} <strong>{info.symbol}</strong></td
+                ></tr
+              >
+              <tr
+                ><td class="label">Withdrawable</td><td
+                  >{info.withdrawableBalance} <strong>{info.symbol}</strong></td
+                ></tr
+              >
             </table>
           {/if}
         </span>
@@ -82,14 +79,15 @@
                 Withdrawing...
               </button>
             {:else if $state === State.Idle}
-              <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
+              <button
+                on:click={() => withdrawVested(contractAddress, config)}
+                class="primary small"
+              >
                 Withdraw
               </button>
             {/if}
           {/if}
-          <button on:click={reset} class="small">
-            Back
-          </button>
+          <button on:click={reset} class="small"> Back </button>
         </span>
       </Modal>
     {:else}
@@ -122,3 +120,21 @@
     {/if}
   </div>
 </main>
+
+<style>
+  div.input-caption {
+    font-size: 1.25rem;
+    text-align: left;
+    margin-left: 1.5rem;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-secondary);
+  }
+  div.input-main {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin-left: 1.5rem;
+    color: var(--color-secondary);
+  }
+</style>

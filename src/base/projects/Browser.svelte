@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
-  import * as proj from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import Address from '@app/Address.svelte';
-  import { Org } from '@app/base/orgs/Org';
-  import * as utils from '@app/utils';
+  import { navigate } from "svelte-routing";
+  import type { Config } from "@app/config";
+  import * as proj from "@app/project";
+  import Loading from "@app/Components/Loading.svelte";
+  import Address from "@app/Address.svelte";
+  import { Org } from "@app/base/orgs/Org";
+  import * as utils from "@app/utils";
 
-  import Tree from './Tree.svelte';
-  import Blob from './Blob.svelte';
-  import Readme from './Readme.svelte';
+  import Tree from "./Tree.svelte";
+  import Blob from "./Blob.svelte";
+  import Readme from "./Readme.svelte";
 
   enum Status {
     Idle,
@@ -18,7 +18,7 @@
   }
 
   type State =
-      { status: Status.Idle }
+    | { status: Status.Idle }
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
@@ -37,9 +37,16 @@
     }
 
     const isMarkdownPath = utils.isMarkdownPath(path);
-    const promise = path === "/"
-      ? proj.getReadme(urn, commit, config)
-      : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, config);
+    const promise =
+      path === "/"
+        ? proj.getReadme(urn, commit, config)
+        : proj.getBlob(
+            urn,
+            commit,
+            path,
+            { highlight: !isMarkdownPath },
+            config
+          );
 
     state = { status: Status.Loading, path };
     state = { status: Status.Loaded, path, blob: await promise };
@@ -52,7 +59,7 @@
     // the loading spinner won't be shown, and instead the blob will be
     // displayed once loaded.
     const blob = await loadBlob(path);
-    getBlob = new Promise(resolve => resolve(blob));
+    getBlob = new Promise((resolve) => resolve(blob));
 
     navigate(proj.path({ urn, org, commit, path }));
   };
@@ -68,6 +75,90 @@
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>
 
+<main>
+  {#await proj.getTree(urn, commit, "/", config)}
+    <!-- Loading -->
+  {:then tree}
+    <header>
+      <div class="commit">
+        commit {commit}
+      </div>
+      <div class="stat">
+        <strong>{tree.stats.commits}</strong> commit(s)
+      </div>
+      <div class="stat">
+        <strong>{tree.stats.contributors}</strong> contributor(s)
+      </div>
+      <div class="anchor">
+        {#if org}
+          {#await getAnchor}
+            <Loading small margins />
+          {:then anchor}
+            {#if anchor === commit}
+              <span class="anchor-widget">
+                <span class="anchor-label">anchored</span>
+                <Address address={org} compact resolve noBadge {config} />
+              </span>
+            {:else}
+              <span class="anchor-widget not-anchored">
+                <span class="anchor-label">not anchored 🔓</span>
+              </span>
+            {/if}
+          {/await}
+        {/if}
+      </div>
+    </header>
+    <div class="container center-content">
+      {#if tree.entries.length}
+        <div class="column-left">
+          <div class="source-tree">
+            <Tree
+              {tree}
+              {path}
+              {fetchTree}
+              {loadingPath}
+              on:select={onSelect}
+            />
+          </div>
+        </div>
+        <div class="column-right">
+          {#await getBlob}
+            <Loading small center />
+          {:then blob}
+            {#if utils.isMarkdownPath(blob.path)}
+              <Readme content={blob.content} />
+            {:else}
+              <Blob {blob} />
+            {/if}
+          {:catch}
+            <div class="error error-message file-not-found">
+              <header>
+                <div class="icon">🍂</div>
+                {#if path != "/"}
+                  <div><code>{path}</code></div>
+                {/if}
+              </header>
+              {#if path == "/"}
+                The README could not be loaded.
+              {:else}
+                This path could not be loaded.
+              {/if}
+            </div>
+          {/await}
+        </div>
+      {/if}
+    </div>
+  {:catch err}
+    <div class="container center-content">
+      <div class="error error-message text-small">
+        <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+             to fetch - this needs a change to the backend. -->
+        API request to <code class="text-small">{err.url}</code> failed
+      </div>
+    </div>
+  {/await}
+</main>
+
 <style>
   main > header {
     font-size: 0.75rem;
@@ -76,7 +167,6 @@
     display: flex;
     align-items: center;
     justify-content: left;
-
   }
   main > header > * {
     margin-right: 0.75rem;
@@ -164,7 +254,8 @@
   }
 
   @media (max-width: 800px) {
-    main > header, .container {
+    main > header,
+    .container {
       padding-left: 2rem;
     }
     .stat {
@@ -172,81 +263,3 @@
     }
   }
 </style>
-
-<main>
-  {#await proj.getTree(urn, commit, "/", config)}
-    <!-- Loading -->
-  {:then tree}
-    <header>
-      <div class="commit">
-        commit {commit}
-      </div>
-      <div class="stat">
-        <strong>{tree.stats.commits}</strong> commit(s)
-      </div>
-      <div class="stat">
-        <strong>{tree.stats.contributors}</strong> contributor(s)
-      </div>
-      <div class="anchor">
-        {#if org}
-          {#await getAnchor}
-            <Loading small margins />
-          {:then anchor}
-            {#if anchor === commit}
-              <span class="anchor-widget">
-                <span class="anchor-label">anchored</span>
-                <Address address={org} compact resolve noBadge {config} />
-              </span>
-            {:else}
-              <span class="anchor-widget not-anchored">
-                <span class="anchor-label">not anchored 🔓</span>
-              </span>
-            {/if}
-          {/await}
-        {/if}
-      </div>
-    </header>
-    <div class="container center-content">
-      {#if tree.entries.length}
-        <div class="column-left">
-          <div class="source-tree">
-            <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
-          </div>
-        </div>
-        <div class="column-right">
-          {#await getBlob}
-            <Loading small center />
-          {:then blob}
-            {#if utils.isMarkdownPath(blob.path)}
-              <Readme content={blob.content} />
-            {:else}
-              <Blob {blob} />
-            {/if}
-          {:catch}
-            <div class="error error-message file-not-found">
-              <header>
-                <div class="icon">🍂</div>
-                {#if path != "/"}
-                  <div><code>{path}</code></div>
-                {/if}
-              </header>
-              {#if path == "/"}
-                The README could not be loaded.
-              {:else}
-                This path could not be loaded.
-              {/if}
-            </div>
-          {/await}
-        </div>
-      {/if}
-    </div>
-  {:catch err}
-    <div class="container center-content">
-      <div class="error error-message text-small">
-        <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
-             to fetch - this needs a change to the backend. -->
-        API request to <code class="text-small">{err.url}</code> failed
-      </div>
-    </div>
-  {/await}
-</main>

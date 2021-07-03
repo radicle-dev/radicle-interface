@@ -1,15 +1,19 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
-  import * as proj from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import Blockies from '@app/Blockies.svelte';
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import type { Config } from "@app/config";
+  import * as proj from "@app/project";
+  import Loading from "@app/Components/Loading.svelte";
+  import Blockies from "@app/Blockies.svelte";
 
-  enum Status { Loading, Loaded, Error }
+  enum Status {
+    Loading,
+    Loaded,
+    Error,
+  }
 
   type State =
-      { status: Status.Loading }
+    | { status: Status.Loading }
     | { status: Status.Loaded }
     | { status: Status.Error; error: string };
 
@@ -43,6 +47,35 @@
   };
 </script>
 
+<article on:click={onClick} class:has-info={info}>
+  {#if info}
+    <div class="id">
+      <span class="name">{info.meta.name}</span><span class="urn"
+        >{project.id}</span
+      >
+    </div>
+    <div class="description">{info.meta.description}</div>
+    <div class="anchor">
+      <span>commit {project.anchor.stateHash}</span>
+      <span>
+        {#each info.meta.maintainers as urn}
+          <span class="avatar">
+            <Blockies address={urn} />
+          </span>
+        {/each}
+      </span>
+    </div>
+  {:else}
+    <div class="id">
+      <span>{project.id}</span>
+      {#if state.status == Status.Loading}
+        <Loading small />
+      {/if}
+    </div>
+    <div class="anchor">commit {project.anchor.stateHash}</div>
+  {/if}
+</article>
+
 <style>
   article {
     padding: 1rem;
@@ -69,7 +102,8 @@
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
   }
-  article .id, article .anchor {
+  article .id,
+  article .anchor {
     display: flex;
     justify-content: space-between;
   }
@@ -93,30 +127,3 @@
     font-size: 0.5rem;
   }
 </style>
-
-<article on:click={onClick} class:has-info={info}>
-  {#if info}
-    <div class="id">
-      <span class="name">{info.meta.name}</span><span class="urn">{project.id}</span>
-    </div>
-    <div class="description">{info.meta.description}</div>
-    <div class="anchor">
-      <span>commit {project.anchor.stateHash}</span>
-      <span>
-        {#each info.meta.maintainers as urn}
-          <span class="avatar">
-            <Blockies address={urn} />
-          </span>
-        {/each}
-      </span>
-    </div>
-  {:else}
-    <div class="id">
-      <span>{project.id}</span>
-      {#if state.status == Status.Loading}
-        <Loading small />
-      {/if}
-    </div>
-    <div class="anchor">commit {project.anchor.stateHash}</div>
-  {/if}
-</article>

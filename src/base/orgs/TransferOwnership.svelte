@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
-  import Modal from '@app/Modal.svelte';
-  import type { Config } from '@app/config';
-  import { formatAddress } from '@app/utils';
-  import Loading from '@app/Loading.svelte';
-  import { assert } from '@app/error';
-  import * as utils from '@app/utils';
+  import { onMount, createEventDispatcher } from "svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
+  import type { Config } from "@app/config";
+  import { formatAddress } from "@app/utils";
+  import Loading from "@app/Components/Loading.svelte";
+  import { assert } from "@app/error";
+  import * as utils from "@app/utils";
 
-  import type { Org } from './Org';
+  import type { Org } from "./Org";
 
   const dispatch = createEventDispatcher();
 
@@ -38,7 +38,7 @@
   const onSubmit = async () => {
     assert(newOwner);
 
-    if (! utils.isAddress(newOwner)) {
+    if (!utils.isAddress(newOwner)) {
       state = State.Failed;
       error = `"${newOwner}" is not a valid Ethereum address.`;
       return;
@@ -60,9 +60,7 @@
 
 {#if state === State.Success}
   <Modal floating small>
-    <div slot="title">
-      ✅
-    </div>
+    <div slot="title">✅</div>
 
     <div slot="subtitle">
       The ownership of <strong>{formatAddress(org.address)}</strong> was
@@ -70,9 +68,7 @@
     </div>
 
     <div slot="actions">
-      <button class="small" on:click={() => dispatch('close')}>
-        Done
-      </button>
+      <button class="small" on:click={() => dispatch("close")}> Done </button>
     </div>
   </Modal>
 {:else}
@@ -88,7 +84,9 @@
       {:else if state == State.Pending}
         Transaction is being processed by the network...
       {:else if state == State.Idle}
-        Transfer the ownership of Org <strong>{formatAddress(org.address)}</strong> to a new address.
+        Transfer the ownership of Org <strong
+          >{formatAddress(org.address)}</strong
+        > to a new address.
       {:else if state == State.Failed}
         <div class="error">
           {error}
@@ -98,7 +96,13 @@
 
     <div slot="body">
       {#if state == State.Idle}
-        <input type="text" size="40" disabled={state !== State.Idle} bind:this={input} bind:value={newOwner} />
+        <input
+          type="text"
+          size="40"
+          disabled={state !== State.Idle}
+          bind:this={input}
+          bind:value={newOwner}
+        />
       {:else if state == State.Pending || state == State.Signing}
         <Loading small center />
       {:else if state == State.Failed}
@@ -108,23 +112,25 @@
 
     <div slot="actions">
       {#if state == State.Signing}
-        <button class="small" on:click={() => dispatch('close')}>
+        <button class="small" on:click={() => dispatch("close")}>
           Cancel
         </button>
       {:else if state == State.Pending}
-        <button class="small" on:click={() => dispatch('close')}>
+        <button class="small" on:click={() => dispatch("close")}>
           Close
         </button>
       {:else if state == State.Failed}
-        <button class="small" on:click={resetForm}>
-          Back
-        </button>
+        <button class="small" on:click={resetForm}> Back </button>
       {:else}
-        <button class="primary" on:click={onSubmit} disabled={!newOwner || state !== State.Idle}>
+        <button
+          class="primary"
+          on:click={onSubmit}
+          disabled={!newOwner || state !== State.Idle}
+        >
           Submit
         </button>
 
-        <button class="text" on:click={() => dispatch('close')}>
+        <button class="text" on:click={() => dispatch("close")}>
           Cancel
         </button>
       {/if}

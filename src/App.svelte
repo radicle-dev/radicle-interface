@@ -1,21 +1,21 @@
 <script lang="ts">
   import { Router, Route } from "svelte-routing";
-  import { getConfig } from '@app/config';
-  import { Connection, state, session } from '@app/session';
+  import { getConfig } from "@app/config";
+  import { Connection, state, session } from "@app/session";
 
-  import Home from '@app/base/home/Index.svelte';
-  import Vesting from '@app/base/vesting/Index.svelte';
-  import Registrations from '@app/base/registrations/Routes.svelte';
-  import Orgs from '@app/base/orgs/Routes.svelte';
-  import Users from '@app/base/users/Routes.svelte';
+  import Home from "@app/base/home/Index.svelte";
+  import Vesting from "@app/base/vesting/Index.svelte";
+  import Registrations from "@app/base/registrations/Routes.svelte";
+  import Orgs from "@app/base/orgs/Routes.svelte";
+  import Users from "@app/base/users/Routes.svelte";
   import IDX from "@app/base/idx/Routes.svelte";
-  import Projects from '@app/base/projects/Routes.svelte';
-  import Resolver from '@app/base/resolver/Routes.svelte';
-  import Header from '@app/Header.svelte';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
+  import Projects from "@app/base/projects/Routes.svelte";
+  import Resolver from "@app/base/resolver/Routes.svelte";
+  import Header from "@app/Header.svelte";
+  import Loading from "@app/Components/Loading.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
 
-  const loadConfig = getConfig().then(cfg => {
+  const loadConfig = getConfig().then((cfg) => {
     if ($state.connection === Connection.Connected) {
       state.refreshBalance(cfg);
     }
@@ -23,28 +23,15 @@
   });
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      let elems = document.querySelectorAll<HTMLElement>('button.primary');
-      if (elems.length == 1) { // We only allow this when there's one primary button.
+    if (event.key === "Enter") {
+      let elems = document.querySelectorAll<HTMLElement>("button.primary");
+      if (elems.length == 1) {
+        // We only allow this when there's one primary button.
         elems[0].click();
       }
     }
   }
 </script>
-
-<style>
-  .app {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  .wrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
-  }
-</style>
 
 <svelte:window on:keydown={handleKeydown} />
 <div class="app">
@@ -86,3 +73,17 @@
     </div>
   {/await}
 </div>
+
+<style>
+  .app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+  }
+</style>

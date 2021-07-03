@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  import Loading from '@app/Loading.svelte';
+  import Loading from "@app/Components/Loading.svelte";
   import type { Tree } from "@app/project";
   import { ObjectType } from "@app/project";
 
@@ -28,6 +28,42 @@
     }
   };
 </script>
+
+<div class="folder" on:click={onClick}>
+  <span class="folder-name">{name}/</span>
+</div>
+
+<div class="container">
+  {#if expanded}
+    {#await tree}
+      <span class="loading"><Loading small margins /></span>
+    {:then tree}
+      {#if tree}
+        {#each tree.entries as entry (entry.path)}
+          {#if entry.info.objectType === ObjectType.Tree}
+            <svelte:self
+              {fetchTree}
+              name={entry.info.name}
+              on:select={onSelectFile}
+              prefix={`${entry.path}/`}
+              {loadingPath}
+              {currentPath}
+            />
+          {:else}
+            <File
+              active={entry.path === currentPath}
+              loading={entry.path === loadingPath}
+              name={entry.info.name}
+              on:click={() => {
+                onSelectFile({ detail: entry.path });
+              }}
+            />
+          {/if}
+        {/each}
+      {/if}
+    {/await}
+  {/if}
+</div>
 
 <style>
   .folder {
@@ -60,37 +96,3 @@
     padding: 0.5rem 0;
   }
 </style>
-
-<div class="folder" on:click={onClick}>
-  <span class="folder-name">{name}/</span>
-</div>
-
-<div class="container">
-  {#if expanded}
-    {#await tree}
-      <span class="loading"><Loading small margins /></span>
-    {:then tree}
-      {#if tree}
-        {#each tree.entries as entry (entry.path)}
-          {#if entry.info.objectType === ObjectType.Tree}
-            <svelte:self
-              {fetchTree}
-              name={entry.info.name}
-              on:select={onSelectFile}
-              prefix={`${entry.path}/`}
-              {loadingPath}
-              {currentPath} />
-          {:else}
-            <File
-              active={entry.path === currentPath}
-              loading={entry.path === loadingPath}
-              name={entry.info.name}
-              on:click={() => {
-                onSelectFile({ detail: entry.path });
-              }} />
-          {/if}
-        {/each}
-      {/if}
-    {/await}
-  {/if}
-</div>

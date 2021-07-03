@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
-  import { setRecords } from './resolver';
-  import type { EnsRecord } from './resolver';
-  import type { Registration } from './registrar';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
+  import { onMount, createEventDispatcher } from "svelte";
+  import { setRecords } from "./resolver";
+  import type { EnsRecord } from "./resolver";
+  import type { Registration } from "./registrar";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Components/Loading.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
 
   enum Status {
     Signing,
@@ -15,7 +15,7 @@
   }
 
   type State =
-      { status: Status.Signing }
+    | { status: Status.Signing }
     | { status: Status.Pending }
     | { status: Status.Success }
     | { status: Status.Failed; error: string };
@@ -27,12 +27,20 @@
 
   const dispatch = createEventDispatcher();
 
-  let state: State = { status: Status.Failed, error: "Error registering, something happened." };
+  let state: State = {
+    status: Status.Failed,
+    error: "Error registering, something happened.",
+  };
 
   onMount(async () => {
     try {
       state.status = Status.Signing;
-      const tx = await setRecords(subdomain, records, registration.resolver, config);
+      const tx = await setRecords(
+        subdomain,
+        records,
+        registration.resolver,
+        config
+      );
       state.status = Status.Pending;
       await tx.wait();
       state.status = Status.Success;
@@ -48,7 +56,7 @@
   };
 
   const onClose = () => {
-    dispatch('close');
+    dispatch("close");
   };
 </script>
 
@@ -66,7 +74,8 @@
       <p>Your registration was successfully updated.</p>
     {:else if state.status === Status.Failed}
       <p class="error">
-        <strong>Error:</strong> {state.error}
+        <strong>Error:</strong>
+        {state.error}
       </p>
     {/if}
   </span>
@@ -74,13 +83,9 @@
     {#if [Status.Signing, Status.Pending].includes(state.status)}
       <Loading center small />
     {:else if state.status === Status.Success}
-      <button on:click={onDone}>
-        Done
-      </button>
+      <button on:click={onDone}> Done </button>
     {:else if state.status === Status.Failed}
-      <button on:click={onClose}>
-        Close
-      </button>
+      <button on:click={onClose}> Close </button>
     {/if}
   </span>
 </Modal>

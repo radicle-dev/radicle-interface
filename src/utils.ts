@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
 import type { BigNumber } from "ethers";
-import multibase from 'multibase';
-import multihashes from 'multihashes';
+import multibase from "multibase";
+import multihashes from "multihashes";
 import EthersSafe from "@gnosis.pm/safe-core-sdk";
-import type { Config } from '@app/config';
-import { assert } from '@app/error';
+import type { Config } from "@app/config";
+import { assert } from "@app/error";
 import type { Registration } from "@app/base/registrations/registrar";
-import { getRegistration } from '@app/base/registrations/registrar';
+import { getRegistration } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 
 export interface Profile {
@@ -28,10 +28,10 @@ export interface Safe {
 }
 
 export interface SafeTransaction {
-    to: string;
-    value: string;
-    data: string;
-    operation: number;
+  to: string;
+  value: string;
+  data: string;
+  operation: number;
 }
 
 export function isAddressEqual(left: string, right: string): boolean {
@@ -39,21 +39,30 @@ export function isAddressEqual(left: string, right: string): boolean {
 }
 
 export function formatBalance(n: BigNumber): string {
-  return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
+  return ethers.utils.commify(
+    parseFloat(ethers.utils.formatUnits(n)).toFixed(2)
+  );
 }
 
-export function formatCAIP10Address(address: string, protocol: string, impl: number): string {
+export function formatCAIP10Address(
+  address: string,
+  protocol: string,
+  impl: number
+): string {
   return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
 export function formatAddress(addr: string): string {
   return formatHash(ethers.utils.getAddress(addr));
 }
+export function ellipsed(x: string, length = 8): string {
+  return `${x.slice(0, length + 2)}…${x.slice(-length)}`;
+}
 
 export function formatHash(hash: string): string {
-  return hash.substring(0, 6)
-    + '...'
-    + hash.substring(hash.length - 4, hash.length);
+  return (
+    hash.substring(0, 6) + "..." + hash.substring(hash.length - 4, hash.length)
+  );
 }
 
 export function capitalize(s: string): string {
@@ -96,7 +105,10 @@ export function isAddress(input: string): boolean {
 }
 
 // Get search parameters from location.
-export function getSearchParam(key: string, location: RouteLocation): string | null {
+export function getSearchParam(
+  key: string,
+  location: RouteLocation
+): string | null {
   const params = new URLSearchParams(location.search);
   return params.get(key);
 }
@@ -123,17 +135,17 @@ export function safeLink(addr: string, config: Config): string {
 export async function querySubgraph(
   url: string,
   query: string,
-  variables: Record<string, any>,
+  variables: Record<string, any>
 ): Promise<null | any> {
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
       variables,
-    })
+    }),
   });
   const json = await response.json();
 
@@ -172,11 +184,14 @@ export function parseRadicleId(urn: string): Uint8Array {
 // Create a project hash from a hash and format.
 export function formatProjectHash(multihash: Uint8Array): string {
   const decoded = multihashes.decode(multihash);
-  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, '');
+  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, "");
 }
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
-export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
+export async function identifyAddress(
+  address: string,
+  config: Config
+): Promise<AddressType> {
   const safe = await isSafe(address, config);
   if (safe) {
     return AddressType.Safe;
@@ -195,17 +210,26 @@ export async function identifyAddress(address: string, config: Config): Promise<
 }
 
 // Resolve a label under the radicle domain.
-export async function resolveLabel(label: string, config: Config): Promise<string | null> {
+export async function resolveLabel(
+  label: string,
+  config: Config
+): Promise<string | null> {
   return config.provider.resolveName(`${label}.${config.registrar.domain}`);
 }
 
-export async function lookupAddress(address: string, config: Config): Promise<Profile>  {
+export async function lookupAddress(
+  address: string,
+  config: Config
+): Promise<Profile> {
   const profile: Profile = { ens: null, idx: null };
 
   try {
     const [ens, idx] = await Promise.allSettled([
       resolveEnsProfile(address, config),
-      resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config)
+      resolveIdxProfile(
+        formatCAIP10Address(address, "eip155", config.network.chainId),
+        config
+      ),
     ]);
 
     if (ens.status == "fulfilled") profile.ens = ens.value;
@@ -218,42 +242,56 @@ export async function lookupAddress(address: string, config: Config): Promise<Pr
 }
 
 // Resolves an IDX profile or return null
-export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
+export async function resolveIdxProfile(
+  caip10: string,
+  config: Config
+): Promise<BasicProfile | null> {
   return config.idx.client.get<BasicProfile>("basicProfile", caip10);
 }
 
 // Resolves an ENS profile or return null
-export async function resolveEnsProfile(address: string, config: Config): Promise<Registration | null> {
+export async function resolveEnsProfile(
+  address: string,
+  config: Config
+): Promise<Registration | null> {
   const label = await config.provider.lookupAddress(address);
-  if (label && await resolveLabel(parseEnsLabel(label, config), config)) {
+  if (label && (await resolveLabel(parseEnsLabel(label, config), config))) {
     return await getRegistration(label, config);
   }
   return null;
 }
 
 // Check whether a Gnosis Safe exists at an address.
-export async function isSafe(address: string, config: Config): Promise<boolean> {
-  if (! config.safe.api) return false;
+export async function isSafe(
+  address: string,
+  config: Config
+): Promise<boolean> {
+  if (!config.safe.api) return false;
 
   const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, { method: 'HEAD' });
+  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, {
+    method: "HEAD",
+  });
 
   return response.ok;
 }
 
 // Get a Gnosis Safe at an address.
-export async function getSafe(address: string, config: Config): Promise<Safe | null> {
-  if (! config.safe.api) return null;
+export async function getSafe(
+  address: string,
+  config: Config
+): Promise<Safe | null> {
+  if (!config.safe.api) return null;
 
   const addr = ethers.utils.getAddress(address);
   const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-    }
+      Accept: "application/json",
+    },
   });
 
-  if (! response.ok) {
+  if (!response.ok) {
     return null;
   }
   const json = await response.json();
@@ -261,15 +299,19 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
   return {
     address: json.address,
     owners: json.owners,
-    threshold: json.threshold
+    threshold: json.threshold,
   };
 }
 
 // Get token balances for an address.
-export async function getTokens(address: string, config: Config):
-  Promise<Array<{ tokenName: string; tokenLogo: string }>>
-{
-  await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
+export async function getTokens(
+  address: string,
+  config: Config
+): Promise<Array<{ tokenName: string; tokenLogo: string }>> {
+  await config.provider.send("alchemy_getTokenBalances", [
+    address,
+    config.tokens,
+  ]);
 
   // TODO
   return [];
@@ -290,7 +332,9 @@ export async function proposeSafeTransaction(
   assert(config.safe.client);
 
   const safeSdk = await EthersSafe.create({
-    ethers, safeAddress, providerOrSigner: config.signer,
+    ethers,
+    safeAddress,
+    providerOrSigner: config.signer,
   });
   const estimation = await config.safe.client.estimateSafeTransaction(
     safeAddress,

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Link } from 'svelte-routing';
-  import type { Config } from '@app/config';
-  import * as proj from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
-  import Blockies from '@app/Blockies.svelte';
+  import { Link } from "svelte-routing";
+  import type { Config } from "@app/config";
+  import * as proj from "@app/project";
+  import Loading from "@app/Components/Loading.svelte";
+  import Modal from "@app/Components/Modal/Modal.svelte";
+  import Blockies from "@app/Blockies.svelte";
 
-  import Browser from './Browser.svelte';
+  import Browser from "./Browser.svelte";
 
   export let urn: string;
   export let org = "";
@@ -19,6 +19,41 @@
 
   const back = () => window.history.back();
 </script>
+
+<main>
+  {#await getProject}
+    <header>
+      <Loading small />
+    </header>
+  {:then project}
+    <header>
+      <div class="title bold">
+        <Link to={projectRoot}>{project.meta.name}</Link>
+        <span class="maintainers">
+          {#each project.meta.maintainers as user}
+            <span class="maintainer">
+              <Blockies address={user} />
+            </span>
+          {/each}
+        </span>
+      </div>
+      <div class="urn">{urn}</div>
+      <div class="description">{project.meta.description}</div>
+    </header>
+    <Browser {urn} {org} commit={commit || project.head} {path} {config} />
+  {:catch}
+    <Modal subtle>
+      <span slot="title">🏜️</span>
+      <span slot="body">
+        <p class="highlight"><strong>{urn}</strong></p>
+        <p>This project was not found.</p>
+      </span>
+      <span slot="actions">
+        <button on:click={back}> Back </button>
+      </span>
+    </Modal>
+  {/await}
+</main>
 
 <style>
   main {
@@ -64,40 +99,3 @@
     margin-left: 0.5rem;
   }
 </style>
-
-<main>
-  {#await getProject}
-    <header>
-      <Loading small />
-    </header>
-  {:then project}
-    <header>
-      <div class="title bold">
-        <Link to={projectRoot}>{project.meta.name}</Link>
-        <span class="maintainers">
-          {#each project.meta.maintainers as user}
-            <span class="maintainer">
-              <Blockies address={user} />
-            </span>
-          {/each}
-        </span>
-      </div>
-      <div class="urn">{urn}</div>
-      <div class="description">{project.meta.description}</div>
-    </header>
-    <Browser {urn} {org} commit={commit || project.head} {path} {config} />
-  {:catch}
-    <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{urn}</strong></p>
-        <p>This project was not found.</p>
-      </span>
-      <span slot="actions">
-        <button on:click={back}>
-          Back
-        </button>
-      </span>
-    </Modal>
-  {/await}
-</main>

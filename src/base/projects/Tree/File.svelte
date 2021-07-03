@@ -1,10 +1,19 @@
 <script lang="ts">
-  import Loading from '@app/Loading.svelte';
+  import Loading from "@app/Components/Loading.svelte";
 
   export let active: boolean;
   export let loading: boolean;
   export let name: string;
 </script>
+
+<div class="file" class:active on:click>
+  <span class="name">{name}</span>
+  <div class="spinner">
+    {#if loading}
+      <Loading small condensed />
+    {/if}
+  </div>
+</div>
 
 <style>
   .file {
@@ -42,12 +51,3 @@
     white-space: nowrap;
   }
 </style>
-
-<div class="file" class:active on:click>
-  <span class="name">{name}</span>
-  <div class="spinner">
-    {#if loading}
-      <Loading small condensed />
-    {/if}
-  </div>
-</div>

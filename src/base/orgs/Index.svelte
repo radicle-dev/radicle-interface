@@ -1,19 +1,67 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte';
-  import { session } from '@app/session';
-  import Create from '@app/base/orgs/Create.svelte';
-  import { Org } from '@app/base/orgs/Org';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import List from './List.svelte';
+  import type { SvelteComponent } from "svelte";
+  import { session } from "@app/session";
+  import Create from "@app/base/orgs/Create.svelte";
+  import { Org } from "@app/base/orgs/Org";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Components/Loading.svelte";
+  import List from "./List.svelte";
 
   export let config: Config;
 
-  const onCreate = () => modal = Create;
+  const onCreate = () => (modal = Create);
   let modal: typeof SvelteComponent | null = null;
 
   $: account = $session && $session.address;
 </script>
+
+<main>
+  {#if account}
+    <div class="my-orgs">
+      <header>
+        <span>My <strong>Orgs</strong></span>
+        <button
+          class="create small secondary"
+          on:click={onCreate}
+          disabled={!account}
+        >
+          Create
+        </button>
+      </header>
+
+      {#await Org.getOrgsByMember(account, config)}
+        <div class="loading">
+          <Loading center />
+        </div>
+      {:then orgs}
+        <List {orgs}>
+          <div class="orgs-empty">Orgs you are a member of show up here.</div>
+        </List>
+      {/await}
+    </div>
+  {/if}
+
+  <header>
+    <span><strong>Orgs</strong> of the Radicle network</span>
+  </header>
+
+  {#await Org.getAll(config)}
+    <div class="loading">
+      <Loading center />
+    </div>
+  {:then orgs}
+    <List {orgs}>
+      <div class="orgs-empty">There are no orgs.</div>
+    </List>
+  {/await}
+</main>
+
+<svelte:component
+  this={modal}
+  owner={account}
+  {config}
+  on:close={() => (modal = null)}
+/>
 
 <style>
   main {
@@ -49,42 +97,3 @@
     padding: 3rem 0;
   }
 </style>
-
-<main>
-  {#if account}
-    <div class="my-orgs">
-      <header>
-        <span>My <strong>Orgs</strong></span>
-        <button class="create small secondary" on:click={onCreate} disabled={!account}>
-          Create
-        </button>
-      </header>
-
-      {#await Org.getOrgsByMember(account, config)}
-        <div class="loading">
-          <Loading center />
-        </div>
-      {:then orgs}
-        <List {orgs}>
-          <div class="orgs-empty">Orgs you are a member of show up here.</div>
-        </List>
-      {/await}
-    </div>
-  {/if}
-
-  <header>
-    <span><strong>Orgs</strong> of the Radicle network</span>
-  </header>
-
-  {#await Org.getAll(config)}
-    <div class="loading">
-      <Loading center />
-    </div>
-  {:then orgs}
-    <List {orgs}>
-      <div class="orgs-empty">There are no orgs.</div>
-    </List>
-  {/await}
-</main>
-
-<svelte:component this={modal} owner={account} {config} on:close={() => modal = null} />

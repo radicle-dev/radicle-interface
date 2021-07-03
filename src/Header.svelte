@@ -2,13 +2,13 @@
   // TODO: Shorten tx hash
   import { link } from "svelte-routing";
   import { formatBalance, formatAddress } from "@app/utils";
-  import { error, Failure } from '@app/error';
+  import { error, Failure } from "@app/error";
   import { disconnectWallet } from "@app/session";
-  import type { Session } from '@app/session';
-  import Loading from '@app/Loading.svelte';
-  import Logo from './Logo.svelte';
-  import Connect from './Connect.svelte';
-  import type { Config } from '@app/config';
+  import type { Session } from "@app/session";
+  import Loading from "@app/Components/Loading.svelte";
+  import Logo from "./Components/Logo.svelte";
+  import Connect from "./Components/Wallet/Connect.svelte";
+  import type { Config } from "@app/config";
 
   export let session: Session | null;
   export let config: Config | null;
@@ -19,6 +19,70 @@
   $: address = session && session.address;
   $: tokenBalance = session && session.tokenBalance;
 </script>
+
+{#if $error}
+  {#if $error.type === Failure.TransactionFailed}
+    <div class="error">
+      {#if $error.message}
+        <strong>Error:</strong> {$error.message}
+      {:else if $error.txHash}
+        <strong>Error:</strong> Transaction
+        <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a> failed.
+      {/if}
+    </div>
+  {/if}
+{/if}
+
+<header>
+  <div class="left">
+    <a use:link href="/"><Logo /></a>
+    <div class="nav">
+      <a use:link href="/registrations">Register</a>
+      <a use:link href="/vesting/">Vesting</a>
+      <a use:link href="/orgs/">Orgs</a>
+    </div>
+  </div>
+
+  <div class="right">
+    {#if config && config.network.name == "ropsten"}
+      <span class="network">Ropsten</span>
+    {:else if config && config.network.name == "rinkeby"}
+      <span class="network">Rinkeby</span>
+    {:else if config && config.network.name == "homestead"}
+      <!-- Don't show anything -->
+    {:else}
+      <span class="network unavailable">No Network</span>
+    {/if}
+
+    {#if address}
+      <span class="balance">
+        {#if tokenBalance}
+          {formatBalance(tokenBalance)} <strong>RAD</strong>
+        {:else}
+          <Loading small />
+        {/if}
+      </span>
+
+      <button
+        class="address outline small"
+        bind:this={sessionButton}
+        on:click={disconnectWallet}
+        on:mouseover={() => (sessionButtonHover = true)}
+        on:mouseout={() => (sessionButtonHover = false)}
+      >
+        {#if sessionButtonHover}
+          Disconnect
+        {:else}
+          {formatAddress(address)}
+        {/if}
+      </button>
+    {:else if config}
+      <span class="connect">
+        <Connect className="small" {config} />
+      </span>
+    {/if}
+  </div>
+</header>
 
 <style>
   header {
@@ -44,7 +108,8 @@
   header .nav a:hover {
     color: var(--color-foreground);
   }
-  header .left, header .right {
+  header .left,
+  header .right {
     display: flex;
     align-items: center;
   }
@@ -90,75 +155,14 @@
     white-space: nowrap;
   }
 
-  @media(max-width: 800px) {
+  @media (max-width: 800px) {
     .balance {
       display: none;
     }
   }
-  @media(max-width: 720px) {
+  @media (max-width: 720px) {
     .network {
       display: none;
     }
   }
 </style>
-
-{#if $error}
-  {#if $error.type === Failure.TransactionFailed}
-    <div class="error">
-      {#if $error.message}
-        <strong>Error:</strong> {$error.message}
-      {:else if $error.txHash}
-        <strong>Error:</strong> Transaction <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a> failed.
-      {/if}
-    </div>
-  {/if}
-{/if}
-
-<header>
-  <div class="left">
-    <a use:link href="/"><Logo /></a>
-    <div class="nav">
-      <a use:link href="/registrations">Register</a>
-      <a use:link href="/vesting/">Vesting</a>
-      <a use:link href="/orgs/">Orgs</a>
-    </div>
-  </div>
-
-  <div class="right">
-    {#if config && config.network.name == 'ropsten'}
-      <span class="network">Ropsten</span>
-    {:else if config && config.network.name == 'rinkeby'}
-      <span class="network">Rinkeby</span>
-    {:else if config && config.network.name == 'homestead'}
-      <!-- Don't show anything -->
-    {:else}
-      <span class="network unavailable">No Network</span>
-    {/if}
-
-    {#if address}
-      <span class="balance">
-        {#if tokenBalance}
-          {formatBalance(tokenBalance)} <strong>RAD</strong>
-        {:else}
-          <Loading small />
-        {/if}
-      </span>
-
-      <button class="address outline small" bind:this={sessionButton}
-        on:click={disconnectWallet}
-        on:mouseover={() => sessionButtonHover = true}
-        on:mouseout={() => sessionButtonHover = false}
-      >
-        {#if sessionButtonHover}
-          Disconnect
-        {:else}
-          {formatAddress(address)}
-        {/if}
-      </button>
-    {:else if config}
-      <span class="connect">
-        <Connect className="small" {config} />
-      </span>
-    {/if}
-  </div>
-</header>

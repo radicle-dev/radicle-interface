@@ -1,11 +1,17 @@
 import { get, writable, derived, Readable } from "svelte/store";
 import type { BigNumber } from "ethers";
+import QRCodeModal from "@walletconnect/qrcode-modal";
+import WalletConnect from "@walletconnect/client";
+import type { Big } from "big.js";
+import * as ethers from "ethers";
+import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
+import * as modal from "@app/modal";
+import { WalletConnectSigner } from "@app/WalletConnectSigner";
 import type {
   TransactionReceipt,
   TransactionResponse,
 } from "@ethersproject/providers";
 import { Config, getConfig } from "@app/config";
-import WalletConnect from "@walletconnect/client";
 import { Unreachable, assert, assertEq } from "@app/error";
 
 export enum Connection {
@@ -39,34 +45,117 @@ export interface Session {
 }
 
 export interface Store extends Readable<State> {
-  connect(config: Config, payload: string): Promise<void>;
+  connectMetamask(config: Config): Promise<void>;
   updateBalance(n: BigNumber): void;
   refreshBalance(config: Config): Promise<void>;
-
+  provider: ethers.providers.Provider;
+  signer: ethers.Signer;
+  disconnect(): Promise<void>;
+  connectWalletConnect(config: Config): Promise<void>;
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount(address: string): void;
 }
 
-//initialize connector
-const connector = new WalletConnect({
-  bridge: "https://bridge.walletconnect.org", // Required
-});
-
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-  const session = window.localStorage.getItem("session");
+  const state = get(store);
 
-  if (session)
-    store.set({
-      connection: Connection.Connected,
-      session: JSON.parse(session),
+  const qrCodeModal = {
+    open: (uri: string, _cb: unknown, _opts?: unknown) => {
+      modal.toggle(ModalWalletQRCode, onModalHide, {
+        uri,
+      });
+    },
+    close: () => {
+      // N.B: this is actually called when the connection is established,
+      // not when the modal is closed per se.
+      store.set({ connection: Connection.Connecting });
+      modal.hide();
+    },
+  };
+  const newWalletConnect = (): WalletConnect => {
+    return new WalletConnect({
+      bridge: "https://bridge.walletconnect.org",
+      qrcodeModal: QRCodeModal,
     });
+  };
+  let walletConnect = newWalletConnect();
+
+  const disconnect = async () => {
+    await walletConnect.killSession().catch(() => {
+      // When the user disconnects wallet-side, calling `killSession`
+      // app-side trows an error because the wallet has already closed
+      // its socket. Therefore, we simply ignore it.
+    });
+
+    store.set({ connection: Connection.Disconnected });
+    window.localStorage.removeItem("session");
+    location.reload();
+    reinitWalletConnect();
+  };
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+  const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+
+  // Connect to a wallet using walletconnect
+  const connectWalletConnect = async (config: Config) => {
+    //Todo : check wallet state in the store before attempting to connect
+    const state = get(store);
+    const session = window.localStorage.getItem("session");
+
+    if (session) {
+      store.set({
+        connection: Connection.Connected,
+        session: JSON.parse(session),
+      });
+    }
+
+    assertEq(state.connection, Connection.Disconnected);
+    store.set({ connection: Connection.Connecting });
+
+    try {
+      await walletConnect.createSession();
+      console.log("got here");
+
+      walletConnect.on("connect", async (error, payload) => {
+        if (error) {
+          throw error;
+        }
+        const address = await signer.getAddress();
+
+        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+
+        const session = { address, tokenBalance, tx: null };
+
+        store.set({ connection: Connection.Connected, session });
+
+        saveSession({ ...session, tokenBalance: null });
+      });
+    } catch (e) {
+      assertEq(state.connection, Connection.Disconnected);
+      store.set({ connection: Connection.Disconnected });
+      assert(e, "Could not connect to wallet connect");
+    }
+    store.set({ connection: Connection.Connecting });
+  };
+
+  const reinitWalletConnect = () => {
+    walletConnect = newWalletConnect();
+    signer.walletConnect = walletConnect;
+  };
+  const onModalHide = (): void => {
+    if (state.connection === Connection.Disconnected) {
+      reinitWalletConnect();
+    }
+  };
 
   return {
     subscribe: store.subscribe,
-    connect: async (config?: Config, payload?: any) => {
+
+    connectMetamask: async (config: Config) => {
       const state = get(store);
 
       assertEq(state.connection, Connection.Disconnected);
@@ -79,14 +168,11 @@ export const loadState = (initial: State): Store => {
         console.error(e);
       }
 
-      if (config?.provider.getSigner()) {
-        const signer = config?.provider.getSigner();
-        console.log(signer);
-      }
-      const address = payload;
+      const signer = config.provider.getSigner();
+      const address = await signer.getAddress();
 
       try {
-        const tokenBalance: BigNumber = await config?.token.balanceOf(address);
+        const tokenBalance: BigNumber = await config.token.balanceOf(address);
         const session = { address, tokenBalance, tx: null };
         store.set({
           connection: Connection.Connected,
@@ -97,7 +183,6 @@ export const loadState = (initial: State): Store => {
         console.error(e);
       }
     },
-
     updateBalance: (n: BigNumber) => {
       store.update((s: State) => {
         assert(s.connection === Connection.Connected);
@@ -200,6 +285,10 @@ export const loadState = (initial: State): Store => {
         }
       });
     },
+    disconnect,
+    connectWalletConnect,
+    provider,
+    signer,
   };
 };
 
@@ -246,9 +335,6 @@ export async function approveSpender(
 }
 
 export function disconnectWallet(): void {
-  if (connector.connected) {
-    connector.killSession();
-  }
   window.localStorage.removeItem("session");
   location.reload();
 }
