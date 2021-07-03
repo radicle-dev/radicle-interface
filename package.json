@@ -47,6 +47,7 @@
     "marked": "^2.0.7",
     "multibase": "^4.0.4",
     "multihashes": "^4.0.2",
+    "pure-svg-code": "^1.0.6",
     "svelte": "^3.32.3",
     "svelte-preprocess": "^4.7.2",
     "svelte-routing": "^1.6.0"
