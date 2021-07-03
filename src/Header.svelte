@@ -3,7 +3,7 @@
   import { link } from "svelte-routing";
   import { formatBalance, formatAddress } from "@app/utils";
   import { error, Failure } from "@app/error";
-  import { disconnectWallet } from "@app/session";
+  import { state } from "@app/session";
   import type { Session } from "@app/session";
   import Loading from "@app/Components/Loading.svelte";
   import Logo from "./Components/Logo.svelte";
@@ -66,7 +66,7 @@
       <button
         class="address outline small"
         bind:this={sessionButton}
-        on:click={disconnectWallet}
+        on:click={state.disconnect}
         on:mouseover={() => (sessionButtonHover = true)}
         on:mouseout={() => (sessionButtonHover = false)}
       >

@@ -105,8 +105,8 @@ export const loadState = (initial: State): Store => {
     //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
-
-    if (session) {
+    console.log(walletConnect.connected, session);
+    if (session && walletConnect.connected) {
       store.set({
         connection: Connection.Connected,
         session: JSON.parse(session),

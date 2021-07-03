@@ -2,7 +2,7 @@
   import { Connection } from "@app/session";
   import { state } from "@app/session";
   import type { Config } from "@app/config";
-  import Modal from "@app/Components/Modal/Modal.svelte";
+  //import Modal from "@app/Components/Modal/Modal.svelte";
   export let config: Config;
   export let caption = "Connect";
   export let className = "";
@@ -10,9 +10,9 @@
 
   let walletUnavailable = !window.ethereum;
 
-  const onClickMetamask = async () => {
-    state.connectMetamask(config);
-  };
+  // const onClickMetamask = async () => {
+  //   state.connectMetamask(config);
+  // };
   console.log(state);
   $: connecting = $state.connection === Connection.Connecting;
 </script>
