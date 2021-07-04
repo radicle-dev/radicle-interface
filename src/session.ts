@@ -2,7 +2,6 @@ import { get, writable, derived, Readable } from "svelte/store";
 import type { BigNumber } from "ethers";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import WalletConnect from "@walletconnect/client";
-import type { Big } from "big.js";
 import * as ethers from "ethers";
 import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
 import * as modal from "@app/modal";
@@ -70,7 +69,7 @@ export const loadState = (initial: State): Store => {
   }
 
   const qrCodeModal = {
-    open: (uri: string, _cb: unknown, _opts?: unknown) => {
+    open: (uri: string) => {
       modal.toggle(ModalWalletQRCode, onModalHide, {
         uri,
       });
@@ -82,6 +81,7 @@ export const loadState = (initial: State): Store => {
       modal.hide();
     },
   };
+  console.log(qrCodeModal);
   const newWalletConnect = (): WalletConnect => {
     return new WalletConnect({
       bridge: "https://bridge.walletconnect.org",
@@ -130,6 +130,7 @@ export const loadState = (initial: State): Store => {
       console.log("got here");
 
       walletConnect.on("connect", async (error, payload) => {
+        console.info(payload);
         if (error) {
           throw error;
         }

@@ -41,12 +41,12 @@
       path === "/"
         ? proj.getReadme(urn, commit, config)
         : proj.getBlob(
-            urn,
-            commit,
-            path,
-            { highlight: !isMarkdownPath },
-            config
-          );
+          urn,
+          commit,
+          path,
+          { highlight: !isMarkdownPath },
+          config
+        );
 
     state = { status: Status.Loading, path };
     state = { status: Status.Loaded, path, blob: await promise };

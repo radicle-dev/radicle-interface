@@ -49,9 +49,6 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
   return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
-export function formatCAIP10Address(address: string, protocol: string, impl: number): string {
-  return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
-}
 
 export function formatAddress(addr: string): string {
   return formatHash(ethers.utils.getAddress(addr));

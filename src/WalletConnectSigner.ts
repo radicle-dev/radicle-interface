@@ -114,6 +114,7 @@ export class WalletConnectSigner extends ethers.Signer {
   }
 
   connect(_provider: Provider): ethers.Signer {
+    console.log(_provider);
     throw new Error("WalletConnectSigner.connect should never be called");
   }
 }
