@@ -4,12 +4,10 @@
   import { formatAddress, formatBalance } from '@app/utils';
   import { session } from '@app/session';
   import type { Config } from '@app/config';
-
-  import Connect from "@app/Components/Wallet/Connect.svelte";
-  import Modal from "@app/Components/Modal/Modal.svelte";
-  import Loading from "@app/Components/Loading.svelte";
-  import Message from "@app/Message.svelte";
-
+  import Connect from '@app/Components/Wallet/Connect.svelte';
+  import Modal from '@app/Components/Modal/Modal.svelte';
+  import Loading from '@app/Components/Loading.svelte';
+  import Message from '@app/Message.svelte';
   import { registrar, registrationFee } from './registrar';
 
   enum State {

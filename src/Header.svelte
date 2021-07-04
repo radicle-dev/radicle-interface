@@ -1,18 +1,18 @@
-<script lang="ts">
+<script lang='ts'>
   // TODO: Shorten tx hash
-  import { link } from "svelte-routing";
-  import { formatBalance, formatAddress } from "@app/utils";
-  import { error, Failure } from "@app/error";
-  import { state } from "@app/session";
-  import type { Session } from "@app/session";
-  import Loading from "@app/Components/Loading.svelte";
-  import Logo from "./Components/Logo.svelte";
-  import Connect from "./Components/Wallet/Connect.svelte";
-  import type { Config } from "@app/config";
+  import { link } from 'svelte-routing';
+  import { formatBalance, formatAddress } from '@app/utils';
+  import { error, Failure } from '@app/error';
+  import { state } from '@app/session';
+  import type { Session } from '@app/session';
+  import Loading from '@app/Components/Loading.svelte';
+  import Logo from '@pp/Components/Logo.svelte';
+  import Connect from '@app/Components/Wallet/Connect.svelte';
+  import type { Config } from '@app/config';
 
   export let session: Session | null;
   export let config: Config | null;
-console.log(config, "confg")
+console.log(config, 'confg')
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
   $: address = session && session.address;
@@ -21,40 +21,40 @@ console.log(config, "confg")
 
 {#if $error}
   {#if $error.type === Failure.TransactionFailed}
-    <div class="error">
+    <div class='error'>
       {#if $error.message}
         <strong>Error:</strong> {$error.message}
       {:else if $error.txHash}
         <strong>Error:</strong> Transaction
-        <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a> failed.
+        <a href='https://etherscan.io/tx/{$error.txHash}'>{$error.txHash}</a> failed.
       {/if}
     </div>
   {/if}
 {/if}
 
 <header>
-  <div class="left">
-    <a use:link href="/"><Logo /></a>
-    <div class="nav">
-      <a use:link href="/registrations">Register</a>
-      <a use:link href="/vesting/">Vesting</a>
-      <a use:link href="/orgs/">Orgs</a>
+  <div class='left'>
+    <a use:link href='/'><Logo /></a>
+    <div class='nav'>
+      <a use:link href='/registrations'>Register</a>
+      <a use:link href='/vesting/'>Vesting</a>
+      <a use:link href='/orgs/'>Orgs</a>
     </div>
   </div>
 
-  <div class="right">
-    {#if config && config.network.name == "ropsten"}
-      <span class="network">Ropsten</span>
-    {:else if config && config.network.name == "rinkeby"}
-      <span class="network">Rinkeby</span>
-    {:else if config && config.network.name == "homestead"}
+  <div class='right'>
+    {#if config && config.network.name == 'ropsten'}
+      <span class='network'>Ropsten</span>
+    {:else if config && config.network.name == 'rinkeby'}
+      <span class='network'>Rinkeby</span>
+    {:else if config && config.network.name == 'homestead'}
       <!-- Don't show anything -->
     {:else}
-      <span class="network unavailable">No Network</span>
+      <span class='network unavailable'>No Network</span>
     {/if}
 
     {#if address}
-      <span class="balance">
+      <span class='balance'>
         {#if tokenBalance}
           {formatBalance(tokenBalance)} <strong>RAD</strong>
         {:else}
@@ -63,7 +63,7 @@ console.log(config, "confg")
       </span>
 
       <button
-        class="address outline small"
+        class='address outline small'
         bind:this={sessionButton}
         on:click={state.disconnect}
         on:mouseover={() => (sessionButtonHover = true)}
@@ -76,8 +76,8 @@ console.log(config, "confg")
         {/if}
       </button>
     {:else if config}
-      <span class="connect">
-        <Connect className="small" {config} />
+      <span class='connect'>
+        <Connect className='small' {config} />
       </span>
     {/if}
   </div>

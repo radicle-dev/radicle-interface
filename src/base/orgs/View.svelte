@@ -1,26 +1,26 @@
-<script lang="ts">
-  import * as ethers from "ethers";
-  import { onMount } from "svelte";
-  import type { SvelteComponent } from "svelte";
-  import Link from "@app/Link.svelte";
-  import type { Config } from "@app/config";
-  import type { Registration } from "@app/base/registrations/registrar";
-  import { getRegistration } from "@app/base/registrations/registrar";
-  import { parseEnsLabel, explorerLink } from "@app/utils";
-  import { session } from "@app/session";
-  import Loading from "@app/Components/Loading.svelte";
-  import Modal from "@app/Components/Modal/Modal.svelte";
-  import Error from "@app/Error.svelte";
-  import Icon from "@app/Components/Icon.svelte";
-  import Blockies from "@app/Blockies.svelte";
-  import SetName from "@app/ens/SetName.svelte";
-  import Project from "@app/base/projects/Widget.svelte";
-  import Address from "@app/Address.svelte";
-  import Message from "@app/Message.svelte";
-  import * as utils from "@app/utils";
+<script lang='ts'>
+  import * as ethers from 'ethers';
+  import { onMount } from 'svelte';
+  import type { SvelteComponent } from 'svelte';
+  import Link from '@app/Link.svelte';
+  import type { Config } from '@app/config';
+  import type { Registration } from '@app/base/registrations/registrar';
+  import { getRegistration } from '@app/base/registrations/registrar';
+  import { parseEnsLabel, explorerLink } from '@app/utils';
+  import { session } from '@app/session';
+  import Loading from '@app/Components/Loading.svelte';
+  import Modal from '@app/Components/Modal/Modal.svelte';
+  import Error from '@app/Error.svelte';
+  import Icon from '@app/Components/Icon.svelte';
+  import Blockies from '@app/Blockies.svelte';
+  import SetName from '@app/ens/SetName.svelte';
+  import Project from '@app/base/projects/Widget.svelte';
+  import Address from '@app/Address.svelte';
+  import Message from '@app/Message.svelte';
+  import * as utils from '@app/utils';
 
-  import { Org } from "./Org";
-  import TransferOwnership from "./TransferOwnership.svelte";
+  import { Org } from './Org';
+  import TransferOwnership from './TransferOwnership.svelte';
 
   export let address: string;
   export let config: Config;
@@ -46,8 +46,9 @@
   };
 
   $: label = name && parseEnsLabel(name, config);
-  $: isOwner = (org: Org): boolean =>
-    $session ? utils.isAddressEqual(org.owner, $session.address) : false;
+  $: isOwner = (org: Org): boolean => $session
+    ? utils.isAddressEqual(org.owner, $session.address)
+    : false;
   $: isAuthorized = async (org: Org): Promise<boolean> => {
     if ($session) {
       if (isOwner(org)) {
@@ -65,30 +66,30 @@
   {#if org}
     <main>
       <header>
-        <div class="avatar">
+        <div class='avatar'>
           {#if registration && registration.avatar}
-            <img src={registration.avatar} alt="avatar" />
+            <img src={registration.avatar} alt='avatar' />
           {:else}
             <Blockies address={org.address} />
           {/if}
         </div>
-        <div class="info">
-          <span class="title bold">
+        <div class='info'>
+          <span class='title bold'>
             {registration ? label : ethers.utils.getAddress(address)}
           </span>
-          <div class="links">
+          <div class='links'>
             {#if registration}
               {#if registration.url}
-                <a class="url" href={registration.url}>{registration.url}</a>
+                <a class='url' href={registration.url}>{registration.url}</a>
               {/if}
               {#if registration.twitter}
-                <a class="url" href={registration.twitter}>
-                  <Icon name="twitter" />
+                <a class='url' href={registration.twitter}>
+                  <Icon name='twitter' />
                 </a>
               {/if}
               {#if registration.github}
-                <a class="url" href={registration.github}>
-                  <Icon name="github" />
+                <a class='url' href={registration.github}>
+                  <Icon name='github' />
                 </a>
               {/if}
             {/if}
@@ -96,31 +97,31 @@
         </div>
       </header>
 
-      <div class="fields">
+      <div class='fields'>
         <!-- Address -->
-        <div class="label">Address</div>
+        <div class='label'>Address</div>
         <div><Address {config} address={org.address} /></div>
         <div />
         <!-- Owner -->
-        <div class="label">Owner</div>
+        <div class='label'>Owner</div>
         <div><Address resolve {config} address={org.owner} /></div>
         <div>
           {#if isOwner(org)}
-            <button class="tiny secondary" on:click={transferOwnership}>
+            <button class='tiny secondary' on:click={transferOwnership}>
               Transfer
             </button>
           {/if}
         </div>
         <!-- Name -->
-        <div class="label">Name</div>
+        <div class='label'>Name</div>
         <div>
           {#await org.lookupAddress(config)}
-            <div class="loading"><Loading small /></div>
+            <div class='loading'><Loading small /></div>
           {:then name}
             {#if name}
               <Link to={`/registrations/${label}`}>{name}</Link>
             {:else}
-              <span class="subtle">Not set</span>
+              <span class='subtle'>Not set</span>
             {/if}
           {/await}
         </div>
@@ -129,25 +130,25 @@
             <!-- Loading -->
           {:then authorized}
             {#if authorized}
-              <button class="tiny secondary" on:click={setName}> Set </button>
+              <button class='tiny secondary' on:click={setName}> Set </button>
             {/if}
           {/await}
         </div>
       </div>
 
-      <div class="members">
+      <div class='members'>
         {#await org.getMembers(config)}
           <Loading center />
         {:then members}
           {#each members as address}
-            <div class="member">
-              <div class="member-icon">
+            <div class='member'>
+              <div class='member-icon'>
                 <Blockies {address} />
               </div>
               <a
                 href={explorerLink(address, config)}
-                target="_blank"
-                class="member"
+                target='_blank'
+                class='member'
               >
                 {utils.formatAddress(address)}
               </a>
@@ -156,12 +157,12 @@
         {/await}
       </div>
 
-      <div class="projects">
+      <div class='projects'>
         {#await org.getProjects(config)}
           <Loading center />
         {:then projects}
           {#each projects as project}
-            <div class="project">
+            <div class='project'>
               <Project {project} org={org.address} {config} />
             </div>
           {/each}
@@ -174,20 +175,20 @@
     </main>
   {:else}
     <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{address}</strong></p>
+      <span slot='title'>🏜️</span>
+      <span slot='body'>
+        <p class='highlight'><strong>{address}</strong></p>
         <p>Sorry, there is no Org at this address.</p>
         {#if utils.isAddress(address)}
           <p>
-            <a href={explorerLink(address, config)} class="link" target="_blank"
+            <a href={explorerLink(address, config)} class='link' target='_blank'
               >View in explorer</a
             >
-            <span class="faded">↗</span>
+            <span class='faded'>↗</span>
           </p>
         {/if}
       </span>
-      <span slot="actions">
+      <span slot='actions'>
         <button on:click={back}> Back </button>
       </span>
     </Modal>
