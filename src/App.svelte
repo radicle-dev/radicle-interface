@@ -12,8 +12,8 @@
   import Projects from '@app/base/projects/Routes.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
+  import Loading from '@app/Components/Loading.svelte';
+  import Modal from '@app/Components/Modal/Modal.svelte';
 
   const loadConfig = getConfig().then((cfg) => {
     if ($state.connection === Connection.Connected) {

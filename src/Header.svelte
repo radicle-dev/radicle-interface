@@ -6,7 +6,7 @@
   import { state } from '@app/session';
   import type { Session } from '@app/session';
   import Loading from '@app/Components/Loading.svelte';
-  import Logo from '@pp/Components/Logo.svelte';
+  import Logo from '@app/Components/Logo.svelte';
   import Connect from '@app/Components/Wallet/Connect.svelte';
   import type { Config } from '@app/config';
 
