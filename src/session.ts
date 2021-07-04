@@ -138,13 +138,14 @@ export const loadState = (initial: State): Store => {
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
 
         const session = { address, tokenBalance, tx: null };
-        const provNetwork = await provider.getNetwork();
+        const provNetwork = await ethers.providers.getNetwork(
+          signer.walletConnect.chainId
+        );
         const network = {
           name: provNetwork.name,
           chainId: provNetwork.chainId,
         };
-        console.log(provNetwork, "network");
-        // config = new Config(network, provider, signer);
+        config = new Config(network, provider, signer);
 
         store.set({ connection: Connection.Connected, session });
 
