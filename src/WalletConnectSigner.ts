@@ -1,5 +1,3 @@
-
-
 import type WalletConnect from "@walletconnect/client";
 import * as ethers from "ethers";
 import * as ethersBytes from "@ethersproject/bytes";
@@ -14,9 +12,9 @@ import {
   resolveProperties,
 } from "@ethersproject/properties";
 
-
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;
+
   private _provider: ethers.providers.Provider;
   constructor(
     walletConnect: WalletConnect,
@@ -40,6 +38,11 @@ export class WalletConnectSigner extends ethers.Signer {
     return accountAddress;
   }
 
+  // async getSigner(): Promise<void> {
+  //   const _constructorGuard = {};
+  //   const signer =  ethers.providers.
+  // }
+
   async signMessage(message: ethers.Bytes | string): Promise<string> {
     const prefix = ethers.utils.toUtf8Bytes(
       `\x19Ethereum Signed Message:\n${message.length}`
@@ -57,7 +60,6 @@ export class WalletConnectSigner extends ethers.Signer {
   async sendTransaction(
     transaction: Deferrable<TransactionRequest>
   ): Promise<TransactionResponse> {
-
     const tx = await resolveProperties(transaction);
     const from = tx.from || (await this.getAddress());
 

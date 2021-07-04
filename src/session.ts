@@ -61,6 +61,13 @@ export interface Store extends Readable<State> {
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
   const state = get(store);
+  const session = window.localStorage.getItem("session");
+  if (session) {
+    store.set({
+      connection: Connection.Connected,
+      session: JSON.parse(session),
+    });
+  }
 
   const qrCodeModal = {
     open: (uri: string, _cb: unknown, _opts?: unknown) => {
@@ -96,8 +103,10 @@ export const loadState = (initial: State): Store => {
     reinitWalletConnect();
   };
 
+  //ethereum provider
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
+  // instantiate wallet connect signer
   const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
   // Connect to a wallet using walletconnect
@@ -129,6 +138,13 @@ export const loadState = (initial: State): Store => {
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
 
         const session = { address, tokenBalance, tx: null };
+        const provNetwork = await provider.getNetwork();
+        const network = {
+          name: provNetwork.name,
+          chainId: provNetwork.chainId,
+        };
+        console.log(provNetwork, "network");
+        // config = new Config(network, provider, signer);
 
         store.set({ connection: Connection.Connected, session });
 
