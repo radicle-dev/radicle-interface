@@ -67,6 +67,7 @@
 	--box-shadow-color: var(--color-secondary-2);
 	--content-max-width: 1920px;
 	--content-min-width: 480px;
+	--content-padding: 2rem;
 	--scrollbar-width: 0.5rem;
 }
 

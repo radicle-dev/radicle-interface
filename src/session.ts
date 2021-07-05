@@ -3,6 +3,11 @@ import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
+import WalletConnect from "@walletconnect/client";
+import * as ethers from "ethers";
+import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
+import * as modal from "@app/modal";
+import { WalletConnectSigner } from "@app/WalletConnectSigner";
 
 export enum Connection {
   Disconnected,

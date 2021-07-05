@@ -61,6 +61,10 @@ export function capitalize(s: string): string {
   return s[0].toUpperCase() + s.substr(1);
 }
 
+export function ellipsed(x: string, length = 8): string {
+  return `${x.slice(0, length + 2)}…${x.slice(-length)}`;
+}
+
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
 // returns the label, eg. 'cloudhead', otherwise `null`.
 export function parseEnsLabel(name: string, config: Config): string {

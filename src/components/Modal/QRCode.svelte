@@ -1,7 +1,7 @@
 <script lang="typescript">
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
-
+    import { ellipsed } from "@app/utils";
     export let uri: string;
   
     $: svgString = qrcode({
@@ -13,6 +13,17 @@
       ecl: "M",
     });
   </script>
+
+<style>
+    .qrcode-wrapper {
+      width: fit-content;
+      margin: var(--content-padding) auto;
+      padding: calc(var(--content-padding) / 2);
+      border-radius: 1rem;
+      background-color: white;
+    }
+  </style>
+  
   
   <Modal floating={true}>
     <p slot="title">Connect your wallet</p>
@@ -27,16 +38,8 @@
       <div data-cy="qr-code">
         {@html svgString}
       </div>
+     
     </div>
   </Modal>
   
-  <style>
-    .qrcode-wrapper {
-      width: fit-content;
-      margin: var(--content-padding) auto;
-      padding: calc(var(--content-padding) / 2);
-      border-radius: 1rem;
-      background-color: white;
-    }
-  </style>
-  
+ 
