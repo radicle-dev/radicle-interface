@@ -2,7 +2,7 @@
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
     export let uri: string;
-  
+
     $: svgString = qrcode({
       content: uri,
       width: 225,
@@ -11,7 +11,7 @@
       background: "white",
       ecl: "M",
     });
-  </script>
+</script>
 
 <style>
     .qrcode-wrapper {

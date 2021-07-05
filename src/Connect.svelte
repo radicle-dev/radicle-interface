@@ -12,7 +12,7 @@
 
   const onClickConnect = () => {
     state.connectWalletConnect(config);
-  }
+  };
 
   $: connecting = $state.connection === Connection.Connecting;
 </script>
