@@ -5,7 +5,7 @@ import rewriteAll from "vite-plugin-rewrite-all";
 
 const config: UserConfig = {
   optimizeDeps: {
-    exclude: ['svelte-routing']
+    exclude: ['svelte-routing', "@pedrouid/environment","@pedrouid/iso-crypto"]
   },
   plugins: [svelte(), rewriteAll()],
   resolve: {
@@ -13,6 +13,8 @@ const config: UserConfig = {
       "@app": path.resolve("./src"),
       // Polyfill for Node.js "stream" library.
       "stream": path.resolve("./src/polyfills/stream.ts"),
+      "typedarray-to-buffer": path.resolve("./src/polyfills/typedarray-to-buffer.js"),
+      "enc-utils": path.resolve("./src/polyfills/enc-utils.js"),
     },
   },
   define: {

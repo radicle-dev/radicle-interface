@@ -10,6 +10,10 @@
 
   let walletUnavailable = !window.ethereum;
 
+  const onClickConnect = () => {
+    state.connectWalletConnect(config);
+  }
+
   $: connecting = $state.connection === Connection.Connecting;
 </script>
 
@@ -17,7 +21,7 @@
 </style>
 
 <button
-  on:click={() => state.connect(config)}
+  on:click={onClickConnect}
   {style}
   class="connect {className}"
   disabled={connecting || walletUnavailable}
