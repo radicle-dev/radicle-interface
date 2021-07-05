@@ -1,7 +1,6 @@
 <script lang="typescript">
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
-    import { ellipsed } from "@app/utils";
     export let uri: string;
   
     $: svgString = qrcode({

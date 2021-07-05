@@ -99,12 +99,7 @@ export const loadState = (initial: State): Store => {
     const state = get(store);
     const session = window.localStorage.getItem("session");
     console.log(walletConnect.connected, session);
-    if (session && walletConnect.connected) {
-      store.set({
-        connection: Connection.Connected,
-        session: JSON.parse(session),
-      });
-    }
+    if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
     assertEq(state.connection, Connection.Disconnected);
     store.set({ connection: Connection.Connecting });
