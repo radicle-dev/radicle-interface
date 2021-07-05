@@ -4,6 +4,7 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import config from "@app/config.json";
+import type { WalletConnectSigner } from "./WalletConnectSigner";
 
 declare global {
   interface Window {
@@ -20,7 +21,7 @@ export class Config {
   orgs: { subgraph: string; contractHash: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
-  signer: ethers.Signer & TypedDataSigner | null;
+  signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
   safe: {
     api?: string;
     client?: SafeServiceClient;
@@ -37,7 +38,7 @@ export class Config {
   constructor(
     network: { name: string; chainId: number },
     provider: ethers.providers.JsonRpcProvider,
-    signer: ethers.Signer & TypedDataSigner | null,
+    signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null,
   ) {
     const cfg = (<Record<string, any>> config)[network.name];
     const api = config.radicle.api;
