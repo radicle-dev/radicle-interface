@@ -16,7 +16,7 @@
     },
     "safe": {
       "api": "https://safe-transaction.gnosis.io",
-      "subgraph": null,
+      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/gnosis-safe",
       "viewer": "https://gnosis-safe.io/app/#/safes"
     },
     "tokens": []
