@@ -1,7 +1,7 @@
 <script lang="typescript">
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
-    export let uri: string;
+    export let uri;
 
     $: svgString = qrcode({
       content: uri,
