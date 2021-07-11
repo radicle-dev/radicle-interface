@@ -199,7 +199,7 @@ export async function resolveLabel(label: string, config: Config): Promise<strin
   return config.provider.resolveName(`${label}.${config.registrar.domain}`);
 }
 
-export async function lookupAddress(address: string, config: Config): Promise<Profile>  {
+export async function lookupAddress(address: string, config: Config): Promise<Profile> {
   const profile: Profile = { ens: null, idx: null };
 
   try {

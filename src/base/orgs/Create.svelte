@@ -73,7 +73,7 @@
   const onGovernanceChanged = (event: { detail: string }) => {
     switch (event.detail) {
       case "bdfl": governance = Governance.BDFL; break;
-      case "quorum":  governance = Governance.Quorum; break;
+      case "quorum": governance = Governance.Quorum; break;
     }
   };
 </script>

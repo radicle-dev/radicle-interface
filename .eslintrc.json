@@ -28,6 +28,7 @@
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
     "no-trailing-spaces": ["error"],
+    "no-multi-spaces": ["error"],
     "space-before-function-paren": ["error", {
       "anonymous": "always",
       "named": "never",
