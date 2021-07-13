@@ -32,8 +32,10 @@
   </span>
 
   <span slot="actions">
-    <button on:click={() => dispatch('close')}>
-      {action}
-    </button>
+    <slot name="actions">
+      <button on:click={() => dispatch('close')}>
+        {action}
+      </button>
+    </slot>
   </span>
 </Modal>

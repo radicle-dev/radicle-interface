@@ -28,15 +28,15 @@
   const orgTypes = [
     { label: "Single-signature",
       description: [
-        `Creates an org with the specified address as the only owner.`,
-        `Org transactions such as anchoring can be signed and executed directly from your wallet.`
+        `Creates an org with the specified address as the sole owner.`,
+        `Org transactions such as anchoring are signed and executed directly from the owner's wallet.`
       ],
       value: Governance.BDFL
     },
     { label: "Multi-signature",
       description: [
-        "Creates an org with a multi-signature contract as its owner, and the specified address as its only member.",
-        "A [Gnosis Safe](https://gnosis-safe.io) contract will be deployed for your org.",
+        "Creates an org with a multi-signature contract as its owner, and the specified address as the first member.",
+        "A [Gnosis Safe](https://gnosis-safe.io) will be deployed for your org.",
         "Transactions such as anchoring have to be approved by a quorum of signers."
       ],
       value: Governance.Quorum
@@ -150,7 +150,7 @@
       {#if state === State.Idle}
         <div class="highlight">Select a governance model</div>
       {:else if state === State.Signing}
-        <div class="highlight">Confirm transaction in your wallet</div>
+        <div class="highlight">Please confirm the transaction in your wallet.</div>
       {:else if state === State.Pending}
         <div class="highlight">Waiting for transaction to be processed...</div>
       {/if}
@@ -165,7 +165,7 @@
                      on:changed={onGovernanceChanged} />
           </div>
 
-          <label class="input" for="address">Org owner or member Ethereum address</label>
+          <label class="input" for="address">Ethereum address</label>
           <input name="address" class="small" type="text" maxlength="42" bind:value={owner} />
         </div>
       {:else}

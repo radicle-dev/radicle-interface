@@ -61,17 +61,17 @@
       {#if $state.connection === State.Connecting}
         Connecting...
       {:else if $state.connection === State.Committing}
-        Committing...
+        Committing... Please confirm in your wallet.
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
-        Waiting for commitment time...
+        Waiting for commitment time... This may take a moment.
       {:else if $state.connection === State.Registering}
-        Registering name...
+        Registering name... Please confirm the transaction in your wallet.
       {/if}
     </span>
 
     <span slot="body" class="loader">
       {#if $state.connection === State.Registered}
-        The name has been successfully registered to
+        This name has been successfully registered to
         <span class="highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         <BlockTimer {config} startBlock={$state.commitmentBlock} duration={$state.minAge} />

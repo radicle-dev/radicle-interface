@@ -118,9 +118,8 @@
   <div class="left">
     <a use:link href="/"><Logo /></a>
     <div class="nav">
-      <a use:link href="/registrations">Register</a>
-      <a use:link href="/vesting/">Vesting</a>
       <a use:link href="/orgs/">Orgs</a>
+      <a use:link href="/registrations">Register</a>
     </div>
   </div>
 

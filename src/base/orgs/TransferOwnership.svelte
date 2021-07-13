@@ -86,7 +86,7 @@
       {#if state == State.Signing}
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
-        Transaction is being processed by the network...
+        Waiting for transaction to be processed...
       {:else if state == State.Idle}
         Transfer the ownership of Org <strong>{formatAddress(org.address)}</strong> to a new address.
       {:else if state == State.Failed}
