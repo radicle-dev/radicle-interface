@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
-  import { safeLink, identifyAddress, formatAddress, AddressType } from '@app/utils';
+  import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType } from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import Avatar from "@app/Avatar.svelte";
   import type { Config } from '@app/config';
@@ -68,7 +68,7 @@
     <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge safe">safe</span>
   {:else if addressType === AddressType.Contract}
-    <a href={`/orgs/${address}`} target="_blank">{addressLabel}</a>
+    <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge">contract</span>
   {:else if addressType === AddressType.EOA}
     <a href={`/users/${address}`} target="_blank">{addressLabel}</a>
