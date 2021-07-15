@@ -148,8 +148,7 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
       signature.v,
       signature.r,
       signature.s,
-      { gasLimit: 150000 })
-    .catch((e: Error) => console.error(e));
+      { gasLimit: 150000 });
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
