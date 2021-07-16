@@ -76,6 +76,8 @@ export const loadState = (initial: State): Store => {
   };
   let walletConnect = newWalletConnect();
 
+  let network;
+
   const disconnect = async () => {
     await walletConnect.killSession().catch(() => {
       // When the user disconnects wallet-side, calling `killSession`
@@ -89,11 +91,17 @@ export const loadState = (initial: State): Store => {
     reinitWalletConnect();
   };
 
+  console.log(walletConnect.rpcUrl, "lol");
+
+  console.log(window.ethereum, "eethereum");
+
   //ethereum provider
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
   // instantiate wallet connect signer
   const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+
+  console.log(signer, "signer");
   // Connect to a wallet using walletconnect
   const connectWalletConnect = async (config: Config) => {
   //Todo : check wallet state in the store before attempting to connect
@@ -122,7 +130,7 @@ export const loadState = (initial: State): Store => {
         const provNetwork = await ethers.providers.getNetwork(
           signer.walletConnect.chainId
         );
-        const network = {
+        network = {
           name: provNetwork.name,
           chainId: provNetwork.chainId,
         };
@@ -332,6 +340,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 
 export function disconnectWallet(): void {
   window.localStorage.removeItem("session");
+  window.localStorage.removeItem("walletconnect");
   location.reload();
 }
 

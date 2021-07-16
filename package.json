@@ -36,6 +36,7 @@
     "big.js": "^6.1.1",
     "@walletconnect/client": "^1.4.2-rc.2",
     "@walletconnect/qrcode-modal": "^1.4.1",
+    "@ethersproject/abstract-provider": "^5.4.0",
     "@walletconnect/signer-connection": "^1.4.2-rc.2",
     "@walletconnect/types": "^1.4.2-rc.2",
     "@walletconnect/utils": "^1.4.2-rc.2",

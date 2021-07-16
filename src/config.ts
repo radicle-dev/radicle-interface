@@ -119,6 +119,8 @@ export async function getConfig(): Promise<Config> {
     // instantiate wallet connect signer
     const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
+    console.log(signer.getAddress(), 'from config');
+
     const provNetwork = await ethers.providers.getNetwork(
       signer.walletConnect.chainId
     );

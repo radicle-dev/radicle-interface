@@ -6,19 +6,22 @@ import type {
   TransactionRequest,
   TransactionResponse,
 } from "@ethersproject/abstract-provider";
+
 import {
   Deferrable,
   defineReadOnly,
   resolveProperties,
 } from "@ethersproject/properties";
+import { Logger, _TypedDataEncoder } from "ethers/lib/utils";
+import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
 
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;
 
-  private _provider: ethers.providers.Provider;
+  private _provider: ethers.providers.JsonRpcProvider;
   constructor(
     walletConnect: WalletConnect,
-    provider: Provider,
+    provider: ethers.providers.JsonRpcProvider,
     onDisconnect: () => void
   ) {
     super();
@@ -42,6 +45,24 @@ export class WalletConnectSigner extends ethers.Signer {
   //   const _constructorGuard = {};
   //   const signer =  ethers.providers.
   // }
+  _fail(message: string, operation: string): Promise<any> {
+    return Promise.resolve().then(() => {
+      ethers.logger.throwError(message, Logger.errors.UNSUPPORTED_OPERATION, { operation: operation });
+    });
+  }
+  async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
+    // Populate any ENS names (in-place)
+    const populated = await _TypedDataEncoder.resolveNames(domain, types, value, (name: string) => {
+      return this._provider.resolveName(name);
+    });
+
+    const address = await this.getAddress();
+
+    return await this._provider.send("eth_signTypedData_v4", [
+      address.toLowerCase(),
+      JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value))
+    ]);
+  }
 
   async signMessage(message: ethers.Bytes | string): Promise<string> {
     const prefix = ethers.utils.toUtf8Bytes(

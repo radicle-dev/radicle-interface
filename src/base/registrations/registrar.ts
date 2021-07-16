@@ -172,6 +172,7 @@ async function permitSignature(
   assert(owner.provider);
 
   const ownerAddr = await owner.getAddress();
+  console.log(ownerAddr, "from registrar");
   const nonce = await token.nonces(ownerAddr);
   const chainId = (await owner.provider.getNetwork()).chainId;
 
@@ -197,7 +198,7 @@ async function permitSignature(
     "deadline": deadline
   };
   const sig = await owner._signTypedData(domain, types, values);
-
+  console.log(sig, "here");
   return ethers.utils.splitSignature(sig);
 }
 
