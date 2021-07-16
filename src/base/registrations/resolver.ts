@@ -34,6 +34,11 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
           iface.encodeFunctionData("setText", [node, "com." + r.name, r.value])
         );
         break;
+      case "seed":
+        calls.push(
+          iface.encodeFunctionData("setText", [node, "eth.radicle." + r.name, r.value])
+        );
+        break;
       default:
         console.error(`unknown field "${r.name}"`);
     }

@@ -14,6 +14,7 @@ export interface Registration {
   name: string;
   owner: string;
   address: string | null;
+  seed: string | null;
   url: string | null;
   avatar: string | null;
   twitter: string | null;
@@ -58,17 +59,19 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     resolver.getAddress(),
     resolver.getText('avatar'),
     resolver.getText('url'),
+    resolver.getText('eth.radicle.seed'),
     resolver.getText('com.twitter'),
     resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, twitter, github] =
+  const [address, avatar, url, seed, twitter, github] =
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
     name,
     url,
     avatar,
+    seed,
     owner,
     address,
     twitter,
