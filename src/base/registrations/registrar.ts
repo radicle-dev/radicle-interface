@@ -58,8 +58,8 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     resolver.getAddress(),
     resolver.getText('avatar'),
     resolver.getText('url'),
-    resolver.getText('vnd.twitter'),
-    resolver.getText('vnd.github'),
+    resolver.getText('com.twitter'),
+    resolver.getText('com.github'),
   ]);
 
   const [address, avatar, url, twitter, github] =

@@ -31,7 +31,7 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
       case "github":
       case "twitter":
         calls.push(
-          iface.encodeFunctionData("setText", [node, "vnd." + r.name, r.value])
+          iface.encodeFunctionData("setText", [node, "com." + r.name, r.value])
         );
         break;
       default:
