@@ -170,7 +170,7 @@ async function permitSignature(
   deadline: ethers.BigNumberish,
 ): Promise<ethers.Signature> {
   assert(owner.provider);
-
+  console.log(owner, "here is owner");
   const ownerAddr = await owner.getAddress();
   console.log(ownerAddr, "from registrar");
   const nonce = await token.nonces(ownerAddr);

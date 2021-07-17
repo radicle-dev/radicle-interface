@@ -115,7 +115,10 @@ export async function getConfig(): Promise<Config> {
 
   if (isWalletConnectConnected()){
     //ethereum provider
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.InfuraProvider(
+      "rinkeby",
+      "de5e2a8780c04964950e73b696d1bfb1"
+    );
     // instantiate wallet connect signer
     const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 

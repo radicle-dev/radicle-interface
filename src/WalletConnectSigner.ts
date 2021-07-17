@@ -41,15 +41,7 @@ export class WalletConnectSigner extends ethers.Signer {
     return accountAddress;
   }
 
-  // async getSigner(): Promise<void> {
-  //   const _constructorGuard = {};
-  //   const signer =  ethers.providers.
-  // }
-  _fail(message: string, operation: string): Promise<any> {
-    return Promise.resolve().then(() => {
-      ethers.logger.throwError(message, Logger.errors.UNSUPPORTED_OPERATION, { operation: operation });
-    });
-  }
+
   async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
     // Populate any ENS names (in-place)
     const populated = await _TypedDataEncoder.resolveNames(domain, types, value, (name: string) => {
@@ -58,10 +50,13 @@ export class WalletConnectSigner extends ethers.Signer {
 
     const address = await this.getAddress();
 
-    return await this._provider.send("eth_signTypedData_v4", [
+    console.log(address, "address");
+    const signature = await this.walletConnect.signMessage([
       address.toLowerCase(),
-      JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value))
+      JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),
     ]);
+
+    return signature;
   }
 
   async signMessage(message: ethers.Bytes | string): Promise<string> {
@@ -90,28 +85,17 @@ export class WalletConnectSigner extends ethers.Signer {
       value: maybeBigNumberToString(tx.value),
       data: bytesLikeToString(tx.data),
     });
-
-    return {
-      from,
-      value: ethers.BigNumber.from(tx.value || 0),
-      get chainId(): number {
-        throw new Error("this should never be called");
-      },
-      get nonce(): number {
-        throw new Error("this should never be called");
-      },
-      get gasLimit(): ethers.BigNumber {
-        throw new Error("this should never be called");
-      },
-      get gasPrice(): ethers.BigNumber {
-        throw new Error("this should never be called");
-      },
-      data: bytesLikeToString(tx.data) || "",
+    return <TransactionResponse>{
       hash: txHash,
+      nonce: tx.nonce,
+      gasLimit: tx.gasLimit,
+      gasPrice: tx.gasPrice,
+      data: bytesLikeToString(tx.data) || "",
+      value: tx.value,
+      chainId: tx.chainId,
       confirmations: 1,
-      wait: () => {
-        throw new Error("this should never be called");
-      },
+      from: from,
+      wait: (confirmations?: number) => { return this.provider?.waitForTransaction(txHash, confirmations); }
     };
   }
 

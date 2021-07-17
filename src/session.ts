@@ -96,7 +96,7 @@ export const loadState = (initial: State): Store => {
   console.log(window.ethereum, "eethereum");
 
   //ethereum provider
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const provider = new ethers.providers.InfuraProvider('rinkeby', 'e9c4665d91a343e295308d5995ff5a72');
 
   // instantiate wallet connect signer
   const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
