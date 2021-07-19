@@ -5,6 +5,7 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
+  import { Profile } from '@app/profile';
 
   import Browser from './Browser.svelte';
 
@@ -14,8 +15,20 @@
   export let config: Config;
   export let path: string;
 
-  let getProject = proj.getInfo(urn, config);
   let projectRoot = proj.path({ urn, org, commit });
+  let getProject = new Promise<string | undefined>(resolve => {
+    if (org) {
+      Profile.get(org, config).then((p: Profile) => {
+        resolve(p.seed);
+      });
+    } else {
+      resolve(undefined);
+    }
+  }).then(async (seed) => {
+    const cfg = seed ? config.withSeed(seed) : config;
+    const info = await proj.getInfo(urn, cfg);
+    return { project: info, config: cfg };
+  });
 
   const back = () => window.history.back();
 </script>
@@ -68,14 +81,14 @@
 <main>
   {#await getProject}
     <header>
-      <Loading small />
+      <Loading center />
     </header>
-  {:then project}
+  {:then result}
     <header>
       <div class="title bold">
-        <Link to={projectRoot}>{project.meta.name}</Link>
+        <Link to={projectRoot}>{result.project.meta.name}</Link>
         <span class="maintainers">
-          {#each project.meta.maintainers as user}
+          {#each result.project.meta.maintainers as user}
             <span class="maintainer">
               <Avatar source={user} />
             </span>
@@ -83,9 +96,11 @@
         </span>
       </div>
       <div class="urn">{urn}</div>
-      <div class="description">{project.meta.description}</div>
+      <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} {org} commit={commit || project.head} {path} {config} />
+    <Browser {urn} {org} {path}
+      commit={commit || result.project.head}
+      config={result.config} />
   {:catch}
     <Modal subtle>
       <span slot="title">🏜️</span>
