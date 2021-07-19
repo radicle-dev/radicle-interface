@@ -56,8 +56,10 @@
               value: r.twitter, editable: true },
             { name: "github", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
               value: r.github, editable: true },
-            { name: "seed", placeholder: "https://seed.acme.org:8888",
-              value: r.seed, editable: true },
+            { name: "seed.id", label: "Seed ID", placeholder: "hynkyn...3nrzc@seed.acme.org:8887",
+              value: r.seedId, editable: true },
+            { name: "seed.api", label: "Seed API", placeholder: "https://seed.acme.org:8888",
+              value: r.seedApi, editable: true },
           ];
           state = { status: Status.Found, registration: r };
         } else {
