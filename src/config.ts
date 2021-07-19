@@ -72,6 +72,15 @@ export class Config {
       this.provider,
     );
   }
+
+  // Return the config with an overwritten seed URL.
+  withSeed(seed: string): Config {
+    const cfg = {} as Config;
+    Object.assign(cfg, this);
+    cfg.seed.api = seed;
+
+    return cfg;
+  }
 }
 
 /// Gas limits for various transactions.

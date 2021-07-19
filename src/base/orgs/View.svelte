@@ -220,7 +220,7 @@
           {:then projects}
             {#each projects as project}
               <div class="project">
-                <Project {project} org={org.address} {config} />
+                <Project {project} org={org.address} {config} seed={profile.seed} />
               </div>
             {/each}
           {:catch err}

@@ -54,6 +54,11 @@ export class Profile {
     else return undefined;
   }
 
+  // Using undefined as return type if nothing to be returned since it works better with <a href> links
+  get seed(): string | undefined {
+    return this.profile?.ens?.seed ?? undefined;
+  }
+
   // Keeping this function private since the desired entrypoint is .get()
   private static async lookupAddress(address: string, config: Config): Promise<[IProfile, string]> {
     const profile: IProfile = { ens: null, idx: null };
