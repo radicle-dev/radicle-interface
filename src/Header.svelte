@@ -9,7 +9,7 @@
   import Connect from '@app/Connect.svelte';
   import type { Config } from '@app/config';
   import { Profile } from "@app/profile";
-import Avatar from "./Avatar.svelte";
+  import Avatar from "./Avatar.svelte";
 
   export let session: Session | null;
   export let config: Config;
