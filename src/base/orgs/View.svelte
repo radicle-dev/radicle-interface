@@ -85,6 +85,7 @@
     height: 64px;
   }
   .links {
+    height: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: left;
@@ -107,7 +108,10 @@
   .members .member {
     display: flex;
     align-items: center;
-    margin-right: 1.5rem;
+    margin-right: 2rem;
+  }
+  .members .member:last-child {
+    margin-right: 0;
   }
   .members .member-icon {
     width: 2rem;
