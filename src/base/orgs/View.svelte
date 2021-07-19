@@ -128,86 +128,86 @@
       {#await Profile.get(address, config)}
         <Loading fadeIn />
       {:then profile}
-      <header>
-        <div class="avatar">
-          <Avatar source={profile.avatar ?? address} />
-        </div>
-        <div class="info">
-          <span class="title bold">
-            {parseEnsLabel(profile.name, config) ?? address}
-          </span>
-          <div class="links">
-            {#if profile.url}
-              <a class="url" href={profile.url}>
-                {profile.url}
-              </a>
-            {/if}
-            {#if profile.twitter}
-              <a class="url" href="https://twitter.com/{profile.twitter}">
-                <Icon name="twitter" />
-              </a>
-            {/if}
-            {#if profile.github}
-              <a class="url" href="https://github.com/{profile.github}">
-                <Icon name="github" />
-              </a>
-            {/if}
+        <header>
+          <div class="avatar">
+            <Avatar source={profile.avatar ?? address} />
           </div>
-        </div>
-      </header>
+          <div class="info">
+            <span class="title bold">
+              {parseEnsLabel(profile.name, config) ?? address}
+            </span>
+            <div class="links">
+              {#if profile.url}
+                <a class="url" href={profile.url}>
+                  {profile.url}
+                </a>
+              {/if}
+              {#if profile.twitter}
+                <a class="url" href="https://twitter.com/{profile.twitter}">
+                  <Icon name="twitter" />
+                </a>
+              {/if}
+              {#if profile.github}
+                <a class="url" href="https://github.com/{profile.github}">
+                  <Icon name="github" />
+                </a>
+              {/if}
+            </div>
+          </div>
+        </header>
 
-      <div class="fields">
-        <!-- Address -->
-        <div class="label">Address</div>
-        <div><Address {config} address={org.address} /></div>
-        <div></div>
-        <!-- Owner -->
-        <div class="label">Owner</div>
-        <div><Address resolve {config} address={org.owner} /></div>
-        <div>
-          {#if isOwner(org)}
-            <button class="tiny secondary" on:click={transferOwnership}>
-              Transfer
-            </button>
-          {/if}
-        </div>
-        <!-- Name -->
-        <div class="label">Name</div>
-        <div>
-          {#if profile.name}
-            <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
-          {:else}
-            <span class="subtle">Not set</span>
-          {/if}
-        </div>
-        <div>
-          {#await isAuthorized(org)}
-            <!-- Loading -->
-          {:then authorized}
-            {#if authorized}
-              <button class="tiny secondary" on:click={setName}>
-                Set
+        <div class="fields">
+          <!-- Address -->
+          <div class="label">Address</div>
+          <div><Address {config} address={org.address} /></div>
+          <div></div>
+          <!-- Owner -->
+          <div class="label">Owner</div>
+          <div><Address resolve {config} address={org.owner} /></div>
+          <div>
+            {#if isOwner(org)}
+              <button class="tiny secondary" on:click={transferOwnership}>
+                Transfer
               </button>
             {/if}
-          {/await}
+          </div>
+          <!-- Name -->
+          <div class="label">Name</div>
+          <div>
+            {#if profile.name}
+              <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+            {:else}
+              <span class="subtle">Not set</span>
+            {/if}
+          </div>
+          <div>
+            {#await isAuthorized(org)}
+              <!-- Loading -->
+            {:then authorized}
+              {#if authorized}
+                <button class="tiny secondary" on:click={setName}>
+                  Set
+                </button>
+              {/if}
+            {/await}
+          </div>
         </div>
-      </div>
 
-      {#await org.getMembers(config)}
-        <Loading center />
-      {:then members}
-        {#if members.length > 0}
-          <div class="members">
-            {#each members as address}
-              {#await Profile.get(address, config)}
-                <Loading small center />
-              {:then profile}
-                <div class="member">
-                  <div class="member-icon">
-                    <Avatar source={profile.avatar ?? address} />
+        {#await org.getMembers(config)}
+          <Loading center />
+        {:then members}
+          {#if members.length > 0}
+            <div class="members">
+              {#each members as address}
+                {#await Profile.get(address, config)}
+                  <Loading small center />
+                {:then profile}
+                  <div class="member">
+                    <div class="member-icon">
+                      <Avatar source={profile.avatar ?? address} />
+                    </div>
+                    <Address {address} compact resolve noAvatar {config} />
                   </div>
-                  <Address {address} compact resolve noAvatar {config} />
-                </div>
                 {/await}
               {/each}
             </div>
