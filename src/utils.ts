@@ -74,6 +74,13 @@ export function parseEnsLabel(name: string | undefined, config: Config): string 
   }
 }
 
+// Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
+// Returns the original string if it was unable to extract the username.
+export function parseUsername(input: string): string {
+  const parts = input.split("/");
+  return parts[parts.length - 1];
+}
+
 // Return the current unix time.
 export function unixTime(): number {
   return Math.floor(Date.now() / 1000);

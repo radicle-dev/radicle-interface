@@ -54,7 +54,7 @@
     <header>
       <div class="avatar">
         <Avatar source={profile.avatar ?? address} />
-      </div> 
+      </div>
       <div class="info">
         <span class="title bold"><Address compact noAvatar {address} {config} resolve/></span>
         <div class="links">
@@ -62,17 +62,17 @@
             <a class="url" href={profile.url}>{profile.url}</a>
           {/if}
           {#if profile.twitter}
-            <a class="url" href={profile.twitter}>
+            <a class="url" href="https://twitter.com/{profile.twitter}">
               <Icon name="twitter" />
             </a>
           {/if}
           {#if profile.github}
-            <a class="url" href={profile.github}>
+            <a class="url" href="https://github.com/{profile.github}">
               <Icon name="github" />
             </a>
           {/if}
         </div>
       </div>
-    </header> 
+    </header>
   </main>
 {/await}

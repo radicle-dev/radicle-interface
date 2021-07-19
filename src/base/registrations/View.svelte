@@ -46,18 +46,18 @@
           fields = [
             { name: "owner", placeholder: "",
               value: r.owner, resolve: true, editable: false },
-            { name: "address", placeholder: "Not set",
+            { name: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
               value: r.address, editable: true },
-            { name: "seed", placeholder: "Not set",
-              value: r.seed, editable: true },
-            { name: "url", label: "URL", placeholder: "Not set",
+            { name: "url", label: "URL", placeholder: "https://acme.org",
               value: r.url,editable: true },
-            { name: "avatar", placeholder: "Not set",
+            { name: "avatar", placeholder: "https://acme.org/avatar.png",
               value: r.avatar, editable: true },
-            { name: "twitter", placeholder: "Not set",
+            { name: "twitter", placeholder: "Twitter username, eg. 'acme'",
               value: r.twitter, editable: true },
-            { name: "github", placeholder: "Not set",
+            { name: "github", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
               value: r.github, editable: true },
+            { name: "seed", placeholder: "https://seed.acme.org:8888",
+              value: r.seed, editable: true },
           ];
           state = { status: Status.Found, registration: r };
         } else {

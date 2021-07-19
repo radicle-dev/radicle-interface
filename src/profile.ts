@@ -1,6 +1,8 @@
 import type { Registration } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
-import { formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile } from "@app/utils";
+import {
+  formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername,
+} from "@app/utils";
 import type { Config } from "./config";
 
 export interface IProfile {
@@ -19,14 +21,14 @@ export class Profile {
 
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get github(): string | undefined {
-    if (this.profile?.ens?.github) return this.profile.ens.github;
+    if (this.profile?.ens?.github) return parseUsername(this.profile.ens.github);
     else if (this.profile?.idx?.affiliations) return this.profile.idx?.affiliations.find(item => item === "github");
     else return undefined;
   }
 
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get twitter(): string | undefined {
-    if (this.profile?.ens?.twitter) return this.profile.ens.twitter;
+    if (this.profile?.ens?.twitter) return parseUsername(this.profile.ens.twitter);
     else if (this.profile?.idx?.affiliations) return this.profile.idx.affiliations.find(item => item === "twitter");
     else return undefined;
   }
