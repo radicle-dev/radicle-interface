@@ -5,6 +5,9 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile } from '@app/profile';
   import Loading from '@app/Loading.svelte';
+  import { Org } from '@app/base/orgs/Org';
+  import Message from '@app/Message.svelte';
+  import Project from '@app/base/projects/Widget.svelte';
 
   export let address: string;
   export let config: Config;
@@ -45,6 +48,12 @@
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
   }
+  .projects {
+    margin-top: 2rem;
+  }
+  .projects .project {
+    margin-bottom: 1rem;
+  }
 </style>
 
 {#await Profile.get(address, config)}
@@ -74,5 +83,24 @@
         </div>
       </div>
     </header>
+      <div class="projects">
+        {#await Org.getOrgsByOwner(address, config)}
+          <Loading center fadeIn />
+        {:then orgs}
+          {#each orgs as org}
+            {#await org.getProjects(config) then projects}
+              {#each projects as project}
+                <div class="project">
+                  <Project {project} org={org.address} {config} seed={profile.seed} />
+                </div>
+              {/each}
+            {:catch err}
+              <Message error>
+                <strong>Error: </strong> failed to load projects: {err.message}.
+              </Message>
+            {/await}
+          {/each}
+        {/await}
+      </div>
   </main>
 {/await}
