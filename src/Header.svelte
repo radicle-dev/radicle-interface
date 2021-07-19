@@ -70,7 +70,7 @@ import Avatar from "./Avatar.svelte";
     justify-content: center;
     min-height: 42px;
     margin-left: 2rem;
-    width: 9.75rem;
+    width: 10.25rem;
   }
   .connect {
     display: inline-block;
