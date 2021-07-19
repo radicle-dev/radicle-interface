@@ -47,17 +47,17 @@
             { name: "owner", placeholder: "",
               value: r.owner, resolve: true, editable: false },
             { name: "address", placeholder: "Not set",
-              value: r.address, resolve: false, editable: true },
+              value: r.address, editable: true },
             { name: "seed", placeholder: "Not set",
-              value: r.seed, resolve: false, editable: true },
+              value: r.seed, editable: true },
             { name: "url", label: "URL", placeholder: "Not set",
-              value: r.url, resolve: false, editable: true },
+              value: r.url,editable: true },
             { name: "avatar", placeholder: "Not set",
-              value: r.avatar, resolve: false, editable: true },
+              value: r.avatar, editable: true },
             { name: "twitter", placeholder: "Not set",
-              value: r.twitter, resolve: false, editable: true },
+              value: r.twitter, editable: true },
             { name: "github", placeholder: "Not set",
-              value: r.github, resolve: false, editable: true },
+              value: r.github, editable: true },
           ];
           state = { status: Status.Found, registration: r };
         } else {
