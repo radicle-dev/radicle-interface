@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import type { Registration } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
@@ -62,6 +63,12 @@ export class Profile {
   // Keeping this function private since the desired entrypoint is .get()
   private static async lookupAddress(address: string, config: Config): Promise<[IProfile, string]> {
     const profile: IProfile = { ens: null, idx: null };
+
+    try {
+      address = ethers.utils.getAddress(address);
+    } catch {
+      address = await config.provider.resolveName(address);
+    }
 
     try {
       const [ens, idx] = await Promise.allSettled([
