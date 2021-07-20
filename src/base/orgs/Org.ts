@@ -29,15 +29,6 @@ const GetOrgs = `
   }
 `;
 
-const GetSafes = `
-  query GetSafes($owners: [String!]!) {
-    wallets(where: { owners_contains: $owners }) {
-      id
-      owners
-    }
-  }
-`;
-
 const GetOrgsByOwner = `
   query GetOrgsByOwner($owners: [String!]!) {
     orgs(where: { owner_in: $owners }) {
@@ -225,11 +216,8 @@ export class Org {
   }
 
   static async getOrgsByMember(memberAddr: string, config: Config): Promise<Org[]> {
-    const safeResult = await utils.querySubgraph(
-      config.safe.subgraph, GetSafes, { owners: [memberAddr] }
-    );
-    const wallets: { id: string }[] = safeResult.wallets;
-    const owners = wallets.map(wallet => wallet.id).concat([memberAddr]);
+    const wallets = await utils.getOwnerSafes(memberAddr, config);
+    const owners = wallets?.concat([memberAddr]);
     const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners });
 
     return orgsResult.orgs.map((o: { id: string; owner: string }) => {

@@ -24,7 +24,6 @@ export class Config {
   safe: {
     api?: string;
     client?: SafeServiceClient;
-    subgraph: string;
     viewer: string | null;
   };
   abi: { [contract: string]: string[] };

@@ -266,6 +266,24 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
   };
 }
 
+// Get the Gnosis Safe addresses owned by the given address.
+export async function getOwnerSafes(owner: string, config: Config): Promise<string[] | null> {
+  if (! config.safe.api) return null;
+
+  const addr = ethers.utils.getAddress(owner);
+  const response = await fetch(`${config.safe.api}/api/v1/owners/${addr}/safes/`, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' }
+  });
+
+  if (! response.ok) {
+    return null;
+  }
+  const json = await response.json();
+
+  return json.safes;
+}
+
 // Get token balances for an address.
 export async function getTokens(address: string, config: Config):
   Promise<Array<{ tokenName: string; tokenLogo: string }>>
