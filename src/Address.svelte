@@ -47,8 +47,6 @@
     color: var(--color-foreground);
   }
   .loading {
-    margin-left: 1rem;
-    width: 4rem;
     height: 1.5rem;
   }
 </style>

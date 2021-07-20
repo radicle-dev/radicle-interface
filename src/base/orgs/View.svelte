@@ -50,6 +50,7 @@
 <style>
   main {
     padding: 5rem 0;
+    width: 54rem;
   }
   main > header {
     display: flex;
@@ -121,12 +122,16 @@
 </style>
 
 {#await Org.get(address, config)}
-  <Loading fadeIn />
+  <main class="centered">
+    <Loading center />
+  </main>
 {:then org}
   {#if org}
     <main>
       {#await Profile.get(address, config)}
-        <Loading fadeIn />
+        <div class="centered">
+          <Loading center />
+        </div>
       {:then profile}
         <header>
           <div class="avatar">
