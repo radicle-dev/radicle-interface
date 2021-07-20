@@ -216,6 +216,14 @@ export class Org {
     }
   }
 
+  // Return only Orgs that have a specific user as owner
+  static async getOrgsByOwner(owner: string, config: Config): Promise<Org[]> {
+    const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners: [owner] });
+    return orgsResult.orgs.map((o: { id: string; owner: string }) => {
+      return new Org(o.id, o.owner);
+    });
+  }
+
   static async getOrgsByMember(memberAddr: string, config: Config): Promise<Org[]> {
     const safeResult = await utils.querySubgraph(
       config.safe.subgraph, GetSafes, { owners: [memberAddr] }

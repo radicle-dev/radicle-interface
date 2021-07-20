@@ -84,7 +84,7 @@
       </div>
     </header>
       <div class="projects">
-        {#await Org.getOrgsByMember(address, config)}
+        {#await Org.getOrgsByOwner(address, config)}
           <Loading center fadeIn />
         {:then orgs}
           {#each orgs as org}
