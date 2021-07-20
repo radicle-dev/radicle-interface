@@ -39,7 +39,7 @@ export class Config {
     signer: ethers.Signer & TypedDataSigner | null,
   ) {
     const cfg = (<Record<string, any>> config)[network.name];
-    const api = config.radicle.api;
+    const api = process.env.RADICLE_HTTP_API;
 
     if (!cfg) {
       throw `Network ${network.name} is not supported`;
@@ -94,7 +94,7 @@ function isMetamaskInstalled(): boolean {
 
 export async function getConfig(): Promise<Config> {
   let config: Config;
-  const alchemyApiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
+  const alchemyApiKey = process.env.RADICLE_ALCHEMY_API_KEY;
 
   if (isMetamaskInstalled()) {
     // If we have Metamask, use it as the signer, but try to use Alchemy

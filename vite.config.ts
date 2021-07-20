@@ -17,7 +17,11 @@ const config: UserConfig = {
   },
   define: {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    "process.env": { READABLE_STREAM: "disable" }
+    "process.env": {
+      READABLE_STREAM: "disable",
+      RADICLE_ALCHEMY_API_KEY: process.env.RADICLE_ALCHEMY_API_KEY,
+      RADICLE_HTTP_API: process.env.RADICLE_HTTP_API,
+    },
   },
   build: {
     outDir: "build",

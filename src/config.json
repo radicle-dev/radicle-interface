@@ -42,7 +42,6 @@
     "tokens": []
   },
   "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
-  "radicle": { "api": "http://0.0.0.0:8888" },
   "ipfs": { "gateway": "https://ipfs.io/ipfs/" },
   "abi": {
     "registrar": [
