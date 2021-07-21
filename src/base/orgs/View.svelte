@@ -141,8 +141,10 @@
             <Avatar source={profile.avatar ?? address} />
           </div>
           <div class="info">
-            <span class="title bold">
-              {parseEnsLabel(profile.name, config) ?? address}
+            <span class="title">
+              <span class="bold">
+                {parseEnsLabel(profile.name, config) ?? address}
+              </span>
               {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>
               {/if}
