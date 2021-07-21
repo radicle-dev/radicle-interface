@@ -65,7 +65,9 @@
         <Avatar source={profile.avatar ?? address} />
       </div>
       <div class="info">
-        <span class="title bold"><Address compact noAvatar {address} {config} resolve/></span>
+        <span class="title bold">
+          <Address compact noAvatar noBadge {address} {config} resolve/>
+        </span>
         <div class="links">
           {#if profile.url}
             <a class="url" href={profile.url}>{profile.url}</a>
