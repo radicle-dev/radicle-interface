@@ -254,6 +254,7 @@ input[type="text"] {
 }
 input[type="text"]::placeholder {
 	color: var(--color-secondary);
+	opacity: 1 !important;
 }
 input[type="text"].small {
 	font-size: 0.875rem;
