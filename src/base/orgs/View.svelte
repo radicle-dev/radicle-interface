@@ -143,7 +143,7 @@
           <div class="info">
             <span class="title bold">
               {parseEnsLabel(profile.name, config) ?? address}
-              {#if profile.address === org.owner}
+              {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>
               {/if}
             </span>
