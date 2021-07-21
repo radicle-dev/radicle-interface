@@ -142,8 +142,8 @@ export const loadState = (initial: State): Store => {
     connectMetamask: async (config: Config) => {
       const state = get(store);
 
-      assertEq(state.connection, Connection.Disconnected);
-      store.set({ connection: Connection.Connecting });
+      // assertEq(state.connection, Connection.Disconnected);
+      store.set({ connection: Connection.Connecting});
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
       try {
@@ -341,7 +341,6 @@ function newWalletConnect(): WalletConnect {
       close: () => {
         modalClosedByWalletConnect = true;
         modal.hide();
-        window.location.reload();
       },
     },
   });

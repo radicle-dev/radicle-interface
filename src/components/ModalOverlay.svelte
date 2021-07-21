@@ -26,7 +26,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: scroll;
     }
   
     .overlay {
