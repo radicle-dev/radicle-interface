@@ -35,14 +35,23 @@ export class Config {
 
   constructor(
     network: { name: string; chainId: number },
-    provider: ethers.providers.JsonRpcProvider,
+    provider: ethers.providers.JsonRpcProvider | null,
     signer: ethers.Signer & TypedDataSigner | null,
   ) {
     const cfg = (<Record<string, any>> config)[network.name];
     const api = config.radicle.api;
 
-    if (!cfg) {
+    if (! cfg) {
       throw `Network ${network.name} is not supported`;
+    }
+
+    // Use Alchemy in production, on mainnet.
+    provider = network.name === "homestead" && import.meta.env.PROD
+      ? new ethers.providers.AlchemyProvider(network.name, config.alchemy.key)
+      : provider;
+
+    if (! provider) {
+      throw `No Web3 provider available.`;
     }
 
     const ceramic = new CeramicClient(config.ceramic.api);
@@ -94,25 +103,15 @@ function isMetamaskInstalled(): boolean {
 
 export async function getConfig(): Promise<Config> {
   let config: Config;
-  const alchemyApiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
 
   if (isMetamaskInstalled()) {
-    // If we have Metamask, use it as the signer, but try to use Alchemy
-    // as the provider.
     const metamask = new ethers.providers.Web3Provider(window.ethereum);
     const network = await metamask.ready;
-    const provider = alchemyApiKey
-      ? new ethers.providers.AlchemyProvider(network.name, alchemyApiKey)
-      : metamask;
-
-    config = new Config(network, provider, metamask.getSigner());
+    config = new Config(network, metamask, metamask.getSigner());
   } else {
-    // If we don't have Metamask, we use Alchemy as the provider, and we don't
-    // provide a signer. We default to Homestead.
+    // If we don't have Metamask, we default to Homestead.
     const network = { name: "homestead", chainId: 1 };
-    const provider = new ethers.providers.AlchemyProvider(network.name, alchemyApiKey);
-
-    config = new Config(network, provider, null);
+    config = new Config(network, null, null);
   }
   console.log(config);
 
