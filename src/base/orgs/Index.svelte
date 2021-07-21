@@ -5,6 +5,7 @@
   import { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
+  import Message from '@app/Message.svelte';
   import List from './List.svelte';
 
   export let config: Config;
@@ -25,10 +26,13 @@
   }
   main header {
     color: var(--color-secondary);
-    padding: 0 3rem 3rem 3rem;
     font-size: 1.25rem;
     display: flex;
     align-items: center;
+  }
+
+  .padding {
+    padding: 0 3rem 3rem 3rem;
   }
 
   .my-orgs {
@@ -53,7 +57,7 @@
 <main>
   {#if account}
     <div class="my-orgs">
-      <header>
+      <header class="padding">
         <span>My <strong>Orgs</strong></span>
         <button class="create small secondary" on:click={onCreate} disabled={!account}>
           Create
@@ -68,11 +72,17 @@
         <List {config} {orgs}>
           <div class="orgs-empty">Orgs you are a member of show up here.</div>
         </List>
+      {:catch}
+        <div class="padding">
+          <Message error>
+            <strong>Error: </strong> failed to load orgs.
+          </Message>
+        </div>
       {/await}
     </div>
   {/if}
 
-  <header>
+  <header class="padding">
     <span><strong>Orgs</strong> of the Radicle network</span>
   </header>
 
@@ -84,6 +94,12 @@
     <List {config} {orgs}>
       <div class="orgs-empty">There are no orgs.</div>
     </List>
+  {:catch}
+    <div class="padding">
+      <Message error>
+        <strong>Error: </strong> failed to load orgs.
+      </Message>
+    </div>
   {/await}
 </main>
 
