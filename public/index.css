@@ -239,7 +239,7 @@ a.address {
 }
 
 input[type="text"], button {
-	line-height: 1.5em;
+	line-height: 1.6;
 }
 input[type="text"] {
 	outline: none;

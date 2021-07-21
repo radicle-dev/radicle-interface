@@ -74,12 +74,12 @@
           {/if}
           {#if profile.twitter}
             <a class="url" href="https://twitter.com/{profile.twitter}">
-              <Icon name="twitter" />
+              <Icon name="twitter" inline />
             </a>
           {/if}
           {#if profile.github}
             <a class="url" href="https://github.com/{profile.github}">
-              <Icon name="github" />
+              <Icon name="github" inline />
             </a>
           {/if}
         </div>
