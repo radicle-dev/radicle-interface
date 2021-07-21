@@ -89,7 +89,7 @@ function isMetamaskInstalled(): boolean {
 function isWalletConnectConnected(): boolean {
   const newWalletConnect = (): WalletConnect => {
     return new WalletConnect({
-      bridge: "https://bridge.walletconnect.org",
+      bridge: "https://radicle.bridge.walletconnect.org",
     });
   };
   walletConnect = newWalletConnect();
@@ -115,22 +115,11 @@ export async function getConfig(): Promise<Config> {
 
   if (isWalletConnectConnected()){
     //ethereum provider
-    const provider = new ethers.providers.InfuraProvider(
-      "rinkeby",
-      "de5e2a8780c04964950e73b696d1bfb1"
-    );
+    const network = { name: "rinkeby", chainId: 4 };
+    const provider = new ethers.providers.AlchemyProvider(network.name, alchemyApiKey);
     // instantiate wallet connect signer
     const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
-    console.log(signer.getAddress(), 'from config');
-
-    const provNetwork = await ethers.providers.getNetwork(
-      signer.walletConnect.chainId
-    );
-    const network = {
-      name: provNetwork.name,
-      chainId: provNetwork.chainId,
-    };
     config = new Config(network, provider, signer);
   } else if (isMetamaskInstalled()) {
     // If we have Metamask, use it as the signer, but try to use Alchemy

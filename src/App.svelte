@@ -2,7 +2,7 @@
   import { Router, Route } from "svelte-routing";
   import { getConfig } from '@app/config';
   import { Connection, state, session } from '@app/session';
-
+  import ModalOverlay from '@app/components/ModalOverlay.svelte'
   import Home from '@app/base/home/Index.svelte';
   import Vesting from '@app/base/vesting/Index.svelte';
   import Registrations from '@app/base/registrations/Routes.svelte';
@@ -45,6 +45,8 @@
     height: 100%;
   }
 </style>
+
+<ModalOverlay />
 
 <svelte:window on:keydown={handleKeydown} />
 <div class="app">

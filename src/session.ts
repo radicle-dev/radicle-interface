@@ -6,8 +6,8 @@ import { Unreachable, assert, assertEq } from "@app/error";
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import * as ethers from "ethers";
-// import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
-// import * as modal from "@app/modal";
+import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
+import * as modal from "@app/modal";
 import { WalletConnectSigner } from "@app/WalletConnectSigner";
 
 export enum Connection {
@@ -55,25 +55,6 @@ export const loadState = (initial: State): Store => {
 
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
-  // const qrCodeModal = {
-  //   open: (uri: string) => {
-  //     modal.toggle(ModalWalletQRCode, onModalHide, {
-  //       uri,
-  //     });
-  //   },
-  //   close: () => {
-  //     // N.B: this is actually called when the connection is established,
-  //     // not when the modal is closed per se.
-  //     store.set({ connection: Connection.Connecting });
-  //     modal.hide();
-  //   },
-  // };
-  const newWalletConnect = (): WalletConnect => {
-    return new WalletConnect({
-      bridge: "https://bridge.walletconnect.org",
-      qrcodeModal: QRCodeModal,
-    });
-  };
   let walletConnect = newWalletConnect();
 
   let network;
@@ -91,63 +72,59 @@ export const loadState = (initial: State): Store => {
     reinitWalletConnect();
   };
 
-  console.log(walletConnect.rpcUrl, "lol");
-
-  console.log(window.ethereum, "eethereum");
-
   //ethereum provider
-  const provider = new ethers.providers.InfuraProvider('rinkeby', 'e9c4665d91a343e295308d5995ff5a72');
+  let provider: any;
 
   // instantiate wallet connect signer
-  const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+  let signer: any;
 
-  console.log(signer, "signer");
   // Connect to a wallet using walletconnect
   const connectWalletConnect = async (config: Config) => {
-  //Todo : check wallet state in the store before attempting to connect
+    provider = new ethers.providers.InfuraProvider('rinkeby', 'e9c4665d91a343e295308d5995ff5a72');
+
+    signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+
+    console.log(signer);
+
+    //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
-    console.log(walletConnect.connected, session);
-    //if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
+    if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
     assertEq(state.connection, Connection.Disconnected);
     store.set({ connection: Connection.Connecting });
 
     try {
-      await walletConnect.createSession();
+      await walletConnect.connect();
       console.log("got here");
 
-      walletConnect.on("connect", async (error, payload) => {
-        console.info(payload);
-        if (error) {
-          throw error;
-        }
-        const address = await signer.getAddress();
+      const address = await signer.getAddress();
 
-        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+      const tokenBalance: BigNumber = await config.token.balanceOf(address);
 
-        const session = { address, tokenBalance, tx: null };
-        const provNetwork = await ethers.providers.getNetwork(
-          signer.walletConnect.chainId
-        );
-        network = {
-          name: provNetwork.name,
-          chainId: provNetwork.chainId,
-        };
-        config = new Config(network, provider, signer);
+      const session = { address, tokenBalance, tx: null };
+      const provNetwork = await ethers.providers.getNetwork(
+        signer.walletConnect.chainId
+      );
+      network = {
+        name: provNetwork.name,
+        chainId: provNetwork.chainId,
+      };
+      config = new Config(network, provider, signer);
 
-        console.log(config, "config value");
+      localStorage.setItem("signer", JSON.stringify(signer));
 
-        store.set({ connection: Connection.Connected, session });
+      store.set({ connection: Connection.Connected, session });
 
-        saveSession({ ...session, tokenBalance: null });
-      });
+      saveSession({ ...session, tokenBalance: null });
+
     } catch (e) {
+      console.log(e);
       assertEq(state.connection, Connection.Disconnected);
       store.set({ connection: Connection.Disconnected });
       assert(e, "Could not connect to wallet connect");
     }
-    store.set({ connection: Connection.Connecting });
+  // store.set({ connection: Connection.Connecting });
   };
 
   const reinitWalletConnect = () => {
@@ -342,6 +319,32 @@ export function disconnectWallet(): void {
   window.localStorage.removeItem("session");
   window.localStorage.removeItem("walletconnect");
   location.reload();
+}
+function newWalletConnect(): WalletConnect {
+  let modalClosedByWalletConnect = false;
+  return new WalletConnect({
+    bridge: "https://radicle.bridge.walletconnect.org",
+    qrcodeModal: {
+      open: (uri: string, onClose, _opts?: unknown) => {
+        modal.toggle(
+          ModalWalletQRCode,
+          () => {
+            if (!modalClosedByWalletConnect) {
+              onClose();
+            }
+          },
+          {
+            uri,
+          }
+        );
+      },
+      close: () => {
+        modalClosedByWalletConnect = true;
+        modal.hide();
+        window.location.reload();
+      },
+    },
+  });
 }
 
 function saveSession(session: Session): void {
