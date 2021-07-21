@@ -65,7 +65,7 @@
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge">contract</span>
   {:else if addressType === AddressType.EOA}
-    <a href={`/users/${address}`} target="_blank">{addressLabel}</a>
+    <a href={`/users/${address}`}>{addressLabel}</a>
   {:else if profile?.name} <!-- While we're waiting to find out what address type it is -->
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
   {:else}
