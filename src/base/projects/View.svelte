@@ -5,7 +5,7 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
-  import { Profile } from '@app/profile';
+  import { Org } from '@app/base/orgs/Org';
 
   import Browser from './Browser.svelte';
 
@@ -16,13 +16,11 @@
   export let path: string;
 
   let projectRoot = proj.path({ urn, org, commit });
-  let getProject = new Promise<string | undefined>(resolve => {
+  let getProject = new Promise<string | null>(resolve => {
     if (org) {
-      Profile.get(org, config).then((p: Profile) => {
-        resolve(p.seed);
-      });
+      Org.getProfile(org, config).then(p => resolve(p?.seed || null));
     } else {
-      resolve(undefined);
+      resolve(null);
     }
   }).then(async (seed) => {
     const cfg = seed ? config.withSeed(seed) : config;

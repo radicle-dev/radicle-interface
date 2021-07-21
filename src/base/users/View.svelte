@@ -16,6 +16,7 @@
 <style>
   main {
     padding: 5rem 0;
+    width: 36rem;
   }
   main > header {
     display: flex;
@@ -66,7 +67,7 @@
       </div>
       <div class="info">
         <span class="title bold">
-          <Address compact noAvatar noBadge {address} {config} resolve/>
+          <Address compact noAvatar noBadge {profile} {address} {config} resolve/>
         </span>
         <div class="links">
           {#if profile.url}
@@ -93,7 +94,7 @@
             {#await org.getProjects(config) then projects}
               {#each projects as project}
                 <div class="project">
-                  <Project {project} org={org.address} {config} seed={profile.seed} />
+                  <Project {project} org={org.address} config={profile.config(config)} />
                 </div>
               {/each}
             {:catch err}

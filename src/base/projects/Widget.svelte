@@ -16,15 +16,13 @@
   export let project: proj.Project;
   export let config: Config;
   export let org: string | undefined;
-  export let seed: string | undefined;
 
   let state: State = { status: Status.Loading };
   let info: proj.Info | null = null;
 
   onMount(async () => {
     try {
-      const cfg = seed ? config.withSeed(seed) : config;
-      const result = await proj.getInfo(project.id, cfg);
+      const result = await proj.getInfo(project.id, config);
       state = { status: Status.Loaded };
       info = result;
     } catch (err) {

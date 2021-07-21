@@ -2,7 +2,7 @@
   export let name: string;
   export let width: number | null = null;
   export let height: number | null = null;
-  export let inline: boolean = false;
+  export let inline = false;
 
   const icons = [
     {

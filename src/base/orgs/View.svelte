@@ -85,6 +85,10 @@
     width: 64px;
     height: 64px;
   }
+  .title {
+    display: flex;
+    align-items: center;
+  }
   .links {
     display: flex;
     align-items: center;
@@ -127,7 +131,7 @@
 {:then org}
   {#if org}
     <main>
-      {#await Profile.get(address, config)}
+      {#await org.getProfile(config)}
         <div class="centered">
           <Loading center />
         </div>
@@ -139,6 +143,9 @@
           <div class="info">
             <span class="title bold">
               {parseEnsLabel(profile.name, config) ?? address}
+              {#if profile.address === org.owner}
+                <span class="badge">org</span>
+              {/if}
             </span>
             <div class="links">
               {#if profile.url}
@@ -176,25 +183,28 @@
             {/if}
           </div>
           <!-- Name -->
-          <div class="label">Name</div>
-          <div>
-            {#if profile.name}
-              <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
-            {:else}
-              <span class="subtle">Not set</span>
-            {/if}
-          </div>
-          <div>
-            {#await isAuthorized(org)}
-              <!-- Loading -->
-            {:then authorized}
-              {#if authorized}
-                <button class="tiny secondary" on:click={setName}>
-                  Set
-                </button>
+          <!-- Only show the name if we aren't already using the name of the owner -->
+          {#if profile.address === org.address}
+            <div class="label">Name</div>
+            <div>
+              {#if profile.name}
+                <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+              {:else}
+                <span class="subtle">Not set</span>
               {/if}
-            {/await}
-          </div>
+            </div>
+            <div>
+              {#await isAuthorized(org)}
+                <!-- Loading -->
+              {:then authorized}
+                {#if authorized}
+                  <button class="tiny secondary" on:click={setName}>
+                    Set
+                  </button>
+                {/if}
+              {/await}
+            </div>
+          {/if}
         </div>
 
         {#await org.getMembers(config)}
@@ -224,7 +234,7 @@
           {:then projects}
             {#each projects as project}
               <div class="project">
-                <Project {project} org={org.address} {config} seed={profile.seed} />
+                <Project {project} org={org.address} config={profile.config(config)} />
               </div>
             {/each}
           {:catch err}

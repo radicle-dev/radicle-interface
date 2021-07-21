@@ -20,6 +20,16 @@ export class Profile {
     this.address = address;
   }
 
+  // Get the ENS profile
+  get ens(): Registration | null {
+    return this.profile.ens;
+  }
+
+  // Get the IDX profle
+  get idx(): BasicProfile | null {
+    return this.profile.idx;
+  }
+
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get github(): string | undefined {
     if (this.profile?.ens?.github) return parseUsername(this.profile.ens.github);
@@ -58,6 +68,15 @@ export class Profile {
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get seed(): string | undefined {
     return this.profile?.ens?.seedApi ?? undefined;
+  }
+
+  // Return the profile-specific config. This sets various URLs in the config,
+  // based on profile data.
+  config(config: Config): Config {
+    if (this.seed) {
+      return config.withSeed(this.seed);
+    }
+    return config;
   }
 
   // Keeping this function private since the desired entrypoint is .get()
