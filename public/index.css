@@ -240,7 +240,7 @@ a.address {
 }
 
 input[type="text"], button {
-	line-height: 1.5em;
+	line-height: 1.6;
 }
 input[type="text"] {
 	outline: none;
@@ -255,6 +255,7 @@ input[type="text"] {
 }
 input[type="text"]::placeholder {
 	color: var(--color-secondary);
+	opacity: 1 !important;
 }
 input[type="text"].small {
 	font-size: 0.875rem;

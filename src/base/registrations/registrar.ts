@@ -14,6 +14,8 @@ export interface Registration {
   name: string;
   owner: string;
   address: string | null;
+  seedId: string | null;
+  seedApi: string | null;
   url: string | null;
   avatar: string | null;
   twitter: string | null;
@@ -58,17 +60,21 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     resolver.getAddress(),
     resolver.getText('avatar'),
     resolver.getText('url'),
-    resolver.getText('vnd.twitter'),
-    resolver.getText('vnd.github'),
+    resolver.getText('eth.radicle.seed.id'),
+    resolver.getText('eth.radicle.seed.api'),
+    resolver.getText('com.twitter'),
+    resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, twitter, github] =
+  const [address, avatar, url, seedId, seedApi, twitter, github] =
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
     name,
     url,
     avatar,
+    seedId,
+    seedApi,
     owner,
     address,
     twitter,
@@ -148,8 +154,7 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
       signature.v,
       signature.r,
       signature.s,
-      { gasLimit: 150000 })
-    .catch((e: Error) => console.error(e));
+      { gasLimit: 150000 });
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));

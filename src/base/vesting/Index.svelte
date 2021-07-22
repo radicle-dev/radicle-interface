@@ -1,12 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { formatAddress } from '@app/utils';
   import { State, state } from './state';
   import { getInfo, withdrawVested } from './vesting';
   import type { VestingInfo } from './vesting';
   import type { Session } from '@app/session';
   import type { Config } from '@app/config';
   import Modal from '@app/Modal.svelte';
+  import Address from '@app/Address.svelte';
+  import { formatAddress } from '@app/utils';
 
   let input: HTMLElement;
 
@@ -64,7 +65,7 @@
             Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
           {:else}
             <table>
-              <tr><td class="label">Beneficiary</td><td>{info.beneficiary}</td></tr>
+              <tr><td class="label">Beneficiary</td><td><Address {config} address={info.beneficiary} compact resolve /></td></tr>
               <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
               <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
               <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>

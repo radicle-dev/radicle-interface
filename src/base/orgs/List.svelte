@@ -1,9 +1,15 @@
 <script lang="ts">
   import { Link } from 'svelte-routing';
   import type { Org } from '@app/base/orgs/Org';
-  import Blockies from '@app/Blockies.svelte';
+  import Avatar from '@app/Avatar.svelte';
+  import { Profile } from '@app/profile';
+  import type { Config } from '@app/config';
+  import Loading from '@app/Loading.svelte';
 
+  export let config: Config;
   export let orgs: Org[];
+
+  const orgsAddresses = orgs.map(org => org.address);
 </script>
 
 <style>
@@ -13,14 +19,30 @@
     margin: 3rem;
     display: inline-block;
   }
+  .list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; 
+  }
+  .loading {
+    padding: 3rem 0;
+  }
 </style>
 
-{#each orgs as org}
-  <div class="org">
-    <Link to={`/orgs/${org.address}`}>
-      <Blockies glowOnHover address={org.address} />
-    </Link>
+{#await Profile.getMulti(orgsAddresses, config)}
+  <div class="loading">
+    <Loading center /> 
   </div>
-{:else}
-  <slot />
-{/each}
+{:then profiles}
+  <div class="list">
+    {#each profiles as profile}
+      <div class="org">
+        <Link to={`/orgs/${profile.address}`}>
+          <Avatar glowOnHover source={profile.avatar ?? profile.address} />
+        </Link>
+      </div>
+    {:else}
+      <slot />
+    {/each}
+  </div>
+{/await}

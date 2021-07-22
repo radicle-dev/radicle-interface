@@ -2,6 +2,7 @@
   export let name: string;
   export let width: number | null = null;
   export let height: number | null = null;
+  export let inline = false;
 
   const icons = [
     {
@@ -22,10 +23,13 @@
   svg {
     fill: currentColor;
   }
+  svg.inline {
+    height: 1.6rem;
+  }
 </style>
 
 {#if svg}
-  <svg role="img" class={$$props.class}
+  <svg role="img" class={$$props.class} class:inline
        width={width || "1rem"}
        height={height || "1rem"}
        viewBox="0 0 {svg.size} {svg.size}">

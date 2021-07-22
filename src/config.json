@@ -11,35 +11,12 @@
       "address": "0xa15bEb4876F20018b6b4A4116B7560c5fcC9336e"
     },
     "orgs": {
-      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs",
+      "subgraph": "https://gateway.thegraph.com/api/1758a78ae257ad4906f9c638e4a68c19/subgraphs/id/0x2f0963e77ca6ac0c2dad1bf4147b6b40e0dd8728-0",
       "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74"
     },
     "safe": {
       "api": "https://safe-transaction.gnosis.io",
-      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/gnosis-safe",
       "viewer": "https://gnosis-safe.io/app/#/safes"
-    },
-    "tokens": []
-  },
-  "ropsten": {
-    "registrar": {
-      "domain": "rad.eth",
-      "address": "0xb31441c140E92Ca20A0141D68b13b10ca051e40a"
-    },
-    "radToken": {
-      "address": "0x59b5eee36f5fa52400A136Fd4630Ee2bF126a4C0"
-    },
-    "orgFactory": {
-      "address": "0xf36fbaB8BA78683D23c5021bfcE8A5c88731200F"
-    },
-    "orgs": {
-      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-ropsten",
-      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74"
-    },
-    "safe": {
-      "api": null,
-      "subgraph": null,
-      "viewer": null
     },
     "tokens": []
   },
@@ -60,13 +37,14 @@
     },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io",
-      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/gnosis-safe-rinkeby",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
     },
     "tokens": []
   },
+  "alchemy": { "key": "cQFlLK8EokIGlJhd_soImwEyUoC7Ec8r" },
   "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
-  "radicle": { "api": "" },
+  "radicle": { "api": "http://0.0.0.0:8888" },
+  "ipfs": { "gateway": "https://ipfs.io/ipfs/" },
   "abi": {
     "registrar": [
       "function rad() view returns (address)",

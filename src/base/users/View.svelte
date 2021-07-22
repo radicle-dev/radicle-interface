@@ -1,27 +1,22 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import type { Config } from '@app/config';
-  import type { Registration } from '@app/base/registrations/registrar';
-  import { getRegistration } from '@app/base/registrations/registrar';
   import Icon from '@app/Icon.svelte';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
+  import { Profile } from '@app/profile';
+  import Loading from '@app/Loading.svelte';
+  import { Org } from '@app/base/orgs/Org';
+  import Message from '@app/Message.svelte';
+  import Project from '@app/base/projects/Widget.svelte';
 
   export let address: string;
   export let config: Config;
-  
-  let addressName: string | null = null;
-  let info: Registration | null;
-  
-  onMount(async () => {
-    addressName = await config.provider.lookupAddress(address);
-    info = await getRegistration(addressName, config);
-  });
 </script>
 
 <style>
   main {
     padding: 5rem 0;
+    width: 36rem;
   }
   main > header {
     display: flex;
@@ -54,30 +49,61 @@
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
   }
+  .projects {
+    margin-top: 2rem;
+  }
+  .projects .project {
+    margin-bottom: 1rem;
+  }
 </style>
 
-<main>
-  <header>
-    <div class="avatar">
-      <Avatar source={info?.avatar ?? address} />
-    </div> 
-    <div class="info">
-      <span class="title bold"><Address noAvatar {address} {config} resolve/></span>
+{#await Profile.get(address, config)}
+  <Loading fadeIn />
+{:then profile}
+  <main>
+    <header>
+      <div class="avatar">
+        <Avatar source={profile.avatar ?? address} />
+      </div>
+      <div class="info">
+        <span class="title bold">
+          <Address compact noAvatar noBadge {profile} {address} {config} resolve/>
+        </span>
         <div class="links">
-          {#if info?.url}
-            <a class="url" href={info.url}>{info.url}</a>
+          {#if profile.url}
+            <a class="url" href={profile.url}>{profile.url}</a>
           {/if}
-          {#if info?.twitter}
-            <a class="url" href={info.twitter}>
-              <Icon name="twitter" />
+          {#if profile.twitter}
+            <a class="url" href="https://twitter.com/{profile.twitter}">
+              <Icon name="twitter" inline />
             </a>
           {/if}
-          {#if info?.github}
-            <a class="url" href={info.github}>
-              <Icon name="github" />
+          {#if profile.github}
+            <a class="url" href="https://github.com/{profile.github}">
+              <Icon name="github" inline />
             </a>
           {/if}
         </div>
       </div>
-    </header> 
+    </header>
+      <div class="projects">
+        {#await Org.getOrgsByOwner(address, config)}
+          <Loading center fadeIn />
+        {:then orgs}
+          {#each orgs as org}
+            {#await org.getProjects(config) then projects}
+              {#each projects as project}
+                <div class="project">
+                  <Project {project} org={org.address} config={profile.config(config)} />
+                </div>
+              {/each}
+            {:catch err}
+              <Message error>
+                <strong>Error: </strong> failed to load projects: {err.message}.
+              </Message>
+            {/await}
+          {/each}
+        {/await}
+      </div>
   </main>
+{/await}

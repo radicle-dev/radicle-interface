@@ -4,6 +4,7 @@
     value: string | null;
     label?: string;
     placeholder?: string;
+    resolve?: boolean;
     editable: boolean;
   }
 </script>
@@ -61,11 +62,8 @@
     border-color: var(--color-secondary) !important;
   }
   input.field::placeholder {
-    color: var(--color-subtle);
+    color: var(--color-secondary);
     font-style: italic;
-  }
-  input.field::placeholder {
-    color: transparent;
   }
   input.field[disabled] {
     color: var(--color-secondary);
@@ -105,12 +103,12 @@
                 <a class="link" href="{field.value}" target="_blank">{field.value}</a>
               </span>
             {:else if isAddress(field.value)}
-              <Address address={field.value} {config} />
+              <Address resolve={field.resolve ?? false} address={field.value} {config} />
             {:else}
               {field.value}
             {/if}
           {:else}
-            <span class="subtle">{field.placeholder}</span>
+            <span class="subtle">Not set</span>
           {/if}
         </span>
       {/if}

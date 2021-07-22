@@ -4,15 +4,12 @@ import multibase from 'multibase';
 import multihashes from 'multihashes';
 import EthersSafe from "@gnosis.pm/safe-core-sdk";
 import type { Config } from '@app/config';
+import config from "@app/config.json";
 import { assert } from '@app/error';
 import type { Registration } from "@app/base/registrations/registrar";
 import { getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 
-export interface Profile {
-  ens: Registration | null;
-  idx: BasicProfile | null;
-}
 
 export enum AddressType {
   Contract,
@@ -50,6 +47,11 @@ export function formatAddress(addr: string): string {
   return formatHash(ethers.utils.getAddress(addr));
 }
 
+export function formatIpfsFile(ipfs: string | undefined): string | undefined {
+  if (ipfs) return `${config.ipfs.gateway}${ipfs.replace("ipfs://", "")}`;
+  return undefined;
+}
+
 export function formatHash(hash: string): string {
   return hash.substring(0, 6)
     + '...'
@@ -62,12 +64,21 @@ export function capitalize(s: string): string {
 }
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
-// returns the label, eg. 'cloudhead', otherwise `null`.
-export function parseEnsLabel(name: string, config: Config): string {
-  const domain = config.registrar.domain.replace(".", "\\.");
-  const label = name.replace(new RegExp(`\\.${domain}$`), "");
+// returns the label, eg. 'cloudhead', otherwise `undefined`.
+export function parseEnsLabel(name: string | undefined, config: Config): string | undefined {
+  if (name) {
+    const domain = config.registrar.domain.replace(".", "\\.");
+    const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
-  return label;
+    return label;
+  }
+}
+
+// Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
+// Returns the original string if it was unable to extract the username.
+export function parseUsername(input: string): string {
+  const parts = input.split("/");
+  return parts[parts.length - 1];
 }
 
 // Return the current unix time.
@@ -90,6 +101,12 @@ export function isDid(input: string): boolean {
   return /^did:[a-zA-Z0-9]+:[a-zA-Z0-9]+$/.test(input);
 }
 
+export function isENSName(input: string, config: Config): boolean {
+  const domain = config.registrar.domain.replace(".", "\\.");
+  const regEx = new RegExp(`^[a-zA-Z0-9]+.${domain}$`);
+  return regEx.test(input);
+}
+
 // Check whether the input is an Ethereum address.
 export function isAddress(input: string): boolean {
   return ethers.utils.isAddress(input);
@@ -103,9 +120,7 @@ export function getSearchParam(key: string, location: RouteLocation): string | n
 
 // Get the explorer link of an address, eg. Etherscan.
 export function explorerLink(addr: string, config: Config): string {
-  if (config.network.name == "ropsten") {
-    return `https://ropsten.etherscan.io/address/${addr}`;
-  } else if (config.network.name == "rinkeby") {
+  if (config.network.name == "rinkeby") {
     return `https://rinkeby.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
@@ -195,27 +210,11 @@ export async function identifyAddress(address: string, config: Config): Promise<
 }
 
 // Resolve a label under the radicle domain.
-export async function resolveLabel(label: string, config: Config): Promise<string | null> {
-  return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+export async function resolveLabel(label: string | undefined, config: Config): Promise<string | null> {
+  if (label) return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+  return null;
 }
 
-export async function lookupAddress(address: string, config: Config): Promise<Profile>  {
-  const profile: Profile = { ens: null, idx: null };
-
-  try {
-    const [ens, idx] = await Promise.allSettled([
-      resolveEnsProfile(address, config),
-      resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config)
-    ]);
-
-    if (ens.status == "fulfilled") profile.ens = ens.value;
-    if (idx.status == "fulfilled") profile.idx = idx.value;
-  } catch (error) {
-    console.error(error);
-  }
-
-  return profile;
-}
 
 // Resolves an IDX profile or return null
 export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
@@ -263,6 +262,24 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
     owners: json.owners,
     threshold: json.threshold
   };
+}
+
+// Get the Gnosis Safe addresses owned by the given address.
+export async function getOwnerSafes(owner: string, config: Config): Promise<string[] | null> {
+  if (! config.safe.api) return null;
+
+  const addr = ethers.utils.getAddress(owner);
+  const response = await fetch(`${config.safe.api}/api/v1/owners/${addr}/safes/`, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' }
+  });
+
+  if (! response.ok) {
+    return null;
+  }
+  const json = await response.json();
+
+  return json.safes;
 }
 
 // Get token balances for an address.

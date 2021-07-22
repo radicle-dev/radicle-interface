@@ -4,7 +4,8 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
-  import Blockies from '@app/Blockies.svelte';
+  import Avatar from '@app/Avatar.svelte';
+  import { Org } from '@app/base/orgs/Org';
 
   import Browser from './Browser.svelte';
 
@@ -14,8 +15,18 @@
   export let config: Config;
   export let path: string;
 
-  let getProject = proj.getInfo(urn, config);
   let projectRoot = proj.path({ urn, org, commit });
+  let getProject = new Promise<string | null>(resolve => {
+    if (org) {
+      Org.getProfile(org, config).then(p => resolve(p?.seed || null));
+    } else {
+      resolve(null);
+    }
+  }).then(async (seed) => {
+    const cfg = seed ? config.withSeed(seed) : config;
+    const info = await proj.getInfo(urn, cfg);
+    return { project: info, config: cfg };
+  });
 
   const back = () => window.history.back();
 </script>
@@ -68,24 +79,26 @@
 <main>
   {#await getProject}
     <header>
-      <Loading small />
+      <Loading center />
     </header>
-  {:then project}
+  {:then result}
     <header>
       <div class="title bold">
-        <Link to={projectRoot}>{project.meta.name}</Link>
+        <Link to={projectRoot}>{result.project.meta.name}</Link>
         <span class="maintainers">
-          {#each project.meta.maintainers as user}
+          {#each result.project.meta.maintainers as user}
             <span class="maintainer">
-              <Blockies address={user} />
+              <Avatar source={user} />
             </span>
           {/each}
         </span>
       </div>
       <div class="urn">{urn}</div>
-      <div class="description">{project.meta.description}</div>
+      <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} {org} commit={commit || project.head} {path} {config} />
+    <Browser {urn} {org} {path}
+      commit={commit || result.project.head}
+      config={result.config} />
   {:catch}
     <Modal subtle>
       <span slot="title">🏜️</span>

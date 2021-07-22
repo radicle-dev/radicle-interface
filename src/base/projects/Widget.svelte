@@ -48,6 +48,7 @@
     padding: 1rem;
     border: 1px solid var(--color-secondary-faded);
     border-radius: 0.25rem;
+    min-width: 36rem;
   }
   article.has-info {
     cursor: pointer;

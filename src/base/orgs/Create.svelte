@@ -21,32 +21,33 @@
   }
 
   enum Governance {
-    BDFL = "bdfl",
+    Existing = "existing",
     Quorum = "quorum",
   }
 
   const orgTypes = [
-    { label: "Single-signature",
-      description: [
-        `Creates an org with the specified address as the only owner.`,
-        `Org transactions such as anchoring can be signed and executed directly from your wallet.`
-      ],
-      value: Governance.BDFL
-    },
     { label: "Multi-signature",
       description: [
-        "Creates an org with a multi-signature contract as its owner, and the specified address as its only member.",
-        "A [Gnosis Safe](https://gnosis-safe.io) contract will be deployed for your org.",
+        "Creates an org with a multi-signature contract as its owner, and the specified account as the first member.",
+        "A [Gnosis Safe](https://gnosis-safe.io) will be deployed for your org.",
         "Transactions such as anchoring have to be approved by a quorum of signers."
       ],
       value: Governance.Quorum
+    },
+    { label: "Existing owner",
+      description: [
+        `Creates an org with the specified account as the sole owner.`,
+        `Org transactions such as anchoring are signed and executed from that account.`,
+        `This option allows for using an existing contract or EOA as the owner of the org.`
+      ],
+      value: Governance.Existing
     },
   ];
 
   let state = State.Idle;
   let error: Err | null = null;
   let org: Org | null = null;
-  let governance = Governance.BDFL;
+  let governance = Governance.Quorum;
 
   const dispatch = createEventDispatcher();
   const createOrg = async () => {
@@ -72,8 +73,8 @@
 
   const onGovernanceChanged = (event: { detail: string }) => {
     switch (event.detail) {
-      case "bdfl": governance = Governance.BDFL; break;
-      case "quorum":  governance = Governance.Quorum; break;
+      case "existing": governance = Governance.Existing; break;
+      case "quorum": governance = Governance.Quorum; break;
     }
   };
 </script>
@@ -129,7 +130,7 @@
         <span><Address address={org.address} {config} /></span>
 
         <span class="label">Owner</span>
-        <span><Address address={org.owner} {config} /></span>
+        <span><Address resolve address={org.owner} {config} /></span>
       </div>
     </span>
 
@@ -148,9 +149,9 @@
 
     <span slot="subtitle">
       {#if state === State.Idle}
-        <div class="highlight">Select a governance model</div>
+        <div class="highlight">Select how you'd like to create your org</div>
       {:else if state === State.Signing}
-        <div class="highlight">Confirm transaction in your wallet</div>
+        <div class="highlight">Please confirm the transaction in your wallet.</div>
       {:else if state === State.Pending}
         <div class="highlight">Waiting for transaction to be processed...</div>
       {/if}
@@ -165,7 +166,7 @@
                      on:changed={onGovernanceChanged} />
           </div>
 
-          <label class="input" for="address">Org owner or member Ethereum address</label>
+          <label class="input" for="address">Ethereum account address</label>
           <input name="address" class="small" type="text" maxlength="42" bind:value={owner} />
         </div>
       {:else}

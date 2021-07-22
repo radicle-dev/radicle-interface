@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import Modal from '@app/Modal.svelte';
   import type { Config } from '@app/config';
   import { formatAddress, isAddressEqual } from '@app/utils';
@@ -102,11 +103,20 @@
     </div>
   </Modal>
 {:else if state === State.Mismatch}
-  <Error floating title="🖊️" action="Okay" on:close>
+  <Error floating title="🖊️" on:close>
     The name <strong>{name}.{config.registrar.domain}</strong> does not
-    resolve to <strong>{formatAddress(org.address)}</strong>. Please update
-    The ENS record for {name}.{config.registrar.domain} to
+    resolve to <strong>{org.address}</strong>. Please update
+    the ENS record for {name}.{config.registrar.domain} to
     point to the correct address and try again.
+
+    <div slot="actions">
+      <button on:click={() => navigate(`/registrations/${name}`)}>
+        Go to registration &rarr;
+      </button>
+      <button on:click={() => dispatch('close')} class="text">
+        Close
+      </button>
+    </div>
   </Error>
 {:else if state === State.Failed && error}
   <Error floating title="Transaction failed" message={error} on:close />
@@ -120,7 +130,7 @@
       {#if state == State.Signing}
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
-        Transaction is being processed by the network...
+        Waiting for transaction to be processed...
       {:else if state == State.Proposing}
         Proposal is being submitted to the safe
         <strong>{formatAddress(org.owner)}</strong>,

@@ -3,6 +3,7 @@ import type { TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
 import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
+import { Profile } from '@app/profile';
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Config } from '@app/config';
@@ -29,15 +30,6 @@ const GetOrgs = `
   }
 `;
 
-const GetSafes = `
-  query GetSafes($owners: [String!]!) {
-    wallets(where: { owners_contains: $owners }) {
-      id
-      owners
-    }
-  }
-`;
-
 const GetOrgsByOwner = `
   query GetOrgsByOwner($owners: [String!]!) {
     orgs(where: { owner_in: $owners }) {
@@ -58,10 +50,6 @@ export class Org {
 
     this.address = address.toLowerCase(); // Don't store address checksum.
     this.owner = owner;
-  }
-
-  async lookupAddress(config: Config): Promise<string> {
-    return await config.provider.lookupAddress(this.address);
   }
 
   async setName(name: string, config: Config): Promise<TransactionResponse> {
@@ -154,6 +142,10 @@ export class Org {
     return projects;
   }
 
+  async getProfile(config: Config): Promise<Profile> {
+    return Org.getProfile(this.address, config);
+  }
+
   static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
     const org = new ethers.Contract(
       orgAddr,
@@ -220,12 +212,33 @@ export class Org {
     }
   }
 
+  // Return only org profile if there is one, otherwise tries to get the profile
+  // of its owner.
+  static async getProfile(address: string, config: Config): Promise<Profile> {
+    const profile = await Profile.get(address, config);
+
+    if (profile.ens) {
+      return profile;
+    }
+    const org = await Org.get(address, config);
+
+    if (org) {
+      return Profile.get(org.owner, config);
+    }
+    return profile;
+  }
+
+  // Return only Orgs that have a specific user as owner
+  static async getOrgsByOwner(owner: string, config: Config): Promise<Org[]> {
+    const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners: [owner] });
+    return orgsResult.orgs.map((o: { id: string; owner: string }) => {
+      return new Org(o.id, o.owner);
+    });
+  }
+
   static async getOrgsByMember(memberAddr: string, config: Config): Promise<Org[]> {
-    const safeResult = await utils.querySubgraph(
-      config.safe.subgraph, GetSafes, { owners: [memberAddr] }
-    );
-    const wallets: { id: string }[] = safeResult.wallets;
-    const owners = wallets.map(wallet => wallet.id).concat([memberAddr]);
+    const wallets = await utils.getOwnerSafes(memberAddr, config);
+    const owners = wallets?.concat([memberAddr]);
     const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners });
 
     return orgsResult.orgs.map((o: { id: string; owner: string }) => {
