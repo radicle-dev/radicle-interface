@@ -76,10 +76,11 @@
     display: flex;
     align-items: center;
     justify-content: left;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 
   }
   main > header > * {
-    margin-right: 0.75rem;
     border-radius: 0.25rem;
     min-width: max-content;
   }
@@ -93,7 +94,7 @@
   }
 
   .anchor {
-    display: flex;
+    display: inline-flex;
   }
   .anchor-widget {
     display: flex;
@@ -166,9 +167,6 @@
   @media (max-width: 800px) {
     main > header, .container {
       padding-left: 2rem;
-    }
-    .stat {
-      display: none;
     }
   }
 </style>
