@@ -120,7 +120,7 @@ export const loadState = (initial: State): Store => {
 
       config = new Config(network, provider, signer);
 
-      localStorage.setItem("signer", JSON.stringify(signer));
+      window.localStorage.setItem("signer", signer);
 
       store.set({ connection: Connection.Connected, session });
 
@@ -141,7 +141,7 @@ export const loadState = (initial: State): Store => {
     connectMetamask: async (config: Config) => {
       const state = get(store);
 
-      // assertEq(state.connection, Connection.Disconnected);
+      assertEq(state.connection, Connection.Disconnected || Connection.Connecting);
       store.set({ connection: Connection.Connecting});
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
@@ -323,8 +323,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function disconnectWallet(): void {
-  window.localStorage.removeItem("session");
-  window.localStorage.removeItem("walletconnect");
+  window.localStorage.clear();
   location.reload();
 }
 function newWalletConnect(config: Config): WalletConnect {
