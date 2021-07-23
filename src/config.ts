@@ -42,14 +42,13 @@ export class Config {
 
   constructor(
     network: {name: string; chainId: number},
-    cfg: Record<string, any>,
     provider: ethers.providers.JsonRpcProvider,
     signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null,
   ) {
 
     {
       const api = config.radicle.api;
-
+      const cfg = (<Record<string, any>> config)[network.name];
       const ceramic = new CeramicClient(config.ceramic.api);
       const idx = new IDX({ ceramic });
 
@@ -158,18 +157,18 @@ export async function getConfig(): Promise<Config> {
   if (isWalletConnectConnected()){
     const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
-    cfg = new Config(network, networkConfig, provider, signer);
+    cfg = new Config(network, provider, signer);
   } else if (isMetamaskInstalled()) {
     // If we have Metamask, use it as the signer, but try to use Alchemy
     // as the provider.
 
-    cfg = new Config(network, networkConfig, provider, provider.getSigner());
+    cfg = new Config(network, provider, provider.getSigner());
   } else {
     // If we don't have Metamask, we default to Homestead.
     const network = { name: "homestead", chainId: 1 };
-    cfg = new Config(network, networkConfig, provider, null);
+    cfg = new Config(network, provider, null);
   }
-  console.log(cfg);
+  console.log(cfg, "config");
 
   return cfg;
 }

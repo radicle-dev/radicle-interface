@@ -4,7 +4,7 @@
     import Metamask from "@app/Metamask.svelte";
     import { state } from '@app/session';
     import type { Config } from '@app/config';
-
+    
    
    
     export let uri: string;
@@ -22,6 +22,8 @@
     });
 
     const onClickConnect = () => {
+
+      console.log(config, "from svelete")
       
     state.connectMetamask(config);
   };

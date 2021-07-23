@@ -50,6 +50,13 @@ export interface Store extends Readable<State> {
 const alchemyApiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
 let modalClosedByWalletConnect = false;
 
+function isMetamaskInstalled(): boolean {
+  const { ethereum } = window;
+  return Boolean(ethereum && ethereum.isMetaMask);
+}
+
+
+
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
   const state = get(store);
@@ -57,7 +64,7 @@ export const loadState = (initial: State): Store => {
 
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
-  let walletConnect = newWalletConnect();
+  let walletConnect: any;
 
   let network;
 
@@ -71,7 +78,6 @@ export const loadState = (initial: State): Store => {
     store.set({ connection: Connection.Disconnected });
     window.localStorage.removeItem("session");
     location.reload();
-    reinitWalletConnect();
   };
 
   //ethereum provider
@@ -82,7 +88,9 @@ export const loadState = (initial: State): Store => {
 
   // Connect to a wallet using walletconnect
   const connectWalletConnect = async (config: Config) => {
-    provider = new ethers.providers.InfuraProvider('rinkeby', 'e9c4665d91a343e295308d5995ff5a72');
+    walletConnect = newWalletConnect(config);
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
 
     signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
@@ -96,7 +104,6 @@ export const loadState = (initial: State): Store => {
 
     try {
       await walletConnect.connect();
-      console.log("got here");
 
       const address = await signer.getAddress();
 
@@ -110,6 +117,7 @@ export const loadState = (initial: State): Store => {
         name: provNetwork.name,
         chainId: provNetwork.chainId,
       };
+
       config = new Config(network, provider, signer);
 
       localStorage.setItem("signer", JSON.stringify(signer));
@@ -127,15 +135,6 @@ export const loadState = (initial: State): Store => {
   // store.set({ connection: Connection.Connecting });
   };
 
-  const reinitWalletConnect = () => {
-    walletConnect = newWalletConnect();
-    signer.walletConnect = walletConnect;
-  };
-  const onModalHide = (): void => {
-    if (state.connection === Connection.Disconnected) {
-      reinitWalletConnect();
-    }
-  };
 
   return {
     subscribe: store.subscribe,
@@ -151,15 +150,15 @@ export const loadState = (initial: State): Store => {
       } catch (e) {
         console.error(e);
       }
+
       const metamask = new ethers.providers.Web3Provider(window.ethereum);
       const signer = metamask.getSigner();
 
+      network = await metamask.ready;
+
       const address = await signer.getAddress();
-      const network = await metamask.ready;
-      const provider = alchemyApiKey
-        ? new ethers.providers.AlchemyProvider(network.name, alchemyApiKey)
-        : metamask;
-      config = new Config(network, provider, metamask.getSigner());
+
+      config = new Config(network, provider, signer);
 
       try {
         modal.hide();
@@ -328,7 +327,8 @@ export function disconnectWallet(): void {
   window.localStorage.removeItem("walletconnect");
   location.reload();
 }
-function newWalletConnect(): WalletConnect {
+function newWalletConnect(config: Config): WalletConnect {
+
   return new WalletConnect({
     bridge: "https://radicle.bridge.walletconnect.org",
     qrcodeModal: {
@@ -342,6 +342,7 @@ function newWalletConnect(): WalletConnect {
           },
           {
             uri,
+            config,
           }
         );
       },
