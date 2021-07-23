@@ -12,7 +12,7 @@ import {
   defineReadOnly,
   resolveProperties,
 } from "@ethersproject/properties";
-import { Logger, _TypedDataEncoder } from "ethers/lib/utils";
+import { _TypedDataEncoder } from "ethers/lib/utils";
 import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
 
 export class WalletConnectSigner extends ethers.Signer {

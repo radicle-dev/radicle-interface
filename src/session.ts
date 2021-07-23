@@ -4,7 +4,6 @@ import type { TransactionReceipt, TransactionResponse } from '@ethersproject/pro
 import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
 import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
 import * as ethers from "ethers";
 import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
 import * as modal from "@app/modal";
@@ -47,19 +46,13 @@ export interface Store extends Readable<State> {
   setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount(address: string): void;
 }
-const alchemyApiKey = import.meta.env.RADICLE_ALCHEMY_API_KEY;
-let modalClosedByWalletConnect = false;
 
-function isMetamaskInstalled(): boolean {
-  const { ethereum } = window;
-  return Boolean(ethereum && ethereum.isMetaMask);
-}
+let modalClosedByWalletConnect = false;
 
 
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-  const state = get(store);
   const session = window.localStorage.getItem("session");
 
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
@@ -332,6 +325,7 @@ function newWalletConnect(config: Config): WalletConnect {
     bridge: "https://radicle.bridge.walletconnect.org",
     qrcodeModal: {
       open: (uri: string, onClose, _opts?: unknown) => {
+        console.log(_opts);
         modal.toggle(
           ModalWalletQRCode,
           () => {

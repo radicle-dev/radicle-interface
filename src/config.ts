@@ -1,4 +1,4 @@
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import CeramicClient from "@ceramicnetwork/http-client";

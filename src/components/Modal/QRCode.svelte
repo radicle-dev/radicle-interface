@@ -5,8 +5,8 @@
     import { state } from '@app/session';
     import type { Config } from '@app/config';
     
-   
-   
+
+
     export let uri: string;
     export let config: Config;
     export let caption = "Connect Wallet";
@@ -23,10 +23,10 @@
 
     const onClickConnect = () => {
 
-      console.log(config, "from svelete")
-      
-    state.connectMetamask(config);
-  };
+      console.log(config, "from svelete");
+    
+      state.connectMetamask(config);
+};
 
 </script>
 

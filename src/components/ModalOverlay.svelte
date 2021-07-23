@@ -7,15 +7,15 @@
 -->
 <script lang="typescript">
     import * as modal from "@app/modal";
-  
+
     const clickOutside = () => {
       modal.hide();
     };
-  
+
     const modalStore = modal.store;
     // Hack to make svelte typecheck in the markup section.
     $: store = $modalStore;
-  </script>
+</script>
   
   <style>
     .modal {
