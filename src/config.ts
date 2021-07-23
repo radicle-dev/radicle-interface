@@ -41,7 +41,7 @@ export class Config {
   token: ethers.Contract;
 
   constructor(
-    network: {name: string; chainId: number},
+    network: { name: string; chainId: number },
     provider: ethers.providers.JsonRpcProvider,
     signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null,
   ) {
@@ -87,7 +87,6 @@ export class Config {
   }
 
 
-
 }
 
 function isMetamaskInstalled(): boolean {
@@ -103,7 +102,7 @@ function isWalletConnectConnected(): boolean {
   };
   walletConnect = newWalletConnect();
 
-  if (walletConnect.connected){
+  if (walletConnect.connected) {
     return true;
   } else {
     return false;
@@ -112,11 +111,11 @@ function isWalletConnectConnected(): boolean {
 
 export async function getConfig(): Promise<Config> {
 
-  let network = {name: "homestead", chainId: 1};
+  let network = { name: "homestead", chainId: 1 };
 
   const metamask = isMetamaskInstalled() ? new ethers.providers.Web3Provider(window.ethereum) : null;
 
-  if (metamask){
+  if (metamask) {
     network = await metamask.ready;
   }
 
@@ -132,7 +131,7 @@ export async function getConfig(): Promise<Config> {
 
     if (network.name === "homestead" && import.meta.env.PROD) {
       provider = new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
-    } else if (isMetamaskInstalled()){
+    } else if (isMetamaskInstalled()) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
     }
     if (! provider) {
@@ -154,7 +153,7 @@ export async function getConfig(): Promise<Config> {
 
   let cfg: Config;
 
-  if (isWalletConnectConnected()){
+  if (isWalletConnectConnected()) {
     const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
 
     cfg = new Config(network, provider, signer);

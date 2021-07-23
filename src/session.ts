@@ -50,7 +50,6 @@ export interface Store extends Readable<State> {
 let modalClosedByWalletConnect = false;
 
 
-
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
   const session = window.localStorage.getItem("session");
@@ -135,7 +134,7 @@ export const loadState = (initial: State): Store => {
       const state = get(store);
 
       assertEq(state.connection, Connection.Disconnected || Connection.Connecting);
-      store.set({ connection: Connection.Connecting});
+      store.set({ connection: Connection.Connecting });
 
       // TODO: This hangs on Brave, if you have to unlock your wallet..
       try {

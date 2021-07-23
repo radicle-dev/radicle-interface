@@ -6,7 +6,6 @@
     import type { Config } from '@app/config';
     
 
-
     export let uri: string;
     export let config: Config;
     export let caption = "Connect Wallet";
