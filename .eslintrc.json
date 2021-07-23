@@ -1,5 +1,6 @@
 {
   "env": {
+    "es6": true,
     "browser": true,
     "node": true
   },
@@ -9,8 +10,9 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "extraFileExtensions": [".svelte"]
   },
   "plugins": [
     "svelte3",
@@ -29,6 +31,10 @@
     "keyword-spacing": ["error"],
     "no-trailing-spaces": ["error"],
     "no-multi-spaces": ["error"],
+    "no-multiple-empty-lines": ["error"],
+    "space-before-blocks": ["error"],
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "never"],
     "space-before-function-paren": ["error", {
       "anonymous": "always",
       "named": "never",
@@ -36,6 +42,7 @@
     }],
     "eol-last": ["error"],
     "key-spacing": ["error"],
+    "@typescript-eslint/object-curly-spacing": ["error", "always"],
     "@typescript-eslint/type-annotation-spacing": ["error"],
     "@typescript-eslint/naming-convention": [
       "error",
