@@ -21,9 +21,6 @@
     });
 
     const onClickConnect = () => {
-
-      console.log(config, "from svelete");
-    
       state.connectMetamask(config);
 };
 

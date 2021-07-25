@@ -50,7 +50,6 @@ export class WalletConnectSigner extends ethers.Signer {
 
     const address = await this.getAddress();
 
-    console.log(address, "address");
     const signature = await this.walletConnect.signTypedData([
       address.toLowerCase(),
       JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),

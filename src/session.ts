@@ -1,4 +1,4 @@
-import { get, writable, derived, Readable, Writable } from "svelte/store";
+import { get, writable, derived, Readable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
@@ -74,6 +74,8 @@ export const loadState = (initial: State): Store => {
       qrcodeModal: {
         open: (uri: string, onClose, _opts?: unknown) => {
           modalStore.set({ status: ModalStateType.Open, modalProps: { uri, config } });
+          console.log(_opts);
+          onClose();
         },
         close: () => {
           modalStore.set({ status: ModalStateType.Close, modalProps: null });

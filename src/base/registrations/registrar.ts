@@ -175,9 +175,7 @@ async function permitSignature(
   deadline: ethers.BigNumberish,
 ): Promise<ethers.Signature> {
   assert(owner.provider);
-  console.log(owner, "here is owner");
   const ownerAddr = await owner.getAddress();
-  console.log(ownerAddr, "from registrar");
   const nonce = await token.nonces(ownerAddr);
   const chainId = (await owner.provider.getNetwork()).chainId;
 
@@ -214,7 +212,6 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   const tx = await registrar(config).connect(config.signer).register(
     name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 }
   );
-  console.log("Sent", tx);
 
   await tx.wait();
   window.localStorage.clear();
