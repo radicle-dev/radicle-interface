@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Connection } from "@app/session";
-  import { state } from '@app/session';
+  import { Connection, state, store, ModalStateType } from "@app/session";
   import type { Config } from '@app/config';
+  import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
 
   export let config: Config;
   export let caption = "Connect";
@@ -13,7 +13,7 @@
   const onClickConnect = () => {
     state.connectWalletConnect(config);
   };
-
+  $: modalConnected = $store.status === ModalStateType.Open;
   $: connecting = $state.connection === Connection.Connecting;
 </script>
 
@@ -27,6 +27,9 @@
   disabled={connecting || walletUnavailable}
   data-waiting={connecting || null}
 >
+{#if modalConnected}
+<ModalWalletQRCode {config} uri={$store.modalProps.uri} />
+{/if}
   {#if connecting}
     Connecting...
   {:else}

@@ -1,18 +1,21 @@
-import { get, writable, derived, Readable } from "svelte/store";
+import { get, writable, derived, Readable, Writable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
 import WalletConnect from "@walletconnect/client";
 import * as ethers from "ethers";
-import ModalWalletQRCode from "@app/Components/Modal/QRCode.svelte";
-import * as modal from "@app/modal";
 import { WalletConnectSigner } from "@app/WalletConnectSigner";
 
 export enum Connection {
   Disconnected,
   Connecting,
   Connected
+}
+
+export enum ModalStateType {
+  Open,
+  Close
 }
 
 export type TxState =
@@ -33,6 +36,14 @@ export interface Session {
   tx: TxState;
 }
 
+export type ModalState = { status: ModalStateType.Open; modalProps: ModalProps } | { status: ModalStateType.Close; modalProps: null };
+
+export interface ModalProps {
+  config: Config;
+  uri: string;
+}
+
+
 export interface Store extends Readable<State> {
   connectMetamask(config: Config): Promise<void>;
   updateBalance(n: BigNumber): void;
@@ -47,12 +58,29 @@ export interface Store extends Readable<State> {
   setChangedAccount(address: string): void;
 }
 
-let modalClosedByWalletConnect = false;
+const modalStore = writable<ModalState>({ status: ModalStateType.Close, modalProps: null });
+export const store = derived(modalStore, ($store) => $store);
 
 
 export const loadState = (initial: State): Store => {
+
+
   const store = writable<State>(initial);
   const session = window.localStorage.getItem("session");
+  function newWalletConnect(config: Config): WalletConnect {
+
+    return new WalletConnect({
+      bridge: "https://radicle.bridge.walletconnect.org",
+      qrcodeModal: {
+        open: (uri: string, onClose, _opts?: unknown) => {
+          modalStore.set({ status: ModalStateType.Open, modalProps: { uri, config } });
+        },
+        close: () => {
+          modalStore.set({ status: ModalStateType.Close, modalProps: null });
+        },
+      },
+    });
+  }
 
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
@@ -118,6 +146,8 @@ export const loadState = (initial: State): Store => {
 
       saveSession({ ...session, tokenBalance: null });
 
+      window.location.reload();
+
     } catch (e) {
       console.log(e);
       assertEq(state.connection, Connection.Disconnected);
@@ -153,8 +183,7 @@ export const loadState = (initial: State): Store => {
       config = new Config(network, provider, signer);
 
       try {
-        modal.hide();
-        modalClosedByWalletConnect = true;
+        modalStore.set({ status: ModalStateType.Close, modalProps: null });
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
         const session = { address, tokenBalance, tx: null };
         store.set({
@@ -277,6 +306,7 @@ export const loadState = (initial: State): Store => {
 };
 
 export const state = loadState({ connection: Connection.Disconnected });
+
 export const session = derived(state, s => {
   if (s.connection === Connection.Connected) {
     return s.session;
@@ -317,33 +347,6 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 export function disconnectWallet(): void {
   window.localStorage.clear();
   location.reload();
-}
-function newWalletConnect(config: Config): WalletConnect {
-
-  return new WalletConnect({
-    bridge: "https://radicle.bridge.walletconnect.org",
-    qrcodeModal: {
-      open: (uri: string, onClose, _opts?: unknown) => {
-        console.log(_opts);
-        modal.toggle(
-          ModalWalletQRCode,
-          () => {
-            if (!modalClosedByWalletConnect) {
-              onClose();
-            }
-          },
-          {
-            uri,
-            config,
-          }
-        );
-      },
-      close: () => {
-        modalClosedByWalletConnect = true;
-        modal.hide();
-      },
-    },
-  });
 }
 
 function saveSession(session: Session): void {
