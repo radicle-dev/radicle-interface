@@ -47,7 +47,6 @@ export class WalletConnectSigner extends ethers.Signer {
     });
 
     const address = await this.getAddress();
-
     const signature = await this.walletConnect.signTypedData([
       address.toLowerCase(),
       JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),
@@ -116,7 +115,6 @@ export class WalletConnectSigner extends ethers.Signer {
   }
 
   connect(_provider: Provider): ethers.Signer {
-    console.log(_provider);
     throw new Error("WalletConnectSigner.connect should never be called");
   }
 }

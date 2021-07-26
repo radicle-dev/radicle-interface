@@ -3,9 +3,9 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
+import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
-import type WalletConnect from "@walletconnect/client";
 
 declare global {
   interface Window {
@@ -25,6 +25,7 @@ export class Config {
   radToken: { address: string };
   orgFactory: { address: string };
   orgs: { subgraph: string; contractHash: string };
+  radicleBridge: { bridge: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
@@ -37,7 +38,6 @@ export class Config {
   seed: { api?: string };
   idx: { client: IDX };
   ceramic: { client: CeramicClient };
-  walletConnect: { bridge: string };
   tokens: string[];
   token: ethers.Contract;
 
@@ -58,6 +58,7 @@ export class Config {
       this.registrar = cfg.registrar;
       this.radToken = cfg.radToken;
       this.orgFactory = cfg.orgFactory;
+      this.radicleBridge = { bridge: config.radicleBridge.bridge };
       this.orgs = cfg.orgs;
       this.safe = cfg.safe;
       this.safe.client = this.safe.api
@@ -69,7 +70,6 @@ export class Config {
       this.abi = config.abi;
       this.idx = { client: idx };
       this.ceramic = { client: ceramic };
-      this.walletConnect = { bridge: config.walletConnect.bridge };
       this.tokens = cfg.tokens;
       this.token = new ethers.Contract(
         this.radToken.address,
@@ -97,11 +97,14 @@ function isMetamaskInstalled(): boolean {
 }
 
 function isWalletConnectConnected(): boolean {
+  const newWalletConnect = (): WalletConnect => {
+    return new WalletConnect({
+      bridge: config.radicleBridge.bridge,
+    });
+  };
+  walletConnect = newWalletConnect();
 
-  const walletConnectFromLocalStorage: any = window.localStorage.getItem('walletconnect');
-  walletConnect = JSON.parse(walletConnectFromLocalStorage);
-
-  if (walletConnect?.connected) {
+  if (walletConnect.connected) {
     return true;
   } else {
     return false;
@@ -125,13 +128,16 @@ export async function getConfig(): Promise<Config> {
 
   function getProvider(): ethers.providers.JsonRpcProvider {
     // Use Alchemy in production, on mainnet.
+    let provider;
+
     if (network.name === "homestead" && import.meta.env.PROD) {
-      return new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
+      provider = new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
     } else if (isMetamaskInstalled()) {
-      return new ethers.providers.Web3Provider(window.ethereum);
+      provider = new ethers.providers.Web3Provider(window.ethereum);
     } else {
       throw `No Web3 provider available.`;
     }
+    return provider;
   }
 
   const provider = getProvider();

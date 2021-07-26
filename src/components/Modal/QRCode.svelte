@@ -1,4 +1,4 @@
-<script lang="ts">
+  <script lang="ts">
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
     import { state } from '@app/session';
@@ -22,7 +22,7 @@ const onClickConnect = () => {
 
 </script>
 
-<style>
+  <style>
     .qrcode-wrapper {
       width: fit-content;
       margin: var(--content-padding) auto;
@@ -53,7 +53,8 @@ const onClickConnect = () => {
       </div>
     </div>
     <p>Or Connect your metamask wallet</p>
-      <a on:click={onClickConnect} href=' ' class="link">
+      <!-- svelte-ignore a11y-missing-attribute -->
+      <a on:click={onClickConnect} class="link">
         Connect with Metamask
       </a>
     </div>

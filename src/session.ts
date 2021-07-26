@@ -13,7 +13,7 @@ export enum Connection {
   Connected
 }
 
-export enum ModalStateType {
+export enum ConnectionModalStateType {
   Open,
   Close
 }
@@ -29,21 +29,17 @@ export type State =
     { connection: Connection.Disconnected }
   | { connection: Connection.Connecting }
   | { connection: Connection.Connected; session: Session };
-
 export interface Session {
   address: string;
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
 
-export type ModalState = { status: ModalStateType.Open; modalProps: ConnectionModalProps } | { status: ModalStateType.Close; modalProps: null };
-
+export type ConnectionModalState = { status: ConnectionModalStateType.Open; modalProps: ConnectionModalProps } | { status: ConnectionModalStateType.Close; modalProps: null };
 export interface ConnectionModalProps {
   config: Config;
   uri: string;
 }
-
-
 export interface Store extends Readable<State> {
   connectMetamask(config: Config): Promise<void>;
   updateBalance(n: BigNumber): void;
@@ -57,41 +53,36 @@ export interface Store extends Readable<State> {
   setChangedAccount(address: string): void;
 }
 
-const modalStore = writable<ModalState>({ status: ModalStateType.Close, modalProps: null });
+const modalStore = writable<ConnectionModalState>({ status: ConnectionModalStateType.Close, modalProps: null });
 export const store = derived(modalStore, ($store) => $store);
 
-
 export const loadState = (initial: State): Store => {
-
-
   const store = writable<State>(initial);
   const session = window.localStorage.getItem("session");
   function newWalletConnect(config: Config): WalletConnect {
 
-    return new WalletConnect({
-      bridge: config.walletConnect.bridge,
+    walletConnect = new WalletConnect({
+      bridge: config.radicleBridge.bridge,
       qrcodeModal: {
         open: (uri: string, onClose, _opts?: unknown) => {
-          modalStore.set({ status: ModalStateType.Open, modalProps: { uri, config } });
+          modalStore.set({ status: ConnectionModalStateType.Open, modalProps: { uri, config } });
           console.log(_opts);
           onClose();
         },
         close: () => {
-          modalStore.set({ status: ModalStateType.Close, modalProps: null });
+          modalStore.set({ status: ConnectionModalStateType.Close, modalProps: null });
         },
       },
     });
-  }
 
+    return walletConnect;
+  }
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
   let walletConnect: any;
-
   let network;
-
   //ethereum provider
   let provider: any;
-
   // instantiate wallet connect signer
   let signer: any;
 
@@ -99,13 +90,14 @@ export const loadState = (initial: State): Store => {
   const connectWalletConnect = async (config: Config) => {
     walletConnect = newWalletConnect(config);
 
+    window.localStorage.setItem('wallet_connect', JSON.stringify(walletConnect));
     provider = new ethers.providers.Web3Provider(window.ethereum);
-
     signer = new WalletConnectSigner(walletConnect, provider);
 
     //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
+
     if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
     assertEq(state.connection, Connection.Disconnected);
     store.set({ connection: Connection.Connecting });
@@ -114,9 +106,7 @@ export const loadState = (initial: State): Store => {
       await walletConnect.connect();
 
       const address = await signer.getAddress();
-
       const tokenBalance: BigNumber = await config.token.balanceOf(address);
-
       const session = { address, tokenBalance, tx: null };
       const provNetwork = await ethers.providers.getNetwork(
         signer.walletConnect.chainId
@@ -130,7 +120,6 @@ export const loadState = (initial: State): Store => {
 
       store.set({ connection: Connection.Connected, session });
       saveSession({ ...session, tokenBalance: null });
-      window.location.reload();
 
     } catch (e) {
       console.log(e);
@@ -166,7 +155,7 @@ export const loadState = (initial: State): Store => {
       config = new Config(network, provider, signer);
 
       try {
-        modalStore.set({ status: ModalStateType.Close, modalProps: null });
+        modalStore.set({ status: ConnectionModalStateType.Close, modalProps: null });
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
         const session = { address, tokenBalance, tx: null };
         store.set({

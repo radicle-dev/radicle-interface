@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Connection, state, store, ModalStateType } from "@app/session";
+  import { Connection, state, store, ConnectionModalStateType } from "@app/session";
   import type { Config } from '@app/config';
   import ModalWalletQRCode from "@app/components/Modal/QRCode.svelte";
 
@@ -13,7 +13,7 @@
   const onClickConnect = () => {
     state.connectWalletConnect(config);
   };
-  $: modalConnected = $store.status === ModalStateType.Open;
+  $: modalConnected = $store.status === ConnectionModalStateType.Open;
   $: connecting = $state.connection === Connection.Connecting;
 </script>
 
