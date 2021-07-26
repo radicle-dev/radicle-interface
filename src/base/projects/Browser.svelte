@@ -76,10 +76,11 @@
     display: flex;
     align-items: center;
     justify-content: left;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 
   }
   main > header > * {
-    margin-right: 0.75rem;
     border-radius: 0.25rem;
     min-width: max-content;
   }
@@ -93,7 +94,7 @@
   }
 
   .anchor {
-    display: flex;
+    display: inline-flex;
   }
   .anchor-widget {
     display: flex;
@@ -167,9 +168,6 @@
     main > header, .container {
       padding-left: 2rem;
     }
-    .stat {
-      display: none;
-    }
   }
 </style>
 
@@ -187,6 +185,11 @@
       <div class="stat">
         <strong>{tree.stats.contributors}</strong> contributor(s)
       </div>
+      {#if config.seed.api}
+        <div class="stat" title="Project data is fetched from this seed">
+          <span>{utils.formatSeedApi(config.seed.api)}</span>
+        </div>
+      {/if}
       <div class="anchor">
         {#if org}
           {#await getAnchor}

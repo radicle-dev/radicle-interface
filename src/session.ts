@@ -80,7 +80,7 @@ export const loadState = (initial: State): Store => {
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
   let walletConnect: any;
-  let network;
+  let network: any;
   //ethereum provider
   let provider: any;
   // instantiate wallet connect signer
@@ -133,6 +133,7 @@ export const loadState = (initial: State): Store => {
   return {
     subscribe: store.subscribe,
     connectMetamask: async (config: Config) => {
+      assert(config.signer);
       const state = get(store);
 
       assertEq(state.connection, Connection.Disconnected || Connection.Connecting);
@@ -145,11 +146,7 @@ export const loadState = (initial: State): Store => {
         console.error(e);
       }
 
-      const metamask = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = metamask.getSigner();
-
-      network = await metamask.ready;
-
+      const signer = config.signer;
       const address = await signer.getAddress();
 
       config = new Config(network, provider, signer);
@@ -304,7 +301,9 @@ state.subscribe(s => {
 });
 
 export async function approveSpender(spender: string, amount: BigNumber, config: Config): Promise<void> {
-  const signer = config.provider.getSigner();
+  assert(config.signer);
+
+  const signer = config.signer;
   const addr = await signer.getAddress();
 
   const allowance = await config.token.allowance(addr, spender);

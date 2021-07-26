@@ -58,6 +58,14 @@ export function formatHash(hash: string): string {
     + hash.substring(hash.length - 4, hash.length);
 }
 
+export function formatSeedApi(input: string): string {
+  const match = input.match(/^https?:\/\/([^:]+)/);
+  if (match) {
+    return match[1];
+  }
+  return input;
+}
+
 export function capitalize(s: string): string {
   if (s === "") return s;
   return s[0].toUpperCase() + s.substr(1);
