@@ -3,7 +3,7 @@ import { formatBalance } from "@app/utils";
 import * as session from "@app/session";
 import { State, state } from "./state";
 import type { Config } from "@app/config";
-
+import { assert } from "@app/error";
 
 export interface VestingInfo {
   token: string;
@@ -15,8 +15,10 @@ export interface VestingInfo {
 }
 
 export async function withdrawVested(address: string, config: Config): Promise<void> {
+  assert(config.signer);
+
   const contract = new ethers.Contract(address, config.abi.vesting, config.provider);
-  const signer = config.provider.getSigner();
+  const signer = config.signer;
 
   state.set(State.WithdrawingSign);
 
