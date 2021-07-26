@@ -149,6 +149,8 @@ export const loadState = (initial: State): Store => {
       const signer = config.signer;
       const address = await signer.getAddress();
 
+      network = config.network;
+
       config = new Config(network, provider, signer);
 
       try {
