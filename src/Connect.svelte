@@ -27,9 +27,9 @@
   disabled={connecting || walletUnavailable}
   data-waiting={connecting || null}
 >
-{#if modalConnected}
-<ModalWalletQRCode {config} uri={$store.modalProps?.uri || ''} />
-{/if}
+  {#if modalConnected}
+    <ModalWalletQRCode {config} uri={$store.modalProps?.uri || ''} />
+  {/if}
   {#if connecting}
     Connecting...
   {:else}

@@ -201,7 +201,6 @@ async function permitSignature(
     "deadline": deadline
   };
   const sig = await owner._signTypedData(domain, types, values);
-  console.log(sig, "here");
   return ethers.utils.splitSignature(sig);
 }
 

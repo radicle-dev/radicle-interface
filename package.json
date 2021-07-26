@@ -41,7 +41,6 @@
     "@walletconnect/utils": "^1.4.2-rc.2",
     "ethereum-blockies": "^0.1.1",
     "eventemitter3": "4.0.7",
-    "events": "^3.3.0",
     "eip1193-provider": "1.0.1",
     "ethers": "^5.0.31",
     "marked": "^2.0.7",

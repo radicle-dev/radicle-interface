@@ -22,13 +22,11 @@ export class WalletConnectSigner extends ethers.Signer {
   constructor(
     walletConnect: WalletConnect,
     provider: ethers.providers.JsonRpcProvider,
-    onDisconnect: () => void
   ) {
     super();
     defineReadOnly(this, "provider", provider);
     this._provider = provider;
     this.walletConnect = walletConnect;
-    this.walletConnect.on("disconnect", onDisconnect);
   }
 
   async getAddress(): Promise<string> {
@@ -54,8 +52,6 @@ export class WalletConnectSigner extends ethers.Signer {
       address.toLowerCase(),
       JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),
     ]);
-
-    console.log(signature, "signature");
 
     return signature;
   }

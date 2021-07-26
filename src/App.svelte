@@ -44,6 +44,7 @@
     height: 100%;
   }
 </style>
+
 <svelte:window on:keydown={handleKeydown} />
 <div class="app">
   {#await loadConfig}

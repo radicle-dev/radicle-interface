@@ -36,9 +36,9 @@ export interface Session {
   tx: TxState;
 }
 
-export type ModalState = { status: ModalStateType.Open; modalProps: ModalProps } | { status: ModalStateType.Close; modalProps: null };
+export type ModalState = { status: ModalStateType.Open; modalProps: ConnectionModalProps } | { status: ModalStateType.Close; modalProps: null };
 
-export interface ModalProps {
+export interface ConnectionModalProps {
   config: Config;
   uri: string;
 }
@@ -50,7 +50,6 @@ export interface Store extends Readable<State> {
   refreshBalance(config: Config): Promise<void>;
   provider: ethers.providers.Provider;
   signer: ethers.Signer;
-  disconnect(): Promise<void>;
   connectWalletConnect(config: Config): Promise<void>;
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
@@ -70,7 +69,7 @@ export const loadState = (initial: State): Store => {
   function newWalletConnect(config: Config): WalletConnect {
 
     return new WalletConnect({
-      bridge: "https://radicle.bridge.walletconnect.org",
+      bridge: config.walletConnect.bridge,
       qrcodeModal: {
         open: (uri: string, onClose, _opts?: unknown) => {
           modalStore.set({ status: ModalStateType.Open, modalProps: { uri, config } });
@@ -90,18 +89,6 @@ export const loadState = (initial: State): Store => {
 
   let network;
 
-  const disconnect = async () => {
-    await walletConnect.killSession().catch(() => {
-      // When the user disconnects wallet-side, calling `killSession`
-      // app-side trows an error because the wallet has already closed
-      // its socket. Therefore, we simply ignore it.
-    });
-
-    store.set({ connection: Connection.Disconnected });
-    window.localStorage.removeItem("session");
-    location.reload();
-  };
-
   //ethereum provider
   let provider: any;
 
@@ -114,13 +101,12 @@ export const loadState = (initial: State): Store => {
 
     provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+    signer = new WalletConnectSigner(walletConnect, provider);
 
     //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
     if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
-
     assertEq(state.connection, Connection.Disconnected);
     store.set({ connection: Connection.Connecting });
 
@@ -142,12 +128,8 @@ export const loadState = (initial: State): Store => {
 
       config = new Config(network, provider, signer);
 
-      window.localStorage.setItem("signer", signer);
-
       store.set({ connection: Connection.Connected, session });
-
       saveSession({ ...session, tokenBalance: null });
-
       window.location.reload();
 
     } catch (e) {
@@ -156,7 +138,6 @@ export const loadState = (initial: State): Store => {
       store.set({ connection: Connection.Disconnected });
       assert(e, "Could not connect to wallet connect");
     }
-  // store.set({ connection: Connection.Connecting });
   };
 
 
@@ -300,7 +281,6 @@ export const loadState = (initial: State): Store => {
         }
       });
     },
-    disconnect,
     connectWalletConnect,
     provider,
     signer,

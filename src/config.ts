@@ -3,9 +3,9 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
-import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
+import type WalletConnect from "@walletconnect/client";
 
 declare global {
   interface Window {
@@ -37,6 +37,7 @@ export class Config {
   seed: { api?: string };
   idx: { client: IDX };
   ceramic: { client: CeramicClient };
+  walletConnect: { bridge: string };
   tokens: string[];
   token: ethers.Contract;
 
@@ -68,6 +69,7 @@ export class Config {
       this.abi = config.abi;
       this.idx = { client: idx };
       this.ceramic = { client: ceramic };
+      this.walletConnect = { bridge: config.walletConnect.bridge };
       this.tokens = cfg.tokens;
       this.token = new ethers.Contract(
         this.radToken.address,
@@ -95,14 +97,11 @@ function isMetamaskInstalled(): boolean {
 }
 
 function isWalletConnectConnected(): boolean {
-  const newWalletConnect = (): WalletConnect => {
-    return new WalletConnect({
-      bridge: "https://radicle.bridge.walletconnect.org",
-    });
-  };
-  walletConnect = newWalletConnect();
 
-  if (walletConnect.connected) {
+  const walletConnectFromLocalStorage: any = window.localStorage.getItem('walletconnect');
+  walletConnect = JSON.parse(walletConnectFromLocalStorage);
+
+  if (walletConnect?.connected) {
     return true;
   } else {
     return false;
@@ -119,7 +118,6 @@ export async function getConfig(): Promise<Config> {
     network = await metamask.ready;
   }
 
-
   const networkConfig = (<Record<string, any>> config)[network.name];
   if (!networkConfig) {
     throw `Network ${network.name} is not supported`;
@@ -127,40 +125,26 @@ export async function getConfig(): Promise<Config> {
 
   function getProvider(): ethers.providers.JsonRpcProvider {
     // Use Alchemy in production, on mainnet.
-    let provider;
-
     if (network.name === "homestead" && import.meta.env.PROD) {
-      provider = new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
+      return new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
     } else if (isMetamaskInstalled()) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-    }
-    if (! provider) {
+      return new ethers.providers.Web3Provider(window.ethereum);
+    } else {
       throw `No Web3 provider available.`;
     }
-    return provider;
   }
-
-
-  const disconnect = async () => {
-    await walletConnect.killSession().catch(() => {
-      // When the user disconnects wallet-side, calling `killSession`
-      // app-side trows an error because the wallet has already closed
-      // its socket. Therefore, we simply ignore it.
-    });
-  };
 
   const provider = getProvider();
 
   let cfg: Config;
 
   if (isWalletConnectConnected()) {
-    const signer = new WalletConnectSigner(walletConnect, provider, disconnect);
+    const signer = new WalletConnectSigner(walletConnect, provider);
 
     cfg = new Config(network, provider, signer);
   } else if (isMetamaskInstalled()) {
     // If we have Metamask, use it as the signer, but try to use Alchemy
     // as the provider.
-
     cfg = new Config(network, provider, provider.getSigner());
   } else {
     // If we don't have Metamask, we default to Homestead.

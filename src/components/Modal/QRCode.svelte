@@ -1,15 +1,11 @@
-<script lang="typescript">
+<script lang="ts">
     import { qrcode } from "pure-svg-code";
     import Modal from "@app/Modal.svelte";
-    import Metamask from "@app/Metamask.svelte";
     import { state } from '@app/session';
     import type { Config } from '@app/config';
-    
 
     export let uri: string;
     export let config: Config;
-    export let caption = "Connect Wallet";
-
 
     $: svgString = qrcode({
       content: uri,
@@ -20,9 +16,9 @@
       ecl: "M"
     });
 
-    const onClickConnect = () => {
-      state.connectMetamask(config);
-};
+  const onClickConnect = () => {
+    state.connectMetamask(config);
+  };
 
 </script>
 
@@ -40,7 +36,7 @@
     height: 100%;
   }
   </style>
-  
+
   <div class="wrapper">
   <Modal floating={true} center>
     <p slot="title">Connect your wallet</p>
@@ -57,16 +53,9 @@
       </div>
     </div>
     <p>Or Connect your metamask wallet</p>
-    <button on:click={onClickConnect} style="background-color: white; border-radius: 1rem; height:20;">
-      <div style="display: flex; align-items: center; justify-content: center;">
-     
-      <Metamask/> <p style="margin-left: 0.5rem; color: var(--color-secondary); font-weight: bold;">{caption}</p>
-    
-    
-    </div>
-    </button>
+      <a on:click={onClickConnect} href=' ' class="link">
+        Connect with Metamask
+      </a>
     </div>
   </Modal>
   </div>
-  
- 
