@@ -16,9 +16,9 @@
       ecl: "M"
     });
 
-  const onClickConnect = () => {
-    state.connectMetamask(config);
-  };
+const onClickConnect = () => {
+      state.connectMetamask(config);
+};
 
 </script>
 
