@@ -4,6 +4,7 @@
     value: string | null;
     label?: string;
     placeholder?: string;
+    description: string;
     resolve?: boolean;
     editable: boolean;
   }
@@ -37,7 +38,7 @@
   .fields {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 1.5rem;
+    grid-gap: 1rem 1.5rem;
   }
   .fields > div {
     justify-self: start;
@@ -53,6 +54,11 @@
     padding: 0.25rem 1rem;
     margin: 0;
     white-space: nowrap;
+  }
+
+  .description {
+    padding-left: 1rem;
+    max-width: 32rem;
   }
 
   input.field {
@@ -71,6 +77,9 @@
 
   .label {
     border: 1px solid transparent;
+    padding: 0.25rem;
+    height: 100%;
+    display: block;
   }
 
   .actions {
@@ -112,6 +121,9 @@
           {/if}
         </span>
       {/if}
+      <div class="description text-small faded">
+        {field.description}
+      </div>
     </div>
   {/each}
 </div>
