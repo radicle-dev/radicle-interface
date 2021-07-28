@@ -338,8 +338,11 @@ label.input {
 	align-items: center;
 }
 
-span.small, .text-small {
+span.small, .text-xsmall {
 	font-size: 0.75rem;
+}
+.text-small {
+	font-size: 0.875rem;
 }
 
 button.error:hover {

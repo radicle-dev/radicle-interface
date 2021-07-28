@@ -70,7 +70,7 @@
     justify-content: center;
     min-height: 42px;
     margin-left: 2rem;
-    width: 10.25rem;
+    width: 9.25rem;
   }
   .connect {
     display: inline-block;

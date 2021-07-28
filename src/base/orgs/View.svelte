@@ -2,7 +2,7 @@
   import type { SvelteComponent } from 'svelte';
   import Link from '@app/Link.svelte';
   import type { Config } from '@app/config';
-  import { parseEnsLabel, explorerLink } from '@app/utils';
+  import { formatName, parseEnsLabel, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -143,7 +143,7 @@
           <div class="info">
             <span class="title">
               <span class="bold">
-                {parseEnsLabel(profile.name, config) ?? address}
+                {profile.name ? formatName(profile.name, config) : address}
               </span>
               {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>

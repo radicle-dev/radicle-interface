@@ -44,7 +44,7 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
 }
 
 export function formatAddress(addr: string): string {
-  return formatHash(ethers.utils.getAddress(addr));
+  return formatHash(ethers.utils.getAddress(addr)).replace(/^0x/, "");
 }
 
 export function formatIpfsFile(ipfs: string | undefined): string | undefined {
@@ -168,6 +168,12 @@ export async function querySubgraph(
   }
 
   return json.data;
+}
+
+// Format a name.
+export function formatName(input: string, config: Config): string {
+  const name = parseEnsLabel(input, config);
+  return name || input;
 }
 
 // Create a Radicle ID from a root hash.
