@@ -186,7 +186,7 @@
           </div>
           <!-- Name -->
           <!-- Only show the name if we aren't already using the name of the owner -->
-          {#if profile.address === org.address}
+          {#if utils.isAddressEqual(profile.address, org.address)}
             <div class="label">Name</div>
             <div>
               {#if profile.name}
