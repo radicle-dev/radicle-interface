@@ -38,7 +38,7 @@
     display: inline-block;
     margin-top: 0.75rem;
     border-radius: 0.75rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0rem 0.5rem;
     text-overflow: ellipsis;
     overflow-x: hidden;
     max-width: 7rem;
