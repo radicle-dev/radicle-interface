@@ -211,9 +211,9 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   const tx = await registrar(config).connect(config.signer).register(
     name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 }
   );
-
-  await tx.wait();
   console.log("Sent", tx);
+  await tx.wait();
+
   window.localStorage.clear();
   state.set({ connection: State.Registered });
 }

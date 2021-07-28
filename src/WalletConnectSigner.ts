@@ -17,14 +17,12 @@ import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-si
 
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;
-
-  private _provider: ethers.providers.JsonRpcProvider;
+  private readonly _provider: ethers.providers.JsonRpcProvider;
   constructor(
     walletConnect: WalletConnect,
     provider: ethers.providers.JsonRpcProvider,
   ) {
     super();
-    defineReadOnly(this, "provider", provider);
     this._provider = provider;
     this.walletConnect = walletConnect;
   }
@@ -39,7 +37,6 @@ export class WalletConnectSigner extends ethers.Signer {
     return accountAddress;
   }
 
-
   async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
     // Populate any ENS names (in-place)
     const populated = await _TypedDataEncoder.resolveNames(domain, types, value, (name: string) => {
@@ -51,7 +48,6 @@ export class WalletConnectSigner extends ethers.Signer {
       address.toLowerCase(),
       JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),
     ]);
-
     return signature;
   }
 

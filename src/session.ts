@@ -317,7 +317,9 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 }
 
 export function disconnectWallet(): void {
-  window.localStorage.clear();
+  window.localStorage.removeItem('session');
+  window.localStorage.removeItem('walletconnect');
+  window.localStorage.removeItem('wallet_connect');
   location.reload();
 }
 
