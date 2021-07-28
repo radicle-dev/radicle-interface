@@ -122,7 +122,7 @@
               {field.value}
             {/if}
           {:else}
-            <span class="subtle">Not set</span>
+            <span class="subtle not-set">&cross; Not set</span>
           {/if}
         </span>
       {/if}
