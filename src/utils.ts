@@ -231,7 +231,6 @@ export async function resolveLabel(label: string | undefined, config: Config): P
   return null;
 }
 
-
 // Resolves an IDX profile or return null
 export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
   return config.idx.client.get<BasicProfile>("basicProfile", caip10);
@@ -239,9 +238,9 @@ export async function resolveIdxProfile(caip10: string, config: Config): Promise
 
 // Resolves an ENS profile or return null
 export async function resolveEnsProfile(address: string, config: Config): Promise<Registration | null> {
-  const label = await config.provider.lookupAddress(address);
-  if (label && await resolveLabel(parseEnsLabel(label, config), config)) {
-    return await getRegistration(label, config);
+  const name = await config.provider.lookupAddress(address);
+  if (name) {
+    return await getRegistration(name, config);
   }
   return null;
 }

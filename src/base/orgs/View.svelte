@@ -224,7 +224,7 @@
                     <div class="member-icon">
                       <Avatar source={profile.avatar ?? address} />
                     </div>
-                    <Address {address} compact resolve noAvatar {config} />
+                    <Address {address} compact resolve noAvatar {profile} {config} />
                   </div>
                 {/await}
               {/each}
