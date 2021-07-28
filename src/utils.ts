@@ -31,6 +31,11 @@ export interface SafeTransaction {
     operation: number;
 }
 
+export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
+  const name = await config.provider.lookupAddress(address);
+  return name === domain;
+}
+
 export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
 }

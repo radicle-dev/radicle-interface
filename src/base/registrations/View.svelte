@@ -10,7 +10,7 @@
   import type { Field } from '@app/Form.svelte';
   import { assert } from '@app/error';
   import Error from '@app/Error.svelte';
-  import { isAddressEqual } from '@app/utils';
+  import { isAddressEqual, isReverseRecordSet } from '@app/utils';
 
   import { getRegistration } from './registrar';
   import type { EnsRecord } from './resolver';
@@ -33,6 +33,8 @@
   export let subdomain: string;
   export let config: Config;
 
+  subdomain = subdomain.toLowerCase();
+
   let state: State = { status: Status.Loading };
   let editable = false;
   let fields: Field[] = [];
@@ -41,16 +43,25 @@
 
   onMount(() => {
     getRegistration(name, config)
-      .then(r => {
+      .then(async r => {
         if (r) {
+          let reverseRecord = false;
+          if (r.address) {
+            reverseRecord = await isReverseRecordSet(r.address, name, config);
+          }
+
           fields = [
             { name: "owner", placeholder: "",
               description: "The owner and controller of this name.",
               value: r.owner, resolve: true, editable: false },
             { name: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
-              description: "The address this name resolves to. "
-              + "For this name to be correctly associated with the address, "
-              + "a reverse entry should also be set on the address.",
+              description: "The address this name resolves to. " + (
+                reverseRecord
+                  ? `The reverse record for this address is set to **${name}**`
+                  : "The reverse record for this address is **not set**. "
+                  + "For this name to be correctly associated with the address, "
+                  + "a reverse record should be set."
+              ),
               value: r.address, editable: true },
             { name: "url", label: "URL", placeholder: "https://acme.org",
               description: "A homepage or other URL associated with this name.",

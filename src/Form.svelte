@@ -12,6 +12,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import marked from 'marked';
   import { capitalize, isUrl, isAddress } from '@app/utils';
   import Address from '@app/Address.svelte';
   import type { Config } from '@app/config';
@@ -59,6 +60,10 @@
   .description {
     padding-left: 1rem;
     max-width: 32rem;
+  }
+  .description :global(p) {
+    padding: 0;
+    margin: 0;
   }
 
   input.field {
@@ -122,7 +127,7 @@
         </span>
       {/if}
       <div class="description text-small faded">
-        {field.description}
+        {@html marked(field.description)}
       </div>
     </div>
   {/each}
