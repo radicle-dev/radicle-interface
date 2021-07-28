@@ -21,10 +21,12 @@
 
   export let address: string;
   export let config: Config;
+  export let action: string | null = null;
 
   const back = () => window.history.back();
 
-  let setNameForm: typeof SvelteComponent | null = null;
+  let setNameForm: typeof SvelteComponent | null =
+    action === "setName" ? SetName : null;
   const setName = () => {
     setNameForm = SetName;
   };
