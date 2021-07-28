@@ -22,8 +22,8 @@
           navigate(`/users/${query}`, { replace: true });
         }
       } else if (utils.isRadicleId(query)) {
-        // Go to Radicle entity.
-        alert("Radicle IDs are not yet supported");
+        // Go to Radicle project.
+        navigate(`/projects/${query}`, { replace: true });
       } else {
         let label = utils.parseEnsLabel(query, config);
         if (label.includes(".")) {
