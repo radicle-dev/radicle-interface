@@ -73,13 +73,11 @@ export function capitalize(s: string): string {
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
 // returns the label, eg. 'cloudhead', otherwise `undefined`.
-export function parseEnsLabel(name: string | undefined, config: Config): string | undefined {
-  if (name) {
-    const domain = config.registrar.domain.replace(".", "\\.");
-    const label = name.replace(new RegExp(`\\.${domain}$`), "");
+export function parseEnsLabel(name: string, config: Config): string {
+  const domain = config.registrar.domain.replace(".", "\\.");
+  const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
-    return label;
-  }
+  return label;
 }
 
 // Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
@@ -172,8 +170,7 @@ export async function querySubgraph(
 
 // Format a name.
 export function formatName(input: string, config: Config): string {
-  const name = parseEnsLabel(input, config);
-  return name || input;
+  return parseEnsLabel(input, config);
 }
 
 // Create a Radicle ID from a root hash.

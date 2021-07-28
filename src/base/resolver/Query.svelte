@@ -26,7 +26,7 @@
         alert("Radicle IDs are not yet supported");
       } else {
         let label = utils.parseEnsLabel(query, config);
-        if (label?.includes(".")) {
+        if (label.includes(".")) {
           error = true;
         } else {
           // Jump straight to org, if the ENS entry points to an org. Otherwise it checks if the
