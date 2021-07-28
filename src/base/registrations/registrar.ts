@@ -50,6 +50,8 @@ state.subscribe((s: Connection) => {
 });
 
 export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
+  name = name.toLowerCase();
+
   const resolver = await config.provider.getResolver(name);
   if (! resolver) {
     return null;
@@ -96,6 +98,8 @@ export async function registerName(name: string, owner: string, config: Config):
 
   if (! name) return;
 
+  name = name.toLowerCase();
+
   const commitmentJson = window.localStorage.getItem('commitment');
   const commitment = commitmentJson && JSON.parse(commitmentJson);
 
@@ -120,6 +124,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
   if ((await config.token.balanceOf(owner)).lt(fee)) {
     throw { type: Failure.InsufficientBalance, message: "Not enough RAD funds" };
   }
+  name = name.toLowerCase();
 
   await commit(makeCommitment(name, owner, salt), fee, minAge, config);
   // Save commitment in local storage in case the user refreshes or closes
