@@ -46,7 +46,6 @@ export class Config {
     provider: ethers.providers.JsonRpcProvider,
     signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null,
   ) {
-
     {
       const api = config.radicle.api;
       const cfg = (<Record<string, any>> config)[network.name];

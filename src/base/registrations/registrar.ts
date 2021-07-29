@@ -92,7 +92,7 @@ export async function registrationFee(config: Config): Promise<BigNumber> {
 }
 
 export async function registerName(name: string, owner: string, config: Config): Promise<void> {
-  assert(config.signer);
+  //assert(config.signer);
 
   if (! name) return;
 
@@ -102,6 +102,7 @@ export async function registerName(name: string, owner: string, config: Config):
   try {
     // Try to recover an existing commitment.
     if (commitment && commitment.name === name && commitment.owner === owner) {
+      console.log(config.signer,config, "signer from register name");
       await register(name, owner, commitment.salt, config);
     } else {
       await commitAndRegister(name, owner, config);
@@ -129,12 +130,14 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
     owner: owner,
     salt: ethers.utils.hexlify(salt)
   }));
+  console.log(config.signer,config, "signer from commit name");
 
   await register(name, owner, salt, config);
 }
 
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
   assert(config.signer);
+  console.log(config.signer,config, "signer from register name");
 
   state.set({ connection: State.Committing });
 
@@ -213,7 +216,6 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   );
   console.log("Sent", tx);
   await tx.wait();
-
   window.localStorage.clear();
   state.set({ connection: State.Registered });
 }
