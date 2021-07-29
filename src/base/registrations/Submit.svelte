@@ -53,6 +53,8 @@
     <span slot="title">
       {#if $state.connection === State.Registered}
         <div>🎉</div>
+      {:else}
+        <div>🌐</div>
       {/if}
       {subdomain}.{config.registrar.domain}
     </span>
@@ -60,12 +62,18 @@
     <span slot="subtitle">
       {#if $state.connection === State.Connecting}
         Connecting...
+      {:else if $state.connection === State.SigningPermit}
+        Approving registration fee. Please confirm in your wallet.
+      {:else if $state.connection === State.SigningCommit}
+        Committing to <strong>{subdomain}</strong>. Please confirm transaction in your wallet.
       {:else if $state.connection === State.Committing}
-        Committing... Please confirm in your wallet.
+        Waiting for <strong>commit</strong> transaction to be processed&hellip;
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
-        Waiting for commitment time... This may take a moment.
+        Waiting for commitment to mature. This may take a moment.
+      {:else if $state.connection === State.SigningRegister}
+        Proceeding with registration. Please confirm transaction in your wallet.
       {:else if $state.connection === State.Registering}
-        Registering name... Please confirm the transaction in your wallet.
+        Waiting for <strong>register</strong> transaction to be processed&hellip;
       {/if}
     </span>
 
