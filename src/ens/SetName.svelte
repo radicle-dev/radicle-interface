@@ -123,7 +123,8 @@
 {:else}
   <Modal floating>
     <div slot="title">
-      🖊️
+      <div>🖊️</div>
+      <span>Reverse record</span>
     </div>
 
     <div slot="subtitle">

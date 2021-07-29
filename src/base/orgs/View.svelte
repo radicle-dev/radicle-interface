@@ -2,7 +2,7 @@
   import type { SvelteComponent } from 'svelte';
   import Link from '@app/Link.svelte';
   import type { Config } from '@app/config';
-  import { parseEnsLabel, explorerLink } from '@app/utils';
+  import { formatName, parseEnsLabel, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -21,10 +21,12 @@
 
   export let address: string;
   export let config: Config;
+  export let action: string | null = null;
 
   const back = () => window.history.back();
 
-  let setNameForm: typeof SvelteComponent | null = null;
+  let setNameForm: typeof SvelteComponent | null =
+    action === "setName" ? SetName : null;
   const setName = () => {
     setNameForm = SetName;
   };
@@ -143,7 +145,7 @@
           <div class="info">
             <span class="title">
               <span class="bold">
-                {parseEnsLabel(profile.name, config) ?? address}
+                {profile.name ? formatName(profile.name, config) : address}
               </span>
               {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>
@@ -186,7 +188,7 @@
           </div>
           <!-- Name -->
           <!-- Only show the name if we aren't already using the name of the owner -->
-          {#if profile.address === org.address}
+          {#if utils.isAddressEqual(profile.address, org.address)}
             <div class="label">Name</div>
             <div>
               {#if profile.name}
@@ -222,7 +224,7 @@
                     <div class="member-icon">
                       <Avatar source={profile.avatar ?? address} />
                     </div>
-                    <Address {address} compact resolve noAvatar {config} />
+                    <Address {address} compact resolve noAvatar {profile} {config} />
                   </div>
                 {/await}
               {/each}

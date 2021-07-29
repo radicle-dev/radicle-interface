@@ -23,6 +23,9 @@
   export let subdomain: string;
   export let owner: string | null;
 
+  // We only support lower-case names.
+  subdomain = subdomain.toLowerCase();
+
   let fee: string;
   let state = State.CheckingAvailability;
   let error: string | null = null;

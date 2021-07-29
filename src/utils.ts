@@ -31,6 +31,11 @@ export interface SafeTransaction {
     operation: number;
 }
 
+export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
+  const name = await config.provider.lookupAddress(address);
+  return name === domain;
+}
+
 export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
 }
@@ -44,7 +49,7 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
 }
 
 export function formatAddress(addr: string): string {
-  return formatHash(ethers.utils.getAddress(addr));
+  return formatHash(ethers.utils.getAddress(addr)).replace(/^0x/, "");
 }
 
 export function formatIpfsFile(ipfs: string | undefined): string | undefined {
@@ -73,13 +78,11 @@ export function capitalize(s: string): string {
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
 // returns the label, eg. 'cloudhead', otherwise `undefined`.
-export function parseEnsLabel(name: string | undefined, config: Config): string | undefined {
-  if (name) {
-    const domain = config.registrar.domain.replace(".", "\\.");
-    const label = name.replace(new RegExp(`\\.${domain}$`), "");
+export function parseEnsLabel(name: string, config: Config): string {
+  const domain = config.registrar.domain.replace(".", "\\.");
+  const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
-    return label;
-  }
+  return label;
 }
 
 // Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
@@ -170,6 +173,11 @@ export async function querySubgraph(
   return json.data;
 }
 
+// Format a name.
+export function formatName(input: string, config: Config): string {
+  return parseEnsLabel(input, config);
+}
+
 // Create a Radicle ID from a root hash.
 export function formatRadicleId(hash: Uint8Array): string {
   // Remove any zero-padding from the byte array. SHA1 is 20 bytes long.
@@ -223,7 +231,6 @@ export async function resolveLabel(label: string | undefined, config: Config): P
   return null;
 }
 
-
 // Resolves an IDX profile or return null
 export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
   return config.idx.client.get<BasicProfile>("basicProfile", caip10);
@@ -231,9 +238,9 @@ export async function resolveIdxProfile(caip10: string, config: Config): Promise
 
 // Resolves an ENS profile or return null
 export async function resolveEnsProfile(address: string, config: Config): Promise<Registration | null> {
-  const label = await config.provider.lookupAddress(address);
-  if (label && await resolveLabel(parseEnsLabel(label, config), config)) {
-    return await getRegistration(label, config);
+  const name = await config.provider.lookupAddress(address);
+  if (name) {
+    return await getRegistration(name, config);
   }
   return null;
 }

@@ -18,7 +18,6 @@
 
 <style>
   span.root {
-    line-height: 1.5em;
     margin: 1rem;
     margin-left: 0;
     margin-right: 0;

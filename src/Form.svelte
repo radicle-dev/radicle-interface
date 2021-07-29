@@ -4,6 +4,7 @@
     value: string | null;
     label?: string;
     placeholder?: string;
+    description: string;
     resolve?: boolean;
     editable: boolean;
   }
@@ -11,6 +12,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import marked from 'marked';
   import { capitalize, isUrl, isAddress } from '@app/utils';
   import Address from '@app/Address.svelte';
   import type { Config } from '@app/config';
@@ -37,7 +39,7 @@
   .fields {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 1.5rem;
+    grid-gap: 1rem 1.5rem;
   }
   .fields > div {
     justify-self: start;
@@ -53,6 +55,15 @@
     padding: 0.25rem 1rem;
     margin: 0;
     white-space: nowrap;
+  }
+
+  .description {
+    padding-left: 1rem;
+    max-width: 32rem;
+  }
+  .description :global(p) {
+    padding: 0;
+    margin: 0;
   }
 
   input.field {
@@ -71,6 +82,9 @@
 
   .label {
     border: 1px solid transparent;
+    padding: 0.25rem;
+    height: 100%;
+    display: block;
   }
 
   .actions {
@@ -108,10 +122,13 @@
               {field.value}
             {/if}
           {:else}
-            <span class="subtle">Not set</span>
+            <span class="subtle not-set">&cross; Not set</span>
           {/if}
         </span>
       {/if}
+      <div class="description text-small faded">
+        {@html marked(field.description)}
+      </div>
     </div>
   {/each}
 </div>

@@ -245,10 +245,10 @@
     </div>
   {:catch err}
     <div class="container center-content">
-      <div class="error error-message text-small">
+      <div class="error error-message text-xsmall">
         <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
-        API request to <code class="text-small">{err.url}</code> failed
+        API request to <code class="text-xsmall">{err.url}</code> failed
       </div>
     </div>
   {/await}

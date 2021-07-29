@@ -26,8 +26,11 @@ export interface Registration {
 export enum State {
   Failed = -1,
   Connecting,
+  SigningPermit,
+  SigningCommit,
   Committing,
   WaitingToRegister,
+  SigningRegister,
   Registering,
   Registered,
 }
@@ -35,8 +38,11 @@ export enum State {
 export type Connection =
     { connection: State.Failed }
   | { connection: State.Connecting }
+  | { connection: State.SigningPermit }
+  | { connection: State.SigningCommit }
   | { connection: State.Committing }
   | { connection: State.WaitingToRegister; commitmentBlock: number; minAge: number }
+  | { connection: State.SigningRegister }
   | { connection: State.Registering }
   | { connection: State.Registered };
 
@@ -50,6 +56,8 @@ state.subscribe((s: Connection) => {
 });
 
 export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
+  name = name.toLowerCase();
+
   const resolver = await config.provider.getResolver(name);
   if (! resolver) {
     return null;
@@ -96,6 +104,8 @@ export async function registerName(name: string, owner: string, config: Config):
 
   if (! name) return;
 
+  name = name.toLowerCase();
+
   const commitmentJson = window.localStorage.getItem('commitment');
   const commitment = commitmentJson && JSON.parse(commitmentJson);
 
@@ -120,6 +130,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
   if ((await config.token.balanceOf(owner)).lt(fee)) {
     throw { type: Failure.InsufficientBalance, message: "Not enough RAD funds" };
   }
+  name = name.toLowerCase();
 
   await commit(makeCommitment(name, owner, salt), fee, minAge, config);
   // Save commitment in local storage in case the user refreshes or closes
@@ -137,14 +148,15 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
   assert(config.signer, "Signer is not available");
 
-  state.set({ connection: State.Committing });
-
   const owner = config.signer;
   const ownerAddr = await owner.getAddress();
   const spender = config.registrar.address;
   const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
   const token = config.token;
   const signature = await permitSignature(owner, token, spender, fee, deadline);
+
+  state.set({ connection: State.SigningCommit });
+
   const tx = await registrar(config)
     .connect(config.signer)
     .commitWithPermit(
@@ -156,6 +168,8 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
       signature.r,
       signature.s,
       { gasLimit: 150000 });
+
+  state.set({ connection: State.Committing });
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
@@ -176,6 +190,7 @@ async function permitSignature(
   deadline: ethers.BigNumberish,
 ): Promise<ethers.Signature> {
   assert(owner.provider, "provider is not available");
+  state.set({ connection: State.SigningPermit });
   const ownerAddr = await owner.getAddress();
   const nonce = await token.nonces(ownerAddr);
   const chainId = (await owner.provider.getNetwork()).chainId;
@@ -212,6 +227,8 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   const tx = await registrar(config).connect(config.signer).register(
     name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 }
   );
+  state.set({ connection: State.Registering });
+
   console.log("Sent", tx);
   await tx.wait();
   window.localStorage.clear();

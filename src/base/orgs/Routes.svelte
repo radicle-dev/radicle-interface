@@ -3,6 +3,7 @@
   import Index from '@app/base/orgs/Index.svelte';
   import View from '@app/base/orgs/View.svelte';
   import type { Config } from '@app/config';
+  import { getSearchParam } from '@app/utils';
 
   export let config: Config;
 </script>
@@ -11,6 +12,6 @@
   <Index {config} />
 </Route>
 
-<Route path="/orgs/:address" let:params>
-  <View {config} address={params.address} />
+<Route path="/orgs/:address" let:params let:location>
+  <View {config} address={params.address} action={getSearchParam("action", location)} />
 </Route>
