@@ -92,7 +92,7 @@ export async function registrationFee(config: Config): Promise<BigNumber> {
 }
 
 export async function registerName(name: string, owner: string, config: Config): Promise<void> {
-  //assert(config.signer);
+  assert(config.signer, "signer is not available");
 
   if (! name) return;
 
@@ -102,7 +102,6 @@ export async function registerName(name: string, owner: string, config: Config):
   try {
     // Try to recover an existing commitment.
     if (commitment && commitment.name === name && commitment.owner === owner) {
-      console.log(config.signer,config, "signer from register name");
       await register(name, owner, commitment.salt, config);
     } else {
       await commitAndRegister(name, owner, config);
@@ -136,8 +135,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
 }
 
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
-  assert(config.signer);
-  console.log(config.signer,config, "signer from register name");
+  assert(config.signer, "Signer is not available");
 
   state.set({ connection: State.Committing });
 
@@ -177,7 +175,7 @@ async function permitSignature(
   value: ethers.BigNumberish,
   deadline: ethers.BigNumberish,
 ): Promise<ethers.Signature> {
-  assert(owner.provider);
+  assert(owner.provider, "provider is not available");
   const ownerAddr = await owner.getAddress();
   const nonce = await token.nonces(ownerAddr);
   const chainId = (await owner.provider.getNetwork()).chainId;
@@ -208,7 +206,7 @@ async function permitSignature(
 }
 
 async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
-  assert(config.signer);
+  assert(config.signer, "signer is not available");
   state.set({ connection: State.Registering });
 
   const tx = await registrar(config).connect(config.signer).register(
