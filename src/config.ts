@@ -58,7 +58,7 @@ export class Config {
       this.registrar = cfg.registrar;
       this.radToken = cfg.radToken;
       this.orgFactory = cfg.orgFactory;
-      this.radicleBridge = { bridge: config.radicleBridge.bridge };
+      this.radicleBridge = { bridge: config.walletConnect.radicleBridge };
       this.orgs = cfg.orgs;
       this.safe = cfg.safe;
       this.safe.client = this.safe.api
@@ -99,7 +99,7 @@ function isMetamaskInstalled(): boolean {
 function isWalletConnectConnected(): boolean {
   const newWalletConnect = (): WalletConnect => {
     return new WalletConnect({
-      bridge: config.radicleBridge.bridge,
+      bridge: config.walletConnect.radicleBridge,
     });
   };
   walletConnect = newWalletConnect();

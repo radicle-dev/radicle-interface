@@ -29,13 +29,15 @@ export type State =
     { connection: Connection.Disconnected }
   | { connection: Connection.Connecting }
   | { connection: Connection.Connected; session: Session };
+
+export type ConnectionModalState =
+| { status: ConnectionModalStateType.Open; modalProps: ConnectionModalProps }
+| { status: ConnectionModalStateType.Close; modalProps: null };
 export interface Session {
   address: string;
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
-
-export type ConnectionModalState = { status: ConnectionModalStateType.Open; modalProps: ConnectionModalProps } | { status: ConnectionModalStateType.Close; modalProps: null };
 export interface ConnectionModalProps {
   config: Config;
   uri: string;
@@ -81,16 +83,12 @@ export const loadState = (initial: State): Store => {
 
   let walletConnect: any;
   let network: any;
-  //ethereum provider
   let provider: any;
-  // instantiate wallet connect signer
   let signer: any;
 
   // Connect to a wallet using walletconnect
   const connectWalletConnect = async (config: Config) => {
     walletConnect = newWalletConnect(config);
-
-    window.localStorage.setItem('wallet_connect', JSON.stringify(walletConnect));
     provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = new WalletConnectSigner(walletConnect, provider);
 
@@ -150,7 +148,6 @@ export const loadState = (initial: State): Store => {
       const address = await signer.getAddress();
 
       network = config.network;
-
       config = new Config(network, provider, signer);
 
       try {
@@ -319,7 +316,6 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 export function disconnectWallet(): void {
   window.localStorage.removeItem('session');
   window.localStorage.removeItem('walletconnect');
-  window.localStorage.removeItem('wallet_connect');
   location.reload();
 }
 

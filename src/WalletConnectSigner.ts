@@ -9,7 +9,6 @@ import type {
 
 import {
   Deferrable,
-  defineReadOnly,
   resolveProperties,
 } from "@ethersproject/properties";
 import { _TypedDataEncoder } from "ethers/lib/utils";
