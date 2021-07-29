@@ -37,7 +37,7 @@
 </style>
 
 <div class="wrapper">
-  <Modal floating={true} center>
+  <Modal floating center>
     <p slot="title">Connect your wallet</p>
     <p slot="subtitle" style="text-align: center;">
       Code Not working? <br />
