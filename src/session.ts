@@ -126,7 +126,6 @@ export const loadState = (initial: State): Store => {
 
     } catch (e) {
       console.log(e);
-      assertEq(state.connection, Connection.Disconnected);
       store.set({ connection: Connection.Disconnected });
       assert(e, "Could not connect to wallet connect");
     }
