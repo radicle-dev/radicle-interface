@@ -23,7 +23,7 @@
 
 <style>
   .qrcode-wrapper {
-    width: fit-content;
+    width: min-content;
     margin: var(--content-padding) auto;
     padding: calc(var(--content-padding) / 2);
     border-radius: 1rem;
@@ -40,18 +40,18 @@
   <Modal floating center>
     <p slot="title">Connect your wallet</p>
     <p slot="subtitle" style="text-align: center;">
-      Code Not working? <br />
+      Code not working? <br />
       <a href="https://walletconnect.org/wallets" class="link">
         View compatible wallets.
       </a>
     </p>
     <div slot="body">
       <div class="qrcode-wrapper">
-        <div data-cy="qr-code">
+        <div>
           {@html svgString}
         </div>
       </div>
-      <p>Or Connect your metamask wallet</p>
+      <p>Or connect your Metamask wallet</p>
       <!-- svelte-ignore a11y-missing-attribute -->
       <a on:click={onClickConnect} class="link"> Connect with Metamask </a>
     </div>

@@ -54,6 +54,7 @@ export interface Store extends Readable<State> {
   setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount(address: string): void;
 }
+let walletConnect: any;
 
 const modalStore = writable<ConnectionModalState>({ status: ConnectionModalStateType.Close, modalProps: null });
 export const store = derived(modalStore, ($store) => $store);
@@ -81,7 +82,6 @@ export const loadState = (initial: State): Store => {
   }
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
-  let walletConnect: any;
   let network: any;
   let provider: any;
   let signer: any;
@@ -96,13 +96,15 @@ export const loadState = (initial: State): Store => {
     const state = get(store);
     const session = window.localStorage.getItem("session");
 
-    if (session && walletConnect.connected) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
+    if (session && walletConnect.connected) {
+      store.set({ connection: Connection.Connected, session: JSON.parse(session) });
+      return;
+    }
     assertEq(state.connection, Connection.Disconnected);
     store.set({ connection: Connection.Connecting });
 
     try {
       await walletConnect.connect();
-
       const address = await signer.getAddress();
       const tokenBalance: BigNumber = await config.token.balanceOf(address);
       const session = { address, tokenBalance, tx: null };
@@ -113,7 +115,10 @@ export const loadState = (initial: State): Store => {
         name: provNetwork.name,
         chainId: provNetwork.chainId,
       };
-
+      if (network.chainId !== config.network.chainId) {
+        walletConnect.killSession();
+        throw `Network mismatch`;
+      }
       config = new Config(network, provider, signer);
 
       store.set({ connection: Connection.Connected, session });
@@ -315,7 +320,9 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 
 export function disconnectWallet(): void {
   window.localStorage.removeItem('session');
-  window.localStorage.removeItem('walletconnect');
+  if (walletConnect.connected) {
+    walletConnect.killSession();
+  }
   location.reload();
 }
 
