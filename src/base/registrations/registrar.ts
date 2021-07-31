@@ -147,7 +147,6 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
 
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
   assert(config.signer, "Signer is not available");
-
   const owner = config.signer;
   const ownerAddr = await owner.getAddress();
   const spender = config.registrar.address;

@@ -92,11 +92,13 @@ export const loadState = (initial: State): Store => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = new WalletConnectSigner(walletConnect, provider);
 
+    config.setSigner(signer);
+
     //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
 
-    if (session && walletConnect.connected) {
+    if (session && walletConnect?.connected) {
       store.set({ connection: Connection.Connected, session: JSON.parse(session) });
       return;
     }
@@ -319,10 +321,8 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 
 export function disconnectWallet(): void {
   window.localStorage.removeItem('session');
-  if (walletConnect.connected) {
-    walletConnect.killSession();
-  }
-  location.reload();
+  walletConnect.killSession();
+  window.location.reload();
 }
 
 function saveSession(session: Session): void {

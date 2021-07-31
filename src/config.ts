@@ -17,8 +17,6 @@ declare global {
 const gasLimits = {
   createOrg: 1_200_000,
 };
-
-let walletConnect: WalletConnect;
 export class Config {
   network: { name: string; chainId: number };
   registrar: { address: string; domain: string };
@@ -27,6 +25,7 @@ export class Config {
   orgs: { subgraph: string; contractHash: string };
   radicleBridge: { bridge: string };
   gasLimits: { createOrg: number };
+  static walletConnect: WalletConnect;
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
   safe: {
@@ -78,6 +77,14 @@ export class Config {
     }
   }
 
+  getSigner() {
+    return this.signer;
+  }
+
+  setSigner(signer: WalletConnectSigner) {
+    this.signer = signer;
+  }
+
   // Return the config with an overwritten seed URL.
   withSeed(seed: string): Config {
     const cfg = {} as Config;
@@ -101,9 +108,9 @@ function isWalletConnectConnected(): boolean {
       bridge: config.walletConnect.bridge,
     });
   };
-  walletConnect = newWalletConnect();
+  Config.walletConnect = newWalletConnect();
 
-  if (walletConnect.connected) {
+  if (Config.walletConnect?.connected) {
     return true;
   } else {
     return false;
@@ -127,16 +134,14 @@ export async function getConfig(): Promise<Config> {
 
   function getProvider(): ethers.providers.JsonRpcProvider {
     // Use Alchemy in production, on mainnet.
-    let provider;
 
     if (network.name === "homestead" && import.meta.env.PROD) {
-      provider = new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
+      return new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
     } else if (isMetamaskInstalled()) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
+      return new ethers.providers.Web3Provider(window.ethereum);
     } else {
       throw `No Web3 provider available.`;
     }
-    return provider;
   }
 
   const provider = getProvider();
@@ -144,7 +149,7 @@ export async function getConfig(): Promise<Config> {
   let cfg: Config;
 
   if (isWalletConnectConnected()) {
-    const signer = new WalletConnectSigner(walletConnect, provider);
+    const signer = new WalletConnectSigner(Config.walletConnect, provider);
 
     cfg = new Config(network, provider, signer);
   } else if (isMetamaskInstalled()) {
