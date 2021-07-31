@@ -77,11 +77,7 @@ export class Config {
     }
   }
 
-  getSigner() {
-    return this.signer;
-  }
-
-  setSigner(signer: WalletConnectSigner) {
+  setSigner(signer: WalletConnectSigner): void {
     this.signer = signer;
   }
 
