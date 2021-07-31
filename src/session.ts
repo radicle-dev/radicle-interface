@@ -127,7 +127,7 @@ export const loadState = (initial: State): Store => {
     } catch (e) {
       console.log(e);
       store.set({ connection: Connection.Disconnected });
-      throw e `Could not connect to wallet connect`;
+      throw e;
     }
   };
 
