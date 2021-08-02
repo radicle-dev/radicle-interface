@@ -269,7 +269,7 @@
       </span>
     </Modal>
   {/if}
-  <svelte:component this={setNameForm} {org} {config} on:close={() => setNameForm = null} />
+  <svelte:component this={setNameForm} entity={org} {config} on:close={() => setNameForm = null} />
   <svelte:component this={transferOwnerForm} {org} {config} on:close={() => transferOwnerForm = null} />
 {:catch err}
   <Error error={err} />

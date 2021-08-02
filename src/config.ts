@@ -22,6 +22,7 @@ export class Config {
   registrar: { address: string; domain: string };
   radToken: { address: string };
   orgFactory: { address: string };
+  reverseRegistrar: { address: string };
   orgs: { subgraph: string; contractHash: string };
   radicleBridge: { bridge: string };
   gasLimits: { createOrg: number };

@@ -5,7 +5,8 @@
   import type { Config } from '@app/config';
   import { formatAddress, isAddressEqual } from '@app/utils';
   import DomainInput from '@app/ens/DomainInput.svelte';
-  import type { Org } from '@app/base/orgs/Org';
+  import { Org } from '@app/base/orgs/Org';
+  import type { User } from '@app/base/users/User';
   import Loading from '@app/Loading.svelte';
   import Error from '@app/Error.svelte';
   import Address from '@app/Address.svelte';
@@ -13,8 +14,12 @@
 
   const dispatch = createEventDispatcher();
 
-  export let org: Org;
+  export let entity: Org | User;
   export let config: Config;
+
+  const org = Org.hasOwnProperty.call(entity, "owner")
+    ? entity as Org
+    : null;
 
   enum State {
     Idle,
@@ -43,15 +48,15 @@
     let domain = `${name}.${config.registrar.domain}`;
     let resolved = await config.provider.resolveName(domain);
 
-    if (resolved && isAddressEqual(resolved, org.address)) {
+    if (resolved && isAddressEqual(resolved, entity.address)) {
       try {
-        if (await utils.isSafe(org.owner, config)) {
+        if (org && await utils.isSafe(org.owner, config)) {
           state = State.Proposing;
           await org.setNameMultisig(domain, config);
           state = State.Proposed;
         } else {
           state = State.Signing;
-          let tx = await org.setName(domain, config);
+          let tx = await entity.setName(domain, config);
           state = State.Pending;
           await tx.wait();
           state = State.Success;
@@ -74,7 +79,7 @@
     </div>
 
     <div slot="subtitle">
-      The ENS name for {org.address} was set to
+      The ENS name for {entity.address} was set to
       <strong>{name}.{config.registrar.domain}</strong>.
     </div>
 
@@ -84,14 +89,14 @@
       </button>
     </div>
   </Modal>
-{:else if state === State.Proposed}
+{:else if state === State.Proposed && org}
   <Modal floating>
     <div slot="title">
       🪴
     </div>
 
     <div slot="subtitle">
-      <p>The transaction to set the ENS name for <strong>{formatAddress(org.address)}</strong>
+      <p>The transaction to set the ENS name for <strong>{formatAddress(entity.address)}</strong>
       to <strong>{name}.{config.registrar.domain}</strong> was proposed to:</p>
       <p><Address address={org.owner} {config} compact /></p>
     </div>
@@ -105,7 +110,7 @@
 {:else if state === State.Mismatch}
   <Error floating title="🖊️" on:close>
     The name <strong>{name}.{config.registrar.domain}</strong> does not
-    resolve to <strong>{org.address}</strong>. Please update
+    resolve to <strong>{entity.address}</strong>. Please update
     the ENS record for {name}.{config.registrar.domain} to
     point to the correct address and try again.
 
@@ -132,12 +137,12 @@
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
         Waiting for transaction to be processed...
-      {:else if state == State.Proposing}
+      {:else if state == State.Proposing && org}
         Proposal is being submitted to the safe
         <strong>{formatAddress(org.owner)}</strong>,
         please sign the transaction in your wallet.
       {:else}
-        Set an ENS name for <strong>{formatAddress(org.address)}</strong>
+        Set an ENS name for <strong>{formatAddress(entity.address)}</strong>
       {/if}
     </div>
 
