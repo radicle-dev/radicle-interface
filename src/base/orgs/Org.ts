@@ -212,18 +212,22 @@ export class Org {
     }
   }
 
-  // Return only org profile if there is one, otherwise tries to get the profile
+  // Return the org profile if there is one, otherwise try to get the profile
   // of its owner.
   static async getProfile(address: string, config: Config): Promise<Profile> {
     const profile = await Profile.get(address, config);
 
-    if (profile.ens) {
+    if (profile.ens) { // Orgs only use ENS for profile information.
       return profile;
     }
     const org = await Org.get(address, config);
 
     if (org) {
-      return Profile.get(org.owner, config);
+      const ownerProfile = await Profile.get(org.owner, config);
+
+      if (ownerProfile.ens || ownerProfile.idx) {
+        return ownerProfile;
+      }
     }
     return profile;
   }
