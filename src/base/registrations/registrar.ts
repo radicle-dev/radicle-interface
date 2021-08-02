@@ -229,6 +229,7 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   state.set({ connection: State.Registering });
 
   console.log("Sent", tx);
+
   await tx.wait();
   window.localStorage.clear();
   state.set({ connection: State.Registered });

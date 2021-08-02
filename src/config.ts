@@ -3,7 +3,7 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
-import WalletConnect from "@walletconnect/client";
+import type WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
 
@@ -99,13 +99,6 @@ function isMetamaskInstalled(): boolean {
 }
 
 function isWalletConnectConnected(): boolean {
-  const newWalletConnect = (): WalletConnect => {
-    return new WalletConnect({
-      bridge: config.walletConnect.bridge,
-    });
-  };
-  Config.walletConnect = newWalletConnect();
-
   if (Config.walletConnect?.connected) {
     return true;
   } else {

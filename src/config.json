@@ -42,7 +42,7 @@
     "tokens": []
   },
   "alchemy": { "key": "cQFlLK8EokIGlJhd_soImwEyUoC7Ec8r" },
-  "walletConnect" : { "bridge" : "https://radicle.bridge.walletconnect.org" },
+  "walletConnect": { "bridge" : "https://radicle.bridge.walletconnect.org" },
   "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
   "radicle": { "api": "http://0.0.0.0:8888" },
   "ipfs": { "gateway": "https://ipfs.io/ipfs/" },

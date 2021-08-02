@@ -16,6 +16,7 @@ import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-si
 
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;
+
   public readonly provider: ethers.providers.JsonRpcProvider;
   constructor(
     walletConnect: WalletConnect,
@@ -84,7 +85,7 @@ export class WalletConnectSigner extends ethers.Signer {
       data: bytesLikeToString(tx.data) || "",
       value: tx.value,
       chainId: tx.chainId,
-      confirmations: 1,
+      confirmations: 0,
       from: from,
       wait: (confirmations?: number) => { return this.provider?.waitForTransaction(txHash, confirmations); }
     };

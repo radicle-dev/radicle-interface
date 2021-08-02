@@ -54,7 +54,6 @@ export interface Store extends Readable<State> {
   setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount(address: string): void;
 }
-let walletConnect: any;
 
 const modalStore = writable<ConnectionModalState>({ status: ConnectionModalStateType.Close, modalProps: null });
 export const store = derived(modalStore, ($store) => $store);
@@ -64,7 +63,7 @@ export const loadState = (initial: State): Store => {
   const session = window.localStorage.getItem("session");
   function newWalletConnect(config: Config): WalletConnect {
 
-    walletConnect = new WalletConnect({
+    Config.walletConnect = new WalletConnect({
       bridge: config.radicleBridge.bridge,
       qrcodeModal: {
         open: (uri: string, onClose, _opts?: unknown) => {
@@ -78,7 +77,7 @@ export const loadState = (initial: State): Store => {
       },
     });
 
-    return walletConnect;
+    return Config.walletConnect;
   }
   if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
 
@@ -88,13 +87,12 @@ export const loadState = (initial: State): Store => {
 
   // Connect to a wallet using walletconnect
   const connectWalletConnect = async (config: Config) => {
+    let walletConnect: WalletConnect = Config.walletConnect;
     walletConnect = newWalletConnect(config);
     provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = new WalletConnectSigner(walletConnect, provider);
 
     config.setSigner(signer);
-
-    //Todo : check wallet state in the store before attempting to connect
     const state = get(store);
     const session = window.localStorage.getItem("session");
 
@@ -321,7 +319,7 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
 
 export function disconnectWallet(): void {
   window.localStorage.removeItem('session');
-  walletConnect.killSession();
+  Config.walletConnect?.killSession();
   window.location.reload();
 }
 
