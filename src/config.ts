@@ -57,6 +57,7 @@ export class Config {
       this.registrar = cfg.registrar;
       this.radToken = cfg.radToken;
       this.orgFactory = cfg.orgFactory;
+      this.reverseRegistrar = cfg.reverseRegistrar;
       this.radicleBridge = { bridge: config.walletConnect.bridge };
       this.orgs = cfg.orgs;
       this.safe = cfg.safe;
