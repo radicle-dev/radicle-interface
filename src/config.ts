@@ -17,6 +17,7 @@ export class Config {
   registrar: { address: string; domain: string };
   radToken: { address: string };
   orgFactory: { address: string };
+  reverseRegistrar: { address: string };
   orgs: { subgraph: string; contractHash: string };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
@@ -62,6 +63,7 @@ export class Config {
     this.registrar = cfg.registrar;
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
+    this.reverseRegistrar = cfg.reverseRegistrar;
     this.orgs = cfg.orgs;
     this.safe = cfg.safe;
     this.safe.client = this.safe.api

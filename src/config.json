@@ -18,6 +18,9 @@
       "api": "https://safe-transaction.gnosis.io",
       "viewer": "https://gnosis-safe.io/app/#/safes"
     },
+    "reverseRegistrar": {
+      "address": "0x084b1c3C81545d370f3634392De611CaaBFf8148"
+    },
     "tokens": []
   },
   "rinkeby": {
@@ -38,6 +41,9 @@
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
+    },
+    "reverseRegistrar": {
+      "address": "0x6F628b68b30Dc3c17f345c9dbBb1E483c2b7aE5c"
     },
     "tokens": []
   },
@@ -74,6 +80,9 @@
       "function createOrg(address) returns (address)",
       "function createOrg(address[], uint256) returns (address)",
       "event OrgCreated(address, address)"
+    ],
+    "reverseRegistrar": [
+      "function setName(string) returns (bytes32)"
     ],
     "org": [
       "function owner() view returns (address)",
