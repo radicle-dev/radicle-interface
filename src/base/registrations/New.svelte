@@ -79,7 +79,7 @@
         for <strong>{fee} RAD</strong>.
       {/if}
     {:else if state === State.NameUnavailable}
-      The name <span class="highlight">{subdomain}</span> is not available for registration.
+      This name is <strong>not available</strong> for registration.
     {:else if state === State.CheckingAvailability}
       <Loading small center />
     {:else if state === State.CheckingFailed && error}

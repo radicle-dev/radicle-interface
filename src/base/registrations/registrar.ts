@@ -46,7 +46,6 @@ export type Connection =
   | { connection: State.Registering }
   | { connection: State.Registered };
 
-
 export const state = writable<Connection>({ connection: State.Connecting });
 
 window.registrarState = state;
