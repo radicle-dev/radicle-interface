@@ -87,6 +87,7 @@ export const loadState = (initial: State): Store => {
 
       try {
         await config.walletConnect.client.connect();
+        console.log("WalletConnect: connected.");
 
         const address = await signer.getAddress();
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
@@ -103,6 +104,7 @@ export const loadState = (initial: State): Store => {
         }
         store.set({ connection: Connection.Connected, session });
       } catch (e) {
+        console.log("WalletConnect: connection failed.");
         store.set({ connection: Connection.Disconnected });
 
         // There seems to be no way to detect this "error" caused by the user

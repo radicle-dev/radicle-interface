@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { ethers } from "ethers";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
@@ -150,7 +150,7 @@ export class Config {
           state.set({ state: "open", uri, onClose });
         },
         close: () => {
-          state.set({ state: "close" });
+          // We handle the "close" event through the "disconnect" handler.
         }
       },
       clientMeta: {
@@ -164,6 +164,12 @@ export class Config {
     });
     walletConnect.on("modal_closed", () => {
       state.set({ state: "close" });
+    });
+    walletConnect.on("disconnect", () => {
+      const wcs = get(state);
+      if (wcs.state === "open") {
+        wcs.onClose();
+      }
     });
 
     const walletConnectSigner = new WalletConnectSigner(walletConnect, provider);
