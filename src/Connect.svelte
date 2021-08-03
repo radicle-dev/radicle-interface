@@ -11,7 +11,6 @@
   export let style = "";
   export let config: Config;
 
-  let walletUnavailable = !window.ethereum;
   let error: Err | null = null;
 
   const onModalClose = () => {
@@ -39,7 +38,7 @@
   on:click|stopPropagation={onConnect}
   {style}
   class="connect {className}"
-  disabled={connecting || walletUnavailable}
+  disabled={connecting}
   data-waiting={connecting || null}
 >
   {#if connecting}
