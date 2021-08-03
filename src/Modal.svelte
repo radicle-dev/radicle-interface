@@ -4,6 +4,7 @@
   export let subtle = false;
   export let small = false;
   export let narrow = false;
+  export let center = false;
 </script>
 
 <style>
@@ -96,7 +97,7 @@
   <div class="modal-overlay"></div>
 {/if}
 
-<div class:modal-floating={floating} class="centered">
+<div class:modal-floating={floating} class:centered={!center}>
   <div class="modal" class:error
        class:modal-subtle={subtle}
        class:modal-narrow={narrow}

@@ -1,4 +1,3 @@
-// TODO: Show "look at your wallet" / "confirm tx" before state change.
 import { ethers } from 'ethers';
 import { writable } from 'svelte/store';
 import type { BigNumber } from 'ethers';
@@ -99,7 +98,7 @@ export async function registrationFee(config: Config): Promise<BigNumber> {
 }
 
 export async function registerName(name: string, owner: string, config: Config): Promise<void> {
-  assert(config.signer);
+  assert(config.signer, "signer is not available");
 
   if (! name) return;
 
@@ -144,7 +143,7 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
 }
 
 async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
-  assert(config.signer);
+  assert(config.signer, "signer is not available");
 
   const owner = config.signer;
   const ownerAddr = await owner.getAddress();
@@ -187,8 +186,7 @@ async function permitSignature(
   value: ethers.BigNumberish,
   deadline: ethers.BigNumberish,
 ): Promise<ethers.Signature> {
-  assert(owner.provider);
-
+  assert(owner.provider, "provider is not available");
   state.set({ connection: State.SigningPermit });
 
   const ownerAddr = await owner.getAddress();
@@ -222,7 +220,7 @@ async function permitSignature(
 }
 
 async function register(name: string, owner: string, salt: Uint8Array, config: Config) {
-  assert(config.signer);
+  assert(config.signer, "signer is not available");
   state.set({ connection: State.SigningRegister });
 
   const tx = await registrar(config).connect(config.signer).register(
@@ -233,7 +231,7 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   console.log("Sent", tx);
 
   await tx.wait();
-  window.localStorage.clear();
+  window.localStorage.removeItem("commitment");
   state.set({ connection: State.Registered });
 }
 

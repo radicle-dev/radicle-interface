@@ -148,7 +148,7 @@
       </span>
 
       <button class="address outline small" bind:this={sessionButton}
-        on:click={disconnectWallet}
+        on:click={() => disconnectWallet(config)}
         on:mouseover={() => sessionButtonHover = true}
         on:mouseout={() => sessionButtonHover = false}
       >

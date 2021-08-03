@@ -3,6 +3,7 @@ import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
+import * as ethers from "ethers";
 
 export enum Connection {
   Disconnected,
@@ -29,10 +30,10 @@ export interface Session {
 }
 
 export interface Store extends Readable<State> {
-  connect(config: Config): Promise<void>;
+  connectMetamask(config: Config): Promise<void>;
+  connectWalletConnect(config: Config): Promise<void>;
   updateBalance(n: BigNumber): void;
   refreshBalance(config: Config): Promise<void>;
-
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
@@ -41,39 +42,77 @@ export interface Store extends Readable<State> {
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-  const session = window.localStorage.getItem("session");
+  const metamask = window.localStorage.getItem("metamask");
 
-  if (session) store.set({ connection: Connection.Connected, session: JSON.parse(session) });
+  if (metamask) {
+    store.set({ connection: Connection.Connected, session: JSON.parse(metamask) });
+  }
 
   return {
     subscribe: store.subscribe,
-    connect: async (config: Config) => {
-      assert(config.signer);
+    connectMetamask: async (config: Config) => {
+      assert(config.metamaskSigner);
+
       const state = get(store);
 
-      assertEq(state.connection, Connection.Disconnected);
+      assertEq(state.connection, Connection.Disconnected || Connection.Connecting);
       store.set({ connection: Connection.Connecting });
 
-      // TODO: This hangs on Brave, if you have to unlock your wallet..
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-      } catch (e) {
-        console.error(e);
-      }
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      const signer = config.signer;
+      const signer = config.metamaskSigner;
       const address = await signer.getAddress();
 
+      config.setSigner(signer);
+
       try {
+        config.walletConnect.state.set({ state: "close" });
+
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
         const session = { address, tokenBalance, tx: null };
+
         store.set({
           connection: Connection.Connected,
           session,
         });
-        saveSession({ ...session, tokenBalance: null });
+        saveSession({ ...session });
       } catch (e) {
         console.error(e);
+      }
+    },
+
+    connectWalletConnect: async (config: Config) => {
+      store.set({ connection: Connection.Connecting });
+      const signer = config.getWalletConnectSigner();
+
+      try {
+        await config.walletConnect.client.connect();
+
+        const address = await signer.getAddress();
+        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+        const session = { address, tokenBalance, tx: null };
+        const network = await ethers.providers.getNetwork(
+          signer.walletConnect.chainId
+        );
+
+        if (network.chainId !== config.network.chainId) {
+          config.walletConnect.client.killSession();
+          throw new Error(
+            `Network mismatch. Please switch to ${config.network.name}.`
+          );
+        }
+        store.set({ connection: Connection.Connected, session });
+      } catch (e) {
+        store.set({ connection: Connection.Disconnected });
+
+        // There seems to be no way to detect this "error" caused by the user
+        // closing the modal dialog, besides matching on the message string.
+        // Welcome to the wonderful ghetto that is WalletConnect.
+        //
+        // Since it's not really an error, we don't throw if this is what happened.
+        if (e.message !== "User close QRCode Modal") {
+          throw e;
+        }
       }
     },
 
@@ -168,7 +207,7 @@ export const loadState = (initial: State): Store => {
             // In case of locking Metamask the accountsChanged event returns undefined.
             // To prevent out of sync state, the wallet gets disconnected.
             if (address === undefined) {
-              disconnectWallet();
+              disconnectMetamask();
             } else {
               s.session.address = address;
               saveSession(s.session);
@@ -178,11 +217,12 @@ export const loadState = (initial: State): Store => {
             return s;
         }
       });
-    }
+    },
   };
 };
 
 export const state = loadState({ connection: Connection.Disconnected });
+
 export const session = derived(state, s => {
   if (s.connection === Connection.Connected) {
     return s.session;
@@ -193,7 +233,7 @@ export const session = derived(state, s => {
 window.ethereum?.on('chainChanged', () => {
   // We disconnect the wallet to avoid out of sync state
   // between the account address and IDX DIDs
-  disconnectWallet();
+  disconnectMetamask();
   location.reload();
 });
 
@@ -222,13 +262,20 @@ export async function approveSpender(spender: string, amount: BigNumber, config:
   }
 }
 
-export function disconnectWallet(): void {
-  window.localStorage.removeItem("session");
-  location.reload();
+export function disconnectMetamask(): void {
+  window.localStorage.removeItem('metamask');
+  window.location.reload();
+}
+
+export function disconnectWallet(config: Config): void {
+  if (config.walletConnect.client.connected) {
+    config.walletConnect.client.killSession();
+  }
+  disconnectMetamask();
 }
 
 function saveSession(session: Session): void {
-  window.localStorage.setItem("session", JSON.stringify({
+  window.localStorage.setItem("metamask", JSON.stringify({
     ...session, tokenBalance: null
   }));
 }

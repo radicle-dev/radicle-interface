@@ -15,9 +15,15 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
 
-  const loadConfig = getConfig().then(cfg => {
+  const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {
       state.refreshBalance(cfg);
+    } else if ($state.connection === Connection.Disconnected) {
+      // Update the session state if we're already connected to WalletConnect
+      // from a previous session.
+      if (cfg.walletConnect.client.connected) {
+        await state.connectWalletConnect(cfg);
+      }
     }
     return cfg;
   });
