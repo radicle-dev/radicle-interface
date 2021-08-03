@@ -158,8 +158,7 @@ export class Config {
         description: "Radicle Interface",
         url: window.location.host,
         icons: [
-          `${window.location.protocol}//${window.location.host}/favicon.ico`,
-          `${window.location.protocol}//${window.location.host}/favicon.svg`
+          `${window.location.protocol}//${window.location.host}/icon.png`,
         ],
       }
     });
