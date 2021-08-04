@@ -7,7 +7,7 @@
   export let did: string;
   export let caip10: string;
   export let config: Config;
-  
+
   onMount(async () => {
     if (config.signer) {
       const address = await config.signer.getAddress();
