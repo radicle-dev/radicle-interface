@@ -7,7 +7,7 @@ import { assert } from '@app/error';
 export type EnsRecord = { name: string; value: string };
 
 export async function setRecords(name: string, records: EnsRecord[], resolver: EnsResolver, config: Config): Promise<TransactionResponse> {
-  assert(config.signer);
+  assert(config.signer, "no signer available");
 
   const resolverContract = new ethers.Contract(resolver.address, config.abi.resolver, config.signer);
   const node = ethers.utils.namehash(`${name}.${config.registrar.domain}`);

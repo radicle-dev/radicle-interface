@@ -164,6 +164,16 @@ export class Config {
       }
     });
 
+    // Behold, we set this private class variable here because WalletConnect doesn't
+    // give us any other way to set it :'(
+    //
+    // The default is to use the favicon, which doesn't work, given that it is
+    // designed for browsers and not mobile apps which often show a much bigger
+    // icon, resulting in a blurry image.
+    (walletConnect as any)._clientMeta.icons = [
+      `${window.location.protocol}//${window.location.host}/logo.png`
+    ];
+
     const walletConnectSigner = new WalletConnectSigner(walletConnect, provider);
 
     return {
