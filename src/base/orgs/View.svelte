@@ -218,7 +218,7 @@
             <div class="members">
               {#each members as address}
                 {#await Profile.get(address, config)}
-                  <Loading small center />
+                  <Loading small />
                 {:then profile}
                   <div class="member">
                     <div class="member-icon">
