@@ -152,14 +152,6 @@ export class Config {
         close: () => {
           // We handle the "close" event through the "disconnect" handler.
         }
-      },
-      clientMeta: {
-        name: "Radicle",
-        description: "Radicle Interface",
-        url: window.location.host,
-        icons: [
-          `${window.location.protocol}//${window.location.host}/icon.png`,
-        ],
       }
     });
     walletConnect.on("modal_closed", () => {

@@ -15,6 +15,7 @@ const config: UserConfig = {
       'stream': path.resolve('./src/polyfills/stream.ts'),
       'typedarray-to-buffer': path.resolve('./src/polyfills/typedarray-to-buffer.js'),
       // "Buffer" is not defined in the published package..
+      '@walletconnect/encoding': path.resolve('./src/polyfills/enc-utils.js'),
       'enc-utils': path.resolve('./src/polyfills/enc-utils.js'),
     },
   },
