@@ -3,6 +3,7 @@ import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
+import { formatNetwork } from "@app/utils";
 import * as ethers from "ethers";
 
 export enum Connection {
@@ -99,7 +100,7 @@ export const loadState = (initial: State): Store => {
         if (network.chainId !== config.network.chainId) {
           config.walletConnect.client.killSession();
           throw new Error(
-            `Network mismatch. Please switch to ${config.network.name}.`
+            `Network mismatch. Please switch your wallet to ${formatNetwork(config.network)}.`
           );
         }
         store.set({ connection: Connection.Connected, session });

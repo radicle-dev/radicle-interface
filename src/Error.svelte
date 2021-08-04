@@ -7,6 +7,7 @@
 
   export let error: Err | null = null;
   export let title = "Error";
+  export let emoji = "";
   export let subtitle = "";
   export let message = "";
   export let floating = false;
@@ -18,6 +19,9 @@
 
 <Modal on:close error {floating} {subtle}>
   <span slot="title">
+    {#if emoji}
+      <div>{emoji}</div>
+    {/if}
     {title}
   </span>
 

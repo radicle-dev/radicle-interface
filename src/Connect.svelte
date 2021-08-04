@@ -51,7 +51,6 @@
 {#if $walletConnectState.state === "open"}
   <ConnectWallet {config} uri={$walletConnectState.uri} on:close={onModalClose} />
 {:else if error}
-  <Error floating title="Wallet connection failed" {error}
-         on:close={() => error = null} />
+  <Error floating emoji="👛" title="Connection failed" {error} on:close={() => error = null} />
 {/if}
 

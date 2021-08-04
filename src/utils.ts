@@ -71,6 +71,15 @@ export function formatSeedApi(input: string): string {
   return input;
 }
 
+export function formatNetwork(input: { name: string }): string {
+  let name = input.name;
+
+  if (name === "homestead") {
+    name = "mainnet";
+  }
+  return capitalize(name);
+}
+
 export function capitalize(s: string): string {
   if (s === "") return s;
   return s[0].toUpperCase() + s.substr(1);
