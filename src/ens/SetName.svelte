@@ -108,7 +108,7 @@
     </div>
   </Modal>
 {:else if state === State.Mismatch}
-  <Error floating title="🖊️" on:close>
+  <Error floating title="🧣" on:close>
     The name <strong>{name}.{config.registrar.domain}</strong> does not
     resolve to <strong>{entity.address}</strong>. Please update
     the ENS record for {name}.{config.registrar.domain} to
@@ -128,8 +128,8 @@
 {:else}
   <Modal floating>
     <div slot="title">
-      <div>🖊️</div>
-      <span>Reverse record</span>
+      <div>🧣</div>
+      <span>Associate profile</span>
     </div>
 
     <div slot="subtitle">
@@ -143,6 +143,9 @@
         please sign the transaction in your wallet.
       {:else}
         Set an ENS name for <strong>{formatAddress(entity.address)}</strong>
+        to associate a profile.
+        ENS profiles provide human-identifiable data to your org, such as a
+        unique name, avatar and URL, and help make your org more discoverable.
       {/if}
     </div>
 

@@ -186,10 +186,10 @@
               </button>
             {/if}
           </div>
-          <!-- Name -->
+          <!-- Name/Profile -->
+          <div class="label">Profile</div>
           <!-- Only show the name if we aren't already using the name of the owner -->
           {#if utils.isAddressEqual(profile.address, org.address)}
-            <div class="label">Name</div>
             <div>
               {#if profile.name}
                 <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
@@ -204,6 +204,19 @@
                 {#if authorized}
                   <button class="tiny secondary" on:click={setName}>
                     Set
+                  </button>
+                {/if}
+              {/await}
+            </div>
+          {:else}
+            <div class="subtle">
+              Using owner's profile.
+            </div>
+            <div>
+              {#await isAuthorized(org) then authorized}
+                {#if authorized}
+                  <button class="tiny secondary" on:click={setName}>
+                    Change
                   </button>
                 {/if}
               {/await}
