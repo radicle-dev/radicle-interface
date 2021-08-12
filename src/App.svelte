@@ -8,7 +8,6 @@
   import Registrations from '@app/base/registrations/Routes.svelte';
   import Orgs from '@app/base/orgs/Routes.svelte';
   import Users from '@app/base/users/Routes.svelte';
-  import IDX from "@app/base/idx/Routes.svelte";
   import Projects from '@app/base/projects/Routes.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
@@ -74,7 +73,6 @@
         <Registrations {config} session={$session} />
         <Orgs {config} />
         <Users {config} />
-        <IDX {config} />
         <Projects {config} />
         <Resolver {config} />
       </Router>
