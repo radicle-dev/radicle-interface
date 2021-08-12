@@ -43,16 +43,23 @@ export interface Store extends Readable<State> {
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-  const metamask = window.localStorage.getItem("metamask");
-
-  if (metamask) {
-    store.set({ connection: Connection.Connected, session: JSON.parse(metamask) });
-  }
 
   return {
     subscribe: store.subscribe,
     connectMetamask: async (config: Config) => {
-      assert(config.metamaskSigner);
+      assert(config.metamask.signer);
+
+      // Re-connect using previous session.
+      if (config.metamask.connected) {
+        const metamask = config.metamask.session;
+        const tokenBalance: BigNumber = await config.token.balanceOf(metamask.address);
+        const session = { tokenBalance, tx: null, address: metamask.address };
+
+        store.set({ connection: Connection.Connected, session });
+        config.setSigner(config.metamask.signer);
+
+        return;
+      }
 
       const state = get(store);
 
@@ -61,7 +68,7 @@ export const loadState = (initial: State): Store => {
 
       await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      const signer = config.metamaskSigner;
+      const signer = config.metamask.signer;
       const address = await signer.getAddress();
 
       config.setSigner(signer);

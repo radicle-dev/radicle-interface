@@ -23,6 +23,8 @@
       // from a previous session.
       if (cfg.walletConnect.client.connected) {
         await state.connectWalletConnect(cfg);
+      } else if (cfg.metamask.connected) {
+        await state.connectMetamask(cfg);
       }
     }
     return cfg;

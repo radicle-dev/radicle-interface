@@ -41,7 +41,14 @@ export class Config {
     signer: WalletConnectSigner;
     state: Writable<WalletConnectState>;
   };
-  metamaskSigner: ethers.Signer & TypedDataSigner | null;
+  metamask: {
+    connected: true;
+    signer: ethers.Signer & TypedDataSigner;
+    session: { address: string };
+  } | {
+    connected: false;
+    signer: ethers.Signer & TypedDataSigner | null;
+  };
   safe: {
     api?: string;
     client?: SafeServiceClient;
@@ -72,9 +79,18 @@ export class Config {
       walletConnectState,
       provider
     );
+    const metamaskSession = window.localStorage.getItem("metamask");
+    const metamask = metamaskSession ? JSON.parse(metamaskSession) : null;
 
     this.network = network;
-    this.metamaskSigner = metamaskSigner;
+    this.metamask = metamask && metamaskSigner ? {
+      connected: true,
+      session: { address: metamask["address"] },
+      signer: metamaskSigner,
+    } : {
+      connected: false,
+      signer: metamaskSigner,
+    };
     this.walletConnect = {
       bridge: config.walletConnect.bridge,
       client: wc.connector,
@@ -208,6 +224,9 @@ export async function getConfig(): Promise<Config> {
     ? new ethers.providers.Web3Provider(window.ethereum)
     : null;
   const metamaskSigner = metamask?.getSigner() || null;
+
+  console.log("metamask", metamask);
+  console.log("metamaskSigner", metamaskSigner);
 
   let network = { name: "homestead", chainId: 1 };
   if (metamask) {

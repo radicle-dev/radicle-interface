@@ -68,7 +68,7 @@
     </div>
 
     <div slot="actions">
-      <button class="secondary tiny text-small" on:click={onClickConnect} disabled={!config.metamaskSigner}>
+      <button class="secondary tiny text-small" on:click={onClickConnect} disabled={!config.metamask.signer}>
         Connect with Metamask
       </button>
       <button class="text tiny text-small" on:click={onClose}>
