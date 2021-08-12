@@ -49,7 +49,7 @@
     "tokens": []
   },
   "walletConnect": { "bridge": "https://radicle.bridge.walletconnect.org" },
-  "ceramic": { "api": "https://ceramic-clay.3boxlabs.com" },
+  "ceramic": { "api": "https://gateway.ceramic.network" },
   "radicle": { "api": "http://0.0.0.0:8888" },
   "ipfs": { "gateway": "https://ipfs.io/ipfs/" },
   "abi": {
