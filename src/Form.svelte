@@ -3,11 +3,28 @@
     name: string;
     value: string | null;
     label?: string;
+    validate?: string;
     placeholder?: string;
     description: string;
     resolve?: boolean;
     editable: boolean;
+    error?: string;
   }
+
+  const validationTypes: { [index: string]: RegExp } = {
+    url: /^(https:\/\/|http:\/\/|ipfs:\/\/)\S+/,
+    // Github
+    //   Username may only contain alphanumeric characters or hyphens.
+    //   Username cannot have multiple consecutive hyphens.
+    //   Username cannot begin or end with a hyphen.
+    //   Maximum is 39 characters.
+    // Twitter
+    //   Username may only contain alphanumeric characters or underscores.
+    //   Maximum is 15 characters.
+    // For simplification of the regex pattern we use a combined version of both requirements.
+    handle: /^[a-zA-Z0-9-_]{1,39}$/,
+    address: /^0x[a-zA-Z0-9]{40}$/
+  };
 </script>
 
 <script lang="ts">
@@ -22,6 +39,25 @@
   export let disabled = false;
   export let config: Config;
 
+  let formFields = fields;
+  let hasErrors = false;
+
+  const check = (event: Event) => {
+    const name = (<HTMLInputElement>event.target).name;
+    const value = (<HTMLInputElement>event.target).value;
+
+    formFields = formFields.map(field => {
+      if (field.name === name && field.validate) {
+        hasErrors = value.length > 0 ? !validationTypes[field.validate].test(value) : false;
+        return { ...field,
+          value: value,
+          error: hasErrors ? `Must be a valid ${field.validate}` : undefined
+        };
+      }
+      return field;
+    });
+  };
+
   const cleanup = (fields: Field[]): { name: string; value: string | null }[] => {
     return fields.filter(field => field.editable).map(field => {
       return {
@@ -31,8 +67,12 @@
     });
   };
   const dispatch = createEventDispatcher();
-  const save = () => dispatch('save', cleanup(fields));
-  const cancel = () => dispatch('cancel');
+  const save = () => dispatch('save', cleanup(formFields));
+  const validate = (event: Event) => dispatch('validate', check(event));
+  const cancel = () => {
+    formFields = fields;
+    dispatch('cancel');
+  };
 </script>
 
 <style>
@@ -72,6 +112,9 @@
     text-overflow: ellipsis;
     border-color: var(--color-secondary) !important;
   }
+  .description.invalid {
+    color: var(--color-negative) !important;
+  }
   input.field::placeholder {
     color: var(--color-secondary);
     font-style: italic;
@@ -101,14 +144,14 @@
 </style>
 
 <div class="fields">
-  {#each fields as field}
+  {#each formFields as field}
     <div class="label">
       {field.label || capitalize(field.name)}
     </div>
     <div>
       {#if field.editable && editable}
         <input name={field.name} class="field" placeholder={field.placeholder}
-               bind:value={field.value} type="text" {disabled} />
+               on:keyup={validate} value={field.value} type="text" {disabled} />
       {:else}
         <span class="field">
           {#if field.value}
@@ -126,9 +169,15 @@
           {/if}
         </span>
       {/if}
-      <div class="description text-small faded">
-        {@html marked(field.description)}
-      </div>
+      {#if field.error}
+        <div class="description invalid text-small faded">
+          {field.error}
+        </div>
+      {:else}
+        <div class="description text-small faded">
+          {@html marked(field.description)}
+        </div>
+      {/if}
     </div>
   {/each}
 </div>
@@ -137,7 +186,7 @@
   <button on:click={cancel} {disabled} class="small">
     Cancel
   </button>
-  <button on:click={save} {disabled} class="small primary">
+  <button on:click={save} disabled={hasErrors || disabled} class="small primary">
     Save
   </button>
 </div>

@@ -51,10 +51,10 @@
           }
 
           fields = [
-            { name: "owner", placeholder: "",
+            { name: "owner", validate: "address", placeholder: "",
               description: "The owner and controller of this name.",
               value: r.owner, resolve: true, editable: false },
-            { name: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
+            { name: "address", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
               description: "The address this name resolves to. " + (
                 reverseRecord
                   ? `The reverse record for this address is set to **${name}**`
@@ -63,22 +63,22 @@
                   + "a reverse record should be set."
               ),
               value: r.address, editable: true },
-            { name: "url", label: "URL", placeholder: "https://acme.org",
+            { name: "url", label: "URL", validate: "url", placeholder: "https://acme.org",
               description: "A homepage or other URL associated with this name.",
               value: r.url,editable: true },
-            { name: "avatar", placeholder: "https://acme.org/avatar.png",
+            { name: "avatar", validate: "url", placeholder: "https://acme.org/avatar.png",
               description: "An avatar or square image associated with this name.",
               value: r.avatar, editable: true },
-            { name: "twitter", placeholder: "Twitter username, eg. 'acme'",
+            { name: "twitter", validate: "handle", placeholder: "Twitter username, eg. 'acme'",
               description: "The Twitter handle associated with this name.",
               value: r.twitter, editable: true },
-            { name: "github", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
+            { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
               description: "The GitHub username associated with this name.",
               value: r.github, editable: true },
             { name: "seed.id", label: "Seed ID", placeholder: "hynkyn...3nrzc@seed.acme.org:8887",
               description: "The ID of a Radicle Link node that hosts entities associated with this name.",
               value: r.seedId, editable: true },
-            { name: "seed.api", label: "Seed API", placeholder: "https://seed.acme.org:8888",
+            { name: "seed.api", label: "Seed API", validate: "url", placeholder: "https://seed.acme.org:8888",
               description: "The HTTP address of a node that serves Radicle entities over HTTP.",
               value: r.seedApi, editable: true },
           ];
