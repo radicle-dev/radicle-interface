@@ -19,7 +19,8 @@
 </script>
 
 <style>
-  .markdown :global(h1, h2, h3, h4, h5, h6) {
+  .markdown :global(h1), .markdown :global(h2), .markdown :global(h3),
+  .markdown :global(h4), .markdown :global(h5), .markdown :global(h6) {
     color: var(--color-foreground);
   }
 

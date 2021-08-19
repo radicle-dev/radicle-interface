@@ -150,7 +150,9 @@
       <button class="address outline small" bind:this={sessionButton}
         on:click={() => disconnectWallet(config)}
         on:mouseover={() => sessionButtonHover = true}
+        on:focus={() => sessionButtonHover = true}
         on:mouseout={() => sessionButtonHover = false}
+        on:blur={() => sessionButtonHover = false}
       >
         {#await Profile.get(address, config)}
           <Loading small center />
