@@ -198,7 +198,11 @@
             {#if anchor === commit}
               <span class="anchor-widget">
                 <span class="anchor-label">anchored</span>
-                <Address address={org} compact resolve noBadge {config} />
+                {#await Org.getProfile(org, config)}
+                  <Loading small />
+                {:then profile}
+                  <Address address={org} compact resolve noBadge {profile} {config} />
+                {/await}
               </span>
             {:else}
               <span class="anchor-widget not-anchored">
