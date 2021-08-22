@@ -14,8 +14,9 @@ export async function get(
     query[key] = val.toString();
   }
 
+  const base = config.seed.api.replace(/\/$/, "");
   const search = new URLSearchParams(query).toString();
-  const baseUrl = `${config.seed.api}/v1/${path}`;
+  const baseUrl = `${base}/v1/${path}`;
   const url = search ? `${baseUrl}?${search}` : baseUrl;
 
   let response = null;

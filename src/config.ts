@@ -129,7 +129,7 @@ export class Config {
   withSeed(seed: string): Config {
     const cfg = {} as Config;
     Object.assign(cfg, this);
-    cfg.seed.api = seed;
+    cfg.seed.api = seed.replace(/\/$/, "");
 
     return cfg;
   }
