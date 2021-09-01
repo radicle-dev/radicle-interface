@@ -29,6 +29,8 @@
     "semi": "off",
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
+    "no-implicit-globals": ["error"],
+    "no-restricted-globals": ["error", "name", "event", "frames", "history", "length", "content", "origin", "status"],
     "no-trailing-spaces": ["error"],
     "no-multi-spaces": ["error"],
     "no-multiple-empty-lines": ["error"],
