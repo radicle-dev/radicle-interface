@@ -130,27 +130,25 @@ async function commitAndRegister(name: string, owner: string, config: Config): P
   }
   name = name.toLowerCase();
 
-  await commit(makeCommitment(name, owner, salt), fee, minAge, config);
-  // Save commitment in local storage in case the user refreshes or closes
-  // the page.
-  window.localStorage.setItem('commitment', JSON.stringify({
-    name: name,
-    owner: owner,
-    salt: ethers.utils.hexlify(salt)
-  }));
-
+  await commit(name, owner, salt, fee, minAge, config);
   await register(name, owner, salt, config);
 }
 
-async function commit(commitment: string, fee: BigNumber, minAge: number, config: Config): Promise<void> {
+async function commit(
+  name: string,
+  owner: string,
+  salt: Uint8Array,
+  fee: BigNumber,
+  minAge: number,
+  config: Config
+): Promise<void> {
   assert(config.signer, "signer is not available");
 
-  const owner = config.signer;
-  const ownerAddr = await owner.getAddress();
+  const commitment = makeCommitment(name, owner, salt);
   const spender = config.registrar.address;
   const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
   const token = config.token;
-  const signature = await permitSignature(owner, token, spender, fee, deadline);
+  const signature = await permitSignature(config.signer, token, spender, fee, deadline);
 
   state.set({ connection: State.SigningCommit });
 
@@ -158,7 +156,7 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
     .connect(config.signer)
     .commitWithPermit(
       commitment,
-      ownerAddr,
+      owner,
       fee,
       deadline,
       signature.v,
@@ -170,7 +168,16 @@ async function commit(commitment: string, fee: BigNumber, minAge: number, config
 
   await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
+
   const receipt = await config.provider.getTransactionReceipt(tx.hash);
+  // Save commitment in local storage in case the user refreshes or closes
+  // the page.
+  window.localStorage.setItem('commitment', JSON.stringify({
+    name: name,
+    owner: owner,
+    salt: ethers.utils.hexlify(salt)
+  }));
+
   state.set({
     connection: State.WaitingToRegister,
     commitmentBlock: receipt.blockNumber,
