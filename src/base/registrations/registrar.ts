@@ -162,7 +162,7 @@ async function commit(
       signature.v,
       signature.r,
       signature.s,
-      { gasLimit: 150000 });
+      { gasLimit: 180000 });
 
   state.set({ connection: State.Committing });
 
