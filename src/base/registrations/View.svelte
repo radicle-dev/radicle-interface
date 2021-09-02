@@ -46,8 +46,8 @@
       .then(async r => {
         if (r) {
           let reverseRecord = false;
-          if (r.address) {
-            reverseRecord = await isReverseRecordSet(r.address, name, config);
+          if (r.profile.address) {
+            reverseRecord = await isReverseRecordSet(r.profile.address, name, config);
           }
 
           fields = [
@@ -62,25 +62,25 @@
                   + "For this name to be correctly associated with the address, "
                   + "a reverse record should be set."
               ),
-              value: r.address, editable: true },
+              value: r.profile.address, editable: true },
             { name: "url", label: "URL", validate: "url", placeholder: "https://acme.org",
               description: "A homepage or other URL associated with this name.",
-              value: r.url,editable: true },
+              value: r.profile.url,editable: true },
             { name: "avatar", validate: "url", placeholder: "https://acme.org/avatar.png",
               description: "An avatar or square image associated with this name.",
-              value: r.avatar, editable: true },
+              value: r.profile.avatar, editable: true },
             { name: "twitter", validate: "handle", placeholder: "Twitter username, eg. 'acme'",
               description: "The Twitter handle associated with this name.",
-              value: r.twitter, editable: true },
+              value: r.profile.twitter, editable: true },
             { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
               description: "The GitHub username associated with this name.",
-              value: r.github, editable: true },
+              value: r.profile.github, editable: true },
             { name: "seed.id", label: "Seed ID", placeholder: "hynkyn...3nrzc@seed.acme.org:8887",
               description: "The ID of a Radicle Link node that hosts entities associated with this name.",
-              value: r.seedId, editable: true },
+              value: r.profile.seedId, editable: true },
             { name: "seed.api", label: "Seed API", validate: "url", placeholder: "https://seed.acme.org:8888",
               description: "The HTTP address of a node that serves Radicle entities over HTTP.",
-              value: r.seedApi, editable: true },
+              value: r.profile.seedApi, editable: true },
           ];
           state = { status: Status.Found, registration: r };
         } else {

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import type { Registration } from "@app/base/registrations/registrar";
+import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
   formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername,
@@ -7,8 +7,14 @@ import {
 import type { Config } from "./config";
 
 export interface IProfile {
-  ens: Registration | null;
+  ens: EnsProfile | null;
   idx: BasicProfile | null;
+}
+
+export enum ProfileType {
+  Full,
+  Minimal,
+  Project,
 }
 
 export class Profile {
@@ -21,7 +27,7 @@ export class Profile {
   }
 
   // Get the ENS profile
-  get ens(): Registration | null {
+  get ens(): EnsProfile | null {
     return this.profile.ens;
   }
 
@@ -80,7 +86,11 @@ export class Profile {
   }
 
   // Keeping this function private since the desired entrypoint is .get()
-  private static async lookupAddress(address: string, config: Config): Promise<[IProfile, string]> {
+  private static async lookupAddress(
+    address: string,
+    profileType: ProfileType,
+    config: Config
+  ): Promise<[IProfile, string]> {
     const profile: IProfile = { ens: null, idx: null };
 
     try {
@@ -91,7 +101,7 @@ export class Profile {
 
     try {
       const [ens, idx] = await Promise.allSettled([
-        resolveEnsProfile(address, config),
+        resolveEnsProfile(address, profileType, config),
         resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config)
       ]);
 
@@ -105,16 +115,17 @@ export class Profile {
   }
 
   static async getMulti(addresses: string[], config: Config): Promise<Profile[]> {
-    const profilePromises = addresses.map(address => this.lookupAddress(address, config));
+    const profilePromises = addresses.map(address => this.lookupAddress(address, ProfileType.Minimal, config));
     const profiles = await Promise.all(profilePromises);
     return profiles.map(profile => { return new Profile(...profile); });
   }
 
   static async get(
     address: string,
+    profileType: ProfileType,
     config: Config,
   ): Promise<Profile> {
-    const profile = await this.lookupAddress(address, config);
+    const profile = await this.lookupAddress(address, profileType, config);
     return new Profile(...profile);
   }
 }

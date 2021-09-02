@@ -3,7 +3,7 @@
   import { link } from 'svelte-routing';
   import { ethers } from 'ethers';
   import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType, parseEnsLabel } from '@app/utils';
-  import { Profile } from '@app/profile';
+  import { Profile, ProfileType } from '@app/profile';
   import Loading from '@app/Loading.svelte';
   import Avatar from "@app/Avatar.svelte";
   import type { Config } from '@app/config';
@@ -25,7 +25,7 @@
   onMount(async () => {
     identifyAddress(address, config).then((t: AddressType) => addressType = t);
     if (resolve && !profile) {
-      Profile.get(address, config).then(p => profile = p);
+      Profile.get(address, ProfileType.Minimal, config).then(p => profile = p);
     }
   });
   $: addressLabel = profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;

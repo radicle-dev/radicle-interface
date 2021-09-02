@@ -17,7 +17,7 @@
 
   import { Org } from '@app/base/orgs/Org';
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
-  import { Profile } from '@app/profile';
+  import { Profile, ProfileType } from '@app/profile';
 
   export let address: string;
   export let config: Config;
@@ -133,7 +133,7 @@
 {:then org}
   {#if org}
     <main>
-      {#await org.getProfile(config)}
+      {#await org.getProfile(ProfileType.Full, config)}
         <div class="centered">
           <Loading center />
         </div>
@@ -230,7 +230,7 @@
           {#if members.length > 0}
             <div class="members">
               {#each members as address}
-                {#await Profile.get(address, config)}
+                {#await Profile.get(address, ProfileType.Minimal, config)}
                   <Loading small />
                 {:then profile}
                   <div class="member">

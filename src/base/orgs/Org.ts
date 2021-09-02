@@ -3,7 +3,7 @@ import type { TransactionResponse } from '@ethersproject/providers';
 import type { ContractReceipt } from '@ethersproject/contracts';
 import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
-import { Profile } from '@app/profile';
+import { Profile, ProfileType } from '@app/profile';
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Config } from '@app/config';
@@ -142,8 +142,12 @@ export class Org {
     return projects;
   }
 
-  async getProfile(config: Config): Promise<Profile> {
-    return Org.getProfile(this.address, config);
+  async getProfile(profileType: ProfileType, config: Config): Promise<Profile> {
+    return Org.getProfile(this.address, profileType, config);
+  }
+
+  static async getProjectProfile(addr: string, config: Config): Promise<Profile> {
+    return Org.getProfile(addr, ProfileType.Project, config);
   }
 
   static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
@@ -214,8 +218,8 @@ export class Org {
 
   // Return the org profile if there is one, otherwise try to get the profile
   // of its owner.
-  static async getProfile(address: string, config: Config): Promise<Profile> {
-    const profile = await Profile.get(address, config);
+  static async getProfile(address: string, profileType: ProfileType, config: Config): Promise<Profile> {
+    const profile = await Profile.get(address, profileType, config);
 
     if (profile.ens) { // Orgs only use ENS for profile information.
       return profile;
@@ -223,7 +227,7 @@ export class Org {
     const org = await Org.get(address, config);
 
     if (org) {
-      const ownerProfile = await Profile.get(org.owner, config);
+      const ownerProfile = await Profile.get(org.owner, profileType, config);
 
       if (ownerProfile.ens || ownerProfile.idx) {
         return ownerProfile;

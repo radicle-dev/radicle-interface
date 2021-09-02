@@ -3,7 +3,7 @@
   import Icon from '@app/Icon.svelte';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
-  import { Profile } from '@app/profile';
+  import { ProfileType, Profile } from '@app/profile';
   import Loading from '@app/Loading.svelte';
   import { Org } from '@app/base/orgs/Org';
   import Message from '@app/Message.svelte';
@@ -57,7 +57,7 @@
   }
 </style>
 
-{#await Profile.get(address, config)}
+{#await Profile.get(address, ProfileType.Full, config)}
   <Loading fadeIn />
 {:then profile}
   <main>

@@ -6,10 +6,10 @@ import EthersSafe from "@gnosis.pm/safe-core-sdk";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
-import type { Registration } from "@app/base/registrations/registrar";
-import { getRegistration } from '@app/base/registrations/registrar';
+import type { EnsProfile } from "@app/base/registrations/registrar";
+import { getAvatar, getSeed, getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
-
+import { ProfileType } from '@app/profile';
 
 export enum AddressType {
   Contract,
@@ -246,10 +246,42 @@ export async function resolveIdxProfile(caip10: string, config: Config): Promise
 }
 
 // Resolves an ENS profile or return null
-export async function resolveEnsProfile(address: string, config: Config): Promise<Registration | null> {
+export async function resolveEnsProfile(address: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
   const name = await config.provider.lookupAddress(address);
   if (name) {
-    return await getRegistration(name, config);
+    if (profileType === ProfileType.Full) {
+      const registration = await getRegistration(name, config);
+      if (registration) {
+        return registration.profile;
+      }
+    } else if (profileType === ProfileType.Project) {
+      const avatar = await getAvatar(name, config);
+      const seedApi = await getSeed(name, config);
+
+      return {
+        name,
+        address,
+        avatar,
+        seedApi,
+        url: null,
+        seedId: null,
+        twitter: null,
+        github: null,
+      };
+    } else if (profileType === ProfileType.Minimal) {
+      const avatar = await getAvatar(name, config);
+
+      return {
+        name,
+        address,
+        avatar,
+        url: null,
+        seedId: null,
+        seedApi: null,
+        twitter: null,
+        github: null,
+      };
+    }
   }
   return null;
 }

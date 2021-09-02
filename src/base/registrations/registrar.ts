@@ -10,8 +10,14 @@ import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
 
 export interface Registration {
-  name: string;
   owner: string;
+  profile: EnsProfile;
+  resolver: EnsResolver;
+}
+
+export interface EnsProfile {
+  name: string;
+  owner?: string;
   address: string | null;
   seedId: string | null;
   seedApi: string | null;
@@ -19,7 +25,6 @@ export interface Registration {
   avatar: string | null;
   twitter: string | null;
   github: string | null;
-  resolver: EnsResolver;
 }
 
 export enum State {
@@ -76,17 +81,39 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
-    name,
-    url,
-    avatar,
-    seedId,
-    seedApi,
     owner,
-    address,
-    twitter,
-    github,
     resolver,
+    profile: {
+      name,
+      url,
+      avatar,
+      seedId,
+      seedApi,
+      address,
+      twitter,
+      github,
+    },
   };
+}
+
+export async function getAvatar(name: string, config: Config): Promise<string | null> {
+  name = name.toLowerCase();
+
+  const resolver = await config.provider.getResolver(name);
+  if (! resolver) {
+    return null;
+  }
+  return resolver.getText('avatar');
+}
+
+export async function getSeed(name: string, config: Config): Promise<string | null> {
+  name = name.toLowerCase();
+
+  const resolver = await config.provider.getResolver(name);
+  if (! resolver) {
+    return null;
+  }
+  return resolver.getText('eth.radicle.seed.api');
 }
 
 export function registrar(config: Config): ethers.Contract {

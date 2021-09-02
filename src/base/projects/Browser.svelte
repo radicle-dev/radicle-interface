@@ -1,6 +1,7 @@
 <script lang="ts">
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
+  import type { Profile } from '@app/profile';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Address from '@app/Address.svelte';
@@ -26,7 +27,9 @@
   export let commit: string;
   export let config: Config;
   export let path: string;
-  export let org = "";
+  export let org: Profile | null = null;
+
+  const orgAddress = org?.address;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Idle };
@@ -54,7 +57,7 @@
     const blob = await loadBlob(path);
     getBlob = new Promise(resolve => resolve(blob));
 
-    navigate(proj.path({ urn, org, commit, path }));
+    navigate(proj.path({ urn, org: orgAddress, commit, path }));
   };
 
   const fetchTree = async (path: string) => {
@@ -64,7 +67,7 @@
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);
-  $: getAnchor = org ? Org.getAnchor(org, urn, config) : null;
+  $: getAnchor = orgAddress ? Org.getAnchor(orgAddress, urn, config) : null;
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>
 
@@ -191,18 +194,14 @@
         </div>
       {/if}
       <div class="anchor">
-        {#if org}
+        {#if orgAddress}
           {#await getAnchor}
             <Loading small margins />
           {:then anchor}
             {#if anchor === commit}
               <span class="anchor-widget">
                 <span class="anchor-label">anchored</span>
-                {#await Org.getProfile(org, config)}
-                  <Loading small />
-                {:then profile}
-                  <Address address={org} compact resolve noBadge {profile} {config} />
-                {/await}
+                <Address address={orgAddress} compact resolve noBadge profile={org} {config} />
               </span>
             {:else}
               <span class="anchor-widget not-anchored">

@@ -8,7 +8,7 @@
   import Logo from '@app/Logo.svelte';
   import Connect from '@app/Connect.svelte';
   import type { Config } from '@app/config';
-  import { Profile } from "@app/profile";
+  import { Profile, ProfileType } from "@app/profile";
   import Avatar from "./Avatar.svelte";
 
   export let session: Session | null;
@@ -154,7 +154,7 @@
         on:mouseout={() => sessionButtonHover = false}
         on:blur={() => sessionButtonHover = false}
       >
-        {#await Profile.get(address, config)}
+        {#await Profile.get(address, ProfileType.Minimal, config)}
           <Loading small center />
         {:then profile}
           {#if sessionButtonHover}

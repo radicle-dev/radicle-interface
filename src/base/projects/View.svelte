@@ -6,6 +6,7 @@
   import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Org } from '@app/base/orgs/Org';
+  import type { Profile } from '@app/profile';
 
   import Browser from './Browser.svelte';
 
@@ -16,16 +17,17 @@
   export let path: string;
 
   let projectRoot = proj.path({ urn, org, commit });
-  let getProject = new Promise<string | null>(resolve => {
+  let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
-      Org.getProfile(org, config).then(p => resolve(p?.seed || null));
+      Org.getProjectProfile(org, config).then(p => resolve(p));
     } else {
       resolve(null);
     }
-  }).then(async (seed) => {
+  }).then(async (orgProfile) => {
+    const seed = orgProfile?.seed;
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
-    return { project: info, config: cfg };
+    return { project: info, config: cfg, org: orgProfile };
   });
 
   const back = () => window.history.back();
@@ -96,7 +98,7 @@
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} {org} {path}
+    <Browser {urn} org={result.org} {path}
       commit={commit || result.project.head}
       config={result.config} />
   {:catch}
