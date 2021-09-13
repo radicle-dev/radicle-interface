@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import type { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
-import EthersSafe from "@gnosis.pm/safe-core-sdk";
+import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
@@ -362,8 +362,12 @@ export async function proposeSafeTransaction(
   assert(config.signer);
   assert(config.safe.client);
 
+  const ethAdapter = new EthersAdapter({
+    ethers,
+    signer: config.signer,
+  });
   const safeSdk = await EthersSafe.create({
-    ethers, safeAddress, providerOrSigner: config.signer,
+    ethAdapter, safeAddress,
   });
   const estimation = await config.safe.client.estimateSafeTransaction(
     safeAddress,
