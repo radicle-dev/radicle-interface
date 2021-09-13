@@ -1,4 +1,5 @@
-import { get, writable, derived, Readable } from "svelte/store";
+import { get, writable, derived } from "svelte/store";
+import type { Readable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig } from "@app/config";
