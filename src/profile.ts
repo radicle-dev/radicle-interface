@@ -100,13 +100,10 @@ export class Profile {
     }
 
     try {
-      const [ens, idx] = await Promise.allSettled([
-        resolveEnsProfile(address, profileType, config),
-        resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config)
-      ]);
-
-      if (ens.status == "fulfilled") profile.ens = ens.value;
-      if (idx.status == "fulfilled") profile.idx = idx.value;
+      profile.ens = await resolveEnsProfile(address, profileType, config);
+      if (!profile.ens) {
+        profile.idx = await resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config);
+      }
     } catch (error) {
       console.error(error);
     }
