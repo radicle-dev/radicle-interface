@@ -23,7 +23,10 @@
     //   Maximum is 15 characters.
     // For simplification of the regex pattern we use a combined version of both requirements.
     handle: /^[a-zA-Z0-9-_]{1,39}$/,
-    address: /^0x[a-zA-Z0-9]{40}$/
+    address: /^0x[a-zA-Z0-9]{40}$/,
+    id: /^[a-z0-9]+$/,
+    // Just make sure there is a TLD at the end.
+    domain: /\.[a-z]{2,}$/,
   };
 </script>
 

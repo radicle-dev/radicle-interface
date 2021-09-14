@@ -63,14 +63,6 @@ export function formatHash(hash: string): string {
     + hash.substring(hash.length - 4, hash.length);
 }
 
-export function formatSeedApi(input: string): string {
-  const match = input.match(/^https?:\/\/([^:]+)/);
-  if (match) {
-    return match[1];
-  }
-  return input;
-}
-
 export function formatNetwork(input: { name: string }): string {
   let name = input.name;
 
@@ -256,13 +248,13 @@ export async function resolveEnsProfile(address: string, profileType: ProfileTyp
       }
     } else if (profileType === ProfileType.Project) {
       const avatar = await getAvatar(name, config);
-      const seedApi = await getSeed(name, config);
+      const seedHost = await getSeed(name, config);
 
       return {
         name,
         address,
         avatar,
-        seedApi,
+        seedHost,
         url: null,
         seedId: null,
         twitter: null,
@@ -277,7 +269,7 @@ export async function resolveEnsProfile(address: string, profileType: ProfileTyp
         avatar,
         url: null,
         seedId: null,
-        seedApi: null,
+        seedHost: null,
         twitter: null,
         github: null,
       };

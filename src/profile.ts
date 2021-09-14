@@ -73,7 +73,7 @@ export class Profile {
 
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get seed(): string | undefined {
-    return this.profile?.ens?.seedApi ?? undefined;
+    return this.profile?.ens?.seedHost ?? undefined;
   }
 
   // Return the profile-specific config. This sets various URLs in the config,

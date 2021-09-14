@@ -20,7 +20,7 @@ export interface EnsProfile {
   owner?: string;
   address: string | null;
   seedId: string | null;
-  seedApi: string | null;
+  seedHost: string | null;
   url: string | null;
   avatar: string | null;
   twitter: string | null;
@@ -72,12 +72,12 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     resolver.getText('avatar'),
     resolver.getText('url'),
     resolver.getText('eth.radicle.seed.id'),
-    resolver.getText('eth.radicle.seed.api'),
+    resolver.getText('eth.radicle.seed.host'),
     resolver.getText('com.twitter'),
     resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, seedId, seedApi, twitter, github] =
+  const [address, avatar, url, seedId, seedHost, twitter, github] =
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
@@ -88,7 +88,7 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
       url,
       avatar,
       seedId,
-      seedApi,
+      seedHost,
       address,
       twitter,
       github,
@@ -113,7 +113,7 @@ export async function getSeed(name: string, config: Config): Promise<string | nu
   if (! resolver) {
     return null;
   }
-  return resolver.getText('eth.radicle.seed.api');
+  return resolver.getText('eth.radicle.seed.host');
 }
 
 export function registrar(config: Config): ethers.Contract {

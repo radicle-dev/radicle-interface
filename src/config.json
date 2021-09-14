@@ -50,7 +50,7 @@
   },
   "walletConnect": { "bridge": "https://radicle.bridge.walletconnect.org" },
   "ceramic": { "api": "https://gateway.ceramic.network" },
-  "radicle": { "api": "http://0.0.0.0:8888" },
+  "radicle": { "seed": { "host": "0.0.0.0", "port": 8777 } },
   "ipfs": { "gateway": "https://ipfs.io/ipfs/" },
   "abi": {
     "registrar": [

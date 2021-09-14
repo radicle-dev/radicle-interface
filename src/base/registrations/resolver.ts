@@ -35,7 +35,7 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
         );
         break;
       case "seed.id":
-      case "seed.api":
+      case "seed.host":
         calls.push(
           iface.encodeFunctionData("setText", [node, "eth.radicle." + r.name, r.value])
         );

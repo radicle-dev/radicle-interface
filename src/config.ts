@@ -55,7 +55,7 @@ export class Config {
     viewer: string | null;
   };
   abi: { [contract: string]: string[] };
-  seed: { api?: string };
+  seed: { host?: string; port: number };
   idx: { client: IDX };
   ceramic: { client: CeramicClient };
   tokens: string[];
@@ -66,7 +66,6 @@ export class Config {
     provider: ethers.providers.JsonRpcProvider,
     metamaskSigner: ethers.Signer & TypedDataSigner | null,
   ) {
-    const api = config.radicle.api;
     const cfg = (<Record<string, any>> config)[network.name];
     const ceramic = new CeramicClient(config.ceramic.api);
     const idx = new IDX({ ceramic });
@@ -97,7 +96,7 @@ export class Config {
       signer: wc.signer,
       state: walletConnectState,
     };
-    this.seed = { api };
+    this.seed = config.radicle.seed;
     this.registrar = cfg.registrar;
     this.radToken = cfg.radToken;
     this.orgFactory = cfg.orgFactory;
@@ -126,10 +125,10 @@ export class Config {
   }
 
   // Return the config with an overwritten seed URL.
-  withSeed(seed: string): Config {
+  withSeed(seedHost: string): Config {
     const cfg = {} as Config;
     Object.assign(cfg, this);
-    cfg.seed.api = seed.replace(/\/$/, "");
+    cfg.seed.host = seedHost;
 
     return cfg;
   }

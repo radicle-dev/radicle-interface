@@ -75,12 +75,14 @@
             { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
               description: "The GitHub username associated with this name.",
               value: r.profile.github, editable: true },
-            { name: "seed.id", label: "Seed ID", placeholder: "hynkyn...3nrzc@seed.acme.org:8887",
-              description: "The ID of a Radicle Link node that hosts entities associated with this name.",
+            { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
+              description: "The seed host address. " +
+                "Only domain names with TLS are supported. " +
+                `HTTP(S) API requests use port ${config.seed.port}.`,
+              value: r.profile.seedHost, editable: true },
+            { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
+              description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
               value: r.profile.seedId, editable: true },
-            { name: "seed.api", label: "Seed API", validate: "url", placeholder: "https://seed.acme.org:8888",
-              description: "The HTTP address of a node that serves Radicle entities over HTTP.",
-              value: r.profile.seedApi, editable: true },
           ];
           state = { status: Status.Found, registration: r };
         } else {

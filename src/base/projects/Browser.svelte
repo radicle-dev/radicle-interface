@@ -188,9 +188,9 @@
       <div class="stat">
         <strong>{tree.stats.contributors}</strong> contributor(s)
       </div>
-      {#if config.seed.api}
+      {#if config.seed.host}
         <div class="stat" title="Project data is fetched from this seed">
-          <span>{utils.formatSeedApi(config.seed.api)}</span>
+          <span>{config.seed.host}</span>
         </div>
       {/if}
       <div class="anchor">
