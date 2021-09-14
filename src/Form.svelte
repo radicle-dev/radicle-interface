@@ -151,7 +151,7 @@
     <div>
       {#if field.editable && editable}
         <input name={field.name} class="field" placeholder={field.placeholder}
-               on:keyup={validate} value={field.value} type="text" {disabled} />
+               on:change={validate} value={field.value} type="text" {disabled} />
       {:else}
         <span class="field">
           {#if field.value}
