@@ -8,6 +8,8 @@
   import { Org } from '@app/base/orgs/Org';
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
+  import Link from '@app/Link.svelte';
+  import { parseEnsLabel } from '@app/utils';
 
   export let address: string;
   export let config: Config;
@@ -35,6 +37,17 @@
   }
   .info a {
     border: none;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: 5rem 4fr 2fr;
+    grid-gap: 1rem 2rem;
+  }
+  .fields > div {
+    justify-self: start;
+    align-self: center;
+    height: 2rem;
+    line-height: 2rem;
   }
   .avatar {
     width: 64px;
@@ -86,6 +99,21 @@
         </div>
       </div>
     </header>
+      <div class="fields">
+        <!-- Address -->
+        <div class="label">Address</div>
+        <div><Address noAvatar {config} address={address} /></div>
+        <div></div>
+        <!-- Profile -->
+        <div class="label">Profile</div>
+        <div>
+          {#if profile.name}
+            <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+          {:else}
+            <span class="subtle">Not set</span>
+          {/if}
+        </div>
+      </div>
       <div class="projects">
         {#await Org.getOrgsByOwner(address, config)}
           <Loading center fadeIn />
