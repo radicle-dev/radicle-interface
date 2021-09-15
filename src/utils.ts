@@ -197,8 +197,13 @@ export function formatRadicleId(hash: Uint8Array): string {
 }
 
 // Parse a Radicle Id (URN).
-export function parseRadicleId(urn: string): Uint8Array {
-  const encoded = urn.replace(/^rad:[a-z]+:/, "");
+export function parseRadicleId(urn: string): string {
+  return urn.replace(/^rad:[a-z]+:/, "");
+}
+
+// Decode a Radicle Id (URN).
+export function decodeRadicleId(urn: string): Uint8Array {
+  const encoded = parseRadicleId(urn);
   const multihash = multibase.decode(encoded);
   const hash = multihashes.decode(multihash);
 

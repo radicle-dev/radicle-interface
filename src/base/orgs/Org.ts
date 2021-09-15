@@ -156,7 +156,7 @@ export class Org {
       config.abi.org,
       config.provider
     );
-    const unpadded = utils.parseRadicleId(urn);
+    const unpadded = utils.decodeRadicleId(urn);
     const id = ethers.utils.zeroPad(unpadded, 32);
 
     try {

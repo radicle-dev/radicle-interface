@@ -32,6 +32,8 @@
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Idle };
+  // Whether the clone dropdown is visible.
+  let cloneDropdown = false;
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
     if (state.status == Status.Loaded && state.path === path) {
@@ -115,6 +117,47 @@
   }
   .anchor-label:last-child {
     margin-right: 0;
+  }
+
+  .clone {
+    color: var(--color-primary);
+    background-color: var(--color-primary-background);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .clone:hover {
+    background-color: var(--color-primary-background-lighter);
+  }
+  .clone-dropdown {
+    background-color: var(--color-foreground-background);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0.25rem;
+    display: none;
+    position: absolute;
+  }
+  .clone-dropdown.clone-dropdown-visible {
+    display: block;
+  }
+  .clone-dropdown input {
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    font-family: var(--font-family-monospace);
+    padding: 0.5rem;
+    background: var(--color-primary-background);
+    border: none;
+    outline: none;
+    width: 24rem;
+    text-overflow: ellipsis;
+    border-radius: 0.25rem;
+  }
+  .clone-dropdown label {
+    display: block;
+    color: var(--color-foreground-faded);
+    padding: 0.5rem 0.5rem 0 0.25rem;
+    font-size: 0.75rem;
   }
 
   .stat {
@@ -208,6 +251,15 @@
         <div class="stat" title="Project data is fetched from this seed">
           <span>{config.seed.host}</span>
         </div>
+        <span>
+          <div class="clone" on:click={() => cloneDropdown = !cloneDropdown}>
+            Clone ↓
+          </div>
+          <div class="clone-dropdown" class:clone-dropdown-visible={cloneDropdown}>
+            <input readonly name="clone-url" value="https://{config.seed.host}/{utils.parseRadicleId(urn)}"/>
+            <label for="clone-url">Use Git to clone this repository from the URL above.</label>
+          </div>
+        </span>
       {/if}
     </header>
     <div class="container center-content">

@@ -12,6 +12,8 @@
 	--color-primary-5: #dd44dd;
 	--color-primary-6: #ffd4ff;
 	--color-primary-faded: #ff55ff77;
+	--color-primary-background: #ff55ff11;
+	--color-primary-background-lighter: #ff55ff22;
 	--color-secondary: #5555ff;
 	--color-secondary-background: #5555ff11;
 	--color-secondary-faded: #5555ff77;
@@ -46,8 +48,8 @@
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
 	--color-foreground-subtler: #333344;
-	--color-foreground-background: #77778811;
-	--color-foreground-background-subtle: #7777880a;
+	--color-foreground-background: #121a21;
+	--color-foreground-background-subtle: #10171e;
 	--color-foreground-1: #242e38;
 	--color-foreground-2: #29343d;
 	--color-foreground-3: #333e47;
