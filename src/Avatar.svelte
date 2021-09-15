@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { createIcon } from '@app/blockies';
   import { isAddress, isRadicleId } from '@app/utils';
-  
+
   export let source: string;
   export let inline = false;
   export let glowOnHover = false;
@@ -24,6 +24,7 @@
 
 <style>
   .avatar {
+    display: block;
     border-radius: 50%;
     min-width: 1rem;
     min-height: 1rem;
@@ -36,7 +37,7 @@
     box-shadow: 0 0 3rem var(--color-secondary);
   }
   .inline {
-    display: inline-block;
+    display: inline-block !important;
     width: 1rem;
     height: 1rem;
     margin-right: 0.5rem;

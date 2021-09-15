@@ -51,11 +51,21 @@
   }
 
   .title {
-    font-size: 2.25rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: space-between;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .title .divider {
+    color: var(--color-foreground-subtle);
+    margin: 0 0.5rem;
+    font-weight: normal;
+  }
+  .org-avatar {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
   }
   .urn {
     font-family: var(--font-family-monospace);
@@ -64,17 +74,6 @@
   }
   .description {
     margin: 1rem 0 1.5rem 0;
-  }
-  .maintainers {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .maintainer {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    margin-left: 0.5rem;
   }
 </style>
 
@@ -86,14 +85,13 @@
   {:then result}
     <header>
       <div class="title bold">
+        {#if result.org}
+          <a class="org-avatar" title={result.org.name || result.org.address} href={`/orgs/${org}`}>
+            <Avatar source={result.org.avatar || org}/>
+          </a>
+          <span class="divider">/</span>
+        {/if}
         <Link to={projectRoot}>{result.project.meta.name}</Link>
-        <span class="maintainers">
-          {#each result.project.meta.maintainers as user}
-            <span class="maintainer">
-              <Avatar source={user} />
-            </span>
-          {/each}
-        </span>
       </div>
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>

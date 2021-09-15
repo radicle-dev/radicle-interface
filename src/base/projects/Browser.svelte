@@ -4,7 +4,6 @@
   import type { Profile } from '@app/profile';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
-  import Address from '@app/Address.svelte';
   import { Org } from '@app/base/orgs/Org';
   import * as utils from '@app/utils';
 
@@ -182,6 +181,23 @@
       <div class="commit">
         commit {commit}
       </div>
+      <div class="anchor">
+        {#if orgAddress}
+          {#await getAnchor}
+            <Loading small margins />
+          {:then anchor}
+            {#if anchor === commit}
+              <span class="anchor-widget">
+                <span class="anchor-label">anchored 🔒</span>
+              </span>
+            {:else}
+              <span class="anchor-widget not-anchored">
+                <span class="anchor-label">not anchored 🔓</span>
+              </span>
+            {/if}
+          {/await}
+        {/if}
+      </div>
       <div class="stat">
         <strong>{tree.stats.commits}</strong> commit(s)
       </div>
@@ -193,24 +209,6 @@
           <span>{config.seed.host}</span>
         </div>
       {/if}
-      <div class="anchor">
-        {#if orgAddress}
-          {#await getAnchor}
-            <Loading small margins />
-          {:then anchor}
-            {#if anchor === commit}
-              <span class="anchor-widget">
-                <span class="anchor-label">anchored</span>
-                <Address address={orgAddress} compact resolve noBadge profile={org} {config} />
-              </span>
-            {:else}
-              <span class="anchor-widget not-anchored">
-                <span class="anchor-label">not anchored 🔓</span>
-              </span>
-            {/if}
-          {/await}
-        {/if}
-      </div>
     </header>
     <div class="container center-content">
       {#if tree.entries.length}
