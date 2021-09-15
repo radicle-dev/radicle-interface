@@ -48,8 +48,12 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
   return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
-export function formatAddress(addr: string): string {
-  return formatHash(ethers.utils.getAddress(addr)).replace(/^0x/, "");
+export function formatAddress(input: string): string {
+  const addr = ethers.utils.getAddress(input).replace(/^0x/, "");
+
+  return addr.substring(0, 4)
+    + ' – '
+    + addr.substring(addr.length - 4, addr.length);
 }
 
 export function formatIpfsFile(ipfs: string | undefined): string | undefined {

@@ -15,8 +15,8 @@
 
 <style>
   .org {
-    width: 7rem;
-    height: 7rem;
+    width: 8rem;
+    height: 8rem;
     margin-left: 3rem;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
@@ -41,7 +41,7 @@
     padding: 0rem 0.5rem;
     text-overflow: ellipsis;
     overflow-x: hidden;
-    max-width: 7rem;
+    max-width: 8rem;
   }
   .list {
     display: flex;
