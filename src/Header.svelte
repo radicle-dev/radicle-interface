@@ -71,6 +71,8 @@
     min-height: 42px;
     margin-left: 2rem;
     width: 10rem;
+    padding-left: 0;
+    padding-right: 0;
   }
   .connect {
     display: inline-block;
