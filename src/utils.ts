@@ -155,6 +155,7 @@ export async function querySubgraph(
   url: string,
   query: string,
   variables: Record<string, any>,
+  retries = 3
 ): Promise<null | any> {
   const response = await fetch(url, {
     method: 'POST',
@@ -172,7 +173,8 @@ export async function querySubgraph(
     for (const e of json.errors) {
       console.error("querySubgraph:", e.message);
     }
-    return null;
+    if (retries > 0) querySubgraph(url, query, variables, retries - 1);
+    else return null;
   }
 
   return json.data;
