@@ -229,18 +229,19 @@
         {:then members}
           {#if members.length > 0}
             <div class="members">
-              {#each members as address}
-                {#await Profile.get(address, ProfileType.Minimal, config)}
-                  <Loading small />
-                {:then profile}
+              {#await Profile.getMulti(members, config)}
+                <Loading small />
+              {:then members}
+                {#each members as profile}
                   <div class="member">
                     <div class="member-icon">
-                      <Avatar source={profile.avatar ?? address} />
+                      <Avatar source={profile.avatar ?? profile.address} />
                     </div>
-                    <Address {address} compact resolve noAvatar {profile} {config} />
+                    <Address address={profile.address} compact
+                      resolve noAvatar {profile} {config} />
                   </div>
-                {/await}
-              {/each}
+                {/each}
+              {/await}
             </div>
           {/if}
         {/await}
