@@ -292,7 +292,7 @@ export async function isSafe(address: string, config: Config): Promise<boolean> 
   if (! config.safe.api) return false;
 
   const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, { method: 'HEAD' });
+  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}/`, { method: 'HEAD' });
 
   return response.ok;
 }
@@ -302,7 +302,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
   if (! config.safe.api) return null;
 
   const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}`, {
+  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}/`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
