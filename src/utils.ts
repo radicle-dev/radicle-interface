@@ -250,14 +250,18 @@ export async function resolveIdxProfile(caip10: string, config: Config): Promise
 export async function resolveEnsProfile(address: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
   const name = await config.provider.lookupAddress(address);
   if (name) {
+
+    const resolver = await config.provider.getResolver(name);
     if (profileType === ProfileType.Full) {
       const registration = await getRegistration(name, config);
       if (registration) {
         return registration.profile;
       }
     } else if (profileType === ProfileType.Project) {
-      const avatar = await getAvatar(name, config);
-      const seedHost = await getSeed(name, config);
+      const project = await Promise.allSettled([getAvatar(name, config, resolver), getSeed(name, config, resolver)]);
+
+      const [avatar, seedHost] =
+        project.map(r => r.status == "fulfilled" ? r.value : null);
 
       return {
         name,
@@ -270,7 +274,7 @@ export async function resolveEnsProfile(address: string, profileType: ProfileTyp
         github: null,
       };
     } else if (profileType === ProfileType.Minimal) {
-      const avatar = await getAvatar(name, config);
+      const avatar = await getAvatar(name, config, resolver);
 
       return {
         name,

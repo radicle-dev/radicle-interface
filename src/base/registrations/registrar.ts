@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { writable } from 'svelte/store';
 import type { BigNumber } from 'ethers';
-import type { EnsResolver } from '@ethersproject/providers';
+import type { EnsResolver, Resolver } from '@ethersproject/providers';
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
@@ -96,20 +96,20 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
   };
 }
 
-export async function getAvatar(name: string, config: Config): Promise<string | null> {
+export async function getAvatar(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
   name = name.toLowerCase();
 
-  const resolver = await config.provider.getResolver(name);
+  resolver = resolver ?? await config.provider.getResolver(name);
   if (! resolver) {
     return null;
   }
   return resolver.getText('avatar');
 }
 
-export async function getSeed(name: string, config: Config): Promise<string | null> {
+export async function getSeed(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
   name = name.toLowerCase();
 
-  const resolver = await config.provider.getResolver(name);
+  resolver = resolver ?? await config.provider.getResolver(name);
   if (! resolver) {
     return null;
   }
