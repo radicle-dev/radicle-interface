@@ -62,7 +62,10 @@ export class Config {
     link: { port: number };
   };
   idx: { client: IDX };
-  ceramic: { client: CeramicClient };
+  ceramic: {
+   client: CeramicClient;
+   registry: string;
+  };
   tokens: string[];
   token: ethers.Contract;
 
@@ -116,7 +119,10 @@ export class Config {
     this.gasLimits = gasLimits;
     this.abi = config.abi;
     this.idx = { client: idx };
-    this.ceramic = { client: ceramic };
+    this.ceramic = {
+      client: ceramic,
+      registry: config.ceramic.registry
+    };
     this.tokens = cfg.tokens;
     this.token = new ethers.Contract(
       this.radToken.address,

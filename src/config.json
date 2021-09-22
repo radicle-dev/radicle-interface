@@ -49,7 +49,10 @@
     "tokens": []
   },
   "walletConnect": { "bridge": "https://radicle.bridge.walletconnect.org" },
-  "ceramic": { "api": "https://gateway.ceramic.network" },
+  "ceramic": {
+    "api": "https://gateway.ceramic.network",
+    "registry": "https://self.id/"
+  },
   "radicle": {
     "seed": {
       "host": "0.0.0.0",

@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { SvelteComponent } from 'svelte';
-  import Link from '@app/Link.svelte';
   import type { Config } from '@app/config';
-  import { formatName, parseEnsLabel, explorerLink } from '@app/utils';
+  import { formatName, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -196,7 +195,7 @@
           {#if utils.isAddressEqual(profile.address, org.address)}
             <div>
               {#if profile.name}
-                <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+                <a href={profile.registry(config)} class="link" target="_blank">{profile.name}</a>
               {:else}
                 <span class="subtle">Not set</span>
               {/if}

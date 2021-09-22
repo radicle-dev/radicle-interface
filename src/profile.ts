@@ -1,7 +1,7 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
-  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername,
+  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
 } from "@app/utils";
 import type { Config } from "@app/config";
 
@@ -96,6 +96,13 @@ export class Profile {
       return config.withSeed(this.seedHost, this.seedId);
     }
     return config;
+  }
+
+  // Returns the corresponding registration form to edit a user profile.
+  // We are not interested in a non-existant registry link, since we check before hand if the name exists.
+  registry(config: Config): string {
+    if (this.profile?.ens) return `/registrations/${parseEnsLabel(this.profile.ens.name, config)}`;
+    else return `${config.ceramic.registry}${formatCAIP10Address(this.profile.address, "eip155", config.network.chainId)}`;
   }
 
   // Keeping this function private since the desired entrypoint is .get()

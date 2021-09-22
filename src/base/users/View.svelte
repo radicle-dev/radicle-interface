@@ -8,8 +8,6 @@
   import { Org } from '@app/base/orgs/Org';
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
-  import Link from '@app/Link.svelte';
-  import { parseEnsLabel } from '@app/utils';
 
   export let address: string;
   export let config: Config;
@@ -112,7 +110,7 @@
         <div class="label">Profile</div>
         <div>
           {#if profile.name}
-            <Link to={`/registrations/${parseEnsLabel(profile.name, config)}`}>{profile.name}</Link>
+            <a href={profile.registry(config)} class="link" target="_blank">{profile.name}</a>
           {:else}
             <span class="subtle">Not set</span>
           {/if}
