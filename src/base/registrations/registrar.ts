@@ -57,12 +57,15 @@ state.subscribe((s: Connection) => {
   console.log("register.state", s);
 });
 
-export async function getRegistration(name: string, config: Config): Promise<Registration | null> {
+export async function getRegistration(name: string, config: Config, resolver?: Resolver): Promise<Registration | null> {
   name = name.toLowerCase();
 
-  const resolver = await config.provider.getResolver(name);
   if (! resolver) {
-    return null;
+    resolver = await config.provider.getResolver(name);
+
+    if (! resolver) {
+      return null;
+    }
   }
 
   const meta = await Promise.allSettled([

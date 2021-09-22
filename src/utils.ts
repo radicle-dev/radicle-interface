@@ -266,7 +266,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
     const resolver = await config.provider.getResolver(name);
 
     if (profileType === ProfileType.Full) {
-      const registration = await getRegistration(name, config);
+      const registration = await getRegistration(name, config, resolver);
       if (registration) {
         return registration.profile;
       }
