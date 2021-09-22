@@ -209,8 +209,10 @@ export class Org {
     );
 
     try {
-      const owner = await org.owner();
-      const resolved = await org.resolvedAddress;
+      const [owner, resolved] = await Promise.all([
+        org.owner(),
+        org.resolvedAddress,
+      ]);
 
       // If what is resolved is not the same as the input, it's because we
       // were given a name.
