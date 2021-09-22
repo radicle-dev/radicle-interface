@@ -122,6 +122,7 @@
   .clone {
     color: var(--color-primary);
     background-color: var(--color-primary-background);
+    font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -241,16 +242,7 @@
           {/await}
         {/if}
       </div>
-      <div class="stat">
-        <strong>{tree.stats.commits}</strong> commit(s)
-      </div>
-      <div class="stat">
-        <strong>{tree.stats.contributors}</strong> contributor(s)
-      </div>
       {#if config.seed.host}
-        <div class="stat" title="Project data is fetched from this seed">
-          <span>{config.seed.host}</span>
-        </div>
         <span>
           <div class="clone" on:click={() => cloneDropdown = !cloneDropdown}>
             Clone ↓
@@ -260,7 +252,16 @@
             <label for="clone-url">Use Git to clone this repository from the URL above.</label>
           </div>
         </span>
+        <div class="stat" title="Project data is fetched from this seed">
+          <span>{config.seed.host}</span>
+        </div>
       {/if}
+      <div class="stat">
+        <strong>{tree.stats.commits}</strong> commit(s)
+      </div>
+      <div class="stat">
+        <strong>{tree.stats.contributors}</strong> contributor(s)
+      </div>
     </header>
     <div class="container center-content">
       {#if tree.entries.length}
