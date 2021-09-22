@@ -210,7 +210,7 @@ function getProvider(
 ): ethers.providers.JsonRpcProvider {
   // Use Alchemy in production, on mainnet. Otherwise use Metamask if installed.
   if (network.name === "homestead" && import.meta.env.PROD) {
-    return new ethers.providers.AlchemyProvider(network.name, config.alchemy.key);
+    return new ethers.providers.AlchemyWebSocketProvider(network.name, config.alchemy.key);
   } else if (metamask) {
     return metamask;
   } else {
