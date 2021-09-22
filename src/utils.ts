@@ -76,6 +76,14 @@ export function formatNetwork(input: { name: string }): string {
   return capitalize(name);
 }
 
+export function formatOrg(input: string, config: Config): string {
+  if (isAddress(input)) {
+    return formatAddress(input);
+  } else {
+    return parseEnsLabel(input, config);
+  }
+}
+
 export function capitalize(s: string): string {
   if (s === "") return s;
   return s[0].toUpperCase() + s.substr(1);

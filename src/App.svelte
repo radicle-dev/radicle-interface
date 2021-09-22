@@ -54,6 +54,10 @@
 </style>
 
 <svelte:window on:keydown={handleKeydown} />
+<svelte:head>
+  <title>Radicle</title>
+</svelte:head>
+
 <div class="app">
   {#await loadConfig}
     <!-- Loading wallet -->

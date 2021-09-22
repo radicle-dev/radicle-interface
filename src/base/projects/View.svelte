@@ -7,6 +7,8 @@
   import Avatar from '@app/Avatar.svelte';
   import { Org } from '@app/base/orgs/Org';
   import type { Profile } from '@app/profile';
+  import type { Info } from '@app/project';
+  import { formatOrg } from '@app/utils';
 
   import Browser from './Browser.svelte';
 
@@ -16,6 +18,8 @@
   export let config: Config;
   export let path: string;
 
+  let pageTitle = `${formatOrg(org, config)}/${urn}`;
+  let projectInfo: Info | null = null;
   let projectRoot = proj.path({ urn, org, commit });
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
@@ -27,8 +31,19 @@
     const seed = orgProfile?.seed;
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
+
+    projectInfo = info;
+
     return { project: info, config: cfg, org: orgProfile };
   });
+
+  $: if (projectInfo) {
+    if (projectInfo.meta.description) {
+      pageTitle = `${formatOrg(org, config)}/${projectInfo.meta.name}: ${projectInfo.meta.description}`;
+    } else {
+      pageTitle = `${formatOrg(org, config)}/${projectInfo.meta.name}`;
+    }
+  }
 
   const back = () => window.history.back();
 </script>
@@ -76,6 +91,10 @@
     margin: 1rem 0 1.5rem 0;
   }
 </style>
+
+<svelte:head>
+  <title>{pageTitle}</title>
+</svelte:head>
 
 <main>
   {#await getProject}

@@ -54,6 +54,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>Radicle: Orgs</title>
+</svelte:head>
+
 <main>
   {#if account}
     <div class="my-orgs">

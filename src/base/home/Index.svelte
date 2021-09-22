@@ -9,6 +9,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>Radicle &ndash; Home</title>
+</svelte:head>
+
 <main class="centered">
   <div>
     <input size="40" type="text" bind:value={input} placeholder="Enter a name, address or domain..." />

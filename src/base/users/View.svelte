@@ -70,6 +70,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>{address}</title>
+</svelte:head>
+
 {#await Profile.get(address, ProfileType.Full, config)}
   <Loading fadeIn />
 {:then profile}

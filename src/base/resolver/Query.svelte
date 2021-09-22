@@ -48,6 +48,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Radicle: {query}</title>
+</svelte:head>
+
 <main class="centered">
   {#if error}
     <Error on:close={() => navigate('/')}>

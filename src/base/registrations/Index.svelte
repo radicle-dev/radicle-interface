@@ -34,6 +34,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>Radicle: Register</title>
+</svelte:head>
+
 <main class="centered">
   <div>
     <div class="input-caption">

@@ -42,6 +42,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>{subdomain}</title>
+</svelte:head>
+
 {#if error}
   <Err
     title="Transaction failed"

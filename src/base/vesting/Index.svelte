@@ -53,6 +53,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>Radicle &ndash; Vesting</title>
+</svelte:head>
+
 <main class="centered">
   <div>
     {#if info}

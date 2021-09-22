@@ -58,6 +58,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Radicle: Register {subdomain}</title>
+</svelte:head>
+
 <Modal narrow>
   <span slot="title">
     <div>🌐</div>

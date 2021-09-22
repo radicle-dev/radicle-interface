@@ -126,6 +126,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>{utils.formatOrg(address, config)}</title>
+</svelte:head>
+
 {#await Org.get(address, config)}
   <main class="centered">
     <Loading center />

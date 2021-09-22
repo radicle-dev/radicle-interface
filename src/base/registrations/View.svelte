@@ -124,6 +124,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>{subdomain}.{config.registrar.domain}</title>
+</svelte:head>
+
 {#if state.status === Status.Loading}
   <Loading />
 {:else if state.status === Status.Failed}
