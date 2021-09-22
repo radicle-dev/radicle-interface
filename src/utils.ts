@@ -78,7 +78,7 @@ export function formatNetwork(input: { name: string }): string {
 
 export function formatOrg(input: string, config: Config): string {
   if (isAddress(input)) {
-    return formatAddress(input);
+    return ethers.utils.getAddress(input);
   } else {
     return parseEnsLabel(input, config);
   }
