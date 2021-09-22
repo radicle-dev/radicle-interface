@@ -226,6 +226,16 @@ function getProvider(
   }
 }
 
+// Checks if the promise metamask.ready returns the network, else timesout after 4 seconds.
+function checkMetaMask(metamask: ethers.providers.Web3Provider): Promise<ethers.providers.Network | null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(null);
+    }, 4000);
+    metamask.ready.then(network => resolve(network));
+  });
+}
+
 export async function getConfig(): Promise<Config> {
   const metamask = isMetamaskInstalled()
     ? new ethers.providers.Web3Provider(window.ethereum)
@@ -238,7 +248,9 @@ export async function getConfig(): Promise<Config> {
   let network = { name: "homestead", chainId: 1 };
   if (metamask) {
     // If Metamask is detected, we use the network configured there.
-    network = await metamask.ready;
+    const ready = await checkMetaMask(metamask);
+    if (ready === null) throw new Error("Not able to connect to Metamask, check for multiple Web3 providers");
+    network = ready;
   }
 
   const networkConfig = (<Record<string, any>> config)[network.name];
