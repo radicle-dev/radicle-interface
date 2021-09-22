@@ -144,7 +144,7 @@
       {:then profile}
         <header>
           <div class="avatar">
-            <Avatar source={profile.avatar ?? address} />
+            <Avatar source={profile.avatar ?? org.address} />
           </div>
           <div class="info">
             <span class="title">
