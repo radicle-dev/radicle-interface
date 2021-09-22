@@ -19,7 +19,7 @@
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import { Profile, ProfileType } from '@app/profile';
 
-  export let address: string;
+  export let addressOrName: string;
   export let config: Config;
   export let action: string | null = null;
 
@@ -127,10 +127,10 @@
 </style>
 
 <svelte:head>
-  <title>{utils.formatOrg(address, config)}</title>
+  <title>{utils.formatOrg(addressOrName, config)}</title>
 </svelte:head>
 
-{#await Org.get(address, config)}
+{#await Org.get(addressOrName, config)}
   <main class="centered">
     <Loading center />
   </main>
@@ -149,7 +149,7 @@
           <div class="info">
             <span class="title">
               <span class="bold">
-                {profile.name ? formatName(profile.name, config) : address}
+                {profile.name ? formatName(profile.name, config) : profile.address}
               </span>
               {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>
@@ -271,11 +271,11 @@
     <Modal subtle>
       <span slot="title">🏜️</span>
       <span slot="body">
-        <p class="highlight"><strong>{address}</strong></p>
+        <p class="highlight"><strong>{addressOrName}</strong></p>
         <p>Sorry, there is no Org at this address.</p>
-        {#if utils.isAddress(address)}
+        {#if utils.isAddress(addressOrName)}
           <p>
-            <a href={explorerLink(address, config)} class="link" target="_blank">View in explorer</a>
+            <a href={explorerLink(addressOrName, config)} class="link" target="_blank">View in explorer</a>
             <span class="faded">↗</span>
           </p>
         {/if}

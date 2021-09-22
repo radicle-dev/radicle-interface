@@ -13,5 +13,5 @@
 </Route>
 
 <Route path="/orgs/:address" let:params let:location>
-  <View {config} address={params.address} action={getSearchParam("action", location)} />
+  <View {config} addressOrName={params.address} action={getSearchParam("action", location)} />
 </Route>
