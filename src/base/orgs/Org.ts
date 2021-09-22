@@ -44,12 +44,14 @@ const GetOrgsByOwner = `
 export class Org {
   address: string;
   owner: string;
+  name?: string;
 
-  constructor(address: string, owner: string) {
+  constructor(address: string, owner: string, name?: string) {
     assert(ethers.utils.isAddress(address), "address must be valid");
 
     this.address = address.toLowerCase(); // Don't store address checksum.
     this.owner = owner;
+    this.name = name;
   }
 
   async setName(name: string, config: Config): Promise<TransactionResponse> {
@@ -143,11 +145,11 @@ export class Org {
   }
 
   async getProfile(profileType: ProfileType, config: Config): Promise<Profile> {
-    return Org.getProfile(this.address, profileType, config);
+    return Org.getProfile(this.name ?? this.address, profileType, config);
   }
 
-  static async getProjectProfile(addr: string, config: Config): Promise<Profile> {
-    return Org.getProfile(addr, ProfileType.Project, config);
+  static async getProjectProfile(addrOrName: string, config: Config): Promise<Profile> {
+    return Org.getProfile(addrOrName, ProfileType.Project, config);
   }
 
   static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
@@ -197,11 +199,11 @@ export class Org {
   }
 
   static async get(
-    address: string,
+    addressOrName: string,
     config: Config,
   ): Promise<Org | null> {
     const org = new ethers.Contract(
-      address,
+      addressOrName,
       config.abi.org,
       config.provider
     );
@@ -209,7 +211,14 @@ export class Org {
     try {
       const owner = await org.owner();
       const resolved = await org.resolvedAddress;
-      return new Org(resolved, owner);
+
+      // If what is resolved is not the same as the input, it's because we
+      // were given a name.
+      if (utils.isAddressEqual(addressOrName, resolved)) {
+        return new Org(resolved, owner);
+      } else {
+        return new Org(resolved, owner, addressOrName);
+      }
     } catch (e) {
       console.error(e);
       return null;
@@ -218,13 +227,13 @@ export class Org {
 
   // Return the org profile if there is one, otherwise try to get the profile
   // of its owner.
-  static async getProfile(address: string, profileType: ProfileType, config: Config): Promise<Profile> {
-    const profile = await Profile.get(address, profileType, config);
+  static async getProfile(addressOrName: string, profileType: ProfileType, config: Config): Promise<Profile> {
+    const profile = await Profile.get(addressOrName, profileType, config);
 
     if (profile.ens) { // Orgs only use ENS for profile information.
       return profile;
     }
-    const org = await Org.get(address, config);
+    const org = await Org.get(addressOrName, config);
 
     if (org) {
       const ownerProfile = await Profile.get(org.owner, profileType, config);

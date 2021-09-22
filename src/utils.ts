@@ -249,26 +249,32 @@ export async function resolveIdxProfile(caip10: string, config: Config): Promise
 }
 
 // Resolves an ENS profile or return null
-export async function resolveEnsProfile(address: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
-  const name = await config.provider.lookupAddress(address);
-  if (name) {
+export async function resolveEnsProfile(addressOrName: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
+  const name = ethers.utils.isAddress(addressOrName)
+    ? await config.provider.lookupAddress(addressOrName)
+    : addressOrName;
 
+  if (name) {
     const resolver = await config.provider.getResolver(name);
+
     if (profileType === ProfileType.Full) {
       const registration = await getRegistration(name, config);
       if (registration) {
         return registration.profile;
       }
     } else if (profileType === ProfileType.Project) {
-      const project = await Promise.allSettled([getAvatar(name, config, resolver), getSeed(name, config, resolver)]);
+      const project = await Promise.allSettled([
+        getAvatar(name, config, resolver),
+        getSeed(name, config, resolver)
+      ]);
 
       const [avatar, seedHost] =
         project.map(r => r.status == "fulfilled" ? r.value : null);
 
       return {
         name,
-        address,
         avatar,
+        address: null,
         seedHost,
         url: null,
         seedId: null,
@@ -280,8 +286,8 @@ export async function resolveEnsProfile(address: string, profileType: ProfileTyp
 
       return {
         name,
-        address,
         avatar,
+        address: null,
         url: null,
         seedId: null,
         seedHost: null,
