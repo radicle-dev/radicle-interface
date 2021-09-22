@@ -106,7 +106,7 @@ export async function getAvatar(name: string, config: Config, resolver?: Resolve
   return resolver.getText('avatar');
 }
 
-export async function getSeed(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
+export async function getSeedHost(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -114,6 +114,16 @@ export async function getSeed(name: string, config: Config, resolver?: Resolver)
     return null;
   }
   return resolver.getText('eth.radicle.seed.host');
+}
+
+export async function getSeedId(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
+  name = name.toLowerCase();
+
+  resolver = resolver ?? await config.provider.getResolver(name);
+  if (! resolver) {
+    return null;
+  }
+  return resolver.getText('eth.radicle.seed.id');
 }
 
 export function registrar(config: Config): ethers.Contract {

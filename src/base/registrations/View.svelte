@@ -79,7 +79,7 @@
             { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
               description: "The seed host address. " +
                 "Only domain names with TLS are supported. " +
-                `HTTP(S) API requests use port ${config.seed.port}.`,
+                `HTTP(S) API requests use port ${config.seed.api.port}.`,
               value: r.profile.seedHost, editable: true },
             { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
               description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",

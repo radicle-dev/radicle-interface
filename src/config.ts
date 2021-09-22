@@ -55,7 +55,12 @@ export class Config {
     viewer: string | null;
   };
   abi: { [contract: string]: string[] };
-  seed: { host?: string; port: number };
+  seed: {
+    host?: string;
+    id?: string;
+    api: { port: number };
+    link: { port: number };
+  };
   idx: { client: IDX };
   ceramic: { client: CeramicClient };
   tokens: string[];
@@ -125,11 +130,14 @@ export class Config {
   }
 
   // Return the config with an overwritten seed URL.
-  withSeed(seedHost: string): Config {
+  withSeed(seedHost: string, seedId?: string): Config {
     const cfg = {} as Config;
     Object.assign(cfg, this);
     cfg.seed.host = seedHost;
 
+    if (seedId) {
+      cfg.seed.id = seedId;
+    }
     return cfg;
   }
 

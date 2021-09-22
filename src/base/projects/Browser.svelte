@@ -34,6 +34,8 @@
   let state: State = { status: Status.Idle };
   // Whether the clone dropdown is visible.
   let cloneDropdown = false;
+  // Whether the seed dropdown is visible.
+  let seedDropdown = false;
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
     if (state.status == Status.Loaded && state.path === path) {
@@ -119,6 +121,14 @@
     margin-right: 0;
   }
 
+  .seed {
+    cursor: pointer;
+    border-radius: 0.25rem;
+  }
+  .seed:hover {
+    background-color: var(--color-foreground-background-lighter);
+  }
+
   .clone {
     color: var(--color-primary);
     background-color: var(--color-primary-background);
@@ -131,7 +141,7 @@
   .clone:hover {
     background-color: var(--color-primary-background-lighter);
   }
-  .clone-dropdown {
+  .dropdown {
     background-color: var(--color-foreground-background);
     padding: 1rem;
     margin-top: 0.5rem;
@@ -143,18 +153,27 @@
     display: block;
   }
   .clone-dropdown input {
-    font-size: 0.75rem;
     color: var(--color-primary);
+    background: var(--color-primary-background);
+  }
+  .seed-dropdown input {
+    color: var(--color-foreground-90);
+    background: var(--color-foreground-background-lighter);
+  }
+  .seed-dropdown.seed-dropdown-visible {
+    display: block;
+  }
+  .dropdown input {
+    font-size: 0.75rem;
     font-family: var(--font-family-monospace);
     padding: 0.5rem;
-    background: var(--color-primary-background);
     border: none;
     outline: none;
     width: 24rem;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis !important;
     border-radius: 0.25rem;
   }
-  .clone-dropdown label {
+  .dropdown label {
     display: block;
     color: var(--color-foreground-faded);
     padding: 0.5rem 0.5rem 0 0.25rem;
@@ -245,16 +264,26 @@
       {#if config.seed.host}
         <span>
           <div class="clone" on:click={() => cloneDropdown = !cloneDropdown}>
-            Clone ↓
+            Clone
           </div>
-          <div class="clone-dropdown" class:clone-dropdown-visible={cloneDropdown}>
+          <div class="dropdown clone-dropdown" class:clone-dropdown-visible={cloneDropdown}>
             <input readonly name="clone-url" value="https://{config.seed.host}/{utils.parseRadicleId(urn)}"/>
             <label for="clone-url">Use Git to clone this repository from the URL above.</label>
           </div>
         </span>
-        <div class="stat" title="Project data is fetched from this seed">
-          <span>{config.seed.host}</span>
-        </div>
+        <span>
+          <div class="stat seed" on:click={() => seedDropdown = !seedDropdown} title="Project data is fetched from this seed">
+            <span>{config.seed.host}</span>
+          </div>
+          <div class="dropdown seed-dropdown" class:seed-dropdown-visible={seedDropdown}>
+            {#if config.seed.id}
+              <input readonly name="clone-url" value={`${config.seed.id}@${config.seed.host}:${config.seed.link.port}`}/>
+              <label for="seed-url">Bootstrap your Radicle node with this seed.</label>
+            {:else if org}
+              <label for="#">Seed ID is not set for {org.name}.</label>
+            {/if}
+          </div>
+        </span>
       {/if}
       <div class="stat">
         <strong>{tree.stats.commits}</strong> commit(s)

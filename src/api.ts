@@ -15,7 +15,7 @@ export async function get(
   }
 
   const base = config.seed.host;
-  const port = config.seed.port;
+  const port = config.seed.api.port;
   const search = new URLSearchParams(query).toString();
   const baseUrl = `https://${base}:${port}/v1/${path}`;
   const url = search ? `${baseUrl}?${search}` : baseUrl;

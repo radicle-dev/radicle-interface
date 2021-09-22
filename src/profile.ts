@@ -75,8 +75,13 @@ export class Profile {
   }
 
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
-  get seed(): string | undefined {
+  get seedHost(): string | undefined {
     return this.profile?.ens?.seedHost ?? undefined;
+  }
+
+  // Using undefined as return type if nothing to be returned since it works better with <a href> links
+  get seedId(): string | undefined {
+    return this.profile?.ens?.seedId ?? undefined;
   }
 
   // Get the name, and if not available, the address.
@@ -87,8 +92,8 @@ export class Profile {
   // Return the profile-specific config. This sets various URLs in the config,
   // based on profile data.
   config(config: Config): Config {
-    if (this.seed) {
-      return config.withSeed(this.seed);
+    if (this.seedHost) {
+      return config.withSeed(this.seedHost, this.seedId);
     }
     return config;
   }

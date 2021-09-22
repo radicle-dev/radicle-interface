@@ -28,8 +28,9 @@
       resolve(null);
     }
   }).then(async (orgProfile) => {
-    const seed = orgProfile?.seed;
-    const cfg = seed ? config.withSeed(seed) : config;
+    const seedHost = orgProfile?.seedHost;
+    const seedId = orgProfile?.seedId || undefined;
+    const cfg = seedHost ? config.withSeed(seedHost, seedId) : config;
     const info = await proj.getInfo(urn, cfg);
 
     projectInfo = info;
