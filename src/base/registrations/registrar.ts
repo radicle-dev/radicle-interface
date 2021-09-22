@@ -10,7 +10,6 @@ import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
 
 export interface Registration {
-  owner: string;
   profile: EnsProfile;
   resolver: EnsResolver;
 }
@@ -66,7 +65,6 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     return null;
   }
 
-  const owner = await getOwner(name, config);
   const meta = await Promise.allSettled([
     resolver.getAddress(),
     resolver.getText('avatar'),
@@ -81,7 +79,6 @@ export async function getRegistration(name: string, config: Config): Promise<Reg
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
-    owner,
     resolver,
     profile: {
       name,
@@ -278,7 +275,7 @@ function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
   return ethers.utils.keccak256(bytes);
 }
 
-async function getOwner(name: string, config: Config): Promise<string> {
+export async function getOwner(name: string, config: Config): Promise<string> {
   const ensAddr = config.provider.network.ensAddress;
   if (! ensAddr) {
     throw new Error("ENS address is not defined");

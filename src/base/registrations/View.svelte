@@ -12,7 +12,7 @@
   import Error from '@app/Error.svelte';
   import { isAddressEqual, isReverseRecordSet } from '@app/utils';
 
-  import { getRegistration } from './registrar';
+  import { getRegistration, getOwner } from './registrar';
   import type { EnsRecord } from './resolver';
   import type { Registration } from './registrar';
   import Update from './Update.svelte';
@@ -27,7 +27,7 @@
   type State =
       { status: Status.Loading }
     | { status: Status.NotFound }
-    | { status: Status.Found; registration: Registration }
+    | { status: Status.Found; registration: Registration; owner: string }
     | { status: Status.Failed; error: string };
 
   export let subdomain: string;
@@ -49,11 +49,12 @@
           if (r.profile.address) {
             reverseRecord = await isReverseRecordSet(r.profile.address, name, config);
           }
+          const owner = await getOwner(name, config);
 
           fields = [
             { name: "owner", validate: "address", placeholder: "",
               description: "The owner and controller of this name.",
-              value: r.owner, resolve: true, editable: false },
+              value: owner, resolve: true, editable: false },
             { name: "address", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
               description: "The address this name resolves to. " + (
                 reverseRecord
@@ -84,7 +85,7 @@
               description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
               value: r.profile.seedId, editable: true },
           ];
-          state = { status: Status.Found, registration: r };
+          state = { status: Status.Found, registration: r, owner };
         } else {
           state = { status: Status.NotFound };
         }
@@ -104,8 +105,8 @@
       });
   };
 
-  $: isOwner = (registration: Registration): boolean => {
-    return $session ? isAddressEqual(registration.owner, $session.address) : false;
+  $: isOwner = (owner: string): boolean => {
+    return $session ? isAddressEqual(owner, $session.address) : false;
   };
 </script>
 
@@ -154,7 +155,7 @@
     <header>
       <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
       <button
-        class="tiny primary" class:active={editable} disabled={!isOwner(state.registration)}
+        class="tiny primary" class:active={editable} disabled={!isOwner(state.owner)}
         on:click={() => editable = !editable}>
           Edit
       </button>
