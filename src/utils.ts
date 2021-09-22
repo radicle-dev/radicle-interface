@@ -270,35 +270,34 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       if (registration) {
         return registration.profile;
       }
-    } else if (profileType === ProfileType.Project) {
-      const project = await Promise.allSettled([
+    } else {
+      const promises = [
         getAvatar(name, config, resolver),
-        getSeed(name, config, resolver)
-      ]);
+      ];
 
-      const [avatar, seedHost] =
+      if (addressOrName === name) {
+        promises.push(resolver.getAddress());
+      } else {
+        promises.push(Promise.resolve(addressOrName));
+      }
+
+      if (profileType === ProfileType.Project) {
+        promises.push(getSeed(name, config, resolver));
+      } else if (profileType === ProfileType.Minimal) {
+        promises.push(Promise.resolve(null));
+      }
+
+      const project = await Promise.allSettled(promises);
+      const [avatar, address, seedHost] =
         project.map(r => r.status == "fulfilled" ? r.value : null);
 
       return {
         name,
         avatar,
-        address: null,
+        address,
         seedHost,
         url: null,
         seedId: null,
-        twitter: null,
-        github: null,
-      };
-    } else if (profileType === ProfileType.Minimal) {
-      const avatar = await getAvatar(name, config, resolver);
-
-      return {
-        name,
-        avatar,
-        address: null,
-        url: null,
-        seedId: null,
-        seedHost: null,
         twitter: null,
         github: null,
       };

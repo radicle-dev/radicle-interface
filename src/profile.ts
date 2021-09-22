@@ -1,9 +1,9 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
-  formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername,
+  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername,
 } from "@app/utils";
-import type { Config } from "./config";
+import type { Config } from "@app/config";
 
 export interface IProfile {
   address: string;
@@ -99,20 +99,27 @@ export class Profile {
     profileType: ProfileType,
     config: Config
   ): Promise<IProfile> {
-    const address = await config.provider.resolveName(addressOrName);
-    const profile: IProfile = { address, ens: null, idx: null };
+    const ens = await resolveEnsProfile(addressOrName, profileType, config);
 
-    try {
-      profile.ens = await resolveEnsProfile(addressOrName, profileType, config);
-
-      if (! profile.ens) {
-        profile.idx = await resolveIdxProfile(formatCAIP10Address(address, "eip155", config.network.chainId), config);
+    if (ens) {
+      if (ens.address) {
+        return { address: ens.address, ens, idx: null };
       }
-    } catch (error) {
-      console.error(error);
-    }
+      throw new Error(`No address set for ${addressOrName}`);
 
-    return profile;
+    } else if (isAddress(addressOrName)) {
+      const address = addressOrName;
+
+      try {
+        const idx = await resolveIdxProfile(
+          formatCAIP10Address(address, "eip155", config.network.chainId), config
+        );
+        return { address, ens: null, idx };
+      } catch {
+        return { address, ens: null, idx: null };
+      }
+    }
+    throw new Error(`Name ${addressOrName} was not found`);
   }
 
   static async getMulti(addresses: string[], config: Config): Promise<Profile[]> {
