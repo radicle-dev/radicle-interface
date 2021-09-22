@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
+  import type { ethers } from "ethers";
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Link from '@app/Link.svelte';
@@ -40,57 +41,63 @@
   let fields: Field[] = [];
   let name = `${subdomain}.${config.registrar.domain}`;
   let updateRecords: EnsRecord[] | null = null;
+  let retries = 3;
+  let resolver: ethers.providers.EnsResolver | undefined = undefined;
+
+  async function parseRecords(r: Registration | null): Promise<Registration | null> {
+    if (r) {
+      let reverseRecord = false;
+      if (r.profile.address) {
+        reverseRecord = await isReverseRecordSet(r.profile.address, name, config);
+      }
+      const owner = await getOwner(name, config);
+      resolver = r.resolver;
+
+      fields = [
+        { name: "owner", validate: "address", placeholder: "",
+          description: "The owner and controller of this name.",
+          value: owner, resolve: true, editable: false },
+        { name: "address", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
+          description: "The address this name resolves to. " + (
+            reverseRecord
+              ? `The reverse record for this address is set to **${name}**`
+              : "The reverse record for this address is **not set**. "
+              + "For this name to be correctly associated with the address, "
+              + "a reverse record should be set."
+          ),
+          value: r.profile.address, editable: true },
+        { name: "url", label: "URL", validate: "url", placeholder: "https://acme.org",
+          description: "A homepage or other URL associated with this name.",
+          value: r.profile.url,editable: true },
+        { name: "avatar", validate: "url", placeholder: "https://acme.org/avatar.png",
+          description: "An avatar or square image associated with this name.",
+          value: r.profile.avatar, editable: true },
+        { name: "twitter", validate: "handle", placeholder: "Twitter username, eg. 'acme'",
+          description: "The Twitter handle associated with this name.",
+          value: r.profile.twitter, editable: true },
+        { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
+          description: "The GitHub username associated with this name.",
+          value: r.profile.github, editable: true },
+        { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
+          description: "The seed host address. " +
+            "Only domain names with TLS are supported. " +
+            `HTTP(S) API requests use port ${config.seed.api.port}.`,
+          value: r.profile.seedHost, editable: true },
+        { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
+          description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
+          value: r.profile.seedId, editable: true },
+      ];
+      state = { status: Status.Found, registration: r, owner };
+    } else {
+      state = { status: Status.NotFound };
+    }
+    if (window.history.state?.retry) retries -= 1;
+    return r;
+  }
 
   onMount(() => {
-    getRegistration(name, config)
-      .then(async r => {
-        if (r) {
-          let reverseRecord = false;
-          if (r.profile.address) {
-            reverseRecord = await isReverseRecordSet(r.profile.address, name, config);
-          }
-          const owner = await getOwner(name, config);
-
-          fields = [
-            { name: "owner", validate: "address", placeholder: "",
-              description: "The owner and controller of this name.",
-              value: owner, resolve: true, editable: false },
-            { name: "address", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
-              description: "The address this name resolves to. " + (
-                reverseRecord
-                  ? `The reverse record for this address is set to **${name}**`
-                  : "The reverse record for this address is **not set**. "
-                  + "For this name to be correctly associated with the address, "
-                  + "a reverse record should be set."
-              ),
-              value: r.profile.address, editable: true },
-            { name: "url", label: "URL", validate: "url", placeholder: "https://acme.org",
-              description: "A homepage or other URL associated with this name.",
-              value: r.profile.url,editable: true },
-            { name: "avatar", validate: "url", placeholder: "https://acme.org/avatar.png",
-              description: "An avatar or square image associated with this name.",
-              value: r.profile.avatar, editable: true },
-            { name: "twitter", validate: "handle", placeholder: "Twitter username, eg. 'acme'",
-              description: "The Twitter handle associated with this name.",
-              value: r.profile.twitter, editable: true },
-            { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
-              description: "The GitHub username associated with this name.",
-              value: r.profile.github, editable: true },
-            { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
-              description: "The seed host address. " +
-                "Only domain names with TLS are supported. " +
-                `HTTP(S) API requests use port ${config.seed.api.port}.`,
-              value: r.profile.seedHost, editable: true },
-            { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
-              description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
-              value: r.profile.seedId, editable: true },
-          ];
-          state = { status: Status.Found, registration: r, owner };
-        } else {
-          state = { status: Status.NotFound };
-        }
-        return r;
-      }).catch(err => {
+    getRegistration(name, config, resolver)
+      .then(parseRecords).catch(err => {
         state = { status: Status.Failed, error: err };
       });
   });
@@ -104,6 +111,12 @@
         return { name: f.name, value: f.value as string };
       });
   };
+
+  $: if (window.history.state?.retry && state.status === Status.NotFound && retries > 0) {
+    getRegistration(name, config, resolver).then(parseRecords).catch(err => {
+      state = { status: Status.Failed, error: err };
+    });
+  }
 
   $: isOwner = (owner: string): boolean => {
     return $session ? isAddressEqual(owner, $session.address) : false;

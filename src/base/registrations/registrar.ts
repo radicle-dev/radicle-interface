@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { writable } from 'svelte/store';
 import type { BigNumber } from 'ethers';
-import type { EnsResolver, Resolver } from '@ethersproject/providers';
+import type { EnsResolver } from '@ethersproject/providers';
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
@@ -57,7 +57,7 @@ state.subscribe((s: Connection) => {
   console.log("register.state", s);
 });
 
-export async function getRegistration(name: string, config: Config, resolver?: Resolver): Promise<Registration | null> {
+export async function getRegistration(name: string, config: Config, resolver?: EnsResolver): Promise<Registration | null> {
   name = name.toLowerCase();
 
   if (! resolver) {
@@ -96,7 +96,7 @@ export async function getRegistration(name: string, config: Config, resolver?: R
   };
 }
 
-export async function getAvatar(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
+export async function getAvatar(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -106,7 +106,7 @@ export async function getAvatar(name: string, config: Config, resolver?: Resolve
   return resolver.getText('avatar');
 }
 
-export async function getSeedHost(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
+export async function getSeedHost(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -116,7 +116,7 @@ export async function getSeedHost(name: string, config: Config, resolver?: Resol
   return resolver.getText('eth.radicle.seed.host');
 }
 
-export async function getSeedId(name: string, config: Config, resolver?: Resolver): Promise<string | null> {
+export async function getSeedId(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
