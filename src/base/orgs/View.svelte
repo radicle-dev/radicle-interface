@@ -252,7 +252,7 @@
           {:then projects}
             {#each projects as project}
               <div class="project">
-                <Project {project} org={profile.name ?? org.address} config={profile.config(config)} />
+                <Project {project} org={profile.nameOrAddress} config={profile.config(config)} />
               </div>
             {/each}
           {:catch err}

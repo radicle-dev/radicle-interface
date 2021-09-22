@@ -79,6 +79,11 @@ export class Profile {
     return this.profile?.ens?.seedHost ?? undefined;
   }
 
+  // Get the name, and if not available, the address.
+  get nameOrAddress(): string {
+    return this.name ?? this.address;
+  }
+
   // Return the profile-specific config. This sets various URLs in the config,
   // based on profile data.
   config(config: Config): Config {

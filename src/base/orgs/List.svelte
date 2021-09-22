@@ -61,7 +61,7 @@
   <div class="list">
     {#each profiles as profile}
       <div class="org">
-        <Link to={`/orgs/${profile.address}`}>
+        <Link to={`/orgs/${profile.nameOrAddress}`}>
           <div class="org-avatar">
             <Avatar source={profile.avatar ?? profile.address} />
           </div>
