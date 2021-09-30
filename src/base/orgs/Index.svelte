@@ -9,7 +9,11 @@
   import List from './List.svelte';
 
   export let config: Config;
+  export let pinned = false;
 
+  const getOrgs = pinned && (config.orgs.pinned.length > 0)
+    ? Org.getMulti(config.orgs.pinned, config)
+    : Org.getAll(config);
   const onCreate = () => modal = Create;
   let modal: typeof SvelteComponent | null = null;
 
@@ -32,14 +36,14 @@
   }
 
   .padding {
-    padding: 0 3rem 3rem 3rem;
+    padding: 0 2rem 2rem 2rem;
   }
 
   .my-orgs {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
   .orgs-empty {
-    margin-left: 3rem;
+    margin-left: 2rem;
     padding: 1rem 0 2rem 0;
     font-style: italic;
     color: var(--color-foreground-faded);
@@ -50,7 +54,7 @@
   }
 
   .loading {
-    padding: 3rem 0;
+    padding: 2rem 0;
   }
 </style>
 
@@ -90,7 +94,7 @@
     <span><strong>Orgs</strong> of the Radicle network</span>
   </header>
 
-  {#await Org.getAll(config)}
+  {#await getOrgs}
     <div class="loading">
       <Loading center />
     </div>

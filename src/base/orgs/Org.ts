@@ -172,6 +172,13 @@ export class Org {
     }
   }
 
+  static async getMulti(ids: string[], config: Config): Promise<Array<Org>> {
+    const results = await Promise.all(ids.map(addr => Org.get(addr, config)));
+    const orgs = results.filter((org): org is Org => org != null);
+
+    return orgs;
+  }
+
   static async getAll(config: Config): Promise<Array<Org>> {
     const result = await utils.querySubgraph(config.orgs.subgraph, GetOrgs, {});
     const orgs: Org[] = [];

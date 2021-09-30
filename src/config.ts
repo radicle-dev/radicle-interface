@@ -31,7 +31,7 @@ export class Config {
   radToken: { address: string };
   orgFactory: { address: string };
   reverseRegistrar: { address: string };
-  orgs: { subgraph: string; contractHash: string };
+  orgs: { subgraph: string; contractHash: string; pinned: string[] };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;

@@ -34,6 +34,22 @@
     display: flex;
     align-items: center;
   }
+  header .nav {
+    display: inline-block;
+    height: 100%;
+    margin-left: 1.5rem;
+    white-space: nowrap;
+  }
+  header .nav a {
+    display: inline-block;
+    padding: 0.5rem 0.5rem;
+    margin-right: 1.5rem;
+    font-weight: 500;
+    color: var(--color-foreground-6);
+  }
+  header .nav a:hover {
+    color: var(--color-foreground);
+  }
   .logo {
     display: flex;
   }
@@ -54,7 +70,7 @@
   .search {
     height: 42px;
     width: 16rem;
-    margin-left: 1rem;
+    margin-left: 1.5rem;
     display: inline-block;
   }
   .address {
@@ -121,6 +137,10 @@
     <a use:link href="/" class="logo"><Logo /></a>
     <div class="search">
       <Search />
+    </div>
+    <div class="nav">
+      <a use:link href="/orgs/">Orgs</a>
+      <a use:link href="/registrations">Register</a>
     </div>
   </div>
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ethers } from 'ethers';
+  import { onMount } from 'svelte';
   import { Link } from 'svelte-routing';
   import type { Org } from '@app/base/orgs/Org';
   import Avatar from '@app/Avatar.svelte';
@@ -10,38 +12,53 @@
   export let config: Config;
   export let orgs: Org[];
 
-  const orgsAddresses = orgs.map(org => org.address);
+  const orgMembers: Record<string, string[]> = {};
+  const getProfiles = Profile.getMulti(orgs.map(o => o.name ?? o.address), config);
+
+  onMount(async () => {
+    const promises = orgs.map(org => org.getMembers(config).then(members => {
+      orgMembers[ethers.utils.getAddress(org.address)] = members;
+    }));
+
+    Promise.all(promises);
+  });
 </script>
 
 <style>
   .org {
-    width: 8rem;
-    height: 8rem;
+    width: 10rem;
+    height: 10rem;
     margin-left: 3rem;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
+    padding: 1rem;
     display: inline-block;
     text-align: center;
+    border-radius: 1rem;
   }
-  .org:hover .org-label {
-    color: var(--color-background);
-    background: var(--color-secondary);
+  .org:hover  {
+    background: var(--color-foreground-background-lighter);
   }
   .org-avatar {
     margin: 0 auto;
     text-align: center;
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    height: 4rem;
   }
   .org-label {
     color: var(--color-foreground-90);
     display: inline-block;
+    font-weight: var(--font-weight-medium);
     margin-top: 0.75rem;
     border-radius: 0.75rem;
     padding: 0rem 0.5rem;
     text-overflow: ellipsis;
     overflow-x: hidden;
     max-width: 8rem;
+  }
+  .org-members {
+    font-size: 0.875rem;
+    color: var(--color-foreground-faded);
   }
   .list {
     display: flex;
@@ -53,15 +70,15 @@
   }
 </style>
 
-{#await Profile.getMulti(orgsAddresses, config)}
+{#await getProfiles}
   <div class="loading">
     <Loading center />
   </div>
 {:then profiles}
   <div class="list">
     {#each profiles as profile}
-      <div class="org">
-        <Link to={`/orgs/${profile.nameOrAddress}`}>
+      <Link to={`/orgs/${profile.nameOrAddress}`}>
+        <div class="org">
           <div class="org-avatar">
             <Avatar source={profile.avatar ?? profile.address} />
           </div>
@@ -72,8 +89,15 @@
               {formatAddress(profile.address)}
             {/if}
           </div>
-        </Link>
-      </div>
+          <div class="org-members">
+            {#if orgMembers[profile.address]?.length}
+              {orgMembers[profile.address].length} members
+            {:else}
+              {formatAddress(profile.address)}
+            {/if}
+          </div>
+        </div>
+      </Link>
     {:else}
       <slot />
     {/each}

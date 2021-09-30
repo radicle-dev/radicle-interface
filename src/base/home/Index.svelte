@@ -17,6 +17,6 @@
 
 <main>
   <div>
-    <Orgs {config} />
+    <Orgs {config} pinned />
   </div>
 </main>
