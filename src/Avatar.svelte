@@ -47,5 +47,6 @@
 {#if isAddress(source) || isRadicleId(source)}
   <div class="avatar" class:inline bind:this={container} class:glowOnHover title={source}/>
 {:else}
-  <img class="avatar" class:inline src={source} class:glowOnHover alt="avatar"/>
+  <!-- svelte-ignore a11y-missing-attribute -->
+  <img class="avatar" class:inline src={source} class:glowOnHover />
 {/if}
