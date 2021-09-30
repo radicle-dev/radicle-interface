@@ -22,6 +22,7 @@
   main {
     padding: 3rem 3rem;
     width: 100%;
+    max-width: 72rem;
   }
   .blurb {
     color: var(--color-foreground-90);
