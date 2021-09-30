@@ -23,6 +23,15 @@
     padding: 3rem 3rem;
     width: 100%;
   }
+  .blurb {
+    color: var(--color-foreground-90);
+    padding: 0rem;
+    max-width: 90%;
+    font-size: 1.25rem;
+    text-align: left;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+  }
   .heading {
     color: var(--color-secondary);
     padding: 1rem 0rem;
@@ -39,6 +48,13 @@
 </svelte:head>
 
 <main>
+  <div class="blurb">
+    <p>Radicle 🌱 is a Web3 network for software collaboration. Radicle
+    provides truly 👌 decentralized infrastructure for developer communities 🧙,
+    enabling anyone to fund 💸 and manage software using NFTs 🍬 and multi-sigs 🖊️.
+    </p>
+  </div>
+
   {#await getOrgs}
     <div class="loading">
       <Loading center />
