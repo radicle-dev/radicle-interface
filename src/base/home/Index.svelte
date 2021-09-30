@@ -1,23 +1,22 @@
 <script lang="ts">
-  import { navigate } from 'svelte-routing';
+  import type { Config } from '@app/config';
+  import Orgs from '@app/base/orgs/Index.svelte';
 
-  let input = "";
-  const search = () => {
-    navigate(`/resolver/query?${
-      new URLSearchParams({ q: input })
-    }`);
-  };
+  export let config: Config;
 </script>
+
+<style>
+  main {
+    width: 100%;
+  }
+</style>
 
 <svelte:head>
   <title>Radicle &ndash; Home</title>
 </svelte:head>
 
-<main class="centered">
+<main>
   <div>
-    <input size="40" type="text" bind:value={input} placeholder="Enter a name, address or domain..." />
-    <button class="primary" on:click={search} disabled={!input}>
-      Search
-    </button>
+    <Orgs {config} />
   </div>
 </main>

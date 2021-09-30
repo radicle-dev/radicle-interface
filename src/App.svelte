@@ -44,6 +44,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    background: linear-gradient(
+      180deg,
+      var(--color-secondary-background) 0%,
+      transparent 30%,
+      transparent 100%
+    );
   }
   .wrapper {
     display: flex;
@@ -69,7 +75,7 @@
     <div class="wrapper">
       <Router>
         <Route path="/">
-          <Home />
+          <Home {config} />
         </Route>
         <Route path="vesting">
           <Vesting {config} session={$session} />

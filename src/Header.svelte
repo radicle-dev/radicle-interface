@@ -9,7 +9,8 @@
   import Connect from '@app/Connect.svelte';
   import type { Config } from '@app/config';
   import { Profile, ProfileType } from "@app/profile";
-  import Avatar from "./Avatar.svelte";
+  import Avatar from '@app/Avatar.svelte';
+  import Search from '@app/Search.svelte';
 
   export let session: Session | null;
   export let config: Config;
@@ -29,25 +30,12 @@
     margin: 0;
     padding: 1.5rem;
   }
-  header .nav {
-    display: inline-block;
-    height: 100%;
-    margin-left: 1.5rem;
-    white-space: nowrap;
-  }
-  header .nav a {
-    display: inline-block;
-    padding: 0.5rem 0.5rem;
-    margin-right: 1.5rem;
-    font-weight: 500;
-    color: var(--color-foreground-6);
-  }
-  header .nav a:hover {
-    color: var(--color-foreground);
-  }
   header .left, header .right {
     display: flex;
     align-items: center;
+  }
+  .logo {
+    display: flex;
   }
   .error {
     text-align: center;
@@ -62,6 +50,12 @@
   }
   .error a:hover {
     text-decoration: none;
+  }
+  .search {
+    height: 42px;
+    width: 16rem;
+    margin-left: 1rem;
+    display: inline-block;
   }
   .address {
     display: flex;
@@ -124,10 +118,9 @@
 
 <header>
   <div class="left">
-    <a use:link href="/"><Logo /></a>
-    <div class="nav">
-      <a use:link href="/orgs/">Orgs</a>
-      <a use:link href="/registrations">Register</a>
+    <a use:link href="/" class="logo"><Logo /></a>
+    <div class="search">
+      <Search />
     </div>
   </div>
 
