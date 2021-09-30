@@ -9,11 +9,7 @@
   import List from './List.svelte';
 
   export let config: Config;
-  export let pinned = false;
 
-  const getOrgs = pinned && (config.orgs.pinned.length > 0)
-    ? Org.getMulti(config.orgs.pinned, config)
-    : Org.getAll(config);
   const onCreate = () => modal = Create;
   let modal: typeof SvelteComponent | null = null;
 
@@ -23,7 +19,7 @@
 <style>
   main {
     width: 100%;
-    padding: 5rem 3rem;
+    padding: 3rem;
     display: block;
     align-items: space-between;
     justify-content: space-between;
@@ -33,10 +29,7 @@
     font-size: 1.25rem;
     display: flex;
     align-items: center;
-  }
-
-  .padding {
-    padding: 0 2rem 2rem 2rem;
+    padding: 1rem 0;
   }
 
   .my-orgs {
@@ -65,7 +58,7 @@
 <main>
   {#if account}
     <div class="my-orgs">
-      <header class="padding">
+      <header>
         <span>My <strong>Orgs</strong></span>
         <button class="create small secondary" on:click={onCreate} disabled={!account}>
           Create
@@ -81,7 +74,7 @@
           <div class="orgs-empty">Orgs you are a member of show up here.</div>
         </List>
       {:catch}
-        <div class="padding">
+        <div>
           <Message error>
             <strong>Error: </strong> failed to load orgs.
           </Message>
@@ -90,11 +83,11 @@
     </div>
   {/if}
 
-  <header class="padding">
+  <header>
     <span><strong>Orgs</strong> of the Radicle network</span>
   </header>
 
-  {#await getOrgs}
+  {#await Org.getAll(config)}
     <div class="loading">
       <Loading center />
     </div>
@@ -103,7 +96,7 @@
       <div class="orgs-empty">There are no orgs.</div>
     </List>
   {:catch}
-    <div class="padding">
+    <div>
       <Message error>
         <strong>Error: </strong> failed to load orgs.
       </Message>

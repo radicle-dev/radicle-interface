@@ -28,13 +28,16 @@
   .org {
     width: 10rem;
     height: 10rem;
-    margin-left: 3rem;
+    margin-right: 3rem;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     padding: 1rem;
     display: inline-block;
     text-align: center;
     border-radius: 1rem;
+  }
+  .org::last-child {
+    margin-right: 0;
   }
   .org:hover  {
     background: var(--color-foreground-background-lighter);
