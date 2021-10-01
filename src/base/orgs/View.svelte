@@ -211,8 +211,9 @@
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
             <div class="seed-address">
-              <span class="seed-icon">🌱</span>
-              {utils.formatSeedId(profile.seedId)}@{profile.seedHost}<span class="faded">:{config.seed.link.port}</span>
+              <span class="seed-icon">🌱</span>{
+                utils.formatSeedId(profile.seedId)}@{profile.seedHost
+              }<span class="faded">:{config.seed.link.port}</span>
             </div>
             <div>
               <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
