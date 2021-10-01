@@ -36,8 +36,22 @@ export async function isReverseRecordSet(address: string, domain: string, config
   return name === domain;
 }
 
+export async function toClipboard(text: string): Promise<void> {
+  return navigator.clipboard.writeText(text);
+}
+
 export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
+}
+
+export function formatSeedAddress(id: string, host: string, config: Config): string {
+  return `${id}@${host}:${config.seed.link.port}`;
+}
+
+export function formatSeedId(id: string): string {
+  return id.substring(0, 6)
+    + '…'
+    + id.substring(id.length - 6, id.length);
 }
 
 export function formatBalance(n: BigNumber): string {

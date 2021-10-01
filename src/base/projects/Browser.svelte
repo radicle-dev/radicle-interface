@@ -277,7 +277,7 @@
           </div>
           <div class="dropdown seed-dropdown" class:seed-dropdown-visible={seedDropdown}>
             {#if config.seed.id}
-              <input readonly name="clone-url" value={`${config.seed.id}@${config.seed.host}:${config.seed.link.port}`}/>
+              <input readonly name="clone-url" value={utils.formatSeedAddress(config.seed.id, config.seed.host, config)}/>
               <label for="seed-url">Bootstrap your Radicle node with this seed.</label>
             {:else if org}
               <label for="#">Seed ID is not set for {org.name}.</label>

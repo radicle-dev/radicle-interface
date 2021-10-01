@@ -30,6 +30,16 @@
     setNameForm = SetName;
   };
 
+  let seedCopied = false;
+  const copySeed = (seedId: string, seedHost: string) => {
+    return () => utils.toClipboard(utils.formatSeedAddress(seedId, seedHost, config)).then(() => {
+      seedCopied = true;
+      setTimeout(() => {
+        seedCopied = false;
+      }, 3000);
+    });
+  };
+
   let transferOwnerForm: typeof SvelteComponent | null = null;
   const transferOwnership = () => {
     transferOwnerForm = TransferOwnership;
@@ -98,6 +108,14 @@
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
+  }
+  .seed-address {
+    font-size: 1rem;
+    color: var(--color-foreground-90);
+  }
+  .seed-icon {
+    width: 1rem;
+    margin-right: 0.5rem;
   }
   .projects {
     margin-top: 2rem;
@@ -189,6 +207,23 @@
               </button>
             {/if}
           </div>
+          <!-- Seed Address -->
+          {#if profile.seedId && profile.seedHost}
+            <div class="label">Seed</div>
+            <div class="seed-address">
+              <span class="seed-icon">🌱</span>
+              {utils.formatSeedId(profile.seedId)}@{profile.seedHost}<span class="faded">:{config.seed.link.port}</span>
+            </div>
+            <div>
+              <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
+                {#if seedCopied}
+                  Copy ✓
+                {:else}
+                  Copy
+                {/if}
+              </button>
+            </div>
+          {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>
           <!-- Only show the name if we aren't already using the name of the owner -->

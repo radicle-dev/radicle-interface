@@ -186,6 +186,10 @@ button.primary[disabled] {
 	border-color: var(--color-primary-faded) !important;
 	background-color: transparent;
 }
+button.faded {
+	color: var(--color-foreground-90);
+	border-color: var(--color-foreground-90);
+}
 button[disabled] {
 	cursor: not-allowed !important;
 	color: var(--color-foreground-faded);
