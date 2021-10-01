@@ -6,6 +6,7 @@ import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 import { Profile, ProfileType } from '@app/profile';
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
+import type { Safe } from '@app/utils';
 import type { Config } from '@app/config';
 import type { Project } from '@app/project';
 
@@ -113,6 +114,10 @@ export class Org {
       return safe.owners;
     }
     return [];
+  }
+
+  async getSafe(config: Config): Promise<Safe | null> {
+    return utils.getSafe(this.owner, config);
   }
 
   async isMember(address: string, config: Config): Promise<boolean> {

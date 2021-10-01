@@ -260,6 +260,20 @@
               {/await}
             </div>
           {/if}
+          <!-- Quorum -->
+          <div class="label">Quorum</div>
+          <div>
+            {#await org.getSafe(config)}
+              <Loading small />
+            {:then safe}
+              {#if safe}
+                {safe.threshold} <span class="faded">of</span> {safe.owners.length}
+              {:else}
+                N/A
+              {/if}
+            {/await}
+          </div>
+          <div></div>
         </div>
 
         {#await org.getMembers(config)}
