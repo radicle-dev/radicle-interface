@@ -175,7 +175,7 @@
           {#if sessionButtonHover}
             Disconnect
           {:else}
-            <Avatar source={profile.avatar ?? address} inline />{formatAddress(address)}
+            <Avatar source={profile.avatar ?? address} {address} inline />{formatAddress(address)}
           {/if}
         {/await}
       </button>

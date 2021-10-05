@@ -1,25 +1,29 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { createIcon } from '@app/blockies';
   import { isAddress, isRadicleId } from '@app/utils';
 
+  export let address: string;
   export let source: string;
   export let inline = false;
   export let glowOnHover = false;
 
-  let container: HTMLElement;
+  function handleMissingFile() {
+    source = createContainer(address);
+  }
 
-  onMount(() => {
-    if (isAddress(source) || isRadicleId(source)) {
-      const seed = source.toLowerCase();
-      const avatar = createIcon({
-        seed,
-        size: 8,
-        scale: 16,
-      });
-      container.style.backgroundImage = `url(${avatar.toDataURL()})`;
-    }
-  });
+  function createContainer(source: string) {
+    const seed = source.toLowerCase();
+    const avatar = createIcon({
+      seed,
+      size: 8,
+      scale: 16,
+    });
+    return avatar.toDataURL();
+  }
+
+  $: if (isAddress(source) || isRadicleId(source)) {
+    source = createContainer(source);
+  }
 </script>
 
 <style>
@@ -44,9 +48,5 @@
   }
 </style>
 
-{#if isAddress(source) || isRadicleId(source)}
-  <div class="avatar" class:inline bind:this={container} class:glowOnHover title={source}/>
-{:else}
-  <!-- svelte-ignore a11y-missing-attribute -->
-  <img class="avatar" class:inline src={source} class:glowOnHover />
-{/if}
+<!-- svelte-ignore a11y-missing-attribute -->
+<img class="avatar" class:inline src={source} on:error={handleMissingFile} class:glowOnHover />

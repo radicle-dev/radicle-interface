@@ -161,7 +161,7 @@
       {:then profile}
         <header>
           <div class="avatar">
-            <Avatar source={profile.avatar ?? org.address} />
+            <Avatar source={profile.avatar ?? org.address} address={org.address} />
           </div>
           <div class="info">
             <span class="title">
@@ -288,7 +288,7 @@
                 {#each members as profile}
                   <div class="member">
                     <div class="member-icon">
-                      <Avatar source={profile.avatar ?? profile.address} />
+                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                     </div>
                     <Address address={profile.address} compact
                       resolve noAvatar {profile} {config} />

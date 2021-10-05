@@ -78,7 +78,7 @@
   <main>
     <header>
       <div class="avatar">
-        <Avatar source={profile.avatar ?? address} />
+        <Avatar source={profile.avatar ?? address} {address} />
       </div>
       <div class="info">
         <span class="title bold">

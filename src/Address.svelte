@@ -49,7 +49,7 @@
 
 <div class="address" title={address} class:no-badge={noBadge}>
   {#if !noAvatar}
-    <Avatar inline source={profile?.avatar ?? address} />
+    <Avatar inline source={profile?.avatar ?? address} {address}/>
   {/if}
   {#if addressType === AddressType.Org}
     <a use:link href={`/orgs/${address}`}>{addressLabel}</a>

@@ -107,7 +107,7 @@
       <div class="title bold">
         {#if result.org}
           <a class="org-avatar" title={result.org.nameOrAddress} href={`/orgs/${result.org.nameOrAddress}`}>
-            <Avatar source={result.org.avatar || result.org.address}/>
+            <Avatar source={result.org.avatar || result.org.address} address={result.org.address}/>
           </a>
           <span class="divider">/</span>
         {/if}

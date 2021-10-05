@@ -83,7 +83,7 @@
       <Link to={`/orgs/${profile.nameOrAddress}`}>
         <div class="org">
           <div class="org-avatar">
-            <Avatar source={profile.avatar ?? profile.address} />
+            <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
           </div>
           <div class="org-label">
             {#if profile.name}
