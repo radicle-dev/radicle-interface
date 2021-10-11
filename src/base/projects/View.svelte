@@ -19,9 +19,10 @@
   export let config: Config;
   export let path: string;
 
-  let pageTitle = `${formatOrg(org, config)}/${urn}`;
+  let parentName = formatOrg(org || user, config);
+  let pageTitle = parentName ? `${parentName}/${urn}` : urn;
   let projectInfo: Info | null = null;
-  let projectRoot = proj.path({ urn, org, commit });
+  let projectRoot = proj.path({ urn, user, org, commit });
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
       Org.getProjectProfile(org, config).then(p => resolve(p));
@@ -48,10 +49,14 @@
   };
 
   $: if (projectInfo) {
+    const baseName = parentName
+      ? `${parentName}/${projectInfo.meta.name}`
+      : projectInfo.meta.name;
+
     if (projectInfo.meta.description) {
-      pageTitle = `${formatOrg(org, config)}/${projectInfo.meta.name}: ${projectInfo.meta.description}`;
+      pageTitle = `${baseName}: ${projectInfo.meta.description}`;
     } else {
-      pageTitle = `${formatOrg(org, config)}/${projectInfo.meta.name}`;
+      pageTitle = baseName;
     }
   }
 
