@@ -32,6 +32,7 @@ export class Config {
   orgFactory: { address: string };
   reverseRegistrar: { address: string };
   orgs: { subgraph: string; contractHash: string; pinned: string[] };
+  users: { pinned: string[] };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
@@ -110,6 +111,7 @@ export class Config {
     this.orgFactory = cfg.orgFactory;
     this.reverseRegistrar = cfg.reverseRegistrar;
     this.orgs = cfg.orgs;
+    this.users = cfg.users;
     this.safe = cfg.safe;
     this.safe.client = this.safe.api
       ? new SafeServiceClient(this.safe.api)
