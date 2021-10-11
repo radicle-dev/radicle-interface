@@ -116,7 +116,7 @@
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} org={result.org} {path}
+    <Browser {urn} {org} profile={result.org} {path}
       commit={commit || result.project.head}
       config={result.config} />
   {:catch}

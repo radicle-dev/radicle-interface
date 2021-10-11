@@ -26,9 +26,10 @@
   export let commit: string;
   export let config: Config;
   export let path: string;
-  export let org: Profile | null = null;
+  export let profile: Profile | null = null;
+  export let org: string | null = null;
 
-  const orgAddress = org?.address;
+  const orgAddress = org ?? undefined;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Idle };
@@ -108,6 +109,7 @@
     border-radius: 0.25rem;
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
+    cursor: help;
   }
   .anchor-widget.not-anchored {
     color: var(--color-foreground-faded);
@@ -251,7 +253,7 @@
           {:then anchor}
             {#if anchor === commit}
               <span class="anchor-widget">
-                <span class="anchor-label">anchored 🔒</span>
+                <span class="anchor-label" title="{orgAddress}">anchored 🔒</span>
               </span>
             {:else}
               <span class="anchor-widget not-anchored">
@@ -279,8 +281,8 @@
             {#if config.seed.id}
               <input readonly name="clone-url" value={utils.formatSeedAddress(config.seed.id, config.seed.host, config)}/>
               <label for="seed-url">Bootstrap your Radicle node with this seed.</label>
-            {:else if org}
-              <label for="#">Seed ID is not set for {org.name}.</label>
+            {:else if profile}
+              <label for="#">Seed ID is not set for {profile.name}.</label>
             {/if}
           </div>
         </span>
