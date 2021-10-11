@@ -6,7 +6,7 @@
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
   import Message from '@app/Message.svelte';
-  import List from './List.svelte';
+  import Cards from '@app/Cards.svelte';
 
   export let config: Config;
 
@@ -70,9 +70,9 @@
           <Loading center />
         </div>
       {:then orgs}
-        <List {config} {orgs}>
+        <Cards {config} {orgs}>
           <div class="orgs-empty">Orgs you are a member of show up here.</div>
-        </List>
+        </Cards>
       {:catch}
         <div>
           <Message error>
@@ -92,9 +92,9 @@
       <Loading center />
     </div>
   {:then orgs}
-    <List {config} {orgs}>
+    <Cards {config} {orgs}>
       <div class="orgs-empty">There are no orgs.</div>
-    </List>
+    </Cards>
   {:catch}
     <div>
       <Message error>

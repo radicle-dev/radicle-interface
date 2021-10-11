@@ -5,8 +5,7 @@
   import { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
   import Message from '@app/Message.svelte';
-
-  import List from '@app/base/orgs/List.svelte';
+  import Cards from '@app/Cards.svelte';
 
   export let config: Config;
 
@@ -47,6 +46,9 @@
     padding: 1rem 0rem;
     font-size: 1.25rem;
   }
+  .loading {
+    padding-top: 2rem;
+  }
   .actions {
     margin-top: 1rem;
     text-align: center;
@@ -70,21 +72,23 @@
       <Loading center />
     </div>
   {:then entities}
-    <div class="heading">
-      Explore <strong>orgs</strong> and <strong>projects</strong> on the Radicle network.
-    </div>
-    <List {config} profiles={entities.users} orgs={entities.orgs}>
-      <div class="orgs-empty">There are no orgs.</div>
-    </List>
-    <div class="actions">
-      <button class="small secondary" on:click={viewMore}>
-        View all
-      </button>
-    </div>
+    {#if entities.orgs.length || entities.users.length}
+      <div class="heading">
+        Explore <strong>orgs</strong> and <strong>users</strong> on the Radicle network.
+      </div>
+      <Cards {config} profiles={entities.users} orgs={entities.orgs}>
+        <div class="empty">There are no orgs or users.</div>
+      </Cards>
+      <div class="actions">
+        <button class="small secondary" on:click={viewMore}>
+          View all
+        </button>
+      </div>
+    {/if}
   {:catch}
     <div class="padding">
       <Message error>
-        <strong>Error: </strong> failed to load orgs.
+        <strong>Error: </strong> failed to load orgs and users.
       </Message>
     </div>
   {/await}

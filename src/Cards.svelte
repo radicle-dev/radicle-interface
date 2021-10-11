@@ -48,14 +48,14 @@
       {:else}
         <Card {profile} {config} path={`/orgs/${profile.nameOrAddress}`} />
       {/if}
-    {:else}
-      <slot />
     {/each}
 
     {#each profiles as profile}
       <Card {profile} {config} path={`/users/${profile.nameOrAddress}`} />
-    {:else}
-      <slot />
     {/each}
+
+    {#if !orgProfiles.length && !profiles.length}
+      <slot />
+    {/if}
   </div>
 {/await}
