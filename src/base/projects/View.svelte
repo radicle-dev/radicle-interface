@@ -8,7 +8,7 @@
   import { Org } from '@app/base/orgs/Org';
   import type { Profile } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg } from '@app/utils';
+  import { formatOrg, isAddressEqual } from '@app/utils';
 
   import Browser from './Browser.svelte';
 
@@ -37,6 +37,12 @@
 
     return { project: info, config: cfg, org: orgProfile };
   });
+
+  const parentUrl = (profile: Profile) => {
+    return org === profile.name || isAddressEqual(org, profile.address)
+      ? `/orgs/${profile.nameOrAddress}`
+      : `/users/${profile.nameOrAddress}`;
+  };
 
   $: if (projectInfo) {
     if (projectInfo.meta.description) {
@@ -106,7 +112,7 @@
     <header>
       <div class="title bold">
         {#if result.org}
-          <a class="org-avatar" title={result.org.nameOrAddress} href={`/orgs/${result.org.nameOrAddress}`}>
+          <a class="org-avatar" title={result.org.nameOrAddress} href={parentUrl(result.org)}>
             <Avatar source={result.org.avatar || result.org.address} address={result.org.address}/>
           </a>
           <span class="divider">/</span>
