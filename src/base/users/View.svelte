@@ -9,7 +9,7 @@
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
 
-  export let address: string;
+  export let addressOrName: string;
   export let config: Config;
 </script>
 
@@ -69,20 +69,20 @@
 </style>
 
 <svelte:head>
-  <title>{address}</title>
+  <title>{addressOrName}</title>
 </svelte:head>
 
-{#await Profile.get(address, ProfileType.Full, config)}
+{#await Profile.get(addressOrName, ProfileType.Full, config)}
   <Loading fadeIn />
 {:then profile}
   <main>
     <header>
       <div class="avatar">
-        <Avatar source={profile.avatar ?? address} {address} />
+        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
       </div>
       <div class="info">
         <span class="title bold">
-          <Address compact noAvatar noBadge {profile} {address} {config} resolve/>
+          <Address compact noAvatar noBadge {profile} address={profile.address} {config} resolve/>
         </span>
         <div class="links">
           {#if profile.url}
@@ -104,7 +104,7 @@
       <div class="fields">
         <!-- Address -->
         <div class="label">Address</div>
-        <div><Address noAvatar {config} address={address} /></div>
+        <div><Address noAvatar {config} address={profile.address} /></div>
         <div></div>
         <!-- Profile -->
         <div class="label">Profile</div>
@@ -117,7 +117,7 @@
         </div>
       </div>
       <div class="projects">
-        {#await Org.getOrgsByOwner(address, config)}
+        {#await Org.getOrgsByOwner(profile.address, config)}
           <Loading center fadeIn />
         {:then orgs}
           {#each orgs as org}

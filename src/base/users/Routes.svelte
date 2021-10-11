@@ -7,5 +7,5 @@
 </script>
 
 <Route path="/users/:address" let:params>
-  <View {config} address={params.address}/>
+  <View {config} addressOrName={params.address}/>
 </Route>
