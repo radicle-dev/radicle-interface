@@ -6,7 +6,7 @@
   import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Org } from '@app/base/orgs/Org';
-  import type { Profile } from '@app/profile';
+  import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
   import { formatOrg, isAddressEqual } from '@app/utils';
 
@@ -14,6 +14,7 @@
 
   export let urn: string;
   export let org = "";
+  export let user = "";
   export let commit = "";
   export let config: Config;
   export let path: string;
@@ -24,22 +25,24 @@
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
       Org.getProjectProfile(org, config).then(p => resolve(p));
+    } else if (user) {
+      Profile.get(user, ProfileType.Project, config).then(p => resolve(p));
     } else {
       resolve(null);
     }
-  }).then(async (orgProfile) => {
-    const seedHost = orgProfile?.seedHost;
-    const seedId = orgProfile?.seedId || undefined;
+  }).then(async (profile) => {
+    const seedHost = profile?.seedHost;
+    const seedId = profile?.seedId || undefined;
     const cfg = seedHost ? config.withSeed(seedHost, seedId) : config;
     const info = await proj.getInfo(urn, cfg);
 
     projectInfo = info;
 
-    return { project: info, config: cfg, org: orgProfile };
+    return { project: info, config: cfg, profile };
   });
 
   const parentUrl = (profile: Profile) => {
-    return org === profile.name || isAddressEqual(org, profile.address)
+    return org
       ? `/orgs/${profile.nameOrAddress}`
       : `/users/${profile.nameOrAddress}`;
   };
@@ -111,9 +114,9 @@
   {:then result}
     <header>
       <div class="title bold">
-        {#if result.org}
-          <a class="org-avatar" title={result.org.nameOrAddress} href={parentUrl(result.org)}>
-            <Avatar source={result.org.avatar || result.org.address} address={result.org.address}/>
+        {#if result.profile}
+          <a class="org-avatar" title={result.profile.nameOrAddress} href={parentUrl(result.profile)}>
+            <Avatar source={result.profile.avatar || result.profile.address} address={result.profile.address}/>
           </a>
           <span class="divider">/</span>
         {/if}
@@ -122,7 +125,9 @@
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} {org} profile={result.org} {path}
+    <Browser {urn} {org} {user} {path}
+      anchors={result.profile?.projectAnchors ?? org}
+      profile={result.profile}
       commit={commit || result.project.head}
       config={result.config} />
   {:catch}

@@ -7,7 +7,7 @@ import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
 import type { EnsProfile } from "@app/base/registrations/registrar";
-import { getAvatar, getSeedHost, getSeedId, getRegistration } from '@app/base/registrations/registrar';
+import { getAvatar, getSeedHost, getSeedId, getProjectAnchorsAddress, getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import { ProfileType } from '@app/profile';
 
@@ -301,12 +301,13 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       if (profileType === ProfileType.Project) {
         promises.push(getSeedHost(name, config, resolver));
         promises.push(getSeedId(name, config, resolver));
+        promises.push(getProjectAnchorsAddress(name, config, resolver));
       } else if (profileType === ProfileType.Minimal) {
         promises.push(Promise.resolve(null));
       }
 
       const project = await Promise.allSettled(promises);
-      const [avatar, address, seedHost, seedId] =
+      const [avatar, address, seedHost, seedId, projectAnchors] =
         project.map(r => r.status == "fulfilled" ? r.value : null);
 
       return {
@@ -315,6 +316,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
         address,
         seedHost,
         seedId,
+        projectAnchors,
         url: null,
         twitter: null,
         github: null,

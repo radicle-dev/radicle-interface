@@ -31,3 +31,17 @@
 <Route path="/orgs/:org/projects/:urn" let:params>
   <View {config} org={params.org} urn={params.urn} path="/" />
 </Route>
+
+<!-- With a User context -->
+
+<Route path="/users/:user/projects/:urn/head/*" let:params>
+  <View {config} user={params.user} urn={params.urn} path={params['*'] || "/"} />
+</Route>
+
+<Route path="/users/:user/projects/:urn/:commit/*" let:params>
+  <View {config} user={params.user} urn={params.urn} commit={params.commit} path={params["*"] || "/"} />
+</Route>
+
+<Route path="/users/:user/projects/:urn" let:params>
+  <View {config} user={params.user} urn={params.urn} path="/" />
+</Route>

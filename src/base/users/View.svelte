@@ -104,8 +104,14 @@
       <div class="fields">
         <!-- Address -->
         <div class="label">Address</div>
-        <div><Address noAvatar {config} address={profile.address} /></div>
+        <div><Address {config} address={profile.address} /></div>
         <div></div>
+        <!-- Project anchors -->
+        {#if profile.projectAnchors}
+          <div class="label">Anchors</div>
+          <div><Address {config} address={profile.projectAnchors} /></div>
+          <div></div>
+        {/if}
         <!-- Profile -->
         <div class="label">Profile</div>
         <div>
@@ -117,23 +123,25 @@
         </div>
       </div>
       <div class="projects">
-        {#await Org.getOrgsByOwner(profile.address, config)}
-          <Loading center fadeIn />
-        {:then orgs}
-          {#each orgs as org}
-            {#await org.getProjects(config) then projects}
-              {#each projects as project}
-                <div class="project">
-                  <Project {project} org={org.address} config={profile.config(config)} />
-                </div>
-              {/each}
-            {:catch err}
-              <Message error>
-                <strong>Error: </strong> failed to load projects: {err.message}.
-              </Message>
-            {/await}
-          {/each}
-        {/await}
+        {#if profile.projectAnchors}
+          {#await Org.get(profile.projectAnchors, config)}
+            <Loading center fadeIn />
+          {:then org}
+            {#if org}
+              {#await org.getProjects(config) then projects}
+                {#each projects as project}
+                  <div class="project">
+                    <Project {project} user={addressOrName} config={profile.config(config)} />
+                  </div>
+                {/each}
+              {:catch err}
+                <Message error>
+                  <strong>Error: </strong> failed to load projects: {err.message}.
+                </Message>
+              {/await}
+            {/if}
+          {/await}
+        {/if}
       </div>
   </main>
 {/await}

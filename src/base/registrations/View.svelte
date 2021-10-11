@@ -86,6 +86,9 @@
         { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
           description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
           value: r.profile.seedId, editable: true },
+        { name: "project.anchors", label: "Anchors", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91...",
+          description: "The alternative Ethereum address under which associated project anchors can be found.",
+          value: r.profile.projectAnchors, editable: true },
       ];
       state = { status: Status.Found, registration: r, owner };
     } else {

@@ -15,7 +15,8 @@
 
   export let project: proj.Project;
   export let config: Config;
-  export let org: string | undefined;
+  export let org: string | undefined = undefined;
+  export let user: string | undefined = undefined;
 
   let state: State = { status: Status.Loading };
   let info: proj.Info | null = null;
@@ -36,6 +37,7 @@
         proj.path({
           urn: project.id,
           org,
+          user,
           commit: project.anchor.stateHash,
         })
       );

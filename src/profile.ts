@@ -84,6 +84,11 @@ export class Profile {
     return this.profile?.ens?.seedId ?? undefined;
   }
 
+  // Using undefined as return type if nothing to be returned since it works better with <a href> links
+  get projectAnchors(): string | undefined {
+    return this.profile?.ens?.projectAnchors ?? undefined;
+  }
+
   // Get the name, and if not available, the address.
   get nameOrAddress(): string {
     return this.name ?? this.address;

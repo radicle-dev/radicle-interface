@@ -20,6 +20,7 @@ export interface EnsProfile {
   address: string | null;
   seedId: string | null;
   seedHost: string | null;
+  projectAnchors: string | null;
   url: string | null;
   avatar: string | null;
   twitter: string | null;
@@ -74,11 +75,12 @@ export async function getRegistration(name: string, config: Config, resolver?: E
     resolver.getText('url'),
     resolver.getText('eth.radicle.seed.id'),
     resolver.getText('eth.radicle.seed.host'),
+    resolver.getText('eth.radicle.project.anchors'),
     resolver.getText('com.twitter'),
     resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, seedId, seedHost, twitter, github] =
+  const [address, avatar, url, seedId, seedHost, projectAnchors, twitter, github] =
     meta.map(r => r.status == "fulfilled" ? r.value : null);
 
   return {
@@ -89,6 +91,7 @@ export async function getRegistration(name: string, config: Config, resolver?: E
       avatar,
       seedId,
       seedHost,
+      projectAnchors,
       address,
       twitter,
       github,
@@ -124,6 +127,16 @@ export async function getSeedId(name: string, config: Config, resolver?: EnsReso
     return null;
   }
   return resolver.getText('eth.radicle.seed.id');
+}
+
+export async function getProjectAnchorsAddress(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
+  name = name.toLowerCase();
+
+  resolver = resolver ?? await config.provider.getResolver(name);
+  if (! resolver) {
+    return null;
+  }
+  return resolver.getText('eth.radicle.project.anchors');
 }
 
 export function registrar(config: Config): ethers.Contract {

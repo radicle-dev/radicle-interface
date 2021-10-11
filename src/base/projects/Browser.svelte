@@ -27,9 +27,9 @@
   export let config: Config;
   export let path: string;
   export let profile: Profile | null = null;
+  export let anchors: string | null = null;
   export let org: string | null = null;
-
-  const orgAddress = org ?? undefined;
+  export let user: string | null = null;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Idle };
@@ -61,7 +61,13 @@
     const blob = await loadBlob(path);
     getBlob = new Promise(resolve => resolve(blob));
 
-    navigate(proj.path({ urn, org: orgAddress, commit, path }));
+    if (org) {
+      navigate(proj.path({ urn, org, commit, path }));
+    } else if (user) {
+      navigate(proj.path({ urn, user, commit, path }));
+    } else {
+      navigate(proj.path({ urn, commit, path }));
+    }
   };
 
   const fetchTree = async (path: string) => {
@@ -71,7 +77,7 @@
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);
-  $: getAnchor = orgAddress ? Org.getAnchor(orgAddress, urn, config) : null;
+  $: getAnchor = anchors ? Org.getAnchor(anchors, urn, config) : null;
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>
 
@@ -244,16 +250,16 @@
   {:then tree}
     <header>
       <div class="commit">
-        commit {commit}
+        {commit}
       </div>
       <div class="anchor">
-        {#if orgAddress}
+        {#if anchors}
           {#await getAnchor}
             <Loading small margins />
           {:then anchor}
             {#if anchor === commit}
               <span class="anchor-widget">
-                <span class="anchor-label" title="{orgAddress}">anchored 🔒</span>
+                <span class="anchor-label" title="{anchors}">anchored 🔒</span>
               </span>
             {:else}
               <span class="anchor-widget not-anchored">
