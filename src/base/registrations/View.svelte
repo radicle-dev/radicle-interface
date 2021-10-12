@@ -66,10 +66,10 @@
               + "a reverse record should be set."
           ),
           value: r.profile.address, editable: true },
-        { name: "url", label: "URL", validate: "url", placeholder: "https://acme.org",
+        { name: "url", label: "URL", validate: "URL", placeholder: "https://acme.org",
           description: "A homepage or other URL associated with this name.",
           value: r.profile.url,editable: true },
-        { name: "avatar", validate: "url", placeholder: "https://acme.org/avatar.png",
+        { name: "avatar", validate: "URL", placeholder: "https://acme.org/avatar.png",
           description: "An avatar or square image associated with this name.",
           value: r.profile.avatar, editable: true },
         { name: "twitter", validate: "handle", placeholder: "Twitter username, eg. 'acme'",
@@ -86,7 +86,7 @@
         { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
           description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
           value: r.profile.seedId, editable: true },
-        { name: "anchors", label: "Anchors", validate: "urn", placeholder: "URN, eg. eip155:1:0x4a9cf21...",
+        { name: "anchors", label: "Anchors", validate: "URN", placeholder: "URN, eg. eip155:1:0x4a9cf21...",
           description: "URN under which associated project anchors can be found. "
             + "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21...*",
           value: r.profile.anchorsAccount, editable: true },

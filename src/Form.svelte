@@ -12,7 +12,8 @@
   }
 
   const validationTypes: { [index: string]: RegExp } = {
-    url: /^(https:\/\/|http:\/\/|ipfs:\/\/)\S+/,
+    URL: /^(https:\/\/|http:\/\/|ipfs:\/\/)\S+/,
+    URN: /^[a-z]+:[a-zA-Z0-9:-]{1,64}$/,
     // Github
     //   Username may only contain alphanumeric characters or hyphens.
     //   Username cannot have multiple consecutive hyphens.
@@ -25,7 +26,6 @@
     handle: /^[a-zA-Z0-9-_]{1,39}$/,
     address: /^0x[a-zA-Z0-9]{40}$/,
     id: /^[a-z0-9]+$/,
-    urn: /^[a-z]+:[a-zA-Z0-9:-]{1,64}$/,
     // Just make sure there is a TLD at the end.
     domain: /\.[a-z]{2,}$/,
   };
