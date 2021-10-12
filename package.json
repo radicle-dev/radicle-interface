@@ -36,6 +36,7 @@
     "@walletconnect/types": "^1.6.0",
     "@walletconnect/utils": "^1.6.0",
     "buffer": "^6.0.3",
+    "caip": "^1.0.0",
     "ethereum-blockies": "^0.1.1",
     "eventemitter3": "4.0.7",
     "eip1193-provider": "1.0.1",

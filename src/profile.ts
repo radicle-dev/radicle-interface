@@ -1,4 +1,4 @@
-import { AccountID } from 'caip';
+import { AccountId } from 'caip';
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
@@ -90,7 +90,7 @@ export class Profile {
     const addr = this.profile?.ens?.anchorsAccount;
 
     if (addr) {
-      const id = AccountID.parse(addr);
+      const id = new AccountId(addr);
 
       // Ethereum address.
       if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {

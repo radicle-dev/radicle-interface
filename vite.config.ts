@@ -10,6 +10,8 @@ const config: UserConfig = {
   plugins: [svelte(), rewriteAll()],
   resolve: {
     alias: {
+      // This is needed for vite not to choke.
+      "caip": path.resolve("./node_modules/caip/dist/umd/index.min.js"),
       '@app': path.resolve('./src'),
       // Polyfill for Node.js 'stream' library.
       'stream': path.resolve('./src/polyfills/stream.ts'),
