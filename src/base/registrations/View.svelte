@@ -86,9 +86,9 @@
         { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
           description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
           value: r.profile.seedId, editable: true },
-        { name: "project.anchors", label: "Anchors", validate: "caip10", placeholder: "CAIP-10 ID, eg. eip155:1:0x4a9cf21...",
-          description: "The alternative address under which associated project anchors can be found. "
-            + "To point to a Radicle Org on Ethereum, prefix the org address with `eip155:1:`",
+        { name: "anchors", label: "Anchors", validate: "urn", placeholder: "URN, eg. eip155:1:0x4a9cf21...",
+          description: "URN under which associated project anchors can be found. "
+            + "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21...*",
           value: r.profile.anchorsAccount, editable: true },
       ];
       state = { status: Status.Found, registration: r, owner };
