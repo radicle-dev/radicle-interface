@@ -57,7 +57,7 @@
   <title>Radicle &ndash; Vesting</title>
 </svelte:head>
 
-<main class="centered">
+<main class="off-centered">
   <div>
     {#if info}
       <Modal>

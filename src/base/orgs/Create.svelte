@@ -141,7 +141,7 @@
     </span>
   </Modal>
 {:else} <!-- Org creation flow -->
-  <Modal floating on:close>
+  <Modal floating on:close center>
     <span slot="title">
       <div>🎪</div>
       <span>Create an Org</span>

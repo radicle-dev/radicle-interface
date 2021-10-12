@@ -148,14 +148,14 @@
 </svelte:head>
 
 {#await Org.get(addressOrName, config)}
-  <main class="centered">
+  <main class="off-centered">
     <Loading center />
   </main>
 {:then org}
   {#if org}
     <main>
       {#await org.getProfile(ProfileType.Full, config)}
-        <div class="centered">
+        <div class="off-centered">
           <Loading center />
         </div>
       {:then profile}

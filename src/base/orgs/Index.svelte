@@ -36,8 +36,7 @@
     margin-bottom: 2rem;
   }
   .orgs-empty {
-    margin-left: 2rem;
-    padding: 1rem 0 2rem 0;
+    padding: 2rem 0 1rem 0;
     font-style: italic;
     color: var(--color-foreground-faded);
   }

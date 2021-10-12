@@ -97,7 +97,7 @@
   <div class="modal-overlay"></div>
 {/if}
 
-<div class:modal-floating={floating} class:centered={!center}>
+<div class:modal-floating={floating} class:off-centered={!center}>
   <div class="modal" class:error
        class:modal-subtle={subtle}
        class:modal-narrow={narrow}

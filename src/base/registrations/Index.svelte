@@ -38,7 +38,7 @@
   <title>Radicle: Register</title>
 </svelte:head>
 
-<main class="centered">
+<main class="off-centered">
   <div>
     <div class="input-caption">
       Register a <strong>{config.registrar.domain}</strong> name

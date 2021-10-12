@@ -335,7 +335,7 @@ label.input {
 	background: var(--color-yellow-background);
 }
 
-.centered {
+.off-centered {
 	height: 100%;
 	padding-top: 5rem;
 	padding-bottom: 24vh;

@@ -8,7 +8,7 @@
   import { Org } from '@app/base/orgs/Org';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg, isAddressEqual } from '@app/utils';
+  import { formatOrg } from '@app/utils';
 
   import Browser from './Browser.svelte';
 

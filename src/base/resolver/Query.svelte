@@ -52,7 +52,7 @@
   <title>Radicle: {query}</title>
 </svelte:head>
 
-<main class="centered">
+<main class="off-centered">
   {#if error}
     <Error on:close={() => navigate('/')}>
       Invalid query string “{query}”
