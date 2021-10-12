@@ -107,9 +107,9 @@
         <div><Address {config} address={profile.address} /></div>
         <div></div>
         <!-- Project anchors -->
-        {#if profile.projectAnchors}
+        {#if profile.anchorsAccount}
           <div class="label">Anchors</div>
-          <div><Address {config} address={profile.projectAnchors} /></div>
+          <div><Address {config} address={profile.anchorsAccount} /></div>
           <div></div>
         {/if}
         <!-- Profile -->
@@ -123,8 +123,8 @@
         </div>
       </div>
       <div class="projects">
-        {#if profile.projectAnchors}
-          {#await Org.get(profile.projectAnchors, config)}
+        {#if profile.anchorsAccount}
+          {#await Org.get(profile.anchorsAccount, config)}
             <Loading center fadeIn />
           {:then org}
             {#if org}

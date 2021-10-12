@@ -1,3 +1,4 @@
+import { AccountID } from 'caip';
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@ceramicstudio/idx-constants";
 import {
@@ -85,8 +86,20 @@ export class Profile {
   }
 
   // Using undefined as return type if nothing to be returned since it works better with <a href> links
-  get projectAnchors(): string | undefined {
-    return this.profile?.ens?.projectAnchors ?? undefined;
+  get anchorsAccount(): string | undefined {
+    const addr = this.profile?.ens?.anchorsAccount;
+
+    if (addr) {
+      const id = AccountID.parse(addr);
+
+      // Ethereum address.
+      if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {
+        return id.address;
+      }
+      if (typeof id.chainId === "string" && /^eip155/.test(id.chainId)) {
+        return id.address;
+      }
+    }
   }
 
   // Get the name, and if not available, the address.

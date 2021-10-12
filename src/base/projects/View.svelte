@@ -131,7 +131,7 @@
       <div class="description">{result.project.meta.description}</div>
     </header>
     <Browser {urn} {org} {user} {path}
-      anchors={result.profile?.projectAnchors ?? org}
+      anchors={result.profile?.anchorsAccount ?? org}
       profile={result.profile}
       commit={commit || result.project.head}
       config={result.config} />
