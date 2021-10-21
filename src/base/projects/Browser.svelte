@@ -12,14 +12,11 @@
   import Readme from './Readme.svelte';
 
   enum Status {
-    Idle,
     Loading,
     Loaded,
   }
 
-  type State =
-      { status: Status.Idle }
-    | { status: Status.Loading; path: string }
+  type State = { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let urn: string;
@@ -30,9 +27,10 @@
   export let anchors: string | null = null;
   export let org: string | null = null;
   export let user: string | null = null;
+  export let project: proj.Info;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
-  let state: State = { status: Status.Idle };
+  let state: State = { status: Status.Loading, path };
   // Whether the clone dropdown is visible.
   let cloneDropdown = false;
   // Whether the seed dropdown is visible.
@@ -61,6 +59,12 @@
     const blob = await loadBlob(path);
     getBlob = new Promise(resolve => resolve(blob));
 
+    navigateBrowser(commit, path);
+  };
+
+  const navigateBrowser = (commit: string, path?: string) => {
+    // Replaces path with current path if none passed.
+    if (path === undefined) path = state.path;
     if (org) {
       navigate(proj.path({ urn, org, commit, path }));
     } else if (user) {
@@ -115,7 +119,10 @@
     border-radius: 0.25rem;
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
-    cursor: help;
+    cursor: pointer;
+  }
+  .anchor-widget.not-allowed {
+    cursor: not-allowed;
   }
   .anchor-widget.not-anchored {
     color: var(--color-foreground-faded);
@@ -258,11 +265,15 @@
             <Loading small margins />
           {:then anchor}
             {#if anchor === commit}
-              <span class="anchor-widget">
+              <span class="anchor-widget" on:click={() => navigateBrowser(project.head)}>
                 <span class="anchor-label" title="{anchors}">anchored 🔒</span>
               </span>
+            {:else if anchor}
+              <span class="anchor-widget not-anchored" on:click={() => navigateBrowser(anchor)}>
+                <span class="anchor-label">not anchored 🔓</span>
+              </span>
             {:else}
-              <span class="anchor-widget not-anchored">
+              <span class="anchor-widget not-anchored not-allowed">
                 <span class="anchor-label">not anchored 🔓</span>
               </span>
             {/if}

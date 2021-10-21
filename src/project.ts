@@ -125,7 +125,8 @@ export function path(
     result.push("head");
   }
 
-  if (path) {
+  // Avoids appending a slash when the path is the root directory.
+  if (path && path !== "/") {
     result.push(path);
   }
   return "/" + result.join("/");

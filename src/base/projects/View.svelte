@@ -133,6 +133,7 @@
     <Browser {urn} {org} {user} {path}
       anchors={result.profile?.anchorsAccount ?? org}
       profile={result.profile}
+      project={result.project}
       commit={commit || result.project.head}
       config={result.config} />
   {:catch}
