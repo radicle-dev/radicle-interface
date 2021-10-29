@@ -7,7 +7,7 @@
   import type { Config } from '@app/config';
   import Modal from '@app/Modal.svelte';
   import Address from '@app/Address.svelte';
-  import { formatAddress } from '@app/utils';
+  import { formatAddress, isAddressEqual } from '@app/utils';
 
   let input: HTMLElement;
 
@@ -32,7 +32,7 @@
     state.set(State.Idle);
   }
 
-  $: isBeneficiary = info && session && (info.beneficiary === session.address);
+  $: isBeneficiary = info && session && isAddressEqual(info.beneficiary, session.address);
 </script>
 
 <style>
