@@ -65,6 +65,7 @@
   const navigateBrowser = (commit: string, path?: string) => {
     // Replaces path with current path if none passed.
     if (path === undefined) path = state.path;
+
     if (org) {
       navigate(proj.path({ urn, org, commit, path }));
     } else if (user) {
@@ -134,6 +135,9 @@
   }
   .anchor-label:last-child {
     margin-right: 0;
+  }
+  .anchor-latest {
+    cursor: default;
   }
 
   .seed {
@@ -265,9 +269,15 @@
             <Loading small margins />
           {:then anchor}
             {#if anchor === commit}
-              <span class="anchor-widget" on:click={() => navigateBrowser(project.head)}>
-                <span class="anchor-label" title="{anchors}">anchored 🔒</span>
-              </span>
+              {#if commit === project.head}
+                <span class="anchor-widget anchor-latest">
+                  <span class="anchor-label" title="{anchors}">anchored 🔒</span>
+                </span>
+              {:else}
+                <span class="anchor-widget" on:click={() => navigateBrowser(project.head)}>
+                  <span class="anchor-label" title="{anchors}">anchored 🔒</span>
+                </span>
+              {/if}
             {:else if anchor}
               <span class="anchor-widget not-anchored" on:click={() => navigateBrowser(anchor)}>
                 <span class="anchor-label">not anchored 🔓</span>
