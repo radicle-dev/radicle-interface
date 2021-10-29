@@ -125,7 +125,6 @@
     border-radius: inherit;
   }
   .branch + .hash {
-    color: var(--color-secondary-darker);
     background-color: var(--color-secondary-background-darker);
     border-radius: inherit;
     border-top-left-radius: 0;
