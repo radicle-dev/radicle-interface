@@ -104,11 +104,32 @@
   }
 
   .commit {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--font-family-monospace);
+  }
+  .commit .branch {
+    padding: 0.5rem 0.75rem;
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-background);
+    border-radius: inherit;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .commit .hash {
+    display: inline-block;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
     padding: 0.5rem 0.75rem;
+    border-radius: inherit;
+  }
+  .branch + .hash {
+    color: var(--color-secondary-darker);
+    background-color: var(--color-secondary-background-darker);
+    border-radius: inherit;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 
   .anchor {
@@ -117,7 +138,7 @@
   .anchor-widget {
     display: flex;
     padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
+    border-radius: inherit;
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     cursor: pointer;
@@ -142,7 +163,7 @@
 
   .seed {
     cursor: pointer;
-    border-radius: 0.25rem;
+    border-radius: inherit;
   }
   .seed:hover {
     background-color: var(--color-foreground-background-lighter);
@@ -261,7 +282,18 @@
   {:then tree}
     <header>
       <div class="commit">
-        {commit}
+        {#if commit === project.head}
+          <div class="branch">
+            {project.meta.defaultBranch}
+          </div>
+          <div class="hash">
+            {commit.slice(0, 7)}
+          </div>
+        {:else}
+          <div class="hash">
+            {commit}
+          </div>
+        {/if}
       </div>
       <div class="anchor">
         {#if anchors}

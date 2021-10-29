@@ -18,6 +18,7 @@ export interface Info {
 export interface Meta {
   name: string;
   description: string;
+  defaultBranch: string;
   maintainers: Urn[];
 }
 
