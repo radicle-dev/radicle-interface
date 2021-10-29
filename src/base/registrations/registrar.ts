@@ -216,10 +216,9 @@ async function commit(
 
   state.set({ connection: State.Committing });
 
-  await tx.wait(1);
+  const receipt = await tx.wait(1);
   session.state.updateBalance(fee.mul(-1));
 
-  const receipt = await config.provider.getTransactionReceipt(tx.hash);
   // Save commitment in local storage in case the user refreshes or closes
   // the page.
   window.localStorage.setItem('commitment', JSON.stringify({
