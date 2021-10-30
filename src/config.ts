@@ -3,8 +3,7 @@ import type { Writable } from "svelte/store";
 import { ethers } from "ethers";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
-import CeramicClient from "@ceramicnetwork/http-client";
-import { IDX } from "@ceramicstudio/idx";
+import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
@@ -62,9 +61,8 @@ export class Config {
     api: { port: number };
     link: { port: number };
   };
-  idx: { client: IDX };
   ceramic: {
-   client: CeramicClient;
+   client: Core;
    registry: string;
   };
   tokens: string[];
@@ -76,8 +74,7 @@ export class Config {
     metamaskSigner: ethers.Signer & TypedDataSigner | null,
   ) {
     const cfg = (<Record<string, any>> config)[network.name];
-    const ceramic = new CeramicClient(config.ceramic.api);
-    const idx = new IDX({ ceramic });
+    const ceramic = new Core({ ceramic: config.ceramic.api });
 
     const walletConnectState = writable<WalletConnectState>(
       { state: "close" }
@@ -120,7 +117,6 @@ export class Config {
     this.signer = null;
     this.gasLimits = gasLimits;
     this.abi = config.abi;
-    this.idx = { client: idx };
     this.ceramic = {
       client: ceramic,
       registry: config.ceramic.registry

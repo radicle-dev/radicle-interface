@@ -8,7 +8,7 @@ import config from "@app/config.json";
 import { assert } from '@app/error';
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import { getAvatar, getSeedHost, getSeedId, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
-import type { BasicProfile } from "@ceramicstudio/idx-constants";
+import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import { ProfileType } from '@app/profile';
 
 export enum AddressType {
@@ -267,7 +267,7 @@ export async function resolveLabel(label: string | undefined, config: Config): P
 
 // Resolves an IDX profile or return null
 export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
-  return config.idx.client.get<BasicProfile>("basicProfile", caip10);
+  return config.ceramic.client.get("basicProfile", caip10);
 }
 
 // Resolves an ENS profile or return null

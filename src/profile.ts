@@ -1,6 +1,6 @@
-import { AccountId } from 'caip';
+import { AccountID } from 'caip';
 import type { EnsProfile } from "@app/base/registrations/registrar";
-import type { BasicProfile } from "@ceramicstudio/idx-constants";
+import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
   isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
 } from "@app/utils";
@@ -90,7 +90,7 @@ export class Profile {
     const addr = this.profile?.ens?.anchorsAccount;
 
     if (addr) {
-      const id = new AccountId(addr);
+      const id = new AccountID(addr);
 
       // Ethereum address.
       if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {
@@ -145,7 +145,8 @@ export class Profile {
           formatCAIP10Address(address, "eip155", config.network.chainId), config
         );
         return { address, ens: null, idx };
-      } catch {
+      } catch (e) {
+        console.error(e);
         return { address, ens: null, idx: null };
       }
     }
