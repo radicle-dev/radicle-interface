@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import type { BigNumber } from "ethers";
+import { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
 import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
@@ -380,12 +380,22 @@ export async function getOwnerSafes(owner: string, config: Config): Promise<stri
 
 // Get token balances for an address.
 export async function getTokens(address: string, config: Config):
-  Promise<Array<{ tokenName: string; tokenLogo: string }>>
+  Promise<Array<{ name: string; symbol: string; decimals: number; logo: string; balance: BigNumber }>>
 {
-  await config.provider.send("alchemy_getTokenBalances", [address, config.tokens]);
+  const userBalances = await config.provider.send("alchemy_getTokenBalances", [address, "DEFAULT_TOKENS"]);
+  const balances = userBalances.tokenBalances.filter((token: any) => {
+    // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
+    if (token.tokenBalance !== "0x") {
+      if (!BigNumber.from(token.tokenBalance).isZero()) {
+        return token;
+      }
+    }
+  }).map(async (token: any) => {
+    const tokenMetaData = await config.provider.send("alchemy_getTokenMetadata", [token.contractAddress]);
+    return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
+  });
 
-  // TODO
-  return [];
+  return Promise.all(balances);
 }
 
 // Check whether the given path has a markdown file extension.

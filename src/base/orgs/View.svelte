@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { SvelteComponent } from 'svelte';
   import type { Config } from '@app/config';
+  import type { BigNumber } from "ethers";
   import { formatName, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
@@ -43,6 +44,20 @@
   let transferOwnerForm: typeof SvelteComponent | null = null;
   const transferOwnership = () => {
     transferOwnerForm = TransferOwnership;
+  };
+  $: getOrgTreasury = async (org: Org): Promise<Array<{ name: string; symbol: string; logo: string; decimals: number; balance: BigNumber }>| undefined> => {
+    const addressType = await utils.identifyAddress(org.owner, config);
+    // We query the org treasury only for Gnosis Safes, to maintain some privacy for EOA org owners.
+    if (addressType === utils.AddressType.Safe) {
+      try {
+        const tokens = await utils.getTokens(org.owner, config);
+        const balance = await config.provider.getBalance(org.owner);
+        // To maintain the format we hardcode the ETH specs.
+        return [{ balance, decimals: 18, logo: "", name: "Ethereum", symbol: "ETH" }, ...tokens];
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
   $: isOwner = (org: Org): boolean => $session
     ? utils.isAddressEqual(org.owner, $session.address)
@@ -207,6 +222,17 @@
               </button>
             {/if}
           </div>
+          {#await getOrgTreasury(org) then tokens}
+            {#if tokens}
+              <div class="label">Treasury</div>
+              <div>
+                {#each tokens as token}
+                  {` ${utils.formatBalance(token.balance)} ${token.symbol} `} 
+                {/each}
+              </div>
+              <div></div>
+            {/if}
+          {/await}
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
