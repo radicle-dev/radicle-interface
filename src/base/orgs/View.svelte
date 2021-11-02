@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { SvelteComponent } from 'svelte';
   import type { Config } from '@app/config';
-  import type { BigNumber } from "ethers";
   import { formatName, explorerLink } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
@@ -45,7 +44,7 @@
   const transferOwnership = () => {
     transferOwnerForm = TransferOwnership;
   };
-  $: getOrgTreasury = async (org: Org): Promise<Array<{ name: string; symbol: string; logo: string; decimals: number; balance: BigNumber }>| undefined> => {
+  $: getOrgTreasury = async (org: Org): Promise<Array<utils.Token>| undefined> => {
     const addressType = await utils.identifyAddress(org.owner, config);
     // We query the org treasury only for Gnosis Safes, to maintain some privacy for EOA org owners.
     if (addressType === utils.AddressType.Safe) {

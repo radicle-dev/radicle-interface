@@ -31,6 +31,14 @@ export interface SafeTransaction {
     operation: number;
 }
 
+export interface Token {
+  name: string;
+  symbol: string;
+  logo: string;
+  decimals: number;
+  balance: BigNumber;
+}
+
 export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
   const name = await config.provider.lookupAddress(address);
   return name === domain;
@@ -379,9 +387,7 @@ export async function getOwnerSafes(owner: string, config: Config): Promise<stri
 }
 
 // Get token balances for an address.
-export async function getTokens(address: string, config: Config):
-  Promise<Array<{ name: string; symbol: string; decimals: number; logo: string; balance: BigNumber }>>
-{
+export async function getTokens(address: string, config: Config): Promise<Array<Token>> {
   const userBalances = await config.provider.send("alchemy_getTokenBalances", [address, "DEFAULT_TOKENS"]);
   const balances = userBalances.tokenBalances.filter((token: any) => {
     // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
