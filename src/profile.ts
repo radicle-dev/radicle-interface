@@ -1,4 +1,3 @@
-import { AccountID } from 'caip';
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
@@ -90,7 +89,9 @@ export class Profile {
     const addr = this.profile?.ens?.anchorsAccount;
 
     if (addr) {
-      const id = new AccountID(addr);
+      // TODO: Workaround until caip package supports both CAIP10 formats.
+      const [namespace, reference, address] = addr.split(":");
+      const id = { "chainId": { namespace, reference }, address };
 
       // Ethereum address.
       if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {
