@@ -6,19 +6,7 @@
   import type { Config } from '@app/config';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
-
-  enum Status {
-    Signing,
-    Pending,
-    Success,
-    Failed,
-  }
-
-  type State =
-      { status: Status.Signing }
-    | { status: Status.Pending }
-    | { status: Status.Success }
-    | { status: Status.Failed; error: string };
+  import { Status, State } from "@app/utils";
 
   export let subdomain: string;
   export let config: Config;

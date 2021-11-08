@@ -247,10 +247,10 @@ a.address {
 	border-bottom-color: transparent;
 }
 
-input[type="text"], button {
+input[type="text"], input[type="number"], button {
 	line-height: 1.6;
 }
-input[type="text"] {
+input[type="text"], input[type="number"] {
 	outline: none;
 	border: none;
 	font-size: 1rem;
@@ -261,12 +261,17 @@ input[type="text"] {
 	padding: 1rem 1.5rem;
 	margin: 1rem;
 }
-input[type="text"]::placeholder {
+input[type="text"]::placeholder, input[type="number"]::placeholder {
 	color: var(--color-secondary);
 	opacity: 1 !important;
 }
-input[type="text"].small {
+input[type="text"].small, input[type="number"].small {
 	font-size: 0.875rem;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 input.wide {
 	width: 44ch;

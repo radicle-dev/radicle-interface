@@ -27,7 +27,7 @@ export type WalletConnectState =
 export class Config {
   network: { name: string; chainId: number };
   registrar: { address: string; domain: string };
-  radToken: { address: string };
+  radToken: { address: string; faucet: string };
   orgFactory: { address: string };
   reverseRegistrar: { address: string };
   orgs: { subgraph: string; contractHash: string; pinned: string[] };

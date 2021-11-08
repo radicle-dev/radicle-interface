@@ -8,6 +8,7 @@
   import Registrations from '@app/base/registrations/Routes.svelte';
   import Orgs from '@app/base/orgs/Routes.svelte';
   import Users from '@app/base/users/Routes.svelte';
+  import Faucet from '@app/base/faucet/Routes.svelte';
   import Projects from '@app/base/projects/Routes.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
@@ -82,6 +83,7 @@
         </Route>
         <Registrations {config} session={$session} />
         <Orgs {config} />
+        <Faucet {config} />
         <Users {config} />
         <Projects {config} />
         <Resolver {config} />

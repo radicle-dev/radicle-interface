@@ -42,7 +42,8 @@
       "address": "0x80b68878442b6510D768Be1bd88712710B86eAcD"
     },
     "radToken": {
-      "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948"
+      "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948",
+      "faucet": "0x8d9BeE9cA51fd3beb5692F6b404Fe9f76E5F3d1b"
     },
     "orgFactory": {
       "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"
@@ -127,6 +128,12 @@
       "function withdrawn() view returns (uint256)",
       "function withdrawableBalance() view returns (uint256)",
       "function withdrawVested()"
+    ],
+    "faucet": [
+      "function lastWithdrawalByUser(address) view returns (uint256)",
+      "function maxWithdrawAmount() view returns (uint256)",
+      "function calculateTimeLock(uint256) view returns (uint256)",
+      "function withdraw(address, uint256)"
     ],
     "ens": ["function owner(bytes32 node) view returns (address)"]
   }
