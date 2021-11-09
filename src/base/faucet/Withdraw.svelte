@@ -12,6 +12,7 @@
   export let config: Config;
 
   let error: Error;
+  let amount: string = window.history.state.amount;
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",
@@ -23,7 +24,7 @@
   onMount(async () => {
     try {
       state.status = Status.Signing;
-      const tx = await withdraw(window.history.state.amount, config);
+      const tx = await withdraw(amount, config);
       state.status = Status.Pending;
       await tx.wait();
       state.status = Status.Success;
@@ -70,7 +71,7 @@
 
     <span slot="body" class="loader">
       {#if state.status === Status.Success}
-        The amount of {window.history.state.amount.toString()} RAD tokens has been successfully transfered to
+        The amount of {amount} RAD tokens has been successfully transfered to
         <span class="highlight">{requester}</span>
       {:else}
         <Loading small center />

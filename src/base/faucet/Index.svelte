@@ -1,32 +1,34 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { BigNumber } from "@ethersproject/bignumber";
-  import { formatEther, parseUnits } from "@ethersproject/units";
-  import type { ethers } from "ethers";
+  import type { BigNumber } from "@ethersproject/bignumber";
+  import { toWei } from "@app/utils";
+  import { formatEther } from "@ethersproject/units";
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
   import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./lib";
 
   export let config: Config;
 
-  let amount = 0;
+  let amount: string;
   let maxWithdrawAmount: BigNumber;
   let lastWithdrawal: BigNumber;
   let error: string | undefined;
 
   async function withdraw() {
-    const [state, message] = await isAbleToWithdraw(amountBN);
+    const [state, message] = await isAbleToWithdraw(amount);
     if (state === true) navigate("/faucet/withdraw", { state: { amount } });
     else error = message;
   }
 
-  async function isAbleToWithdraw(amount: ethers.BigNumber): Promise<[boolean, string?]> {
-    if (amount.isZero()) { return [false, "Not able to withdraw zero tokens"]; }
-    if (parseUnits(amountBN.toString()).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
+  async function isAbleToWithdraw(amount: string): Promise<[boolean, string?]> {
+    if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
+    if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
     let currentTime = new Date().getTime();
-    let timelock = await calculateTimeLock(amountBN, config);
-    let nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(Math.pow(10,3));
-    if (nextAvailableWithdraw.gt(currentTime)) return [false, `Not ready to withdraw, return after ${new Date(nextAvailableWithdraw.toNumber()).toUTCString()}`];
+    let timelock = await calculateTimeLock(amount, config);
+    // Converting a 10 digit to 13 digit timestamp by multiplying by 1000
+    // since JS doesn't display a correct Date string when passing a 10 digit timestamp.
+    let nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(1000);
+    if (nextAvailableWithdraw.gt(currentTime)) return [false, `Not ready to withdraw, return after ${new Date(nextAvailableWithdraw.toNumber()).toLocaleString('en-GB')}`];
 
     return [true];
   }
@@ -35,8 +37,6 @@
     maxWithdrawAmount = await getMaxWithdrawAmount(config);
     lastWithdrawal = await lastWithdrawalByUser(config);
   });
-
-  $: amountBN = amount ? BigNumber.from(amount) : BigNumber.from(0);
 </script>
 
 <style>
@@ -54,7 +54,7 @@
     margin: 1rem 1.5rem 0rem;
     color: var(--color-secondary);
   }
-  input[type="number"] {
+  input[type="text"] {
     margin: 0;
     margin-right: 1.5rem;
   }
@@ -101,7 +101,7 @@
       <div class="input-main">
         <div class="name">
           <input
-            type="number"
+            type="text"
             placeholder="Set amount to withdraw"
             bind:value={amount}
             on:input={() => error = ""}

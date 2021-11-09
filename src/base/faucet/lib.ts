@@ -3,9 +3,9 @@ import * as ethers from 'ethers';
 import type { Config } from '@app/config';
 import { assert } from '@app/error';
 import type { TransactionResponse } from '@ethersproject/providers';
-import { parseUnits } from '@ethersproject/units';
+import { toWei } from '@app/utils';
 
-export async function withdraw(amount: number, config: Config): Promise<TransactionResponse> {
+export async function withdraw(amount: string, config: Config): Promise<TransactionResponse> {
   assert(config.signer);
 
   const faucet = new ethers.Contract(
@@ -14,7 +14,7 @@ export async function withdraw(amount: number, config: Config): Promise<Transact
     config.signer
   );
 
-  return faucet.withdraw(config.radToken.address, ethers.utils.parseUnits(amount.toString()));
+  return faucet.withdraw(config.radToken.address, toWei(amount));
 }
 
 export async function getMaxWithdrawAmount(config: Config): Promise<ethers.BigNumber> {
@@ -29,7 +29,7 @@ export async function getMaxWithdrawAmount(config: Config): Promise<ethers.BigNu
   return faucet.maxWithdrawAmount();
 }
 
-export async function calculateTimeLock(amount: ethers.BigNumber, config: Config): Promise<ethers.BigNumber> {
+export async function calculateTimeLock(amount: string, config: Config): Promise<ethers.BigNumber> {
   assert(config.signer);
 
   const faucet = new ethers.Contract(
@@ -38,7 +38,7 @@ export async function calculateTimeLock(amount: ethers.BigNumber, config: Config
     config.signer
   );
 
-  return faucet.calculateTimeLock(parseUnits(amount.toString()));
+  return faucet.calculateTimeLock(toWei(amount));
 }
 
 export async function lastWithdrawalByUser(config: Config): Promise<ethers.BigNumber> {

@@ -10,6 +10,7 @@ import type { EnsProfile } from "@app/base/registrations/registrar";
 import { getAvatar, getSeedHost, getSeedId, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import { ProfileType } from '@app/profile';
+import { parseUnits } from "@ethersproject/units";
 
 export enum AddressType {
   Contract,
@@ -59,6 +60,10 @@ export async function isReverseRecordSet(address: string, domain: string, config
 
 export async function toClipboard(text: string): Promise<void> {
   return navigator.clipboard.writeText(text);
+}
+
+export function toWei(amount: string): BigNumber {
+  return parseUnits(amount);
 }
 
 export function isAddressEqual(left: string, right: string): boolean {
