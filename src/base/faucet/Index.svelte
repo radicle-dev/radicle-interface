@@ -5,7 +5,7 @@
   import type { ethers } from "ethers";
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
-  import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./Faucet";
+  import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./lib";
 
   export let config: Config;
 
@@ -16,7 +16,7 @@
 
   async function withdraw() {
     const [state, message] = await isAbleToWithdraw(amountBN);
-    if (state === true) navigate("/faucet/submit", { state: { amount } });
+    if (state === true) navigate("/faucet/withdraw", { state: { amount } });
     else error = message;
   }
 

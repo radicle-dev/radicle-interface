@@ -6,7 +6,7 @@
   import Modal from "@app/Modal.svelte";
   import Err from "@app/Error.svelte";
   import { Status, State } from "@app/utils";
-  import { withdraw } from "./Faucet";
+  import { withdraw } from "./lib";
   import { session } from '@app/session';
 
   export let config: Config;
@@ -47,7 +47,7 @@
   <Err
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate("/faucet")}
+    on:close={back}
   />
 {:else}
   <Modal>
@@ -79,7 +79,7 @@
 
     <span slot="actions">
       {#if state.status === Status.Success}
-        <button on:click={back} class="register"> Back </button>
+        <button on:click={back}> Back </button>
       {/if}
     </span>
   </Modal>
