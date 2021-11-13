@@ -11,6 +11,7 @@ import { getAvatar, getSeedHost, getSeedId, getAnchorsAccount, getRegistration }
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import { ProfileType } from '@app/profile';
 import { parseUnits } from "@ethersproject/units";
+import { GetSafe } from "@app/base/orgs/Org";
 
 export enum AddressType {
   Contract,
@@ -354,54 +355,26 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
 
 // Check whether a Gnosis Safe exists at an address.
 export async function isSafe(address: string, config: Config): Promise<boolean> {
-  if (! config.safe.api) return false;
+  // For the subgraph we need to pass a lowercase address
+  const query = await querySubgraph(config.orgs.subgraph, GetSafe, { addr: address.toLowerCase() });
 
-  const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}/`, { method: 'HEAD' });
-
-  return response.ok;
+  return query.safe !== null ? true : false;
 }
 
 // Get a Gnosis Safe at an address.
 export async function getSafe(address: string, config: Config): Promise<Safe | null> {
-  if (! config.safe.api) return null;
+  // For the subgraph we need to pass a lowercase address
+  const query = await querySubgraph(config.orgs.subgraph, GetSafe, { addr: address.toLowerCase() });
 
-  const addr = ethers.utils.getAddress(address);
-  const response = await fetch(`${config.safe.api}/api/v1/safes/${addr}/`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
-
-  if (! response.ok) {
+  if (! query.safe) {
     return null;
   }
-  const json = await response.json();
 
   return {
-    address: json.address,
-    owners: json.owners,
-    threshold: json.threshold
+    address: query.safe.id,
+    owners: query.safe.owners,
+    threshold: query.safe.threshold
   };
-}
-
-// Get the Gnosis Safe addresses owned by the given address.
-export async function getOwnerSafes(owner: string, config: Config): Promise<string[] | null> {
-  if (! config.safe.api) return null;
-
-  const addr = ethers.utils.getAddress(owner);
-  const response = await fetch(`${config.safe.api}/api/v1/owners/${addr}/safes/`, {
-    method: 'GET',
-    headers: { 'Accept': 'application/json' }
-  });
-
-  if (! response.ok) {
-    return null;
-  }
-  const json = await response.json();
-
-  return json.safes;
 }
 
 // Get token balances for an address.

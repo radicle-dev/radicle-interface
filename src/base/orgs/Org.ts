@@ -31,13 +31,38 @@ const GetOrgs = `
   }
 `;
 
-const GetOrgsByOwner = `
-  query GetOrgsByOwner($owners: [String!]!) {
+const GetSafesByOwners = `
+  query GetSafesByOwner($owners: [String!]!) {
+    safes(where: { owners_contains: $owners }) {
+      id
+      owners
+      threshold
+    }
+  }
+`;
+
+const GetOrgsByOwners = `
+  query GetOrgsByOwners($owners: [String!]!) {
     orgs(where: { owner_in: $owners }) {
       id
       owner
+      safe {
+        id
+        owners
+        threshold
+      }
       creator
       timestamp
+    }
+  }
+`;
+
+export const GetSafe = `
+  query GetSafe($addr: ID!) {
+    safe(id: $addr) {
+      id
+      owners
+      threshold
     }
   }
 `;
@@ -259,20 +284,19 @@ export class Org {
     return profile;
   }
 
-  // Return only Orgs that have a specific user as owner
-  static async getOrgsByOwner(owner: string, config: Config): Promise<Org[]> {
-    const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners: [owner] });
-    return orgsResult.orgs.map((o: { id: string; owner: string }) => {
-      return new Org(o.id, o.owner);
-    });
-  }
+  static async getOrgsByMember(owner: string, config: Config): Promise<Org[]> {
+    type Safe = { id: string; owners: string[]; threshold: number };
 
-  static async getOrgsByMember(memberAddr: string, config: Config): Promise<Org[]> {
-    const wallets = await utils.getOwnerSafes(memberAddr, config);
-    const owners = wallets?.concat([memberAddr]);
-    const orgsResult = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwner, { owners });
+    // TODO: We use two subgraph queries since we can't do a filter query yet in the subgraph
+    // https://github.com/graphprotocol/graph-node/issues/2539#issuecomment-855979841
+    const safesByOwner = await utils.querySubgraph(config.orgs.subgraph, GetSafesByOwners, { owners: [owner] });
+    const safes = safesByOwner.safes.reduce(
+      (prev: any, curr: Safe) => prev.concat(curr.id), []);
+    const orgsByOwner = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwners, { owners: [...safes, owner] });
 
-    return orgsResult.orgs.map((o: { id: string; owner: string }) => {
+    const orgs: any[] = [...orgsByOwner.orgs];
+
+    return orgs.map((o: { id: string; owner: string }) => {
       return new Org(o.id, o.owner);
     });
   }
