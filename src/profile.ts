@@ -147,7 +147,10 @@ export class Profile {
         );
         return { address, ens: null, idx };
       } catch (e) {
-        console.error(e);
+        // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
+        if (e.message.match("No DID found for")) console.debug(e);
+        else console.error(e);
+
         return { address, ens: null, idx: null };
       }
     }
