@@ -2,9 +2,8 @@ import { get, writable, derived } from "svelte/store";
 import type { Readable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
-import { Config, getConfig } from "@app/config";
+import { Config, getConfig, isMetamaskInstalled } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
-import { formatNetwork } from "@app/utils";
 import * as ethers from "ethers";
 
 export enum Connection {
@@ -105,12 +104,34 @@ export const loadState = (initial: State): Store => {
           signer.walletConnect.chainId
         );
 
+        // Instead of killing the WalletConnect session, we force the UI to change network
         if (network.chainId !== config.network.chainId) {
-          config.walletConnect.client.killSession();
-          throw new Error(
-            `Network mismatch. Please switch your wallet to ${formatNetwork(config.network)}.`
-          );
+          config.changeNetwork(network.chainId);
         }
+
+        config.walletConnect.client.on("session_update", async (error, { params: [{ accounts, chainId }] }: { params: [{ accounts: [string]; chainId: number }] }) => {
+          if (error) {
+            throw error;
+          }
+
+          try {
+            // We only change accounts if the address has been changed, to avoid unnecessary refreshing.
+            if (address !== accounts[0]) changeAccounts(accounts[0]);
+            // Check the current chainId, and request Metamask to change, or reload the window to get the correct chain.
+            if (chainId !== config.network.chainId) {
+              if (isMetamaskInstalled()) {
+                await window.ethereum.request({
+                  method: 'wallet_switchEthereumChain',
+                  params: [{ chainId: ethers.utils.hexValue(chainId) }]
+                });
+              } else {
+                config.changeNetwork(chainId);
+                window.location.reload();
+              }
+            }
+          } catch (e) { console.error(e); }
+        });
+
         store.set({ connection: Connection.Connected, session });
       } catch (e) {
         console.log("WalletConnect: connection failed.");
@@ -245,15 +266,18 @@ window.ethereum?.on('chainChanged', () => {
   // We disconnect the wallet to avoid out of sync state
   // between the account address and IDX DIDs
   disconnectMetamask();
-  location.reload();
 });
 
 // Updates state when user changes accounts
 window.ethereum?.on("accountsChanged", async ([address]: string) => {
+  changeAccounts(address);
+});
+
+export async function changeAccounts(address: string): Promise<void> {
   const config = await getConfig();
   state.setChangedAccount(address);
   state.refreshBalance(config);
-});
+}
 
 state.subscribe(s => {
   console.log("session.state", s);

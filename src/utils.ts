@@ -107,15 +107,6 @@ export function formatHash(hash: string): string {
     + hash.substring(hash.length - 4, hash.length);
 }
 
-export function formatNetwork(input: { name: string }): string {
-  let name = input.name;
-
-  if (name === "homestead") {
-    name = "mainnet";
-  }
-  return capitalize(name);
-}
-
 export function formatOrg(input: string, config: Config): string {
   if (isAddress(input)) {
     return ethers.utils.getAddress(input);

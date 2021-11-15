@@ -7,6 +7,7 @@ import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
+import { disconnectWallet } from "./session";
 
 declare global {
   interface Window {
@@ -129,6 +130,10 @@ export class Config {
     );
   }
 
+  changeNetwork(chainId: number): void {
+    this.network = ethers.providers.getNetwork(chainId);
+  }
+
   setSigner(signer: ethers.Signer & TypedDataSigner | WalletConnectSigner): void {
     this.signer = signer;
   }
@@ -210,7 +215,7 @@ export class Config {
   }
 }
 
-function isMetamaskInstalled(): boolean {
+export function isMetamaskInstalled(): boolean {
   const { ethereum } = window;
   return Boolean(ethereum && ethereum.isMetaMask);
 }
