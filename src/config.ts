@@ -7,7 +7,6 @@ import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
-import { disconnectWallet } from "./session";
 
 declare global {
   interface Window {
