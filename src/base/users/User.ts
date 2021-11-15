@@ -20,6 +20,6 @@ export class User {
       config.abi.reverseRegistrar,
       config.signer
     );
-    return reverseRegistrar.setName(name, this.address);
+    return reverseRegistrar.setName(name);
   }
 }

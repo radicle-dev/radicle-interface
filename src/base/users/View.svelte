@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { SvelteComponent } from 'svelte';
   import type { Config } from '@app/config';
   import Icon from '@app/Icon.svelte';
   import Address from '@app/Address.svelte';
@@ -8,9 +9,25 @@
   import { Org } from '@app/base/orgs/Org';
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
+  import { session } from '@app/session';
+  import { isAddressEqual } from '@app/utils';
+  import Error from '@app/Error.svelte';
+  import SetName from '@app/ens/SetName.svelte';
+  import { User } from '@app/base/users/User';
 
   export let addressOrName: string;
   export let config: Config;
+  export let action: string | null = null;
+
+  let setNameForm: typeof SvelteComponent | null =
+    action === "setName" ? SetName : null;
+  const setName = () => {
+    setNameForm = SetName;
+  };
+
+  $: isAuthorized = (address: string): boolean | null => {
+    return $session && isAddressEqual(address, $session.address);
+  };
 </script>
 
 <style>
@@ -139,6 +156,13 @@
             <span class="subtle">Not set</span>
           {/if}
         </div>
+        <div>
+          {#if (isAuthorized(profile.address))}
+            <button class="tiny secondary" on:click={setName}>
+              Set
+            </button>
+          {/if}
+        </div>
       </div>
       {#await Org.getOrgsByMember(profile.address, config)}
         <Loading center />
@@ -183,4 +207,7 @@
         {/if}
       </div>
   </main>
+  <svelte:component this={setNameForm} entity={new User(profile.address)} {config} on:close={() => setNameForm = null} />
+{:catch err}
+  <Error error={err} />
 {/await}

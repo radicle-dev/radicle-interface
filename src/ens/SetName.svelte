@@ -21,6 +21,8 @@
     ? entity as Org
     : null;
 
+  const label = org ? "org" : "profile";
+
   enum State {
     Idle,
     Checking,
@@ -138,14 +140,14 @@
       {:else if state == State.Pending}
         Waiting for transaction to be processed...
       {:else if state == State.Proposing && org}
-        Proposal is being submitted to the safe
+        Proposal is being submitted
         <strong>{formatAddress(org.owner)}</strong>,
         please sign the transaction in your wallet.
       {:else}
         Set an ENS name for <strong>{formatAddress(entity.address)}</strong>
         to associate a profile.
-        ENS profiles provide human-identifiable data to your org, such as a
-        unique name, avatar and URL, and help make your org more discoverable.
+        ENS profiles provide human-identifiable data to your {label}, such as a
+        unique name, avatar and URL, and help make your {label} more discoverable.
       {/if}
     </div>
 
