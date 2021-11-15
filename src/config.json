@@ -63,7 +63,8 @@
     "reverseRegistrar": {
       "address": "0x6F628b68b30Dc3c17f345c9dbBb1E483c2b7aE5c"
     },
-    "tokens": []
+    "tokens": [],
+    "alchemy": { "key": "1T6h-0rxu7SRzKEtmukIoxaJOXazLDNs" }
   },
   "walletConnect": { "bridge": "https://radicle.bridge.walletconnect.org" },
   "ceramic": {
