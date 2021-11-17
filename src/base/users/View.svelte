@@ -66,6 +66,24 @@
   .projects .project {
     margin-bottom: 1rem;
   }
+  .members {
+    margin-top: 2rem;
+    align-items: center;
+    display: flex;
+  }
+  .members .member {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+  }
+  .members .member:last-child {
+    margin-right: 0;
+  }
+  .members .member-icon {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+  }
 </style>
 
 <svelte:head>
@@ -122,6 +140,27 @@
           {/if}
         </div>
       </div>
+      {#await Org.getOrgsByMember(profile.address, config)}
+        <Loading center />
+      {:then orgs}
+        {#if orgs.length > 0}
+          <div class="members">
+            {#each orgs as org}
+              {#await Org.getProfile(org.address, ProfileType.Minimal, config)}
+                <Loading/>
+              {:then profile}
+                <div class="member">
+                  <div class="member-icon">
+                    <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                  </div>
+                  <Address address={profile.address} compact
+                    resolve noBadge noAvatar {profile} {config} />
+                </div>
+              {/await}
+            {/each}
+          </div>
+        {/if}
+      {/await}
       <div class="projects">
         {#if profile.anchorsAccount}
           {#await Org.get(profile.anchorsAccount, config)}

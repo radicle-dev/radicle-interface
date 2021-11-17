@@ -32,7 +32,7 @@ const GetOrgs = `
 `;
 
 const GetSafesByOwners = `
-  query GetSafesByOwner($owners: [String!]!) {
+  query GetSafesByOwners($owners: [String!]!) {
     safes(where: { owners_contains: $owners }) {
       id
       owners
