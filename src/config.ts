@@ -129,6 +129,10 @@ export class Config {
     );
   }
 
+  changeNetwork(chainId: number): void {
+    this.network = ethers.providers.getNetwork(chainId);
+  }
+
   setSigner(signer: ethers.Signer & TypedDataSigner | WalletConnectSigner): void {
     this.signer = signer;
   }
@@ -210,7 +214,7 @@ export class Config {
   }
 }
 
-function isMetamaskInstalled(): boolean {
+export function isMetamaskInstalled(): boolean {
   const { ethereum } = window;
   return Boolean(ethereum && ethereum.isMetaMask);
 }
@@ -220,8 +224,8 @@ function getProvider(
   config: Record<string, any>,
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
-  // Use Alchemy in production, on mainnet. Otherwise use Metamask if installed.
-  if (network.name === "homestead" && import.meta.env.PROD) {
+  // Use Alchemy in production. Otherwise use Metamask if installed.
+  if (import.meta.env.PROD) {
     return new ethers.providers.AlchemyWebSocketProvider(network.name, config.alchemy.key);
   } else if (metamask) {
     return metamask;
