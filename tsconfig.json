@@ -11,7 +11,9 @@
     "module": "es2020",
     "types": [
       "svelte",
-      "vite/client"
+      "vite/client",
+      "@types/jest",
+      "cypress"
     ],
     "sourceMap": true,
     "moduleResolution": "node",

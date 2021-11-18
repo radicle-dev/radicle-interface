@@ -13,6 +13,8 @@ declare global {
   interface Window {
     ethereum: any;
     registrarState: any;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Cypress: any;
   }
 }
 
@@ -230,8 +232,8 @@ function getProvider(
   config: Record<string, any>,
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
-  // Use Alchemy in production. Otherwise use Metamask if installed.
-  if (import.meta.env.PROD) {
+  // Use Alchemy in production or when E2E testing. Otherwise use Metamask if installed.
+  if (import.meta.env.PROD || window.Cypress) {
     return new ethers.providers.AlchemyWebSocketProvider(network.name, config.alchemy.key);
   } else if (metamask) {
     return metamask;
@@ -265,6 +267,9 @@ export async function getConfig(): Promise<Config> {
     const ready = await checkMetaMask(metamask);
     if (ready === null) throw new Error("Not able to connect to Metamask, check for multiple Web3 providers");
     network = ready;
+  } else if (window.Cypress) {
+    // When E2e testing we use the rinkeby network
+    network = { name: "homestead", chainId: 1 };
   }
 
   const networkConfig = (<Record<string, any>> config)[network.name];

@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "integrationFolder": "cypress/integration",
+  "pluginsFile": false,
+  "supportFile": "cypress/support/commands.ts",
+  "video": false,
+  "defaultCommandTimeout": 20000
+}
