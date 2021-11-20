@@ -89,6 +89,7 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
   return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
+// Returns a checksummed, shortened, without 0x prefix Ethereum address
 export function formatAddress(input: string): string {
   const addr = ethers.utils.getAddress(input).replace(/^0x/, "");
 
@@ -326,6 +327,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
 
       const project = await Promise.allSettled(promises);
       const [avatar, address, seedHost, seedId, anchorsAccount] =
+        // Just checking for r.value equal null and casting to undefined, since resolver functions return null
         project.map(r => r.status == "fulfilled" ? r.value : null);
 
       return {

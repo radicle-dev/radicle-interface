@@ -33,8 +33,10 @@ export class WalletConnectSigner extends ethers.Signer {
 
   async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
     // Populate any ENS names (in-place)
-    const populated = await _TypedDataEncoder.resolveNames(domain, types, value, (name: string) => {
-      return this.provider.resolveName(name);
+    const populated = await _TypedDataEncoder.resolveNames(domain, types, value, async (name: string) => {
+      const address = await this.provider.resolveName(name);
+      if (address === null) throw Error("resolver or addr is not configured for ENS name");
+      return address;
     });
 
     const address = await this.getAddress();

@@ -18,7 +18,7 @@
     : Promise.resolve([]);
 
   const getEntities = Promise.all([getUsers, getOrgs]).then(([users, orgs]) => {
-    return { users: users, orgs: orgs };
+    return { users, orgs };
   });
 
   const viewMore = () => {

@@ -5,7 +5,11 @@
   import type { Config } from '@app/config';
   import { formatName, formatAddress } from '@app/utils';
 
-  export let profile: Profile;
+  export let profile: Profile | {
+    address: string;
+    avatar?: string;
+    name?: string;
+  } ;
   export let config: Config;
   export let path: string;
   export let members: string[] = [];

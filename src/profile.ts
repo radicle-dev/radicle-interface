@@ -7,8 +7,8 @@ import type { Config } from "@app/config";
 
 export interface IProfile {
   address: string;
-  ens: EnsProfile | null;
-  idx: BasicProfile | null;
+  ens?: EnsProfile;
+  idx?: BasicProfile;
 }
 
 export enum ProfileType {
@@ -30,12 +30,12 @@ export class Profile {
   }
 
   // Get the ENS profile
-  get ens(): EnsProfile | null {
+  get ens(): EnsProfile | undefined {
     return this.profile.ens;
   }
 
   // Get the IDX profle
-  get idx(): BasicProfile | null {
+  get idx(): BasicProfile | undefined {
     return this.profile.idx;
   }
 
@@ -125,6 +125,7 @@ export class Profile {
   }
 
   // Keeping this function private since the desired entrypoint is .get()
+  // All addresses returned from this function should be lowercase.
   private static async lookupProfile(
     addressOrName: string,
     profileType: ProfileType,
@@ -134,31 +135,34 @@ export class Profile {
 
     if (ens) {
       if (ens.address) {
-        return { address: ens.address, ens, idx: null };
+        return {
+          address: ens.address.toLowerCase(),
+          ens: { ...ens, address: ens.address.toLowerCase() }
+        };
       }
       throw new Error(`No address set for ${addressOrName}`);
 
     } else if (isAddress(addressOrName)) {
-      const address = addressOrName;
+      const address = addressOrName.toLowerCase();
 
       try {
         const idx = await resolveIdxProfile(
           formatCAIP10Address(address, "eip155", config.network.chainId), config
         );
-        return { address, ens: null, idx };
+        return { address, idx: idx ?? undefined };
       } catch (e) {
         // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
         if (e.message.match("No DID found for")) console.debug(e);
         else console.error(e);
 
-        return { address, ens: null, idx: null };
+        return { address };
       }
     }
     throw new Error(`Name ${addressOrName} was not found`);
   }
 
-  static async getMulti(addresses: string[], config: Config): Promise<Profile[]> {
-    const profilePromises = addresses.map(address => this.lookupProfile(address, ProfileType.Minimal, config));
+  static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {
+    const profilePromises = addressesOrNames.map(addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config));
     const profiles = await Promise.all(profilePromises);
     return profiles.map(profile => { return new Profile(profile); });
   }

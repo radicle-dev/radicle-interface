@@ -58,7 +58,7 @@ state.subscribe((s: Connection) => {
   console.log("register.state", s);
 });
 
-export async function getRegistration(name: string, config: Config, resolver?: EnsResolver): Promise<Registration | null> {
+export async function getRegistration(name: string, config: Config, resolver?: EnsResolver | null): Promise<Registration | null> {
   name = name.toLowerCase();
 
   if (! resolver) {
@@ -99,7 +99,7 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   };
 }
 
-export async function getAvatar(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
+export async function getAvatar(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -109,7 +109,7 @@ export async function getAvatar(name: string, config: Config, resolver?: EnsReso
   return resolver.getText('avatar');
 }
 
-export async function getSeedHost(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
+export async function getSeedHost(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -119,7 +119,7 @@ export async function getSeedHost(name: string, config: Config, resolver?: EnsRe
   return resolver.getText('eth.radicle.seed.host');
 }
 
-export async function getSeedId(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
+export async function getSeedId(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -129,7 +129,7 @@ export async function getSeedId(name: string, config: Config, resolver?: EnsReso
   return resolver.getText('eth.radicle.seed.id');
 }
 
-export async function getAnchorsAccount(name: string, config: Config, resolver?: EnsResolver): Promise<string | null> {
+export async function getAnchorsAccount(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
