@@ -82,10 +82,10 @@
           description: "The seed host address. " +
             "Only domain names with TLS are supported. " +
             `HTTP(S) API requests use port ${config.seed.api.port}.`,
-          value: r.profile.seedHost, editable: true },
+          value: r.profile.seed.host, editable: true },
         { name: "seed.id", label: "Seed ID", validate: "id", placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
           description: "The Device ID of a Radicle Link node that hosts entities associated with this name.",
-          value: r.profile.seedId, editable: true },
+          value: r.profile.seed.id, editable: true },
         { name: "anchors", label: "Anchors", validate: "URN", placeholder: "URN, eg. eip155:1:0x4a9cf21...",
           description: "URN under which associated project anchors can be found. "
             + "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21...*",

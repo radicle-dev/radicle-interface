@@ -321,30 +321,34 @@
           {/await}
         {/if}
       </div>
-      {#if config.seed.host}
+      {#if config.seed.git.host}
         <span>
           <div class="clone" on:click={() => cloneDropdown = !cloneDropdown}>
             Clone
           </div>
           <div class="dropdown clone-dropdown" class:clone-dropdown-visible={cloneDropdown}>
-            <input readonly name="clone-url" value="https://{config.seed.host}/{utils.parseRadicleId(urn)}"/>
+            <input readonly name="clone-url" value="https://{config.seed.git.host}/{utils.parseRadicleId(urn)}"/>
             <label for="clone-url">Use Git to clone this repository from the URL above.</label>
           </div>
         </span>
-        <span>
-          <div class="stat seed" on:click={() => seedDropdown = !seedDropdown} title="Project data is fetched from this seed">
-            <span>{config.seed.host}</span>
-          </div>
-          <div class="dropdown seed-dropdown" class:seed-dropdown-visible={seedDropdown}>
-            {#if config.seed.id}
-              <input readonly name="clone-url" value={utils.formatSeedAddress(config.seed.id, config.seed.host, config)}/>
-              <label for="seed-url">Bootstrap your Radicle node with this seed.</label>
-            {:else if profile}
-              <label for="#">Seed ID is not set for {profile.name}.</label>
-            {/if}
-          </div>
-        </span>
       {/if}
+      <span>
+        {#if config.seed.api.host}
+          <div class="stat seed" on:click={() => seedDropdown = !seedDropdown} title="Project data is fetched from this seed">
+            <span>{config.seed.api.host}</span>
+          </div>
+        {/if}
+        <div class="dropdown seed-dropdown" class:seed-dropdown-visible={seedDropdown}>
+          {#if config.seed.link.id && config.seed.link.host}
+            <input readonly
+              name="clone-url"
+              value={utils.formatSeedAddress(config.seed.link.id, config.seed.link.host, config)}/>
+            <label for="seed-url">Bootstrap your Radicle node with this seed.</label>
+          {:else if profile}
+            <label for="#">Seed ID is not set for {profile.name}.</label>
+          {/if}
+        </div>
+      </span>
       <div class="stat">
         <strong>{tree.stats.commits}</strong> commit(s)
       </div>

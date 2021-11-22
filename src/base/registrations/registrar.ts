@@ -6,7 +6,7 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
 import type { Config } from '@app/config';
-import { unixTime } from '@app/utils';
+import { isDomain, unixTime } from '@app/utils';
 import { assert } from '@app/error';
 
 export interface Registration {
@@ -14,17 +14,38 @@ export interface Registration {
   resolver: EnsResolver;
 }
 
+export class Seed {
+  id?: string;
+  host?: string;
+  git?: string;
+  api?: string;
+
+  constructor(id?: string, host?: string, git?: string, api?: string) {
+    if (id && /^[a-z0-9]+$/.test(id)) {
+      this.id = id;
+    }
+    if (host && isDomain(host)) {
+      this.host = host;
+    }
+    if (api && isDomain(api)) {
+      this.api = api;
+    }
+    if (git && isDomain(git)) {
+      this.git = git;
+    }
+  }
+}
+
 export interface EnsProfile {
   name: string;
   owner?: string;
-  address: string | null;
-  seedId: string | null;
-  seedHost: string | null;
-  anchorsAccount: string | null;
-  url: string | null;
-  avatar: string | null;
-  twitter: string | null;
-  github: string | null;
+  address?: string;
+  seed: Seed;
+  anchorsAccount?: string;
+  url?: string;
+  avatar?: string;
+  twitter?: string;
+  github?: string;
 }
 
 export enum State {
@@ -75,13 +96,15 @@ export async function getRegistration(name: string, config: Config, resolver?: E
     resolver.getText('url'),
     resolver.getText('eth.radicle.seed.id'),
     resolver.getText('eth.radicle.seed.host'),
+    resolver.getText('eth.radicle.seed.git'),
+    resolver.getText('eth.radicle.seed.api'),
     resolver.getText('eth.radicle.anchors'),
     resolver.getText('com.twitter'),
     resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, seedId, seedHost, anchorsAccount, twitter, github] =
-    meta.map(r => r.status == "fulfilled" ? r.value : null);
+  const [address, avatar, url, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
+    meta.map(r => r.status == "fulfilled" && r.value ? r.value : undefined);
 
   return {
     resolver,
@@ -89,8 +112,12 @@ export async function getRegistration(name: string, config: Config, resolver?: E
       name,
       url,
       avatar,
-      seedId,
-      seedHost,
+      seed: new Seed(
+        seedId,
+        seedHost,
+        seedGit,
+        seedApi,
+      ),
       anchorsAccount,
       address,
       twitter,
@@ -109,26 +136,6 @@ export async function getAvatar(name: string, config: Config, resolver?: EnsReso
   return resolver.getText('avatar');
 }
 
-export async function getSeedHost(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
-  name = name.toLowerCase();
-
-  resolver = resolver ?? await config.provider.getResolver(name);
-  if (! resolver) {
-    return null;
-  }
-  return resolver.getText('eth.radicle.seed.host');
-}
-
-export async function getSeedId(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
-  name = name.toLowerCase();
-
-  resolver = resolver ?? await config.provider.getResolver(name);
-  if (! resolver) {
-    return null;
-  }
-  return resolver.getText('eth.radicle.seed.id');
-}
-
 export async function getAnchorsAccount(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
@@ -137,6 +144,24 @@ export async function getAnchorsAccount(name: string, config: Config, resolver?:
     return null;
   }
   return resolver.getText('eth.radicle.anchors');
+}
+
+export async function getSeed(name: string, config: Config, resolver?: EnsResolver | null): Promise<Seed | null> {
+  name = name.toLowerCase();
+
+  resolver = resolver ?? await config.provider.getResolver(name);
+  if (! resolver) {
+    return null;
+  }
+
+  const [id, host, git, api] = await Promise.all([
+    resolver.getText('eth.radicle.seed.id'),
+    resolver.getText('eth.radicle.seed.host'),
+    resolver.getText('eth.radicle.seed.git'),
+    resolver.getText('eth.radicle.seed.api'),
+  ]);
+
+  return new Seed(id, host, git, api);
 }
 
 export function registrar(config: Config): ethers.Contract {

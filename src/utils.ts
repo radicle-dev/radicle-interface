@@ -7,7 +7,7 @@ import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
 import type { EnsProfile } from "@app/base/registrations/registrar";
-import { getAvatar, getSeedHost, getSeedId, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
+import { getAvatar, getSeed, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import { ProfileType } from '@app/profile';
 import { parseUnits } from "@ethersproject/units";
@@ -307,7 +307,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
         return registration.profile;
       }
     } else {
-      const promises = [
+      const promises: [Promise<any>] = [
         getAvatar(name, config, resolver),
       ];
 
@@ -318,28 +318,24 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       }
 
       if (profileType === ProfileType.Project) {
-        promises.push(getSeedHost(name, config, resolver));
-        promises.push(getSeedId(name, config, resolver));
+        promises.push(getSeed(name, config, resolver));
         promises.push(getAnchorsAccount(name, config, resolver));
       } else if (profileType === ProfileType.Minimal) {
         promises.push(Promise.resolve(null));
       }
 
       const project = await Promise.allSettled(promises);
-      const [avatar, address, seedHost, seedId, anchorsAccount] =
-        // Just checking for r.value equal null and casting to undefined, since resolver functions return null
-        project.map(r => r.status == "fulfilled" ? r.value : null);
+      const [avatar, address, seed, anchorsAccount] =
+        // Just checking for r.value equal null and casting to undefined,
+        // since resolver functions return null.
+        project.map(r => r.status == "fulfilled" && r.value ? r.value : null);
 
       return {
         name,
         avatar,
         address,
-        seedHost,
-        seedId,
+        seed,
         anchorsAccount,
-        url: null,
-        twitter: null,
-        github: null,
       };
     }
   }
@@ -391,6 +387,11 @@ export async function getTokens(address: string, config: Config): Promise<Array<
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
+}
+
+// Check whether the given input string is a domain, eg. `alt-clients.radicle.xyz.
+export function isDomain(input: string): boolean {
+  return /^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input);
 }
 
 // Propose a Gnosis Safe multi-sig transaction.

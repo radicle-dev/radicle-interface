@@ -1,4 +1,4 @@
-import type { EnsProfile } from "@app/base/registrations/registrar";
+import type { EnsProfile, Seed } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
   isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
@@ -39,52 +39,48 @@ export class Profile {
     return this.profile.idx;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get github(): string | undefined {
     if (this.profile?.ens?.github) return parseUsername(this.profile.ens.github);
     else if (this.profile?.idx?.affiliations) return this.profile.idx?.affiliations.find(item => item === "github");
     else return undefined;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get twitter(): string | undefined {
     if (this.profile?.ens?.twitter) return parseUsername(this.profile.ens.twitter);
     else if (this.profile?.idx?.affiliations) return this.profile.idx.affiliations.find(item => item === "twitter");
     else return undefined;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get url(): string | undefined {
     if (this.profile?.ens?.url) return this.profile.ens.url;
     else if (this.profile?.idx?.url) return this.profile.idx.url;
     else return undefined;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get name(): string | undefined {
     if (this.profile?.ens?.name) return this.profile.ens.name;
     else if (this.profile?.idx?.name) return this.profile.idx.name;
     else return undefined;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get avatar(): string | undefined {
     if (this.profile?.ens?.avatar) return this.profile.ens.avatar;
     else if (this.profile?.idx?.image?.original?.src) return formatIpfsFile(this.profile.idx.image.original.src);
     else return undefined;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get seedHost(): string | undefined {
-    return this.profile?.ens?.seedHost ?? undefined;
+    return this.profile?.ens?.seed?.host;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
   get seedId(): string | undefined {
-    return this.profile?.ens?.seedId ?? undefined;
+    return this.profile?.ens?.seed.id;
   }
 
-  // Using undefined as return type if nothing to be returned since it works better with <a href> links
+  get seed(): Seed | undefined {
+    return this.profile?.ens?.seed;
+  }
+
   get anchorsAccount(): string | undefined {
     const addr = this.profile?.ens?.anchorsAccount;
 
@@ -111,8 +107,8 @@ export class Profile {
   // Return the profile-specific config. This sets various URLs in the config,
   // based on profile data.
   config(config: Config): Config {
-    if (this.seedHost) {
-      return config.withSeed(this.seedHost, this.seedId);
+    if (this.seed) {
+      return config.withSeed(this.seed);
     }
     return config;
   }
@@ -152,7 +148,7 @@ export class Profile {
         return { address, idx: idx ?? undefined };
       } catch (e) {
         // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
-        if (e.message.match("No DID found for")) console.debug(e);
+        if (e.message.match("No DID found for")) console.debug(e.message);
         else console.error(e);
 
         return { address };

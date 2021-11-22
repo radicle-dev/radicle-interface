@@ -5,7 +5,7 @@ export async function get(
   params: Record<string, any>,
   config: Config
 ): Promise<any> {
-  if (! config.seed.host) {
+  if (! config.seed.api.host) {
     throw new Error("Seed host unavailable");
   }
 
@@ -14,7 +14,7 @@ export async function get(
     query[key] = val.toString();
   }
 
-  const base = config.seed.host;
+  const base = config.seed.api.host;
   const port = config.seed.api.port;
   const search = new URLSearchParams(query).toString();
   const baseUrl = `https://${base}:${port}/v1/${path}`;

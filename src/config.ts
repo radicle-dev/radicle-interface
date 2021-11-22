@@ -7,6 +7,7 @@ import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
+import type { Seed } from "@app/base/registrations/registrar";
 
 declare global {
   interface Window {
@@ -56,10 +57,9 @@ export class Config {
   };
   abi: { [contract: string]: string[] };
   seed: {
-    host?: string;
-    id?: string;
-    api: { port: number };
-    link: { port: number };
+    api: { host?: string; port: number };
+    git: { host?: string; port: number };
+    link: { host?: string; id?: string; port: number };
   };
   ceramic: {
    client: Core;
@@ -138,14 +138,20 @@ export class Config {
   }
 
   // Return the config with an overwritten seed URL.
-  withSeed(seedHost: string, seedId?: string): Config {
+  withSeed(seed: Seed): Config {
     const cfg = {} as Config;
     Object.assign(cfg, this);
-    cfg.seed.host = seedHost;
 
-    if (seedId) {
-      cfg.seed.id = seedId;
-    }
+    // The `git` and `api` keys being more specific take
+    // precedence over the `host`, if available.
+    const api = seed.api ?? seed.host;
+    const git = seed.git ?? seed.host;
+
+    cfg.seed.api.host = api;
+    cfg.seed.git.host = git;
+    cfg.seed.link.host = seed.host;
+    cfg.seed.link.id = seed.id;
+
     return cfg;
   }
 
