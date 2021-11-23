@@ -21,6 +21,8 @@
     : ethers.utils.getAddress(address);
   let addressType: AddressType | null = null;
 
+  const nameOrAddress = profile?.name || address;
+
   onMount(async () => {
     identifyAddress(address, config).then((t: AddressType) => addressType = t);
     if (resolve && !profile) {
@@ -52,7 +54,7 @@
     <Avatar inline source={profile?.avatar ?? address} {address}/>
   {/if}
   {#if addressType === AddressType.Org}
-    <a use:link href={`/orgs/${address}`}>{addressLabel}</a>
+    <a use:link href={`/orgs/${nameOrAddress}`}>{addressLabel}</a>
     <span class="badge">org</span>
   {:else if addressType === AddressType.Safe}
     <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
@@ -61,7 +63,7 @@
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge">contract</span>
   {:else if addressType === AddressType.EOA}
-    <a href={`/users/${address}`}>{addressLabel}</a>
+    <a href={`/users/${nameOrAddress}`}>{addressLabel}</a>
   {:else} <!-- While we're waiting to find out what address type it is -->
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
   {/if}
