@@ -226,7 +226,7 @@
               <div class="label">Treasury</div>
               <div>
                 {#each tokens as token}
-                  {` ${utils.formatBalance(token.balance)} ${token.symbol} `} 
+                  {` ${utils.formatBalance(token.balance)} ${token.symbol} `}
                 {/each}
               </div>
               <div></div>
@@ -287,19 +287,15 @@
             </div>
           {/if}
           <!-- Quorum -->
-          <div class="label">Quorum</div>
-          <div>
-            {#await org.getSafe(config)}
-              <Loading small />
-            {:then safe}
-              {#if safe}
+          {#await org.getSafe(config) then safe}
+            {#if safe}
+              <div class="label">Quorum</div>
+              <div>
                 {safe.threshold} <span class="faded">of</span> {safe.owners.length}
-              {:else}
-                N/A
-              {/if}
-            {/await}
-          </div>
-          <div></div>
+              </div>
+              <div></div>
+            {/if}
+          {/await}
         </div>
 
         {#await org.getMembers(config)}
