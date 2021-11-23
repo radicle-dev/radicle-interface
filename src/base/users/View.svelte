@@ -147,7 +147,7 @@
           <div class="members">
             {#each orgs as org}
               {#await Org.getProfile(org.address, ProfileType.Minimal, config)}
-                <Loading small />
+                <Loading small margins />
               {:then profile}
                 <div class="member">
                   <div class="member-icon">
