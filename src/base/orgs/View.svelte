@@ -51,8 +51,13 @@
       try {
         const tokens = await utils.getTokens(org.owner, config);
         const balance = await config.provider.getBalance(org.owner);
-        // To maintain the format we hardcode the ETH specs.
-        return [{ balance, decimals: 18, logo: "", name: "Ethereum", symbol: "ETH" }, ...tokens];
+
+        if (! balance.isZero()) {
+          // To maintain the format we hardcode the ETH specs.
+          return [{ balance, decimals: 18, logo: "", name: "Ethereum", symbol: "ETH" }, ...tokens];
+        } else {
+          return tokens;
+        }
       } catch (e) {
         console.error(e);
       }
@@ -222,7 +227,7 @@
             {/if}
           </div>
           {#await getOrgTreasury(org) then tokens}
-            {#if tokens}
+            {#if tokens && tokens.length > 0}
               <div class="label">Treasury</div>
               <div>
                 {#each tokens as token}
