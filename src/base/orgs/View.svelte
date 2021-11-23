@@ -256,7 +256,7 @@
           {#if utils.isAddressEqual(profile.address, org.address)}
             <div>
               {#if profile.name}
-                <a href={profile.registry(config)} class="link" target="_blank">{profile.name}</a>
+                <a href={profile.registry(config)} class="link">{profile.name}</a>
               {:else}
                 <span class="subtle">Not set</span>
               {/if}
