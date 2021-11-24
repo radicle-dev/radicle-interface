@@ -173,7 +173,7 @@
 {:then org}
   {#if org}
     <main>
-      {#await org.getProfile(ProfileType.Full, config)}
+      {#await Profile.get(org.name ?? org.address, ProfileType.Full, config)}
         <div class="off-centered">
           <Loading center />
         </div>

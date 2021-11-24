@@ -146,7 +146,7 @@
         {#if orgs.length > 0}
           <div class="members">
             {#each orgs as org}
-              {#await Org.getProfile(org.address, ProfileType.Minimal, config)}
+              {#await Profile.get(org.address, ProfileType.Minimal, config)}
                 <Loading small margins />
               {:then profile}
                 <div class="member">

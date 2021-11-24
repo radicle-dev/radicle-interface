@@ -5,7 +5,6 @@
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
-  import { Org } from '@app/base/orgs/Org';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
   import { formatOrg } from '@app/utils';
@@ -25,7 +24,7 @@
   let projectRoot = proj.path({ urn, user, org, commit });
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
-      Org.getProjectProfile(org, config).then(p => resolve(p));
+      Profile.get(org, ProfileType.Project, config).then(p => resolve(p));
     } else if (user) {
       Profile.get(user, ProfileType.Project, config).then(p => resolve(p));
     } else {
