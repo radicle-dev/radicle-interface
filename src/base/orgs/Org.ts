@@ -7,7 +7,7 @@ import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Safe } from '@app/utils';
 import type { Config } from '@app/config';
-import type { Project } from '@app/project';
+import type { PendingProject, Project } from '@app/project';
 
 const GetProjects = `
   query GetProjects($org: ID!) {
@@ -69,14 +69,16 @@ export const GetSafe = `
 export class Org {
   address: string;
   owner: string;
-  name?: string;
+  name?: string | null;
+  safe?: Safe | null;
 
-  constructor(address: string, owner: string, name?: string) {
+  constructor(address: string, owner: string, name?: string | null, safe?: Safe | null) {
     assert(ethers.utils.isAddress(address), "address must be valid");
 
     this.address = address.toLowerCase(); // Don't store address checksum.
     this.owner = owner;
     this.name = name;
+    this.safe = safe;
   }
 
   async setName(name: string, config: Config): Promise<TransactionResponse> {
@@ -162,7 +164,9 @@ export class Org {
   }
 
   async getMembers(config: Config): Promise<Array<string>> {
-    const safe = await utils.getSafe(this.owner, config);
+    if (this.safe) return this.safe.owners;
+
+    const safe = await this.getSafe(config);
     if (safe) {
       return safe.owners;
     }
@@ -170,15 +174,17 @@ export class Org {
   }
 
   async getSafe(config: Config): Promise<Safe | null> {
+    if (this.safe) return this.safe;
+
     return utils.getSafe(this.owner, config);
   }
 
   async isMember(address: string, config: Config): Promise<boolean> {
     const members = await this.getMembers(config);
-    return members.includes(ethers.utils.getAddress(address));
+    return members.includes(address.toLowerCase());
   }
 
-  async getProjects(config: Config): Promise<Array<Project>> {
+  async getProjects(config: Config): Promise<Project[]> {
     const result = await utils.querySubgraph(
       config.orgs.subgraph, GetProjects, { org: this.address }
     );
@@ -200,6 +206,39 @@ export class Org {
       }
     }
     return projects;
+  }
+
+  async getPendingProjects(config: Config): Promise<PendingProject[]> {
+    if (! config.safe.client) return [];
+
+    const orgAddr = ethers.utils.getAddress(this.address);
+    const response = await config.safe.client.getPendingTransactions(
+      ethers.utils.getAddress(this.owner)
+    );
+    const projects: PendingProject[] = [];
+
+    for (const tx of response.results || []) {
+      if (tx.data && tx.to === orgAddr) {
+        const project = parseAnchorTx(tx.data, config);
+        const confirmations = tx.confirmations?.map(t => t.owner) || [];
+
+        if (project) {
+          projects.push({ ...project, confirmations, safeTxHash: tx.safeTxHash });
+        }
+      }
+    }
+    return projects;
+  }
+
+  async getAllProjects(config: Config): Promise<Array<Project | PendingProject>> {
+    const result = await Promise.allSettled([
+      this.getPendingProjects(config),
+      this.getProjects(config),
+    ]);
+
+    return result.flatMap(r => {
+      return r.status === "fulfilled" ? r.value : [];
+    });
   }
 
   static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
@@ -271,9 +310,12 @@ export class Org {
         org.resolvedAddress,
       ]);
 
+      const safe = await utils.getSafe(owner, config);
       // If what is resolved is not the same as the input, it's because we
       // were given a name.
-      if (utils.isAddressEqual(addressOrName, resolved)) {
+      if (utils.isAddressEqual(addressOrName, resolved) && safe) {
+        return new Org(resolved, owner, null, safe);
+      } else if (safe === null) {
         return new Org(resolved, owner);
       } else {
         return new Org(resolved, owner, addressOrName);
@@ -335,4 +377,22 @@ export class Org {
       gasLimit: config.gasLimits.createOrg
     });
   }
+}
+
+export function parseAnchorTx(data: string, config: Config): Project | null {
+  const iface = new ethers.utils.Interface(config.abi.org);
+  const parsedTx = iface.parseTransaction({ data });
+
+  if (parsedTx.name === "anchor") {
+    const encodedProjectUrn = parsedTx.args[0];
+    const encodedCommitHash = parsedTx.args[2];
+    const id = utils.formatRadicleId(
+      ethers.utils.arrayify(`${encodedProjectUrn}`)
+    );
+    const byteArray = ethers.utils.arrayify(encodedCommitHash);
+    const stateHash = utils.formatProjectHash(byteArray);
+
+    return { id, anchor: { stateHash } };
+  }
+  return null;
 }

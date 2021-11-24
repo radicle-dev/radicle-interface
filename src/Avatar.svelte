@@ -49,4 +49,4 @@
 </style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
-<img class="avatar" class:inline src={source} on:error={handleMissingFile} class:glowOnHover />
+<img class="avatar" class:inline src={source} title={address} on:error={handleMissingFile} class:glowOnHover />

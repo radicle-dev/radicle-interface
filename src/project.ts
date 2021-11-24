@@ -10,6 +10,11 @@ export interface Project {
   };
 }
 
+export interface PendingProject extends Project {
+  safeTxHash: string; // Safe transaction hash.
+  confirmations: string[]; // Owner addresses who have confirmed.
+}
+
 export interface Info {
   head: string;
   meta: Meta;

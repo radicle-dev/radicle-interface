@@ -2,7 +2,8 @@ import { ethers } from "ethers";
 import { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
-import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
+import EthersSafe, { EthersAdapter, TransactionResult } from "@gnosis.pm/safe-core-sdk";
+import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
@@ -427,4 +428,72 @@ export async function proposeSafeTransaction(
     safeTxHash,
     signature
   );
+}
+
+// Sign a Gnosis Safe multi-sig transaction.
+export async function signSafeTransaction(
+  safeAddress: string,
+  safeTxHash: string,
+  config: Config
+): Promise<SafeSignature> {
+  assert(config.signer);
+
+  const ethAdapter = new EthersAdapter({
+    ethers, signer: config.signer
+  });
+  const safeSdk = await EthersSafe.create({
+    ethAdapter, safeAddress
+  });
+  return await safeSdk.signTransactionHash(safeTxHash);
+}
+
+// Execute a Gnosis Safe signed transaction by safeTxHash.
+export async function executeSignedSafeTransaction(
+  safeAddress: string,
+  safeTxHash: string,
+  config: Config
+): Promise<TransactionResult> {
+  assert(config.signer);
+  assert(config.safe.client);
+
+  const ethAdapter = new EthersAdapter({
+    ethers, signer: config.signer
+  });
+  const safeSdk = await EthersSafe.create({
+    ethAdapter, safeAddress
+  });
+
+  const signedTx = await config.safe.client.getTransaction(safeTxHash);
+
+  assert(signedTx.data);
+  assert(signedTx.confirmations);
+
+  const safeTx = await safeSdk.createTransaction({
+    ...signedTx,
+    gasPrice: Number(signedTx.gasPrice),
+    data: signedTx.data
+  } );
+
+  signedTx.confirmations.forEach(confirmation => {
+    const signature = new EthSignSignature(confirmation.owner, confirmation.signature);
+    safeTx.addSignature(signature);
+  });
+
+  return await safeSdk.executeTransaction(safeTx);
+}
+
+export class EthSignSignature {
+  signer: string;
+  data: string;
+
+  constructor(signer: string, signature: string) {
+    this.signer = signer;
+    this.data = signature;
+  }
+  staticPart(): string {
+    return this.data;
+  }
+  dynamicPart(): string {
+    return '';
+  }
 }

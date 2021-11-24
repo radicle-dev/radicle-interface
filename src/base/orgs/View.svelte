@@ -8,15 +8,14 @@
   import Error from '@app/Error.svelte';
   import Icon from '@app/Icon.svelte';
   import SetName from '@app/ens/SetName.svelte';
-  import Project from '@app/base/projects/Widget.svelte';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
-  import Message from '@app/Message.svelte';
   import * as utils from '@app/utils';
 
   import { Org } from '@app/base/orgs/Org';
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import { Profile, ProfileType } from '@app/profile';
+  import Projects from './View/Projects.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -136,12 +135,6 @@
   .seed-icon {
     width: 1rem;
     margin-right: 0.5rem;
-  }
-  .projects {
-    margin-top: 2rem;
-  }
-  .projects .project {
-    margin-bottom: 1rem;
   }
   .members {
     margin-top: 2rem;
@@ -326,21 +319,7 @@
           {/if}
         {/await}
 
-        <div class="projects">
-          {#await org.getProjects(config)}
-            <Loading center />
-          {:then projects}
-            {#each projects as project}
-              <div class="project">
-                <Project {project} org={profile.nameOrAddress} config={profile.config(config)} />
-              </div>
-            {/each}
-          {:catch err}
-            <Message error>
-              <strong>Error: </strong> failed to load projects: {err.message}.
-            </Message>
-          {/await}
-        </div>
+        <Projects {org} {config} />
       {/await}
     </main>
   {:else}
