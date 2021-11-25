@@ -132,6 +132,35 @@ export class Org {
     return org.setOwner(address);
   }
 
+  async setOwnerMultisig(owner: string, config: Config): Promise<void> {
+    assert(config.signer);
+    assert(config.safe.client);
+
+    const safeAddress = ethers.utils.getAddress(this.owner);
+    const orgAddress = ethers.utils.getAddress(this.address);
+    const org = new ethers.Contract(
+      this.address,
+      config.abi.org,
+      config.signer
+    );
+    const unsignedTx = await org.populateTransaction.setOwner(
+      owner
+    );
+
+    const txData = unsignedTx.data;
+    if (! txData) {
+      throw new Error("Org::setOwnerMultisig: Could not generate transaction for `setOwner` call");
+    }
+
+    const safeTx = {
+      to: orgAddress,
+      value: ethers.constants.Zero.toString(),
+      data: txData,
+      operation: OperationType.Call,
+    };
+    await utils.proposeSafeTransaction(safeTx, safeAddress, config);
+  }
+
   async getMembers(config: Config): Promise<Array<string>> {
     const safe = await utils.getSafe(this.owner, config);
     if (safe) {

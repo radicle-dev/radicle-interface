@@ -63,6 +63,7 @@
       }
     }
   };
+  $: account = $session && $session.address;
   $: isOwner = (org: Org): boolean => $session
     ? utils.isAddressEqual(org.owner, $session.address)
     : false;
@@ -220,7 +221,7 @@
           <div class="label">Owner</div>
           <div><Address resolve {config} address={org.owner} /></div>
           <div>
-            {#if isOwner(org)}
+            {#if isOwner(org) || (account && org.isMember(account, config))}
               <button class="tiny secondary" on:click={transferOwnership}>
                 Transfer
               </button>

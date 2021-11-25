@@ -5,6 +5,8 @@
   import { formatAddress, isAddress } from "@app/utils";
   import Loading from '@app/Loading.svelte';
   import { assert } from '@app/error';
+  import * as utils from '@app/utils';
+  import Address from '@app/Address.svelte';
 
   import type { Org } from './Org';
 
@@ -15,9 +17,16 @@
 
   enum State {
     Idle,
+
+    // Single sig states.
     Signing,
     Pending,
     Success,
+
+    // Multi sig states.
+    Proposing,
+    Proposed,
+
     Failed,
   }
 
@@ -43,12 +52,18 @@
       return;
     }
 
-    state = State.Signing;
     try {
-      let tx = await org.setOwner(newOwner, config);
-      state = State.Pending;
-      await tx.wait();
-      state = State.Success;
+      if (org && await utils.isSafe(org.owner, config)) {
+        state = State.Proposing;
+        await org.setOwnerMultisig(newOwner, config);
+        state = State.Proposed;
+      } else {
+        state = State.Signing;
+        let tx = await org.setOwner(newOwner, config);
+        state = State.Pending;
+        await tx.wait();
+        state = State.Success;
+      }
     } catch (e) {
       console.error(e);
       state = State.Failed;
@@ -74,6 +89,24 @@
       </button>
     </div>
   </Modal>
+{:else if state === State.Proposed && org}
+  <Modal floating>
+    <div slot="title">
+      🪴
+    </div>
+
+    <div slot="subtitle">
+      <p>The transaction to set the owner of <strong>{formatAddress(org.address)}</strong>
+      to <strong>{newOwner}</strong> was proposed to:</p>
+      <p><Address address={org.owner} {config} compact /></p>
+    </div>
+
+    <div slot="actions">
+      <button class="small" on:click={() => dispatch('close')}>
+        Done
+      </button>
+    </div>
+  </Modal>
 {:else}
   <Modal floating error={state == State.Failed} small={state == State.Failed}>
     <div slot="title">
@@ -86,6 +119,10 @@
         Please confirm the transaction in your wallet.
       {:else if state == State.Pending}
         Waiting for transaction to be processed...
+      {:else if state == State.Proposing && org}
+        Proposal is being submitted to the safe
+        <strong>{formatAddress(org.owner)}</strong>,
+        please sign the transaction in your wallet.
       {:else if state == State.Idle}
         Transfer the ownership of Org <strong>{formatAddress(org.address)}</strong> to a new address.
       {:else if state == State.Failed}
@@ -98,7 +135,7 @@
     <div slot="body">
       {#if state == State.Idle}
         <input type="text" size="40" disabled={state !== State.Idle} bind:this={input} bind:value={newOwner} />
-      {:else if state == State.Pending || state == State.Signing}
+      {:else if state == State.Pending || state == State.Proposing || state == State.Signing}
         <Loading small center />
       {:else if state == State.Failed}
         <!-- ... -->
