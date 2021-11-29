@@ -319,7 +319,7 @@
           {/if}
         {/await}
 
-        <Projects {org} {config} />
+        <Projects {org} config={profile.seed ? config.withSeed(profile.seed) : config} />
       {/await}
     </main>
   {:else}
