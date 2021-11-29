@@ -19,7 +19,5 @@ describe('Projects', () => {
     cy.contains(`name = "radicle-tools"`);
     cy.contains("abis").click();
     cy.contains("account").click();
-    cy.contains("Cargo.toml").click();
-    cy.contains(`name = "rad-account"`);
   });
 });
