@@ -35,6 +35,8 @@
   let cloneDropdown = false;
   // Whether the seed dropdown is visible.
   let seedDropdown = false;
+  // Whether the mobile file tree is visible.
+  let mobileFileTree = false;
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
     if (state.status == Status.Loaded && state.path === path) {
@@ -59,6 +61,8 @@
     const blob = await loadBlob(path);
     getBlob = new Promise(resolve => resolve(blob));
 
+    // Close mobile tree if user navigates to other file
+    mobileFileTree = false;
     navigateBrowser(commit, path);
   };
 
@@ -77,6 +81,10 @@
 
   const fetchTree = async (path: string) => {
     return proj.getTree(urn, commit, path, config);
+  };
+
+  const toggleMobileFileTree = () => {
+    mobileFileTree = !mobileFileTree;
   };
 
   // This is reactive to respond to path changes that don't originate from this
@@ -252,8 +260,8 @@
 
   .source-tree {
     overflow-x: hidden;
+    padding-top: 1rem;
   }
-
   .file-not-found {
     text-align: center;
     border-radius: 0.25rem;
@@ -267,10 +275,53 @@
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
+  .desktop {
+    display: default;
+  }
+  .mobile {
+    display: none !important;
+  }
+  nav {
+    padding: 0 2rem;
+  }
 
   @media (max-width: 800px) {
     main > header, .container {
       padding-left: 2rem;
+    }
+    main > header {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  @media (max-width: 720px) {
+    button.browse {
+      width: 100%;
+      border-color: var(--color-secondary-faded);
+    }
+    .mobile {
+      display: block !important;
+    }
+    .desktop {
+      display: none !important;
+    }
+    .column-right {
+      padding: 1rem 0;
+      min-width: 0;
+    }
+    .dropdown {
+      left: 32px;
+      z-index: 10;
+    }
+    .container {
+      flex-direction: column;
+    }
+    .column-left {
+      display: none;
+      padding-right: 0;
+    }
+    .column-left-visible {
+      display: block;
     }
   }
 </style>
@@ -286,11 +337,14 @@
             {project.meta.defaultBranch}
           </div>
           <div class="hash">
-            {commit.slice(0, 7)}
+            {utils.formatCommit(commit)}
           </div>
         {:else}
-          <div class="hash">
+          <div class="hash desktop">
             {commit}
+          </div>
+          <div class="hash mobile">
+            {utils.formatCommit(commit)}
           </div>
         {/if}
       </div>
@@ -356,9 +410,17 @@
         <strong>{tree.stats.contributors}</strong> contributor(s)
       </div>
     </header>
+
+    <!-- Mobile navigation -->
+    <nav class="mobile">
+      <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
+        Browse
+      </button>
+    </nav>
+
     <div class="container center-content">
       {#if tree.entries.length}
-        <div class="column-left">
+        <div class="column-left" class:column-left-visible={mobileFileTree}>
           <div class="source-tree">
             <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
           </div>

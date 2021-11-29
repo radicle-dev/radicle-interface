@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { SvelteComponent } from 'svelte';
   import type { Config } from '@app/config';
-  import { formatName, explorerLink } from '@app/utils';
+  import { formatName, explorerLink, formatAddress } from '@app/utils';
   import { session } from '@app/session';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
@@ -16,6 +16,7 @@
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import Projects from './View/Projects.svelte';
+  import Link from '@app/Link.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -124,6 +125,12 @@
     align-items: center;
     justify-content: left;
   }
+  .overflow-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
@@ -140,6 +147,7 @@
     margin-top: 2rem;
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
   }
   .members .member {
     display: flex;
@@ -149,10 +157,34 @@
   .members .member:last-child {
     margin-right: 0;
   }
+  .mobile {
+    display: none !important;
+  }
+  .desktop {
+    display: block !important;
+  }
   .members .member-icon {
     width: 2rem;
     height: 2rem;
     margin-right: 1rem;
+  }
+  @media (max-width: 720px) {
+    main {
+      width: 100%;
+      padding: 1.5rem;
+    }
+    .fields {
+      grid-template-columns: 5rem auto;
+    }
+    .members .member {
+      margin-right: 1rem;
+    }
+    .mobile {
+      display: block !important;
+    }
+    .desktop {
+      display: none !important;
+    }
   }
 </style>
 
@@ -178,8 +210,11 @@
           </div>
           <div class="info">
             <span class="title">
-              <span class="bold">
+              <span class="bold desktop">
                 {profile.name ? formatName(profile.name, config) : profile.address}
+              </span>
+              <span class="bold mobile">
+                {profile.name ? formatName(profile.name, config) : formatAddress(profile.address)}
               </span>
               {#if profile.name && profile.address === org.owner}
                 <span class="badge">org</span>
@@ -188,7 +223,12 @@
             <div class="links">
               {#if profile.url}
                 <a class="url" href={profile.url}>
-                  {profile.url}
+                  <span class="mobile">
+                    <Icon name="url" inline />
+                  </span>
+                  <span class="desktop">
+                    {profile.url}
+                  </span>
                 </a>
               {/if}
               {#if profile.twitter}
@@ -208,12 +248,14 @@
         <div class="fields">
           <!-- Address -->
           <div class="label">Address</div>
-          <div><Address {config} address={org.address} /></div>
-          <div></div>
+          <div class="desktop"><Address {config} address={org.address} /></div>
+          <div class="mobile"><Address compact {config} address={org.address} /></div>
+          <div class="desktop" />
           <!-- Owner -->
           <div class="label">Owner</div>
-          <div><Address resolve {config} address={org.owner} /></div>
-          <div>
+          <div class="desktop"><Address resolve {config} address={org.owner} /></div>
+          <div class="mobile"><Address compact resolve {config} address={org.owner} /></div>
+          <div class="desktop">
             {#if isOwner(org) || (account && org.isMember(account, config))}
               <button class="tiny secondary" on:click={transferOwnership}>
                 Transfer
@@ -228,18 +270,27 @@
                   {` ${utils.formatBalance(token.balance)} ${token.symbol} `}
                 {/each}
               </div>
-              <div></div>
+              <div class="desktop" />
             {/if}
           {/await}
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
-            <div class="seed-address">
+            <div class="mobile">
+              <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
+                {#if seedCopied}
+                  Copy ✓
+                {:else}
+                  Copy
+                {/if}
+              </button>
+            </div>
+            <div class="seed-address desktop">
               <span class="seed-icon">🌱</span>{
                 utils.formatSeedId(profile.seedId)}@{profile.seedHost
               }<span class="faded">:{config.seed.link.port}</span>
             </div>
-            <div>
+            <div class="desktop">
               <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
                 {#if seedCopied}
                   Copy ✓
@@ -253,14 +304,14 @@
           <div class="label">Profile</div>
           <!-- Only show the name if we aren't already using the name of the owner -->
           {#if utils.isAddressEqual(profile.address, org.address)}
-            <div>
+            <div class="overflow-text">
               {#if profile.name}
                 <a href={profile.registry(config)} class="link">{profile.name}</a>
               {:else}
                 <span class="subtle">Not set</span>
               {/if}
             </div>
-            <div>
+            <div class="desktop">
               {#await isAuthorized(org)}
                 <!-- Loading -->
               {:then authorized}
@@ -275,7 +326,7 @@
             <div class="subtle">
               Using owner's profile.
             </div>
-            <div>
+            <div class="desktop">
               {#await isAuthorized(org) then authorized}
                 {#if authorized}
                   <button class="tiny secondary" on:click={setName}>
@@ -292,7 +343,7 @@
               <div>
                 {safe.threshold} <span class="faded">of</span> {safe.owners.length}
               </div>
-              <div></div>
+              <div class="desktop"/>
             {/if}
           {/await}
         </div>
@@ -308,10 +359,14 @@
                 {#each members as profile}
                   <div class="member">
                     <div class="member-icon">
-                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      <Link to="/users/{profile.address}">
+                        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      </Link>
                     </div>
-                    <Address address={profile.address} compact
-                      resolve noAvatar {profile} {config} />
+                    <div class="desktop">
+                      <Address address={profile.address} compact
+                        resolve noAvatar {profile} {config} />
+                    </div>
                   </div>
                 {/each}
               {/await}

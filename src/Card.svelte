@@ -54,6 +54,12 @@
     font-size: 0.875rem;
     color: var(--color-foreground-faded);
   }
+
+  @media (max-width: 720px) {
+    .card {
+      margin-right: 0;
+    }
+  }
 </style>
 
 <Link to={path}>

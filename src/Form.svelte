@@ -34,9 +34,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import marked from 'marked';
-  import { capitalize, isUrl, isAddress } from '@app/utils';
+  import { capitalize, isUrl, isAddress, formatSeedId } from '@app/utils';
   import Address from '@app/Address.svelte';
   import type { Config } from '@app/config';
+  import Icon from "@app/Icon.svelte";
 
   export let fields: Field[];
   export let editable = false;
@@ -82,7 +83,7 @@
 <style>
   .fields {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 6rem auto;
     grid-gap: 1rem 1.5rem;
   }
   .fields > div {
@@ -145,6 +146,24 @@
   .actions.editable {
     visibility: visible;
   }
+  .mobile {
+    display: none !important;
+  }
+  .desktop {
+    display: block !important;
+  }
+
+  @media (max-width: 720px) {
+    .mobile {
+      display: block !important;
+    }
+    .desktop {
+      display: none !important;
+    }
+    .field {
+      width: unset;
+    }
+  }
 </style>
 
 <div class="fields">
@@ -160,11 +179,26 @@
         <span class="field">
           {#if field.value}
             {#if isUrl(field.value)}
-              <span>
+              <span class="desktop">
                 <a class="link" href="{field.value}" target="_blank">{field.value}</a>
               </span>
+              <span class="mobile" title={field.value}>
+                <Icon name="url" />
+              </span>
             {:else if isAddress(field.value)}
-              <Address resolve={field.resolve ?? false} address={field.value} {config} />
+              <div class="desktop">
+                <Address resolve={field.resolve ?? false} address={field.value} {config} />
+              </div>
+              <div class="mobile">
+                <Address compact resolve={field.resolve ?? false} address={field.value} {config} />
+              </div>
+            {:else if (field.label === "Seed ID")}
+              <div class="mobile">
+                {formatSeedId(field.value)}
+              </div>
+              <div class="desktop">
+                {field.value}
+              </div>
             {:else}
               {field.value}
             {/if}

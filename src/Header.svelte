@@ -11,12 +11,19 @@
   import { Profile, ProfileType } from "@app/profile";
   import Avatar from '@app/Avatar.svelte';
   import Search from '@app/Search.svelte';
+  import Icon from "./Icon.svelte";
+  import MobileNavbar from "./MobileNavbar.svelte";
 
   export let session: Session | null;
   export let config: Config;
 
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
+  let mobileNavbarDisplayed = false;
+
+  function toggleNavbar() {
+    mobileNavbarDisplayed = !mobileNavbarDisplayed;
+  }
 
   $: address = session && session.address;
   $: tokenBalance = session && session.tokenBalance;
@@ -107,6 +114,16 @@
     margin-left: 2rem;
     white-space: nowrap;
   }
+  div.toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    height: 42px;
+    width: 42px;
+    z-index: 2;
+    cursor: pointer;
+  }
 
   @media(max-width: 800px) {
     .balance {
@@ -114,7 +131,7 @@
     }
   }
   @media(max-width: 720px) {
-    .network {
+    .network, .search, header .nav, .balance {
       display: none;
     }
   }
@@ -184,5 +201,12 @@
         <Connect className="small" {config} />
       </span>
     {/if}
+    <div class="ellipsis toggle mobile" on:click={toggleNavbar}>
+      <Icon name="ellipsis" width={27} height={27} />
+    </div>
   </div>
+
+  {#if mobileNavbarDisplayed}
+    <MobileNavbar on:select={toggleNavbar} />
+  {/if}
 </header>

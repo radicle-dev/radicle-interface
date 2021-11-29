@@ -51,6 +51,14 @@
   .description :global(strong) {
     font-weight: var(--font-weight-medium);
   }
+  .desktop {
+    display: block !important;
+  }
+  @media (max-width: 720px) {
+    .desktop {
+      display: none !important;
+    }
+  }
 </style>
 
 <main>
@@ -63,7 +71,7 @@
         {option.label}
       </label>
       {#if option.description}
-        <div class="description">
+        <div class="description desktop">
           {@html marked(option.description.join("\n"))}
         </div>
       {/if}

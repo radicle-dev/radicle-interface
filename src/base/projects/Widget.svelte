@@ -5,6 +5,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Blockies from '@app/Blockies.svelte';
+  import { formatCommit, formatRadicleUrn } from '@app/utils';
 
   enum Status { Loading, Loaded, Error }
 
@@ -112,35 +113,54 @@
     height: 1.25rem;
     font-size: 0.5rem;
   }
+  .mobile {
+    display: none !important;
+  }
+  .desktop {
+    display: block !important;
+  }
+  @media (max-width: 720px) {
+    article {
+      min-width: 0;
+    }
+    .mobile {
+      display: block !important;
+    }
+    .desktop {
+      display: none !important;
+    }
+  }
 </style>
 
 <article on:click={onClick} class:has-info={info} class:project-faded={faded}>
   {#if info}
     <div class="id">
-      <span class="name">{info.meta.name}</span><span class="urn">{project.id}</span>
+      <span class="name">{info.meta.name}</span>
+      <span class="urn desktop">{project.id}</span>
     </div>
     <div class="description">{info.meta.description}</div>
     <div class="anchor">
-      <span class="commit">commit {project.anchor.stateHash}</span>
-      <span class="actions">
-        <slot name="actions">
-          {#each info.meta.maintainers as urn}
-            <span class="avatar">
-              <Blockies address={urn} />
-            </span>
-          {/each}
-        </slot>
+      <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+      <span class="desktop">commit {project.anchor.stateHash}</span>
+      <span>
+        {#each info.meta.maintainers as urn}
+          <span class="avatar">
+            <Blockies address={urn} />
+          </span>
+        {/each}
       </span>
     </div>
   {:else}
     <div class="id">
-      <span>{project.id}</span>
+      <span class="desktop">{project.id}</span>
+      <span class="mobile">{formatRadicleUrn(project.id)}</span>
       {#if state.status == Status.Loading}
         <Loading small />
       {/if}
     </div>
     <div class="anchor">
-      <span class="commit">commit {project.anchor.stateHash}</span>
+      <span class="commit mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+      <span class="commit desktop">commit {project.anchor.stateHash}</span>
       <span class="actions">
         <slot name="actions">
         </slot>

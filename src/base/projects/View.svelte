@@ -71,13 +71,6 @@
   main > header {
     padding: 0 2rem 0 8rem;
   }
-
-  @media (max-width: 800px) {
-    main > header {
-      padding-left: 2rem;
-    }
-  }
-
   .title {
     display: inline-flex;
     align-items: center;
@@ -99,9 +92,30 @@
     font-family: var(--font-family-monospace);
     font-size: 0.75rem;
     color: var(--color-foreground-faded);
+    overflow-wrap: anywhere;
   }
   .description {
     margin: 1rem 0 1.5rem 0;
+  }
+
+  @media (max-width: 800px) {
+    main > header {
+      padding-left: 2rem;
+    }
+    main {
+      padding-top: 2rem;
+      min-width: 0;
+    }
+    .title {
+      font-size: 1.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .org-avatar {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 </style>
 

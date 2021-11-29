@@ -53,6 +53,15 @@
     margin-top: 1rem;
     text-align: center;
   }
+  @media (max-width: 720px) {
+    .blurb {
+      max-width: none;
+      font-size: 1rem;
+    }
+    .heading {
+      font-size: 1rem;
+    }
+  }
 </style>
 
 <svelte:head>

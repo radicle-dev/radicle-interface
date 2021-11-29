@@ -1,9 +1,15 @@
 <script lang="ts">
   import { navigate } from 'svelte-routing';
+  import { createEventDispatcher } from 'svelte';
+
+  export let size = 40;
 
   let input = "";
+
+  const dispatch = createEventDispatcher();
   const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
+      dispatch("search");
       navigate(`/resolver/query?${
         new URLSearchParams({ q: input })
       }`);
@@ -24,7 +30,7 @@
 </style>
 
 <input
-    size="40"
+    size="{size}"
     type="text"
     bind:value={input}
     on:keydown={handleKeydown}

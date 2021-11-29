@@ -82,6 +82,12 @@ export function formatSeedId(id: string): string {
     + id.substring(id.length - 6, id.length);
 }
 
+export function formatRadicleUrn(id: string): string {
+  return id.substring(0, 14)
+    + '…'
+    + id.substring(id.length - 6, id.length);
+}
+
 export function formatBalance(n: BigNumber): string {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
 }
@@ -110,6 +116,10 @@ export function formatHash(hash: string): string {
     + hash.substring(hash.length - 4, hash.length);
 }
 
+export function formatCommit(oid: string): string {
+  return oid.substring(0,7);
+}
+
 export function formatOrg(input: string, config: Config): string {
   if (isAddress(input)) {
     return ethers.utils.getAddress(input);
@@ -130,6 +140,22 @@ export function parseEnsLabel(name: string, config: Config): string {
   const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
   return label;
+}
+
+export function clickOutside(node: HTMLElement, onEventFunction: () => void): any {
+  const handleClick = (event: any) => {
+    const path = event.composedPath();
+    if (!path.includes(node)) {
+      onEventFunction();
+    }
+  };
+  document.addEventListener("click", handleClick, true);
+
+  return {
+    destroy() {
+      document.removeEventListener("click", handleClick, true);
+    }
+  };
 }
 
 // Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".

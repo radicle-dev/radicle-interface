@@ -79,7 +79,7 @@ body {
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.6;
-	min-width: 580px;
+	min-width: var(--content-min-width);
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -90,6 +90,12 @@ body {
 	scrollbar-width: thin;
 	scrollbar-height: thin;
 	scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+@media (max-width: 720px) {
+  body {
+    min-width: 0;
+  }
 }
 
 html {
@@ -217,7 +223,7 @@ button.small {
 	min-width: 6rem;
 }
 button.tiny {
-	min-width: 0;
+	min-width: auto;
 	padding: 0 0.75rem;
 	height: 2rem;
 }

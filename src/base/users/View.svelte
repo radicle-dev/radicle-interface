@@ -101,6 +101,31 @@
     height: 2rem;
     margin-right: 1rem;
   }
+  .mobile {
+    display: none !important;
+  }
+  .desktop {
+    display: block !important;
+  }
+  @media (max-width: 720px) {
+    .fields {
+      grid-template-columns: 5rem auto;
+    }
+    main {
+      width: 100%;
+      padding-right: 1.5rem;
+      padding-left: 1.5rem;
+    }
+    .members .member {
+      margin-right: 1rem;
+    }
+    .mobile {
+      display: block !important;
+    }
+    .desktop {
+      display: none !important;
+    }
+  }
 </style>
 
 <svelte:head>
@@ -121,7 +146,14 @@
         </span>
         <div class="links">
           {#if profile.url}
-            <a class="url" href={profile.url}>{profile.url}</a>
+            <a class="url" href={profile.url}>
+              <div class="mobile">
+                <Icon name="url" inline />
+              </div>
+              <div class="desktop">
+                {profile.url}
+              </div>
+            </a>
           {/if}
           {#if profile.twitter}
             <a class="url" href="https://twitter.com/{profile.twitter}">
@@ -139,13 +171,15 @@
       <div class="fields">
         <!-- Address -->
         <div class="label">Address</div>
-        <div><Address {config} address={profile.address} /></div>
-        <div></div>
+        <div class="desktop"><Address {config} address={profile.address} /></div>
+        <div class="mobile"><Address compact {config} address={profile.address} /></div>
+        <div class="desktop" />
         <!-- Project anchors -->
         {#if profile.anchorsAccount}
           <div class="label">Anchors</div>
-          <div><Address {config} address={profile.anchorsAccount} /></div>
-          <div></div>
+          <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
+          <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
+          <div class="desktop" />
         {/if}
         <!-- Profile -->
         <div class="label">Profile</div>
@@ -156,7 +190,7 @@
             <span class="subtle">Not set</span>
           {/if}
         </div>
-        <div>
+        <div class="desktop">
           {#if (isAuthorized(profile.address))}
             <button class="tiny secondary" on:click={setName}>
               Set
@@ -177,8 +211,14 @@
                   <div class="member-icon">
                     <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                   </div>
-                  <Address address={profile.address} compact
-                    resolve noBadge noAvatar {profile} {config} />
+                  <div class="desktop">
+                    <Address address={profile.address}
+                      resolve noBadge noAvatar {profile} {config} />
+                  </div>
+                  <div class="mobile">
+                    <Address address={profile.address} compact
+                      resolve noBadge noAvatar {profile} {config} />
+                  </div>
                 </div>
               {/await}
             {/each}

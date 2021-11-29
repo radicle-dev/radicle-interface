@@ -140,6 +140,13 @@
   main > header > * {
     margin: 0 1rem 0 0;
   }
+  @media (max-width: 720px) {
+    main {
+      width: 100%;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
 </style>
 
 <svelte:head>
@@ -172,6 +179,7 @@
     <header>
       <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
       <button
+        style="min-width: 60px;"
         class="tiny primary" class:active={editable} disabled={!isOwner(state.owner)}
         on:click={() => editable = !editable}>
           Edit

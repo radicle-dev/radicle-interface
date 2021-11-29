@@ -16,9 +16,6 @@
   // This property allows components eg. Header.svelte to pass a resolved profile object.
   export let profile: Profile | null = null;
 
-  let checksumAddress = compact
-    ? formatAddress(address)
-    : ethers.utils.getAddress(address);
   let addressType: AddressType | null = null;
 
   const nameOrAddress = profile?.name || address;
@@ -30,6 +27,9 @@
     }
   });
   $: addressLabel = profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
+  $: checksumAddress = compact
+    ? formatAddress(address)
+    : ethers.utils.getAddress(address);
 </script>
 
 <style>
@@ -63,7 +63,7 @@
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge">contract</span>
   {:else if addressType === AddressType.EOA}
-    <a href={`/users/${nameOrAddress}`}>{addressLabel}</a>
+    <a use:link href={`/users/${nameOrAddress}`}>{addressLabel}</a>
   {:else} <!-- While we're waiting to find out what address type it is -->
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
   {/if}
