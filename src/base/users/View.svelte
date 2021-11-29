@@ -10,7 +10,7 @@
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import { session } from '@app/session';
-  import { isAddressEqual } from '@app/utils';
+  import { isAddressEqual, watchBrowserWidth } from '@app/utils';
   import Error from '@app/Error.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import { User } from '@app/base/users/User';
@@ -24,6 +24,7 @@
   const setName = () => {
     setNameForm = SetName;
   };
+  let compact = watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
 
   $: isAuthorized = (address: string): boolean | null => {
     return $session && isAddressEqual(address, $session.address);
@@ -101,6 +102,16 @@
     height: 2rem;
     margin-right: 1rem;
   }
+  @media (max-width: 720px) {
+    .fields {
+      grid-template-columns: 5rem auto;
+    }
+    main {
+      width: unset;
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+  }
 </style>
 
 <svelte:head>
@@ -140,12 +151,16 @@
         <!-- Address -->
         <div class="label">Address</div>
         <div><Address {config} address={profile.address} /></div>
-        <div></div>
+        {#if ! compact}
+          <div/>
+        {/if}
         <!-- Project anchors -->
         {#if profile.anchorsAccount}
           <div class="label">Anchors</div>
           <div><Address {config} address={profile.anchorsAccount} /></div>
-          <div></div>
+          {#if ! compact}
+            <div/>
+          {/if}
         {/if}
         <!-- Profile -->
         <div class="label">Profile</div>
@@ -156,13 +171,15 @@
             <span class="subtle">Not set</span>
           {/if}
         </div>
-        <div>
-          {#if (isAuthorized(profile.address))}
-            <button class="tiny secondary" on:click={setName}>
-              Set
-            </button>
-          {/if}
-        </div>
+        {#if ! compact}
+          <div>
+            {#if (isAuthorized(profile.address))}
+              <button class="tiny secondary" on:click={setName}>
+                Set
+              </button>
+            {/if}
+          </div>
+        {/if}
       </div>
       {#await Org.getOrgsByMember(profile.address, config)}
         <Loading center />

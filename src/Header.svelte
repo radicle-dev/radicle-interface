@@ -1,6 +1,6 @@
 <script lang="ts">
   import { link } from "svelte-routing";
-  import { formatAddress, formatBalance } from "@app/utils";
+  import { formatAddress, formatBalance, watchBrowserWidth } from "@app/utils";
   import { error, Failure } from '@app/error';
   import { disconnectWallet } from "@app/session";
   import type { Session } from '@app/session';
@@ -11,12 +11,21 @@
   import { Profile, ProfileType } from "@app/profile";
   import Avatar from '@app/Avatar.svelte';
   import Search from '@app/Search.svelte';
+  import Icon from "./Icon.svelte";
+  import MobileNavbar from "./MobileNavbar.svelte";
 
   export let session: Session | null;
   export let config: Config;
 
   let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
+  let mobileNavbarDisplayed = false;
+
+  let compact = watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
+
+  function toggleNavbar() {
+    mobileNavbarDisplayed = !mobileNavbarDisplayed;
+  }
 
   $: address = session && session.address;
   $: tokenBalance = session && session.tokenBalance;
@@ -107,6 +116,21 @@
     margin-left: 2rem;
     white-space: nowrap;
   }
+  div.toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    border: 1px solid white;
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+    z-index: 500;
+  }
+
+  div .toggle:hover {
+    cursor: pointer;
+  }
 
   @media(max-width: 800px) {
     .balance {
@@ -114,7 +138,7 @@
     }
   }
   @media(max-width: 720px) {
-    .network {
+    .network, .search, header .nav, .balance {
       display: none;
     }
   }
@@ -184,5 +208,12 @@
         <Connect className="small" {config} />
       </span>
     {/if}
+    {#if compact}
+      <div on:click={toggleNavbar} class="toggle"><Icon name="ellipsis" width={27} height={27} /></div>
+    {/if}
   </div>
+
+  {#if mobileNavbarDisplayed}
+    <MobileNavbar />
+  {/if}
 </header>

@@ -9,6 +9,7 @@
   import Loading from '@app/Loading.svelte';
   import Options from '@app/Options.svelte';
   import Address from '@app/Address.svelte';
+  import { watchBrowserWidth } from '@app/utils';
 
   export let config: Config;
   export let owner: string;
@@ -25,9 +26,10 @@
     Quorum = "quorum",
   }
 
+  let compact = watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
   const orgTypes = [
     { label: "Multi-signature",
-      description: [
+      description: compact ? ["Creates an org with a multi-signature contract as its owner"] : [
         "Creates an org with a multi-signature contract as its owner, and the specified account as the first member.",
         "A [Gnosis Safe](https://gnosis-safe.io) will be deployed for your org.",
         "Transactions such as anchoring have to be approved by a quorum of signers."
@@ -35,7 +37,7 @@
       value: Governance.Quorum
     },
     { label: "Existing owner",
-      description: [
+      description: compact ? ["Creates an org with the specified account as the sole owner."] : [
         `Creates an org with the specified account as the sole owner.`,
         `Org transactions such as anchoring are signed and executed from that account.`,
         `This option allows for using an existing contract or EOA as the owner of the org.`

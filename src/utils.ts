@@ -82,6 +82,12 @@ export function formatSeedId(id: string): string {
     + id.substring(id.length - 6, id.length);
 }
 
+export function formatRadicleUrn(id: string): string {
+  return id.substring(0, 14)
+    + '…'
+    + id.substring(id.length - 6, id.length);
+}
+
 export function formatBalance(n: BigNumber): string {
   return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
 }
@@ -108,6 +114,10 @@ export function formatHash(hash: string): string {
   return hash.substring(0, 6)
     + '...'
     + hash.substring(hash.length - 4, hash.length);
+}
+
+export function formatCommit(oid: string): string {
+  return oid.substring(0,6);
 }
 
 export function formatOrg(input: string, config: Config): string {
@@ -238,6 +248,12 @@ export function formatRadicleId(hash: Uint8Array): string {
   const payload = multibase.encode("base32z", multihash);
 
   return `rad:git:${new TextDecoder().decode(payload)}`;
+}
+
+export function watchBrowserWidth(window: Window, mediaQuery: string, callback: (mql: any) => void): boolean {
+  window.matchMedia(mediaQuery).addEventListener("change", callback);
+  if (window.innerWidth < 720) { return true;}
+  return false;
 }
 
 // Parse a Radicle Id (URN).

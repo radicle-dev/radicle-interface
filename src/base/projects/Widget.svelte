@@ -5,6 +5,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Blockies from '@app/Blockies.svelte';
+import { formatCommit, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
 
   enum Status { Loading, Loaded, Error }
 
@@ -21,6 +22,8 @@
 
   let state: State = { status: Status.Loading };
   let info: proj.Info | null = null;
+
+  let compact = watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
 
   onMount(async () => {
     try {
@@ -112,24 +115,27 @@
     height: 1.25rem;
     font-size: 0.5rem;
   }
+  @media (max-width: 720px) {
+    article {
+      min-width: 0;
+    }
+  }
 </style>
 
 <article on:click={onClick} class:has-info={info} class:project-faded={faded}>
   {#if info}
     <div class="id">
-      <span class="name">{info.meta.name}</span><span class="urn">{project.id}</span>
+      <span class="name">{info.meta.name}</span><span class="urn">{compact ? formatRadicleUrn(project.id) : project.id}</span>
     </div>
     <div class="description">{info.meta.description}</div>
     <div class="anchor">
-      <span class="commit">commit {project.anchor.stateHash}</span>
-      <span class="actions">
-        <slot name="actions">
-          {#each info.meta.maintainers as urn}
-            <span class="avatar">
-              <Blockies address={urn} />
-            </span>
-          {/each}
-        </slot>
+      <span>commit {compact ? formatCommit(project.anchor.stateHash) : project.anchor.stateHash}</span>
+      <span>
+        {#each info.meta.maintainers as urn}
+          <span class="avatar">
+            <Blockies address={urn} />
+          </span>
+        {/each}
       </span>
     </div>
   {:else}
@@ -139,12 +145,6 @@
         <Loading small />
       {/if}
     </div>
-    <div class="anchor">
-      <span class="commit">commit {project.anchor.stateHash}</span>
-      <span class="actions">
-        <slot name="actions">
-        </slot>
-      </span>
-    </div>
+    <div class="anchor">commit {compact ? formatCommit(project.anchor.stateHash) : project.anchor.stateHash}</div>
   {/if}
 </article>

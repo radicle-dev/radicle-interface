@@ -28,6 +28,11 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
+  @media (max-width: 720px) {
+    .list {
+      justify-content: center;
+    }
+  }
 </style>
 
   <div class="list">

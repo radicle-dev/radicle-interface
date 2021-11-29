@@ -91,6 +91,12 @@
   .modal-small .modal-subtitle {
     color: var(--color-foreground);
   }
+  @media (max-width: 720px) {
+    .modal {
+      width: 90%;
+      min-width: unset;
+    }
+  }
 </style>
 
 {#if floating}

@@ -21,6 +21,8 @@
   export let config: Config;
   export let action: string | null = null;
 
+  let compact = utils.watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
+
   const back = () => window.history.back();
 
   let setNameForm: typeof SvelteComponent | null =
@@ -140,11 +142,13 @@
     margin-top: 2rem;
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
   }
   .members .member {
     display: flex;
     align-items: center;
     margin-right: 2rem;
+    padding-bottom: 30px;
   }
   .members .member:last-child {
     margin-right: 0;
@@ -153,6 +157,23 @@
     width: 2rem;
     height: 2rem;
     margin-right: 1rem;
+  }
+  @media (max-width: 720px) {
+    main {
+      width: unset;
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+    .members .member:last-child {
+      padding-bottom: 0;
+    }
+    .members {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .fields {
+      grid-template-columns: 5rem auto;
+    }
   }
 </style>
 
@@ -188,7 +209,11 @@
             <div class="links">
               {#if profile.url}
                 <a class="url" href={profile.url}>
-                  {profile.url}
+                  {#if compact}
+                    <Icon name="url" inline />
+                  {:else}
+                    {profile.url}
+                  {/if}
                 </a>
               {/if}
               {#if profile.twitter}
@@ -209,17 +234,21 @@
           <!-- Address -->
           <div class="label">Address</div>
           <div><Address {config} address={org.address} /></div>
-          <div></div>
+          {#if ! compact}
+            <div/>
+          {/if}
           <!-- Owner -->
           <div class="label">Owner</div>
           <div><Address resolve {config} address={org.owner} /></div>
-          <div>
-            {#if isOwner(org) || (account && org.isMember(account, config))}
-              <button class="tiny secondary" on:click={transferOwnership}>
-                Transfer
-              </button>
-            {/if}
-          </div>
+          {#if ! compact}
+            <div>
+              {#if isOwner(org) || (account && org.isMember(account, config))}
+                <button class="tiny secondary" on:click={transferOwnership}>
+                  Transfer
+                </button>
+              {/if}
+            </div>
+          {/if}
           {#await getOrgTreasury(org) then tokens}
             {#if tokens && tokens.length > 0}
               <div class="label">Treasury</div>
@@ -228,26 +257,40 @@
                   {` ${utils.formatBalance(token.balance)} ${token.symbol} `}
                 {/each}
               </div>
-              <div></div>
+              {#if ! compact}
+                <div/>
+              {/if}
             {/if}
           {/await}
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
-            <div class="seed-address">
-              <span class="seed-icon">🌱</span>{
-                utils.formatSeedId(profile.seedId)}@{profile.seedHost
-              }<span class="faded">:{config.seed.link.port}</span>
-            </div>
-            <div>
-              <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
-                {#if seedCopied}
-                  Copy ✓
-                {:else}
-                  Copy
-                {/if}
-              </button>
-            </div>
+            {#if compact}
+              <div>🌱 
+                <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
+                  {#if seedCopied}
+                    Copy ✓
+                  {:else}
+                    Copy
+                  {/if}
+                </button>
+              </div>
+            {:else}
+              <div class="seed-address">
+                <span class="seed-icon">🌱</span>{
+                  utils.formatSeedId(profile.seedId)}@{profile.seedHost
+                }<span class="faded">:{config.seed.link.port}</span>
+              </div>
+              <div>
+                <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
+                  {#if seedCopied}
+                    Copy ✓
+                  {:else}
+                    Copy
+                  {/if}
+                </button>
+              </div>
+            {/if}
           {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>
@@ -260,30 +303,34 @@
                 <span class="subtle">Not set</span>
               {/if}
             </div>
-            <div>
-              {#await isAuthorized(org)}
-                <!-- Loading -->
-              {:then authorized}
-                {#if authorized}
-                  <button class="tiny secondary" on:click={setName}>
-                    Set
-                  </button>
-                {/if}
-              {/await}
-            </div>
+            {#if ! compact}
+              <div>
+                {#await isAuthorized(org)}
+                  <!-- Loading -->
+                {:then authorized}
+                  {#if authorized}
+                    <button class="tiny secondary" on:click={setName}>
+                      Set
+                    </button>
+                  {/if}
+                {/await}
+              </div>
+            {/if}
           {:else}
             <div class="subtle">
               Using owner's profile.
             </div>
-            <div>
-              {#await isAuthorized(org) then authorized}
-                {#if authorized}
-                  <button class="tiny secondary" on:click={setName}>
-                    Change
-                  </button>
-                {/if}
-              {/await}
-            </div>
+            {#if (! compact)}
+              <div>
+                {#await isAuthorized(org) then authorized}
+                  {#if authorized}
+                    <button class="tiny secondary" on:click={setName}>
+                      Change
+                    </button>
+                  {/if}
+                {/await}
+              </div>
+            {/if}
           {/if}
           <!-- Quorum -->
           {#await org.getSafe(config) then safe}
@@ -292,7 +339,9 @@
               <div>
                 {safe.threshold} <span class="faded">of</span> {safe.owners.length}
               </div>
-              <div></div>
+              {#if (! compact)}
+                <div/>
+              {/if}
             {/if}
           {/await}
         </div>
