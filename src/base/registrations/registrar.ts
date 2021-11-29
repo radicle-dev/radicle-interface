@@ -15,12 +15,12 @@ export interface Registration {
 }
 
 export class Seed {
-  id?: string;
-  host?: string;
-  git?: string;
-  api?: string;
+  id?: string | null;
+  host?: string | null;
+  git?: string | null;
+  api?: string | null;
 
-  constructor(id?: string, host?: string, git?: string, api?: string) {
+  constructor(id?: string | null, host?: string | null, git?: string | null, api?: string | null) {
     if (id && /^[a-z0-9]+$/.test(id)) {
       this.id = id;
     }

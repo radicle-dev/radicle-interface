@@ -59,9 +59,9 @@ export class Config {
   };
   abi: { [contract: string]: string[] };
   seed: {
-    api: { host?: string; port: number };
-    git: { host?: string; port: number };
-    link: { host?: string; id?: string; port: number };
+    api: { host?: string | null; port: number };
+    git: { host?: string | null; port: number };
+    link: { host?: string | null; id?: string | null; port: number };
   };
   ceramic: {
    client: Core;

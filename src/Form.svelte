@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
   export interface Field {
     name: string;
-    value?: string;
+    value?: string | null;
     label?: string;
     validate?: string;
     placeholder?: string;
@@ -62,7 +62,7 @@
     });
   };
 
-  const cleanup = (fields: Field[]): { name: string; value?: string }[] => {
+  const cleanup = (fields: Field[]): { name: string; value?: string | null }[] => {
     return fields.filter(field => field.editable).map(field => {
       return {
         name: field.name,

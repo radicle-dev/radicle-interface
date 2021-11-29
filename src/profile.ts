@@ -69,11 +69,11 @@ export class Profile {
     else return undefined;
   }
 
-  get seedHost(): string | undefined {
+  get seedHost(): string | null | undefined {
     return this.profile?.ens?.seed?.host;
   }
 
-  get seedId(): string | undefined {
+  get seedId(): string | null | undefined {
     return this.profile?.ens?.seed.id;
   }
 
