@@ -38,7 +38,7 @@
     color: var(--color-foreground-level-6);
     user-select: none;
     line-height: 1.5rem;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
   }
   .folder:hover {
     background-color: var(--color-foreground-background);
@@ -58,11 +58,6 @@
   .loading {
     display: inline-block;
     padding: 0.5rem 0;
-  }
-
-  @media (max-width: 720px) {
-    .folder {
-    }
   }
 </style>
 

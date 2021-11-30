@@ -39,7 +39,9 @@
   .name {
     margin-left: 0.25rem;
     user-select: none;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    text-overflow: ellipsis !important;
+    overflow: hidden;
   }
 </style>
 

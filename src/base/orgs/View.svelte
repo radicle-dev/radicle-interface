@@ -3,7 +3,6 @@
   import type { Config } from '@app/config';
   import { formatName, explorerLink } from '@app/utils';
   import { session } from '@app/session';
-  import Link from '@app/Link.svelte';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
@@ -17,6 +16,7 @@
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import Projects from './View/Projects.svelte';
+  import Link from '@app/Link.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -127,6 +127,12 @@
     align-items: center;
     justify-content: left;
   }
+  .overflow-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
@@ -149,7 +155,6 @@
     display: flex;
     align-items: center;
     margin-right: 2rem;
-    padding-bottom: 30px;
   }
   .members .member:last-child {
     margin-right: 0;
@@ -161,16 +166,8 @@
   }
   @media (max-width: 720px) {
     main {
-      width: unset;
-      padding-right: 1rem;
-      padding-left: 1rem;
-    }
-    .members .member:last-child {
-      padding-bottom: 0;
-    }
-    .members {
-      flex-direction: column;
-      align-items: flex-start;
+      width: 100%;
+      padding: 1rem;
     }
     .fields {
       grid-template-columns: 5rem auto;
@@ -270,7 +267,7 @@
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
             {#if compact}
-              <div>🌱 
+              <div>
                 <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
                   {#if seedCopied}
                     Copy ✓
@@ -300,7 +297,7 @@
           <div class="label">Profile</div>
           <!-- Only show the name if we aren't already using the name of the owner -->
           {#if utils.isAddressEqual(profile.address, org.address)}
-            <div>
+            <div class="overflow-text">
               {#if profile.name}
                 <a href={profile.registry(config)} class="link">{profile.name}</a>
               {:else}

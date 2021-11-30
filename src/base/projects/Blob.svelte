@@ -27,8 +27,9 @@
   header .file-name {
     font-weight: normal;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-right: 1rem;
-    overflow-x: hidden;
   }
 
   .last-commit {

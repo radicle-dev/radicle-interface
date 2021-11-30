@@ -93,6 +93,7 @@
     font-family: var(--font-family-monospace);
     font-size: 0.75rem;
     color: var(--color-foreground-faded);
+    overflow-wrap: anywhere;
   }
   .description {
     margin: 1rem 0 1.5rem 0;
@@ -105,7 +106,9 @@
       min-width: 0;
     }
     .title {
-      font-size: 6vw;
+      font-size: 1.4rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 </style>
@@ -130,7 +133,7 @@
         {/if}
         <Link to={projectRoot}>{result.project.meta.name}</Link>
       </div>
-      <div class="urn">{compact ? formatRadicleUrn(urn) : urn}</div>
+      <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
     <Browser {urn} {org} {user} {path}

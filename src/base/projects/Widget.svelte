@@ -125,7 +125,10 @@ import { formatCommit, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
 <article on:click={onClick} class:has-info={info} class:project-faded={faded}>
   {#if info}
     <div class="id">
-      <span class="name">{info.meta.name}</span><span class="urn">{compact ? formatRadicleUrn(project.id) : project.id}</span>
+      <span class="name">{info.meta.name}</span>
+      {#if !compact}
+        <span class="urn">{project.id}</span>
+      {/if}
     </div>
     <div class="description">{info.meta.description}</div>
     <div class="anchor">
