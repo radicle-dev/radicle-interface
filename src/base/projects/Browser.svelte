@@ -287,7 +287,7 @@
     background-color: var(--color-foreground-background-lighter);
     position: absolute;
     left: -35px;
-    width: 250px;
+    width: 100%;
     border-right: 2px solid white;
     border-top: 2px solid white;
     border-bottom: 2px solid white;

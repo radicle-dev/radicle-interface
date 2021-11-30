@@ -28,6 +28,7 @@
     font-weight: normal;
     white-space: nowrap;
     margin-right: 1rem;
+    overflow-x: hidden;
   }
 
   .last-commit {
