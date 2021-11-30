@@ -5,7 +5,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Blockies from '@app/Blockies.svelte';
-import { formatCommit, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
+  import { formatCommit, watchBrowserWidth } from '@app/utils';
 
   enum Status { Loading, Loaded, Error }
 
@@ -148,6 +148,12 @@ import { formatCommit, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
         <Loading small />
       {/if}
     </div>
-    <div class="anchor">commit {compact ? formatCommit(project.anchor.stateHash) : project.anchor.stateHash}</div>
+    <div class="anchor">
+      <span class="commit">commit {compact ? formatCommit(project.anchor.stateHash) : project.anchor.stateHash}</span>
+      <span class="actions">
+        <slot name="actions">
+        </slot>
+      </span>
+    </div>
   {/if}
 </article>

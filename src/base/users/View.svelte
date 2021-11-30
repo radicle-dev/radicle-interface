@@ -107,7 +107,7 @@
       grid-template-columns: 5rem auto;
     }
     main {
-      width: unset;
+      width: 100%;
       padding-right: 1rem;
       padding-left: 1rem;
     }
@@ -135,7 +135,13 @@
         </span>
         <div class="links">
           {#if profile.url}
-            <a class="url" href={profile.url}>{profile.url}</a>
+            <a class="url" href={profile.url}>
+              {#if compact}
+                <Icon name="url" inline />
+              {:else}
+                {profile.url}
+              {/if}
+            </a>
           {/if}
           {#if profile.twitter}
             <a class="url" href="https://twitter.com/{profile.twitter}">

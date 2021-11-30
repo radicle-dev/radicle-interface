@@ -7,7 +7,7 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
+  import { formatOrg, watchBrowserWidth } from '@app/utils';
 
   import Browser from './Browser.svelte';
 
