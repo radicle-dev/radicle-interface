@@ -7,7 +7,7 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg } from '@app/utils';
+  import { formatOrg, formatRadicleUrn, watchBrowserWidth } from '@app/utils';
 
   import Browser from './Browser.svelte';
 
@@ -18,6 +18,7 @@
   export let config: Config;
   export let path: string;
 
+  let compact = watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
   let parentName = formatOrg(org || user, config);
   let pageTitle = parentName ? `${parentName}/${urn}` : urn;
   let projectInfo: Info | null = null;
@@ -71,13 +72,6 @@
   main > header {
     padding: 0 2rem 0 8rem;
   }
-
-  @media (max-width: 800px) {
-    main > header {
-      padding-left: 2rem;
-    }
-  }
-
   .title {
     display: inline-flex;
     align-items: center;
@@ -103,6 +97,17 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
+  @media (max-width: 800px) {
+    main > header {
+      padding-left: 2rem;
+    }
+    main {
+      min-width: 0;
+    }
+    .title {
+      font-size: 6vw;
+    }
+  }
 </style>
 
 <svelte:head>
@@ -125,7 +130,7 @@
         {/if}
         <Link to={projectRoot}>{result.project.meta.name}</Link>
       </div>
-      <div class="urn">{urn}</div>
+      <div class="urn">{compact ? formatRadicleUrn(urn) : urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
     <Browser {urn} {org} {user} {path}

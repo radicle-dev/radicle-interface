@@ -29,6 +29,8 @@
   export let user: string | null = null;
   export let project: proj.Info;
 
+  let displayMobileTree = false;
+  let compact = utils.watchBrowserWidth(window, "(max-width: 720px)", (mql: MediaQueryList) => compact = mql.matches);
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
   // Whether the clone dropdown is visible.
@@ -59,6 +61,8 @@
     const blob = await loadBlob(path);
     getBlob = new Promise(resolve => resolve(blob));
 
+    // Close mobile tree if user navigates to other file
+    displayMobileTree = false;
     navigateBrowser(commit, path);
   };
 
@@ -79,11 +83,17 @@
     return proj.getTree(urn, commit, path, config);
   };
 
+  const toggleMobileNavbar = () => {
+    displayMobileTree = !displayMobileTree;
+  };
+
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);
   $: getAnchor = anchors ? Org.getAnchor(anchors, urn, config) : null;
   $: loadingPath = state.status == Status.Loading ? state.path : null;
+  // Checks if window width has left mobile and hide the mobile tree
+  $: if (! compact && displayMobileTree) displayMobileTree = false;
 </script>
 
 <style>
@@ -225,6 +235,11 @@
     background: var(--color-foreground-background);
   }
 
+  .navigate {
+    background-color: var(--color-yellow-background);
+    color: var(--color-yellow);
+  }
+
   .center-content {
     margin: 0 auto;
   }
@@ -250,8 +265,34 @@
     width: 100%;
   }
 
+  @media (max-width: 720px) {
+    .column-right {
+      padding-left: 0;
+      min-width: 0;
+      position: relative
+    }
+    .dropdown {
+      left: 32px;
+      z-index: 10;
+    }
+  }
+
   .source-tree {
     overflow-x: hidden;
+  }
+
+  .tree {
+    padding: 15px 0;
+    padding-left: 32px;
+    background-color: var(--color-foreground-background-lighter);
+    position: absolute;
+    left: -35px;
+    width: 250px;
+    border-right: 2px solid white;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
 
   .file-not-found {
@@ -355,15 +396,27 @@
       <div class="stat">
         <strong>{tree.stats.contributors}</strong> contributor(s)
       </div>
+      {#if compact}
+        <div class="stat navigate" on:click={toggleMobileNavbar}>
+          Navigate
+        </div>
+      {/if}
     </header>
     <div class="container center-content">
       {#if tree.entries.length}
-        <div class="column-left">
-          <div class="source-tree">
-            <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
+        {#if !compact}
+          <div class="column-left">
+            <div class="source-tree">
+              <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
+            </div>
           </div>
-        </div>
+        {/if}
         <div class="column-right">
+          {#if displayMobileTree}
+            <div class="tree">
+              <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
+            </div>
+          {/if}
           {#await getBlob}
             <Loading small center />
           {:then blob}
