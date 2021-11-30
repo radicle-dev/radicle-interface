@@ -121,8 +121,6 @@
     justify-content: center;
     align-items: center;
     margin-left: 10px;
-    border: 1px solid white;
-    border-radius: 50%;
     height: 42px;
     width: 42px;
     z-index: 500;
