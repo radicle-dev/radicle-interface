@@ -3,6 +3,7 @@
   import type { Config } from '@app/config';
   import { formatName, explorerLink } from '@app/utils';
   import { session } from '@app/session';
+  import Link from '@app/Link.svelte';
   import Loading from '@app/Loading.svelte';
   import Modal from '@app/Modal.svelte';
   import Error from '@app/Error.svelte';
@@ -173,6 +174,9 @@
     }
     .fields {
       grid-template-columns: 5rem auto;
+    }
+    .members .member {
+      margin-right: 1rem;
     }
   }
 </style>
@@ -357,10 +361,14 @@
                 {#each members as profile}
                   <div class="member">
                     <div class="member-icon">
-                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      <Link to="/users/{profile.address}">
+                        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      </Link>
                     </div>
-                    <Address address={profile.address} compact
-                      resolve noAvatar {profile} {config} />
+                    {#if !compact}
+                      <Address address={profile.address} compact
+                        resolve noAvatar {profile} {config} />
+                    {/if}
                   </div>
                 {/each}
               {/await}

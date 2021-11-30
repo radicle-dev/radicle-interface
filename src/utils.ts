@@ -117,7 +117,7 @@ export function formatHash(hash: string): string {
 }
 
 export function formatCommit(oid: string): string {
-  return oid.substring(0,6);
+  return oid.substring(0,7);
 }
 
 export function formatOrg(input: string, config: Config): string {

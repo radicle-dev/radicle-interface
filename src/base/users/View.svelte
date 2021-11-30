@@ -111,6 +111,9 @@
       padding-right: 1rem;
       padding-left: 1rem;
     }
+    .members .member {
+      margin-right: 1rem;
+    }
   }
 </style>
 
@@ -194,8 +197,10 @@
                   <div class="member-icon">
                     <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                   </div>
-                  <Address address={profile.address} compact
-                    resolve noBadge noAvatar {profile} {config} />
+                  {#if !compact}
+                    <Address address={profile.address} compact
+                      resolve noBadge noAvatar {profile} {config} />
+                  {/if}
                 </div>
               {/await}
             {/each}
