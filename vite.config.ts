@@ -7,6 +7,7 @@ const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
+  base: "",
   plugins: [svelte(), rewriteAll()],
   resolve: {
     alias: {
