@@ -2,9 +2,9 @@
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import type { Profile } from '@app/profile';
+  import { ethers } from "ethers";
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
-  import { Org } from '@app/base/orgs/Org';
   import * as utils from '@app/utils';
 
   import Tree from './Tree.svelte';
@@ -87,10 +87,36 @@
     mobileFileTree = !mobileFileTree;
   };
 
+  const GetAllAnchors = `
+    query GetAllAnchors($project: Bytes!, $org: ID!) {
+      anchors(orderBy: timestamp, orderDirection: desc, where: { objectId: $project, org: $org }) {
+        multihash
+        timestamp
+      }
+    }
+  `;
+
+  interface AnchorObject {
+    timestamp: number;
+    commit: string;
+    multihash: string;
+  }
+
+  async function getAllAnchors(anchors: string | null, urn: string): Promise<string[] | null> {
+    if (! anchors) {
+      return null;
+    }
+    const unpadded = utils.decodeRadicleId(urn);
+    const id = ethers.utils.hexZeroPad(unpadded, 32);
+    const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
+    return allAnchors.anchors
+      .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
+  }
+
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);
-  $: getAnchor = anchors ? Org.getAnchor(anchors, urn, config) : null;
+  $: getAnchor = anchors ? getAllAnchors(anchors, urn) : null;
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>
 
@@ -343,21 +369,30 @@
           {#await getAnchor}
             <Loading small margins />
           {:then anchor}
-            {#if anchor === commit}
-              {#if commit === project.head}
+            {#if anchor}
+              <!-- commit is head and latest anchor  -->
+              {#if commit == anchor[0] && commit === project.head}
                 <span class="anchor-widget anchor-latest">
-                  <span class="anchor-label" title="{anchors}">anchored 🔒</span>
+                  <span class="anchor-label" title="{anchors}">latest 🔐</span>
                 </span>
-              {:else}
+              <!-- commit is not head but latest anchor  -->
+              {:else if commit == anchor[0] && commit !== project.head}
                 <span class="anchor-widget" on:click={() => navigateBrowser(project.head)}>
-                  <span class="anchor-label" title="{anchors}">anchored 🔒</span>
+                  <span class="anchor-label" title="{anchors}">latest 🔐</span>
+                </span>
+              <!-- commit is not head a stale anchor  -->
+              {:else if anchor?.includes(commit)}
+                <span class="anchor-widget" on:click={() => navigateBrowser(anchor[0])}>
+                  <span class="anchor-label" title="{anchors}">stale 🔒</span>
+                </span>
+              <!-- commit is not anchored, could be head or any other commit  -->
+              {:else}
+                <span class="anchor-widget not-anchored" on:click={() => navigateBrowser(anchor[0])}>
+                  <span class="anchor-label">not anchored 🔓</span>
                 </span>
               {/if}
-            {:else if anchor}
-              <span class="anchor-widget not-anchored" on:click={() => navigateBrowser(anchor)}>
-                <span class="anchor-label">not anchored 🔓</span>
-              </span>
             {:else}
+              <!-- commit is not head and neither an anchor, and there are no anchors available  -->
               <span class="anchor-widget not-anchored not-allowed">
                 <span class="anchor-label">not anchored 🔓</span>
               </span>
