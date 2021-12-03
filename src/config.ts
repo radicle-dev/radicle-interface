@@ -7,7 +7,7 @@ import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
-import type { Seed } from "@app/base/registrations/registrar";
+import type { Seed } from '@app/base/seeds/Seed';
 
 declare global {
   interface Window {

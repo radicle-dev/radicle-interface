@@ -17,7 +17,13 @@ export async function get(
   const base = config.seed.api.host;
   const port = config.seed.api.port;
   const search = new URLSearchParams(query).toString();
-  const baseUrl = `https://${base}:${port}/v1/${path}`;
+  // Allow using the functionality with local runned http-api
+  const isLocalhost = /^0.0.0.0$/.test(base);
+  const protocol = isLocalhost ? "http://" : "https://";
+
+  const baseUrl = path
+    ? `${protocol}${base}:${port}/v1/${path}`
+    : `${protocol}${base}:${port}`;
   const url = search ? `${baseUrl}?${search}` : baseUrl;
 
   let response = null;

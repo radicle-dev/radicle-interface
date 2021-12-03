@@ -1,9 +1,10 @@
-import type { EnsProfile, Seed } from "@app/base/registrations/registrar";
+import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
   isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
 } from "@app/utils";
 import type { Config } from "@app/config";
+import type { Seed } from "@app/base/seeds/Seed";
 
 export interface IProfile {
   address: string;

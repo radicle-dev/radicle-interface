@@ -82,6 +82,10 @@ export async function getInfo(urn: string, config: Config): Promise<Info> {
   return api.get(`projects/${urn}`, {}, config);
 }
 
+export async function getProjects(config: Config): Promise<any> {
+  return api.get("projects", {}, config);
+}
+
 export async function getTree(
   urn: string,
   commit: string,

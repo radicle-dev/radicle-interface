@@ -7,6 +7,7 @@
   import Message from "@app/Message.svelte";
   import Widget from '@app/base/projects/Widget.svelte';
   import Anchor from './Anchor.svelte';
+  import { formatCommit } from "@app/utils";
 
   export let org: Org;
   export let config: Config;
@@ -47,6 +48,10 @@
       <div class="project">
         {#if "safeTxHash" in project} <!-- Pending project -->
           <Widget {project} org={org.address} {config} faded>
+            <span slot="stateHash">
+              <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+              <span class="desktop">commit {project.anchor.stateHash}</span>
+            </span>
             <span class="anchor" slot="actions">
               {#if org.safe && $session}
                 <Anchor {project} safe={org.safe} on:success={() => updateRecords()} account={$session.address} {config} />
@@ -55,7 +60,12 @@
             </span>
           </Widget>
         {:else} <!-- Anchored project -->
-          <Widget {project} org={org.address} {config} />
+          <Widget {project} org={org.address} {config}>
+            <span slot="stateHash">
+              <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+              <span class="desktop">commit {project.anchor.stateHash}</span>
+            </span>
+          </Widget>
         {/if}
       </div>
     {/each}

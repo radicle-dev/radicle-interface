@@ -5,7 +5,7 @@
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Blockies from '@app/Blockies.svelte';
-  import { formatCommit, formatRadicleUrn } from '@app/utils';
+  import { formatRadicleUrn } from '@app/utils';
 
   enum Status { Loading, Loaded, Error }
 
@@ -41,7 +41,7 @@
           urn: project.id,
           org,
           user,
-          commit: project.anchor.stateHash,
+          commit: project.anchor?.stateHash,
         })
       );
     }
@@ -128,8 +128,9 @@
     </div>
     <div class="description">{info.meta.description}</div>
     <div class="anchor">
-      <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
-      <span class="desktop">commit {project.anchor.stateHash}</span>
+      <span class="commit">
+        <slot name="stateHash"></slot>
+      </span>
       <span>
         {#each info.meta.maintainers as urn}
           <span class="avatar">
@@ -147,11 +148,11 @@
       {/if}
     </div>
     <div class="anchor">
-      <span class="commit mobile">commit {formatCommit(project.anchor.stateHash)}</span>
-      <span class="commit desktop">commit {project.anchor.stateHash}</span>
+      <span class="commit">
+        <slot name="stateHash"></slot>
+      </span>
       <span class="actions">
-        <slot name="actions">
-        </slot>
+        <slot name="actions" />
       </span>
     </div>
   {/if}

@@ -417,8 +417,10 @@ export function isMarkdownPath(path: string): boolean {
 }
 
 // Check whether the given input string is a domain, eg. `alt-clients.radicle.xyz.
+// Also accepts in dev env 0.0.0.0 as domain
 export function isDomain(input: string): boolean {
-  return /^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input);
+  return (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input))
+    || (!import.meta.env.PROD && /^0.0.0.0$/.test(input)) ;
 }
 
 // Propose a Gnosis Safe multi-sig transaction.

@@ -275,9 +275,11 @@
               </button>
             </div>
             <div class="seed-address desktop">
-              <span class="seed-icon">🌱</span>{
-                utils.formatSeedId(profile.seedId)}@{profile.seedHost
-              }<span class="faded">:{config.seed.link.port}</span>
+              <span class="seed-icon">🌱</span>
+                <a href="/seeds/{profile.seedHost}" class="link">
+                  {utils.formatSeedId(profile.seedId)}@{profile.seedHost}
+                </a>
+              <span class="faded">:{config.seed.link.port}</span>
             </div>
             <div class="desktop">
               <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>

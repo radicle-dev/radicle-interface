@@ -6,35 +6,15 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import * as session from '@app/session';
 import { Failure } from '@app/error';
 import type { Config } from '@app/config';
-import { isDomain, unixTime } from '@app/utils';
+import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
+import { Seed } from '@app/base/seeds/Seed';
 
 export interface Registration {
   profile: EnsProfile;
   resolver: EnsResolver;
 }
 
-export class Seed {
-  id?: string;
-  host?: string;
-  git?: string;
-  api?: string;
-
-  constructor(id?: string, host?: string, git?: string, api?: string) {
-    if (id && /^[a-z0-9]+$/.test(id)) {
-      this.id = id;
-    }
-    if (host && isDomain(host)) {
-      this.host = host;
-    }
-    if (api && isDomain(api)) {
-      this.api = api;
-    }
-    if (git && isDomain(git)) {
-      this.git = git;
-    }
-  }
-}
 
 export interface EnsProfile {
   name: string;
@@ -113,8 +93,9 @@ export async function getRegistration(name: string, config: Config, resolver?: E
       url,
       avatar,
       seed: new Seed(
-        seedId,
+        config,
         seedHost,
+        seedId,
         seedGit,
         seedApi,
       ),
@@ -161,7 +142,7 @@ export async function getSeed(name: string, config: Config, resolver?: EnsResolv
     resolver.getText('eth.radicle.seed.api'),
   ]);
 
-  return new Seed(id, host, git, api);
+  return new Seed(config, host, id, git, api);
 }
 
 export function registrar(config: Config): ethers.Contract {
