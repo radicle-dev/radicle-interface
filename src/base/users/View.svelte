@@ -114,8 +114,7 @@
     }
     main {
       width: 100%;
-      padding-right: 1.5rem;
-      padding-left: 1.5rem;
+      padding: 1.5rem;
     }
     .members .member {
       margin-right: 1rem;
