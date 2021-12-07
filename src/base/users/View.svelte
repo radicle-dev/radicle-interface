@@ -10,7 +10,7 @@
   import Message from '@app/Message.svelte';
   import Project from '@app/base/projects/Widget.svelte';
   import { session } from '@app/session';
-  import { isAddressEqual } from '@app/utils';
+  import { formatCommit, isAddressEqual } from '@app/utils';
   import Error from '@app/Error.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import { User } from '@app/base/users/User';
@@ -225,7 +225,12 @@
               {#await org.getProjects(config) then projects}
                 {#each projects as project}
                   <div class="project">
-                    <Project {project} user={addressOrName} config={profile.config(config)} />
+                    <Project {project} user={addressOrName} config={profile.config(config)}>
+                      <span slot="stateHash">
+                        <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+                        <span class="desktop">commit {project.anchor.stateHash}</span>
+                      </span>
+                    </Project>
                   </div>
                 {/each}
               {:catch err}
