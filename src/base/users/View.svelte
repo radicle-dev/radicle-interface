@@ -197,10 +197,10 @@
         {#if orgs.length > 0}
           <div class="members">
             {#each orgs as org}
-              {#await Profile.get(org.address, ProfileType.Minimal, config)}
-                <Loading small margins />
-              {:then profile}
-                <div class="member">
+              <div class="member">
+                {#await Profile.get(org.address, ProfileType.Minimal, config)}
+                  <Loading small margins />
+                {:then profile}
                   <div class="member-icon">
                     <Link to="/orgs/{profile.address}">
                       <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
@@ -210,8 +210,8 @@
                     <Address address={profile.address} compact
                       resolve noBadge noAvatar {profile} {config} />
                   </div>
-                </div>
-              {/await}
+                {/await}
+              </div>
             {/each}
           </div>
         {/if}
