@@ -14,6 +14,7 @@
   import Error from '@app/Error.svelte';
   import SetName from '@app/ens/SetName.svelte';
   import { User } from '@app/base/users/User';
+  import Link from '@app/Link.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -77,6 +78,9 @@
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
   }
+  .url {
+    height: 1.6rem; /* Height of the icon */
+  }
   .projects {
     margin-top: 1rem;
   }
@@ -103,6 +107,7 @@
     height: 2rem;
     margin-right: 1rem;
   }
+
   @media (max-width: 720px) {
     .fields {
       grid-template-columns: 5rem auto;
@@ -136,13 +141,11 @@
         </span>
         <div class="links">
           {#if profile.url}
-            <a class="url" href={profile.url}>
-              <div class="mobile">
-                <Icon name="url" inline />
-              </div>
-              <div class="desktop">
-                {profile.url}
-              </div>
+            <a class="url mobile" href={profile.url}>
+              <Icon name="url" inline />
+            </a>
+            <a class="url desktop" href={profile.url}>
+              {profile.url}
             </a>
           {/if}
           {#if profile.twitter}
@@ -181,7 +184,7 @@
           {/if}
         </div>
         <div class="desktop">
-          {#if (isAuthorized(profile.address))}
+          {#if isAuthorized(profile.address)}
             <button class="tiny secondary" on:click={setName}>
               Set
             </button>
@@ -199,9 +202,11 @@
               {:then profile}
                 <div class="member">
                   <div class="member-icon">
-                    <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                    <Link to="/orgs/{profile.address}">
+                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                    </Link>
                   </div>
-                  <div>
+                  <div class="desktop">
                     <Address address={profile.address} compact
                       resolve noBadge noAvatar {profile} {config} />
                   </div>

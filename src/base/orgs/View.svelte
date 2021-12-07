@@ -134,6 +134,7 @@
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
+    height: 1.6rem;
   }
   .seed-address {
     font-size: 1rem;
