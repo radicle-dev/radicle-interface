@@ -42,6 +42,7 @@
     white-space: nowrap;
     text-overflow: ellipsis !important;
     overflow: hidden;
+    max-width: 24ch;
   }
 </style>
 
