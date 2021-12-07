@@ -81,7 +81,7 @@
 <style>
   main {
     padding: 5rem 0;
-    width: 54rem;
+    width: 720px;
   }
   main > header {
     display: flex;
