@@ -260,7 +260,6 @@
 
   .source-tree {
     overflow-x: hidden;
-    padding-top: 1rem;
   }
   .file-not-found {
     text-align: center;
@@ -296,6 +295,9 @@
     .column-right {
       padding: 1rem 0;
       min-width: 0;
+    }
+    .source-tree {
+      padding-top: 1rem;
     }
     .dropdown {
       left: 32px;
