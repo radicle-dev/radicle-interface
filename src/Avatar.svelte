@@ -32,7 +32,6 @@
     border-radius: 50%;
     min-width: 1rem;
     min-height: 1rem;
-    width: 100%;
     height: 100%;
     background-size: cover;
     background-repeat: no-repeat;
