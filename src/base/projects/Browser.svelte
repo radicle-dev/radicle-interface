@@ -278,7 +278,7 @@
     padding: 0 2rem;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 960px) {
     main > header, .container {
       padding-left: 2rem;
     }

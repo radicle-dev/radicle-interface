@@ -98,7 +98,7 @@
     margin: 1rem 0 1.5rem 0;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 960px) {
     main > header {
       padding-left: 2rem;
     }

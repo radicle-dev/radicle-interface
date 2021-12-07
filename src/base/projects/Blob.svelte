@@ -89,6 +89,12 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  @media (max-width: 960px) {
+    .code, .line-numbers {
+      font-size: 0.875rem;
+    }
+  }
 </style>
 
 <div>
