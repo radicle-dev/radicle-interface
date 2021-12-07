@@ -153,15 +153,10 @@
     display: flex;
     align-items: center;
     margin-right: 2rem;
+    margin-bottom: 1rem;
   }
   .members .member:last-child {
     margin-right: 0;
-  }
-  .mobile {
-    display: none !important;
-  }
-  .desktop {
-    display: block !important;
   }
   .members .member-icon {
     width: 2rem;
@@ -178,12 +173,6 @@
     }
     .members .member {
       margin-right: 1rem;
-    }
-    .mobile {
-      display: block !important;
-    }
-    .desktop {
-      display: none !important;
     }
   }
 </style>

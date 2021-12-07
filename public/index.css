@@ -353,6 +353,22 @@ label.input {
 	align-items: center;
 }
 
+.mobile {
+  display: none !important;
+}
+.desktop {
+  display: block !important;
+}
+
+@media (max-width: 720px) {
+  .mobile {
+    display: block !important;
+  }
+  .desktop {
+    display: none !important;
+  }
+}
+
 span.small, .text-xsmall {
 	font-size: 0.75rem;
 }

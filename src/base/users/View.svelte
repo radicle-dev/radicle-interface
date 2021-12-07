@@ -78,7 +78,7 @@
     margin-right: 1rem;
   }
   .projects {
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
   .projects .project {
     margin-bottom: 1rem;
@@ -87,11 +87,13 @@
     margin-top: 2rem;
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
   }
   .members .member {
     display: flex;
     align-items: center;
     margin-right: 2rem;
+    margin-bottom: 1rem;
   }
   .members .member:last-child {
     margin-right: 0;
@@ -100,12 +102,6 @@
     width: 2rem;
     height: 2rem;
     margin-right: 1rem;
-  }
-  .mobile {
-    display: none !important;
-  }
-  .desktop {
-    display: block !important;
   }
   @media (max-width: 720px) {
     .fields {
@@ -118,12 +114,6 @@
     }
     .members .member {
       margin-right: 1rem;
-    }
-    .mobile {
-      display: block !important;
-    }
-    .desktop {
-      display: none !important;
     }
   }
 </style>
@@ -211,11 +201,7 @@
                   <div class="member-icon">
                     <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                   </div>
-                  <div class="desktop">
-                    <Address address={profile.address}
-                      resolve noBadge noAvatar {profile} {config} />
-                  </div>
-                  <div class="mobile">
+                  <div>
                     <Address address={profile.address} compact
                       resolve noBadge noAvatar {profile} {config} />
                   </div>

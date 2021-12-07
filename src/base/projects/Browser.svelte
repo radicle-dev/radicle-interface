@@ -275,12 +275,6 @@
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  .desktop {
-    display: default;
-  }
-  .mobile {
-    display: none !important;
-  }
   nav {
     padding: 0 2rem;
   }
@@ -298,12 +292,6 @@
     button.browse {
       width: 100%;
       border-color: var(--color-secondary-faded);
-    }
-    .mobile {
-      display: block !important;
-    }
-    .desktop {
-      display: none !important;
     }
     .column-right {
       padding: 1rem 0;

@@ -114,17 +114,10 @@
     margin-left: 2rem;
     white-space: nowrap;
   }
-  div.toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-    height: 42px;
-    width: 42px;
-    z-index: 2;
-    cursor: pointer;
-  }
 
+  div.toggle {
+    display: none;
+  }
   @media(max-width: 800px) {
     .balance {
       display: none;
@@ -133,6 +126,16 @@
   @media(max-width: 720px) {
     .network, .search, header .nav, .balance {
       display: none;
+    }
+    div.toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 10px;
+      height: 42px;
+      width: 42px;
+      z-index: 2;
+      cursor: pointer;
     }
   }
 </style>
@@ -201,7 +204,7 @@
         <Connect className="small" {config} />
       </span>
     {/if}
-    <div class="ellipsis toggle mobile" on:click={toggleNavbar}>
+    <div class="toggle" on:click={toggleNavbar}>
       <Icon name="ellipsis" width={27} height={27} />
     </div>
   </div>

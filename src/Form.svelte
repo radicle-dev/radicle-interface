@@ -146,20 +146,7 @@
   .actions.editable {
     visibility: visible;
   }
-  .mobile {
-    display: none !important;
-  }
-  .desktop {
-    display: block !important;
-  }
-
   @media (max-width: 720px) {
-    .mobile {
-      display: block !important;
-    }
-    .desktop {
-      display: none !important;
-    }
     .field {
       width: unset;
     }

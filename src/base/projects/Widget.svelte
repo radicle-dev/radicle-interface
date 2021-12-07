@@ -113,21 +113,9 @@
     height: 1.25rem;
     font-size: 0.5rem;
   }
-  .mobile {
-    display: none !important;
-  }
-  .desktop {
-    display: block !important;
-  }
   @media (max-width: 720px) {
     article {
       min-width: 0;
-    }
-    .mobile {
-      display: block !important;
-    }
-    .desktop {
-      display: none !important;
     }
   }
 </style>

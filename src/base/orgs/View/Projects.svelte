@@ -28,7 +28,7 @@
 
 <style>
   .projects {
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
   .projects .project {
     margin-bottom: 1rem;
