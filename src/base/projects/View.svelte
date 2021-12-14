@@ -10,6 +10,7 @@
   import { formatOrg } from '@app/utils';
 
   import Browser from './Browser.svelte';
+  import Header from './Header.svelte';
 
   export let urn: string;
   export let org = "";
@@ -44,6 +45,10 @@
     return org
       ? `/orgs/${profile.nameOrAddress}`
       : `/users/${profile.nameOrAddress}`;
+  };
+
+  const onCommitChange = ({ detail: newCommit }: { detail: string }): void => {
+    commit = newCommit;
   };
 
   $: if (projectInfo) {
@@ -142,12 +147,28 @@
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    <Browser {urn} {org} {user} {path}
-      anchors={result.profile?.anchorsAccount ?? org}
-      profile={result.profile}
-      project={result.project}
-      commit={commit || result.project.head}
-      config={result.config} />
+    {#await proj.getTree(urn, commit, "/", config)}
+      <!-- Loading -->
+    {:then tree}
+      <Header {urn} {tree}
+        anchors={result.profile?.anchorsAccount ?? org}
+        commit={commit || result.project.head}
+        config={result.config}
+        project={result.project}
+        on:commitChange={onCommitChange}
+      /> 
+      <Browser {urn} {org} {user} {path} {tree}
+        commit={commit || result.project.head}
+        config={result.config} />
+    {:catch err}
+      <div class="container center-content">
+        <div class="error error-message text-xsmall">
+          <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+               to fetch - this needs a change to the backend. -->
+          API request to <code class="text-xsmall">{err.url}</code> failed
+        </div>
+      </div>
+    {/await}
   {:catch}
     <Modal subtle>
       <span slot="title">🏜️</span>
