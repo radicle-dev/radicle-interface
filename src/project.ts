@@ -95,7 +95,7 @@ export async function getTree(
   if (path === "/") {
     path = "";
   }
-  return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, config);
+  return api.get(`projects/${urn}/tree/${config.seed.link.id}/${commit}/${path}`, {}, config);
 }
 
 export async function getBlob(
@@ -105,7 +105,7 @@ export async function getBlob(
   options: { highlight: boolean },
   config: Config
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/blob/${commit}/${path}`, options, config);
+  return api.get(`projects/${urn}/blob/${config.seed.link.id}/${commit}/${path}`, options, config);
 }
 
 export async function getReadme(
@@ -113,7 +113,7 @@ export async function getReadme(
   commit: string,
   config: Config
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/readme/${commit}`, {}, config);
+  return api.get(`projects/${urn}/readme/${config.seed.link.id}/${commit}`, {}, config);
 }
 
 export function path(
