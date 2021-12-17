@@ -11,6 +11,7 @@
 
   import Browser from './Browser.svelte';
   import Header from './Header.svelte';
+  import History from "./Commit/History.svelte";
 
   export let urn: string;
   export let org = "";
@@ -19,10 +20,10 @@
   export let config: Config;
   export let path: string;
 
+  let content = proj.ProjectContent.Browser;
   let parentName = formatOrg(org || user, config);
   let pageTitle = parentName ? `${parentName}/${urn}` : urn;
   let projectInfo: Info | null = null;
-  let projectRoot = proj.path({ urn, user, org, commit });
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
       Profile.get(org, ProfileType.Project, config).then(p => resolve(p));
@@ -35,6 +36,7 @@
     const seed = profile?.seed;
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
+    commit = commit ? commit : info.head;
 
     projectInfo = info;
 
@@ -45,10 +47,6 @@
     return org
       ? `/orgs/${profile.nameOrAddress}`
       : `/users/${profile.nameOrAddress}`;
-  };
-
-  const onCommitChange = ({ detail: newCommit }: { detail: string }): void => {
-    commit = newCommit;
   };
 
   $: if (projectInfo) {
@@ -64,6 +62,8 @@
   }
 
   const back = () => window.history.back();
+  // Reacts to change to the used commit
+  $: projectRoot = proj.path({ urn, user, org, commit });
 </script>
 
 <style>
@@ -152,14 +152,18 @@
     {:then tree}
       <Header {urn} {tree}
         anchors={result.profile?.anchorsAccount ?? org}
-        commit={commit || result.project.head}
         config={result.config}
         project={result.project}
-        on:commitChange={onCommitChange}
-      /> 
-      <Browser {urn} {org} {user} {path} {tree}
-        commit={commit || result.project.head}
-        config={result.config} />
+        bind:commit={commit}
+        bind:content={content}
+      />
+      {#if content == proj.ProjectContent.Browser}
+        <Browser {urn} {org} {user} {path} {tree}
+          commit={commit}
+          config={result.config} />
+      {:else if content == proj.ProjectContent.Commits}
+        <History {urn} config={result.config} bind:commit={commit}  />
+      {/if}
     {:catch err}
       <div class="container center-content">
         <div class="error error-message text-xsmall">

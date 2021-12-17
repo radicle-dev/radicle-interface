@@ -79,32 +79,6 @@
     mobileFileTree = !mobileFileTree;
   };
 
-  const GetAllAnchors = `
-    query GetAllAnchors($project: Bytes!, $org: ID!) {
-      anchors(orderBy: timestamp, orderDirection: desc, where: { objectId: $project, org: $org }) {
-        multihash
-        timestamp
-      }
-    }
-  `;
-
-  interface AnchorObject {
-    timestamp: number;
-    commit: string;
-    multihash: string;
-  }
-
-  async function getAllAnchors(anchors: string | null, urn: string): Promise<string[] | null> {
-    if (! anchors) {
-      return null;
-    }
-    const unpadded = utils.decodeRadicleId(urn);
-    const id = ethers.utils.hexZeroPad(unpadded, 32);
-    const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
-    return allAnchors.anchors
-      .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
-  }
-
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
   $: getBlob = loadBlob(path);

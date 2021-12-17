@@ -2,10 +2,10 @@
   import type { Config } from '@app/config';
   import * as utils from '@app/utils';
   import Loading from '@app/Loading.svelte';
-  import { Org } from '@app/base/orgs/Org';
+  import { ethers } from "ethers";
   import type { Info, Tree } from '@app/project';
+  import { ProjectContent } from "@app/project";
   import type { Profile } from '@app/profile';
-  import { createEventDispatcher } from "svelte";
   
   export let config: Config;
   export let anchors: string | null = null;
@@ -14,17 +14,45 @@
   export let project: Info;
   export let profile: Profile | null = null;
   export let tree: Tree;
+  export let content: ProjectContent;
 
   // Whether the clone dropdown is visible.
   let cloneDropdown = false;
   // Whether the seed dropdown is visible.
   let seedDropdown = false;
-  const dispatch = createEventDispatcher();
-  const onClick = ({ detail: newCommit }: { detail: string }): void => {
-    dispatch("commitChange", newCommit);
+
+  // Switches between the browser and commit view
+  const switchContent = () => {
+    content = content == ProjectContent.Browser ? ProjectContent.Commits : ProjectContent.Browser;
   };
 
-  $: getAnchor = anchors ? Org.getAnchor(anchors, urn, config) : null;
+  const GetAllAnchors = `
+    query GetAllAnchors($project: Bytes!, $org: ID!) {
+      anchors(orderBy: timestamp, orderDirection: desc, where: { objectId: $project, org: $org }) {
+        multihash
+        timestamp
+      }
+    }
+  `;
+
+  interface AnchorObject {
+    timestamp: number;
+    multihash: string;
+  }
+
+  async function getAllAnchors(anchors: string | null, urn: string): Promise<string[] | null> {
+    if (! anchors) {
+      return null;
+    }
+    const unpadded = utils.decodeRadicleId(urn);
+    const id = ethers.utils.hexZeroPad(unpadded, 32);
+    const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
+    console.log(allAnchors);
+    return allAnchors.anchors
+      .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
+  }
+
+  $: getAnchor = anchors ? getAllAnchors(anchors, urn) : null;
 </script>
 
 <style>
@@ -109,7 +137,7 @@
     background-color: var(--color-foreground-background-lighter);
   }
 
-  .clone {
+  .clone, .commit-count {
     color: var(--color-primary);
     background-color: var(--color-primary-background);
     font-family: var(--font-family-monospace);
@@ -118,7 +146,7 @@
     cursor: pointer;
     user-select: none;
   }
-  .clone:hover {
+  .clone:hover, .commit-count:hover {
     background-color: var(--color-primary-background-lighter);
   }
   .dropdown {
@@ -165,6 +193,11 @@
     padding: 0.5rem 0.75rem;
     background: var(--color-foreground-background);
   }
+
+  .error {
+    color: var(--color-negative);
+    cursor: not-allowed;
+  }
   @media (max-width: 960px) {
     header {
       padding-left: 2rem;
@@ -204,31 +237,38 @@
       {#await getAnchor}
         <Loading small margins />
       {:then anchor}
-        {#if anchor === commit}
-          {#if commit === project.head}
+        {#if anchor}
+          <!-- commit is head and latest anchor  -->
+          {#if commit == anchor[0] && commit === project.head}
             <span class="anchor-widget anchor-latest">
-              <span class="anchor-label" title={anchors}>anchored 🔒</span>
+              <span class="anchor-label" title="{anchors}">latest 🔐</span>
             </span>
+          <!-- commit is not head but latest anchor  -->
+          {:else if commit == anchor[0] && commit !== project.head}
+            <span class="anchor-widget" on:click={() => commit = project.head}>
+              <span class="anchor-label" title="{anchors}">latest 🔐</span>
+            </span>
+          <!-- commit is not head a stale anchor  -->
+          {:else if anchor?.includes(commit)}
+            <span class="anchor-widget" on:click={() => commit = anchor[0]}>
+              <span class="anchor-label" title="{anchors}">stale 🔒</span>
+            </span>
+          <!-- commit is not anchored, could be head or any other commit  -->
           {:else}
-            <span
-              class="anchor-widget"
-              on:click={() => onClick({ detail: project.head })}
-            >
-              <span class="anchor-label" title={anchors}>anchored 🔒</span>
+            <span class="anchor-widget not-anchored" on:click={() => commit = anchor[0]}>
+              <span class="anchor-label">not anchored 🔓</span>
             </span>
           {/if}
-        {:else if anchor}
-          <span
-            class="anchor-widget not-anchored"
-            on:click={() => onClick({ detail: anchor })}
-          >
-            <span class="anchor-label">not anchored 🔓</span>
-          </span>
         {:else}
+          <!-- commit is not head and neither an anchor, and there are no anchors available  -->
           <span class="anchor-widget not-anchored not-allowed">
             <span class="anchor-label">not anchored 🔓</span>
           </span>
         {/if}
+      {:catch}
+        <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
+          <span class="anchor-label">❌</span>
+        </span>
       {/await}
     {/if}
   </div>
@@ -283,8 +323,12 @@
       {/if}
     </div>
   </span>
-  <div class="stat">
-    <strong>{tree.stats.commits}</strong> commit(s)
+  <div class="stat commit-count" on:click={switchContent}>
+    {#if content == ProjectContent.Browser}
+      <strong>{tree.stats.commits}</strong> commit(s)
+    {:else}
+      <strong>Back to Browser</strong>
+    {/if}
   </div>
   <div class="stat">
     <strong>{tree.stats.contributors}</strong> contributor(s)

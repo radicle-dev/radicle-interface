@@ -359,12 +359,18 @@ label.input {
 .desktop {
   display: block !important;
 }
+.desktop-inline {
+  display: inline !important;
+}
 
 @media (max-width: 720px) {
   .mobile {
     display: block !important;
   }
   .desktop {
+    display: none !important;
+  }
+  .desktop-inline {
     display: none !important;
   }
 }

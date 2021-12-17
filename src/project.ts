@@ -1,5 +1,6 @@
 import type { Config } from '@app/config';
 import * as api from '@app/api';
+import type { CommitsHistory } from '@app/base/projects/Commit/lib';
 
 export type Urn = string;
 
@@ -13,6 +14,12 @@ export interface Project {
 export interface PendingProject extends Project {
   safeTxHash: string; // Safe transaction hash.
   confirmations: string[]; // Owner addresses who have confirmed.
+}
+
+// Enumerates the space below the Header component in the projects View component
+export enum ProjectContent {
+  Browser,
+  Commits,
 }
 
 export interface Info {
@@ -80,6 +87,10 @@ export interface Blob {
 
 export async function getInfo(urn: string, config: Config): Promise<Info> {
   return api.get(`projects/${urn}`, {}, config);
+}
+
+export async function getCommits(urn: string, commit: string, config: Config): Promise<CommitsHistory> {
+  return api.get(`projects/${urn}/commits/${commit}`, {}, config);
 }
 
 export async function getProjects(config: Config): Promise<any> {
