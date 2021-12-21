@@ -9,7 +9,7 @@
 <style>
   .hash {
     font-family: var(--font-family-monospace);
-    padding: 0 4px 0 0;
+    padding: 0 1rem 0 0;
   }
   .author {
     margin-right: 8px
@@ -18,19 +18,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem 0 0.6rem;
+    padding: 0 1rem 0 1rem;
     height: 2.5rem;
   }
-  .small {
-    font-size: 14px;
-  }
+
   @media (max-width: 720px) {
     .commit {
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      padding-top: 0.3rem;
-      padding-bottom: 0.3rem;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
       height: unset;
     }
     .author, .hash {
@@ -45,9 +43,9 @@
   }
 </style>
 
-<div class="commit small">
+<div class="commit">
   <div class="summary">
-    <span class="secondary desktop-inline hash bold">{formatCommit(commit.sha1)}</span>
+    <span class="secondary desktop-inline hash">{formatCommit(commit.sha1)}</span>
     <span>{commit.summary}</span>
   </div>
   <div>

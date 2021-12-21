@@ -6,7 +6,7 @@
   import type { Info, Tree } from '@app/project';
   import { ProjectContent } from "@app/project";
   import type { Profile } from '@app/profile';
-  
+
   export let config: Config;
   export let anchors: string | null = null;
   export let urn: string;
@@ -137,7 +137,7 @@
     background-color: var(--color-foreground-background-lighter);
   }
 
-  .clone, .commit-count {
+  .clone {
     color: var(--color-primary);
     background-color: var(--color-primary-background);
     font-family: var(--font-family-monospace);
@@ -146,8 +146,15 @@
     cursor: pointer;
     user-select: none;
   }
-  .clone:hover, .commit-count:hover {
+  .clone:hoverr {
     background-color: var(--color-primary-background-lighter);
+  }
+  .commit-count {
+    cursor: pointer;
+    user-select: none;
+  }
+  .commit-count:hover {
+    background-color: var(--color-foreground-background-lighter);
   }
   .dropdown {
     background-color: var(--color-foreground-background);
@@ -192,6 +199,10 @@
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     background: var(--color-foreground-background);
+  }
+  .stat.active {
+    color: var(--color-background);
+    background: var(--color-foreground-90);
   }
 
   .error {
@@ -323,12 +334,8 @@
       {/if}
     </div>
   </span>
-  <div class="stat commit-count" on:click={switchContent}>
-    {#if content == ProjectContent.Browser}
-      <strong>{tree.stats.commits}</strong> commit(s)
-    {:else}
-      <strong>Back to Browser</strong>
-    {/if}
+  <div class="stat commit-count" class:active={content == ProjectContent.Commits} on:click={switchContent}>
+    <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   <div class="stat">
     <strong>{tree.stats.contributors}</strong> contributor(s)

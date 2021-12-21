@@ -18,28 +18,18 @@
 <style>
   .history {
     padding: 0 2rem 0 8rem;
+    font-size: 0.875rem;
   }
   .commit-group header {
-    color: var(--color-foreground-6);
-    padding-left: 0.6rem;
+    color: var(--color-foreground-faded);
   }
   .commit-group-headers {
-    border: 1px solid var(--color-foreground-3);
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     margin-bottom: 2rem;
+    background: var(--color-foreground-background);
   }
   .commit {
-    border-bottom: 1px solid var(--color-foreground-3);
     padding: 0.25rem 0;
-  }
-  .commit:first-child {
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-  }
-  .commit:last-child {
-    border-bottom: none;
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
   }
   @media (max-width: 720px) {
     .history {
