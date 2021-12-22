@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Link } from 'svelte-routing';
+  import { navigate, Link } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
@@ -62,8 +62,10 @@
   }
 
   const back = () => window.history.back();
-  // Reacts to change to the used commit
+  // React to changes to the project commit. We have to manually
+  // set the URL as well, to match the current commit.
   $: projectRoot = proj.path({ urn, user, org, commit });
+  $: navigate(proj.path({ urn, user, org, commit, path }));
 </script>
 
 <style>
