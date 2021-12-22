@@ -72,8 +72,8 @@ export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
 }
 
-export function formatSeedAddress(id: string, host: string, config: Config): string {
-  return `${id}@${host}:${config.seed.link.port}`;
+export function formatSeedAddress(id: string, host: string, port: number): string {
+  return `${id}@${host}:${port}`;
 }
 
 export function formatSeedId(id: string): string {
@@ -111,13 +111,14 @@ export function formatIpfsFile(ipfs: string | undefined): string | undefined {
 }
 
 export function formatHash(hash: string): string {
+  if (hash.length < 10) return hash;
   return hash.substring(0, 6)
     + '...'
     + hash.substring(hash.length - 4, hash.length);
 }
 
 export function formatCommit(oid: string): string {
-  return oid.substring(0,7);
+  return oid.substring(0, 7);
 }
 
 export function formatOrg(input: string, config: Config): string {
@@ -130,7 +131,7 @@ export function formatOrg(input: string, config: Config): string {
 
 export function capitalize(s: string): string {
   if (s === "") return s;
-  return s[0].toUpperCase() + s.substr(1);
+  return s[0].toUpperCase() + s.substring(1);
 }
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and
@@ -196,7 +197,7 @@ export function isENSName(input: string, config: Config): boolean {
   return regEx.test(input);
 }
 
-// Check whether the input is an Ethereum address.
+// Check whether the input is an checksummed or all lowercase Ethereum address.
 export function isAddress(input: string): boolean {
   return ethers.utils.isAddress(input);
 }
@@ -424,7 +425,7 @@ export function isMarkdownPath(path: string): boolean {
 // Also accepts in dev env 0.0.0.0 as domain
 export function isDomain(input: string): boolean {
   return (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input))
-    || (!import.meta.env.PROD && /^0.0.0.0$/.test(input)) ;
+    || (! import.meta.env.PROD && /^0.0.0.0$/.test(input));
 }
 
 // Propose a Gnosis Safe multi-sig transaction.
@@ -504,7 +505,7 @@ export async function executeSignedSafeTransaction(
     ...signedTx,
     gasPrice: Number(signedTx.gasPrice),
     data: signedTx.data
-  } );
+  });
 
   signedTx.confirmations.forEach(confirmation => {
     const signature = new EthSignSignature(confirmation.owner, confirmation.signature);

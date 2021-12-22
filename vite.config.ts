@@ -1,18 +1,31 @@
+/// <reference types="vitest" />
 import path from 'path';
 import { UserConfig } from 'vite';
-import svelte from '@sveltejs/vite-plugin-svelte';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import rewriteAll from 'vite-plugin-rewrite-all';
+import IstanbulPlugin from 'vite-plugin-istanbul';
+
 
 const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
-  plugins: [svelte(), rewriteAll()],
+  plugins: [
+    svelte({ hot: !process.env.VITEST }),
+    rewriteAll(),
+    IstanbulPlugin({
+      include: "src/**/*",
+      exclude: ["node_modules"],
+      extension: [".ts", ".svelte"],
+      cypress: true
+    })
+  ],
   resolve: {
     alias: {
       // This is needed for vite not to choke.
       "caip": path.resolve("./node_modules/caip/dist/umd/index.min.js"),
       '@app': path.resolve('./src'),
+      '@test': path.resolve('./cypress'),
       // Polyfill for Node.js 'stream' library.
       'stream': path.resolve('./src/polyfills/stream.ts'),
       'typedarray-to-buffer': path.resolve('./src/polyfills/typedarray-to-buffer.js'),

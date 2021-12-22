@@ -161,96 +161,96 @@
         </div>
       </div>
     </header>
-      <div class="fields">
-        <!-- Address -->
-        <div class="label">Address</div>
-        <div class="desktop"><Address {config} address={profile.address} /></div>
-        <div class="mobile"><Address compact {config} address={profile.address} /></div>
+    <div class="fields">
+      <!-- Address -->
+      <div class="label">Address</div>
+      <div class="desktop"><Address {config} address={profile.address} /></div>
+      <div class="mobile"><Address compact {config} address={profile.address} /></div>
+      <div class="desktop" />
+      <!-- Project anchors -->
+      {#if profile.anchorsAccount}
+        <div class="label">Anchors</div>
+        <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
+        <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
         <div class="desktop" />
-        <!-- Project anchors -->
-        {#if profile.anchorsAccount}
-          <div class="label">Anchors</div>
-          <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
-          <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
-          <div class="desktop" />
+      {/if}
+      <!-- Seed Address -->
+      {#if profile.seedId && profile.seedHost}
+        <div class="label">Seed</div>
+        <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+      {/if}
+      <!-- Profile -->
+      <div class="label">Profile</div>
+      <div>
+        {#if profile.name}
+          <a href={profile.registry(config)} class="link">{profile.name}</a>
+        {:else}
+          <span class="subtle">Not set</span>
         {/if}
-        <!-- Seed Address -->
-        {#if profile.seedId && profile.seedHost}
-          <div class="label">Seed</div>
-          <SeedAddress {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
-        {/if}
-        <!-- Profile -->
-        <div class="label">Profile</div>
-        <div>
-          {#if profile.name}
-            <a href={profile.registry(config)} class="link">{profile.name}</a>
-          {:else}
-            <span class="subtle">Not set</span>
-          {/if}
-        </div>
-        <div class="desktop">
-          {#if isAuthorized(profile.address)}
-            <button class="tiny secondary" on:click={setName}>
-              Set
-            </button>
-          {/if}
-        </div>
       </div>
-      {#await Org.getOrgsByMember(profile.address, config)}
-        <Loading center />
-      {:then orgs}
-        {#if orgs.length > 0}
-          <div class="members">
-            {#each orgs as org}
-              <div class="member">
-                {#await Profile.get(org.address, ProfileType.Minimal, config)}
-                  <Loading small margins />
-                {:then profile}
-                  <div class="member-icon">
-                    <Link to="/orgs/{profile.address}">
-                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
-                    </Link>
-                  </div>
-                  <div class="desktop">
-                    <Address address={profile.address} compact
-                      resolve noBadge noAvatar {profile} {config} />
-                  </div>
-                {/await}
-              </div>
-            {/each}
-          </div>
+      <div class="desktop">
+        {#if isAuthorized(profile.address)}
+          <button class="tiny secondary" on:click={setName}>
+            Set
+          </button>
         {/if}
-      {:catch err}
-        <Message error>
-          <strong>Error: </strong> failed to load orgs: {err.message}.
-        </Message>
-      {/await}
-      <div class="projects">
-        {#if profile.anchorsAccount}
-          {#await Org.get(profile.anchorsAccount, config)}
-            <Loading center fadeIn />
-          {:then org}
-            {#if org}
-              {#await org.getProjects(config) then projects}
-                {#each projects as project}
-                  <div class="project">
-                    <Project {project} user={addressOrName} config={profile.config(config)}>
-                      <span slot="stateHash">
-                        <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
-                        <span class="desktop">commit {project.anchor.stateHash}</span>
-                      </span>
-                    </Project>
-                  </div>
-                {/each}
-              {:catch err}
-                <Message error>
-                  <strong>Error: </strong> failed to load projects: {err.message}.
-                </Message>
+      </div>
+    </div>
+    {#await Org.getOrgsByMember(profile.address, config)}
+      <Loading center />
+    {:then orgs}
+      {#if orgs.length > 0}
+        <div class="members">
+          {#each orgs as org}
+            <div class="member">
+              {#await Profile.get(org.address, ProfileType.Minimal, config)}
+                <Loading small margins />
+              {:then profile}
+                <div class="member-icon">
+                  <Link to="/orgs/{profile.address}">
+                    <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                  </Link>
+                </div>
+                <div class="desktop">
+                  <Address address={profile.address} compact
+                    resolve noBadge noAvatar {profile} {config} />
+                </div>
               {/await}
-            {/if}
-          {/await}
-        {/if}
-      </div>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    {:catch err}
+      <Message error>
+        <strong>Error: </strong> failed to load orgs: {err.message}.
+      </Message>
+    {/await}
+    <div class="projects">
+      {#if profile.anchorsAccount}
+        {#await Org.get(profile.anchorsAccount, config)}
+          <Loading center fadeIn />
+        {:then org}
+          {#if org}
+            {#await org.getProjects(config) then projects}
+              {#each projects as project}
+                <div class="project">
+                  <Project {project} user={addressOrName} config={profile.config(config)}>
+                    <span slot="stateHash">
+                      <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
+                      <span class="desktop">commit {project.anchor.stateHash}</span>
+                    </span>
+                  </Project>
+                </div>
+              {/each}
+            {:catch err}
+              <Message error>
+                <strong>Error: </strong> failed to load projects: {err.message}.
+              </Message>
+            {/await}
+          {/if}
+        {/await}
+      {/if}
+    </div>
   </main>
   <svelte:component this={setNameForm} entity={new User(profile.address)} {config} on:close={() => setNameForm = null} />
 {:catch err}

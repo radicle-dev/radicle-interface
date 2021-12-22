@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { Config } from "./config";
   import { formatSeedAddress, formatSeedId, toClipboard } from "./utils";
 
-  export let config: Config;
   export let id: string;
   export let host: string;
   export let port: number;
@@ -10,7 +8,7 @@
   let seedCopied = false;
 
   const copySeed = (seedId: string, seedHost: string) => {
-    return () => toClipboard(formatSeedAddress(seedId, seedHost, config)).then(() => {
+    return () => toClipboard(formatSeedAddress(seedId, seedHost, port)).then(() => {
       seedCopied = true;
       setTimeout(() => {
         seedCopied = false;

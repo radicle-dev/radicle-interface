@@ -96,7 +96,7 @@
       <!-- Seed Address -->
       <div class="label">Address</div>
       {#if info.version === "0.2.0" && info.host}
-        <SeedAddress {config} id={info.id} host={info.host} port={config.seed.link.port} />
+        <SeedAddress id={info.id} host={info.host} port={config.seed.link.port} />
       {:else}
         <div class="seed-address subtle">N/A</div>
         <div class="desktop" />

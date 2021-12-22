@@ -251,7 +251,7 @@
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
-            <SeedAddress {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+            <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
           {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>
