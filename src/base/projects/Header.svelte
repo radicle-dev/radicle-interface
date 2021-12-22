@@ -82,9 +82,7 @@
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
-    border-radius: inherit;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: 0.25rem 0 0 0.25rem;
   }
   .commit .hash {
     display: inline-block;
@@ -95,9 +93,7 @@
   }
   .branch + .hash {
     background-color: var(--color-secondary-background-darker);
-    border-radius: inherit;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-radius: 0 0.25rem 0.25rem 0;
   }
 
   .anchor {
