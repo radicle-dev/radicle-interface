@@ -137,6 +137,7 @@
     height: 1.6rem;
   }
   .seed-address {
+    display: inline-flex;
     font-size: 1rem;
     color: var(--color-foreground-90);
   }
@@ -275,12 +276,12 @@
                 {/if}
               </button>
             </div>
-            <div class="seed-address desktop">
-              <span class="seed-icon">🌱</span>
-                <a href="/seeds/{profile.seedHost}" class="link">
-                  {utils.formatSeedId(profile.seedId)}@{profile.seedHost}
-                </a>
-              <span class="faded">:{config.seed.link.port}</span>
+            <div class="desktop">
+              <div class="seed-address">
+                <span class="seed-icon">🌱</span>
+                <span><a href="/seeds/{profile.seedHost}" class="link">{utils.formatSeedId(profile.seedId)}@{profile.seedHost}</a></span>
+                <span class="faded">:{config.seed.link.port}</span>
+              </div>
             </div>
             <div class="desktop">
               <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
