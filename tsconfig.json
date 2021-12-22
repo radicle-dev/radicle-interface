@@ -11,8 +11,10 @@
     "module": "es2020",
     "types": [
       "svelte",
-      "vite/client"
+      "vite/client",
+      "vitest/global"
     ],
+    "typeRoots": ["node_modules/vitest"],
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,

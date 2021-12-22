@@ -1,13 +1,23 @@
 import path from 'path';
 import { UserConfig } from 'vite';
-import svelte from '@sveltejs/vite-plugin-svelte';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import rewriteAll from 'vite-plugin-rewrite-all';
 
 const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
-  plugins: [svelte(), rewriteAll()],
+  plugins: [svelte({ hot: !process.env.VITEST }), rewriteAll()],
+  test: {
+    global: true,
+    environment: 'jsdom',
+    deps: {
+      inline: [
+        "@ethersproject/signing-key",
+        "@ethersproject/basex"
+      ]
+    }
+  },
   resolve: {
     alias: {
       // This is needed for vite not to choke.
