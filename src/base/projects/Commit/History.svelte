@@ -57,4 +57,11 @@
       </div>
     {/each}
   </div>
+{:catch err}
+  <div class="history">
+    <div class="error error-message text-xsmall">
+      <div>API request to <code class="text-xsmall">{err.url}</code> failed.</div>
+      <div>API needs to be version ^0.2.</div>
+    </div>
+  </div>
 {/await}
