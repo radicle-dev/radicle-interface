@@ -40,6 +40,7 @@
         proj.path({
           urn: project.id,
           org,
+          content: proj.ProjectContent.Tree,
           user,
           commit: project.anchor?.stateHash,
         })

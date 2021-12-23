@@ -19,8 +19,8 @@
   export let commit = "";
   export let config: Config;
   export let path: string;
+  export let content: proj.ProjectContent = proj.ProjectContent.Tree;
 
-  let content = proj.ProjectContent.Browser;
   let parentName = formatOrg(org || user, config);
   let pageTitle = parentName ? `${parentName}/${urn}` : urn;
   let projectInfo: Info | null = null;
@@ -64,8 +64,8 @@
   const back = () => window.history.back();
   // React to changes to the project commit. We have to manually
   // set the URL as well, to match the current commit.
-  $: projectRoot = proj.path({ urn, user, org, commit });
-  $: navigate(proj.path({ urn, user, org, commit, path }));
+  $: projectRoot = proj.path({ urn, user, content: proj.ProjectContent.Tree, org, commit });
+  $: navigate(proj.path({ urn, user, org, content, commit, path }));
 </script>
 
 <style>
@@ -159,11 +159,11 @@
         bind:commit={commit}
         bind:content={content}
       />
-      {#if content == proj.ProjectContent.Browser}
+      {#if content == proj.ProjectContent.Tree}
         <Browser {urn} {org} {user} {path} {tree}
           commit={commit}
           config={result.config} />
-      {:else if content == proj.ProjectContent.Commits}
+      {:else if content == proj.ProjectContent.History}
         <History {urn} config={result.config} bind:commit={commit}  />
       {/if}
     {:catch err}

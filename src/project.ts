@@ -18,8 +18,8 @@ export interface PendingProject extends Project {
 
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
-  Browser,
-  Commits,
+  Tree,
+  History,
 }
 
 export interface Info {
@@ -128,9 +128,9 @@ export async function getReadme(
 }
 
 export function path(
-  opts: { urn: string; org?: string; user?: string; commit?: string; path?: string }
+  opts: { urn: string; org?: string; content?: ProjectContent; user?: string; commit?: string; path?: string }
 ): string {
-  const { urn, org, user, commit, path } = opts;
+  const { urn, org, user, content, commit, path } = opts;
   const result = [];
 
   if (org) {
@@ -139,6 +139,12 @@ export function path(
     result.push("users", user);
   }
   result.push("projects", urn);
+
+  if (content == ProjectContent.History) {
+    result.push("history");
+  } else {
+    result.push("tree");
+  }
 
   if (commit) {
     result.push(commit);

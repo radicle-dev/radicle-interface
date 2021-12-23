@@ -23,7 +23,7 @@
 
   // Switches between the browser and commit view
   const switchContent = () => {
-    content = content == ProjectContent.Browser ? ProjectContent.Commits : ProjectContent.Browser;
+    content = content == ProjectContent.Tree ? ProjectContent.History : ProjectContent.Tree;
   };
 
   const GetAllAnchors = `
@@ -47,7 +47,6 @@
     const unpadded = utils.decodeRadicleId(urn);
     const id = ethers.utils.hexZeroPad(unpadded, 32);
     const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
-    console.log(allAnchors);
     return allAnchors.anchors
       .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
   }
@@ -330,7 +329,7 @@
       {/if}
     </div>
   </span>
-  <div class="stat commit-count" class:active={content == ProjectContent.Commits} on:click={switchContent}>
+  <div class="stat commit-count" class:active={content == ProjectContent.History} on:click={switchContent}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   <div class="stat">
