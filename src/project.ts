@@ -1,8 +1,11 @@
 import type { Config } from '@app/config';
 import * as api from '@app/api';
 import type { CommitsHistory } from '@app/base/projects/Commit/lib';
+import { isOid } from '@app/utils';
 
 export type Urn = string;
+export type Peer = string;
+export type Branch = { [key: string]: string };
 
 export interface Project {
   id: string;
@@ -18,8 +21,8 @@ export interface PendingProject extends Project {
 
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
-  Browser,
-  Commits,
+  Tree,
+  History,
 }
 
 export interface Info {
@@ -32,6 +35,7 @@ export interface Meta {
   description: string;
   defaultBranch: string;
   maintainers: Urn[];
+  delegates: Peer[];
 }
 
 export interface Tree {
@@ -85,6 +89,10 @@ export interface Blob {
   info: EntryInfo;
 }
 
+export interface Branches {
+  heads: Branch;
+}
+
 export async function getInfo(urn: string, config: Config): Promise<Info> {
   return api.get(`projects/${urn}`, {}, config);
 }
@@ -97,15 +105,17 @@ export async function getProjects(config: Config): Promise<any> {
   return api.get("projects", {}, config);
 }
 
+export async function getBranchesByPeer(urn: string, peer: string, config: Config): Promise<Branches> {
+  return api.get(`projects/${urn}/remotes/${peer}`, {}, config);
+}
+
 export async function getTree(
   urn: string,
   commit: string,
   path: string,
   config: Config
 ): Promise<Tree> {
-  if (path === "/") {
-    path = "";
-  }
+  if (path === "/") path = "";
   return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, config);
 }
 
@@ -128,9 +138,9 @@ export async function getReadme(
 }
 
 export function path(
-  opts: { urn: string; org?: string; user?: string; commit?: string; path?: string }
+  opts: { urn: string; org?: string; content?: ProjectContent; user?: string; revision?: string; path?: string }
 ): string {
-  const { urn, org, user, commit, path } = opts;
+  const { urn, org, user, content, revision, path } = opts;
   const result = [];
 
   if (org) {
@@ -140,8 +150,18 @@ export function path(
   }
   result.push("projects", urn);
 
-  if (commit) {
-    result.push(commit);
+  switch (content) {
+    case ProjectContent.History:
+      result.push("history");
+      break;
+
+    default:
+      result.push("tree");
+      break;
+  }
+
+  if (revision) {
+    result.push(revision);
   } else if (path) {
     result.push("head");
   }
@@ -151,4 +171,28 @@ export function path(
     result.push(path);
   }
   return "/" + result.join("/");
+}
+
+// We need a SHA1 commit in some places, so we return early if the revision is a SHA and else we look into branches.
+// As fallback we use the head commit.
+export function getOid(head: string, revision: string, branches?: [string, string][]): string {
+  if (isOid(revision)) return revision;
+  if (branches) {
+    const branch = branches.find(([name,]) => name === revision);
+    return branch ? branch[1] : head;
+  }
+  return head;
+}
+
+// Splits the path consisting of a revision (eg. branch or commit) and file path into a tuple [revision, file-path]
+export function splitPrefixFromPath(input: string, branches: [string, string][], head: string): [string, string] {
+  const branch = branches.find(([branchName,]) => input.startsWith(branchName));
+  const commitPath = [input.slice(0, 40), input.slice(41)];
+  if (branch) {
+    const [rev, path] = [input.slice(0, branch[0].length), input.slice(branch[0].length + 1)];
+    return [rev, path ? path : "/"];
+  } else if (isOid(commitPath[0])) {
+    return [commitPath[0], commitPath[1] ? commitPath[1] : "/"];
+  }
+  return [head, "/"];
 }

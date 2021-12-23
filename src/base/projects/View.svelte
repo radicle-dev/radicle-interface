@@ -8,22 +8,22 @@
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
   import { formatOrg } from '@app/utils';
+  import { getOid } from '@app/project';
 
-  import Browser from './Browser.svelte';
-  import Header from './Header.svelte';
-  import History from "./Commit/History.svelte";
+  import Header from '@app/base/projects/Header.svelte';
+  import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
 
   export let urn: string;
   export let org = "";
   export let user = "";
-  export let commit = "";
   export let config: Config;
-  export let path: string;
 
-  let content = proj.ProjectContent.Browser;
   let parentName = formatOrg(org || user, config);
   let pageTitle = parentName ? `${parentName}/${urn}` : urn;
   let projectInfo: Info | null = null;
+  let revision: string;
+  let content: proj.ProjectContent;
+  let path: string;
   let getProject = new Promise<Profile | null>(resolve => {
     if (org) {
       Profile.get(org, ProfileType.Project, config).then(p => resolve(p));
@@ -36,11 +36,14 @@
     const seed = profile?.seed;
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
-    commit = commit ? commit : info.head;
-
     projectInfo = info;
 
-    return { project: info, config: cfg, profile };
+    // Checks for delegates returned from seed node, as feature check of the seed node
+    if (info.meta.delegates) {
+      const branches = await proj.getBranchesByPeer(urn, info.meta.delegates[0], cfg);
+      return { project: info, branches: [...Object.entries(branches.heads)], peer: info.meta.delegates[0], config: cfg, profile };
+    }
+    return { project: info, branches: Array([info.meta.defaultBranch, info.head]) as [string, string][], config: cfg, profile };
   });
 
   const parentUrl = (profile: Profile) => {
@@ -61,11 +64,20 @@
     }
   }
 
+  function updateRouteParams({ detail: newParams }: { detail: { path: string; revision: string; content: proj.ProjectContent } }) {
+    let newLocation = proj.path({ urn, user, org, content: newParams.content, revision: newParams.revision, path: newParams.path });
+    if (newLocation !== window.location.pathname) {
+      navigate(newLocation);
+    }
+    if (content !== newParams.content) content = newParams.content;
+    if (revision !== newParams.revision) revision = newParams.revision;
+    if (path !== newParams.path) path = newParams.path;
+  }
+
   const back = () => window.history.back();
   // React to changes to the project commit. We have to manually
   // set the URL as well, to match the current commit.
-  $: projectRoot = proj.path({ urn, user, org, commit });
-  $: navigate(proj.path({ urn, user, org, commit, path }));
+  $: projectRoot = proj.path({ urn, user, org });
 </script>
 
 <style>
@@ -149,23 +161,19 @@
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    {#await proj.getTree(urn, commit, "/", config)}
-      <!-- Loading -->
-    {:then tree}
-      <Header {urn} {tree}
+    {#await proj.getTree(urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
+      <Header {urn} {tree} {revision} {content} {path}
         anchors={result.profile?.anchorsAccount ?? org}
         config={result.config}
         project={result.project}
-        bind:commit={commit}
-        bind:content={content}
-      />
-      {#if content == proj.ProjectContent.Browser}
-        <Browser {urn} {org} {user} {path} {tree}
-          commit={commit}
-          config={result.config} />
-      {:else if content == proj.ProjectContent.Commits}
-        <History {urn} config={result.config} bind:commit={commit}  />
-      {/if}
+        branches={result.branches}
+        profile={result.profile}
+        on:routeParamsChange={updateRouteParams} />
+      <ProjectContentRoutes {urn} {org} {user} {tree} {path}
+        project={result.project}
+        branches={result.branches}
+        config={result.config}
+        on:routeParamsChange={updateRouteParams} />
     {:catch err}
       <div class="container center-content">
         <div class="error error-message text-xsmall">

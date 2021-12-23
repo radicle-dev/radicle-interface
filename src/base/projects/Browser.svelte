@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher, onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
@@ -9,6 +10,8 @@
   import Blob from './Blob.svelte';
   import Readme from './Readme.svelte';
 
+  const dispatch = createEventDispatcher();
+
   enum Status {
     Loading,
     Loaded,
@@ -18,17 +21,23 @@
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let urn: string;
-  export let commit: string;
+  export let revision: string;
   export let config: Config;
   export let path: string;
   export let org: string | null = null;
   export let user: string | null = null;
   export let tree: proj.Tree;
+  export let project: proj.Info;
+  export let branches: [string, string][];
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
+
+  onMount(() => {
+    dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
+  });
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
     if (state.status == Status.Loaded && state.path === path) {
@@ -46,28 +55,30 @@
     return state.blob;
   };
 
-  const onSelect = async ({ detail: path }: { detail: string }) => {
+  const onSelect = async ({ detail: newPath }: { detail: string }) => {
     // Ensure we don't spend any time in a "loading" state. This means
     // the loading spinner won't be shown, and instead the blob will be
     // displayed once loaded.
-    const blob = await loadBlob(path);
+    const blob = await loadBlob(newPath);
     getBlob = new Promise(resolve => resolve(blob));
+
+    dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
 
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
-    navigateBrowser(commit, path);
+    navigateBrowser(revision, newPath);
   };
 
-  const navigateBrowser = (commit: string, path?: string) => {
+  const navigateBrowser = (revision: string, path?: string) => {
     // Replaces path with current path if none passed.
     if (path === undefined) path = state.path;
 
     if (org) {
-      navigate(proj.path({ urn, org, commit, path }));
+      navigate(proj.path({ urn, org, revision, path }));
     } else if (user) {
-      navigate(proj.path({ urn, user, commit, path }));
+      navigate(proj.path({ urn, user, revision, path }));
     } else {
-      navigate(proj.path({ urn, commit, path }));
+      navigate(proj.path({ urn, revision, path }));
     }
   };
 
@@ -81,6 +92,9 @@
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
+  $: [revision, path] = proj.splitPrefixFromPath(revision, branches, project.head);
+  $: commit = proj.getOid(project.head, revision, branches);
+  $: dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

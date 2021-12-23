@@ -1,18 +1,26 @@
 <script lang="ts">
+  import { createEventDispatcher, onMount } from "svelte";
   import CommitTeaser from "./CommitTeaser.svelte";
-  import { getCommits } from "@app/project";
+  import { getCommits, Info, getOid, ProjectContent } from "@app/project";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "./lib";
 
-  export let commit: string;
+  export let revision: string;
   export let urn: string;
   export let config: Config;
+  export let project: Info;
+  export let branches: [string, string][];
 
   async function fetchCommits(): Promise<GroupedCommitsHistory> {
-    const commitsQuery = await getCommits(urn, commit, config);
+    const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), config);
     return groupCommitHistory(commitsQuery);
   }
+
+  const dispatch = createEventDispatcher();
+  onMount(() => {
+    dispatch("routeParamsChange", { content: ProjectContent.History, revision, path: "/" });
+  });
 </script>
 
 <style>
@@ -31,7 +39,7 @@
   .commit {
     padding: 0.25rem 0;
   }
-  @media (max-width: 720px) {
+  @media (max-width: 960px) {
     .history {
       padding-left: 2rem;
     }

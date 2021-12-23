@@ -3,18 +3,24 @@
   import * as utils from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import { ethers } from "ethers";
-  import type { Info, Tree } from '@app/project';
-  import { ProjectContent } from "@app/project";
+  import { ProjectContent, getOid } from '@app/project';
+  import type { Info, Tree } from "@app/project";
   import type { Profile } from '@app/profile';
+  import BranchSelector from './BranchSelector.svelte';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let config: Config;
   export let anchors: string | null = null;
   export let urn: string;
-  export let commit: string;
+  export let path: string;
   export let project: Info;
   export let profile: Profile | null = null;
   export let tree: Tree;
+  export let branches: [string, string][] = [];
   export let content: ProjectContent;
+  export let revision: string;
 
   // Whether the clone dropdown is visible.
   let cloneDropdown = false;
@@ -22,8 +28,12 @@
   let seedDropdown = false;
 
   // Switches between the browser and commit view
-  const switchContent = () => {
-    content = content == ProjectContent.Browser ? ProjectContent.Commits : ProjectContent.Browser;
+  const toggleContent = (input: ProjectContent) => {
+    dispatch("routeParamsChange", { content: content === input ? ProjectContent.Tree : input, revision, path });
+  };
+
+  const updateRevision = (newRevision: string) => {
+    dispatch("routeParamsChange", { content, revision: newRevision, path });
   };
 
   const GetAllAnchors = `
@@ -47,12 +57,12 @@
     const unpadded = utils.decodeRadicleId(urn);
     const id = ethers.utils.hexZeroPad(unpadded, 32);
     const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
-    console.log(allAnchors);
     return allAnchors.anchors
       .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
   }
 
   $: getAnchor = anchors ? getAllAnchors(anchors, urn) : null;
+  $: commit = getOid(project.head, revision, branches);
 </script>
 
 <style>
@@ -65,37 +75,11 @@
     justify-content: left;
     flex-wrap: wrap;
     gap: 0.5rem;
-
   }
   header > * {
     border-radius: 0.25rem;
     min-width: max-content;
   }
-
-  .commit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-family-monospace);
-  }
-  .commit .branch {
-    padding: 0.5rem 0.75rem;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
-    border-radius: 0.25rem 0 0 0.25rem;
-  }
-  .commit .hash {
-    display: inline-block;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
-    padding: 0.5rem 0.75rem;
-    border-radius: inherit;
-  }
-  .branch + .hash {
-    background-color: var(--color-secondary-background-darker);
-    border-radius: 0 0.25rem 0.25rem 0;
-  }
-
   .anchor {
     display: inline-flex;
   }
@@ -222,63 +206,50 @@
 </style>
 
 <header>
-  <div class="commit">
-    {#if commit === project.head}
-      <div class="branch">
-        {project.meta.defaultBranch}
-      </div>
-      <div class="hash">
-        {utils.formatCommit(commit)}
-      </div>
-    {:else}
-      <div class="hash desktop">
-        {commit}
-      </div>
-      <div class="hash mobile">
-        {utils.formatCommit(commit)}
-      </div>
-    {/if}
-  </div>
-  <div class="anchor">
-    {#if anchors}
-      {#await getAnchor}
-        <Loading small margins />
-      {:then anchor}
-        {#if anchor}
-          <!-- commit is head and latest anchor  -->
-          {#if commit == anchor[0] && commit === project.head}
-            <span class="anchor-widget anchor-latest">
-              <span class="anchor-label" title="{anchors}">latest 🔐</span>
-            </span>
-          <!-- commit is not head but latest anchor  -->
-          {:else if commit == anchor[0] && commit !== project.head}
-            <span class="anchor-widget" on:click={() => commit = project.head}>
-              <span class="anchor-label" title="{anchors}">latest 🔐</span>
-            </span>
-          <!-- commit is not head a stale anchor  -->
-          {:else if anchor?.includes(commit)}
-            <span class="anchor-widget" on:click={() => commit = anchor[0]}>
-              <span class="anchor-label" title="{anchors}">stale 🔒</span>
-            </span>
-          <!-- commit is not anchored, could be head or any other commit  -->
+  {#if revision}
+    <BranchSelector {branches} {project} {revision}
+      on:revisionChanged={(event) => updateRevision(event.detail)} />
+    <div class="anchor">
+      {#if anchors}
+        {#await getAnchor}
+          <Loading small margins />
+        {:then anchor}
+          {#if anchor}
+            <!-- commit is head and latest anchor  -->
+            {#if commit == anchor[0] && commit === project.head}
+              <span class="anchor-widget anchor-latest">
+                <span class="anchor-label" title="{anchors}">latest 🔐</span>
+              </span>
+            <!-- commit is not head but latest anchor  -->
+            {:else if commit == anchor[0] && commit !== project.head}
+              <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
+                <span class="anchor-label" title="{anchors}">latest 🔐</span>
+              </span>
+            <!-- commit is not head a stale anchor  -->
+            {:else if anchor?.includes(commit)}
+              <span class="anchor-widget" on:click={() => updateRevision(anchor[0])}>
+                <span class="anchor-label" title="{anchors}">stale 🔒</span>
+              </span>
+            <!-- commit is not anchored, could be head or any other commit  -->
+            {:else}
+              <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchor[0])}>
+                <span class="anchor-label">not anchored 🔓</span>
+              </span>
+            {/if}
           {:else}
-            <span class="anchor-widget not-anchored" on:click={() => commit = anchor[0]}>
+            <!-- commit is not head and neither an anchor, and there are no anchors available  -->
+            <span class="anchor-widget not-anchored not-allowed">
               <span class="anchor-label">not anchored 🔓</span>
             </span>
           {/if}
-        {:else}
-          <!-- commit is not head and neither an anchor, and there are no anchors available  -->
-          <span class="anchor-widget not-anchored not-allowed">
-            <span class="anchor-label">not anchored 🔓</span>
+        {:catch}
+          <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
+            <span class="anchor-label">❌</span>
           </span>
-        {/if}
-      {:catch}
-        <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
-          <span class="anchor-label">❌</span>
-        </span>
-      {/await}
-    {/if}
-  </div>
+        {/await}
+      {/if}
+    </div>
+  {/if}
   {#if config.seed.git.host}
     <span>
       <div class="clone" on:click={() => (cloneDropdown = !cloneDropdown)}>
@@ -330,7 +301,7 @@
       {/if}
     </div>
   </span>
-  <div class="stat commit-count" class:active={content == ProjectContent.Commits} on:click={switchContent}>
+  <div class="stat commit-count" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   <div class="stat">

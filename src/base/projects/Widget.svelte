@@ -41,7 +41,7 @@
           urn: project.id,
           org,
           user,
-          commit: project.anchor?.stateHash,
+          revision: project.anchor?.stateHash,
         })
       );
     }

@@ -4,44 +4,21 @@
   import type { Config } from '@app/config';
 
   export let config: Config;
+
 </script>
 
-<Route path="/projects/:urn/head/*" let:params>
-  <View {config} urn={params.urn} path={params['*'] || "/"} />
-</Route>
-
-<Route path="/projects/:urn/:commit/*" let:params>
-  <View {config} urn={params.urn} commit={params.commit} path={params['*'] || "/"} />
-</Route>
-
-<Route path="/projects/:urn" let:params>
-  <View {config} urn={params.urn} path="/" />
+<Route path="/projects/:urn/*" let:params>
+  <View {config} urn={params.urn} />
 </Route>
 
 <!-- With an Org context -->
 
-<Route path="/orgs/:org/projects/:urn/head/*" let:params>
-  <View {config} org={params.org} urn={params.urn} path={params['*'] || "/"} />
-</Route>
-
-<Route path="/orgs/:org/projects/:urn/:commit/*" let:params>
-  <View {config} org={params.org} urn={params.urn} commit={params.commit} path={params["*"] || "/"} />
-</Route>
-
-<Route path="/orgs/:org/projects/:urn" let:params>
-  <View {config} org={params.org} urn={params.urn} path="/" />
+<Route path="/orgs/:org/projects/:urn/*" let:params>
+  <View {config} org={params.org} urn={params.urn} />
 </Route>
 
 <!-- With a User context -->
 
-<Route path="/users/:user/projects/:urn/head/*" let:params>
-  <View {config} user={params.user} urn={params.urn} path={params['*'] || "/"} />
-</Route>
-
-<Route path="/users/:user/projects/:urn/:commit/*" let:params>
-  <View {config} user={params.user} urn={params.urn} commit={params.commit} path={params["*"] || "/"} />
-</Route>
-
-<Route path="/users/:user/projects/:urn" let:params>
-  <View {config} user={params.user} urn={params.urn} path="/" />
+<Route path="/users/:user/projects/:urn/*" let:params>
+  <View {config} user={params.user} urn={params.urn} />
 </Route>

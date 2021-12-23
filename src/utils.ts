@@ -28,10 +28,10 @@ export interface Safe {
 }
 
 export interface SafeTransaction {
-    to: string;
-    value: string;
-    data: string;
-    operation: number;
+  to: string;
+  value: string;
+  data: string;
+  operation: number;
 }
 
 export interface Token {
@@ -43,17 +43,17 @@ export interface Token {
 }
 
 export enum Status {
-    Signing,
-    Pending,
-    Success,
-    Failed,
-  }
+  Signing,
+  Pending,
+  Success,
+  Failed,
+}
 
 export type State =
-      { status: Status.Signing }
-    | { status: Status.Pending }
-    | { status: Status.Success }
-    | { status: Status.Failed; error: string };
+    { status: Status.Signing }
+  | { status: Status.Pending }
+  | { status: Status.Success }
+  | { status: Status.Failed; error: string };
 
 export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
   const name = await config.provider.lookupAddress(address);
@@ -173,6 +173,11 @@ export function unixTime(): number {
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {
   return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
+}
+
+// Check whether the input is a SHA1 commit.
+export function isOid(input: string): boolean {
+  return /^[a-fA-F0-9]{40}$/.test(input);
 }
 
 // Check whether the input is a URL.
