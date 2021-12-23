@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { Config } from '@app/config';
   import * as utils from '@app/utils';
-  import Loading from '@app/Loading.svelte';
-  import { ethers } from "ethers";
   import { ProjectContent, getOid } from '@app/project';
   import type { Info, Tree } from "@app/project";
   import type { Profile } from '@app/profile';
@@ -12,7 +10,7 @@
   const dispatch = createEventDispatcher();
 
   export let config: Config;
-  export let anchors: string | null = null;
+  export let anchors: string[];
   export let urn: string;
   export let path: string;
   export let project: Info;
@@ -36,32 +34,6 @@
     dispatch("routeParamsChange", { content, revision: newRevision, path });
   };
 
-  const GetAllAnchors = `
-    query GetAllAnchors($project: Bytes!, $org: ID!) {
-      anchors(orderBy: timestamp, orderDirection: desc, where: { objectId: $project, org: $org }) {
-        multihash
-        timestamp
-      }
-    }
-  `;
-
-  interface AnchorObject {
-    timestamp: number;
-    multihash: string;
-  }
-
-  async function getAllAnchors(anchors: string | null, urn: string): Promise<string[] | null> {
-    if (! anchors) {
-      return null;
-    }
-    const unpadded = utils.decodeRadicleId(urn);
-    const id = ethers.utils.hexZeroPad(unpadded, 32);
-    const allAnchors = await utils.querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchors });
-    return allAnchors.anchors
-      .map((anchor: AnchorObject) => utils.formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
-  }
-
-  $: getAnchor = anchors ? getAllAnchors(anchors, urn) : null;
   $: commit = getOid(project.head, revision, branches);
 </script>
 
@@ -185,10 +157,6 @@
     background: var(--color-foreground-90);
   }
 
-  .error {
-    color: var(--color-negative);
-    cursor: not-allowed;
-  }
   @media (max-width: 960px) {
     header {
       padding-left: 2rem;
@@ -210,42 +178,32 @@
     on:revisionChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
     {#if anchors}
-      {#await getAnchor}
-        <Loading small margins />
-      {:then anchor}
-        {#if anchor}
-          <!-- commit is head and latest anchor  -->
-          {#if commit == anchor[0] && commit === project.head}
-            <span class="anchor-widget anchor-latest">
-              <span class="anchor-label" title="{anchors}">latest 🔐</span>
-            </span>
-          <!-- commit is not head but latest anchor  -->
-          {:else if commit == anchor[0] && commit !== project.head}
-            <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
-              <span class="anchor-label" title="{anchors}">latest 🔐</span>
-            </span>
-          <!-- commit is not head a stale anchor  -->
-          {:else if anchor?.includes(commit)}
-            <span class="anchor-widget" on:click={() => updateRevision(anchor[0])}>
-              <span class="anchor-label" title="{anchors}">stale 🔒</span>
-            </span>
-          <!-- commit is not anchored, could be head or any other commit  -->
-          {:else}
-            <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchor[0])}>
-              <span class="anchor-label">not anchored 🔓</span>
-            </span>
-          {/if}
-        {:else}
-          <!-- commit is not head and neither an anchor, and there are no anchors available  -->
-          <span class="anchor-widget not-anchored not-allowed">
-            <span class="anchor-label">not anchored 🔓</span>
-          </span>
-        {/if}
-      {:catch}
-        <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
-          <span class="anchor-label">❌</span>
+      <!-- commit is head and latest anchor  -->
+      {#if commit == anchors[0] && commit === project.head}
+        <span class="anchor-widget anchor-latest">
+          <span class="anchor-label" title="{anchors[0]}">latest 🔐</span>
         </span>
-      {/await}
+      <!-- commit is not head but latest anchor  -->
+      {:else if commit == anchors[0] && commit !== project.head}
+        <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
+          <span class="anchor-label" title="{anchors[0]}">latest 🔐</span>
+        </span>
+      <!-- commit is not head a stale anchor  -->
+      {:else if anchors.includes(commit)}
+        <span class="anchor-widget" on:click={() => updateRevision(anchors[0])}>
+          <span class="anchor-label" title="{commit}">stale 🔒</span>
+        </span>
+      <!-- commit is not anchored, could be head or any other commit  -->
+      {:else}
+        <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchors[0])}>
+          <span class="anchor-label">not anchored 🔓</span>
+        </span>
+      {/if}
+    {:else}
+      <!-- commit is not head and neither an anchor, and there are no anchors available  -->
+      <span class="anchor-widget not-anchored not-allowed">
+        <span class="anchor-label">not anchored 🔓</span>
+      </span>
     {/if}
   </div>
   {#if config.seed.git.host}

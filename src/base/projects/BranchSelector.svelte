@@ -23,7 +23,6 @@
 
   branches = branches.sort(sortBranches);
 
-  // Casting commit to string, since the commit will always be defined here
   $: commit = getOid(project.head, revision, branches);
 </script>
 
