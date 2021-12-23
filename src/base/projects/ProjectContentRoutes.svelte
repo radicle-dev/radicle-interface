@@ -15,22 +15,23 @@
   export let peer: Peer;
   export let branches: [string, string][];
   export let content: ProjectContent;
+  export let anchors: string[];
   export let revision: string;
   export let path: string;
+
+  let locator = anchors[0] || project.head;
 </script>
 
 <Router>
   <!-- The default action is to render Browser with the default branch head -->
   <Route path="/">
-    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer}
-      locator={project.head}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer} {locator}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree">
-    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer}
-      locator={project.head}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer} {locator}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
@@ -43,7 +44,7 @@
       bind:revision={revision} />
   </Route>
   <Route path="/history">
-    <History {urn} locator={project.head} {config} {project} {branches}
+    <History {urn} {config} {project} {branches} {locator}
       bind:content={content}
       bind:revision={revision} />
   </Route>

@@ -10,6 +10,7 @@
   import { formatOrg, formatSeedId } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
+  import { getAllAnchors } from '@app/anchors';
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
@@ -43,6 +44,7 @@
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
     projectInfo = info;
+    const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? org);
     let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
 
@@ -55,7 +57,7 @@
       }
       peers = await proj.getPeers(urn, cfg);
     }
-    return { project: info, branches, peers, config: cfg, profile };
+    return { project: info, branches, peers, anchors, config: cfg, profile };
   });
 
   const parentUrl = (profile: Profile) => {
@@ -178,7 +180,7 @@
     </header>
     {#await proj.getTree(urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
       <Header {urn} {tree} {revision} {content} {path} {peer}
-        anchors={result.profile?.anchorsAccount ?? org}
+        anchors={result.anchors}
         peerSelector={!!seed}
         config={result.config}
         project={result.project}
@@ -187,6 +189,7 @@
         on:routeParamsChange={updateRouteParams} />
       <ProjectContentRoutes {urn} {org} {user} {seed} {tree} {peer}
         project={result.project}
+        anchors={result.anchors}
         branches={result.branches}
         config={result.config}
         bind:content={content}
