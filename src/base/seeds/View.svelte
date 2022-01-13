@@ -3,7 +3,7 @@
   import { Seed } from "@app/base/seeds/Seed";
   import Widget from "@app/base/projects/Widget.svelte";
   import Loading from "@app/Loading.svelte";
-  import SeedId from "@app/SeedID.svelte";
+  import SeedAddress from "@app/SeedAddress.svelte";
 
   export let config: Config;
   export let seedAddress: string;
@@ -94,7 +94,7 @@
       <div class="label">Seed</div>
       {#if info.version === "0.2.0" && seed.host}
         {#await seed.getPeer() then peer}
-          <SeedId {config} id={peer.id} host={seed.host} port={config.seed.link.port} />
+          <SeedAddress {config} id={peer.id} host={seed.host} port={config.seed.link.port} />
         {/await}
       {:else}
         <div class="seed-address subtle">N/A</div>

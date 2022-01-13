@@ -17,7 +17,7 @@
   import { Profile, ProfileType } from '@app/profile';
   import Projects from './View/Projects.svelte';
   import Link from '@app/Link.svelte';
-  import SeedId from '@app/SeedID.svelte';
+  import SeedAddress from '@app/SeedAddress.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -249,7 +249,7 @@
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
-            <SeedId {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+            <SeedAddress {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
           {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>

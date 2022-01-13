@@ -15,6 +15,7 @@
   import SetName from '@app/ens/SetName.svelte';
   import { User } from '@app/base/users/User';
   import Link from '@app/Link.svelte';
+  import SeedAddress from '@app/SeedAddress.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -34,7 +35,7 @@
 <style>
   main {
     padding: 5rem 0;
-    width: 36rem;
+    width: 720px;
   }
   main > header {
     display: flex;
@@ -172,6 +173,11 @@
           <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
           <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
           <div class="desktop" />
+        {/if}
+        <!-- Seed Address -->
+        {#if profile.seedId && profile.seedHost}
+          <div class="label">Seed</div>
+          <SeedAddress {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
         {/if}
         <!-- Profile -->
         <div class="label">Profile</div>
