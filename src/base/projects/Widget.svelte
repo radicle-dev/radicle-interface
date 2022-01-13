@@ -19,9 +19,12 @@
   export let org: string | undefined = undefined;
   export let user: string | undefined = undefined;
   export let faded = false;
+  export let seed = "";
 
   let state: State = { status: Status.Loading };
   let info: proj.Info | null = null;
+
+  let prefix = seed && `seeds/${seed}`;
 
   onMount(async () => {
     try {
@@ -42,7 +45,7 @@
           org,
           user,
           revision: project.anchor?.stateHash,
-        })
+        }, prefix)
       );
     }
   };

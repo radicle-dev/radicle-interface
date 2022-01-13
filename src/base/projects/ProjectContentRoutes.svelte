@@ -16,6 +16,7 @@
   export let anchors: string[];
   export let revision: string;
   export let path: string;
+  export let prefix: string;
 
   let locator = anchors[0] || project.head;
 </script>
@@ -23,20 +24,20 @@
 <Router>
   <!-- The default action is to render Browser with the default branch head -->
   <Route path="/">
-    <Browser {urn} {org} {user} {config} {tree} {project} {branches} {locator}
+    <Browser {urn} {org} {user} {config} {tree} {project} {branches} {locator} {prefix}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree">
-    <Browser {urn} {org} {user} {config} {tree} {project} {branches} {locator}
+    <Browser {urn} {org} {user} {config} {tree} {project} {branches} {locator} {prefix}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree/*" let:params>
     <Browser {urn} {org} {user} {config} {tree} {project} {branches}
-      locator={params["*"]}
+      {prefix} locator={params["*"]}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />

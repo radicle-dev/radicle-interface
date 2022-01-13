@@ -177,7 +177,8 @@
   <BranchSelector {branches} {project} {revision}
     on:revisionChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
-    {#if anchors}
+    <!-- Checking for length since a empty array is being passed -->
+    {#if anchors.length > 0}
       <!-- commit is head and latest anchor  -->
       {#if commit == anchors[0] && commit === project.head}
         <span class="anchor-widget anchor-latest">

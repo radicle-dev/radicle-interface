@@ -157,7 +157,7 @@
         <div class="projects">
           {#each projects as project}
             <div class="project">
-              <Widget {project} {config} />
+              <Widget {project} {config} seed={seed.host} />
             </div>
           {/each}
         </div>

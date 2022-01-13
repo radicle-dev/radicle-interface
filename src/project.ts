@@ -138,10 +138,15 @@ export async function getReadme(
 }
 
 export function path(
-  opts: { urn: string; org?: string; content?: ProjectContent; user?: string; revision?: string; path?: string }
+  opts: { urn: string; org?: string; content?: ProjectContent; user?: string; revision?: string; path?: string },
+  prefix?: string
 ): string {
   const { urn, org, user, content, revision, path } = opts;
   const result = [];
+
+  if (prefix) {
+    result.push(prefix);
+  }
 
   if (org) {
     result.push("orgs", org);

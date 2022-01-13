@@ -28,6 +28,7 @@
   export let content: proj.ProjectContent;
   export let revision: string;
   export let path: string;
+  export let prefix: string;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
@@ -75,11 +76,11 @@
     if (path === undefined) path = state.path;
 
     if (org) {
-      navigate(proj.path({ urn, org, revision, path }));
+      navigate(proj.path({ urn, org, revision, path }, prefix));
     } else if (user) {
-      navigate(proj.path({ urn, user, revision, path }));
+      navigate(proj.path({ urn, user, revision, path }, prefix));
     } else {
-      navigate(proj.path({ urn, revision, path }));
+      navigate(proj.path({ urn, revision, path }, prefix));
     }
   };
 
