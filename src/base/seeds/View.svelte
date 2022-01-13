@@ -2,23 +2,13 @@
   import type { Config } from "@app/config";
   import { Seed } from "@app/base/seeds/Seed";
   import Widget from "@app/base/projects/Widget.svelte";
-  import * as utils from "@app/utils";
   import Loading from "@app/Loading.svelte";
+  import SeedId from "@app/SeedID.svelte";
 
   export let config: Config;
   export let seedAddress: string;
 
   const seed = new Seed(config, seedAddress);
-
-  let seedCopied = false;
-  const copySeed = (seedId: string, seedHost: string) => {
-    return () => utils.toClipboard(utils.formatSeedAddress(seedId, seedHost, config)).then(() => {
-      seedCopied = true;
-      setTimeout(() => {
-        seedCopied = false;
-      }, 3000);
-    });
-  };
 </script>
 
 <style>
@@ -62,9 +52,6 @@
   .projects .project {
     margin-bottom: 1rem;
   }
-  .mobile {
-    display: none !important;
-  }
   .desktop {
     display: block !important;
   }
@@ -75,9 +62,6 @@
     }
     .fields {
       grid-template-columns: 5rem auto;
-    }
-    .mobile {
-      display: block !important;
     }
     .desktop {
       display: none !important;
@@ -110,33 +94,7 @@
       <div class="label">Seed</div>
       {#if info.version === "0.2.0" && seed.host}
         {#await seed.getPeer() then peer}
-          <div class="mobile">
-            <button class="tiny faded" disabled={seedCopied} on:click={copySeed(peer.id, seed.host)}>
-              {#if seedCopied}
-                Copy ✓
-              {:else}
-                Copy
-              {/if}
-            </button>
-          </div>
-          <div class="seed-address desktop">
-            <span class="seed-icon">🌱</span>
-            {utils.formatSeedId(peer.id)}@{seed.host}
-            <span class="faded">:{seed.config.seed.link.port}</span>
-          </div>
-          <div class="desktop">
-            <button
-              class="tiny faded"
-              disabled={seedCopied}
-              on:click={copySeed(peer.id, seed.host)}
-            >
-              {#if seedCopied}
-                Copy ✓
-              {:else}
-                Copy
-              {/if}
-            </button>
-          </div>
+          <SeedId {config} id={peer.id} host={seed.host} port={config.seed.link.port} />
         {/await}
       {:else}
         <div class="seed-address subtle">N/A</div>

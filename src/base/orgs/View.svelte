@@ -17,6 +17,7 @@
   import { Profile, ProfileType } from '@app/profile';
   import Projects from './View/Projects.svelte';
   import Link from '@app/Link.svelte';
+  import SeedId from '@app/SeedID.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -28,16 +29,6 @@
     action === "setName" ? SetName : null;
   const setName = () => {
     setNameForm = SetName;
-  };
-
-  let seedCopied = false;
-  const copySeed = (seedId: string, seedHost: string) => {
-    return () => utils.toClipboard(utils.formatSeedAddress(seedId, seedHost, config)).then(() => {
-      seedCopied = true;
-      setTimeout(() => {
-        seedCopied = false;
-      }, 3000);
-    });
   };
 
   let transferOwnerForm: typeof SvelteComponent | null = null;
@@ -135,15 +126,6 @@
     display: flex; /* Ensures correct vertical positioning of icons */
     margin-right: 1rem;
     height: 1.6rem;
-  }
-  .seed-address {
-    display: inline-flex;
-    font-size: 1rem;
-    color: var(--color-foreground-90);
-  }
-  .seed-icon {
-    width: 1rem;
-    margin-right: 0.5rem;
   }
   .members {
     margin-top: 2rem;
@@ -267,31 +249,7 @@
           <!-- Seed Address -->
           {#if profile.seedId && profile.seedHost}
             <div class="label">Seed</div>
-            <div class="mobile">
-              <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
-                {#if seedCopied}
-                  Copy ✓
-                {:else}
-                  Copy
-                {/if}
-              </button>
-            </div>
-            <div class="desktop">
-              <div class="seed-address">
-                <span class="seed-icon">🌱</span>
-                <span><a href="/seeds/{profile.seedHost}" class="link">{utils.formatSeedId(profile.seedId)}@{profile.seedHost}</a></span>
-                <span class="faded">:{config.seed.link.port}</span>
-              </div>
-            </div>
-            <div class="desktop">
-              <button class="tiny faded" disabled={seedCopied} on:click={copySeed(profile.seedId, profile.seedHost)}>
-                {#if seedCopied}
-                  Copy ✓
-                {:else}
-                  Copy
-                {/if}
-              </button>
-            </div>
+            <SeedId {config} id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
           {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>
