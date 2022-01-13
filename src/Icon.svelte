@@ -24,6 +24,11 @@
       name: "ellipsis",
       size: 24,
       data: `<path d="M7 12a2 2 0 1 1-4.001-.001A2 2 0 0 1 7 12zm12-2a2 2 0 1 0 .001 4.001A2 2 0 0 0 19 10zm-7 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 12 10z"/>`
+    },
+    {
+      name: "fork",
+      size: 17,
+      data: `<circle cx="6.5" cy="13.5" r="2" stroke="#5555FF"/><circle cx="10.5" cy="2.5" r="2" stroke="#5555FF"/><circle cx="2.5" cy="2.5" r="2" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 2.5 8 2.5 5.5C2.5 3.9 2.5 4.66667 2.5 4" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 10.5 8 10.5 5.5C10.5 3.9 10.5 4.66667 10.5 4" stroke="#5555FF"/>`
     }
   ];
   const svg = icons.find(e => e.name === name);

@@ -7,6 +7,10 @@ export type Urn = string;
 export type Peer = string;
 export type Branch = { [key: string]: string };
 
+export interface ProjectListing {
+  name: string;
+  urn: Urn;
+}
 export interface Project {
   id: string;
   anchor: {
@@ -101,12 +105,16 @@ export async function getCommits(urn: string, commit: string, config: Config): P
   return api.get(`projects/${urn}/commits/${commit}`, {}, config);
 }
 
-export async function getProjects(config: Config): Promise<any> {
+export async function getProjects(config: Config): Promise<ProjectListing[]> {
   return api.get("projects", {}, config);
 }
 
 export async function getBranchesByPeer(urn: string, peer: string, config: Config): Promise<Branches> {
   return api.get(`projects/${urn}/remotes/${peer}`, {}, config);
+}
+
+export async function getPeers(urn: string, config: Config): Promise<Peer[]> {
+  return api.get(`projects/${urn}/remotes`, {}, config);
 }
 
 export async function getTree(
@@ -143,12 +151,13 @@ export function path(
     org?: string;
     user?: string;
     seed?: string;
+    peer?: string;
     content?: ProjectContent;
     revision?: string;
     path?: string;
   }
 ): string {
-  const { urn, org, user, seed, content, revision, path } = opts;
+  const { urn, org, user, seed, peer, content, revision, path } = opts;
   const result = [];
 
   if (org) {
@@ -159,6 +168,10 @@ export function path(
     result.push("seeds", seed);
   }
   result.push("projects", urn);
+
+  if (peer) {
+    result.push("remotes", peer);
+  }
 
   switch (content) {
     case ProjectContent.History:

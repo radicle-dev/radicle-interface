@@ -22,10 +22,16 @@
     return 0;
   };
 
+  let branchLabel: string;
   branches = branches.sort(sortBranches);
 
-  // Casting commit to string, since the commit will always be defined here
   $: commit = getOid(project.head, revision, branches);
+  $: isLabel = commit == project.head || !isOid(revision);
+  $: if (commit == project.head) {
+    branchLabel = project.meta.defaultBranch;
+  } else if (!isOid(revision)) {
+    branchLabel = revision;
+  }
 </script>
 
 <style>
@@ -70,6 +76,15 @@
     display: none;
     position: absolute;
   }
+  .hidden {
+    display: none;
+  }
+  .pointer {
+    cursor: pointer;
+  } 
+  .branch-dropdown.branch-dropdown-without-label {
+    margin-top: 1.6rem;
+  }
   .branch-dropdown.branch-dropdown-visible {
     display: block;
   }
@@ -90,18 +105,12 @@
   <!-- Check for branches listing feature -->
   {#if branches.length > 0}
     <span>
-      <div on:click={() => toggleDropdown("branch")} class="stat branch" class:not-allowed={!branches}>
-        {#if commit === project.head}
-          {project.meta.defaultBranch}
-        <!-- If commit is no sha1 commit show branch or tag name -->
-        {:else if !isOid(revision)}
-          {revision}
-        {:else}
-          Browse...
-        {/if}
+      <div on:click={() => toggleDropdown("branch")} class="stat branch" class:not-allowed={!branches} class:hidden={!isLabel}>
+        {branchLabel}
       </div>
       <div
         class="dropdown branch-dropdown"
+        class:branch-dropdown-without-label={!isLabel}
         class:branch-dropdown-visible={branchesDropdown}
       >
         {#each branches as [name,]}
@@ -109,15 +118,15 @@
         {/each}
       </div>
     </span>
-    {#if commit === project.head || !isOid(revision)}
+    {#if isLabel}
       <div class="hash">
         {formatCommit(commit)}
       </div>
     {:else}
-      <div class="hash desktop">
+      <div class="hash desktop" class:pointer={!isLabel} on:click={() => toggleDropdown("branch")}>
         {commit}
       </div>
-      <div class="hash mobile">
+      <div class="hash mobile" class:pointer={!isLabel} on:click={() => toggleDropdown("branch")}>
         {formatCommit(commit)}
       </div>
     {/if}

@@ -7,7 +7,7 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg } from '@app/utils';
+  import { formatOrg, formatSeedId } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
 
@@ -18,6 +18,7 @@
   export let org = "";
   export let user = "";
   export let seed = "";
+  export let peer = "";
   export let config: Config;
 
   let parentName = formatOrg(org || user, config);
@@ -42,13 +43,19 @@
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
     projectInfo = info;
+    let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
+    let peers: proj.Peer[] = [];
 
     // Checks for delegates returned from seed node, as feature check of the seed node
     if (info.meta.delegates) {
-      const branches = await proj.getBranchesByPeer(urn, info.meta.delegates[0], cfg);
-      return { project: info, branches: [...Object.entries(branches.heads)], peer: info.meta.delegates[0], config: cfg, profile };
+      // Check for selected peer to override available branches.
+      if (peer) {
+        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.meta.delegates[0], cfg);
+        branches = [...Object.entries(branchesByPeer.heads)];
+      }
+      peers = await proj.getPeers(urn, cfg);
     }
-    return { project: info, branches: Array([info.meta.defaultBranch, info.head]) as [string, string][], config: cfg, profile };
+    return { project: info, branches, peers, config: cfg, profile };
   });
 
   const parentUrl = (profile: Profile) => {
@@ -69,14 +76,15 @@
     }
   }
 
-  function updateRouteParams({ detail: newParams }: { detail: { path: string; revision: string; content: proj.ProjectContent } }) {
-    let newLocation = proj.path({ urn, user, org, seed, content: newParams.content, revision: newParams.revision, path: newParams.path });
+  function updateRouteParams({ detail: newParams }: { detail: { path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
+    let newLocation = proj.path({ urn, user, org, seed, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
     if (content !== newParams.content) content = newParams.content;
     if (revision !== newParams.revision) revision = newParams.revision;
     if (path !== newParams.path) path = newParams.path;
+    if (peer !== newParams.peer) peer = newParams.peer;
   }
 
   const back = () => window.history.back();
@@ -161,19 +169,24 @@
           <span class="divider">/</span>
         {/if}
         <Link to={projectRoot}>{result.project.meta.name}</Link>
+        {#if peer}
+          <span class="divider" title={peer}>/ {formatSeedId(peer)}</span> 
+        {/if}
       </div>
       <div class="urn">{urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
     {#await proj.getTree(urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
-      <Header {urn} {tree} {revision} {content} {path}
+      <Header {urn} {tree} {revision} {content} {path} {peer}
         anchors={result.profile?.anchorsAccount ?? org}
+        peerSelector={!!seed}
         config={result.config}
         project={result.project}
         branches={result.branches}
         profile={result.profile}
+        peers={result.peers}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {urn} {org} {user} {seed} {tree}
+      <ProjectContentRoutes {urn} {org} {user} {seed} {tree} {peer}
         project={result.project}
         branches={result.branches}
         config={result.config}

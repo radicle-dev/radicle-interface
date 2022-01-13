@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { Info, ProjectContent, Tree } from "@app/project";
+  import type { Info, Peer, ProjectContent, Tree } from "@app/project";
   import { Route, Router } from "svelte-routing";
   import Browser from "./Browser.svelte";
   import History from "./Commit/History.svelte";
@@ -12,6 +12,7 @@
   export let tree: Tree;
   export let user: string;
   export let seed: string;
+  export let peer: Peer;
   export let branches: [string, string][];
   export let content: ProjectContent;
   export let revision: string;
@@ -21,21 +22,21 @@
 <Router>
   <!-- The default action is to render Browser with the default branch head -->
   <Route path="/">
-    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer}
       locator={project.head}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree">
-    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer}
       locator={project.head}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree/*" let:params>
-    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches} {peer}
       locator={params["*"]}
       bind:content={content}
       bind:path={path}

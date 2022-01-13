@@ -13,6 +13,10 @@
   <View {config} seed={params.seed} urn={params.urn} />
 </Route>
 
+<Route path="/seeds/:seed/projects/:urn/remotes/:peer/*" let:params>
+  <View {config} seed={params.seed} peer={params.peer} urn={params.urn} />
+</Route>
+
 <!-- With an Org context -->
 
 <Route path="/orgs/:org/projects/:urn/*" let:params>

@@ -7,6 +7,7 @@
   import type { Info, Tree } from "@app/project";
   import type { Profile } from '@app/profile';
   import BranchSelector from './BranchSelector.svelte';
+  import PeerSelector from './PeerSelector.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
@@ -21,8 +22,14 @@
   export let branches: [string, string][] = [];
   export let content: ProjectContent;
   export let revision: string;
+  // If peerSelector should be showed.
+  export let peerSelector: boolean;
+  // Currently selected peer.
+  export let peer: string;
+  // Listing of available peers, empty array if none available.
+  export let peers: string[];
 
-  let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false };
+  let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {
     Object.keys(dropdownState).map((key: string) => {
       if (input === key) dropdownState[key] = !dropdownState[key];
@@ -32,11 +39,15 @@
 
   // Switches between the browser and commit view
   const toggleContent = (input: ProjectContent) => {
-    dispatch("routeParamsChange", { content: content === input ? ProjectContent.Tree : input, revision, path });
+    dispatch("routeParamsChange", { content: content === input ? ProjectContent.Tree : input, revision, peer, path });
+  };
+
+  const updatePeer = (newPeer: string) => {
+    dispatch("routeParamsChange", { content, revision, peer: newPeer, path });
   };
 
   const updateRevision = (newRevision: string) => {
-    dispatch("routeParamsChange", { content, revision: newRevision, path });
+    dispatch("routeParamsChange", { content, revision: newRevision, peer, path });
   };
 
   const GetAllAnchors = `
@@ -209,11 +220,16 @@
 </style>
 
 <header>
+  {#if peers.length > 0 && peerSelector}
+    <PeerSelector {peers} {toggleDropdown} {peer}
+      bind:peersDropdown={dropdownState.peer}
+      on:peerChanged={(event) => updatePeer(event.detail)} />
+  {/if}
   <BranchSelector {branches} {project} {revision} {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
     on:revisionChanged={(event) => updateRevision(event.detail)} />
-  <div class="anchor">
-    {#if anchors}
+  {#if anchors}
+    <div class="anchor">
       {#await getAnchor}
         <Loading small margins />
       {:then anchor}
@@ -250,8 +266,8 @@
           <span class="anchor-label">❌</span>
         </span>
       {/await}
-    {/if}
-  </div>
+    </div>
+  {/if}
   {#if config.seed.git.host}
     <span>
       <div class="clone" on:click={() => toggleDropdown("clone")}>
