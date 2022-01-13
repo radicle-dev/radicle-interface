@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
@@ -9,8 +8,6 @@
   import Tree from './Tree.svelte';
   import Blob from './Blob.svelte';
   import Readme from './Readme.svelte';
-
-  const dispatch = createEventDispatcher();
 
   enum Status {
     Loading,
@@ -29,22 +26,21 @@
   export let branches: [string, string][];
   export let locator: string; // eg. "master/README.md"
   export let content: proj.ProjectContent;
-
-  // Bind content to file tree to trigger updates in parent components.
-  content = proj.ProjectContent.Tree;
+  export let revision: string;
+  export let path: string;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
-  $: [revision, path] = proj.splitPrefixFromPath(locator, branches, project.head);
+  $: [revision_, path_] = proj.splitPrefixFromPath(locator, branches, project.head);
+  // Bind content to file tree to trigger updates in parent components.
+  $: content = proj.ProjectContent.Tree;
+  $: revision = revision_;
+  $: path = path_;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
-
-  onMount(() => {
-    dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
-  });
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
     if (state.status == Status.Loaded && state.path === path) {
@@ -68,8 +64,6 @@
     // displayed once loaded.
     const blob = await loadBlob(newPath);
     getBlob = new Promise(resolve => resolve(blob));
-
-    dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
 
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
@@ -98,7 +92,6 @@
   };
 
   $: commit = proj.getOid(project.head, revision, branches);
-  $: dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

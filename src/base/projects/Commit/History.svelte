@@ -1,12 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
   import CommitTeaser from "./CommitTeaser.svelte";
   import { getCommits, Info, getOid, ProjectContent, splitPrefixFromPath } from "@app/project";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "./lib";
-
-  const dispatch = createEventDispatcher();
 
   export let locator: string;
   export let urn: string;
@@ -14,17 +11,12 @@
   export let project: Info;
   export let branches: [string, string][];
   export let content: ProjectContent;
-
-  $: [revision,] = splitPrefixFromPath(locator, branches, project.head);
+  export let revision: string;
 
   // Bind content to commit history to trigger updates in parent components.
-  content = ProjectContent.History;
-
-  onMount(() => {
-    dispatch("routeParamsChange", { content: ProjectContent.History, revision });
-  });
-
-  $: dispatch("routeParamsChange", { content: ProjectContent.History, revision });
+  $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
+  $: content = ProjectContent.History;
+  $: revision = revision_;
 
   async function fetchCommits(revision: string): Promise<GroupedCommitsHistory> {
     const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), config);

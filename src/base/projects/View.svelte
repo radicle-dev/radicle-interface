@@ -174,7 +174,8 @@
         branches={result.branches}
         config={result.config}
         bind:content={content}
-        on:routeParamsChange={updateRouteParams} />
+        bind:revision={revision}
+        bind:path={path} />
     {:catch err}
       <div class="container center-content">
         <div class="error error-message text-xsmall">
