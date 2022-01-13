@@ -206,50 +206,48 @@
 </style>
 
 <header>
-  {#if revision}
-    <BranchSelector {branches} {project} {revision}
-      on:revisionChanged={(event) => updateRevision(event.detail)} />
-    <div class="anchor">
-      {#if anchors}
-        {#await getAnchor}
-          <Loading small margins />
-        {:then anchor}
-          {#if anchor}
-            <!-- commit is head and latest anchor  -->
-            {#if commit == anchor[0] && commit === project.head}
-              <span class="anchor-widget anchor-latest">
-                <span class="anchor-label" title="{anchors}">latest 🔐</span>
-              </span>
-            <!-- commit is not head but latest anchor  -->
-            {:else if commit == anchor[0] && commit !== project.head}
-              <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
-                <span class="anchor-label" title="{anchors}">latest 🔐</span>
-              </span>
-            <!-- commit is not head a stale anchor  -->
-            {:else if anchor?.includes(commit)}
-              <span class="anchor-widget" on:click={() => updateRevision(anchor[0])}>
-                <span class="anchor-label" title="{anchors}">stale 🔒</span>
-              </span>
-            <!-- commit is not anchored, could be head or any other commit  -->
-            {:else}
-              <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchor[0])}>
-                <span class="anchor-label">not anchored 🔓</span>
-              </span>
-            {/if}
+  <BranchSelector {branches} {project} {revision}
+    on:revisionChanged={(event) => updateRevision(event.detail)} />
+  <div class="anchor">
+    {#if anchors}
+      {#await getAnchor}
+        <Loading small margins />
+      {:then anchor}
+        {#if anchor}
+          <!-- commit is head and latest anchor  -->
+          {#if commit == anchor[0] && commit === project.head}
+            <span class="anchor-widget anchor-latest">
+              <span class="anchor-label" title="{anchors}">latest 🔐</span>
+            </span>
+          <!-- commit is not head but latest anchor  -->
+          {:else if commit == anchor[0] && commit !== project.head}
+            <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
+              <span class="anchor-label" title="{anchors}">latest 🔐</span>
+            </span>
+          <!-- commit is not head a stale anchor  -->
+          {:else if anchor?.includes(commit)}
+            <span class="anchor-widget" on:click={() => updateRevision(anchor[0])}>
+              <span class="anchor-label" title="{anchors}">stale 🔒</span>
+            </span>
+          <!-- commit is not anchored, could be head or any other commit  -->
           {:else}
-            <!-- commit is not head and neither an anchor, and there are no anchors available  -->
-            <span class="anchor-widget not-anchored not-allowed">
+            <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchor[0])}>
               <span class="anchor-label">not anchored 🔓</span>
             </span>
           {/if}
-        {:catch}
-          <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
-            <span class="anchor-label">❌</span>
+        {:else}
+          <!-- commit is not head and neither an anchor, and there are no anchors available  -->
+          <span class="anchor-widget not-anchored not-allowed">
+            <span class="anchor-label">not anchored 🔓</span>
           </span>
-        {/await}
-      {/if}
-    </div>
-  {/if}
+        {/if}
+      {:catch}
+        <span class="anchor-widget error" title="Not able to fetch anchor from subgraph">
+          <span class="anchor-label">❌</span>
+        </span>
+      {/await}
+    {/if}
+  </div>
   {#if config.seed.git.host}
     <span>
       <div class="clone" on:click={() => (cloneDropdown = !cloneDropdown)}>

@@ -21,14 +21,21 @@
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let urn: string;
-  export let revision: string;
   export let config: Config;
-  export let path: string;
   export let org: string | null = null;
   export let user: string | null = null;
   export let tree: proj.Tree;
   export let project: proj.Info;
   export let branches: [string, string][];
+  export let locator: string; // eg. "master/README.md"
+  export let content: proj.ProjectContent;
+
+  // Bind content to file tree to trigger updates in parent components.
+  content = proj.ProjectContent.Tree;
+
+  // This is reactive to respond to path changes that don't originate from this
+  // component, eg. when using the browser's "back" button.
+  $: [revision, path] = proj.splitPrefixFromPath(locator, branches, project.head);
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -90,9 +97,6 @@
     mobileFileTree = !mobileFileTree;
   };
 
-  // This is reactive to respond to path changes that don't originate from this
-  // component, eg. when using the browser's "back" button.
-  $: [revision, path] = proj.splitPrefixFromPath(revision, branches, project.head);
   $: commit = proj.getOid(project.head, revision, branches);
   $: dispatch("routeParamsChange", { content: proj.ProjectContent.Tree, revision, path });
   $: getBlob = loadBlob(path);

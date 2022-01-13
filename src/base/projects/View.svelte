@@ -169,10 +169,11 @@
         branches={result.branches}
         profile={result.profile}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {urn} {org} {user} {tree} {path}
+      <ProjectContentRoutes {urn} {org} {user} {tree}
         project={result.project}
         branches={result.branches}
         config={result.config}
+        bind:content={content}
         on:routeParamsChange={updateRouteParams} />
     {:catch err}
       <div class="container center-content">
