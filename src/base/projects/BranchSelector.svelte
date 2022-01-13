@@ -6,10 +6,11 @@
   export let branches: [string, string][];
   export let project: Info;
   export let revision: string;
+  export let toggleDropdown: (input: string) => void;
+  export let branchesDropdown = false;
 
   const dispatch = createEventDispatcher();
 
-  let branchesDropdown = false;
   const switchBranch = (name: string) => {
     dispatch("revisionChanged", name);
   };
@@ -89,7 +90,7 @@
   <!-- Check for branches listing feature -->
   {#if branches.length > 0}
     <span>
-      <div on:click={() => branchesDropdown = !branchesDropdown} class="stat branch" class:not-allowed={!branches}>
+      <div on:click={() => toggleDropdown("branch")} class="stat branch" class:not-allowed={!branches}>
         {#if commit === project.head}
           {project.meta.defaultBranch}
         <!-- If commit is no sha1 commit show branch or tag name -->

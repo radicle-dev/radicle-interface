@@ -22,10 +22,13 @@
   export let content: ProjectContent;
   export let revision: string;
 
-  // Whether the clone dropdown is visible.
-  let cloneDropdown = false;
-  // Whether the seed dropdown is visible.
-  let seedDropdown = false;
+  let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false };
+  function toggleDropdown(input: string) {
+    Object.keys(dropdownState).map((key: string) => {
+      if (input === key) dropdownState[key] = !dropdownState[key];
+      else dropdownState[key] = false;
+    });
+  }
 
   // Switches between the browser and commit view
   const toggleContent = (input: ProjectContent) => {
@@ -206,7 +209,8 @@
 </style>
 
 <header>
-  <BranchSelector {branches} {project} {revision}
+  <BranchSelector {branches} {project} {revision} {toggleDropdown}
+    bind:branchesDropdown={dropdownState.branch}
     on:revisionChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
     {#if anchors}
@@ -250,12 +254,12 @@
   </div>
   {#if config.seed.git.host}
     <span>
-      <div class="clone" on:click={() => (cloneDropdown = !cloneDropdown)}>
+      <div class="clone" on:click={() => toggleDropdown("clone")}>
         Clone
       </div>
       <div
         class="dropdown clone-dropdown"
-        class:clone-dropdown-visible={cloneDropdown}
+        class:clone-dropdown-visible={dropdownState.clone}
       >
         <input
           readonly
@@ -272,7 +276,7 @@
     {#if config.seed.api.host}
       <div
         class="stat seed"
-        on:click={() => (seedDropdown = !seedDropdown)}
+        on:click={() => toggleDropdown("seed")}
         title="Project data is fetched from this seed"
       >
         <span>{config.seed.api.host}</span>
@@ -280,7 +284,7 @@
     {/if}
     <div
       class="dropdown seed-dropdown"
-      class:seed-dropdown-visible={seedDropdown}
+      class:seed-dropdown-visible={dropdownState.seed}
     >
       {#if config.seed.link.id && config.seed.link.host}
         <input
