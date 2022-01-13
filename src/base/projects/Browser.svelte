@@ -177,45 +177,45 @@
 </style>
 
 <main>
-    <!-- Mobile navigation -->
-    <nav class="mobile">
-      <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
-        Browse
-      </button>
-    </nav>
+  <!-- Mobile navigation -->
+  <nav class="mobile">
+    <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
+      Browse
+    </button>
+  </nav>
 
-    <div class="container center-content">
-      {#if tree.entries.length}
-        <div class="column-left" class:column-left-visible={mobileFileTree}>
-          <div class="source-tree">
-            <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
-          </div>
+  <div class="container center-content">
+    {#if tree.entries.length}
+      <div class="column-left" class:column-left-visible={mobileFileTree}>
+        <div class="source-tree">
+          <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
         </div>
-        <div class="column-right">
-          {#await getBlob}
-            <Loading small center />
-          {:then blob}
-            {#if utils.isMarkdownPath(blob.path)}
-              <Readme content={blob.content} />
-            {:else}
-              <Blob {blob} />
-            {/if}
-          {:catch}
-            <div class="error error-message file-not-found">
-              <header>
-                <div class="icon">🍂</div>
-                {#if path != "/"}
-                  <div><code>{path}</code></div>
-                {/if}
-              </header>
-              {#if path == "/"}
-                The README could not be loaded.
-              {:else}
-                This path could not be loaded.
+      </div>
+      <div class="column-right">
+        {#await getBlob}
+          <Loading small center />
+        {:then blob}
+          {#if utils.isMarkdownPath(blob.path)}
+            <Readme content={blob.content} />
+          {:else}
+            <Blob {blob} />
+          {/if}
+        {:catch}
+          <div class="error error-message file-not-found">
+            <header>
+              <div class="icon">🍂</div>
+              {#if path != "/"}
+                <div><code>{path}</code></div>
               {/if}
-            </div>
-          {/await}
-        </div>
-      {/if}
-    </div>
+            </header>
+            {#if path == "/"}
+              The README could not be loaded.
+            {:else}
+              This path could not be loaded.
+            {/if}
+          </div>
+        {/await}
+      </div>
+    {/if}
+  </div>
 </main>
