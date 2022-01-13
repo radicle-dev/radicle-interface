@@ -64,6 +64,9 @@
 <svelte:window on:keydown={handleKeydown} />
 <svelte:head>
   <title>Radicle</title>
+  {#if import.meta.env.PROD}
+    <script defer data-domain="app.radicle.network" src="https://plausible.io/js/plausible.js"></script>
+  {/if}
 </svelte:head>
 
 <div class="app">
