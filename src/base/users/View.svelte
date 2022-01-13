@@ -220,6 +220,10 @@
             {/each}
           </div>
         {/if}
+      {:catch err}
+        <Message error>
+          <strong>Error: </strong> failed to load orgs: {err.message}.
+        </Message>
       {/await}
       <div class="projects">
         {#if profile.anchorsAccount}

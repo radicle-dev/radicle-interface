@@ -18,6 +18,7 @@
   import Projects from './View/Projects.svelte';
   import Link from '@app/Link.svelte';
   import SeedAddress from '@app/SeedAddress.svelte';
+  import Message from '@app/Message.svelte';
 
   export let addressOrName: string;
   export let config: Config;
@@ -96,6 +97,7 @@
     display: grid;
     grid-template-columns: 5rem 4fr 2fr;
     grid-gap: 1rem 2rem;
+    margin-bottom: 1rem;
   }
   .fields > div {
     justify-self: start;
@@ -323,6 +325,10 @@
               {/await}
             </div>
           {/if}
+        {:catch err}
+          <Message error>
+            <strong>Error: </strong> failed to load org members: {err.message}.
+          </Message>
         {/await}
 
         <Projects {org} config={profile.seed ? config.withSeed(profile.seed) : config} />
