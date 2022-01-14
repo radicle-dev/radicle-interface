@@ -33,6 +33,8 @@
     min-width: 1rem;
     min-height: 1rem;
     height: 100%;
+    width: inherit;
+    object-fit: cover;
     background-size: cover;
     background-repeat: no-repeat;
   }
