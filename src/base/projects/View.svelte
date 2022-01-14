@@ -89,7 +89,7 @@
 
   const back = () => window.history.back();
 
-  $: projectRoot = proj.path({ urn, user, org });
+  $: projectRoot = proj.path({ urn, user, org, seed });
 </script>
 
 <style>
