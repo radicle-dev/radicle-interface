@@ -18,6 +18,7 @@
   export let config: Config;
   export let org: string | undefined = undefined;
   export let user: string | undefined = undefined;
+  export let seed: string | undefined = undefined;
   export let faded = false;
 
   let state: State = { status: Status.Loading };
@@ -41,6 +42,7 @@
           urn: project.id,
           org,
           user,
+          seed,
           revision: project.anchor?.stateHash,
         })
       );

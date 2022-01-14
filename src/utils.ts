@@ -243,9 +243,8 @@ export async function querySubgraph(
   const json = await response.json();
 
   if (json.errors) {
-    for (const e of json.errors) {
-      console.error("querySubgraph:", e.message);
-    }
+    console.error("querySubgraph:", json.errors);
+
     if (retries > 0) querySubgraph(url, query, variables, retries - 1);
     else return null;
   }

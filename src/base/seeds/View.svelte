@@ -8,7 +8,7 @@
   export let config: Config;
   export let seedAddress: string;
 
-  const seed = new Seed(config, seedAddress);
+  config = config.withSeed({ host: seedAddress });
 </script>
 
 <style>
@@ -70,10 +70,10 @@
 </style>
 
 <svelte:head>
-  <title>{seed.host}</title>
+  <title>{seedAddress}</title>
 </svelte:head>
 
-{#await seed.getInfo()}
+{#await Seed.get(config)}
   <main class="off-centered">
     <Loading center />
   </main>
@@ -83,7 +83,7 @@
       <div class="info">
         <span class="title">
           <span class="bold">
-            {seed.host}
+            {seedAddress}
           </span>
         </span>
       </div>
@@ -92,17 +92,15 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="label">Seed</div>
-      {#if info.version === "0.2.0" && seed.host}
-        {#await seed.getPeer() then peer}
-          <SeedAddress {config} id={peer.id} host={seed.host} port={config.seed.link.port} />
-        {/await}
+      {#if info.version === "0.2.0" && info.host}
+        <SeedAddress {config} id={info.id} host={info.host} port={config.seed.link.port} />
       {:else}
         <div class="seed-address subtle">N/A</div>
         <div class="desktop" />
       {/if}
       <!-- API Port -->
       <div class="label">API Port</div>
-      <div>{seed.config.seed.api.port}</div>
+      <div>{config.seed.api.port}</div>
       <div class="desktop" />
       <!-- API Version -->
       <div class="label">Version</div>
@@ -111,11 +109,11 @@
     </div>
     <!-- Seed Projects -->
     {#if info.version === "0.2.0"}
-      {#await seed.getProjects() then projects}
+      {#await Seed.getProjects(config) then projects}
         <div class="projects">
           {#each projects as project}
             <div class="project">
-              <Widget {project} {config} />
+              <Widget {project} {config} seed={seedAddress} />
             </div>
           {/each}
         </div>

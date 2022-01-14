@@ -21,6 +21,8 @@ export async function get(
   const isLocalhost = /^0.0.0.0$/.test(base);
   const protocol = isLocalhost ? "http://" : "https://";
 
+  path = path.startsWith("/") ? path.slice(1) : path;
+
   const baseUrl = path
     ? `${protocol}${base}:${port}/v1/${path}`
     : `${protocol}${base}:${port}`;

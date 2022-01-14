@@ -138,15 +138,25 @@ export async function getReadme(
 }
 
 export function path(
-  opts: { urn: string; org?: string; content?: ProjectContent; user?: string; revision?: string; path?: string }
+  opts: {
+    urn: string;
+    org?: string;
+    user?: string;
+    seed?: string;
+    content?: ProjectContent;
+    revision?: string;
+    path?: string;
+  }
 ): string {
-  const { urn, org, user, content, revision, path } = opts;
+  const { urn, org, user, seed, content, revision, path } = opts;
   const result = [];
 
   if (org) {
     result.push("orgs", org);
   } else if (user) {
     result.push("users", user);
+  } else if (seed) {
+    result.push("seeds", seed);
   }
   result.push("projects", urn);
 

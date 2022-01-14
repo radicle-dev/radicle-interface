@@ -75,7 +75,7 @@ export class Profile {
   }
 
   get seedId(): string | undefined {
-    return this.profile?.ens?.seed.id;
+    return this.profile?.ens?.seed?.id;
   }
 
   get seed(): Seed | undefined {

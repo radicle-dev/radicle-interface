@@ -7,8 +7,10 @@
 
 </script>
 
-<Route path="/projects/:urn/*" let:params>
-  <View {config} urn={params.urn} />
+<!-- With an Seed context -->
+
+<Route path="/seeds/:seed/projects/:urn/*" let:params>
+  <View {config} seed={params.seed} urn={params.urn} />
 </Route>
 
 <!-- With an Org context -->

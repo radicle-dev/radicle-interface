@@ -11,6 +11,7 @@
   export let org: string;
   export let tree: Tree;
   export let user: string;
+  export let seed: string;
   export let branches: [string, string][];
   export let content: ProjectContent;
   export let revision: string;
@@ -20,21 +21,21 @@
 <Router>
   <!-- The default action is to render Browser with the default branch head -->
   <Route path="/">
-    <Browser {urn} {org} {user} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
       locator={project.head}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree">
-    <Browser {urn} {org} {user} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
       locator={project.head}
       bind:content={content}
       bind:path={path}
       bind:revision={revision} />
   </Route>
   <Route path="/tree/*" let:params>
-    <Browser {urn} {org} {user} {config} {tree} {project} {branches}
+    <Browser {urn} {org} {user} {seed} {config} {tree} {project} {branches}
       locator={params["*"]}
       bind:content={content}
       bind:path={path}

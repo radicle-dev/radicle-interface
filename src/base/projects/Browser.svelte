@@ -21,6 +21,7 @@
   export let config: Config;
   export let org: string | null = null;
   export let user: string | null = null;
+  export let seed: string | null = null;
   export let tree: proj.Tree;
   export let project: proj.Info;
   export let branches: [string, string][];
@@ -78,6 +79,8 @@
       navigate(proj.path({ urn, org, revision, path }));
     } else if (user) {
       navigate(proj.path({ urn, user, revision, path }));
+    } else if (seed) {
+      navigate(proj.path({ urn, seed, revision, path }));
     } else {
       navigate(proj.path({ urn, revision, path }));
     }

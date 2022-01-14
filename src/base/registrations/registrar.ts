@@ -20,7 +20,7 @@ export interface EnsProfile {
   name: string;
   owner?: string;
   address?: string;
-  seed: Seed;
+  seed?: Seed;
   anchorsAccount?: string;
   url?: string;
   avatar?: string;
@@ -86,25 +86,21 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   const [address, avatar, url, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
     meta.map(r => r.status == "fulfilled" && r.value ? r.value : undefined);
 
-  return {
-    resolver,
-    profile: {
-      name,
-      url,
-      avatar,
-      seed: new Seed(
-        config,
-        seedHost,
-        seedId,
-        seedGit,
-        seedApi,
-      ),
-      anchorsAccount,
-      address,
-      twitter,
-      github,
-    },
+  const profile: EnsProfile = {
+    name,
+    url,
+    avatar,
+    anchorsAccount,
+    address,
+    twitter,
+    github,
   };
+
+  if (seedHost && seedId) {
+    profile.seed = new Seed(seedHost, seedId, seedGit, seedApi);
+  }
+
+  return { resolver, profile };
 }
 
 export async function getAvatar(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
@@ -142,7 +138,7 @@ export async function getSeed(name: string, config: Config, resolver?: EnsResolv
     resolver.getText('eth.radicle.seed.api'),
   ]);
 
-  return new Seed(config, host, id, git, api);
+  return new Seed(host, id, git, api);
 }
 
 export function registrar(config: Config): ethers.Contract {

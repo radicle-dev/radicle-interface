@@ -9,6 +9,7 @@
   import type { Info } from '@app/project';
   import { formatOrg } from '@app/utils';
   import { getOid } from '@app/project';
+  import { Seed } from '@app/base/seeds/Seed';
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
@@ -16,6 +17,7 @@
   export let urn: string;
   export let org = "";
   export let user = "";
+  export let seed = "";
   export let config: Config;
 
   let parentName = formatOrg(org || user, config);
@@ -24,16 +26,19 @@
   let revision: string;
   let content: proj.ProjectContent;
   let path: string;
-  let getProject = new Promise<Profile | null>(resolve => {
+  let getProject = new Promise<{ profile?: Profile; seed?: Seed } | null>(resolve => {
     if (org) {
-      Profile.get(org, ProfileType.Project, config).then(p => resolve(p));
+      Profile.get(org, ProfileType.Project, config).then(p => resolve({ profile: p }));
     } else if (user) {
-      Profile.get(user, ProfileType.Project, config).then(p => resolve(p));
+      Profile.get(user, ProfileType.Project, config).then(p => resolve({ profile: p }));
+    } else if (seed) {
+      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s }));
     } else {
       resolve(null);
     }
-  }).then(async (profile) => {
-    const seed = profile?.seed;
+  }).then(async (result) => {
+    const profile = result?.profile;
+    const seed = profile?.seed ?? result?.seed;
     const cfg = seed ? config.withSeed(seed) : config;
     const info = await proj.getInfo(urn, cfg);
     projectInfo = info;
@@ -65,7 +70,7 @@
   }
 
   function updateRouteParams({ detail: newParams }: { detail: { path: string; revision: string; content: proj.ProjectContent } }) {
-    let newLocation = proj.path({ urn, user, org, content: newParams.content, revision: newParams.revision, path: newParams.path });
+    let newLocation = proj.path({ urn, user, org, seed, content: newParams.content, revision: newParams.revision, path: newParams.path });
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
@@ -75,8 +80,7 @@
   }
 
   const back = () => window.history.back();
-  // React to changes to the project commit. We have to manually
-  // set the URL as well, to match the current commit.
+
   $: projectRoot = proj.path({ urn, user, org });
 </script>
 
@@ -169,7 +173,7 @@
         branches={result.branches}
         profile={result.profile}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {urn} {org} {user} {tree}
+      <ProjectContentRoutes {urn} {org} {user} {seed} {tree}
         project={result.project}
         branches={result.branches}
         config={result.config}

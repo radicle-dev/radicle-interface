@@ -1,46 +1,58 @@
 import * as api from '@app/api';
 import type { Config } from '@app/config';
-import { getInfo, getProjects } from '@app/project';
-import type { Info, Project } from "@app/project";
+import * as proj from '@app/project';
+import type { Project } from "@app/project";
 import { isDomain } from '@app/utils';
-
-export interface SeedInfo {
-  version: string;
-}
+import { assert } from '@app/error';
 
 export class Seed {
-  host?: string;
-  id?: string;
-  git?: string;
-  api?: string;
-  config: Config;
+  host: string;
+  id: string;
 
-  constructor(config: Config, host?: string, id?: string, git?: string, api?: string) {
-    if (id && /^[a-z0-9]+$/.test(id)) {
-      this.id = id;
-    }
-    if (host && isDomain(host)) {
-      this.host = host;
-    }
+  api?: string;
+  git?: string;
+  version?: string;
+
+  constructor(host: string, id: string, git?: string, api?: string) {
+    assert(isDomain(host));
+    assert(/^[a-z0-9]+$/.test(id));
+
+    this.host = host;
+    this.id = id;
+
     if (api && isDomain(api)) {
       this.api = api;
     }
     if (git && isDomain(git)) {
       this.git = git;
     }
-    this.config = config.withSeed(this);
   }
-  async getInfo(): Promise<SeedInfo> {
-    return api.get(``, {}, this.config);
+
+  static async getPeer(config: Config): Promise<{ id: string }> {
+    return api.get("/peer", {}, config);
   }
-  async getPeer(): Promise<{ id: string }> {
-    return api.get("peer", {}, this.config);
+
+  static async getProject(urn: string, config: Config): Promise<proj.Info> {
+    return proj.getInfo(urn, config);
   }
-  async getProject(urn: string): Promise<Info> {
-    return getInfo(urn, this.config);
-  }
-  async getProjects(): Promise<Project[]> {
-    const result = await getProjects(this.config);
+
+  static async getProjects(config: Config): Promise<Project[]> {
+    const result = await proj.getProjects(config);
     return result.map((project: any) => ({ ...project, id: project.urn }));
+  }
+
+  static async get(config: Config): Promise<Seed> {
+    assert(config.seed.api.host);
+
+    const [info, peer] = await Promise.all([
+      api.get("/", {}, config),
+      Seed.getPeer(config),
+    ]);
+
+    return {
+      host: config.seed.api.host,
+      id: peer.id,
+      version: info.version,
+    };
   }
 }

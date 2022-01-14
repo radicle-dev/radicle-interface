@@ -7,7 +7,6 @@ import { Core } from '@self.id/core';
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
-import type { Seed } from '@app/base/seeds/Seed';
 
 declare global {
   interface Window {
@@ -138,7 +137,7 @@ export class Config {
   }
 
   // Return the config with an overwritten seed URL.
-  withSeed(seed: Seed): Config {
+  withSeed(seed: { host: string; id?: string; api?: string; git?: string }): Config {
     const cfg = {} as Config;
     Object.assign(cfg, this);
 
