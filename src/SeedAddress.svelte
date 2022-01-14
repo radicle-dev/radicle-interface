@@ -23,24 +23,20 @@
   .seed-address {
     display: inline-flex;
     font-size: 1rem;
+    line-height: 2rem;
     color: var(--color-foreground-90);
+    vertical-align: middle;
   }
   .seed-icon {
     width: 1rem;
     margin-right: 0.5rem;
   }
+  .seed-address > * {
+    vertical-align: middle;
+  }
 </style>
 
 
-<div class="mobile">
-  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
-    {#if seedCopied}
-      Copy ✓
-    {:else}
-      Copy
-    {/if}
-  </button>
-</div>
 <div class="desktop">
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
@@ -48,7 +44,7 @@
     <span class="faded">:{port}</span>
   </div>
 </div>
-<div class="desktop">
+<div>
   <button class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
     {#if seedCopied}
       Copy ✓
