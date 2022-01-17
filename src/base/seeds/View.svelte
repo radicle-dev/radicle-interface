@@ -94,13 +94,17 @@
 
     <div class="fields">
       <!-- Seed Address -->
-      <div class="label">Seed</div>
+      <div class="label">Address</div>
       {#if info.version === "0.2.0" && info.host}
         <SeedAddress {config} id={info.id} host={info.host} port={config.seed.link.port} />
       {:else}
         <div class="seed-address subtle">N/A</div>
         <div class="desktop" />
       {/if}
+      <!-- Seed ID -->
+      <div class="label">Seed ID</div>
+      <div>{info.id}</div>
+      <div class="desktop" />
       <!-- API Port -->
       <div class="label">API Port</div>
       <div>{config.seed.api.port}</div>
