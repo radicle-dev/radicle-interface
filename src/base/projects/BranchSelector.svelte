@@ -10,10 +10,10 @@
   export let branchesDropdown = false;
 
   const dispatch = createEventDispatcher();
-
   const switchBranch = (name: string) => {
     dispatch("revisionChanged", name);
   };
+  const showSelector = branches.length > 1;
 
   // Sort branches array alphabetically
   const sortBranches = ([firstBranchName,]: [string, string], [secondBranchName,]: [string, string]) => {
@@ -51,7 +51,7 @@
   .commit .branch.not-allowed {
     cursor: not-allowed;
   }
-  .branch:hover {
+  .branch:hover:not(.not-allowed) {
     background-color: var(--color-foreground-background-lighter);
   }
   .commit .hash {
@@ -81,7 +81,7 @@
   }
   .pointer {
     cursor: pointer;
-  } 
+  }
   .branch-dropdown.branch-dropdown-without-label {
     margin-top: 1.6rem;
   }
@@ -105,7 +105,12 @@
   <!-- Check for branches listing feature -->
   {#if branches.length > 0}
     <span>
-      <div on:click={() => toggleDropdown("branch")} class="stat branch" class:not-allowed={!branches} class:hidden={!isLabel}>
+      <div
+        class="stat branch"
+        class:not-allowed={!showSelector}
+        class:hidden={!isLabel}
+        on:click={() => showSelector && toggleDropdown("branch")}
+      >
         {branchLabel}
       </div>
       <div
