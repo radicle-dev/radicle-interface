@@ -192,6 +192,7 @@
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
+    height: 2.125rem;
     background: var(--color-foreground-background);
   }
   .stat.active {

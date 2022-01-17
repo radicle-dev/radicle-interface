@@ -86,7 +86,7 @@
       <div class="info">
         <span class="title">
           <span class="bold">
-            {seedAddress}
+            🌱 {seedAddress}
           </span>
         </span>
       </div>

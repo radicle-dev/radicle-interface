@@ -58,6 +58,7 @@
     align-items: center;
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
+    height: 2.125rem;
     background: var(--color-foreground-background);
   }
   @media (max-width: 720px) {
@@ -71,7 +72,7 @@
 <div class="selector">
   <span>
     <div on:click={() => toggleDropdown("peer")} class="stat peer" class:not-allowed={!peers}>
-      <Icon name="fork" width={25} height={17} />
+      <Icon name="fork" width={15} height={15} />
       {#if peer}
         {formatSeedId(peer)}
       {/if}

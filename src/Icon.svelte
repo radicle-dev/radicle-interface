@@ -28,7 +28,8 @@
     },
     {
       name: "fork",
-      size: 17,
+      size: 16,
+      offset: { x: -1, y: 0 },
       data: `<circle cx="6.5" cy="13.5" r="2" stroke="#5555FF"/><circle cx="10.5" cy="2.5" r="2" stroke="#5555FF"/><circle cx="2.5" cy="2.5" r="2" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 2.5 8 2.5 5.5C2.5 3.9 2.5 4.66667 2.5 4" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 10.5 8 10.5 5.5C10.5 3.9 10.5 4.66667 10.5 4" stroke="#5555FF"/>`
     }
   ];
@@ -48,7 +49,7 @@
   <svg role="img" class={$$props.class} class:inline class:fill
        width={width || "1rem"}
        height={height || "1rem"}
-       viewBox="0 0 {svg.size} {svg.size}">
+       viewBox="{svg.offset?.x || 0} {svg.offset?.y || 0} {svg.size} {svg.size}">
     {@html svg.data}
   </svg>
 {/if}
