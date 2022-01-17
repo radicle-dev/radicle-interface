@@ -60,6 +60,7 @@
 	--color-foreground-5: #8594a1;
 	--color-foreground-6: #d3dee8;
 	--color-background: #0b131a;
+	--color-shadow: rgba(0, 0, 0, 0.2);
 	--color-glow: #5555ff22;
 	--color-glow-error: #ff555522;
 	--color-scrollbar: var(--color-foreground-subtler);

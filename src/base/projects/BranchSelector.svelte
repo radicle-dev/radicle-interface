@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { Info, getOid } from "@app/project";
   import { formatCommit, isOid } from "@app/utils";
-  import { createEventDispatcher } from "svelte";
+  import Dropdown from "@app/Dropdown.svelte";
 
   export let branches: [string, string][];
   export let project: Info;
@@ -61,43 +62,13 @@
     padding: 0.5rem 0.75rem;
     border-radius: inherit;
   }
-  .item {
-    cursor: pointer;
-    padding: 0.3rem;
-  }
-  .item:hover {
-    background-color: var(--color-foreground-background-lighter);
-  }
-  .dropdown {
-    background-color: var(--color-foreground-background);
-    padding: 1rem;
-    margin-top: 0.5rem;
-    border-radius: 0.25rem;
-    display: none;
-    position: absolute;
-  }
   .hidden {
     display: none;
-  }
-  .pointer {
-    cursor: pointer;
-  }
-  .branch-dropdown.branch-dropdown-without-label {
-    margin-top: 1.6rem;
-  }
-  .branch-dropdown.branch-dropdown-visible {
-    display: block;
   }
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     background: var(--color-foreground-background);
-  }
-  @media (max-width: 720px) {
-    .dropdown {
-      left: 32px;
-      z-index: 10;
-    }
   }
 </style>
 
@@ -113,28 +84,21 @@
       >
         {branchLabel}
       </div>
-      <div
-        class="dropdown branch-dropdown"
-        class:branch-dropdown-without-label={!isLabel}
-        class:branch-dropdown-visible={branchesDropdown}
-      >
-        {#each branches as [name,]}
-          <div class="item" on:click={() => switchBranch(name)}>{name}</div>
-        {/each}
-      </div>
+      <Dropdown
+        items={branches.map(([name,]) => name)}
+        visible={branchesDropdown}
+        on:select={(e) => switchBranch(e.detail)} />
     </span>
-    {#if isLabel}
-      <div class="hash">
+    <div class="hash desktop">
+      {#if isLabel}
         {formatCommit(commit)}
-      </div>
-    {:else}
-      <div class="hash desktop" class:pointer={!isLabel} on:click={() => toggleDropdown("branch")}>
+      {:else}
         {commit}
-      </div>
-      <div class="hash mobile" class:pointer={!isLabel} on:click={() => toggleDropdown("branch")}>
-        {formatCommit(commit)}
-      </div>
-    {/if}
+      {/if}
+    </div>
+    <div class="hash mobile">
+      {formatCommit(commit)}
+    </div>
   <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
   {:else if commit === project.head}
     <div class="stat branch not-allowed">
