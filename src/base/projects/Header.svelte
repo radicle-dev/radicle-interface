@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as utils from '@app/utils';
   import Loading from '@app/Loading.svelte';
   import { ethers } from "ethers";
   import { ProjectContent, getOid } from '@app/project';
   import type { Info, Tree } from "@app/project";
-  import type { Profile } from '@app/profile';
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -17,7 +17,6 @@
   export let urn: string;
   export let path: string;
   export let project: Info;
-  export let profile: Profile | null = null;
   export let tree: Tree;
   export let branches: [string, string][] = [];
   export let content: ProjectContent;
@@ -165,13 +164,6 @@
     color: var(--color-primary);
     background: var(--color-primary-background);
   }
-  .seed-dropdown input {
-    color: var(--color-foreground-90);
-    background: var(--color-foreground-background-lighter);
-  }
-  .seed-dropdown.seed-dropdown-visible {
-    display: block;
-  }
   .dropdown input {
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
@@ -293,32 +285,12 @@
     {#if config.seed.api.host}
       <div
         class="stat seed"
-        on:click={() => toggleDropdown("seed")}
+        on:click={() => navigate(`/seeds/${config.seed.api.host}`)}
         title="Project data is fetched from this seed"
       >
         <span>{config.seed.api.host}</span>
       </div>
     {/if}
-    <div
-      class="dropdown seed-dropdown"
-      class:seed-dropdown-visible={dropdownState.seed}
-    >
-      {#if config.seed.link.id && config.seed.link.host}
-        <input
-          readonly
-          name="clone-url"
-          value={utils.formatSeedAddress(
-            config.seed.link.id,
-            config.seed.link.host,
-            config
-          )}
-        />
-        <label for="seed-url">Bootstrap your Radicle node with this seed.</label
-        >
-      {:else if profile}
-        <label for="#">Seed ID is not set for {profile.name}.</label>
-      {/if}
-    </div>
   </span>
   <div class="stat commit-count" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)

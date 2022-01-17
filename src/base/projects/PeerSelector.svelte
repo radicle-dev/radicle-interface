@@ -32,6 +32,9 @@
   .selector .peer.not-allowed {
     cursor: not-allowed;
   }
+  .peer-id {
+    margin-left: 0.5rem;
+  }
   .peer:hover {
     background-color: var(--color-foreground-background-lighter);
   }
@@ -74,7 +77,9 @@
     <div on:click={() => toggleDropdown("peer")} class="stat peer" class:not-allowed={!peers}>
       <Icon name="fork" width={15} height={15} />
       {#if peer}
-        {formatSeedId(peer)}
+        <span class="peer-id">
+          {formatSeedId(peer)}
+        </span>
       {/if}
     </div>
     <div

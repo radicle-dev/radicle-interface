@@ -170,7 +170,7 @@
         {/if}
         <Link to={projectRoot}>{result.project.meta.name}</Link>
         {#if peer}
-          <span class="divider" title={peer}>/ {formatSeedId(peer)}</span> 
+          <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
       </div>
       <div class="urn">{urn}</div>
@@ -183,7 +183,6 @@
         config={result.config}
         project={result.project}
         branches={result.branches}
-        profile={result.profile}
         peers={result.peers}
         on:routeParamsChange={updateRouteParams} />
       <ProjectContentRoutes {urn} {org} {user} {seed} {tree} {peer}
