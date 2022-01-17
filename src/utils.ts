@@ -88,8 +88,8 @@ export function formatRadicleUrn(id: string): string {
     + id.substring(id.length - 6, id.length);
 }
 
-export function formatBalance(n: BigNumber): string {
-  return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n)).toFixed(2));
+export function formatBalance(n: BigNumber, decimals?: number): string {
+  return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n, decimals)).toFixed(2));
 }
 
 export function formatCAIP10Address(address: string, protocol: string, impl: number): string {

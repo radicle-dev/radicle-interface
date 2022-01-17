@@ -242,7 +242,7 @@
               <div class="label">Treasury</div>
               <div>
                 {#each tokens as token}
-                  {` ${utils.formatBalance(token.balance)} ${token.symbol} `}
+                  {` ${utils.formatBalance(token.balance, token.decimals)} ${token.symbol} `}
                 {/each}
               </div>
               <div class="desktop" />
