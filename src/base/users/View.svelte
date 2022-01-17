@@ -142,7 +142,7 @@
         <div class="links">
           {#if profile.url}
             <a class="url mobile" href={profile.url}>
-              <Icon name="url" inline />
+              <Icon name="url" fill inline />
             </a>
             <a class="url desktop" href={profile.url}>
               {profile.url}
@@ -150,12 +150,12 @@
           {/if}
           {#if profile.twitter}
             <a class="url" href="https://twitter.com/{profile.twitter}">
-              <Icon name="twitter" inline />
+              <Icon name="twitter" fill inline />
             </a>
           {/if}
           {#if profile.github}
             <a class="url" href="https://github.com/{profile.github}">
-              <Icon name="github" inline />
+              <Icon name="github" fill inline />
             </a>
           {/if}
         </div>

@@ -3,6 +3,7 @@
   export let width: number | null = null;
   export let height: number | null = null;
   export let inline = false;
+  export let fill = false;
 
   const icons = [
     {
@@ -35,7 +36,7 @@
 </script>
 
 <style>
-  svg {
+  svg.fill {
     fill: currentColor;
   }
   svg.inline {
@@ -44,7 +45,7 @@
 </style>
 
 {#if svg}
-  <svg role="img" class={$$props.class} class:inline
+  <svg role="img" class={$$props.class} class:inline class:fill
        width={width || "1rem"}
        height={height || "1rem"}
        viewBox="0 0 {svg.size} {svg.size}">
