@@ -131,7 +131,7 @@
     <div class="description">{info.meta.description}</div>
     <div class="anchor">
       <span class="commit">
-        <slot name="stateHash"></slot>
+        <slot name="stateHash">{info.meta.defaultBranch} {info.head}</slot>
       </span>
       <span>
         {#each info.meta.maintainers as urn}
