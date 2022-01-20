@@ -1,17 +1,15 @@
 <script lang="ts">
   import CommitTeaser from "./CommitTeaser.svelte";
-  import { getCommits, Info, getOid, ProjectContent, splitPrefixFromPath } from "@app/project";
-  import type { Config } from "@app/config";
+  import { getCommits, Source, getOid, ProjectContent, splitPrefixFromPath } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "./lib";
 
+  export let source: Source;
   export let locator: string;
-  export let urn: string;
-  export let config: Config;
-  export let project: Info;
-  export let branches: [string, string][];
   export let content: ProjectContent;
   export let revision: string;
+
+  let { urn, config, project, branches } = source;
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);

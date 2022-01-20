@@ -40,8 +40,8 @@
     }
   }).then(async (result) => {
     const profile = result?.profile;
-    const seed = profile?.seed ?? result?.seed;
-    const cfg = seed ? config.withSeed(seed) : config;
+    const seedInstance = profile?.seed ?? result?.seed;
+    const cfg = seedInstance ? config.withSeed(seedInstance) : config;
     const info = await proj.getInfo(urn, cfg);
     projectInfo = info;
     const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? org);
@@ -57,7 +57,7 @@
       }
       peers = await proj.getPeers(urn, cfg);
     }
-    return { project: info, branches, peers, anchors, config: cfg, profile };
+    return { urn, org, user, seed, peer, project: info, branches, peers, config: cfg, profile, anchors };
   });
 
   const parentUrl = (profile: Profile) => {
@@ -179,19 +179,12 @@
       <div class="description">{result.project.meta.description}</div>
     </header>
     {#await proj.getTree(urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
-      <Header {urn} {tree} {revision} {content} {path} {peer}
-        anchors={result.anchors}
+      <Header {tree} {revision} {content} {path}
+        source={result}
         peerSelector={!!seed}
-        config={result.config}
-        project={result.project}
-        branches={result.branches}
-        peers={result.peers}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {urn} {org} {user} {seed} {tree} {peer}
-        project={result.project}
-        anchors={result.anchors}
-        branches={result.branches}
-        config={result.config}
+      <ProjectContentRoutes {tree}
+        source={result}
         bind:content={content}
         bind:revision={revision}
         bind:path={path} />

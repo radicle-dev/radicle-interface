@@ -1,6 +1,5 @@
 <script lang="ts">
   import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import * as utils from '@app/utils';
@@ -17,19 +16,14 @@
   type State = { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
-  export let urn: string;
-  export let config: Config;
-  export let org: string | null = null;
-  export let user: string | null = null;
-  export let seed: string | null = null;
+  export let source: proj.Source;
   export let tree: proj.Tree;
-  export let peer: proj.Peer;
-  export let project: proj.Info;
-  export let branches: [string, string][];
   export let locator: string; // eg. "master/README.md"
   export let content: proj.ProjectContent;
   export let revision: string;
   export let path: string;
+
+  let { urn, org, user, seed, peer, project, config, branches } = source;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.

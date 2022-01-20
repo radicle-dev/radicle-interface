@@ -4,7 +4,7 @@
   import Dropdown from "@app/Dropdown.svelte";
   import { formatSeedId } from "@app/utils";
 
-  export let peer: string | null;
+  export let peer: string;
   export let peers: string[];
   export let toggleDropdown: (input: string) => void;
   export let peersDropdown = false;

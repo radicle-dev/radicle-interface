@@ -1,30 +1,23 @@
 <script lang="ts">
   import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
   import * as utils from '@app/utils';
-  import { ProjectContent, getOid } from '@app/project';
-  import type { Info, Tree } from "@app/project";
+  import { ProjectContent, getOid, Source } from '@app/project';
+  import type { Tree } from "@app/project";
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
-  export let config: Config;
-  export let anchors: string[];
-  export let urn: string;
+  export let source: Source;
   export let path: string;
-  export let project: Info;
   export let tree: Tree;
-  export let branches: [string, string][] = [];
   export let content: ProjectContent;
   export let revision: string;
   // If peerSelector should be showed.
   export let peerSelector: boolean;
-  // Currently selected peer.
-  export let peer: string;
-  // Listing of available peers, empty array if none available.
-  export let peers: string[];
+  
+  let { urn, peer, config, project, branches, peers, anchors } = source;
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {

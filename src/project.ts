@@ -2,6 +2,7 @@ import type { Config } from '@app/config';
 import * as api from '@app/api';
 import type { CommitsHistory } from '@app/base/projects/Commit/lib';
 import { isOid } from '@app/utils';
+import type { Profile } from '@app/profile';
 
 export type Urn = string;
 export type Peer = string;
@@ -16,6 +17,21 @@ export interface Project {
   anchor: {
     stateHash: string;
   };
+}
+
+// Params to render correctly source code related views
+export interface Source {
+  urn: string;
+  org: string;
+  user: string;
+  peer: string;
+  config: Config;
+  project: Info;
+  peers: Peer[];
+  anchors: string[];
+  seed: string;
+  branches: [string, string][];
+  profile?: Profile;
 }
 
 export interface PendingProject extends Project {
