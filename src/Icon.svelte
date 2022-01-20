@@ -4,6 +4,7 @@
   export let height: number | null = null;
   export let inline = false;
   export let fill = false;
+  export let clickHandler: (() => void) | undefined = undefined;
 
   const icons = [
     {
@@ -31,6 +32,17 @@
       size: 16,
       offset: { x: -1, y: 0 },
       data: `<circle cx="6.5" cy="13.5" r="2" stroke="#5555FF"/><circle cx="10.5" cy="2.5" r="2" stroke="#5555FF"/><circle cx="2.5" cy="2.5" r="2" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 2.5 8 2.5 5.5C2.5 3.9 2.5 4.66667 2.5 4" stroke="#5555FF"/><path d="M6.5 11.5C6.5 7 10.5 8 10.5 5.5C10.5 3.9 10.5 4.66667 10.5 4" stroke="#5555FF"/>`
+    },
+    {
+      name: "browse",
+      size: 16,
+      data: `<path fill-rule="evenodd" d="M4.72 3.22a.75.75 0 011.06 1.06L2.06 8l3.72 3.72a.75.75 0 11-1.06 1.06L.47 8.53a.75.75 0 010-1.06l4.25-4.25zm6.56 0a.75.75 0 10-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 101.06 1.06l4.25-4.25a.75.75 0 000-1.06l-4.25-4.25z"></path>`
+    },
+    {
+      name: "chevron",
+      size: 15,
+      offset: { x: 0, y: 1 },
+      data: `<path fill-rule="evenodd" d="M12.78 6.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.22 7.28a.75.75 0 011.06-1.06L8 9.94l3.72-3.72a.75.75 0 011.06 0z"></path>`
     }
   ];
   const svg = icons.find(e => e.name === name);
@@ -43,13 +55,17 @@
   svg.inline {
     height: 1.6rem;
   }
+  svg.clickable {
+    cursor: pointer;
+  }
 </style>
 
 {#if svg}
   <svg role="img" class={$$props.class} class:inline class:fill
        width={width || "1rem"}
        height={height || "1rem"}
-       viewBox="{svg.offset?.x || 0} {svg.offset?.y || 0} {svg.size} {svg.size}">
+       viewBox="{svg.offset?.x || 0} {svg.offset?.y || 0} {svg.size} {svg.size}"
+       on:click|stopPropagation={clickHandler}>
     {@html svg.data}
   </svg>
 {/if}

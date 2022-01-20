@@ -1,4 +1,5 @@
-import type { CommitHeader, Stats } from "@app/project";
+import type { Stats } from "@app/project";
+import type { Diff } from "@app/diff";
 
 export interface CommitsHistory {
   headers: CommitHeader[];
@@ -7,6 +8,12 @@ export interface CommitsHistory {
 export interface GroupedCommitsHistory {
   headers: CommitGroup[];
   stats: Stats;
+}
+
+export interface Author {
+  avatar: string;
+  email: string;
+  name: string;
 }
 
 export interface CommitStats {
@@ -20,12 +27,32 @@ export interface GroupedCommitsHistory {
   stats: Stats;
 }
 
+export interface CommitHeader {
+  author: Author;
+  committer: Author;
+  committerTime: number;
+  description: string;
+  sha1: string;
+  summary: string;
+}
+
 // A set of commits grouped by time.
 export interface CommitGroup {
   time: string;
   commits: CommitHeader[];
 }
 
+export interface CommitStats {
+  additions: number;
+  deletions: number;
+}
+
+export interface Commit {
+  header: CommitHeader;
+  stats: CommitStats;
+  diff: Diff;
+  branches: string[];
+}
 
 export function formatGroupTime(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("en-US", {

@@ -2,7 +2,8 @@
   import type { ProjectContent, Source, Tree } from "@app/project";
   import { Route, Router } from "svelte-routing";
   import Browser from "./Browser.svelte";
-  import History from "./Commit/History.svelte";
+  import Commit from "./Commit.svelte";
+  import History from "./History.svelte";
 
   export let source: Source;
   export let tree: Tree;
@@ -34,12 +35,22 @@
       bind:revision={revision} />
   </Route>
   <Route path="/history">
-    <History {locator} {source}
+    <History {locator} {source} {path}
       bind:content={content}
       bind:revision={revision} />
   </Route>
   <Route path="/history/*" let:params>
-    <History locator={params["*"]} {source}
+    <History locator={params["*"]} {source} {path}
+      bind:content={content}
+      bind:revision={revision} />
+  </Route>
+  <Route path="/commit/:commit" let:params>
+    <Commit {source} locator={params.commit}
+      bind:content={content}
+      bind:revision={revision} />
+  </Route>
+  <Route path="/commit/*" let:params>
+    <Commit {source} locator={params["*"]}
       bind:content={content}
       bind:revision={revision} />
   </Route>

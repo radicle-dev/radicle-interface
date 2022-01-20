@@ -1,20 +1,38 @@
 <script lang="ts">
-  import CommitTeaser from "./CommitTeaser.svelte";
+  import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import { getCommits, Source, getOid, ProjectContent, splitPrefixFromPath } from "@app/project";
+  import * as proj from "@app/project";
   import Loading from "@app/Loading.svelte";
-  import { groupCommitHistory, GroupedCommitsHistory } from "./lib";
+  import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
+  import { navigate } from "svelte-routing";
 
   export let source: Source;
   export let locator: string;
   export let content: ProjectContent;
   export let revision: string;
+  export let path: string;
 
-  let { urn, config, project, branches } = source;
+  let { urn, user, seed, org, peer, config, project, branches } = source;
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
-  $: content = ProjectContent.History;
+  $: content = content ?? ProjectContent.History;
   $: revision = revision_;
+
+  const navigateHistory = (revision: string, content?: ProjectContent) => {
+    // Replaces path with current path if none passed.
+    if (path === undefined) path = "/";
+
+    if (org) {
+      navigate(proj.path({ content, peer, urn, org, revision, path }));
+    } else if (user) {
+      navigate(proj.path({ content, peer, urn, user, revision, path }));
+    } else if (seed) {
+      navigate(proj.path({ content, peer, urn, seed, revision, path }));
+    } else {
+      navigate(proj.path({ content, peer, urn, revision, path }));
+    }
+  };
 
   async function fetchCommits(revision: string): Promise<GroupedCommitsHistory> {
     const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), config);
@@ -56,8 +74,8 @@
         </header>
         <div class="commit-group-headers">
           {#each group.commits as commit (commit.sha1)}
-            <div class="commit">
-              <CommitTeaser {commit} />
+            <div class="commit" on:click={() => navigateHistory(commit.sha1, ProjectContent.Commit)}>
+              <CommitTeaser {commit} on:browseCommit={(event) => navigateHistory(event.detail)} />
             </div>
           {/each}
         </div>

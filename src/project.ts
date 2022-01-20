@@ -1,6 +1,6 @@
 import type { Config } from '@app/config';
 import * as api from '@app/api';
-import type { CommitsHistory } from '@app/base/projects/Commit/lib';
+import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
 import { isOid } from '@app/utils';
 import type { Profile } from '@app/profile';
 
@@ -43,6 +43,7 @@ export interface PendingProject extends Project {
 export enum ProjectContent {
   Tree,
   History,
+  Commit,
 }
 
 export interface Info {
@@ -70,24 +71,9 @@ export interface Stats {
   contributors: number;
 }
 
-export interface Author {
-  avatar: string;
-  email: string;
-  name: string;
-}
-
 export enum ObjectType {
   Blob = "BLOB",
   Tree = "TREE",
-}
-
-export interface CommitHeader {
-  author: Author;
-  committer: Author;
-  committerTime: number;
-  description: string;
-  sha1: string;
-  summary: string;
 }
 
 export interface EntryInfo {
@@ -118,6 +104,10 @@ export async function getInfo(urn: string, config: Config): Promise<Info> {
 }
 
 export async function getCommits(urn: string, commit: string, config: Config): Promise<CommitsHistory> {
+  return api.get(`projects/${urn}/commits?from=${commit}`, {}, config);
+}
+
+export async function getCommit(urn: string, commit: string, config: Config): Promise<Commit> {
   return api.get(`projects/${urn}/commits/${commit}`, {}, config);
 }
 
@@ -192,6 +182,10 @@ export function path(
   switch (content) {
     case ProjectContent.History:
       result.push("history");
+      break;
+
+    case ProjectContent.Commit:
+      result.push("commit");
       break;
 
     default:

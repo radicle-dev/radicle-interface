@@ -1,9 +1,17 @@
 <script lang="ts">
-  import type { CommitHeader } from "@app/project";
+  import Icon from "@app/Icon.svelte";
+  import type { CommitHeader } from "@app/commit";
   import { formatCommit } from "@app/utils";
-  import { formatCommitTime } from "./lib";
+  import { createEventDispatcher } from "svelte";
+  import { formatCommitTime } from "@app/commit";
 
   export let commit: CommitHeader;
+
+  const dispatch = createEventDispatcher();
+
+  function browseCommit(commit: string) {
+    dispatch("browseCommit", commit);
+  }
 </script>
 
 <style>
@@ -20,6 +28,15 @@
     justify-content: space-between;
     padding: 0 1rem 0 1rem;
     height: 2.5rem;
+    cursor: pointer;
+  }
+  .commit .right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .time {
+    margin-right: 0.5rem;
   }
 
   @media (max-width: 720px) {
@@ -48,8 +65,9 @@
     <span class="secondary desktop-inline hash">{formatCommit(commit.sha1)}</span>
     <span>{commit.summary}</span>
   </div>
-  <div>
+  <div class="right">
     <span class="bold author">{commit.committer.name}</span>
-    <span class="desktop-inline">{formatCommitTime(commit.committerTime)}</span>
+    <span class="desktop-inline time">{formatCommitTime(commit.committerTime)}</span>
+    <Icon name="browse" clickHandler={() => browseCommit(commit.sha1)} width={17} inline fill />
   </div>
 </div>
