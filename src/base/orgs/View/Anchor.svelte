@@ -74,6 +74,7 @@
 
 <style>
   .confirmations {
+    white-space: nowrap;
     margin-right: 0.5rem;
   }
   .table {
@@ -93,11 +94,15 @@
   .avatars {
     display: flex;
   }
+  .no-wrap {
+    white-space: nowrap;
+  }
 </style>
 
 <span class="confirmations">
   {#if pending > 0}
-    <strong>{pending}</strong> signature(s) pending
+    <span class="desktop"><strong>{pending}</strong> signature(s) pending</span>
+    <span class="mobile"><strong>{pending}</strong> sig(s) pending</span>
   {/if}
 </span>
 
@@ -117,12 +122,12 @@
   </button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}
-  <span class="badge safe no-margin">✓ signed</span>
+  <span class="badge safe no-margin no-wrap">✓ signed</span>
 {:else}
   <button on:click|stopPropagation={() => {
     action = Action.Sign;
     state = State.Confirm;
-    }} class="tiny">
+    }} class="desktop tiny">
     Confirm
   </button>
 {/if}
@@ -204,7 +209,7 @@
           Cancel
         </button>
       {:else if state == State.Success}
-        <button on:click={() => close}>Done</button>
+        <button on:click={close}>Done</button>
       {/if}
     </span>
   </Modal>

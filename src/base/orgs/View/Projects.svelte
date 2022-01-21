@@ -36,6 +36,7 @@
   }
   .anchor {
     display: flex;
+    flex-direction: row;
     align-items: center;
   }
 </style>
@@ -55,7 +56,6 @@
             <span class="anchor" slot="actions">
               {#if org.safe && $session}
                 <Anchor {project} safe={org.safe} on:success={() => updateRecords()} account={$session.address} {config} />
-                <button on:click={() => updateRecords()}>Update projects</button>
               {/if}
             </span>
           </Widget>
