@@ -1,5 +1,5 @@
 <script lang="ts">
-  import marked from "marked";
+  import { marked } from "marked";
   import { createEventDispatcher } from 'svelte';
 
   export let options: { label: string; value: string; description?: string[] }[];

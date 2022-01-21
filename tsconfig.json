@@ -18,6 +18,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "useDefineForClassFields": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "importsNotUsedAsValues": "error",
     "skipLibCheck": true,
