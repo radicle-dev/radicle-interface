@@ -3,7 +3,8 @@ import { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
 import EthersSafe, { EthersAdapter, TransactionResult } from "@gnosis.pm/safe-core-sdk";
-import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
+import type { SafeSignature, SafeTransaction, SafeTransactionDataPartial } from "@gnosis.pm/safe-core-sdk-types";
+import type { ProposeTransactionProps, SafeMultisigTransactionEstimate } from "@gnosis.pm/safe-service-client";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
@@ -25,13 +26,6 @@ export interface Safe {
   address: string;
   owners: string[];
   threshold: number;
-}
-
-export interface SafeTransaction {
-  to: string;
-  value: string;
-  data: string;
-  operation: number;
 }
 
 export interface Token {
@@ -429,7 +423,7 @@ export function isDomain(input: string): boolean {
 
 // Propose a Gnosis Safe multi-sig transaction.
 export async function proposeSafeTransaction(
-  safeTx: SafeTransaction,
+  safeTx: SafeMultisigTransactionEstimate,
   safeAddress: string,
   config: Config
 ): Promise<void> {
@@ -447,19 +441,19 @@ export async function proposeSafeTransaction(
     safeAddress,
     safeTx
   );
-  const transaction = await safeSdk.createTransaction({
-    ...safeTx,
+  const transaction: SafeTransaction = await safeSdk.createTransaction({
+    ...safeTx as SafeTransactionDataPartial,
     safeTxGas: Number(estimation.safeTxGas),
   });
   const safeTxHash = await safeSdk.getTransactionHash(transaction);
   const signature = await safeSdk.signTransactionHash(safeTxHash);
 
-  await config.safe.client.proposeTransaction(
+  await config.safe.client.proposeTransaction({
     safeAddress,
-    transaction.data,
+    safeTransaction: transaction,
     safeTxHash,
-    signature
-  );
+    senderAddress: signature.signer
+  });
 }
 
 // Sign a Gnosis Safe multi-sig transaction.
