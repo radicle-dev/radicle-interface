@@ -133,12 +133,16 @@
       <span class="commit">
         <slot name="stateHash">{info.meta.defaultBranch} {info.head}</slot>
       </span>
-      <span>
-        {#each info.meta.maintainers as urn}
-          <span class="avatar">
-            <Blockies address={urn} />
+      <span class="actions">
+        <slot name="actions">
+          <span>
+            {#each info.meta.maintainers as urn}
+              <span class="avatar">
+                <Blockies address={urn} />
+              </span>
+            {/each}
           </span>
-        {/each}
+        </slot>
       </span>
     </div>
   {:else}
