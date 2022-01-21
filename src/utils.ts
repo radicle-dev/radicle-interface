@@ -4,7 +4,7 @@ import multibase from 'multibase';
 import multihashes from 'multihashes';
 import EthersSafe, { EthersAdapter, TransactionResult } from "@gnosis.pm/safe-core-sdk";
 import type { SafeSignature, SafeTransaction, SafeTransactionDataPartial } from "@gnosis.pm/safe-core-sdk-types";
-import type { ProposeTransactionProps, SafeMultisigTransactionEstimate } from "@gnosis.pm/safe-service-client";
+import type { SafeMultisigTransactionEstimate } from "@gnosis.pm/safe-service-client";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
