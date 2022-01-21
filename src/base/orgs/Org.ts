@@ -313,12 +313,10 @@ export class Org {
       const safe = await utils.getSafe(owner, config);
       // If what is resolved is not the same as the input, it's because we
       // were given a name.
-      if (utils.isAddressEqual(addressOrName, resolved) && safe) {
+      if (utils.isAddressEqual(addressOrName, resolved)) {
         return new Org(resolved, owner, null, safe);
-      } else if (safe === null) {
-        return new Org(resolved, owner);
       } else {
-        return new Org(resolved, owner, addressOrName);
+        return new Org(resolved, owner, addressOrName, safe);
       }
     } catch (e) {
       console.error(e);
