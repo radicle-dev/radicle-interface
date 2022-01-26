@@ -13,6 +13,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@cypress/code-coverage": "^3.9.12",
     "@cypress/vite-dev-server": "^2.2.2",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.10",
     "@testing-library/cypress": "^8.0.2",
@@ -29,6 +30,7 @@
     "svelte-check": "^1.5.2",
     "typescript": "^4.2.4",
     "vite": "^2.3.7",
+    "vite-plugin-istanbul": "^2.4.0",
     "vite-plugin-rewrite-all": "^0.1.2",
     "vitest": "^0.0.104"
   },
