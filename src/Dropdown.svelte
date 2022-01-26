@@ -36,7 +36,7 @@
 </style>
 
 {#if visible}
-  <div class="dropdown">
+  <div data-cy="branch-dropdown" class="dropdown">
     {#each items as item}
       <div class="dropdown-item" on:click={() => onSelect(item)}>{item}</div>
     {/each}
