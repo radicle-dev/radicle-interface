@@ -13,7 +13,6 @@
   },
   "type": "module",
   "devDependencies": {
-    "@cypress/code-coverage": "^3.9.12",
     "@cypress/vite-dev-server": "^2.2.2",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.10",
     "@testing-library/cypress": "^8.0.2",
@@ -22,7 +21,6 @@
     "@types/node": "^15.12.2",
     "@typescript-eslint/eslint-plugin": "^4.26.1",
     "@typescript-eslint/parser": "^4.26.1",
-    "c8": "^7.10.0",
     "cypress": "^9.3.1",
     "cypress-svelte-unit-test": "git+https://github.com/flakolefluk/cypress-svelte-unit-test.git",
     "eslint": "^7.28.0",
