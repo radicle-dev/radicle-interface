@@ -72,8 +72,8 @@ export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
 }
 
-export function formatSeedAddress(id: string, host: string, config: Config): string {
-  return `${id}@${host}:${config.seed.link.port}`;
+export function formatSeedAddress(id: string, host: string, port: number): string {
+  return `${id}@${host}:${port}`;
 }
 
 export function formatSeedId(id: string): string {

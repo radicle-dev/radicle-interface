@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { Config } from "./config";
   import { formatSeedAddress, formatSeedId, toClipboard } from "./utils";
 
-  export let config: Config;
   export let id: string;
   export let host: string;
   export let port: number;
@@ -10,7 +8,7 @@
   let seedCopied = false;
 
   const copySeed = (seedId: string, seedHost: string) => {
-    return () => toClipboard(formatSeedAddress(seedId, seedHost, config)).then(() => {
+    return () => toClipboard(formatSeedAddress(seedId, seedHost, port)).then(() => {
       seedCopied = true;
       setTimeout(() => {
         seedCopied = false;
@@ -40,12 +38,12 @@
 <div class="desktop">
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
-    <span><a href="/seeds/{host}" class="link">{formatSeedId(id)}@{host}</a></span>
-    <span class="faded">:{port}</span>
+    <span data-cy="seed-address"><a href="/seeds/{host}" class="link">{formatSeedId(id)}@{host}</a></span>
+    <span data-cy="seed-port" class="faded">:{port}</span>
   </div>
 </div>
 <div>
-  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
+  <button data-cy="seed-btn" class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
     {#if seedCopied}
       Copy ✓
     {:else}
