@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import * as commands from "./commands";
+import "./commands";
 import '@cypress/code-coverage/support';
 
 // Alternatively you can use CommonJS syntax:

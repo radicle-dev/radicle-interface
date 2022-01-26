@@ -17,7 +17,6 @@
       "cypress",
       "@testing-library/cypress"
     ],
-    "typeRoots": ["node_modules/vitest"],
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
