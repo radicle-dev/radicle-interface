@@ -18,18 +18,18 @@
 </script>
 
 <Modal on:close error {floating} {subtle}>
-  <span slot="title">
+  <span slot="title" data-cy="title">
     {#if emoji}
       <div>{emoji}</div>
     {/if}
     {title}
   </span>
 
-  <span slot="subtitle">
+  <span slot="subtitle" data-cy="subtitle">
     {subtitle}
   </span>
 
-  <span slot="body">
+  <span slot="body" data-cy="body">
     <slot>
       <strong>Error:</strong> {body}
     </slot>
@@ -37,7 +37,7 @@
 
   <span slot="actions">
     <slot name="actions">
-      <button on:click={() => dispatch('close')}>
+      <button data-cy="action-btn" on:click={() => dispatch('close')}>
         {action}
       </button>
     </slot>
