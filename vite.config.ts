@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import path from 'path';
 import { UserConfig } from 'vite';
 import svelte from '@sveltejs/vite-plugin-svelte';
