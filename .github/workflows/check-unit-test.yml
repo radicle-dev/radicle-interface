@@ -1,0 +1,13 @@
+name: check-unit-test
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+      - run: npm ci
+      - run: npm run cy:run-ct 
