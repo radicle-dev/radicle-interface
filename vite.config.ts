@@ -1,8 +1,7 @@
 /// <reference types="vitest" />
-
 import path from 'path';
 import { UserConfig } from 'vite';
-import svelte from '@sveltejs/vite-plugin-svelte';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import rewriteAll from 'vite-plugin-rewrite-all';
 import IstanbulPlugin from 'vite-plugin-istanbul';
 
@@ -11,23 +10,15 @@ const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
-  plugins: [svelte({ hot: !process.env.VITEST }), rewriteAll(), IstanbulPlugin(
-    {
+  plugins: [
+    svelte({ hot: !process.env.VITEST }),
+    rewriteAll(),
+    IstanbulPlugin({
       include: "src/*",
       exclude: ["node_modules"],
       extension: [".ts", ".svelte"]
-    }
-  )],
-  test: {
-    global: false,
-    environment: 'jsdom',
-    deps: {
-      inline: [
-        "@ethersproject/signing-key",
-        "@ethersproject/basex"
-      ]
-    }
-  },
+    })
+  ],
   resolve: {
     alias: {
       // This is needed for vite not to choke.

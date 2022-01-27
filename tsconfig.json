@@ -13,7 +13,6 @@
     "types": [
       "svelte",
       "vite/client",
-      "vitest/global",
       "cypress",
       "@testing-library/cypress"
     ],
