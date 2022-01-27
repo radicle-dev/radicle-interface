@@ -33,7 +33,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import marked from 'marked';
+  import { marked } from 'marked';
   import { capitalize, isUrl, isAddress, formatSeedId } from '@app/utils';
   import Address from '@app/Address.svelte';
   import type { Config } from '@app/config';
