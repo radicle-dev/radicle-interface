@@ -1,6 +1,5 @@
 import Error from "./Error.svelte";
 import { mount } from "cypress-svelte-unit-test";
-import * as commands from "@test/support/commands";
 import { Failure } from '@app/error';
 import { cssFile } from "@test/support/styles";
 
@@ -15,19 +14,19 @@ describe('Error', function () {
       }
     }
     }, cssFile);
-    commands.pick("title").should("have.text", " Error");
-    commands.pick("subtitle").should("have.text", "Subtitle of Modal");
-    commands.pick("body").should("have.text", "Error: Not enough RAD");
-    commands.pick("action-btn").should("have.text", "Back");
+    cy.get("[data-cy=title]").should("have.text", " Error");
+    cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
+    cy.get("[data-cy=body]").should("have.text", "Error: Not enough RAD");
+    cy.get("[data-cy=action-btn]").should("have.text", "Back");
   });
   it("Open Error modal with custom message", () => {
     mount(Error, { props: {
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
     } }, cssFile);
-    commands.pick("subtitle").should("have.text", "Subtitle of Modal");
-    commands.pick("body").should("have.text", "Error: Error message to check for");
-    commands.pick("action-btn").should("have.text", "Back");
+    cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
+    cy.get("[data-cy=body]").should("have.text", "Error: Error message to check for");
+    cy.get("[data-cy=action-btn]").should("have.text", "Back");
   });
   it("Check floating modal changes button label to Close", () => {
     mount(Error, { props: {
@@ -36,6 +35,6 @@ describe('Error', function () {
       message: "Error message to check for",
       floating: true
     } }, cssFile);
-    commands.pick("action-btn").should("have.text", "Close");
+    cy.get("[data-cy=action-btn]").should("have.text", "Close");
   });
 });
