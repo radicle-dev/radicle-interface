@@ -7,8 +7,6 @@ describe('Search', function () {
     mount(Search, {}, styles);
     cy.get("input").should("exist");
     cy.get("input").should("have.attr", "placeholder", "Search a name or address...");
-    cy.get("input").type("cloudhead{enter}");
-    cy.url().should("contain", "/resolver/query?q=cloudhead");
   });
   it("Search input displays and navigates correctly", () => {
     mount(Search, {}, styles);

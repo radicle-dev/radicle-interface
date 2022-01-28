@@ -38,12 +38,12 @@
 <div class="desktop">
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
-    <span data-cy="seed-address"><a href="/seeds/{host}" class="link">{formatSeedId(id)}@{host}</a></span>
-    <span data-cy="seed-port" class="faded">:{port}</span>
+    <span><a href="/seeds/{host}" class="link">{formatSeedId(id)}@{host}</a></span>
+    <span class="faded">:{port}</span>
   </div>
 </div>
 <div>
-  <button data-cy="seed-btn" class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
+  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
     {#if seedCopied}
       Copy ✓
     {:else}

@@ -24,17 +24,18 @@ const defaultProps = {
 };
 
 describe('BranchSelector', function () {
+  beforeEach(() => {
+    cy.viewport(1300, 300);
+  });
   it("Render with commit = head and branch listing", () => {
-    cy.viewport(730, 100);
     mount(BranchSelector, {
       props: defaultProps
     }, styles
     );
-    cy.get("[data-cy=branch-name]").should("have.text", "master");
-    cy.get("[data-cy=hash]").should("have.text", "e678629");
+    cy.findByText("master").should("exist");
+    cy.get("div.commit > div.hash.desktop").should("have.text", "e678629");
   });
   it("Test Branch selection", () => {
-    cy.viewport(730, 300);
     mount(BranchSelector, {
       props: {
         ...defaultProps, branches: [
@@ -48,14 +49,13 @@ describe('BranchSelector', function () {
       }
     }, styles
     );
-    cy.get("[data-cy=branch-dropdown]>div").first().click();
+    cy.get("div.dropdown > div").first().click();
     cy.get("@revisionChanged")
       .should("be.calledOnce")
       .its("firstCall.args.0.detail")
       .should("equal", "feature-branch");
   });
   it("Render with commit != head, passing a branch as rev and branch listing", () => {
-    cy.viewport(730, 100);
     mount(BranchSelector, {
       props: {
         ...defaultProps, branches: [
@@ -68,11 +68,10 @@ describe('BranchSelector', function () {
       }
     }, styles
     );
-    cy.get("[data-cy=branch-name]").should("have.text", "feature-branch");
-    cy.get("[data-cy=hash]").should("have.text", "29e8b7b");
+    cy.findByText("feature-branch").should("exist");
+    cy.get("div.commit > div.hash.desktop").should("have.text", "29e8b7b");
   });
   it("Render with commit != head passing a commit as rev and branch listing", () => {
-    cy.viewport(730, 100);
     mount(BranchSelector, {
       props: {
         ...defaultProps,
@@ -80,10 +79,9 @@ describe('BranchSelector', function () {
       }
     }, styles
     );
-    cy.get("[data-cy=hash]").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
+    cy.get("div.commit > div.hash.desktop").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
   it("Render with commit = head, without branch listing", () => {
-    cy.viewport(730, 100);
     mount(BranchSelector, {
       props: {
         ...defaultProps,
@@ -92,11 +90,10 @@ describe('BranchSelector', function () {
       }
     }, styles
     );
-    cy.get("[data-cy=branch-name]").should("have.text", "master");
-    cy.get("[data-cy=hash]").should("have.text", "e678629");
+    cy.findByText("master").should("exist");
+    cy.get("div.commit > div.hash").should("have.text", "e678629");
   });
   it("Render without branch listing, commit != head", () => {
-    cy.viewport(730, 100);
     mount(BranchSelector, {
       props: {
         ...defaultProps,
@@ -105,6 +102,6 @@ describe('BranchSelector', function () {
       }
     }, styles
     );
-    cy.get("[data-cy=hash]").should("have.text", "6b84e519d3c535879eb2b9ee8457bb70ca275a75");
+    cy.get("div.commit > div.hash.desktop").should("have.text", "6b84e519d3c535879eb2b9ee8457bb70ca275a75");
   });
 });

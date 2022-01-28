@@ -14,19 +14,19 @@ describe('Error', function () {
       }
     }
     }, styles);
-    cy.get("[data-cy=title]").should("have.text", " Error");
-    cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
-    cy.get("[data-cy=body]").should("have.text", "Error: Not enough RAD");
-    cy.get("[data-cy=action-btn]").should("have.text", "Back");
+    cy.get("[slot=title]").should("have.text", " Error");
+    cy.get("[slot=subtitle]").should("have.text", "Subtitle of Modal");
+    cy.get("[slot=body]").should("have.text", "Error: Not enough RAD");
+    cy.get("button").should("have.text", "Back");
   });
   it("Open Error modal with custom message", () => {
     mount(Error, { props: {
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
     } }, styles);
-    cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
-    cy.get("[data-cy=body]").should("have.text", "Error: Error message to check for");
-    cy.get("[data-cy=action-btn]").should("have.text", "Back");
+    cy.get("[slot=subtitle]").should("have.text", "Subtitle of Modal");
+    cy.get("[slot=body]").should("have.text", "Error: Error message to check for");
+    cy.get("button").should("have.text", "Back");
   });
   it("Check floating modal changes button label to Close", () => {
     mount(Error, { props: {
@@ -35,6 +35,6 @@ describe('Error', function () {
       message: "Error message to check for",
       floating: true
     } }, styles);
-    cy.get("[data-cy=action-btn]").should("have.text", "Close");
+    cy.get("button").should("have.text", "Close");
   });
 });

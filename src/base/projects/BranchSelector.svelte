@@ -77,7 +77,6 @@
   {#if branches.length > 0}
     <span>
       <div
-        data-cy="branch-name"
         class="stat branch"
         class:not-allowed={!showSelector}
         class:hidden={!isLabel}
@@ -90,7 +89,7 @@
         visible={branchesDropdown}
         on:select={(e) => switchBranch(e.detail)} />
     </span>
-    <div data-cy="hash" class="hash desktop">
+    <div class="hash desktop">
       {#if isLabel}
         {formatCommit(commit)}
       {:else}
@@ -102,14 +101,14 @@
     </div>
   <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
   {:else if commit === project.head}
-    <div data-cy="branch-name" class="stat branch not-allowed">
+    <div class="stat branch not-allowed">
       {project.meta.defaultBranch}
     </div>
-    <div data-cy="hash" class="hash">
+    <div class="hash">
       {formatCommit(commit)}
     </div>
   {:else}
-    <div data-cy="hash" class="hash desktop">
+    <div class="hash desktop">
       {commit}
     </div>
     <div class="hash mobile">
