@@ -3,7 +3,5 @@
   "componentFolder": "src",
   "testFiles": "**/*spec.{js,ts}",
   "pluginsFile": "cypress/plugins/index.cjs",
-  "viewportWidth": 1300,
-  "viewportHeight":1000,
   "baseUrl": "http://localhost:3000"
 }
