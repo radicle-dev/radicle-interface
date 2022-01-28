@@ -1,7 +1,7 @@
 import Error from "./Error.svelte";
 import { mount } from "cypress-svelte-unit-test";
 import { Failure } from '@app/error';
-import { cssFile } from "@test/support/styles";
+import { styles } from "@test/support/index";
 
 describe('Error', function () {
   it("Open Error modal with default props", () => {
@@ -13,7 +13,7 @@ describe('Error', function () {
         message: "Not enough RAD"
       }
     }
-    }, cssFile);
+    }, styles);
     cy.get("[data-cy=title]").should("have.text", " Error");
     cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
     cy.get("[data-cy=body]").should("have.text", "Error: Not enough RAD");
@@ -23,7 +23,7 @@ describe('Error', function () {
     mount(Error, { props: {
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
-    } }, cssFile);
+    } }, styles);
     cy.get("[data-cy=subtitle]").should("have.text", "Subtitle of Modal");
     cy.get("[data-cy=body]").should("have.text", "Error: Error message to check for");
     cy.get("[data-cy=action-btn]").should("have.text", "Back");
@@ -34,7 +34,7 @@ describe('Error', function () {
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
       floating: true
-    } }, cssFile);
+    } }, styles);
     cy.get("[data-cy=action-btn]").should("have.text", "Close");
   });
 });

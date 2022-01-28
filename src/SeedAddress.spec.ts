@@ -1,6 +1,6 @@
 import SeedAddress from "./SeedAddress.svelte";
 import { mount } from "cypress-svelte-unit-test";
-import { cssFile } from "@test/support/styles";
+import { styles } from "@test/support/index";
 
 describe('Search', function () {
   it("Renders correctly", () => {
@@ -12,7 +12,7 @@ describe('Search', function () {
       }
     },
     {
-      ...cssFile,
+      ...styles,
       html: `
         <div class="fields">
           <div class="label">Seed</div>

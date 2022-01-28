@@ -1,6 +1,6 @@
 import BranchSelector from "./BranchSelector.svelte";
 import { mount } from "cypress-svelte-unit-test";
-import { cssFile } from "@test/support/styles";
+import { styles } from "@test/support/index";
 
 const defaultProps = {
   project: {
@@ -28,7 +28,7 @@ describe('BranchSelector', function () {
     cy.viewport(730, 100);
     mount(BranchSelector, {
       props: defaultProps
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=branch-name]").should("have.text", "master");
     cy.get("[data-cy=hash]").should("have.text", "e678629");
@@ -46,7 +46,7 @@ describe('BranchSelector', function () {
       }, callbacks: {
         revisionChanged: cy.stub().as("revisionChanged")
       }
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=branch-dropdown]>div").first().click();
     cy.get("@revisionChanged")
@@ -66,7 +66,7 @@ describe('BranchSelector', function () {
         ],
         revision: "feature-branch"
       }
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=branch-name]").should("have.text", "feature-branch");
     cy.get("[data-cy=hash]").should("have.text", "29e8b7b");
@@ -78,7 +78,7 @@ describe('BranchSelector', function () {
         ...defaultProps,
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00"
       }
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=hash]").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
@@ -90,7 +90,7 @@ describe('BranchSelector', function () {
         revision: "e678629cd37c770c640a2cd997fc76303c815772",
         branches: [],
       }
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=branch-name]").should("have.text", "master");
     cy.get("[data-cy=hash]").should("have.text", "e678629");
@@ -103,7 +103,7 @@ describe('BranchSelector', function () {
         revision: "6b84e519d3c535879eb2b9ee8457bb70ca275a75",
         branches: [],
       }
-    }, cssFile
+    }, styles
     );
     cy.get("[data-cy=hash]").should("have.text", "6b84e519d3c535879eb2b9ee8457bb70ca275a75");
   });
