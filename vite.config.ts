@@ -14,9 +14,10 @@ const config: UserConfig = {
     svelte({ hot: !process.env.VITEST }),
     rewriteAll(),
     IstanbulPlugin({
-      include: "src/*",
+      include: "src/**/*",
       exclude: ["node_modules"],
-      extension: [".ts", ".svelte"]
+      extension: [".ts", ".svelte"],
+      cypress: true
     })
   ],
   resolve: {

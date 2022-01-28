@@ -2,4 +2,4 @@
 # For now we only check the Svelte files.
 
 npm test
-npx nyc report --check-coverage -e .svelte -all
+npx nyc report
