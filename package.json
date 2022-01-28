@@ -20,13 +20,11 @@
     "cypress-svelte-unit-test": "git+https://github.com/flakolefluk/cypress-svelte-unit-test.git",
     "eslint": "^7.28.0",
     "eslint-plugin-svelte3": "^3.2.0",
-    "happy-dom": "^2.30.1",
     "svelte-check": "^1.5.2",
     "typescript": "^4.2.4",
     "vite": "^2.7.13",
     "vite-plugin-istanbul": "^2.4.0",
-    "vite-plugin-rewrite-all": "^0.1.2",
-    "vitest": "^0.2.4"
+    "vite-plugin-rewrite-all": "^0.1.2"
   },
   "dependencies": {
     "@datamodels/identity-profile-basic": "^0.1.2",
