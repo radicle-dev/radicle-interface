@@ -16,6 +16,7 @@ describe('Search', function () {
     cy.findByText(":8776").should("exist");
     cy.findByText("Copy").should("exist");
   });
+
   it("Copies seed address correctly", () => {
     // We query the cy.window here since doing the clipboard action in the runner window, would throw an error
     cy.findByText("Copy").click().should("exist");

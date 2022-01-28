@@ -27,6 +27,7 @@ describe('BranchSelector', function () {
   beforeEach(() => {
     cy.viewport(1300, 300);
   });
+
   it("Render with commit = head and branch listing", () => {
     mount(BranchSelector, {
       props: defaultProps
@@ -35,6 +36,7 @@ describe('BranchSelector', function () {
     cy.findByText("master").should("exist");
     cy.get("div.commit > div.hash.desktop").should("have.text", "e678629");
   });
+
   it("Test Branch selection", () => {
     mount(BranchSelector, {
       props: {
@@ -55,6 +57,7 @@ describe('BranchSelector', function () {
       .its("firstCall.args.0.detail")
       .should("equal", "feature-branch");
   });
+
   it("Render with commit != head, passing a branch as rev and branch listing", () => {
     mount(BranchSelector, {
       props: {
@@ -71,6 +74,7 @@ describe('BranchSelector', function () {
     cy.findByText("feature-branch").should("exist");
     cy.get("div.commit > div.hash.desktop").should("have.text", "29e8b7b");
   });
+
   it("Render with commit != head passing a commit as rev and branch listing", () => {
     mount(BranchSelector, {
       props: {
@@ -81,6 +85,7 @@ describe('BranchSelector', function () {
     );
     cy.get("div.commit > div.hash.desktop").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
+
   it("Render with commit = head, without branch listing", () => {
     mount(BranchSelector, {
       props: {
@@ -93,6 +98,7 @@ describe('BranchSelector', function () {
     cy.findByText("master").should("exist");
     cy.get("div.commit > div.hash").should("have.text", "e678629");
   });
+
   it("Render without branch listing, commit != head", () => {
     mount(BranchSelector, {
       props: {

@@ -19,6 +19,7 @@ describe('Error', function () {
     cy.get("[slot=body]").should("have.text", "Error: Not enough RAD");
     cy.get("button").should("have.text", "Back");
   });
+
   it("Open Error modal with custom message", () => {
     mount(Error, { props: {
       subtitle: "Subtitle of Modal",
@@ -28,6 +29,7 @@ describe('Error', function () {
     cy.get("[slot=body]").should("have.text", "Error: Error message to check for");
     cy.get("button").should("have.text", "Back");
   });
+
   it("Check floating modal changes button label to Close", () => {
     mount(Error, { props: {
       title: "Title of Modal",
