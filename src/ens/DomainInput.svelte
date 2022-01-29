@@ -28,6 +28,7 @@
     border-left: none;
   }
   input {
+    line-height: 1.5;
     margin: 0;
     margin-right: 0;
     border-top-right-radius: 0;
