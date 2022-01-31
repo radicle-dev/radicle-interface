@@ -17,9 +17,9 @@ describe('SeedAddress', function () {
   });
 
   it("Copies seed address correctly", () => {
-    // We query the cy.window here since doing the clipboard action in the runner window, would throw an error
     cy.findByText("Copy").click().should("exist");
     cy.findByText("Copy ✓").should("have.attr", "disabled");
+    // We invoke the cy.window here since doing the clipboard action in the runner window, would throw an error
     cy.window().its("navigator.clipboard").invoke("readText").should("equal", "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1@seed.cloudhead.io:8776");
     cy.wait(4000);
     cy.findByText("Copy").click().should("exist").should("not.have.attr", "disabled");

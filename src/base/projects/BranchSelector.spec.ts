@@ -24,10 +24,6 @@ const defaultProps = {
 };
 
 describe('BranchSelector', function () {
-  beforeEach(() => {
-    cy.viewport(1300, 300);
-  });
-
   it("Render with commit = head and branch listing", () => {
     mount(BranchSelector, {
       props: defaultProps
@@ -38,6 +34,8 @@ describe('BranchSelector', function () {
   });
 
   it("Test Branch selection", () => {
+    // The viewport here is to simulate desktop behaviour
+    cy.viewport(800, 300);
     mount(BranchSelector, {
       props: {
         ...defaultProps, branches: [
