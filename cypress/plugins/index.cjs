@@ -8,6 +8,7 @@ module.exports = (on, config) => {
       options,
       viteConfig: {
         configFile: path.resolve(__dirname, '..', '..', 'vite.config.ts'),
+        logLevel: "warn"
       },
     });
   });
