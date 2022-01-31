@@ -8,6 +8,9 @@
     "test": "cypress run-ct"
   },
   "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.12",
     "@cypress/vite-dev-server": "^2.2.2",
