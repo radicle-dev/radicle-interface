@@ -1,9 +1,8 @@
-/// <reference types="cypress" />
 import SeedAddress from "./SeedAddress.svelte";
 import { mount } from "cypress-svelte-unit-test";
 import { styles } from "@test/support/index";
 
-describe('Search', function () {
+describe('SeedAddress', function () {
   it("Renders correctly", () => {
     mount(SeedAddress, {
       props: {
