@@ -23,11 +23,15 @@
 
   onMount(async () => {
     try {
-      state.status = Status.Signing;
-      const tx = await withdraw(amount, config);
-      state.status = Status.Pending;
-      await tx.wait();
-      state.status = Status.Success;
+      if ($session) {
+        state.status = Status.Signing;
+        const tx = await withdraw(amount, $session.config.signer, config);
+        state.status = Status.Pending;
+        await tx.wait();
+        state.status = Status.Success;
+      } else {
+        back();
+      }
     } catch (e: any) {
       console.error(e);
       error = e;

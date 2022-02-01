@@ -4,6 +4,8 @@ import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
 import { Config, getConfig, isMetamaskInstalled } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
+import type { TypedDataSigner } from '@ethersproject/abstract-signer';
+import type { WalletConnectSigner } from "./WalletConnectSigner";
 import * as ethers from "ethers";
 
 export enum Connection {
@@ -19,6 +21,13 @@ export type TxState =
   | { state: 'fail'; hash: string; blockHash: string; blockNumber: number; error: string }
   | null;
 
+// Definitions made in `Config` that need to be part of the session,
+// to provide reactivity based on events i.e. accountsChanged
+// TODO: Eventually there will be more reactive config needs, e.g. seeds
+export interface SessionConfig {
+  signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
+}
+
 export type State =
     { connection: Connection.Disconnected }
   | { connection: Connection.Connecting }
@@ -26,6 +35,7 @@ export type State =
 
 export interface Session {
   address: string;
+  config: SessionConfig;
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
@@ -38,7 +48,7 @@ export interface Store extends Readable<State> {
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
-  setChangedAccount(address: string): void;
+  setChangedAccount(address: string, config: Config): void;
 }
 
 export const loadState = (initial: State): Store => {
@@ -52,8 +62,9 @@ export const loadState = (initial: State): Store => {
       // Re-connect using previous session.
       if (config.metamask.connected) {
         const metamask = config.metamask.session;
+        const sessionConfig = { signer: config.signer };
         const tokenBalance: BigNumber = await config.token.balanceOf(metamask.address);
-        const session = { tokenBalance, tx: null, address: metamask.address };
+        const session = { tokenBalance, tx: null, config: sessionConfig, address: metamask.address };
 
         store.set({ connection: Connection.Connected, session });
         config.setSigner(config.metamask.signer);
@@ -77,7 +88,8 @@ export const loadState = (initial: State): Store => {
         config.walletConnect.state.set({ state: "close" });
 
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
-        const session = { address, tokenBalance, tx: null };
+        const sessionConfig = { signer: config.signer };
+        const session = { config: sessionConfig, address, tokenBalance, tx: null };
 
         store.set({
           connection: Connection.Connected,
@@ -99,7 +111,8 @@ export const loadState = (initial: State): Store => {
 
         const address = await signer.getAddress();
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
-        const session = { address, tokenBalance, tx: null };
+        const sessionConfig = { signer: config.signer };
+        const session = { config: sessionConfig, address, tokenBalance, tx: null };
         const network = await ethers.providers.getNetwork(
           signer.walletConnect.chainId
         );
@@ -232,7 +245,7 @@ export const loadState = (initial: State): Store => {
       });
     },
 
-    setChangedAccount: (address: string) => {
+    setChangedAccount: (address: string, config: Config) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
@@ -242,6 +255,7 @@ export const loadState = (initial: State): Store => {
               disconnectMetamask();
             } else {
               s.session.address = address;
+              s.session.config = { signer: config.signer };
               saveSession(s.session);
             }
             return s;
@@ -275,7 +289,7 @@ window.ethereum?.on("accountsChanged", async ([address]: string) => {
 
 export async function changeAccounts(address: string): Promise<void> {
   const config = await getConfig();
-  state.setChangedAccount(address);
+  state.setChangedAccount(address, config);
   state.refreshBalance(config);
 }
 
@@ -311,6 +325,6 @@ export function disconnectWallet(config: Config): void {
 
 function saveSession(session: Session): void {
   window.localStorage.setItem("metamask", JSON.stringify({
-    ...session, tokenBalance: null
+    ...session, tokenBalance: null, config: null
   }));
 }

@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { BigNumber } from "@ethersproject/bignumber";
+  import { session } from "@app/session";
   import { toWei } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
-  import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
   import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./lib";
 
@@ -21,22 +21,30 @@
   }
 
   async function isAbleToWithdraw(amount: string): Promise<[boolean, string?]> {
-    if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
-    if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
-    let currentTime = new Date().getTime();
-    let timelock = await calculateTimeLock(amount, config);
-    // Converting a 10 digit to 13 digit timestamp by multiplying by 1000
-    // since JS doesn't display a correct Date string when passing a 10 digit timestamp.
-    let nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(1000);
-    if (nextAvailableWithdraw.gt(currentTime)) return [false, `Not ready to withdraw, return after ${new Date(nextAvailableWithdraw.toNumber()).toLocaleString('en-GB')}`];
+    try {
+      if (!$session) { return [false]; }
+      if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
+      if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
+      let currentTime = new Date().getTime();
+      let timelock = await calculateTimeLock(amount, $session.config.signer, config);
+      // Converting a 10 digit to 13 digit timestamp by multiplying by 1000
+      // since JS doesn't display a correct Date string when passing a 10 digit timestamp.
+      let nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(1000);
+      if (nextAvailableWithdraw.gt(currentTime)) return [false, `Not ready to withdraw, return after ${new Date(nextAvailableWithdraw.toNumber()).toLocaleString('en-GB')}`];
 
-    return [true];
+      return [true];
+    } catch (e: any) {
+      console.error(e);
+      error = e.message;
+
+      return [false];
+    }
   }
   
-  onMount(async () => {
-    maxWithdrawAmount = await getMaxWithdrawAmount(config);
-    lastWithdrawal = await lastWithdrawalByUser(config);
-  });
+  $: if ($session) {
+    getMaxWithdrawAmount($session.config.signer, config).then(x => maxWithdrawAmount = x);
+    lastWithdrawalByUser($session.config.signer, config).then(x => lastWithdrawal = x);
+  }
 </script>
 
 <style>
@@ -89,7 +97,7 @@
         To get RAD tokens on <strong>{config.network.name}</strong>, please
         check the known exchanges.
       </div>
-    {:else if !config.signer}
+    {:else if !$session}
       <div class="input-caption">
         To get RAD tokens on <strong>{config.network.name}</strong>, please
         connect your wallet.

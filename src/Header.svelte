@@ -17,7 +17,6 @@
   export let session: Session | null;
   export let config: Config;
 
-  let sessionButton: HTMLElement | null = null;
   let sessionButtonHover = false;
   let mobileNavbarDisplayed = false;
 
@@ -182,7 +181,7 @@
         {/if}
       </span>
 
-      <button class="address outline small" bind:this={sessionButton}
+      <button class="address outline small"
         on:click={() => disconnectWallet(config)}
         on:mouseover={() => sessionButtonHover = true}
         on:focus={() => sessionButtonHover = true}
