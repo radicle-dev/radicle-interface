@@ -1,10 +1,27 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { marked } from "marked";
+  import sanitizeHtml from 'sanitize-html';
 
   export let content: string;
 
   let container: HTMLElement;
+
+  const sanitize = (content: string): string => {
+    return sanitizeHtml(marked.parse(content), {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        "img",
+        "audio",
+        "video",
+      ]),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        video: ["src"],
+        audio: ["src"],
+      },
+      disallowedTagsMode: "escape",
+    });
+  };
 
   onMount(() => {
     // Don't underline <a> tags that contain images.
@@ -162,6 +179,6 @@
 
 {#if content}
   <div class="markdown" bind:this={container}>
-    {@html marked(content)}
+    {@html marked(sanitize(content))}
   </div>
 {/if}
