@@ -331,7 +331,7 @@
           </Message>
         {/await}
 
-        <Projects {org} config={profile.seed ? config.withSeed(profile.seed) : config} />
+        <Projects {org} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
       {/await}
     </main>
   {:else}

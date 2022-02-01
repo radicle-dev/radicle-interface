@@ -2,7 +2,6 @@
   import type { Config } from "@app/config";
   import type { Org } from "@app/base/orgs/Org";
   import type { PendingProject, Project } from "@app/project";
-  import { session } from '@app/session';
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
   import Widget from '@app/base/projects/Widget.svelte';
@@ -11,20 +10,20 @@
 
   export let org: Org;
   export let config: Config;
+  export let account: string | null;
 
-  let getProjects = queryProjects;
-
-  function updateRecords() {
+  const updateRecords = () => {
     getProjects = queryProjects;
-  }
+  };
 
-  async function queryProjects(): Promise<(Project | PendingProject)[]> {
-    if ($session) {
-      const result = await org.isMember($session.address, config);
+  $: queryProjects = async (): Promise<(Project | PendingProject)[]> => {
+    if (account) {
+      const result = await org.isMember(account, config);
       return result ? org.getAllProjects(config) : org.getProjects(config);
     }
     return org.getProjects(config);
-  }
+  };
+  $: getProjects = queryProjects;
 </script>
 
 <style>
@@ -53,9 +52,8 @@
               <span class="desktop">commit {project.anchor.stateHash}</span>
             </span>
             <span class="anchor" slot="actions">
-              {#if org.safe && $session}
-                <Anchor {project} safe={org.safe} on:success={() => updateRecords()} account={$session.address} {config} />
-                <button on:click={() => updateRecords()}>Update projects</button>
+              {#if org.safe && account}
+                <Anchor {project} safe={org.safe} on:success={() => updateRecords()} {account} {config} />
               {/if}
             </span>
           </Widget>

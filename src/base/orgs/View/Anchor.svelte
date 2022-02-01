@@ -30,31 +30,32 @@
 
   const dispatch = createEventDispatcher();
   let state = State.Idle;
+  let error: string | null = null;
   let action: null | Action = null;
-  const isSigned = project.confirmations.includes(
-    ethers.utils.getAddress(account)
-  );
+
   const close = () => {
     action = null;
     state = State.Idle;
-    // Could eventually be a separate function if we want to handle a Cancel event differently.
-    dispatch("success");
   };
+
   const pending = safe.threshold - project.confirmations.length;
   const executeTransaction = async (safeTxHash: string) => {
     try {
       action = Action.Execute;
-      state = State.Confirm;
+      state = State.Signing;
       const txResult = await utils.executeSignedSafeTransaction(safe.address, safeTxHash, config);
 
       state = State.Submitting;
       await txResult.transactionResponse?.wait();
 
       state = State.Success;
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      error = err.message;
+      state = State.Failed;
     }
   };
+
   const confirmAnchor = async (safeTxHash: string) => {
     try {
       action = Action.Sign;
@@ -65,11 +66,16 @@
       await config.safe.client?.confirmTransaction(safeTxHash, signature.data);
 
       state = State.Success;
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      error = err.message;
       state = State.Failed;
     }
   };
+
+  $: isSigned = project.confirmations.includes(
+    ethers.utils.getAddress(account)
+  );
 </script>
 
 <style>
@@ -144,6 +150,8 @@
         <span>Transaction is being confirmed...</span>
       {:else if state == State.Success}
         <span>Transaction confirmed.</span>
+      {:else if state == State.Failed}
+        <span>Transaction failed</span>
       {/if}
     </span>
 
@@ -153,6 +161,8 @@
           <div>Project</div><code>{project.id}</code>
           <div>Hash</div><code>{project.anchor.stateHash}</code>
         </div>
+      {:else if state == State.Failed}
+        <div>{error}</div>
       {/if}
     </span>
 
@@ -164,8 +174,11 @@
         <button class="text" on:click={close}>
           Cancel
         </button>
-      {:else if state == State.Success}
-        <button on:click={close}>Done</button>
+      {:else if state == State.Success || state == State.Failed}
+        <button on:click={() => {
+          close();
+          dispatch("success");
+        }}>Done</button>
       {/if}
     </span>
   </Modal>
@@ -178,11 +191,15 @@
 
     <span slot="subtitle">
       {#if state == State.Confirm}
+        <span>Initiate the transaction...</span>
+      {:else if state == State.Signing}
         <span>Sign the transaction in your wallet...</span>
       {:else if state == State.Submitting}
         <span>Transaction is being confirmed...</span>
       {:else if state == State.Success}
         <span>Transaction confirmed.</span>
+      {:else if state == State.Failed}
+        <span>Transaction failed</span>
       {/if}
     </span>
 
@@ -192,6 +209,8 @@
           <div>TxHash</div><code>{utils.formatHash(project.safeTxHash)}</code>
           <div>Quorum</div><code>{project.confirmations.length} of {safe.threshold}</code>
         </div>
+      {:else if state == State.Failed}
+        <div>{error}</div>
       {/if}
     </span>
 
@@ -203,8 +222,11 @@
         <button class="text" on:click={close}>
           Cancel
         </button>
-      {:else if state == State.Success}
-        <button on:click={() => close}>Done</button>
+      {:else if state == State.Success || state == State.Failed}
+        <button on:click={() => {
+          close();
+          dispatch("success");
+        }}>Done</button>
       {/if}
     </span>
   </Modal>
