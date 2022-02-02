@@ -24,7 +24,7 @@
     "eslint": "^7.28.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "radicle-svelte-unit-test": "^1.0.0",
-    "svelte-check": "^1.5.2",
+    "svelte-check": "^2.4.1",
     "typescript": "^4.2.4",
     "vite": "^2.7.13",
     "vite-plugin-istanbul": "^2.4.0",
@@ -54,7 +54,7 @@
     "multihashes": "^4.0.2",
     "pure-svg-code": "^1.0.6",
     "sanitize-html": "^2.6.1",
-    "svelte": "^3.44.3",
+    "svelte": "^3.46.3",
     "svelte-preprocess": "^4.7.2",
     "svelte-routing": "^1.6.0"
   }

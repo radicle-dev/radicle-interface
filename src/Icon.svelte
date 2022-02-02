@@ -4,7 +4,6 @@
   export let height: number | null = null;
   export let inline = false;
   export let fill = false;
-  export let clickHandler: (() => void) | undefined = undefined;
 
   const icons = [
     {
@@ -52,7 +51,7 @@
   svg.fill {
     fill: currentColor;
   }
-  svg.inline {
+  span.inline, svg.inline {
     height: 1.6rem;
   }
   svg.clickable {
@@ -61,11 +60,12 @@
 </style>
 
 {#if svg}
-  <svg role="img" class={$$props.class} class:inline class:fill
-       width={width || "1rem"}
-       height={height || "1rem"}
-       viewBox="{svg.offset?.x || 0} {svg.offset?.y || 0} {svg.size} {svg.size}"
-       on:click|stopPropagation={clickHandler}>
-    {@html svg.data}
-  </svg>
+  <span on:click class:inline style:height={`${height}px`} style:width={`${width}px`}>
+    <svg role="img" class={$$props.class} class:inline class:fill
+         width={width || "1rem"}
+         height={height || "1rem"}
+         viewBox="{svg.offset?.x || 0} {svg.offset?.y || 0} {svg.size} {svg.size}">
+      {@html svg.data}
+    </svg>
+  </span>
 {/if}

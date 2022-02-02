@@ -68,6 +68,6 @@
   <div class="right">
     <span class="bold author">{commit.committer.name}</span>
     <span class="desktop-inline time">{formatCommitTime(commit.committerTime)}</span>
-    <Icon name="browse" clickHandler={() => browseCommit(commit.sha1)} width={17} inline fill />
+    <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.sha1)} />
   </div>
 </div>

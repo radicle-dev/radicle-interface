@@ -3,7 +3,7 @@
   import Icon from "@app/Icon.svelte";
   import { lineNumberL, lineNumberR, lineSign } from "@app/diff";
   import type { FileDiff } from "@app/diff";
-  
+
   const dispatch = createEventDispatcher();
 
   export let file: FileDiff;
@@ -109,10 +109,10 @@
   <header
     on:click={collapse}>
     <div class="actions">
-      <Icon clickHandler={collapse} name="chevron" width={20} inline fill />
+      <Icon name="chevron" width={20} inline fill />
       <p class="bold file-path">{file.path}</p>
     </div>
-    <Icon clickHandler={() => dispatch("browse", file.path)} name="browse" width={20} inline fill />
+    <Icon name="browse" width={20} inline fill on:click={() => dispatch("browse", file.path)} />
   </header>
   {#if !collapsed}
     <main>

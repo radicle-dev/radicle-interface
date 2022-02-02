@@ -73,7 +73,8 @@
         <p class="bold">{path}</p>
         <span class="diff-type created">created</span>
       </div>
-      <Icon class="clickable" clickHandler={() => dispatch("browse", path)} name="browse" width={20} inline fill />
+      <Icon class="clickable" name="browse" width={20} inline fill
+        on:click={() => dispatch("browse", path)} />
     </header>
   {/each}
   {#each diff.deleted as path (path)}
@@ -82,7 +83,8 @@
         <p class="bold">{path}</p>
         <span class="diff-type deleted">deleted</span>
       </div>
-      <Icon class="clickable" clickHandler={() => dispatch("browse", path)} name="browse" width={20} inline fill />
+      <Icon class="clickable" name="browse" width={20} inline fill
+        on:click={() => dispatch("browse", path)} />
     </header>
   {/each}
 </div>
