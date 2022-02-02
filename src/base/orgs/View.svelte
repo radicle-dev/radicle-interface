@@ -249,9 +249,13 @@
             {/if}
           {/await}
           <!-- Seed Address -->
-          {#if profile.seedId && profile.seedHost}
+          {#if profile.seed?.valid}
             <div class="label">Seed</div>
-            <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+            <SeedAddress seed={profile.seed} port={config.seed.link.port} />
+          {:else if !profile.seed?.valid}
+            <div class="label">Seed</div>
+            <div class="subtle">✗ Seed configuration is invalid</div>
+            <div class="desktop" />
           {/if}
           <!-- Name/Profile -->
           <div class="label">Profile</div>
@@ -331,7 +335,11 @@
           </Message>
         {/await}
 
-        <Projects {org} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
+        <Projects {org} {account} config={profile.config(config)} />
+      {:catch err}
+        <Message error>
+          <strong>Error: </strong> {err.message}.
+        </Message>
       {/await}
     </main>
   {:else}

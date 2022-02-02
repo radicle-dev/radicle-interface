@@ -175,9 +175,11 @@
         <div class="desktop" />
       {/if}
       <!-- Seed Address -->
-      {#if profile.seedId && profile.seedHost}
-        <div class="label">Seed</div>
-        <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+      {#if profile.seed && profile.seed.valid}
+        {#if profile.seed.id && profile.seed.host}
+          <div class="label">Seed</div>
+          <SeedAddress seed={profile.seed} port={config.seed.link.port} />
+        {/if}
       {/if}
       <!-- Profile -->
       <div class="label">Profile</div>

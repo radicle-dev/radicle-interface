@@ -41,12 +41,14 @@
   }).then(async (result) => {
     const profile = result?.profile;
     const seedInstance = profile?.seed ?? result?.seed;
-    const cfg = seedInstance ? config.withSeed(seedInstance) : config;
+    const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
     const info = await proj.getInfo(urn, cfg);
-    projectInfo = info;
     const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? org);
+
     let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
+
+    projectInfo = info;
 
     // Checks for delegates returned from seed node, as feature check of the seed node
     if (info.meta.delegates) {

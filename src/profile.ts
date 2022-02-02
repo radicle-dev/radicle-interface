@@ -4,7 +4,7 @@ import {
   isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
 } from "@app/utils";
 import type { Config } from "@app/config";
-import type { Seed } from "@app/base/seeds/Seed";
+import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 
 export interface IProfile {
   address: string;
@@ -70,16 +70,9 @@ export class Profile {
     else return undefined;
   }
 
-  get seedHost(): string | undefined {
-    return this.profile?.ens?.seed?.host;
-  }
-
-  get seedId(): string | undefined {
-    return this.profile?.ens?.seed?.id;
-  }
-
-  get seed(): Seed | undefined {
-    return this.profile?.ens?.seed;
+  // We add null here to differentiate between a `undefined` and a invalid / null seed
+  get seed(): Seed | InvalidSeed | null {
+    return this.profile?.ens?.seed ?? null;
   }
 
   get anchorsAccount(): string | undefined {
@@ -108,7 +101,7 @@ export class Profile {
   // Return the profile-specific config. This sets various URLs in the config,
   // based on profile data.
   config(config: Config): Config {
-    if (this.seed) {
+    if (this.seed && this.seed.valid) {
       return config.withSeed(this.seed);
     }
     return config;

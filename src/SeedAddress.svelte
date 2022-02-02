@@ -1,8 +1,8 @@
 <script lang="ts">
   import { formatSeedAddress, formatSeedId, toClipboard } from "./utils";
+  import type { Seed } from "@app/base/seeds/Seed";
 
-  export let id: string;
-  export let host: string;
+  export let seed: Seed;
   export let port: number;
 
   let seedCopied = false;
@@ -38,12 +38,12 @@
 <div class="desktop">
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
-    <span><a href="/seeds/{host}" class="link">{formatSeedId(id)}@{host}</a></span>
+    <span><a href="/seeds/{seed.host}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
     <span class="faded">:{port}</span>
   </div>
 </div>
 <div>
-  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(id, host)}>
+  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(seed.id, seed.host)}>
     {#if seedCopied}
       Copy ✓
     {:else}

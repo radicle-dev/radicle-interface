@@ -5,7 +5,21 @@ import type { Project } from "@app/project";
 import { isDomain } from '@app/utils';
 import { assert } from '@app/error';
 
+export class InvalidSeed {
+  valid: false = false;
+
+  host?: string;
+  id?: string;
+
+  constructor(host?: string, id?: string) {
+    this.host = host;
+    this.id = id;
+  }
+}
+
 export class Seed {
+  valid: true = true;
+
   host: string;
   id: string;
 
@@ -13,9 +27,9 @@ export class Seed {
   git?: string;
   version?: string;
 
-  constructor(host: string, id: string, git?: string, api?: string) {
-    assert(isDomain(host));
-    assert(/^[a-z0-9]+$/.test(id));
+  constructor(host: string, id: string, git?: string | null, api?: string | null) {
+    assert(isDomain(host), "invalid seed host");
+    assert(/^[a-z0-9]+$/.test(id), "invalid seed id");
 
     this.host = host;
     this.id = id;
@@ -49,10 +63,9 @@ export class Seed {
       Seed.getPeer(config),
     ]);
 
-    return {
-      host: config.seed.api.host,
-      id: peer.id,
-      version: info.version,
-    };
+    const seed = new Seed(config.seed.api.host, peer.id);
+    seed.version = info.version;
+
+    return seed;
   }
 }

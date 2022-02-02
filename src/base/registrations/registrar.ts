@@ -8,19 +8,18 @@ import { Failure } from '@app/error';
 import type { Config } from '@app/config';
 import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
-import { Seed } from '@app/base/seeds/Seed';
+import { Seed, InvalidSeed } from '@app/base/seeds/Seed';
 
 export interface Registration {
   profile: EnsProfile;
   resolver: EnsResolver;
 }
 
-
 export interface EnsProfile {
   name: string;
   owner?: string;
   address?: string;
-  seed?: Seed;
+  seed?: Seed | InvalidSeed;
   anchorsAccount?: string;
   url?: string;
   avatar?: string;
@@ -96,8 +95,14 @@ export async function getRegistration(name: string, config: Config, resolver?: E
     github,
   };
 
+  // If no seed provided profile.seed ends up being undefined
   if (seedHost && seedId) {
-    profile.seed = new Seed(seedHost, seedId, seedGit, seedApi);
+    try {
+      profile.seed = new Seed(seedHost, seedId, seedGit, seedApi);
+    } catch (e: any) {
+      console.debug(e, seedHost, seedId);
+      profile.seed = new InvalidSeed(seedHost, seedId);
+    }
   }
 
   return { resolver, profile };
@@ -123,7 +128,7 @@ export async function getAnchorsAccount(name: string, config: Config, resolver?:
   return resolver.getText('eth.radicle.anchors');
 }
 
-export async function getSeed(name: string, config: Config, resolver?: EnsResolver | null): Promise<Seed | null> {
+export async function getSeed(name: string, config: Config, resolver?: EnsResolver | null): Promise<Seed | InvalidSeed | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? await config.provider.getResolver(name);
@@ -139,10 +144,16 @@ export async function getSeed(name: string, config: Config, resolver?: EnsResolv
   ]);
 
   if (! host || ! id) {
+    console.debug("getSeed: No seed host or id provided");
     return null;
   }
 
-  return new Seed(host, id, git ?? undefined, api ?? undefined);
+  try {
+    return new Seed(host, id, git, api);
+  } catch (e: any) {
+    console.debug(e, host, id);
+    return new InvalidSeed(id, host);
+  }
 }
 
 export function registrar(config: Config): ethers.Contract {

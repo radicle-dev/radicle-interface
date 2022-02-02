@@ -30,7 +30,7 @@
       state = { status: Status.Loaded };
       info = result;
     } catch (err: any) {
-      console.error(err.message);
+      console.debug(err);
       state = { status: Status.Error, error: err.message };
     }
   });
