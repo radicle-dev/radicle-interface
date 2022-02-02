@@ -16,7 +16,7 @@
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
-  $: content = content ?? ProjectContent.History;
+  $: content = ProjectContent.History;
   $: revision = revision_;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {

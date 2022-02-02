@@ -33,10 +33,12 @@
   };
 
   const updatePeer = (newPeer: string) => {
+    dropdownState.peer = false;
     dispatch("routeParamsChange", { content, revision, peer: newPeer, path });
   };
 
   const updateRevision = (newRevision: string) => {
+    dropdownState.branch = false;
     dispatch("routeParamsChange", { content, revision: newRevision, peer, path });
   };
 
