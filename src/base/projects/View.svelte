@@ -6,7 +6,7 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { ProjectInfo } from '@app/project';
-  import { formatOrg, formatSeedId, isRadicleId } from '@app/utils';
+  import { formatOrg, formatSeedId, isRadicleId, setOpenGraphMetaTag } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
 
@@ -77,6 +77,12 @@
     } else {
       pageTitle = baseName;
     }
+
+    setOpenGraphMetaTag([
+      { prop: "og:title", content: projectInfo.name },
+      { prop: "og:description", content: projectInfo.description },
+      { prop: "og:url", content: window.location.href }
+    ]);
   }
 
   function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {

@@ -7,8 +7,15 @@
   import Loading from '@app/Loading.svelte';
   import Message from '@app/Message.svelte';
   import Cards from '@app/Cards.svelte';
+  import { setOpenGraphMetaTag } from '@app/utils';
 
   export let config: Config;
+
+  setOpenGraphMetaTag([
+    { prop: "og:title", content: "Radicle Orgs" },
+    { prop: "og:description", content: "Orgs of the Radicle Network" },
+    { prop: "og:url", content: window.location.href }
+  ]);
 
   const onCreate = () => modal = Create;
   let modal: typeof SvelteComponent | null = null;

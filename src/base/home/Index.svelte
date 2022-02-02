@@ -6,8 +6,15 @@
   import Loading from '@app/Loading.svelte';
   import Message from '@app/Message.svelte';
   import Cards from '@app/Cards.svelte';
+  import { setOpenGraphMetaTag } from '@app/utils';
 
   export let config: Config;
+
+  setOpenGraphMetaTag([
+    { prop: "og:title", content: "Radicle Interface" },
+    { prop: "og:description", content: "Interact with Radicle" },
+    { prop: "og:url", content: window.location.href }
+  ]);
 
   const getOrgs = config.orgs.pinned.length > 0
     ? Org.getMulti(config.orgs.pinned, config)

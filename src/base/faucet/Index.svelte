@@ -2,7 +2,7 @@
   import type { Config } from "@app/config";
   import type { BigNumber } from "@ethersproject/bignumber";
   import { session } from "@app/session";
-  import { toWei } from "@app/utils";
+  import { setOpenGraphMetaTag, toWei } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
   import { navigate } from "svelte-routing";
   import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./lib";
@@ -13,6 +13,12 @@
   let maxWithdrawAmount: BigNumber;
   let lastWithdrawal: BigNumber;
   let error: string | undefined;
+
+  setOpenGraphMetaTag([
+    { prop: "og:title", content: "Radicle Faucet" },
+    { prop: "og:description", content: "Rinkeby Testnet Faucet" },
+    { prop: "og:url", content: window.location.href }
+  ]);
 
   async function withdraw() {
     const [state, message] = await isAbleToWithdraw(amount);
