@@ -9,7 +9,17 @@
     resolve?: boolean;
     editable: boolean;
     error?: string;
+    example?: string;
   }
+
+  const validationExamples: Record<string, string> = {
+    "URL": "https://acme.xyz/",
+    "URN": "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
+    "handle": "acme",
+    "id": "hydkkcf6k9be5fuszdhpqbctu3q3fuwagj874wx2puia8ti8coygh1",
+    "domain": "seed.acme.xyz",
+    "address": "0x17a8c096733BD5F87aD43D7A2A4d1C42ab8A2A70",
+  };
 
   const validationTypes: { [index: string]: RegExp } = {
     URL: /^(https:\/\/|http:\/\/|ipfs:\/\/)\S+/,
@@ -26,8 +36,7 @@
     handle: /^[a-zA-Z0-9-_]{1,39}$/,
     address: /^0x[a-zA-Z0-9]{40}$/,
     id: /^[a-z0-9]+$/,
-    // Just make sure there is a TLD at the end.
-    domain: /\.[a-z]{2,}$/,
+    domain: /^[^/:$!_;,@#]+\.[a-z]{2,}$/,
   };
 </script>
 
@@ -56,7 +65,10 @@
         hasErrors = value.length > 0 ? !validationTypes[field.validate].test(value) : false;
         return { ...field,
           value: value,
-          error: hasErrors ? `Must be a valid ${field.validate}` : undefined
+          error: hasErrors
+            ? `Must be a valid ${field.validate}`
+            : undefined,
+          example: validationExamples[field.validate],
         };
       }
       return field;
@@ -196,7 +208,11 @@
       {/if}
       {#if field.error}
         <div class="description invalid text-small faded">
-          {field.error}
+          {#if field.example}
+            {field.error}, eg. <em>{field.example}</em>
+          {:else}
+            {field.error}
+          {/if}
         </div>
       {:else}
         <div class="description text-small faded">
