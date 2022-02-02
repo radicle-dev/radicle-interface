@@ -1,5 +1,5 @@
 import Error from "./Error.svelte";
-import { mount } from "cypress-svelte-unit-test";
+import { mount } from "radicle-svelte-unit-test";
 import { Failure } from '@app/error';
 import { styles } from "@test/support/index";
 

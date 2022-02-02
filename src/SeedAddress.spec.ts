@@ -1,5 +1,5 @@
 import SeedAddress from "./SeedAddress.svelte";
-import { mount } from "cypress-svelte-unit-test";
+import { mount } from "radicle-svelte-unit-test";
 import { styles } from "@test/support/index";
 
 describe('SeedAddress', function () {
