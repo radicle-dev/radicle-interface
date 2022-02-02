@@ -133,7 +133,7 @@ export const loadState = (initial: State): Store => {
         });
 
         store.set({ connection: Connection.Connected, session });
-      } catch (e) {
+      } catch (e: any) {
         console.log("WalletConnect: connection failed.");
         store.set({ connection: Connection.Disconnected });
 

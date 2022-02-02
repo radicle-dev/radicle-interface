@@ -29,7 +29,7 @@
       const result = await proj.getInfo(project.id, config);
       state = { status: Status.Loaded };
       info = result;
-    } catch (err) {
+    } catch (err: any) {
       console.error(err.message);
       state = { status: Status.Error, error: err.message };
     }

@@ -63,7 +63,7 @@
       let receipt = await tx.wait();
       org = Org.fromReceipt(receipt);
       state = State.Success;
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
 
       state = State.Idle;

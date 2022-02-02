@@ -138,7 +138,11 @@ export async function getSeed(name: string, config: Config, resolver?: EnsResolv
     resolver.getText('eth.radicle.seed.api'),
   ]);
 
-  return new Seed(host, id, git, api);
+  if (! host || ! id) {
+    return null;
+  }
+
+  return new Seed(host, id, git ?? undefined, api ?? undefined);
 }
 
 export function registrar(config: Config): ethers.Contract {
@@ -166,7 +170,7 @@ export async function registerName(name: string, owner: string, config: Config):
     } else {
       await commitAndRegister(name, owner, config);
     }
-  } catch (e) {
+  } catch (e: any) {
     throw { type: e.type || Failure.TransactionFailed, message: e.message, txHash: e.txHash };
   }
 }

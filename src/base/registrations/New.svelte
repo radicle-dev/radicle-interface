@@ -51,7 +51,7 @@
       } else {
         state = State.NameUnavailable;
       }
-    } catch (err) {
+    } catch (err: any) {
       state = State.CheckingFailed;
       error = err.message;
     }

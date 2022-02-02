@@ -64,7 +64,7 @@
         await tx.wait();
         state = State.Success;
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       state = State.Failed;
       error = e.message;

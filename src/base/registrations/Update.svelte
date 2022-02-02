@@ -24,7 +24,7 @@
       state.status = Status.Pending;
       await tx.wait();
       state.status = Status.Success;
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       state = { status: Status.Failed, error: e.message };
     }

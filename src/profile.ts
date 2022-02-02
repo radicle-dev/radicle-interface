@@ -147,7 +147,7 @@ export class Profile {
           formatCAIP10Address(address, "eip155", config.network.chainId), config
         );
         return { address, idx: idx ?? undefined };
-      } catch (e) {
+      } catch (e: any) {
         // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
         if (e.message.match("No DID found for")) console.debug(e.message);
         else console.error(e);

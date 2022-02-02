@@ -24,7 +24,7 @@
   const onConnect = async () => {
     try {
       await state.connectWalletConnect(config);
-    } catch (e) {
+    } catch (e: any) {
       walletConnectState.set({ state: "close" });
       error = e;
     }

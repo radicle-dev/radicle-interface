@@ -25,7 +25,7 @@
   onMount(async () => {
     try {
       await registerName(subdomain, registrationOwner, config);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error", e);
 
       state.set({ connection: State.Failed });
