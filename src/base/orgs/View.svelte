@@ -316,7 +316,7 @@
                 {#each members as profile}
                   <div class="member">
                     <div class="member-icon">
-                      <Link to="/users/{profile.address}">
+                      <Link to="/{profile.address}">
                         <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                       </Link>
                     </div>

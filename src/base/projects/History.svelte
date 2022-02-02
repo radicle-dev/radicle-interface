@@ -12,7 +12,7 @@
   export let revision: string;
   export let path: string;
 
-  let { urn, user, seed, org, peer, config, project, branches } = source;
+  let { urn, seed, addressOrName, peer, config, project, branches } = source;
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
@@ -23,10 +23,8 @@
     // Replaces path with current path if none passed.
     if (path === undefined) path = "/";
 
-    if (org) {
-      navigate(proj.path({ content, peer, urn, org, revision, path }));
-    } else if (user) {
-      navigate(proj.path({ content, peer, urn, user, revision, path }));
+    if (addressOrName) {
+      navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
     } else if (seed) {
       navigate(proj.path({ content, peer, urn, seed, revision, path }));
     } else {

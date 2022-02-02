@@ -22,8 +22,7 @@ export interface Project {
 // Params to render correctly source code related views
 export interface Source {
   urn: string;
-  org: string;
-  user: string;
+  addressOrName: string;
   peer: string;
   config: Config;
   project: Info;
@@ -155,8 +154,7 @@ export async function getReadme(
 export function path(
   opts: {
     urn: string;
-    org?: string;
-    user?: string;
+    addressOrName?: string;
     seed?: string;
     peer?: string;
     content?: ProjectContent;
@@ -164,17 +162,15 @@ export function path(
     path?: string;
   }
 ): string {
-  const { urn, org, user, seed, peer, content, revision, path } = opts;
+  const { urn, addressOrName, seed, peer, content, revision, path } = opts;
   const result = [];
 
-  if (org) {
-    result.push("orgs", org);
-  } else if (user) {
-    result.push("users", user);
+  if (addressOrName) {
+    result.push(addressOrName);
   } else if (seed) {
     result.push("seeds", seed);
   }
-  result.push("projects", urn);
+  result.push(urn);
 
   if (peer) {
     result.push("remotes", peer);

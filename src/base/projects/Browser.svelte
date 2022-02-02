@@ -23,7 +23,7 @@
   export let revision: string;
   export let path: string;
 
-  let { urn, org, user, seed, peer, project, config, branches } = source;
+  let { urn, addressOrName, seed, peer, project, config, branches } = source;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
@@ -70,10 +70,8 @@
     // Replaces path with current path if none passed.
     if (path === undefined) path = state.path;
 
-    if (org) {
-      navigate(proj.path({ peer, urn, org, revision, path }));
-    } else if (user) {
-      navigate(proj.path({ peer, urn, user, revision, path }));
+    if (addressOrName) {
+      navigate(proj.path({ peer, urn, addressOrName, revision, path }));
     } else if (seed) {
       navigate(proj.path({ peer, urn, seed, revision, path }));
     } else {

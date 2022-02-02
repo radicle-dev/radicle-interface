@@ -46,7 +46,7 @@
     {#each projects as project}
       <div class="project">
         {#if "safeTxHash" in project} <!-- Pending project -->
-          <Widget {project} org={org.address} {config} faded>
+          <Widget {project} addressOrName={org.address} {config} faded>
             <span slot="stateHash">
               <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
               <span class="desktop">commit {project.anchor.stateHash}</span>
@@ -58,7 +58,7 @@
             </span>
           </Widget>
         {:else} <!-- Anchored project -->
-          <Widget {project} org={org.address} {config}>
+          <Widget {project} addressOrName={org.address} {config}>
             <span slot="stateHash">
               <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
               <span class="desktop">commit {project.anchor.stateHash}</span>

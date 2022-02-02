@@ -16,10 +16,8 @@
     if (query) {
       if (ethers.utils.isAddress(query)) {
         const addressType = query && await utils.identifyAddress(query, config);
-        if (addressType === utils.AddressType.Org) {
-          navigate(`/orgs/${query}`, { replace: true });
-        } else if (addressType === utils.AddressType.EOA) {
-          navigate(`/users/${query}`, { replace: true });
+        if (addressType === utils.AddressType.Org || addressType === utils.AddressType.EOA) {
+          navigate(`/${query}`, { replace: true });
         }
       } else if (utils.isRadicleId(query)) {
         // Go to Radicle project.
@@ -33,10 +31,8 @@
           // address type is an EOA and jumps to the user page else it just goes to the registration.
           const address = await utils.resolveLabel(label, config);
           const addressType = address && await utils.identifyAddress(address, config);
-          if (addressType === utils.AddressType.Org) {
-            navigate(`/orgs/${address}`, { replace: true });
-          } else if (addressType === utils.AddressType.EOA) {
-            navigate(`/users/${address}`, { replace: true });
+          if (addressType === utils.AddressType.Org || addressType === utils.AddressType.EOA) {
+            navigate(`/${address}`, { replace: true });
           } else {
             navigate(`/registrations/${label}`, { replace: true });
           }

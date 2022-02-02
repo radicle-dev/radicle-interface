@@ -209,7 +209,7 @@
                 <Loading small margins />
               {:then profile}
                 <div class="member-icon">
-                  <Link to="/orgs/{profile.address}">
+                  <Link to="/{profile.address}">
                     <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
                   </Link>
                 </div>
@@ -236,7 +236,7 @@
             {#await org.getProjects(config) then projects}
               {#each projects as project}
                 <div class="project">
-                  <Project {project} user={addressOrName} config={profile.config(config)}>
+                  <Project {project} {addressOrName} config={profile.config(config)}>
                     <span slot="stateHash">
                       <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
                       <span class="desktop">commit {project.anchor.stateHash}</span>

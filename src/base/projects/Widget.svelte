@@ -16,8 +16,7 @@
 
   export let project: proj.Project;
   export let config: Config;
-  export let org: string | undefined = undefined;
-  export let user: string | undefined = undefined;
+  export let addressOrName: string | undefined = undefined;
   export let seed: string | undefined = undefined;
   export let faded = false;
 
@@ -40,8 +39,7 @@
       navigate(
         proj.path({
           urn: project.id,
-          org,
-          user,
+          addressOrName,
           seed,
           revision: project.anchor?.stateHash,
         })

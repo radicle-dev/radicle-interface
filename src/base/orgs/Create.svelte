@@ -135,7 +135,7 @@
     </span>
 
     <span slot="actions">
-      <button on:click={() => navigate(`/orgs/${org?.address}`)}>
+      <button on:click={() => navigate(`/${org?.address}`)}>
         Done
       </button>
     </span>
