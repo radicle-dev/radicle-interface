@@ -38,18 +38,18 @@
   <div class="list">
     {#each orgs as org}
       {#await Profile.get(org.name ?? org.address, ProfileType.Minimal, config)}
-        <Card profile={{ address: org.address }} {config} path={`/orgs/${org.address}`} />
+        <Card profile={{ address: org.address }} {config} path={`/${org.address}`} />
       {:then profile}
         {#if orgMembers[profile.address]?.length}
-          <Card {profile} {config} path={`/orgs/${profile.nameOrAddress}`} members={orgMembers[profile.address]} />
+          <Card {profile} {config} path={`/${profile.nameOrAddress}`} members={orgMembers[profile.address]} />
         {:else}
-          <Card {profile} {config} path={`/orgs/${profile.nameOrAddress}`} />
+          <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
         {/if}
       {/await}
     {/each}
 
     {#each profiles as profile}
-      <Card {profile} {config} path={`/users/${profile.nameOrAddress}`} />
+      <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
     {/each}
 
     {#if !orgs.length && !profiles.length}

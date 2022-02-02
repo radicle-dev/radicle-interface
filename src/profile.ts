@@ -1,15 +1,19 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
-  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel
+  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel, AddressType, identifyAddress
 } from "@app/utils";
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
+import { Org } from "@app/base/orgs/Org";
+import { NotFoundError } from "@app/error";
 
 export interface IProfile {
   address: string;
+  type: AddressType;
   ens?: EnsProfile;
   idx?: BasicProfile;
+  org?: Org;
 }
 
 export enum ProfileType {
@@ -28,6 +32,16 @@ export class Profile {
   // Get the Ethereum address
   get address(): string {
     return this.profile.ens?.address ?? this.profile.address;
+  }
+
+  // Get the address type
+  get type(): AddressType {
+    return this.profile.type;
+  }
+
+  // Get the org instance
+  get org(): Org | undefined {
+    return this.profile.org;
   }
 
   // Get the ENS profile
@@ -121,13 +135,23 @@ export class Profile {
     profileType: ProfileType,
     config: Config
   ): Promise<IProfile> {
+    let type = AddressType.EOA;
+    let org: Org | null = null;
     const ens = await resolveEnsProfile(addressOrName, profileType, config);
 
     if (ens) {
       if (ens.address) {
+        type = await identifyAddress(ens.address, config);
+
+        if (type === AddressType.Org) {
+          org = await Org.get(ens.address, config);
+        }
+
         return {
           address: ens.address.toLowerCase(),
-          ens: { ...ens, address: ens.address.toLowerCase() }
+          type,
+          ens: { ...ens, address: ens.address.toLowerCase() },
+          org: org ?? undefined
         };
       }
       throw new Error(`No address set for ${addressOrName}`);
@@ -135,20 +159,30 @@ export class Profile {
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();
 
+      type = await identifyAddress(addressOrName, config);
+      if (type === AddressType.Org) {
+        org = await Org.get(addressOrName, config);
+      }
+
       try {
         const idx = await resolveIdxProfile(
           formatCAIP10Address(address, "eip155", config.network.chainId), config
         );
-        return { address, idx: idx ?? undefined };
+        return {
+          address,
+          type,
+          idx: idx ?? undefined,
+          org: org ?? undefined
+        };
       } catch (e: any) {
         // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
         if (e.message.match("No DID found for")) console.debug(e.message);
         else console.error(e);
 
-        return { address };
+        return { address, type, org: org ?? undefined };
       }
     }
-    throw new Error(`Name ${addressOrName} was not found`);
+    throw new NotFoundError(`Not able to resolve profile for ${addressOrName}`);
   }
 
   static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {

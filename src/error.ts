@@ -24,6 +24,16 @@ export class Unreachable extends Error {
   }
 }
 
+export class NotFoundError extends Error {
+  constructor(message?: string) {
+    if (message) {
+      super(`not found: ${message}`);
+    } else {
+      super(`not found`);
+    }
+  }
+}
+
 class AssertionError extends Error {
   constructor(message?: string) {
     if (message) {

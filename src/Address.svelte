@@ -21,9 +21,14 @@
   const nameOrAddress = profile?.name || address;
 
   onMount(async () => {
-    identifyAddress(address, config).then((t: AddressType) => addressType = t);
-    if (resolve && !profile) {
-      Profile.get(address, ProfileType.Minimal, config).then(p => profile = p);
+    if (!profile) {
+      identifyAddress(address, config).then((t: AddressType) => addressType = t);
+      if (resolve) {
+        Profile.get(address, ProfileType.Minimal, config).then(p => profile = p);
+      }
+    } else {
+      // If there is a profile we can use the profile.type to avoid identifying it again.
+      addressType = profile.type;
     }
   });
   $: addressLabel = profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
@@ -54,7 +59,7 @@
     <Avatar inline source={profile?.avatar ?? address} {address}/>
   {/if}
   {#if addressType === AddressType.Org}
-    <a use:link href={`/orgs/${nameOrAddress}`}>{addressLabel}</a>
+    <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
     <span class="badge">org</span>
   {:else if addressType === AddressType.Safe}
     <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
@@ -63,7 +68,7 @@
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     <span class="badge">contract</span>
   {:else if addressType === AddressType.EOA}
-    <a use:link href={`/users/${nameOrAddress}`}>{addressLabel}</a>
+    <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
   {:else} <!-- While we're waiting to find out what address type it is -->
     <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
   {/if}

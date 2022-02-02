@@ -11,6 +11,7 @@
   import Seeds from '@app/base/seeds/Routes.svelte';
   import Faucet from '@app/base/faucet/Routes.svelte';
   import Projects from '@app/base/projects/Routes.svelte';
+  import Profile from '@app/Profile.svelte';
   import Resolver from '@app/base/resolver/Routes.svelte';
   import Header from '@app/Header.svelte';
   import Loading from '@app/Loading.svelte';
@@ -89,9 +90,12 @@
         <Orgs {config} />
         <Seeds {config} />
         <Faucet {config} />
-        <Users {config} />
-        <Projects {config} />
+        <Users />
         <Resolver {config} />
+        <Route path="/:addressOrName" let:params>
+          <Profile addressOrName={params.addressOrName} {config} />
+        </Route>
+        <Projects {config} />
       </Router>
     </div>
   {:catch err}

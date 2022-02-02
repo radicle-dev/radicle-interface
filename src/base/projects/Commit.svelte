@@ -10,16 +10,14 @@
   export let locator: string;
   export let source: any;
 
-  const { org, user, peer, seed } = source;
+  const { addressOrName, peer, seed } = source;
 
   const navigateCommit = (path: string, content?: proj.ProjectContent) => {
     // Replaces path with current path if none passed.
     if (path === undefined) path = "/";
 
-    if (org) {
-      navigate(proj.path({ content, peer, urn, org, revision, path }));
-    } else if (user) {
-      navigate(proj.path({ content, peer, urn, user, revision, path }));
+    if (addressOrName) {
+      navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
     } else if (seed) {
       navigate(proj.path({ content, peer, urn, seed, revision, path }));
     } else {

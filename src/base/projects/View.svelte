@@ -3,7 +3,6 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
@@ -14,27 +13,25 @@
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
+  import NotFound from '@app/NotFound.svelte';
 
   export let id: string; // Project name or URN.
-  export let org = "";
-  export let user = "";
+  export let addressOrName = "";
   export let seed = "";
   export let peer = "";
   export let config: Config;
 
-  let parentName = formatOrg(org || user, config);
+  let parentName = formatOrg(addressOrName, config);
   let pageTitle = parentName ? `${parentName}/${id}` : id;
   let projectInfo: Info | null = null;
   let revision: string;
   let content: proj.ProjectContent;
   let path: string;
-  let getProject = new Promise<{ profile?: Profile; seed?: Seed } | null>(resolve => {
-    if (org) {
-      Profile.get(org, ProfileType.Project, config).then(p => resolve({ profile: p }));
-    } else if (user) {
-      Profile.get(user, ProfileType.Project, config).then(p => resolve({ profile: p }));
+  let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>((resolve, reject) => {
+    if (addressOrName) {
+      Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p })).catch(err => reject(err.message));
     } else if (seed) {
-      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s }));
+      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s })).catch(err => reject(err.message));
     } else {
       resolve(null);
     }
@@ -44,15 +41,11 @@
     const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
     const info = await proj.getInfo(id, cfg);
     const urn = isRadicleId(id) ? id : info.meta.urn;
-    const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? org);
-
+    const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? addressOrName);
     let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
 
     projectInfo = info;
-
-    // Replace project name with URN, in URL bar.
-    navigate(proj.path({ peer, urn, org, revision, path, seed }), { replace: true });
 
     // Checks for delegates returned from seed node, as feature check of the seed node
     if (info.meta.delegates) {
@@ -63,14 +56,8 @@
       }
       peers = await proj.getPeers(urn, cfg);
     }
-    return { urn, org, user, seed, peer, project: info, branches, peers, config: cfg, profile, anchors };
+    return { urn, addressOrName, seed, peer, project: info, branches, peers, config: cfg, profile, anchors };
   });
-
-  const parentUrl = (profile: Profile) => {
-    return org
-      ? `/orgs/${profile.nameOrAddress}`
-      : `/users/${profile.nameOrAddress}`;
-  };
 
   $: if (projectInfo) {
     const baseName = parentName
@@ -85,7 +72,7 @@
   }
 
   function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
-    let newLocation = proj.path({ user, org, seed, urn: newParams.urn, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
+    let newLocation = proj.path({ addressOrName, seed, urn: newParams.urn, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
@@ -94,8 +81,6 @@
     if (path !== newParams.path) path = newParams.path;
     if (peer !== newParams.peer) peer = newParams.peer;
   }
-
-  const back = () => window.history.back();
 </script>
 
 <style>
@@ -172,12 +157,12 @@
     <header>
       <div class="title bold">
         {#if result.profile}
-          <a class="org-avatar" title={result.profile.nameOrAddress} href={parentUrl(result.profile)}>
+          <a class="org-avatar" title={result.profile.nameOrAddress} href="/{result.profile.nameOrAddress}">
             <Avatar source={result.profile.avatar || result.profile.address} address={result.profile.address}/>
           </a>
           <span class="divider">/</span>
         {/if}
-        <Link to={proj.path({ urn: result.urn, user, org, seed })}>{result.project.meta.name}</Link>
+        <Link to={proj.path({ urn: result.urn, addressOrName, seed })}>{result.project.meta.name}</Link>
         {#if peer}
           <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
@@ -205,17 +190,6 @@
       </div>
     {/await}
   {:catch}
-    <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{id}</strong></p>
-        <p>This project was not found.</p>
-      </span>
-      <span slot="actions">
-        <button on:click={back}>
-          Back
-        </button>
-      </span>
-    </Modal>
+    <NotFound title={id} subtitle="This project was not found." />
   {/await}
 </main>
