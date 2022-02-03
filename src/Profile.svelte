@@ -15,9 +15,8 @@
   import { Org } from '@app/base/orgs/Org';
   import Message from '@app/Message.svelte';
   import Error from '@app/Error.svelte';
-  import { User } from './base/users/User';
-  import Project from '@app/base/projects/Widget.svelte';
-import Projects from './base/orgs/View/Projects.svelte';
+  import { User } from '@app/base/users/User';
+  import Projects from '@app/base/orgs/View/Projects.svelte';
 
   export let config: Config;
   export let addressOrName: string;
@@ -149,12 +148,6 @@ import Projects from './base/orgs/View/Projects.svelte';
     height: 2rem;
     margin-right: 1rem;
   }
-  .projects {
-    margin-top: 1rem;
-  }
-  .projects .project {
-    margin-bottom: 1rem;
-  }
   @media (max-width: 720px) {
     main {
       width: 100%;
@@ -238,6 +231,7 @@ import Projects from './base/orgs/View/Projects.svelte';
             </button>
           {/if}
         </div>
+        <!-- Org Treasury -->
         {#await getOrgTreasury(profile.org) then tokens}
           {#if tokens && tokens.length > 0}
             <div class="label">Treasury</div>
@@ -250,6 +244,7 @@ import Projects from './base/orgs/View/Projects.svelte';
           {/if}
         {/await}
       {:else}
+        <!-- Project anchors -->
         {#if profile.anchorsAccount}
           <div class="label">Anchors</div>
           <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
@@ -262,9 +257,8 @@ import Projects from './base/orgs/View/Projects.svelte';
         <div class="label">Seed</div>
         <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
       {/if}
-      <!-- Name/Profile -->
+      <!-- Org Name/Profile -->
       <div class="label">Profile</div>
-      <!-- Only show the name if we aren't already using the name of the owner -->
       {#if profile.org}
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">
@@ -285,19 +279,6 @@ import Projects from './base/orgs/View/Projects.svelte';
               {/if}
             {/await}
           </div>
-        {:else}
-          <div class="subtle">
-            Using owner's profile.
-          </div>
-          <div class="desktop">
-            {#await isOrgAuthorized(profile.org) then authorized}
-              {#if authorized}
-                <button class="tiny secondary" on:click={setName}>
-                  Change
-                </button>
-              {/if}
-            {/await}
-          </div>
         {/if}
         <!-- Quorum -->
         {#await profile.org.getSafe(config) then safe}
@@ -310,6 +291,7 @@ import Projects from './base/orgs/View/Projects.svelte';
           {/if}
         {/await}
       {:else}
+        <!-- User Profile -->
         <div>
           {#if profile.name}
             <a href={profile.registry(config)} class="link">{profile.name}</a>
@@ -357,7 +339,6 @@ import Projects from './base/orgs/View/Projects.svelte';
           <strong>Error: </strong> failed to load org members: {err.message}.
         </Message>
       {/await}
-      <Projects org={profile.org} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
     {:else}
       {#await Org.getOrgsByMember(profile.address, config)}
         <Loading center />
@@ -388,33 +369,8 @@ import Projects from './base/orgs/View/Projects.svelte';
           <strong>Error: </strong> failed to load orgs: {err.message}.
         </Message>
       {/await}
-      <div class="projects">
-        {#if profile.anchorsAccount}
-          {#await Org.get(profile.anchorsAccount, config)}
-            <Loading center fadeIn />
-          {:then org}
-            {#if org}
-              {#await org.getProjects(config) then projects}
-                {#each projects as project}
-                  <div class="project">
-                    <Project {project} {addressOrName} config={profile.config(config)}>
-                      <span slot="stateHash">
-                        <span class="mobile">commit {utils.formatCommit(project.anchor.stateHash)}</span>
-                        <span class="desktop">commit {project.anchor.stateHash}</span>
-                      </span>
-                    </Project>
-                  </div>
-                {/each}
-              {:catch err}
-                <Message error>
-                  <strong>Error: </strong> failed to load projects: {err.message}.
-                </Message>
-              {/await}
-            {/if}
-          {/await}
-        {/if}
-      </div>
     {/if}
+    <Projects {profile} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
   </main>
 
   <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
