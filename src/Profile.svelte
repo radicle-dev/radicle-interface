@@ -327,7 +327,7 @@
                   </div>
                   <div class="desktop">
                     <Address address={profile.address} compact
-                      resolve noAvatar {profile} {config} />
+                      resolve noBadge noAvatar {profile} {config} />
                   </div>
                 </div>
               {/each}
