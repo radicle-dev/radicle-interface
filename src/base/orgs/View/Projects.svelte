@@ -50,7 +50,7 @@
       {#each projects as project}
         <div class="project">
           {#if "safeTxHash" in project} <!-- Pending project -->
-            <Widget {project} addressOrName={profile.org.name ?? profile.org.address} {config} faded>
+            <Widget {project} addressOrName={profile.name ?? profile.address} {config} faded>
               <span slot="stateHash">
                 <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
                 <span class="desktop">commit {project.anchor.stateHash}</span>
@@ -62,7 +62,7 @@
               </span>
             </Widget>
           {:else} <!-- Anchored project -->
-            <Widget {project} addressOrName={profile.org.name ?? profile.org.address} {config}>
+            <Widget {project} addressOrName={profile.name ?? profile.address} {config}>
               <span slot="stateHash">
                 <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
                 <span class="desktop">commit {project.anchor.stateHash}</span>
@@ -86,7 +86,7 @@
             {#await org.getProjects(config) then projects}
               {#each projects as project}
                 <div class="project">
-                  <Widget {project} addressOrName={profile.address} {config}>
+                  <Widget {project} addressOrName={profile.name ?? profile.address} {config}>
                     <span slot="stateHash">
                       <span class="mobile">commit {formatCommit(project.anchor.stateHash)}</span>
                       <span class="desktop">commit {project.anchor.stateHash}</span>
