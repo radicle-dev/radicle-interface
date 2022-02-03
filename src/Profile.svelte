@@ -1,17 +1,73 @@
 <script lang="ts">
+  import type { SvelteComponent } from 'svelte';
   import type { Config } from '@app/config';
   import Address from '@app/Address.svelte';
   import Avatar from '@app/Avatar.svelte';
   import Icon from '@app/Icon.svelte';
+  import SetName from '@app/ens/SetName.svelte';
   import SeedAddress from '@app/SeedAddress.svelte';
+  import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import Link from '@app/Link.svelte';
-import { Profile, ProfileType } from '@app/profile';
-import Loading from '@app/Loading.svelte';
-import { formatAddress, formatName } from '@app/utils';
+  import { Profile, ProfileType } from '@app/profile';
+  import Loading from '@app/Loading.svelte';
+  import * as utils from '@app/utils';
+  import { session } from '@app/session';
+  import { Org } from '@app/base/orgs/Org';
+  import Message from '@app/Message.svelte';
+  import Error from '@app/Error.svelte';
+  import { User } from './base/users/User';
+  import Project from '@app/base/projects/Widget.svelte';
+import Projects from './base/orgs/View/Projects.svelte';
 
   export let config: Config;
   export let addressOrName: string;
+  export let action: string | null = null;
 
+  let setNameForm: typeof SvelteComponent | null =
+    action === "setName" ? SetName : null;
+  const setName = () => {
+    setNameForm = SetName;
+  };
+
+  let transferOwnerForm: typeof SvelteComponent | null = null;
+  const transferOwnership = () => {
+    transferOwnerForm = TransferOwnership;
+  };
+  $: account = $session && $session.address;
+  $: isOwner = (org: Org): boolean => $session
+    ? utils.isAddressEqual(org.owner, $session.address)
+    : false;
+  $: getOrgTreasury = async (org: Org): Promise<Array<utils.Token>| undefined> => {
+    const addressType = await utils.identifyAddress(org.owner, config);
+    // We query the org treasury only for Gnosis Safes, to maintain some privacy for EOA org owners.
+    if (addressType === utils.AddressType.Safe) {
+      try {
+        const tokens = await utils.getTokens(org.owner, config);
+        const balance = await config.provider.getBalance(org.owner);
+
+        if (! balance.isZero()) {
+          // To maintain the format we hardcode the ETH specs.
+          return [{ balance, decimals: 18, logo: "", name: "Ethereum", symbol: "ETH" }, ...tokens];
+        } else {
+          return tokens;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+  $: isUserAuthorized = (address: string): boolean | null => {
+    return $session && utils.isAddressEqual(address, $session.address);
+  };
+  $: isOrgAuthorized = async (org: Org): Promise<boolean> => {
+    if ($session) {
+      if (isOwner(org)) {
+        return true;
+      }
+      return await org.isMember($session.address, config);
+    }
+    return false;
+  };
 </script>
 
 <style>
@@ -93,6 +149,12 @@ import { formatAddress, formatName } from '@app/utils';
     height: 2rem;
     margin-right: 1rem;
   }
+  .projects {
+    margin-top: 1rem;
+  }
+  .projects .project {
+    margin-bottom: 1rem;
+  }
   @media (max-width: 720px) {
     main {
       width: 100%;
@@ -124,12 +186,14 @@ import { formatAddress, formatName } from '@app/utils';
       <div class="info">
         <span class="title">
           <span class="bold desktop">
-            {profile.name ? formatName(profile.name, config) : profile.address}
+            {profile.name ? utils.formatName(profile.name, config) : profile.address}
           </span>
           <span class="bold mobile">
-            {profile.name ? formatName(profile.name, config) : formatAddress(profile.address)}
+            {profile.name ? utils.formatName(profile.name, config) : utils.formatAddress(profile.address)}
           </span>
-          <span class="badge">org</span>
+          {#if profile.name && profile.org}
+            <span class="badge">org</span>
+          {/if}
         </span>
         <div class="links">
           {#if profile.url}
@@ -163,20 +227,36 @@ import { formatAddress, formatName } from '@app/utils';
       <div class="mobile"><Address compact {config} address={profile.address} /></div>
       <div class="desktop" />
       <!-- Owner -->
-      <div class="label">Owner</div>
-      <div class="desktop"><Address resolve {config} address={profile.address} /></div>
-      <div class="mobile"><Address compact resolve {config} address={profile.address} /></div>
-      <div class="desktop">
-        <button class="tiny secondary" on:click={() => console.log("transfer ownership")}>
-          Transfer
-        </button>
-      </div>
-      <div class="label">Treasury</div>
-      <div>
-        1'000'000 USDC
-      </div>
-      <div class="desktop" />
-
+      {#if profile.org}
+        <div class="label">Owner</div>
+        <div class="desktop"><Address resolve {config} address={profile.org.owner} /></div>
+        <div class="mobile"><Address compact resolve {config} address={profile.org.owner} /></div>
+        <div class="desktop">
+          {#if isOwner(profile.org) || (account && profile.org.isMember(account, config))}
+            <button class="tiny secondary" on:click={transferOwnership}>
+              Transfer
+            </button>
+          {/if}
+        </div>
+        {#await getOrgTreasury(profile.org) then tokens}
+          {#if tokens && tokens.length > 0}
+            <div class="label">Treasury</div>
+            <div>
+              {#each tokens as token}
+                {` ${utils.formatBalance(token.balance, token.decimals)} ${token.symbol} `}
+              {/each}
+            </div>
+            <div class="desktop" />
+          {/if}
+        {/await}
+      {:else}
+        {#if profile.anchorsAccount}
+          <div class="label">Anchors</div>
+          <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
+          <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
+          <div class="desktop" />
+        {/if}
+      {/if}
       <!-- Seed Address -->
       {#if profile.seedId && profile.seedHost}
         <div class="label">Seed</div>
@@ -185,37 +265,160 @@ import { formatAddress, formatName } from '@app/utils';
       <!-- Name/Profile -->
       <div class="label">Profile</div>
       <!-- Only show the name if we aren't already using the name of the owner -->
-      <div class="overflow-text">
-        <a href="/" class="link">radicle.eth</a>
-        <span class="subtle">Not set</span>
-      </div>
-      <div class="desktop">
-        <button class="tiny secondary" on:click={() => console.log("Set name")}>
-          Set
-        </button>
-      </div>
-
-      <!-- Quorum -->
-      <div class="label">Quorum</div>
-      <div>
-        2 <span class="faded">of</span> 3
-      </div>
-      <div class="desktop"/>
-    </div>
-
-    <div class="members">
-      <div class="member">
-        <div class="member-icon">
-          <Link to="/">
-            <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
-          </Link>
+      {#if profile.org}
+        {#if utils.isAddressEqual(profile.address, profile.org.address)}
+          <div class="overflow-text">
+            {#if profile.name}
+              <a href={profile.registry(config)} class="link">{profile.name}</a>
+            {:else}
+              <span class="subtle">Not set</span>
+            {/if}
+          </div>
+          <div class="desktop">
+            {#await isOrgAuthorized(profile.org)}
+              <!-- Loading -->
+            {:then authorized}
+              {#if authorized}
+                <button class="tiny secondary" on:click={setName}>
+                  Set
+                </button>
+              {/if}
+            {/await}
+          </div>
+        {:else}
+          <div class="subtle">
+            Using owner's profile.
+          </div>
+          <div class="desktop">
+            {#await isOrgAuthorized(profile.org) then authorized}
+              {#if authorized}
+                <button class="tiny secondary" on:click={setName}>
+                  Change
+                </button>
+              {/if}
+            {/await}
+          </div>
+        {/if}
+        <!-- Quorum -->
+        {#await profile.org.getSafe(config) then safe}
+          {#if safe}
+            <div class="label">Quorum</div>
+            <div>
+              {safe.threshold} <span class="faded">of</span> {safe.owners.length}
+            </div>
+            <div class="desktop"/>
+          {/if}
+        {/await}
+      {:else}
+        <div>
+          {#if profile.name}
+            <a href={profile.registry(config)} class="link">{profile.name}</a>
+          {:else}
+            <span class="subtle">Not set</span>
+          {/if}
         </div>
         <div class="desktop">
-          <Address address={profile.address} compact
-            resolve noAvatar {config} />
+          {#if isUserAuthorized(profile.address)}
+            <button class="tiny secondary" on:click={setName}>
+              Set
+            </button>
+          {/if}
         </div>
-      </div>
+      {/if}
     </div>
 
+    {#if profile.org}
+      {#await profile.org.getMembers(config)}
+        <Loading center />
+      {:then members}
+        {#if members.length > 0}
+          <div class="members">
+            {#await Profile.getMulti(members, config)}
+              <Loading small />
+            {:then members}
+              {#each members as profile}
+                <div class="member">
+                  <div class="member-icon">
+                    <Link to="/{profile.address}">
+                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                    </Link>
+                  </div>
+                  <div class="desktop">
+                    <Address address={profile.address} compact
+                      resolve noAvatar {profile} {config} />
+                  </div>
+                </div>
+              {/each}
+            {/await}
+          </div>
+        {/if}
+      {:catch err}
+        <Message error>
+          <strong>Error: </strong> failed to load org members: {err.message}.
+        </Message>
+      {/await}
+      <Projects org={profile.org} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
+    {:else}
+      {#await Org.getOrgsByMember(profile.address, config)}
+        <Loading center />
+      {:then orgs}
+        {#if orgs.length > 0}
+          <div class="members">
+            {#each orgs as org}
+              <div class="member">
+                {#await Profile.get(org.address, ProfileType.Minimal, config)}
+                  <Loading small margins />
+                {:then profile}
+                  <div class="member-icon">
+                    <Link to="/{profile.address}">
+                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                    </Link>
+                  </div>
+                  <div class="desktop">
+                    <Address address={profile.address} compact
+                      resolve noBadge noAvatar {profile} {config} />
+                  </div>
+                {/await}
+              </div>
+            {/each}
+          </div>
+        {/if}
+      {:catch err}
+        <Message error>
+          <strong>Error: </strong> failed to load orgs: {err.message}.
+        </Message>
+      {/await}
+      <div class="projects">
+        {#if profile.anchorsAccount}
+          {#await Org.get(profile.anchorsAccount, config)}
+            <Loading center fadeIn />
+          {:then org}
+            {#if org}
+              {#await org.getProjects(config) then projects}
+                {#each projects as project}
+                  <div class="project">
+                    <Project {project} {addressOrName} config={profile.config(config)}>
+                      <span slot="stateHash">
+                        <span class="mobile">commit {utils.formatCommit(project.anchor.stateHash)}</span>
+                        <span class="desktop">commit {project.anchor.stateHash}</span>
+                      </span>
+                    </Project>
+                  </div>
+                {/each}
+              {:catch err}
+                <Message error>
+                  <strong>Error: </strong> failed to load projects: {err.message}.
+                </Message>
+              {/await}
+            {/if}
+          {/await}
+        {/if}
+      </div>
+    {/if}
   </main>
+
+  <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
+  <svelte:component this={transferOwnerForm} org={profile.org} {config} on:close={() => transferOwnerForm = null} />
+{:catch err}
+  <Error error={err} />
 {/await}
