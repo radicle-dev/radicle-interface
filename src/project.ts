@@ -52,6 +52,7 @@ export interface Info {
 }
 
 export interface Meta {
+  urn: string;
   name: string;
   description: string;
   defaultBranch: string;
@@ -99,8 +100,8 @@ export interface Branches {
   heads: Branch;
 }
 
-export async function getInfo(urn: string, config: Config): Promise<Info> {
-  return api.get(`projects/${urn}`, {}, config);
+export async function getInfo(nameOrUrn: string, config: Config): Promise<Info> {
+  return api.get(`projects/${nameOrUrn}`, {}, config);
 }
 
 export async function getCommits(urn: string, commit: string, config: Config): Promise<CommitsHistory> {

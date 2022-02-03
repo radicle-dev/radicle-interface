@@ -7,7 +7,7 @@
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
-  import { formatOrg, formatSeedId } from '@app/utils';
+  import { formatOrg, formatSeedId, isRadicleId } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
   import { getAllAnchors } from '@app/anchors';
@@ -15,7 +15,7 @@
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
 
-  export let urn: string;
+  export let id: string; // Project name or URN.
   export let org = "";
   export let user = "";
   export let seed = "";
@@ -23,7 +23,7 @@
   export let config: Config;
 
   let parentName = formatOrg(org || user, config);
-  let pageTitle = parentName ? `${parentName}/${urn}` : urn;
+  let pageTitle = parentName ? `${parentName}/${id}` : id;
   let projectInfo: Info | null = null;
   let revision: string;
   let content: proj.ProjectContent;
@@ -42,13 +42,17 @@
     const profile = result?.profile;
     const seedInstance = profile?.seed ?? result?.seed;
     const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
-    const info = await proj.getInfo(urn, cfg);
+    const info = await proj.getInfo(id, cfg);
+    const urn = isRadicleId(id) ? id : info.meta.urn;
     const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? org);
 
     let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
 
     projectInfo = info;
+
+    // Replace project name with URN, in URL bar.
+    navigate(proj.path({ peer, urn, org, revision, path, seed }), { replace: true });
 
     // Checks for delegates returned from seed node, as feature check of the seed node
     if (info.meta.delegates) {
@@ -80,8 +84,8 @@
     }
   }
 
-  function updateRouteParams({ detail: newParams }: { detail: { path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
-    let newLocation = proj.path({ urn, user, org, seed, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
+  function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
+    let newLocation = proj.path({ user, org, seed, urn: newParams.urn, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
@@ -92,8 +96,6 @@
   }
 
   const back = () => window.history.back();
-
-  $: projectRoot = proj.path({ urn, user, org, seed });
 </script>
 
 <style>
@@ -175,15 +177,15 @@
           </a>
           <span class="divider">/</span>
         {/if}
-        <Link to={projectRoot}>{result.project.meta.name}</Link>
+        <Link to={proj.path({ urn: result.urn, user, org, seed })}>{result.project.meta.name}</Link>
         {#if peer}
           <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
       </div>
-      <div class="urn">{urn}</div>
+      <div class="urn">{result.urn}</div>
       <div class="description">{result.project.meta.description}</div>
     </header>
-    {#await proj.getTree(urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
+    {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
       <Header {tree} {revision} {content} {path}
         source={result}
         peerSelector={!!seed}
@@ -206,7 +208,7 @@
     <Modal subtle>
       <span slot="title">🏜️</span>
       <span slot="body">
-        <p class="highlight"><strong>{urn}</strong></p>
+        <p class="highlight"><strong>{id}</strong></p>
         <p>This project was not found.</p>
       </span>
       <span slot="actions">

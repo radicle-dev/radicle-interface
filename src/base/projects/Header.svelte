@@ -29,17 +29,17 @@
 
   // Switches between the browser and commit view
   const toggleContent = (input: ProjectContent) => {
-    dispatch("routeParamsChange", { content: content === input ? ProjectContent.Tree : input, revision, peer, path });
+    dispatch("routeParamsChange", { urn, content: content === input ? ProjectContent.Tree : input, revision, peer, path });
   };
 
   const updatePeer = (newPeer: string) => {
     dropdownState.peer = false;
-    dispatch("routeParamsChange", { content, revision, peer: newPeer, path });
+    dispatch("routeParamsChange", { urn, content, revision, peer: newPeer, path });
   };
 
   const updateRevision = (newRevision: string) => {
     dropdownState.branch = false;
-    dispatch("routeParamsChange", { content, revision: newRevision, peer, path });
+    dispatch("routeParamsChange", { urn, content, revision: newRevision, peer, path });
   };
 
   $: commit = getOid(project.head, revision, branches);
