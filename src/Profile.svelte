@@ -216,8 +216,8 @@
     <div class="fields">
       <!-- Address -->
       <div class="label">Address</div>
-      <div class="desktop"><Address {config} address={profile.address} /></div>
-      <div class="mobile"><Address compact {config} address={profile.address} /></div>
+      <div class="desktop"><Address {config} {profile} address={profile.address} /></div>
+      <div class="mobile"><Address compact {config} {profile} address={profile.address} /></div>
       <div class="desktop" />
       <!-- Owner -->
       {#if profile.org}
