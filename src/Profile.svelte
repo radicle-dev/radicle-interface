@@ -243,11 +243,13 @@
           <div class="desktop"><Address resolve {config} address={profile.org.owner} /></div>
           <div class="mobile"><Address compact resolve {config} address={profile.org.owner} /></div>
           <div class="desktop">
-            {#if isOwner(profile.org) || (account && profile.org.isMember(account, config))}
-              <button class="tiny secondary" on:click={transferOwnership}>
-                Transfer
-              </button>
-            {/if}
+            {#await account && profile.org.isMember(account, config) then isMember}
+              {#if isOwner(profile.org) || isMember}
+                <button class="tiny secondary" on:click={transferOwnership}>
+                  Transfer
+                </button>
+              {/if}
+            {/await}
           </div>
           <!-- Org Treasury -->
           {#await getOrgTreasury(profile.org) then tokens}
