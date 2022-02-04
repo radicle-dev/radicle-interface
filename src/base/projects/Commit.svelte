@@ -51,7 +51,25 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+  }
+  .description {
+    margin: 0.5rem 0 1rem 0;
+  }
+  .meta {
+    color: var(--color-foreground-80);
+  }
+  .email {
+    font-family: var(--font-family-monospace);
+    font-size: 0.875rem;
+  }
+  .sha1 {
+    color: var(--color-foreground-80);
+    font-size: 0.875rem;
+  }
+  .time {
+    margin-left: 0.25rem;
+    color: var(--color-foreground-faded);
   }
   @media (max-width: 960px) {
     .commit {
@@ -65,23 +83,22 @@
     <header>
       <div class="summary">
         <h3>{commit.header.summary}</h3>
-        <div class="desktop font-mono faded">
-          <span>commit</span>
+        <div class="desktop font-mono sha1">
           <span>{commit.header.sha1}</span>
         </div>
-        <div class="mobile font-mono faded">
+        <div class="mobile font-mono sha1">
           {formatCommit(commit.header.sha1)}
         </div>
       </div>
-      <pre>{commit.header.description}</pre>
-      <div>
-        <span>Committed by {commit.header.committer.name}</span>
-        <span class="font-mono faded desktop-inline">&lt;{commit.header.committer.email}&gt; </span>
-        <span class="desktop-inline">{formatCommitTime(commit.header.committerTime)}</span>
+      <pre class="description">{commit.header.description}</pre>
+      <div class="meta">
+        <span>Committed by <strong>{commit.header.committer.name}</strong></span>
+        <span class="font-mono email desktop-inline">&lt;{commit.header.committer.email}&gt; </span>
+        <span class="time desktop-inline">{formatCommitTime(commit.header.committerTime)}</span>
       </div>
-      <div>
-        <span>Authored by {commit.header.author.name} </span>
-        <span class="font-mono faded desktop-inline">&lt;{commit.header.author.email}&gt;</span>
+      <div class="meta">
+        <span>Authored by <strong>{commit.header.author.name}</strong> </span>
+        <span class="font-mono email desktop-inline">&lt;{commit.header.author.email}&gt;</span>
       </div>
     </header>
     <Changeset stats={commit.stats} diff={commit.diff} on:browse={(event) => navigateCommit(event.detail)} />
@@ -90,7 +107,6 @@
   <div class="commit">
     <div class="error error-message text-xsmall">
       <div>API request to <code class="text-xsmall">{err.url}</code> failed.</div>
-      <div>API needs to be version ^0.2.</div>
     </div>
   </div>
 {/await}

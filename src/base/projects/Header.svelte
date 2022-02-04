@@ -16,7 +16,7 @@
   export let revision: string;
   // If peerSelector should be showed.
   export let peerSelector: boolean;
-  
+
   let { urn, peer, config, project, branches, peers, anchors } = source;
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };

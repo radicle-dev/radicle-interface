@@ -20,20 +20,19 @@
     padding: 0 1rem 0 0;
   }
   .author {
-    margin-right: 8px
+    margin-right: 0.5rem;
   }
   .commit {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem 0 1rem;
-    height: 2.5rem;
-    cursor: pointer;
+    padding: 0.5rem 1rem;
   }
   .commit .right {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 0.5rem;
   }
   .time {
     margin-right: 0.5rem;
@@ -67,7 +66,7 @@
   </div>
   <div class="right">
     <span class="bold author">{commit.committer.name}</span>
-    <span class="desktop-inline time">{formatCommitTime(commit.committerTime)}</span>
+    <span class="desktop-inline font-mono text-small time">{formatCommitTime(commit.committerTime)}</span>
     <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.sha1)} />
   </div>
 </div>

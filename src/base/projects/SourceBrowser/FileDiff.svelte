@@ -18,9 +18,10 @@
 <style>
   .changeset-file {
     border: 1px solid var(--color-foreground-3);
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     min-width: var(--content-min-width);
     margin-bottom: 2rem;
+    line-height: 1.5rem;
   }
   .changeset-file header {
     cursor: pointer;
@@ -32,7 +33,7 @@
     padding: 1rem;
   }
   main {
-    border-top: 1px solid var(--color-foreground-3);
+    border-top: 1px dashed var(--color-foreground-3);
   }
   .changeset-file main {
     overflow-x: auto;
@@ -60,29 +61,32 @@
     margin: 0.5rem 0;
   }
   tr.diff-line[data-type="+"] > * {
-    background: var(--color-positive-1);
+    color: var(--color-positive);
   }
   tr.diff-line[data-type="-"] > * {
-    background: var(--color-negative-1);
+    color: var(--color-negative);
   }
   td.diff-line-number {
     text-align: right;
     user-select: none;
-    line-height: 150%;
+    line-height: 1.5rem;
+    min-width: 3rem;
   }
   td.diff-line-number[data-type="+"],
   td.diff-line-type[data-type="+"] {
+    background-color: var(--color-positive-background);
     color: var(--color-positive-6);
   }
   td.diff-line-number[data-type="-"],
   td.diff-line-type[data-type="-"] {
+    background-color: var(--color-negative-background);
     color: var(--color-negative-6);
   }
   td.diff-line-number.left {
-    padding: 0 0.25rem 0 1rem;
+    padding: 0 0.5rem 0 0.75rem;
   }
   td.diff-line-number.right {
-    padding: 0 1rem 0 0.25rem;
+    padding: 0 0.75rem 0 0.5rem;
   }
   td.diff-line-content {
     white-space: pre;
@@ -90,18 +94,19 @@
     padding-right: 0.5rem;
   }
   td.diff-line-type {
-    padding-right: 1rem;
     text-align: center;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
   td.diff-expand-header {
-    background: var(--color-background);
+    padding-left: 0.5rem;
     color: var(--color-foreground-4);
   }
   td.diff-line-number {
     color: var(--color-foreground-4);
   }
   .file-path {
-    margin-left: 0.5rem;
+    font-size: 1rem;
   }
 </style>
 
@@ -109,8 +114,7 @@
   <header
     on:click={collapse}>
     <div class="actions">
-      <Icon name="chevron" width={20} inline fill />
-      <p class="bold file-path">{file.path}</p>
+      <p class="file-path">{file.path}</p>
     </div>
     <Icon name="browse" width={20} inline fill on:click={() => dispatch("browse", file.path)} />
   </header>

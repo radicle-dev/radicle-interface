@@ -44,10 +44,14 @@
   }
   .file-header .diff-type.created {
     color: var(--color-positive);
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
     background-color: var(--color-positive-1);
   }
   .file-header .diff-type.deleted {
     color: var(--color-negative);
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
     background-color: var(--color-negative-1);
   }
   .file-header .file-data {

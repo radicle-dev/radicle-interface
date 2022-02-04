@@ -54,7 +54,18 @@
     background: var(--color-foreground-background);
   }
   .commit {
-    padding: 0.25rem 0;
+    cursor: pointer;
+  }
+  .commit:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+  }
+  .commit:last-child {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+  .commit:hover {
+    background: var(--color-foreground-background-lighter);
   }
   @media (max-width: 960px) {
     .history {
@@ -86,7 +97,6 @@
   <div class="history">
     <div class="error error-message text-xsmall">
       <div>API request to <code class="text-xsmall">{err.url}</code> failed.</div>
-      <div>API needs to be version ^0.2.</div>
     </div>
   </div>
 {/await}

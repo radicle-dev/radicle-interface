@@ -33,7 +33,7 @@
 	--color-yellow-background: #ffff9911;
 	--color-positive: #53db53;
 	--color-positive-background: #53db5311;
-	--color-positive-1: #21402f;
+	--color-positive-1: #11332b;
 	--color-positive-2: #2c6837;
 	--color-positive-6: #e3ffe3;
 	--color-caution: #ffc555;
@@ -42,11 +42,12 @@
 	--color-caution-6: #ffefcf;
 	--color-negative: #ff5555;
 	--color-negative-background: #ff555511;
-	--color-negative-1: #38282f;
+	--color-negative-1: #35202b;
 	--color-negative-2: #623237;
 	--color-negative-6: #ffd4d4;
 	--color-foreground: #ffffff;
 	--color-foreground-90: #dddddd;
+	--color-foreground-80: #aaaaaa;
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
 	--color-foreground-subtler: #333344;
