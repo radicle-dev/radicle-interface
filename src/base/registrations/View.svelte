@@ -39,7 +39,6 @@
   let state: State = { status: Status.Loading };
   let editable = false;
   let fields: Field[] = [];
-  let name = `${subdomain}.${config.registrar.domain}`;
   let updateRecords: EnsRecord[] | null = null;
   let retries = 3;
   let resolver: ethers.providers.EnsResolver | undefined = undefined;
@@ -48,9 +47,9 @@
     if (r) {
       let reverseRecord = false;
       if (r.profile.address) {
-        reverseRecord = await isReverseRecordSet(r.profile.address, name, config);
+        reverseRecord = await isReverseRecordSet(r.profile.address, subdomain, config);
       }
-      const owner = await getOwner(name, config);
+      const owner = await getOwner(subdomain, config);
       resolver = r.resolver;
 
       fields = [
@@ -60,7 +59,7 @@
         { name: "address", validate: "address", placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
           description: "The address this name resolves to. " + (
             reverseRecord
-              ? `The reverse record for this address is set to **${name}**`
+              ? `The reverse record for this address is set to **${subdomain}**`
               : "The reverse record for this address is **not set**. "
               + "For this name to be correctly associated with the address, "
               + "a reverse record should be set."
@@ -101,7 +100,7 @@
   }
 
   onMount(() => {
-    getRegistration(name, config, resolver)
+    getRegistration(subdomain, config, resolver)
       .then(parseRecords).catch(err => {
         state = { status: Status.Failed, error: err };
       });
@@ -118,7 +117,7 @@
   };
 
   $: if (window.history.state?.retry && state.status === Status.NotFound && retries > 0) {
-    getRegistration(name, config, resolver).then(parseRecords).catch(err => {
+    getRegistration(subdomain, config, resolver).then(parseRecords).catch(err => {
       state = { status: Status.Failed, error: err };
     });
   }
@@ -151,7 +150,7 @@
 </style>
 
 <svelte:head>
-  <title>{subdomain}.{config.registrar.domain}</title>
+  <title>{subdomain}</title>
 </svelte:head>
 
 {#if state.status === Status.Loading}
@@ -164,7 +163,7 @@
   <Modal subtle>
     <span slot="title" class="secondary">
       <div>🍄</div>
-      {subdomain}.{config.registrar.domain}
+      {subdomain}
     </span>
 
     <span slot="body">
@@ -178,7 +177,7 @@
 {:else if state.status === Status.Found}
   <main>
     <header>
-      <h1 class="bold">{subdomain}.{config.registrar.domain}</h1>
+      <h1 class="bold">{subdomain}</h1>
       <button
         style="min-width: 60px;"
         class="tiny primary" class:active={editable} disabled={!isOwner(state.owner)}
