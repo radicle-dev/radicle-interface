@@ -10,6 +10,7 @@
     editable: boolean;
     error?: string;
     example?: string;
+    url?: string;
   }
 
   const validationExamples: Record<string, string> = {
@@ -41,12 +42,12 @@
 </script>
 
 <script lang="ts">
+  import { link } from "svelte-routing";
   import { createEventDispatcher } from 'svelte';
   import { marked } from 'marked';
   import { capitalize, isUrl, isAddress, formatSeedId } from '@app/utils';
   import Address from '@app/Address.svelte';
   import type { Config } from '@app/config';
-  import Icon from "@app/Icon.svelte";
 
   export let fields: Field[];
   export let editable = false;
@@ -113,6 +114,11 @@
     margin: 0;
     white-space: nowrap;
   }
+  .ellipsis {
+    width: 28rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   .description {
     padding-left: 1rem;
@@ -178,11 +184,8 @@
         <span class="field">
           {#if field.value}
             {#if isUrl(field.value)}
-              <span class="desktop">
+              <span class="ellipsis">
                 <a class="link" href="{field.value}" target="_blank">{field.value}</a>
-              </span>
-              <span class="mobile" title={field.value}>
-                <Icon name="url" />
               </span>
             {:else if isAddress(field.value)}
               <div class="desktop">
@@ -191,7 +194,11 @@
               <div class="mobile">
                 <Address compact resolve={field.resolve ?? false} address={field.value} {config} />
               </div>
-            {:else if (field.label === "Seed ID")}
+            {:else if (field.url)}
+              <div>
+                <a class="link" use:link href="{field.url}">{field.value}</a>
+              </div>
+            {:else if (field.validate === "id")}
               <div class="mobile">
                 {formatSeedId(field.value)}
               </div>

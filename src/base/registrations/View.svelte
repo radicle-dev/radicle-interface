@@ -79,6 +79,7 @@
           description: "The GitHub username associated with this name.",
           value: r.profile.github, editable: true },
         { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
+          url: r.profile.seed && `/seeds/${r.profile.seed.host}`,
           description: "The seed host address. " +
             "Only domain names with TLS are supported. " +
             `HTTP(S) API requests use port ${config.seed.api.port}.`,
