@@ -179,7 +179,7 @@ export class Profile {
         if (e.message.match("No DID found for")) console.debug(e.message);
         else console.error(e);
 
-        return { address, type };
+        return { address, type, org: org ?? undefined };
       }
     }
     return null;
