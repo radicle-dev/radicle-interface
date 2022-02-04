@@ -175,7 +175,20 @@
     <Loading center />
   </div>
 {:then profile}
-  {#if profile}
+  {#if !profile}
+    <Modal subtle>
+      <span slot="title">🏜️</span>
+      <span slot="body">
+        <p class="highlight"><strong>{addressOrName}</strong></p>
+        <p>Sorry, the requested address or domain is invalid.</p>
+      </span>
+      <span slot="actions">
+        <button on:click={back}>
+          Back
+        </button>
+      </span>
+    </Modal>
+  {:else}
     <main>
       <header>
         <div class="avatar">
@@ -384,19 +397,6 @@
 
     <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
     <svelte:component this={transferOwnerForm} org={profile.org} {config} on:close={() => transferOwnerForm = null} />
-  {:else}
-    <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{addressOrName}</strong></p>
-        <p>Sorry, the requested address or domain is invalid.</p>
-      </span>
-      <span slot="actions">
-        <button on:click={back}>
-          Back
-        </button>
-      </span>
-    </Modal>
   {/if}
 {:catch err}
   <Error error={err} />
