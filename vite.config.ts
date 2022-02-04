@@ -4,13 +4,16 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import rewriteAll from 'vite-plugin-rewrite-all';
 import IstanbulPlugin from 'vite-plugin-istanbul';
 
-
 const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
   plugins: [
-    svelte({ hot: !process.env.VITEST }),
+    svelte({
+      compilerOptions: {
+        dev: process.env.NODE_ENV !== "production"
+      }
+    }),
     rewriteAll(),
     IstanbulPlugin({
       include: "src/**/*",
