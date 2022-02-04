@@ -34,7 +34,6 @@
     }
   });
 
-  $: console.log(addressOrName);
   const onClick = () => {
     if (info) {
       navigate(

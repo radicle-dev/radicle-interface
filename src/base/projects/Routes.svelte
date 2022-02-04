@@ -17,7 +17,15 @@
   <View {config} seed={params.seed} peer={params.peer} id={params.id} />
 </Route>
 
-<!-- With User or Org context -->
+<!-- Explicit user and org context, will at some point be replaced by the generic route -->
+<Route path="/orgs/:addressOrName/:id/*" let:params>
+  <View {config} addressOrName={params.addressOrName} id={params.id} />
+</Route>
+
+<Route path="/users/:addressOrName/:id/*" let:params>
+  <View {config} addressOrName={params.addressOrName} id={params.id} />
+</Route>
+<!-- End of eventual dropped routes -->
 
 <Route path="/:addressOrName/:id/*" let:params>
   <View {config} addressOrName={params.addressOrName} id={params.id} />

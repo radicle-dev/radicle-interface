@@ -133,7 +133,7 @@ export class Profile {
     addressOrName: string,
     profileType: ProfileType,
     config: Config
-  ): Promise<IProfile> {
+  ): Promise<IProfile | null> {
     let type = AddressType.EOA;
     let org: Org | null = null;
     const ens = await resolveEnsProfile(addressOrName, profileType, config);
@@ -182,21 +182,21 @@ export class Profile {
         return { address, type };
       }
     }
-    throw new Error(`Name ${addressOrName} was not found`);
+    return null;
   }
 
-  static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {
+  static async getMulti(addressesOrNames: string[], config: Config): Promise<(Profile | null)[]> {
     const profilePromises = addressesOrNames.map(addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config));
     const profiles = await Promise.all(profilePromises);
-    return profiles.map(profile => { return new Profile(profile); });
+    return profiles.map(profile => { return profile ? new Profile(profile) : null; });
   }
 
   static async get(
     addressOrName: string,
     profileType: ProfileType,
     config: Config,
-  ): Promise<Profile> {
+  ): Promise<Profile | null> {
     const profile = await this.lookupProfile(addressOrName, profileType, config);
-    return new Profile(profile);
+    return profile ? new Profile(profile) : null;
   }
 }
