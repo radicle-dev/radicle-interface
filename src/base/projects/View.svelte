@@ -27,7 +27,7 @@
   let revision: string;
   let content: proj.ProjectContent;
   let path: string;
-  let getProject = new Promise<{ profile?: Profile; seed?: Seed } | null>(resolve => {
+  let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>(resolve => {
     if (addressOrName) {
       Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p }));
     } else if (seed) {

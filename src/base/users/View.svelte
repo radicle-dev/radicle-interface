@@ -7,7 +7,7 @@
 
   onMount(() => {
     navigate(`/${addressOrName}`);
-  })
+  });
 </script>
 
 <Loading center />

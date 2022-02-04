@@ -30,7 +30,7 @@ export interface Source {
   anchors: string[];
   seed: string;
   branches: [string, string][];
-  profile?: Profile;
+  profile?: Profile | null;
 }
 
 export interface PendingProject extends Project {
