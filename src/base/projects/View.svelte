@@ -144,6 +144,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .description {
+      font-size: 0.875rem;
+    }
     .org-avatar {
       display: inline-block;
       width: 1.5rem;
