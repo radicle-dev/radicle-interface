@@ -226,7 +226,7 @@
         <input
           readonly
           name="clone-url"
-          value="https://{config.seed.git.host}/{utils.parseRadicleId(urn)}"
+          value="https://{config.seed.git.host}/{utils.parseRadicleId(urn)}.git"
         />
         <label for="clone-url"
           >Use Git to clone this repository from the URL above.</label
