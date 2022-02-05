@@ -204,7 +204,7 @@
       </span>
     {/if}
     <div class="toggle" on:click={toggleNavbar}>
-      <Icon name="ellipsis" width={27} height={27} />
+      <Icon name="ellipsis" width={27} height={27} fill />
     </div>
   </div>
 
