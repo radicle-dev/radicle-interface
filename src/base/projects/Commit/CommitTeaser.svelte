@@ -38,17 +38,12 @@
     margin-right: 0.5rem;
   }
 
-  @media (max-width: 720px) {
-    .commit {
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 0.25rem;
-      padding-bottom: 0.25rem;
-      height: unset;
+  @media (max-width: 960px) {
+    .hash {
+      padding-right: 0.5rem;
     }
-    .author, .hash {
-      font-size: 12px;
+    .time, .author, .hash {
+      font-size: 0.75rem;
     }
     .summary {
       overflow: hidden;
@@ -61,11 +56,11 @@
 
 <div class="commit">
   <div class="summary">
-    <span class="secondary desktop-inline hash">{formatCommit(commit.sha1)}</span>
+    <span class="secondary hash">{formatCommit(commit.sha1)}</span>
     <span>{commit.summary}</span>
   </div>
   <div class="right">
-    <span class="bold author">{commit.committer.name}</span>
+    <span class="desktop-inline bold author">{commit.committer.name}</span>
     <span class="desktop-inline font-mono text-small time">{formatCommitTime(commit.committerTime)}</span>
     <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.sha1)} />
   </div>
