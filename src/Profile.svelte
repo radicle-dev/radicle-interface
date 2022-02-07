@@ -17,14 +17,12 @@
   import Error from '@app/Error.svelte';
   import { User } from '@app/base/users/User';
   import Projects from '@app/base/orgs/View/Projects.svelte';
-  import Modal from '@app/Modal.svelte';
-  import { Invalid } from '@app/error';
+  import { NotFoundError } from '@app/error';
+  import NotFound from '@app/NotFound.svelte';
 
   export let config: Config;
   export let addressOrName: string;
   export let action: string | null = null;
-
-  const back = () => window.history.back();
 
   let setNameForm: typeof SvelteComponent | null =
     action === "setName" ? SetName : null;
@@ -385,19 +383,8 @@
   <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
   <svelte:component this={transferOwnerForm} org={profile.org} {config} on:close={() => transferOwnerForm = null} />
 {:catch err}
-  {#if err instanceof Invalid}
-    <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{addressOrName}</strong></p>
-        <p>Sorry, the requested address or domain is invalid.</p>
-      </span>
-      <span slot="actions">
-        <button on:click={back}>
-          Back
-        </button>
-      </span>
-    </Modal>
+  {#if err instanceof NotFoundError}
+    <NotFound title={addressOrName} subtitle="Sorry, the requested address or domain was not found." />
   {:else}
     <Error error={err} />
   {/if}

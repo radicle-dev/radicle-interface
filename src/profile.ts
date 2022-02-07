@@ -6,7 +6,7 @@ import {
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
-import { Invalid } from "@app/error";
+import { NotFoundError } from "@app/error";
 
 export interface IProfile {
   address: string;
@@ -182,7 +182,7 @@ export class Profile {
         return { address, type, org: org ?? undefined };
       }
     }
-    throw new Invalid(`Not able to resolve profile for ${addressOrName}`);
+    throw new NotFoundError(`Not able to resolve profile for ${addressOrName}`);
   }
 
   static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {

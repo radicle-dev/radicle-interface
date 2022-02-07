@@ -24,12 +24,12 @@ export class Unreachable extends Error {
   }
 }
 
-export class Invalid extends Error {
+export class NotFoundError extends Error {
   constructor(message?: string) {
     if (message) {
-      super(message);
+      super(`not found: ${message}`);
     } else {
-      super(`invalid`);
+      super(`not found`);
     }
   }
 }

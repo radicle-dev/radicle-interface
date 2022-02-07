@@ -3,7 +3,6 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { Info } from '@app/project';
@@ -14,6 +13,7 @@
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
+  import NotFound from '@app/NotFound.svelte';
 
   export let id: string; // Project name or URN.
   export let addressOrName = "";
@@ -81,8 +81,6 @@
     if (path !== newParams.path) path = newParams.path;
     if (peer !== newParams.peer) peer = newParams.peer;
   }
-
-  const back = () => window.history.back();
 </script>
 
 <style>
@@ -192,17 +190,6 @@
       </div>
     {/await}
   {:catch}
-    <Modal subtle>
-      <span slot="title">🏜️</span>
-      <span slot="body">
-        <p class="highlight"><strong>{id}</strong></p>
-        <p>This project was not found.</p>
-      </span>
-      <span slot="actions">
-        <button on:click={back}>
-          Back
-        </button>
-      </span>
-    </Modal>
+    <NotFound title={id} subtitle="This project was not found." />
   {/await}
 </main>

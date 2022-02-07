@@ -4,12 +4,10 @@
   import Widget from "@app/base/projects/Widget.svelte";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
-  import Modal from "@app/Modal.svelte";
+  import NotFound from "@app/NotFound.svelte";
 
   export let config: Config;
   export let seedAddress: string;
-
-  const back = () => window.history.back();
 
   config = config.withSeed({ host: seedAddress });
 </script>
@@ -130,16 +128,5 @@
     {/if}
   </main>
 {:catch}
-  <Modal subtle>
-    <span slot="title">🏜️</span>
-    <span slot="body">
-      <p class="highlight"><strong>{seedAddress}</strong></p>
-      <p>Not able to query information from this seed.</p>
-    </span>
-    <span slot="actions">
-      <button on:click={back}>
-        Back
-      </button>
-    </span>
-  </Modal>
+  <NotFound title={seedAddress} subtitle="Not able to query information from this seed." />
 {/await}

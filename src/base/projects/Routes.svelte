@@ -2,6 +2,7 @@
   import { Route } from "svelte-routing";
   import View from '@app/base/projects/View.svelte';
   import type { Config } from '@app/config';
+  import Redirect from "@app/Redirect.svelte";
 
   export let config: Config;
 
@@ -19,19 +20,11 @@
 
 <!-- Explicit user and org context, will at some point be replaced by the generic route -->
 <Route path="/orgs/:addressOrName/projects/:id/*" let:params>
-  <View {config} addressOrName={params.addressOrName} id={params.id} />
-</Route>
-
-<Route path="/orgs/:addressOrName/:id/*" let:params>
-  <View {config} addressOrName={params.addressOrName} id={params.id} />
+  <Redirect to="/{params.addressOrName}/{params.id}/{params["*"]}" />
 </Route>
 
 <Route path="/users/:addressOrName/projects/:id/*" let:params>
-  <View {config} addressOrName={params.addressOrName} id={params.id} />
-</Route>
-
-<Route path="/users/:addressOrName/:id/*" let:params>
-  <View {config} addressOrName={params.addressOrName} id={params.id} />
+  <Redirect to="/{params.addressOrName}/{params.id}/{params["*"]}" />
 </Route>
 <!-- End of eventual dropped routes -->
 
