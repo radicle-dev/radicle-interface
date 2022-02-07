@@ -27,11 +27,11 @@
   let revision: string;
   let content: proj.ProjectContent;
   let path: string;
-  let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>(resolve => {
+  let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>((resolve, reject) => {
     if (addressOrName) {
-      Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p }));
+      Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p })).catch(err => reject(err.message));
     } else if (seed) {
-      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s }));
+      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s })).catch(err => reject(err.message));
     } else {
       resolve(null);
     }
