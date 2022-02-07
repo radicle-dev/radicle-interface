@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Route } from "svelte-routing";
-  import View from '@app/base/users/View.svelte';
+  import Redirect from "@app/Redirect.svelte";
 </script>
 
 <Route path="/users/:addressOrName" let:params>
-  <View addressOrName={params.addressOrName} />
+  <Redirect to="/{params.addressOrName}" />
 </Route>
