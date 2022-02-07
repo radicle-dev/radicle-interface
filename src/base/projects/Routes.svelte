@@ -18,7 +18,15 @@
 </Route>
 
 <!-- Explicit user and org context, will at some point be replaced by the generic route -->
+<Route path="/orgs/:addressOrName/projects/:id/*" let:params>
+  <View {config} addressOrName={params.addressOrName} id={params.id} />
+</Route>
+
 <Route path="/orgs/:addressOrName/:id/*" let:params>
+  <View {config} addressOrName={params.addressOrName} id={params.id} />
+</Route>
+
+<Route path="/users/:addressOrName/projects/:id/*" let:params>
   <View {config} addressOrName={params.addressOrName} id={params.id} />
 </Route>
 
