@@ -273,9 +273,9 @@
           {/if}
         {/if}
         <!-- Seed Address -->
-        {#if profile.seedId && profile.seedHost}
+        {#if profile.seed && profile.seed.valid}
           <div class="label">Seed</div>
-          <SeedAddress id={profile.seedId} host={profile.seedHost} port={config.seed.link.port} />
+          <SeedAddress seed={profile.seed} port={config.seed.link.port} />
         {/if}
         <!-- Org Name/Profile -->
         <div class="label">Profile</div>
@@ -394,7 +394,7 @@
           </Message>
         {/await}
       {/if}
-      <Projects {profile} {account} config={profile.seed ? config.withSeed(profile.seed) : config} />
+      <Projects {profile} {account} config={profile.config(config)} />
     </main>
 
     <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
