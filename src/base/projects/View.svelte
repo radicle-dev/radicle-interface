@@ -47,9 +47,6 @@
 
     projectInfo = info;
 
-    // Replace project name with URN, in URL bar.
-    navigate(proj.path({ peer, urn, addressOrName, revision, path, seed }), { replace: true });
-
     // Checks for delegates returned from seed node, as feature check of the seed node
     if (info.meta.delegates) {
       // Check for selected peer to override available branches.
