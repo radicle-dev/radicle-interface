@@ -7,7 +7,7 @@
 
   export let config: Config;
   export let orgs: Org[] = [];
-  export let profiles: (Profile | null)[] = [];
+  export let profiles: Profile[] = [];
 
   const orgMembers: Record<string, string[]> = {};
 
@@ -40,20 +40,16 @@
       {#await Profile.get(org.name ?? org.address, ProfileType.Minimal, config)}
         <Card profile={{ address: org.address }} {config} path={`/${org.address}`} />
       {:then profile}
-        {#if profile}
-          {#if orgMembers[profile.address]?.length}
-            <Card {profile} {config} path={`/${profile.nameOrAddress}`} members={orgMembers[profile.address]} />
-          {:else}
-            <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
-          {/if}
+        {#if orgMembers[profile.address]?.length}
+          <Card {profile} {config} path={`/${profile.nameOrAddress}`} members={orgMembers[profile.address]} />
+        {:else}
+          <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
         {/if}
       {/await}
     {/each}
 
     {#each profiles as profile}
-      {#if profile}
-        <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
-      {/if}
+      <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
     {/each}
 
     {#if !orgs.length && !profiles.length}

@@ -191,12 +191,10 @@
         {#await Profile.get(address, ProfileType.Minimal, config)}
           <Loading small center />
         {:then profile}
-          {#if profile}
-            {#if sessionButtonHover}
-              Disconnect
-            {:else}
-              <Avatar source={profile.avatar ?? address} {address} inline />{formatAddress(address)}
-            {/if}
+          {#if sessionButtonHover}
+            Disconnect
+          {:else}
+            <Avatar source={profile.avatar ?? address} {address} inline />{formatAddress(address)}
           {/if}
         {/await}
       </button>

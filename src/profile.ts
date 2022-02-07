@@ -5,7 +5,8 @@ import {
 } from "@app/utils";
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
-import { Org } from "./base/orgs/Org";
+import { Org } from "@app/base/orgs/Org";
+import { Invalid } from "./error";
 
 export interface IProfile {
   address: string;
@@ -133,7 +134,7 @@ export class Profile {
     addressOrName: string,
     profileType: ProfileType,
     config: Config
-  ): Promise<IProfile | null> {
+  ): Promise<IProfile> {
     let type = AddressType.EOA;
     let org: Org | null = null;
     const ens = await resolveEnsProfile(addressOrName, profileType, config);
@@ -182,21 +183,21 @@ export class Profile {
         return { address, type, org: org ?? undefined };
       }
     }
-    return null;
+    throw new Invalid(`Not able to resolve profile for ${addressOrName}`);
   }
 
-  static async getMulti(addressesOrNames: string[], config: Config): Promise<(Profile | null)[]> {
+  static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {
     const profilePromises = addressesOrNames.map(addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config));
     const profiles = await Promise.all(profilePromises);
-    return profiles.map(profile => { return profile ? new Profile(profile) : null; });
+    return profiles.map(profile => { return new Profile(profile); });
   }
 
   static async get(
     addressOrName: string,
     profileType: ProfileType,
     config: Config,
-  ): Promise<Profile | null> {
+  ): Promise<Profile> {
     const profile = await this.lookupProfile(addressOrName, profileType, config);
-    return profile ? new Profile(profile) : null;
+    return new Profile(profile);
   }
 }

@@ -24,6 +24,16 @@ export class Unreachable extends Error {
   }
 }
 
+export class Invalid extends Error {
+  constructor(message?: string) {
+    if (message) {
+      super(message);
+    } else {
+      super(`invalid`);
+    }
+  }
+}
+
 class AssertionError extends Error {
   constructor(message?: string) {
     if (message) {
