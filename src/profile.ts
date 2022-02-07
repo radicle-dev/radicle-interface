@@ -6,7 +6,7 @@ import {
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
-import { Invalid } from "./error";
+import { Invalid } from "@app/error";
 
 export interface IProfile {
   address: string;
@@ -160,7 +160,6 @@ export class Profile {
       const address = addressOrName.toLowerCase();
 
       type = await identifyAddress(addressOrName, config);
-
       if (type === AddressType.Org) {
         org = await Org.get(addressOrName, config);
       }

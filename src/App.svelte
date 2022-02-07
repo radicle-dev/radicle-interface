@@ -88,9 +88,9 @@
         </Route>
         <Registrations {config} session={$session} />
         <Orgs {config} />
-        <Users />
         <Seeds {config} />
         <Faucet {config} />
+        <Users />
         <Resolver {config} />
         <Route path="/:addressOrName" let:params>
           <Profile addressOrName={params.addressOrName} {config} />
