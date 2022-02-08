@@ -312,7 +312,7 @@ export async function identifyAddress(address: string, config: Config): Promise<
 
 // Resolve a label under the radicle domain.
 export async function resolveLabel(label: string | undefined, config: Config): Promise<string | null> {
-  if (label) return config.provider.resolveName(`${label}.${config.registrar.domain}`);
+  if (label) return config.provider.resolveName(`${label}`);
   return null;
 }
 

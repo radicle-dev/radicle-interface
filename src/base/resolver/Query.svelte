@@ -23,19 +23,14 @@
         // Go to Radicle project.
         navigate(`/projects/${query}`, { replace: true });
       } else {
-        let label = utils.parseEnsLabel(query, config);
-        if (label.includes(".")) {
-          error = true;
+        // Jump straight to org, if the ENS entry points to an org. Otherwise it checks if the
+        // address type is an EOA and jumps to the user page else it just goes to the registration.
+        const address = await utils.resolveLabel(query, config);
+        const addressType = address && await utils.identifyAddress(address, config);
+        if (addressType === utils.AddressType.Org || addressType === utils.AddressType.EOA) {
+          navigate(`/${address}`, { replace: true });
         } else {
-          // Jump straight to org, if the ENS entry points to an org. Otherwise it checks if the
-          // address type is an EOA and jumps to the user page else it just goes to the registration.
-          const address = await utils.resolveLabel(label, config);
-          const addressType = address && await utils.identifyAddress(address, config);
-          if (addressType === utils.AddressType.Org || addressType === utils.AddressType.EOA) {
-            navigate(`/${address}`, { replace: true });
-          } else {
-            navigate(`/registrations/${label}`, { replace: true });
-          }
+          navigate(`/registrations/${query}`, { replace: true });
         }
       }
     } else {
