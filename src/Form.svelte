@@ -80,7 +80,8 @@
     return fields.filter(field => field.editable).map(field => {
       return {
         name: field.name,
-        value: field.value && field.value.trim(),
+        // We only allow to have a trueish value or an empty string.
+        value: field.value ? field.value.trim() : "",
       };
     });
   };
@@ -179,7 +180,7 @@
     <div>
       {#if field.editable && editable}
         <input name={field.name} class="field" placeholder={field.placeholder}
-               on:change={validate} value={field.value} type="text" {disabled} />
+               on:change={validate} value={field.value || ""} type="text" {disabled} />
       {:else}
         <span class="field">
           {#if field.value}

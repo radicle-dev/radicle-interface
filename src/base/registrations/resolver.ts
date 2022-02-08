@@ -10,7 +10,7 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
   assert(config.signer, "no signer available");
 
   const resolverContract = new ethers.Contract(resolver.address, config.abi.resolver, config.signer);
-  const node = ethers.utils.namehash(`${name}.${config.registrar.domain}`);
+  const node = ethers.utils.namehash(`${name}`);
 
   const calls = [];
   const iface = new ethers.utils.Interface(config.abi.resolver);
