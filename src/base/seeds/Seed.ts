@@ -1,7 +1,6 @@
 import * as api from '@app/api';
 import type { Config } from '@app/config';
 import * as proj from '@app/project';
-import type { Project } from "@app/project";
 import { isDomain } from '@app/utils';
 import { assert } from '@app/error';
 
@@ -46,11 +45,11 @@ export class Seed {
     return api.get("/peer", {}, config);
   }
 
-  static async getProject(urn: string, config: Config): Promise<proj.Info> {
+  static async getProject(urn: string, config: Config): Promise<proj.ProjectInfo> {
     return proj.getInfo(urn, config);
   }
 
-  static async getProjects(config: Config): Promise<Project[]> {
+  static async getProjects(config: Config): Promise<proj.ProjectInfo[]> {
     const result = await proj.getProjects(config);
     return result.map((project: any) => ({ ...project, id: project.urn }));
   }

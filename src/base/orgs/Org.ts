@@ -7,7 +7,7 @@ import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Safe } from '@app/utils';
 import type { Config } from '@app/config';
-import type { PendingProject, Project } from '@app/project';
+import type { PendingAnchor, Anchor } from '@app/project';
 
 const GetProjects = `
   query GetProjects($org: ID!) {
@@ -184,15 +184,16 @@ export class Org {
     return members.includes(address.toLowerCase());
   }
 
-  async getProjects(config: Config): Promise<Project[]> {
+  async getProjects(config: Config): Promise<Anchor[]> {
     const result = await utils.querySubgraph(
       config.orgs.subgraph, GetProjects, { org: this.address }
     );
-    const projects: Project[] = [];
+    const projects: Anchor[] = [];
 
     for (const p of result.projects) {
       try {
-        const proj: Project = {
+        const proj: Anchor = {
+          confirmed: true,
           id: utils.formatRadicleId(ethers.utils.arrayify(p.anchor.objectId)),
           anchor: {
             stateHash: utils.formatProjectHash(
@@ -208,37 +209,32 @@ export class Org {
     return projects;
   }
 
-  async getPendingProjects(config: Config): Promise<PendingProject[]> {
+  async getPendingProjects(config: Config): Promise<PendingAnchor[]> {
     if (! config.safe.client) return [];
 
     const orgAddr = ethers.utils.getAddress(this.address);
     const response = await config.safe.client.getPendingTransactions(
       ethers.utils.getAddress(this.owner)
     );
-    const projects: PendingProject[] = [];
+    const projects: PendingAnchor[] = [];
 
     for (const tx of response.results || []) {
       if (tx.data && tx.to === orgAddr) {
-        const project = parseAnchorTx(tx.data, config);
+        const anchor = parseAnchorTx(tx.data, config);
         const confirmations = tx.confirmations?.map(t => t.owner) || [];
 
-        if (project) {
-          projects.push({ ...project, confirmations, safeTxHash: tx.safeTxHash });
+        if (anchor) {
+          projects.push({
+            id: anchor.id,
+            anchor: { stateHash: anchor.stateHash },
+            confirmations,
+            safeTxHash: tx.safeTxHash,
+            confirmed: false,
+          });
         }
       }
     }
     return projects;
-  }
-
-  async getAllProjects(config: Config): Promise<Array<Project | PendingProject>> {
-    const result = await Promise.allSettled([
-      this.getPendingProjects(config),
-      this.getProjects(config),
-    ]);
-
-    return result.flatMap(r => {
-      return r.status === "fulfilled" ? r.value : [];
-    });
   }
 
   static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
@@ -377,7 +373,7 @@ export class Org {
   }
 }
 
-export function parseAnchorTx(data: string, config: Config): Project | null {
+export function parseAnchorTx(data: string, config: Config): { id: string; stateHash: string } | null {
   const iface = new ethers.utils.Interface(config.abi.org);
   const parsedTx = iface.parseTransaction({ data });
 
@@ -390,7 +386,7 @@ export function parseAnchorTx(data: string, config: Config): Project | null {
     const byteArray = ethers.utils.arrayify(encodedCommitHash);
     const stateHash = utils.formatProjectHash(byteArray);
 
-    return { id, anchor: { stateHash } };
+    return { id, stateHash };
   }
   return null;
 }

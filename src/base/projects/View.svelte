@@ -5,7 +5,7 @@
   import Loading from '@app/Loading.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
-  import type { Info } from '@app/project';
+  import type { ProjectInfo } from '@app/project';
   import { formatOrg, formatSeedId, isRadicleId } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
@@ -23,7 +23,7 @@
 
   let parentName = formatOrg(addressOrName, config);
   let pageTitle = parentName ? `${parentName}/${id}` : id;
-  let projectInfo: Info | null = null;
+  let projectInfo: ProjectInfo | null = null;
   let revision: string;
   let content: proj.ProjectContent;
   let path: string;
@@ -40,18 +40,18 @@
     const seedInstance = profile?.seed ?? result?.seed;
     const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
     const info = await proj.getInfo(id, cfg);
-    const urn = isRadicleId(id) ? id : info.meta.urn;
+    const urn = isRadicleId(id) ? id : info.urn;
     const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? addressOrName);
-    let branches = Array([info.meta.defaultBranch, info.head]) as [string, string][];
+    let branches = Array([info.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
 
     projectInfo = info;
 
     // Checks for delegates returned from seed node, as feature check of the seed node
-    if (info.meta.delegates) {
+    if (info.delegates) {
       // Check for selected peer to override available branches.
       if (peer) {
-        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.meta.delegates[0], cfg);
+        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.delegates[0], cfg);
         branches = [...Object.entries(branchesByPeer.heads)];
       }
       peers = await proj.getPeers(urn, cfg);
@@ -61,11 +61,11 @@
 
   $: if (projectInfo) {
     const baseName = parentName
-      ? `${parentName}/${projectInfo.meta.name}`
-      : projectInfo.meta.name;
+      ? `${parentName}/${projectInfo.name}`
+      : projectInfo.name;
 
-    if (projectInfo.meta.description) {
-      pageTitle = `${baseName}: ${projectInfo.meta.description}`;
+    if (projectInfo.description) {
+      pageTitle = `${baseName}: ${projectInfo.description}`;
     } else {
       pageTitle = baseName;
     }
@@ -162,14 +162,15 @@
           </a>
           <span class="divider">/</span>
         {/if}
-        <Link to={proj.path({ urn: result.urn, addressOrName, seed })}>{result.project.meta.name}</Link>
+        <Link to={proj.path({ urn: result.urn, addressOrName, seed })}>{result.project.name}</Link>
         {#if peer}
           <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
       </div>
       <div class="urn">{result.urn}</div>
-      <div class="description">{result.project.meta.description}</div>
+      <div class="description">{result.project.description}</div>
     </header>
+
     {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
       <Header {tree} {revision} {content} {path}
         source={result}

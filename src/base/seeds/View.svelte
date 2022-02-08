@@ -1,15 +1,24 @@
 <script lang="ts">
+  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
   import { Seed } from "@app/base/seeds/Seed";
   import Widget from "@app/base/projects/Widget.svelte";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
   import NotFound from "@app/NotFound.svelte";
+  import * as proj from "@app/project";
 
   export let config: Config;
   export let seedAddress: string;
 
   config = config.withSeed({ host: seedAddress });
+
+  const onProjectClick = (project: proj.ProjectInfo) => {
+    navigate(proj.path({
+      urn: project.urn,
+      seed: seedAddress,
+    }));
+  };
 </script>
 
 <style>
@@ -113,19 +122,15 @@
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->
-    {#if info.version === "0.2.0"}
-      {#await Seed.getProjects(config) then projects}
-        <div class="projects">
-          {#each projects as project}
-            <div class="project">
-              <Widget {project} {config} seed={seedAddress} />
-            </div>
-          {/each}
-        </div>
-      {/await}
-    {:else}
-      <div class="projects subtle">For seed project listing, update http-api to v0.2.0</div>
-    {/if}
+    {#await Seed.getProjects(config) then projects}
+      <div class="projects">
+        {#each projects as project}
+          <div class="project">
+            <Widget {project} on:click={() => onProjectClick(project)} />
+          </div>
+        {/each}
+      </div>
+    {/await}
   </main>
 {:catch}
   <NotFound title={seedAddress} subtitle="Not able to query information from this seed." />

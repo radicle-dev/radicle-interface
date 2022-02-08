@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ethers } from "ethers";
   import type { Safe } from "@app/utils";
-  import type { PendingProject } from "@app/project";
+  import type { PendingAnchor } from "@app/project";
   import type { Config } from "@app/config";
   import * as utils from "@app/utils";
   import Modal from "@app/Modal.svelte";
@@ -9,7 +9,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let safe: Safe;
-  export let project: PendingProject;
+  export let anchor: PendingAnchor;
   export let account: string;
   export let config: Config;
 
@@ -38,7 +38,7 @@
     state = State.Idle;
   };
 
-  const pending = safe.threshold - project.confirmations.length;
+  const pending = safe.threshold - anchor.confirmations.length;
   const executeTransaction = async (safeTxHash: string) => {
     try {
       action = Action.Execute;
@@ -73,7 +73,7 @@
     }
   };
 
-  $: isSigned = project.confirmations.includes(
+  $: isSigned = anchor.confirmations.includes(
     ethers.utils.getAddress(account)
   );
 </script>
@@ -108,7 +108,7 @@
 </span>
 
 <div class="avatars">
-  {#each project.confirmations as signee}
+  {#each anchor.confirmations as signee}
     <Avatar inline source={signee} address={signee} glowOnHover />
   {/each}
 </div>
@@ -158,8 +158,8 @@
     <span slot="body">
       {#if state == State.Confirm}
         <div class="table">
-          <div>Project</div><code>{project.id}</code>
-          <div>Hash</div><code>{project.anchor.stateHash}</code>
+          <div>Project</div><code>{anchor.id}</code>
+          <div>Hash</div><code>{anchor.anchor.stateHash}</code>
         </div>
       {:else if state == State.Failed}
         <div>{error}</div>
@@ -168,7 +168,7 @@
 
     <span slot="actions">
       {#if state == State.Confirm}
-        <button class="primary" on:click={() => confirmAnchor(project.safeTxHash)}>
+        <button class="primary" on:click={() => confirmAnchor(anchor.safeTxHash)}>
           Confirm
         </button>
         <button class="text" on:click={close}>
@@ -206,8 +206,8 @@
     <span slot="body">
       {#if state == State.Confirm}
         <div class="table">
-          <div>TxHash</div><code>{utils.formatHash(project.safeTxHash)}</code>
-          <div>Quorum</div><code>{project.confirmations.length} of {safe.threshold}</code>
+          <div>TxHash</div><code>{utils.formatHash(anchor.safeTxHash)}</code>
+          <div>Quorum</div><code>{anchor.confirmations.length} of {safe.threshold}</code>
         </div>
       {:else if state == State.Failed}
         <div>{error}</div>
@@ -216,7 +216,7 @@
 
     <span slot="actions">
       {#if state == State.Confirm}
-        <button class="primary" on:click={() => executeTransaction(project.safeTxHash)}>
+        <button class="primary" on:click={() => executeTransaction(anchor.safeTxHash)}>
           Confirm
         </button>
         <button class="text" on:click={close}>

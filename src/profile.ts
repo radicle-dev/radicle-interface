@@ -1,12 +1,14 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
-  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile, resolveIdxProfile, parseUsername, parseEnsLabel, AddressType, identifyAddress
+  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile,
+  resolveIdxProfile, parseUsername, parseEnsLabel, AddressType, identifyAddress
 } from "@app/utils";
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
 import { NotFoundError } from "@app/error";
+import type { Anchor, PendingAnchor } from "@app/project";
 
 export interface IProfile {
   address: string;
@@ -126,6 +128,51 @@ export class Profile {
   registry(config: Config): string {
     if (this.profile?.ens) return `/registrations/${parseEnsLabel(this.profile.ens.name, config)}`;
     else return `${config.ceramic.registry}${formatCAIP10Address(this.profile.address, "eip155", config.network.chainId)}`;
+  }
+
+  // Get confirmed anchors.
+  async confirmedAnchors(config: Config): Promise<Record<string, Anchor>> {
+    const org = await this.getAnchorsOrg(config);
+
+    if (org) {
+      const result = await org.getProjects(config);
+      const anchors: Record<string, Anchor> = {};
+
+      for (const anchor of result) {
+        anchors[anchor.id] = anchor;
+      }
+      return anchors;
+    } else {
+      return {};
+    }
+  }
+
+  // Get pending anchors.
+  async pendingAnchors(config: Config): Promise<Record<string, PendingAnchor>> {
+    const org = await this.getAnchorsOrg(config);
+
+    if (org) {
+      const result = await org.getPendingProjects(config);
+      const anchors: Record<string, PendingAnchor> = {};
+
+      for (const anchor of result) {
+        anchors[anchor.id] = anchor;
+      }
+      return anchors;
+    } else {
+      return {};
+    }
+  }
+
+  // Get the anchors account as an org, or the org, if available.
+  private async getAnchorsOrg(config: Config): Promise<Org | null> {
+    if (this.anchorsAccount) {
+      return await Org.get(this.anchorsAccount, config);
+    } else if (this.org) {
+      return this.org;
+    } else {
+      return null;
+    }
   }
 
   // Keeping this function private since the desired entrypoint is .get()

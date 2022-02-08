@@ -8,12 +8,19 @@ export type Urn = string;
 export type Peer = string;
 export type Branch = { [key: string]: string };
 
-export interface ProjectListing {
-  name: string;
-  urn: Urn;
-}
-export interface Project {
+export interface Anchor {
+  confirmed: true;
   id: string;
+  anchor: {
+    stateHash: string;
+  };
+}
+
+export interface PendingAnchor {
+  confirmed: false;
+  id: string;
+  safeTxHash: string; // Safe transaction hash.
+  confirmations: string[]; // Owner addresses who have confirmed.
   anchor: {
     stateHash: string;
   };
@@ -25,17 +32,12 @@ export interface Source {
   addressOrName: string;
   peer: string;
   config: Config;
-  project: Info;
+  project: ProjectInfo;
   peers: Peer[];
   anchors: string[];
   seed: string;
   branches: [string, string][];
   profile?: Profile | null;
-}
-
-export interface PendingProject extends Project {
-  safeTxHash: string; // Safe transaction hash.
-  confirmations: string[]; // Owner addresses who have confirmed.
 }
 
 // Enumerates the space below the Header component in the projects View component
@@ -45,12 +47,8 @@ export enum ProjectContent {
   Commit,
 }
 
-export interface Info {
+export interface ProjectInfo {
   head: string;
-  meta: Meta;
-}
-
-export interface Meta {
   urn: string;
   name: string;
   description: string;
@@ -99,8 +97,13 @@ export interface Branches {
   heads: Branch;
 }
 
-export async function getInfo(nameOrUrn: string, config: Config): Promise<Info> {
-  return api.get(`projects/${nameOrUrn}`, {}, config);
+export async function getInfo(nameOrUrn: string, config: Config): Promise<ProjectInfo> {
+  const info = await api.get(`projects/${nameOrUrn}`, {}, config);
+
+  return {
+    ...info,
+    ...info.meta // Nb. This is only needed while we are upgrading to the new http-api.
+  };
 }
 
 export async function getCommits(urn: string, commit: string, config: Config): Promise<CommitsHistory> {
@@ -111,7 +114,7 @@ export async function getCommit(urn: string, commit: string, config: Config): Pr
   return api.get(`projects/${urn}/commits/${commit}`, {}, config);
 }
 
-export async function getProjects(config: Config): Promise<ProjectListing[]> {
+export async function getProjects(config: Config): Promise<ProjectInfo[]> {
   return api.get("projects", {}, config);
 }
 

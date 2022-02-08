@@ -1,51 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
-  import * as proj from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import Blockies from '@app/Blockies.svelte';
-  import { formatRadicleUrn } from '@app/utils';
+  import type * as proj from '@app/project';
+  import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
 
-  enum Status { Loading, Loaded, Error }
-
-  type State =
-      { status: Status.Loading }
-    | { status: Status.Loaded }
-    | { status: Status.Error; error: string };
-
-  export let project: proj.Project;
-  export let config: Config;
-  export let addressOrName: string | undefined = undefined;
-  export let seed: string | undefined = undefined;
+  export let project: proj.ProjectInfo;
   export let faded = false;
-
-  let state: State = { status: Status.Loading };
-  let info: proj.Info | null = null;
-
-  onMount(async () => {
-    try {
-      const result = await proj.getInfo(project.id, config);
-      state = { status: Status.Loaded };
-      info = result;
-    } catch (err: any) {
-      console.debug(err);
-      state = { status: Status.Error, error: err.message };
-    }
-  });
-
-  const onClick = () => {
-    if (info) {
-      navigate(
-        proj.path({
-          urn: project.id,
-          addressOrName,
-          seed,
-          revision: project.anchor?.stateHash,
-        })
-      );
-    }
-  };
+  export let anchor: proj.Anchor | null = null;
 </script>
 
 <style>
@@ -54,18 +13,16 @@
     border: 1px solid var(--color-secondary-faded);
     border-radius: 0.25rem;
     min-width: 36rem;
-  }
-  article.has-info {
     cursor: pointer;
   }
   article.project-faded {
     border: 1px dashed var(--color-foreground-subtle);
     cursor: not-allowed;
   }
-  article.has-info:hover {
+  article:hover {
     border-color: var(--color-secondary);
   }
-  article.project-faded.has-info:hover {
+  article.project-faded:hover {
     border-color: var(--color-foreground-faded);
   }
   article .id {
@@ -101,17 +58,14 @@
     font-family: var(--font-family-monospace);
     font-size: 0.75rem;
   }
+  article .anchor-badge {
+    visibility: hidden;
+  }
   article:hover .id .urn {
     visibility: visible;
   }
-  article .avatar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    width: 1.25rem;
-    height: 1.25rem;
-    font-size: 0.5rem;
+  article:hover .anchor-badge {
+    visibility: visible;
   }
   @media (max-width: 720px) {
     article {
@@ -120,40 +74,29 @@
   }
 </style>
 
-<article on:click={onClick} class:has-info={info} class:project-faded={faded}>
-  {#if info}
-    <div class="id">
-      <span class="name">{info.meta.name}</span>
-      <span class="urn desktop">{project.id}</span>
-    </div>
-    <div class="description">{info.meta.description}</div>
-    <div class="anchor">
-      <span class="commit">
-        <slot name="stateHash">{info.meta.defaultBranch} {info.head}</slot>
-      </span>
-      <span>
-        {#each info.meta.maintainers as urn}
-          <span class="avatar">
-            <Blockies address={urn} />
-          </span>
-        {/each}
-      </span>
-    </div>
-  {:else}
-    <div class="id">
-      <span class="desktop">{project.id}</span>
-      <span class="mobile">{formatRadicleUrn(project.id)}</span>
-      {#if state.status == Status.Loading}
-        <Loading small />
-      {/if}
-    </div>
-    <div class="anchor">
-      <span class="commit">
-        <slot name="stateHash"></slot>
-      </span>
-      <span class="actions">
-        <slot name="actions" />
-      </span>
-    </div>
-  {/if}
+<article on:click class:project-faded={faded}>
+  <div class="id">
+    <span class="name">{project.name}</span>
+    <span class="urn desktop">{project.urn}</span>
+  </div>
+  <div class="description">{project.description}</div>
+  <div class="anchor">
+    <span class="commit">
+      <slot name="stateHash">{project.head}</slot>
+    </span>
+    <span class="actions">
+      <slot name="actions">
+      </slot>
+    </span>
+    <span class="anchor-badge">
+      <slot name="anchor">
+        {#if anchor}
+          <AnchorBadge
+            commit={project.head}
+            head={project.head} noText noBg
+            anchors={[anchor.anchor.stateHash]} />
+        {/if}
+      </slot>
+    </span>
+  </div>
 </article>

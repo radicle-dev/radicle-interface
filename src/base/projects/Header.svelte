@@ -2,6 +2,7 @@
   import { navigate } from 'svelte-routing';
   import * as utils from '@app/utils';
   import { ProjectContent, getOid, Source } from '@app/project';
+  import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
   import type { Tree } from "@app/project";
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
@@ -63,32 +64,6 @@
   .anchor {
     display: inline-flex;
   }
-  .anchor-widget {
-    display: flex;
-    padding: 0.5rem 0.75rem;
-    border-radius: inherit;
-    color: var(--color-tertiary);
-    background-color: var(--color-tertiary-background);
-    cursor: pointer;
-  }
-  .anchor-widget.not-allowed {
-    cursor: not-allowed;
-  }
-  .anchor-widget.not-anchored {
-    color: var(--color-foreground-faded);
-    background-color: var(--color-foreground-background);
-  }
-  .anchor-label {
-    font-family: var(--font-family-monospace);
-    margin-right: 0.5rem;
-  }
-  .anchor-label:last-child {
-    margin-right: 0;
-  }
-  .anchor-latest {
-    cursor: default;
-  }
-
   .seed {
     cursor: pointer;
     border-radius: inherit;
@@ -185,34 +160,8 @@
     bind:branchesDropdown={dropdownState.branch}
     on:revisionChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
-    {#if anchors}
-      <!-- commit is head and latest anchor  -->
-      {#if commit == anchors[0] && commit === project.head}
-        <span class="anchor-widget anchor-latest">
-          <span class="anchor-label" title="{anchors[0]}">latest 🔐</span>
-        </span>
-      <!-- commit is not head but latest anchor  -->
-      {:else if commit == anchors[0] && commit !== project.head}
-        <span class="anchor-widget" on:click={() => updateRevision(project.head)}>
-          <span class="anchor-label" title="{anchors[0]}">latest 🔐</span>
-        </span>
-      <!-- commit is not head a stale anchor  -->
-      {:else if anchors.includes(commit)}
-        <span class="anchor-widget" on:click={() => updateRevision(anchors[0])}>
-          <span class="anchor-label" title="{commit}">stale 🔒</span>
-        </span>
-      <!-- commit is not anchored, could be head or any other commit  -->
-      {:else}
-        <span class="anchor-widget not-anchored" on:click={() => updateRevision(anchors[0])}>
-          <span class="anchor-label">not anchored 🔓</span>
-        </span>
-      {/if}
-    {:else}
-      <!-- commit is not head and neither an anchor, and there are no anchors available  -->
-      <span class="anchor-widget not-anchored not-allowed">
-        <span class="anchor-label">not anchored 🔓</span>
-      </span>
-    {/if}
+    <AnchorBadge {commit} {anchors}
+      head={project.head} on:click={(event) => updateRevision(event.detail)} />
   </div>
   {#if config.seed.git.host}
     <span>

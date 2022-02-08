@@ -133,6 +133,7 @@
   }
   .members {
     margin-top: 2rem;
+    padding-bottom: 1rem;
     align-items: center;
     display: flex;
     flex-wrap: wrap;
@@ -141,7 +142,6 @@
     display: flex;
     align-items: center;
     margin-right: 2rem;
-    margin-bottom: 1rem;
   }
   .members .member:last-child {
     margin-right: 0;
