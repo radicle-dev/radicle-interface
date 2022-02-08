@@ -21,6 +21,7 @@
   }
   .author {
     margin-right: 0.5rem;
+    white-space: nowrap;
   }
   .commit {
     display: flex;
@@ -34,8 +35,15 @@
     align-items: center;
     gap: 0.5rem;
   }
+  .summary {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
+  }
   .time {
     margin-right: 0.5rem;
+    white-space: nowrap;
   }
 
   @media (max-width: 960px) {
@@ -49,7 +57,7 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      width: 100%;
+      padding-right: 1rem;
     }
   }
 </style>
