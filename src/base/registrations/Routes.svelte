@@ -18,12 +18,12 @@
 </Route>
 
 <Route path="registrations/:name/form" let:params let:location>
-  <New {config} subdomain={params.name} owner={getSearchParam("owner", location)} />
+  <New {config} name={params.name} owner={getSearchParam("owner", location)} />
 </Route>
 
 <Route path="registrations/:name/submit" let:params let:location>
   {#if session}
-    <Submit {config} subdomain={params.name} owner={getSearchParam("owner", location)} {session} />
+    <Submit {config} name={params.name} owner={getSearchParam("owner", location)} {session} />
   {:else}
     <Error
       message={"You must connect your wallet to register"}
@@ -32,6 +32,6 @@
   {/if}
 </Route>
 
-<Route path="registrations/:name" let:params>
-  <View {config} subdomain={params.name} />
+<Route path="registrations/:domain" let:params>
+  <View {config} domain={params.domain} />
 </Route>

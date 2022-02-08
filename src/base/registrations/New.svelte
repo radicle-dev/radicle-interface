@@ -20,11 +20,11 @@
   }
 
   export let config: Config;
-  export let subdomain: string;
+  export let name: string;
   export let owner: string | null;
 
   // We only support lower-case names.
-  subdomain = subdomain.toLowerCase();
+  name = name.toLowerCase();
 
   let fee: string;
   let state = State.CheckingAvailability;
@@ -32,7 +32,7 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(`/registrations/${subdomain}/submit?${
+    navigate(`/registrations/${name}/submit?${
       registrationOwner ? new URLSearchParams({ owner: registrationOwner }) : ''
     }`);
   }
@@ -41,7 +41,7 @@
     try {
       const [_fee, isAvailable] = await Promise.all([
         registrationFee(config),
-        registrar(config).available(subdomain),
+        registrar(config).available(name),
       ]);
 
       fee = formatBalance(_fee);
@@ -59,7 +59,7 @@
 </script>
 
 <svelte:head>
-  <title>Radicle: Register {subdomain}</title>
+  <title>Radicle: Register {name}</title>
 </svelte:head>
 
 <Modal narrow>
@@ -69,17 +69,17 @@
   </span>
 
   <span slot="subtitle">
-    {subdomain}.{config.registrar.domain}
+    {name}.{config.registrar.domain}
   </span>
 
   <span slot="body">
     {#if state === State.NameAvailable}
       {#if registrationOwner}
-        The name <strong>{subdomain}</strong> is available for registration
+        The name <strong>{name}</strong> is available for registration
         under account <strong>{formatAddress(registrationOwner)}</strong>
         for <strong>{fee} RAD</strong>.
       {:else}
-        The name <strong>{subdomain}</strong> is available
+        The name <strong>{name}</strong> is available
         for <strong>{fee} RAD</strong>.
       {/if}
     {:else if state === State.NameUnavailable}

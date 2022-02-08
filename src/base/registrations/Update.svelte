@@ -8,7 +8,7 @@
   import Modal from '@app/Modal.svelte';
   import { Status, State } from "@app/utils";
 
-  export let subdomain: string;
+  export let domain: string;
   export let config: Config;
   export let records: EnsRecord[];
   export let registration: Registration;
@@ -20,7 +20,7 @@
   onMount(async () => {
     try {
       state.status = Status.Signing;
-      const tx = await setRecords(subdomain, records, registration.resolver, config);
+      const tx = await setRecords(domain, records, registration.resolver, config);
       state.status = Status.Pending;
       await tx.wait();
       state.status = Status.Success;

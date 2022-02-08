@@ -13,18 +13,18 @@
   import { registerName, State, state } from './registrar';
 
   export let config: Config;
-  export let subdomain: string;
+  export let name: string;
   export let owner: string | null;
   export let session: Session;
 
   let error: Error | null = null;
   let registrationOwner = owner || session.address;
 
-  const view = () => navigate(`/registrations/${subdomain}`, { state: { retry: true } });
+  const view = () => navigate(`/registrations/${name}`, { state: { retry: true } });
 
   onMount(async () => {
     try {
-      await registerName(subdomain, registrationOwner, config);
+      await registerName(name, registrationOwner, config);
     } catch (e: any) {
       console.error("Error", e);
 
@@ -43,7 +43,7 @@
 </style>
 
 <svelte:head>
-  <title>{subdomain}</title>
+  <title>{name}</title>
 </svelte:head>
 
 {#if error}
@@ -60,7 +60,7 @@
       {:else}
         <div>🌐</div>
       {/if}
-      {subdomain}.{config.registrar.domain}
+      {name}.{config.registrar.domain}
     </span>
 
     <span slot="subtitle">
@@ -69,7 +69,7 @@
       {:else if $state.connection === State.SigningPermit}
         Approving registration fee. Please confirm in your wallet.
       {:else if $state.connection === State.SigningCommit}
-        Committing to <strong>{subdomain}</strong>. Please confirm transaction in your wallet.
+        Committing to <strong>{name}</strong>. Please confirm transaction in your wallet.
       {:else if $state.connection === State.Committing}
         Waiting for <strong>commit</strong> transaction to be processed&hellip;
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
