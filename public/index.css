@@ -388,6 +388,12 @@ span.small, .text-xsmall {
 .text-small {
 	font-size: 0.875rem;
 }
+.text-medium {
+	font-size: 1.25rem;
+}
+.text-big {
+	font-size: 1.5rem;
+}
 
 button.error:hover {
 	background-color: var(--color-negative);

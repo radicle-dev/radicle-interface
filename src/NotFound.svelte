@@ -10,7 +10,7 @@
 <Modal subtle>
   <span slot="title">🏜️</span>
   <span slot="body">
-    <p class="highlight"><strong>{title}</strong></p>
+    <p class="highlight text-medium"><strong>{title}</strong></p>
     <p>{subtitle}</p>
   </span>
   <span slot="actions">
