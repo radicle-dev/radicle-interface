@@ -23,7 +23,7 @@ export class WalletConnectSigner extends ethers.Signer {
 
   async getAddress(): Promise<string> {
     const accountAddress = this.walletConnect.accounts[0];
-    if (!accountAddress) {
+    if (! accountAddress) {
       throw new Error(
         "The connected wallet has no accounts or there is a connection problem"
       );

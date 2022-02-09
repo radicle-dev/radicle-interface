@@ -28,7 +28,7 @@
 
   async function isAbleToWithdraw(amount: string): Promise<[boolean, string?]> {
     try {
-      if (!$session) { return [false]; }
+      if (! $session) { return [false]; }
       if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
       if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
       let currentTime = new Date().getTime();

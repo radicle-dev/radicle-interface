@@ -161,7 +161,7 @@ export function parseEnsLabel(name: string, config: Config): string {
 export function clickOutside(node: HTMLElement, onEventFunction: () => void): any {
   const handleClick = (event: any) => {
     const path = event.composedPath();
-    if (!path.includes(node)) {
+    if (! path.includes(node)) {
       onEventFunction();
     }
   };
@@ -419,7 +419,7 @@ export async function getTokens(address: string, config: Config): Promise<Array<
   const balances = userBalances.tokenBalances.filter((token: any) => {
     // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
     if (token.tokenBalance !== "0x") {
-      if (!BigNumber.from(token.tokenBalance).isZero()) {
+      if (! BigNumber.from(token.tokenBalance).isZero()) {
         return token;
       }
     }
