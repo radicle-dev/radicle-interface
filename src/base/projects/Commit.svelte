@@ -23,7 +23,7 @@
     }
   };
 
-  let { project, urn, branches, config } = source;
+  let { project, urn, branches } = source;
 
   $: [revision_,] = proj.splitPrefixFromPath(locator, branches, project.head);
   $: content = proj.ProjectContent.Commit;
@@ -74,7 +74,7 @@
   }
 </style>
 
-{#await proj.getCommit(urn, revision, config) then commit}
+{#await proj.getCommit(urn, revision, seed.api) then commit}
   <div class="commit">
     <header>
       <div class="summary">
