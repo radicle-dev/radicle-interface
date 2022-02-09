@@ -2,7 +2,7 @@ import type { EnsProfile } from "@app/base/registrations/registrar";
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import {
   isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile,
-  resolveIdxProfile, parseUsername, parseEnsLabel, AddressType, identifyAddress
+  resolveIdxProfile, parseUsername, AddressType, identifyAddress
 } from "@app/utils";
 import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
@@ -118,7 +118,7 @@ export class Profile {
   // Returns the corresponding registration form to edit a user profile.
   // We are not interested in a non-existant registry link, since we check before hand if the name exists.
   registry(config: Config): string {
-    if (this.profile?.ens) return `/registrations/${parseEnsLabel(this.profile.ens.name, config)}`;
+    if (this.profile?.ens) return `/registrations/${this.profile.ens.name}`;
     else return `${config.ceramic.registry}${formatCAIP10Address(this.profile.address, "eip155", config.network.chainId)}`;
   }
 
