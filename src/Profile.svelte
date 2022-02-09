@@ -133,15 +133,18 @@
   }
   .members {
     margin-top: 2rem;
-    padding-bottom: 1rem;
     align-items: center;
     display: flex;
     flex-wrap: wrap;
+  }
+  .members.loading {
+    padding-bottom: 1rem;
   }
   .members .member {
     display: flex;
     align-items: center;
     margin-right: 2rem;
+    margin-bottom: 1rem;
   }
   .members .member:last-child {
     margin-right: 0;
@@ -319,11 +322,13 @@
         <Loading center />
       {:then members}
         {#if members.length > 0}
-          <div class="members">
             <!-- We don't need to catch errors here, since it's not defined by user input and defaults to ETH addresses -->
-            {#await Profile.getMulti(members, config)}
+          {#await Profile.getMulti(members, config)}
+            <div class="members loading">
               <Loading small />
-            {:then members}
+            </div>
+          {:then members}
+            <div class="members">
               {#each members as profile}
                 <div class="member">
                   <div class="member-icon">
@@ -337,8 +342,8 @@
                   </div>
                 </div>
               {/each}
-            {/await}
-          </div>
+            </div>
+          {/await}
         {/if}
       {:catch err}
         <Message error>
