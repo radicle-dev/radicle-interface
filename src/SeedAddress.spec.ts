@@ -13,8 +13,7 @@ describe('SeedAddress', function () {
         port: 8776
       }
     }, styles);
-    cy.findByText("hydkkk…coygh1@seed.cloudhead.io").should("exist").should("have.attr", "href", "/seeds/seed.cloudhead.io");
-    cy.findByText(":8776").should("exist");
+    cy.findByText("seed.cloudhead.io").should("exist").should("have.attr", "href", "/seeds/seed.cloudhead.io");
     cy.findByText("Copy").should("exist");
   });
 
@@ -22,7 +21,7 @@ describe('SeedAddress', function () {
     cy.findByText("Copy").click().should("exist");
     cy.findByText("Copy ✓").should("have.attr", "disabled");
     // We invoke the cy.window here since doing the clipboard action in the runner window, would throw an error
-    cy.window().its("navigator.clipboard").invoke("readText").should("equal", "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1@seed.cloudhead.io:8776");
+    cy.window().its("navigator.clipboard").invoke("readText").should("equal", "seed.cloudhead.io");
     cy.wait(4000);
     cy.findByText("Copy").click().should("exist").should("not.have.attr", "disabled");
   });

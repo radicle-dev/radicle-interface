@@ -4,11 +4,15 @@
 
   export let seed: Seed;
   export let port: number;
+  export let full = false;
 
   let seedCopied = false;
 
   const copySeed = (seedId: string, seedHost: string) => {
-    return () => toClipboard(formatSeedAddress(seedId, seedHost, port)).then(() => {
+    const str = full
+      ? formatSeedAddress(seedId, seedHost, port)
+      : seedHost;
+    return () => toClipboard(str).then(() => {
       seedCopied = true;
       setTimeout(() => {
         seedCopied = false;
@@ -38,8 +42,12 @@
 <div class="desktop">
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
-    <span><a href="/seeds/{seed.host}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
-    <span class="faded">:{port}</span>
+    {#if full}
+      <span><a href="/seeds/{seed.host}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
+      <span class="faded">:{port}</span>
+    {:else}
+      <span><a href="/seeds/{seed.host}" class="link">{seed.host}</a></span>
+    {/if}
   </div>
 </div>
 <div>
