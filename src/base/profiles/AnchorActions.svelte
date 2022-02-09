@@ -98,6 +98,12 @@
   }
   .avatars {
     display: flex;
+    margin-right: 0.75rem;
+  }
+  button.execute {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 
@@ -109,7 +115,7 @@
 
 <div class="avatars">
   {#each anchor.confirmations as signee}
-    <Avatar inline source={signee} address={signee} glowOnHover />
+    <Avatar inline source={signee} address={signee} />
   {/each}
 </div>
 
@@ -118,8 +124,8 @@
   <button on:click|stopPropagation={() => {
     action = Action.Execute;
     state = State.Confirm;
-  }} class="tiny">
-    Execute
+  }} class="tiny execute">
+    <Avatar inline source={account} address={account} /> Execute
   </button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}

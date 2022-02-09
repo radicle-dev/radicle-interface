@@ -41,6 +41,13 @@
     display: flex;
     align-items: center;
   }
+  article .anchor-info {
+    display: flex;
+    align-items: center;
+  }
+  article .actions {
+    margin-right: 1rem;
+  }
   article .commit, article .actions {
     font-family: var(--font-family-monospace);
   }
@@ -90,19 +97,21 @@
         {/if}
       </slot>
     </span>
-    <span class="actions">
-      <slot name="actions">
-      </slot>
-    </span>
-    <span class="anchor-badge">
-      <slot name="anchor">
-        {#if anchor}
-          <AnchorBadge
-            commit={project.head}
-            head={project.head} noText noBg
-            anchors={[anchor.anchor.stateHash]} />
-        {/if}
-      </slot>
+    <span class="anchor-info">
+      <span class="actions">
+        <slot name="actions">
+        </slot>
+      </span>
+      <span class="anchor-badge">
+        <slot name="anchor">
+          {#if anchor}
+            <AnchorBadge
+              commit={project.head}
+              head={project.head} noText noBg
+              anchors={[anchor.anchor.stateHash]} />
+          {/if}
+        </slot>
+      </span>
     </span>
   </div>
 </article>
