@@ -8,6 +8,7 @@ import type { Config } from "@app/config";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
 import { NotFoundError } from "@app/error";
+import { getProjectAnchors } from "@app/anchors";
 import type { Anchor, PendingAnchor } from "@app/project";
 
 export interface IProfile {
@@ -162,6 +163,15 @@ export class Profile {
     } else {
       return {};
     }
+  }
+
+  async confirmedProjectAnchors(urn: string, config: Config): Promise<string[]> {
+    const storage = this.anchorsAccount || this.org?.address;
+
+    if (storage) {
+      return await getProjectAnchors(urn, storage, config);
+    }
+    return [];
   }
 
   // Get the anchors account as an org, or the org, if available.

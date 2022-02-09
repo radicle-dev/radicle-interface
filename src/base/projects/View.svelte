@@ -9,7 +9,6 @@
   import { formatOrg, formatSeedId, isRadicleId } from '@app/utils';
   import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
-  import { getAllAnchors } from '@app/anchors';
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
@@ -41,7 +40,8 @@
     const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
     const info = await proj.getInfo(id, cfg);
     const urn = isRadicleId(id) ? id : info.urn;
-    const anchors = await getAllAnchors(config, urn, profile?.anchorsAccount ?? addressOrName);
+    const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
+
     let branches = Array([info.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
 
