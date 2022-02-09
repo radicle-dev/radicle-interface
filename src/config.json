@@ -73,7 +73,6 @@
   },
   "radicle": {
     "seed": {
-      "host": "0.0.0.0",
       "api": { "port": 8777 },
       "link": { "port": 8776 },
       "git": { "port": 80 }

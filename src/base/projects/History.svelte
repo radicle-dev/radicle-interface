@@ -12,7 +12,7 @@
   export let revision: string;
   export let path: string;
 
-  let { urn, seed, addressOrName, peer, config, project, branches } = source;
+  let { urn, seed, addressOrName, peer, project, branches } = source;
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
@@ -21,19 +21,17 @@
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
     // Replaces path with current path if none passed.
-    if (path === undefined) path = "/";
+    if (! path) path = "/";
 
     if (addressOrName) {
       navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
-    } else if (seed) {
-      navigate(proj.path({ content, peer, urn, seed, revision, path }));
     } else {
-      navigate(proj.path({ content, peer, urn, revision, path }));
+      navigate(proj.path({ content, peer, urn, seed: seed.host, revision, path }));
     }
   };
 
   async function fetchCommits(revision: string): Promise<GroupedCommitsHistory> {
-    const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), config);
+    const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), seed.api);
     return groupCommitHistory(commitsQuery);
   }
 </script>

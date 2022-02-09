@@ -23,7 +23,7 @@
   export let revision: string;
   export let path: string;
 
-  let { urn, addressOrName, seed, peer, project, config, branches } = source;
+  let { urn, addressOrName, seed, peer, project, branches } = source;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.
@@ -45,8 +45,8 @@
 
     const isMarkdownPath = utils.isMarkdownPath(path);
     const promise = path === "/"
-      ? proj.getReadme(urn, commit, config)
-      : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, config);
+      ? proj.getReadme(urn, commit, source.seed.api)
+      : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, source.seed.api);
 
     state = { status: Status.Loading, path };
     state = { status: Status.Loaded, path, blob: await promise };
@@ -72,15 +72,13 @@
 
     if (addressOrName) {
       navigate(proj.path({ peer, urn, addressOrName, revision, path }));
-    } else if (seed) {
-      navigate(proj.path({ peer, urn, seed, revision, path }));
     } else {
-      navigate(proj.path({ peer, urn, revision, path }));
+      navigate(proj.path({ peer, urn, seed: seed.host, revision, path }));
     }
   };
 
   const fetchTree = async (path: string) => {
-    return proj.getTree(urn, commit, path, config);
+    return proj.getTree(urn, commit, path, seed.api);
   };
 
   const toggleMobileFileTree = () => {

@@ -98,7 +98,9 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   // If no seed provided profile.seed ends up being undefined
   if (seedHost && seedId) {
     try {
-      profile.seed = new Seed(seedHost, seedId, seedGit, seedApi);
+      profile.seed = new Seed({
+        host: seedHost, id: seedId, git: seedGit, api: seedApi
+      }, config);
     } catch (e: any) {
       console.debug(e, seedHost, seedId);
       profile.seed = new InvalidSeed(seedHost, seedId);
@@ -149,7 +151,7 @@ export async function getSeed(name: string, config: Config, resolver?: EnsResolv
   }
 
   try {
-    return new Seed(host, id, git, api);
+    return new Seed({ host, id, git, api }, config);
   } catch (e: any) {
     console.debug(e, host, id);
     return new InvalidSeed(id, host);

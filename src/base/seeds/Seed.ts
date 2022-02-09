@@ -19,52 +19,79 @@ export class InvalidSeed {
 export class Seed {
   valid: true = true;
 
-  host: string;
-  id: string;
+  api: { host: string; port: number };
+  git: { host: string; port: number };
+  link: { host: string; id: string; port: number };
 
-  api?: string;
-  git?: string;
   version?: string;
 
-  constructor(host: string, id: string, git?: string | null, api?: string | null) {
-    assert(isDomain(host), "invalid seed host");
-    assert(/^[a-z0-9]+$/.test(id), "invalid seed id");
+  constructor(seed: {
+    host: string;
+    id: string;
+    git?: string | null;
+    api?: string | null;
+    version?: string | null;
+  }, cfg: Config) {
+    assert(isDomain(seed.host), "invalid seed host");
+    assert(/^[a-z0-9]+$/.test(seed.id), "invalid seed id");
 
-    this.host = host;
-    this.id = id;
+    seed.api && assert(isDomain(seed.api), "invalid seed api host");
+    seed.git && assert(isDomain(seed.git), "invalid seed git host");
 
-    if (api && isDomain(api)) {
-      this.api = api;
+    // The `git` and `api` keys being more specific take
+    // precedence over the `host`, if available.
+    const api = seed.api ?? seed.host;
+    const git = seed.git ?? seed.host;
+
+    this.api = { host: api, port: cfg.seed.api.port };
+    this.git = { host: git, port: cfg.seed.git.port };
+    this.link = { host: seed.host, id: seed.id, port: cfg.seed.link.port };
+
+    if (seed.version) {
+      this.version = seed.version;
     }
-    if (git && isDomain(git)) {
-      this.git = git;
-    }
   }
 
-  static async getPeer(config: Config): Promise<{ id: string }> {
-    return api.get("/peer", {}, config);
+  get id(): string {
+    return this.link.id;
   }
 
-  static async getProject(urn: string, config: Config): Promise<proj.ProjectInfo> {
-    return proj.getInfo(urn, config);
+  get host(): string {
+    return this.api.host;
   }
 
-  static async getProjects(config: Config): Promise<proj.ProjectInfo[]> {
-    const result = await proj.getProjects(config);
+  async getPeer(): Promise<{ id: string }> {
+    return Seed.getPeer(this.api);
+  }
+
+  async getProject(urn: string): Promise<proj.ProjectInfo> {
+    return proj.getInfo(urn, this.api);
+  }
+
+  async getProjects(): Promise<proj.ProjectInfo[]> {
+    const result = await proj.getProjects(this.api);
     return result.map((project: any) => ({ ...project, id: project.urn }));
   }
 
-  static async get(config: Config): Promise<Seed> {
-    assert(config.seed.api.host);
+  static async getPeer({ host, port }: api.Host): Promise<{ id: string }> {
+    return api.get("/peer", {}, { host, port });
+  }
 
+  static async getInfo({ host, port }: api.Host): Promise<{ version: string }> {
+    return api.get("/", {}, { host, port });
+  }
+
+  static async lookup(hostname: string, cfg: Config): Promise<Seed> {
+    const host = { host: hostname, port: cfg.seed.api.port };
     const [info, peer] = await Promise.all([
-      api.get("/", {}, config),
-      Seed.getPeer(config),
+      Seed.getInfo(host),
+      Seed.getPeer(host),
     ]);
 
-    const seed = new Seed(config.seed.api.host, peer.id);
-    seed.version = info.version;
-
-    return seed;
+    return new Seed({
+      host: hostname,
+      id: peer.id,
+      version: info.version,
+    }, cfg);
   }
 }

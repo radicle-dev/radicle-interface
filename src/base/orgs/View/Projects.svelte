@@ -8,11 +8,12 @@
   import Widget from '@app/base/projects/Widget.svelte';
   import type { Profile } from "@app/profile";
   import type { ProjectInfo, Anchor, PendingAnchor } from "@app/project";
-  import { Seed } from "@app/base/seeds/Seed";
+  import type { Seed } from "@app/base/seeds/Seed";
   import AnchorActions from "@app/base/profiles/AnchorActions.svelte";
 
   export let profile: Profile;
   export let config: Config;
+  export let seed: Seed;
   export let account: string | null;
 
   let anchors: Record<string, Anchor> = {};
@@ -55,31 +56,29 @@
 </style>
 
 <div class="projects">
-  {#if config.seed.api.host}
-    {#await Seed.getProjects(config)}
-      <Loading center />
-    {:then projects}
-      {#each projects as project}
-        {@const anchor = anchors[project.urn]}
-        {@const pendingAnchor = pendingAnchors[project.urn]}
-        <div class="project">
-          <Widget {project} {anchor} on:click={() => onClick(project)}>
-            <span class="actions" slot="actions">
-              {#if profile.org?.safe && account && anchor}
-                {#if pendingAnchor} <!-- Pending anchor -->
-                  <AnchorActions
-                    {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
-                    on:success={() => loadAnchors()} />
-                {/if}
+  {#await seed.getProjects()}
+    <Loading center />
+  {:then projects}
+    {#each projects as project}
+      {@const anchor = anchors[project.urn]}
+      {@const pendingAnchor = pendingAnchors[project.urn]}
+      <div class="project">
+        <Widget {project} {anchor} on:click={() => onClick(project)}>
+          <span class="actions" slot="actions">
+            {#if profile.org?.safe && account && anchor}
+              {#if pendingAnchor} <!-- Pending anchor -->
+                <AnchorActions
+                  {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
+                  on:success={() => loadAnchors()} />
               {/if}
-            </span>
-          </Widget>
-        </div>
-      {/each}
-    {:catch err}
-      <Message error>
-        <strong>Error: </strong> failed to load projects: {err.message}.
-      </Message>
-    {/await}
-  {/if}
+            {/if}
+          </span>
+        </Widget>
+      </div>
+    {/each}
+  {:catch err}
+    <Message error>
+      <strong>Error: </strong> failed to load projects: {err.message}.
+    </Message>
+  {/await}
 </div>

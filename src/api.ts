@@ -1,21 +1,20 @@
-import type { Config } from '@app/config';
+export interface Host {
+  host: string;
+  port: number;
+}
 
 export async function get(
   path: string,
   params: Record<string, any>,
-  config: Config
+  api: Host
 ): Promise<any> {
-  if (! config.seed.api.host) {
-    throw new Error("Seed host unavailable");
-  }
-
   const query: Record<string, string> = {};
   for (const [key, val] of Object.entries(params)) {
     query[key] = val.toString();
   }
 
-  const base = config.seed.api.host;
-  const port = config.seed.api.port;
+  const base = api.host;
+  const port = api.port;
   const search = new URLSearchParams(query).toString();
   // Allow using the functionality with local runned http-api
   const isLocalhost = /^0.0.0.0$/.test(base);

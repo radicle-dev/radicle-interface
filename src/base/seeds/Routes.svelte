@@ -7,5 +7,5 @@
 </script>
 
 <Route path="/seeds/:seed" let:params>
-  <View {config} seedAddress={params.seed}/>
+  <View {config} host={params.seed}/>
 </Route>

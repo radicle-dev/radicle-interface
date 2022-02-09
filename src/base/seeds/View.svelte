@@ -9,14 +9,12 @@
   import * as proj from "@app/project";
 
   export let config: Config;
-  export let seedAddress: string;
-
-  config = config.withSeed({ host: seedAddress });
+  export let host: string;
 
   const onProjectClick = (project: proj.ProjectInfo) => {
     navigate(proj.path({
       urn: project.urn,
-      seed: seedAddress,
+      seed: host,
     }));
   };
 </script>
@@ -80,20 +78,20 @@
 </style>
 
 <svelte:head>
-  <title>{seedAddress}</title>
+  <title>{host}</title>
 </svelte:head>
 
-{#await Seed.get(config)}
+{#await Seed.lookup(host, config)}
   <main class="off-centered">
     <Loading center />
   </main>
-{:then info}
+{:then seed}
   <main>
     <header>
       <div class="info">
         <span class="title">
           <span class="bold">
-            🌱 {seedAddress}
+            🌱 {host}
           </span>
         </span>
       </div>
@@ -102,27 +100,27 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="label">Address</div>
-      {#if info.version === "0.2.0" && info.host}
-        <SeedAddress seed={info} port={config.seed.link.port} />
+      {#if seed.version === "0.2.0" && seed.host}
+        <SeedAddress {seed} port={seed.link.port} />
       {:else}
         <div class="seed-address subtle">N/A</div>
         <div class="desktop" />
       {/if}
       <!-- Seed ID -->
       <div class="label">Seed ID</div>
-      <div>{info.id}</div>
+      <div>{seed.id}</div>
       <div class="desktop" />
       <!-- API Port -->
       <div class="label">API Port</div>
-      <div>{config.seed.api.port}</div>
+      <div>{seed.api.port}</div>
       <div class="desktop" />
       <!-- API Version -->
       <div class="label">Version</div>
-      <div>{info.version}</div>
+      <div>{seed.version}</div>
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->
-    {#await Seed.getProjects(config) then projects}
+    {#await seed.getProjects() then projects}
       <div class="projects">
         {#each projects as project}
           <div class="project">
@@ -133,5 +131,5 @@
     {/await}
   </main>
 {:catch}
-  <NotFound title={seedAddress} subtitle="Not able to query information from this seed." />
+  <NotFound title={host} subtitle="Not able to query information from this seed." />
 {/await}

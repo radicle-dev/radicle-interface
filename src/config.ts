@@ -56,9 +56,9 @@ export class Config {
   };
   abi: { [contract: string]: string[] };
   seed: {
-    api: { host?: string; port: number };
-    git: { host?: string; port: number };
-    link: { host?: string; id?: string; port: number };
+    api: { port: number };
+    git: { port: number };
+    link: { port: number };
   };
   ceramic: {
    client: Core;
@@ -134,24 +134,6 @@ export class Config {
 
   setSigner(signer: ethers.Signer & TypedDataSigner | WalletConnectSigner): void {
     this.signer = signer;
-  }
-
-  // Return the config with an overwritten seed URL.
-  withSeed(seed: { host: string; id?: string; api?: string; git?: string }): Config {
-    const cfg = {} as Config;
-    Object.assign(cfg, this);
-
-    // The `git` and `api` keys being more specific take
-    // precedence over the `host`, if available.
-    const api = seed.api ?? seed.host;
-    const git = seed.git ?? seed.host;
-
-    cfg.seed.api.host = api;
-    cfg.seed.git.host = git;
-    cfg.seed.link.host = seed.host;
-    cfg.seed.link.id = seed.id;
-
-    return cfg;
   }
 
   getWalletConnectSigner(): WalletConnectSigner {

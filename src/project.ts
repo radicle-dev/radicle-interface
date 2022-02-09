@@ -1,8 +1,8 @@
-import type { Config } from '@app/config';
 import * as api from '@app/api';
 import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
 import { isOid } from '@app/utils';
 import type { Profile } from '@app/profile';
+import type { Seed } from '@app/base/seeds/Seed';
 
 export type Urn = string;
 export type Peer = string;
@@ -31,11 +31,10 @@ export interface Source {
   urn: string;
   addressOrName: string;
   peer: string;
-  config: Config;
   project: ProjectInfo;
   peers: Peer[];
   anchors: string[];
-  seed: string;
+  seed: Seed;
   branches: [string, string][];
   profile?: Profile | null;
 }
@@ -97,8 +96,8 @@ export interface Branches {
   heads: Branch;
 }
 
-export async function getInfo(nameOrUrn: string, config: Config): Promise<ProjectInfo> {
-  const info = await api.get(`projects/${nameOrUrn}`, {}, config);
+export async function getInfo(nameOrUrn: string, host: api.Host): Promise<ProjectInfo> {
+  const info = await api.get(`projects/${nameOrUrn}`, {}, host);
 
   return {
     ...info,
@@ -106,34 +105,34 @@ export async function getInfo(nameOrUrn: string, config: Config): Promise<Projec
   };
 }
 
-export async function getCommits(urn: string, commit: string, config: Config): Promise<CommitsHistory> {
-  return api.get(`projects/${urn}/commits?from=${commit}`, {}, config);
+export async function getCommits(urn: string, commit: string, host: api.Host): Promise<CommitsHistory> {
+  return api.get(`projects/${urn}/commits?from=${commit}`, {}, host);
 }
 
-export async function getCommit(urn: string, commit: string, config: Config): Promise<Commit> {
-  return api.get(`projects/${urn}/commits/${commit}`, {}, config);
+export async function getCommit(urn: string, commit: string, host: api.Host): Promise<Commit> {
+  return api.get(`projects/${urn}/commits/${commit}`, {}, host);
 }
 
-export async function getProjects(config: Config): Promise<ProjectInfo[]> {
-  return api.get("projects", {}, config);
+export async function getProjects(host: api.Host): Promise<ProjectInfo[]> {
+  return api.get("projects", {}, host);
 }
 
-export async function getBranchesByPeer(urn: string, peer: string, config: Config): Promise<Branches> {
-  return api.get(`projects/${urn}/remotes/${peer}`, {}, config);
+export async function getBranchesByPeer(urn: string, peer: string, host: api.Host): Promise<Branches> {
+  return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
 }
 
-export async function getPeers(urn: string, config: Config): Promise<Peer[]> {
-  return api.get(`projects/${urn}/remotes`, {}, config);
+export async function getPeers(urn: string, host: api.Host): Promise<Peer[]> {
+  return api.get(`projects/${urn}/remotes`, {}, host);
 }
 
 export async function getTree(
   urn: string,
   commit: string,
   path: string,
-  config: Config
+  host: api.Host
 ): Promise<Tree> {
   if (path === "/") path = "";
-  return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, config);
+  return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, host);
 }
 
 export async function getBlob(
@@ -141,17 +140,17 @@ export async function getBlob(
   commit: string,
   path: string,
   options: { highlight: boolean },
-  config: Config
+  host: api.Host
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/blob/${commit}/${path}`, options, config);
+  return api.get(`projects/${urn}/blob/${commit}/${path}`, options, host);
 }
 
 export async function getReadme(
   urn: string,
   commit: string,
-  config: Config
+  host: api.Host
 ): Promise<Blob> {
-  return api.get(`projects/${urn}/readme/${commit}`, {}, config);
+  return api.get(`projects/${urn}/readme/${commit}`, {}, host);
 }
 
 export function path(

@@ -115,15 +115,6 @@ export class Profile {
     return this.name ?? this.address;
   }
 
-  // Return the profile-specific config. This sets various URLs in the config,
-  // based on profile data.
-  config(config: Config): Config {
-    if (this.seed && this.seed.valid) {
-      return config.withSeed(this.seed);
-    }
-    return config;
-  }
-
   // Returns the corresponding registration form to edit a user profile.
   // We are not interested in a non-existant registry link, since we check before hand if the name exists.
   registry(config: Config): string {

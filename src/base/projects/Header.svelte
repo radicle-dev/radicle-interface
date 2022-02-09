@@ -18,7 +18,7 @@
   // If peerSelector should be showed.
   export let peerSelector: boolean;
 
-  let { urn, peer, config, project, branches, peers, anchors } = source;
+  let { urn, peer, project, branches, peers, seed, anchors } = source;
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {
@@ -163,7 +163,7 @@
     <AnchorBadge {commit} {anchors}
       head={project.head} on:click={(event) => updateRevision(event.detail)} />
   </div>
-  {#if config.seed.git.host}
+  {#if seed.git.host}
     <span>
       <div class="clone" on:click={() => toggleDropdown("clone")}>
         Clone
@@ -175,7 +175,7 @@
         <input
           readonly
           name="clone-url"
-          value="https://{config.seed.git.host}/{utils.parseRadicleId(urn)}.git"
+          value="https://{seed.git.host}/{utils.parseRadicleId(urn)}.git"
         />
         <label for="clone-url"
           >Use Git to clone this repository from the URL above.</label
@@ -184,13 +184,13 @@
     </span>
   {/if}
   <span>
-    {#if config.seed.api.host}
+    {#if seed.api.host}
       <div
         class="stat seed"
-        on:click={() => navigate(`/seeds/${config.seed.api.host}`)}
+        on:click={() => navigate(`/seeds/${seed.api.host}`)}
         title="Project data is fetched from this seed"
       >
-        <span>{config.seed.api.host}</span>
+        <span>{seed.api.host}</span>
       </div>
     {/if}
   </span>

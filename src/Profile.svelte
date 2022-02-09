@@ -377,7 +377,9 @@
         </Message>
       {/await}
     {/if}
-    <Projects {profile} {account} config={profile.config(config)} />
+    {#if profile.seed?.valid}
+      <Projects {profile} seed={profile.seed} {account} {config} />
+    {/if}
   </main>
 
   <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />

@@ -18,10 +18,8 @@
 
     if (addressOrName) {
       navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
-    } else if (seed) {
-      navigate(proj.path({ content, peer, urn, seed, revision, path }));
     } else {
-      navigate(proj.path({ content, peer, urn, revision, path }));
+      navigate(proj.path({ content, peer, urn, seed: seed.host, revision, path }));
     }
   };
 

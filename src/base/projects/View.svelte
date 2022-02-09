@@ -16,7 +16,7 @@
 
   export let id: string; // Project name or URN.
   export let addressOrName = "";
-  export let seed = "";
+  export let seedHost = "";
   export let peer = "";
   export let config: Config;
 
@@ -29,16 +29,24 @@
   let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>((resolve, reject) => {
     if (addressOrName) {
       Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p })).catch(err => reject(err.message));
-    } else if (seed) {
-      Seed.get(config.withSeed({ host: seed })).then(s => resolve({ seed: s })).catch(err => reject(err.message));
+    } else if (seedHost) {
+      Seed.lookup(seedHost, config).then(s => resolve({ seed: s })).catch(err => reject(err.message));
     } else {
       resolve(null);
     }
   }).then(async (result) => {
-    const profile = result?.profile;
-    const seedInstance = profile?.seed ?? result?.seed;
-    const cfg = seedInstance && seedInstance.valid ? config.withSeed(seedInstance) : config;
-    const info = await proj.getInfo(id, cfg);
+    if (! result) {
+      throw new Error("Couldn't load project");
+    }
+
+    const profile = result.profile;
+    const seed = result.seed || profile?.seed;
+
+    if (! seed?.valid) {
+      throw new Error("Couldn't load project: invalid seed");
+    }
+
+    const info = await proj.getInfo(id, seed.api);
     const urn = isRadicleId(id) ? id : info.urn;
     const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
 
@@ -51,12 +59,12 @@
     if (info.delegates) {
       // Check for selected peer to override available branches.
       if (peer) {
-        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.delegates[0], cfg);
+        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.delegates[0], seed.api);
         branches = [...Object.entries(branchesByPeer.heads)];
       }
-      peers = await proj.getPeers(urn, cfg);
+      peers = await proj.getPeers(urn, seed.api);
     }
-    return { urn, addressOrName, seed, peer, project: info, branches, peers, config: cfg, profile, anchors };
+    return { urn, addressOrName, seed, peer, project: info, branches, peers, config, profile, anchors };
   });
 
   $: if (projectInfo) {
@@ -72,7 +80,16 @@
   }
 
   function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
-    let newLocation = proj.path({ addressOrName, seed, urn: newParams.urn, content: newParams.content, peer: newParams.peer, revision: newParams.revision, path: newParams.path });
+    const newLocation = proj.path({
+      addressOrName,
+      seed: seedHost,
+      urn: newParams.urn,
+      content: newParams.content,
+      peer: newParams.peer,
+      revision: newParams.revision,
+      path: newParams.path
+    });
+
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
@@ -162,7 +179,7 @@
           </a>
           <span class="divider">/</span>
         {/if}
-        <Link to={proj.path({ urn: result.urn, addressOrName, seed })}>{result.project.name}</Link>
+        <Link to={proj.path({ urn: result.urn, addressOrName, seed: result.seed.host })}>{result.project.name}</Link>
         {#if peer}
           <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
@@ -171,10 +188,10 @@
       <div class="description">{result.project.description}</div>
     </header>
 
-    {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", config) then tree}
+    {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", result.seed.api) then tree}
       <Header {tree} {revision} {content} {path}
         source={result}
-        peerSelector={!!seed}
+        peerSelector={!!seedHost}
         on:routeParamsChange={updateRouteParams} />
       <ProjectContentRoutes {tree}
         source={result}
