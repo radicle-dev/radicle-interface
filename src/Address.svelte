@@ -21,8 +21,9 @@
   const nameOrAddress = profile?.name || address;
 
   onMount(async () => {
-    if (!profile) {
+    if (! profile) {
       identifyAddress(address, config).then((t: AddressType) => addressType = t);
+
       if (resolve) {
         Profile.get(address, ProfileType.Minimal, config).then(p => profile = p);
       }
@@ -31,7 +32,7 @@
       addressType = profile.type;
     }
   });
-  $: addressLabel = profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
+  $: addressLabel = resolve && profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
   $: checksumAddress = compact
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
@@ -56,7 +57,11 @@
 
 <div class="address" title={address} class:no-badge={noBadge}>
   {#if !noAvatar}
-    <Avatar inline source={profile?.avatar ?? address} {address}/>
+    {#if resolve && profile?.avatar}
+      <Avatar inline source={profile.avatar} {address}/>
+    {:else}
+      <Avatar inline source={address} {address}/>
+    {/if}
   {/if}
   {#if addressType === AddressType.Org}
     <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
