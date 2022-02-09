@@ -32,11 +32,11 @@ export class Seed {
     api?: string | null;
     version?: string | null;
   }, cfg: Config) {
-    assert(isDomain(seed.host), "invalid seed host");
-    assert(/^[a-z0-9]+$/.test(seed.id), "invalid seed id");
+    assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
+    assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
-    seed.api && assert(isDomain(seed.api), "invalid seed api host");
-    seed.git && assert(isDomain(seed.git), "invalid seed git host");
+    seed.api && assert(isDomain(seed.api), `invalid seed api host ${seed.api}`);
+    seed.git && assert(isDomain(seed.git), `invalid seed git host ${seed.git}`);
 
     // The `git` and `api` keys being more specific take
     // precedence over the `host`, if available.
