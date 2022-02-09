@@ -329,12 +329,9 @@ export class Org {
     const safes = safesByOwner.safes.reduce(
       (prev: any, curr: Safe) => prev.concat(curr.id), []);
     const orgsByOwner = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwners, { owners: [...safes, owner] });
+    const orgs: { id: string; owner: string }[] = [...orgsByOwner.orgs];
 
-    const orgs: any[] = [...orgsByOwner.orgs];
-
-    return orgs.map((o: { id: string; owner: string }) => {
-      return new Org(o.id, o.owner);
-    });
+    return orgs.map(o => new Org(o.id, o.owner));
   }
 
   static async createMultiSig(
