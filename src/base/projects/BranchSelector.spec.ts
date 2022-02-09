@@ -5,17 +5,15 @@ import { styles } from "@test/support/index";
 const defaultProps = {
   project: {
     head: "e678629cd37c770c640a2cd997fc76303c815772",
-    meta: {
-      name: "nakamoto",
-      description: "Privacy-preserving Bitcoin light-client implementation in Rust",
-      defaultBranch: "master",
-      maintainers: [
-        "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"
-      ],
-      delegates: [
-        "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"
-      ]
-    }
+    name: "nakamoto",
+    description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+    defaultBranch: "master",
+    maintainers: [
+      "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"
+    ],
+    delegates: [
+      "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"
+    ]
   },
   branches: [
     ["master", "e678629cd37c770c640a2cd997fc76303c815772"]

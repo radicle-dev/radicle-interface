@@ -6,8 +6,10 @@ describe('SeedAddress', function () {
   it("Renders correctly", () => {
     mount(SeedAddress, {
       props: {
-        id: "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1",
-        host: "seed.cloudhead.io",
+        seed: {
+          id: "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1",
+          host: "seed.cloudhead.io",
+        },
         port: 8776
       }
     }, styles);
