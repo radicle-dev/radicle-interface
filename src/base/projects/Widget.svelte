@@ -79,10 +79,16 @@
     <span class="name">{project.name}</span>
     <span class="urn desktop">{project.urn}</span>
   </div>
-  <div class="description">{project.description}</div>
+  <div class="description">{project.description || ""}</div>
   <div class="anchor">
     <span class="commit">
-      <slot name="stateHash">{project.head}</slot>
+      <slot name="stateHash">
+        {#if project.head}
+          {project.head}
+        {:else}
+          <span class="subtle">Could not retrieve HEAD</span>
+        {/if}
+      </slot>
     </span>
     <span class="actions">
       <slot name="actions">
