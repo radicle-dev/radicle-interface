@@ -76,7 +76,7 @@
     </div>
     <div class="card-members">
       {#if members.length > 0}
-        {members.length} members
+        {members.length} member(s)
       {:else}
         {formatAddress(profile.address)}
       {/if}
