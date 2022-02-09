@@ -65,9 +65,9 @@
   {#if diff.modified.length > 0}
     <span class="bold"> {diff.modified.length} file(s) changed </span>
     with
-    <span class="additions bold"> {stats.additions} additions </span>
+    <span class="additions bold"> {stats.additions} addition(s) </span>
     and
-    <span class="deletions bold"> {stats.deletions} deletions </span>
+    <span class="deletions bold"> {stats.deletions} deletion(s) </span>
   {/if}
 </div>
 <div>
