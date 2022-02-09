@@ -1,22 +1,14 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
   import { Seed } from "@app/base/seeds/Seed";
-  import Widget from "@app/base/projects/Widget.svelte";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
   import NotFound from "@app/NotFound.svelte";
-  import * as proj from "@app/project";
+  import Projects from "@app/base/orgs/View/Projects.svelte";
 
   export let config: Config;
   export let host: string;
 
-  const onProjectClick = (project: proj.ProjectInfo) => {
-    navigate(proj.path({
-      urn: project.urn,
-      seed: host,
-    }));
-  };
 </script>
 
 <style>
@@ -53,12 +45,6 @@
   .title {
     display: flex;
     align-items: center;
-  }
-  .projects {
-    margin-top: 2rem;
-  }
-  .projects .project {
-    margin-bottom: 1rem;
   }
   .desktop {
     display: block !important;
@@ -115,15 +101,7 @@
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->
-    {#await seed.getProjects() then projects}
-      <div class="projects">
-        {#each projects as project}
-          <div class="project">
-            <Widget {project} on:click={() => onProjectClick(project)} />
-          </div>
-        {/each}
-      </div>
-    {/await}
+    <Projects {seed} {config} />
   </main>
 {:catch}
   <NotFound title={host} subtitle="Not able to query information from this seed." />

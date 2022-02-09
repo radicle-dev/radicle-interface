@@ -11,29 +11,32 @@
   import type { Seed } from "@app/base/seeds/Seed";
   import AnchorActions from "@app/base/profiles/AnchorActions.svelte";
 
-  export let profile: Profile;
-  export let config: Config;
   export let seed: Seed;
-  export let account: string | null;
+  export let profile: Profile | null = null;
+  export let account: string | null = null;
+  export let config: Config;
 
   let anchors: Record<string, Anchor> = {};
   let pendingAnchors: Record<string, PendingAnchor> = {};
 
   const loadAnchors = async () => {
-    const [pending, confirmed] = await Promise.all([
-      profile.pendingAnchors(config),
-      profile.confirmedAnchors(config),
-    ]);
+    if (profile) {
+      const [pending, confirmed] = await Promise.all([
+        profile.pendingAnchors(config),
+        profile.confirmedAnchors(config),
+      ]);
 
-    anchors = confirmed;
-    pendingAnchors = pending;
+      anchors = confirmed;
+      pendingAnchors = pending;
+    }
   };
 
   const onClick = (project: ProjectInfo) => {
     navigate(
       proj.path({
         urn: project.urn,
-        addressOrName: profile.name ?? profile.address,
+        seed: seed?.host,
+        addressOrName: profile?.name ?? profile?.address,
         revision: project.head,
       })
     );
@@ -65,7 +68,7 @@
       <div class="project">
         <Widget {project} {anchor} on:click={() => onClick(project)}>
           <span class="actions" slot="actions">
-            {#if profile.org?.safe && account && anchor}
+            {#if profile?.org?.safe && account && anchor}
               {#if pendingAnchor} <!-- Pending anchor -->
                 <AnchorActions
                   {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
