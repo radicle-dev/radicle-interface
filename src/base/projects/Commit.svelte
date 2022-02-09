@@ -8,9 +8,9 @@
   export let content: proj.ProjectContent;
   export let revision: string;
   export let locator: string;
-  export let source: any;
+  export let source: proj.Source;
 
-  const { addressOrName, peer, seed } = source;
+  const { addressOrName, peer, seed, project, urn, branches } = source;
 
   const navigateCommit = (path: string, content?: proj.ProjectContent) => {
     // Replaces path with current path if none passed.
@@ -22,8 +22,6 @@
       navigate(proj.path({ content, peer, urn, seed: seed.host, revision, path }));
     }
   };
-
-  let { project, urn, branches } = source;
 
   $: [revision_,] = proj.splitPrefixFromPath(locator, branches, project.head);
   $: content = proj.ProjectContent.Commit;
