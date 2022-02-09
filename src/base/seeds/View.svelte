@@ -100,12 +100,7 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="label">Address</div>
-      {#if seed.version === "0.2.0" && seed.host}
-        <SeedAddress {seed} port={seed.link.port} />
-      {:else}
-        <div class="seed-address subtle">N/A</div>
-        <div class="desktop" />
-      {/if}
+      <SeedAddress {seed} port={seed.link.port} />
       <!-- Seed ID -->
       <div class="label">Seed ID</div>
       <div>{seed.id}</div>
