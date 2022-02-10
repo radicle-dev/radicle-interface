@@ -36,7 +36,7 @@
 
   const updatePeer = (newPeer: string) => {
     dropdownState.peer = false;
-    dispatch("routeParamsChange", { urn, content, revision, peer: newPeer, path });
+    dispatch("routeParamsChange", { urn, peer: newPeer, path });
   };
 
   const updateRevision = (newRevision: string) => {

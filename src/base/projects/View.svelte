@@ -7,12 +7,12 @@
   import { Profile, ProfileType } from '@app/profile';
   import type { ProjectInfo } from '@app/project';
   import { formatOrg, formatSeedId, isRadicleId, setOpenGraphMetaTag } from '@app/utils';
-  import { getOid } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
 
   import Header from '@app/base/projects/Header.svelte';
   import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
   import NotFound from '@app/NotFound.svelte';
+  import type { Host } from '@app/api';
 
   export let id: string; // Project name or URN.
   export let addressOrName = "";
@@ -23,7 +23,7 @@
   let parentName = formatOrg(addressOrName, config);
   let pageTitle = parentName ? `${parentName}/${id}` : id;
   let projectInfo: ProjectInfo | null = null;
-  let revision: string;
+  let revision = "";
   let content: proj.ProjectContent;
   let path: string;
   let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>((resolve, reject) => {
@@ -47,24 +47,16 @@
     }
 
     const info = await proj.getInfo(id, seed.api);
+    projectInfo = info;
+
     const urn = isRadicleId(id) ? id : info.urn;
     const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
 
     let branches = Array([info.defaultBranch, info.head]) as [string, string][];
     let peers: proj.Peer[] = [];
+    peers = await proj.getPeers(urn, seed.api);
 
-    projectInfo = info;
-
-    // Checks for delegates returned from seed node, as feature check of the seed node
-    if (info.delegates) {
-      // Check for selected peer to override available branches.
-      if (peer) {
-        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.delegates[0], seed.api);
-        branches = [...Object.entries(branchesByPeer.heads)];
-      }
-      peers = await proj.getPeers(urn, seed.api);
-    }
-    return { urn, addressOrName, seed, peer, project: info, branches, peers, config, profile, anchors };
+    return { urn, addressOrName, seed, peer, project: info, branches, peers, profile, anchors };
   });
 
   $: if (projectInfo) {
@@ -85,22 +77,38 @@
     ]);
   }
 
-  function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
-    const newLocation = proj.path({
+  const getProjectSource = async (urn: string, peer: string, project: ProjectInfo, seedHost: Host): Promise<[proj.Tree, string]> => {
+    revision = project.head;
+
+    if (peer) {
+      const query = await proj.getBranchesByPeer(urn, peer, seedHost);
+      revision = query.heads[project.defaultBranch];
+    }
+    const tree = await proj.getTree(urn, revision, "/", seedHost);
+
+    return [tree, revision];
+  };
+
+  function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision?: string; peer: string; content?: proj.ProjectContent } }) {
+    const routeParams: any = {
       addressOrName,
       seed: seedHost,
       urn: newParams.urn,
-      content: newParams.content,
       peer: newParams.peer,
-      revision: newParams.revision,
       path: newParams.path
-    });
+    };
+
+    if (newParams.revision) routeParams.revision = newParams.revision;
+    if (newParams.content) routeParams.content = newParams.content;
+    const newLocation = proj.path(routeParams);
+
+    console.log(newLocation);
 
     if (newLocation !== window.location.pathname) {
       navigate(newLocation);
     }
-    if (content !== newParams.content) content = newParams.content;
-    if (revision !== newParams.revision) revision = newParams.revision;
+    if (content !== newParams.content) content = newParams.content ?? proj.ProjectContent.Tree;
+    if (revision !== newParams.revision) revision = newParams.revision ?? "";
     if (path !== newParams.path) path = newParams.path;
     if (peer !== newParams.peer) peer = newParams.peer;
   }
@@ -194,12 +202,12 @@
       <div class="description">{result.project.description}</div>
     </header>
 
-    {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", result.seed.api) then tree}
-      <Header {tree} {revision} {content} {path} {peer}
+    {#await getProjectSource(result.urn, peer, result.project, result.seed.api) then [tree, head]}
+      <Header {tree} revision={head} {content} {path} {peer}
         source={result}
         peerSelector={!!seedHost}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {tree} {peer}
+      <ProjectContentRoutes {tree} {peer} {head}
         source={result}
         bind:content={content}
         bind:revision={revision}

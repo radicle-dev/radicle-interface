@@ -11,7 +11,9 @@
   export let revision: string;
   export let path: string;
   export let peer: string;
+  export let head: string;
 
+  revision = head;
   let locator = source.anchors[0] || source.project.head;
 </script>
 
