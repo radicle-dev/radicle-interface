@@ -117,6 +117,10 @@ export async function getProjects(host: api.Host): Promise<ProjectInfo[]> {
   return api.get("projects", {}, host);
 }
 
+export async function getDelegateProjects(delegate: string, host: api.Host): Promise<ProjectInfo[]> {
+  return api.get(`delegates/${delegate}/projects`, {}, host);
+}
+
 export async function getBranchesByPeer(urn: string, peer: string, host: api.Host): Promise<Branches> {
   return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
 }

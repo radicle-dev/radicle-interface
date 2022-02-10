@@ -59,7 +59,7 @@
 </style>
 
 <div class="projects">
-  {#await seed.getProjects()}
+  {#await seed.getProjects(profile?.id)}
     <Loading center />
   {:then projects}
     {#each projects as project}

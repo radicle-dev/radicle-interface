@@ -37,6 +37,11 @@ export class Profile {
     return this.profile.ens?.address ?? this.profile.address;
   }
 
+  // Get radicle link id.
+  get id(): string | undefined {
+    return this.profile.ens?.id;
+  }
+
   // Get the address type
   get type(): AddressType {
     return this.profile.type;

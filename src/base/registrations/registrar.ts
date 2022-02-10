@@ -17,6 +17,7 @@ export interface Registration {
 
 export interface EnsProfile {
   name: string;
+  id?: string;
   owner?: string;
   address?: string;
   seed?: Seed | InvalidSeed;
@@ -73,6 +74,7 @@ export async function getRegistration(name: string, config: Config, resolver?: E
     resolver.getAddress(),
     resolver.getText('avatar'),
     resolver.getText('url'),
+    resolver.getText('eth.radicle.id'),
     resolver.getText('eth.radicle.seed.id'),
     resolver.getText('eth.radicle.seed.host'),
     resolver.getText('eth.radicle.seed.git'),
@@ -82,11 +84,12 @@ export async function getRegistration(name: string, config: Config, resolver?: E
     resolver.getText('com.github'),
   ]);
 
-  const [address, avatar, url, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
+  const [address, avatar, url, id, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
     meta.map(r => r.status == "fulfilled" && r.value ? r.value : undefined);
 
   const profile: EnsProfile = {
     name,
+    id,
     url,
     avatar,
     anchorsAccount,

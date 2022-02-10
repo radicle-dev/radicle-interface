@@ -68,8 +68,11 @@ export class Seed {
     return proj.getInfo(urn, this.api);
   }
 
-  async getProjects(): Promise<proj.ProjectInfo[]> {
-    const result = await proj.getProjects(this.api);
+  async getProjects(id?: string): Promise<proj.ProjectInfo[]> {
+    const result = id
+      ? await proj.getDelegateProjects(id, this.api)
+      : await proj.getProjects(this.api);
+
     return result.map((project: any) => ({ ...project, id: project.urn }));
   }
 
