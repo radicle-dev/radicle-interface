@@ -8,7 +8,7 @@
     description: string;
     resolve?: boolean;
     editable: boolean;
-    error?: string;
+    error?: string | null;
     example?: string;
     url?: string;
   }
@@ -182,7 +182,8 @@
     <div>
       {#if field.editable && editable}
         <input name={field.name} class="field" placeholder={field.placeholder}
-               on:change={validate} value={field.value || ""} type="text" {disabled} />
+          on:change={validate} on:input={() => field.error = null}
+          value={field.value || ""} type="text" {disabled} />
       {:else}
         <span class="field">
           {#if field.value}
