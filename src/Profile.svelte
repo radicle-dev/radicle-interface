@@ -19,6 +19,7 @@
   import Projects from '@app/base/orgs/View/Projects.svelte';
   import { NotFoundError } from '@app/error';
   import NotFound from '@app/NotFound.svelte';
+  import RadicleUrn from '@app/RadicleUrn.svelte';
 
   export let config: Config;
   export let addressOrName: string;
@@ -220,6 +221,16 @@
     </header>
 
     <div class="fields">
+      <!-- ID -->
+      {#if profile.id}
+        <div class="label">ID</div>
+        <RadicleUrn urn={profile.id} />
+      {/if}
+      <!-- Seed Address -->
+      {#if profile.seed && profile.seed.valid}
+        <div class="label">Seed</div>
+        <SeedAddress seed={profile.seed} port={config.seed.link.port} />
+      {/if}
       <!-- Address -->
       <div class="label">Address</div>
       <div class="desktop"><Address {config} {profile} address={profile.address} /></div>
@@ -259,11 +270,6 @@
           <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
           <div class="desktop" />
         {/if}
-      {/if}
-      <!-- Seed Address -->
-      {#if profile.seed && profile.seed.valid}
-        <div class="label">Seed</div>
-        <SeedAddress seed={profile.seed} port={config.seed.link.port} />
       {/if}
       <!-- Org Name/Profile -->
       <div class="label">Profile</div>
