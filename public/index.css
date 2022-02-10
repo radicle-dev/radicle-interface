@@ -395,6 +395,15 @@ span.small, .text-xsmall {
 	font-size: 1.5rem;
 }
 
+.notice {
+	font-size: 0.875rem;
+	border-radius: 0.25rem;
+	color: var(--color-yellow);
+	background-color: var(--color-yellow-background);
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
 button.error:hover {
 	background-color: var(--color-negative);
 }

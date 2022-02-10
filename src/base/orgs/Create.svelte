@@ -160,6 +160,11 @@
     <span slot="body">
       {#if state === State.Idle}
         <div class="configuration">
+          <div class="notice">
+            <strong>Notice:</strong> Orgs V1 are being deprecated. It is recommended
+            not to create new orgs at this point.
+          </div>
+
           <div class="governance">
             <Options name="governance" disabled={state !== State.Idle}
                      selected="{governance}" options={orgTypes}
