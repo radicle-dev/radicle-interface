@@ -77,6 +77,9 @@
         { name: "github", validate: "handle", label: "GitHub", placeholder: "GitHub username, eg. 'acme'",
           description: "The GitHub username associated with this name.",
           value: r.profile.github, editable: true },
+        { name: "id", label: "Radicle", validate: "identity", placeholder: "Radicle URN, eg. rad:git:hnrkqdpm9ub19oc8d...",
+          description: "The local radicle identity associated with this name.",
+          value: r.profile.id, editable: true },
         { name: "seed.host", label: "Seed Host", validate: "domain", placeholder: "seed.acme.org",
           url: r.profile.seed && `/seeds/${r.profile.seed.host}`,
           description: "The seed host address. " +

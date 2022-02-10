@@ -18,6 +18,7 @@
     "URN": "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
     "handle": "acme",
     "id": "hydkkcf6k9be5fuszdhpqbctu3q3fuwagj874wx2puia8ti8coygh1",
+    "identity": "rad:git:hnrkqdpm9ub19oc8dccx44echy75hzfsezyio",
     "domain": "seed.acme.xyz",
     "address": "0x17a8c096733BD5F87aD43D7A2A4d1C42ab8A2A70",
   };
@@ -37,6 +38,7 @@
     handle: /^[a-zA-Z0-9-_]{1,39}$/,
     address: /^0x[a-zA-Z0-9]{40}$/,
     id: /^[a-z0-9]+$/,
+    identity: /^rad:git:[a-z0-9]{37}$/,
     domain: /^[^/:$!_;,@#]+\.[a-z]{2,}$/,
   };
 </script>

@@ -34,6 +34,7 @@ export async function setRecords(name: string, records: EnsRecord[], resolver: E
           iface.encodeFunctionData("setText", [node, "com." + r.name, r.value])
         );
         break;
+      case "id":
       case "seed.id":
       case "seed.host":
       case "seed.git":
