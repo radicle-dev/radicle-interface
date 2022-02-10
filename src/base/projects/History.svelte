@@ -11,8 +11,9 @@
   export let content: ProjectContent;
   export let revision: string;
   export let path: string;
+  export let peer: string;
 
-  let { urn, seed, addressOrName, peer, project, branches } = source;
+  let { urn, seed, addressOrName, project, branches } = source;
 
   // Bind content to commit history to trigger updates in parent components.
   $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);

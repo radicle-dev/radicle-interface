@@ -9,8 +9,9 @@
   export let revision: string;
   export let locator: string;
   export let source: proj.Source;
+  export let peer: string;
 
-  const { addressOrName, peer, seed, project, urn, branches } = source;
+  const { addressOrName, seed, project, urn, branches } = source;
 
   const navigateCommit = (path: string, content?: proj.ProjectContent) => {
     // Replaces path with current path if none passed.

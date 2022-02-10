@@ -195,11 +195,11 @@
     </header>
 
     {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", result.seed.api) then tree}
-      <Header {tree} {revision} {content} {path}
+      <Header {tree} {revision} {content} {path} {peer}
         source={result}
         peerSelector={!!seedHost}
         on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {tree}
+      <ProjectContentRoutes {tree} {peer}
         source={result}
         bind:content={content}
         bind:revision={revision}

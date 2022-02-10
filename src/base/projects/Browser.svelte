@@ -22,8 +22,9 @@
   export let content: proj.ProjectContent;
   export let revision: string;
   export let path: string;
+  export let peer: string;
 
-  let { urn, addressOrName, seed, peer, project, branches } = source;
+  let { urn, addressOrName, seed, project, branches } = source;
 
   // This is reactive to respond to path changes that don't originate from this
   // component, eg. when using the browser's "back" button.

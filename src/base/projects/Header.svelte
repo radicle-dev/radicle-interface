@@ -15,10 +15,11 @@
   export let tree: Tree;
   export let content: ProjectContent;
   export let revision: string;
+  export let peer: string;
   // If peerSelector should be showed.
   export let peerSelector: boolean;
 
-  let { urn, peer, project, branches, peers, seed, anchors } = source;
+  let { urn, project, branches, peers, seed, anchors } = source;
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {
