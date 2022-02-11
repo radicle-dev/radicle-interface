@@ -33,6 +33,7 @@ export interface Source {
   urn: string;
   project: ProjectInfo;
   peers: PeerId[];
+  branches: Branches;
   anchors: string[];
   seed: Seed;
   profile?: Profile | null;
@@ -97,7 +98,6 @@ export interface Remote {
 
 export interface Browser {
   content: ProjectContent;
-  branches: Branches;
   revision: string | null;
   peer: string | null;
   path: string | null;
@@ -112,21 +112,16 @@ export const browserStore = writable({
 } as Browser);
 
 export interface BrowseTo {
-    content?: ProjectContent;
-    revision?: string | null;
-    path?: string | null;
-    peer?: string | null;
-    branches?: Branches;
-}
-
-export interface PathOptions {
-  urn: string;
   content?: ProjectContent;
-  profile?: string | null;
-  seed?: string | null;
-  peer?: string | null;
   revision?: string | null;
   path?: string | null;
+  peer?: string | null;
+}
+
+export interface PathOptions extends BrowseTo {
+  urn: string;
+  profile?: string | null;
+  seed?: string | null;
 }
 
 export function browse(browse: BrowseTo): void {
@@ -191,28 +186,20 @@ export async function getRemotes(urn: string, host: api.Host): Promise<PeerId[]>
 export async function getRoot(
   project: ProjectInfo,
   revision: string | null,
-  peer: string | null,
+  heads: Branches,
   host: api.Host
-): Promise<{ tree: Tree; branches: Branches; commit: string }> {
+): Promise<{ tree: Tree; commit: string }> {
   const urn = project.urn;
 
-  let remote: Remote = {
-    heads: { [project.defaultBranch]: project.head }
-  };
-
-  if (peer) {
-    remote = await getRemote(urn, peer, host);
-  }
-
-  const head = remote.heads[project.defaultBranch];
-  const commit = revision ? getOid(revision, remote.heads) : head;
+  const head = heads[project.defaultBranch];
+  const commit = revision ? getOid(revision, heads) : head;
 
   if (! commit) {
     throw new Error(`Revision ${revision} not found`);
   }
   const tree = await getTree(urn, commit, "/", host);
 
-  return { tree, branches: remote.heads, commit };
+  return { tree, commit };
 }
 
 export async function getTree(
@@ -298,16 +285,22 @@ export function getOid(revision: string, branches?: Branches): string | null {
   return null;
 }
 
-// Splits the path consisting of a revision (eg. branch or commit) and file path into a tuple [revision, file-path]
-export function splitPrefixFromPath(input: string, branches: Branches): [string, string] | null {
+// Parses the path consisting of a revision (eg. branch or commit) and file path into a tuple [revision, file-path]
+export function parseRoute(input: string, branches: Branches): { path?: string; revision?: string } {
   const branch = Object.entries(branches).find(([branchName,]) => input.startsWith(branchName));
   const commitPath = [input.slice(0, 40), input.slice(41)];
+  const parsed: { path?: string; revision?: string } = {};
 
   if (branch) {
     const [rev, path] = [input.slice(0, branch[0].length), input.slice(branch[0].length + 1)];
-    return [rev, path ? path : "/"];
+
+    parsed.revision = rev;
+    parsed.path = path ? path : "/";
   } else if (isOid(commitPath[0])) {
-    return [commitPath[0], commitPath[1] ? commitPath[1] : "/"];
+    parsed.revision = commitPath[0];
+    parsed.path = commitPath[1] ? commitPath[1] : "/";
+  } else {
+    parsed.path = input;
   }
-  return null;
+  return parsed;
 }

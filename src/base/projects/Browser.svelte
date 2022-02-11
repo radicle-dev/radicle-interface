@@ -25,7 +25,7 @@
 
   $: browser = $browserStore;
   $: path = browser.path || "/";
-  $: revision = browser.revision || browser.branches[project.head];
+  $: revision = browser.revision || source.branches[project.head];
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -71,7 +71,7 @@
     mobileFileTree = !mobileFileTree;
   };
 
-  $: commit = proj.getOid(revision, browser.branches) || project.head;
+  $: commit = proj.getOid(revision, source.branches) || project.head;
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

@@ -5,7 +5,6 @@
   import Redirect from "@app/Redirect.svelte";
 
   export let config: Config;
-
 </script>
 
 <!-- With an Seed context -->

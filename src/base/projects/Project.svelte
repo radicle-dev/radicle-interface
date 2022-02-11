@@ -7,12 +7,16 @@
   import { browserStore } from '@app/project';
 
   import Header from '@app/base/projects/Header.svelte';
-  import ProjectContentRoutes from '@app/base/projects/ProjectContentRoutes.svelte';
+
+  import Browser from "./Browser.svelte";
+  import Commit from "./Commit.svelte";
+  import History from "./History.svelte";
 
   export let peer: string | null = null;
   export let config: Config;
   export let source: proj.Source;
-  export let peerSelector = false;
+  export let content: proj.ProjectContent;
+  export let revision: string;
 
   const project = source.project;
 
@@ -43,11 +47,6 @@
     { prop: "og:description", content: project.description },
     { prop: "og:url", content: window.location.href }
   ]);
-
-  // Necessary for the initial load, but causes double rendering.
-  // Once the content routing is above this component, this can go
-  // away.
-  $: revision = $browserStore.revision;
 </script>
 
 <style>
@@ -119,9 +118,16 @@
   <div class="description">{source.project.description}</div>
 </header>
 
-{#await proj.getRoot(source.project, revision, peer, source.seed.api) then { tree, branches, commit }}
-  <Header {tree} {branches} {commit} {browserStore} {source} {peerSelector} />
-  <ProjectContentRoutes {tree} {peer} {branches} {browserStore} {source} />
+{#await proj.getRoot(source.project, revision, source.branches, source.seed.api) then { tree, commit }}
+  <Header {tree} {commit} {browserStore} {source} peerSelector={! source.profile} />
+
+  {#if content == proj.ProjectContent.Tree}
+    <Browser {source} {tree} {browserStore} />
+  {:else if content == proj.ProjectContent.History}
+    <History {source} {commit} />
+  {:else if content == proj.ProjectContent.Commit}
+    <Commit {source} {commit} />
+  {/if}
 {:catch err}
   <div class="container center-content">
     <div class="error error-message text-xsmall">

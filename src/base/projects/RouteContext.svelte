@@ -1,42 +1,40 @@
 <script lang="ts">
   import type { Writable } from 'svelte/store';
+  import type { Config } from "@app/config";
   import * as proj from '@app/project';
 
-  export let browserStore: Writable<proj.Browser>;
+  import Project from './Project.svelte';
+
+  export let browserStore: Writable<proj.Browser> = proj.browserStore;
   export let route: string | null = null;
   export let revision: string | null = null;
   export let peer: string | null;
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
-  export let branches: proj.Branches;
-  export let project: proj.ProjectInfo;
+  export let source: proj.Source;
+  export let config: Config;
 
-  const browse: any = { content, peer, branches, path: "/" };
+  const browse: any = { content, peer, path: "/" };
+  const head = source.branches[source.project.defaultBranch];
 
   $: if (route) {
-    const result = proj.splitPrefixFromPath(route, $browserStore.branches);
+    const { path, revision } = proj.parseRoute(route, source.branches);
 
-    console.log("RouteParser", route, result);
-
-    if (result) {
-      const [revision, path] = result;
-
-      browse.revision = revision;
-      browse.path = path;
-    }
+    if (path) browse.path = path;
+    if (revision) browse.revision = revision;
   } else if (revision) {
     browse.revision = revision;
   } else {
-    browse.revision = branches[project.defaultBranch];
+    browse.revision = head;
   }
 
   $: proj.browse(browse);
   $: browser = $browserStore;
-  $: commit = browser.revision && proj.getOid(browser.revision, browser.branches);
 </script>
 
-<slot
-  revision={browser.revision}
+<Project
   peer={browser.peer}
-  path={browser.path || "/"}
-  {commit}
-></slot>
+  revision={browser.revision || head}
+  content={browser.content}
+  {source}
+  {config}
+/>

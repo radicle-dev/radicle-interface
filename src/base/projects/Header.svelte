@@ -14,19 +14,12 @@
   export let commit: string;
   export let browserStore: Writable<Browser>;
   export let peerSelector: boolean; // If peerSelector should be showed.
-  export let branches: proj.Branches;
 
   let { urn, project, peers, seed, anchors } = source;
 
   $: browser = $browserStore;
   $: revision = browser.revision || commit;
   $: content = browser.content;
-
-  $: if (Object.keys(browser.branches).length > 0) {
-    branches = browser.branches;
-  } else {
-    proj.browse({ branches });
-  }
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {
@@ -164,7 +157,7 @@
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />
   {/if}
-  <BranchSelector {branches} {project} {revision} {toggleDropdown}
+  <BranchSelector branches={source.branches} {project} {revision} {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
