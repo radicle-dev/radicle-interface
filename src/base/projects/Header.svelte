@@ -24,6 +24,8 @@
 
   $: if (Object.keys(browser.branches).length > 0) {
     branches = browser.branches;
+  } else {
+    proj.browse({ branches });
   }
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };

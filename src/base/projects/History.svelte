@@ -11,7 +11,7 @@
   let { urn, seed } = source;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    proj.navigateTo({ content, revision }, source);
+    proj.navigateTo({ content, revision, path: null }, source);
   };
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
     const commitsQuery = await getCommits(urn, parentCommit, seed.api);

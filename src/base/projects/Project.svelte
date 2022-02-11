@@ -43,6 +43,11 @@
     { prop: "og:description", content: project.description },
     { prop: "og:url", content: window.location.href }
   ]);
+
+  // Necessary for the initial load, but causes double rendering.
+  // Once the content routing is above this component, this can go
+  // away.
+  $: revision = $browserStore.revision;
 </script>
 
 <style>
@@ -114,8 +119,7 @@
   <div class="description">{source.project.description}</div>
 </header>
 
-<!-- TODO: Should reivision be null? -->
-{#await proj.getRoot(source.project, null, peer, source.seed.api) then { tree, branches, commit }}
+{#await proj.getRoot(source.project, revision, peer, source.seed.api) then { tree, branches, commit }}
   <Header {tree} {branches} {commit} {browserStore} {source} {peerSelector} />
   <ProjectContentRoutes {tree} {peer} {branches} {browserStore} {source} />
 {:catch err}

@@ -14,6 +14,7 @@
   const switchBranch = (name: string) => {
     dispatch("branchChanged", name);
   };
+
   let branchLabel: string | null = null;
 
   $: branchList = Object.keys(branches).sort();
@@ -22,8 +23,10 @@
   $: commit = getOid(revision, branches) || head;
   $: if (commit == head) {
     branchLabel = project.defaultBranch;
-  } else if (! isOid(revision)) {
+  } else if (branches[revision]) {
     branchLabel = revision;
+  } else {
+    branchLabel = null;
   }
 </script>
 
