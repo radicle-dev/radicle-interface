@@ -36,7 +36,7 @@
       proj.path({
         urn: project.urn,
         seed: seed?.host,
-        addressOrName: profile?.name ?? profile?.address,
+        profile: profile?.name ?? profile?.address,
         revision: project.head,
       })
     );

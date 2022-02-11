@@ -1,39 +1,22 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { getCommits, Source, getOid, ProjectContent, splitPrefixFromPath } from "@app/project";
+  import { getCommits, Source, ProjectContent } from "@app/project";
   import * as proj from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
-  import { navigate } from "svelte-routing";
 
   export let source: Source;
-  export let locator: string;
-  export let content: ProjectContent;
-  export let revision: string;
-  export let path: string;
+  export let commit: string;
 
-  let { urn, seed, addressOrName, peer, project, branches } = source;
-
-  // Bind content to commit history to trigger updates in parent components.
-  $: [revision_,] = splitPrefixFromPath(locator, branches, project.head);
-  $: content = ProjectContent.History;
-  $: revision = revision_;
+  let { urn, seed } = source;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    // Replaces path with current path if none passed.
-    if (! path) path = "/";
-
-    if (addressOrName) {
-      navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
-    } else {
-      navigate(proj.path({ content, peer, urn, seed: seed.host, revision, path }));
-    }
+    proj.navigateTo({ content, revision }, source);
   };
-
-  async function fetchCommits(revision: string): Promise<GroupedCommitsHistory> {
-    const commitsQuery = await getCommits(urn, getOid(project.head, revision, branches), seed.api);
+  const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
+    const commitsQuery = await getCommits(urn, parentCommit, seed.api);
     return groupCommitHistory(commitsQuery);
-  }
+  };
 </script>
 
 <style>
@@ -70,7 +53,7 @@
   }
 </style>
 
-{#await fetchCommits(revision)}
+{#await fetchCommits(commit)}
   <Loading center />
 {:then history}
   <div class="history">

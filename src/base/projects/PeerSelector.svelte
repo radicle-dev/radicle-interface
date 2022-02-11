@@ -4,13 +4,12 @@
   import Dropdown from "@app/Dropdown.svelte";
   import { formatSeedId } from "@app/utils";
 
-  export let peer: string;
+  export let peer: string | null = null;
   export let peers: string[];
   export let toggleDropdown: (input: string) => void;
   export let peersDropdown = false;
 
   const dispatch = createEventDispatcher();
-
   const switchPeer = (peer: string) => {
     dispatch("peerChanged", peer);
   };

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { ProjectInfo, getOid } from "@app/project";
+  import { ProjectInfo, Branches, getOid } from "@app/project";
   import { formatCommit, isOid } from "@app/utils";
   import Dropdown from "@app/Dropdown.svelte";
 
-  export let branches: [string, string][];
+  export let branches: Branches;
   export let project: ProjectInfo;
   export let revision: string;
   export let toggleDropdown: (input: string) => void;
@@ -12,25 +12,17 @@
 
   const dispatch = createEventDispatcher();
   const switchBranch = (name: string) => {
-    dispatch("revisionChanged", name);
+    dispatch("branchChanged", name);
   };
-  const showSelector = branches.length > 1;
+  let branchLabel: string | null = null;
 
-  // Sort branches array alphabetically
-  const sortBranches = ([firstBranchName,]: [string, string], [secondBranchName,]: [string, string]) => {
-    if (firstBranchName < secondBranchName) return -1;
-    if (firstBranchName > secondBranchName) return 1;
-    return 0;
-  };
-
-  let branchLabel: string;
-  branches = branches.sort(sortBranches);
-
-  $: commit = getOid(project.head, revision, branches);
-  $: isLabel = commit == project.head || !isOid(revision);
-  $: if (commit == project.head) {
+  $: branchList = Object.keys(branches).sort();
+  $: showSelector = branchList.length > 1;
+  $: head = branches[project.defaultBranch];
+  $: commit = getOid(revision, branches) || head;
+  $: if (commit == head) {
     branchLabel = project.defaultBranch;
-  } else if (!isOid(revision)) {
+  } else if (! isOid(revision)) {
     branchLabel = revision;
   }
 </script>
@@ -60,10 +52,10 @@
     color: var(--color-secondary);
     background-color: var(--color-secondary-background-darker);
     padding: 0.5rem 0.75rem;
-    border-radius: inherit;
+    border-radius: 0 0.25rem 0.25rem 0;
   }
-  .hidden {
-    display: none;
+  .commit .hash.unlabeled {
+    border-radius: 0.25rem;
   }
   .stat {
     font-family: var(--font-family-monospace);
@@ -74,33 +66,34 @@
 
 <div class="commit">
   <!-- Check for branches listing feature -->
-  {#if branches.length > 0}
-    <span>
-      <div
-        class="stat branch"
-        class:not-allowed={!showSelector}
-        class:hidden={!isLabel}
-        on:click={() => showSelector && toggleDropdown("branch")}
-      >
-        {branchLabel}
-      </div>
-      <Dropdown
-        items={branches.map(([name,]) => name)}
-        visible={branchesDropdown}
-        on:select={(e) => switchBranch(e.detail)} />
-    </span>
-    <div class="hash desktop">
-      {#if isLabel}
+  {#if branchList.length > 0}
+    {#if branchLabel}
+      <span>
+        <div
+          class="stat branch"
+          class:not-allowed={!showSelector}
+          on:click={() => showSelector && toggleDropdown("branch")}
+        >
+          {branchLabel}
+        </div>
+        <Dropdown
+          items={branchList}
+          visible={branchesDropdown}
+          on:select={(e) => switchBranch(e.detail)} />
+      </span>
+      <div class="hash desktop">
         {formatCommit(commit)}
-      {:else}
+      </div>
+    {:else}
+      <div class="unlabeled hash desktop">
         {commit}
-      {/if}
-    </div>
+      </div>
+    {/if}
     <div class="hash mobile">
       {formatCommit(commit)}
     </div>
   <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
-  {:else if commit === project.head}
+  {:else if commit === head}
     <div class="stat branch not-allowed">
       {project.defaultBranch}
     </div>
@@ -108,7 +101,7 @@
       {formatCommit(commit)}
     </div>
   {:else}
-    <div class="hash desktop">
+    <div class="unlabeled hash desktop">
       {commit}
     </div>
     <div class="hash mobile">

@@ -1,31 +1,22 @@
 <script lang="ts">
   import * as proj from "@app/project";
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
-  import { navigate } from "svelte-routing";
   import { formatCommitTime } from "@app/commit";
   import { formatCommit } from "@app/utils";
 
-  export let content: proj.ProjectContent;
-  export let revision: string;
-  export let locator: string;
   export let source: proj.Source;
+  export let commit: string;
 
-  const { addressOrName, peer, seed, project, urn, branches } = source;
+  proj.browse({ content: proj.ProjectContent.Commit });
 
-  const navigateCommit = (path: string, content?: proj.ProjectContent) => {
-    // Replaces path with current path if none passed.
-    if (path === undefined) path = "/";
-
-    if (addressOrName) {
-      navigate(proj.path({ content, peer, urn, addressOrName, revision, path }));
-    } else {
-      navigate(proj.path({ content, peer, urn, seed: seed.host, revision, path }));
-    }
+  const { seed, urn } = source;
+  const onBrowse = (event: { detail: string }) => {
+    proj.navigateTo({
+      content: proj.ProjectContent.Tree,
+      revision: commit,
+      path: event.detail
+    }, source);
   };
-
-  $: [revision_,] = proj.splitPrefixFromPath(locator, branches, project.head);
-  $: content = proj.ProjectContent.Commit;
-  $: revision = revision_;
 </script>
 
 <style>
@@ -72,7 +63,7 @@
   }
 </style>
 
-{#await proj.getCommit(urn, revision, seed.api) then commit}
+{#await proj.getCommit(urn, commit, seed.api) then commit}
   <div class="commit">
     <header>
       <div class="summary">
@@ -95,7 +86,7 @@
         <span class="font-mono email desktop-inline">&lt;{commit.header.author.email}&gt;</span>
       </div>
     </header>
-    <Changeset stats={commit.stats} diff={commit.diff} on:browse={(event) => navigateCommit(event.detail)} />
+    <Changeset stats={commit.stats} diff={commit.diff} on:browse={onBrowse} />
   </div>
 {:catch err}
   <div class="commit">

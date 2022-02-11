@@ -28,6 +28,6 @@
 </Route>
 <!-- End of eventual dropped routes -->
 
-<Route path="/:addressOrName/:id/*" let:params>
-  <View {config} addressOrName={params.addressOrName} id={params.id} />
+<Route path="/:profile/:id/*" let:params>
+  <View {config} profileName={params.profile} id={params.id} />
 </Route>

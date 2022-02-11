@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { navigate, Link } from 'svelte-routing';
+  import { Link } from 'svelte-routing';
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Avatar from '@app/Avatar.svelte';
   import { Profile, ProfileType } from '@app/profile';
   import type { ProjectInfo } from '@app/project';
-  import { formatOrg, formatSeedId, isRadicleId, setOpenGraphMetaTag } from '@app/utils';
-  import { getOid } from '@app/project';
+  import { formatProfile, formatSeedId, isRadicleId, setOpenGraphMetaTag } from '@app/utils';
+  import { browserStore } from '@app/project';
   import { Seed } from '@app/base/seeds/Seed';
 
   import Header from '@app/base/projects/Header.svelte';
@@ -15,26 +15,28 @@
   import NotFound from '@app/NotFound.svelte';
 
   export let id: string; // Project name or URN.
-  export let addressOrName = "";
-  export let seedHost = "";
-  export let peer = "";
+  export let seedHost: string | null = null;
+  export let profileName: string | null = null; // Address or name of parent profile.
+  export let peer: string | null = null;
   export let config: Config;
 
-  let parentName = formatOrg(addressOrName, config);
+  // Nb. Once we move the content routing above this component, this should
+  // no longer be necessary, but right now, we have the project header that
+  // is rendered before the routes are parsed, so we have to set this here.
+  proj.browse({ peer });
+
+  let parentName = profileName ? formatProfile(profileName, config) : null;
   let pageTitle = parentName ? `${parentName}/${id}` : id;
   let projectInfo: ProjectInfo | null = null;
-  let revision: string;
-  let content: proj.ProjectContent;
-  let path: string;
   let getProject = new Promise<{ profile?: Profile | null; seed?: Seed } | null>((resolve, reject) => {
-    if (addressOrName) {
-      Profile.get(addressOrName, ProfileType.Project, config).then(p => resolve({ profile: p })).catch(err => reject(err.message));
+    if (profileName) {
+      Profile.get(profileName, ProfileType.Project, config).then(p => resolve({ profile: p })).catch(err => reject(err.message));
     } else if (seedHost) {
       Seed.lookup(seedHost, config).then(s => resolve({ seed: s })).catch(err => reject(err.message));
     } else {
       resolve(null);
     }
-  }).then(async (result) => {
+  }).then(async (result): Promise<proj.Source> => {
     if (! result) {
       throw new Error("Couldn't load project");
     }
@@ -50,22 +52,26 @@
     const urn = isRadicleId(id) ? id : info.urn;
     const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
 
-    let branches = Array([info.defaultBranch, info.head]) as [string, string][];
-    let peers: proj.Peer[] = [];
+    // Older versions of http-api don't include the URN.
+    if (! info.urn) info.urn = urn;
 
     projectInfo = info;
 
-    // Checks for delegates returned from seed node, as feature check of the seed node
-    if (info.delegates) {
-      // Check for selected peer to override available branches.
-      if (peer) {
-        const branchesByPeer = await proj.getBranchesByPeer(urn, peer || info.delegates[0], seed.api);
-        branches = [...Object.entries(branchesByPeer.heads)];
-      }
-      peers = await proj.getPeers(urn, seed.api);
-    }
-    return { urn, addressOrName, seed, peer, project: info, branches, peers, config, profile, anchors };
+    const peers: proj.PeerId[] = info.delegates
+      ? await proj.getRemotes(urn, seed.api)
+      : [];
+
+    return { urn, seed, project: info, peers, profile, anchors };
   });
+
+  function rootPath(source: proj.Source): string {
+    return proj.pathTo({
+      content: proj.ProjectContent.Tree,
+      peer: null,
+      path: "/",
+      revision: null,
+    }, source);
+  }
 
   $: if (projectInfo) {
     const baseName = parentName
@@ -83,26 +89,6 @@
       { prop: "og:description", content: projectInfo.description },
       { prop: "og:url", content: window.location.href }
     ]);
-  }
-
-  function updateRouteParams({ detail: newParams }: { detail: { urn: string; path: string; revision: string; peer: string; content: proj.ProjectContent } }) {
-    const newLocation = proj.path({
-      addressOrName,
-      seed: seedHost,
-      urn: newParams.urn,
-      content: newParams.content,
-      peer: newParams.peer,
-      revision: newParams.revision,
-      path: newParams.path
-    });
-
-    if (newLocation !== window.location.pathname) {
-      navigate(newLocation);
-    }
-    if (content !== newParams.content) content = newParams.content;
-    if (revision !== newParams.revision) revision = newParams.revision;
-    if (path !== newParams.path) path = newParams.path;
-    if (peer !== newParams.peer) peer = newParams.peer;
   }
 </script>
 
@@ -185,7 +171,7 @@
           </a>
           <span class="divider">/</span>
         {/if}
-        <Link to={proj.path({ urn: result.urn, addressOrName, seed: result.seed.host })}>{result.project.name}</Link>
+        <Link to={rootPath(result)}>{result.project.name}</Link>
         {#if peer}
           <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
         {/if}
@@ -194,16 +180,10 @@
       <div class="description">{result.project.description}</div>
     </header>
 
-    {#await proj.getTree(result.urn, getOid(result.project.head, revision, result.branches), "/", result.seed.api) then tree}
-      <Header {tree} {revision} {content} {path}
-        source={result}
-        peerSelector={!!seedHost}
-        on:routeParamsChange={updateRouteParams} />
-      <ProjectContentRoutes {tree}
-        source={result}
-        bind:content={content}
-        bind:revision={revision}
-        bind:path={path} />
+    <!-- TODO: Should reivision be null? -->
+    {#await proj.getRoot(result.project, null, peer, result.seed.api) then { tree, branches, commit }}
+      <Header {tree} {branches} {commit} {browserStore} source={result} peerSelector={!!seedHost} />
+      <ProjectContentRoutes {tree} {peer} {branches} {browserStore} source={result} />
     {:catch err}
       <div class="container center-content">
         <div class="error error-message text-xsmall">

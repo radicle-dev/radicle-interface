@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from 'svelte-routing';
+  import type { Readable } from 'svelte/store';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import * as utils from '@app/utils';
@@ -13,25 +13,19 @@
     Loaded,
   }
 
-  type State = { status: Status.Loading; path: string }
+  type State =
+      { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let source: proj.Source;
   export let tree: proj.Tree;
-  export let locator: string; // eg. "master/README.md"
-  export let content: proj.ProjectContent;
-  export let revision: string;
-  export let path: string;
+  export let browserStore: Readable<proj.Browser>;
 
-  let { urn, addressOrName, seed, peer, project, branches } = source;
+  const { urn, project } = source;
 
-  // This is reactive to respond to path changes that don't originate from this
-  // component, eg. when using the browser's "back" button.
-  $: [revision_, path_] = proj.splitPrefixFromPath(locator, branches, project.head);
-  // Bind content to file tree to trigger updates in parent components.
-  $: content = proj.ProjectContent.Tree;
-  $: revision = revision_;
-  $: path = path_;
+  $: browser = $browserStore;
+  $: path = browser.path || "/";
+  $: revision = browser.revision || browser.branches[project.head];
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -63,29 +57,21 @@
 
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
-    navigateBrowser(revision, newPath);
-  };
 
-  const navigateBrowser = (revision: string, path?: string) => {
-    // Replaces path with current path if none passed.
-    if (path === undefined) path = state.path;
-
-    if (addressOrName) {
-      navigate(proj.path({ peer, urn, addressOrName, revision, path }));
-    } else {
-      navigate(proj.path({ peer, urn, seed: seed.host, revision, path }));
+    if (path) {
+      proj.navigateTo({ path: newPath, revision }, source);
     }
   };
 
   const fetchTree = async (path: string) => {
-    return proj.getTree(urn, commit, path, seed.api);
+    return proj.getTree(urn, commit, path, source.seed.api);
   };
 
   const toggleMobileFileTree = () => {
     mobileFileTree = !mobileFileTree;
   };
 
-  $: commit = proj.getOid(project.head, revision, branches);
+  $: commit = proj.getOid(revision, browser.branches) || project.head;
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

@@ -1,3 +1,5 @@
+import { navigate } from 'svelte-routing';
+import { get, writable } from 'svelte/store';
 import * as api from '@app/api';
 import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
 import { isOid } from '@app/utils';
@@ -5,8 +7,8 @@ import type { Profile } from '@app/profile';
 import type { Seed } from '@app/base/seeds/Seed';
 
 export type Urn = string;
-export type Peer = string;
-export type Branch = { [key: string]: string };
+export type PeerId = string;
+export type Branches = { [key: string]: string };
 
 export interface Anchor {
   confirmed: true;
@@ -29,13 +31,10 @@ export interface PendingAnchor {
 // Params to render correctly source code related views
 export interface Source {
   urn: string;
-  addressOrName: string;
-  peer: string;
   project: ProjectInfo;
-  peers: Peer[];
+  peers: PeerId[];
   anchors: string[];
   seed: Seed;
-  branches: [string, string][];
   profile?: Profile | null;
 }
 
@@ -53,7 +52,7 @@ export interface ProjectInfo {
   description: string;
   defaultBranch: string;
   maintainers: Urn[];
-  delegates: Peer[];
+  delegates: PeerId[];
 }
 
 export interface Tree {
@@ -92,8 +91,68 @@ export interface Blob {
   info: EntryInfo;
 }
 
-export interface Branches {
-  heads: Branch;
+export interface Remote {
+  heads: Branches;
+}
+
+export interface Browser {
+  content: ProjectContent;
+  branches: Branches;
+  revision: string | null;
+  peer: string | null;
+  path: string | null;
+}
+
+export const browserStore = writable({
+  content: ProjectContent.Tree,
+  branches: {},
+  revision: null,
+  peer: null,
+  path: null,
+} as Browser);
+
+export interface BrowseTo {
+    content?: ProjectContent;
+    revision?: string | null;
+    path?: string | null;
+    peer?: string | null;
+    branches?: Branches;
+}
+
+export interface PathOptions {
+  urn: string;
+  content?: ProjectContent;
+  profile?: string | null;
+  seed?: string | null;
+  peer?: string | null;
+  revision?: string | null;
+  path?: string | null;
+}
+
+export function browse(browse: BrowseTo): void {
+  const browser = get(browserStore);
+  browserStore.set({ ...browser, ...browse });
+}
+
+export function pathTo(browse: BrowseTo, source: Source): string {
+  const browser = get(browserStore);
+  const options: PathOptions = {
+    urn: source.urn,
+    ...browser,
+    ...browse
+  };
+
+  if (source.profile) {
+    options.profile = source.profile?.nameOrAddress;
+  } else {
+    options.seed = source.seed.host;
+  }
+
+  return path(options);
+}
+
+export function navigateTo(browse: BrowseTo, source: Source): void {
+  navigate(pathTo(browse, source));
 }
 
 export async function getInfo(nameOrUrn: string, host: api.Host): Promise<ProjectInfo> {
@@ -121,12 +180,39 @@ export async function getDelegateProjects(delegate: string, host: api.Host): Pro
   return api.get(`delegates/${delegate}/projects`, {}, host);
 }
 
-export async function getBranchesByPeer(urn: string, peer: string, host: api.Host): Promise<Branches> {
+export async function getRemote(urn: string, peer: string, host: api.Host): Promise<Remote> {
   return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
 }
 
-export async function getPeers(urn: string, host: api.Host): Promise<Peer[]> {
+export async function getRemotes(urn: string, host: api.Host): Promise<PeerId[]> {
   return api.get(`projects/${urn}/remotes`, {}, host);
+}
+
+export async function getRoot(
+  project: ProjectInfo,
+  revision: string | null,
+  peer: string | null,
+  host: api.Host
+): Promise<{ tree: Tree; branches: Branches; commit: string }> {
+  const urn = project.urn;
+
+  let remote: Remote = {
+    heads: { [project.defaultBranch]: project.head }
+  };
+
+  if (peer) {
+    remote = await getRemote(urn, peer, host);
+  }
+
+  const head = remote.heads[project.defaultBranch];
+  const commit = revision ? getOid(revision, remote.heads) : head;
+
+  if (! commit) {
+    throw new Error(`Revision ${revision} not found`);
+  }
+  const tree = await getTree(urn, commit, "/", host);
+
+  return { tree, branches: remote.heads, commit };
 }
 
 export async function getTree(
@@ -157,22 +243,12 @@ export async function getReadme(
   return api.get(`projects/${urn}/readme/${commit}`, {}, host);
 }
 
-export function path(
-  opts: {
-    urn: string;
-    addressOrName?: string;
-    seed?: string;
-    peer?: string;
-    content?: ProjectContent;
-    revision?: string;
-    path?: string;
-  }
-): string {
-  const { urn, addressOrName, seed, peer, content, revision, path } = opts;
+export function path(opts: PathOptions): string {
+  const { urn, profile, seed, peer, content, revision, path } = opts;
   const result = [];
 
-  if (addressOrName) {
-    result.push(addressOrName);
+  if (profile) {
+    result.push(profile);
   } else if (seed) {
     result.push("seeds", seed);
   }
@@ -188,7 +264,7 @@ export function path(
       break;
 
     case ProjectContent.Commit:
-      result.push("commit");
+      result.push("commits");
       break;
 
     default:
@@ -198,8 +274,6 @@ export function path(
 
   if (revision) {
     result.push(revision);
-  } else if (path) {
-    result.push("head");
   }
 
   // Avoids appending a slash when the path is the root directory.
@@ -211,24 +285,29 @@ export function path(
 
 // We need a SHA1 commit in some places, so we return early if the revision is a SHA and else we look into branches.
 // As fallback we use the head commit.
-export function getOid(head: string, revision: string, branches?: [string, string][]): string {
+export function getOid(revision: string, branches?: Branches): string | null {
   if (isOid(revision)) return revision;
+
   if (branches) {
-    const branch = branches.find(([name,]) => name === revision);
-    return branch ? branch[1] : head;
+    const oid = branches[revision];
+
+    if (oid) {
+      return oid;
+    }
   }
-  return head;
+  return null;
 }
 
 // Splits the path consisting of a revision (eg. branch or commit) and file path into a tuple [revision, file-path]
-export function splitPrefixFromPath(input: string, branches: [string, string][], head: string): [string, string] {
-  const branch = branches.find(([branchName,]) => input.startsWith(branchName));
+export function splitPrefixFromPath(input: string, branches: Branches): [string, string] | null {
+  const branch = Object.entries(branches).find(([branchName,]) => input.startsWith(branchName));
   const commitPath = [input.slice(0, 40), input.slice(41)];
+
   if (branch) {
     const [rev, path] = [input.slice(0, branch[0].length), input.slice(branch[0].length + 1)];
     return [rev, path ? path : "/"];
   } else if (isOid(commitPath[0])) {
     return [commitPath[0], commitPath[1] ? commitPath[1] : "/"];
   }
-  return [head, "/"];
+  return null;
 }

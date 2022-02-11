@@ -1,24 +1,30 @@
 <script lang="ts">
+  import type { Writable } from 'svelte/store';
   import { navigate } from 'svelte-routing';
   import * as utils from '@app/utils';
-  import { ProjectContent, getOid, Source } from '@app/project';
+  import * as proj from '@app/project';
+  import { Browser, ProjectContent, Source } from '@app/project';
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
   import type { Tree } from "@app/project";
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
-  import { createEventDispatcher } from 'svelte';
-
-  const dispatch = createEventDispatcher();
 
   export let source: Source;
-  export let path: string;
   export let tree: Tree;
-  export let content: ProjectContent;
-  export let revision: string;
-  // If peerSelector should be showed.
-  export let peerSelector: boolean;
+  export let commit: string;
+  export let browserStore: Writable<Browser>;
+  export let peerSelector: boolean; // If peerSelector should be showed.
+  export let branches: proj.Branches;
 
-  let { urn, peer, project, branches, peers, seed, anchors } = source;
+  let { urn, project, peers, seed, anchors } = source;
+
+  $: browser = $browserStore;
+  $: revision = browser.revision || commit;
+  $: content = browser.content;
+
+  $: if (Object.keys(browser.branches).length > 0) {
+    branches = browser.branches;
+  }
 
   let dropdownState: { [key: string]: boolean } = { clone: false, seed: false, branch: false, peer: false };
   function toggleDropdown(input: string) {
@@ -28,22 +34,22 @@
     });
   }
 
-  // Switches between the browser and commit view
+  // Switches between the browser and commit view.
   const toggleContent = (input: ProjectContent) => {
-    dispatch("routeParamsChange", { urn, content: content === input ? ProjectContent.Tree : input, revision, peer, path });
+    proj.navigateTo({
+      content: content === input ? ProjectContent.Tree : input
+    }, source);
   };
 
-  const updatePeer = (newPeer: string) => {
+  const updatePeer = (peer: string) => {
     dropdownState.peer = false;
-    dispatch("routeParamsChange", { urn, content, revision, peer: newPeer, path });
+    proj.navigateTo({ peer, revision: null }, source);
   };
 
-  const updateRevision = (newRevision: string) => {
+  const updateRevision = (revision: string) => {
     dropdownState.branch = false;
-    dispatch("routeParamsChange", { urn, content, revision: newRevision, peer, path });
+    proj.navigateTo({ revision }, source);
   };
-
-  $: commit = getOid(project.head, revision, branches);
 </script>
 
 <style>
@@ -152,13 +158,13 @@
 
 <header>
   {#if peers.length > 0 && peerSelector}
-    <PeerSelector {peers} {toggleDropdown} {peer}
+    <PeerSelector {peers} {toggleDropdown} peer={browser.peer}
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />
   {/if}
   <BranchSelector {branches} {project} {revision} {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
-    on:revisionChanged={(event) => updateRevision(event.detail)} />
+    on:branchChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
     <AnchorBadge {commit} {anchors}
       head={project.head} on:click={(event) => updateRevision(event.detail)} />

@@ -108,6 +108,9 @@
   .file-path {
     font-size: 1rem;
   }
+  .browse {
+    display: flex;
+  }
 </style>
 
 <article id={file.path} class="changeset-file">
@@ -116,7 +119,9 @@
     <div class="actions">
       <p class="file-path">{file.path}</p>
     </div>
-    <Icon name="browse" width={20} inline fill on:click={() => dispatch("browse", file.path)} />
+    <div class="browse clickable" on:click|stopPropagation={() => dispatch("browse", file.path)}>
+      <Icon name="browse" width={20} inline fill />
+    </div>
   </header>
   {#if !collapsed}
     <main>

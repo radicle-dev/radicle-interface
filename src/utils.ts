@@ -131,7 +131,7 @@ export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
 }
 
-export function formatOrg(input: string, config: Config): string {
+export function formatProfile(input: string, config: Config): string {
   if (isAddress(input)) {
     return ethers.utils.getAddress(input);
   } else {
@@ -397,7 +397,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
   // For the subgraph we need to pass a lowercase address
   const query = await querySubgraph(config.orgs.subgraph, GetSafe, { addr: address.toLowerCase() });
 
-  if (! query.safe) {
+  if (! query?.safe) {
     return null;
   }
 

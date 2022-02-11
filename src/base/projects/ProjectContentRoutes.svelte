@@ -1,57 +1,65 @@
 <script lang="ts">
-  import type { ProjectContent, Source, Tree } from "@app/project";
+  import type { Writable } from "svelte/store";
   import { Route, Router } from "svelte-routing";
+  import type * as proj from "@app/project";
+  import { ProjectContent } from "@app/project";
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
   import History from "./History.svelte";
+  import RouteContext from "./RouteContext.svelte";
 
-  export let source: Source;
-  export let tree: Tree;
-  export let content: ProjectContent;
-  export let revision: string;
-  export let path: string;
+  export let source: proj.Source;
+  export let tree: proj.Tree;
+  export let browserStore: Writable<proj.Browser>;
+  export let peer: string | null;
+  export let branches: proj.Branches;
 
-  let locator = source.anchors[0] || source.project.head;
+  const project = source.project;
 </script>
 
 <Router>
   <!-- The default action is to render Browser with the default branch head -->
   <Route path="/">
-    <Browser {source} {tree} {locator}
-      bind:content={content}
-      bind:path={path}
-      bind:revision={revision} />
+    <RouteContext {browserStore} {peer} {branches} {project}>
+      <Browser {source} {tree} {browserStore} />
+    </RouteContext>
   </Route>
   <Route path="/tree">
-    <Browser {source} {tree} {locator}
-      bind:content={content}
-      bind:path={path}
-      bind:revision={revision} />
+    <RouteContext {browserStore} {peer} {branches} {project}>
+      <Browser {source} {tree} {browserStore} />
+    </RouteContext>
   </Route>
   <Route path="/tree/*" let:params>
-    <Browser {source} {tree} locator={params["*"]}
-      bind:content={content}
-      bind:path={path}
-      bind:revision={revision} />
+    <RouteContext route={params["*"]} {browserStore} {peer} {branches} {project}>
+      <Browser {source} {tree} {browserStore} />
+    </RouteContext>
   </Route>
   <Route path="/history">
-    <History {locator} {source} {path}
-      bind:content={content}
-      bind:revision={revision} />
+    <RouteContext {browserStore} content={ProjectContent.History} {peer} {branches} {project} let:commit>
+      {#if commit}
+        <History {source} {commit} />
+      {/if}
+    </RouteContext>
   </Route>
   <Route path="/history/*" let:params>
-    <History locator={params["*"]} {source} {path}
-      bind:content={content}
-      bind:revision={revision} />
+    <RouteContext route={params["*"]} {browserStore} content={ProjectContent.History} {peer} {branches} {project} let:commit>
+      {#if commit}
+        <History {source} {commit} />
+      {/if}
+    </RouteContext>
   </Route>
-  <Route path="/commit/:commit" let:params>
-    <Commit {source} locator={params.commit}
-      bind:content={content}
-      bind:revision={revision} />
+  <Route path="/commits/:commit" let:params>
+    <RouteContext revision={params.commit} {browserStore} {project} content={ProjectContent.Commit} {peer} {branches} let:revision>
+      {#if revision}
+        <Commit {source} commit={revision} />
+      {/if}
+    </RouteContext>
   </Route>
-  <Route path="/commit/*" let:params>
-    <Commit {source} locator={params["*"]}
-      bind:content={content}
-      bind:revision={revision} />
+  <Route path="/commits/*" let:params>
+    <RouteContext route={params["*"]} {browserStore} {project} content={ProjectContent.Commit} {peer} {branches} let:revision>
+      {#if revision}
+        <Commit {source} commit={revision} />
+      {/if}
+    </RouteContext>
   </Route>
 </Router>

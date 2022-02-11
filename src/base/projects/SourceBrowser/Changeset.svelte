@@ -59,6 +59,9 @@
     flex-direction: row;
     align-items: center;
   }
+  .browse {
+    display: flex;
+  }
 </style>
 
 <div class="changeset-summary">
@@ -77,8 +80,9 @@
         <p class="bold">{path}</p>
         <span class="diff-type created">created</span>
       </div>
-      <Icon class="clickable" name="browse" width={20} inline fill
-        on:click={() => dispatch("browse", path)} />
+      <div class="browse" on:click={() => dispatch("browse", path)}>
+        <Icon name="browse" width={20} inline fill />
+      </div>
     </header>
   {/each}
   {#each diff.deleted as path (path)}
@@ -87,8 +91,9 @@
         <p class="bold">{path}</p>
         <span class="diff-type deleted">deleted</span>
       </div>
-      <Icon class="clickable" name="browse" width={20} inline fill
-        on:click={() => dispatch("browse", path)} />
+      <div class="browse" on:click={() => dispatch("browse", path)}>
+        <Icon name="browse" width={20} inline fill />
+      </div>
     </header>
   {/each}
 </div>
