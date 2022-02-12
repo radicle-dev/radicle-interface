@@ -81,6 +81,10 @@
   }
 
   @media (max-width: 960px) {
+    header {
+      padding-left: 2rem;
+    }
+
     .title {
       font-size: 1.5rem;
       overflow: hidden;
