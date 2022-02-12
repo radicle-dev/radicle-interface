@@ -13,9 +13,10 @@
   export let source: proj.Source;
   export let config: Config;
 
-  const browse: any = { content, peer, path: "/" };
+  const browse: proj.BrowseTo = { content, peer, path: "/" };
   const head = source.branches[source.project.defaultBranch];
 
+  // route is passed when the URL has more params after e.g. /tree or /history
   $: if (route) {
     const { path, revision } = proj.parseRoute(route, source.branches);
 
@@ -27,7 +28,7 @@
     browse.revision = head;
   }
 
-  $: proj.browse(browse);
+  $: proj.browse({ ...browse, peer });
   $: browser = $browserStore;
 </script>
 
