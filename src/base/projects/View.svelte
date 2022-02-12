@@ -15,7 +15,7 @@
   export let peer: string | null = null;
   export let config: Config;
 
-  const getProject = async (): Promise<proj.Source> => {
+  const getProject = async (peer: string | null): Promise<proj.Source> => {
     const profile = profileName ? await Profile.get(profileName, ProfileType.Project, config) : null;
     const seed = profile ? profile.seed : seedHost ? await Seed.lookup(seedHost, config) : null;
 
@@ -71,7 +71,7 @@
 </style>
 
 <main>
-  {#await getProject()}
+  {#await getProject(peer)}
     <header>
       <Loading center />
     </header>
