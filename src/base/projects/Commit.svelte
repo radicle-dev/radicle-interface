@@ -7,8 +7,6 @@
   export let source: proj.Source;
   export let commit: string;
 
-  proj.browse({ content: proj.ProjectContent.Commit });
-
   const { seed, urn } = source;
   const onBrowse = (event: { detail: string }) => {
     proj.navigateTo({
