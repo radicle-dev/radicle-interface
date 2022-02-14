@@ -7,7 +7,7 @@ import { assert } from '@app/error';
 import * as utils from '@app/utils';
 import type { Safe } from '@app/utils';
 import type { Config } from '@app/config';
-import type { PendingAnchor, Anchor } from '@app/project';
+import type { PendingAnchor, Anchor } from '@app/base/projects/Project';
 
 const GetProjects = `
   query GetProjects($org: ID!) {

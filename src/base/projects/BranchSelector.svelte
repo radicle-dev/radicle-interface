@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { ProjectInfo, Branches, getOid } from "@app/project";
+  import { ProjectInfo, Branches, getOid } from "@app/base/projects/Project";
   import { formatCommit } from "@app/utils";
   import Dropdown from "@app/Dropdown.svelte";
 
   export let branches: Branches;
-  export let project: ProjectInfo;
+  export let info: ProjectInfo;
   export let revision: string;
   export let toggleDropdown: (input: string) => void;
   export let branchesDropdown = false;
@@ -19,10 +19,10 @@
 
   $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: head = branches[project.defaultBranch];
+  $: head = branches[info.defaultBranch];
   $: commit = getOid(revision, branches) || head;
   $: if (commit == head) {
-    branchLabel = project.defaultBranch;
+    branchLabel = info.defaultBranch;
   } else if (branches[revision]) {
     branchLabel = revision;
   } else {
@@ -99,7 +99,7 @@
   <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
   {:else if commit === head}
     <div class="stat branch not-allowed">
-      {project.defaultBranch}
+      {info.defaultBranch}
     </div>
     <div class="hash">
       {formatCommit(commit)}

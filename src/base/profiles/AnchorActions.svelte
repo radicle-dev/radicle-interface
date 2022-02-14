@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ethers } from "ethers";
   import type { Safe } from "@app/utils";
-  import type { PendingAnchor } from "@app/project";
+  import type { PendingAnchor } from "@app/base/projects/Project";
   import type { Config } from "@app/config";
   import * as utils from "@app/utils";
   import Modal from "@app/Modal.svelte";

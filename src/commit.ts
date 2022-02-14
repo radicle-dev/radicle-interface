@@ -1,4 +1,4 @@
-import type { Stats } from "@app/project";
+import type { Stats } from "@app/base/projects/Project";
 import type { Diff } from "@app/diff";
 
 export interface CommitsHistory {

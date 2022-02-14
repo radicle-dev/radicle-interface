@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  import type { Tree } from "@app/project";
-  import { ObjectType } from "@app/project";
+  import type { Tree } from "@app/base/projects/Project";
+  import { ObjectType } from "@app/base/projects/Project";
 
   import File from './Tree/File.svelte';
   import Folder from './Tree/Folder.svelte';

@@ -3,7 +3,7 @@ import { mount } from "radicle-svelte-unit-test";
 import { styles } from "@test/support/index";
 
 const defaultProps = {
-  project: {
+  info: {
     head: "e678629cd37c770c640a2cd997fc76303c815772",
     urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
     name: "nakamoto",

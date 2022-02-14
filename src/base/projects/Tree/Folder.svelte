@@ -2,8 +2,8 @@
   import { createEventDispatcher } from "svelte";
 
   import Loading from '@app/Loading.svelte';
-  import type { Tree } from "@app/project";
-  import { ObjectType } from "@app/project";
+  import type { Tree } from "@app/base/projects/Project";
+  import { ObjectType } from "@app/base/projects/Project";
 
   import File from "./File.svelte";
 
