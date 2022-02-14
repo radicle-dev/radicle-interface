@@ -10,15 +10,15 @@
   export let revision: string | null = null;
   export let peer: string | null;
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
-  export let source: proj.Source;
+  export let project: proj.Project;
   export let config: Config;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
-  const head = source.branches[source.project.defaultBranch];
+  const head = project.branches[project.defaultBranch];
 
   // route is passed when the URL has more params after e.g. /tree or /history
   $: if (route) {
-    const { path, revision } = proj.parseRoute(route, source.branches);
+    const { path, revision } = proj.parseRoute(route, project.branches);
 
     if (path) browse.path = path;
     if (revision) browse.revision = revision;
@@ -36,6 +36,6 @@
   peer={browser.peer}
   revision={browser.revision || head}
   content={browser.content}
-  {source}
+  {project}
   {config}
 />

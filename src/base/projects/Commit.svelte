@@ -4,16 +4,15 @@
   import { formatCommitTime } from "@app/commit";
   import { formatCommit } from "@app/utils";
 
-  export let source: proj.Source;
+  export let project: proj.Project;
   export let commit: string;
 
-  const { seed, urn } = source;
   const onBrowse = (event: { detail: string }) => {
-    proj.navigateTo({
+    project.navigateTo({
       content: proj.ProjectContent.Tree,
       revision: commit,
       path: event.detail
-    }, source);
+    });
   };
 </script>
 
@@ -61,7 +60,7 @@
   }
 </style>
 
-{#await proj.getCommit(urn, commit, seed.api) then commit}
+{#await project.getCommit(commit) then commit}
   <div class="commit">
     <header>
       <div class="summary">

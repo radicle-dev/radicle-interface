@@ -17,15 +17,13 @@
       { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
-  export let source: proj.Source;
+  export let project: proj.Project;
   export let tree: proj.Tree;
   export let browserStore: Readable<proj.Browser>;
 
-  const { urn, project } = source;
-
   $: browser = $browserStore;
   $: path = browser.path || "/";
-  $: revision = browser.revision || source.branches[project.head];
+  $: revision = browser.revision || project.branches[project.head];
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -39,8 +37,8 @@
 
     const isMarkdownPath = utils.isMarkdownPath(path);
     const promise = path === "/"
-      ? proj.getReadme(urn, commit, source.seed.api)
-      : proj.getBlob(urn, commit, path, { highlight: !isMarkdownPath }, source.seed.api);
+      ? project.getReadme(commit)
+      : project.getBlob(commit, path, { highlight: !isMarkdownPath });
 
     state = { status: Status.Loading, path };
     state = { status: Status.Loaded, path, blob: await promise };
@@ -59,19 +57,19 @@
     mobileFileTree = false;
 
     if (path) {
-      proj.navigateTo({ path: newPath, revision }, source);
+      project.navigateTo({ path: newPath, revision });
     }
   };
 
   const fetchTree = async (path: string) => {
-    return proj.getTree(urn, commit, path, source.seed.api);
+    return project.getTree(commit, path);
   };
 
   const toggleMobileFileTree = () => {
     mobileFileTree = !mobileFileTree;
   };
 
-  $: commit = proj.getOid(revision, source.branches) || project.head;
+  $: commit = proj.getOid(revision, project.branches) || project.head;
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

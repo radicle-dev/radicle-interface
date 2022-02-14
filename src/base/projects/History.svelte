@@ -1,20 +1,18 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { getCommits, Source, ProjectContent } from "@app/project";
-  import * as proj from "@app/project";
+  import type { Project } from "@app/project";
+  import { ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
 
-  export let source: Source;
+  export let project: Project;
   export let commit: string;
 
-  let { urn, seed } = source;
-
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    proj.navigateTo({ content, revision, path: null }, source);
+    project.navigateTo({ content, revision, path: null });
   };
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
-    const commitsQuery = await getCommits(urn, parentCommit, seed.api);
+    const commitsQuery = await project.getCommits(parentCommit);
     return groupCommitHistory(commitsQuery);
   };
 </script>

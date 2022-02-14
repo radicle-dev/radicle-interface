@@ -2,20 +2,19 @@
   import type { Writable } from 'svelte/store';
   import { navigate } from 'svelte-routing';
   import * as utils from '@app/utils';
-  import * as proj from '@app/project';
-  import { Browser, ProjectContent, Source } from '@app/project';
+  import { Browser, ProjectContent, Project } from '@app/project';
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
   import type { Tree } from "@app/project";
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
 
-  export let source: Source;
+  export let project: Project;
   export let tree: Tree;
   export let commit: string;
   export let browserStore: Writable<Browser>;
   export let peerSelector: boolean; // If peerSelector should be showed.
 
-  let { urn, project, peers, seed, anchors } = source;
+  let { urn, peers, branches, seed, anchors } = project;
 
   $: browser = $browserStore;
   $: revision = browser.revision || commit;
@@ -31,19 +30,19 @@
 
   // Switches between the browser and commit view.
   const toggleContent = (input: ProjectContent) => {
-    proj.navigateTo({
+    project.navigateTo({
       content: content === input ? ProjectContent.Tree : input
-    }, source);
+    });
   };
 
   const updatePeer = (peer: string) => {
     dropdownState.peer = false;
-    proj.navigateTo({ peer, revision: null }, source);
+    project.navigateTo({ peer, revision: null });
   };
 
   const updateRevision = (revision: string) => {
     dropdownState.branch = false;
-    proj.navigateTo({ revision }, source);
+    project.navigateTo({ revision });
   };
 </script>
 
@@ -157,7 +156,7 @@
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />
   {/if}
-  <BranchSelector branches={source.branches} {project} {revision} {toggleDropdown}
+  <BranchSelector {branches} {project} {revision} {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">

@@ -1,11 +1,8 @@
 <script lang="ts">
   import type { Config } from '@app/config';
   import { Route, Router } from "svelte-routing";
-  import * as proj from '@app/project';
+  import { Project, ProjectContent } from '@app/project';
   import Loading from '@app/Loading.svelte';
-  import { Profile, ProfileType } from '@app/profile';
-  import { isRadicleId } from '@app/utils';
-  import { Seed } from '@app/base/seeds/Seed';
   import NotFound from '@app/NotFound.svelte';
 
   import ProjectRoute from "./ProjectRoute.svelte";
@@ -15,38 +12,6 @@
   export let profileName: string | null = null; // Address or name of parent profile.
   export let peer: string | null = null;
   export let config: Config;
-
-  const getProject = async (peer: string | null): Promise<proj.Source> => {
-    const profile = profileName ? await Profile.get(profileName, ProfileType.Project, config) : null;
-    const seed = profile ? profile.seed : seedHost ? await Seed.lookup(seedHost, config) : null;
-
-    if (!profile && !seed) {
-      throw new Error("Couldn't load project");
-    }
-    if (! seed?.valid) {
-      throw new Error("Couldn't load project: invalid seed");
-    }
-
-    const project = await proj.getInfo(id, seed.api);
-    const urn = isRadicleId(id) ? id : project.urn;
-    const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
-
-    // Older versions of http-api don't include the URN.
-    if (! project.urn) project.urn = urn;
-
-    const peers: proj.PeerId[] = project.delegates
-      ? await proj.getRemotes(urn, seed.api)
-      : [];
-
-    let remote: proj.Remote = {
-      heads: { [project.defaultBranch]: project.head }
-    };
-
-    if (peer) {
-      remote = await proj.getRemote(urn, peer, seed.api);
-    }
-    return { urn, seed, project, peers, branches: remote.heads, profile, anchors };
-  };
 </script>
 
 <style>
@@ -72,35 +37,35 @@
 </style>
 
 <main>
-  {#await getProject(peer)}
+  {#await Project.get(id, peer, profileName, seedHost, config)}
     <header>
       <Loading center />
     </header>
-  {:then source}
+  {:then project}
     <Router>
       <!-- The default action is to render Browser with the default branch head -->
       <Route path="/">
-        <ProjectRoute content={proj.ProjectContent.Tree} {peer} {source} {config} />
+        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
       <Route path="/tree">
-        <ProjectRoute content={proj.ProjectContent.Tree} {peer} {source} {config} />
+        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
       <Route path="/tree/*" let:params>
-        <ProjectRoute route={params["*"]} content={proj.ProjectContent.Tree} {peer} {source} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
 
       <Route path="/history">
-        <ProjectRoute content={proj.ProjectContent.History} {peer} {source} {config} />
+        <ProjectRoute content={ProjectContent.History} {peer} {project} {config} />
       </Route>
       <Route path="/history/*" let:params>
-        <ProjectRoute route={params["*"]} content={proj.ProjectContent.History} {peer} {source} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.History} {peer} {project} {config} />
       </Route>
 
       <Route path="/commits/:commit" let:params>
-        <ProjectRoute revision={params.commit} content={proj.ProjectContent.Commit} {peer} {source} {config} />
+        <ProjectRoute revision={params.commit} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
       <Route path="/commits/*" let:params>
-        <ProjectRoute route={params["*"]} content={proj.ProjectContent.Commit} {peer} {source} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
     </Router>
   {:catch}

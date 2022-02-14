@@ -2,9 +2,10 @@ import { navigate } from 'svelte-routing';
 import { get, writable } from 'svelte/store';
 import * as api from '@app/api';
 import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
-import { isOid } from '@app/utils';
-import type { Profile } from '@app/profile';
-import type { Seed } from '@app/base/seeds/Seed';
+import { isOid, isRadicleId } from '@app/utils';
+import { Profile, ProfileType } from '@app/profile';
+import { Seed } from '@app/base/seeds/Seed';
+import type { Config } from '@app/config';
 
 export type Urn = string;
 export type PeerId = string;
@@ -26,17 +27,6 @@ export interface PendingAnchor {
   anchor: {
     stateHash: string;
   };
-}
-
-// Params to render correctly source code related views
-export interface Source {
-  urn: string;
-  project: ProjectInfo;
-  peers: PeerId[];
-  branches: Branches;
-  anchors: string[];
-  seed: Seed;
-  profile?: Profile | null;
 }
 
 // Enumerates the space below the Header component in the projects View component
@@ -129,107 +119,6 @@ export function browse(browse: BrowseTo): void {
   browserStore.set({ ...browser, ...browse });
 }
 
-export function pathTo(browse: BrowseTo, source: Source): string {
-  const browser = get(browserStore);
-  const options: PathOptions = {
-    urn: source.urn,
-    ...browser,
-    ...browse
-  };
-
-  if (source.profile) {
-    options.profile = source.profile?.nameOrAddress;
-  } else {
-    options.seed = source.seed.host;
-  }
-
-  return path(options);
-}
-
-export function navigateTo(browse: BrowseTo, source: Source): void {
-  navigate(pathTo(browse, source));
-}
-
-export async function getInfo(nameOrUrn: string, host: api.Host): Promise<ProjectInfo> {
-  const info = await api.get(`projects/${nameOrUrn}`, {}, host);
-
-  return {
-    ...info,
-    ...info.meta // Nb. This is only needed while we are upgrading to the new http-api.
-  };
-}
-
-export async function getCommits(urn: string, commit: string, host: api.Host): Promise<CommitsHistory> {
-  return api.get(`projects/${urn}/commits?from=${commit}`, {}, host);
-}
-
-export async function getCommit(urn: string, commit: string, host: api.Host): Promise<Commit> {
-  return api.get(`projects/${urn}/commits/${commit}`, {}, host);
-}
-
-export async function getProjects(host: api.Host): Promise<ProjectInfo[]> {
-  return api.get("projects", {}, host);
-}
-
-export async function getDelegateProjects(delegate: string, host: api.Host): Promise<ProjectInfo[]> {
-  return api.get(`delegates/${delegate}/projects`, {}, host);
-}
-
-export async function getRemote(urn: string, peer: string, host: api.Host): Promise<Remote> {
-  return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
-}
-
-export async function getRemotes(urn: string, host: api.Host): Promise<PeerId[]> {
-  return api.get(`projects/${urn}/remotes`, {}, host);
-}
-
-export async function getRoot(
-  project: ProjectInfo,
-  revision: string | null,
-  heads: Branches,
-  host: api.Host
-): Promise<{ tree: Tree; commit: string }> {
-  const urn = project.urn;
-
-  const head = heads[project.defaultBranch];
-  const commit = revision ? getOid(revision, heads) : head;
-
-  if (! commit) {
-    throw new Error(`Revision ${revision} not found`);
-  }
-  const tree = await getTree(urn, commit, "/", host);
-
-  return { tree, commit };
-}
-
-export async function getTree(
-  urn: string,
-  commit: string,
-  path: string,
-  host: api.Host
-): Promise<Tree> {
-  if (path === "/") path = "";
-  return api.get(`projects/${urn}/tree/${commit}/${path}`, {}, host);
-}
-
-export async function getBlob(
-  urn: string,
-  commit: string,
-  path: string,
-  options: { highlight: boolean },
-  host: api.Host
-): Promise<Blob> {
-  return api.get(`projects/${urn}/blob/${commit}/${path}`, options, host);
-}
-
-export async function getReadme(
-  urn: string,
-  commit: string,
-  host: api.Host
-): Promise<Blob> {
-  return api.get(`projects/${urn}/readme/${commit}`, {}, host);
-}
-
 export function path(opts: PathOptions): string {
   const { urn, profile, seed, peer, content, revision, path } = opts;
   const result = [];
@@ -303,4 +192,157 @@ export function parseRoute(input: string, branches: Branches): { path?: string; 
     parsed.path = input;
   }
   return parsed;
+}
+
+export class Project implements ProjectInfo {
+  urn: string;
+  head: string;
+  name: string;
+  description: string;
+  defaultBranch: string;
+  maintainers: Urn[];
+  delegates: PeerId[];
+  seed: Seed;
+  peers: string[];
+  branches: Branches;
+  profile: Profile | null;
+  anchors: string[];
+
+  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: string[], branches: Branches, profile: Profile | null, anchors: string[]) {
+    this.urn = urn;
+    this.head = info.head;
+    this.name = info.name;
+    this.description = info.description;
+    this.defaultBranch = info.defaultBranch;
+    this.maintainers = info.maintainers;
+    this.delegates = info.delegates;
+    this.seed = seed;
+    this.peers = peers;
+    this.branches = branches;
+    this.profile = profile;
+    this.anchors = anchors;
+  }
+
+  async getRoot(
+    revision: string | null,
+  ): Promise<{ tree: Tree; commit: string }> {
+    const head = this.branches[this.defaultBranch];
+    const commit = revision ? getOid(revision, this.branches) : head;
+
+    if (! commit) {
+      throw new Error(`Revision ${revision} not found`);
+    }
+    const tree = await this.getTree(commit, "/");
+
+    return { tree, commit };
+  }
+
+  static async getInfo(nameOrUrn: string, host: api.Host): Promise<ProjectInfo> {
+    const info = await api.get(`projects/${nameOrUrn}`, {}, host);
+
+    return {
+      ...info,
+      ...info.meta // Nb. This is only needed while we are upgrading to the new http-api.
+    };
+  }
+
+  static async getProjects(host: api.Host): Promise<ProjectInfo[]> {
+    return api.get("projects", {}, host);
+  }
+
+  static async getDelegateProjects(delegate: string, host: api.Host): Promise<ProjectInfo[]> {
+    return api.get(`delegates/${delegate}/projects`, {}, host);
+  }
+
+  static async getRemote(urn: string, peer: string, host: api.Host): Promise<Remote> {
+    return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
+  }
+
+  static async getRemotes(urn: string, host: api.Host): Promise<PeerId[]> {
+    return api.get(`projects/${urn}/remotes`, {}, host);
+  }
+
+  async getCommits(commit: string): Promise<CommitsHistory> {
+    return api.get(`projects/${this.urn}/commits?from=${commit}`, {}, this.seed.api);
+  }
+
+  async getCommit(commit: string): Promise<Commit> {
+    return api.get(`projects/${this.urn}/commits/${commit}`, {}, this.seed.api);
+  }
+
+  async getTree(
+    commit: string,
+    path: string,
+  ): Promise<Tree> {
+    if (path === "/") path = "";
+    return api.get(`projects/${this.urn}/tree/${commit}/${path}`, {}, this.seed.api);
+  }
+
+  async getBlob(
+    commit: string,
+    path: string,
+    options: { highlight: boolean },
+  ): Promise<Blob> {
+    return api.get(`projects/${this.urn}/blob/${commit}/${path}`, options, this.seed.api);
+  }
+
+  async getReadme(
+    commit: string,
+  ): Promise<Blob> {
+    return api.get(`projects/${this.urn}/readme/${commit}`, {}, this.seed.api);
+  }
+
+  navigateTo(browse: BrowseTo): void {
+    navigate(this.pathTo(browse));
+  }
+
+  pathTo(browse: BrowseTo): string {
+    const browser = get(browserStore);
+    const options: PathOptions = {
+      urn: this.urn,
+      ...browser,
+      ...browse
+    };
+
+    if (this.profile) {
+      options.profile = this.profile?.nameOrAddress;
+    } else {
+      options.seed = this.seed.host;
+    }
+
+    return path(options);
+  }
+
+  static async get(id: string, peer: string | null, profileName: string | null, seedHost: string | null, config: Config): Promise<Project> {
+    const profile = profileName ? await Profile.get(profileName, ProfileType.Project, config) : null;
+    const seed = profile ? profile.seed : seedHost ? await Seed.lookup(seedHost, config) : null;
+
+    if (!profile && !seed) {
+      throw new Error("Couldn't load project");
+    }
+    if (! seed?.valid) {
+      throw new Error("Couldn't load project: invalid seed");
+    }
+
+    const info = await Project.getInfo(id, seed.api);
+    const urn = isRadicleId(id) ? id : info.urn;
+    const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
+
+    // Older versions of http-api don't include the URN.
+    if (! info.urn) info.urn = urn;
+
+    const peers: PeerId[] = info.delegates
+      ? await Project.getRemotes(urn, seed.api)
+      : [];
+
+    let remote: Remote = {
+      heads: { [info.defaultBranch]: info.head }
+    };
+
+    if (peer) {
+      remote = await Project.getRemote(urn, peer, seed.api);
+    }
+
+    return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
+  }
 }

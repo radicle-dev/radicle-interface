@@ -14,22 +14,20 @@
 
   export let peer: string | null = null;
   export let config: Config;
-  export let source: proj.Source;
+  export let project: proj.Project;
   export let content: proj.ProjectContent;
   export let revision: string;
 
-  const project = source.project;
-
-  let parentName = source.profile ? formatProfile(source.profile.nameOrAddress, config) : null;
+  let parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
 
-  function rootPath(source: proj.Source): string {
-    return proj.pathTo({
+  function rootPath(): string {
+    return project.pathTo({
       content: proj.ProjectContent.Tree,
       peer: null,
       path: "/",
       revision: null,
-    }, source);
+    });
   }
 
   const baseName = parentName
@@ -107,30 +105,30 @@
 
 <header>
   <div class="title bold">
-    {#if source.profile}
-      <a class="org-avatar" title={source.profile.nameOrAddress} href="/{source.profile.nameOrAddress}">
-        <Avatar source={source.profile.avatar || source.profile.address} address={source.profile.address}/>
+    {#if project.profile}
+      <a class="org-avatar" title={project.profile.nameOrAddress} href="/{project.profile.nameOrAddress}">
+        <Avatar source={project.profile.avatar || project.profile.address} address={project.profile.address}/>
       </a>
       <span class="divider">/</span>
     {/if}
-    <Link to={rootPath(source)}>{source.project.name}</Link>
+    <Link to={rootPath()}>{project.name}</Link>
     {#if peer}
       <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
     {/if}
   </div>
-  <div class="urn">{source.urn}</div>
-  <div class="description">{source.project.description}</div>
+  <div class="urn">{project.urn}</div>
+  <div class="description">{project.description}</div>
 </header>
 
-{#await proj.getRoot(source.project, revision, source.branches, source.seed.api) then { tree, commit }}
-  <Header {tree} {commit} {browserStore} {source} peerSelector={! source.profile} />
+{#await project.getRoot(revision) then { tree, commit }}
+  <Header {tree} {commit} {browserStore} {project} peerSelector={! project.profile} />
 
   {#if content == proj.ProjectContent.Tree}
-    <Browser {source} {tree} {browserStore} />
+    <Browser {project} {tree} {browserStore} />
   {:else if content == proj.ProjectContent.History}
-    <History {source} {commit} />
+    <History {project} {commit} />
   {:else if content == proj.ProjectContent.Commit}
-    <Commit {source} {commit} />
+    <Commit {project} {commit} />
   {/if}
 {:catch err}
   <div class="container center-content">
