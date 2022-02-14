@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Config } from '@app/config';
+  import { Route, Router } from "svelte-routing";
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import { Profile, ProfileType } from '@app/profile';
@@ -7,7 +8,7 @@
   import { Seed } from '@app/base/seeds/Seed';
   import NotFound from '@app/NotFound.svelte';
 
-  import ProjectContentRoutes from './ProjectContentRoutes.svelte';
+  import ProjectRoute from "./ProjectRoute.svelte";
 
   export let id: string; // Project name or URN.
   export let seedHost: string | null = null;
@@ -76,7 +77,32 @@
       <Loading center />
     </header>
   {:then source}
-    <ProjectContentRoutes {source} {peer} {config} />
+    <Router>
+      <!-- The default action is to render Browser with the default branch head -->
+      <Route path="/">
+        <ProjectRoute content={proj.ProjectContent.Tree} {peer} {source} {config} />
+      </Route>
+      <Route path="/tree">
+        <ProjectRoute content={proj.ProjectContent.Tree} {peer} {source} {config} />
+      </Route>
+      <Route path="/tree/*" let:params>
+        <ProjectRoute route={params["*"]} content={proj.ProjectContent.Tree} {peer} {source} {config} />
+      </Route>
+
+      <Route path="/history">
+        <ProjectRoute content={proj.ProjectContent.History} {peer} {source} {config} />
+      </Route>
+      <Route path="/history/*" let:params>
+        <ProjectRoute route={params["*"]} content={proj.ProjectContent.History} {peer} {source} {config} />
+      </Route>
+
+      <Route path="/commits/:commit" let:params>
+        <ProjectRoute revision={params.commit} content={proj.ProjectContent.Commit} {peer} {source} {config} />
+      </Route>
+      <Route path="/commits/*" let:params>
+        <ProjectRoute route={params["*"]} content={proj.ProjectContent.Commit} {peer} {source} {config} />
+      </Route>
+    </Router>
   {:catch}
     <NotFound title={id} subtitle="This project was not found." />
   {/await}
