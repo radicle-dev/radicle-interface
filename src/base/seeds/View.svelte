@@ -35,6 +35,7 @@
     display: grid;
     grid-template-columns: 5rem 4fr 2fr;
     grid-gap: 1rem 2rem;
+    margin-bottom: 2rem;
   }
   .fields > div {
     justify-self: start;
@@ -77,7 +78,7 @@
       <div class="info">
         <span class="title">
           <span class="bold">
-            🌱 {host}
+            {host} 🌱
           </span>
         </span>
       </div>
