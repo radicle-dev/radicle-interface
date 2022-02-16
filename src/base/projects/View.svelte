@@ -7,6 +7,7 @@
 
   import ProjectRoute from "./ProjectRoute.svelte";
 
+  export let url: string | undefined = undefined;
   export let id: string; // Project name or URN.
   export let seedHost: string | null = null;
   export let profileName: string | null = null; // Address or name of parent profile.
@@ -42,7 +43,7 @@
       <Loading center />
     </header>
   {:then project}
-    <Router>
+    <Router {url}>
       <!-- The default action is to render Browser with the default branch head -->
       <Route path="/">
         <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />

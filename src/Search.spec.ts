@@ -1,18 +1,12 @@
 import Search from "./Search.svelte";
-import { mount } from "radicle-svelte-unit-test";
-import { styles } from "@test/support/index";
+import { screen, render, fireEvent } from "@testing-library/svelte";
+import { describe, test } from "vitest";
 
 describe('Search', function () {
-  it("Renders correctly", () => {
-    mount(Search, {}, styles);
-    cy.get("input").should("exist");
-    cy.get("input").should("have.attr", "placeholder", "Search a name or address...");
-  });
-
-  it("Search input displays and navigates correctly", () => {
-    mount(Search, {}, styles);
-    cy.get("input").type("cloudhead{enter}");
-    cy.get("input").should("have.value", "cloudhead");
-    cy.url().should("contain", "/resolver/query?q=cloudhead");
+  test("Renders correctly", async () => {
+    const { getByPlaceholderText } = render(Search);
+    const input = getByPlaceholderText("Search a name or address...");
+    await fireEvent.input(input, { target: { value: "cloudhead" } });
+    await screen.findByDisplayValue("cloudhead");
   });
 });

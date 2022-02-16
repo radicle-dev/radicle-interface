@@ -1,26 +1,41 @@
+/// <reference types="vitest" />
 import path from 'path';
 import { UserConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import rewriteAll from 'vite-plugin-rewrite-all';
-import IstanbulPlugin from 'vite-plugin-istanbul';
 
 const config: UserConfig = {
   optimizeDeps: {
     exclude: ['svelte-routing', '@pedrouid/environment', '@pedrouid/iso-crypto']
   },
+  test: {
+    deps: {
+      inline: [
+        "@ethersproject/signing-key",
+        "@ethersproject/basex",
+      ]
+    },
+    coverage: {
+      reporter: ["text"],
+      all: true,
+      excludeNodeModules: true,
+      extension: [".svelte", ".ts", ".js"]
+    },
+    environment: 'jsdom',
+    setupFiles: [
+      // Since Vitest runs on node, we need to polyfill fetch with node-fetch
+      "src/polyfills/fetch.js",
+      "src/polyfills/canvas.js"
+    ]
+  },
   plugins: [
     svelte({
+      hot: !process.env.VITEST,
       compilerOptions: {
         dev: process.env.NODE_ENV !== "production"
       }
     }),
     rewriteAll(),
-    IstanbulPlugin({
-      include: "src/**/*",
-      exclude: ["node_modules"],
-      extension: [".ts", ".svelte"],
-      cypress: true
-    })
   ],
   resolve: {
     alias: {
@@ -45,5 +60,10 @@ const config: UserConfig = {
     sourcemap: true
   }
 };
+
+// For Vitest to work we need to supress the READABLE_STREAM disable.
+if (process.env.VITEST) {
+  config.define = undefined;
+}
 
 export default config;

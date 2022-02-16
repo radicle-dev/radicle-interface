@@ -1,7 +1,0 @@
-{
-  "video": false,
-  "componentFolder": "src",
-  "testFiles": "**/*spec.{js,ts}",
-  "pluginsFile": "cypress/plugins/index.cjs",
-  "baseUrl": "http://localhost:3000"
-}

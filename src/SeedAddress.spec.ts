@@ -1,28 +1,21 @@
+import { Seed } from "./base/seeds/Seed";
+import type { Config } from "./config";
 import SeedAddress from "./SeedAddress.svelte";
-import { mount } from "radicle-svelte-unit-test";
-import { styles } from "@test/support/index";
+import { test } from "vitest";
+import { render } from "@testing-library/svelte";
 
-describe('SeedAddress', function () {
-  it("Renders correctly", () => {
-    mount(SeedAddress, {
-      props: {
-        seed: {
-          id: "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1",
-          host: "seed.cloudhead.io",
-        },
-        port: 8776
-      }
-    }, styles);
-    cy.findByText("seed.cloudhead.io").should("exist").should("have.attr", "href", "/seeds/seed.cloudhead.io");
-    cy.findByText("Copy").should("exist");
-  });
+const seed = new Seed({ host: "seed.mock.io", id: "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1" }, {
+  seed: {
+    api: { port: 8777 },
+    git: { port: 8777 },
+    link: { port: 8777 }
+  }
+} as Config);
 
-  it("Copies seed address correctly", () => {
-    cy.findByText("Copy").click().should("exist");
-    cy.findByText("Copy ✓").should("have.attr", "disabled");
-    // We invoke the cy.window here since doing the clipboard action in the runner window, would throw an error
-    cy.window().its("navigator.clipboard").invoke("readText").should("equal", "seed.cloudhead.io");
-    cy.wait(4000);
-    cy.findByText("Copy").click().should("exist").should("not.have.attr", "disabled");
-  });
+test("mount component", async () => {
+  render(SeedAddress, { props: {
+    seed,
+    port: 8776,
+    full: true
+  } });
 });

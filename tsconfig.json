@@ -2,7 +2,6 @@
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": [
     "src",
-    "cypress"
   ],
   "exclude": [
     "node_modules/*"
@@ -13,8 +12,6 @@
     "types": [
       "svelte",
       "vite/client",
-      "cypress",
-      "@testing-library/cypress"
     ],
     "sourceMap": true,
     "moduleResolution": "node",
@@ -27,7 +24,6 @@
     "skipLibCheck": true,
     "paths": {
       "@app/*": ["./src/*"],
-      "@test/*": ["./cypress/*"]
     }
   },
   "noEmit": true

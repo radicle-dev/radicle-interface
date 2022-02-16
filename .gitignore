@@ -3,5 +3,4 @@ node_modules/
 NOTES
 
 # Coverage
-.nyc_output
 coverage
