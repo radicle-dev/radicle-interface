@@ -31,6 +31,7 @@
 	--color-light: #add0e4;
 	--color-yellow: #ffff99;
 	--color-yellow-background: #ffff9911;
+	--color-yellow-background-lighter: #ffff9922;
 	--color-positive: #53db53;
 	--color-positive-background: #53db5311;
 	--color-positive-1: #11332b;
@@ -51,6 +52,7 @@
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
 	--color-foreground-subtler: #333344;
+	--color-foreground-even-subtler: #292936;
 	--color-foreground-background: #121a21;
 	--color-foreground-background-subtle: #10171e;
 	--color-foreground-background-lighter: #151f24;
@@ -336,6 +338,10 @@ label.input {
 	margin: 0 0.5rem;
 	font-size: 0.75rem;
 	line-height: 1.6;
+}
+.badge.primary {
+	color: var(--color-primary);
+	background: var(--color-primary-background);
 }
 .badge.tertiary {
 	color: var(--color-tertiary);

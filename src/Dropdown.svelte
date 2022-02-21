@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  export let items: string[];
+  export let items: { key: string; value: string; badge: string | null }[];
+  export let selected: string | null;
   export let visible = false;
 
   const dispatch = createEventDispatcher();
@@ -17,14 +18,17 @@
     margin-top: 0.5rem;
     border-radius: 0.25rem;
     position: absolute;
-    box-shadow: 8px 8px 24px var(--color-shadow);
+    box-shadow: 16px 16px 32px 32px var(--color-shadow);
   }
   .dropdown-item {
     cursor: pointer;
     padding: 0.5rem 1rem;
   }
-  .dropdown-item:hover {
+  .dropdown-item:hover, .selected {
     background-color: var(--color-foreground-background-lighter);
+  }
+  .dropdown .badge {
+    margin: 0;
   }
 
   @media (max-width: 720px) {
@@ -37,8 +41,12 @@
 
 {#if visible}
   <div class="dropdown">
-    {#each items as item}
-      <div class="dropdown-item" on:click={() => onSelect(item)}>{item}</div>
+    {#each items as {key, value, badge}}
+      <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} title={value}>{@html key}
+        {#if badge}
+          <span class="badge primary">{badge}</span>
+        {/if}
+      </div>
     {/each}
   </div>
 {/if}

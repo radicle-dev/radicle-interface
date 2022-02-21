@@ -73,16 +73,16 @@
   }
 
   .clone {
-    color: var(--color-primary);
-    background-color: var(--color-primary-background);
+    color: var(--color-yellow);
+    background-color: var(--color-yellow-background);
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
     cursor: pointer;
     user-select: none;
   }
-  .clone:hoverr {
-    background-color: var(--color-primary-background-lighter);
+  .clone:hover {
+    background-color: var(--color-yellow-background-lighter);
   }
   .commit-count {
     cursor: pointer;
@@ -103,8 +103,8 @@
     display: block;
   }
   .clone-dropdown input {
-    color: var(--color-primary);
-    background: var(--color-primary-background);
+    color: var(--color-yellow);
+    background: var(--color-yellow-background);
   }
   .dropdown input {
     font-size: 0.75rem;

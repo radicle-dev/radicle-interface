@@ -1,13 +1,28 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import Icon from "@app/Icon.svelte";
   import Dropdown from "@app/Dropdown.svelte";
   import { formatSeedId } from "@app/utils";
+  import type { Peer } from "@app/project";
 
   export let peer: string | null = null;
-  export let peers: (string | { id: string })[];
+  export let peers: Peer[];
   export let toggleDropdown: (input: string) => void;
   export let peersDropdown = false;
+
+  let meta: Peer | undefined;
+  // List of items to be created for the Dropdown component.
+  let items: { key: string; value: string; badge: string | null }[] = [];
+
+  onMount(() => {
+    meta = peers.find(p => p.id === peer);
+    items = peers.map(p => {
+      if (! p.name) console.debug("Not able to resolve peer identity for: ", p.id);
+      let key = p.name ? `<strong>${p.name}</strong> ${p.id}` : p.id;
+
+      return { key, value: p.id, badge: p.delegate ? "delegate" : null };
+    });
+  });
 
   const dispatch = createEventDispatcher();
   const switchPeer = (peer: string) => {
@@ -32,8 +47,11 @@
   .selector .peer.not-allowed {
     cursor: not-allowed;
   }
+  .selector .badge {
+    margin: 0;
+  }
   .peer-id {
-    margin-left: 0.5rem;
+    margin: 0 0.5rem;
   }
   .peer:hover {
     background-color: var(--color-foreground-background-lighter);
@@ -52,14 +70,23 @@
   <span>
     <div on:click={() => toggleDropdown("peer")} class="stat peer" class:not-allowed={!peers}>
       <Icon name="fork" width={15} height={15} />
-      {#if peer}
+      {#if meta}
+        <span class="peer-id">
+          {meta.name ?? formatSeedId(meta.id)}
+        </span>
+        {#if meta.delegate}
+          <span class="badge primary">delegate</span>
+        {/if}
+      <!-- If the delegate metadata is not found -->
+      {:else if peer}
         <span class="peer-id">
           {formatSeedId(peer)}
         </span>
       {/if}
     </div>
     <Dropdown
-      items={peers.map((p) => typeof(p) == "string" ? p : p.id)}
+      {items}
+      selected={peer}
       visible={peersDropdown}
       on:select={(e) => switchPeer(e.detail)}
     />

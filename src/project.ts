@@ -86,6 +86,12 @@ export interface Remote {
   heads: Branches;
 }
 
+export interface Peer {
+  id: PeerId;
+  name: string;
+  delegate: boolean;
+}
+
 export interface Browser {
   content: ProjectContent;
   revision: string | null;
@@ -203,12 +209,12 @@ export class Project implements ProjectInfo {
   maintainers: Urn[];
   delegates: PeerId[];
   seed: Seed;
-  peers: (string | { id: string })[];
+  peers: Peer[];
   branches: Branches;
   profile: Profile | null;
   anchors: string[];
 
-  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: (string | { id: string })[], branches: Branches, profile: Profile | null, anchors: string[]) {
+  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
     this.urn = urn;
     this.head = info.head;
     this.name = info.name;
@@ -258,7 +264,7 @@ export class Project implements ProjectInfo {
     return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
   }
 
-  static async getRemotes(urn: string, host: api.Host): Promise<(PeerId | { id: string })[]> {
+  static async getRemotes(urn: string, host: api.Host): Promise<Peer[]> {
     return api.get(`projects/${urn}/remotes`, {}, host);
   }
 
@@ -331,7 +337,7 @@ export class Project implements ProjectInfo {
     // Older versions of http-api don't include the URN.
     if (! info.urn) info.urn = urn;
 
-    const peers: (PeerId | { id: string })[] = info.delegates
+    const peers: Peer[] = info.delegates
       ? await Project.getRemotes(urn, seed.api)
       : [];
 

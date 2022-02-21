@@ -17,7 +17,7 @@
 
   let branchLabel: string | null = null;
 
-  $: branchList = Object.keys(branches).sort();
+  $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, badge: null }));
   $: showSelector = branchList.length > 1;
   $: head = branches[project.defaultBranch];
   $: commit = getOid(revision, branches) || head;
@@ -81,6 +81,7 @@
         </div>
         <Dropdown
           items={branchList}
+          selected={branchLabel}
           visible={branchesDropdown}
           on:select={(e) => switchBranch(e.detail)} />
       </span>
