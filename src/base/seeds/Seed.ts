@@ -35,13 +35,33 @@ export class Seed {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
     assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
-    seed.api && assert(isDomain(seed.api), `invalid seed api host ${seed.api}`);
-    seed.git && assert(isDomain(seed.git), `invalid seed git host ${seed.git}`);
+    let api = null;
+    let git = null;
+
+    if (seed.api) {
+      try {
+        const url = new URL(seed.api);
+        api = url.hostname;
+      } catch {
+        api = seed.api;
+      }
+      assert(isDomain(api), `invalid seed api host ${api}`);
+    }
+
+    if (seed.git) {
+      try {
+        const url = new URL(seed.git);
+        git = url.hostname;
+      } catch {
+        git = seed.git;
+      }
+      assert(isDomain(git), `invalid seed git host ${git}`);
+    }
 
     // The `git` and `api` keys being more specific take
     // precedence over the `host`, if available.
-    const api = seed.api ?? seed.host;
-    const git = seed.git ?? seed.host;
+    api = api ?? seed.host;
+    git = git ?? seed.host;
 
     this.api = { host: api, port: cfg.seed.api.port };
     this.git = { host: git, port: cfg.seed.git.port };
