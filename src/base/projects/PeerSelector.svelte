@@ -5,7 +5,7 @@
   import { formatSeedId } from "@app/utils";
 
   export let peer: string | null = null;
-  export let peers: string[];
+  export let peers: (string | { id: string })[];
   export let toggleDropdown: (input: string) => void;
   export let peersDropdown = false;
 
@@ -59,7 +59,7 @@
       {/if}
     </div>
     <Dropdown
-      items={peers}
+      items={peers.map((p) => typeof(p) == "string" ? p : p.id)}
       visible={peersDropdown}
       on:select={(e) => switchPeer(e.detail)}
     />

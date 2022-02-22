@@ -203,12 +203,12 @@ export class Project implements ProjectInfo {
   maintainers: Urn[];
   delegates: PeerId[];
   seed: Seed;
-  peers: string[];
+  peers: (string | { id: string })[];
   branches: Branches;
   profile: Profile | null;
   anchors: string[];
 
-  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: string[], branches: Branches, profile: Profile | null, anchors: string[]) {
+  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: (string | { id: string })[], branches: Branches, profile: Profile | null, anchors: string[]) {
     this.urn = urn;
     this.head = info.head;
     this.name = info.name;
@@ -258,7 +258,7 @@ export class Project implements ProjectInfo {
     return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
   }
 
-  static async getRemotes(urn: string, host: api.Host): Promise<PeerId[]> {
+  static async getRemotes(urn: string, host: api.Host): Promise<(PeerId | { id: string })[]> {
     return api.get(`projects/${urn}/remotes`, {}, host);
   }
 
@@ -331,7 +331,7 @@ export class Project implements ProjectInfo {
     // Older versions of http-api don't include the URN.
     if (! info.urn) info.urn = urn;
 
-    const peers: PeerId[] = info.delegates
+    const peers: (PeerId | { id: string })[] = info.delegates
       ? await Project.getRemotes(urn, seed.api)
       : [];
 
