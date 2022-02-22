@@ -263,7 +263,7 @@ export class Project implements ProjectInfo {
   }
 
   async getCommits(commit: string): Promise<CommitsHistory> {
-    return api.get(`projects/${this.urn}/commits?from=${commit}`, {}, this.seed.api);
+    return api.get(`projects/${this.urn}/commits?parent=${commit}`, {}, this.seed.api);
   }
 
   async getCommit(commit: string): Promise<Commit> {
