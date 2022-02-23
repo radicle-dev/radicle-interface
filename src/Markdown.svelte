@@ -131,7 +131,7 @@
     font-family: var(--font-family-monospace);
     font-size: 1rem;
     background-color: var(--color-foreground-background);
-    padding: 1rem;
+    padding: 1rem !important;
     border-radius: 0.25rem;
     margin: 1rem 0;
     overflow: scroll;
