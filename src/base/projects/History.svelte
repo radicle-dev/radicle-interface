@@ -1,6 +1,7 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import type { Project } from "@app/project";
+  import { Project } from "@app/project";
+  import { ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
   import Message from "@app/Message.svelte";
@@ -9,7 +10,7 @@
   export let commit: string;
 
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
-    const commitsQuery = await project.getCommits(parentCommit);
+    const commitsQuery = await Project.getCommits(project.urn, project.seed.api, parentCommit);
     return groupCommitHistory(commitsQuery);
   };
 </script>
@@ -55,7 +56,7 @@
     {#each history.headers as group (group.time)}
       <div class="commit-group">
         <header class="commit-date">
-          <p>{group.time}</p>
+          <p>{group.date}</p>
         </header>
         <div class="commit-group-headers">
           {#each group.commits as commit (commit.header.sha1)}

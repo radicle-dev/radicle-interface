@@ -67,7 +67,7 @@
       {@const pendingAnchor = pendingAnchors[project.urn]}
       {#if project.head}
         <div class="project">
-          <Widget {project} {anchor} on:click={() => onClick(project)}>
+          <Widget {project} {seed} {anchor} on:click={() => onClick(project)}>
             <span class="actions" slot="actions">
               {#if profile?.org?.safe && account && anchor}
                 {#if pendingAnchor} <!-- Pending anchor -->

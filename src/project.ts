@@ -274,8 +274,12 @@ export class Project implements ProjectInfo {
     return api.get(`projects/${urn}/remotes`, {}, host);
   }
 
-  async getCommits(commit: string): Promise<CommitsHistory> {
-    return api.get(`projects/${this.urn}/commits?parent=${commit}`, {}, this.seed.api);
+  static async getCommits(urn: string, host: api.Host, parent?: string, since?: string, until?: string, perPage?: string, page?: string): Promise<CommitsHistory> {
+    const params: Record<string, string | undefined> = { parent, since, until, "per-page": perPage, page };
+    // Removes the undefined params.
+    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+
+    return api.get(`projects/${urn}/commits`, params, host);
   }
 
   async getCommit(commit: string): Promise<Commit> {
