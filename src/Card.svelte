@@ -1,18 +1,30 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { Link } from 'svelte-routing';
   import Avatar from '@app/Avatar.svelte';
   import type { Profile } from '@app/profile';
   import type { Config } from '@app/config';
   import { formatName, formatAddress } from '@app/utils';
+  import type { Seed } from '@app/base/seeds/Seed';
 
   export let profile: Profile | {
     address: string;
     avatar?: string;
     name?: string;
-  } ;
+  } | null = null;
+  export let seed: Seed | null = null;
   export let config: Config;
   export let path: string;
   export let members: string[] = [];
+
+  let numberOfProjects: number | null = null;
+
+  onMount(async () => {
+    if (seed) {
+      const projects = await seed.getProjects();
+      numberOfProjects = projects.length;
+    }
+  });
 </script>
 
 <style>
@@ -55,6 +67,16 @@
     color: var(--color-foreground-faded);
   }
 
+  .card.seed {
+    width: 14rem;
+  }
+  .card.seed .card-label {
+    max-width: 12rem;
+  }
+  .card.seed .seed-emoji {
+    font-size: 3rem;
+  }
+
   @media (max-width: 720px) {
     .card {
       margin-right: 0;
@@ -63,22 +85,36 @@
 </style>
 
 <Link to={path}>
-  <div class="card">
+  <div class="card" class:seed={!!seed}>
     <div class="card-avatar">
-      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+      {#if profile}
+        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+      {:else if seed}
+        <span class="seed-emoji">
+          {seed.emoji}
+        </span>
+      {/if}
     </div>
     <div class="card-label">
-      {#if profile.name}
-        {formatName(profile.name, config)}
-      {:else}
-        {formatAddress(profile.address)}
+      {#if profile}
+        {#if profile.name}
+          {formatName(profile.name, config)}
+        {:else}
+          {formatAddress(profile.address)}
+        {/if}
+      {:else if seed}
+        {seed.host}
       {/if}
     </div>
     <div class="card-members">
-      {#if members.length > 0}
-        {members.length} member(s)
-      {:else}
-        {formatAddress(profile.address)}
+      {#if profile}
+        {#if members.length > 0}
+          {members.length} member(s)
+        {:else}
+          {formatAddress(profile.address)}
+        {/if}
+      {:else if numberOfProjects}
+        {numberOfProjects} project(s)
       {/if}
     </div>
   </div>

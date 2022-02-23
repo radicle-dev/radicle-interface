@@ -78,7 +78,7 @@
       <div class="info">
         <span class="title">
           <span class="bold">
-            {host} 🌱
+            {host} {seed.emoji}
           </span>
         </span>
       </div>

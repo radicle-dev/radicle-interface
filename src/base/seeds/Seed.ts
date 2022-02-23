@@ -24,6 +24,7 @@ export class Seed {
   link: { host: string; id: string; port: number };
 
   version?: string;
+  emoji: string;
 
   constructor(seed: {
     host: string;
@@ -56,6 +57,13 @@ export class Seed {
         git = seed.git;
       }
       assert(isDomain(git), `invalid seed git host ${git}`);
+    }
+
+    const meta = cfg.seeds.pinned[seed.host];
+    if (meta) {
+      this.emoji = meta.emoji;
+    } else {
+      this.emoji = "🌱";
     }
 
     // The `git` and `api` keys being more specific take
@@ -116,5 +124,9 @@ export class Seed {
       id: peer.id,
       version: info.version,
     }, cfg);
+  }
+
+  static async lookupMulti(hostnames: string[], cfg: Config): Promise<Seed[]> {
+    return await Promise.all(hostnames.map(h => Seed.lookup(h, cfg)));
   }
 }

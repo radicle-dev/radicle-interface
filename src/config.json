@@ -26,6 +26,19 @@
         "cloudhead.radicle.eth"
       ]
     },
+    "seeds": {
+      "pinned": {
+        "willow.radicle.garden": {
+          "emoji": "🪵"
+        },
+        "pine.radicle.garden": {
+          "emoji": "🌲"
+        },
+        "maple.radicle.garden": {
+          "emoji": "🍁"
+        }
+      }
+    },
     "safe": {
       "api": "https://safe-transaction.gnosis.io",
       "viewer": "https://gnosis-safe.io/app/#/safes"

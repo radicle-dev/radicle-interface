@@ -4,10 +4,12 @@
   import Card from '@app/Card.svelte';
   import type { Org } from '@app/base/orgs/Org';
   import type { Config } from '@app/config';
+  import type { Seed } from '@app/base/seeds/Seed';
 
   export let config: Config;
   export let orgs: Org[] = [];
   export let profiles: Profile[] = [];
+  export let seeds: Seed[] = [];
 
   const orgMembers: Record<string, string[]> = {};
 
@@ -52,7 +54,11 @@
       <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
     {/each}
 
-    {#if !orgs.length && !profiles.length}
+    {#each seeds as seed}
+      <Card {seed} {config} path={`/seeds/${seed.host}`} />
+    {/each}
+
+    {#if !orgs.length && !profiles.length && !seeds.length}
       <slot />
     {/if}
   </div>

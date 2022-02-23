@@ -7,6 +7,7 @@
   import Message from '@app/Message.svelte';
   import Cards from '@app/Cards.svelte';
   import { setOpenGraphMetaTag } from '@app/utils';
+  import { Seed } from '@app/base/seeds/Seed';
 
   export let config: Config;
 
@@ -24,8 +25,12 @@
     ? Profile.getMulti(config.users.pinned, config)
     : Promise.resolve([]);
 
-  const getEntities = Promise.all([getUsers, getOrgs]).then(([users, orgs]) => {
-    return { users, orgs };
+  const getSeeds = Object.keys(config.seeds.pinned).length > 0
+    ? Seed.lookupMulti(Object.keys(config.seeds.pinned), config)
+    : Promise.resolve([]);
+
+  const getEntities = Promise.all([getUsers, getOrgs, getSeeds]).then(([users, orgs, seeds]) => {
+    return { users, orgs, seeds };
   });
 
   const viewMore = () => {
@@ -88,6 +93,14 @@
       <Loading center />
     </div>
   {:then entities}
+    {#if entities.seeds.length}
+      <div class="heading">
+        Explore <strong>seed nodes</strong> on the Radicle network.
+      </div>
+      <Cards {config} seeds={entities.seeds}>
+        <div class="empty">There are no seed nodes.</div>
+      </Cards>
+    {/if}
     {#if entities.orgs.length || entities.users.length}
       <div class="heading">
         Explore <strong>orgs</strong> and <strong>users</strong> on the Radicle network.
