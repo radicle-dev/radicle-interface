@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as proj from "@app/base/projects/Project";
+  import * as proj from "@app/project";
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import { formatCommitTime } from "@app/commit";
   import { formatCommit } from "@app/utils";

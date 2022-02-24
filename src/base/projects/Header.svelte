@@ -148,7 +148,7 @@
     on:branchChanged={(event) => updateRevision(event.detail)} />
   <div class="anchor">
     <AnchorBadge {commit} {anchors}
-      head={info.head} on:click={(event) => updateRevision(event.detail)} />
+      head={project.head} on:click={(event) => updateRevision(event.detail)} />
   </div>
   {#if seed.git.host}
     <span>

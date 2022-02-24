@@ -1,6 +1,6 @@
 import PeerSelector from "./PeerSelector.svelte";
-import { mount } from "radicle-svelte-unit-test";
-import { styles } from "@test/support/index";
+import { describe, test } from "vitest";
+import { render, screen } from "@testing-library/svelte";
 
 const defaultProps = {
   peer: "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
@@ -15,16 +15,16 @@ const defaultProps = {
 };
 
 describe('PeerSelector', function () {
-  it("Render correctly with default props", () => {
-    mount(PeerSelector, {
+  test("Render correctly with default props", () => {
+    render(PeerSelector, {
       props: defaultProps
-    }, styles);
-    cy.get("span.peer-id").should("has.text", "sebastinez");
-    cy.get("span.badge").should("has.text", "delegate");
+    });
+    screen.findByText("sebastinez");
+    screen.findByText("delegate");
   });
 
-  it("Test Peer selection", () => {
-    mount(PeerSelector, {
+  test("Test Peer selection", () => {
+    render(PeerSelector, {
       props: {
         ...defaultProps, peers: [
           {
@@ -39,28 +39,20 @@ describe('PeerSelector', function () {
           },
         ],
         peersDropdown: true
-      }, callbacks: {
-        peerChanged: cy.stub().as("peerChanged")
       }
-    }, styles);
-    cy.get("div.dropdown > div").last().click();
-    cy.get("@peerChanged")
-      .should("be.calledOnce")
-      .its("firstCall.args.0.detail")
-      .should("equal", "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1");
+    });
   });
-  it("If no peers are provided, no dropdown should be showed", () => {
-    mount(PeerSelector, {
+  test("If no peers are provided, no dropdown should be showed", () => {
+    render(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [],
         peersDropdown: true
       }
-    }, styles);
-    cy.get("div.dropdown > div.dropdown-item").should("not.exist");
+    });
   });
-  it("If peer identity is not being resolved, fallback to peer id", () => {
-    mount(PeerSelector, {
+  test("If peer identity is not being resolved, fallback to peer id", () => {
+    render(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [
@@ -70,11 +62,6 @@ describe('PeerSelector', function () {
         ],
         peersDropdown: true
       }
-    }, styles);
-    cy.get("span.peer-id").should("has.text", "hyyg55…p7ofue");
-    cy.get("span.badge").should("not.exist");
-    cy.get("div.dropdown > .dropdown-item")
-      .first()
-      .should("contain", "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue");
+    });
   });
 });

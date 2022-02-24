@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Readable } from 'svelte/store';
-  import * as proj from '@app/base/projects/Project';
+  import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import * as utils from '@app/utils';
 

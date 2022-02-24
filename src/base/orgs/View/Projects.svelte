@@ -2,12 +2,12 @@
   import { navigate } from "svelte-routing";
   import { onMount } from "svelte";
   import type { Config } from "@app/config";
-  import * as proj from "@app/base/projects/Project";
+  import * as proj from "@app/project";
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
   import Widget from '@app/base/projects/Widget.svelte';
   import type { Profile } from "@app/profile";
-  import type { ProjectInfo, Anchor, PendingAnchor } from "@app/base/projects/Project";
+  import type { ProjectInfo, Anchor, PendingAnchor } from "@app/project";
   import type { Seed } from "@app/base/seeds/Seed";
   import AnchorActions from "@app/base/profiles/AnchorActions.svelte";
 
@@ -31,13 +31,13 @@
     }
   };
 
-  const onClick = (info: ProjectInfo) => {
+  const onClick = (project: ProjectInfo) => {
     navigate(
       proj.path({
-        urn: info.urn,
+        urn: project.urn,
         seed: seed?.host,
         profile: profile?.name ?? profile?.address,
-        revision: info.head,
+        revision: project.head,
       })
     );
   };
@@ -62,11 +62,11 @@
   {#await seed.getProjects(profile?.id)}
     <Loading center />
   {:then projects}
-    {#each projects as info}
-      {@const anchor = anchors[info.urn]}
-      {@const pendingAnchor = pendingAnchors[info.urn]}
+    {#each projects as project}
+      {@const anchor = anchors[project.urn]}
+      {@const pendingAnchor = pendingAnchors[project.urn]}
       <div class="project">
-        <Widget {info} {anchor} on:click={() => onClick(info)}>
+        <Widget {project} {anchor} on:click={() => onClick(project)}>
           <span class="actions" slot="actions">
             {#if profile?.org?.safe && account && anchor}
               {#if pendingAnchor} <!-- Pending anchor -->

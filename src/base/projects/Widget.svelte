@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type * as proj from '@app/base/projects/Project';
+  import type * as proj from '@app/project';
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
 
-  export let info: proj.ProjectInfo;
+  export let project: proj.ProjectInfo;
   export let faded = false;
   export let anchor: proj.Anchor | null = null;
 </script>
@@ -83,15 +83,15 @@
 
 <article on:click class:project-faded={faded}>
   <div class="id">
-    <span class="name">{info.name}</span>
-    <span class="urn desktop">{info.urn}</span>
+    <span class="name">{project.name}</span>
+    <span class="urn desktop">{project.urn}</span>
   </div>
-  <div class="description">{info.description || ""}</div>
+  <div class="description">{project.description || ""}</div>
   <div class="anchor">
     <span class="commit">
       <slot name="stateHash">
-        {#if info.head}
-          {info.head}
+        {#if project.head}
+          {project.head}
         {:else}
           <span class="subtle">Could not retrieve HEAD</span>
         {/if}
@@ -106,8 +106,8 @@
         <slot name="anchor">
           {#if anchor}
             <AnchorBadge
-              commit={info.head}
-              head={info.head} noText noBg
+              commit={project.head}
+              head={project.head} noText noBg
               anchors={[anchor.anchor.stateHash]} />
           {/if}
         </slot>

@@ -9,7 +9,7 @@ import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
 import { NotFoundError } from "@app/error";
 import { getProjectAnchors } from "@app/anchors";
-import type { Anchor, PendingAnchor } from "@app/base/projects/Project";
+import type { Anchor, PendingAnchor } from "@app/project";
 
 export interface IProfile {
   address: string;

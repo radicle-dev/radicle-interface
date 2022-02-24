@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Link } from 'svelte-routing';
   import type { Config } from '@app/config';
-  import * as proj from '@app/base/projects/Project';
+  import * as proj from '@app/project';
   import Avatar from '@app/Avatar.svelte';
   import Clipboard from '@app/Clipboard.svelte';
   import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
-  import { browserStore } from '@app/base/projects/Project';
+  import { browserStore } from '@app/project';
 
   import Header from '@app/base/projects/Header.svelte';
 
@@ -32,18 +32,18 @@
   }
 
   const baseName = parentName
-    ? `${parentName}/${info.name}`
-    : info.name;
+    ? `${parentName}/${project.name}`
+    : project.name;
 
-  if (info.description) {
-    pageTitle = `${baseName}: ${info.description}`;
+  if (project.description) {
+    pageTitle = `${baseName}: ${project.description}`;
   } else {
     pageTitle = baseName;
   }
 
   setOpenGraphMetaTag([
-    { prop: "og:title", content: info.name },
-    { prop: "og:description", content: info.description },
+    { prop: "og:title", content: project.name },
+    { prop: "og:description", content: project.description },
     { prop: "og:url", content: window.location.href }
   ]);
 </script>
