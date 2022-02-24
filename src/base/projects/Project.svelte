@@ -3,7 +3,8 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Avatar from '@app/Avatar.svelte';
-  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
+  import Icon from '@app/Icon.svelte';
+  import { formatProfile, formatSeedId, setOpenGraphMetaTag, toClipboard } from '@app/utils';
   import { browserStore } from '@app/project';
 
   import Header from '@app/base/projects/Header.svelte';
@@ -113,10 +114,14 @@
     {/if}
     <Link to={rootPath()}>{project.name}</Link>
     {#if peer}
-      <span class="divider" title={peer}>/ {formatSeedId(peer)}</span>
+      <span class="divider" title={peer}>/ {formatSeedId(peer)}
+        <Icon name="clipboard" width={16} height={16} class="clickable" on:click={() => toClipboard(peer ?? "")}/>
+      </span>
     {/if}
   </div>
-  <div class="urn">{project.urn}</div>
+  <div class="urn" on:click={() => toClipboard(project.urn)}>{project.urn}
+    <Icon name="small-clipboard" width={12} height={12} class="clickable" on:click={() => toClipboard(project.urn)}/>
+  </div>
   <div class="description">{project.description}</div>
 </header>
 

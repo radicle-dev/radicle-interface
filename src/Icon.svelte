@@ -42,6 +42,16 @@
       size: 15,
       offset: { x: 0, y: 1 },
       data: `<path fill-rule="evenodd" d="M12.78 6.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.22 7.28a.75.75 0 011.06-1.06L8 9.94l3.72-3.72a.75.75 0 011.06 0z"></path>`
+    },
+    {
+      name: "small-clipboard",
+      size: 12,
+      data: `<svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><line x1="3.5" y1="1" x2="3.5" y2="10"/><line x1="6.5" y1="1" x2="6.5" y2="4"/><line x1="9.5" y1="5" x2="9.5" y2="10"/><line x1="7" y1="1.5" x2="4" y2="1.5"/><line x1="9.64645" y1="4.35355" x2="6.64644" y2="1.35355"/><line x1="10" y1="9.5" x2="4" y2="9.5"/><line x1="10" y1="4.5" x2="6" y2="4.5"/><line x1="1.5" y1="4" x2="1.5" y2="12"/><line x1="7" y1="11.5" x2="1" y2="11.5"/></svg>`
+    },
+    {
+      name: "clipboard",
+      size: 16,
+      data: `<svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><line x1="4.5" y1="1" x2="4.5" y2="13"/><line x1="9.5" y1="1" x2="9.5" y2="4"/><line x1="12.5" y1="5" x2="12.5" y2="13"/><line x1="9" y1="1.5" x2="5" y2="1.5"/><line x1="12.6464" y1="4.35355" x2="9.64644" y2="1.35355"/><line x1="12" y1="12.5" x2="5" y2="12.5"/><line x1="13" y1="4.5" x2="9" y2="4.5"/><line x1="2.5" y1="4" x2="2.5" y2="15"/><line x1="10" y1="14.5" x2="2" y2="14.5"/></svg>`
     }
   ];
   const svg = icons.find(e => e.name === name);
