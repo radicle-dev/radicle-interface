@@ -29,9 +29,9 @@
 
 <style>
   .card {
-    width: 10rem;
-    height: 10rem;
-    margin-right: 3rem;
+    width: 12rem;
+    height: 10.5rem;
+    margin-right: 1.5rem;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     padding: 1rem;
@@ -57,10 +57,9 @@
     font-weight: var(--font-weight-medium);
     margin-top: 0.75rem;
     border-radius: 0.75rem;
-    padding: 0rem 0.5rem;
+    padding: 0rem;
     text-overflow: ellipsis;
     overflow-x: hidden;
-    max-width: 8rem;
   }
   .card-members {
     font-size: 0.875rem;

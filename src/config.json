@@ -18,6 +18,8 @@
         "community.radicle.eth",
         "upstream.radicle.eth",
         "gnosisguild.radicle.eth",
+        "grants.radicle.eth",
+        "gip-editors.radicle.eth",
         "dxdao.radicle.eth"
       ]
     },
