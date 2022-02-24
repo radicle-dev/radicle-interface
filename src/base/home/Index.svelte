@@ -42,12 +42,12 @@
   main {
     padding: 3rem 3rem;
     width: 100%;
-    max-width: 72rem;
+    max-width: 74rem;
   }
   .blurb {
     color: var(--color-foreground-90);
     padding: 0rem;
-    max-width: 90%;
+    max-width: 70%;
     font-size: 1.25rem;
     text-align: left;
     border-radius: 1rem;
