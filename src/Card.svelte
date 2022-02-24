@@ -113,8 +113,12 @@
         {:else}
           {formatAddress(profile.address)}
         {/if}
-      {:else if numberOfProjects}
-        {numberOfProjects} project(s)
+      {:else if numberOfProjects !== null}
+        {#if numberOfProjects > 0}
+          {numberOfProjects} project(s)
+        {:else}
+          No projects
+        {/if}
       {/if}
     </div>
   </div>
