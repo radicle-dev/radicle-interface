@@ -90,7 +90,7 @@
     "seed": {
       "api": { "port": 8777 },
       "link": { "port": 8776 },
-      "git": { "port": 80 }
+      "git": { "port": 443 }
     }
   },
   "ipfs": { "gateway": "https://ipfs.io/ipfs/" },

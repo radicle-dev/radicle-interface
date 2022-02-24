@@ -38,11 +38,14 @@ export class Seed {
 
     let api = null;
     let git = null;
+    let apiPort = null;
+    let gitPort = null;
 
     if (seed.api) {
       try {
         const url = new URL(seed.api);
         api = url.hostname;
+        apiPort = url.port || null;
       } catch {
         api = seed.api;
       }
@@ -53,6 +56,7 @@ export class Seed {
       try {
         const url = new URL(seed.git);
         git = url.hostname;
+        gitPort = url.port || null;
       } catch {
         git = seed.git;
       }
@@ -71,8 +75,8 @@ export class Seed {
     api = api ?? seed.host;
     git = git ?? seed.host;
 
-    this.api = { host: api, port: cfg.seed.api.port };
-    this.git = { host: git, port: cfg.seed.git.port };
+    this.api = { host: api, port: Number(apiPort) || cfg.seed.api.port };
+    this.git = { host: git, port: Number(gitPort) || cfg.seed.git.port };
     this.link = { host: seed.host, id: seed.id, port: cfg.seed.link.port };
 
     if (seed.version) {
