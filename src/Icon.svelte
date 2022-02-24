@@ -44,8 +44,9 @@
       data: `<path fill-rule="evenodd" d="M12.78 6.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.22 7.28a.75.75 0 011.06-1.06L8 9.94l3.72-3.72a.75.75 0 011.06 0z"></path>`
     },
     {
-      name: "small-clipboard",
+      name: "clipboard-small",
       size: 12,
+      offset: { x: -1, y: 1 },
       data: `<svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><line x1="3.5" y1="1" x2="3.5" y2="10"/><line x1="6.5" y1="1" x2="6.5" y2="4"/><line x1="9.5" y1="5" x2="9.5" y2="10"/><line x1="7" y1="1.5" x2="4" y2="1.5"/><line x1="9.64645" y1="4.35355" x2="6.64644" y2="1.35355"/><line x1="10" y1="9.5" x2="4" y2="9.5"/><line x1="10" y1="4.5" x2="6" y2="4.5"/><line x1="1.5" y1="4" x2="1.5" y2="12"/><line x1="7" y1="11.5" x2="1" y2="11.5"/></svg>`
     },
     {
@@ -66,6 +67,11 @@
   }
   svg.clickable {
     cursor: pointer;
+  }
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 

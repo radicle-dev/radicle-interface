@@ -3,8 +3,8 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Avatar from '@app/Avatar.svelte';
-  import Icon from '@app/Icon.svelte';
-  import { formatProfile, formatSeedId, setOpenGraphMetaTag, toClipboard } from '@app/utils';
+  import Clipboard from '@app/Clipboard.svelte';
+  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
   import { browserStore } from '@app/project';
 
   import Header from '@app/base/projects/Header.svelte';
@@ -53,15 +53,19 @@
     padding: 0 2rem 0 8rem;
   }
   .title {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     font-size: 2rem;
     margin-bottom: 0.5rem;
   }
   .title .divider {
     color: var(--color-foreground-subtle);
     margin: 0 0.5rem;
+    font-weight: normal;
+  }
+  .title .peer-id {
+    color: var(--color-foreground-subtle);
     font-weight: normal;
   }
   .org-avatar {
@@ -74,6 +78,10 @@
     font-size: 0.75rem;
     color: var(--color-foreground-faded);
     overflow-wrap: anywhere;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 0.125rem;
   }
   .description {
     margin: 1rem 0 1.5rem 0;
@@ -114,13 +122,14 @@
     {/if}
     <Link to={rootPath()}>{project.name}</Link>
     {#if peer}
-      <span class="divider" title={peer}>/ {formatSeedId(peer)}
-        <Icon name="clipboard" width={16} height={16} class="clickable" on:click={() => toClipboard(peer ?? "")}/>
+      <span class="peer-id">
+        <span class="divider">/</span><span title={peer}>{formatSeedId(peer)}</span><Clipboard text={peer} />
       </span>
     {/if}
   </div>
-  <div class="urn" on:click={() => toClipboard(project.urn)}>{project.urn}
-    <Icon name="small-clipboard" width={12} height={12} class="clickable" on:click={() => toClipboard(project.urn)}/>
+  <div class="urn">
+    <span>{project.urn}</span>
+    <Clipboard small text={project.urn} />
   </div>
   <div class="description">{project.description}</div>
 </header>
