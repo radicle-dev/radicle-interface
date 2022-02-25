@@ -5,6 +5,7 @@
   import { Browser, ProjectContent, Project } from '@app/project';
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
   import type { Tree } from "@app/project";
+  import Input from "@app/Input.svelte";
   import BranchSelector from './BranchSelector.svelte';
   import PeerSelector from './PeerSelector.svelte';
 
@@ -102,20 +103,6 @@
   .clone-dropdown.clone-dropdown-visible {
     display: block;
   }
-  .clone-dropdown input {
-    color: var(--color-yellow);
-    background: var(--color-yellow-background);
-  }
-  .dropdown input {
-    font-size: 0.75rem;
-    font-family: var(--font-family-monospace);
-    padding: 0.5rem;
-    border: none;
-    outline: none;
-    width: 24rem;
-    text-overflow: ellipsis !important;
-    border-radius: 0.25rem;
-  }
   .dropdown label {
     display: block;
     color: var(--color-foreground-faded);
@@ -172,10 +159,11 @@
         class="dropdown clone-dropdown"
         class:clone-dropdown-visible={dropdownState.clone}
       >
-        <input
-          readonly
+        <Input
           name="clone-url"
           value="https://{seed.git.host}/{utils.parseRadicleId(urn)}.git"
+          class="yellow"
+          clipboard
         />
         <label for="clone-url"
           >Use Git to clone this repository from the URL above.</label
