@@ -86,6 +86,11 @@ export function formatSeedAddress(id: string, host: string, port: number): strin
   return `${id}@${host}:${port}`;
 }
 
+export function formatLocationHash(hash: string | null): number | null {
+  if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
+  return null;
+}
+
 export function formatSeedId(id: string): string {
   return id.substring(0, 6)
     + '…'

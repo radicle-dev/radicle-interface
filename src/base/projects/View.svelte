@@ -50,22 +50,22 @@
       <Route path="/tree">
         <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
-      <Route path="/tree/*" let:params>
-        <ProjectRoute route={params["*"]} content={ProjectContent.Tree} {peer} {project} {config} />
+      <Route path="/tree/*" let:params let:location>
+        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
 
       <Route path="/history">
         <ProjectRoute content={ProjectContent.History} {peer} {project} {config} />
       </Route>
-      <Route path="/history/*" let:params>
-        <ProjectRoute route={params["*"]} content={ProjectContent.History} {peer} {project} {config} />
+      <Route path="/history/*" let:params let:location>
+        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.History} {peer} {project} {config} />
       </Route>
 
       <Route path="/commits/:commit" let:params>
         <ProjectRoute revision={params.commit} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
-      <Route path="/commits/*" let:params>
-        <ProjectRoute route={params["*"]} content={ProjectContent.Commit} {peer} {project} {config} />
+      <Route path="/commits/*" let:params let:location>
+        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
     </Router>
   {:catch}

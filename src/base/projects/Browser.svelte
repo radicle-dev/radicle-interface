@@ -173,7 +173,7 @@
           {#if utils.isMarkdownPath(blob.path)}
             <Readme content={blob.content} />
           {:else}
-            <Blob {blob} />
+            <Blob line={browser.line} {blob} />
           {/if}
         {:catch}
           <div class="error error-message file-not-found">

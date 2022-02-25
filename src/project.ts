@@ -97,6 +97,7 @@ export interface Browser {
   revision: string | null;
   peer: string | null;
   path: string | null;
+  line: number | null;
 }
 
 export const browserStore = writable({
@@ -105,6 +106,7 @@ export const browserStore = writable({
   revision: null,
   peer: null,
   path: null,
+  line: null,
 } as Browser);
 
 export interface BrowseTo {
@@ -112,6 +114,7 @@ export interface BrowseTo {
   revision?: string | null;
   path?: string | null;
   peer?: string | null;
+  line?: number | null;
 }
 
 export interface PathOptions extends BrowseTo {

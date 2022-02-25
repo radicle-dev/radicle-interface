@@ -1,12 +1,20 @@
 <script lang="ts">
   import type { Blob } from "@app/project";
+  import { onMount } from "svelte";
 
   export let blob: Blob;
+  export let line: number | null;
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
   const parentDir = blob.path.match(/^.*\/|/)?.values().next().value;
+
+  // Waiting onMount, due to the line numbers still loading.
+  onMount(() => {
+    const lineElement = document.getElementById(`L${line}`);
+    if (lineElement) lineElement.scrollIntoView();
+  });
 </script>
 
 <style>
@@ -54,6 +62,12 @@
     text-align: right;
     user-select: none;
     padding: 0 1rem 0.5rem 1rem;
+  }
+  .line-number {
+    display: block;
+  }
+  .line-number:hover {
+    color: var(--color-foreground);
   }
 
   .code {
@@ -118,7 +132,9 @@
         </div>
       {:else}
         <pre class="line-numbers">
-          {@html lineNumbers.join("\n")}
+          {#each lineNumbers as lineNumber}
+            <a href="#L{lineNumber}" class="line-number" id="L{lineNumber}">{lineNumber}</a>
+          {/each}
         </pre>
         <pre
           class="code no-scrollbar">

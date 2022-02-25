@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Writable } from 'svelte/store';
   import type { Config } from "@app/config";
+  import { formatLocationHash } from '@app/utils';
   import * as proj from '@app/project';
 
   import Project from './Project.svelte';
@@ -12,8 +13,10 @@
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
   export let config: Config;
+  export let hash: string | null = null;
 
-  const browse: proj.BrowseTo = { content, peer, path: "/" };
+  const line = formatLocationHash(hash);
+  const browse: proj.BrowseTo = { content, peer, path: "/", line };
   const head = project.branches[project.defaultBranch];
 
   // route is passed when the URL has more params after e.g. /tree or /history
