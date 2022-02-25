@@ -76,6 +76,7 @@
   }
 
   .container {
+    position: relative;
     display: flex;
     border: 1px solid var(--color-foreground-subtle);
     border-top-style: dashed;
@@ -96,6 +97,15 @@
     margin-bottom: 1rem;
   }
 
+  .highlight {
+    position: absolute;
+    width: 100%;
+    height: 1.5rem;
+    opacity: 0.3;
+    top: 1rem;
+    background-color: var(--color-yellow);
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -107,6 +117,10 @@
   @media (max-width: 960px) {
     .code, .line-numbers {
       font-size: 0.875rem;
+    }
+    .highlight {
+      transform: translateY(-3px);
+      height: 1.2rem;
     }
   }
 </style>
@@ -131,6 +145,9 @@
           <span class="small">Binary content</span>
         </div>
       {:else}
+        {#if line}
+          <div class="highlight" style="top: {line == 1 ? 1 : (1.5 * line) - 0.5}rem" />
+        {/if}
         <pre class="line-numbers">
           {#each lineNumbers as lineNumber}
             <a href="#L{lineNumber}"
