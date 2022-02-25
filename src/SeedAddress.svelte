@@ -1,24 +1,11 @@
 <script lang="ts">
-  import { formatSeedAddress, formatSeedId, toClipboard } from "./utils";
+  import { formatSeedAddress, formatSeedId } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
+  import Clipboard from "@app/Clipboard.svelte";
 
   export let seed: Seed;
   export let port: number;
   export let full = false;
-
-  let seedCopied = false;
-
-  const copySeed = (seedId: string, seedHost: string) => {
-    const str = full
-      ? formatSeedAddress(seedId, seedHost, port)
-      : seedHost;
-    return () => toClipboard(str).then(() => {
-      seedCopied = true;
-      setTimeout(() => {
-        seedCopied = false;
-      }, 3000);
-    });
-  };
 </script>
 
 <style>
@@ -39,7 +26,7 @@
 </style>
 
 
-<div class="desktop">
+<div>
   <div class="seed-address">
     <span class="seed-icon">🌱</span>
     {#if full}
@@ -49,13 +36,6 @@
       <span><a href="/seeds/{seed.host}" class="link">{seed.host}</a></span>
     {/if}
   </div>
+  <Clipboard text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host } />
 </div>
-<div>
-  <button class="tiny faded" disabled={seedCopied} on:click={copySeed(seed.id, seed.host)}>
-    {#if seedCopied}
-      Copy ✓
-    {:else}
-      Copy
-    {/if}
-  </button>
-</div>
+<div class="desktop"/>
