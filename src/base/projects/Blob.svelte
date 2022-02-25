@@ -7,7 +7,7 @@
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
-  const lineNumbers = Array(lines).fill(0).map((_, index) => (index + 1).toString());
+  const lineNumbers = Array(lines).fill(0).map((_, index) => index + 1);
   const parentDir = blob.path.match(/^.*\/|/)?.values().next().value;
 
   // Waiting onMount, due to the line numbers still loading.
@@ -66,8 +66,8 @@
   .line-number {
     display: block;
   }
-  .line-number:hover {
-    color: var(--color-foreground);
+  .line-number:hover, .line-number.highlighted {
+    color: var(--color-foreground-90);
   }
 
   .code {
@@ -133,7 +133,10 @@
       {:else}
         <pre class="line-numbers">
           {#each lineNumbers as lineNumber}
-            <a href="#L{lineNumber}" class="line-number" id="L{lineNumber}">{lineNumber}</a>
+            <a href="#L{lineNumber}"
+               class="line-number"
+               class:highlighted={lineNumber === line}
+               id="L{lineNumber}">{lineNumber}</a>
           {/each}
         </pre>
         <pre

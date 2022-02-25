@@ -57,7 +57,7 @@
     mobileFileTree = false;
 
     if (path) {
-      project.navigateTo({ path: newPath, revision });
+      project.navigateTo({ path: newPath, revision, line: null });
     }
   };
 

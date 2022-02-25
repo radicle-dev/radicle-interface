@@ -15,11 +15,13 @@
   export let config: Config;
   export let hash: string | null = null;
 
-  const line = formatLocationHash(hash);
-  const browse: proj.BrowseTo = { content, peer, path: "/", line };
+  const browse: proj.BrowseTo = { content, peer, path: "/" };
   const head = project.branches[project.defaultBranch];
 
-  // route is passed when the URL has more params after e.g. /tree or /history
+  // If line-number hash changes, we update the browser.
+  $: browse.line = formatLocationHash(hash);
+
+  // `route` includes any unmatched path segments.
   $: if (route) {
     const { path, revision } = proj.parseRoute(route, project.branches);
 
