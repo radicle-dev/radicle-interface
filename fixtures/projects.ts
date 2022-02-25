@@ -170,16 +170,20 @@ export const readmeMock = {
 };
 
 export const infoMock = {
+  urn: "rad:git:hnrknktqojdakynn6kkkywjuz7xqgm85ziauo",
+  name: "nakamoto",
+  description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+  defaultBranch: "master",
+  delegates: [
+    {
+      type: "indirect",
+      urn: "rad:git:hnrk81wcokr48mkm544kh74kc9fqz84d3rfcy",
+      ids: [
+        "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue"
+      ]
+    }
+  ],
   head: "6e8a614a30adbfd681a472b89c54605f978b0b25",
-  meta: {
-    urn: "rad:git:hnrknktqojdakynn6kkkywjuz7xqgm85ziauo",
-    name: "nakamoto",
-    description:
-      "Privacy-preserving Bitcoin light-client implementation in Rust",
-    defaultBranch: "master",
-    maintainers: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
-    delegates: ["hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"],
-  },
 };
 
 export const peerMock = {
@@ -187,5 +191,9 @@ export const peerMock = {
 };
 
 export const remoteMock = [
-  "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+  {
+    "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
+    "name": "sebastinez",
+    "delegate": true
+  }
 ];

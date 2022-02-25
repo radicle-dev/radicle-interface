@@ -61,7 +61,7 @@ const config: UserConfig = {
   }
 };
 
-// For Vitest to work we need to supress the READABLE_STREAM disable.
+// For Vitest to work we need to unset READABLE_STREAM.
 if (process.env.VITEST) {
   config.define = undefined;
 }

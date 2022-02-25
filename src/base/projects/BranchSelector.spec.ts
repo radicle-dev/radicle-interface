@@ -3,7 +3,7 @@ import { describe, test } from "vitest";
 import { render, screen } from "@testing-library/svelte";
 
 const defaultProps = {
-  info: {
+  project: {
     head: "e678629cd37c770c640a2cd997fc76303c815772",
     urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
     name: "nakamoto",

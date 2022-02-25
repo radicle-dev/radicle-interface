@@ -1,9 +1,6 @@
 <script lang="ts">
-  // Ok this is something horrible, but I wanted to make it pass and it's the nicest way I found to make it work.
-  // TODO: Before merging this I'll have worked it out.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { marked } = require("marked");
   import { onMount } from "svelte";
+  import { marked } from "marked";
   import sanitizeHtml from 'sanitize-html';
 
   export let content: string;

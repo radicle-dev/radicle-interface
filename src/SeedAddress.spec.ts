@@ -1,5 +1,4 @@
 import { Seed } from "./base/seeds/Seed";
-import type { Config } from "./config";
 import SeedAddress from "./SeedAddress.svelte";
 import { test } from "vitest";
 import { render } from "@testing-library/svelte";
@@ -9,8 +8,13 @@ const seed = new Seed({ host: "seed.mock.io", id: "hydkkkf5ksbe5fuszdhpqhytu3q36
     api: { port: 8777 },
     git: { port: 8777 },
     link: { port: 8777 }
+  },
+  seeds: {
+    pinned: {
+      "willow.radicle.garden": { emoji: "🌳" }
+    }
   }
-} as Config);
+} as any); // We cast Config here to any because we only need a partial config, but Partial does not work well.
 
 test("mount component", async () => {
   render(SeedAddress, { props: {

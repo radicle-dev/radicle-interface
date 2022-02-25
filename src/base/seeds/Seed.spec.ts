@@ -1,9 +1,13 @@
 import { Seed } from "./Seed";
 import { Config } from "@app/config";
+import { describe, test, expect } from "vitest";
 
 describe('Seed', function () {
-  it("Constructs git host correctly", () => {
+  test("Constructs git host correctly", () => {
     const cfg = new Config({ name: "homestead", chainId: 1 }, null as any, null);
+    cfg.seeds.pinned = {
+      "willow.radicle.garden": { emoji: "🌱" },
+    };
     const seed = new Seed({
       host: "seed.cloudhead.io",
       id: "hydzjm73tstmdcwhach3psfgkunbjpih7ztnuswhw9w6h9pi5sffd6",
@@ -18,8 +22,11 @@ describe('Seed', function () {
     expect(seed.api.port).to.eq(8777);
   });
 
-  it("Constructs git host correctly with custom port", () => {
+  test("Constructs git host correctly with custom port", () => {
     const cfg = new Config({ name: "homestead", chainId: 1 }, null as any, null);
+    cfg.seeds.pinned = {
+      "willow.radicle.garden": { emoji: "🌱" },
+    };
     const seed = new Seed({
       host: "seed.cloudhead.io",
       id: "hydzjm73tstmdcwhach3psfgkunbjpih7ztnuswhw9w6h9pi5sffd6",
@@ -30,8 +37,11 @@ describe('Seed', function () {
     expect(seed.git.port).to.eq(8778);
   });
 
-  it("Constructs api host correctly", () => {
+  test("Constructs api host correctly", () => {
     const cfg = new Config({ name: "homestead", chainId: 1 }, null as any, null);
+    cfg.seeds.pinned = {
+      "willow.radicle.garden": { emoji: "🌱" },
+    };
     const seed = new Seed({
       host: "seed.cloudhead.io",
       id: "hydzjm73tstmdcwhach3psfgkunbjpih7ztnuswhw9w6h9pi5sffd6",

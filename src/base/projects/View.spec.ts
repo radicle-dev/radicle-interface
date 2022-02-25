@@ -1,6 +1,5 @@
-import type { Config } from "@app/config";
 import View from "./View.svelte";
-import { test, beforeAll, afterAll } from "vitest";
+import { describe, test, beforeAll, afterAll } from "vitest";
 import { readmeMock, infoMock, treeMock, rootMock, peerMock, remoteMock } from "../../../fixtures/projects";
 import { isSafe } from "../../../fixtures/safe";
 import { render, screen } from "@testing-library/svelte";
@@ -20,6 +19,7 @@ const defaultProps = {
       git: { port: 8777 },
       link: { port: 8777 }
     },
+    seeds: { pinned: { "willow.radicle.garden": { emoji: "🌳" } } },
     safe: {
       api: "https://safe-transaction.gnosis.io",
       viewer: "https://gnosis-safe.io/app/#/safes"
@@ -27,7 +27,7 @@ const defaultProps = {
     network: {
       name: "rinkeby"
     }
-  } as Config
+  } as any // We cast Config here to any because we only need a partial config, but Partial does not work well.
 };
 
 export const restHandlers = [
@@ -64,14 +64,16 @@ const server = setupServer(...restHandlers);
 beforeAll(() => server.listen());
 afterAll(() => server.close());
 
-test("mount component", async () => {
-  const { rerender } = render(View, { props: defaultProps });
-  await screen.findByText("nakamoto");
-  await screen.findByText("rad:git:hnrknktqojdakynn6kkkywjuz7xqgm85ziauo");
-  await screen.findByText("Privacy-preserving Bitcoin light-client implementation in Rust");
-  await screen.findByText("6e8a614", { selector: "div.hash.desktop" });
-  await screen.findByText("master");
+describe("Project View", () => {
+  test("mount component", async () => {
+    const { rerender } = render(View, { props: defaultProps });
+    await screen.findByText("nakamoto");
+    await screen.findByText("rad:git:hnrknktqojdakynn6kkkywjuz7xqgm85ziauo");
+    await screen.findByText("Privacy-preserving Bitcoin light-client implementation in Rust");
+    await screen.findByText("6e8a614", { selector: "div.hash.desktop" });
+    await screen.findByText("master");
 
-  rerender({ ...defaultProps, url: "/tree/1e54ae2ed58b5f7a7afb9365f0bd3a85c57d9af1" });
-  await screen.findByText("1e54ae2ed58b5f7a7afb9365f0bd3a85c57d9af1", { selector: "div.hash.desktop" });
+    rerender({ ...defaultProps, url: "/tree/1e54ae2ed58b5f7a7afb9365f0bd3a85c57d9af1" });
+    await screen.findByText("1e54ae2ed58b5f7a7afb9365f0bd3a85c57d9af1", { selector: "div.hash.desktop" });
+  });
 });
