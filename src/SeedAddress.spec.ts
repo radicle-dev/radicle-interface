@@ -14,15 +14,5 @@ describe('SeedAddress', function () {
       }
     }, styles);
     cy.findByText("seed.cloudhead.io").should("exist").should("have.attr", "href", "/seeds/seed.cloudhead.io");
-    cy.findByText("Copy").should("exist");
-  });
-
-  it("Copies seed address correctly", () => {
-    cy.findByText("Copy").click().should("exist");
-    cy.findByText("Copy ✓").should("have.attr", "disabled");
-    // We invoke the cy.window here since doing the clipboard action in the runner window, would throw an error
-    cy.window().its("navigator.clipboard").invoke("readText").should("equal", "seed.cloudhead.io");
-    cy.wait(4000);
-    cy.findByText("Copy").click().should("exist").should("not.have.attr", "disabled");
   });
 });

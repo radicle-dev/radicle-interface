@@ -36,6 +36,6 @@
       <span><a href="/seeds/{seed.host}" class="link">{seed.host}</a></span>
     {/if}
   </div>
-  <Clipboard text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host } />
+  <Clipboard text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host} />
 </div>
 <div class="desktop"/>
