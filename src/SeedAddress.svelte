@@ -28,7 +28,7 @@
 
 <div>
   <div class="seed-address">
-    <span class="seed-icon">🌱</span>
+    <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span><a href="/seeds/{seed.host}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
       <span class="faded">:{port}</span>
