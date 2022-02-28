@@ -16,9 +16,7 @@
     background-color: var(--color-foreground-background);
     padding: 0.5rem 0;
     margin-top: 0.5rem;
-    border-radius: 0.25rem;
     position: absolute;
-    box-shadow: 16px 16px 32px 32px var(--color-shadow);
   }
   .dropdown-item {
     cursor: pointer;

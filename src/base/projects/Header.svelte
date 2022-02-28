@@ -93,12 +93,8 @@
     background-color: var(--color-foreground-background-lighter);
   }
   .dropdown {
-    background-color: var(--color-foreground-background);
     padding: 1rem;
-    margin-top: 0.5rem;
-    border-radius: 0.25rem;
     display: none;
-    position: absolute;
   }
   .clone-dropdown.clone-dropdown-visible {
     display: block;
@@ -160,14 +156,20 @@
         class:clone-dropdown-visible={dropdownState.clone}
       >
         <Input
-          name="clone-url"
+          name="rad-clone-url"
+          value="rad clone rad://{seed.git.host}/{utils.parseRadicleId(urn)}"
+          class="yellow"
+          clipboard
+        />
+        <label for="rad-clone-url">Use the Radicle CLI to clone this project.</label>
+        <br />
+        <Input
+          name="git-clone-url"
           value="https://{seed.git.host}/{utils.parseRadicleId(urn)}.git"
           class="yellow"
           clipboard
         />
-        <label for="clone-url"
-          >Use Git to clone this repository from the URL above.</label
-        >
+        <label for="git-clone-url">Use Git to clone this repository from the URL above.</label>
       </div>
     </span>
   {/if}

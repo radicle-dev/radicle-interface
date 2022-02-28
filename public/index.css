@@ -306,6 +306,15 @@ label.input {
 	background-color: var(--color-negative);
 }
 
+.dropdown {
+	background-color: var(--color-foreground-background);
+	margin-top: 0.5rem;
+	position: absolute;
+	box-shadow: 16px 16px 32px 32px var(--color-shadow);
+	z-index: 10;
+	border-radius: 0.25rem;
+}
+
 .error {
 	color: var(--color-negative) !important;
 	border-color: var(--color-negative) !important;
