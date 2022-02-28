@@ -102,8 +102,7 @@
     width: 100%;
     height: 1.5rem;
     top: 1rem;
-    opacity: 0.1;
-    background-color: var(--color-yellow);
+    background-color: var(--color-yellow-background-lighter);
   }
 
   .no-scrollbar {
