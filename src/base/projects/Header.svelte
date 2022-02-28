@@ -161,7 +161,9 @@
           class="yellow"
           clipboard
         />
-        <label for="rad-clone-url">Use the Radicle CLI to clone this project.</label>
+        <label for="rad-clone-url">
+          Use the <a target="_blank" href="https://radicle.network/get-started.html" class="link">Radicle CLI</a> to clone this project.
+        </label>
         <br />
         <Input
           name="git-clone-url"
