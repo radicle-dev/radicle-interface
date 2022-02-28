@@ -101,8 +101,8 @@
     position: absolute;
     width: 100%;
     height: 1.5rem;
-    opacity: 0.3;
     top: 1rem;
+    opacity: 0.1;
     background-color: var(--color-yellow);
   }
 
@@ -119,8 +119,7 @@
       font-size: 0.875rem;
     }
     .highlight {
-      transform: translateY(-3px);
-      height: 1.2rem;
+      display: none;
     }
   }
 </style>
