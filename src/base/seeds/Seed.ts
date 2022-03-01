@@ -19,8 +19,8 @@ export class InvalidSeed {
 export class Seed {
   valid: true = true;
 
-  api: { host: string; port: number };
-  git: { host: string; port: number };
+  api: { host: string; port: number | null };
+  git: { host: string; port: number | null };
   link: { host: string; id: string; port: number };
 
   version?: string;
@@ -38,14 +38,14 @@ export class Seed {
 
     let api = null;
     let git = null;
-    let apiPort = null;
-    let gitPort = null;
+    let apiPort: number | null = cfg.seed.api.port;
+    let gitPort: number | null = cfg.seed.git.port;
 
     if (seed.api) {
       try {
         const url = new URL(seed.api);
         api = url.hostname;
-        apiPort = url.port || null;
+        apiPort = url.port ? Number(url.port) : null;
       } catch {
         api = seed.api;
       }
@@ -56,7 +56,7 @@ export class Seed {
       try {
         const url = new URL(seed.git);
         git = url.hostname;
-        gitPort = url.port || null;
+        gitPort = url.port ? Number(url.port) : null;
       } catch {
         git = seed.git;
       }
@@ -75,8 +75,8 @@ export class Seed {
     api = api ?? seed.host;
     git = git ?? seed.host;
 
-    this.api = { host: api, port: Number(apiPort) || cfg.seed.api.port };
-    this.git = { host: git, port: Number(gitPort) || cfg.seed.git.port };
+    this.api = { host: api, port: apiPort };
+    this.git = { host: git, port: gitPort };
     this.link = { host: seed.host, id: seed.id, port: cfg.seed.link.port };
 
     if (seed.version) {

@@ -1,6 +1,6 @@
 export interface Host {
   host: string;
-  port: number;
+  port: number | null;
 }
 
 export async function get(
@@ -23,24 +23,26 @@ export async function get(
   path = path.startsWith("/") ? path.slice(1) : path;
 
   const baseUrl = path
-    ? `${protocol}${base}:${port}/v1/${path}`
-    : `${protocol}${base}:${port}`;
-  const url = search ? `${baseUrl}?${search}` : baseUrl;
+    ? `${protocol}${base}/v1/${path}`
+    : `${protocol}${base}`;
+  const url = new URL(search ? `${baseUrl}?${search}` : baseUrl);
+  url.port = String(port);
 
+  const urlString = String(url);
   let response = null;
   try {
-    response = await fetch(url, {
+    response = await fetch(urlString, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       }
     });
   } catch (err) {
-    throw new ApiError(url, "API request failed");
+    throw new ApiError(urlString, "API request failed");
   }
 
   if (! response.ok) {
-    throw new ApiError(url, "Not found");
+    throw new ApiError(urlString, "Not found");
   }
   return response.json();
 }
