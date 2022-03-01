@@ -59,6 +59,9 @@
 </script>
 
 <style>
+  svg {
+    fill: transparent;
+  }
   svg.fill {
     fill: currentColor;
   }
