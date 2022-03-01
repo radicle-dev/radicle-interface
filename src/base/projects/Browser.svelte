@@ -100,6 +100,11 @@
     width: 100%;
   }
 
+  .error-grey {
+    color: var(--color-foreground-faded) !important;
+    background-color: var(--color-foreground-background);
+  }
+
   .source-tree {
     overflow-x: hidden;
   }
@@ -176,7 +181,7 @@
             <Blob line={browser.line} {blob} />
           {/if}
         {:catch}
-          <div class="error error-message file-not-found">
+          <div class="error error-grey error-message file-not-found">
             <header>
               <div class="icon">🍂</div>
               {#if path != "/"}
