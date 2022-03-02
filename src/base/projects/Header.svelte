@@ -13,7 +13,6 @@
   export let tree: Tree;
   export let commit: string;
   export let browserStore: Writable<Browser>;
-  export let peerSelector: boolean; // If peerSelector should be showed.
 
   let { urn, peers, branches, seed, anchors } = project;
 
@@ -134,7 +133,7 @@
 </style>
 
 <header>
-  {#if peers.length > 0 && peerSelector}
+  {#if peers.length > 0}
     <PeerSelector {peers} {toggleDropdown} peer={browser.peer}
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />

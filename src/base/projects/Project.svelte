@@ -138,7 +138,7 @@
 
 {#if revision}
   {#await project.getRoot(revision) then { tree, commit }}
-    <Header {tree} {commit} {browserStore} {project} peerSelector={! project.profile} />
+    <Header {tree} {commit} {browserStore} {project} />
 
     {#if content == proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />

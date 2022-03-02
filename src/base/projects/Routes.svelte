@@ -7,7 +7,7 @@
   export let config: Config;
 </script>
 
-<!-- With an Seed context -->
+<!-- With a seed context -->
 
 <Route path="/seeds/:seed/:id/*" let:params>
   <View {config} seedHost={params.seed} id={params.id} />
@@ -26,6 +26,10 @@
   <Redirect to="/{params.addressOrName}/{params.id}/{params["*"]}" />
 </Route>
 <!-- End of eventual dropped routes -->
+
+<Route path="/:profile/:id/remotes/:peer/*" let:params>
+  <View {config} profileName={params.profile} id={params.id} peer={params.peer} />
+</Route>
 
 <Route path="/:profile/:id/*" let:params>
   <View {config} profileName={params.profile} id={params.id} />
