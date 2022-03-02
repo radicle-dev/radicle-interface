@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Config } from "@app/config";
+  import { formatSeedId } from "@app/utils";
   import { Seed } from "@app/base/seeds/Seed";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
   import NotFound from "@app/NotFound.svelte";
+  import Clipboard from "@app/Clipboard.svelte";
   import Projects from "@app/base/orgs/View/Projects.svelte";
 
   export let config: Config;
@@ -50,6 +52,10 @@
   .desktop {
     display: block !important;
   }
+  .inline {
+    display: inline !important;
+  }
+
   @media (max-width: 720px) {
     main {
       width: 100%;
@@ -78,7 +84,7 @@
       <div class="info">
         <span class="title">
           <span class="bold">
-            {host} {seed.emoji}
+            {host} <span class="desktop inline">{seed.emoji}</span>
           </span>
         </span>
       </div>
@@ -90,7 +96,7 @@
       <SeedAddress {seed} port={seed.link.port} />
       <!-- Seed ID -->
       <div class="label">Seed ID</div>
-      <div>{seed.id}</div>
+      <div>{formatSeedId(seed.id)} <Clipboard small text={seed.id} /></div>
       <div class="desktop" />
       <!-- API Port -->
       <div class="label">API Port</div>
