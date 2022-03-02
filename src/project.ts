@@ -37,7 +37,7 @@ export enum ProjectContent {
 }
 
 export interface ProjectInfo {
-  head: string;
+  head: string | null;
   urn: string;
   name: string;
   description: string;
@@ -205,7 +205,7 @@ export function parseRoute(input: string, branches: Branches): { path?: string; 
 
 export class Project implements ProjectInfo {
   urn: string;
-  head: string;
+  head: string | null;
   name: string;
   description: string;
   defaultBranch: string;
@@ -345,7 +345,7 @@ export class Project implements ProjectInfo {
       : [];
 
     let remote: Remote = {
-      heads: { [info.defaultBranch]: info.head }
+      heads: info.head ? { [info.defaultBranch]: info.head } : {}
     };
 
     if (peer) {

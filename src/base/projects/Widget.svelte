@@ -93,7 +93,7 @@
         {#if project.head}
           {project.head}
         {:else}
-          <span class="subtle">Could not retrieve HEAD</span>
+          <span class="subtle">✗ No head</span>
         {/if}
       </slot>
     </span>
@@ -104,7 +104,7 @@
       </span>
       <span class="anchor-badge">
         <slot name="anchor">
-          {#if anchor}
+          {#if anchor && project.head}
             <AnchorBadge
               commit={project.head}
               head={project.head} noText noBg

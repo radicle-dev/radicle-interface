@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Readable } from 'svelte/store';
-  import * as proj from '@app/project';
+  import type * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
   import Placeholder from '@app/Placeholder.svelte';
   import * as utils from '@app/utils';
@@ -21,10 +21,11 @@
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let browserStore: Readable<proj.Browser>;
+  export let commit: string;
 
   $: browser = $browserStore;
   $: path = browser.path || "/";
-  $: revision = browser.revision || project.branches[project.head];
+  $: revision = browser.revision;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -70,7 +71,6 @@
     mobileFileTree = !mobileFileTree;
   };
 
-  $: commit = proj.getOid(revision, project.branches) || project.head;
   $: getBlob = loadBlob(path);
   $: loadingPath = state.status == Status.Loading ? state.path : null;
 </script>

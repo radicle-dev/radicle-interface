@@ -4,7 +4,7 @@
   const dispatch = createEventDispatcher();
 
   export let anchors: Array<string> = [];
-  export let head: string;
+  export let head: string | null;
   export let commit: string;
   export let noText = false;
   export let noBg = false;
@@ -44,7 +44,7 @@
   }
 </style>
 
-{#if anchors}
+{#if anchors && head}
   <!-- commit is head and latest anchor  -->
   {#if commit == anchors[0] && commit === head}
     <span class="anchor-widget anchor-latest" class:no-bg={noBg}>

@@ -141,7 +141,7 @@
     <Header {tree} {commit} {browserStore} {project} peerSelector={! project.profile} />
 
     {#if content == proj.ProjectContent.Tree}
-      <Browser {project} {tree} {browserStore} />
+      <Browser {project} {commit} {tree} {browserStore} />
     {:else if content == proj.ProjectContent.History}
       <History {project} {commit} />
     {:else if content == proj.ProjectContent.Commit}

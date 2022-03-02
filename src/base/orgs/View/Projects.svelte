@@ -65,19 +65,21 @@
     {#each projects as project}
       {@const anchor = anchors[project.urn]}
       {@const pendingAnchor = pendingAnchors[project.urn]}
-      <div class="project">
-        <Widget {project} {anchor} on:click={() => onClick(project)}>
-          <span class="actions" slot="actions">
-            {#if profile?.org?.safe && account && anchor}
-              {#if pendingAnchor} <!-- Pending anchor -->
-                <AnchorActions
-                  {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
-                  on:success={() => loadAnchors()} />
+      {#if project.head}
+        <div class="project">
+          <Widget {project} {anchor} on:click={() => onClick(project)}>
+            <span class="actions" slot="actions">
+              {#if profile?.org?.safe && account && anchor}
+                {#if pendingAnchor} <!-- Pending anchor -->
+                  <AnchorActions
+                    {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
+                    on:success={() => loadAnchors()} />
+                {/if}
               {/if}
-            {/if}
-          </span>
-        </Widget>
-      </div>
+            </span>
+          </Widget>
+        </div>
+      {/if}
     {/each}
   {:catch err}
     <Message error>
