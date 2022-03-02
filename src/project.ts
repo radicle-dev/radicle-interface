@@ -349,7 +349,11 @@ export class Project implements ProjectInfo {
     };
 
     if (peer) {
-      remote = await Project.getRemote(urn, peer, seed.api);
+      try {
+        remote = await Project.getRemote(urn, peer, seed.api);
+      } catch {
+        remote.heads = {};
+      }
     }
 
     return new Project(urn, info, seed, peers, remote.heads, profile, anchors);

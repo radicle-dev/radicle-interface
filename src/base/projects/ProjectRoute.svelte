@@ -16,7 +16,7 @@
   export let hash: string | null = null;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
-  const head = project.branches[project.defaultBranch];
+  const head = project.branches[project.defaultBranch] || null;
 
   // If line-number hash changes, we update the browser.
   $: browse.line = formatLocationHash(hash);

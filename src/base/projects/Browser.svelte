@@ -2,6 +2,7 @@
   import type { Readable } from 'svelte/store';
   import * as proj from '@app/project';
   import Loading from '@app/Loading.svelte';
+  import Placeholder from '@app/Placeholder.svelte';
   import * as utils from '@app/utils';
 
   import Tree from './Tree.svelte';
@@ -100,26 +101,8 @@
     width: 100%;
   }
 
-  .error-grey {
-    color: var(--color-foreground-faded) !important;
-    background-color: var(--color-foreground-background);
-  }
-
   .source-tree {
     overflow-x: hidden;
-  }
-  .file-not-found {
-    text-align: center;
-    border-radius: 0.25rem;
-    padding-bottom: 2rem;
-  }
-  .file-not-found header {
-    padding: 1rem 0;
-    font-weight: bold;
-  }
-  .file-not-found .icon {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
   }
   nav {
     padding: 0 2rem;
@@ -181,19 +164,20 @@
             <Blob line={browser.line} {blob} />
           {/if}
         {:catch}
-          <div class="error error-grey error-message file-not-found">
-            <header>
-              <div class="icon">🍂</div>
+          <Placeholder icon="🍂">
+            <span slot="title">
               {#if path != "/"}
                 <div><code>{path}</code></div>
               {/if}
-            </header>
-            {#if path == "/"}
-              The README could not be loaded.
-            {:else}
-              This path could not be loaded.
-            {/if}
-          </div>
+            </span>
+            <span slot="body">
+              {#if path == "/"}
+                The README could not be loaded.
+              {:else}
+                This path could not be loaded.
+              {/if}
+            </span>
+          </Placeholder>
         {/await}
       </div>
     {/if}

@@ -3,6 +3,7 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Avatar from '@app/Avatar.svelte';
+  import Placeholder from '@app/Placeholder.svelte';
   import Clipboard from '@app/Clipboard.svelte';
   import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
   import { browserStore } from '@app/project';
@@ -17,7 +18,7 @@
   export let config: Config;
   export let project: proj.Project;
   export let content: proj.ProjectContent;
-  export let revision: string;
+  export let revision: string | null;
 
   let parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
@@ -49,9 +50,6 @@
 </script>
 
 <style>
-  header {
-    padding: 0 2rem 0 8rem;
-  }
   .title {
     display: flex;
     align-items: center;
@@ -87,8 +85,12 @@
     margin: 1rem 0 1.5rem 0;
   }
 
+  .content {
+    padding: 0 2rem 0 8rem;
+  }
+
   @media (max-width: 960px) {
-    header {
+    .content {
       padding-left: 2rem;
     }
 
@@ -112,7 +114,7 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
-<header>
+<header class="content">
   <div class="title bold">
     {#if project.profile}
       <a class="org-avatar" title={project.profile.nameOrAddress} href="/{project.profile.nameOrAddress}">
@@ -134,22 +136,37 @@
   <div class="description">{project.description}</div>
 </header>
 
-{#await project.getRoot(revision) then { tree, commit }}
-  <Header {tree} {commit} {browserStore} {project} peerSelector={! project.profile} />
+{#if revision}
+  {#await project.getRoot(revision) then { tree, commit }}
+    <Header {tree} {commit} {browserStore} {project} peerSelector={! project.profile} />
 
-  {#if content == proj.ProjectContent.Tree}
-    <Browser {project} {tree} {browserStore} />
-  {:else if content == proj.ProjectContent.History}
-    <History {project} {commit} />
-  {:else if content == proj.ProjectContent.Commit}
-    <Commit {project} {commit} />
-  {/if}
-{:catch err}
-  <div class="container center-content">
-    <div class="error error-message text-xsmall">
-      <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
-           to fetch - this needs a change to the backend. -->
-      API request to <code class="text-xsmall">{err.url}</code> failed
+    {#if content == proj.ProjectContent.Tree}
+      <Browser {project} {tree} {browserStore} />
+    {:else if content == proj.ProjectContent.History}
+      <History {project} {commit} />
+    {:else if content == proj.ProjectContent.Commit}
+      <Commit {project} {commit} />
+    {/if}
+  {:catch err}
+    <div class="container center-content">
+      <div class="error error-message text-xsmall">
+        <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+             to fetch - this needs a change to the backend. -->
+        API request to <code class="text-xsmall">{err.url}</code> failed
+      </div>
     </div>
+  {/await}
+{:else}
+  <div class="content">
+    {#if peer}
+      <Placeholder icon="🍂">
+        <span slot="title"><code>{formatSeedId(peer)}</code></span>
+        <span slot="body">Couldn't load remote source tree.</span>
+      </Placeholder>
+    {:else}
+      <Placeholder icon="🍂">
+        <span slot="body">Couldn't load source tree.</span>
+      </Placeholder>
+    {/if}
   </div>
-{/await}
+{/if}
