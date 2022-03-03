@@ -1,8 +1,7 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": [
-    "src",
-    "cypress"
+    "src"
   ],
   "exclude": [
     "node_modules/*"
@@ -26,8 +25,8 @@
     "importsNotUsedAsValues": "error",
     "skipLibCheck": true,
     "paths": {
+      "@public/*": ["./public/*"],
       "@app/*": ["./src/*"],
-      "@test/*": ["./cypress/*"]
     }
   },
   "noEmit": true

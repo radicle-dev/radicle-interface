@@ -188,7 +188,7 @@
   <div class="stat commit-count" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
-  <div class="stat">
+  <div class="stat contributor-count">
     <strong>{tree.stats.contributors}</strong> contributor(s)
   </div>
 </header>

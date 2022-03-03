@@ -8,8 +8,11 @@ import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
 
+
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Cypress: any;
     ethereum: any;
     registrarState: any;
   }
@@ -246,8 +249,7 @@ export async function getConfig(): Promise<Config> {
   if (metamask) {
     // If Metamask is detected, we use the network configured there.
     const ready = await checkMetaMask(metamask);
-    if (ready === null) throw new Error("Not able to connect to Metamask, check for multiple Web3 providers");
-    network = ready;
+    if (ready) network = ready;
   }
 
   const networkConfig = (<Record<string, any>> config)[network.name];

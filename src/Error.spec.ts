@@ -1,11 +1,11 @@
 import Error from "./Error.svelte";
-import { mount } from "radicle-svelte-unit-test";
+import { render } from "@testing-library/svelte";
 import { Failure } from '@app/error';
-import { styles } from "@test/support/index";
+import "@public/index.css";
 
 describe('Error', function () {
-  it("Open Error modal with default props", () => {
-    mount(Error, { props: {
+  it("should show passed in props", () => {
+    render(Error, { props: {
       subtitle: "Subtitle of Modal",
       error: {
         type: Failure.InsufficientBalance,
@@ -13,30 +13,28 @@ describe('Error', function () {
         message: "Not enough RAD"
       }
     }
-    }, styles);
-    cy.get("[slot=title]").should("have.text", " Error");
-    cy.get("[slot=subtitle]").should("have.text", "Subtitle of Modal");
-    cy.get("[slot=body]").should("have.text", "Error: Not enough RAD");
-    cy.get("button").should("have.text", "Back");
+    });
+    cy.findByText("Error");
+    cy.findByText("Subtitle of Modal");
+    cy.findByText("Not enough RAD");
+    cy.findByText("Back");
   });
 
-  it("Open Error modal with custom message", () => {
-    mount(Error, { props: {
+  it("should show custom error message", () => {
+    render(Error, { props: {
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
-    } }, styles);
-    cy.get("[slot=subtitle]").should("have.text", "Subtitle of Modal");
-    cy.get("[slot=body]").should("have.text", "Error: Error message to check for");
-    cy.get("button").should("have.text", "Back");
+    } });
+    cy.findByText("Error message to check for");
   });
 
-  it("Check floating modal changes button label to Close", () => {
-    mount(Error, { props: {
+  it("should change button label to Close when floating", () => {
+    render(Error, { props: {
       title: "Title of Modal",
       subtitle: "Subtitle of Modal",
       message: "Error message to check for",
       floating: true
-    } }, styles);
-    cy.get("button").should("have.text", "Close");
+    } });
+    cy.findByText("Close");
   });
 });

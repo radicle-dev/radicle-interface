@@ -57,7 +57,7 @@
   <div class="history">
     {#each history.headers as group (group.time)}
       <div class="commit-group">
-        <header>
+        <header class="commit-date">
           <p>{group.time}</p>
         </header>
         <div class="commit-group-headers">

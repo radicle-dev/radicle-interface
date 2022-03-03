@@ -1,0 +1,100 @@
+{
+  "path": "",
+  "entries": [
+    {
+      "path": "contracts",
+      "info": {
+        "name": "contracts",
+        "objectType": "TREE",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "scripts",
+      "info": {
+        "name": "scripts",
+        "objectType": "TREE",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "test",
+      "info": {
+        "name": "test",
+        "objectType": "TREE",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": ".gitignore",
+      "info": {
+        "name": ".gitignore",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "README.md",
+      "info": {
+        "name": "README.md",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "hardhat.config.js",
+      "info": {
+        "name": "hardhat.config.js",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "package-lock.json",
+      "info": {
+        "name": "package-lock.json",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "package.json",
+      "info": {
+        "name": "package.json",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    },
+    {
+      "path": "yarn.lock",
+      "info": {
+        "name": "yarn.lock",
+        "objectType": "BLOB",
+        "lastCommit": null
+      }
+    }
+  ],
+  "info": {
+    "name": "",
+    "objectType": "TREE",
+    "lastCommit": {
+      "sha1": "56e4e029c294b08546386e1fb706b772c7433c49",
+      "author": {
+        "name": "dabit3",
+        "email": "dabit3@gmail.com"
+      },
+      "summary": "emit event",
+      "description": "",
+      "committer": {
+        "name": "dabit3",
+        "email": "dabit3@gmail.com"
+      },
+      "committerTime": 1646237176
+    }
+  },
+  "stats": {
+    "commits": 3,
+    "branches": 1,
+    "contributors": 1
+  }
+}

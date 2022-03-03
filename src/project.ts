@@ -169,7 +169,6 @@ export function path(opts: PathOptions): string {
 }
 
 // We need a SHA1 commit in some places, so we return early if the revision is a SHA and else we look into branches.
-// As fallback we use the head commit.
 export function getOid(revision: string, branches?: Branches): string | null {
   if (isOid(revision)) return revision;
 

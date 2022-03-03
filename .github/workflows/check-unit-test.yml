@@ -1,4 +1,4 @@
-name: check-components 
+name: check-unit-test
 on: [push, pull_request]
 
 jobs:
@@ -10,5 +10,5 @@ jobs:
         with:
           node-version: '14'
       - run: npm ci
-      - run: ./scripts/test
+      - run: ./scripts/unit-test
         shell: bash

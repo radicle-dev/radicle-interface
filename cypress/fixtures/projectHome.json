@@ -1,0 +1,23 @@
+{
+  "message": "Welcome!",
+  "service": "radicle-http-api",
+  "version": "0.2.0",
+  "path": "/",
+  "links": [
+    {
+      "href": "/v1/projects",
+      "rel": "projects",
+      "type": "GET"
+    },
+    {
+      "href": "/v1/peer",
+      "rel": "peer",
+      "type": "GET"
+    },
+    {
+      "href": "/v1/delegates/:urn/projects",
+      "rel": "projects",
+      "type": "GET"
+    }
+  ]
+}

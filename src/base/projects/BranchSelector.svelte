@@ -19,7 +19,7 @@
 
   $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: head = branches[project.defaultBranch];
+  $: head = project.head ?? branches[project.defaultBranch];
   $: commit = getOid(revision, branches) || head;
   $: if (commit == head) {
     branchLabel = project.defaultBranch;

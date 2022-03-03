@@ -1,6 +1,6 @@
 import PeerSelector from "./PeerSelector.svelte";
-import { mount } from "radicle-svelte-unit-test";
-import { styles } from "@test/support/index";
+import { fireEvent, render } from "@testing-library/svelte";
+import "@public/index.css";
 
 const defaultProps = {
   peer: "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
@@ -14,67 +14,82 @@ const defaultProps = {
   toggleDropdown: () => console.log("toggle"),
 };
 
-describe('PeerSelector', function () {
-  it("Render correctly with default props", () => {
-    mount(PeerSelector, {
+describe('Logic', function () {
+  it("show delegate name and badge", () => {
+    render(PeerSelector, {
       props: defaultProps
-    }, styles);
-    cy.get("span.peer-id").should("has.text", "sebastinez");
-    cy.get("span.badge").should("has.text", "delegate");
+    });
+    cy.get("span.peer-id").should("have.text", "sebastinez");
+    cy.get("span.badge.primary").should("have.text", "delegate");
   });
 
-  it("Test Peer selection", () => {
-    mount(PeerSelector, {
-      props: {
-        ...defaultProps, peers: [
-          {
-            "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
-            "name": "sebastinez",
-            "delegate": false
-          },
-          {
-            "id": "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1",
-            "name": "cloudhead",
-            "delegate": true
-          },
-        ],
-        peersDropdown: true
-      }, callbacks: {
-        peerChanged: cy.stub().as("peerChanged")
-      }
-    }, styles);
-    cy.get("div.dropdown > div").last().click();
-    cy.get("@peerChanged")
-      .should("be.calledOnce")
-      .its("firstCall.args.0.detail")
-      .should("equal", "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1");
-  });
-  it("If no peers are provided, no dropdown should be showed", () => {
-    mount(PeerSelector, {
+  it("show peer id with badge if no name available", () => {
+    render(PeerSelector, {
       props: {
         ...defaultProps,
-        peers: [],
-        peersDropdown: true
+        peers: [
+          {
+            "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
+            "delegate": true
+          }
+        ],
       }
-    }, styles);
-    cy.get("div.dropdown > div.dropdown-item").should("not.exist");
+    });
+    cy.get("span.peer-id").should("have.text", "hyyg55…p7ofue");
+    cy.get("span.badge.primary").should("have.text", "delegate");
   });
-  it("If peer identity is not being resolved, fallback to peer id", () => {
-    mount(PeerSelector, {
+
+  it("show only peer id if no additional data available", () => {
+    render(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [
           {
             "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
           }
-        ],
-        peersDropdown: true
+        ]
       }
-    }, styles);
-    cy.get("span.peer-id").should("has.text", "hyyg55…p7ofue");
-    cy.get("span.badge").should("not.exist");
-    cy.get("div.dropdown > .dropdown-item")
-      .first()
-      .should("contain", "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue");
+    });
+    cy.get("span.peer-id").should("have.text", "hyyg55…p7ofue");
+  });
+});
+
+describe("Layout", () => {
+  it("should highlight the current peer", () => {
+    render(PeerSelector, {
+      props: { ...defaultProps, peersDropdown: true }
+    });
+    cy.get("div.dropdown-item").should("have.class", "selected");
+  });
+});
+
+describe('Events', () => {
+  it("dispatch peerChanged event if clicking on a peer", () => {
+    cy.viewport("macbook-13");
+    const { getByText, component } = render(PeerSelector, {
+      props: {
+        ...defaultProps,
+        peersDropdown: true,
+        peers: [
+          {
+            "id": "hyy841u4phudmr8s5rg1jjwd1ct7x7438wmjwtsm464y8uyxyhyi6c",
+            "name": "cloudhead",
+            "delegate": true
+          },
+          {
+            "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
+            "name": "sebastinez",
+            "delegate": true
+          }
+        ]
+      }
+    });
+
+    const peer = getByText("cloudhead");
+    const mock = cy.spy();
+    component.$on("peerChanged", mock);
+
+    fireEvent.click(peer);
+    expect(mock).to.have.been.calledOnce;
   });
 });

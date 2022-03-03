@@ -98,6 +98,8 @@ export function formatSeedId(id: string): string {
 }
 
 export function formatRadicleUrn(id: string): string {
+  assert(isRadicleId(id));
+
   return id.substring(0, 14)
     + '…'
     + id.substring(id.length - 6, id.length);
@@ -125,6 +127,7 @@ export function formatIpfsFile(ipfs: string | undefined): string | undefined {
   return undefined;
 }
 
+// If the string is less than 10 characters the entire string is returned.
 export function formatHash(hash: string): string {
   if (hash.length < 10) return hash;
   return hash.substring(0, 6)
@@ -149,8 +152,7 @@ export function capitalize(s: string): string {
   return s[0].toUpperCase() + s.substring(1);
 }
 
-// Takes a domain name, eg. 'cloudhead.radicle.eth' and
-// returns the label, eg. 'cloudhead', otherwise `undefined`.
+// Takes a domain name, eg. 'cloudhead.radicle.eth' and returns the label, eg. 'cloudhead'.
 export function parseEnsLabel(name: string, config: Config): string {
   const domain = config.registrar.domain.replace(".", "\\.");
   const label = name.replace(new RegExp(`\\.${domain}$`), "");

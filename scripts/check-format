@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # Checks local /node_modules,
 # if not found will download that package and execute it.

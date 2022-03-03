@@ -1,6 +1,6 @@
 import BranchSelector from "./BranchSelector.svelte";
-import { mount } from "radicle-svelte-unit-test";
-import { styles } from "@test/support/index";
+import { fireEvent, render } from "@testing-library/svelte";
+import "@public/index.css";
 
 const defaultProps = {
   project: {
@@ -18,41 +18,63 @@ const defaultProps = {
   },
   branches: { "master": "e678629cd37c770c640a2cd997fc76303c815772" },
   revision: "e678629cd37c770c640a2cd997fc76303c815772",
+  toggleDropdown: () => "branch"
 };
 
-describe('BranchSelector', function () {
-  it("Render with commit = head and branch listing", () => {
-    mount(BranchSelector, {
-      props: defaultProps
-    }, styles);
-    cy.findByText("master").should("exist");
-    cy.get("div.commit > div.hash.desktop").should("have.text", "e678629");
+describe('Logic', () => {
+  it("should show defaultBranch label and head commit if revision == head", () => {
+    const { rerender } = render(BranchSelector, {
+      props: defaultProps,
+    });
+    cy.get("div.stat.branch").should("be.visible").should("have.text", "master");
+    cy.get("div.hash.mobile").should("be.visible").should("have.text", "e678629");
+
+    // If project.head is null we should get the head from branches.
+    rerender({
+      props: {
+        ...defaultProps,
+        project: {
+          head: null,
+          urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
+          name: "nakamoto",
+          description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+          defaultBranch: "master",
+          maintainers: [
+            "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"
+          ],
+          delegates: [
+            "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"
+          ]
+        }
+      }
+    });
+    cy.get("div.stat.branch").should("be.visible").should("have.text", "master");
+    cy.get("div.hash.mobile").should("be.visible").should("have.text", "e678629");
   });
 
-  it("Test Branch selection", () => {
-    // The viewport here is to simulate desktop behaviour
-    cy.viewport(800, 300);
-    mount(BranchSelector, {
+  it("should show the branch dropdown if branches available", () => {
+    render(BranchSelector, {
       props: {
-        ...defaultProps, branches: {
+        ...defaultProps,
+        branches: {
           "master": "e678629cd37c770c640a2cd997fc76303c815772",
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
           "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         },
-        branchesDropdown: true,
-      }, callbacks: {
-        branchChanged: cy.stub().as("branchChanged")
+        branchesDropdown: true
       }
-    }, styles);
-    cy.get("div.dropdown > div").first().click();
-    cy.get("@branchChanged")
-      .should("be.calledOnce")
-      .its("firstCall.args.0.detail")
-      .should("equal", "feature-branch");
+    });
+    cy.get("div.dropdown div.dropdown-item")
+      .first()
+      .should("contain.text", "feature-branch")
+      .next()
+      .should("contain.text", "master").should("have.class", "selected")
+      .next()
+      .should("contain.text", "xyz");
   });
 
-  it("Render with commit != head, passing a branch as rev and branch listing", () => {
-    mount(BranchSelector, {
+  it("should show feature-branch label and head commit, if branch label is passed as revision", () => {
+    render(BranchSelector, {
       props: {
         ...defaultProps, branches: {
           "master": "e678629cd37c770c640a2cd997fc76303c815772",
@@ -61,42 +83,84 @@ describe('BranchSelector', function () {
         },
         revision: "feature-branch"
       }
-    }, styles);
-    cy.findByText("feature-branch").should("exist");
-    cy.get("div.commit > div.hash.desktop").should("have.text", "29e8b7b");
+    });
+    cy.get("div.stat.branch").should("be.visible").should("have.text", "feature-branch");
+    cy.get("div.hash.mobile").should("be.visible").should("have.text", "29e8b7b");
   });
 
-  it("Render with commit != head passing a commit as rev and branch listing", () => {
-    mount(BranchSelector, {
+  it("should show only commit if no branchLabel nor branches are available", () => {
+    render(BranchSelector, {
       props: {
         ...defaultProps,
-        revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00"
+        revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+        branches: {}
       }
-    }, styles
-    );
-    cy.get("div.commit > div.hash.desktop").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
+    });
+    cy.get("div.hash.mobile").should("be.visible").should("have.text", "debf82e");
+    cy.viewport("macbook-13");
+    cy.get("div.hash.desktop").should("be.visible").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
 
-  it("Render with commit = head, without branch listing", () => {
-    mount(BranchSelector, {
+  it("should show only commit if branches are available but no branchLabel", () => {
+    render(BranchSelector, {
+      props: {
+        ...defaultProps,
+        revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+      }
+    });
+    cy.get("div.hash.mobile").should("be.visible").should("have.text", "debf82e");
+    cy.viewport("macbook-13");
+    cy.get("div.hash.desktop").should("be.visible").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
+  });
+
+  it("should show defaultBranch label if revision == head", () => {
+    render(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "e678629cd37c770c640a2cd997fc76303c815772",
-        branches: {},
+        branches: {}
       }
-    }, styles
-    );
-    cy.get("div.commit > div.hash.desktop").should("have.text", "e678629cd37c770c640a2cd997fc76303c815772");
+    });
+    cy.get("div.stat.branch.not-allowed").should("be.visible").should("have.text", "master");
   });
+});
 
-  it("Render without branch listing, commit != head", () => {
-    mount(BranchSelector, {
+describe("Layout", () => {
+  it("should show shortened commit when on mobile, and full hash when on desktop", () => {
+    render(BranchSelector, {
       props: {
         ...defaultProps,
-        revision: "6b84e519d3c535879eb2b9ee8457bb70ca275a75",
-        branches: {},
+        revision: "e678629cd37c770c640a2cd997fc76303c815772"
       }
-    }, styles);
-    cy.get("div.commit > div.hash.desktop").should("have.text", "6b84e519d3c535879eb2b9ee8457bb70ca275a75");
+    });
+    cy.viewport("iphone-x");
+    cy.get("div.hash.mobile").should("be.visible");
+    cy.get("div.hash.desktop").should("not.be.visible");
+    cy.viewport("macbook-15");
+    cy.get("div.hash.mobile").should("not.be.visible");
+    cy.get("div.hash.desktop").should("be.visible");
+  });
+});
+
+describe("Events", () => {
+  it("should dispatch a 'branchChanged' event on click", () => {
+    const { getByText, component } = render(BranchSelector, {
+      props: {
+        ...defaultProps,
+        revision: "feature-branch",
+        branchesDropdown: true,
+        branches: {
+          "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
+          "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+        }
+      }
+    });
+    const branchLabel = getByText("xyz");
+
+    const mock = cy.spy();
+    component.$on("branchChanged", mock);
+
+    fireEvent.click(branchLabel);
+    expect(mock).to.have.been.calledOnce;
   });
 });

@@ -29,5 +29,5 @@
 </style>
 
 <div class="parent">
-  <div class="loader" style="width: {(currentBlock - startBlock) * 10}%" />
+  <div class="loader" style="width: {(currentBlock - startBlock) * Math.floor(100 / duration)}%" />
 </div>

@@ -1,0 +1,24 @@
+{
+  "binary": false,
+  "html": false,
+  "content": "# Basic Sample Hardhat Project\n\nThis project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.\n\nTry running some of the following tasks:\n\n```shell\nnpx hardhat accounts\nnpx hardhat compile\nnpx hardhat clean\nnpx hardhat test\nnpx hardhat node\nnode scripts/sample-script.js\nnpx hardhat help\n```\n",
+  "info": {
+    "name": "README.md",
+    "objectType": "BLOB",
+    "lastCommit": {
+      "sha1": "cbf5df499ab4f4a908f1756fbe2c236a4530516a",
+      "author": {
+        "name": "dabit3",
+        "email": "dabit3@gmail.com"
+      },
+      "summary": "initial commit",
+      "description": "",
+      "committer": {
+        "name": "dabit3",
+        "email": "dabit3@gmail.com"
+      },
+      "committerTime": 1646236685
+    }
+  },
+  "path": "README.md"
+}
