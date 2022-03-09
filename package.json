@@ -50,6 +50,7 @@
     "ethereum-blockies": "^0.1.1",
     "ethers": "^5.0.31",
     "eventemitter3": "4.0.7",
+    "front-matter": "4.0.2",
     "marked": "^4.0.12",
     "multibase": "^4.0.4",
     "multihashes": "^4.0.2",

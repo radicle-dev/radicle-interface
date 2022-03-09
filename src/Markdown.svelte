@@ -1,9 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { marked } from "marked";
+  import fm from "front-matter";
+  import type { FrontMatterResult } from "front-matter";
   import sanitizeHtml from 'sanitize-html';
 
   export let content: string;
+  export let doc: FrontMatterResult<Record<string, string>> = fm(content);
 
   let container: HTMLElement;
 
@@ -36,6 +39,24 @@
 </script>
 
 <style>
+  .front-matter {
+    font-size: 0.75rem;
+    font-family: var(--font-family-monospace);
+    color: var(--color-foreground-90);
+    border: 1px dashed var(--color-foreground-subtle);
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .front-matter table {
+    border-collapse: collapse;
+  }
+  .front-matter table td {
+    padding: 0.125rem 1rem;
+  }
+  .front-matter table td:first-child {
+    padding-left: 0.5rem;
+  }
+
   .markdown :global(h1), .markdown :global(h2), .markdown :global(h3),
   .markdown :global(h4), .markdown :global(h5), .markdown :global(h6) {
     color: var(--color-foreground);
@@ -178,7 +199,20 @@
 </style>
 
 {#if content}
+  {#if doc.frontmatter}
+    <div class="front-matter">
+      <table>
+        {#each Object.entries(doc.attributes) as [key, val]}
+          <tr>
+            <td><strong>{key}</strong></td>
+            <td>{val}</td>
+          </tr>
+        {/each}
+      </table>
+    </div>
+  {/if}
+
   <div class="markdown" bind:this={container}>
-    {@html marked(sanitize(content))}
+    {@html marked(sanitize(doc.body))}
   </div>
 {/if}
