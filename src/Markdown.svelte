@@ -3,14 +3,17 @@
   import { marked } from "marked";
   import fm from "front-matter";
   import type { FrontMatterResult } from "front-matter";
-  import sanitizeHtml from 'sanitize-html';
+  import type * as proj from "@app/project";
+  import { getImageMime } from "@app/utils";
+  import sanitizeHtml from "sanitize-html";
 
   export let content: string;
   export let doc: FrontMatterResult<Record<string, string>> = fm(content);
+  export let getImage: (path: string) => Promise<proj.Blob>;
 
   let container: HTMLElement;
 
-  const sanitize = (content: string): string => {
+  const render = (content: string): string => {
     return sanitizeHtml(marked.parse(content), {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([
         "img",
@@ -33,6 +36,24 @@
     for (let e of elems) {
       if (e.firstElementChild instanceof HTMLImageElement) {
         e.classList.add("no-underline");
+      }
+    }
+
+    // Iterate over all images, and fetch their data from the API, then
+    // replace the source with a Data-URL. We do this due to the absence
+    // of a static file server.
+    for (let i of container.querySelectorAll("img")) {
+      const path = i.getAttribute("src");
+
+      if (path) {
+        getImage(path).then(blob => {
+          if (blob.content) {
+            const mime = getImageMime(path);
+            if (mime) {
+              i.setAttribute("src", `data:${mime};base64,${blob.content}`);
+            }
+          }
+        });
       }
     }
   });
@@ -213,6 +234,6 @@
   {/if}
 
   <div class="markdown" bind:this={container}>
-    {@html marked(sanitize(doc.body))}
+    {@html render(doc.body)}
   </div>
 {/if}

@@ -1,6 +1,9 @@
 <script lang="ts">
   import Markdown from '@app/Markdown.svelte';
+  import type * as proj from '@app/project';
+
   export let content: string;
+  export let getImage: (path: string) => Promise<proj.Blob>;
 </script>
 
 <style>
@@ -12,5 +15,5 @@
 </style>
 
 <article>
-  <Markdown {content} />
+  <Markdown {content} {getImage} />
 </article>

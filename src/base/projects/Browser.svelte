@@ -48,6 +48,12 @@
     return state.blob;
   };
 
+  // Get an image blob based on a relative path.
+  const getImage = async (imagePath: string): Promise<proj.Blob> => {
+    const finalPath = utils.canonicalize(imagePath, path);
+    return project.getBlob(commit, finalPath, { highlight: false });
+  };
+
   const onSelect = async ({ detail: newPath }: { detail: string }) => {
     // Ensure we don't spend any time in a "loading" state. This means
     // the loading spinner won't be shown, and instead the blob will be
@@ -159,7 +165,7 @@
           <Loading small center />
         {:then blob}
           {#if utils.isMarkdownPath(blob.path)}
-            <Readme content={blob.content} />
+            <Readme content={blob.content} {getImage} />
           {:else}
             <Blob line={browser.line} {blob} />
           {/if}

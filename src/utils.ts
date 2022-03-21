@@ -174,6 +174,43 @@ export function clickOutside(node: HTMLElement, onEventFunction: () => void): an
   };
 }
 
+// Get the mime type of an image, given a file path.
+// Returns `null` if unknown.
+export function getImageMime(path: string): string | null {
+  const mimes: Record<string, string> = {
+    'apng': 'image/apng',
+    'png': 'image/png',
+    'svg': 'image/svg+xml',
+    'gif': 'image/gif',
+    'jpeg': 'image/jpeg',
+    'jpg': 'image/jpeg',
+    'webp': 'image/webp',
+  };
+  const ext = path.split(".").pop();
+
+  if (ext) {
+    if (mimes[ext]) {
+      return mimes[ext];
+    }
+  }
+  return null;
+}
+
+// TODO: Needs testing with absolute and relative paths.
+export function canonicalize(path: string, base: string): string {
+  const finalPath = base
+    .split("/")
+    .slice(0, -1) // Remove file name.
+    .concat([path]) // Add image file path.
+    .join("/");
+
+  // URL is used to resolve relative paths, eg. `../../assets/image.png`.
+  const url = new URL(finalPath, document.location.origin);
+  const pathname = url.pathname.replace(/^\//, "");
+
+  return pathname;
+}
+
 // Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
 // Returns the original string if it was unable to extract the username.
 export function parseUsername(input: string): string {
