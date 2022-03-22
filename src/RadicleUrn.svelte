@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { parseRadicleId, toClipboard } from "./utils";
+  import { parseRadicleId, toClipboard } from "@app/utils";
 
   export let urn: string;
 

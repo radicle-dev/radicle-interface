@@ -23,6 +23,12 @@
       // dependencies.
       window.global = window;
     </script>
+
+    <script type="module">
+      // Make global 'Buffer' available to legacy modules.
+      import { Buffer } from "buffer";
+      window.Buffer = Buffer;
+    </script>
     <title>Radicle Interface</title>
   </head>
   <body>

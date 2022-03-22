@@ -1,15 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { marked } from "marked";
-  import fm from "front-matter";
-  import type { FrontMatterResult } from "front-matter";
+  import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
   import { getImageMime } from "@app/utils";
   import sanitizeHtml from "sanitize-html";
 
   export let content: string;
-  export let doc: FrontMatterResult<Record<string, string>> = fm(content);
   export let getImage: (path: string) => Promise<proj.Blob>;
+  export let doc = matter(content);
+
+  const frontMatter = Object.entries(doc.data);
 
   let container: HTMLElement;
 
@@ -220,10 +221,10 @@
 </style>
 
 {#if content}
-  {#if doc.frontmatter}
+  {#if frontMatter.length > 0}
     <div class="front-matter">
       <table>
-        {#each Object.entries(doc.attributes) as [key, val]}
+        {#each frontMatter as [key, val]}
           <tr>
             <td><strong>{key}</strong></td>
             <td>{val}</td>
@@ -234,6 +235,6 @@
   {/if}
 
   <div class="markdown" bind:this={container}>
-    {@html render(doc.body)}
+    {@html render(doc.content)}
   </div>
 {/if}

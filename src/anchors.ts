@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import type { Config } from "./config";
-import { decodeRadicleId, formatProjectHash, querySubgraph } from "./utils";
+import { decodeRadicleId, formatProjectHash, querySubgraph } from "@app/utils";
 
 const GetAllAnchors = `
   query GetAllAnchors($project: Bytes!, $org: ID!) {
