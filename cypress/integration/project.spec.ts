@@ -21,7 +21,7 @@ describe("Project view", () => {
   it("Page header", () => {
     cy.visit("/seeds/willow.radicle.garden/bright-forest-protocol", {
       onBeforeLoad(win) {
-        win.ethereum = new MockExtensionProvider();
+        win.ethereum = new MockExtensionProvider("homestead", "0x3256a804085C24f3451cAb2C98a37e16DEEc5721");
       },
     });
     cy.get("div.title").contains("bright-forest-protocol");

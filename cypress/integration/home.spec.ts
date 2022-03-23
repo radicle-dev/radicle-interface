@@ -17,7 +17,7 @@ describe("Landing page", () => {
     cy.intercept("https://willow.radicle.garden:8777/v1/projects", { fixture: "projectList.json" });
     cy.visit("/", {
       onBeforeLoad(win) {
-        win.ethereum = new MockExtensionProvider();
+        win.ethereum = new MockExtensionProvider("homestead", "0x3256a804085C24f3451cAb2C98a37e16DEEc5721");
       },
     });
     cy.get("div.card-label")

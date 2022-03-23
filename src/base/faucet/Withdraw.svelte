@@ -25,7 +25,7 @@
     try {
       if ($session) {
         state.status = Status.Signing;
-        const tx = await withdraw(amount, $session.signer, config);
+        const tx = await withdraw(amount, $session.config.signer, config);
         state.status = Status.Pending;
         await tx.wait();
         state.status = Status.Success;
