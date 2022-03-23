@@ -71,6 +71,9 @@
     "users": {
       "pinned": []
     },
+    "seeds": {
+      "pinned": []
+    },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
