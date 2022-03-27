@@ -415,6 +415,11 @@ span.small, .text-xsmall {
 .text-big {
 	font-size: 1.5rem;
 }
+.text-truncate {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+}
 
 .notice {
 	font-size: 0.875rem;

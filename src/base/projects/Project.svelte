@@ -95,9 +95,7 @@
     }
 
     .title {
-      font-size: 1.5rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 1.375rem;
     }
     .description {
       font-size: 0.875rem;
@@ -122,7 +120,9 @@
       </a>
       <span class="divider">/</span>
     {/if}
-    <Link to={rootPath()}>{project.name}</Link>
+    <span class="text-truncate">
+      <Link to={rootPath()}>{project.name}</Link>
+    </span>
     {#if peer}
       <span class="peer-id">
         <span class="divider">/</span><span title={peer}>{formatSeedId(peer)}</span><Clipboard text={peer} />
@@ -130,7 +130,7 @@
     {/if}
   </div>
   <div class="urn">
-    <span>{project.urn}</span>
+    <span class="text-truncate">{project.urn}</span>
     <Clipboard small text={project.urn} />
   </div>
   <div class="description">{project.description}</div>

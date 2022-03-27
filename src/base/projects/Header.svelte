@@ -95,7 +95,11 @@
     padding: 1rem;
     display: none;
   }
+  .clone-dropdown {
+    width: 24rem;
+  }
   .clone-dropdown.clone-dropdown-visible {
+    position: absolute;
     display: block;
   }
   .dropdown label {
@@ -126,7 +130,9 @@
   }
   @media (max-width: 720px) {
     .dropdown {
-      left: 32px;
+      width: auto;
+      left: 2rem;
+      right: 2rem;
       z-index: 10;
     }
   }

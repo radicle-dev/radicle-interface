@@ -26,7 +26,7 @@
     padding: 0.5rem;
     border: none;
     outline: none;
-    width: 24rem;
+    width: 100%;
     text-overflow: ellipsis !important;
     border-radius: 0.25rem;
   }

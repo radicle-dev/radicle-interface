@@ -126,13 +126,15 @@
       border-color: var(--color-secondary-faded);
     }
     .column-right {
-      padding: 1rem 0;
+      padding: 1.5rem 0;
       min-width: 0;
     }
     .source-tree {
-      padding-top: 1rem;
+      padding: 0 2rem;
+      margin: 1rem 0;
     }
     .container {
+      padding: 0;
       flex-direction: column;
     }
     .column-left {
