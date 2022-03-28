@@ -61,8 +61,8 @@
           <p>{group.time}</p>
         </header>
         <div class="commit-group-headers">
-          {#each group.commits as commit (commit.sha1)}
-            <div class="commit" on:click={() => navigateHistory(commit.sha1, ProjectContent.Commit)}>
+          {#each group.commits as commit (commit.header.sha1)}
+            <div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
               <CommitTeaser {commit} on:browseCommit={(event) => navigateHistory(event.detail)} />
             </div>
           {/each}

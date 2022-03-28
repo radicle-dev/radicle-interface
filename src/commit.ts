@@ -2,8 +2,13 @@ import type { Stats } from "@app/project";
 import type { Diff } from "@app/diff";
 
 export interface CommitsHistory {
-  headers: CommitHeader[];
+  headers: CommitHeaderWithContext[];
   stats: Stats;
+}
+
+export interface CommitHeaderWithContext {
+  header: CommitHeader;
+  context: CommitContext;
 }
 export interface GroupedCommitsHistory {
   headers: CommitGroup[];
@@ -27,6 +32,20 @@ export interface GroupedCommitsHistory {
   stats: Stats;
 }
 
+export interface Person {
+  name: string;
+}
+
+export interface CommitContext {
+  committer: {
+    peer: {
+      id: string;
+      person: Person;
+      delegate: boolean;
+    };
+  };
+}
+
 export interface CommitHeader {
   author: Author;
   committer: Author;
@@ -39,7 +58,7 @@ export interface CommitHeader {
 // A set of commits grouped by time.
 export interface CommitGroup {
   time: string;
-  commits: CommitHeader[];
+  commits: CommitHeaderWithContext[];
 }
 
 export interface CommitStats {
@@ -69,14 +88,14 @@ export const groupCommitHistory = (
   return { ...history, headers: groupCommits(history.headers) };
 };
 
-export function groupCommits(commits: CommitHeader[]): CommitGroup[] {
+export function groupCommits(commits: { header: CommitHeader; context: CommitContext }[]): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
   commits = commits.sort((a, b) => {
-    if (a.committerTime > b.committerTime) {
+    if (a.header.committerTime > b.header.committerTime) {
       return -1;
-    } else if (a.committerTime < b.committerTime) {
+    } else if (a.header.committerTime < b.header.committerTime) {
       return 1;
     }
 
@@ -84,7 +103,7 @@ export function groupCommits(commits: CommitHeader[]): CommitGroup[] {
   });
 
   for (const commit of commits) {
-    const time = commit.committerTime * 1000;
+    const time = commit.header.committerTime * 1000;
     const date = new Date(time);
     const isNewDay =
       !groupedCommits.length ||
