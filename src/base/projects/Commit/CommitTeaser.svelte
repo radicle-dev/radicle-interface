@@ -1,11 +1,18 @@
 <script lang="ts">
   import Icon from "@app/Icon.svelte";
-  import type { CommitHeader } from "@app/commit";
+  import type { CommitHeaderWithContext } from "@app/commit";
+  import type { Project } from "@app/project";
   import { formatCommit } from "@app/utils";
   import { createEventDispatcher } from "svelte";
+  import { ProjectContent } from "@app/project";
   import { formatCommitTime } from "@app/commit";
 
-  export let commit: CommitHeader;
+  export let commit: CommitHeaderWithContext;
+  export let project: Project;
+
+  const navigateHistory = (revision: string, content?: ProjectContent) => {
+    project.navigateTo({ content, revision, path: null });
+  };
 
   const dispatch = createEventDispatcher();
 
@@ -62,14 +69,17 @@
   }
 </style>
 
-<div class="commit">
+<div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
   <div class="summary">
-    <span class="secondary hash">{formatCommit(commit.sha1)}</span>
-    <span>{commit.summary}</span>
+    <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
+    <span class="summary">{commit.header.summary}</span>
   </div>
   <div class="right">
-    <span class="desktop-inline bold author">{commit.committer.name}</span>
-    <span class="desktop-inline font-mono text-small time">{formatCommitTime(commit.committerTime)}</span>
-    <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.sha1)} />
+    {#if commit.context.committer}
+      <span class="badge primary">Verified</span>
+    {/if}
+    <span class="desktop-inline bold author">{commit.header.committer.name}</span>
+    <span class="desktop-inline font-mono text-small time">{formatCommitTime(commit.header.committerTime)}</span>
+    <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.header.sha1)} />
   </div>
 </div>

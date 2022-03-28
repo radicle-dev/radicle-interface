@@ -77,39 +77,47 @@ describe("Project View", () => {
     });
     cy.get("div.stat.commit-count").should("have.class", "active");
 
-    cy.log("Commit Group");
-    cy.get("header.commit-date").should("have.text", "Wednesday, March 2, 2022");
+    cy.log("Commit Group & Commit Trailer");
+    cy.fixture("groupedCommits.json").then((commitGroup) => {
+      // This iterates over the commit groups and then over each commit.
+      cy.get("div.commit-group").should("have.length", 2)
+        .each((item, index) => {
+          expect(Cypress.$(item.children(".commit-date")).text()).to.eq(commitGroup[index].groupDate);
+          const $el = Cypress.$(item.find(".commit"));
+          cy.wrap($el).each((commit, commitIndex) => {
+            expect(Cypress.$(commit).find(".hash").text()).to.eq(commitGroup[index].commits[commitIndex].sha);
+            expect(Cypress.$(commit).find("span.summary").text()).to.eq(commitGroup[index].commits[commitIndex].summary);
+            expect(Cypress.$(commit).find(".author").text()).to.eq(commitGroup[index].commits[commitIndex].committer.name);
+            expect(Cypress.$(commit).find(".time").text()).to.eq(commitGroup[index].commits[commitIndex].committerTime);
+          });
+        });
 
-    cy.log("Commit Trailer");
-    cy.get("div.summary span.hash")
-      .should("have.text", "cbf5df4")
-      .next()
-      .should("have.text", "initial commit");
-    cy.get("div.commit div.right span")
-      .first()
-      .should("have.text", "dabit3")
-      .next()
-      .should("have.text", "Wed, 02 Mar 2022 15:58:05 GMT");
-    cy.get("div.summary").click();
+      // Checking that the initial commit has the Verified badge
+      cy.get(".badge").last().should("have.text", "Verified");
+      cy.get("div.summary").last().click();
 
-    cy.log("Commit Detail View");
-    cy.location().should((location) => {
-      expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a');
+      cy.log("Commit Detail View");
+      // We get the initial commit from the fixture file to assert here
+      const { committer, committerTime, summary, description } = commitGroup[1].commits[1];
+
+      cy.location().should((location) => {
+        expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a');
+      });
+      cy.get("header div.summary h3").should("have.text", summary);
+      cy.get("header pre.description").should("have.text", description);
+      cy.get("header div.meta")
+        .first()
+        .should("have.text", `Committed by ${committer.name} <${committer.mail}> ${committerTime}`)
+        .next()
+        .should("have.text", `Authored by ${committer.name} <${committer.mail}>`);
+      cy.get("div.changeset-summary").should("have.text", "1 file(s) changed\n    with\n    0 addition(s)\n    and\n    0 deletion(s)");
+      cy.get("header.file-header:nth-child(1) div.file-data > *")
+        .first()
+        .should("have.text", "README.md")
+        .next()
+        .should("have.text", "created");
+      cy.get("tr.diff-line td.diff-line-number").contains("16");
+      cy.get("tr.diff-line td.diff-line-content").contains("To prevent front-running, the RAD/USDC balances are set through the Uniswap router *proxy* contract");
     });
-    cy.get("header div.summary h3").should("have.text", "initial commit");
-    cy.get("header pre.description").should("have.text", "this is the first commit of many");
-    cy.get("header div.meta")
-      .first()
-      .should("have.text", "Committed by dabit3 <dabit3@gmail.com> Wed, 02 Mar 2022 15:58:05 GMT")
-      .next()
-      .should("have.text", "Authored by dabit3 <dabit3@gmail.com>");
-    cy.get("div.changeset-summary").should("have.text", "1 file(s) changed\n    with\n    0 addition(s)\n    and\n    0 deletion(s)");
-    cy.get("header.file-header:nth-child(1) div.file-data > *")
-      .first()
-      .should("have.text", "README.md")
-      .next()
-      .should("have.text", "created");
-    cy.get("tr.diff-line td.diff-line-number").contains("16");
-    cy.get("tr.diff-line td.diff-line-content").contains("To prevent front-running, the RAD/USDC balances are set through the Uniswap router *proxy* contract");
   });
 });
