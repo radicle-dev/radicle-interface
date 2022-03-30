@@ -107,6 +107,12 @@
     width: 100%;
   }
 
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
   .source-tree {
     overflow-x: hidden;
   }
@@ -129,6 +135,9 @@
       padding: 1.5rem 0;
       min-width: 0;
     }
+    .placeholder {
+      padding: 1.5rem;
+    }
     .source-tree {
       padding: 0 2rem;
       margin: 1rem 0;
@@ -149,14 +158,16 @@
 
 <main>
   <!-- Mobile navigation -->
-  <nav class="mobile">
-    <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
-      Browse
-    </button>
-  </nav>
+  {#if tree.entries.length > 0}
+    <nav class="mobile">
+      <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
+        Browse
+      </button>
+    </nav>
+  {/if}
 
   <div class="container center-content">
-    {#if tree.entries.length}
+    {#if tree.entries.length > 0}
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree">
           <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
@@ -187,6 +198,17 @@
             </span>
           </Placeholder>
         {/await}
+      </div>
+    {:else}
+      <div class="placeholder">
+        <Placeholder icon="👀">
+          <span slot="title">
+            Nothing to show
+          </span>
+          <span slot="body">
+            We couldn't find any files at this revision.
+          </span>
+        </Placeholder>
       </div>
     {/if}
   </div>
