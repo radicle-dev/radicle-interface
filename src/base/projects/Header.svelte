@@ -144,13 +144,16 @@
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />
   {/if}
+
   <BranchSelector {branches} {project} {revision} {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
+
   <div class="anchor">
     <AnchorBadge {commit} {anchors}
       head={project.head} on:click={(event) => updateRevision(event.detail)} />
   </div>
+
   {#if seed.git.host}
     <span>
       <div class="clone" on:click={() => toggleDropdown("clone")}>

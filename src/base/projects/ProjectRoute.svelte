@@ -29,8 +29,13 @@
     if (revision) browse.revision = revision;
   } else if (revision) {
     browse.revision = revision;
-  } else {
+  } else if (head) {
     browse.revision = head;
+  } else {
+    const branchNames = Object.keys(project.branches);
+    const firstBranch = branchNames.length >= 1 ? branchNames[0] : null;
+
+    browse.revision = firstBranch;
   }
 
   $: proj.browse({ ...browse, peer });
