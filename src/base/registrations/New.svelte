@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
-  import { formatAddress, formatBalance } from '@app/utils';
+  import { formatAddress } from '@app/utils';
   import { session } from '@app/session';
   import type { Config } from '@app/config';
 
@@ -10,7 +10,7 @@
   import Loading from '@app/Loading.svelte';
   import Message from '@app/Message.svelte';
 
-  import { registrar, registrationFee } from './registrar';
+  import { registrar } from './registrar';
 
   enum State {
     CheckingAvailability,
@@ -26,7 +26,6 @@
   // We only support lower-case names.
   name = name.toLowerCase();
 
-  let fee: string;
   let state = State.CheckingAvailability;
   let error: string | null = null;
   $: registrationOwner = owner || ($session && $session.address);
@@ -39,12 +38,7 @@
 
   onMount(async () => {
     try {
-      const [_fee, isAvailable] = await Promise.all([
-        registrationFee(config),
-        registrar(config).available(name),
-      ]);
-
-      fee = formatBalance(_fee);
+      const isAvailable = await registrar(config).available(name);
 
       if (isAvailable) {
         state = State.NameAvailable;
@@ -76,11 +70,9 @@
     {#if state === State.NameAvailable}
       {#if registrationOwner}
         The name <strong>{name}</strong> is available for registration
-        under account <strong>{formatAddress(registrationOwner)}</strong>
-        for <strong>{fee} RAD</strong>.
+        under account <strong>{formatAddress(registrationOwner)}</strong>.
       {:else}
-        The name <strong>{name}</strong> is available
-        for <strong>{fee} RAD</strong>.
+        The name <strong>{name}</strong> is available.
       {/if}
     {:else if state === State.NameUnavailable}
       This name is <strong>not available</strong> for registration.

@@ -103,6 +103,7 @@
       "function radNode() view returns (bytes32)",
       "function minCommitmentAge() view returns (uint256)",
       "function registrationFeeRad() view returns (uint256)",
+      "function commit(bytes32)",
       "function commitWithPermit(bytes32, address, uint256, uint256, uint8, bytes32, bytes32)",
       "function register(string, address, uint256)",
       "function valid(string) pure returns (bool)",

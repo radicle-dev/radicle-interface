@@ -220,21 +220,32 @@ async function commit(
   const spender = config.registrar.address;
   const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
   const token = config.token;
-  const signature = await permitSignature(config.signer, token, spender, fee, deadline);
 
-  state.set({ connection: State.SigningCommit });
+  let tx = null;
 
-  const tx = await registrar(config)
-    .connect(config.signer)
-    .commitWithPermit(
-      commitment,
-      owner,
-      fee,
-      deadline,
-      signature.v,
-      signature.r,
-      signature.s,
-      { gasLimit: 180000 });
+  if (fee.isZero()) {
+    state.set({ connection: State.SigningCommit });
+
+    tx = await registrar(config)
+      .connect(config.signer)
+      .commit(commitment, { gasLimit: 180000 });
+  } else {
+    const signature = await permitSignature(config.signer, token, spender, fee, deadline);
+
+    state.set({ connection: State.SigningCommit });
+
+    tx = await registrar(config)
+      .connect(config.signer)
+      .commitWithPermit(
+        commitment,
+        owner,
+        fee,
+        deadline,
+        signature.v,
+        signature.r,
+        signature.s,
+        { gasLimit: 180000 });
+  }
 
   state.set({ connection: State.Committing });
 
