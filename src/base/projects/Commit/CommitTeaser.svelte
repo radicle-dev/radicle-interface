@@ -1,13 +1,13 @@
 <script lang="ts">
   import Icon from "@app/Icon.svelte";
-  import type { CommitHeaderWithContext } from "@app/commit";
+  import type { CommitMetadata } from "@app/commit";
   import type { Project } from "@app/project";
   import { formatCommit } from "@app/utils";
   import { createEventDispatcher } from "svelte";
   import { ProjectContent } from "@app/project";
   import { formatCommitTime } from "@app/commit";
 
-  export let commit: CommitHeaderWithContext;
+  export let commit: CommitMetadata;
   export let project: Project;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {

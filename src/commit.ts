@@ -2,11 +2,11 @@ import type { Stats } from "@app/project";
 import type { Diff } from "@app/diff";
 
 export interface CommitsHistory {
-  headers: CommitHeaderWithContext[];
+  headers: CommitMetadata[];
   stats: Stats;
 }
 
-export interface CommitHeaderWithContext {
+export interface CommitMetadata {
   header: CommitHeader;
   context: CommitContext;
 }
@@ -58,7 +58,7 @@ export interface CommitHeader {
 // A set of commits grouped by time.
 export interface CommitGroup {
   time: string;
-  commits: CommitHeaderWithContext[];
+  commits: CommitMetadata[];
 }
 
 export interface CommitStats {
