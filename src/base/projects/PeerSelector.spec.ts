@@ -7,7 +7,7 @@ const defaultProps = {
   peers: [
     {
       "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
-      "name": "sebastinez",
+      "person": { "name": "sebastinez" },
       "delegate": true
     }
   ],
@@ -73,12 +73,12 @@ describe('Events', () => {
         peers: [
           {
             "id": "hyy841u4phudmr8s5rg1jjwd1ct7x7438wmjwtsm464y8uyxyhyi6c",
-            "name": "cloudhead",
+            "person": { "name": "cloudhead" },
             "delegate": true
           },
           {
             "id": "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
-            "name": "sebastinez",
+            "person": { "name": "sebastinez" },
             "delegate": true
           }
         ]

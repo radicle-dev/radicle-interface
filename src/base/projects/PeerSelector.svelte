@@ -17,8 +17,8 @@
   onMount(() => {
     meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
-      if (! p.name) console.debug("Not able to resolve peer identity for: ", p.id);
-      let key = p.name ? `<strong>${p.name}</strong> ${p.id}` : p.id;
+      if (! p.person?.name) console.debug("Not able to resolve peer identity for: ", p.id);
+      let key = p.person?.name ? `<strong>${p.person.name}</strong> ${p.id}` : p.id;
 
       return { key, value: p.id, badge: p.delegate ? "delegate" : null };
     });
@@ -72,7 +72,7 @@
       <Icon name="fork" width={15} height={15} />
       {#if meta}
         <span class="peer-id">
-          {meta.name ?? formatSeedId(meta.id)}
+          {meta.person?.name ?? formatSeedId(meta.id)}
         </span>
         {#if meta.delegate}
           <span class="badge primary">delegate</span>

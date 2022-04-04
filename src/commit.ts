@@ -1,4 +1,4 @@
-import type { Stats } from "@app/project";
+import type { Stats, Person } from "@app/project";
 import type { Diff } from "@app/diff";
 import { ApiError } from "@app/api";
 
@@ -31,10 +31,6 @@ export interface CommitStats {
 export interface GroupedCommitsHistory {
   headers: CommitGroup[];
   stats: Stats;
-}
-
-export interface Person {
-  name: string;
 }
 
 export interface CommitContext {

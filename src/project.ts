@@ -86,9 +86,13 @@ export interface Remote {
   heads: Branches;
 }
 
+export interface Person {
+  name: string;
+}
+
 export interface Peer {
   id: PeerId;
-  name: string;
+  person?: Person;
   delegate: boolean;
 }
 
