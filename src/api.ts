@@ -38,19 +38,19 @@ export async function get(
       }
     });
   } catch (err) {
-    throw new ApiError(urlString, "API request failed");
+    throw new ApiError("API request failed", urlString);
   }
 
   if (! response.ok) {
-    throw new ApiError(urlString, "Not found");
+    throw new ApiError("Not found", urlString);
   }
   return response.json();
 }
 
-class ApiError extends Error {
-  url: string;
+export class ApiError extends Error {
+  url?: string;
 
-  constructor(url: string, message: string) {
+  constructor(message: string, url?: string) {
     super(message);
 
     if (Error.captureStackTrace) {

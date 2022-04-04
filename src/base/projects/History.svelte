@@ -3,6 +3,7 @@
   import type { Project } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
+  import Message from "@app/Message.svelte";
 
   export let project: Project;
   export let commit: string;
@@ -66,8 +67,12 @@
   </div>
 {:catch err}
   <div class="history">
-    <div class="error error-message text-xsmall">
-      <div>API request to <code class="text-xsmall">{err.url}</code> failed.</div>
-    </div>
+    <Message error>
+      {#if err.url}
+        API request to <code class="text-xsmall">{err.url}</code> failed.
+      {:else}
+        {err.message}
+      {/if}
+    </Message>
   </div>
 {/await}

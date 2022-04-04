@@ -1,5 +1,6 @@
 import type { Stats } from "@app/project";
 import type { Diff } from "@app/diff";
+import { ApiError } from "@app/api";
 
 export interface CommitsHistory {
   headers: CommitMetadata[];
@@ -37,7 +38,7 @@ export interface Person {
 }
 
 export interface CommitContext {
-  committer: {
+  committer?: {
     peer: {
       id: string;
       person: Person;
@@ -92,36 +93,40 @@ export function groupCommits(commits: { header: CommitHeader; context: CommitCon
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
-  commits = commits.sort((a, b) => {
-    if (a.header.committerTime > b.header.committerTime) {
-      return -1;
-    } else if (a.header.committerTime < b.header.committerTime) {
-      return 1;
+  try {
+    commits = commits.sort((a, b) => {
+      if (a.header.committerTime > b.header.committerTime) {
+        return -1;
+      } else if (a.header.committerTime < b.header.committerTime) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    for (const commit of commits) {
+      const time = commit.header.committerTime * 1000;
+      const date = new Date(time);
+      const isNewDay =
+        !groupedCommits.length ||
+        !groupDate ||
+        date.getDate() < groupDate.getDate() ||
+        date.getMonth() < groupDate.getMonth() ||
+        date.getFullYear() < groupDate.getFullYear();
+
+      if (isNewDay) {
+        groupedCommits.push({
+          time: formatGroupTime(time),
+          commits: [],
+        });
+        groupDate = date;
+      }
+      groupedCommits[groupedCommits.length - 1].commits.push(commit);
     }
-
-    return 0;
-  });
-
-  for (const commit of commits) {
-    const time = commit.header.committerTime * 1000;
-    const date = new Date(time);
-    const isNewDay =
-      !groupedCommits.length ||
-      !groupDate ||
-      date.getDate() < groupDate.getDate() ||
-      date.getMonth() < groupDate.getMonth() ||
-      date.getFullYear() < groupDate.getFullYear();
-
-    if (isNewDay) {
-      groupedCommits.push({
-        time: formatGroupTime(time),
-        commits: [],
-      });
-      groupDate = date;
-    }
-    groupedCommits[groupedCommits.length - 1].commits.push(commit);
+    return groupedCommits;
+  } catch (err) {
+    throw new ApiError("Not able to create commit history, please consider updating seed HTTP API.");
   }
-  return groupedCommits;
 }
 
 export const formatCommitTime = (t: number): string => {
