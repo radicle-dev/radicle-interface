@@ -1,11 +1,18 @@
 <script lang="ts">
   import Icon from "@app/Icon.svelte";
   import type { CommitHeaderWithContext } from "@app/commit";
+  import type { Project } from "@app/project";
   import { formatCommit } from "@app/utils";
   import { createEventDispatcher } from "svelte";
+  import { ProjectContent } from "@app/project";
   import { formatCommitTime } from "@app/commit";
 
   export let commit: CommitHeaderWithContext;
+  export let project: Project;
+
+  const navigateHistory = (revision: string, content?: ProjectContent) => {
+    project.navigateTo({ content, revision, path: null });
+  };
 
   const dispatch = createEventDispatcher();
 
@@ -62,10 +69,10 @@
   }
 </style>
 
-<div class="commit">
+<div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
   <div class="summary">
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
-    <span>{commit.header.summary}</span>
+    <span class="summary">{commit.header.summary}</span>
   </div>
   <div class="right">
     {#if commit.context.committer}

@@ -1,16 +1,12 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import type { Project } from "@app/project";
-  import { ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
 
   export let project: Project;
   export let commit: string;
 
-  const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({ content, revision, path: null });
-  };
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
     const commitsQuery = await project.getCommits(parentCommit);
     return groupCommitHistory(commitsQuery);
@@ -30,18 +26,18 @@
     margin-bottom: 2rem;
     background: var(--color-foreground-background);
   }
-  .commit {
+  .commit-group-headers {
     cursor: pointer;
   }
-  .commit:first-child {
+  .commit-group-headers:first-child {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
   }
-  .commit:last-child {
+  .commit-group-headers:last-child {
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
   }
-  .commit:hover {
+  .commit-group-headers {
     background: var(--color-foreground-background-lighter);
   }
   @media (max-width: 960px) {
@@ -62,9 +58,7 @@
         </header>
         <div class="commit-group-headers">
           {#each group.commits as commit (commit.header.sha1)}
-            <div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
-              <CommitTeaser {commit} on:browseCommit={(event) => navigateHistory(event.detail)} />
-            </div>
+            <CommitTeaser {project} {commit} />
           {/each}
         </div>
       </div>
