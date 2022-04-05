@@ -166,7 +166,7 @@
     {#await loadCommits() then points}
       <div class="desktop activity">
         <Diagram {points}
-          strokeWidth={1.25}
+          strokeWidth={3}
           viewBoxHeight={100}
           viewBoxWidth={600}
         />

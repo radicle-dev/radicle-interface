@@ -50,7 +50,7 @@
     margin-top: 1rem;
   }
   .projects .project {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .actions {
     display: flex;

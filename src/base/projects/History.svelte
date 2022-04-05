@@ -1,7 +1,6 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import { Project } from "@app/project";
-  import { ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
   import Message from "@app/Message.svelte";

@@ -4,7 +4,6 @@
 
   export let strokeWidth: number;
   export let points: CommitGroup[];
-  export let strokeColor = "#ff55ff";
   export let viewBoxWidth: number;
   export let viewBoxHeight: number;
 
@@ -12,7 +11,7 @@
   let path = "";
   let areaPath = "";
 
-  let heightWithPadding = viewBoxHeight + 10;
+  let heightWithPadding = viewBoxHeight + 16;
 
   // The latest point on the x axis, starting at 0 until `viewBoxWidth`
   let lastWidthPoint = viewBoxWidth;
@@ -65,14 +64,21 @@
     // Creates the stroke path with the array of points
     path = createPath();
     // Concats a path closing for it to be the area under the stroke
-    areaPath = path.concat(`L${lastWidthPoint},${heightWithPadding}L${viewBoxWidth},${viewBoxHeight+10}Z`);
+    areaPath = path.concat(`L${lastWidthPoint},${viewBoxHeight}L${viewBoxWidth},${viewBoxHeight}Z`);
   });
 </script>
 
 <svg viewBox="0 0 {viewBoxWidth} {heightWithPadding}" xmlns="http://www.w3.org/2000/svg">
-  <use fill="url(#gradient)" />
+  <svg style="height: 0; width: 0;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="fillGradient" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#ff55ff" stop-opacity="0" />
+        <stop offset="100%" stop-color="#ff55ff" stop-opacity="0.2" />
+      </linearGradient>
+    </defs>
+  </svg>
   <g>
-    <path fill="transparent" stroke={strokeColor} stroke-width={strokeWidth} d={path} />
-    <path fill="url('#gradient')" stroke="transparent" d={areaPath} />
+    <path fill="transparent" stroke="url(#gradient)" stroke-width={strokeWidth} stroke-linejoin="round" d={path} />
+    <path fill="url(#fillGradient)" stroke="transparent" d={areaPath} />
   </g>
 </svg>
