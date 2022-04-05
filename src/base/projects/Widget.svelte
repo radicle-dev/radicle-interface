@@ -32,7 +32,6 @@
     border: 1px solid var(--color-secondary-faded);
     border-radius: 0.25rem;
     min-width: 36rem;
-    min-height: 140px;
     cursor: pointer;
   }
   article .right {
@@ -109,13 +108,13 @@
     font-size: 0.75rem;
   }
   article .anchor-badge {
-    visibility: hidden;
+    display: none;
   }
   article:hover .id .urn {
     visibility: visible;
   }
   article:hover .anchor-badge {
-    visibility: visible;
+    display: block;
   }
   @media (max-width: 720px) {
     article {
