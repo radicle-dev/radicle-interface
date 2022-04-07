@@ -18,7 +18,10 @@
   };
 
   const loadCommits = async () => {
-    const commits = await Project.getCommits(project.urn, seed.api, project.head ?? undefined, getTimestampOneYearAgo(), undefined, "500", "0");
+    const commits = await Project.getCommits(project.urn, seed.api, {
+      parent: project.head ?? null,
+      since: getTimestampOneYearAgo(),
+    });
     return groupCommitsByWeek(commits.headers);
   };
 </script>

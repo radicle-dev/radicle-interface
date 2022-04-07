@@ -9,7 +9,9 @@
   export let commit: string;
 
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
-    const commitsQuery = await Project.getCommits(project.urn, project.seed.api, parentCommit);
+    const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
+      parent: parentCommit, verified: true
+    });
     return groupCommitHistory(commitsQuery);
   };
 </script>

@@ -10,7 +10,9 @@ export async function get(
 ): Promise<any> {
   const query: Record<string, string> = {};
   for (const [key, val] of Object.entries(params)) {
-    query[key] = val.toString();
+    if (val !== undefined && val !== null) {
+      query[key] = val.toString();
+    }
   }
 
   const base = api.host;
