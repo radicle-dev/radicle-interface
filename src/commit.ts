@@ -69,6 +69,7 @@ export interface Commit {
   stats: CommitStats;
   diff: Diff;
   branches: string[];
+  context: CommitContext;
 }
 
 export function formatGroupTime(timestamp: number): string {
@@ -129,7 +130,10 @@ export function groupCommits(commits: { header: CommitHeader; context: CommitCon
 }
 
 export const formatCommitTime = (t: number): string => {
-  return new Date(t * 1000).toUTCString();
+  const options: any = {
+    hour: "2-digit", minute: "2-digit", timeZoneName: "short", hour12: false
+  };
+  return new Date(t * 1000).toLocaleTimeString("en-us", options);
 };
 
 export function groupCommitsByWeek(commits: CommitMetadata[]): CommitGroup[] {

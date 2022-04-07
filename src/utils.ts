@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import md5 from "md5";
 import { BigNumber } from "ethers";
 import multibase from 'multibase';
 import multihashes from 'multihashes';
@@ -480,6 +481,15 @@ export function isMarkdownPath(path: string): boolean {
 export function isDomain(input: string): boolean {
   return (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input))
     || (! import.meta.env.PROD && /^0.0.0.0$/.test(input));
+}
+
+
+// Get the gravatar URL of an email.
+export function gravatarURL(email: string): string {
+  const address = email.trim().toLowerCase();
+  const hash = md5(address);
+
+  return `https://www.gravatar.com/avatar/${hash}`;
 }
 
 // Propose a Gnosis Safe multi-sig transaction.

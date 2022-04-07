@@ -1,18 +1,12 @@
 <script lang="ts">
-  import Icon from "@app/Icon.svelte";
   import type { CommitMetadata } from "@app/commit";
-  import type { Project } from "@app/project";
   import { formatCommit } from "@app/utils";
   import { createEventDispatcher } from "svelte";
-  import { ProjectContent } from "@app/project";
-  import { formatCommitTime } from "@app/commit";
+
+  import Icon from "@app/Icon.svelte";
+  import CommitAuthorship from "./CommitAuthorship.svelte";
 
   export let commit: CommitMetadata;
-  export let project: Project;
-
-  const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({ content, revision, path: null });
-  };
 
   const dispatch = createEventDispatcher();
 
@@ -24,23 +18,38 @@
 <style>
   .hash {
     font-family: var(--font-family-monospace);
-    padding: 0 1rem 0 0;
   }
-  .author {
-    margin-right: 0.5rem;
-    white-space: nowrap;
+  .commit-teaser {
+    background-color: var(--color-foreground-background);
+    padding: 0.5rem 0rem;
   }
-  .commit {
+  .commit-teaser:hover {
+    background-color: var(--color-foreground-background-lighter);
+  }
+  .commit-teaser:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+  }
+  .commit-teaser:last-child {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+  .commit-teaser {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 1rem;
   }
-  .commit .right {
+
+  .column-left {
+    padding: 0 1.5rem;
+  }
+  .column-center {
+    flex: min-content;
+  }
+  .commit-teaser .column-right {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    padding-right: 1.5rem;
   }
   .summary {
     overflow: hidden;
@@ -48,16 +57,15 @@
     text-overflow: ellipsis;
     padding-right: 1rem;
   }
-  .time {
-    margin-right: 0.5rem;
-    white-space: nowrap;
+  .badge {
+    margin: 0 1rem 0 0;
   }
 
   @media (max-width: 960px) {
     .hash {
       padding-right: 0.5rem;
     }
-    .time, .author, .hash {
+    .hash {
       font-size: 0.75rem;
     }
     .summary {
@@ -69,17 +77,22 @@
   }
 </style>
 
-<div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
-  <div class="summary">
+<div class="commit-teaser">
+  <div class="column-left">
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
-    <span class="summary">{commit.header.summary}</span>
   </div>
-  <div class="right">
+  <div class="column-center">
+    <div class="header">
+      <div class="summary">
+        {commit.header.summary}
+      </div>
+    </div>
+    <CommitAuthorship {commit} />
+  </div>
+  <div class="column-right">
     {#if commit.context.committer}
-      <span class="badge primary">Verified</span>
+      <span class="badge tertiary">Verified</span>
     {/if}
-    <span class="desktop-inline bold author">{commit.header.committer.name}</span>
-    <span class="desktop-inline font-mono text-small time">{formatCommitTime(commit.header.committerTime)}</span>
     <Icon name="browse" width={17} inline fill on:click={() => browseCommit(commit.header.sha1)} />
   </div>
 </div>

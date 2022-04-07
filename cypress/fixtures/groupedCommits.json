@@ -3,14 +3,16 @@
     "groupDate": "Thursday, March 3, 2022",
     "commits": [
       {
-        "sha": "9cd3532",
-        "summary": "Second commit",
-        "description": "",
-        "committer": {
-          "name": "dabit3",
-          "mail": "dabit3@gmail.com"
-        },
-        "committerTime": "Thu, 03 Mar 2022 05:51:25 GMT"
+        "header": {
+          "sha": "9cd3532",
+          "summary": "Second commit",
+          "description": "",
+          "committer": {
+            "name": "dabit3",
+            "mail": "dabit3@gmail.com"
+          },
+          "committerTime": "06:51 GMT+1"
+        }
       }
     ]
   },
@@ -18,24 +20,28 @@
     "groupDate": "Wednesday, March 2, 2022",
     "commits": [
       {
-        "sha": "e045b92",
-        "summary": "Update README",
-        "description": "",
-        "committer": {
-          "name": "dabit3",
-          "mail": "dabit3@gmail.com"
-        },
-        "committerTime": "Wed, 02 Mar 2022 16:14:45 GMT"
+        "header": {
+          "sha": "e045b92",
+          "summary": "Update README",
+          "description": "",
+          "committer": {
+            "name": "dabit3",
+            "mail": "dabit3@gmail.com"
+          },
+          "committerTime": "17:14 GMT+1"
+        }
       },
       {
-        "sha": "cbf5df4",
-        "summary": "initial commit",
-        "description": "this is the first commit of many",
-        "committer": {
-          "name": "dabit3",
-          "mail": "dabit3@gmail.com"
-        },
-        "committerTime": "Wed, 02 Mar 2022 15:58:05 GMT"
+        "header": {
+          "sha": "cbf5df4",
+          "summary": "initial commit",
+          "description": "this is the first commit of many",
+          "committer": {
+            "name": "dabit3",
+            "mail": "dabit3@gmail.com"
+          },
+          "committerTime": "16:58 GMT+1"
+        }
       }
     ]
   }

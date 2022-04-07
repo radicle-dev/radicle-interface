@@ -8,7 +8,8 @@
     "coverage": "npx nyc report",
     "test:unit": "vitest run",
     "test:components": "cypress run-ct",
-    "test:e2e": "cypress run"
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
   },
   "type": "module",
   "engines": {
@@ -46,6 +47,7 @@
     "@self.id/core": "^0.1.0",
     "@stardazed/streams": "^3.1.0",
     "@types/marked": "^4.0.1",
+    "@types/md5": "^2.3.2",
     "@walletconnect/client": "^1.6.0",
     "@walletconnect/signer-connection": "^1.6.0",
     "@walletconnect/types": "^1.6.0",
@@ -57,6 +59,7 @@
     "ethers": "^5.0.31",
     "eventemitter3": "4.0.7",
     "marked": "^4.0.12",
+    "md5": "^2.3.0",
     "multibase": "^4.0.4",
     "multihashes": "^4.0.2",
     "pure-svg-code": "^1.0.6",

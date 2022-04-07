@@ -1,12 +1,16 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { Project } from "@app/project";
+  import { Project, ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
   import Message from "@app/Message.svelte";
 
   export let project: Project;
   export let commit: string;
+
+  const navigateHistory = (revision: string, content?: ProjectContent) => {
+    project.navigateTo({ content, revision, path: null });
+  };
 
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
     const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
@@ -25,24 +29,28 @@
     color: var(--color-foreground-faded);
   }
   .commit-group-headers {
-    border-radius: 0.25rem;
     margin-bottom: 2rem;
-    background: var(--color-foreground-background);
   }
-  .commit-group-headers {
+
+  .commit {
+    background-color: var(--color-foreground-background);
+  }
+  .commit:not(:last-child) {
+    border-bottom: 1px dashed var(--color-background);
+  }
+  .commit:hover {
+    background-color: var(--color-foreground-background-lighter);
     cursor: pointer;
   }
-  .commit-group-headers:first-child {
+  .commit:first-child {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
   }
-  .commit-group-headers:last-child {
+  .commit:last-child {
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
   }
-  .commit-group-headers {
-    background: var(--color-foreground-background-lighter);
-  }
+
   @media (max-width: 960px) {
     .history {
       padding-left: 2rem;
@@ -61,7 +69,9 @@
         </header>
         <div class="commit-group-headers">
           {#each group.commits as commit (commit.header.sha1)}
-            <CommitTeaser {project} {commit} />
+            <div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
+              <CommitTeaser {commit} />
+            </div>
           {/each}
         </div>
       </div>
