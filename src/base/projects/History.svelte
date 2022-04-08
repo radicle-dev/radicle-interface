@@ -12,6 +12,10 @@
     project.navigateTo({ content, revision, path: null });
   };
 
+  const browseCommit = (event: { detail: string }) => {
+    project.navigateTo({ content: ProjectContent.Tree, revision: event.detail, path: null });
+  };
+
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
     const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
       parent: parentCommit, verified: true
@@ -70,7 +74,7 @@
         <div class="commit-group-headers">
           {#each group.commits as commit (commit.header.sha1)}
             <div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
-              <CommitTeaser {commit} />
+              <CommitTeaser {commit} on:browseCommit={browseCommit} />
             </div>
           {/each}
         </div>
