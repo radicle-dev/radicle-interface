@@ -2,6 +2,55 @@
 /// <reference types="cypress" />
 import { MockExtensionProvider } from "../support";
 
+const groupedCommits = [
+  {
+    groupDate: "Thursday, March 3, 2022",
+    commits: [
+      {
+        header: {
+          sha: "9cd3532",
+          summary: "Second commit",
+          description: "",
+          committer: {
+            name: "dabit3",
+            mail: "dabit3@gmail.com"
+          },
+          committerTime: "06:51 GMT+1"
+        }
+      }
+    ]
+  },
+  {
+    groupDate: "Wednesday, March 2, 2022",
+    commits: [
+      {
+        header: {
+          sha: "e045b92",
+          summary: "Update README",
+          description: "",
+          committer: {
+            name: "dabit3",
+            mail: "dabit3@gmail.com"
+          },
+          committerTime: "17:14 GMT+1"
+        }
+      },
+      {
+        header: {
+          sha: "cbf5df4",
+          summary: "initial commit",
+          description: "this is the first commit of many",
+          committer: {
+            name: "dabit3",
+            mail: "dabit3@gmail.com"
+          },
+          committerTime: "16:58 GMT+1"
+        }
+      }
+    ]
+  }
+];
+
 describe("Project view", () => {
   beforeEach(() => {
     cy.intercept("https://willow.radicle.garden:8777/", { fixture: "projectHome.json" });
@@ -80,44 +129,37 @@ describe("Project view", () => {
   });
 
   it("Commit group & commit trailer", () => {
-    cy.fixture("groupedCommits.json").then((commitGroup) => {
-      // This iterates over the commit groups and then over each commit.
-      cy.get(".commit-group").should("have.length", 2)
-        .each((item, index) => {
-          expect(Cypress.$(item.children(".commit-date")).text()).to.eq(commitGroup[index].groupDate);
-          const $el = Cypress.$(item.find(".commit-teaser"));
-          cy.wrap($el).each((commit, commitIndex) => {
-            expect(Cypress.$(commit).find(".hash").text()).to.eq(commitGroup[index].commits[commitIndex].header.sha);
-            expect(Cypress.$(commit).find(".summary").text()).to.eq(commitGroup[index].commits[commitIndex].header.summary);
-            expect(Cypress.$(commit).find(".committer").text()).to.eq(commitGroup[index].commits[commitIndex].header.committer.name);
-          });
+    // This iterates over the commit groups and then over each commit.
+    cy.get(".commit-group").should("have.length", 2)
+      .each((item, index) => {
+        expect(Cypress.$(item.children(".commit-date")).text()).to.eq(groupedCommits[index].groupDate);
+        const $el = Cypress.$(item.find(".commit-teaser"));
+        cy.wrap($el).each((commit, commitIndex) => {
+          expect(Cypress.$(commit).find(".hash").text()).to.eq(groupedCommits[index].commits[commitIndex].header.sha);
+          expect(Cypress.$(commit).find(".summary").text()).to.eq(groupedCommits[index].commits[commitIndex].header.summary);
+          expect(Cypress.$(commit).find(".committer").text()).to.eq(groupedCommits[index].commits[commitIndex].header.committer.name);
         });
+      });
 
-      // Checking that the initial commit has the Verified badge
-      cy.get(".badge").last().should("have.text", "Verified");
-      cy.get(".commit").last().click();
-    });
+    // Checking that the initial commit has the Verified badge
+    cy.get(".badge").last().should("have.text", "Verified");
+    cy.get(".commit").last().click();
   });
 
   it("Commit detail view", () => {
-    cy.fixture("groupedCommits.json").then((commitGroup) => {
-      // We get the initial commit from the fixture file to assert here
-      const { committer, committerTime, summary, description } = commitGroup[1].commits[1].header;
-
-      cy.location().should((location) => {
-        expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a');
-      });
-      cy.get("header .summary h3").should("have.text", summary);
-      cy.get("header pre.description").should("have.text", description);
-      cy.get("header .committer").should("have.text", `${committer.name}`);
-      cy.get("div.changeset-summary").should("have.text", "1 file(s) changed\n    with\n    0 addition(s)\n    and\n    0 deletion(s)");
-      cy.get("header.file-header:nth-child(1) div.file-data > *")
-        .first()
-        .should("have.text", "README.md")
-        .next()
-        .should("have.text", "created");
-      cy.get("tr.diff-line td.diff-line-number").contains("16");
-      cy.get("tr.diff-line td.diff-line-content").contains("To prevent front-running, the RAD/USDC balances are set through the Uniswap router *proxy* contract");
+    cy.location().should((location) => {
+      expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a');
     });
+    cy.get("header .summary h3").should("have.text", "initial commit");
+    cy.get("header pre.description").should("have.text", "this is the first commit of many");
+    cy.get("header .committer").should("have.text", "dabit3");
+    cy.get("div.changeset-summary").should("have.text", "1 file(s) changed\n    with\n    0 addition(s)\n    and\n    0 deletion(s)");
+    cy.get("header.file-header:nth-child(1) div.file-data > *")
+      .first()
+      .should("have.text", "README.md")
+      .next()
+      .should("have.text", "created");
+    cy.get("tr.diff-line td.diff-line-number").contains("16");
+    cy.get("tr.diff-line td.diff-line-content").contains("To prevent front-running, the RAD/USDC balances are set through the Uniswap router *proxy* contract");
   });
 });
