@@ -19,6 +19,7 @@
     position: absolute;
   }
   .dropdown-item {
+    white-space: nowrap;
     cursor: pointer;
     padding: 0.5rem 1rem;
   }
