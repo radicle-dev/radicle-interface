@@ -64,6 +64,7 @@
     "multihashes": "^4.0.2",
     "pure-svg-code": "^1.0.6",
     "sanitize-html": "^2.6.1",
+    "siwe": "^1.1.6",
     "svelte": "^3.46.3",
     "svelte-preprocess": "^4.7.2",
     "svelte-routing": "^1.6.0"
