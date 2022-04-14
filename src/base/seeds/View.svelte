@@ -7,10 +7,26 @@
   import NotFound from "@app/NotFound.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import Projects from "@app/base/orgs/View/Projects.svelte";
+  import { SeedSession, signInWithEthereum } from "@app/siwe";
+  import { session } from "@app/session";
+  import Address from "@app/Address.svelte";
 
   export let config: Config;
   export let host: string;
 
+  let sessionData: SeedSession | null = null;
+
+  $: if ($session) {
+    const entries = Object.entries($session.siwe);
+    const result = entries.find(([, session]) => session.domain === host);
+    if (result) {
+      sessionData = result[1];
+    }
+  }
+
+  const signIn = async (seed: Seed) => {
+    await signInWithEthereum(seed, config);
+  };
 </script>
 
 <style>
@@ -106,10 +122,29 @@
       <div class="label">Version</div>
       <div>{seed.version}</div>
       <div class="desktop" />
+      <!-- User Session -->
+      <div class="label">Connection</div>
+      {#if sessionData}
+        <div class="desktop"><Address address={sessionData.address} resolve {config} /></div>
+        <div class="mobile"><Address address={sessionData.address} compact resolve {config} /></div>
+        <div class="desktop" />
+      {:else}
+        <div class="subtle">Not connected</div>
+        {#if config.signer}
+          <div class="desktop">
+            <button class="tiny secondary" on:click={() => signIn(seed)}>
+              Sign in with Ethereum
+            </button>
+          </div>
+        {/if}
+      {/if}
     </div>
     <!-- Seed Projects -->
     <Projects {seed} {config} />
   </main>
 {:catch}
-  <NotFound title={host} subtitle="Not able to query information from this seed." />
+  <NotFound
+    title={host}
+    subtitle="Not able to query information from this seed."
+  />
 {/await}

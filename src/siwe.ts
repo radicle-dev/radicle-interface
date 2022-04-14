@@ -54,8 +54,6 @@ export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ 
   const signature = await config.signer.signMessage(message);
 
   const auth: { id: string; session: SeedSession } = await new Request(`sessions/${result.id}`, seed.api).put({ message, signature: removePrefix(signature) });
-
-  await new Request(`sessions`, seed.api).get({}, { Authorization: result.id });
   connectSeed({ id: result.id, session: auth.session });
 
   return { id: result.id };

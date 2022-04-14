@@ -8,3 +8,6 @@ coverage
 
 # Integration Tests
 cypress/screenshots
+
+# Mac OS
+.DS_Store

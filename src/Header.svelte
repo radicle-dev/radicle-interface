@@ -13,12 +13,18 @@
   import Search from '@app/Search.svelte';
   import Icon from "./Icon.svelte";
   import MobileNavbar from "./MobileNavbar.svelte";
+  import SeedDropdown from "./SeedDropdown.svelte";
 
   export let session: Session | null;
   export let config: Config;
 
   let sessionButtonHover = false;
   let mobileNavbarDisplayed = false;
+  let seedDropdown = false;
+
+  function toggleDropdown() {
+    seedDropdown = !seedDropdown;
+  }
 
   function toggleNavbar() {
     mobileNavbarDisplayed = !mobileNavbarDisplayed;
@@ -118,7 +124,7 @@
     display: none;
   }
   @media(max-width: 800px) {
-    .balance {
+    .balance + .seeds {
       display: none;
     }
   }
@@ -180,6 +186,12 @@
           <Loading small />
         {/if}
       </span>
+
+      {#if session && Object.keys(session.siwe).length > 0}
+        <div class="seeds">
+          <SeedDropdown seeds={session.siwe} {toggleDropdown} {seedDropdown} {config} />
+        </div>
+      {/if}
 
       <button class="address outline small"
         on:click={() => disconnectWallet(config)}

@@ -98,6 +98,12 @@ export function formatSeedId(id: string): string {
     + id.substring(id.length - 6, id.length);
 }
 
+export function removePrefix(hash: string): string {
+  if (! hash.startsWith("0x")) { return hash; }
+
+  return hash.substring(2);
+}
+
 export function formatRadicleUrn(id: string): string {
   assert(isRadicleId(id));
 
