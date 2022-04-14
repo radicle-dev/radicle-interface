@@ -21,12 +21,7 @@ export type TxState =
   | { state: 'fail'; hash: string; blockHash: string; blockNumber: number; error: string }
   | null;
 
-// Definitions made in `Config` that need to be part of the session,
-// to provide reactivity based on events i.e. accountsChanged
-// TODO: Eventually there will be more reactive config needs, e.g. seeds
-export interface SessionConfig {
-  signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
-}
+export type Signer = ethers.Signer & TypedDataSigner | WalletConnectSigner;
 
 export type State =
     { connection: Connection.Disconnected }
@@ -35,7 +30,7 @@ export type State =
 
 export interface Session {
   address: string;
-  config: SessionConfig;
+  signer: Signer | null;
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
@@ -62,9 +57,8 @@ export const loadState = (initial: State): Store => {
       // Re-connect using previous session.
       if (config.metamask.connected) {
         const metamask = config.metamask.session;
-        const sessionConfig = { signer: config.signer };
         const tokenBalance: BigNumber = await config.token.balanceOf(metamask.address);
-        const session = { tokenBalance, tx: null, config: sessionConfig, address: metamask.address };
+        const session = { tokenBalance, tx: null, seeds: {}, signer: config.metamask.signer, address: metamask.address };
 
         store.set({ connection: Connection.Connected, session });
         config.setSigner(config.metamask.signer);
@@ -88,8 +82,7 @@ export const loadState = (initial: State): Store => {
         config.walletConnect.state.set({ state: "close" });
 
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
-        const sessionConfig = { signer: config.signer };
-        const session = { config: sessionConfig, address, tokenBalance, tx: null };
+        const session = { address, signer: config.metamask.signer, seeds: {}, tokenBalance, tx: null };
 
         store.set({
           connection: Connection.Connected,
@@ -111,9 +104,8 @@ export const loadState = (initial: State): Store => {
 
         const address = await signer.getAddress();
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
-        const sessionConfig = { signer: config.signer };
-        const session = { config: sessionConfig, address, tokenBalance, tx: null };
-        const network = await ethers.providers.getNetwork(
+        const session = { address, signer, seeds: {}, tokenBalance, tx: null };
+        const network = ethers.providers.getNetwork(
           signer.walletConnect.chainId
         );
 
@@ -255,7 +247,7 @@ export const loadState = (initial: State): Store => {
               disconnectMetamask();
             } else {
               s.session.address = address;
-              s.session.config = { signer: config.signer };
+              s.session.signer = config.signer;
               saveSession(s.session);
             }
             return s;
