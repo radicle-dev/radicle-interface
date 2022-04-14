@@ -1,6 +1,6 @@
 import { navigate } from 'svelte-routing';
 import { get, writable } from 'svelte/store';
-import * as api from '@app/api';
+import { type Host, Request } from '@app/api';
 import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
 import { isOid, isRadicleId } from '@app/utils';
 import { Profile, ProfileType } from '@app/profile';
@@ -249,8 +249,8 @@ export class Project implements ProjectInfo {
     return { tree, commit };
   }
 
-  static async getInfo(nameOrUrn: string, host: api.Host): Promise<ProjectInfo> {
-    const info = await api.get(`projects/${nameOrUrn}`, {}, host);
+  static async getInfo(nameOrUrn: string, host: Host): Promise<ProjectInfo> {
+    const info = await new Request(`projects/${nameOrUrn}`, host).get();
 
     return {
       ...info,
@@ -258,25 +258,25 @@ export class Project implements ProjectInfo {
     };
   }
 
-  static async getProjects(host: api.Host): Promise<ProjectInfo[]> {
-    return api.get("projects", {}, host);
+  static async getProjects(host: Host): Promise<ProjectInfo[]> {
+    return new Request("projects", host).get();
   }
 
-  static async getDelegateProjects(delegate: string, host: api.Host): Promise<ProjectInfo[]> {
-    return api.get(`delegates/${delegate}/projects`, {}, host);
+  static async getDelegateProjects(delegate: string, host: Host): Promise<ProjectInfo[]> {
+    return new Request(`delegates/${delegate}/projects`, host).get();
   }
 
-  static async getRemote(urn: string, peer: string, host: api.Host): Promise<Remote> {
-    return api.get(`projects/${urn}/remotes/${peer}`, {}, host);
+  static async getRemote(urn: string, peer: string, host: Host): Promise<Remote> {
+    return new Request(`projects/${urn}/remotes/${peer}`, host).get();
   }
 
-  static async getRemotes(urn: string, host: api.Host): Promise<Peer[]> {
-    return api.get(`projects/${urn}/remotes`, {}, host);
+  static async getRemotes(urn: string, host: Host): Promise<Peer[]> {
+    return new Request(`projects/${urn}/remotes`, host).get();
   }
 
   static async getCommits(
     urn: string,
-    host: api.Host,
+    host: Host,
     opts?: {
       parent?: string | null;
       since?: string;
@@ -294,11 +294,11 @@ export class Project implements ProjectInfo {
       "page": opts?.page,
       "verified": opts?.verified
     };
-    return api.get(`projects/${urn}/commits`, params, host);
+    return new Request(`projects/${urn}/commits`, host).get(params);
   }
 
   async getCommit(commit: string): Promise<Commit> {
-    return api.get(`projects/${this.urn}/commits/${commit}`, {}, this.seed.api);
+    return new Request(`projects/${this.urn}/commits/${commit}`, this.seed.api).get();
   }
 
   async getTree(
@@ -306,7 +306,7 @@ export class Project implements ProjectInfo {
     path: string,
   ): Promise<Tree> {
     if (path === "/") path = "";
-    return api.get(`projects/${this.urn}/tree/${commit}/${path}`, {}, this.seed.api);
+    return new Request(`projects/${this.urn}/tree/${commit}/${path}`, this.seed.api).get();
   }
 
   async getBlob(
@@ -314,13 +314,13 @@ export class Project implements ProjectInfo {
     path: string,
     options: { highlight: boolean },
   ): Promise<Blob> {
-    return api.get(`projects/${this.urn}/blob/${commit}/${path}`, options, this.seed.api);
+    return new Request(`projects/${this.urn}/blob/${commit}/${path}`, this.seed.api).get(options);
   }
 
   async getReadme(
     commit: string,
   ): Promise<Blob> {
-    return api.get(`projects/${this.urn}/readme/${commit}`, {}, this.seed.api);
+    return new Request(`projects/${this.urn}/readme/${commit}`, this.seed.api).get();
   }
 
   navigateTo(browse: BrowseTo): void {

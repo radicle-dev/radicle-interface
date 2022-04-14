@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let items: { key: string; value: string; badge: string | null }[];
-  export let selected: string | null;
+  export let selected: string | null = null;
   export let visible = false;
 
   const dispatch = createEventDispatcher();

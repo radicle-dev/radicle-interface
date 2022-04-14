@@ -1,4 +1,4 @@
-import * as api from '@app/api';
+import { Request, type Host } from '@app/api';
 import type { Config } from '@app/config';
 import * as proj from "@app/project";
 import { isDomain } from '@app/utils';
@@ -108,12 +108,12 @@ export class Seed {
     return result.map((project: proj.ProjectInfo) => ({ ...project, id: project.urn }));
   }
 
-  static async getPeer({ host, port }: api.Host): Promise<{ id: string }> {
-    return api.get("/peer", {}, { host, port });
+  static async getPeer(host: Host): Promise<{ id: string }> {
+    return new Request("/peer", host).get();
   }
 
-  static async getInfo({ host, port }: api.Host): Promise<{ version: string }> {
-    return api.get("/", {}, { host, port });
+  static async getInfo(host: Host): Promise<{ version: string }> {
+    return new Request("/", host).get();
   }
 
   static async lookup(hostname: string, cfg: Config): Promise<Seed> {
