@@ -263,7 +263,7 @@ export async function getConfig(): Promise<Config> {
     provider,
     metamaskSigner,
   );
-  console.log(cfg, "config");
+  console.log("config", cfg);
 
   return cfg;
 }
