@@ -26,6 +26,12 @@
   .authorship .avatar:not(:first-child) {
     margin-left: 0.125rem;
   }
+
+  @media (max-width: 720px) {
+    .authorship {
+      display: none;
+    }
+  }
 </style>
 
 <span class="authorship text-xsmall">

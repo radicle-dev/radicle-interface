@@ -61,12 +61,18 @@
     margin: 0 1rem 0 0;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 720px) {
     .hash {
       padding-right: 0.5rem;
     }
     .hash {
       font-size: 0.75rem;
+    }
+    .column-center {
+      overflow: hidden;
+    }
+    .column-right {
+      display: none !important;
     }
     .summary {
       overflow: hidden;
