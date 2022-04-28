@@ -8,6 +8,7 @@ import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import type { WalletConnectSigner } from "./WalletConnectSigner";
 import * as ethers from "ethers";
 import type { SeedSession } from "./siwe";
+import { unixTime } from "./utils";
 
 export enum Connection {
   Disconnected,
@@ -310,8 +311,11 @@ export function loadSeedSessions(): { [key: string]: SeedSession } {
   if (siweStorage) {
     const siwe: { [key: string]: SeedSession } = JSON.parse(siweStorage);
 
-    // We only keep the sessions that are still valid and remove expired from localStorage
-    const activeSessions = Object.fromEntries(Object.entries(siwe).filter(([, value]) => value.expiration_time > Date.now() / 1000));
+    // We only keep the sessions that are still valid, and remove expired ones from `localStorage`.
+    // For a session to be valid the expiration time has to be bigger or equal than the current time.
+    const activeSessions = Object.fromEntries(Object.entries(siwe).filter(([, value]) => {
+      return value.expiration_time >= unixTime();
+    }));
     window.localStorage.setItem("siwe", JSON.stringify({ ...activeSessions }));
 
     return activeSessions;
@@ -358,5 +362,5 @@ function saveSession(session: Session): void {
   const { address, tokenBalance, tx, siwe } = session;
 
   window.localStorage.setItem("metamask", JSON.stringify({ address, tokenBalance, tx }));
-  window.localStorage.setItem("siwe", JSON.stringify({ ...siwe }));
+  window.localStorage.setItem("siwe", JSON.stringify(siwe));
 }

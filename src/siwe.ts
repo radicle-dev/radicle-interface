@@ -3,8 +3,8 @@ import { SiweMessage } from "siwe";
 import { Request, type Host } from '@app/api';
 import type { Config } from "@app/config";
 import { removePrefix } from "@app/utils";
-import { connectSeed } from "./session";
-import type { Seed } from "./base/seeds/Seed";
+import { connectSeed } from "@app/session";
+import type { Seed } from "@app/base/seeds/Seed";
 
 export interface SeedSession {
   domain: string;
@@ -20,8 +20,8 @@ export interface SeedSession {
 }
 
 export function createSiweMessage(seed: Seed, address: string, nonce: string, config: Config): string {
-  const date = new Date();
-  const expirationTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7).toISOString();
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
 
   const message = new SiweMessage({
     domain: seed.api.host,
@@ -30,8 +30,7 @@ export function createSiweMessage(seed: Seed, address: string, nonce: string, co
     uri: window.location.origin,
     nonce,
     version: '1',
-    resources: [`rad:git:${seed.id}`],
-    expirationTime,
+    expirationTime: nextWeek.toISOString(),
     chainId: config.network.chainId
   });
 
@@ -53,7 +52,12 @@ export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ 
   const message = createSiweMessage(seed, address, result.nonce, config);
   const signature = await config.signer.signMessage(message);
 
-  const auth: { id: string; session: SeedSession } = await new Request(`sessions/${result.id}`, seed.api).put({ message, signature: removePrefix(signature) });
+  const auth: {
+    id: string;
+    session: SeedSession;
+  } = await new Request(`sessions/${result.id}`, seed.api)
+    .put({ message, signature: removePrefix(signature) });
+
   connectSeed({ id: result.id, session: auth.session });
 
   return { id: result.id };
