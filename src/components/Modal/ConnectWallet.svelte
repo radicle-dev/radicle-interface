@@ -53,7 +53,7 @@
     <div slot="subtitle">
       <div class="text-small">
         WalletConnect<br/>
-        <a href="https://walletconnect.com/registry/wallets" class="link">
+        <a href="https://walletconnect.com/registry?type=wallet" class="link">
           View compatible wallets
         </a>
       </div>
