@@ -2,10 +2,12 @@
   import { Route } from "svelte-routing";
   import View from '@app/base/seeds/View.svelte';
   import type { Config } from '@app/config';
+  import type { Session } from "@app/session";
 
   export let config: Config;
+  export let session: Session | null;
 </script>
 
 <Route path="/seeds/:seed" let:params>
-  <View {config} host={params.seed}/>
+  <View {config} {session} host={params.seed}/>
 </Route>

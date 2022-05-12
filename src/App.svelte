@@ -89,7 +89,7 @@
         </Route>
         <Registrations {config} session={$session} />
         <Orgs {config} />
-        <Seeds {config} />
+        <Seeds {config} session={$session} />
         <Faucet {config} />
         <Users />
         <Resolver {config} />

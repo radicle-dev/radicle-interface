@@ -7,18 +7,19 @@
   import NotFound from "@app/NotFound.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import Projects from "@app/base/orgs/View/Projects.svelte";
-  import { session } from "@app/session";
+  import type { Session } from "@app/session";
   import Address from "@app/Address.svelte";
   import SiweConnect from "@app/SiweConnect.svelte";
   import type { SeedSession } from "@app/siwe";
 
   export let config: Config;
+  export let session: Session | null;
   export let host: string;
 
   let siweSession: SeedSession | null = null;
 
-  $: if ($session?.siwe) {
-    const entries = Object.entries($session.siwe);
+  $: if (session?.siwe) {
+    const entries = Object.entries(session.siwe);
     const result = entries.find(([, session]) => session.domain === host);
     if (result) {
       siweSession = result[1];
@@ -122,7 +123,7 @@
       <!-- User Session -->
       <div class="label">Connection</div>
       <div>
-        {#if $session?.signer}
+        {#if session?.signer}
           {#if siweSession}
             <div class="desktop">
               <Address address={siweSession.address} {config} resolve />
