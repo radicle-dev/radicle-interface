@@ -68,7 +68,7 @@ export class Request {
     }
 
     if (! response.ok) {
-      throw new ApiError("Not found", urlString);
+      throw new ApiError(response.statusText, urlString);
     }
     return response.json();
   }
