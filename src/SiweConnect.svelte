@@ -23,7 +23,11 @@
   disabled={connection === Connection.Connecting}
   on:click={async () => {
     connection = Connection.Connecting;
-    await signInWithEthereum(seed, config);
+    try {
+      await signInWithEthereum(seed, config);
+    } catch {
+      connection = Connection.Disconnected;
+    }
   }}
 >
   {#if connection === Connection.Connecting}
