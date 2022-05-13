@@ -34,18 +34,11 @@
   }
   main > header {
     display: flex;
+    width: 100%;
+    flex-direction: row;
     align-items: center;
-    justify-content: left;
+    justify-content: space-between;
     margin-bottom: 2rem;
-  }
-  main > header > * {
-    margin: 0 1rem 0 0;
-  }
-  .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: left;
   }
   .fields {
     display: grid;
@@ -95,12 +88,27 @@
 {:then seed}
   <main>
     <header>
-      <div class="info">
-        <span class="title">
-          <span class="bold">
-            {host} <span class="desktop inline">{seed.emoji}</span>
-          </span>
+      <span class="title">
+        <span class="bold">
+          {host} <span class="desktop inline">{seed.emoji}</span>
         </span>
+      </span>
+      <!-- User Session -->
+      <div class="siwe">
+        {#if session?.signer}
+          {#if siweSession}
+            <div class="desktop">
+              <Address address={siweSession.address} {config} resolve />
+            </div>
+            <div class="mobile">
+              <Address address={siweSession.address} {config} compact resolve />
+            </div>
+          {:else}
+            <SiweConnect {seed} {config} />
+          {/if}
+        {:else}
+          <div class="subtle">Please connect your wallet.</div>
+        {/if}
       </div>
     </header>
 
@@ -119,28 +127,6 @@
       <!-- API Version -->
       <div class="label">Version</div>
       <div>{seed.version}</div>
-      <div class="desktop" />
-      <!-- User Session -->
-      <div class="label">Connection</div>
-      <div>
-        {#if session?.signer}
-          {#if siweSession}
-            <div class="desktop">
-              <Address address={siweSession.address} {config} resolve />
-            </div>
-            <div class="mobile">
-              <Address address={siweSession.address} {config} compact resolve />
-            </div>
-          {:else}
-            <SiweConnect
-              {seed}
-              {config}
-            />
-          {/if}
-        {:else}
-          <div class="subtle">Please connect your wallet.</div>
-        {/if}
-      </div>
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->

@@ -7,7 +7,7 @@
 
   export let seed: Seed;
   export let config: Config;
-  export let caption = "Sign in with Ethereum";
+  export let caption = "Sign in";
 
   let connection: Connection = Connection.Disconnected;
 </script>
