@@ -25,7 +25,8 @@
     connection = Connection.Connecting;
     try {
       await signInWithEthereum(seed, config);
-    } catch {
+    } catch (e) {
+      console.error("Sign in", e);
       connection = Connection.Disconnected;
     }
   }}
