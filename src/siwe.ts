@@ -2,20 +2,19 @@
 import { SiweMessage } from "siwe";
 import { Request, type Host } from '@app/api';
 import type { Config } from "@app/config";
-import { removePrefix } from "@app/utils";
 import { connectSeed } from "@app/session";
 import type { Seed } from "@app/base/seeds/Seed";
 
 export interface SeedSession {
   domain: string;
   address: string;
-  statement: string;
+  statement?: string;
   uri: string;
   version: string;
-  chain_id: string;
+  chainId: string;
   nonce: string;
-  issued_at: number;
-  expiration_time: number;
+  issuedAt: number;
+  expirationTime: number;
   resources: string[];
 }
 
@@ -26,7 +25,6 @@ export function createSiweMessage(seed: Seed, address: string, nonce: string, co
   const message = new SiweMessage({
     domain: seed.api.host,
     address,
-    statement: `${seed.api.host} wants you to sign in with Ethereum`,
     uri: window.location.origin,
     nonce,
     version: '1',
@@ -56,7 +54,7 @@ export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ 
     id: string;
     session: SeedSession;
   } = await new Request(`sessions/${result.id}`, seed.api)
-    .put({ message, signature: removePrefix(signature) });
+    .put({ message, signature });
 
   connectSeed({ id: result.id, session: auth.session });
 

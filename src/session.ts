@@ -314,7 +314,7 @@ export function loadSeedSessions(): { [key: string]: SeedSession } {
     // We only keep the sessions that are still valid, and remove expired ones from `localStorage`.
     // For a session to be valid the expiration time has to be bigger or equal than the current time.
     const activeSessions = Object.fromEntries(Object.entries(siwe).filter(([, value]) => {
-      return value.expiration_time >= unixTime();
+      return value.expirationTime >= unixTime();
     }));
     window.localStorage.setItem("siwe", JSON.stringify({ ...activeSessions }));
 
