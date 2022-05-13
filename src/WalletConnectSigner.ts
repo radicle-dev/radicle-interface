@@ -51,13 +51,16 @@ export class WalletConnectSigner extends ethers.Signer {
     const prefix = ethers.utils.toUtf8Bytes(
       `\x19Ethereum Signed Message:\n${message.length}`
     );
-    const msg = ethers.utils.concat([prefix, message]);
+    const data = ((typeof(message) === "string") ? ethers.utils.toUtf8Bytes(message): message);
+
+    const msg = ethers.utils.concat([prefix, data]);
     const address = await this.getAddress();
     const keccakMessage = ethers.utils.keccak256(msg);
     const signature = await this.walletConnect.signMessage([
       address.toLowerCase(),
       keccakMessage,
     ]);
+
     return signature;
   }
 
