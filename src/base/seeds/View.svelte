@@ -107,7 +107,7 @@
             <SiweConnect {seed} {config} />
           {/if}
         {:else}
-          <div class="subtle">Please connect your wallet.</div>
+          <SiweConnect disabled {seed} {config} tooltip={"Connect your wallet to sign in"} />
         {/if}
       </div>
     </header>

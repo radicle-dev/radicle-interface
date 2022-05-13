@@ -8,6 +8,8 @@
   export let seed: Seed;
   export let config: Config;
   export let caption = "Sign in";
+  export let tooltip = "";
+  export let disabled = false;
 
   let connection: Connection = Connection.Disconnected;
 </script>
@@ -20,7 +22,8 @@
 
 <button
   class="tiny secondary"
-  disabled={connection === Connection.Connecting}
+  title={tooltip}
+  disabled={disabled || (connection === Connection.Connecting)}
   on:click={async () => {
     connection = Connection.Connecting;
     try {
