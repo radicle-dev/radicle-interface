@@ -97,10 +97,7 @@
       <div class="siwe">
         {#if session?.signer}
           {#if siweSession}
-            <div class="desktop">
-              <Address address={siweSession.address} {config} resolve />
-            </div>
-            <div class="mobile">
+            <div>
               <Address address={siweSession.address} {config} compact resolve />
             </div>
           {:else}
