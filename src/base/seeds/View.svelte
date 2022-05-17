@@ -56,6 +56,10 @@
     display: flex;
     align-items: center;
   }
+  .session-info {
+    display: flex;
+    flex-direction: row;
+  }
   .desktop {
     display: block !important;
   }
@@ -97,8 +101,8 @@
       <div class="siwe">
         {#if session?.signer}
           {#if siweSession}
-            <div>
-              <Address address={siweSession.address} {config} compact resolve />
+            <div class="session-info">
+              <span style:margin-right="0.5rem">Signed in as&nbsp;</span><Address address={siweSession.address} {config} compact resolve />
             </div>
           {:else}
             <SiweConnect {seed} {config} />

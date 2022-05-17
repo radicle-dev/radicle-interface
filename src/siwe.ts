@@ -39,7 +39,7 @@ export async function createUnauthorizedSession(host: Host): Promise<{ nonce: st
   return await new Request(`sessions`, host).post();
 }
 
-/// Signs the user into given seed and returns when succesfull a session id
+/// Signs the user into given seed and returns when successfull a session id
 export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ id: string } | null> {
   if (! config.signer) {
     return null;
