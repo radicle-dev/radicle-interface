@@ -4,6 +4,7 @@ import { Request, type Host } from '@app/api';
 import type { Config } from "@app/config";
 import { connectSeed } from "@app/session";
 import type { Seed } from "@app/base/seeds/Seed";
+import { ethers } from "ethers";
 
 export interface SeedSession {
   domain: string;
@@ -45,9 +46,13 @@ export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ 
     return null;
   }
 
-  const result = await createUnauthorizedSession(seed.api);
   const address = await config.signer.getAddress();
-  const message = createSiweMessage(seed, address, result.nonce, config);
+  // We convert the address to a checksummed address, since WalletConnect returns a lowercase address.
+  // We need a checksummed address to verify it on the seed node.
+  const checksummedAddress = ethers.utils.getAddress(address);
+
+  const result = await createUnauthorizedSession(seed.api);
+  const message = createSiweMessage(seed, checksummedAddress, result.nonce, config);
   const signature = await config.signer.signMessage(message);
 
   const auth: {
