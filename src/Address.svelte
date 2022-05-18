@@ -13,6 +13,7 @@
   export let noBadge = false;
   export let noAvatar = false;
   export let compact = false;
+  export let small = false;
   // This property allows components eg. Header.svelte to pass a resolved profile object.
   export let profile: Profile | null = null;
 
@@ -55,7 +56,7 @@
   }
 </style>
 
-<div class="address" title={address} class:no-badge={noBadge}>
+<div class="address" title={address} class:no-badge={noBadge} class:text-small={small}>
   {#if !noAvatar}
     {#if resolve && profile?.avatar}
       <Avatar inline source={profile.avatar} {address}/>

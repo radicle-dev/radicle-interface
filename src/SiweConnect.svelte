@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Avatar from "@app/Avatar.svelte";
   import type { Seed } from "@app/base/seeds/Seed";
   import type { Config } from "@app/config";
   import { signInWithEthereum } from "@app/siwe";
@@ -10,6 +11,7 @@
   export let caption = "Sign in";
   export let tooltip = "";
   export let disabled = false;
+  export let address: string | null = null;
 
   let connection: Connection = Connection.Disconnected;
 </script>
@@ -34,9 +36,14 @@
     }
   }}
 >
-  {#if connection === Connection.Connecting}
-    <Loading small />
-  {:else}
-    {caption}
-  {/if}
+  <span class="align">
+    {#if address}
+      <Avatar address={address} source={address} inline />
+    {/if}
+    {#if connection === Connection.Connecting}
+      <Loading small />
+    {:else}
+      {caption}
+    {/if}
+  </span>
 </button>

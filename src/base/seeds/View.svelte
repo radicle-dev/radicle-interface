@@ -63,6 +63,9 @@
   .session-info {
     display: flex;
     flex-direction: row;
+    background: var(--color-secondary-background);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
   }
   .desktop {
     display: block !important;
@@ -109,11 +112,11 @@
         {#if session?.signer}
           {#if siweSession}
             <div class="session-info">
-              <span class="signed-in">Signed in as</span>
-              <Address address={siweSession.address} {config} compact resolve />
+              <span class="signed-in text-small">Signed in as</span>
+              <Address address={siweSession.address} {config} small compact resolve />
             </div>
           {:else}
-            <SiweConnect {seed} {config} />
+            <SiweConnect {seed} address={session.address} {config} />
           {/if}
         {:else}
           <SiweConnect disabled {seed} {config} tooltip={"Connect your wallet to sign in"} />

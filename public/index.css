@@ -403,6 +403,11 @@ label.input {
   }
 }
 
+span.align {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
 span.small, .text-xsmall {
 	font-size: 0.75rem;
 }
