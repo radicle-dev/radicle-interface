@@ -26,6 +26,7 @@ export function createSiweMessage(seed: Seed, address: string, nonce: string, co
   const message = new SiweMessage({
     domain: seed.api.host,
     address,
+    statement: "It's a Radicle world!",
     uri: window.location.origin,
     nonce,
     version: '1',
