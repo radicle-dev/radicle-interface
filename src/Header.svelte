@@ -52,16 +52,22 @@
     margin-left: 1.5rem;
     white-space: nowrap;
   }
-  header .nav a {
+  header .nav .nav-link {
     display: inline-block;
     padding: 0.5rem 0.5rem;
     margin-right: 1.5rem;
     font-weight: 500;
+    cursor: pointer;
+    user-select: none;
     color: var(--color-foreground-6);
   }
-  header .nav a:hover {
+  header .nav .nav-link:hover {
     color: var(--color-foreground);
   }
+  header .nav .seeds-container {
+    display: inline-block;
+  }
+
   .logo {
     display: flex;
   }
@@ -123,11 +129,6 @@
   div.toggle {
     display: none;
   }
-  @media(max-width: 800px) {
-    .balance + .seeds {
-      display: none;
-    }
-  }
   @media(max-width: 720px) {
     .network, .search, header .nav, .balance {
       display: none;
@@ -164,8 +165,17 @@
       <Search />
     </div>
     <div class="nav">
-      <a use:link href="/orgs/">Orgs</a>
-      <a use:link href="/registrations">Register</a>
+      <a use:link class="nav-link" href="/orgs/">Orgs</a>
+      <a use:link class="nav-link" href="/registrations">Register</a>
+
+      {#if session && Object.keys(session.siwe).length > 0}
+        <span class="seeds-container">
+          <span class="nav-link" on:click={toggleDropdown}>
+            Seeds
+          </span>
+          <SeedDropdown seeds={session.siwe} visible={seedDropdown} {config} />
+        </span>
+      {/if}
     </div>
   </div>
 
@@ -186,12 +196,6 @@
           <Loading small />
         {/if}
       </span>
-
-      {#if session && Object.keys(session.siwe).length > 0}
-        <div class="seeds">
-          <SeedDropdown seeds={session.siwe} {toggleDropdown} {seedDropdown} {config} />
-        </div>
-      {/if}
 
       <button class="address outline small"
         on:click={() => disconnectWallet(config)}

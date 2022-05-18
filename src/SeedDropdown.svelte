@@ -6,8 +6,7 @@
   import type { SeedSession } from "@app/siwe";
 
   export let seeds: { [key: string]: SeedSession };
-  export let seedDropdown = false;
-  export let toggleDropdown: () => void;
+  export let visible = false;
   export let config: Config;
 
   // When a user signs into a new seed we want to update the seed listing
@@ -22,26 +21,16 @@
 </script>
 
 <style>
-  .selector {
-    margin-left: 2rem;
-  }
 </style>
 
-<div class="selector">
-  <span>
-    <button class="seed outline small" on:click={toggleDropdown}>
-      Seeds
-    </button>
-    {#await formatSeeds() then items}
-      <Dropdown
-        {items}
-        selected={null}
-        visible={seedDropdown}
-        on:select={(item) => {
-          seedDropdown = false;
-          navigate(`/seeds/${item.detail}`);
-        }}
-      />
-    {/await}
-  </span>
-</div>
+{#await formatSeeds() then items}
+  <Dropdown
+    {items}
+    selected={null}
+    {visible}
+    on:select={(item) => {
+      visible = false;
+      navigate(`/seeds/${item.detail}`);
+    }}
+  />
+{/await}

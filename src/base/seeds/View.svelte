@@ -76,6 +76,9 @@
       width: 100%;
       padding: 1.5rem;
     }
+    .signed-in {
+      display: none;
+    }
     .fields {
       grid-template-columns: 5rem auto;
     }
