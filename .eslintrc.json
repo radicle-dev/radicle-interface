@@ -74,6 +74,11 @@
       {
         "selector": "typeLike",
         "format": ["PascalCase"]
+      },
+      {
+        "selector": ["objectLiteralProperty"],
+        "modifiers": ["requiresQuotes"],
+        "format": null
       }
     ],
     "@typescript-eslint/no-explicit-any": "off",
