@@ -56,6 +56,10 @@
     display: flex;
     align-items: center;
   }
+  .signed-in {
+    color: var(--color-foreground-faded);
+    margin-right: 0.5rem;
+  }
   .session-info {
     display: flex;
     flex-direction: row;
@@ -102,7 +106,8 @@
         {#if session?.signer}
           {#if siweSession}
             <div class="session-info">
-              <span style:margin-right="0.5rem">Signed in as&nbsp;</span><Address address={siweSession.address} {config} compact resolve />
+              <span class="signed-in">Signed in as</span>
+              <Address address={siweSession.address} {config} compact resolve />
             </div>
           {:else}
             <SiweConnect {seed} {config} />
