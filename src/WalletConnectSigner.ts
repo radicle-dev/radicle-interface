@@ -28,7 +28,7 @@ export class WalletConnectSigner extends ethers.Signer {
         "The connected wallet has no accounts or there is a connection problem"
       );
     }
-    return accountAddress;
+    return ethers.utils.getAddress(accountAddress);
   }
 
   async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
