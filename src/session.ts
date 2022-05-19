@@ -2,7 +2,7 @@ import { get, writable, derived } from "svelte/store";
 import type { Readable } from "svelte/store";
 import type { BigNumber } from 'ethers';
 import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
-import { Config, getConfig, isMetamaskInstalled } from "@app/config";
+import { Config, isMetamaskInstalled } from "@app/config";
 import { Unreachable, assert, assertEq } from "@app/error";
 import type { TypedDataSigner } from '@ethersproject/abstract-signer';
 import type { WalletConnectSigner } from "./WalletConnectSigner";
@@ -56,31 +56,40 @@ export interface Store extends Readable<State> {
   connectWalletConnect(config: Config): Promise<void>;
   updateBalance(n: BigNumber): void;
   connectSeed(seed: { id: string; session: SeedSession }): void;
-  refreshBalance(config: Config): Promise<void>;
+  refreshBalance(): Promise<void>;
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
-  setChangedAccount(address: string): void;
+  setChangedAccount(address: string, signer: Signer): void;
 }
+
+// This is a buffer for the Config class to be available in this file, without making it a store just yet.
+// TODO: We should be thinking on making config a store, similar to session, to be more accesible.
+let sessionConfig: Config | null = null;
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
+  // Loads from localStorage all active seed sessions.
   const siwe = loadSeedSessions();
 
   return {
     subscribe: store.subscribe,
     connectMetamask: async (config: Config) => {
+      // TODO: Updates at the moment the local sessionConfig variable, will be removed eventually
+      sessionConfig = config;
       assert(config.metamask.signer);
+      // We use config.metamask.signer here, because config.signer is still null on page reload.
+      const signer = config.metamask.signer;
 
       // Re-connect using previous session.
       if (config.metamask.connected) {
         const metamask = config.metamask.session;
-        const signerConfig: SignerConfig = { signer: config.signer, type: SignerType.MetaMask };
+        const signerConfig: SignerConfig = { signer, type: SignerType.MetaMask };
         const tokenBalance: BigNumber = await config.token.balanceOf(metamask.address);
-        const session = { tokenBalance, tx: null, siwe, config: signerConfig, address: metamask.address };
+        const session = { address: metamask.address, config: signerConfig, siwe, tokenBalance, tx: null };
 
         store.set({ connection: Connection.Connected, session });
-        config.setSigner(config.metamask.signer);
+        config.setSigner(signer);
 
         return;
       }
@@ -91,18 +100,17 @@ export const loadState = (initial: State): Store => {
       store.set({ connection: Connection.Connecting });
 
       await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      const signer = config.metamask.signer;
       const address = await signer.getAddress();
 
       config.setSigner(signer);
 
       try {
+        // We close here any walletConnect session that may be open, before establishing a new Metamask connection.
         config.walletConnect.state.set({ state: "close" });
 
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
-        const signerConfig = { signer: config.signer, type: SignerType.MetaMask };
-        const session = { config: signerConfig, siwe, address, tokenBalance, tx: null };
+        const signerConfig = { signer, type: SignerType.MetaMask };
+        const session = { address, config: signerConfig, siwe, tokenBalance, tx: null };
 
         store.set({
           connection: Connection.Connected,
@@ -115,15 +123,18 @@ export const loadState = (initial: State): Store => {
     },
 
     connectWalletConnect: async (config: Config) => {
+      // TODO: Updates at the moment the local sessionConfig variable, will be removed eventually
+      sessionConfig = config;
       store.set({ connection: Connection.Connecting });
+      // We fetch the walletConnect signer here, because config.signer is still null on page reload.
       const signer = config.getWalletConnectSigner();
 
       try {
         await config.walletConnect.client.connect();
         console.log("WalletConnect: connected.");
 
-        const signerConfig: SignerConfig = { signer: config.signer, type: SignerType.WalletConnect };
-        const address = await signer.getAddress();
+        let address = await signer.getAddress();
+        const signerConfig: SignerConfig = { signer, type: SignerType.WalletConnect };
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
         const session = { address, config: signerConfig, siwe, tokenBalance, tx: null };
         const network = ethers.providers.getNetwork(
@@ -141,10 +152,15 @@ export const loadState = (initial: State): Store => {
           }
 
           try {
-            // When the WalletConnect session is updated, we need to update the config signer.
-            config.getWalletConnectSigner();
             // We only change accounts if the address has been changed, to avoid unnecessary refreshing.
-            if (address !== accounts[0]) changeAccounts(accounts[0]);
+            if (address !== accounts[0]) {
+              // When session_update address doesn't match the signer address, we update the signer and pass it to changeAccounts to update the session.
+              const signer = config.getWalletConnectSigner();
+              changeAccounts(accounts[0], signer);
+
+              // We update the address variable in scope of the connectWalletConnect function async here, to be used in the future when session_updates triggers.
+              signer.getAddress().then(a => address = a);
+            }
             // Check the current chainId, and request Metamask to change, or reload the window to get the correct chain.
             if (chainId !== config.network.chainId) {
               if (isMetamaskInstalled()) {
@@ -203,13 +219,13 @@ export const loadState = (initial: State): Store => {
       });
     },
 
-    refreshBalance: async (config: Config) => {
+    refreshBalance: async () => {
       const state = get(store);
-      assert(state.connection === Connection.Connected);
+      assert(state.connection === Connection.Connected && sessionConfig); // We should be connected and have a config created.
       const addr = state.session.address;
 
       try {
-        const tokenBalance: BigNumber = await config.token.balanceOf(addr);
+        const tokenBalance: BigNumber = await sessionConfig.token.balanceOf(addr);
 
         state.session.tokenBalance = tokenBalance;
         store.set(state);
@@ -275,7 +291,7 @@ export const loadState = (initial: State): Store => {
       });
     },
 
-    setChangedAccount: (address: string) => {
+    setChangedAccount: (address: string, signer: Signer) => {
       store.update(s => {
         switch (s.connection) {
           case Connection.Connected:
@@ -286,6 +302,7 @@ export const loadState = (initial: State): Store => {
               disconnectMetamask();
             } else {
               s.session.address = address;
+              s.session.config.signer = signer;
               // We only save the session to localStorage if we use a MetaMask signer
               // WalletConnect does their own session persistance.
               if (s.session.config.type === SignerType.MetaMask) saveMetamaskSession(s.session);
@@ -299,6 +316,7 @@ export const loadState = (initial: State): Store => {
   };
 };
 
+// Initializes the session state on page load or hard refresh.
 export const state = loadState({ connection: Connection.Disconnected });
 
 export const session = derived(state, s => {
@@ -316,13 +334,18 @@ window.ethereum?.on('chainChanged', () => {
 
 // Updates state when user changes accounts
 window.ethereum?.on("accountsChanged", async ([address]: string) => {
-  changeAccounts(address);
+  // Only allow user to change accounts with Metamask if they are connected with Metamask.
+  if (get(session)?.config.type !== SignerType.MetaMask) {
+    return;
+  // TODO: Temporary use case of sessionConfig, will eventually be removed, if moving config to a svelte store.
+  } else if (sessionConfig) {
+    changeAccounts(address, sessionConfig.metamask.signer);
+  }
 });
 
-export async function changeAccounts(address: string): Promise<void> {
-  const config = await getConfig();
-  state.setChangedAccount(address);
-  state.refreshBalance(config);
+export async function changeAccounts(address: string, signer: Signer): Promise<void> {
+  state.setChangedAccount(address, signer);
+  state.refreshBalance();
 }
 
 export function loadSeedSessions(): { [key: string]: SeedSession } {

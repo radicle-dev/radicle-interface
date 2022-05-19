@@ -8,6 +8,8 @@ describe("MetaMask", () => {
         win.ethereum = new MockExtensionProvider("rinkeby", "0x3256a804085C24f3451cAb2C98a37e16DEEc5721");
       }
     });
+    cy.intercept("POST", "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby", { data: { safe: null } } );
+    cy.intercept("https://gateway.ceramic.network/api/v0/streams", new Blob([]));
     cy.get("button.connect").click();
     cy.get("button.secondary").click();
     cy.get("button.address").should("contain", "3256 – 5721");
