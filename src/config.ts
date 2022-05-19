@@ -167,7 +167,7 @@ export class Config {
     signer: WalletConnectSigner;
   } {
     const walletConnect = new WalletConnect({
-      bridge: config.walletConnect.bridge,
+      bridge,
       qrcodeModal: {
         open: (uri: string, onClose) => {
           state.set({ state: "open", uri, onClose });
