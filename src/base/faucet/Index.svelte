@@ -32,7 +32,7 @@
       if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
       if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
       let currentTime = new Date().getTime();
-      let timelock = await calculateTimeLock(amount, $session.config.signer, config);
+      let timelock = await calculateTimeLock(amount, $session.signer, config);
       // Converting a 10 digit to 13 digit timestamp by multiplying by 1000
       // since JS doesn't display a correct Date string when passing a 10 digit timestamp.
       let nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(1000);
@@ -48,8 +48,8 @@
   }
 
   $: if ($session) {
-    getMaxWithdrawAmount($session.config.signer, config).then(x => maxWithdrawAmount = x);
-    lastWithdrawalByUser($session.config.signer, config).then(x => lastWithdrawal = x);
+    getMaxWithdrawAmount($session.signer, config).then(x => maxWithdrawAmount = x);
+    lastWithdrawalByUser($session.signer, config).then(x => lastWithdrawal = x);
   }
 </script>
 

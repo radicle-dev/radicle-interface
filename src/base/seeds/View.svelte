@@ -109,7 +109,7 @@
       </span>
       <!-- User Session -->
       <div class="siwe">
-        {#if session?.config.signer}
+        {#if session?.signer}
           {#if siweSession}
             <div class="session-info">
               <span class="signed-in text-small">Signed in as</span>

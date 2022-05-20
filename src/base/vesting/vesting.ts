@@ -26,7 +26,7 @@ export async function withdrawVested(address: string, config: Config): Promise<v
 
   state.set(State.Withdrawing);
   await tx.wait();
-  session.state.refreshBalance();
+  session.state.refreshBalance(config);
   state.set(State.Withdrawn);
 }
 
