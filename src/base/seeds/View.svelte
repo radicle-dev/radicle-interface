@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { formatSeedId } from "@app/utils";
+  import { formatSeedId, formatSeedHost } from "@app/utils";
   import { Seed } from "@app/base/seeds/Seed";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
@@ -16,6 +16,7 @@
   export let session: Session | null;
   export let host: string;
 
+  const hostName = formatSeedHost(host);
   let siweSession: SeedSession | null = null;
 
   $: if (session?.siwe) {
@@ -92,7 +93,7 @@
 </style>
 
 <svelte:head>
-  <title>{host}</title>
+  <title>{hostName}</title>
 </svelte:head>
 
 {#await Seed.lookup(host, config)}
@@ -104,7 +105,7 @@
     <header>
       <span class="title">
         <span class="bold">
-          {host} <span class="desktop inline">{seed.emoji}</span>
+          {hostName} <span class="desktop inline">{seed.emoji}</span>
         </span>
       </span>
       <!-- User Session -->

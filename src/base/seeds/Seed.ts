@@ -1,7 +1,7 @@
 import { Request, type Host } from '@app/api';
 import type { Config } from '@app/config';
 import * as proj from "@app/project";
-import { isDomain } from '@app/utils';
+import { isDomain, isLocal } from '@app/utils';
 import { assert } from '@app/error';
 
 export class InvalidSeed {
@@ -66,6 +66,8 @@ export class Seed {
     const meta = cfg.seeds.pinned[seed.host];
     if (meta) {
       this.emoji = meta.emoji;
+    } else if (isLocal(seed.host)) {
+      this.emoji = "🏠";
     } else {
       this.emoji = "🌱";
     }

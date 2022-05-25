@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatSeedAddress, formatSeedId } from "@app/utils";
+  import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
   import Clipboard from "@app/Clipboard.svelte";
 
@@ -29,10 +29,10 @@
   <div class="seed-address">
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
-      <span><a href="/seeds/{seed.host}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
+      <span><a href="/seeds/{formatSeedHost(seed.host)}" class="link">{formatSeedId(seed.id)}@{seed.host}</a></span>
       <span class="faded">:{port}</span>
     {:else}
-      <span><a href="/seeds/{seed.host}" class="link">{seed.host}</a></span>
+      <span><a href="/seeds/{formatSeedHost(seed.host)}" class="link">{formatSeedHost(seed.host)}</a></span>
     {/if}
   </div>
   <Clipboard small text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host} />

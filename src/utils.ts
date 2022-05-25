@@ -87,6 +87,14 @@ export function formatSeedAddress(id: string, host: string, port: number): strin
   return `${id}@${host}:${port}`;
 }
 
+export function formatSeedHost(host: string): string {
+  if (isLocal(host)) {
+    return "radicle.local";
+  } else {
+    return host;
+  }
+}
+
 export function formatLocationHash(hash: string | null): number | null {
   if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
   return null;
@@ -489,6 +497,10 @@ export function isDomain(input: string): boolean {
     || (! import.meta.env.PROD && /^0.0.0.0$/.test(input));
 }
 
+// Check whether the given address is a local host address.
+export function isLocal(addr: string): boolean {
+  return addr === "127.0.0.1" || addr === "0.0.0.0";
+}
 
 // Get the gravatar URL of an email.
 export function gravatarURL(email: string): string {

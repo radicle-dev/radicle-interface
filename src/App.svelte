@@ -108,7 +108,7 @@
         </span>
 
         <span slot="body">
-          {err}
+          {err.message ? err.message : JSON.stringify(err)}
         </span>
       </Modal>
     </div>
