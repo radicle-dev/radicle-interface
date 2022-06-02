@@ -1,0 +1,99 @@
+<script lang="ts">
+  import Avatar from "@app/Avatar.svelte";
+  import Clipboard from "@app/Clipboard.svelte";
+  import { Link } from "svelte-routing";
+  import { formatSeedId } from "@app/utils";
+  import { type PeerId, type Project, ProjectContent } from "@app/project";
+
+  export let project: Project;
+  export let peer: PeerId | null = null;
+  export let noDescription = false;
+
+  function rootPath(): string {
+    return project.pathTo({
+      content: ProjectContent.Tree,
+      peer: null,
+      path: "/",
+      revision: null,
+      issue: null,
+    });
+  }
+</script>
+
+<style>
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .title .divider {
+    color: var(--color-foreground-subtle);
+    margin: 0 0.5rem;
+    font-weight: normal;
+  }
+  .title .peer-id {
+    color: var(--color-foreground-subtle);
+    font-weight: normal;
+  }
+  .org-avatar {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+  }
+  .urn {
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
+    color: var(--color-foreground-faded);
+    overflow-wrap: anywhere;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 0.125rem;
+  }
+  .description {
+    margin: 1rem 0 1.5rem 0;
+  }
+  .placeholder {
+    height: 2rem;
+  }
+
+  .content {
+    padding: 0 2rem 0 8rem;
+  }
+
+  @media (max-width: 960px) {
+    .content {
+      padding-left: 2rem;
+    }
+  }
+</style>
+
+<header class="content">
+  <div class="title bold">
+    {#if project.profile}
+      <a class="org-avatar" title={project.profile.nameOrAddress} href="/{project.profile.nameOrAddress}">
+        <Avatar source={project.profile.avatar || project.profile.address} title={project.profile.address}/>
+      </a>
+      <span class="divider">/</span>
+    {/if}
+    <span class="text-truncate">
+      <Link to={rootPath()}>{project.name}</Link>
+    </span>
+    {#if peer}
+      <span class="peer-id">
+        <span class="divider">/</span><span title={peer}>{formatSeedId(peer)}</span><Clipboard text={peer} />
+      </span>
+    {/if}
+  </div>
+  <div class="urn">
+    <span class="text-truncate">{project.urn}</span>
+    <Clipboard small text={project.urn} />
+  </div>
+  {#if !noDescription}
+    <div class="description">{project.description}</div>
+  {:else}
+    <div class="placeholder" />
+  {/if}
+</header>
