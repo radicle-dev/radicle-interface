@@ -64,11 +64,12 @@
   .anchor {
     display: inline-flex;
   }
-  .seed {
+
+  .clickable {
     cursor: pointer;
     border-radius: inherit;
   }
-  .seed:hover {
+  .clickable:hover {
     background-color: var(--color-foreground-background-lighter);
   }
 
@@ -78,18 +79,6 @@
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
-    cursor: pointer;
-    user-select: none;
-  }
-  .clone:hover {
-    background-color: var(--color-yellow-background-lighter);
-  }
-  .commit-count {
-    cursor: pointer;
-    user-select: none;
-  }
-  .commit-count:hover {
-    background-color: var(--color-foreground-background-lighter);
   }
   .dropdown {
     padding: 1rem;
@@ -186,7 +175,7 @@
   <span>
     {#if seed.api.host}
       <div
-        class="stat seed"
+        class="stat seed clickable"
         on:click={() => navigate(`/seeds/${seed.api.host}`)}
         title="Project data is fetched from this seed"
       >
@@ -194,7 +183,7 @@
       </div>
     {/if}
   </span>
-  <div class="stat commit-count" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
+  <div class="stat commit-count clickable" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   <div class="stat contributor-count">
