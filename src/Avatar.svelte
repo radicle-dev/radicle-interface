@@ -2,13 +2,13 @@
   import { createIcon } from '@app/blockies';
   import { isAddress, isRadicleId } from '@app/utils';
 
-  export let address: string;
+  export let title: string;
   export let source: string;
   export let inline = false;
   export let glowOnHover = false;
 
   function handleMissingFile() {
-    source = createContainer(address);
+    source = createContainer(title);
   }
 
   function createContainer(source: string) {
@@ -50,4 +50,4 @@
 </style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
-<img class="avatar" class:inline src={source} title={address} on:error={handleMissingFile} class:glowOnHover />
+<img class="avatar" class:inline src={source} {title} on:error={handleMissingFile} class:glowOnHover />

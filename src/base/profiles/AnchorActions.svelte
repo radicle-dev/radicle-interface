@@ -115,7 +115,7 @@
 
 <div class="avatars">
   {#each anchor.confirmations as signee}
-    <Avatar inline source={signee} address={signee} />
+    <Avatar inline source={signee} title={signee} />
   {/each}
 </div>
 
@@ -125,7 +125,7 @@
     action = Action.Execute;
     state = State.Confirm;
   }} class="tiny execute">
-    <Avatar inline source={account} address={account} /> Execute
+    <Avatar inline source={account} title={account} /> Execute
   </button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}

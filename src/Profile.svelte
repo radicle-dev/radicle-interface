@@ -181,7 +181,7 @@
   <main>
     <header>
       <div class="avatar">
-        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+        <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
       </div>
       <div class="info">
         <span class="title">
@@ -339,7 +339,7 @@
                 <div class="member">
                   <div class="member-icon">
                     <Link to="/{profile.address}">
-                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
                     </Link>
                   </div>
                   <div class="desktop">
@@ -370,7 +370,7 @@
                 {:then profile}
                   <div class="member-icon">
                     <Link to="/{profile.address}">
-                      <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+                      <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
                     </Link>
                   </div>
                   <div class="desktop">

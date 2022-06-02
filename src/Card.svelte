@@ -87,7 +87,7 @@
   <div class="card" class:seed={!!seed}>
     <div class="card-avatar">
       {#if profile}
-        <Avatar source={profile.avatar ?? profile.address} address={profile.address} />
+        <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
       {:else if seed}
         <span class="seed-emoji">
           {seed.emoji}

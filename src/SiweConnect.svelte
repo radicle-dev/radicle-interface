@@ -38,7 +38,7 @@
 >
   <span class="align">
     {#if address}
-      <Avatar address={address} source={address} inline />
+      <Avatar title={address} source={address} inline />
     {/if}
     {#if connection === Connection.Connecting}
       <Loading small />

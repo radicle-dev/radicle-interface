@@ -116,7 +116,7 @@
   <div class="title bold">
     {#if project.profile}
       <a class="org-avatar" title={project.profile.nameOrAddress} href="/{project.profile.nameOrAddress}">
-        <Avatar source={project.profile.avatar || project.profile.address} address={project.profile.address}/>
+        <Avatar source={project.profile.avatar || project.profile.address} title={project.profile.address}/>
       </a>
       <span class="divider">/</span>
     {/if}

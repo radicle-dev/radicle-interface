@@ -59,9 +59,9 @@
 <div class="address" title={address} class:no-badge={noBadge} class:text-small={small}>
   {#if !noAvatar}
     {#if resolve && profile?.avatar}
-      <Avatar inline source={profile.avatar} {address}/>
+      <Avatar inline source={profile.avatar} title={address}/>
     {:else}
-      <Avatar inline source={address} {address}/>
+      <Avatar inline source={address} title={address}/>
     {/if}
   {/if}
   {#if addressType === AddressType.Org}
