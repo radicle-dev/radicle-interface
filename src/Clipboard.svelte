@@ -30,7 +30,7 @@
   }
 </style>
 
-<span class="clipboard" class:small on:click={() => toClipboard(text)}>
+<span class="clipboard" class:small on:click|stopPropagation={() => toClipboard(text)}>
   {#if small}
     <Icon name="clipboard-small" width={12} height={12} />
   {:else}
