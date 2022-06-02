@@ -4,7 +4,7 @@
   import { formatLocationHash } from '@app/utils';
   import * as proj from '@app/project';
 
-  import Project from './Project.svelte';
+  import Project from '@app/base/projects/Project.svelte';
 
   export let browserStore: Writable<proj.Browser> = proj.browserStore;
   export let route: string | null = null;

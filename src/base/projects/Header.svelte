@@ -4,10 +4,10 @@
   import * as utils from '@app/utils';
   import { Browser, ProjectContent, Project } from '@app/project';
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
+  import BranchSelector from '@app/base/projects/BranchSelector.svelte';
+  import PeerSelector from '@app/base/projects/PeerSelector.svelte';
   import type { Tree } from "@app/project";
   import Input from "@app/Input.svelte";
-  import BranchSelector from './BranchSelector.svelte';
-  import PeerSelector from './PeerSelector.svelte';
 
   export let project: Project;
   export let tree: Tree;
