@@ -8,7 +8,7 @@
   export let session: Session | null;
 </script>
 
-<Route path="/seeds/radicle.local" let:params>
+<Route path="/seeds/radicle.local">
   <View {config} {session} host={"0.0.0.0"}/>
 </Route>
 
