@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { CommitMetadata } from "@app/commit";
-  import { gravatarURL } from "@app/utils";
-  import { formatCommitTime } from "@app/commit";
+  import { formatTimestamp, gravatarURL } from "@app/utils";
 
   export let commit: CommitMetadata;
 </script>
@@ -63,5 +62,5 @@
     {/if}
   {/if}
   <span>&nbsp;at&nbsp;</span>
-  <span class="desktop-inline text-xsmall time">{formatCommitTime(commit.header.committerTime)}</span>
+  <span class="desktop-inline text-xsmall time">{formatTimestamp(commit.header.committerTime)}</span>
 </span>
