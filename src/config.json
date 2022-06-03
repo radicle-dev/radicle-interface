@@ -89,6 +89,9 @@
     "api": "https://gateway.ceramic.network",
     "registry": "https://self.id/"
   },
+  "reactions": [
+    "👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"
+  ],
   "radicle": {
     "seed": {
       "api": { "port": 8777 },
