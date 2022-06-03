@@ -213,8 +213,10 @@ export function getImageMime(path: string): string | null {
   return null;
 }
 
-// TODO: Needs testing with absolute and relative paths.
-export function canonicalize(path: string, base: string): string {
+// Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
+// Returns the resolved path.
+export function canonicalize(path: string, base: string, origin = document.location.origin): string {
+  path = path.replace(/^\//, ""); // Remove leading slash
   const finalPath = base
     .split("/")
     .slice(0, -1) // Remove file name.
@@ -222,7 +224,7 @@ export function canonicalize(path: string, base: string): string {
     .join("/");
 
   // URL is used to resolve relative paths, eg. `../../assets/image.png`.
-  const url = new URL(finalPath, document.location.origin);
+  const url = new URL(finalPath, origin);
   const pathname = url.pathname.replace(/^\//, "");
 
   return pathname;

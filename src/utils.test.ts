@@ -274,3 +274,22 @@ describe("Parse Strings", () => {
     ).toEqual(expected);
   });
 });
+
+describe("Path Manipulation", () => {
+  test.each([
+    { imagePath: "/assets/images/tux.png", base: "/", origin: "https://app.radicle.network", expected: "assets/images/tux.png" },
+    { imagePath: "assets/images/tux.png", base: "/", origin: "https://app.radicle.network", expected: "assets/images/tux.png" },
+    { imagePath: "assets/images/tux.png", base: "/", origin: "http://localhost:3000", expected: "assets/images/tux.png" },
+    { imagePath: "../tux.png", base: "/components/assets/README.md", origin: "http://localhost:3000", expected: "components/tux.png" },
+    { imagePath: "../tux.png", base: "/components/assets/", origin: "http://localhost:3000", expected: "components/tux.png" },
+    { imagePath: "../../tux.png", base: "/components/assets/images/README.md", origin: "http://localhost:3000", expected: "components/tux.png" },
+  ])("canonicalize origin: $origin base: $base, path: $imagePath => $expected", ({ imagePath, base, expected, origin }) => {
+    expect(
+      utils.canonicalize(
+        imagePath,
+        base,
+        origin
+      )
+    ).toEqual(expected);
+  });
+});
