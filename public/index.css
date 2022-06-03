@@ -48,8 +48,9 @@
 	--color-negative-2: #623237;
 	--color-negative-6: #ffd4d4;
 	--color-foreground: #ffffff;
-	--color-foreground-90: #dddddd;
-	--color-foreground-80: #aaaaaa;
+	--color-foreground-90: #ddddee;
+	--color-foreground-80: #aaaab6;
+	--color-foreground-70: #9999aa;
 	--color-foreground-faded: #777788;
 	--color-foreground-subtle: #444455;
 	--color-foreground-subtler: #333344;
@@ -74,6 +75,7 @@
 	--font-weight-medium: 600;
 	--font-weight-bold: 700;
 	--border-radius: 50px;
+	--border-radius-medium: 0.25rem;
 	--box-shadow-color: var(--color-secondary-2);
 	--content-max-width: 1920px;
 	--content-min-width: 480px;
@@ -170,7 +172,7 @@ button {
 	min-width: 8rem;
 }
 button:not([disabled]):hover {
-	color: var(--color-background) !important;
+	color: var(--color-background);
 	background-color: var(--color-foreground);
 }
 button.waiting {
@@ -211,6 +213,14 @@ button[disabled] {
 }
 button[data-waiting] {
 	cursor: wait !important;
+}
+button.unstyled, button.unstyled:hover, button.unstyled:focus {
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+	border: none;
+	color: var(--color-foreground);
+	background: transparent;
 }
 
 button.text {

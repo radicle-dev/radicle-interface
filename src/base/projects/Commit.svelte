@@ -21,13 +21,10 @@
   .commit {
     padding: 0 2rem 0 8rem;
   }
-  h3 {
-    margin: 0;
-  }
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-medium);
   }
   .summary {
     display: flex;
@@ -62,7 +59,7 @@
   <div class="commit">
     <header>
       <div class="summary">
-        <h3>{commit.header.summary}</h3>
+        <div class="text-medium">{commit.header.summary}</div>
         <div class="desktop font-mono sha1">
           <span>{commit.header.sha1}</span>
         </div>

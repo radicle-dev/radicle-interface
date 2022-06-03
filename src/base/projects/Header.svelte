@@ -8,6 +8,7 @@
   import PeerSelector from '@app/base/projects/PeerSelector.svelte';
   import type { Tree } from "@app/project";
   import Input from "@app/Input.svelte";
+  import { groupIssues, Issue } from '@app/issue';
 
   export let project: Project;
   export let tree: Tree;
@@ -31,7 +32,17 @@
   // Switches between the browser and commit view.
   const toggleContent = (input: ProjectContent) => {
     project.navigateTo({
-      content: content === input ? ProjectContent.Tree : input
+      content: content === input ? ProjectContent.Tree : input,
+      issue: null // Removing issue here from browserStore to not contaminate path on navigation.
+    });
+  };
+
+  const toggleIssues = () => {
+    project.navigateTo({
+      content: content !== ProjectContent.Issues ? ProjectContent.Issues : ProjectContent.Tree,
+      revision: null,
+      issue: null,
+      path: null,
     });
   };
 
@@ -186,6 +197,11 @@
   <div class="stat commit-count clickable" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
+  {#await Issue.getIssues(project.urn, seed.api) then issues}
+    <div class="stat issue-count clickable" class:active={content == ProjectContent.Issues} on:click={toggleIssues}>
+      <strong>{groupIssues(issues).open.length}</strong> issue(s)
+    </div>
+  {/await}
   <div class="stat contributor-count">
     <strong>{tree.stats.contributors}</strong> contributor(s)
   </div>

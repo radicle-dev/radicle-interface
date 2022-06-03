@@ -100,6 +100,10 @@ export function formatLocationHash(hash: string | null): number | null {
   return null;
 }
 
+export function formatIssueId(id: string): string {
+  return id.substring(0, 11);
+}
+
 export function formatSeedId(id: string): string {
   return id.substring(0, 6)
     + '…'
@@ -241,6 +245,10 @@ export function parseUsername(input: string): string {
 export function unixTime(): number {
   return Math.floor(Date.now() / 1000);
 }
+
+export const formatTimestamp = (t: number): string => {
+  return new Date(t * 1000).toLocaleString("en-EN", { dateStyle: "full", timeStyle: "long" });
+};
 
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {

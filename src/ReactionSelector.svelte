@@ -1,0 +1,66 @@
+<!-- TODO: Once we are able to add reactions, we should allow people to interact with the reaction handler -->
+<script lang="ts">
+  import { createEventDispatcher } from "svelte";
+  import Icon from "@app/Icon.svelte";
+  import config from "@app/config.json";
+
+  let showReactions = false;
+
+  const dispatch = createEventDispatcher();
+</script>
+
+<style>
+  .selector {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: var(--color-foreground-faded);
+    border-radius: var(--border-radius-medium);
+    height: 1rem;
+    width: 1rem;
+    cursor: not-allowed;
+  }
+  .selector > div {
+    display: flex;
+  }
+
+  .modal {
+    position: absolute;
+    left: 1.5rem;
+    background-color: var(--color-foreground-background);
+    border-radius: var(--border-radius-medium);
+  }
+  .modal > div {
+    padding: 0.5rem;
+  }
+  .modal > div:last-child {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+  .modal > div:first-child {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+  }
+  .modal > div:hover {
+    background-color: var(--color-foreground-subtle);
+  }
+</style>
+
+<div class="selector">
+  <Icon fill
+    name="ellipsis"
+    width={18}
+    height={18}
+  />
+  {#if showReactions}
+    <div class="modal">
+      {#each config.reactions as reaction}
+        <div on:click={() => dispatch("select", reaction)}>
+          {reaction}
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>

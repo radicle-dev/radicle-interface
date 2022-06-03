@@ -23,7 +23,7 @@
   }
   .commit-teaser {
     background-color: var(--color-foreground-background);
-    padding: 0.5rem 0rem;
+    padding: 0.75rem 0rem;
   }
   .commit-teaser:hover {
     background-color: var(--color-foreground-background-lighter);

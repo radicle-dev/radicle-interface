@@ -6,6 +6,7 @@ import { isOid, isRadicleId } from '@app/utils';
 import { Profile, ProfileType } from '@app/profile';
 import { Seed } from '@app/base/seeds/Seed';
 import type { Config } from '@app/config';
+import type { Issue } from '@app/issue';
 
 export type Urn = string;
 export type PeerId = string;
@@ -34,6 +35,8 @@ export enum ProjectContent {
   Tree,
   History,
   Commit,
+  Issues,
+  Issue
 }
 
 export interface ProjectInfo {
@@ -99,6 +102,7 @@ export interface Peer {
 export interface Browser {
   content: ProjectContent;
   revision: string | null;
+  issue: string | null;
   peer: string | null;
   path: string | null;
   line: number | null;
@@ -108,6 +112,7 @@ export const browserStore = writable({
   content: ProjectContent.Tree,
   branches: {},
   revision: null,
+  issue: null,
   peer: null,
   path: null,
   line: null,
@@ -116,6 +121,7 @@ export const browserStore = writable({
 export interface BrowseTo {
   content?: ProjectContent;
   revision?: string | null;
+  issue?: string | null;
   path?: string | null;
   peer?: string | null;
   line?: number | null;
@@ -133,7 +139,7 @@ export function browse(browse: BrowseTo): void {
 }
 
 export function path(opts: PathOptions): string {
-  const { urn, profile, seed, peer, content, revision, path } = opts;
+  const { urn, profile, seed, peer, content, revision, path, issue } = opts;
   const result = [];
 
   if (profile) {
@@ -156,9 +162,21 @@ export function path(opts: PathOptions): string {
       result.push("commits");
       break;
 
+    case ProjectContent.Issues:
+      result.push("issues");
+      break;
+
+    case ProjectContent.Issue:
+      result.push("issues");
+      break;
+
     default:
       result.push("tree");
       break;
+  }
+
+  if (issue) {
+    result.push(issue);
   }
 
   if (revision) {
@@ -217,10 +235,11 @@ export class Project implements ProjectInfo {
   seed: Seed;
   peers: Peer[];
   branches: Branches;
+  issues: Issue[];
   profile: Profile | null;
   anchors: string[];
 
-  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
+  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[], issues: Issue[]) {
     this.urn = urn;
     this.head = info.head;
     this.name = info.name;
@@ -231,6 +250,7 @@ export class Project implements ProjectInfo {
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
+    this.issues = issues;
     this.profile = profile;
     this.anchors = anchors;
   }
@@ -301,6 +321,14 @@ export class Project implements ProjectInfo {
     return new Request(`projects/${this.urn}/commits/${commit}`, this.seed.api).get();
   }
 
+  static async getIssues(urn: string, host: Host): Promise<Issue[]> {
+    return new Request(`projects/${urn}/issues`, host).get();
+  }
+
+  async getIssue(issue: string): Promise<Issue> {
+    return new Request(`projects/${this.urn}/issues/${issue}`, this.seed.api).get();
+  }
+
   async getTree(
     commit: string,
     path: string,
@@ -358,6 +386,7 @@ export class Project implements ProjectInfo {
     const info = await Project.getInfo(id, seed.api);
     const urn = isRadicleId(id) ? id : info.urn;
     const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
+    const issues = await Project.getIssues(urn, seed.api);
 
     // Older versions of http-api don't include the URN.
     if (! info.urn) info.urn = urn;
@@ -378,6 +407,6 @@ export class Project implements ProjectInfo {
       }
     }
 
-    return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
+    return new Project(urn, info, seed, peers, remote.heads, profile, anchors, issues);
   }
 }

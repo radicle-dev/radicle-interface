@@ -9,11 +9,11 @@
   export let commit: string;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({ content, revision, path: null });
+    project.navigateTo({ content, revision, issue: null, path: null });
   };
 
   const browseCommit = (event: { detail: string }) => {
-    project.navigateTo({ content: ProjectContent.Tree, revision: event.detail, path: null });
+    project.navigateTo({ content: ProjectContent.Tree, revision: event.detail, issue: null, path: null });
   };
 
   const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {

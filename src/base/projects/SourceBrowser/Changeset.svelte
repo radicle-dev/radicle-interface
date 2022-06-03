@@ -24,7 +24,7 @@
   }
   .file-header {
     border: 1px solid var(--color-foreground-3);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-medium);
     height: 3rem;
     display: flex;
     flex-direction: row;
@@ -40,7 +40,7 @@
   .file-header .diff-type {
     margin-left: 1rem;
     padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-medium);
   }
   .file-header .diff-type.created {
     color: var(--color-positive);
@@ -66,18 +66,18 @@
 
 <div class="changeset-summary">
   {#if diff.modified.length > 0}
-    <span class="bold"> {diff.modified.length} file(s) changed </span>
+    <span> {diff.modified.length} file(s) changed </span>
     with
-    <span class="additions bold"> {stats.additions} addition(s) </span>
+    <span class="additions"> {stats.additions} addition(s) </span>
     and
-    <span class="deletions bold"> {stats.deletions} deletion(s) </span>
+    <span class="deletions"> {stats.deletions} deletion(s) </span>
   {/if}
 </div>
 <div>
   {#each diff.created as path (path)}
     <header id={path} class="file-header">
       <div class="file-data">
-        <p class="bold">{path}</p>
+        <p>{path}</p>
         <span class="diff-type created">created</span>
       </div>
       <div class="browse" on:click={() => dispatch("browse", path)}>
@@ -88,7 +88,7 @@
   {#each diff.deleted as path (path)}
     <header id={path} class="file-header">
       <div class="file-data">
-        <p class="bold">{path}</p>
+        <p>{path}</p>
         <span class="diff-type deleted">deleted</span>
       </div>
       <div class="browse" on:click={() => dispatch("browse", path)}>

@@ -10,6 +10,8 @@
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
   import History from "./History.svelte";
+  import Issues from './Issues.svelte';
+  import Issue from './Issue.svelte';
   import ProjectMeta from './ProjectMeta.svelte';
 
   export let peer: string | null = null;
@@ -75,6 +77,12 @@
       </div>
     </div>
   {/await}
+
+  {#if content == proj.ProjectContent.Issues}
+    <Issues {project} {config} />
+  {:else if content == proj.ProjectContent.Issue && $browserStore.issue}
+    <Issue {project} {config} issue={$browserStore.issue} />
+  {/if}
 {:else}
   <div class="content">
     {#if peer}

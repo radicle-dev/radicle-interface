@@ -9,6 +9,7 @@
   export let browserStore: Writable<proj.Browser> = proj.browserStore;
   export let route: string | null = null;
   export let revision: string | null = null;
+  export let issue: string | null = null;
   export let peer: string | null;
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
@@ -29,6 +30,8 @@
     if (revision) browse.revision = revision;
   } else if (revision) {
     browse.revision = revision;
+  } else if (issue) {
+    browse.issue = issue;
   } else if (head) {
     browse.revision = head;
   } else {

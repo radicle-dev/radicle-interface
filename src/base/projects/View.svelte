@@ -67,6 +67,13 @@
       <Route path="/commits/*" let:params let:location>
         <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
+
+      <Route path="/issues">
+        <ProjectRoute content={ProjectContent.Issues} {peer} {project} {config} />
+      </Route>
+      <Route path="/issues/:issue" let:params>
+        <ProjectRoute content={ProjectContent.Issue} issue={params.issue} {peer} {project} {config} />
+      </Route>
     </Router>
   {:catch}
     <NotFound title={id} subtitle="This project was not found." />
