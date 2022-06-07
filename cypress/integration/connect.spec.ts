@@ -9,7 +9,7 @@ describe("MetaMask", () => {
       }
     });
     cy.intercept("POST", "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby", { data: { safe: null } } );
-    cy.intercept("https://gateway.ceramic.network/api/v0/streams", new Blob([]));
+    cy.intercept("https://gateway.ceramic.network/api/v0/streams", { fixture: "ceramicStream.json" });
     cy.get("button.connect").click();
     cy.get("button.secondary").click();
     cy.get("button.address").should("contain", "3256 – 5721");
