@@ -7,25 +7,25 @@
     "check": "scripts/check",
     "coverage": "npx nyc report",
     "test:unit": "vitest run",
-    "test:components": "cypress run-ct",
+    "test:components": "cypress run --component",
     "test:e2e": "cypress run",
-    "test:e2e:open": "cypress open"
+    "test:open": "cypress open"
   },
   "type": "module",
   "engines": {
     "node": ">=14"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.9.12",
+    "@cypress/code-coverage": "^3.10.0",
     "@cypress/vite-dev-server": "^2.2.2",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
-    "@testing-library/cypress": "^8.0.2",
+    "@testing-library/cypress": "^8.0.3",
     "@testing-library/svelte": "^3.1.0",
     "@tsconfig/svelte": "^1.0.13",
     "@types/sanitize-html": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
-    "cypress": "^9.7.0",
+    "cypress": "^10.0.3",
     "eslint": "^7.28.0",
     "eslint-plugin-radicle": "^0.2.0",
     "eslint-plugin-svelte3": "^3.2.0",

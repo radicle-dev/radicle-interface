@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { MockExtensionProvider } from "../support";
+import { MockExtensionProvider } from "../support/e2e";
 
 describe("Landing page", () => {
   it("Loads user, orgs and seeds", () => {

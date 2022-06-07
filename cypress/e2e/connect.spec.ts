@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { MockExtensionProvider } from "../support";
+import { MockExtensionProvider } from "../support/e2e";
 
 describe("MetaMask", () => {
   it("Lets user connect with Metamask provider", () => {

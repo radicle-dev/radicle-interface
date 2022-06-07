@@ -16,6 +16,7 @@
       "@testing-library/cypress"
     ],
     "sourceMap": true,
+    "baseUrl": "./",
     "moduleResolution": "node",
     "strict": true,
     "resolveJsonModule": true,

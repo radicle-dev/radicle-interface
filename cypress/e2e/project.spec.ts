@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /// <reference types="cypress" />
-import { MockExtensionProvider } from "../support";
+import { MockExtensionProvider } from "../support/e2e";
 
 const groupedCommits = [
   {
