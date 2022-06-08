@@ -68,32 +68,34 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  header > * {
+  .widget {
     border-radius: 0.25rem;
     min-width: max-content;
   }
   .anchor {
     display: inline-flex;
   }
-
   .clickable {
     cursor: pointer;
-    border-radius: inherit;
   }
   .clickable:hover {
     background-color: var(--color-foreground-background-lighter);
   }
-
   .clone {
     color: var(--color-yellow);
     background-color: var(--color-yellow-background);
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
   }
   .dropdown {
     padding: 1rem;
     display: none;
+  }
+  .dropdown label {
+    display: block;
+    color: var(--color-foreground-faded);
+    padding: 0.5rem 0.5rem 0 0.25rem;
+    font-size: 0.75rem;
   }
   .clone-dropdown {
     width: 24rem;
@@ -102,13 +104,6 @@
     position: absolute;
     display: block;
   }
-  .dropdown label {
-    display: block;
-    color: var(--color-foreground-faded);
-    padding: 0.5rem 0.5rem 0 0.25rem;
-    font-size: 0.75rem;
-  }
-
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
@@ -149,14 +144,14 @@
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
 
-  <div class="anchor">
+  <div class="anchor widget">
     <AnchorBadge {commit} {anchors}
       head={project.head} on:click={(event) => updateRevision(event.detail)} />
   </div>
 
   {#if seed.git.host}
     <span>
-      <div class="clone" on:click={() => toggleDropdown("clone")}>
+      <div class="clone clickable widget" on:click={() => toggleDropdown("clone")}>
         Clone
       </div>
       <div
@@ -186,7 +181,7 @@
   <span>
     {#if seed.api.host}
       <div
-        class="stat seed clickable"
+        class="stat seed clickable widget"
         on:click={() => navigate(`/seeds/${seed.api.host}`)}
         title="Project data is fetched from this seed"
       >
@@ -194,15 +189,15 @@
       </div>
     {/if}
   </span>
-  <div class="stat commit-count clickable" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
+  <div class="stat commit-count clickable widget" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   {#await Issue.getIssues(project.urn, seed.api) then issues}
-    <div class="stat issue-count clickable" class:active={content == ProjectContent.Issues} on:click={toggleIssues}>
+    <div class="stat issue-count clickable widget" class:active={content == ProjectContent.Issues} on:click={toggleIssues}>
       <strong>{groupIssues(issues).open.length}</strong> issue(s)
     </div>
   {/await}
-  <div class="stat contributor-count">
+  <div class="stat contributor-count widget">
     <strong>{tree.stats.contributors}</strong> contributor(s)
   </div>
 </header>
