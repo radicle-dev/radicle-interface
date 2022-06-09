@@ -235,11 +235,10 @@ export class Project implements ProjectInfo {
   seed: Seed;
   peers: Peer[];
   branches: Branches;
-  issues: Issue[];
   profile: Profile | null;
   anchors: string[];
 
-  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[], issues: Issue[]) {
+  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
     this.urn = urn;
     this.head = info.head;
     this.name = info.name;
@@ -250,7 +249,6 @@ export class Project implements ProjectInfo {
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
-    this.issues = issues;
     this.profile = profile;
     this.anchors = anchors;
   }
@@ -386,7 +384,6 @@ export class Project implements ProjectInfo {
     const info = await Project.getInfo(id, seed.api);
     const urn = isRadicleId(id) ? id : info.urn;
     const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
-    const issues = await Project.getIssues(urn, seed.api);
 
     // Older versions of http-api don't include the URN.
     if (! info.urn) info.urn = urn;
@@ -407,6 +404,6 @@ export class Project implements ProjectInfo {
       }
     }
 
-    return new Project(urn, info, seed, peers, remote.heads, profile, anchors, issues);
+    return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
   }
 }

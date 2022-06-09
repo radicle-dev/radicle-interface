@@ -81,6 +81,12 @@
   .clickable:hover {
     background-color: var(--color-foreground-background-lighter);
   }
+  .not-allowed {
+    cursor: not-allowed;
+  }
+  .not-allowed.widget {
+    color: var(--color-foreground-faded);
+  }
   .clone {
     color: var(--color-yellow);
     background-color: var(--color-yellow-background);
@@ -195,6 +201,10 @@
   {#await Issue.getIssues(project.urn, seed.api) then issues}
     <div class="stat issue-count clickable widget" class:active={content == ProjectContent.Issues} on:click={toggleIssues}>
       <strong>{groupIssues(issues).open.length}</strong> issue(s)
+    </div>
+  {:catch e}
+    <div class="stat issue-count not-allowed widget" title="Not supported">
+      0 issue(s)
     </div>
   {/await}
   <div class="stat contributor-count widget">
