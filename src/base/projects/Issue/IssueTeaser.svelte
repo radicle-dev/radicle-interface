@@ -99,8 +99,8 @@
   <div class="state">
     <div
       class="state-icon"
-      class:closed={issue.state !== "open"}
-      class:open={issue.state === "open"}
+      class:closed={issue.state.status === "closed"}
+      class:open={issue.state.status === "open"}
     />
   </div>
   <div class="column-left">

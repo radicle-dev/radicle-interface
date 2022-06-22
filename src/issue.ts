@@ -11,7 +11,12 @@ export interface IIssue {
   timestamp: number;
 }
 
-export type State = { closed: { reason: string } } | "open";
+export type State = {
+  status: "open";
+} | {
+  status: "closed";
+  reason: string;
+};
 
 export interface Comment {
   author: Author;
@@ -36,11 +41,7 @@ export type Label = string;
 
 export function groupIssues(issues: Issue[]): { open: Issue[]; closed: Issue[] } {
   return issues.reduce((acc, issue) => {
-    if (issue.state === 'open') {
-      acc.open.push(issue);
-    } else {
-      acc.closed.push(issue);
-    }
+    acc[issue.state.status].push(issue);
     return acc;
   }, { open: [] as Issue[], closed: [] as Issue[] });
 }

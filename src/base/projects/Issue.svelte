@@ -90,7 +90,7 @@
     padding: 0.5rem 1rem;
     border-radius: 1.25rem;
   }
-  .opened {
+  .open {
     color: var(--color-positive);
     background-color: var(--color-positive-background);
   }
@@ -114,7 +114,6 @@
 {#await Issue.getIssue(project.urn, issue, project.seed.api)}
   <Loading center />
 {:then issue}
-  {@const state = issue.state === "open" ? "open" : "closed"}
   <div class="issue">
     <header>
       <div class="summary">
@@ -126,10 +125,10 @@
         </div>
         <div
           class="summary-state"
-          class:closed={issue.state !== "open"}
-          class:opened={issue.state == "open"}
+          class:closed={issue.state.status === "closed"}
+          class:open={issue.state.status === "open"}
         >
-          {capitalize(state)}
+          {capitalize(issue.state.status)}
         </div>
       </div>
       <div class="text-small">
