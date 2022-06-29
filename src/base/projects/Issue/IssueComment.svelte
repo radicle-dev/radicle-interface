@@ -18,8 +18,8 @@
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (comment.author.ens?.name) {
-      profile = await Profile.get(comment.author.ens.name, ProfileType.Minimal, config);
+    if (comment.author.identity.ens?.name) {
+      profile = await Profile.get(comment.author.identity.ens.name, ProfileType.Minimal, config);
     }
   });
 
@@ -67,7 +67,7 @@
 
 <div class="comment">
   <div class="person">
-    <Avatar source={profile?.avatar || comment.author.urn} title={profile?.name || comment.author.urn} />
+    <Avatar source={profile?.avatar || comment.author.identity.urn} title={profile?.name || comment.author.identity.urn} />
   </div>
   <div class="card">
     <div class="card-header">

@@ -1,4 +1,5 @@
 import { type Host, Request } from '@app/api';
+import type { PeerId } from '@app/project';
 
 export interface IIssue {
   id: string;
@@ -26,10 +27,13 @@ export interface Comment {
 }
 
 export interface Author {
-  urn: string;
-  name?: string;
-  ens?: {
-    name: string;
+  peer: PeerId;
+  identity: {
+    urn: string;
+    name?: string;
+    ens?: {
+      name: string;
+    };
   };
 }
 

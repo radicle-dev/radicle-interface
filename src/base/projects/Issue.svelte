@@ -132,7 +132,7 @@
         </div>
       </div>
       <div class="text-small">
-        {issue.author.name}
+        {issue.author.identity.name}
         <span class="faded">opened on</span>
         <span class="date">
           {formatTimestamp(issue.timestamp)}

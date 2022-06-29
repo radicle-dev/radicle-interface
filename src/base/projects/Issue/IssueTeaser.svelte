@@ -13,8 +13,8 @@
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (issue.author.ens?.name) {
-      profile = await Profile.get(issue.author.ens.name, ProfileType.Minimal, config);
+    if (issue.author.identity.ens?.name) {
+      profile = await Profile.get(issue.author.identity.ens.name, ProfileType.Minimal, config);
     }
   });
 

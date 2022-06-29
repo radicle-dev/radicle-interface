@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { Author } from "@app/issue";
-  import { formatTimestamp } from "@app/utils";
+  import { formatRadicleUrn, formatTimestamp } from "@app/utils";
   import Address from "@app/Address.svelte";
   import type { Profile } from "@app/profile";
 
@@ -35,9 +35,13 @@
 <span class="authorship text-xsmall">
   {#if profile}
     <Address resolve address={profile.address} noBadge {noAvatar} compact small {config} {profile} />
+  {:else if author.identity.name}
+    <span class="highlight">
+      {author.identity.name}
+    </span>
   {:else}
     <span class="highlight">
-      {author.name}
+      {formatRadicleUrn(author.identity.urn)}
     </span>
   {/if}
   <span class="desktop caption">&nbsp;{caption}&nbsp;</span>
