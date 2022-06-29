@@ -24,7 +24,7 @@
 	/* padding: 0.7rem 2rem; */
 	padding: .4rem 1rem;
     color: var(--color-secondary);
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border-radius: 0 var(--border-radius-round) var(--border-radius-round) 0;
     border: 1px solid var(--color-secondary);
     border-left: none;
 	height: var(--button-regular-height);
@@ -35,7 +35,7 @@
     margin-right: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    border-radius: var(--border-radius-round) 0 0 var(--border-radius-round);
     border-right: none;
   }
   input[disabled] {

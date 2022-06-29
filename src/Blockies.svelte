@@ -26,7 +26,7 @@
     min-height: 1rem;
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 50%;
+    border-radius: var(--border-radius-round);
   }
   .icon.glowOnHover:hover {
     box-shadow: 0 0 3rem var(--color-secondary);

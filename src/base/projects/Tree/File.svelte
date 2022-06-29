@@ -9,7 +9,7 @@
 <style>
   .file {
     color: var(--color-foreground-90);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
     display: flex;
     justify-content: space-between;

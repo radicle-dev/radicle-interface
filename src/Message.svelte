@@ -8,7 +8,7 @@
   }
   .message-error {
     color: var(--color-negative);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     background-color: var(--color-glow-error);
   }
 </style>

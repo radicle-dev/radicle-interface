@@ -33,10 +33,6 @@
   .changeset-summary .deletions {
     color: var(--color-negative);
   }
-  .diff-listing {
-    /* This border forces to keep the FileDiff margin-bottom visible */
-    border: 1px solid transparent;
-  }
 </style>
 
 <div class="changeset-summary">

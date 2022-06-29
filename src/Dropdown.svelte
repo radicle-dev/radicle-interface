@@ -12,12 +12,6 @@
 </script>
 
 <style>
-  .dropdown {
-    background-color: var(--color-foreground-background);
-    padding: 0.5rem 0;
-    margin-top: 0.5rem;
-    position: absolute;
-  }
   .dropdown-item {
     white-space: nowrap;
     cursor: pointer;

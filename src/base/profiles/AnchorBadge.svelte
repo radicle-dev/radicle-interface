@@ -16,7 +16,7 @@
   .anchor-widget {
     display: flex;
     padding: 0.5rem 0.75rem;
-    border-radius: inherit;
+    border-radius: var(--border-radius-small);
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     cursor: pointer;

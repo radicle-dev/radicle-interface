@@ -64,7 +64,7 @@
   .state-icon {
     width: 0.5rem;
     height: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-small);
   }
   .open {
     background-color: var(--color-positive);

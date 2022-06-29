@@ -21,7 +21,7 @@
   .authorship .avatar {
     width: 1rem;
     height: 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     margin-right: 0.25rem;
   }
   .authorship .avatar:not(:first-child) {

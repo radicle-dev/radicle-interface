@@ -133,7 +133,7 @@
   }
 
   input.field {
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
     overflow: hidden;
     text-overflow: ellipsis;
     border-color: var(--color-secondary) !important;

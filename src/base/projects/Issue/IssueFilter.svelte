@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: row;
     margin: 1rem 0;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
   }
   .state-toggle {
     cursor: pointer;

@@ -28,8 +28,8 @@
     border-width: 1px 1px 0 1px;
     border-color: var(--color-foreground-subtle);
     border-style: solid;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
+    border-top-left-radius: var(--border-radius-small);
+    border-top-right-radius: var(--border-radius-small);
   }
 
   header .file-name {
@@ -45,7 +45,7 @@
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
     font-size: 0.75rem;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -80,6 +80,8 @@
     display: flex;
     border: 1px solid var(--color-foreground-subtle);
     border-top-style: dashed;
+	border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
 
   .binary {

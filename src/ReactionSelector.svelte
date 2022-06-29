@@ -17,7 +17,7 @@
     justify-content: center;
     position: relative;
     color: var(--color-foreground-faded);
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
     height: 1rem;
     width: 1rem;
     cursor: not-allowed;
@@ -30,18 +30,18 @@
     position: absolute;
     left: 1.5rem;
     background-color: var(--color-foreground-background);
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
   }
   .modal > div {
     padding: 0.5rem;
   }
   .modal > div:last-child {
-    border-top-right-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
+    border-top-right-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
   .modal > div:first-child {
-    border-top-left-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
+    border-top-left-radius: var(--border-radius-small);
+    border-bottom-left-radius: var(--border-radius-small);
   }
   .modal > div:hover {
     background-color: var(--color-foreground-subtle);

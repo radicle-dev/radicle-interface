@@ -30,12 +30,12 @@
     background-color: var(--color-foreground-background-lighter);
   }
   .commit-teaser:first-child {
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
+    border-top-left-radius: var(--border-radius-small);
+    border-top-right-radius: var(--border-radius-small);
   }
   .commit-teaser:last-child {
-    border-bottom-left-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
   .commit-teaser {
     display: flex;

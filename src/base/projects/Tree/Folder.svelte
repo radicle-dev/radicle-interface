@@ -42,7 +42,7 @@
   }
   .folder:hover {
     background-color: var(--color-foreground-background);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
   }
 
   .folder-name {

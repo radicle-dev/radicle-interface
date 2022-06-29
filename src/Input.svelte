@@ -18,7 +18,7 @@
     text-align: right;
     -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
     mask: linear-gradient(90deg, transparent 0%, #fff 50%);
-    border-radius: 0 0.25rem 0.25rem 0;
+    border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
   }
   input {
     font-size: 0.75rem;
@@ -28,7 +28,7 @@
     outline: none;
     width: 100%;
     text-overflow: ellipsis !important;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
   }
   main:hover .clipboard {
     visibility: visible;

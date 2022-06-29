@@ -36,7 +36,7 @@
     background: var(--color-background);
     min-width: 240px;
     max-width: 360px;
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
     text-align: center;
   }
   .modal-title {

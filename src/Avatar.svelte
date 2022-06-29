@@ -32,7 +32,7 @@
 <style>
   .avatar {
     display: block;
-    border-radius: 50%;
+    border-radius: var(--border-radius-round);
     min-width: 1rem;
     min-height: 1rem;
     height: 100%;

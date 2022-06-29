@@ -19,7 +19,7 @@
 <style>
   .changeset-file {
     border: 1px solid var(--color-foreground-3);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     min-width: var(--content-min-width);
     margin-bottom: 2rem;
     line-height: 1.5rem;

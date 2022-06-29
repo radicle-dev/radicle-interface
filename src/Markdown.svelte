@@ -171,7 +171,7 @@
     font-size: 1rem;
     background-color: var(--color-foreground-background);
     padding: 1rem !important;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     margin: 1rem 0;
     overflow: scroll;
     scrollbar-width: none;

@@ -62,7 +62,7 @@
     gap: 0.5rem;
   }
   .widget {
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     min-width: max-content;
   }
   .anchor {

@@ -97,7 +97,7 @@
   }
   .governance {
     background-color: var(--color-secondary-background);
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
     padding: 1rem 1rem 0rem 1rem;
     margin-bottom: 2rem;
   }

@@ -45,7 +45,7 @@
     max-width: 70%;
     font-size: 1.25rem;
     text-align: left;
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
   }
   .heading {

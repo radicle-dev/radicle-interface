@@ -114,10 +114,10 @@
     background-color: var(--color-tertiary-background);
     line-height: 1.5em;
     padding: 0rem 1rem;
-    border-radius: var(--border-radius);
-	height: var(--button-regular-height);
-	display: flex;
-	align-items: center;
+    height: var(--button-regular-height);
+    display: flex;
+    align-items: center;
+    border-radius: var(--border-radius-round);
   }
   .network.unavailable {
     color: #888;

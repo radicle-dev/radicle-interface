@@ -25,7 +25,7 @@
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
   }
   .summary {
     display: flex;

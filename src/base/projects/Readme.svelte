@@ -10,7 +10,7 @@
   article {
     padding: 2rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
   }
 </style>
 

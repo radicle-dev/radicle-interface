@@ -74,10 +74,9 @@
 	--font-family-monospace: monospace;
 	--font-weight-medium: 600;
 	--font-weight-bold: 700;
-
-	--border-radius: 50px;
-	--border-radius-medium: 0.25rem;
-
+	--border-radius: 1rem;
+	--border-radius-small: 0.5rem;
+	--border-radius-round: 10rem;
 	--box-shadow-color: var(--color-secondary-2);
 
 	--content-max-width: 1920px;
@@ -141,7 +140,7 @@ html {
 }
 *::-webkit-scrollbar-thumb {
 	background: transparent;
-	border-radius: 4px;
+	border-radius: var(--border-radius);
 }
 *::-webkit-scrollbar-corner {
 	background: transparent;
@@ -175,7 +174,7 @@ button {
 	font-size: 1rem;
 	padding: 0rem 1.5rem;
 	border: 1px solid var(--color-foreground-6);
-	border-radius: var(--border-radius);
+	border-radius: var(--border-radius-round);
 	cursor: pointer;
 	min-width: 6rem;
 	height: var(--button-regular-height);
@@ -293,8 +292,8 @@ input[type="text"] {
 	color: var(--color-foreground);
 	background: transparent;
 	border: 1px solid var(--color-secondary);
-	border-radius: var(--border-radius);
-	padding: 0rem 1.5rem;
+	border-radius: var(--border-radius-round);
+	padding: 1rem 1.5rem;
 	margin: 1rem;
 	height: var(--button-regular-height);
 }
@@ -335,10 +334,11 @@ label.input {
 .dropdown, .popup {
 	background-color: var(--color-foreground-background);
 	margin-top: 0.5rem;
+	padding: 0.5rem 0;
 	position: absolute;
 	box-shadow: 16px 16px 32px 32px var(--color-shadow);
 	z-index: 10;
-	border-radius: 0.25rem;
+	border-radius: var(--border-radius-small);
 }
 
 .error {
@@ -458,7 +458,7 @@ span.small, .text-xsmall {
 
 .notice {
 	font-size: 0.875rem;
-	border-radius: 0.25rem;
+	border-radius: var(--border-radius);
 	color: var(--color-yellow);
 	background-color: var(--color-yellow-background);
 	padding: 1rem;

@@ -26,7 +26,7 @@
     stroke: var(--color-positive);
   }
   .clipboard:hover {
-    border-radius: 1.5rem;
+    border-radius: var(--border-radius);
   }
 </style>
 

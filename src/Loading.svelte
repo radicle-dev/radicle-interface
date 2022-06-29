@@ -35,8 +35,7 @@
     width: 18px;
     height: 18px;
     background-color: #5555ff;
-
-    border-radius: 100%;
+    border-radius: var(--border-radius-round);
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;

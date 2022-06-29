@@ -42,7 +42,7 @@
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
-    border-radius: 0.25rem 0 0 0.25rem;
+    border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
   }
   .commit .branch.not-allowed {
     cursor: not-allowed;
@@ -55,10 +55,10 @@
     color: var(--color-secondary);
     background-color: var(--color-secondary-background-darker);
     padding: 0.5rem 0.75rem;
-    border-radius: 0 0.25rem 0.25rem 0;
+    border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
   }
   .commit .hash.unlabeled {
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
   }
   .stat {
     font-family: var(--font-family-monospace);

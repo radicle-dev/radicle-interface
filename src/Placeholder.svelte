@@ -5,7 +5,7 @@
 <style>
   .placeholder {
     text-align: center;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
     padding-bottom: 2rem;
     color: var(--color-foreground-faded) !important;
     background-color: var(--color-foreground-background);

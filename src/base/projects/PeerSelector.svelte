@@ -42,7 +42,7 @@
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-small);
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;

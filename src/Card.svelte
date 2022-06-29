@@ -37,7 +37,7 @@
     padding: 1rem;
     display: inline-block;
     text-align: center;
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
   }
   .card::last-child {
     margin-right: 0;
@@ -56,7 +56,7 @@
     display: inline-block;
     font-weight: var(--font-weight-medium);
     margin-top: 0.75rem;
-    border-radius: 0.75rem;
+    border-radius: var(--border-radius);
     padding: 0rem;
     text-overflow: ellipsis;
     overflow-x: hidden;

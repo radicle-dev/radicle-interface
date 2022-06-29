@@ -26,7 +26,7 @@
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
     margin-bottom: 2rem;
   }
   main {
@@ -39,7 +39,7 @@
   .metadata {
     flex-basis: 18rem;
     margin-left: 1rem;
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
     font-size: 0.875rem;
     padding-left: 1rem;
   }
@@ -89,7 +89,7 @@
   }
   .summary-state {
     padding: 0.5rem 1rem;
-    border-radius: 1.25rem;
+    border-radius: var(--border-radius);
   }
   .open {
     color: var(--color-positive);

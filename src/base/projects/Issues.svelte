@@ -26,7 +26,7 @@
     font-size: 0.875rem;
   }
   .issues-list {
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius);
     overflow: hidden;
   }
   .teaser:not(:last-child) {
