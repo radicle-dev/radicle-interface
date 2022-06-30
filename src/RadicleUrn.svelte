@@ -41,7 +41,7 @@
   </div>
 </div>
 <div>
-  <button class="tiny faded" disabled={copied} on:click={copy()}>
+  <button class="small faded" disabled={copied} on:click={copy()}>
     {#if copied}
       Copy ✓
     {:else}

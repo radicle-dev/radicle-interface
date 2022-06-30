@@ -244,7 +244,7 @@
         <div class="desktop">
           {#await account && profile.org.isMember(account, config) then isMember}
             {#if isOwner(profile.org) || isMember}
-              <button class="tiny secondary" on:click={transferOwnership}>
+              <button class="small secondary" on:click={transferOwnership}>
                 Transfer
               </button>
             {/if}
@@ -287,7 +287,7 @@
               <!-- Loading -->
             {:then authorized}
               {#if authorized}
-                <button class="tiny secondary" on:click={setName}>
+                <button class="small secondary" on:click={setName}>
                   Set
                 </button>
               {/if}
@@ -315,7 +315,7 @@
         </div>
         <div class="desktop">
           {#if isUserAuthorized(profile.address)}
-            <button class="tiny secondary" on:click={setName}>
+            <button class="small secondary" on:click={setName}>
               Set
             </button>
           {/if}

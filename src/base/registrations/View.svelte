@@ -183,11 +183,11 @@
       <h1 class="bold">{domain}</h1>
       <button
         style="min-width: 60px;"
-        class="tiny primary" class:active={editable} disabled={!isOwner(state.owner)}
+        class="small primary" class:active={editable} disabled={!isOwner(state.owner)}
         on:click={() => editable = !editable}>
           Edit
       </button>
-      <button class="tiny secondary" disabled>
+      <button class="small secondary" disabled>
         Transfer
       </button>
     </header>

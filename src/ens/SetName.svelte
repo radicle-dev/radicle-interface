@@ -86,7 +86,7 @@
     </div>
 
     <div slot="actions">
-      <button class="small" on:click={() => dispatch('close')}>
+      <button class="regular" on:click={() => dispatch('close')}>
         Done
       </button>
     </div>
@@ -104,7 +104,7 @@
     </div>
 
     <div slot="actions">
-      <button class="small" on:click={() => dispatch('close')}>
+      <button class="regular" on:click={() => dispatch('close')}>
         Done
       </button>
     </div>
@@ -162,11 +162,11 @@
 
     <div slot="actions">
       {#if state == State.Signing}
-        <button class="small" on:click={() => dispatch('close')}>
+        <button class="regular" on:click={() => dispatch('close')}>
           Cancel
         </button>
       {:else if state == State.Pending}
-        <button class="small" on:click={() => dispatch('close')}>
+        <button class="regular" on:click={() => dispatch('close')}>
           Close
         </button>
       {:else}

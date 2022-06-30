@@ -26,6 +26,7 @@
     margin: 0;
     padding:  0.5rem 1.25rem;
     border-style: dashed;
+	height: var(--button-regular-height);
   }
 </style>
 

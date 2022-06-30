@@ -23,7 +23,7 @@
 </style>
 
 <button
-  class="tiny secondary"
+  class="small secondary"
   title={tooltip}
   disabled={disabled || (connection === Connection.Connecting)}
   on:click={async () => {

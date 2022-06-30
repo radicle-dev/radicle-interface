@@ -183,14 +183,14 @@
       {#if state === State.Idle}
         <button
           on:click={createOrg}
-          class="primary"
+          class="primary regular"
           data-waiting={[State.Signing, State.Pending].includes(state) || null}
           disabled={state !== State.Idle}
         >
           Create
         </button>
 
-        <button on:click={() => dispatch('close')} class="text">
+        <button on:click={() => dispatch('close')} class="text regular">
           Close
         </button>
       {/if}

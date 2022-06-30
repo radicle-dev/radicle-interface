@@ -124,7 +124,7 @@
   <button on:click|stopPropagation={() => {
     action = Action.Execute;
     state = State.Confirm;
-  }} class="tiny execute">
+  }} class="small execute">
     <Avatar inline source={account} title={account} /> Execute
   </button>
   <!-- Check whether or not we've signed this proposal -->
@@ -134,7 +134,7 @@
   <button on:click|stopPropagation={() => {
     action = Action.Sign;
     state = State.Confirm;
-    }} class="tiny">
+    }} class="small">
     Confirm
   </button>
 {/if}

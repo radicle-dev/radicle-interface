@@ -160,7 +160,7 @@
   <!-- Mobile navigation -->
   {#if tree.entries.length > 0}
     <nav class="mobile">
-      <button class="small browse secondary center-content" on:click={toggleMobileFileTree}>
+      <button class="regular browse secondary center-content" on:click={toggleMobileFileTree}>
         Browse
       </button>
     </nav>

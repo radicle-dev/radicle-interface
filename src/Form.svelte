@@ -235,10 +235,10 @@
 </div>
 
 <div class="actions" class:editable>
-  <button on:click={cancel} {disabled} class="small">
+  <button on:click={cancel} {disabled} class="regular">
     Cancel
   </button>
-  <button on:click={save} disabled={hasErrors || disabled} class="small primary">
+  <button on:click={save} disabled={hasErrors || disabled} class="regular primary">
     Save
   </button>
 </div>

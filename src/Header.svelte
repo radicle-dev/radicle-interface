@@ -41,10 +41,12 @@
     align-items: center;
     margin: 0;
     padding: 1.5rem;
+	height: 5.5rem;
   }
   header .left, header .right {
     display: flex;
     align-items: center;
+	height: var(--button-regular-height);
   }
   header .nav {
     display: inline-block;
@@ -70,6 +72,8 @@
 
   .logo {
     display: flex;
+	height: var(--button-regular-height);
+	align-items: center;
   }
   .error {
     text-align: center;
@@ -86,7 +90,7 @@
     text-decoration: none;
   }
   .search {
-    height: 42px;
+    height: var(--button-regular-height);
     width: 16rem;
     margin-left: 1.5rem;
     display: inline-block;
@@ -96,7 +100,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    min-height: 42px;
     margin-left: 2rem;
     width: 10rem;
     padding-left: 0;
@@ -110,8 +113,11 @@
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     line-height: 1.5em;
-    padding: 0.5rem 1rem;
+    padding: 0rem 1rem;
     border-radius: var(--border-radius);
+	height: var(--button-regular-height);
+	display: flex;
+	align-items: center;
   }
   .network.unavailable {
     color: #888;
@@ -196,7 +202,7 @@
         {/if}
       </span>
 
-      <button class="address outline small"
+      <button class="address outline regular"
         on:click={() => disconnectWallet(config)}
         on:mouseover={() => sessionButtonHover = true}
         on:focus={() => sessionButtonHover = true}
@@ -215,7 +221,7 @@
       </button>
     {:else if config}
       <span class="connect">
-        <Connect className="small" {config} />
+        <Connect className="regular" {config} />
       </span>
     {/if}
     <div class="toggle" on:click={toggleNavbar}>

@@ -53,7 +53,7 @@
         />
       </span>
 
-      <button disabled={!label} class="primary register" on:click={register}>
+      <button disabled={!label} class="primary register regular" on:click={register}>
         Check
       </button>
     </div>

@@ -66,7 +66,7 @@
     <div class="my-orgs">
       <header>
         <span>My <strong>Orgs</strong></span>
-        <button class="create small secondary" on:click={onCreate} disabled={!account}>
+        <button class="create regular secondary" on:click={onCreate} disabled={!account}>
           Create
         </button>
       </header>

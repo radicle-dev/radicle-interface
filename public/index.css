@@ -74,12 +74,20 @@
 	--font-family-monospace: monospace;
 	--font-weight-medium: 600;
 	--font-weight-bold: 700;
+
 	--border-radius: 50px;
 	--border-radius-medium: 0.25rem;
+
 	--box-shadow-color: var(--color-secondary-2);
+
 	--content-max-width: 1920px;
 	--content-min-width: 480px;
+
 	--scrollbar-width: 0.5rem;
+
+	--button-regular-height: 2.5rem;
+	--button-small-height: 2rem;
+	--button-tiny-height: 1.5rem;
 }
 
 body {
@@ -165,15 +173,18 @@ button {
 	color: var(--color-foreground-6);
 	background: transparent;
 	font-size: 1rem;
-	padding: 1rem 1.5rem;
+	padding: 0rem 1.5rem;
 	border: 1px solid var(--color-foreground-6);
 	border-radius: var(--border-radius);
 	cursor: pointer;
 	min-width: 8rem;
+	display: inline-flex;
+	align-items: center;
 }
 button:not([disabled]):hover {
 	color: var(--color-background);
 	background-color: var(--color-foreground);
+	border-color: transparent;
 }
 button.waiting {
 	cursor: wait;
@@ -233,12 +244,13 @@ button.text:hover {
 	background-color: var(--color-foreground);
 }
 
-button.small {
+button.regular {
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 	min-width: 6rem;
+	height: var(--button-regular-height);
 }
-button.tiny {
+button.small {
 	min-width: auto;
 	padding: 0 0.75rem;
 	height: 2rem;
@@ -280,8 +292,9 @@ input[type="text"] {
 	background: transparent;
 	border: 1px solid var(--color-secondary);
 	border-radius: var(--border-radius);
-	padding: 1rem 1.5rem;
+	padding: 0rem 1.5rem;
 	margin: 1rem;
+	height: var(--button-regular-height);
 }
 input[type="text"]::placeholder {
 	color: var(--color-secondary);
@@ -358,6 +371,7 @@ label.input {
 	margin: 0 0.5rem;
 	font-size: 0.75rem;
 	line-height: 1.6;
+	height: var(--button-tiny-height);
 }
 .badge.primary {
 	color: var(--color-primary);

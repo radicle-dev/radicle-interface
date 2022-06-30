@@ -18,14 +18,16 @@
 
 <style>
   span.root {
-    margin: 1rem;
-    margin-left: 0;
-    margin-right: 0;
-	padding: 1rem 2rem;
+    /* margin: 1rem; */
+    /* margin-left: 0; */
+    /* margin-right: 0; */
+	/* padding: 0.7rem 2rem; */
+	padding: .4rem 1rem;
     color: var(--color-secondary);
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
     border: 1px solid var(--color-secondary);
     border-left: none;
+	height: var(--button-regular-height);
   }
   input {
     line-height: 1.5;

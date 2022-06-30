@@ -79,20 +79,20 @@
         <span slot="actions">
           {#if isBeneficiary}
             {#if $state === State.WithdrawingSign}
-              <button disabled data-waiting class="primary small">
+              <button disabled data-waiting class="primary regular">
                 Waiting for signature...
               </button>
             {:else if $state === State.Withdrawing}
-              <button disabled data-waiting class="primary small">
+              <button disabled data-waiting class="primary regular">
                 Withdrawing...
               </button>
             {:else if $state === State.Idle}
-              <button on:click={() => withdrawVested(contractAddress, config)} class="primary small">
+              <button on:click={() => withdrawVested(contractAddress, config)} class="primary regular">
                 Withdraw
               </button>
             {/if}
           {/if}
-          <button on:click={reset} class="small">
+          <button on:click={reset} class="regular">
             Back
           </button>
         </span>
