@@ -1,14 +1,11 @@
 <script lang="ts">
   import { Route } from "svelte-routing";
-  import Index from '@app/base/orgs/Index.svelte';
-  import type { Config } from '@app/config';
   import Redirect from "@app/Redirect.svelte";
-
-  export let config: Config;
+  import NotFound from "@app/NotFound.svelte";
 </script>
 
 <Route path="/orgs">
-  <Index {config} />
+  <NotFound title="404" subtitle="Radicle Orgs are in the process of being re-designed." />
 </Route>
 
 <Route path="/orgs/:addressOrName" let:params>

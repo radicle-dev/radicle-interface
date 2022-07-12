@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
   import { Profile } from '@app/profile';
   import { Org } from '@app/base/orgs/Org';
@@ -32,10 +31,6 @@
   const getEntities = Promise.all([getUsers, getOrgs, getSeeds]).then(([users, orgs, seeds]) => {
     return { users, orgs, seeds };
   });
-
-  const viewMore = () => {
-    navigate("/orgs");
-  };
 </script>
 
 <style>
@@ -60,10 +55,6 @@
   }
   .loading {
     padding-top: 2rem;
-  }
-  .actions {
-    margin-top: 1rem;
-    text-align: center;
   }
   @media (max-width: 720px) {
     .blurb {
@@ -106,11 +97,6 @@
       <Cards {config} profiles={entities.users} orgs={entities.orgs}>
         <div class="empty">There are no orgs or users.</div>
       </Cards>
-      <div class="actions">
-        <button class="small secondary" on:click={viewMore}>
-          View all
-        </button>
-      </div>
     {/if}
   {:catch}
     <div class="padding">

@@ -88,7 +88,7 @@
           <Vesting {config} session={$session} />
         </Route>
         <Registrations {config} session={$session} />
-        <Orgs {config} />
+        <Orgs />
         <Seeds {config} session={$session} />
         <Faucet {config} />
         <Users />

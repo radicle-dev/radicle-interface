@@ -165,7 +165,6 @@
       <Search />
     </div>
     <div class="nav">
-      <a use:link class="nav-link" href="/orgs/">Orgs</a>
       <a use:link class="nav-link" href="/registrations">Register</a>
 
       {#if session && Object.keys(session.siwe).length > 0}
