@@ -13,7 +13,7 @@
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (issue.author.identity.ens?.name) {
+    if (issue.author.kind === "resolved" && issue.author.identity.ens?.name) {
       profile = await Profile.get(issue.author.identity.ens.name, ProfileType.Minimal, config);
     }
   });

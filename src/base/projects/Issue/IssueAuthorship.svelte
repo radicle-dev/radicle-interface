@@ -35,13 +35,13 @@
 <span class="authorship text-xsmall">
   {#if profile}
     <Address resolve address={profile.address} noBadge {noAvatar} compact small {config} {profile} />
-  {:else if author.identity.name}
+  {:else if author.kind === "resolved"}
     <span class="highlight">
       {author.identity.name}
     </span>
-  {:else}
+  {:else if author.urn}
     <span class="highlight">
-      {formatRadicleUrn(author.identity.urn)}
+      {formatRadicleUrn(author.urn)}
     </span>
   {/if}
   <span class="desktop caption">&nbsp;{caption}&nbsp;</span>

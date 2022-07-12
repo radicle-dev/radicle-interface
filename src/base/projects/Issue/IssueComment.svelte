@@ -18,10 +18,19 @@
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (comment.author.identity.ens?.name) {
+    if (comment.author.kind === "resolved" && comment.author.identity.ens?.name) {
       profile = await Profile.get(comment.author.identity.ens.name, ProfileType.Minimal, config);
     }
   });
+
+  $: source = profile?.avatar ||
+    (comment.author.kind === "resolved"
+      ? comment.author.identity.urn
+      : comment.author.urn);
+  $: title = profile?.name ||
+    (comment.author.kind === "resolved"
+      ? comment.author.identity.name
+      : comment.author.urn);
 
   const selectReaction = (event: { detail: string }) => {
     // TODO: Once we allow adding reactions through the http-api, we should call it here.
@@ -67,19 +76,21 @@
 
 <div class="comment">
   <div class="person">
-    <Avatar source={profile?.avatar || comment.author.identity.urn} title={profile?.name || comment.author.identity.urn} />
+    <Avatar {source} {title} />
   </div>
   <div class="card">
     <div class="card-header">
-      <IssueAuthorship noAvatar {config}
-        caption="commented on" author={comment.author} {profile} timestamp={comment.timestamp} />
+      <IssueAuthorship noAvatar {config} {profile}
+        caption="commented on" author={comment.author} timestamp={comment.timestamp} />
       <ReactionSelector on:select={selectReaction} />
     </div>
     <div class="card-body">
       <Markdown content={comment.body} {getImage} />
       {#if comment.reactions.length > 0}
         <div class="reactions">
-          <Reactions reactions={comment.reactions} on:click={incrementReaction} />
+          <Reactions
+            reactions={comment.reactions}
+            on:click={incrementReaction} />
         </div>
       {/if}
     </div>

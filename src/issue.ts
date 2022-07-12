@@ -26,15 +26,23 @@ export interface Comment {
   timestamp: number;
 }
 
-export interface Author {
+export type Author = ResolvedIdentity | UnresolvedIdentity;
+
+export interface ResolvedIdentity {
+  kind: "resolved";
   peer: PeerId;
   identity: {
     urn: string;
-    name?: string;
-    ens?: {
+    name: string;
+    ens: {
       name: string;
-    };
+    } | null;
   };
+}
+export interface UnresolvedIdentity {
+  kind: "unresolved";
+  peer: PeerId;
+  urn: string;
 }
 
 export interface CommentWithReplies extends Comment {

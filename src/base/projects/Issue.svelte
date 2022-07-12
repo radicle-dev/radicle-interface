@@ -2,9 +2,10 @@
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import type { Blob, Project } from "@app/project";
-  import { canonicalize, capitalize, formatTimestamp } from "@app/utils";
+  import { canonicalize, capitalize } from "@app/utils";
   import IssueComment from "@app/base/projects/Issue/IssueComment.svelte";
   import { Issue } from "@app/issue";
+  import IssueAuthorship from "@app/base/projects/Issue/IssueAuthorship.svelte";
 
   export let issue: string;
   export let project: Project;
@@ -97,9 +98,6 @@
   .closed {
     background-color: var(--color-negative-2);
   }
-  .date {
-    color: var(--color-foreground-80);
-  }
   .replies {
     margin-left: 2rem;
   }
@@ -131,13 +129,7 @@
           {capitalize(issue.state.status)}
         </div>
       </div>
-      <div class="text-small">
-        {issue.author.identity.name}
-        <span class="faded">opened on</span>
-        <span class="date">
-          {formatTimestamp(issue.timestamp)}
-        </span>
-      </div>
+      <IssueAuthorship author={issue.author} timestamp={issue.timestamp} caption="opened on" {config} />
     </header>
     <main>
       <div class="comments">
