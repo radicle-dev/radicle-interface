@@ -147,8 +147,8 @@ body::-webkit-scrollbar-thumb {
 	background: var(--color-negative);
 }
 
-code {
-	font-family: monospace;
+code, .code {
+	font-family: "Source Code Pro";
 	font-size: 0.95rem;
 }
 
