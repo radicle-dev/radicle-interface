@@ -1,5 +1,6 @@
 <script lang="ts">
   import Clipboard from '@app/Clipboard.svelte';
+  import { closeFocused } from '@app/Floating.svelte';
 
   export let name: string;
   export let value: string;
@@ -10,6 +11,7 @@
 <style>
   main {
     display: flex;
+    align-items: center;
   }
   .clipboard {
     visibility: hidden;
@@ -39,7 +41,7 @@
   <input class={$$props.class} readonly={clipboard} {name} {value} />
   {#if clipboard}
     <span class="clipboard {$$props.class}">
-      <Clipboard text={value} {small} />
+      <Clipboard text={value} {small} on:copied={closeFocused} />
     </span>
   {/if}
 </main>

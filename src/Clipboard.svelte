@@ -1,6 +1,14 @@
 <script lang="ts">
   import Icon from '@app/Icon.svelte';
   import { toClipboard } from '@app/utils';
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
+
+  const copy = () => {
+    toClipboard(text);
+    dispatch("copied");
+  };
 
   export let text: string;
   export let small = false;
@@ -8,8 +16,8 @@
 
 <style>
   .clipboard {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
@@ -30,7 +38,7 @@
   }
 </style>
 
-<span class="clipboard" class:small on:click|stopPropagation={() => toClipboard(text)}>
+<span class="clipboard" class:small on:click|stopPropagation={copy}>
   {#if small}
     <Icon name="clipboard-small" width={12} height={12} />
   {:else}
