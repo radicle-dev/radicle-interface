@@ -1,5 +1,7 @@
 <script lang="ts">
   import { groupIssues, Issue } from "@app/issue";
+  import Placeholder from "@app/Placeholder.svelte";
+  import { capitalize } from "@app/utils";
 
   export let issues: Issue[];
   export let state = "open";
@@ -33,13 +35,6 @@
   .active {
     color: var(--color-foreground);
   }
-  .empty {
-    padding: 1rem;
-    cursor: default;
-    color: var(--color-foreground-faded);
-    background-color: var(--color-foreground-background);
-    border-radius: var(--border-radius-medium);
-  }
   .separator {
     color: var(--color-foreground-faded);
     margin: 0 0.5rem;
@@ -67,5 +62,8 @@
 {#if filteredIssues.length}
   <slot {filteredIssues} />
 {:else}
-  <div class="empty">No results matched your search.</div>
+  <Placeholder icon="🍣">
+    <div slot="title">{capitalize(state)} issues</div>
+    <div slot="body">No issues matched the current filter</div>
+  </Placeholder>
 {/if}
