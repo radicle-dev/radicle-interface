@@ -222,7 +222,7 @@ function getProvider(
   } else if (metamask) {
     return metamask;
   } else {
-    throw new Error("No Web3 provider available.");
+    throw new Error("A wallet such as Metamask must be enabled on your browser.");
   }
 }
 
