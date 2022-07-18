@@ -2,6 +2,7 @@
   import type { Config } from '@app/config';
   import * as proj from '@app/project';
   import Placeholder from '@app/Placeholder.svelte';
+  import Loading from '@app/Loading.svelte';
   import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
   import { browserStore } from '@app/project';
   import { fetchCommits } from '@app/commit';
@@ -64,7 +65,9 @@
 <ProjectMeta noDescription={content !== proj.ProjectContent.Tree} {project} {peer} />
 
 {#if revision}
-  {#await project.getRoot(revision) then { tree, commit }}
+  {#await project.getRoot(revision)}
+    <Loading center />
+  {:then { tree, commit }}
     <Header {tree} {commit} {browserStore} {project} noAnchor />
 
     {#if content == proj.ProjectContent.Tree}
