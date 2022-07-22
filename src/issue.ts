@@ -1,13 +1,19 @@
 import { type Host, Request } from '@app/api';
-import type { PeerId } from '@app/project';
+import type { Author } from '@app/cobs';
+
+export interface TimelineItem {
+  person: Author;
+  message: string;
+  timestamp: number;
+}
 
 export interface IIssue {
   id: string;
   author: Author;
   title: string;
   state: State;
-  comment: CommentWithReplies;
-  discussion: CommentWithReplies[];
+  comment: Comment;
+  discussion: Thread[];
   labels?: Label[]; // When no labels are set, this is undefined
   timestamp: number;
 }
@@ -19,35 +25,15 @@ export type State = {
   reason: string;
 };
 
-export interface Comment {
+export interface Comment<R = null> {
   author: Author;
   body: string;
   reactions: Record<string, number>;
   timestamp: number;
+  replies: R;
 }
 
-export type Author = ResolvedIdentity | UnresolvedIdentity;
-
-export interface ResolvedIdentity {
-  kind: "resolved";
-  peer: PeerId;
-  identity: {
-    urn: string;
-    name: string;
-    ens: {
-      name: string;
-    } | null;
-  };
-}
-export interface UnresolvedIdentity {
-  kind: "unresolved";
-  peer: PeerId;
-  urn: string;
-}
-
-export interface CommentWithReplies extends Comment {
-  replies: Comment[];
-}
+export type Thread = Comment<Comment[]>;
 
 export type Label = string;
 
@@ -63,8 +49,8 @@ export class Issue {
   author: Author;
   title: string;
   state: State;
-  comment: CommentWithReplies;
-  discussion: CommentWithReplies[];
+  comment: Comment;
+  discussion: Thread[];
   labels?: Label[]; // When no labels are set, this is undefined
   timestamp: number;
 
