@@ -61,6 +61,6 @@
       <span>&nbsp;committed</span>
     {/if}
   {/if}
-  <span>&nbsp;at&nbsp;</span>
+  <span>&nbsp;</span>
   <span class="desktop-inline text-xsmall time">{formatTimestamp(commit.header.committerTime)}</span>
 </span>

@@ -246,13 +246,45 @@ export function unixTime(): number {
   return Math.floor(Date.now() / 1000);
 }
 
-export const formatTimestamp = (t: number): string => {
-  return new Date(t * 1000).toLocaleString("en-EN", { dateStyle: "full", timeStyle: "long" });
+export const formatTimestamp = (timestamp: number, current = new Date().getTime()): string => {
+  const units: Record<string, number> = {
+    year: 24 * 60 * 60 * 1000 * 365,
+    month: 24 * 60 * 60 * 1000 * 365 / 12,
+    day: 24 * 60 * 60 * 1000,
+    hour: 60 * 60 * 1000,
+    minute: 60 * 1000,
+    second: 1000
+  };
+
+  // Multiplying timestamp with 1000 to convert from seconds to milliseconds
+  timestamp = timestamp * 1000;
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: "auto", style: 'long' });
+  const elapsed = current - timestamp;
+
+  if (elapsed > units["year"]) {
+    return new Date(timestamp).toUTCString(); // If it's more than a year we return early showing a Datetime string
+  } else if (elapsed < 0) {
+    return "now"; // If elapsed is a negative number we are dealing with an item from the future, and we return "now"
+  }
+
+  for (const u in units) {
+    if (elapsed > units[u] || u == 'second') {
+      // We convert the division result to a negative number to get "XX [unit] ago"
+      return rtf.format(Math.round(elapsed / units[u]) * -1, u as Intl.RelativeTimeFormatUnit);
+    }
+  }
+
+  return new Date(timestamp).toUTCString();
 };
 
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {
   return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
+}
+
+// Check whether the input is a Radicle Peer ID.
+export function isPeerId(input: string): boolean {
+  return /^h[a-zA-Z0-9]+$/.test(input);
 }
 
 // Check whether the input is a SHA1 commit.
@@ -353,6 +385,13 @@ export function formatRadicleId(hash: Uint8Array): string {
 // Parse a Radicle Id (URN).
 export function parseRadicleId(urn: string): string {
   return urn.replace(/^rad:[a-z]+:/, "");
+}
+
+// Get amount of days passed between two dates without including the end date
+export function getDaysPassed(from: Date, to: Date): number {
+  return Math.floor(
+    (to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000)
+  );
 }
 
 // Decode a Radicle Id (URN).

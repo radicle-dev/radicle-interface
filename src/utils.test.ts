@@ -156,6 +156,15 @@ describe("String Assertions", () => {
   });
 
   test.each([
+    { id: "hnrkj4c35uoyceb3d1dsscx8qq55cikrd1aio", expected: true },
+    { id: "0x1234567890123456789012345678901234567890", expected: false },
+  ])("isPeerId $id => $expected", ({ id, expected }) => {
+    expect(
+      utils.isPeerId(id))
+      .toEqual(expected);
+  });
+
+  test.each([
     { oid: "a64ae9c6d572e0ad906faa9a4a7a8d43f113278c", expected: true },
     { oid: "a64ae9c", expected: false }
   ])("isOid $oid => $expected", ({ oid, expected }) => {
@@ -290,6 +299,34 @@ describe("Path Manipulation", () => {
         base,
         origin
       )
+    ).toEqual(expected);
+  });
+});
+
+describe("Date Manipulation", () => {
+  test.each([
+    { from: new Date("2022-01-01"), to: new Date("2022-02-01"), expected: 31 },
+    { from: new Date("2022-01-01"), to: new Date("2022-01-02"), expected: 1 },
+    { from: new Date("2022-01-01"), to: new Date("2022-01-01"), expected: 0 },
+  ])("getDaysPassed expected: $expected ", ({ from, to, expected }) => {
+    expect(
+      utils.getDaysPassed(from, to)
+    ).toEqual(expected);
+  });
+  test.each([
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-01 12:00:00"), expected: "now" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-01 12:00:01"), expected: "1 second ago" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-01 12:01:01"), expected: "1 minute ago" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-01 13:01:01"), expected: "1 hour ago" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-02 13:01:01"), expected: "yesterday" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-01-04 13:01:01"), expected: "3 days ago" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-02-02 13:01:01"), expected: "last month" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2022-04-02 13:01:01"), expected: "3 months ago" },
+    { from: new Date("2022-01-01 12:00:00"), to: new Date("2023-04-02 12:00:00"), expected: "Sat, 01 Jan 2022 12:00:00 GMT" },
+    { from: new Date("2022-03-05 12:00:00"), to: new Date("2026-04-02 12:00:00"), expected: "Sat, 05 Mar 2022 12:00:00 GMT" },
+  ])("formatTimestamp expected: $expected", ({ from, to, expected }) => {
+    expect(
+      utils.formatTimestamp(from.getTime() / 1000, to.getTime())
     ).toEqual(expected);
   });
 });
