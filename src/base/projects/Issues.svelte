@@ -3,15 +3,17 @@
   import type { Config } from "@app/config";
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import IssueFilter from "@app/base/projects/Issue/IssueFilter.svelte";
-  import { Issue } from "@app/issue";
+  import type { Issue } from "@app/issue";
 
   export let project: Project;
   export let config: Config;
+  export let issues: Issue[];
 
   const navigate = (issue: string) => {
     project.navigateTo({
       content: ProjectContent.Issue,
       issue,
+      patch: null,
       revision: null,
       path: null
     });
@@ -47,15 +49,13 @@
 </style>
 
 <div class="issues">
-  {#await Issue.getIssues(project.urn, project.seed.api) then issues}
-    <IssueFilter {issues} let:filteredIssues>
-      <div class="issues-list">
-        {#each filteredIssues as issue}
-          <div class="teaser" on:click={() => navigate(issue.id)}>
-            <IssueTeaser {config} {issue} />
-          </div>
-        {/each}
-      </div>
-    </IssueFilter>
-  {/await}
+  <IssueFilter {issues} let:filteredIssues>
+    <div class="issues-list">
+      {#each filteredIssues as issue}
+        <div class="teaser" on:click={() => navigate(issue.id)}>
+          <IssueTeaser {config} {issue} />
+        </div>
+      {/each}
+    </div>
+  </IssueFilter>
 </div>

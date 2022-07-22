@@ -1,17 +1,18 @@
 <script lang="ts">
   import * as proj from "@app/project";
   import { formatCommit } from "@app/utils";
+  import type { Commit } from "@app/commit";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
 
   export let project: proj.Project;
-  export let commit: string;
+  export let commit: Commit;
 
   const onBrowse = (event: { detail: string }) => {
     project.navigateTo({
       content: proj.ProjectContent.Tree,
-      revision: commit,
+      revision: commit.header.sha1,
       path: event.detail
     });
   };
@@ -55,32 +56,24 @@
   }
 </style>
 
-{#await project.getCommit(commit) then commit}
-  <div class="commit">
-    <header>
-      <div class="summary">
-        <div class="text-medium">{commit.header.summary}</div>
-        <div class="desktop font-mono sha1">
-          <span>{commit.header.sha1}</span>
-        </div>
-        <div class="mobile font-mono sha1 text-small">
-          {formatCommit(commit.header.sha1)}
-        </div>
+<div class="commit">
+  <header>
+    <div class="summary">
+      <div class="text-medium">{commit.header.summary}</div>
+      <div class="desktop font-mono sha1">
+        <span>{commit.header.sha1}</span>
       </div>
-      <pre class="description text-small">{commit.header.description}</pre>
-      <div class="authorship">
-        <CommitAuthorship {commit} />
-        {#if commit.context?.committer}
-          <span class="badge tertiary">Verified</span>
-        {/if}
+      <div class="mobile font-mono sha1 text-small">
+        {formatCommit(commit.header.sha1)}
       </div>
-    </header>
-    <Changeset stats={commit.stats} diff={commit.diff} on:browse={onBrowse} />
-  </div>
-{:catch err}
-  <div class="commit">
-    <div class="error error-message text-xsmall">
-      <div>API request to <code class="text-xsmall">{err.url}</code> failed.</div>
     </div>
-  </div>
-{/await}
+    <pre class="description text-small">{commit.header.description}</pre>
+    <div class="authorship">
+      <CommitAuthorship {commit} />
+      {#if commit.context?.committer}
+        <span class="badge tertiary">Verified</span>
+      {/if}
+    </div>
+  </header>
+  <Changeset stats={commit.stats} diff={commit.diff} on:browse={onBrowse} />
+</div>

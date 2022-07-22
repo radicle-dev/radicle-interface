@@ -1,9 +1,10 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { Author } from "@app/issue";
   import { formatRadicleUrn, formatTimestamp } from "@app/utils";
   import Address from "@app/Address.svelte";
-  import type { Profile } from "@app/profile";
+  import { Profile, ProfileType } from "@app/profile";
+  import { onMount } from "svelte";
+  import type { Author } from "@app/cobs";
 
   export let noAvatar = false;
   export let author: Author;
@@ -11,6 +12,12 @@
   export let caption: string;
   export let config: Config;
   export let profile: Profile | null = null;
+
+  onMount(async () => {
+    if (author.profile?.ens?.name) {
+      profile = await Profile.get(author.profile.ens.name, ProfileType.Minimal, config);
+    }
+  });
 </script>
 
 <style>
@@ -34,18 +41,20 @@
 
 <span class="authorship text-xsmall">
   {#if profile}
-    <Address resolve address={profile.address} noBadge {noAvatar} compact small {config} {profile} />
-  {:else if author.kind === "resolved"}
+    <Address
+      xsmall highlight resolve noBadge compact {noAvatar} {config} {profile}
+      address={profile.address} />
+  {:else if author.profile}
     <span class="highlight">
-      {author.identity.name}
+      {author.profile.name}
     </span>
-  {:else if author.urn}
+  {:else}
     <span class="highlight">
       {formatRadicleUrn(author.urn)}
     </span>
   {/if}
-  <span class="desktop caption">&nbsp;{caption}&nbsp;</span>
-  <span class="text-xsmall date desktop">
+  <span class="caption">&nbsp;{caption}&nbsp;</span>
+  <span class="text-xsmall date">
     {formatTimestamp(timestamp)}
   </span>
 </span>

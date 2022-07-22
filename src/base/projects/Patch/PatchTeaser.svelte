@@ -1,39 +1,39 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { formatObjectId } from "@app/cobs";
-  import type { Issue } from "@app/issue";
+  import type { Patch } from "@app/patch";
   import type { Config } from "@app/config";
   import { Profile, ProfileType } from "@app/profile";
 
   import Authorship from "@app/Authorship.svelte";
 
-  export let issue: Issue;
+  export let patch: Patch;
   export let config: Config;
 
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (issue.author.profile?.ens?.name) {
-      profile = await Profile.get(issue.author.profile.ens.name, ProfileType.Minimal, config);
+    if (patch.author.profile?.ens?.name) {
+      profile = await Profile.get(patch.author.profile.ens.name, ProfileType.Minimal, config);
     }
   });
 
-  const commentCount = issue.countComments();
+  const commentCount = patch.countComments(patch.revisions.length - 1);
 </script>
 
 <style>
-  .issue-teaser {
+  .patch-teaser {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background-color: var(--color-foreground-background);
     padding: 0.75rem 0;
   }
-  .issue-teaser:hover {
+  .patch-teaser:hover {
     background-color: var(--color-foreground-background-lighter);
     cursor: pointer;
   }
-  .issue-id {
+  .patch-id {
     color: var(--color-foreground-faded);
     font-size: 0.75rem;
     font-family: var(--font-family-monospace);
@@ -95,24 +95,24 @@
   }
 </style>
 
-<div class="issue-teaser">
+<div class="patch-teaser">
   <div class="state">
     <div
       class="state-icon"
-      class:closed={issue.state.status === "closed"}
-      class:open={issue.state.status === "open"}
+      class:closed={patch.state === "archived"}
+      class:open={patch.state === "proposed"}
     />
   </div>
   <div class="column-left">
     <div class="summary">
       <!-- TODO: Truncation not working on overflow -->
-      {issue.title}
-      <span class="issue-id">{formatObjectId(issue.id)}</span>
+      {patch.title}
+      <span class="patch-id">{formatObjectId(patch.id)}</span>
     </div>
     <Authorship {profile} {config}
       caption="opened"
-      author={issue.author}
-      timestamp={issue.timestamp} />
+      author={patch.author}
+      timestamp={patch.timestamp} />
   </div>
   {#if commentCount > 0}
     <div class="column-right">

@@ -1,26 +1,17 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import { Project, ProjectContent } from "@app/project";
-  import Loading from "@app/Loading.svelte";
-  import { groupCommitHistory, GroupedCommitsHistory } from "@app/commit";
-  import Message from "@app/Message.svelte";
+  import type { GroupedCommitsHistory } from "@app/commit";
 
   export let project: Project;
-  export let commit: string;
+  export let history: GroupedCommitsHistory;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({ content, revision, issue: null, path: null });
+    project.navigateTo({ content, revision, issue: null, patch: null, path: null });
   };
 
   const browseCommit = (event: { detail: string }) => {
     project.navigateTo({ content: ProjectContent.Tree, revision: event.detail, issue: null, path: null });
-  };
-
-  const fetchCommits = async (parentCommit: string): Promise<GroupedCommitsHistory> => {
-    const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
-      parent: parentCommit, verified: true
-    });
-    return groupCommitHistory(commitsQuery);
   };
 </script>
 
@@ -62,9 +53,6 @@
   }
 </style>
 
-{#await fetchCommits(commit)}
-  <Loading center />
-{:then history}
   <div class="history">
     {#each history.headers as group (group.time)}
       <div class="commit-group">
@@ -81,14 +69,3 @@
       </div>
     {/each}
   </div>
-{:catch err}
-  <div class="history">
-    <Message error>
-      {#if err.url}
-        API request to <code class="text-xsmall">{err.url}</code> failed.
-      {:else}
-        {err.message}
-      {/if}
-    </Message>
-  </div>
-{/await}

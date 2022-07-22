@@ -1,4 +1,4 @@
-import type { Stats, Person } from "@app/project";
+import { Stats, Person, Project } from "@app/project";
 import type { Diff } from "@app/diff";
 import { ApiError } from "@app/api";
 
@@ -59,14 +59,14 @@ export interface CommitGroup {
   week: number;
 }
 
-export interface CommitStats {
+export interface DiffStats {
   additions: number;
   deletions: number;
 }
 
 export interface Commit {
   header: CommitHeader;
-  stats: CommitStats;
+  stats: DiffStats;
   diff: Diff;
   branches: string[];
   context: CommitContext;
@@ -127,6 +127,13 @@ export function groupCommits(commits: { header: CommitHeader; context: CommitCon
   } catch (err) {
     throw new ApiError("Not able to create commit history, please consider updating seed HTTP API.");
   }
+}
+
+export async function fetchCommits(project: Project, parentCommit: string): Promise<GroupedCommitsHistory> {
+  const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
+    parent: parentCommit, verified: true
+  });
+  return groupCommitHistory(commitsQuery);
 }
 
 export function groupCommitsByWeek(commits: CommitMetadata[]): CommitGroup[] {

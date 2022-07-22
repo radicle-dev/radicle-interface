@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import Loading from "@app/Loading.svelte";
   import type { Blob, Project } from "@app/project";
   import { canonicalize, capitalize } from "@app/utils";
-  import IssueComment from "@app/base/projects/Issue/IssueComment.svelte";
-  import { Issue } from "@app/issue";
-  import IssueAuthorship from "@app/base/projects/Issue/IssueAuthorship.svelte";
+  import { formatObjectId } from "@app/cobs";
+  import Comment from "@app/Comment.svelte";
+  import type { Issue } from "@app/issue";
+  import Authorship from "@app/Authorship.svelte";
 
-  export let issue: string;
+  export let issue: Issue;
   export let project: Project;
   export let config: Config;
 
@@ -109,60 +109,58 @@
   }
 </style>
 
-{#await Issue.getIssue(project.urn, issue, project.seed.api)}
-  <Loading center />
-{:then issue}
-  <div class="issue">
-    <header>
-      <div class="summary">
-        <div class="summary-left">
-          <span class="summary-title text-medium">
-            {issue.title}
-          </span>
-          <span class="font-mono id">{issue.id}</span>
-        </div>
-        <div
-          class="summary-state"
-          class:closed={issue.state.status === "closed"}
-          class:open={issue.state.status === "open"}
-        >
-          {capitalize(issue.state.status)}
-        </div>
+<div class="issue">
+  <header>
+    <div class="summary">
+      <div class="summary-left">
+        <span class="summary-title text-medium">
+          {issue.title}
+        </span>
+        <span class="font-mono id desktop">{issue.id}</span>
+        <span class="font-mono id mobile">{formatObjectId(issue.id)}</span>
       </div>
-      <IssueAuthorship author={issue.author} timestamp={issue.timestamp} caption="opened on" {config} />
-    </header>
-    <main>
-      <div class="comments">
-        <IssueComment comment={issue.comment} {getImage} {config} />
-        {#each issue.discussion as comment}
-          <IssueComment {comment} {getImage} {config} />
-          {#if comment.replies}
-            <div class="replies">
-              {#each comment.replies as reply}
-                <IssueComment comment={reply} {getImage} {config} />
-              {/each}
+      <div
+        class="summary-state"
+        class:closed={issue.state.status === "closed"}
+        class:open={issue.state.status === "open"}
+      >
+        {capitalize(issue.state.status)}
+      </div>
+    </div>
+    <Authorship {config}
+      author={issue.author} timestamp={issue.timestamp} caption="opened on" />
+  </header>
+  <main>
+    <div class="comments">
+      <Comment comment={issue.comment} {getImage} {config} />
+      {#each issue.discussion as comment}
+        <Comment {comment} {getImage} {config} />
+        {#if comment.replies}
+          <div class="replies">
+            {#each comment.replies as reply}
+              <Comment comment={reply} {getImage} {config} />
+            {/each}
+          </div>
+        {/if}
+      {/each}
+    </div>
+    <div class="metadata desktop">
+      <div class="metadata-section">
+        <div class="metadata-section-header">
+          Labels
+        </div>
+        <div class="metadata-section-body">
+          {#if issue.labels?.length}
+            {#each issue.labels as label}
+              <span class="label">{label}</span>
+            {/each}
+          {:else}
+            <div class="metadata-section-empty">
+              No labels.
             </div>
           {/if}
-        {/each}
-      </div>
-      <div class="metadata">
-        <div class="metadata-section">
-          <div class="metadata-section-header">
-            Labels
-          </div>
-          <div class="metadata-section-body">
-            {#if issue.labels?.length}
-              {#each issue.labels as label}
-                <span class="label">{label}</span>
-              {/each}
-            {:else}
-              <div class="metadata-section-empty">
-                No labels.
-              </div>
-            {/if}
-          </div>
         </div>
       </div>
-    </main>
-  </div>
-{/await}
+    </div>
+  </main>
+</div>

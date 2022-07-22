@@ -8,7 +8,7 @@
   const dispatch = createEventDispatcher();
 
   export let diff: Diff;
-  export let stats: CommitStats;
+  export let stats: DiffStats;
 </script>
 
 <style>

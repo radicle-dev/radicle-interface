@@ -1,14 +1,15 @@
 <script lang="ts">
-  import type { Writable } from 'svelte/store';
-  import { navigate } from 'svelte-routing';
-  import * as utils from '@app/utils';
-  import { Browser, ProjectContent, Project } from '@app/project';
-  import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
-  import BranchSelector from '@app/base/projects/BranchSelector.svelte';
-  import PeerSelector from '@app/base/projects/PeerSelector.svelte';
+  import type { Writable } from "svelte/store";
+  import { navigate } from "svelte-routing";
+  import * as utils from "@app/utils";
+  import { Browser, ProjectContent, Project } from "@app/project";
+  import AnchorBadge from "@app/base/profiles/AnchorBadge.svelte";
+  import BranchSelector from "@app/base/projects/BranchSelector.svelte";
+  import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import type { Tree } from "@app/project";
   import Input from "@app/Input.svelte";
-  import { groupIssues, Issue } from '@app/issue';
+  import { groupIssues, Issue } from "@app/issue";
+  import { groupPatches, Patch } from "@app/patch";
 
   export let project: Project;
   export let tree: Tree;
@@ -29,20 +30,13 @@
     });
   }
 
-  // Switches between the browser and commit view.
-  const toggleContent = (input: ProjectContent) => {
+  // Switches between project views.
+  const toggleContent = (input: ProjectContent, keepSourceInPath: boolean) => {
     project.navigateTo({
       content: content === input ? ProjectContent.Tree : input,
-      issue: null // Removing issue here from browserStore to not contaminate path on navigation.
-    });
-  };
-
-  const toggleIssues = () => {
-    project.navigateTo({
-      content: content !== ProjectContent.Issues ? ProjectContent.Issues : ProjectContent.Tree,
-      revision: null,
-      issue: null,
-      path: null,
+      issue: null, // Removing issue here from browserStore to not contaminate path on navigation.
+      patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
+      ...(keepSourceInPath ? null : { revision: null, path: null }),
     });
   };
 
@@ -141,46 +135,59 @@
 
 <header>
   {#if peers.length > 0}
-    <PeerSelector {peers} {toggleDropdown} peer={browser.peer}
+    <PeerSelector
+      {peers}
+      {toggleDropdown}
+      peer={browser.peer}
       bind:peersDropdown={dropdownState.peer}
       on:peerChanged={(event) => updatePeer(event.detail)} />
   {/if}
 
-  <BranchSelector {branches} {project} {revision} {toggleDropdown}
+  <BranchSelector
+    {branches}
+    {project}
+    {revision}
+    {toggleDropdown}
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
 
   <div class="anchor widget">
-    <AnchorBadge {commit} {anchors}
-      head={project.head} on:click={(event) => updateRevision(event.detail)} />
+    <AnchorBadge
+      {commit}
+      {anchors}
+      head={project.head}
+      on:click={(event) => updateRevision(event.detail)} />
   </div>
 
   {#if seed.git.host}
     <span>
-      <div class="clone clickable widget" on:click={() => toggleDropdown("clone")}>
+      <div
+        class="clone clickable widget"
+        on:click={() => toggleDropdown("clone")}>
         Clone
       </div>
       <div
         class="dropdown clone-dropdown"
-        class:clone-dropdown-visible={dropdownState.clone}
-      >
+        class:clone-dropdown-visible={dropdownState.clone}>
         <Input
           name="rad-clone-url"
           value="rad clone rad://{seed.git.host}/{utils.parseRadicleId(urn)}"
           class="yellow"
-          clipboard
-        />
+          clipboard />
         <label for="rad-clone-url">
-          Use the <a target="_blank" href="https://radicle.network/get-started.html" class="link">Radicle CLI</a> to clone this project.
+          Use the <a
+            target="_blank"
+            href="https://radicle.network/get-started.html"
+            class="link">Radicle CLI</a> to clone this project.
         </label>
         <br />
         <Input
           name="git-clone-url"
           value="https://{seed.git.host}/{utils.parseRadicleId(urn)}.git"
           class="yellow"
-          clipboard
-        />
-        <label for="git-clone-url">Use Git to clone this repository from the URL above.</label>
+          clipboard />
+        <label for="git-clone-url"
+          >Use Git to clone this repository from the URL above.</label>
       </div>
     </span>
   {/if}
@@ -189,22 +196,39 @@
       <div
         class="stat seed clickable widget"
         on:click={() => navigate(`/seeds/${seed.api.host}`)}
-        title="Project data is fetched from this seed"
-      >
+        title="Project data is fetched from this seed">
         <span>{seed.api.host}</span>
       </div>
     {/if}
   </span>
-  <div class="stat commit-count clickable widget" class:active={content == ProjectContent.History} on:click={() => toggleContent(ProjectContent.History)}>
+  <div
+    class="stat commit-count clickable widget"
+    class:active={content == ProjectContent.History}
+    on:click={() => toggleContent(ProjectContent.History, true)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   {#await Issue.getIssues(project.urn, seed.api) then issues}
-    <div class="stat issue-count clickable widget" class:active={content == ProjectContent.Issues} on:click={toggleIssues}>
+    <div
+      class="stat issue-count clickable widget"
+      class:active={content == ProjectContent.Issues}
+      on:click={() => toggleContent(ProjectContent.Issues, false)}>
       <strong>{groupIssues(issues).open.length}</strong> issue(s)
     </div>
   {:catch}
     <div class="stat issue-count not-allowed widget" title="Not supported">
       0 issue(s)
+    </div>
+  {/await}
+  {#await Patch.getPatches(project.urn, seed.api) then patches}
+    <div
+      class="stat patch-count clickable widget"
+      class:active={content == ProjectContent.Patches}
+      on:click={() => toggleContent(ProjectContent.Patches, false)}>
+      <strong>{groupPatches(patches).proposed.length}</strong> patch(es)
+    </div>
+  {:catch}
+    <div class="stat patch-count not-allowed widget" title="Not supported">
+      0 patch(es)
     </div>
   {/await}
   <div class="stat contributor-count widget">

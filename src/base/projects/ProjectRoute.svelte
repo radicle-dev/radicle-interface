@@ -10,6 +10,7 @@
   export let route: string | null = null;
   export let revision: string | null = null;
   export let issue: string | null = null;
+  export let patch: string | null = null;
   export let peer: string | null;
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
@@ -32,6 +33,8 @@
     browse.revision = revision;
   } else if (issue) {
     browse.issue = issue;
+  } else if (patch) {
+    browse.patch = patch;
   } else if (head) {
     browse.revision = head;
   } else {

@@ -36,7 +36,9 @@ export enum ProjectContent {
   History,
   Commit,
   Issues,
-  Issue
+  Issue,
+  Patches,
+  Patch
 }
 
 export interface ProjectInfo {
@@ -103,6 +105,7 @@ export interface Browser {
   content: ProjectContent;
   revision: string | null;
   issue: string | null;
+  patch: string | null;
   peer: string | null;
   path: string | null;
   line: number | null;
@@ -113,6 +116,7 @@ export const browserStore = writable({
   branches: {},
   revision: null,
   issue: null,
+  patch: null,
   peer: null,
   path: null,
   line: null,
@@ -122,6 +126,7 @@ export interface BrowseTo {
   content?: ProjectContent;
   revision?: string | null;
   issue?: string | null;
+  patch?: string | null;
   path?: string | null;
   peer?: string | null;
   line?: number | null;
@@ -139,7 +144,7 @@ export function browse(browse: BrowseTo): void {
 }
 
 export function path(opts: PathOptions): string {
-  const { urn, profile, seed, peer, content, revision, path, issue } = opts;
+  const { urn, profile, seed, peer, content, revision, path, issue, patch } = opts;
   const result = [];
 
   if (profile) {
@@ -170,6 +175,14 @@ export function path(opts: PathOptions): string {
       result.push("issues");
       break;
 
+    case ProjectContent.Patches:
+      result.push("patches");
+      break;
+
+    case ProjectContent.Patch:
+      result.push("patches");
+      break;
+
     default:
       result.push("tree");
       break;
@@ -177,6 +190,10 @@ export function path(opts: PathOptions): string {
 
   if (issue) {
     result.push(issue);
+  }
+
+  if (patch) {
+    result.push(patch);
   }
 
   if (revision) {

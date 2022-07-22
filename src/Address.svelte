@@ -14,6 +14,8 @@
   export let noAvatar = false;
   export let compact = false;
   export let small = false;
+  export let xsmall = false;
+  export let highlight = false;
   // This property allows components eg. Header.svelte to pass a resolved profile object.
   export let profile: Profile | null = null;
 
@@ -54,9 +56,17 @@
   .address a:hover {
     color: var(--color-foreground);
   }
+  .highlight {
+    color: var(--color-foreground-90);
+    font-weight: bold;
+  }
 </style>
 
-<div class="address" title={address} class:no-badge={noBadge} class:text-small={small}>
+<div class="address" title={address}
+  class:no-badge={noBadge}
+  class:text-small={small}
+  class:text-xsmall={xsmall}
+  class:highlight>
   {#if !noAvatar}
     {#if resolve && profile?.avatar}
       <Avatar inline source={profile.avatar} title={address}/>

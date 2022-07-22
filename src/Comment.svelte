@@ -1,35 +1,33 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Config } from "@app/config";
-  import type { Comment } from "@app/issue";
+  import type { Comment, Thread } from "@app/issue";
   import Avatar from "@app/Avatar.svelte";
   import Markdown from "@app/Markdown.svelte";
   import ReactionSelector from "@app/ReactionSelector.svelte";
   import type { Blob } from "@app/project";
   import { Profile, ProfileType } from "@app/profile";
 
-  import IssueAuthorship from "./IssueAuthorship.svelte";
-  import Reactions from "./Reactions.svelte";
+  import Authorship from "@app/Authorship.svelte";
+  import Reactions from "@app/Reactions.svelte";
 
-  export let comment: Comment;
+  export let comment: Comment | Thread;
   export let config: Config;
+  export let caption = "left a comment";
   export let getImage: (path: string) => Promise<Blob>;
 
   let profile: Profile | null = null;
 
   onMount(async () => {
-    if (comment.author.kind === "resolved" && comment.author.identity.ens?.name) {
-      profile = await Profile.get(comment.author.identity.ens.name, ProfileType.Minimal, config);
+    if (comment.author.profile?.ens?.name) {
+      profile = await Profile.get(comment.author.profile.ens.name, ProfileType.Minimal, config);
     }
   });
 
-  $: source = profile?.avatar ||
-    (comment.author.kind === "resolved"
-      ? comment.author.identity.urn
-      : comment.author.urn);
+  $: source = profile?.avatar || comment.author.urn;
   $: title = profile?.name ||
-    (comment.author.kind === "resolved"
-      ? comment.author.identity.name
+    (comment.author.profile
+      ? comment.author.profile.name
       : comment.author.urn);
 
   const selectReaction = (event: { detail: string }) => {
@@ -80,8 +78,9 @@
   </div>
   <div class="card">
     <div class="card-header">
-      <IssueAuthorship noAvatar {config} {profile}
-        caption="commented on" author={comment.author} timestamp={comment.timestamp} />
+      <Authorship noAvatar {config} {caption} {profile}
+        author={comment.author}
+        timestamp={comment.timestamp} />
       <ReactionSelector on:select={selectReaction} />
     </div>
     <div class="card-body">

@@ -74,6 +74,13 @@
       <Route path="/issues/:issue" let:params>
         <ProjectRoute content={ProjectContent.Issue} issue={params.issue} {peer} {project} {config} />
       </Route>
+
+      <Route path="/patches">
+        <ProjectRoute content={ProjectContent.Patches} {peer} {project} {config} />
+      </Route>
+      <Route path="/patches/:patch" let:params>
+        <ProjectRoute content={ProjectContent.Patch} patch={params.patch} {peer} {project} {config} />
+      </Route>
     </Router>
   {:catch}
     <NotFound title={id} subtitle="This project was not found." />

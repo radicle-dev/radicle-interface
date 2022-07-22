@@ -4,8 +4,12 @@
   import Placeholder from '@app/Placeholder.svelte';
   import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
   import { browserStore } from '@app/project';
+  import { fetchCommits } from '@app/commit';
+  import * as patch from "@app/patch";
+  import * as issue from "@app/issue";
 
   import Header from '@app/base/projects/Header.svelte';
+  import Async from '@app/Async.svelte';
 
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
@@ -13,6 +17,8 @@
   import Issues from './Issues.svelte';
   import Issue from './Issue.svelte';
   import ProjectMeta from './ProjectMeta.svelte';
+  import Patches from './Patches.svelte';
+  import Patch from './Patch.svelte';
 
   export let peer: string | null = null;
   export let config: Config;
@@ -64,9 +70,13 @@
     {#if content == proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />
     {:else if content == proj.ProjectContent.History}
-      <History {project} {commit} />
+      <Async fetch={fetchCommits(project, commit)} let:result>
+        <History {project} history={result} />
+      </Async>
     {:else if content == proj.ProjectContent.Commit}
-      <Commit {project} {commit} />
+      <Async fetch={project.getCommit(commit)} let:result>
+        <Commit {project} commit={result} />
+      </Async>
     {/if}
   {:catch err}
     <div class="container center-content">
@@ -79,9 +89,21 @@
   {/await}
 
   {#if content == proj.ProjectContent.Issues}
-    <Issues {project} {config} />
+    <Async fetch={issue.Issue.getIssues(project.urn, project.seed.api)} let:result>
+      <Issues {project} {config} issues={result} />
+    </Async>
   {:else if content == proj.ProjectContent.Issue && $browserStore.issue}
-    <Issue {project} {config} issue={$browserStore.issue} />
+    <Async fetch={issue.Issue.getIssue(project.urn, $browserStore.issue, project.seed.api)} let:result>
+      <Issue {project} {config} issue={result} />
+    </Async>
+  {:else if content == proj.ProjectContent.Patches}
+    <Async fetch={patch.Patch.getPatches(project.urn, project.seed.api)} let:result>
+      <Patches {project} {config} patches={result} />
+    </Async>
+  {:else if content == proj.ProjectContent.Patch && $browserStore.patch}
+    <Async fetch={patch.Patch.getPatch(project.urn, $browserStore.patch, project.seed.api)} let:result>
+      <Patch {project} {config} patch={result} />
+    </Async>
   {/if}
 {:else}
   <div class="content">
