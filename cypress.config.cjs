@@ -4,6 +4,7 @@ const { startDevServer } = require('@cypress/vite-dev-server');
 
 module.exports = defineConfig({
   video: false,
+  defaultCommandTimeout: 10000,
   e2e: {
     setupNodeEvents(on, config) {
       return require('@cypress/code-coverage/task')(on, config);
@@ -27,5 +28,6 @@ module.exports = defineConfig({
 
     },
     specPattern: 'src/**/*spec.ts',
+    indexHtmlFile: './index.html'
   },
 });

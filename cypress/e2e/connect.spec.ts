@@ -10,8 +10,8 @@ describe("MetaMask", () => {
     });
     cy.intercept("POST", "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby", { data: { safe: null } } );
     cy.intercept("https://gateway.ceramic.network/api/v0/streams", { fixture: "ceramicStream.json" });
-    cy.get("button.connect").click();
-    cy.get("button.secondary").click();
+    cy.get("button.connect").should("have.text", "Connect").click();
+    cy.get("button.secondary").should("have.text", "Connect with Metamask").click();
     cy.get("button.address").should("contain", "3256 – 5721");
     cy.window().then((win) => {
       win.ethereum.changeAccount("0xd3b5586D15140B6f793b260fd90588A0dAefc5B6");

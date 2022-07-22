@@ -59,6 +59,7 @@ describe("Project view", () => {
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy", { fixture: "projectInfo.json" });
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes", { fixture: "projectRemotes.json" });
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/issues", { fixture: "projectIssues.json" });
+    cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/patches", { fixture: "projectPatches.json" });
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/tree/56e4e029c294b08546386e1fb706b772c7433c49", { fixture: "projectTree56e4e02.json" });
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/tree/cbf5df499ab4f4a908f1756fbe2c236a4530516a", { fixture: "projectTreecbf5df4.json" });
     cy.intercept("https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke", { fixture: "projectBranches.json" });
@@ -154,13 +155,31 @@ describe("Project view", () => {
     cy.get("header .summary .text-medium").should("have.text", "initial commit");
     cy.get("header pre.description").should("have.text", "this is the first commit of many");
     cy.get("header .committer").should("have.text", "dabit3");
-    cy.get("div.changeset-summary").should("have.text", "1 file(s) changed\n    with\n    0 addition(s)\n    and\n    0 deletion(s)");
-    cy.get("header.file-header:nth-child(1) div.file-data > *")
+    cy.get("div.changeset-summary").should("have.text", "1 file(s) created, 1 file(s) deleted and 1 file(s) changed\n  with\n  0 addition(s)\n  and\n  0 deletion(s)");
+    cy.get("header.file-header:nth-child(1) p.file-path")
       .first()
-      .should("have.text", "README.md")
+      .should("have.text", "test.md")
       .next()
       .should("have.text", "created");
     cy.get("tr.diff-line td.diff-line-number").contains("16");
     cy.get("tr.diff-line td.diff-line-content").contains("To prevent front-running, the RAD/USDC balances are set through the Uniswap router *proxy* contract");
+  });
+
+  it("Issues button", () => {
+    cy.get("div.stat.issue-count")
+      .click();
+    cy.location().should((location) => {
+      expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/issues');
+    });
+    cy.get("div.stat.issue-count").should("have.class", "active");
+  });
+
+  it("Patches button", () => {
+    cy.get("div.stat.patch-count")
+      .click();
+    cy.location().should((location) => {
+      expect(location.pathname).to.eq('/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/patches');
+    });
+    cy.get("div.stat.patch-count").should("have.class", "active");
   });
 });

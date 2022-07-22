@@ -19,10 +19,44 @@
   },
   "diff": {
     "created": [
-      "README.md"
+      {
+        "path": "test.md",
+        "diff": {
+          "type": "plain",
+          "hunks": [
+            {
+              "header": "@@ -0,0 +1 @@\n",
+              "lines": [
+                {
+                  "type": "addition",
+                  "line": "Hello world\n",
+                  "lineNum": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
     ],
     "deleted": [
-      "LICENSE"
+      {
+        "path": "test.md",
+        "diff": {
+          "type": "plain",
+          "hunks": [
+            {
+              "header": "@@ -0,0 +1 @@\n",
+              "lines": [
+                {
+                  "type": "addition",
+                  "line": "Hello world\n",
+                  "lineNum": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
     ],
     "moved": [],
     "copied": [],

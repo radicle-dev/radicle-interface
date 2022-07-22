@@ -3,6 +3,7 @@ import '@cypress/code-coverage/support';
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
 import '@testing-library/cypress/add-commands';
 import { BigNumber, ethers } from 'ethers';
+import { Resolver } from "@ethersproject/providers";
 
 declare global {
   interface Window {
@@ -27,6 +28,15 @@ export class MockExtensionProvider extends ethers.providers.BaseProvider {
 
   getSigner(addressOrIndex?: string | number): JsonRpcSigner {
     return new JsonRpcSigner({}, this as unknown as JsonRpcProvider, addressOrIndex);
+  }
+
+  async getResolver(name: string): Promise<null | Resolver> {
+    const address = "0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0";
+    return new Resolver(this, address, name, address);
+  }
+
+  async lookupAddress(address: string | Promise<string>): Promise<string | null> {
+    return "mock.eth";
   }
 
   changeAccount(address: string): void {

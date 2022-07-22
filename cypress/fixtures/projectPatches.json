@@ -1,0 +1,90 @@
+[
+  {
+    "id": "hnrkj4c35uoyceb3d1dsscx8qq55cikrd1aio",
+    "author": {
+      "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+      "urn": "rad:git:hnrkkxqo5jgx3bwbphdsmqyk9djkfr368czio",
+      "profile": {
+        "name": "Scooby",
+        "ens": null
+      }
+    },
+    "title": "this is a patch with multiple commits and a merge base",
+    "state": "proposed",
+    "target": "upstream",
+    "labels": [],
+    "revisions": [
+      {
+        "id": "d2a46e1f-88a9-4e72-bc68-3f6afc92003c",
+        "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+        "base": "58c1864cb6c6edd8682830d087bdcef7902cf62a",
+        "oid": "a36d8df141a0d3cedf47c4a42383ed98818195de",
+        "comment": {
+          "author": {
+            "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+            "urn": "rad:git:hnrkkxqo5jgx3bwbphdsmqyk9djkfr368czio",
+            "profile": {
+              "name": "Scooby",
+              "ens": null
+            }
+          },
+          "body": "Signed-off-by: Sebastian Martinez <me@sebastinez.dev>",
+          "reactions": {
+
+          },
+          "replies": null,
+          "timestamp": 1656666433
+        },
+        "discussion": [],
+        "reviews": {},
+        "merges": [],
+        "changeset": null,
+        "timestamp": 1656666433
+      }
+    ],
+    "timestamp": 1656666433
+  },
+  {
+    "id": "hnrkqjf6ucd3o8ffztt7yyeatuj9u4k4957xo",
+    "author": {
+      "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+      "urn": "rad:git:hnrkkxqo5jgx3bwbphdsmqyk9djkfr368czio",
+      "profile": {
+        "name": "Scooby",
+        "ens": null
+      }
+    },
+    "title": "Removing files",
+    "state": "proposed",
+    "target": "upstream",
+    "labels": [],
+    "revisions": [
+      {
+        "id": "7edbb9df-e921-4dff-b2e2-5b0a50c51188",
+        "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+        "base": "58c1864cb6c6edd8682830d087bdcef7902cf62a",
+        "oid": "6da5af5cf09b5db638b8a6f5ce386391c3b74da4",
+        "comment": {
+          "author": {
+            "peer": "hybepksbf5xzew3ztear7k7peddho5wfts3d8uyb9pcdu6sqgnwqak",
+            "urn": "rad:git:hnrkkxqo5jgx3bwbphdsmqyk9djkfr368czio",
+            "profile": {
+              "name": "Scooby",
+              "ens": null
+            }
+          },
+          "body": "Signed-off-by: Sebastian Martinez <me@sebastinez.dev>",
+          "reactions": {},
+          "replies": null,
+          "timestamp": 1656667614
+        },
+        "discussion": [],
+        "reviews": {},
+        "merges": [],
+        "changeset": null,
+        "timestamp": 1656667614
+      }
+    ],
+    "timestamp": 1656667614
+  }
+]

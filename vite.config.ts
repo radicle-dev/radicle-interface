@@ -66,7 +66,7 @@ const config: UserConfig = {
 };
 
 // For Vitest to work we need to unset READABLE_STREAM.
-if (process.env.VITEST) {
+if (process.env.VITEST || process.env.Cypress) {
   config.define = undefined;
 }
 
