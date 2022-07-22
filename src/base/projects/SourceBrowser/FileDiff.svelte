@@ -7,6 +7,7 @@
   const dispatch = createEventDispatcher();
 
   export let file: FileDiff;
+  export let mode: string | null = null;
 
   function collapse() {
     collapsed = !collapsed;
@@ -111,13 +112,38 @@
   .browse {
     display: flex;
   }
+
+  .created {
+    color: var(--color-positive);
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
+    background-color: var(--color-positive-1);
+  }
+  .deleted {
+    color: var(--color-negative);
+    font-family: var(--font-family-monospace);
+    font-size: 0.75rem;
+    background-color: var(--color-negative-1);
+  }
+  .file-header .diff-type {
+    margin-left: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius-medium);
+  }
 </style>
 
 <article id={file.path} class="changeset-file">
-  <header
-    on:click={collapse}>
+  <header class="file-header" on:click={collapse}>
     <div class="actions">
       <p class="file-path">{file.path}</p>
+      {#if mode}
+        <span
+          class="diff-type"
+          class:created={mode === "created"}
+          class:deleted={mode === "deleted"}>
+          {mode}
+        </span>
+      {/if}
     </div>
     <div class="browse clickable" on:click|stopPropagation={() => dispatch("browse", file.path)}>
       <Icon name="browse" width={20} inline fill />

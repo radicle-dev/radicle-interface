@@ -70,6 +70,7 @@ export type LineDiff = Addition | Deletion | Context;
 export interface FileDiff {
   path: string;
   diff: Changeset;
+  eof: EofNewLine | null;
 }
 
 export interface Changeset {
@@ -83,9 +84,15 @@ export interface Hunk {
 }
 
 export interface Diff {
-  created: string[];
-  deleted: string[];
+  created: FileDiff[];
+  deleted: FileDiff[];
   moved: string[];
   copied: string[];
   modified: FileDiff[];
+}
+
+export enum EofNewLine {
+  OldMissing = "oldMissing",
+  NewMissing = "newMissing",
+  BothMissing = "bothMissing",
 }
