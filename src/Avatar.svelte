@@ -1,13 +1,15 @@
 <script lang="ts">
   import { createIcon } from '@app/blockies';
-  import { isAddress, isRadicleId } from '@app/utils';
+  import { isAddress, isPeerId, isRadicleId } from '@app/utils';
 
   export let title: string;
   export let source: string;
   export let inline = false;
+  export let grayscale = false;
   export let glowOnHover = false;
 
   function handleMissingFile() {
+    console.warn("Not able to locate", source);
     source = createContainer(title);
   }
 
@@ -21,9 +23,10 @@
     return avatar.toDataURL();
   }
 
-  $: if (isAddress(source) || isRadicleId(source)) {
+  if (isAddress(source) || isRadicleId(source) || isPeerId(source)) {
     source = createContainer(source);
   }
+  grayscale = isPeerId(title) || isRadicleId(title);
 </script>
 
 <style>
@@ -41,6 +44,9 @@
   .avatar.glowOnHover:hover {
     box-shadow: 0 0 3rem var(--color-secondary);
   }
+  .grayscale {
+    filter: grayscale();
+  }
   .inline {
     display: inline-block !important;
     width: 1rem;
@@ -50,4 +56,5 @@
 </style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
-<img class="avatar" class:inline src={source} {title} on:error={handleMissingFile} class:glowOnHover />
+<img {title} src={source} class="avatar" on:error={handleMissingFile}
+  class:inline class:grayscale class:glowOnHover />
