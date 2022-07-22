@@ -1,6 +1,7 @@
 import { Stats, Person, Project } from "@app/project";
 import type { Diff } from "@app/diff";
 import { ApiError } from "@app/api";
+import { getDaysPassed } from "@app/utils";
 
 export interface CommitsHistory {
   headers: CommitMetadata[];
@@ -185,11 +186,4 @@ export function groupCommitsByWeek(commits: CommitMetadata[]): CommitGroup[] {
   }
 
   return groupedCommits;
-}
-
-// Get amount of days passed between two dates
-function getDaysPassed(from: Date, to: Date): number {
-  return Math.floor(
-    (to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000)
-  );
 }
