@@ -4,7 +4,7 @@
   import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
   import { getImageMime } from "@app/utils";
-  import sanitizeHtml from "sanitize-html";
+  import xss, { getDefaultWhiteList } from "xss";
 
   export let content: string;
   export let getImage: (path: string) => Promise<proj.Blob>;
@@ -15,18 +15,14 @@
   let container: HTMLElement;
 
   const render = (content: string): string => {
-    return sanitizeHtml(marked.parse(content), {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "img",
-        "audio",
-        "video",
-      ]),
-      allowedAttributes: {
-        ...sanitizeHtml.defaults.allowedAttributes,
-        video: ["src"],
+    return xss(marked.parse(content), {
+      whiteList: {
+        ...getDefaultWhiteList(),
+        img: ["src"],
         audio: ["src"],
+        video: ["src"]
       },
-      disallowedTagsMode: "escape",
+      stripIgnoreTag: false,
     });
   };
 

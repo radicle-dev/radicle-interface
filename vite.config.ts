@@ -2,8 +2,10 @@
 import path from 'path';
 import { UserConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import rewriteAll from 'vite-plugin-rewrite-all';
+import { ViteDevServer } from "vite";
 import IstanbulPlugin from 'vite-plugin-istanbul';
+import history from "connect-history-api-fallback";
+import type { Request, Response } from "express-serve-static-core";
 
 const config: UserConfig = {
   optimizeDeps: {
@@ -41,6 +43,9 @@ const config: UserConfig = {
       cypress: true
     })
   ],
+  server: {
+    port: 3000
+  },
   resolve: {
     alias: {
       // This is needed for vite not to choke.
@@ -71,3 +76,21 @@ if (process.env.VITEST || process.env.Cypress) {
 }
 
 export default config;
+
+function rewriteAll() {
+  return {
+    name: 'rewrite-all',
+    configureServer(server: ViteDevServer) {
+      return () => {
+        const handler = history({
+          disableDotRule: true,
+          rewrites: [{ from: /\/$/, to: () => "/index.html" }]
+        });
+
+        server.middlewares.use((req, res, next) => {
+          handler(req as Request, res as Response, next);
+        });
+      };
+    }
+  };
+}

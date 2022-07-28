@@ -20,9 +20,6 @@
   };
 </script>
 
-<style>
-</style>
-
 {#await formatSeeds() then items}
   <Dropdown
     {items}
