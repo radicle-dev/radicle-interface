@@ -21,7 +21,7 @@
     display: inline-flex;
     font-size: var(--font-size-regular);
     line-height: 2rem;
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
     vertical-align: middle;
   }
   .icon {

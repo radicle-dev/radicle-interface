@@ -25,7 +25,7 @@
   }
   header {
     padding: 1rem;
-    background: var(--color-foreground-background-subtle);
+    background: var(--color-foreground-1);
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
   }
@@ -39,7 +39,7 @@
     margin: 0.5rem 0 1rem 0;
   }
   .sha1 {
-    color: var(--color-foreground-80);
+    color: var(--color-foreground-5);
     font-size: var(--font-size-small);
   }
   .authorship {

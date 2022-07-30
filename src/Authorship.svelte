@@ -32,14 +32,14 @@
     padding: 0.125rem 0;
   }
   .caption {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .highlight {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
     font-weight: var(--font-weight-bold);
   }
   .date {
-    color: var(--color-foreground-80);
+    color: var(--color-foreground-6);
   }
 </style>
 

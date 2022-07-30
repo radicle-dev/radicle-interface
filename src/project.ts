@@ -398,7 +398,9 @@ export class Project implements ProjectInfo {
   async getBlob(
     commit: string,
     path: string,
-    options: { highlight: boolean },
+    options:
+      | { highlight: false }
+      | { highlight: true; theme: "base16-ocean.dark" | "base16-ocean.light" },
   ): Promise<Blob> {
     return new Request(
       `projects/${this.urn}/blob/${commit}/${path}`,

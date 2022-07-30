@@ -44,20 +44,20 @@
     font-size: var(--font-size-small);
   }
   .commit-group header {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-6);
   }
   .commit-group-headers {
     margin-bottom: 2rem;
   }
 
   .commit {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
   }
   .commit:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
   }
   .commit:hover {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
     cursor: pointer;
   }
   .commit:first-child {

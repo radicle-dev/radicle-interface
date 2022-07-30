@@ -9,9 +9,9 @@
 
 <style>
   .clone-button {
-    background-color: var(--color-yellow-background);
+    background-color: var(--color-caution-2);
     border-radius: var(--border-radius-small);
-    color: var(--color-yellow);
+    color: var(--color-caution-6);
     cursor: pointer;
     font-family: var(--font-family-monospace);
     min-width: max-content;
@@ -19,12 +19,12 @@
     user-select: none;
   }
   .clone-button:hover {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-caution-3);
   }
   .dropdown {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
-    box-shadow: 16px 16px 32px 32px var(--color-shadow);
+    box-shadow: var(--elevation-low);
     margin-top: 0.5rem;
     padding: 1rem;
     position: absolute;
@@ -40,7 +40,7 @@
     }
   }
   label {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-6);
     display: block;
     font-size: var(--font-size-tiny);
     padding: 0.5rem 0.5rem 0 0.25rem;
@@ -53,9 +53,7 @@
     <div class="dropdown">
       <Input
         name="rad-clone-url"
-        value="rad clone rad://{seedHost}/{utils.parseRadicleId(urn)}"
-        class="yellow"
-        clipboard />
+        value="rad clone rad://{seedHost}/{utils.parseRadicleId(urn)}" />
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
@@ -68,9 +66,7 @@
       <br />
       <Input
         name="git-clone-url"
-        value="https://{seedHost}/{utils.parseRadicleId(urn)}.git"
-        class="yellow"
-        clipboard />
+        value="https://{seedHost}/{utils.parseRadicleId(urn)}.git" />
       <label for="git-clone-url">
         Use Git to clone this repository from the URL above.
       </label>

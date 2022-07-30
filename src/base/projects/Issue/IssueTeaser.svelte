@@ -30,15 +30,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     padding: 0.75rem 0;
   }
   .issue-teaser:hover {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
     cursor: pointer;
   }
   .issue-id {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     margin-left: 0.5rem;
@@ -55,7 +55,7 @@
     flex-basis: 5rem;
   }
   .comment-count {
-    color: var(--color-foreground-70);
+    color: var(--color-foreground-4);
     font-weight: var(--font-weight-bold);
   }
   .comment-count .emoji {
@@ -74,7 +74,7 @@
     background-color: var(--color-positive);
   }
   .closed {
-    background-color: var(--color-negative-2);
+    background-color: var(--color-negative);
   }
   .summary {
     display: flex;

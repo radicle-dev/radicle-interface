@@ -65,13 +65,13 @@
     height: 100%;
   }
   .address a {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
   }
   .address a:hover {
     color: var(--color-foreground);
   }
   .highlight {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
     font-weight: var(--font-weight-bold);
   }
   .wrapper {

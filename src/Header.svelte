@@ -16,6 +16,7 @@
   import MobileNavbar from "./MobileNavbar.svelte";
   import SeedDropdown from "./SeedDropdown.svelte";
   import Button from "@app/Button.svelte";
+  import ThemeToggle from "./ThemeToggle.svelte";
 
   export let session: Session | null;
   export let config: Config;
@@ -40,22 +41,22 @@
     padding: 1.5rem;
     height: 5.5rem;
   }
-  header .left,
-  header .right {
+  .left,
+  .right {
     display: flex;
     align-items: center;
     height: var(--button-regular-height);
+    gap: 1rem;
   }
-  header .nav {
+  .nav {
     display: inline-block;
     height: 100%;
     margin-left: 1.5rem;
     white-space: nowrap;
   }
-  header .nav .seeds-container {
+  .nav .seeds-container {
     display: inline-block;
   }
-
   .logo {
     display: flex;
     height: var(--button-regular-height);
@@ -78,27 +79,25 @@
   .search {
     height: var(--button-regular-height);
     width: 16rem;
-    margin-left: 1.5rem;
+    margin-left: 0.5rem;
     display: inline-block;
   }
   .connect {
     display: inline-block;
-    margin-left: 2rem;
   }
   .network {
-    color: var(--color-tertiary);
-    background-color: var(--color-tertiary-background);
+    color: var(--color-tertiary-6);
+    background-color: var(--color-tertiary-1);
     line-height: 1.5em;
     padding: 0rem 1rem;
     height: var(--button-regular-height);
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-round);
-    margin-left: 2rem;
   }
   .network.unavailable {
-    color: #888;
-    background-color: #ffffff11;
+    color: var(--color-foreground-5);
+    background-color: var(--color-foreground-3);
   }
   .network:last-child {
     margin-right: 0;
@@ -108,13 +107,12 @@
     padding: 0.5rem 0.5rem;
     cursor: pointer;
     user-select: none;
-    color: var(--color-foreground-6);
+    color: var(--color-foreground);
   }
   .register:hover {
     color: var(--color-foreground);
   }
   .balance {
-    margin: 0 2rem;
     white-space: nowrap;
   }
 
@@ -122,9 +120,13 @@
     display: none;
   }
   @media (max-width: 720px) {
+    header .right {
+      gap: 1rem;
+    }
     .network,
     .search,
     header .nav,
+    .register,
     .balance {
       display: none;
     }
@@ -132,7 +134,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-left: 10px;
       height: 42px;
       width: 42px;
       z-index: 2;
@@ -178,7 +179,6 @@
   </div>
 
   <div class="right">
-    <a use:link class="register" href="/registrations">Register</a>
     {#if config && config.network.name === "rinkeby"}
       <span class="network">Rinkeby</span>
     {:else if config && config.network.name === "homestead"}
@@ -186,6 +186,7 @@
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
+    <a use:link class="register" href="/registrations">Register</a>
 
     {#if address}
       <span class="balance">
@@ -223,6 +224,7 @@
         <Connect buttonVariant="foreground" {config} />
       </span>
     {/if}
+    <ThemeToggle />
     <div class="toggle" on:click={toggleNavbar}>
       <span style="transform: scale(1.2);">
         <Icon name="ellipsis" />

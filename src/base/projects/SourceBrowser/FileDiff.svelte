@@ -19,7 +19,7 @@
 
 <style>
   .changeset-file {
-    border: 1px solid var(--color-foreground-3);
+    border: 1px solid var(--color-foreground-4);
     border-radius: var(--border-radius-small);
     min-width: var(--content-min-width);
     margin-bottom: 2rem;
@@ -35,7 +35,7 @@
     padding: 1rem;
   }
   main {
-    border-top: 1px dashed var(--color-foreground-3);
+    border-top: 1px dashed var(--color-foreground-4);
   }
   .changeset-file main {
     overflow-x: auto;
@@ -53,9 +53,9 @@
   }
   .binary {
     padding: 1rem;
-    color: var(--color-foreground-level-4);
+    color: var(--color-foreground-5);
     text-align: center;
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-foreground-2);
   }
   table.diff {
     font-family: var(--font-family-monospace);
@@ -77,12 +77,12 @@
   }
   td.diff-line-number[data-type="+"],
   td.diff-line-type[data-type="+"] {
-    background-color: var(--color-positive-background);
+    background-color: var(--color-positive-2);
     color: var(--color-positive-6);
   }
   td.diff-line-number[data-type="-"],
   td.diff-line-type[data-type="-"] {
-    background-color: var(--color-negative-background);
+    background-color: var(--color-negative-2);
     color: var(--color-negative-6);
   }
   td.diff-line-number.left {
@@ -103,10 +103,10 @@
   }
   td.diff-expand-header {
     padding-left: 0.5rem;
-    color: var(--color-foreground-4);
+    color: var(--color-foreground-5);
   }
   td.diff-line-number {
-    color: var(--color-foreground-4);
+    color: var(--color-foreground-5);
   }
   .browse {
     display: flex;

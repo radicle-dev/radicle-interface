@@ -28,10 +28,10 @@
     height: 1.5rem;
   }
   .clipboard:hover :global(svg) {
-    fill: var(--color-foreground-90);
+    fill: var(--color-foreground);
   }
   .clipboard:active :global(svg) {
-    fill: var(--color-positive);
+    fill: var(--color-foreground-6);
   }
   .clipboard:hover {
     border-radius: var(--border-radius);

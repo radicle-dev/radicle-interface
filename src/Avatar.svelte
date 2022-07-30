@@ -6,7 +6,6 @@
   export let source: string;
   export let inline = false;
   export let grayscale = false;
-  export let glowOnHover = false;
 
   function handleMissingFile() {
     console.warn("Not able to locate", source);
@@ -41,9 +40,6 @@
     background-size: cover;
     background-repeat: no-repeat;
   }
-  .avatar.glowOnHover:hover {
-    box-shadow: 0 0 3rem var(--color-secondary);
-  }
   .grayscale {
     filter: grayscale();
   }
@@ -62,5 +58,4 @@
   class="avatar"
   on:error={handleMissingFile}
   class:inline
-  class:grayscale
-  class:glowOnHover />
+  class:grayscale />

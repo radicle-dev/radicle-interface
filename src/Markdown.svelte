@@ -67,8 +67,8 @@
   .front-matter {
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
-    color: var(--color-foreground-90);
-    border: 1px dashed var(--color-foreground-subtle);
+    color: var(--color-foreground);
+    border: 1px dashed var(--color-foreground-4);
     padding: 0.5rem;
     margin-bottom: 1.5rem;
   }
@@ -96,7 +96,7 @@
     font-weight: var(--font-weight-medium);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
-    border-bottom: 1px solid var(--color-foreground-subtle);
+    border-bottom: 1px solid var(--color-foreground-4);
   }
 
   .markdown :global(h2) {
@@ -104,7 +104,7 @@
     font-weight: var(--font-weight-normal);
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
-    border-bottom: 1px dashed var(--color-foreground-subtle);
+    border-bottom: 1px dashed var(--color-foreground-4);
   }
 
   .markdown :global(h3) {
@@ -163,7 +163,7 @@
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    color: var(--color-light);
+    color: var(--color-secondary-6);
   }
 
   .markdown :global(pre code) {
@@ -174,7 +174,7 @@
   .markdown :global(pre) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-2);
     padding: 1rem !important;
     border-radius: var(--border-radius-small);
     margin: 1rem 0;
@@ -194,7 +194,7 @@
   }
   .markdown :global(a) {
     text-decoration: none;
-    border-bottom: 1px solid var(--color-foreground-90);
+    border-bottom: 1px solid var(--color-foreground-6);
   }
   .markdown :global(a.no-underline) {
     border-bottom: none;
@@ -206,7 +206,7 @@
     overflow: hidden;
     background: transparent;
     border: 0;
-    border-bottom: 1px solid var(--color-foreground-faded);
+    border-bottom: 1px solid var(--color-foreground-4);
   }
 
   .markdown :global(ol) {
@@ -225,17 +225,17 @@
     border-collapse: collapse;
     border-radius: 0.5rem;
     border-style: hidden;
-    box-shadow: 0 0 0 1px var(--color-foreground-subtle);
+    box-shadow: 0 0 0 1px var(--color-foreground-4);
     overflow: hidden;
   }
   .markdown :global(td) {
     text-align: left;
     text-overflow: ellipsis;
-    border: 1px solid var(--color-foreground-subtle);
+    border: 1px solid var(--color-foreground-4);
     padding: 0.5rem 1rem;
   }
   .markdown :global(tr:nth-child(even)) {
-    background-color: var(--color-foreground-even-subtler);
+    background-color: var(--color-foreground-2);
   }
   .markdown :global(th) {
     text-align: center;

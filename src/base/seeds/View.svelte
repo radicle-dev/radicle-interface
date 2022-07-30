@@ -62,13 +62,13 @@
     align-items: center;
   }
   .signed-in {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     margin-right: 0.5rem;
   }
   .session-info {
     display: flex;
     flex-direction: row;
-    background: var(--color-secondary-background);
+    background: var(--color-secondary-2);
     padding: 0.25rem 0.5rem;
     border-radius: var(--border-radius);
   }

@@ -18,7 +18,7 @@
     height: 0.5rem;
     width: 100%;
     border-radius: var(--border-radius-small);
-    background-color: var(--color-secondary-background);
+    background-color: var(--color-secondary-2);
   }
   .loader {
     height: 0.5rem;

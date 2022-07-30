@@ -24,9 +24,9 @@
     position: absolute;
   }
   .popup {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
-    box-shadow: 16px 16px 32px 32px var(--color-shadow);
+    box-shadow: var(--elevation-low);
     color: var(--color-foreground);
     font-size: var(--font-size-tiny);
     left: -10rem;
@@ -45,12 +45,13 @@
     color: var(--color-tertiary);
   }
   .committer {
-    border-top: 1px dashed var(--color-foreground-subtle);
+    border-top: 1px dashed var(--color-foreground-4);
     padding: 0.75rem;
   }
   .peer {
     padding-top: 0.5rem;
     word-break: break-all;
+    color: var(--color-foreground-5);
   }
 </style>
 
@@ -75,7 +76,7 @@
           <CommitAuthorship {commit} showAuthor={false} showTime={false} />
           {#if commit.context.committer}
             <div class="peer">
-              <span class="faded">{commit.context.committer.peer.id}</span>
+              {commit.context.committer.peer.id}
             </div>
           {/if}
         </div>

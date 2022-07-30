@@ -2,7 +2,6 @@
   import { onDestroy } from "svelte";
 
   export let small = false;
-  export let color = "secondary";
   export let center = false;
   export let fadeIn = false;
   export let margins = false;
@@ -46,7 +45,7 @@
   .spinner > div {
     width: 18px;
     height: 18px;
-    background-color: #5555ff;
+    background-color: var(--color-secondary);
     border-radius: var(--border-radius-round);
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -157,10 +156,10 @@
       class:center
       class:margins
       class:condensed>
-      <div class="bounce1" style="background-color: var(--color-{color})" />
+      <div class="bounce1" style="background-color: var(--color-secondary)" />
       {#if !condensed}
-        <div class="bounce2" style="background-color: var(--color-{color})" />
-        <div class="bounce3" style="background-color: var(--color-{color})" />
+        <div class="bounce2" style="background-color: var(--color-secondary)" />
+        <div class="bounce3" style="background-color: var(--color-secondary)" />
       {/if}
     </div>
   </div>

@@ -17,7 +17,7 @@
   button {
     background: transparent;
     border-radius: var(--border-radius-round);
-    border: 1px solid var(--color-foreground-6);
+    border: 1px solid var(--color-foreground);
     cursor: pointer;
     font-family: var(--font-family-sans-serif);
     font-feature-settings: "ss01", "ss02", "cv01", "cv03";
@@ -34,11 +34,11 @@
     color: var(--color-background);
   }
   .foreground {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground);
   }
   .foreground[disabled] {
-    color: var(--color-foreground-faded);
-    border-color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
+    border-color: var(--color-foreground-5);
   }
   .foreground:not([disabled]):hover {
     background-color: var(--color-foreground);
@@ -49,8 +49,8 @@
     border-color: var(--color-primary);
   }
   .primary[disabled] {
-    color: var(--color-primary-faded);
-    border-color: var(--color-primary-faded);
+    color: var(--color-primary-5);
+    border-color: var(--color-primary-5);
   }
   .primary:not([disabled]):hover {
     background-color: var(--color-primary);
@@ -61,8 +61,8 @@
     border-color: var(--color-secondary);
   }
   .secondary[disabled] {
-    color: var(--color-secondary-faded);
-    border-color: var(--color-secondary-faded);
+    color: var(--color-secondary-5);
+    border-color: var(--color-secondary-5);
   }
   .secondary:not([disabled]):hover {
     background-color: var(--color-secondary);
@@ -73,19 +73,19 @@
     border-color: var(--color-negative);
   }
   .negative[disabled] {
-    color: var(--color-negative-faded);
-    border-color: var(--color-negative-faded);
+    color: var(--color-negative-5);
+    border-color: var(--color-negative-5);
   }
   .negative:not([disabled]):hover {
     background-color: var(--color-negative);
   }
 
   .text {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground);
     border: none;
   }
   .text[disabled] {
-    color: var(--color-foreground-4);
+    color: var(--color-foreground-5);
   }
   .text:not([disabled]):hover {
     background-color: var(--color-foreground);

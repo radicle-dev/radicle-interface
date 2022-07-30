@@ -14,23 +14,23 @@
   }
   .metadata-section {
     margin-bottom: 1rem;
-    border-bottom: 1px dashed var(--color-foreground-subtle);
+    border-bottom: 1px dashed var(--color-foreground-4);
   }
   .metadata-section-header {
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .metadata-section-body {
     margin-bottom: 1.25rem;
   }
   .metadata-section-empty {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
   }
   .label {
     border-radius: var(--border-radius);
     color: var(--color-tertiary);
-    background-color: var(--color-tertiary-background);
+    background-color: var(--color-tertiary-2);
     padding: 0.25rem 0.75rem;
     margin-right: 0.5rem;
     font-size: var(--font-size-small);

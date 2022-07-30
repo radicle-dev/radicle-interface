@@ -32,7 +32,7 @@
   }
   button {
     border-radius: var(--border-radius-small);
-    color: var(--color-foreground-80);
+    color: var(--color-foreground-6);
     cursor: pointer;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
@@ -46,12 +46,12 @@
   button.active {
     cursor: pointer;
     color: var(--color-foreground);
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
   }
   button[disabled],
   button[disabled]:hover {
     cursor: not-allowed;
-    color: var(--color-foreground-80);
+    color: var(--color-foreground-6);
   }
 </style>
 

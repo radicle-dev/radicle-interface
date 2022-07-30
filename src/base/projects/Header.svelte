@@ -56,23 +56,23 @@
     cursor: pointer;
   }
   .clickable:hover {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
   }
   .not-allowed {
     cursor: not-allowed;
   }
   .not-allowed.widget {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
     height: 2.125rem;
-    background: var(--color-foreground-background);
+    background: var(--color-foreground-1);
   }
   .stat.active {
     color: var(--color-background);
-    background: var(--color-foreground-90);
+    background: var(--color-foreground);
   }
 
   @media (max-width: 960px) {

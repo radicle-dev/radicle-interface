@@ -18,11 +18,11 @@
 
 <style>
   .dropdown {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     position: absolute;
-    box-shadow: 16px 16px 32px 32px var(--color-shadow);
+    box-shadow: var(--elevation-low);
     z-index: 10;
     border-radius: var(--border-radius-small);
   }
@@ -37,7 +37,7 @@
   }
   .dropdown-item:hover,
   .selected {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
   }
   @media (max-width: 720px) {
     .dropdown {

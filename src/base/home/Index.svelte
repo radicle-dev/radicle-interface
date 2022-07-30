@@ -41,7 +41,7 @@
     max-width: 74rem;
   }
   .blurb {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground);
     padding: 0rem;
     max-width: 70%;
     font-size: var(--font-size-medium);

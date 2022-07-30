@@ -35,19 +35,19 @@
     cursor: pointer;
     padding: 0.25rem;
     margin: 0.125rem 0;
-    color: var(--color-foreground-level-6);
+    color: var(--color-foreground-6);
     user-select: none;
     line-height: 1.5rem;
     white-space: nowrap;
   }
   .folder:hover {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
   }
 
   .folder-name {
     margin-left: 0.25rem;
-    color: var(--color-light);
+    color: var(--color-secondary-6);
   }
 
   .container {

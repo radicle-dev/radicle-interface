@@ -31,7 +31,7 @@
     padding: 0 0.5rem 0 1rem;
     color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
-    border-color: var(--color-foreground-subtle);
+    border-color: var(--color-foreground-3);
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
@@ -48,7 +48,7 @@
   .last-commit {
     padding: 0.5rem;
     color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
+    background-color: var(--color-secondary-2);
     font-size: var(--font-size-tiny);
     border-radius: var(--border-radius-small);
     overflow-x: hidden;
@@ -62,7 +62,7 @@
   }
 
   .line-numbers {
-    color: var(--color-foreground-subtle);
+    color: var(--color-foreground-4);
     font-family: var(--font-family-sans-serif);
     text-align: right;
     user-select: none;
@@ -73,7 +73,7 @@
   }
   .line-number:hover,
   .line-number.highlighted {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
   }
 
   .code {
@@ -84,7 +84,7 @@
   .container {
     position: relative;
     display: flex;
-    border: 1px solid var(--color-foreground-subtle);
+    border: 1px solid var(--color-foreground-3);
     border-top-style: dashed;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
@@ -97,8 +97,8 @@
     align-items: center;
     width: 100%;
     height: 16rem;
-    background-color: var(--color-foreground-background);
-    color: var(--color-foreground-90);
+    background-color: var(--color-foreground-1);
+    color: var(--color-foreground-6);
     font-family: var(--font-family-monospace);
   }
   .binary > * {
@@ -110,7 +110,7 @@
     width: 100%;
     height: 1.5rem;
     top: 1rem;
-    background-color: var(--color-yellow-background-lighter);
+    background-color: var(--color-caution-3);
   }
 
   .no-scrollbar {

@@ -42,7 +42,7 @@
 <style>
   header {
     padding: 1rem;
-    background: var(--color-foreground-background-subtle);
+    background: var(--color-foreground-1);
     border-radius: var(--border-radius);
   }
   .patch {
@@ -65,22 +65,23 @@
   }
   .id {
     font-size: var(--font-size-tiny);
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .summary-state {
     padding: 0.5rem 1rem;
     border-radius: 1.25rem;
   }
   .proposed {
-    color: var(--color-positive);
-    background-color: var(--color-positive-background);
+    color: var(--color-positive-6);
+    background-color: var(--color-positive-1);
   }
   .draft {
-    color: var(--color-positive);
-    background-color: var(--color-positive-background);
+    color: var(--color-positive-6);
+    background-color: var(--color-positive-1);
   }
   .archived {
-    background-color: var(--color-negative-2);
+    color: var(--color-negative-6);
+    background-color: var(--color-negative-1);
   }
   .flex {
     display: flex;

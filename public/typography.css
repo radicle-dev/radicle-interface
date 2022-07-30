@@ -61,7 +61,7 @@ p {
 }
 
 .txt-missing {
-  color: var(--color-foreground-faded);
+  color: var(--color-foreground-5);
   font-style: italic;
 }
 

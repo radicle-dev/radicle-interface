@@ -1,10 +1,13 @@
 <script lang="ts">
   import type { Readable } from "svelte/store";
   import type * as proj from "@app/project";
+  import type { Theme } from "@app/ThemeToggle.svelte";
+
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
+  import { theme } from "@app/ThemeToggle.svelte";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -17,7 +20,7 @@
 
   type State =
     | { status: Status.Loading; path: string }
-    | { status: Status.Loaded; path: string; blob: proj.Blob };
+    | { status: Status.Loaded; path: string; blob: proj.Blob; theme: Theme };
 
   export let project: proj.Project;
   export let tree: proj.Tree;
@@ -33,8 +36,12 @@
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
 
-  const loadBlob = async (path: string): Promise<proj.Blob> => {
-    if (state.status === Status.Loaded && state.path === path) {
+  const loadBlob = async (path: string, theme: Theme): Promise<proj.Blob> => {
+    if (
+      state.status === Status.Loaded &&
+      state.path === path &&
+      state.theme === theme
+    ) {
       return state.blob;
     }
 
@@ -42,10 +49,16 @@
     const promise =
       path === "/"
         ? project.getReadme(commit)
-        : project.getBlob(commit, path, { highlight: !isMarkdownPath });
+        : project.getBlob(
+            commit,
+            path,
+            isMarkdownPath
+              ? { highlight: false }
+              : { highlight: true, theme: `base16-ocean.${theme}` },
+          );
 
     state = { status: Status.Loading, path };
-    state = { status: Status.Loaded, path, blob: await promise };
+    state = { status: Status.Loaded, path, blob: await promise, theme };
 
     return state.blob;
   };
@@ -56,11 +69,11 @@
     return project.getBlob(commit, finalPath, { highlight: false });
   };
 
-  const onSelect = async ({ detail: newPath }: { detail: string }) => {
+  const onSelect = async (newPath: string, theme: Theme) => {
     // Ensure we don't spend any time in a "loading" state. This means
     // the loading spinner won't be shown, and instead the blob will be
     // displayed once loaded.
-    const blob = await loadBlob(newPath);
+    const blob = await loadBlob(newPath, theme);
     getBlob = new Promise(resolve => resolve(blob));
 
     // Close mobile tree if user navigates to other file
@@ -79,7 +92,7 @@
     mobileFileTree = !mobileFileTree;
   };
 
-  $: getBlob = loadBlob(path);
+  $: getBlob = loadBlob(path, $theme);
   $: loadingPath = state.status === Status.Loading ? state.path : null;
 </script>
 
@@ -171,7 +184,14 @@
     {#if tree.entries.length > 0}
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree">
-          <Tree {tree} {path} {fetchTree} {loadingPath} on:select={onSelect} />
+          <Tree
+            {tree}
+            {path}
+            {fetchTree}
+            {loadingPath}
+            on:select={e => {
+              onSelect(e.detail, $theme);
+            }} />
         </div>
       </div>
       <div class="column-right">

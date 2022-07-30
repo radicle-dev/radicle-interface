@@ -56,7 +56,7 @@
   }
   .card {
     flex: 1;
-    border: 1px solid var(--color-foreground-3);
+    border: 1px solid var(--color-foreground-4);
     border-radius: var(--border-radius);
   }
   .card-header {

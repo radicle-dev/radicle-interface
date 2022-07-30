@@ -25,17 +25,20 @@
   }
   .modal-overlay {
     z-index: 200;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: #00000075;
   }
   .modal {
     padding: 2rem 3rem;
     border: 1px solid var(--color-secondary);
     font-family: var(--font-family-sans-serif);
     background: var(--color-background);
-    box-shadow: 8px 8px 64px var(--box-shadow-color);
+    box-shadow: var(--elevation-high);
     min-width: 480px;
     max-width: 760px;
     text-align: center;
+  }
+  .modal.error {
+    box-shadow: var(--elevation-high-negative);
   }
   .modal.error .modal-title,
   .modal.error .modal-subtitle,
@@ -49,10 +52,10 @@
   .modal.modal-subtle {
     border: none;
     box-shadow: none;
-    background: radial-gradient(var(--color-glow) 0%, transparent 70%);
+    background: radial-gradient(var(--glow) 0%, transparent 70%);
   }
   .modal.modal-subtle.error {
-    background: radial-gradient(var(--color-glow-error) 0%, transparent 70%);
+    background: radial-gradient(var(--glow-error) 0%, transparent 70%);
   }
   .modal-title {
     color: var(--color-foreground);

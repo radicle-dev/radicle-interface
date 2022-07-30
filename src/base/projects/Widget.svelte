@@ -24,7 +24,7 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 1rem;
-    border: 1px solid var(--color-secondary-faded);
+    border: 1px solid var(--color-secondary-5);
     border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
@@ -57,7 +57,7 @@
     white-space: nowrap;
   }
   article.project-faded {
-    border: 1px dashed var(--color-foreground-subtle);
+    border: 1px dashed var(--color-foreground-4);
     cursor: not-allowed;
   }
   .activity {
@@ -66,12 +66,13 @@
   }
   article:hover {
     border-color: var(--color-secondary);
+    background-color: var(--color-secondary-1);
   }
   article:hover .activity {
     display: none !important;
   }
   article.project-faded:hover {
-    border-color: var(--color-foreground-faded);
+    border-color: var(--color-foreground-5);
   }
   article .id {
     font-size: var(--font-size-regular);
@@ -98,7 +99,7 @@
   }
   article .id .urn {
     visibility: hidden;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);

@@ -30,12 +30,12 @@
     margin-bottom: 0.5rem;
   }
   .title .divider {
-    color: var(--color-foreground-subtle);
+    color: var(--color-foreground-4);
     margin: 0 0.5rem;
     font-weight: var(--font-weight-normal);
   }
   .title .peer-id {
-    color: var(--color-foreground-subtle);
+    color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     display: flex;
     align-items: center;
@@ -48,7 +48,7 @@
   .urn {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     overflow-wrap: anywhere;
     display: flex;
     justify-content: left;

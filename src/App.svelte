@@ -15,6 +15,7 @@
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import LinearGradient from "@app/LinearGradient.svelte";
+  import ColorPalette from "./ColorPalette.svelte";
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {
@@ -47,7 +48,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #181a38 0%, transparent 100%);
+    background: var(--header-gradient);
     background-repeat: no-repeat;
     background-size: 100% 6rem;
   }
@@ -80,6 +81,7 @@
       <Loading center />
     </div>
   {:then config}
+    <ColorPalette />
     <Header session={$session} {config} />
     <div class="wrapper">
       <Router>

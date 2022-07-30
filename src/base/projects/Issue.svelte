@@ -22,7 +22,7 @@
 <style>
   header {
     padding: 1rem;
-    background: var(--color-foreground-background-subtle);
+    background: var(--color-foreground-1);
     border-radius: var(--border-radius);
     margin-bottom: 2rem;
   }
@@ -44,23 +44,23 @@
   }
   .metadata-section {
     margin-bottom: 1rem;
-    border-bottom: 1px dashed var(--color-foreground-subtle);
+    border-bottom: 1px dashed var(--color-foreground-4);
   }
   .metadata-section-header {
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .metadata-section-body {
     margin-bottom: 1.25rem;
   }
   .metadata-section-empty {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
   }
   .label {
     border-radius: var(--border-radius);
     color: var(--color-tertiary);
-    background-color: var(--color-tertiary-background);
+    background-color: var(--color-tertiary-2);
     padding: 0.25rem 0.75rem;
     margin-right: 0.5rem;
     font-size: var(--font-size-small);
@@ -84,7 +84,7 @@
   .id {
     font-size: var(--font-size-tiny);
     margin-left: 0.75rem;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
   .summary-state {
     padding: 0.5rem 1rem;
@@ -92,9 +92,10 @@
   }
   .open {
     color: var(--color-positive);
-    background-color: var(--color-positive-background);
+    background-color: var(--color-positive-2);
   }
   .closed {
+    color: var(--color-negative);
     background-color: var(--color-negative-2);
   }
   .replies {

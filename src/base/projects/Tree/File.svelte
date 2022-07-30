@@ -8,7 +8,7 @@
 
 <style>
   .file {
-    color: var(--color-foreground-90);
+    color: var(--color-foreground-6);
     border-radius: var(--border-radius-small);
     cursor: pointer;
     display: flex;
@@ -20,12 +20,12 @@
   }
 
   .file:hover {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
   }
 
   .file.active {
     color: var(--color-foreground) !important;
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
   }
 
   .spinner {

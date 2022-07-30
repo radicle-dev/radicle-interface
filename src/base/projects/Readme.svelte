@@ -10,7 +10,7 @@
   article {
     padding: 2rem;
     max-width: 64rem;
-    background: var(--color-foreground-background-subtle);
+    background: var(--color-foreground-1);
     border-radius: var(--border-radius);
   }
 </style>

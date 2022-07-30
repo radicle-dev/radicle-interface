@@ -7,8 +7,8 @@
     text-align: center;
     border-radius: var(--border-radius-small);
     padding-bottom: 2rem;
-    color: var(--color-foreground-faded) !important;
-    background-color: var(--color-foreground-background);
+    color: var(--color-foreground-5) !important;
+    background-color: var(--color-foreground-1);
   }
   .placeholder header {
     padding: 1rem 0;

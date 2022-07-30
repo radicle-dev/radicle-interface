@@ -55,7 +55,7 @@
   .revision-toggle {
     border-radius: var(--border-radius-small);
     border: none;
-    color: var(--color-foreground-80);
+    color: var(--color-foreground-6);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     height: var(--button-tiny-height);
@@ -63,12 +63,12 @@
     background-color: var(--color-background);
   }
   .revision-toggle:hover {
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     color: var(--color-foreground);
     cursor: pointer;
   }
   .revision-toggle:disabled {
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
   }
 </style>
 

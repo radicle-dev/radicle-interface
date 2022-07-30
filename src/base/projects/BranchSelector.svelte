@@ -42,7 +42,7 @@
     cursor: pointer;
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
+    background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
     user-select: none;
   }
@@ -50,12 +50,12 @@
     cursor: not-allowed;
   }
   .branch:hover:not(.not-allowed) {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
   }
   .commit .hash {
     display: inline-block;
     color: var(--color-secondary);
-    background-color: var(--color-secondary-background-darker);
+    background-color: var(--color-secondary-1);
     padding: 0.5rem 0.75rem;
     border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
   }
@@ -65,7 +65,7 @@
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
-    background: var(--color-foreground-background);
+    background: var(--color-foreground-1);
   }
 </style>
 

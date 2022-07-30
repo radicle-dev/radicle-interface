@@ -4,74 +4,9 @@
 }
 
 :root {
-  --color-primary: #ff55ff;
-  --color-primary-1: #382847;
-  --color-primary-2: #62326d;
-  --color-primary-5: #dd44dd;
-  --color-primary-6: #ffd4ff;
-  --color-primary-faded: #ff55ff77;
-  --color-primary-background: #ff55ff11;
-  --color-primary-background-lighter: #ff55ff22;
-  --color-secondary: #5555ff;
-  --color-secondary-background: #5555ff11;
-  --color-secondary-background-darker: #5555ff09;
-  --color-secondary-faded: #5555ff77;
-  --color-secondary-darker: #4343cc;
-  --color-secondary-1: #212847;
-  --color-secondary-2: #2c326d;
-  --color-secondary-6: #e3e3ff;
-  --color-tertiary: #55ffff;
-  --color-tertiary-faded: #ade4e4;
-  --color-tertiary-background: #55ffff11;
-  --color-tertiary-1: #214047;
-  --color-tertiary-2: #2c326d;
-  --color-tertiary-6: #e3e3ff;
-  --color-light: #add0e4;
-  --color-yellow: #ffff99;
-  --color-yellow-background: #ffff9911;
-  --color-yellow-background-solid: #222929;
-  --color-yellow-background-lighter: #ffff9922;
-  --color-positive: #53db53;
-  --color-positive-background: #53db5311;
-  --color-positive-1: #11332b;
-  --color-positive-2: #2c6837;
-  --color-positive-6: #e3ffe3;
-  --color-caution: #ffc555;
-  --color-caution-1: #2f312d;
-  --color-caution-2: #524a34;
-  --color-caution-6: #ffefcf;
-  --color-negative: #ff5555;
-  --color-negative-background: #ff555511;
-  --color-negative-1: #35202b;
-  --color-negative-2: #623237;
-  --color-negative-6: #ffd4d4;
-  --color-foreground: #ffffff;
-  --color-foreground-90: #ddddee;
-  --color-foreground-80: #aaaab6;
-  --color-foreground-70: #9999aa;
-  --color-foreground-faded: #777788;
-  --color-foreground-subtle: #444455;
-  --color-foreground-subtler: #333344;
-  --color-foreground-even-subtler: #292936;
-  --color-foreground-background: #121a21;
-  --color-foreground-background-subtle: #10171e;
-  --color-foreground-background-lighter: #151f24;
-  --color-foreground-1: #242e38;
-  --color-foreground-2: #29343d;
-  --color-foreground-3: #333e47;
-  --color-foreground-4: #5e6d7a;
-  --color-foreground-5: #8594a1;
-  --color-foreground-6: #d3dee8;
-  --color-background: #0b131a;
-  --color-shadow: rgba(0, 0, 0, 0.2);
-  --color-glow: #5555ff22;
-  --color-glow-error: #ff555522;
-  --color-scrollbar: var(--color-foreground-subtler);
-
   --border-radius: 0.75rem;
   --border-radius-small: 0.5rem;
   --border-radius-round: 10rem;
-  --box-shadow-color: var(--color-secondary-2);
 
   --content-max-width: 1920px;
   --content-min-width: 480px;
@@ -81,6 +16,22 @@
   --button-regular-height: 2.5rem;
   --button-small-height: 2rem;
   --button-tiny-height: 1.5rem;
+
+  --glow: var(--color-secondary-3);
+  --glow-error: var(--color-negative-3);
+  --header-gradient: linear-gradient(
+    180deg,
+    var(--color-secondary-3) 0%,
+    transparent 100%
+  );
+}
+
+[data-theme="light"] {
+  --header-gradient: linear-gradient(
+    180deg,
+    var(--color-secondary-2) 0%,
+    transparent 100%
+  );
 }
 
 html {
@@ -95,12 +46,12 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  color: white;
+  color: var(--color-foreground);
   text-align: left;
   background-color: var(--color-background);
   scrollbar-width: thin;
   scrollbar-height: thin;
-  scrollbar-color: var(--color-scrollbar) transparent;
+  scrollbar-color: var(--color-foreground-4) transparent;
 }
 
 @media (max-width: 720px) {
@@ -135,7 +86,7 @@ body {
 }
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-  background-color: var(--color-scrollbar);
+  background-color: var(--color-foreground-4);
 }
 
 .error::selection,
@@ -153,9 +104,9 @@ a {
   text-decoration: none;
 }
 a.link {
-  color: #d0d0d0;
+  color: var(--color-foreground-6);
   text-decoration: none;
-  border-bottom: 1px dashed #444;
+  border-bottom: 1px dashed var(--color-foreground-5);
 }
 a.link:hover {
   color: var(--color-foreground);
@@ -163,11 +114,11 @@ a.link:hover {
 }
 a.link.primary {
   color: var(--color-primary);
-  border-bottom-color: var(--color-primary-faded);
+  border-bottom-color: var(--color-primary-5);
 }
 a.link.primary:hover {
-  color: var(--color-primary-faded);
-  border-bottom-color: var(--color-primary-faded);
+  color: var(--color-primary-5);
+  border-bottom-color: var(--color-primary-5);
 }
 a.address {
   border-bottom-color: transparent;
@@ -208,10 +159,9 @@ label.input {
 .error {
   color: var(--color-negative) !important;
   border-color: var(--color-negative) !important;
-  --box-shadow-color: var(--color-negative-2) !important;
 }
 .error-message {
-  background-color: var(--color-negative-background);
+  background-color: var(--color-negative-2);
   word-wrap: break-word;
   text-overflow: ellipsis;
   overflow-x: hidden;
@@ -223,11 +173,7 @@ label.input {
   color: var(--color-secondary);
 }
 .faded {
-  color: var(--color-foreground-faded);
-}
-.yellow {
-  color: var(--color-yellow);
-  background: var(--color-yellow-background-solid);
+  color: var(--color-foreground-5);
 }
 .off-centered {
   height: 100%;

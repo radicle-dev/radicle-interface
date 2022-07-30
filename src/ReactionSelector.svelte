@@ -16,7 +16,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     border-radius: var(--border-radius);
     height: 1rem;
     width: 1rem;
@@ -29,7 +29,7 @@
   .modal {
     position: absolute;
     left: 1.5rem;
-    background-color: var(--color-foreground-background);
+    background-color: var(--color-foreground-1);
     border-radius: var(--border-radius);
   }
   .modal > div {
@@ -44,7 +44,7 @@
     border-bottom-left-radius: var(--border-radius-small);
   }
   .modal > div:hover {
-    background-color: var(--color-foreground-subtle);
+    background-color: var(--color-foreground-2);
   }
 </style>
 

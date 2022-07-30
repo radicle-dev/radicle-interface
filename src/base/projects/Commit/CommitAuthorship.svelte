@@ -11,7 +11,7 @@
   .authorship {
     display: flex;
     align-items: center;
-    color: var(--color-foreground-faded);
+    color: var(--color-foreground-5);
     padding: 0.125rem 0;
   }
   .authorship .author,

@@ -18,28 +18,29 @@
     display: flex;
   }
   .foreground {
-    color: var(--color-foreground-faded);
-    background: var(--color-foreground-background);
+    color: var(--color-foreground-6);
+    background: var(--color-foreground-2);
   }
   .positive {
-    color: var(--color-positive);
-    background-color: var(--color-positive-1);
+    color: var(--color-positive-6);
+    background-color: var(--color-positive-3);
   }
   .negative {
     color: var(--color-negative);
-    background-color: var(--color-negative-1);
+    background-color: var(--color-negative-4);
   }
   .primary {
     color: var(--color-primary);
-    background: var(--color-primary-background);
+    background: linear-gradient(var(--color-primary-3), var(--color-primary-3)),
+      linear-gradient(var(--color-background), var(--color-background));
   }
   .tertiary {
-    color: var(--color-tertiary);
-    background: var(--color-tertiary-background);
+    color: var(--color-tertiary-6);
+    background: var(--color-tertiary-1);
   }
   .caution {
-    color: var(--color-yellow);
-    background: var(--color-yellow-background);
+    color: var(--color-caution);
+    background: var(--color-caution-2);
   }
 </style>
 

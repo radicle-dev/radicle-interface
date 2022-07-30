@@ -62,7 +62,7 @@
     cursor: pointer;
     padding: 0.5rem;
     color: var(--color-secondary);
-    background-color: var(--color-secondary-background);
+    background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small);
     user-select: none;
   }
@@ -73,7 +73,7 @@
     margin: 0 0.5rem;
   }
   .peer:hover {
-    background-color: var(--color-foreground-background-lighter);
+    background-color: var(--color-foreground-2);
   }
   .stat {
     display: flex;
@@ -81,7 +81,7 @@
     font-family: var(--font-family-monospace);
     padding: 0.5rem;
     height: 2.125rem;
-    background: var(--color-foreground-background);
+    background: var(--color-foreground-1);
   }
 </style>
 
