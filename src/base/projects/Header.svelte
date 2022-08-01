@@ -15,6 +15,7 @@
   export let tree: Tree;
   export let commit: string;
   export let browserStore: Writable<Browser>;
+  export let noAnchor = false;
 
   let { urn, peers, branches, seed, anchors } = project;
 
@@ -151,13 +152,15 @@
     bind:branchesDropdown={dropdownState.branch}
     on:branchChanged={(event) => updateRevision(event.detail)} />
 
-  <div class="anchor widget">
-    <AnchorBadge
-      {commit}
-      {anchors}
-      head={project.head}
-      on:click={(event) => updateRevision(event.detail)} />
-  </div>
+  {#if !noAnchor}
+    <div class="anchor widget">
+      <AnchorBadge
+        {commit}
+        {anchors}
+        head={project.head}
+        on:click={(event) => updateRevision(event.detail)} />
+    </div>
+  {/if}
 
   {#if seed.git.host}
     <span>

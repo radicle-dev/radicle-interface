@@ -65,7 +65,7 @@
 
 {#if revision}
   {#await project.getRoot(revision) then { tree, commit }}
-    <Header {tree} {commit} {browserStore} {project} />
+    <Header {tree} {commit} {browserStore} {project} noAnchor />
 
     {#if content == proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />

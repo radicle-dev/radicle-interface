@@ -88,7 +88,6 @@ describe("Project view", () => {
     cy.get("div.stat.seed span").should("have.text", "willow.radicle.garden");
     cy.get("div.stat.commit-count").should("have.text", "3 commit(s)");
     cy.get("div.stat.contributor-count").should("have.text", "1 contributor(s)");
-    cy.get("div.anchor span.anchor-label").contains("not anchored 🔓");
     cy.get("div.stat.branch").should("have.class", "not-allowed").should("have.text", "main");
     cy.get("div.hash.desktop").should("have.text", "56e4e02");
     cy.get("div.clone").click();
