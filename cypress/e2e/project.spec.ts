@@ -155,7 +155,7 @@ describe("Project view", () => {
     cy.get("header .summary .text-medium").should("have.text", "initial commit");
     cy.get("header pre.description").should("have.text", "this is the first commit of many");
     cy.get("header .committer").should("have.text", "dabit3");
-    cy.get("div.changeset-summary").should("have.text", "1 file(s) created, 1 file(s) deleted and 1 file(s) changed\n  with\n  0 addition(s)\n  and\n  0 deletion(s)");
+    cy.get("div.changeset-summary").should("have.text", "1 file(s) changed, 1 file(s) created, 1 file(s) deleted\n  with\n  0 addition(s)\n  and\n  0 deletion(s)");
     cy.get("header.file-header:nth-child(1) p.file-path")
       .first()
       .should("have.text", "test.md")

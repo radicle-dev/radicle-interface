@@ -87,10 +87,6 @@
   .flex {
     display: flex;
   }
-  main {
-    background-color: var(--color-foreground-background);
-    padding: 0 1rem;
-  }
 
   @media (max-width: 960px) {
     .patch {
@@ -122,12 +118,14 @@
       timestamp={patch.timestamp}
       caption="opened" />
   </header>
+
   <PatchTabBar
     {activeTab}
     {revisionNumber}
     revisions={patch.revisions}
     on:switchTab={onSwitch}
     on:revisionChanged={onRevisionChanged} />
+
   <main>
     {#if activeTab === PatchTab.Timeline}
       <div class="flex">

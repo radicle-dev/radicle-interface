@@ -28,7 +28,6 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin: 1.5rem 0;
   }
   .replies {
     margin-left: 2rem;
@@ -48,7 +47,7 @@
             urn: element.inner.peer.person.urn,
             profile: element.inner.peer.person,
           }}
-          caption={`did merge to ${formatSeedId(element.inner.peer.id)}`}
+          caption={`merged to ${formatSeedId(element.inner.peer.id)}`}
           timestamp={element.timestamp}
           {config} />
       </div>

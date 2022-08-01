@@ -26,21 +26,13 @@
     font-size: 0.875rem;
   }
   .issues-list {
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius-medium);
     overflow: hidden;
-  }
-
-  .teaser:first-child {
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-  }
-  .teaser:last-child {
-    border-bottom-left-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
   }
   .teaser:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
   }
+
   @media (max-width: 960px) {
     .issues {
       padding-left: 2rem;

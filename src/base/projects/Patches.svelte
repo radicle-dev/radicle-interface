@@ -25,18 +25,14 @@
     padding: 0 2rem 0 8rem;
     font-size: 0.875rem;
   }
-
-  .teaser:first-child {
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-  }
-  .teaser:last-child {
-    border-bottom-left-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
+  .patches-list {
+    border-radius: var(--border-radius-medium);
+    overflow: hidden;
   }
   .teaser:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
   }
+
   @media (max-width: 960px) {
     .patches {
       padding-left: 2rem;

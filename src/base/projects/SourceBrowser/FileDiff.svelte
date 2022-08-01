@@ -127,7 +127,7 @@
   }
   .file-header .diff-type {
     margin-left: 1rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0rem 0.5rem;
     border-radius: var(--border-radius-medium);
   }
 </style>

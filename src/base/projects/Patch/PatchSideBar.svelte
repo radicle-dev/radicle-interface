@@ -11,7 +11,6 @@
     border-radius: var(--border-radius-medium);
     font-size: 0.875rem;
     padding-left: 1rem;
-    margin: 1.5rem 0;
   }
   .metadata-section {
     margin-bottom: 1rem;

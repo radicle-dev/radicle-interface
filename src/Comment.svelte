@@ -84,7 +84,11 @@
       <ReactionSelector on:select={selectReaction} />
     </div>
     <div class="card-body">
-      <Markdown content={comment.body} {getImage} />
+      {#if comment.body === ""}
+        <span class="subtle">No description.</span>
+      {:else}
+        <Markdown content={comment.body} {getImage} />
+      {/if}
       {#if comment.reactions.length > 0}
         <div class="reactions">
           <Reactions

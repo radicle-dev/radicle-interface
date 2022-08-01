@@ -7,17 +7,18 @@
   export let stats: DiffStats;
 
   const diffDescription = ({ modified, created, deleted }: Diff): string => {
-    let s = "";
+    let s = [];
+
+    if (modified.length) {
+      s.push(`${modified.length} file(s) changed`);
+    }
     if (created.length) {
-      s = s.concat(`${created.length} file(s) created`);
+      s.push(`${created.length} file(s) created`);
     }
     if (deleted.length) {
-      s = s.concat(`, ${deleted.length} file(s) deleted`);
+      s.push(`${deleted.length} file(s) deleted`);
     }
-    if (modified.length) {
-      s = s.concat(` and ${modified.length} file(s) changed`);
-    }
-    return s;
+    return s.join(", ");
   };
 </script>
 
@@ -35,7 +36,6 @@
   .diff-listing {
     /* This border forces to keep the FileDiff margin-bottom visible */
     border: 1px solid transparent;
-    margin: 0 1rem;
   }
 </style>
 

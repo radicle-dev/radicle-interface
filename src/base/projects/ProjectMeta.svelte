@@ -16,6 +16,7 @@
       path: "/",
       revision: null,
       issue: null,
+      patch: null,
     });
   }
 </script>
