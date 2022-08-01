@@ -27,7 +27,7 @@
     "skipLibCheck": true,
     "paths": {
       "@public/*": ["./public/*"],
-      "@app/*": ["./src/*"],
+      "@app/*": ["./src/*"]
     }
   },
   "noEmit": true

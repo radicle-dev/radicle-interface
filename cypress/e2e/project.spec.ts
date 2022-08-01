@@ -139,12 +139,15 @@ describe("Project view", () => {
         cy.wrap($el).each((commit, commitIndex) => {
           expect(Cypress.$(commit).find(".hash").text()).to.eq(groupedCommits[index].commits[commitIndex].header.sha);
           expect(Cypress.$(commit).find(".summary").text()).to.eq(groupedCommits[index].commits[commitIndex].header.summary);
-          expect(Cypress.$(commit).find(".committer").text()).to.eq(groupedCommits[index].commits[commitIndex].header.committer.name);
+          expect(Cypress.$(commit).find(".committer").first().text()).to.eq(groupedCommits[index].commits[commitIndex].header.committer.name);
         });
       });
 
     // Checking that the initial commit has the Verified badge
-    cy.get(".badge").last().should("have.text", "Verified");
+    cy.get(".verified-popup-body").should("have.text", "This commit was signed\n            with the committer's radicle key.");
+    cy.get(".verified-popup-peer").should("have.text", "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue");
+    cy.get(".verified-popup .verified-committer").should("have.text", "dabit3");
+
     cy.get(".commit").last().click();
   });
 
@@ -183,3 +186,4 @@ describe("Project view", () => {
     cy.get("div.stat.patch-count").should("have.class", "active");
   });
 });
+

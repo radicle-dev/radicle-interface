@@ -329,7 +329,7 @@ label.input {
 	background-color: var(--color-negative);
 }
 
-.dropdown {
+.dropdown, .popup {
 	background-color: var(--color-foreground-background);
 	margin-top: 0.5rem;
 	position: absolute;
@@ -448,6 +448,9 @@ span.small, .text-xsmall {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
+}
+.text-faded {
+	color: var(--color-foreground-faded);
 }
 
 .notice {

@@ -5,6 +5,7 @@
 
   import Icon from "@app/Icon.svelte";
   import CommitAuthorship from "./CommitAuthorship.svelte";
+  import CommitVerifiedBadge from "./CommitVerifiedBadge.svelte";
 
   export let commit: CommitMetadata;
 
@@ -57,9 +58,6 @@
     text-overflow: ellipsis;
     padding-right: 1rem;
   }
-  .badge {
-    margin: 0;
-  }
   .browse {
     display: flex;
     z-index: 10;
@@ -74,7 +72,7 @@
     .column-left {
       overflow: hidden;
     }
-    .badge, .browse {
+    .browse {
       display: none !important;
     }
     .summary {
@@ -96,9 +94,7 @@
     <CommitAuthorship {commit} />
   </div>
   <div class="column-right">
-    {#if commit.context.committer}
-      <span class="badge tertiary">Verified</span>
-    {/if}
+    <CommitVerifiedBadge {commit} />
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
     <div class="browse" on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
       <Icon name="browse" width={17} inline fill />

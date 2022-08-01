@@ -3,6 +3,8 @@
   import { formatTimestamp, gravatarURL } from "@app/utils";
 
   export let commit: CommitMetadata;
+  export let showTime = true;
+  export let showAuthor = true;
 </script>
 
 <style>
@@ -34,8 +36,8 @@
 </style>
 
 <span class="authorship text-xsmall">
-  <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.author.email)}" />
   {#if commit.header.author.email === commit.header.committer.email}
+    <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.committer.email)}" />
     {#if commit.context?.committer}
       <span class="bold committer verified-committer">
         {commit.context?.committer.peer.person.name}
@@ -46,8 +48,11 @@
       <span>&nbsp;committed</span>
     {/if}
   {:else}
-    <span class="desktop-inline author">{commit.header.author.name}</span>
-    <span>&nbsp;authored&nbsp;</span>
+    {#if showAuthor}
+      <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.author.email)}" />
+      <span class="desktop-inline author">{commit.header.author.name}</span>
+      <span>&nbsp;authored&nbsp;</span>
+    {/if}
     <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.committer.email)}" />
     {#if commit.context?.committer}
       <span class="bold committer verified-committer">
@@ -61,6 +66,8 @@
       <span>&nbsp;committed</span>
     {/if}
   {/if}
-  <span>&nbsp;</span>
-  <span class="desktop-inline text-xsmall time">{formatTimestamp(commit.header.committerTime)}</span>
+  {#if showTime}
+    <span>&nbsp;</span>
+    <span class="desktop-inline text-xsmall time">{formatTimestamp(commit.header.committerTime)}</span>
+  {/if}
 </span>
