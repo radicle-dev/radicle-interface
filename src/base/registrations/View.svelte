@@ -184,11 +184,9 @@
       <button
         style="min-width: 60px;"
         class="small primary" class:active={editable} disabled={!isOwner(state.owner)}
+        title={!isOwner(state.owner) ? "Only owner can edit this profile" : ""}
         on:click={() => editable = !editable}>
           Edit
-      </button>
-      <button class="small secondary" disabled>
-        Transfer
       </button>
     </header>
     <Form {config} {editable} {fields} on:save={onSave} on:cancel={() => editable = false} />
