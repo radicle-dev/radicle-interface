@@ -6,11 +6,19 @@ import { isOid, isRadicleId } from '@app/utils';
 import { Profile, ProfileType } from '@app/profile';
 import { Seed } from '@app/base/seeds/Seed';
 import type { Config } from '@app/config';
-import type { Issue } from '@app/issue';
 
 export type Urn = string;
 export type PeerId = string;
 export type Branches = { [key: string]: string };
+
+export type Delegate = {
+  type: "indirect";
+  urn: Urn;
+  ids: PeerId[];
+} | {
+  type: "direct";
+  id: PeerId;
+};
 
 export interface Anchor {
   confirmed: true;
@@ -47,8 +55,10 @@ export interface ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  maintainers: Urn[];
-  delegates: PeerId[];
+  delegates: Delegate[];
+  remotes: PeerId[];
+  patches: number;
+  issues: number;
 }
 
 export interface Tree {
@@ -247,13 +257,15 @@ export class Project implements ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  maintainers: Urn[];
-  delegates: PeerId[];
+  delegates: Delegate[];
+  remotes: PeerId[];
   seed: Seed;
   peers: Peer[];
   branches: Branches;
   profile: Profile | null;
   anchors: string[];
+  patches: number;
+  issues: number;
 
   constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
     this.urn = urn;
@@ -261,11 +273,13 @@ export class Project implements ProjectInfo {
     this.name = info.name;
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
-    this.maintainers = info.maintainers;
     this.delegates = info.delegates;
+    this.remotes = info.remotes;
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
+    this.patches = info.patches;
+    this.issues = info.issues;
     this.profile = profile;
     this.anchors = anchors;
   }
@@ -334,14 +348,6 @@ export class Project implements ProjectInfo {
 
   async getCommit(commit: string): Promise<Commit> {
     return new Request(`projects/${this.urn}/commits/${commit}`, this.seed.api).get();
-  }
-
-  static async getIssues(urn: string, host: Host): Promise<Issue[]> {
-    return new Request(`projects/${urn}/issues`, host).get();
-  }
-
-  async getIssue(issue: string): Promise<Issue> {
-    return new Request(`projects/${this.urn}/issues/${issue}`, this.seed.api).get();
   }
 
   async getTree(

@@ -8,8 +8,6 @@
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import type { Tree } from "@app/project";
   import Input from "@app/Input.svelte";
-  import { groupIssues, Issue } from "@app/issue";
-  import { groupPatches, Patch } from "@app/patch";
 
   export let project: Project;
   export let tree: Tree;
@@ -210,30 +208,30 @@
     on:click={() => toggleContent(ProjectContent.History, true)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
-  {#await Issue.getIssues(project.urn, seed.api) then issues}
+  {#if project.issues > 0}
     <div
       class="stat issue-count clickable widget"
       class:active={content == ProjectContent.Issues}
       on:click={() => toggleContent(ProjectContent.Issues, false)}>
-      <strong>{groupIssues(issues).open.length}</strong> issue(s)
+      <strong>{project.issues}</strong> issue(s)
     </div>
-  {:catch}
+  {:else}
     <div class="stat issue-count not-allowed widget" title="Not supported">
       0 issue(s)
     </div>
-  {/await}
-  {#await Patch.getPatches(project.urn, seed.api) then patches}
+  {/if}
+  {#if project.patches > 0}
     <div
       class="stat patch-count clickable widget"
       class:active={content == ProjectContent.Patches}
       on:click={() => toggleContent(ProjectContent.Patches, false)}>
-      <strong>{groupPatches(patches).proposed.length}</strong> patch(es)
+      <strong>{project.patches}</strong> patch(es)
     </div>
-  {:catch}
+  {:else}
     <div class="stat patch-count not-allowed widget" title="Not supported">
       0 patch(es)
     </div>
-  {/await}
+  {/if}
   <div class="stat contributor-count widget">
     <strong>{tree.stats.contributors}</strong> contributor(s)
   </div>
