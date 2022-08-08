@@ -177,9 +177,11 @@ button {
 	border: 1px solid var(--color-foreground-6);
 	border-radius: var(--border-radius);
 	cursor: pointer;
-	min-width: 8rem;
+	min-width: 6rem;
+	height: var(--button-regular-height);
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 }
 button:not([disabled]):hover {
 	color: var(--color-background);
@@ -326,6 +328,7 @@ label.input {
 	border-color: var(--color-negative);
 }
 .modal.error .modal-actions button:hover {
+	color: var(--color-background);
 	background-color: var(--color-negative);
 }
 
@@ -463,6 +466,7 @@ span.small, .text-xsmall {
 }
 
 button.error:hover {
+	color: var(--color-background);
 	background-color: var(--color-negative);
 }
 
