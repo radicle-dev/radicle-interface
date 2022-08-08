@@ -61,7 +61,7 @@
     font-family: var(--font-family-sans-serif);
     text-align: right;
     user-select: none;
-    padding: 0 1rem 0.5rem 1rem;
+    padding: 1rem 1rem 0.5rem 1rem;
   }
   .line-number {
     display: block;
@@ -146,22 +146,19 @@
         {#if line}
           <div class="highlight" style="top: {line == 1 ? 1 : (1.5 * line) - 0.5}rem" />
         {/if}
-        <pre class="line-numbers">
+        <div class="line-numbers">
           {#each lineNumbers as lineNumber}
             <a href="#L{lineNumber}"
                class="line-number"
                class:highlighted={lineNumber === line}
                id="L{lineNumber}">{lineNumber}</a>
           {/each}
-        </pre>
-        <pre
-          class="code no-scrollbar">
-          {#if blob.html}
-            {@html blob.content}
-          {:else}
-            {blob.content}
-          {/if}
-        </pre>
+        </div>
+        {#if blob.html}
+          <pre class="code no-scrollbar">{@html blob.content}</pre>
+        {:else}
+          <pre class="code no-scrollbar">{blob.content}</pre>
+        {/if}
       {/if}
     </div>
   </div>
