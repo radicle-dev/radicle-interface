@@ -32,6 +32,11 @@
   .name {
     margin: 1rem;
   }
+  .input-info {
+    position: absolute;
+    font-style: italic;
+    margin-top: 0.1rem;
+  }
 </style>
 
 <svelte:head>
@@ -51,9 +56,14 @@
           placeholder=""
           root={config.registrar.domain}
         />
+        {#if label && label.length < 2}
+          <span class="input-info">Please enter a minimum of 2 characters.</span>
+        {:else if label && label.length > 128}
+          <span class="input-info">Please enter a maximum of 128 characters.</span>
+        {/if}
       </span>
 
-      <button disabled={!label} class="primary register regular" on:click={register}>
+      <button disabled={!label || label.length < 2 || label.length > 128} class="primary register regular" on:click={register}>
         Check
       </button>
     </div>
