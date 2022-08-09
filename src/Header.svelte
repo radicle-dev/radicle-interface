@@ -11,6 +11,7 @@
   import { Profile, ProfileType } from "@app/profile";
   import Avatar from '@app/Avatar.svelte';
   import Search from '@app/Search.svelte';
+  import Floating from "@app/Floating.svelte";
   import Icon from "./Icon.svelte";
   import MobileNavbar from "./MobileNavbar.svelte";
   import SeedDropdown from "./SeedDropdown.svelte";
@@ -20,11 +21,6 @@
 
   let sessionButtonHover = false;
   let mobileNavbarDisplayed = false;
-  let seedDropdown = false;
-
-  function toggleDropdown() {
-    seedDropdown = !seedDropdown;
-  }
 
   function toggleNavbar() {
     mobileNavbarDisplayed = !mobileNavbarDisplayed;
@@ -175,10 +171,14 @@
 
       {#if session && Object.keys(session.siwe).length > 0}
         <span class="seeds-container">
-          <span class="nav-link" on:click={toggleDropdown}>
-            Seeds
-          </span>
-          <SeedDropdown seeds={session.siwe} visible={seedDropdown} {config} />
+          <Floating>
+            <span slot="toggle" class="nav-link">
+              Seeds
+            </span>
+            <svelte:fragment slot="modal">
+              <SeedDropdown seeds={session.siwe} {config} />
+            </svelte:fragment>
+          </Floating>
         </span>
       {/if}
     </div>

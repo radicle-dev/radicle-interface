@@ -1,5 +1,6 @@
 <script lang="ts">
   import Dropdown from "@app/Dropdown.svelte";
+  import Floating from "@app/Floating.svelte";
   import { PatchTab, Revision } from "@app/patch";
   import { formatCommit, formatTimestamp } from "@app/utils";
   import { createEventDispatcher } from "svelte";
@@ -23,11 +24,8 @@
   }));
 
   const onRevisionChange = ({ detail }: { detail: string }) => {
-    showSelector = false;
     dispatch("revisionChanged", detail);
   };
-
-  let showSelector = false;
 </script>
 
 <style>
@@ -82,16 +80,20 @@
       Changeset
     </div>
     <div class="revision-toggle">
-      <button
-        class:tab={revisions.length > 1}
-        class="text-small revision-toggle"
-        disabled={revisions.length <= 1}
-        on:click={() => showSelector = !showSelector}>
-        {formatRevisionName(revisions[revisionNumber], revisionNumber)}
-      </button>
-      <Dropdown
-        items={revisionList} selected={revisionNumber.toString()} visible={showSelector}
-        on:select={onRevisionChange} />
+      <Floating disabled={revisions.length <= 1}>
+        <button
+          slot="toggle"
+          class:tab={revisions.length > 1}
+          class="text-small revision-toggle"
+          disabled={revisions.length <= 1}>
+          {formatRevisionName(revisions[revisionNumber], revisionNumber)}
+        </button>
+        <svelte:fragment slot="modal">
+          <Dropdown
+            items={revisionList} selected={revisionNumber.toString()}
+            on:select={onRevisionChange} />
+        </svelte:fragment>
+      </Floating>
     </div>
   </div>
 </div>

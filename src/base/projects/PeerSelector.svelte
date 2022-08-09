@@ -4,11 +4,10 @@
   import Dropdown from "@app/Dropdown.svelte";
   import { formatSeedId } from "@app/utils";
   import type { Peer } from "@app/project";
+  import Floating from "@app/Floating.svelte";
 
   export let peer: string | null = null;
   export let peers: Peer[];
-  export let toggleDropdown: (input: string) => void;
-  export let peersDropdown = false;
 
   let meta: Peer | undefined;
   // List of items to be created for the Dropdown component.
@@ -43,6 +42,7 @@
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
     border-radius: var(--border-radius-small);
+    user-select: none;
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;
@@ -66,9 +66,9 @@
   }
 </style>
 
-<div class="selector">
-  <span>
-    <div on:click={() => toggleDropdown("peer")} class="stat peer" class:not-allowed={!peers}>
+<Floating>
+  <div slot="toggle" class="selector">
+    <div class="stat peer" class:not-allowed={!peers}>
       <Icon name="fork" width={15} height={15} />
       {#if meta}
         <span class="peer-id">
@@ -84,11 +84,13 @@
         </span>
       {/if}
     </div>
+  </div>
+
+  <svelte:fragment slot="modal">
     <Dropdown
       {items}
       selected={peer}
-      visible={peersDropdown}
       on:select={(e) => switchPeer(e.detail)}
     />
-  </span>
-</div>
+  </svelte:fragment>
+</Floating>

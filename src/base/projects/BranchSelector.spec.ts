@@ -18,7 +18,6 @@ const defaultProps = {
   },
   branches: { "master": "e678629cd37c770c640a2cd997fc76303c815772" },
   revision: "e678629cd37c770c640a2cd997fc76303c815772",
-  toggleDropdown: () => "branch"
 };
 
 describe('Logic', () => {
@@ -61,9 +60,9 @@ describe('Logic', () => {
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
           "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         },
-        branchesDropdown: true
       }
     });
+    cy.get("div.commit div.stat.branch").click();
     cy.get("div.dropdown div.dropdown-item")
       .first()
       .should("contain.text", "feature-branch")
@@ -148,19 +147,21 @@ describe("Events", () => {
       props: {
         ...defaultProps,
         revision: "feature-branch",
-        branchesDropdown: true,
         branches: {
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
           "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         }
       }
     });
-    const branchLabel = getByText("xyz");
 
-    const mock = cy.spy();
-    component.$on("branchChanged", mock);
+    cy.get("div.commit div.stat.branch").click().then(() => {
+      const branchLabel = getByText("xyz");
 
-    fireEvent.click(branchLabel);
-    expect(mock).to.have.been.calledOnce;
+      const mock = cy.spy();
+      component.$on("branchChanged", mock);
+
+      fireEvent.click(branchLabel);
+      expect(mock).to.have.been.calledOnce;
+    });
   });
 });

@@ -3,7 +3,6 @@
 
   export let items: { key: string; value: string; badge: string | null }[];
   export let selected: string | null = null;
-  export let visible = false;
 
   const dispatch = createEventDispatcher();
   const onSelect = (item: string) => {
@@ -32,16 +31,14 @@
   }
 </style>
 
-{#if visible}
-  <div class="dropdown">
-    {#each items as {key, value, badge}}
-      {#if key && value}
-        <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} title={value}>{@html key}
-          {#if badge}
-            <span class="badge primary">{badge}</span>
-          {/if}
-        </div>
-      {/if}
-    {/each}
-  </div>
-{/if}
+<div class="dropdown">
+  {#each items as {key, value, badge}}
+    {#if key && value}
+      <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} title={value}>{@html key}
+        {#if badge}
+          <span class="badge primary">{badge}</span>
+        {/if}
+      </div>
+    {/if}
+  {/each}
+</div>

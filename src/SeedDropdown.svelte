@@ -4,9 +4,9 @@
   import type { Config } from "@app/config";
   import Dropdown from "@app/Dropdown.svelte";
   import type { SeedSession } from "@app/siwe";
+  import { closeFocused } from "@app/Floating.svelte";
 
   export let seeds: { [key: string]: SeedSession };
-  export let visible = false;
   export let config: Config;
 
   // When a user signs into a new seed we want to update the seed listing
@@ -24,9 +24,8 @@
   <Dropdown
     {items}
     selected={null}
-    {visible}
     on:select={(item) => {
-      visible = false;
+      closeFocused();
       navigate(`/seeds/${item.detail}`);
     }}
   />

@@ -90,7 +90,7 @@ describe("Project view", () => {
     cy.get("div.stat.contributor-count").should("have.text", "1 contributor(s)");
     cy.get("div.stat.branch").should("have.class", "not-allowed").should("have.text", "main");
     cy.get("div.hash.desktop").should("have.text", "56e4e02");
-    cy.get("div.clone").click();
+    cy.get("div.clone-button").click();
   });
 
   it("Peer selector", () => {

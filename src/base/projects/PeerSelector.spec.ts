@@ -11,7 +11,6 @@ const defaultProps = {
       "delegate": true
     }
   ],
-  toggleDropdown: () => console.log("toggle"),
 };
 
 describe('Logic', function () {
@@ -57,8 +56,9 @@ describe('Logic', function () {
 describe("Layout", () => {
   it("should highlight the current peer", () => {
     render(PeerSelector, {
-      props: { ...defaultProps, peersDropdown: true }
+      props: { ...defaultProps }
     });
+    cy.get("div.selector").click();
     cy.get("div.dropdown-item").should("have.class", "selected");
   });
 });
@@ -69,7 +69,6 @@ describe('Events', () => {
     const { getByText, component } = render(PeerSelector, {
       props: {
         ...defaultProps,
-        peersDropdown: true,
         peers: [
           {
             "id": "hyy841u4phudmr8s5rg1jjwd1ct7x7438wmjwtsm464y8uyxyhyi6c",
@@ -85,11 +84,13 @@ describe('Events', () => {
       }
     });
 
-    const peer = getByText("cloudhead");
-    const mock = cy.spy();
-    component.$on("peerChanged", mock);
+    cy.get("div.selector").click().then(() => {
+      const peer = getByText("cloudhead");
+      const mock = cy.spy();
+      component.$on("peerChanged", mock);
 
-    fireEvent.click(peer);
-    expect(mock).to.have.been.calledOnce;
+      fireEvent.click(peer);
+      expect(mock).to.have.been.calledOnce;
+    });
   });
 });

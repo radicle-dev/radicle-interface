@@ -3,12 +3,11 @@
   import { ProjectInfo, Branches, getOid } from "@app/project";
   import { formatCommit } from "@app/utils";
   import Dropdown from "@app/Dropdown.svelte";
+  import Floating from "@app/Floating.svelte";
 
   export let branches: Branches;
   export let project: ProjectInfo;
   export let revision: string;
-  export let toggleDropdown: (input: string) => void;
-  export let branchesDropdown = false;
 
   const dispatch = createEventDispatcher();
   const switchBranch = (name: string) => {
@@ -43,6 +42,7 @@
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
     border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
+    user-select: none;
   }
   .commit .branch.not-allowed {
     cursor: not-allowed;
@@ -71,20 +71,20 @@
   <!-- Check for branches listing feature -->
   {#if branchList.length > 0}
     {#if branchLabel}
-      <span>
+      <Floating disabled={!showSelector}>
         <div
+          slot="toggle"
           class="stat branch"
-          class:not-allowed={!showSelector}
-          on:click={() => showSelector && toggleDropdown("branch")}
-        >
+          class:not-allowed={!showSelector}>
           {branchLabel}
         </div>
-        <Dropdown
-          items={branchList}
-          selected={branchLabel}
-          visible={branchesDropdown}
-          on:select={(e) => switchBranch(e.detail)} />
-      </span>
+        <svelte:fragment slot="modal">
+          <Dropdown
+            items={branchList}
+            selected={branchLabel}
+            on:select={(e) => switchBranch(e.detail)} />
+        </svelte:fragment>
+      </Floating>
       <div class="hash desktop">
         {formatCommit(commit)}
       </div>
