@@ -20,7 +20,7 @@
   let error: Error | null = null;
   let registrationOwner = owner || session.address;
 
-  const view = () => navigate(`/registrations/${name}`, { state: { retry: true } });
+  const view = () => navigate(`/registrations/${name}.radicle.eth`, { state: { retry: true } });
 
   onMount(async () => {
     try {
