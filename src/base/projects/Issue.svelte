@@ -20,9 +20,6 @@
 </script>
 
 <style>
-  .issue {
-    padding: 0 2rem 0 8rem;
-  }
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
@@ -32,7 +29,9 @@
   main {
     display: flex;
   }
-
+  .issue {
+    padding: 0 2rem 0 8rem;
+  }
   .comments {
     flex: 1;
   }

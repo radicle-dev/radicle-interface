@@ -26,7 +26,7 @@
     font-size: 0.875rem;
   }
   .patches-list {
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
   }
   .teaser:not(:last-child) {

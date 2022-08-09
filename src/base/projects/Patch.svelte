@@ -40,16 +40,14 @@
 </script>
 
 <style>
-  .patch {
-    padding: 0 2rem 0 8rem;
-  }
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius-medium);
-    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
   }
-
+  .patch {
+    padding: 0 2rem 0 8rem;
+  }
   .summary {
     display: flex;
     justify-content: space-between;

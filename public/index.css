@@ -74,7 +74,7 @@
 	--font-family-monospace: monospace;
 	--font-weight-medium: 600;
 	--font-weight-bold: 700;
-	--border-radius: 1rem;
+	--border-radius: 0.75rem;
 	--border-radius-small: 0.5rem;
 	--border-radius-round: 10rem;
 	--box-shadow-color: var(--color-secondary-2);

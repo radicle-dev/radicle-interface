@@ -32,26 +32,25 @@
 
 <style>
   .bar {
-    padding: 1rem 0;
-    border-bottom: solid 1px var(--color-background);
+    margin: 1rem 0;
   }
   .tabs {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 1rem;
   }
   .tab {
     color: var(--color-foreground-80);
+    border-radius: var(--border-radius-small);
     font-family: var(--font-family-monospace);
     font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
-  .tab:hover {
+  .tab:hover, .tab.active {
     color: var(--color-foreground);
+    background-color: var(--color-foreground-background);
     cursor: pointer;
-  }
-  .separator {
-    color: var(--color-foreground-faded);
-    margin: 0 0.5rem;
   }
   .active {
     color: var(--color-foreground);
@@ -77,13 +76,11 @@
       on:click={() => dispatch("switchTab", PatchTab.Timeline)}>
       Patch
     </div>
-    <span class="separator">&middot;</span>
     <div
       class="tab" class:active={activeTab === PatchTab.Diff}
       on:click={() => dispatch("switchTab", PatchTab.Diff)}>
       Changeset
     </div>
-    <span class="separator">&middot;</span>
     <div class="revision-toggle">
       <button
         class:tab={revisions.length > 1}
