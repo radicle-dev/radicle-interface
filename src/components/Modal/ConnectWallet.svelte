@@ -52,10 +52,8 @@
 
     <div slot="subtitle">
       <div class="text-small">
-        WalletConnect<br/>
-        <a href="https://walletconnect.com/registry?type=wallet" class="link">
-          View compatible wallets
-        </a>
+        Scan the QR code with <strong>WalletConnect</strong> or use
+        <strong>Metamask</strong>.
       </div>
     </div>
 
