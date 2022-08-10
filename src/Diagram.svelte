@@ -22,6 +22,9 @@
   // The highest value on the y axis
   let commitCountArray: number[] = [];
 
+  // The minimal amplitude shown e.g. commitCount = 1 => `minimalHeight` points of height in the SVG.
+  let minimalHeight = 5;
+
   let week = 0;
 
   for (const point of points) {
@@ -43,10 +46,15 @@
 
     // Normalizes the values to the viewBox dimensions
     let normalizedArray =
-      commitCountArray.map(c =>
-        // When max and min value are 0 we want to make sure the normalization is not being run since it would return NaN
-        c === 0 ? 0 : (viewBoxHeight - 0) * (c - minValue) / (maxValue - minValue)
-      );
+      commitCountArray.map(c => {
+        // If we are not crossing the `viewBoxHeight` we want to return the actual value,
+        // and don't want to normalize <`minimalHeight` commit counts as huge spikes.
+        if (maxValue < viewBoxHeight && c >= minimalHeight) { return c; }
+        // If the value is 0..minimalHeight though we don't want to set it to the minimalHeight.
+        else if (c > 0 && c < minimalHeight) { return minimalHeight; }
+        // If the count is 0 we have to make sure the normalization is not being run since it would return NaN
+        else { return c === 0 ? 0 : (viewBoxHeight - 0) * (c - minValue) / (maxValue - minValue); }
+      });
 
     let path = normalizedArray
       .slice(1)
@@ -77,8 +85,13 @@
       </linearGradient>
     </defs>
   </svg>
-  <g>
-    <path fill="transparent" stroke="url(#gradient)" stroke-width={strokeWidth} stroke-linejoin="round" d={path} />
-    <path fill="url(#fillGradient)" stroke="transparent" d={areaPath} />
-  </g>
+  {#if points.length > 0}
+    <g>
+      <path fill="transparent" stroke="url(#gradient)" stroke-width={strokeWidth} stroke-linejoin="round" d={path} />
+      <path fill="url(#fillGradient)" stroke="transparent" d={areaPath} />
+    </g>
+  {:else}
+    <!-- If no commits have been made in a year, we show a straight line -->
+    <line x1="0" y1={viewBoxHeight} x2="600" y2={viewBoxHeight} stroke="#ff55ff" stroke-width={1} />
+  {/if}
 </svg>
