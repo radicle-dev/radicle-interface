@@ -11,14 +11,9 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
-    "sourceType": "module",
-    "extraFileExtensions": [".svelte"]
+    "sourceType": "module"
   },
-  "plugins": [
-    "svelte3",
-    "@typescript-eslint",
-    "radicle"
-  ],
+  "plugins": ["svelte3", "@typescript-eslint"],
   "overrides": [
     {
       "files": ["*.svelte"],
@@ -26,8 +21,6 @@
     }
   ],
   "rules": {
-    "radicle/space-after-unary": ["error"],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": "off",
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],

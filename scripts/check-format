@@ -1,7 +1,5 @@
-#!/bin/sh
-set -e
+#!/bin/bash
+set -euo pipefail
 
-# Checks local /node_modules,
-# if not found will download that package and execute it.
-# Does not modify files, informs bad code format
 npx eslint .
+npx prettier "**/*.@(ts|js|svelte|json|css|html)" --ignore-path .gitignore --check
