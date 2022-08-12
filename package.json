@@ -6,7 +6,7 @@
     "build": "scripts/build",
     "check": "scripts/check",
     "coverage": "npx nyc report",
-    "test:unit": "vitest run",
+    "test:unit": "TZ='UTC' vitest run",
     "test:components": "cypress run --component",
     "test:e2e": "cypress run",
     "test:open": "cypress open"
