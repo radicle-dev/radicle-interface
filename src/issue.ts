@@ -14,7 +14,7 @@ export interface IIssue {
   state: State;
   comment: Comment;
   discussion: Thread[];
-  labels?: Label[]; // When no labels are set, this is undefined
+  labels: Label[];
   timestamp: number;
 }
 
@@ -51,7 +51,7 @@ export class Issue {
   state: State;
   comment: Comment;
   discussion: Thread[];
-  labels?: Label[]; // When no labels are set, this is undefined
+  labels: Label[];
   timestamp: number;
 
   constructor(issue: IIssue) {
