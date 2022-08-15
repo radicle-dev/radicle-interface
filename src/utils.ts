@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
 import multibase from 'multibase';

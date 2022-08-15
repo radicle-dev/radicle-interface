@@ -119,6 +119,7 @@ export interface Browser {
   peer: string | null;
   path: string | null;
   line: number | null;
+  search: URLSearchParams | null;
 }
 
 export const browserStore = writable({
@@ -130,6 +131,7 @@ export const browserStore = writable({
   peer: null,
   path: null,
   line: null,
+  search: null,
 } as Browser);
 
 export interface BrowseTo {
@@ -140,6 +142,7 @@ export interface BrowseTo {
   path?: string | null;
   peer?: string | null;
   line?: number | null;
+  search?: URLSearchParams | null;
 }
 
 export interface PathOptions extends BrowseTo {

@@ -90,7 +90,7 @@
 
   {#if content == proj.ProjectContent.Issues}
     <Async fetch={issue.Issue.getIssues(project.urn, project.seed.api)} let:result>
-      <Issues {project} {config} issues={result} />
+      <Issues {project} state={$browserStore.search?.get("state") || "open"} {config} issues={result} />
     </Async>
   {:else if content == proj.ProjectContent.Issue && $browserStore.issue}
     <Async fetch={issue.Issue.getIssue(project.urn, $browserStore.issue, project.seed.api)} let:result>

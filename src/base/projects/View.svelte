@@ -51,28 +51,28 @@
         <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
       <Route path="/tree/*" let:params let:location>
-        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.Tree} {peer} {project} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.Tree} {location} {peer} {project} {config} />
       </Route>
 
       <Route path="/history">
         <ProjectRoute content={ProjectContent.History} {peer} {project} {config} />
       </Route>
       <Route path="/history/*" let:params let:location>
-        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.History} {peer} {project} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.History} {location} {peer} {project} {config} />
       </Route>
 
       <Route path="/commits/:commit" let:params>
         <ProjectRoute revision={params.commit} content={ProjectContent.Commit} {peer} {project} {config} />
       </Route>
       <Route path="/commits/*" let:params let:location>
-        <ProjectRoute route={params["*"]} hash={location.hash} content={ProjectContent.Commit} {peer} {project} {config} />
+        <ProjectRoute route={params["*"]} content={ProjectContent.Commit} {location} {peer} {project} {config} />
       </Route>
 
-      <Route path="/issues">
-        <ProjectRoute content={ProjectContent.Issues} {peer} {project} {config} />
+      <Route path="/issues" let:location>
+        <ProjectRoute content={ProjectContent.Issues} {peer} {project} {location} {config} />
       </Route>
-      <Route path="/issues/:issue" let:params>
-        <ProjectRoute content={ProjectContent.Issue} issue={params.issue} {peer} {project} {config} />
+      <Route path="/issues/:issue" let:params let:location>
+        <ProjectRoute content={ProjectContent.Issue} issue={params.issue} {peer} {project} {location} {config} />
       </Route>
 
       <Route path="/patches">

@@ -3,6 +3,7 @@
   import type { Config } from "@app/config";
   import { formatLocationHash } from '@app/utils';
   import * as proj from '@app/project';
+  import type { RouteLocation } from "@app/index";
 
   import Project from '@app/base/projects/Project.svelte';
 
@@ -15,13 +16,13 @@
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
   export let config: Config;
-  export let hash: string | null = null;
+  export let location: RouteLocation | null = null;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
   const head = project.branches[project.defaultBranch] || null;
 
   // If line-number hash changes, we update the browser.
-  $: browse.line = formatLocationHash(hash);
+  $: browse.line = formatLocationHash(location?.hash || null);
 
   // `route` includes any unmatched path segments.
   $: if (route) {
@@ -33,6 +34,8 @@
     browse.revision = revision;
   } else if (issue) {
     browse.issue = issue;
+  } else if (location) {
+    browse.search = new URLSearchParams(location.search);
   } else if (patch) {
     browse.patch = patch;
   } else if (head) {

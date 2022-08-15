@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { navigate } from "svelte-routing";
   import { groupIssues, Issue } from "@app/issue";
   import Placeholder from "@app/Placeholder.svelte";
   import { capitalize } from "@app/utils";
@@ -15,6 +16,7 @@
   .filter {
     display: flex;
     flex-direction: row;
+    align-items: center;
     margin: 1rem 0;
     border-radius: var(--border-radius-small);
   }
@@ -44,7 +46,7 @@
 <div class="filter">
   <button
     class="unstyled state-toggle"
-    on:click={() => state = "open"}
+    on:click={() => navigate("?state=open") }
     disabled={open.length === 0}
     class:active={state === "open"}>
     {open.length} Open
@@ -52,7 +54,7 @@
   <span class="separator">&middot;</span>
   <button
     class="unstyled state-toggle"
-    on:click={() => state = "closed"}
+    on:click={() => navigate("?state=closed")}
     disabled={closed.length === 0}
     class:active={state === "closed"}>
     {closed.length} Closed

@@ -7,6 +7,7 @@
 
   export let project: Project;
   export let config: Config;
+  export let state: string;
   export let issues: Issue[];
 
   const navigate = (issue: string) => {
@@ -41,7 +42,7 @@
 </style>
 
 <div class="issues">
-  <IssueFilter {issues} let:filteredIssues>
+  <IssueFilter {state} {issues} let:filteredIssues>
   {@const sortedIssues = filteredIssues.sort(({ timestamp: t1 }, { timestamp: t2 }) => t2 - t1)}
     <div class="issues-list">
       {#each sortedIssues as issue}
