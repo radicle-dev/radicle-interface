@@ -56,7 +56,7 @@ export const state = writable<Connection>({ connection: State.Connecting });
 window.registrarState = state;
 
 state.subscribe((s: Connection) => {
-  console.log("register.state", s);
+  console.debug("register.state", s);
 });
 
 export async function getRegistration(name: string, config: Config, resolver?: EnsResolver | null): Promise<Registration | null> {
@@ -317,7 +317,7 @@ async function register(name: string, owner: string, salt: Uint8Array, config: C
   );
   state.set({ connection: State.Registering });
 
-  console.log("Sent", tx);
+  console.debug("Sent", tx);
 
   await tx.wait();
   window.localStorage.removeItem("commitment");

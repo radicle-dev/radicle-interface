@@ -32,12 +32,12 @@
 
   const selectReaction = (event: { detail: string }) => {
     // TODO: Once we allow adding reactions through the http-api, we should call it here.
-    console.log(event.detail);
+    console.debug(event.detail);
   };
 
   const incrementReaction = (event: { detail: string }) => {
     // TODO: Once we allow increment reactions through the http-api, we should call it here.
-    console.log(event.detail);
+    console.debug(event.detail);
   };
 </script>
 

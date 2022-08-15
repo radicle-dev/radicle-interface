@@ -242,8 +242,8 @@ export async function getConfig(): Promise<Config> {
     : null;
   const metamaskSigner = metamask?.getSigner() || null;
 
-  console.log("metamask", metamask);
-  console.log("metamaskSigner", metamaskSigner);
+  console.debug("metamask", metamask);
+  console.debug("metamaskSigner", metamaskSigner);
 
   let network = { name: "homestead", chainId: 1 };
   if (metamask) {
@@ -263,7 +263,7 @@ export async function getConfig(): Promise<Config> {
     provider,
     metamaskSigner,
   );
-  console.log("config", cfg);
+  console.debug("config", cfg);
 
   return cfg;
 }

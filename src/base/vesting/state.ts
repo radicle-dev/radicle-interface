@@ -14,5 +14,5 @@ export enum State {
 export const state = writable(State.Idle);
 
 state.subscribe(s => {
-  console.log("vesting.state", s);
+  console.debug("vesting.state", s);
 });

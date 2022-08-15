@@ -19,7 +19,7 @@ export class MockExtensionProvider extends ethers.providers.BaseProvider {
   constructor(network: ethers.providers.Networkish, address: string) {
     super(network);
     this.currentAddress = address;
-    console.log("Creating Mock provider");
+    console.debug("Creating Mock provider");
   }
 
   get ready(): Promise<ethers.providers.Network> {
@@ -98,7 +98,7 @@ export class MockExtensionProvider extends ethers.providers.BaseProvider {
           byzantium: true
         };
       default:
-        console.log("Unknown method", method);
+        console.debug("Unknown method", method);
         break;
     }
   }

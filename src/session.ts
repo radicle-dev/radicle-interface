@@ -116,7 +116,7 @@ export const loadState = (initial: State): Store => {
 
       try {
         await config.walletConnect.client.connect();
-        console.log("WalletConnect: connected.");
+        console.debug("WalletConnect: connected.");
 
         const address = await signer.getAddress();
         const tokenBalance: BigNumber = await config.token.balanceOf(address);
@@ -156,7 +156,7 @@ export const loadState = (initial: State): Store => {
 
         store.set({ connection: Connection.Connected, session });
       } catch (e: any) {
-        console.log("WalletConnect: connection failed.");
+        console.debug("WalletConnect: connection failed.");
         store.set({ connection: Connection.Disconnected });
 
         // There seems to be no way to detect this "error" caused by the user
@@ -351,7 +351,7 @@ export async function connectSeed(seedSession: { id: string; session: SeedSessio
 }
 
 state.subscribe(s => {
-  console.log("session.state", s);
+  console.debug("session.state", s);
 });
 
 export async function approveSpender(spender: string, amount: BigNumber, config: Config): Promise<void> {
