@@ -42,8 +42,9 @@
 
 <div class="issues">
   <IssueFilter {issues} let:filteredIssues>
+  {@const sortedIssues = filteredIssues.sort(({ timestamp: t1 }, { timestamp: t2 }) => t2 - t1)}
     <div class="issues-list">
-      {#each filteredIssues as issue}
+      {#each sortedIssues as issue}
         <div class="teaser" on:click={() => navigate(issue.id)}>
           <IssueTeaser {config} {issue} />
         </div>
