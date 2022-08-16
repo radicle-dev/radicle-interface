@@ -8,7 +8,7 @@ import type { Config } from "@app/config";
 import { cached } from "@app/cache";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
-import { NotFoundError } from "@app/error";
+import { NotFoundError, MissingReverseRecord } from "@app/error";
 import { getProjectAnchors } from "@app/anchors";
 import type { Anchor, PendingAnchor } from "@app/project";
 
@@ -208,7 +208,7 @@ export class Profile {
           org: org ?? undefined
         };
       }
-      throw new Error(`No address set for ${addressOrName}`);
+      throw new MissingReverseRecord(`No address set for ${addressOrName}`);
 
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();

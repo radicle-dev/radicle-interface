@@ -17,7 +17,7 @@
   import Error from '@app/Error.svelte';
   import { User } from '@app/base/users/User';
   import Projects from '@app/base/orgs/View/Projects.svelte';
-  import { NotFoundError } from '@app/error';
+  import { MissingReverseRecord, NotFoundError } from '@app/error';
   import NotFound from '@app/NotFound.svelte';
   import RadicleUrn from '@app/RadicleUrn.svelte';
 
@@ -399,6 +399,8 @@
 {:catch err}
   {#if err instanceof NotFoundError}
     <NotFound title={addressOrName} subtitle="Sorry, the requested address or domain was not found." />
+  {:else if err instanceof MissingReverseRecord}
+    <NotFound title={addressOrName} subtitle="Sorry, the requested name has no reverse record set." />
   {:else}
     <Error error={err} />
   {/if}

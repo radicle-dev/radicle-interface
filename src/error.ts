@@ -34,6 +34,16 @@ export class NotFoundError extends Error {
   }
 }
 
+export class MissingReverseRecord extends Error {
+  constructor(message?: string) {
+    if (message) {
+      super(`missing reverse record: ${message}`);
+    } else {
+      super(`missing reverse record`);
+    }
+  }
+}
+
 class AssertionError extends Error {
   constructor(message?: string) {
     if (message) {
