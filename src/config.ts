@@ -216,13 +216,17 @@ function getProvider(
   config: Record<string, any>,
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
-  // Use Alchemy in production. Otherwise use Metamask if installed.
   if (import.meta.env.PROD) {
     return new ethers.providers.AlchemyWebSocketProvider(network.name, config.alchemy.key);
   } else if (metamask) {
     return metamask;
+  } else if (import.meta.env.DEV) {
+    // The ethers defaultProvider doesn't include a `send` method, which breaks the `utils.getTokens` fn.
+    // Since Metamask nor WalletConnect provide an `alchemy_getTokenBalances` nor `alchemy_getTokenMetadata` endpoint,
+    // we can rely on not using `config.provider.send`.
+    return ethers.providers.getDefaultProvider() as ethers.providers.JsonRpcProvider;
   } else {
-    throw new Error("A wallet such as Metamask must be enabled on your browser.");
+    throw new Error("No Web3 provider available.");
   }
 }
 
