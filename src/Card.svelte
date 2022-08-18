@@ -6,6 +6,7 @@
   import type { Config } from '@app/config';
   import { formatName, formatAddress } from '@app/utils';
   import type { Seed } from '@app/base/seeds/Seed';
+  import Loading from '@app/Loading.svelte';
 
   export let profile: Profile | {
     address: string;
@@ -118,6 +119,8 @@
         {:else}
           No projects
         {/if}
+      {:else if numberOfProjects === null}
+        <Loading center fadeIn small />
       {/if}
     </div>
   </div>
