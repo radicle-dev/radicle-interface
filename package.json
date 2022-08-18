@@ -61,6 +61,7 @@
     "ethers": "^5.5.0",
     "eventemitter3": "4.0.7",
     "events": "^3.3.0",
+    "lru-cache": "^7.13.2",
     "marked": "^4.0.12",
     "md5": "^2.3.0",
     "multibase": "^4.0.4",

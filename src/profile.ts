@@ -5,6 +5,7 @@ import {
   resolveIdxProfile, parseUsername, AddressType, identifyAddress
 } from "@app/utils";
 import type { Config } from "@app/config";
+import { cached } from "@app/cache";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
 import { NotFoundError } from "@app/error";
@@ -212,9 +213,9 @@ export class Profile {
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();
 
-      type = await identifyAddress(addressOrName, config);
+      type = await identifyAddress(address, config);
       if (type === AddressType.Org) {
-        org = await Org.get(addressOrName, config);
+        org = await Org.get(address, config);
       }
 
       try {
@@ -239,7 +240,9 @@ export class Profile {
   }
 
   static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {
-    const profilePromises = addressesOrNames.map(addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config));
+    const profilePromises = addressesOrNames.map(
+      addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config)
+    );
     const profiles = await Promise.all(profilePromises);
     return profiles.map(profile => { return new Profile(profile); });
   }
@@ -253,3 +256,11 @@ export class Profile {
     return new Profile(profile);
   }
 }
+
+export const getBalance = cached(
+  async (address: string, config: Config) => {
+    return await config.provider.getBalance(address);
+  },
+  (address) => address,
+  { max: 1000 }
+);

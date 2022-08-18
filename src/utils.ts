@@ -9,12 +9,13 @@ import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
 import type { Config } from '@app/config';
 import config from "@app/config.json";
 import { assert } from '@app/error';
-import type { EnsProfile } from "@app/base/registrations/registrar";
+import { EnsProfile, getAddress, getResolver } from "@app/base/registrations/registrar";
 import { getAvatar, getSeed, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
 import type { BasicProfile } from '@datamodels/identity-profile-basic';
 import { ProfileType } from '@app/profile';
 import { parseUnits } from "@ethersproject/units";
 import { GetSafe } from "@app/base/orgs/Org";
+import * as cache from "@app/cache";
 
 export enum AddressType {
   Contract,
@@ -58,7 +59,7 @@ export type State =
   | { status: Status.Failed; error: string };
 
 export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
-  const name = await config.provider.lookupAddress(address);
+  const name = await lookupAddress(address, config);
   return name === domain;
 }
 
@@ -337,7 +338,7 @@ export function safeLink(addr: string, config: Config): string {
 }
 
 // Query a subgraph.
-export async function querySubgraph(
+export async function querySubgraphWithRetry(
   url: string,
   query: string,
   variables: Record<string, any>,
@@ -358,12 +359,18 @@ export async function querySubgraph(
   if (json.errors) {
     console.error("querySubgraph:", json.errors);
 
-    if (retries > 0) querySubgraph(url, query, variables, retries - 1);
+    if (retries > 0) querySubgraphWithRetry(url, query, variables, retries - 1);
     else return null;
   }
 
   return json.data;
 }
+
+export const querySubgraph = cache.cached(
+  querySubgraphWithRetry,
+  (url: string, query: string, variables: Record<string, any>) => JSON.stringify({ url, query, variables }),
+  { max: 500, ttl: 5 * 60 * 1000 } // Cache results for 5 minutes.
+);
 
 // Format a name.
 export function formatName(input: string, config: Config): string {
@@ -417,7 +424,7 @@ export async function identifyAddress(address: string, config: Config): Promise<
     return AddressType.Safe;
   }
 
-  const code = await config.provider.getCode(address);
+  const code = await getCode(address, config);
   const bytes = ethers.utils.arrayify(code);
 
   if (bytes.length > 0) {
@@ -436,18 +443,26 @@ export async function resolveLabel(label: string | undefined, config: Config): P
 }
 
 // Resolves an IDX profile or return null
-export async function resolveIdxProfile(caip10: string, config: Config): Promise<BasicProfile | null> {
-  return config.ceramic.client.get("basicProfile", caip10);
-}
+export const resolveIdxProfile = cache.cached(
+  async (caip10: string, config: Config): Promise<BasicProfile | null> => {
+    try {
+      return await config.ceramic.client.get("basicProfile", caip10);
+    } catch (e) {
+      return null;
+    }
+  },
+  (caip10: string) => caip10,
+  { max: 500, ttl: 30 * 60 * 1000 } // Cache results for 30 minutes.
+);
 
 // Resolves an ENS profile or return null
 export async function resolveEnsProfile(addressOrName: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
   const name = ethers.utils.isAddress(addressOrName)
-    ? await config.provider.lookupAddress(addressOrName)
+    ? await lookupAddress(addressOrName, config)
     : addressOrName;
 
   if (name) {
-    const resolver = await config.provider.getResolver(name);
+    const resolver = await getResolver(name, config);
     if (! resolver) {
       return null;
     }
@@ -463,7 +478,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       ];
 
       if (addressOrName === name) {
-        promises.push(resolver.getAddress());
+        promises.push(getAddress(resolver));
       } else {
         promises.push(Promise.resolve(addressOrName));
       }
@@ -519,7 +534,7 @@ export async function getSafe(address: string, config: Config): Promise<Safe | n
 
 // Get token balances for an address.
 export async function getTokens(address: string, config: Config): Promise<Array<Token>> {
-  const userBalances = await config.provider.send("alchemy_getTokenBalances", [address, "DEFAULT_TOKENS"]);
+  const userBalances = await getRpcMethod("alchemy_getTokenBalances", [address, "DEFAULT_TOKENS"], config);
   const balances = userBalances.tokenBalances.filter((token: any) => {
     // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
     if (token.tokenBalance !== "0x") {
@@ -528,12 +543,20 @@ export async function getTokens(address: string, config: Config): Promise<Array<
       }
     }
   }).map(async (token: any) => {
-    const tokenMetaData = await config.provider.send("alchemy_getTokenMetadata", [token.contractAddress]);
+    const tokenMetaData = await getRpcMethod("alchemy_getTokenMetadata", [token.contractAddress], config);
     return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
   });
 
   return Promise.all(balances);
 }
+
+export const getRpcMethod = cache.cached(
+  async (method: string, props: string[], config: Config) => {
+    return await config.provider.send(method, props);
+  },
+  (method, props) => JSON.stringify([method, props]),
+  { ttl: 2 * 60 * 1000 }
+);
 
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
@@ -662,3 +685,19 @@ export class EthSignSignature {
     return '';
   }
 }
+
+export const getCode = cache.cached(
+  async (address: string, config: Config) => {
+    return await config.provider.getCode(address);
+  },
+  (address) => address,
+  { max: 1000 }
+);
+
+export const lookupAddress = cache.cached(
+  async (address: string, config: Config) => {
+    return await config.provider.lookupAddress(address);
+  },
+  (address) => address,
+  { max: 1000 }
+);

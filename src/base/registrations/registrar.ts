@@ -9,6 +9,7 @@ import type { Config } from '@app/config';
 import { unixTime } from '@app/utils';
 import { assert } from '@app/error';
 import { Seed, InvalidSeed } from '@app/base/seeds/Seed';
+import * as cache from '@app/cache';
 
 export interface Registration {
   profile: EnsProfile;
@@ -63,7 +64,7 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   name = name.toLowerCase();
 
   if (! resolver) {
-    resolver = await config.provider.getResolver(name);
+    resolver = await getResolver(name, config);
 
     if (! resolver) {
       return null;
@@ -71,17 +72,17 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   }
 
   const meta = await Promise.allSettled([
-    resolver.getAddress(),
-    resolver.getText('avatar'),
-    resolver.getText('url'),
-    resolver.getText('eth.radicle.id'),
-    resolver.getText('eth.radicle.seed.id'),
-    resolver.getText('eth.radicle.seed.host'),
-    resolver.getText('eth.radicle.seed.git'),
-    resolver.getText('eth.radicle.seed.api'),
-    resolver.getText('eth.radicle.anchors'),
-    resolver.getText('com.twitter'),
-    resolver.getText('com.github'),
+    getAddress(resolver),
+    getText(resolver, 'avatar'),
+    getText(resolver, 'url'),
+    getText(resolver, 'eth.radicle.id'),
+    getText(resolver, 'eth.radicle.seed.id'),
+    getText(resolver, 'eth.radicle.seed.host'),
+    getText(resolver, 'eth.radicle.seed.git'),
+    getText(resolver, 'eth.radicle.seed.api'),
+    getText(resolver, 'eth.radicle.anchors'),
+    getText(resolver, 'com.twitter'),
+    getText(resolver, 'com.github'),
   ]);
 
   const [address, avatar, url, id, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
@@ -116,36 +117,36 @@ export async function getRegistration(name: string, config: Config, resolver?: E
 export async function getAvatar(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
-  resolver = resolver ?? await config.provider.getResolver(name);
+  resolver = resolver ?? await getResolver(name, config);
   if (! resolver) {
     return null;
   }
-  return resolver.getText('avatar');
+  return getText(resolver, 'avatar');
 }
 
 export async function getAnchorsAccount(name: string, config: Config, resolver?: EnsResolver | null): Promise<string | null> {
   name = name.toLowerCase();
 
-  resolver = resolver ?? await config.provider.getResolver(name);
+  resolver = resolver ?? await getResolver(name, config);
   if (! resolver) {
     return null;
   }
-  return resolver.getText('eth.radicle.anchors');
+  return getText(resolver, 'eth.radicle.anchors');
 }
 
 export async function getSeed(name: string, config: Config, resolver?: EnsResolver | null): Promise<Seed | InvalidSeed | null> {
   name = name.toLowerCase();
 
-  resolver = resolver ?? await config.provider.getResolver(name);
+  resolver = resolver ?? await getResolver(name, config);
   if (! resolver) {
     return null;
   }
 
   const [id, host, git, api] = await Promise.all([
-    resolver.getText('eth.radicle.seed.id'),
-    resolver.getText('eth.radicle.seed.host'),
-    resolver.getText('eth.radicle.seed.git'),
-    resolver.getText('eth.radicle.seed.api'),
+    getText(resolver, 'eth.radicle.seed.id'),
+    getText(resolver, 'eth.radicle.seed.host'),
+    getText(resolver, 'eth.radicle.seed.git'),
+    getText(resolver, 'eth.radicle.seed.api'),
   ]);
 
   if (! host || ! id) {
@@ -344,3 +345,27 @@ export async function getOwner(name: string, config: Config): Promise<string> {
 
   return owner;
 }
+
+export const getResolver = cache.cached(
+  async (name: string, config: Config) => {
+    return await config.provider.getResolver(name);
+  },
+  (name) => name,
+  { max: 1000 }
+);
+
+export const getText = cache.cached(
+  async (resolver: EnsResolver, key: string) => {
+    return await resolver.getText(key);
+  },
+  (resolver, key) => `${resolver.name} ${key}`,
+  { max: 1000 }
+);
+
+export const getAddress = cache.cached(
+  async (resolver: EnsResolver) => {
+    return await resolver.getAddress();
+  },
+  (resolver) => resolver.name,
+  { max: 1000 }
+);

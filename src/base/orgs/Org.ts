@@ -5,6 +5,9 @@ import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
 import { assert } from '@app/error';
 import * as utils from '@app/utils';
+import * as cache from "@app/cache";
+import type { SafeMultisigTransactionListResponse } from '@gnosis.pm/safe-service-client';
+import type SafeServiceClient from '@gnosis.pm/safe-service-client';
 import type { Safe } from '@app/utils';
 import type { Config } from '@app/config';
 import type { PendingAnchor, Anchor } from '@app/project';
@@ -186,7 +189,9 @@ export class Org {
 
   async getProjects(config: Config): Promise<Anchor[]> {
     const result = await utils.querySubgraph(
-      config.orgs.subgraph, GetProjects, { org: this.address }
+      config.orgs.subgraph,
+      GetProjects,
+      { org: this.address }
     );
     const projects: Anchor[] = [];
 
@@ -214,8 +219,8 @@ export class Org {
 
     try {
       const orgAddr = ethers.utils.getAddress(this.address);
-      const response = await config.safe.client.getPendingTransactions(
-        ethers.utils.getAddress(this.owner)
+      const response = await getPendingProjects(
+        ethers.utils.getAddress(this.owner), config.safe.client
       );
       const projects: PendingAnchor[] = [];
 
@@ -298,17 +303,10 @@ export class Org {
     addressOrName: string,
     config: Config,
   ): Promise<Org | null> {
-    const org = new ethers.Contract(
-      addressOrName,
-      config.abi.org,
-      config.provider
-    );
+    const org = await getOrgContract(addressOrName, config);
 
     try {
-      const [owner, resolved] = await Promise.all([
-        org.owner(),
-        org.resolvedAddress,
-      ]);
+      const [owner, resolved] = await resolveOrgOwner(org);
 
       const safe = await utils.getSafe(owner, config);
       // If what is resolved is not the same as the input, it's because we
@@ -391,3 +389,38 @@ export function parseAnchorTx(data: string, config: Config): { id: string; state
   }
   return null;
 }
+
+export const getOrgContract = cache.cached(
+  async (addressOrName: string, config: Config) => {
+    return new ethers.Contract(
+      addressOrName,
+      config.abi.org,
+      config.provider
+    );
+  },
+  (addressOrName) => addressOrName
+);
+
+export const resolveOrgOwner = cache.cached(
+  async (org: ethers.Contract) => {
+    return await Promise.all([
+      org.owner(),
+      org.resolvedAddress,
+    ]);
+  },
+  (org) => org.address,
+);
+
+export const getPendingProjects = cache.cached(
+  async (owner: string, client: SafeServiceClient): Promise<SafeMultisigTransactionListResponse> => {
+    try {
+      return await client.getPendingTransactions(
+        ethers.utils.getAddress(owner)
+      );
+    } catch (e) {
+      return { count: 0, results: [] };
+    }
+  },
+  (owner) => owner,
+  { max: 1000, ttl: 5 * 60 * 1000 } // Cache results for 5 minutes.
+);

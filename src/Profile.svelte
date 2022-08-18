@@ -8,7 +8,7 @@
   import SeedAddress from '@app/SeedAddress.svelte';
   import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
   import Link from '@app/Link.svelte';
-  import { Profile, ProfileType } from '@app/profile';
+  import { getBalance, Profile, ProfileType } from '@app/profile';
   import Loading from '@app/Loading.svelte';
   import * as utils from '@app/utils';
   import { session } from '@app/session';
@@ -46,7 +46,7 @@
     if (addressType === utils.AddressType.Safe) {
       try {
         const tokens = await utils.getTokens(org.owner, config);
-        const balance = await config.provider.getBalance(org.owner);
+        const balance = await getBalance(org.owner, config);
 
         if (! balance.isZero()) {
           // To maintain the format we hardcode the ETH specs.
