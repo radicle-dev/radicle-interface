@@ -37,6 +37,10 @@
     font-style: italic;
     margin-top: 0.1rem;
   }
+  .explainer {
+    width: 28rem;
+    margin: 1rem 0;
+  }
 </style>
 
 <svelte:head>
@@ -47,6 +51,11 @@
   <div>
     <div class="input-caption">
       Register a <strong>{config.registrar.domain}</strong> name
+      <div class="text-small explainer">
+        Register a unique name with our ENS registrar, under the <strong>radicle.eth</strong>
+        domain (e.g. cloudhead.radicle.eth). Radicle names never expire and free
+        to register.
+      </div>
     </div>
     <div class="input-main">
       <span class="name">
