@@ -122,8 +122,8 @@
     {#if seed.api.host}
       <div
         class="stat seed clickable widget"
-        on:click={() => navigate(`/seeds/${seed.api.host}`)}
         title="Project data is fetched from this seed">
+        on:click={() => navigate(`/seeds/${seed.api.host}`)}
         <span>{seed.api.host}</span>
       </div>
     {/if}
@@ -134,28 +134,24 @@
     on:click={() => toggleContent(ProjectContent.History, true)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
-  {#if project.issues > 0}
+  {#if project.issues}
     <div
       class="stat issue-count clickable widget"
       class:active={content === ProjectContent.Issues}
+      class:not-allowed={project.issues === 0}
+      class:clickable={project.issues > 0}
       on:click={() => toggleContent(ProjectContent.Issues, false)}>
       <strong>{project.issues}</strong> issue(s)
     </div>
-  {:else}
-    <div class="stat issue-count not-allowed widget" title="Not supported">
-      0 issue(s)
-    </div>
   {/if}
-  {#if project.patches > 0}
+  {#if project.patches}
     <div
       class="stat patch-count clickable widget"
       class:active={content === ProjectContent.Patches}
+      class:not-allowed={project.patches === 0}
+      class:clickable={project.patches > 0}
       on:click={() => toggleContent(ProjectContent.Patches, false)}>
       <strong>{project.patches}</strong> patch(es)
-    </div>
-  {:else}
-    <div class="stat patch-count not-allowed widget" title="Not supported">
-      0 patch(es)
     </div>
   {/if}
   <div class="stat contributor-count widget">

@@ -57,8 +57,8 @@ export interface ProjectInfo {
   defaultBranch: string;
   delegates: Delegate[];
   remotes: PeerId[];
-  patches: number;
-  issues: number;
+  patches?: number;
+  issues?: number;
 }
 
 export interface Tree {
@@ -267,8 +267,9 @@ export class Project implements ProjectInfo {
   branches: Branches;
   profile: Profile | null;
   anchors: string[];
-  patches: number;
-  issues: number;
+  // At the moment we still have seed nodes which won't return neither patches or issues
+  patches?: number;
+  issues?: number;
 
   constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
     this.urn = urn;
