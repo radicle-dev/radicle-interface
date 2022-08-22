@@ -11,7 +11,25 @@
   function register() {
     navigate(`/registrations/${label}/form`);
   }
+
+  function validate(input: string): string[] {
+    const errors: string[] = [];
+
+    if (input && input.includes(".")) {
+      errors.push("Please do not use dots as separators.");
+    }
+    if (input && input.length < 2) {
+      errors.push("Please enter a minimum of 2 characters.");
+    }
+    if (input && input.length > 128) {
+      errors.push("Please enter a maximum of 128 characters.");
+    }
+
+    return errors;
+  }
+
   $: label = input.trim();
+  $: errors = validate(label);
 </script>
 
 <style>
@@ -65,16 +83,21 @@
           placeholder=""
           root={config.registrar.domain}
         />
-        {#if label && label.length < 2}
-          <span class="input-info">Please enter a minimum of 2 characters.</span>
-        {:else if label && label.length > 128}
-          <span class="input-info">Please enter a maximum of 128 characters.</span>
+        {#if errors}
+          <div class="input-info">
+            {#each errors as error}
+              <div>{error}</div>
+            {/each}
+          </div>
         {/if}
       </span>
 
-      <button disabled={!label || label.length < 2 || label.length > 128} class="primary register regular" on:click={register}>
-        Check
-      </button>
+        <button
+          disabled={!label || errors.length !== 0}
+          class="primary register regular"
+          on:click={register}>
+            Check
+        </button>
     </div>
   </div>
 </main>
