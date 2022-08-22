@@ -13,18 +13,10 @@
   export let anchor: proj.Anchor | null = null;
   export let compact = false;
 
-  const getTimestampOneYearAgo = () => {
-    const now = new Date();
-    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-    return Math.floor(oneYearAgo.getTime() / 1000).toString();
-  };
-
   const loadCommits = async () => {
-    const commits = await Project.getCommits(project.urn, seed.api, {
-      parent: project.head ?? null,
-      since: getTimestampOneYearAgo(),
-    });
-    return groupCommitsByWeek(commits.headers);
+    const commits = await Project.getActivity(project.urn, seed.api);
+
+    return groupCommitsByWeek(commits.activity);
   };
 </script>
 

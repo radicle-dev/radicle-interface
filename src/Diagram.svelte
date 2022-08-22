@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { CommitGroup } from "./commit";
+  import type { WeeklyActivity } from "./commit";
 
   export let strokeWidth: number;
-  export let points: CommitGroup[];
+  export let points: WeeklyActivity[];
   export let viewBoxWidth: number;
   export let viewBoxHeight: number;
 

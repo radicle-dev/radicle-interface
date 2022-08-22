@@ -60,6 +60,13 @@ export interface CommitGroup {
   week: number;
 }
 
+export interface WeeklyActivity {
+  date: string;
+  time: number;
+  commits: number[];
+  week: number;
+}
+
 export interface DiffStats {
   additions: number;
   deletions: number;
@@ -137,30 +144,22 @@ export async function fetchCommits(project: Project, parentCommit: string): Prom
   return groupCommitHistory(commitsQuery);
 }
 
-export function groupCommitsByWeek(commits: CommitMetadata[]): CommitGroup[] {
-  const groupedCommits: CommitGroup[] = [];
+export function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
+  const groupedCommits: WeeklyActivity[] = [];
   let groupDate: Date | undefined = undefined;
 
   if (commits.length === 0) {
     return [];
   }
 
-  commits = commits.sort((a, b) => {
-    if (a.header.committerTime > b.header.committerTime) {
-      return -1;
-    } else if (a.header.committerTime < b.header.committerTime) {
-      return 1;
-    }
-
-    return 0;
-  });
+  commits = commits.sort((a, b) => a > b ? -1 : a < b ? 1 : 0);
 
   // A accumulator that increments by the amount of weeks between weekly commit groups
-  let weekAccumulator = Math.floor(getDaysPassed(new Date(commits[0].header.committerTime * 1000), new Date()) / 7);
+  let weekAccumulator = Math.floor(getDaysPassed(new Date(commits[0] * 1000), new Date()) / 7);
 
   // Loops over all commits and stores them by week with some additional metadata in groupedCommits.
   for (const commit of commits) {
-    const time = commit.header.committerTime * 1000;
+    const time = commit * 1000;
     const date = new Date(time);
     const isNewWeek =
       !groupedCommits.length ||

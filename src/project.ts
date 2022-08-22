@@ -349,6 +349,13 @@ export class Project implements ProjectInfo {
     return new Request(`projects/${urn}/commits`, host).get(params);
   }
 
+  static async getActivity(
+    urn: string,
+    host: Host,
+  ): Promise<{ activity: number[] }> {
+    return new Request(`projects/${urn}/activity`, host).get();
+  }
+
   async getCommit(commit: string): Promise<Commit> {
     return new Request(`projects/${this.urn}/commits/${commit}`, this.seed.api).get();
   }
