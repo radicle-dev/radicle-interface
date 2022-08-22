@@ -15,7 +15,7 @@
       let seed = await Seed.lookup(session.domain, config);
       let key = `${seed.emoji} ${seed.host}`;
 
-      return { key, value: seed.host, badge: null };
+      return { key, value: seed.host, title: `Go to ${seed.host}`, badge: null };
     }));
   };
 </script>

@@ -20,6 +20,7 @@
   const revisionList = Object.values(revisions).map((b, i) => ({
     key: formatRevisionName(b, i),
     value: i.toString(),
+    title: `Browse revision ${formatRevisionName(b, i)}`,
     badge: null,
   }));
 

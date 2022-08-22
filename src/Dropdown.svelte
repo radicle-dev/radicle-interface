@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  export let items: { key: string; value: string; badge: string | null }[];
+  export let items: { key: string; title: string; value: string; badge: string | null }[];
   export let selected: string | null = null;
 
   const dispatch = createEventDispatcher();
@@ -32,9 +32,9 @@
 </style>
 
 <div class="dropdown">
-  {#each items as {key, value, badge}}
+  {#each items as {key, value, badge, title}}
     {#if key && value}
-      <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} title={value}>{@html key}
+      <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} {title}>{@html key}
         {#if badge}
           <span class="badge primary">{badge}</span>
         {/if}

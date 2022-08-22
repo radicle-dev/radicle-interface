@@ -16,7 +16,7 @@
 
   let branchLabel: string | null = null;
 
-  $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, badge: null }));
+  $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
   $: head = project.head ?? branches[project.defaultBranch];
   $: commit = getOid(revision, branches) || head;
@@ -67,7 +67,7 @@
   }
 </style>
 
-<div class="commit">
+<div class="commit" title="Switch branches">
   <!-- Check for branches listing feature -->
   {#if branchList.length > 0}
     {#if branchLabel}

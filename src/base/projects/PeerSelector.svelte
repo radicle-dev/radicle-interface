@@ -11,7 +11,12 @@
 
   let meta: Peer | undefined;
   // List of items to be created for the Dropdown component.
-  let items: { key: string; value: string; badge: string | null }[] = [];
+  let items: { key: string; value: string; title: string; badge: string | null }[] = [];
+
+  function createTitle(p: Peer): string {
+    const name = p.person?.name ? p.person.name : p.id;
+    return p.delegate ? `${name} is a delegate of this project` : `${name} is a peer tracked by this seed`;
+  }
 
   onMount(() => {
     meta = peers.find(p => p.id === peer);
@@ -19,7 +24,7 @@
       if (! p.person?.name) console.debug("Not able to resolve peer identity for: ", p.id);
       let key = p.person?.name ? `<strong>${p.person.name}</strong> ${p.id}` : p.id;
 
-      return { key, value: p.id, badge: p.delegate ? "delegate" : null };
+      return { key, value: p.id, title: createTitle(p), badge: p.delegate ? "delegate" : null };
     });
   });
 
@@ -67,7 +72,7 @@
 </style>
 
 <Floating>
-  <div slot="toggle" class="selector">
+  <div slot="toggle" class="selector" title="Switch peers">
     <div class="stat peer" class:not-allowed={!peers}>
       <Icon name="fork" />
       {#if meta}
