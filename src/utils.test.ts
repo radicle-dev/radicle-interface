@@ -93,7 +93,7 @@ describe("Format functions", () => {
       () => utils.formatAddress(
         "0x8f91813",
       )
-    ).toThrowError('invalid address (argument="address", value="0x8f91813", code=INVALID_ARGUMENT, version=address/5.5.0)');
+    ).toThrowError('invalid address (argument="address", value="0x8f91813", code=INVALID_ARGUMENT, version=address/5.7.0)');
   });
 
   test.each([
