@@ -50,10 +50,11 @@
     flex-direction: column;
     background: linear-gradient(
       180deg,
-      var(--color-secondary-background) 0%,
-      transparent 30%,
+      #181a38 0%,
       transparent 100%
     );
+    background-repeat: no-repeat;
+    background-size: 100% 6rem;
   }
   .wrapper {
     display: flex;
