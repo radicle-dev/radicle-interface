@@ -432,4 +432,20 @@ export class Project implements ProjectInfo {
 
     return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
   }
+
+  static async getMulti(projs: { urn: Urn; seed: string }[]): Promise<{ info: ProjectInfo; seed: Host }[]> {
+    const promises = [];
+
+    for (const proj of projs) {
+      const seed = { host: proj.seed, port: null };
+      promises.push(Project.getInfo(proj.urn, seed).then(info => {
+        return { info, seed };
+      }));
+    }
+    const results = await Promise.allSettled(promises);
+    const isFulfilled = <T>(input: PromiseSettledResult<T>):
+      input is PromiseFulfilledResult<T> => input.status === 'fulfilled';
+
+    return results.filter(isFulfilled).map(r => r.value);
+  }
 }

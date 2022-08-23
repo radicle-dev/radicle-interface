@@ -3,13 +3,15 @@
   import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
   import Diagram from '@app/Diagram.svelte';
   import { groupCommitsByWeek } from '@app/commit';
+  import type { Host } from '@app/api';
   import { Project } from '@app/project';
-  import type { Seed } from '@app/base/seeds/Seed';
+  import { formatCommit } from '@app/utils';
 
   export let project: proj.ProjectInfo;
-  export let seed: Seed;
+  export let seed: { api: Host };
   export let faded = false;
   export let anchor: proj.Anchor | null = null;
+  export let compact = false;
 
   const getTimestampOneYearAgo = () => {
     const now = new Date();
@@ -48,7 +50,21 @@
   }
   div .description {
     overflow-x: hidden;
+    overflow-y: hidden;
     text-overflow: ellipsis;
+  }
+  article.compact {
+    min-width: 16rem;
+    height: 8rem;
+  }
+  article.compact .left {
+    width: 100%;
+  }
+  article.compact .right {
+    display: none;
+  }
+  article.compact .description {
+    white-space: nowrap;
   }
   article.project-faded {
     border: 1px dashed var(--color-foreground-subtle);
@@ -126,7 +142,7 @@
   }
 </style>
 
-<article on:click class:project-faded={faded}>
+<article on:click class:project-faded={faded} class:compact>
   <div class="left">
     <div class="id">
       <span class="name">{project.name}</span>
@@ -136,7 +152,11 @@
       <span class="commit">
         <slot name="stateHash">
           {#if project.head}
-            {project.head}
+            {#if compact}
+              {formatCommit(project.head)}
+            {:else}
+              {project.head}
+            {/if}
           {:else}
             <span class="subtle">✗ No head</span>
           {/if}
@@ -144,36 +164,39 @@
       </span>
     </div>
   </div>
-  <div class="right">
-    <div class="id">
-      <span class="urn desktop">{project.urn}</span>
-    </div>
-    <div class="anchor">
-      <span class="anchor-info">
-        <span class="actions">
-          <slot name="actions">
-          </slot>
-        </span>
-        <span class="anchor-badge">
-          <slot name="anchor">
-            {#if anchor && project.head}
-              <AnchorBadge
-                commit={project.head}
-                head={project.head} noText noBg
-                anchors={[anchor.anchor.stateHash]} />
-            {/if}
-          </slot>
-        </span>
-      </span>
-    </div>
-    {#await loadCommits() then points}
-      <div class="desktop activity">
-        <Diagram {points}
-          strokeWidth={3}
-          viewBoxHeight={100}
-          viewBoxWidth={600}
-        />
+
+  {#if !compact}
+    <div class="right">
+      <div class="id">
+        <span class="urn desktop">{project.urn}</span>
       </div>
-    {/await}
-  </div>
+      <div class="anchor">
+        <span class="anchor-info">
+          <span class="actions">
+            <slot name="actions">
+            </slot>
+          </span>
+          <span class="anchor-badge">
+            <slot name="anchor">
+              {#if anchor && project.head}
+                <AnchorBadge
+                  commit={project.head}
+                  head={project.head} noText noBg
+                  anchors={[anchor.anchor.stateHash]} />
+              {/if}
+            </slot>
+          </span>
+        </span>
+      </div>
+      {#await loadCommits() then points}
+        <div class="desktop activity">
+          <Diagram {points}
+            strokeWidth={3}
+            viewBoxHeight={100}
+            viewBoxWidth={600}
+          />
+        </div>
+      {/await}
+    </div>
+  {/if}
 </article>

@@ -1,12 +1,13 @@
 <script lang="ts">
+  import { navigate } from 'svelte-routing';
   import type { Config } from '@app/config';
-  import { Profile } from '@app/profile';
-  import { Org } from '@app/base/orgs/Org';
   import Loading from '@app/Loading.svelte';
+  import Widget from '@app/base/projects/Widget.svelte';
+  import { Project, ProjectInfo } from '@app/project';
+  import type { Host } from '@app/api';
+  import * as proj from "@app/project";
   import Message from '@app/Message.svelte';
-  import Cards from '@app/Cards.svelte';
   import { setOpenGraphMetaTag } from '@app/utils';
-  import { Seed } from '@app/base/seeds/Seed';
 
   export let config: Config;
 
@@ -16,21 +17,18 @@
     { prop: "og:url", content: window.location.href }
   ]);
 
-  const getOrgs = config.orgs.pinned.length > 0
-    ? Org.getMulti(config.orgs.pinned, config)
-    : Org.getAll(config);
-
-  const getUsers = config.users.pinned.length > 0
-    ? Profile.getMulti(config.users.pinned, config)
+  const getProjects = config.projects.pinned.length > 0
+    ? Project.getMulti(config.projects.pinned)
     : Promise.resolve([]);
 
-  const getSeeds = Object.keys(config.seeds.pinned).length > 0
-    ? Seed.lookupMulti(Object.keys(config.seeds.pinned), config)
-    : Promise.resolve([]);
-
-  const getEntities = Promise.all([getUsers, getOrgs, getSeeds]).then(([users, orgs, seeds]) => {
-    return { users, orgs, seeds };
-  });
+  const onClick = (project: ProjectInfo, seed: Host) => {
+    navigate(proj.path({
+      urn: project.urn,
+      seed: seed.host,
+      profile: null,
+      revision: project.head,
+    }));
+  };
 </script>
 
 <style>
@@ -48,10 +46,21 @@
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
   }
+  .projects {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+  }
+  .project {
+    width: 16rem;
+  }
   .heading {
     color: var(--color-secondary);
     padding: 1rem 0rem;
     font-size: 1.25rem;
+    margin-bottom: 1rem;
   }
   .loading {
     padding-top: 2rem;
@@ -77,31 +86,29 @@
     peer-to-peer network 🌐 built on Git.</p>
   </div>
 
-  {#await getEntities}
+  {#await getProjects}
     <div class="loading">
       <Loading center />
     </div>
-  {:then entities}
-    {#if entities.seeds.length}
+  {:then results}
+    {#if results.length}
       <div class="heading">
-        Explore <strong>seed nodes</strong> on the Radicle network.
+        Explore <strong>projects</strong> on the Radicle network.
       </div>
-      <Cards {config} seeds={entities.seeds}>
-        <div class="empty">There are no seed nodes.</div>
-      </Cards>
-    {/if}
-    {#if entities.orgs.length || entities.users.length}
-      <div class="heading">
-        Explore <strong>orgs</strong> and <strong>users</strong> on the Radicle network.
+
+      <div class="projects">
+        {#each results as result}
+          <div class="project">
+            <Widget compact project={result.info} seed={{ api: result.seed }}
+              on:click={() => onClick(result.info, result.seed)} />
+          </div>
+        {/each}
       </div>
-      <Cards {config} profiles={entities.users} orgs={entities.orgs}>
-        <div class="empty">There are no orgs or users.</div>
-      </Cards>
     {/if}
   {:catch}
     <div class="padding">
       <Message error>
-        <strong>Error: </strong> failed to load orgs and users.
+        <strong>Error: </strong> failed to load projects.
       </Message>
     </div>
   {/await}

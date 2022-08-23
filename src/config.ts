@@ -35,6 +35,7 @@ export class Config {
   reverseRegistrar: { address: string };
   orgs: { subgraph: string; contractHash: string; pinned: string[] };
   users: { pinned: string[] };
+  projects: { pinned: { urn: string; name: string; seed: string }[] };
   seeds: { pinned: Record<string, { emoji: string }> };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
@@ -120,6 +121,7 @@ export class Config {
     this.provider = provider;
     this.signer = null;
     this.gasLimits = gasLimits;
+    this.projects = config.projects;
     this.abi = config.abi;
     this.ceramic = {
       client: ceramic,
