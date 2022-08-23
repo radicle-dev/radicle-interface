@@ -9,6 +9,11 @@
 </script>
 
 <style>
+  .wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
   .seed-address {
     display: inline-flex;
     font-size: 1rem;
@@ -25,7 +30,7 @@
   }
 </style>
 
-<div>
+<div class="wrapper">
   <div class="seed-address">
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}

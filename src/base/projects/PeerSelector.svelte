@@ -38,7 +38,7 @@
   }
   .selector .peer {
     cursor: pointer;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
     border-radius: var(--border-radius-small);
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     font-family: var(--font-family-monospace);
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem;
     height: 2.125rem;
     background: var(--color-foreground-background);
   }
@@ -69,7 +69,7 @@
 <Floating>
   <div slot="toggle" class="selector">
     <div class="stat peer" class:not-allowed={!peers}>
-      <Icon name="fork" width={15} height={15} />
+      <Icon name="fork" />
       {#if meta}
         <span class="peer-id">
           {meta.person?.name ?? formatSeedId(meta.id)}

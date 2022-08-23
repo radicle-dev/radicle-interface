@@ -49,11 +49,7 @@
 </style>
 
 <div class="selector">
-  <Icon fill
-    name="ellipsis"
-    width={18}
-    height={18}
-  />
+  <Icon name="ellipsis" />
   {#if showReactions}
     <div class="modal">
       {#each config.reactions as reaction}

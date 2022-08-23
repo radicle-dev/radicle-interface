@@ -701,3 +701,7 @@ export const lookupAddress = cache.cached(
   (address) => address,
   { max: 1000 }
 );
+
+export const unreachable = (value: never): never => {
+  throw new Error(`Unreachable code: ${value}`);
+};

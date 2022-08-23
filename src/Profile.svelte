@@ -129,8 +129,9 @@
   }
   .url {
     display: flex; /* Ensures correct vertical positioning of icons */
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     height: 1.6rem;
+    align-items: center;
   }
   .members {
     margin-top: 2rem;
@@ -199,21 +200,21 @@
           {#if profile.url}
             <a class="url" href={profile.url}>
               <span class="mobile">
-                <Icon name="url" fill inline />
+                <Icon name="url" />
               </span>
-              <span class="desktop">
+              <span class="desktop" style="margin-right: 0.3rem;">
                 {profile.url}
               </span>
             </a>
           {/if}
           {#if profile.twitter}
             <a class="url" href="https://twitter.com/{profile.twitter}">
-              <Icon name="twitter" fill inline />
+              <Icon name="twitter" />
             </a>
           {/if}
           {#if profile.github}
             <a class="url" href="https://github.com/{profile.github}">
-              <Icon name="github" fill inline />
+              <Icon name="github" />
             </a>
           {/if}
         </div>

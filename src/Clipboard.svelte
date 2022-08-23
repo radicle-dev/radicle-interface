@@ -28,10 +28,10 @@
     height: 24px;
   }
   .clipboard:hover :global(svg) {
-    stroke: var(--color-foreground-90);
+    fill: var(--color-foreground-90);
   }
   .clipboard:active :global(svg) {
-    stroke: var(--color-positive);
+    fill: var(--color-positive);
   }
   .clipboard:hover {
     border-radius: var(--border-radius);
@@ -40,8 +40,8 @@
 
 <span class="clipboard" class:small on:click|stopPropagation={copy}>
   {#if small}
-    <Icon name="clipboard-small" width={12} height={12} />
+    <Icon name="clipboard-small" />
   {:else}
-    <Icon name="clipboard" width={16} height={16} />
+    <Icon name="clipboard" />
   {/if}
 </span>

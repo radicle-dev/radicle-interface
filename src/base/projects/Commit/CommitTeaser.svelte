@@ -97,7 +97,7 @@
     <CommitVerifiedBadge {commit} />
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
     <div class="browse" title="View file" on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
-      <Icon name="browse" width={17} inline fill />
+      <Icon name="browse" />
     </div>
   </div>
 </div>

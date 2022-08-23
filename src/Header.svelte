@@ -225,7 +225,9 @@
       </span>
     {/if}
     <div class="toggle" on:click={toggleNavbar}>
-      <Icon name="ellipsis" width={27} height={27} fill />
+      <span style="transform: scale(1.2);">
+        <Icon name="ellipsis" />
+      </span>
     </div>
   </div>
 

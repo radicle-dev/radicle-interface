@@ -146,7 +146,9 @@
       {/if}
     </div>
     <div class="browse clickable" on:click|stopPropagation={() => dispatch("browse", file.path)}>
-      <Icon name="browse" title="View file" width={20} inline fill />
+      <span title="View file" style="transform: scale(1.25);">
+        <Icon name="browse" />
+      </span>
     </div>
   </header>
   {#if !collapsed}
