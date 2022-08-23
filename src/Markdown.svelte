@@ -3,7 +3,7 @@
   import { marked } from "marked";
   import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
-  import { getImageMime } from "@app/utils";
+  import { getImageMime, isUrl } from "@app/utils";
   import xss, { getDefaultWhiteList } from "xss";
 
   export let content: string;
@@ -42,7 +42,8 @@
     for (let i of container.querySelectorAll("img")) {
       const path = i.getAttribute("src");
 
-      if (path) {
+      // Make sure the source isn't a URL before trying to fetch it from the repo
+      if (path && !isUrl(path)) {
         getImage(path).then(blob => {
           if (blob.content) {
             const mime = getImageMime(path);
