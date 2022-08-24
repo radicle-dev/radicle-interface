@@ -55,7 +55,7 @@
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
-          href="https://radicle.network/get-started.html"
+          href="https://radicle.xyz/get-started.html"
           class="link">Radicle CLI</a> to clone this project.
       </label>
       <br />

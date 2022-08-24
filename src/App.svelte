@@ -68,7 +68,7 @@
 <svelte:head>
   <title>Radicle</title>
   {#if import.meta.env.PROD}
-    <script defer data-domain="app.radicle.network" src="https://plausible.io/js/plausible.js"></script>
+    <script defer data-domain="app.radicle.xyz" src="https://plausible.io/js/plausible.js"></script>
   {/if}
 </svelte:head>
 

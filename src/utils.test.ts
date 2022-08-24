@@ -186,8 +186,8 @@ describe("String Assertions", () => {
   });
 
   test.each([
-    { url: "https://app.radicle.network", expected: true },
-    { url: "http://app.radicle.network", expected: true },
+    { url: "https://app.radicle.xyz", expected: true },
+    { url: "http://app.radicle.xyz", expected: true },
     { url: "http://app", expected: true },
     { url: "://app", expected: false },
     { url: "//app", expected: false },
@@ -286,8 +286,8 @@ describe("Parse Strings", () => {
 
 describe("Path Manipulation", () => {
   test.each([
-    { imagePath: "/assets/images/tux.png", base: "/", origin: "https://app.radicle.network", expected: "assets/images/tux.png" },
-    { imagePath: "assets/images/tux.png", base: "/", origin: "https://app.radicle.network", expected: "assets/images/tux.png" },
+    { imagePath: "/assets/images/tux.png", base: "/", origin: "https://app.radicle.xyz", expected: "assets/images/tux.png" },
+    { imagePath: "assets/images/tux.png", base: "/", origin: "https://app.radicle.xyz", expected: "assets/images/tux.png" },
     { imagePath: "assets/images/tux.png", base: "/", origin: "http://localhost:3000", expected: "assets/images/tux.png" },
     { imagePath: "../tux.png", base: "/components/assets/README.md", origin: "http://localhost:3000", expected: "components/tux.png" },
     { imagePath: "../tux.png", base: "/components/assets/", origin: "http://localhost:3000", expected: "components/tux.png" },
