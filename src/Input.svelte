@@ -17,6 +17,7 @@
     visibility: hidden;
     margin-left: -4rem;
     width: 4rem;
+    height: 2rem;
     text-align: right;
     -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
     mask: linear-gradient(90deg, transparent 0%, #fff 50%);
@@ -29,6 +30,7 @@
     border: none;
     outline: none;
     width: 100%;
+    height: 2rem;
     text-overflow: ellipsis !important;
     border-radius: var(--border-radius-small);
   }

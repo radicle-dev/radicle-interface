@@ -16,16 +16,16 @@
 
 <style>
   .clipboard {
-    width: 30px;
-    height: 30px;
+    width: 2rem;
+    height: 2rem;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     align-items: center;
   }
   .clipboard.small {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
   }
   .clipboard:hover :global(svg) {
     fill: var(--color-foreground-90);

@@ -117,6 +117,9 @@
     margin: 0;
     white-space: nowrap;
   }
+  .field > div {
+    height: inherit;
+  }
   .ellipsis {
     width: 28rem;
     overflow: hidden;
@@ -133,7 +136,7 @@
   }
 
   input.field {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-round);
     overflow: hidden;
     text-overflow: ellipsis;
     border-color: var(--color-secondary) !important;
@@ -192,10 +195,10 @@
                 <a class="link" href="{field.value}" target="_blank">{field.value}</a>
               </span>
             {:else if isAddress(field.value)}
-              <div class="desktop">
+              <div class="desktop-inline">
                 <Address resolve={field.resolve ?? false} address={field.value} {config} />
               </div>
-              <div class="mobile">
+              <div class="mobile-inline">
                 <Address compact resolve={field.resolve ?? false} address={field.value} {config} />
               </div>
             {:else if (field.url)}

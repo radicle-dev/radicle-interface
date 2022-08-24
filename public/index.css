@@ -408,7 +408,7 @@ label.input {
   font-family: var(--font-family-monospace);
 }
 
-.mobile {
+.mobile, .mobile-inline {
   display: none !important;
 }
 .desktop {
@@ -422,10 +422,10 @@ label.input {
   .mobile {
     display: block !important;
   }
-  .desktop {
-    display: none !important;
+  .mobile-inline {
+    display: inline !important;
   }
-  .desktop-inline {
+  .desktop, .desktop-inline {
     display: none !important;
   }
 }
