@@ -94,7 +94,10 @@
           "requireLast": false
         }
       }
-    ]
+    ],
+    // Disallow Unused Variables.
+    // https://eslint.org/docs/rules/no-unused-vars
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
   },
   "settings": {
     "svelte3/typescript": true
