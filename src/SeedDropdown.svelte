@@ -12,8 +12,8 @@
   // When a user signs into a new seed we want to update the seed listing
   $: formatSeeds = async () => {
     return await Promise.all(Object.values(seeds).map(async session => {
-      let seed = await Seed.lookup(session.domain, config);
-      let key = `${seed.emoji} ${seed.host}`;
+      const seed = await Seed.lookup(session.domain, config);
+      const key = `${seed.emoji} ${seed.host}`;
 
       return { key, value: seed.host, title: `Go to ${seed.host}`, badge: null };
     }));

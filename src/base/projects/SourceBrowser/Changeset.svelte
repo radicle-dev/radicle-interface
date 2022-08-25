@@ -7,7 +7,7 @@
   export let stats: DiffStats;
 
   const diffDescription = ({ modified, created, deleted }: Diff): string => {
-    let s = [];
+    const s = [];
 
     if (modified.length) {
       s.push(`${modified.length} file(s) changed`);

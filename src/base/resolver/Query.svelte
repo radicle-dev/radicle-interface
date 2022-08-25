@@ -10,7 +10,7 @@
   export let config: Config;
   export let query: string | null;
 
-  let error = false;
+  const error = false;
 
   onMount(async () => {
     if (query) {

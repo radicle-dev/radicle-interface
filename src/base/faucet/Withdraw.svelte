@@ -12,7 +12,7 @@
   export let config: Config;
 
   let error: Error;
-  let amount: string = window.history.state.amount;
+  const amount: string = window.history.state.amount;
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",

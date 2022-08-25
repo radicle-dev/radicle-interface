@@ -14,7 +14,7 @@
   export let subtle = false;
   export let action = floating ? "Close" : "Back";
 
-  let body = message || (error && error.message) || "";
+  const body = message || (error && error.message) || "";
 </script>
 
 <Modal on:close error {floating} {subtle}>

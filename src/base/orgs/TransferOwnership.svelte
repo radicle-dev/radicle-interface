@@ -59,7 +59,7 @@
         state = State.Proposed;
       } else {
         state = State.Signing;
-        let tx = await org.setOwner(newOwner, config);
+        const tx = await org.setOwner(newOwner, config);
         state = State.Pending;
         await tx.wait();
         state = State.Success;

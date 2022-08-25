@@ -14,7 +14,7 @@
   export let browserStore: Writable<Browser>;
   export let noAnchor = false;
 
-  let { urn, peers, branches, seed, anchors } = project;
+  const { urn, peers, branches, seed, anchors } = project;
 
   $: browser = $browserStore;
   $: revision = browser.revision || commit;

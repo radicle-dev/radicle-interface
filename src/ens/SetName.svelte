@@ -47,8 +47,8 @@
   const onSubmit = async () => {
     state = State.Checking;
 
-    let domain = `${name}.${config.registrar.domain}`;
-    let resolved = await config.provider.resolveName(domain);
+    const domain = `${name}.${config.registrar.domain}`;
+    const resolved = await config.provider.resolveName(domain);
 
     if (resolved && isAddressEqual(resolved, entity.address)) {
       try {
@@ -58,7 +58,7 @@
           state = State.Proposed;
         } else {
           state = State.Signing;
-          let tx = await entity.setName(domain, config);
+          const tx = await entity.setName(domain, config);
           state = State.Pending;
           await tx.wait();
           state = State.Success;

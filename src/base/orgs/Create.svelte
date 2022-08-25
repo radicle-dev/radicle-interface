@@ -54,13 +54,13 @@
     state = State.Signing;
 
     try {
-      let tx = governance === Governance.Quorum
+      const tx = governance === Governance.Quorum
         ? await Org.createMultiSig([owner], 1, config)
         : await Org.create(owner, config);
 
       state = State.Pending;
 
-      let receipt = await tx.wait();
+      const receipt = await tx.wait();
       org = Org.fromReceipt(receipt);
       state = State.Success;
     } catch (e: any) {

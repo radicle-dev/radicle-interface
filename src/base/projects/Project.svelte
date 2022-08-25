@@ -27,7 +27,7 @@
   export let content: proj.ProjectContent;
   export let revision: string | null;
 
-  let parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
+  const parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
 
   const baseName = parentName

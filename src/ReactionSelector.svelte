@@ -4,7 +4,7 @@
   import Icon from "@app/Icon.svelte";
   import config from "@app/config.json";
 
-  let showReactions = false;
+  const showReactions = false;
 
   const dispatch = createEventDispatcher();
 </script>

@@ -22,7 +22,7 @@
     meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
       if (! p.person?.name) console.debug("Not able to resolve peer identity for: ", p.id);
-      let key = p.person?.name ? `<strong>${p.person.name}</strong> ${p.id}` : p.id;
+      const key = p.person?.name ? `<strong>${p.person.name}</strong> ${p.id}` : p.id;
 
       return { key, value: p.id, title: createTitle(p), badge: p.delegate ? "delegate" : null };
     });

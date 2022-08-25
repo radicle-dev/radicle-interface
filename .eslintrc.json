@@ -100,8 +100,13 @@
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     // Require using arrow functions as callbacks.
     // https://eslint.org/docs/rules/prefer-arrow-callback
-    "prefer-arrow-callback": "error"
-
+    "prefer-arrow-callback": "error",
+    // Require using const for variables that are never modified after declared.
+    // https://eslint.org/docs/rules/prefer-const
+    "prefer-const": "error",
+    // Disallow modifying variables that are declared using const.
+    // https://eslint.org/docs/rules/no-const-assign
+    "no-const-assign": "error"
   },
   "settings": {
     "svelte3/typescript": true

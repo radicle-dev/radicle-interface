@@ -28,9 +28,9 @@
 
   onMount(() => {
     // Don't underline <a> tags that contain images.
-    let elems = container.querySelectorAll("a");
+    const elems = container.querySelectorAll("a");
 
-    for (let e of elems) {
+    for (const e of elems) {
       if (e.firstElementChild instanceof HTMLImageElement) {
         e.classList.add("no-underline");
       }
@@ -39,7 +39,7 @@
     // Iterate over all images, and fetch their data from the API, then
     // replace the source with a Data-URL. We do this due to the absence
     // of a static file server.
-    for (let i of container.querySelectorAll("img")) {
+    for (const i of container.querySelectorAll("img")) {
       const path = i.getAttribute("src");
 
       // Make sure the source isn't a URL before trying to fetch it from the repo

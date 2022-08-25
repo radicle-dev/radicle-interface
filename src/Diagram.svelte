@@ -11,7 +11,7 @@
   let path = "";
   let areaPath = "";
 
-  let heightWithPadding = viewBoxHeight + 16;
+  const heightWithPadding = viewBoxHeight + 16;
 
   // The latest point on the x axis, starting at 0 until `viewBoxWidth`
   let lastWidthPoint = viewBoxWidth;
@@ -20,10 +20,10 @@
   const widthIteration = viewBoxWidth / 52;
 
   // The highest value on the y axis
-  let commitCountArray: number[] = [];
+  const commitCountArray: number[] = [];
 
   // The minimal amplitude shown e.g. commitCount = 1 => `minimalHeight` points of height in the SVG.
-  let minimalHeight = 5;
+  const minimalHeight = 5;
 
   let week = 0;
 
@@ -41,11 +41,11 @@
 
     if (commitCountArray.length < 52) commitCountArray.push(...new Array(52 - commitCountArray.length).fill(0));
 
-    let maxValue = Math.max(...commitCountArray);
-    let minValue = Math.min(...commitCountArray);
+    const maxValue = Math.max(...commitCountArray);
+    const minValue = Math.min(...commitCountArray);
 
     // Normalizes the values to the viewBox dimensions
-    let normalizedArray =
+    const normalizedArray =
       commitCountArray.map(c => {
         // If we are not crossing the `viewBoxHeight` we want to return the actual value,
         // and don't want to normalize <`minimalHeight` commit counts as huge spikes.
@@ -56,10 +56,10 @@
         else { return c === 0 ? 0 : (viewBoxHeight - 0) * (c - minValue) / (maxValue - minValue); }
       });
 
-    let path = normalizedArray
+    const path = normalizedArray
       .slice(1)
       .reduce((acc, curr) => {
-        let s = `${viewBoxWidth - widthIteration * i},${viewBoxHeight - curr}`;
+        const s = `${viewBoxWidth - widthIteration * i},${viewBoxHeight - curr}`;
         lastWidthPoint = viewBoxWidth - widthIteration * i;
         i += 1;
         return acc.concat(s);
