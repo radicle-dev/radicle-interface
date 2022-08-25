@@ -2,7 +2,7 @@ import SeedAddress from "./SeedAddress.svelte";
 import { render } from "@testing-library/svelte";
 import "@public/index.css";
 
-describe('SeedAddress', function () {
+describe('SeedAddress', () => {
   it("shows the seed emoji and seed host", () => {
     render(SeedAddress, {
       props: {

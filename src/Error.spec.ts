@@ -3,7 +3,7 @@ import { render } from "@testing-library/svelte";
 import { Failure } from '@app/error';
 import "@public/index.css";
 
-describe('Error', function () {
+describe('Error', () => {
   it("should show passed in props", () => {
     render(Error, { props: {
       subtitle: "Subtitle of Modal",

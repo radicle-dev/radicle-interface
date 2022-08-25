@@ -2,7 +2,7 @@ import NotFound from "./NotFound.svelte";
 import { render } from "@testing-library/svelte";
 import "@public/index.css";
 
-describe('NotFound', function () {
+describe('NotFound', () => {
   it("shows passed props correctly", () => {
     render(NotFound, {
       props: {

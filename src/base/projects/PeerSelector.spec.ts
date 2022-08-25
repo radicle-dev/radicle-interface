@@ -13,7 +13,7 @@ const defaultProps = {
   ],
 };
 
-describe('Logic', function () {
+describe('Logic', () => {
   it("show delegate name and badge", () => {
     render(PeerSelector, {
       props: defaultProps

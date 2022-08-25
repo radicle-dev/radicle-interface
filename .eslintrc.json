@@ -97,7 +97,11 @@
     ],
     // Disallow Unused Variables.
     // https://eslint.org/docs/rules/no-unused-vars
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    // Require using arrow functions as callbacks.
+    // https://eslint.org/docs/rules/prefer-arrow-callback
+    "prefer-arrow-callback": "error"
+
   },
   "settings": {
     "svelte3/typescript": true

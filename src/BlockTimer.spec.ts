@@ -4,7 +4,7 @@ import "@public/index.css";
 import type { EventType, Listener } from "@ethersproject/abstract-provider";
 
 
-describe('BlockTimer', function () {
+describe('BlockTimer', () => {
   it("increases correctly the loading bar", () => {
     let block = 1;
     const props = {
