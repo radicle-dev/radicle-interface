@@ -107,7 +107,7 @@
         class="summary-state"
         class:proposed={patch.state === "proposed"}
         class:draft={patch.state === "draft"}
-        class:archived={patch.state == "archived"}>
+        class:archived={patch.state === "archived"}>
         {capitalize(patch.state)}
       </div>
     </div>

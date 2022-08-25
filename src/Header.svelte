@@ -185,9 +185,9 @@
   </div>
 
   <div class="right">
-    {#if config && config.network.name == 'rinkeby'}
+    {#if config && config.network.name === 'rinkeby'}
       <span class="network">Rinkeby</span>
-    {:else if config && config.network.name == 'homestead'}
+    {:else if config && config.network.name === 'homestead'}
       <!-- Don't show anything -->
     {:else}
       <span class="network unavailable">No Network</span>

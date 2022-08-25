@@ -130,14 +130,14 @@
   </span>
   <div
     class="stat commit-count clickable widget"
-    class:active={content == ProjectContent.History}
+    class:active={content === ProjectContent.History}
     on:click={() => toggleContent(ProjectContent.History, true)}>
     <strong>{tree.stats.commits}</strong> commit(s)
   </div>
   {#if project.issues > 0}
     <div
       class="stat issue-count clickable widget"
-      class:active={content == ProjectContent.Issues}
+      class:active={content === ProjectContent.Issues}
       on:click={() => toggleContent(ProjectContent.Issues, false)}>
       <strong>{project.issues}</strong> issue(s)
     </div>
@@ -149,7 +149,7 @@
   {#if project.patches > 0}
     <div
       class="stat patch-count clickable widget"
-      class:active={content == ProjectContent.Patches}
+      class:active={content === ProjectContent.Patches}
       on:click={() => toggleContent(ProjectContent.Patches, false)}>
       <strong>{project.patches}</strong> patch(es)
     </div>

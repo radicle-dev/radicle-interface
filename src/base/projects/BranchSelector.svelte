@@ -20,7 +20,7 @@
   $: showSelector = branchList.length > 1;
   $: head = project.head ?? branches[project.defaultBranch];
   $: commit = getOid(revision, branches) || head;
-  $: if (commit == head) {
+  $: if (commit === head) {
     branchLabel = project.defaultBranch;
   } else if (branches[revision]) {
     branchLabel = revision;

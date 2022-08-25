@@ -135,11 +135,11 @@
     </div>
 
     <div slot="subtitle">
-      {#if state == State.Signing}
+      {#if state === State.Signing}
         Please confirm the transaction in your wallet.
-      {:else if state == State.Pending}
+      {:else if state === State.Pending}
         Waiting for transaction to be processed...
-      {:else if state == State.Proposing && org}
+      {:else if state === State.Proposing && org}
         Proposal is being submitted
         <strong>{formatAddress(org.owner)}</strong>,
         please sign the transaction in your wallet.
@@ -161,11 +161,11 @@
     </div>
 
     <div slot="actions">
-      {#if state == State.Signing}
+      {#if state === State.Signing}
         <button class="regular" on:click={() => dispatch('close')}>
           Cancel
         </button>
-      {:else if state == State.Pending}
+      {:else if state === State.Pending}
         <button class="regular" on:click={() => dispatch('close')}>
           Close
         </button>

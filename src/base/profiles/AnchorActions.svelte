@@ -148,39 +148,39 @@
     </span>
 
     <span slot="subtitle">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <span>Initiate the transaction...</span>
-      {:else if state == State.Signing}
+      {:else if state === State.Signing}
         <span>Sign the transaction in your wallet...</span>
-      {:else if state == State.Submitting}
+      {:else if state === State.Submitting}
         <span>Transaction is being confirmed...</span>
-      {:else if state == State.Success}
+      {:else if state === State.Success}
         <span>Transaction confirmed.</span>
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <span>Transaction failed</span>
       {/if}
     </span>
 
     <span slot="body">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <div class="table">
           <div>Project</div><code>{anchor.id}</code>
           <div>Hash</div><code>{anchor.anchor.stateHash}</code>
         </div>
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <div>{error}</div>
       {/if}
     </span>
 
     <span slot="actions">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <button class="primary" on:click={() => confirmAnchor(anchor.safeTxHash)}>
           Confirm
         </button>
         <button class="text" on:click={close}>
           Cancel
         </button>
-      {:else if state == State.Success || state == State.Failed}
+      {:else if state === State.Success || state === State.Failed}
         <button on:click={() => {
           close();
           dispatch("success");
@@ -196,39 +196,39 @@
     </span>
 
     <span slot="subtitle">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <span>Initiate the transaction...</span>
-      {:else if state == State.Signing}
+      {:else if state === State.Signing}
         <span>Sign the transaction in your wallet...</span>
-      {:else if state == State.Submitting}
+      {:else if state === State.Submitting}
         <span>Transaction is being confirmed...</span>
-      {:else if state == State.Success}
+      {:else if state === State.Success}
         <span>Transaction confirmed.</span>
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <span>Transaction failed</span>
       {/if}
     </span>
 
     <span slot="body">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <div class="table">
           <div>TxHash</div><code>{utils.formatHash(anchor.safeTxHash)}</code>
           <div>Quorum</div><code>{anchor.confirmations.length} of {safe.threshold}</code>
         </div>
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <div>{error}</div>
       {/if}
     </span>
 
     <span slot="actions">
-      {#if state == State.Confirm}
+      {#if state === State.Confirm}
         <button class="primary" on:click={() => executeTransaction(anchor.safeTxHash)}>
           Confirm
         </button>
         <button class="text" on:click={close}>
           Cancel
         </button>
-      {:else if state == State.Success || state == State.Failed}
+      {:else if state === State.Success || state === State.Failed}
         <button on:click={() => {
           close();
           dispatch("success");

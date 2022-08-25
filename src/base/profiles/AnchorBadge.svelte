@@ -46,12 +46,12 @@
 
 {#if anchors && head}
   <!-- commit is head and latest anchor  -->
-  {#if commit == anchors[0] && commit === head}
+  {#if commit === anchors[0] && commit === head}
     <span class="anchor-widget anchor-latest" class:no-bg={noBg}>
       <span class="anchor-label" title="{anchors[0]}">{#if text}latest&nbsp;{/if}🔐</span>
     </span>
   <!-- commit is not head but latest anchor  -->
-  {:else if commit == anchors[0] && commit !== head}
+  {:else if commit === anchors[0] && commit !== head}
     <span class="anchor-widget" class:no-bg={noBg} on:click={() => dispatch("click", head)}>
       <span class="anchor-label" title="{anchors[0]}">{#if text}latest&nbsp;{/if}🔐</span>
     </span>

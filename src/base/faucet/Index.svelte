@@ -98,7 +98,7 @@
 
 <main class="off-centered">
   <div>
-    {#if config.network.name == "homestead"}
+    {#if config.network.name === "homestead"}
       <div class="input-caption">
         To get RAD tokens on <strong>{config.network.name}</strong>, please
         check the known exchanges.

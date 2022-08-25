@@ -21,7 +21,7 @@ const defaultProps = {
 };
 
 describe('Logic', () => {
-  it("should show defaultBranch label and head commit if revision == head", () => {
+  it("should show defaultBranch label and head commit if revision === head", () => {
     const { rerender } = render(BranchSelector, {
       props: defaultProps,
     });
@@ -112,7 +112,7 @@ describe('Logic', () => {
     cy.get("div.hash.desktop").should("be.visible").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
 
-  it("should show defaultBranch label if revision == head", () => {
+  it("should show defaultBranch label if revision === head", () => {
     render(BranchSelector, {
       props: {
         ...defaultProps,

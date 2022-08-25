@@ -70,13 +70,13 @@
   {:then { tree, commit }}
     <Header {tree} {commit} {browserStore} {project} noAnchor />
 
-    {#if content == proj.ProjectContent.Tree}
+    {#if content === proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />
-    {:else if content == proj.ProjectContent.History}
+    {:else if content === proj.ProjectContent.History}
       <Async fetch={fetchCommits(project, commit)} let:result>
         <History {project} history={result} />
       </Async>
-    {:else if content == proj.ProjectContent.Commit}
+    {:else if content === proj.ProjectContent.Commit}
       <Async fetch={project.getCommit(commit)} let:result>
         <Commit {project} commit={result} />
       </Async>
@@ -91,19 +91,19 @@
     </div>
   {/await}
 
-  {#if content == proj.ProjectContent.Issues}
+  {#if content === proj.ProjectContent.Issues}
     <Async fetch={issue.Issue.getIssues(project.urn, project.seed.api)} let:result>
       <Issues {project} state={$browserStore.search?.get("state") || "open"} {config} issues={result} />
     </Async>
-  {:else if content == proj.ProjectContent.Issue && $browserStore.issue}
+  {:else if content === proj.ProjectContent.Issue && $browserStore.issue}
     <Async fetch={issue.Issue.getIssue(project.urn, $browserStore.issue, project.seed.api)} let:result>
       <Issue {project} {config} issue={result} />
     </Async>
-  {:else if content == proj.ProjectContent.Patches}
+  {:else if content === proj.ProjectContent.Patches}
     <Async fetch={patch.Patch.getPatches(project.urn, project.seed.api)} let:result>
       <Patches {project} {config} patches={result} />
     </Async>
-  {:else if content == proj.ProjectContent.Patch && $browserStore.patch}
+  {:else if content === proj.ProjectContent.Patch && $browserStore.patch}
     <Async fetch={patch.Patch.getPatch(project.urn, $browserStore.patch, project.seed.api)} let:result>
       <Patch {project} {config} patch={result} />
     </Async>

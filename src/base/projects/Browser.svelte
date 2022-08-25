@@ -33,7 +33,7 @@
   let mobileFileTree = false;
 
   const loadBlob = async (path: string): Promise<proj.Blob> => {
-    if (state.status == Status.Loaded && state.path === path) {
+    if (state.status === Status.Loaded && state.path === path) {
       return state.blob;
     }
 
@@ -78,7 +78,7 @@
   };
 
   $: getBlob = loadBlob(path);
-  $: loadingPath = state.status == Status.Loading ? state.path : null;
+  $: loadingPath = state.status === Status.Loading ? state.path : null;
 </script>
 
 <style>
@@ -185,12 +185,12 @@
         {:catch}
           <Placeholder icon="🍂">
             <span slot="title">
-              {#if path != "/"}
+              {#if path !== "/"}
                 <div><code>{path}</code></div>
               {/if}
             </span>
             <span slot="body">
-              {#if path == "/"}
+              {#if path === "/"}
                 The README could not be loaded.
               {:else}
                 This path could not be loaded.

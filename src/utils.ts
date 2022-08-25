@@ -270,7 +270,7 @@ export const formatTimestamp = (timestamp: number, current = new Date().getTime(
   }
 
   for (const u in units) {
-    if (elapsed > units[u] || u == 'second') {
+    if (elapsed > units[u] || u === 'second') {
       // We convert the division result to a negative number to get "XX [unit] ago"
       return rtf.format(Math.round(elapsed / units[u]) * -1, u as Intl.RelativeTimeFormatUnit);
     }
@@ -323,7 +323,7 @@ export function getSearchParam(key: string, location: RouteLocation): string | n
 
 // Get the explorer link of an address, eg. Etherscan.
 export function explorerLink(addr: string, config: Config): string {
-  if (config.network.name == "rinkeby") {
+  if (config.network.name === "rinkeby") {
     return `https://rinkeby.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
@@ -494,7 +494,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       const [avatar, address, seed, anchorsAccount] =
         // Just checking for r.value equal null and casting to undefined,
         // since resolver functions return null.
-        project.map(r => r.status == "fulfilled" && r.value ? r.value : null);
+        project.map(r => r.status === "fulfilled" && r.value ? r.value : null);
 
       return {
         name,

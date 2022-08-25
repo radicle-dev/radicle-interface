@@ -86,7 +86,7 @@ export async function getRegistration(name: string, config: Config, resolver?: E
   ]);
 
   const [address, avatar, url, id, seedId, seedHost, seedGit, seedApi, anchorsAccount, twitter, github] =
-    meta.map(r => r.status == "fulfilled" && r.value ? r.value : undefined);
+    meta.map(r => r.status === "fulfilled" && r.value ? r.value : undefined);
 
   const profile: EnsProfile = {
     name,

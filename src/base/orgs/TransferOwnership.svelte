@@ -108,24 +108,24 @@
     </div>
   </Modal>
 {:else}
-  <Modal floating error={state == State.Failed} small={state == State.Failed}>
+  <Modal floating error={state === State.Failed} small={state === State.Failed}>
     <div slot="title">
       🔑
       <div>Transfer ownership</div>
     </div>
 
     <div slot="subtitle">
-      {#if state == State.Signing}
+      {#if state === State.Signing}
         Please confirm the transaction in your wallet.
-      {:else if state == State.Pending}
+      {:else if state === State.Pending}
         Waiting for transaction to be processed...
-      {:else if state == State.Proposing && org}
+      {:else if state === State.Proposing && org}
         Proposal is being submitted to the safe
         <strong>{formatAddress(org.owner)}</strong>,
         please sign the transaction in your wallet.
-      {:else if state == State.Idle}
+      {:else if state === State.Idle}
         Transfer the ownership of Org <strong>{formatAddress(org.address)}</strong> to a new address.
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <div class="error">
           {error}
         </div>
@@ -133,25 +133,25 @@
     </div>
 
     <div slot="body">
-      {#if state == State.Idle}
+      {#if state === State.Idle}
         <input type="text" size="40" disabled={state !== State.Idle} bind:this={input} bind:value={newOwner} />
-      {:else if state == State.Pending || state == State.Proposing || state == State.Signing}
+      {:else if state === State.Pending || state === State.Proposing || state === State.Signing}
         <Loading small center />
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <!-- ... -->
       {/if}
     </div>
 
     <div slot="actions">
-      {#if state == State.Signing}
+      {#if state === State.Signing}
         <button class="regular" on:click={() => dispatch('close')}>
           Cancel
         </button>
-      {:else if state == State.Pending}
+      {:else if state === State.Pending}
         <button class="regular" on:click={() => dispatch('close')}>
           Close
         </button>
-      {:else if state == State.Failed}
+      {:else if state === State.Failed}
         <button class="regular" on:click={resetForm}>
           Back
         </button>

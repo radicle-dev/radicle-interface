@@ -146,7 +146,7 @@
         </div>
       {:else}
         {#if line}
-          <div class="highlight" style="top: {line == 1 ? 1 : (1.5 * line) - 0.5}rem" />
+          <div class="highlight" style="top: {line === 1 ? 1 : (1.5 * line) - 0.5}rem" />
         {/if}
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
