@@ -555,7 +555,7 @@ export const getRpcMethod = cache.cached(
     return await config.provider.send(method, props);
   },
   (method, props) => JSON.stringify([method, props]),
-  { ttl: 2 * 60 * 1000 }
+  { ttl: 2 * 60 * 1000, max: 1000 }
 );
 
 // Check whether the given path has a markdown file extension.
