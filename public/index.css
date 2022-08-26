@@ -366,34 +366,10 @@ label.input {
 .bold {
 	font-weight: bold !important;
 }
-.badge {
-	color: var(--color-foreground-faded);
-	background: var(--color-foreground-background);
-	border-radius: var(--border-radius);
-	padding: 0.125rem 0.5rem;
-	margin: 0 0.5rem;
-	font-size: 0.75rem;
-	line-height: 1.6;
-	height: var(--button-tiny-height);
-}
-.badge.primary {
-	color: var(--color-primary);
-	background: var(--color-primary-background);
-}
-.badge.tertiary {
-	color: var(--color-tertiary);
-	background: var(--color-tertiary-background);
-}
-.badge.safe {
-	color: var(--color-yellow);
-	background: var(--color-yellow-background);
-}
-
 .yellow {
 	color: var(--color-yellow);
 	background: var(--color-yellow-background-solid);
 }
-
 .off-centered {
 	height: 100%;
 	padding-top: 5rem;

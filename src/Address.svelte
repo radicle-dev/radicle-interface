@@ -5,6 +5,7 @@
   import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType, parseEnsLabel } from '@app/utils';
   import { Profile, ProfileType } from '@app/profile';
   import Avatar from "@app/Avatar.svelte";
+  import Badge from "@app/Badge.svelte";
   import type { Config } from '@app/config';
 
   export let address: string;
@@ -47,9 +48,6 @@
     align-items: center;
     height: 100%;
   }
-  .address.no-badge .badge {
-    display: none;
-  }
   .address a {
     color: var(--color-foreground-90);
   }
@@ -60,10 +58,14 @@
     color: var(--color-foreground-90);
     font-weight: bold;
   }
+  .wrapper {
+    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
 </style>
 
 <div class="address" title={address}
-  class:no-badge={noBadge}
   class:text-small={small}
   class:text-xsmall={xsmall}
   class:highlight>
@@ -74,18 +76,26 @@
       <Avatar inline source={address} title={address}/>
     {/if}
   {/if}
-  {#if addressType === AddressType.Org}
-    <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
-    <span class="badge">org</span>
-  {:else if addressType === AddressType.Safe}
-    <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
-    <span class="badge safe">safe</span>
-  {:else if addressType === AddressType.Contract}
-    <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
-    <span class="badge">contract</span>
-  {:else if addressType === AddressType.EOA}
-    <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
-  {:else} <!-- While we're waiting to find out what address type it is -->
-    <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
-  {/if}
+  <div class="wrapper">
+    {#if addressType === AddressType.Org}
+      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      {#if !noBadge}
+        <Badge variant="foreground">org</Badge>
+      {/if}
+    {:else if addressType === AddressType.Safe}
+      <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
+      {#if !noBadge}
+        <Badge variant="caution">safe</Badge>
+      {/if}
+    {:else if addressType === AddressType.Contract}
+      <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
+      {#if !noBadge}
+        <Badge variant="foreground">contract</Badge>
+      {/if}
+    {:else if addressType === AddressType.EOA}
+      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+    {:else} <!-- While we're waiting to find out what address type it is -->
+      <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
+    {/if}
+  </div>
 </div>

@@ -7,6 +7,7 @@
   import Modal from "@app/Modal.svelte";
   import Avatar from "@app/Avatar.svelte";
   import { createEventDispatcher } from 'svelte';
+  import Badge from "@app/Badge.svelte";
 
   export let safe: Safe;
   export let anchor: PendingAnchor;
@@ -129,7 +130,7 @@
   </button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}
-  <span class="badge safe no-margin">✓ signed</span>
+  <Badge variant="caution">✓ signed</Badge>
 {:else}
   <button on:click|stopPropagation={() => {
     action = Action.Sign;

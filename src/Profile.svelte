@@ -20,6 +20,7 @@
   import { MissingReverseRecord, NotFoundError } from '@app/error';
   import NotFound from '@app/NotFound.svelte';
   import RadicleUrn from '@app/RadicleUrn.svelte';
+  import Badge from '@app/Badge.svelte';
 
   export let config: Config;
   export let addressOrName: string;
@@ -115,6 +116,7 @@
   .title {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
   }
   .links {
     display: flex;
@@ -193,7 +195,7 @@
             {profile.name ? utils.formatName(profile.name, config) : utils.formatAddress(profile.address)}
           </span>
           {#if profile.name && profile.org}
-            <span class="badge">org</span>
+            <Badge variant="foreground">org</Badge>
           {/if}
         </span>
         <div class="links">

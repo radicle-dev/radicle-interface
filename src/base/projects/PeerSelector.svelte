@@ -5,6 +5,7 @@
   import { formatSeedId } from "@app/utils";
   import type { Peer } from "@app/project";
   import Floating from "@app/Floating.svelte";
+  import Badge from "@app/Badge.svelte";
 
   export let peer: string | null = null;
   export let peers: Peer[];
@@ -52,9 +53,6 @@
   .selector .peer.not-allowed {
     cursor: not-allowed;
   }
-  .selector .badge {
-    margin: 0;
-  }
   .peer-id {
     margin: 0 0.5rem;
   }
@@ -80,7 +78,7 @@
           {meta.person?.name ?? formatSeedId(meta.id)}
         </span>
         {#if meta.delegate}
-          <span class="badge primary">delegate</span>
+          <Badge variant="primary">delegate</Badge>
         {/if}
       <!-- If the delegate metadata is not found -->
       {:else if peer}

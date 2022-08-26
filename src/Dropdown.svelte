@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import Badge from "@app/Badge.svelte";
 
   export let items: { key: string; title: string; value: string; badge: string | null }[];
   export let selected: string | null = null;
@@ -19,9 +20,6 @@
   .dropdown-item:hover, .selected {
     background-color: var(--color-foreground-background-lighter);
   }
-  .dropdown .badge {
-    margin: 0;
-  }
 
   @media (max-width: 720px) {
     .dropdown {
@@ -36,7 +34,7 @@
     {#if key && value}
       <div class="dropdown-item" class:selected={value === selected} on:click={() => onSelect(value)} {title}>{@html key}
         {#if badge}
-          <span class="badge primary">{badge}</span>
+          <Badge variant="primary">{badge}</Badge>
         {/if}
       </div>
     {/if}

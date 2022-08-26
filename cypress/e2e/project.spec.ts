@@ -142,10 +142,11 @@ describe("Project view", () => {
         });
       });
 
+    cy.get('.commit-teaser .badge').trigger('mouseenter');
     // Checking that the initial commit has the Verified badge
-    cy.get(".verified-popup-body").should("have.text", "This commit was signed\n            with the committer's radicle key.");
-    cy.get(".verified-popup-peer").should("have.text", "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue");
-    cy.get(".verified-popup .verified-committer").should("have.text", "dabit3");
+    cy.get(".popup .header").should("have.text", "✔ This commit was signed\n          with the committer's radicle key.");
+    cy.get(".popup .peer").should("contain.text", "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue");
+    cy.get(".popup .committer").should("contain.text", "dabit3");
 
     cy.get(".commit").last().click();
   });

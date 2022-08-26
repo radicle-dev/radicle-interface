@@ -2,6 +2,7 @@
   import * as proj from "@app/project";
   import { formatCommit } from "@app/utils";
   import type { Commit } from "@app/commit";
+  import Badge from "@app/Badge.svelte";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
@@ -40,9 +41,6 @@
     color: var(--color-foreground-80);
     font-size: 0.875rem;
   }
-  .badge {
-    margin: 0;
-  }
   .authorship {
     display: flex;
     align-items: center;
@@ -71,7 +69,7 @@
     <div class="authorship">
       <CommitAuthorship {commit} />
       {#if commit.context?.committer}
-        <span class="badge tertiary">Verified</span>
+        <Badge variant="tertiary">Verified</Badge>
       {/if}
     </div>
   </header>

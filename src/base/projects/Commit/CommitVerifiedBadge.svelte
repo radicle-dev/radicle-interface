@@ -1,69 +1,67 @@
 <script lang="ts">
   import type { CommitMetadata } from "@app/commit";
-  import Popup from "@app/Popup.svelte";
   import CommitAuthorship from "./CommitAuthorship.svelte";
+  import Badge from "@app/Badge.svelte";
 
   export let commit: CommitMetadata;
+
+  let hover = false;
 </script>
 
 <style>
-  .badge {
-    margin: 0;
-  }
-  .badge:hover .verified-popup {
-    display: block;
-  }
-
-  .verified-popup {
-    display: none;
+  .wrapper {
     position: absolute;
   }
-  .verified-popup-header {
+  .popup {
+    width: 14rem;
+    left: -1rem;
+    z-index: 99;
+    color: var(--color-foreground);
+    font-size: 0.75rem;
+  }
+  .header {
     display: flex;
     padding: 1rem 0.75rem;
+    gap: 0.5rem;
   }
-  .verified-popup-highlight {
+  .highlight {
     color: var(--color-tertiary);
   }
-  .verified-popup-committer {
+  .committer {
     border-top: 1px dashed var(--color-foreground-subtle);
     padding: 0.75rem;
   }
-  .verified-popup-checkmark {
-    margin-right: 0.5rem;
-  }
-  .verified-popup-peer {
+  .peer {
     padding-top: 0.5rem;
     word-break: break-all;
   }
-
-  @media (max-width: 720px) {
-    .badge {
-      display: none !important;
-    }
-  }
 </style>
 
-{#if commit.context.committer}
-  <span class="badge tertiary">
-    Verified
-    <div class="verified-popup">
-      <Popup>
-        <div class="verified-popup-header">
-          <div class="verified-popup-checkmark verified-popup-highlight">
-            ✔
-          </div>
-          <div class="verified-popup-body">
-            This commit was <span class="verified-popup-highlight">signed</span>
-            with the committer's radicle key.</div>
+<Badge
+  variant="tertiary"
+  on:mouseenter={() => {hover = true;}}
+  on:mouseleave={() => {hover = false;}}>
+  Verified
+</Badge>
+
+{#if hover}
+  <div class="wrapper">
+    <div class="popup">
+      <div class="header">
+        <div class="highlight">✔</div>
+        <div>
+          This commit was <span class="highlight">signed</span>
+          with the committer's radicle key.
         </div>
-        <div class="verified-popup-committer">
-          <CommitAuthorship {commit} showAuthor={false} showTime={false} />
-          <div class="verified-popup-peer">
-            <span class="text-faded">{commit.context.committer?.peer.id}</span>
+      </div>
+      <div class="committer">
+        <CommitAuthorship {commit} showAuthor={false} showTime={false} />
+        {#if commit.context.committer}
+          <div class="peer">
+            <span class="text-faded">{commit.context.committer.peer.id}</span>
           </div>
-        </div>
-      </Popup>
+        {/if}
+      </div>
     </div>
-  </span>
+  </div>
 {/if}

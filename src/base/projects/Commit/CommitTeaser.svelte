@@ -94,7 +94,11 @@
     <CommitAuthorship {commit} />
   </div>
   <div class="column-right">
-    <CommitVerifiedBadge {commit} />
+    {#if commit.context.committer}
+      <div class="desktop">
+        <CommitVerifiedBadge {commit} />
+      </div>
+    {/if}
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
     <div class="browse" title="View file" on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
       <Icon name="browse" />
