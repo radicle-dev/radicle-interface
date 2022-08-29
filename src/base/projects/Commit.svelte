@@ -27,6 +27,7 @@
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
     border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
   }
   .summary {
     display: flex;

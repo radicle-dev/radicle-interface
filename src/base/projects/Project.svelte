@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Config } from '@app/config';
+  import type { State as IssueState } from './Issues.svelte';
+
   import * as proj from '@app/project';
   import Placeholder from '@app/Placeholder.svelte';
   import Loading from '@app/Loading.svelte';
@@ -29,6 +31,8 @@
 
   const parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
+
+  $: issueFilter = $browserStore.search?.get("state") as IssueState ?? "open";
 
   const baseName = parentName
     ? `${parentName}/${project.name}`
@@ -93,7 +97,7 @@
 
   {#if content === proj.ProjectContent.Issues}
     <Async fetch={issue.Issue.getIssues(project.urn, project.seed.api)} let:result>
-      <Issues {project} state={$browserStore.search?.get("state") || "open"} {config} issues={result} />
+      <Issues {project} state={issueFilter} {config} issues={result} />
     </Async>
   {:else if content === proj.ProjectContent.Issue && $browserStore.issue}
     <Async fetch={issue.Issue.getIssue(project.urn, $browserStore.issue, project.seed.api)} let:result>

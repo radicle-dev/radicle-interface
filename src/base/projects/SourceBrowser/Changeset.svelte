@@ -24,7 +24,7 @@
 
 <style>
   .changeset-summary {
-    padding: 1.5rem 0;
+    padding-bottom: 1.5rem;
     margin-left: 1rem;
   }
   .changeset-summary .additions {

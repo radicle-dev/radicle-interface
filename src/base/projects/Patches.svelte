@@ -1,23 +1,41 @@
 <script lang="ts">
+  type State = "proposed" | "draft" | "archived";
+
   import type { Config } from "@app/config";
   import type { Patch } from "@app/patch";
-  import { Project, ProjectContent } from "@app/project";
-  import PatchFilter from "./Patch/PatchFilter.svelte";
-  import PatchTeaser from "./Patch/PatchTeaser.svelte";
+  import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
+  import PatchTeaser from "./Patch/PatchTeaser.svelte";
+  import Placeholder from "@app/Placeholder.svelte";
+  import ToggleButton from "@app/ToggleButton.svelte";
+
+  import { Project, ProjectContent } from "@app/project";
+  import { capitalize } from "@app/utils";
+  import { groupPatches } from "@app/patch";
+
+  export let state: State = "proposed";
   export let config: Config;
   export let patches: Patch[];
   export let project: Project;
 
-  const navigate = (patch: string) => {
-    project.navigateTo({
-      content: ProjectContent.Patch,
-      patch,
-      issue: null,
-      revision: null,
-      path: null
-    });
-  };
+  let options: ToggleButtonOption<State>[];
+  const sortedPatches = groupPatches(patches);
+
+  $: filteredPatches = sortedPatches[state];
+  $: options = [
+    {
+      value: "proposed",
+      count: sortedPatches.proposed.length
+    },
+    {
+      value: "draft",
+      count: sortedPatches.draft.length
+    },
+    {
+      value: "archived",
+      count: sortedPatches.archived.length
+    }
+  ];
 </script>
 
 <style>
@@ -41,13 +59,30 @@
 </style>
 
 <div class="patches">
-  <PatchFilter {patches} let:filteredPatches>
+  <div style="margin-bottom: 1rem;">
+    <ToggleButton {options} on:select={(e) => {state = e.detail;}} active={state} />
+  </div>
+
+  {#if filteredPatches.length}
     <div class="patches-list">
       {#each filteredPatches as patch}
-        <div class="teaser" on:click={() => navigate(patch.id)}>
+        <div class="teaser" on:click={() => {
+            project.navigateTo({
+              content: ProjectContent.Patch,
+              patch: patch.id,
+              issue: null,
+              revision: null,
+              path: null
+            });
+          }}>
           <PatchTeaser {config} {patch} />
         </div>
       {/each}
     </div>
-  </PatchFilter>
+  {:else}
+    <Placeholder icon="🍖">
+      <div slot="title">{capitalize(state)} patches</div>
+      <div slot="body">No patches matched the current filter</div>
+    </Placeholder>
+  {/if}
 </div>
