@@ -16,11 +16,13 @@
     white-space: nowrap;
     cursor: pointer;
     padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .dropdown-item:hover, .selected {
     background-color: var(--color-foreground-background-lighter);
   }
-
   @media (max-width: 720px) {
     .dropdown {
       left: 32px;
