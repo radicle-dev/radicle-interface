@@ -3,6 +3,7 @@
   import Icon from "@app/Icon.svelte";
   import { lineNumberL, lineNumberR, lineSign } from "@app/diff";
   import type { FileDiff } from "@app/diff";
+  import Badge from "@app/Badge.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -44,10 +45,11 @@
     flex-direction: row;
     justify-content: space-between;
   }
-  header div.actions {
+  .actions {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 1rem;
   }
   .binary {
     padding: 1rem;
@@ -112,37 +114,16 @@
   .browse {
     display: flex;
   }
-
-  .created {
-    color: var(--color-positive);
-    font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
-    background-color: var(--color-positive-1);
-  }
-  .deleted {
-    color: var(--color-negative);
-    font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
-    background-color: var(--color-negative-1);
-  }
-  .file-header .diff-type {
-    margin-left: 1rem;
-    padding: 0rem 0.5rem;
-    border-radius: var(--border-radius-medium);
-  }
 </style>
 
 <article id={file.path} class="changeset-file">
   <header class="file-header" on:click={collapse}>
     <div class="actions">
       <p class="file-path">{file.path}</p>
-      {#if mode}
-        <span
-          class="diff-type"
-          class:created={mode === "created"}
-          class:deleted={mode === "deleted"}>
-          {mode}
-        </span>
+      {#if mode === "created"}
+        <Badge variant="positive">created</Badge>
+      {:else if mode === "deleted"}
+        <Badge variant="negative">deleted</Badge>
       {/if}
     </div>
     <div class="browse clickable" on:click|stopPropagation={() => dispatch("browse", file.path)}>

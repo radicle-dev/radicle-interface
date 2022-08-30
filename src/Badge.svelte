@@ -1,5 +1,11 @@
 <script lang="ts">
-  export let variant: "foreground" | "caution" | "primary" | "tertiary";
+  export let variant:
+    | "caution"
+    | "foreground"
+    | "negative"
+    | "positive"
+    | "primary"
+    | "tertiary";
 </script>
 
 <style>
@@ -14,6 +20,14 @@
   .foreground {
     color: var(--color-foreground-faded);
     background: var(--color-foreground-background);
+  }
+  .positive {
+    color: var(--color-positive);
+    background-color: var(--color-positive-1);
+  }
+  .negative {
+    color: var(--color-negative);
+    background-color: var(--color-negative-1);
   }
   .primary {
     color: var(--color-primary);
@@ -33,8 +47,10 @@
   on:mouseenter
   on:mouseleave
   class="badge"
-  class:foreground={variant === "foreground"}
   class:caution={variant === "caution"}
+  class:foreground={variant === "foreground"}
+  class:negative={variant === "negative"}
+  class:positive={variant === "positive"}
   class:primary={variant === "primary"}
   class:tertiary={variant === "tertiary"}>
   <slot />
