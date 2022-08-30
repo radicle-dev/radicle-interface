@@ -313,24 +313,6 @@ label.input {
 	display: block;
 }
 
-.modal-actions button {
-	margin-right: 1rem;
-}
-.modal-actions button:last-child {
-	margin-right: 0;
-}
-.modal.error .modal-title {
-	color: var(--color-negative);
-}
-.modal.error .modal-actions button {
-	color: var(--color-negative);
-	border-color: var(--color-negative);
-}
-.modal.error .modal-actions button:hover {
-	color: var(--color-background);
-	background-color: var(--color-negative);
-}
-
 .error {
 	color: var(--color-negative) !important;
 	border-color: var(--color-negative) !important;
