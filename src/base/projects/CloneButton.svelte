@@ -22,8 +22,14 @@
     background-color: var(--color-foreground-background-lighter);
   }
   .dropdown {
+    background-color: var(--color-foreground-background);
+    border-radius: var(--border-radius-small);
+    box-shadow: 16px 16px 32px 32px var(--color-shadow);
+    margin-top: 0.5rem;
     padding: 1rem;
+    position: absolute;
     width: 24rem;
+    z-index: 10;
   }
   @media (max-width: 720px) {
     .dropdown {

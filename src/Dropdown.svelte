@@ -12,6 +12,16 @@
 </script>
 
 <style>
+  .dropdown {
+    background-color: var(--color-foreground-background);
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    position: absolute;
+    box-shadow: 16px 16px 32px 32px var(--color-shadow);
+    z-index: 10;
+    border-radius: var(--border-radius-small);
+  }
+
   .dropdown-item {
     white-space: nowrap;
     cursor: pointer;

@@ -13,11 +13,17 @@
     position: absolute;
   }
   .popup {
-    width: 14rem;
-    left: -1rem;
-    z-index: 99;
+    background-color: var(--color-foreground-background);
+    border-radius: var(--border-radius-small);
+    box-shadow: 16px 16px 32px 32px var(--color-shadow);
     color: var(--color-foreground);
     font-size: 0.75rem;
+    left: -1rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    position: absolute;
+    width: 14rem;
+    z-index: 99;
   }
   .header {
     display: flex;
