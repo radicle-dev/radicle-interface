@@ -432,15 +432,6 @@ span.small, .text-xsmall {
 	color: var(--color-foreground-faded);
 }
 
-.notice {
-	font-size: 0.875rem;
-	border-radius: var(--border-radius);
-	color: var(--color-yellow);
-	background-color: var(--color-yellow-background);
-	padding: 1rem;
-	margin-bottom: 1rem;
-}
-
 button.error:hover {
 	color: var(--color-background);
 	background-color: var(--color-negative);

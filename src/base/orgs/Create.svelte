@@ -110,6 +110,14 @@
     margin: 0.5rem 0 0 0;
     width: 100%;
   }
+  .notice {
+    font-size: 0.875rem;
+    border-radius: var(--border-radius);
+    color: var(--color-yellow);
+    background-color: var(--color-yellow-background);
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
 </style>
 
 {#if error}
