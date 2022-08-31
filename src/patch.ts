@@ -66,10 +66,13 @@ export interface Merge {
 }
 
 export function groupPatches(patches: Patch[]) {
-  return patches.reduce((acc: { [state: string]: Patch[] }, patch) => {
-    acc[patch.state].push(patch);
-    return acc;
-  }, { proposed: [] as Patch[], draft: [] as Patch[], archived: [] as Patch[] });
+  return patches.reduce(
+    (acc: { [state: string]: Patch[] }, patch) => {
+      acc[patch.state].push(patch);
+      return acc;
+    },
+    { proposed: [] as Patch[], draft: [] as Patch[], archived: [] as Patch[] },
+  );
 }
 
 export class Patch implements IPatch {
@@ -108,20 +111,24 @@ export class Patch implements IPatch {
       timestamp: this.revisions[rev].comment.timestamp,
       inner: this.revisions[rev].comment,
     };
-    const discussions = this.revisions[rev].discussion.map((comment): TimelineElement => {
-      return {
-        type: TimelineType.Thread,
-        timestamp: comment.timestamp,
-        inner: comment,
-      };
-    });
-    const reviews = Object.entries(this.revisions[rev].reviews).map(([, review]): TimelineElement => {
-      return {
-        type: TimelineType.Review,
-        timestamp: review.timestamp,
-        inner: review,
-      };
-    });
+    const discussions = this.revisions[rev].discussion.map(
+      (comment): TimelineElement => {
+        return {
+          type: TimelineType.Thread,
+          timestamp: comment.timestamp,
+          inner: comment,
+        };
+      },
+    );
+    const reviews = Object.entries(this.revisions[rev].reviews).map(
+      ([, review]): TimelineElement => {
+        return {
+          type: TimelineType.Review,
+          timestamp: review.timestamp,
+          inner: review,
+        };
+      },
+    );
     const merges = this.revisions[rev].merges.map((merge): TimelineElement => {
       return {
         type: TimelineType.Merge,
@@ -134,12 +141,22 @@ export class Patch implements IPatch {
   }
 
   static async getPatches(urn: string, host: Host): Promise<Patch[]> {
-    const response: IPatch[] = await new Request(`projects/${urn}/patches`, host).get();
-    return response.map((patch) => new Patch(patch));
+    const response: IPatch[] = await new Request(
+      `projects/${urn}/patches`,
+      host,
+    ).get();
+    return response.map(patch => new Patch(patch));
   }
 
-  static async getPatch(urn: string, patch: string, host: Host): Promise<Patch> {
-    const response: IPatch = await new Request(`projects/${urn}/patches/${patch}`, host).get();
+  static async getPatch(
+    urn: string,
+    patch: string,
+    host: Host,
+  ): Promise<Patch> {
+    const response: IPatch = await new Request(
+      `projects/${urn}/patches/${patch}`,
+      host,
+    ).get();
     return new Patch(response);
   }
 }
@@ -157,28 +174,31 @@ export const formatVerdict = (verdict: string | null): string => {
   }
 };
 
-
 export enum TimelineType {
   Comment,
   Thread,
   Review,
-  Merge
+  Merge,
 }
 
-export type TimelineElement = {
-  type: TimelineType.Thread;
-  inner: Thread;
-  timestamp: number;
-} | {
-  type: TimelineType.Comment;
-  inner: Comment;
-  timestamp: number;
-} | {
-  type: TimelineType.Merge;
-  inner: Merge;
-  timestamp: number;
-} | {
-  type: TimelineType.Review;
-  inner: Review;
-  timestamp: number;
-};
+export type TimelineElement =
+  | {
+      type: TimelineType.Thread;
+      inner: Thread;
+      timestamp: number;
+    }
+  | {
+      type: TimelineType.Comment;
+      inner: Comment;
+      timestamp: number;
+    }
+  | {
+      type: TimelineType.Merge;
+      inner: Merge;
+      timestamp: number;
+    }
+  | {
+      type: TimelineType.Review;
+      inner: Review;
+      timestamp: number;
+    };

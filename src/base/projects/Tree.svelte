@@ -4,8 +4,8 @@
   import type { Tree } from "@app/project";
   import { ObjectType } from "@app/project";
 
-  import File from './Tree/File.svelte';
-  import Folder from './Tree/Folder.svelte';
+  import File from "./Tree/File.svelte";
+  import Folder from "./Tree/Folder.svelte";
 
   export let fetchTree: (path: string) => Promise<Tree>;
   export let path: string;
@@ -26,14 +26,12 @@
       name={entry.info.name}
       prefix={`${entry.path}/`}
       currentPath={path}
-      on:select={onSelect}
-    />
+      on:select={onSelect} />
   {:else}
     <File
       active={entry.path === path}
       loading={entry.path === loadingPath}
       name={entry.info.name}
-      on:click={() => onSelect({ detail: entry.path })}
-    />
+      on:click={() => onSelect({ detail: entry.path })} />
   {/if}
 {/each}

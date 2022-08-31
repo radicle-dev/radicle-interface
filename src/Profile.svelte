@@ -1,26 +1,26 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte';
-  import type { Config } from '@app/config';
-  import Address from '@app/Address.svelte';
-  import Avatar from '@app/Avatar.svelte';
-  import Icon from '@app/Icon.svelte';
-  import SetName from '@app/ens/SetName.svelte';
-  import SeedAddress from '@app/SeedAddress.svelte';
-  import TransferOwnership from '@app/base/orgs/TransferOwnership.svelte';
-  import Link from '@app/Link.svelte';
-  import { getBalance, Profile, ProfileType } from '@app/profile';
-  import Loading from '@app/Loading.svelte';
-  import * as utils from '@app/utils';
-  import { session } from '@app/session';
-  import { Org } from '@app/base/orgs/Org';
-  import Message from '@app/Message.svelte';
-  import Error from '@app/Error.svelte';
-  import { User } from '@app/base/users/User';
-  import Projects from '@app/base/orgs/View/Projects.svelte';
-  import { MissingReverseRecord, NotFoundError } from '@app/error';
-  import NotFound from '@app/NotFound.svelte';
-  import RadicleUrn from '@app/RadicleUrn.svelte';
-  import Badge from '@app/Badge.svelte';
+  import type { SvelteComponent } from "svelte";
+  import type { Config } from "@app/config";
+  import Address from "@app/Address.svelte";
+  import Avatar from "@app/Avatar.svelte";
+  import Icon from "@app/Icon.svelte";
+  import SetName from "@app/ens/SetName.svelte";
+  import SeedAddress from "@app/SeedAddress.svelte";
+  import TransferOwnership from "@app/base/orgs/TransferOwnership.svelte";
+  import Link from "@app/Link.svelte";
+  import { getBalance, Profile, ProfileType } from "@app/profile";
+  import Loading from "@app/Loading.svelte";
+  import * as utils from "@app/utils";
+  import { session } from "@app/session";
+  import { Org } from "@app/base/orgs/Org";
+  import Message from "@app/Message.svelte";
+  import Error from "@app/Error.svelte";
+  import { User } from "@app/base/users/User";
+  import Projects from "@app/base/orgs/View/Projects.svelte";
+  import { MissingReverseRecord, NotFoundError } from "@app/error";
+  import NotFound from "@app/NotFound.svelte";
+  import RadicleUrn from "@app/RadicleUrn.svelte";
+  import Badge from "@app/Badge.svelte";
 
   export let config: Config;
   export let addressOrName: string;
@@ -38,10 +38,11 @@
   };
 
   $: account = $session && $session.address;
-  $: isOwner = (org: Org): boolean => $session
-    ? utils.isAddressEqual(org.owner, $session.address)
-    : false;
-  $: getOrgTreasury = async (org: Org): Promise<Array<utils.Token>| undefined> => {
+  $: isOwner = (org: Org): boolean =>
+    $session ? utils.isAddressEqual(org.owner, $session.address) : false;
+  $: getOrgTreasury = async (
+    org: Org,
+  ): Promise<Array<utils.Token> | undefined> => {
     const addressType = await utils.identifyAddress(org.owner, config);
     // We query the org treasury only for Gnosis Safes, to maintain some privacy for EOA org owners.
     if (addressType === utils.AddressType.Safe) {
@@ -49,9 +50,18 @@
         const tokens = await utils.getTokens(org.owner, config);
         const balance = await getBalance(org.owner, config);
 
-        if (! balance.isZero()) {
+        if (!balance.isZero()) {
           // To maintain the format we hardcode the ETH specs.
-          return [{ balance, decimals: 18, logo: "", name: "Ethereum", symbol: "ETH" }, ...tokens];
+          return [
+            {
+              balance,
+              decimals: 18,
+              logo: "",
+              name: "Ethereum",
+              symbol: "ETH",
+            },
+            ...tokens,
+          ];
         } else {
           return tokens;
         }
@@ -184,15 +194,21 @@
   <main>
     <header>
       <div class="avatar">
-        <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
+        <Avatar
+          source={profile.avatar ?? profile.address}
+          title={profile.address} />
       </div>
       <div class="info">
         <span class="title">
           <span class="bold desktop">
-            {profile.name ? utils.formatName(profile.name, config) : profile.address}
+            {profile.name
+              ? utils.formatName(profile.name, config)
+              : profile.address}
           </span>
           <span class="bold mobile">
-            {profile.name ? utils.formatName(profile.name, config) : utils.formatAddress(profile.address)}
+            {profile.name
+              ? utils.formatName(profile.name, config)
+              : utils.formatAddress(profile.address)}
           </span>
           {#if profile.name && profile.org}
             <Badge variant="foreground">org</Badge>
@@ -236,14 +252,22 @@
       {/if}
       <!-- Address -->
       <div class="label">Address</div>
-      <div class="desktop"><Address {config} {profile} address={profile.address} /></div>
-      <div class="mobile"><Address compact {config} {profile} address={profile.address} /></div>
+      <div class="desktop">
+        <Address {config} {profile} address={profile.address} />
+      </div>
+      <div class="mobile">
+        <Address compact {config} {profile} address={profile.address} />
+      </div>
       <div class="desktop" />
       <!-- Owner -->
       {#if profile.org}
         <div class="label">Owner</div>
-        <div class="desktop"><Address resolve {config} address={profile.org.owner} /></div>
-        <div class="mobile"><Address compact resolve {config} address={profile.org.owner} /></div>
+        <div class="desktop">
+          <Address resolve {config} address={profile.org.owner} />
+        </div>
+        <div class="mobile">
+          <Address compact resolve {config} address={profile.org.owner} />
+        </div>
         <div class="desktop">
           {#await account && profile.org.isMember(account, config) then isMember}
             {#if isOwner(profile.org) || isMember}
@@ -259,7 +283,9 @@
             <div class="label">Treasury</div>
             <div>
               {#each tokens as token}
-                {` ${utils.formatBalance(token.balance, token.decimals)} ${token.symbol} `}
+                {` ${utils.formatBalance(token.balance, token.decimals)} ${
+                  token.symbol
+                } `}
               {/each}
             </div>
             <div class="desktop" />
@@ -269,8 +295,12 @@
         <!-- Project anchors -->
         {#if profile.anchorsAccount}
           <div class="label">Anchors</div>
-          <div class="desktop"><Address {config} address={profile.anchorsAccount} /></div>
-          <div class="mobile"><Address compact {config} address={profile.anchorsAccount} /></div>
+          <div class="desktop">
+            <Address {config} address={profile.anchorsAccount} />
+          </div>
+          <div class="mobile">
+            <Address compact {config} address={profile.anchorsAccount} />
+          </div>
           <div class="desktop" />
         {/if}
       {/if}
@@ -290,9 +320,7 @@
               <!-- Loading -->
             {:then authorized}
               {#if authorized}
-                <button class="small secondary" on:click={setName}>
-                  Set
-                </button>
+                <button class="small secondary" on:click={setName}>Set</button>
               {/if}
             {/await}
           </div>
@@ -302,9 +330,11 @@
           {#if safe}
             <div class="label">Quorum</div>
             <div>
-              {safe.threshold} <span class="faded">of</span> {safe.owners.length}
+              {safe.threshold}
+              <span class="faded">of</span>
+              {safe.owners.length}
             </div>
-            <div class="desktop"/>
+            <div class="desktop" />
           {/if}
         {/await}
       {:else}
@@ -318,9 +348,7 @@
         </div>
         <div class="desktop">
           {#if isUserAuthorized(profile.address)}
-            <button class="small secondary" on:click={setName}>
-              Set
-            </button>
+            <button class="small secondary" on:click={setName}>Set</button>
           {/if}
         </div>
       {/if}
@@ -331,7 +359,7 @@
         <Loading center />
       {:then members}
         {#if members.length > 0}
-            <!-- We don't need to catch errors here, since it's not defined by user input and defaults to ETH addresses -->
+          <!-- We don't need to catch errors here, since it's not defined by user input and defaults to ETH addresses -->
           {#await Profile.getMulti(members, config)}
             <div class="members loading">
               <Loading small />
@@ -342,12 +370,20 @@
                 <div class="member">
                   <div class="member-icon">
                     <Link to="/{profile.address}">
-                      <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
+                      <Avatar
+                        source={profile.avatar ?? profile.address}
+                        title={profile.address} />
                     </Link>
                   </div>
                   <div class="desktop">
-                    <Address address={profile.address} compact
-                      resolve noBadge noAvatar {profile} {config} />
+                    <Address
+                      address={profile.address}
+                      compact
+                      resolve
+                      noBadge
+                      noAvatar
+                      {profile}
+                      {config} />
                   </div>
                 </div>
               {/each}
@@ -356,7 +392,8 @@
         {/if}
       {:catch err}
         <Message error>
-          <strong>Error: </strong> failed to load org members: {err.message}.
+          <strong>Error:</strong>
+          failed to load org members: {err.message}.
         </Message>
       {/await}
     {:else}
@@ -373,12 +410,20 @@
                 {:then profile}
                   <div class="member-icon">
                     <Link to="/{profile.address}">
-                      <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
+                      <Avatar
+                        source={profile.avatar ?? profile.address}
+                        title={profile.address} />
                     </Link>
                   </div>
                   <div class="desktop">
-                    <Address address={profile.address} compact
-                      resolve noBadge noAvatar {profile} {config} />
+                    <Address
+                      address={profile.address}
+                      compact
+                      resolve
+                      noBadge
+                      noAvatar
+                      {profile}
+                      {config} />
                   </div>
                 {/await}
               </div>
@@ -387,7 +432,8 @@
         {/if}
       {:catch err}
         <Message error>
-          <strong>Error: </strong> failed to load orgs: {err.message}.
+          <strong>Error:</strong>
+          failed to load orgs: {err.message}.
         </Message>
       {/await}
     {/if}
@@ -396,13 +442,25 @@
     {/if}
   </main>
 
-  <svelte:component this={setNameForm} entity={profile.org ?? new User(profile.address)} {config} on:close={() => setNameForm = null} />
-  <svelte:component this={transferOwnerForm} org={profile.org} {config} on:close={() => transferOwnerForm = null} />
+  <svelte:component
+    this={setNameForm}
+    entity={profile.org ?? new User(profile.address)}
+    {config}
+    on:close={() => (setNameForm = null)} />
+  <svelte:component
+    this={transferOwnerForm}
+    org={profile.org}
+    {config}
+    on:close={() => (transferOwnerForm = null)} />
 {:catch err}
   {#if err instanceof NotFoundError}
-    <NotFound title={addressOrName} subtitle="Sorry, the requested address or domain was not found." />
+    <NotFound
+      title={addressOrName}
+      subtitle="Sorry, the requested address or domain was not found." />
   {:else if err instanceof MissingReverseRecord}
-    <NotFound title={addressOrName} subtitle="Sorry, the requested name has no reverse record set." />
+    <NotFound
+      title={addressOrName}
+      subtitle="Sorry, the requested name has no reverse record set." />
   {:else}
     <Error error={err} />
   {/if}

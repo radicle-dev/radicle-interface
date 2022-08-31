@@ -1,5 +1,5 @@
-import { type Host, Request } from '@app/api';
-import type { Author } from '@app/cobs';
+import { type Host, Request } from "@app/api";
+import type { Author } from "@app/cobs";
 
 export interface TimelineItem {
   person: Author;
@@ -18,12 +18,14 @@ export interface IIssue {
   timestamp: number;
 }
 
-export type State = {
-  status: "open";
-} | {
-  status: "closed";
-  reason: string;
-};
+export type State =
+  | {
+      status: "open";
+    }
+  | {
+      status: "closed";
+      reason: string;
+    };
 
 export interface Comment<R = null> {
   author: Author;
@@ -37,11 +39,17 @@ export type Thread = Comment<Comment[]>;
 
 export type Label = string;
 
-export function groupIssues(issues: Issue[]): { open: Issue[]; closed: Issue[] } {
-  return issues.reduce((acc, issue) => {
-    acc[issue.state.status].push(issue);
-    return acc;
-  }, { open: [] as Issue[], closed: [] as Issue[] });
+export function groupIssues(issues: Issue[]): {
+  open: Issue[];
+  closed: Issue[];
+} {
+  return issues.reduce(
+    (acc, issue) => {
+      acc[issue.state.status].push(issue);
+      return acc;
+    },
+    { open: [] as Issue[], closed: [] as Issue[] },
+  );
 }
 
 export class Issue {
@@ -74,12 +82,22 @@ export class Issue {
   }
 
   static async getIssues(urn: string, host: Host): Promise<Issue[]> {
-    const response: IIssue[] = await new Request(`projects/${urn}/issues`, host).get();
+    const response: IIssue[] = await new Request(
+      `projects/${urn}/issues`,
+      host,
+    ).get();
     return response.map(issue => new Issue(issue));
   }
 
-  static async getIssue(urn: string, issue: string, host: Host): Promise<Issue> {
-    const response: IIssue = await new Request(`projects/${urn}/issues/${issue}`, host).get();
+  static async getIssue(
+    urn: string,
+    issue: string,
+    host: Host,
+  ): Promise<Issue> {
+    const response: IIssue = await new Request(
+      `projects/${urn}/issues/${issue}`,
+      host,
+    ).get();
     return new Issue(response);
   }
 }

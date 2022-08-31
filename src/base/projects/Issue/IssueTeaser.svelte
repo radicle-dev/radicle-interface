@@ -14,7 +14,11 @@
 
   onMount(async () => {
     if (issue.author.profile?.ens?.name) {
-      profile = await Profile.get(issue.author.profile.ens.name, ProfileType.Minimal, config);
+      profile = await Profile.get(
+        issue.author.profile.ens.name,
+        ProfileType.Minimal,
+        config,
+      );
     }
   });
 
@@ -100,8 +104,7 @@
     <div
       class="state-icon"
       class:closed={issue.state.status === "closed"}
-      class:open={issue.state.status === "open"}
-    />
+      class:open={issue.state.status === "open"} />
   </div>
   <div class="column-left">
     <div class="summary">
@@ -109,7 +112,9 @@
       {issue.title}
       <span class="issue-id">{formatObjectId(issue.id)}</span>
     </div>
-    <Authorship {profile} {config}
+    <Authorship
+      {profile}
+      {config}
       caption="opened"
       author={issue.author}
       timestamp={issue.timestamp} />

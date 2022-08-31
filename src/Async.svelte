@@ -12,7 +12,8 @@
   <div class="commit">
     <div class="error error-message text-xsmall">
       <div>
-        API request to <code class="text-xsmall">{err.url}</code> failed.
+        API request to <code class="text-xsmall">{err.url}</code>
+        failed.
       </div>
     </div>
   </div>

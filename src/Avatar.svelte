@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createIcon } from '@app/blockies';
-  import { isAddress, isPeerId, isRadicleId } from '@app/utils';
+  import { createIcon } from "@app/blockies";
+  import { isAddress, isPeerId, isRadicleId } from "@app/utils";
 
   export let title: string;
   export let source: string;
@@ -56,5 +56,11 @@
 </style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
-<img {title} src={source} class="avatar" on:error={handleMissingFile}
-  class:inline class:grayscale class:glowOnHover />
+<img
+  {title}
+  src={source}
+  class="avatar"
+  on:error={handleMissingFile}
+  class:inline
+  class:grayscale
+  class:glowOnHover />

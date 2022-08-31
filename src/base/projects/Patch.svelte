@@ -29,7 +29,7 @@
       content: ProjectContent.Tree,
       revision,
       patch: null,
-      path: event.detail
+      path: event.detail,
     });
   };
 
@@ -111,7 +111,9 @@
         {capitalize(patch.state)}
       </div>
     </div>
-    <Authorship noAvatar {config}
+    <Authorship
+      noAvatar
+      {config}
       author={patch.author}
       timestamp={patch.timestamp}
       caption="opened" />
@@ -137,9 +139,7 @@
         on:browse={e => onBrowse(e, revision.oid)} />
     {:else if activeTab === PatchTab.Diff}
       <Placeholder icon="🍳">
-        <span slot="title">
-          No changeset found
-        </span>
+        <span slot="title">No changeset found</span>
         <span slot="body">
           We couldn't find a changeset related to this patch or revision
         </span>

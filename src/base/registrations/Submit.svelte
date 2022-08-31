@@ -1,16 +1,16 @@
 <script lang="ts">
   // TODO: When name is registered, prompt user to edit records.
   // TODO: When transfering name, warn about transfering to org.
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import type { Session } from '@app/session';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
-  import Err from '@app/Error.svelte';
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import type { Session } from "@app/session";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
+  import Err from "@app/Error.svelte";
   import BlockTimer from "@app/BlockTimer.svelte";
 
-  import { registerName, State, state } from './registrar';
+  import { registerName, State, state } from "./registrar";
 
   export let config: Config;
   export let name: string;
@@ -20,7 +20,8 @@
   let error: Error | null = null;
   const registrationOwner = owner || session.address;
 
-  const view = () => navigate(`/registrations/${name}.radicle.eth`, { state: { retry: true } });
+  const view = () =>
+    navigate(`/registrations/${name}.radicle.eth`, { state: { retry: true } });
 
   onMount(async () => {
     try {
@@ -50,8 +51,7 @@
   <Err
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate('/registrations')}
-  />
+    on:close={() => navigate("/registrations")} />
 {:else}
   <Modal>
     <span slot="title">
@@ -69,15 +69,18 @@
       {:else if $state.connection === State.SigningPermit}
         Approving registration fee. Please confirm in your wallet.
       {:else if $state.connection === State.SigningCommit}
-        Committing to <strong>{name}</strong>. Please confirm transaction in your wallet.
+        Committing to <strong>{name}</strong>
+        . Please confirm transaction in your wallet.
       {:else if $state.connection === State.Committing}
-        Waiting for <strong>commit</strong> transaction to be processed&hellip;
+        Waiting for <strong>commit</strong>
+        transaction to be processed&hellip;
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         Waiting for commitment to mature. This may take a moment.
       {:else if $state.connection === State.SigningRegister}
         Proceeding with registration. Please confirm transaction in your wallet.
       {:else if $state.connection === State.Registering}
-        Waiting for <strong>register</strong> transaction to be processed&hellip;
+        Waiting for <strong>register</strong>
+        transaction to be processed&hellip;
       {/if}
     </span>
 
@@ -86,7 +89,10 @@
         This name has been successfully registered to
         <span class="highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
-        <BlockTimer {config} startBlock={$state.commitmentBlock} duration={$state.minAge} />
+        <BlockTimer
+          {config}
+          startBlock={$state.commitmentBlock}
+          duration={$state.minAge} />
       {:else}
         <Loading small center />
       {/if}
@@ -94,9 +100,7 @@
 
     <span slot="actions">
       {#if $state.connection === State.Registered}
-        <button on:click={view} class="register">
-          View
-        </button>
+        <button on:click={view} class="register">View</button>
       {/if}
     </span>
   </Modal>

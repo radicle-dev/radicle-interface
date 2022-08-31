@@ -5,7 +5,7 @@
   import * as proj from "@app/project";
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
-  import Widget from '@app/base/projects/Widget.svelte';
+  import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
   import type { ProjectInfo, Anchor, PendingAnchor } from "@app/project";
   import type { Seed } from "@app/base/seeds/Seed";
@@ -38,7 +38,7 @@
         seed: seed?.host,
         profile: profile?.name ?? profile?.address,
         revision: project.head,
-      })
+      }),
     );
   };
 
@@ -70,9 +70,13 @@
           <Widget {project} {seed} {anchor} on:click={() => onClick(project)}>
             <span class="actions" slot="actions">
               {#if profile?.org?.safe && account && anchor}
-                {#if pendingAnchor} <!-- Pending anchor -->
+                {#if pendingAnchor}
+                  <!-- Pending anchor -->
                   <AnchorActions
-                    {account} {config} anchor={pendingAnchor} safe={profile.org.safe}
+                    {account}
+                    {config}
+                    anchor={pendingAnchor}
+                    safe={profile.org.safe}
                     on:success={() => loadAnchors()} />
                 {/if}
               {/if}
@@ -83,7 +87,8 @@
     {/each}
   {:catch err}
     <Message error>
-      <strong>Error: </strong> failed to load projects: {err.message}.
+      <strong>Error:</strong>
+      failed to load projects: {err.message}.
     </Message>
   {/await}
 </div>

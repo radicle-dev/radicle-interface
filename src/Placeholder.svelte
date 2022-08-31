@@ -23,7 +23,7 @@
 <div class="error error-message placeholder">
   <header>
     <div class="icon">{icon}</div>
-    <slot name="title"></slot>
+    <slot name="title" />
   </header>
-  <slot name="body"></slot>
+  <slot name="body" />
 </div>

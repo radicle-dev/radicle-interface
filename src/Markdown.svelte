@@ -20,7 +20,7 @@
         ...getDefaultWhiteList(),
         img: ["src"],
         audio: ["src"],
-        video: ["src"]
+        video: ["src"],
       },
       stripIgnoreTag: false,
     });
@@ -76,8 +76,12 @@
     padding-left: 0.5rem;
   }
 
-  .markdown :global(h1), .markdown :global(h2), .markdown :global(h3),
-  .markdown :global(h4), .markdown :global(h5), .markdown :global(h6) {
+  .markdown :global(h1),
+  .markdown :global(h2),
+  .markdown :global(h3),
+  .markdown :global(h4),
+  .markdown :global(h5),
+  .markdown :global(h6) {
     color: var(--color-foreground);
   }
 
@@ -182,7 +186,8 @@
     display: none;
   }
 
-  .markdown :global(a), .markdown :global(a > code) {
+  .markdown :global(a),
+  .markdown :global(a > code) {
     background: none;
     padding: 0;
     color: var(--color-foreground);

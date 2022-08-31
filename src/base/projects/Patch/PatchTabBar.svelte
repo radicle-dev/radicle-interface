@@ -17,7 +17,7 @@
 
   const formatRevisionName = (revision: Revision, index: number) => {
     return `R${index} ${formatCommit(revision.oid)} ${formatTimestamp(
-      revision.timestamp
+      revision.timestamp,
     )}`;
   };
 
@@ -72,7 +72,12 @@
 </style>
 
 <div class="bar text-small">
-  <ToggleButton {options} on:select={(e) => {dispatch("switchTab", e.detail);}} active={activeTab} />
+  <ToggleButton
+    {options}
+    on:select={e => {
+      dispatch("switchTab", e.detail);
+    }}
+    active={activeTab} />
 
   <Floating disabled={revisions.length <= 1}>
     <button
@@ -84,7 +89,8 @@
 
     <svelte:fragment slot="modal">
       <Dropdown
-        items={revisionList} selected={revisionNumber.toString()}
+        items={revisionList}
+        selected={revisionNumber.toString()}
         on:select={onRevisionChange} />
     </svelte:fragment>
   </Floating>

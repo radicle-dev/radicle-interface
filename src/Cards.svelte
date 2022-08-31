@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { Profile, ProfileType } from '@app/profile';
-  import Card from '@app/Card.svelte';
-  import type { Org } from '@app/base/orgs/Org';
-  import type { Config } from '@app/config';
-  import type { Seed } from '@app/base/seeds/Seed';
+  import { onMount } from "svelte";
+  import { Profile, ProfileType } from "@app/profile";
+  import Card from "@app/Card.svelte";
+  import type { Org } from "@app/base/orgs/Org";
+  import type { Config } from "@app/config";
+  import type { Seed } from "@app/base/seeds/Seed";
 
   export let config: Config;
   export let orgs: Org[] = [];
@@ -37,28 +37,35 @@
   }
 </style>
 
-  <div class="list">
-    {#each orgs as org}
-      {#await Profile.get(org.name ?? org.address, ProfileType.Minimal, config)}
-        <Card profile={{ address: org.address }} {config} path={`/${org.address}`} />
-      {:then profile}
-        {#if orgMembers[profile.address]?.length}
-          <Card {profile} {config} path={`/${profile.nameOrAddress}`} members={orgMembers[profile.address]} />
-        {:else}
-          <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
-        {/if}
-      {/await}
-    {/each}
+<div class="list">
+  {#each orgs as org}
+    {#await Profile.get(org.name ?? org.address, ProfileType.Minimal, config)}
+      <Card
+        profile={{ address: org.address }}
+        {config}
+        path={`/${org.address}`} />
+    {:then profile}
+      {#if orgMembers[profile.address]?.length}
+        <Card
+          {profile}
+          {config}
+          path={`/${profile.nameOrAddress}`}
+          members={orgMembers[profile.address]} />
+      {:else}
+        <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
+      {/if}
+    {/await}
+  {/each}
 
-    {#each profiles as profile}
-      <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
-    {/each}
+  {#each profiles as profile}
+    <Card {profile} {config} path={`/${profile.nameOrAddress}`} />
+  {/each}
 
-    {#each seeds as seed}
-      <Card {seed} {config} path={`/seeds/${seed.host}`} />
-    {/each}
+  {#each seeds as seed}
+    <Card {seed} {config} path={`/seeds/${seed.host}`} />
+  {/each}
 
-    {#if !orgs.length && !profiles.length && !seeds.length}
-      <slot />
-    {/if}
-  </div>
+  {#if !orgs.length && !profiles.length && !seeds.length}
+    <slot />
+  {/if}
+</div>

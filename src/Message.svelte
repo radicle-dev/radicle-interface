@@ -14,5 +14,5 @@
 </style>
 
 <div class="message" class:message-error={error}>
-  <slot></slot>
+  <slot />
 </div>

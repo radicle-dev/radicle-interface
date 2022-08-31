@@ -2,10 +2,14 @@ import Search from "./Search.svelte";
 import { fireEvent, render } from "@testing-library/svelte";
 import "@public/index.css";
 
-describe('Logic', () => {
+describe("Logic", () => {
   it("show a appropiate placeholder", () => {
     render(Search);
-    cy.get("input").should("have.attr", "placeholder", "Search a name or address...");
+    cy.get("input").should(
+      "have.attr",
+      "placeholder",
+      "Search a name or address...",
+    );
   });
 
   it("allow input a query and navigates accordingly", () => {

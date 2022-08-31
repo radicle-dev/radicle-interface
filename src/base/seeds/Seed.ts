@@ -1,8 +1,8 @@
-import { Request, type Host } from '@app/api';
-import type { Config } from '@app/config';
+import { Request, type Host } from "@app/api";
+import type { Config } from "@app/config";
 import * as proj from "@app/project";
-import { isDomain, isLocal } from '@app/utils';
-import { assert } from '@app/error';
+import { isDomain, isLocal } from "@app/utils";
+import { assert } from "@app/error";
 
 export class InvalidSeed {
   valid: false = false;
@@ -26,13 +26,16 @@ export class Seed {
   version?: string;
   emoji: string;
 
-  constructor(seed: {
-    host: string;
-    id: string;
-    git?: string | null;
-    api?: string | null;
-    version?: string | null;
-  }, cfg: Config) {
+  constructor(
+    seed: {
+      host: string;
+      id: string;
+      git?: string | null;
+      api?: string | null;
+      version?: string | null;
+    },
+    cfg: Config,
+  ) {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
     assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
@@ -107,7 +110,10 @@ export class Seed {
       ? await proj.Project.getDelegateProjects(id, this.api)
       : await proj.Project.getProjects(this.api);
 
-    return result.map((project: proj.ProjectInfo) => ({ ...project, id: project.urn }));
+    return result.map((project: proj.ProjectInfo) => ({
+      ...project,
+      id: project.urn,
+    }));
   }
 
   static async getPeer(host: Host): Promise<{ id: string }> {
@@ -125,11 +131,14 @@ export class Seed {
       Seed.getPeer(host),
     ]);
 
-    return new Seed({
-      host: hostname,
-      id: peer.id,
-      version: info.version,
-    }, cfg);
+    return new Seed(
+      {
+        host: hostname,
+        id: peer.id,
+        version: info.version,
+      },
+      cfg,
+    );
   }
 
   static async lookupMulti(hostnames: string[], cfg: Config): Promise<Seed[]> {

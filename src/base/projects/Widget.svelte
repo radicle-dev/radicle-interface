@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type * as proj from '@app/project';
-  import AnchorBadge from '@app/base/profiles/AnchorBadge.svelte';
-  import Diagram from '@app/Diagram.svelte';
-  import { groupCommitsByWeek } from '@app/commit';
-  import type { Host } from '@app/api';
-  import { Project } from '@app/project';
-  import { formatCommit } from '@app/utils';
+  import type * as proj from "@app/project";
+  import AnchorBadge from "@app/base/profiles/AnchorBadge.svelte";
+  import Diagram from "@app/Diagram.svelte";
+  import { groupCommitsByWeek } from "@app/commit";
+  import type { Host } from "@app/api";
+  import { Project } from "@app/project";
+  import { formatCommit } from "@app/utils";
 
   export let project: proj.ProjectInfo;
   export let seed: { api: Host };
@@ -101,13 +101,15 @@
   article .actions {
     margin-right: 1rem;
   }
-  article .commit, article .actions {
+  article .commit,
+  article .actions {
     font-family: var(--font-family-monospace);
   }
   article.project-faded .anchor {
     color: var(--color-foreground-faded);
   }
-  article .id, article .anchor {
+  article .id,
+  article .anchor {
     display: flex;
     justify-content: space-between;
   }
@@ -165,15 +167,16 @@
       <div class="anchor">
         <span class="anchor-info">
           <span class="actions">
-            <slot name="actions">
-            </slot>
+            <slot name="actions" />
           </span>
           <span class="anchor-badge">
             <slot name="anchor">
               {#if anchor && project.head}
                 <AnchorBadge
                   commit={project.head}
-                  head={project.head} noText noBg
+                  head={project.head}
+                  noText
+                  noBg
                   anchors={[anchor.anchor.stateHash]} />
               {/if}
             </slot>
@@ -182,11 +185,11 @@
       </div>
       {#await loadCommits() then points}
         <div class="desktop activity">
-          <Diagram {points}
+          <Diagram
+            {points}
             strokeWidth={3}
             viewBoxHeight={100}
-            viewBoxWidth={600}
-          />
+            viewBoxWidth={600} />
         </div>
       {/await}
     </div>

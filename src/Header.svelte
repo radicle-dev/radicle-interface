@@ -1,16 +1,16 @@
 <script lang="ts">
   import { link } from "svelte-routing";
   import { formatAddress, formatBalance } from "@app/utils";
-  import { error, Failure } from '@app/error';
+  import { error, Failure } from "@app/error";
   import { disconnectWallet } from "@app/session";
-  import type { Session } from '@app/session';
-  import Loading from '@app/Loading.svelte';
-  import Logo from '@app/Logo.svelte';
-  import Connect from '@app/Connect.svelte';
-  import type { Config } from '@app/config';
+  import type { Session } from "@app/session";
+  import Loading from "@app/Loading.svelte";
+  import Logo from "@app/Logo.svelte";
+  import Connect from "@app/Connect.svelte";
+  import type { Config } from "@app/config";
   import { Profile, ProfileType } from "@app/profile";
-  import Avatar from '@app/Avatar.svelte';
-  import Search from '@app/Search.svelte';
+  import Avatar from "@app/Avatar.svelte";
+  import Search from "@app/Search.svelte";
   import Floating from "@app/Floating.svelte";
   import Icon from "./Icon.svelte";
   import MobileNavbar from "./MobileNavbar.svelte";
@@ -37,12 +37,13 @@
     align-items: center;
     margin: 0;
     padding: 1.5rem;
-	height: 5.5rem;
+    height: 5.5rem;
   }
-  header .left, header .right {
+  header .left,
+  header .right {
     display: flex;
     align-items: center;
-	height: var(--button-regular-height);
+    height: var(--button-regular-height);
   }
   header .nav {
     display: inline-block;
@@ -68,8 +69,8 @@
 
   .logo {
     display: flex;
-	height: var(--button-regular-height);
-	align-items: center;
+    height: var(--button-regular-height);
+    align-items: center;
   }
   .error {
     text-align: center;
@@ -131,8 +132,11 @@
   div.toggle {
     display: none;
   }
-  @media(max-width: 720px) {
-    .network, .search, header .nav, .balance {
+  @media (max-width: 720px) {
+    .network,
+    .search,
+    header .nav,
+    .balance {
       display: none;
     }
     div.toggle {
@@ -152,9 +156,13 @@
   {#if $error.type === Failure.TransactionFailed}
     <div class="error">
       {#if $error.message}
-        <strong>Error:</strong> {$error.message}
+        <strong>Error:</strong>
+        {$error.message}
       {:else if $error.txHash}
-        <strong>Error:</strong> Transaction <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a> failed.
+        <strong>Error:</strong>
+        Transaction
+        <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a>
+        failed.
       {/if}
     </div>
   {/if}
@@ -172,9 +180,7 @@
       {#if session && Object.keys(session.siwe).length > 0}
         <span class="seeds-container">
           <Floating>
-            <span slot="toggle" class="nav-link">
-              Seeds
-            </span>
+            <span slot="toggle" class="nav-link">Seeds</span>
             <svelte:fragment slot="modal">
               <SeedDropdown seeds={session.siwe} {config} />
             </svelte:fragment>
@@ -185,9 +191,9 @@
   </div>
 
   <div class="right">
-    {#if config && config.network.name === 'rinkeby'}
+    {#if config && config.network.name === "rinkeby"}
       <span class="network">Rinkeby</span>
-    {:else if config && config.network.name === 'homestead'}
+    {:else if config && config.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}
       <span class="network unavailable">No Network</span>
@@ -196,26 +202,30 @@
     {#if address}
       <span class="balance">
         {#if tokenBalance}
-          {formatBalance(tokenBalance)} <strong>RAD</strong>
+          {formatBalance(tokenBalance)}
+          <strong>RAD</strong>
         {:else}
           <Loading small />
         {/if}
       </span>
 
-      <button class="address outline regular"
+      <button
+        class="address outline regular"
         on:click={() => disconnectWallet(config)}
-        on:mouseover={() => sessionButtonHover = true}
-        on:focus={() => sessionButtonHover = true}
-        on:mouseout={() => sessionButtonHover = false}
-        on:blur={() => sessionButtonHover = false}
-      >
+        on:mouseover={() => (sessionButtonHover = true)}
+        on:focus={() => (sessionButtonHover = true)}
+        on:mouseout={() => (sessionButtonHover = false)}
+        on:blur={() => (sessionButtonHover = false)}>
         {#await Profile.get(address, ProfileType.Minimal, config)}
           <Loading small center />
         {:then profile}
           {#if sessionButtonHover}
             Disconnect
           {:else}
-            <Avatar source={profile.avatar ?? address} title={address} inline />{formatAddress(address)}
+            <Avatar
+              source={profile.avatar ?? address}
+              title={address}
+              inline />{formatAddress(address)}
           {/if}
         {/await}
       </button>

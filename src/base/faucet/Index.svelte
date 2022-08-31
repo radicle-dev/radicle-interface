@@ -5,7 +5,11 @@
   import { setOpenGraphMetaTag, toWei } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
   import { navigate } from "svelte-routing";
-  import { getMaxWithdrawAmount, lastWithdrawalByUser, calculateTimeLock } from "./lib";
+  import {
+    getMaxWithdrawAmount,
+    lastWithdrawalByUser,
+    calculateTimeLock,
+  } from "./lib";
 
   export let config: Config;
 
@@ -17,7 +21,7 @@
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Faucet" },
     { prop: "og:description", content: "Rinkeby Testnet Faucet" },
-    { prop: "og:url", content: window.location.href }
+    { prop: "og:url", content: window.location.href },
   ]);
 
   async function withdraw() {
@@ -28,15 +32,31 @@
 
   async function isAbleToWithdraw(amount: string): Promise<[boolean, string?]> {
     try {
-      if (! $session) { return [false]; }
-      if (!amount || amount === "0") { return [false, "Not able to withdraw zero tokens"]; }
-      if (toWei(amount).gt(maxWithdrawAmount)) return [false, `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`];
+      if (!$session) {
+        return [false];
+      }
+      if (!amount || amount === "0") {
+        return [false, "Not able to withdraw zero tokens"];
+      }
+      if (toWei(amount).gt(maxWithdrawAmount)) {
+        return [
+          false,
+          `Reduce amount, max withdrawal is ${formatEther(maxWithdrawAmount)}`,
+        ];
+      }
       const currentTime = new Date().getTime();
       const timelock = await calculateTimeLock(amount, $session.signer, config);
       // Converting a 10 digit to 13 digit timestamp by multiplying by 1000
       // since JS doesn't display a correct Date string when passing a 10 digit timestamp.
       const nextAvailableWithdraw = lastWithdrawal.add(timelock).mul(1000);
-      if (nextAvailableWithdraw.gt(currentTime)) return [false, `Not ready to withdraw, return after ${new Date(nextAvailableWithdraw.toNumber()).toLocaleString('en-GB')}`];
+      if (nextAvailableWithdraw.gt(currentTime)) {
+        return [
+          false,
+          `Not ready to withdraw, return after ${new Date(
+            nextAvailableWithdraw.toNumber(),
+          ).toLocaleString("en-GB")}`,
+        ];
+      }
 
       return [true];
     } catch (e: any) {
@@ -48,8 +68,12 @@
   }
 
   $: if ($session) {
-    getMaxWithdrawAmount($session.signer, config).then(x => maxWithdrawAmount = x);
-    lastWithdrawalByUser($session.signer, config).then(x => lastWithdrawal = x);
+    getMaxWithdrawAmount($session.signer, config).then(
+      x => (maxWithdrawAmount = x),
+    );
+    lastWithdrawalByUser($session.signer, config).then(
+      x => (lastWithdrawal = x),
+    );
   }
 </script>
 
@@ -89,7 +113,6 @@
   .description.invalid {
     color: var(--color-negative) !important;
   }
-
 </style>
 
 <svelte:head>
@@ -100,13 +123,13 @@
   <div>
     {#if config.network.name === "homestead"}
       <div class="input-caption">
-        To get RAD tokens on <strong>{config.network.name}</strong>, please
-        check the known exchanges.
+        To get RAD tokens on <strong>{config.network.name}</strong>
+        , please check the known exchanges.
       </div>
     {:else if !$session}
       <div class="input-caption">
-        To get RAD tokens on <strong>{config.network.name}</strong>, please
-        connect your wallet.
+        To get RAD tokens on <strong>{config.network.name}</strong>
+        , please connect your wallet.
       </div>
     {:else}
       <div class="input-caption">
@@ -118,16 +141,15 @@
             type="text"
             placeholder="Set amount to withdraw"
             bind:value={amount}
-            on:input={() => error = ""}
-          />
-        <button disabled={false} class="primary" on:click={withdraw}>
+            on:input={() => (error = "")} />
+          <button disabled={false} class="primary" on:click={withdraw}>
             Withdraw
-        </button>
+          </button>
         </div>
         {#if error}
-        <div class="error description invalid text-small faded">
-          {error}
-        </div>
+          <div class="error description invalid text-small faded">
+            {error}
+          </div>
         {/if}
       </div>
     {/if}

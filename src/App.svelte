@@ -1,21 +1,21 @@
 <script lang="ts">
   import { Router, Route } from "svelte-routing";
-  import { getConfig } from '@app/config';
-  import { Connection, state, session } from '@app/session';
+  import { getConfig } from "@app/config";
+  import { Connection, state, session } from "@app/session";
 
-  import Home from '@app/base/home/Index.svelte';
-  import Vesting from '@app/base/vesting/Index.svelte';
-  import Registrations from '@app/base/registrations/Routes.svelte';
-  import Orgs from '@app/base/orgs/Routes.svelte';
-  import Users from '@app/base/users/Routes.svelte';
-  import Seeds from '@app/base/seeds/Routes.svelte';
-  import Faucet from '@app/base/faucet/Routes.svelte';
-  import Projects from '@app/base/projects/Routes.svelte';
-  import Profile from '@app/Profile.svelte';
-  import Resolver from '@app/base/resolver/Routes.svelte';
-  import Header from '@app/Header.svelte';
-  import Loading from '@app/Loading.svelte';
-  import Modal from '@app/Modal.svelte';
+  import Home from "@app/base/home/Index.svelte";
+  import Vesting from "@app/base/vesting/Index.svelte";
+  import Registrations from "@app/base/registrations/Routes.svelte";
+  import Orgs from "@app/base/orgs/Routes.svelte";
+  import Users from "@app/base/users/Routes.svelte";
+  import Seeds from "@app/base/seeds/Routes.svelte";
+  import Faucet from "@app/base/faucet/Routes.svelte";
+  import Projects from "@app/base/projects/Routes.svelte";
+  import Profile from "@app/Profile.svelte";
+  import Resolver from "@app/base/resolver/Routes.svelte";
+  import Header from "@app/Header.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import LinearGradient from "@app/LinearGradient.svelte";
 
   const loadConfig = getConfig().then(async cfg => {
@@ -34,9 +34,10 @@
   });
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      const elems = document.querySelectorAll<HTMLElement>('button.primary');
-      if (elems.length === 1) { // We only allow this when there's one primary button.
+    if (event.key === "Enter") {
+      const elems = document.querySelectorAll<HTMLElement>("button.primary");
+      if (elems.length === 1) {
+        // We only allow this when there's one primary button.
         elems[0].click();
       }
     }
@@ -48,11 +49,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(
-      180deg,
-      #181a38 0%,
-      transparent 100%
-    );
+    background: linear-gradient(180deg, #181a38 0%, transparent 100%);
     background-repeat: no-repeat;
     background-size: 100% 6rem;
   }
@@ -68,7 +65,10 @@
 <svelte:head>
   <title>Radicle</title>
   {#if import.meta.env.PROD}
-    <script defer data-domain="app.radicle.xyz" src="https://plausible.io/js/plausible.js"></script>
+    <script
+      defer
+      data-domain="app.radicle.xyz"
+      src="https://plausible.io/js/plausible.js"></script>
   {/if}
 </svelte:head>
 

@@ -5,7 +5,9 @@
 </script>
 
 <Route path="/orgs">
-  <NotFound title="404" subtitle="Radicle Orgs are in the process of being re-designed." />
+  <NotFound
+    title="404"
+    subtitle="Radicle Orgs are in the process of being re-designed." />
 </Route>
 
 <Route path="/orgs/:addressOrName" let:params>

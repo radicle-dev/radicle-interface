@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import Modal from '@app/Modal.svelte';
-  import Error from '@app/Error.svelte';
-  import type { Err } from '@app/error';
-  import { Org } from '@app/base/orgs/Org';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Options from '@app/Options.svelte';
-  import Address from '@app/Address.svelte';
+  import { createEventDispatcher } from "svelte";
+  import { navigate } from "svelte-routing";
+  import Modal from "@app/Modal.svelte";
+  import Error from "@app/Error.svelte";
+  import type { Err } from "@app/error";
+  import { Org } from "@app/base/orgs/Org";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Loading.svelte";
+  import Options from "@app/Options.svelte";
+  import Address from "@app/Address.svelte";
 
   export let config: Config;
   export let owner: string;
@@ -26,21 +26,23 @@
   }
 
   const orgTypes = [
-    { label: "Multi-signature",
+    {
+      label: "Multi-signature",
       description: [
         "Creates an org with a multi-signature contract as its owner, and the specified account as the first member.",
         "A [Gnosis Safe](https://gnosis-safe.io) will be deployed for your org.",
-        "Transactions such as anchoring have to be approved by a quorum of signers."
+        "Transactions such as anchoring have to be approved by a quorum of signers.",
       ],
-      value: Governance.Quorum
+      value: Governance.Quorum,
     },
-    { label: "Existing owner",
+    {
+      label: "Existing owner",
       description: [
         `Creates an org with the specified account as the sole owner.`,
         `Org transactions such as anchoring are signed and executed from that account.`,
-        `This option allows for using an existing contract or EOA as the owner of the org.`
+        `This option allows for using an existing contract or EOA as the owner of the org.`,
       ],
-      value: Governance.Existing
+      value: Governance.Existing,
     },
   ];
 
@@ -54,9 +56,10 @@
     state = State.Signing;
 
     try {
-      const tx = governance === Governance.Quorum
-        ? await Org.createMultiSig([owner], 1, config)
-        : await Org.create(owner, config);
+      const tx =
+        governance === Governance.Quorum
+          ? await Org.createMultiSig([owner], 1, config)
+          : await Org.create(owner, config);
 
       state = State.Pending;
 
@@ -73,8 +76,12 @@
 
   const onGovernanceChanged = (event: { detail: string }) => {
     switch (event.detail) {
-      case "existing": governance = Governance.Existing; break;
-      case "quorum": governance = Governance.Quorum; break;
+      case "existing":
+        governance = Governance.Existing;
+        break;
+      case "quorum":
+        governance = Governance.Quorum;
+        break;
     }
   };
 </script>
@@ -122,11 +129,10 @@
 
 {#if error}
   <Error {error} floating on:close />
-{:else if org} <!-- Org created -->
+{:else if org}
+  <!-- Org created -->
   <Modal floating on:close>
-    <span slot="title">
-      🎉
-    </span>
+    <span slot="title">🎉</span>
 
     <span slot="subtitle">
       <strong>Your org was successfully created.</strong>
@@ -143,12 +149,11 @@
     </span>
 
     <span slot="actions">
-      <button on:click={() => navigate(`/${org?.address}`)}>
-        Done
-      </button>
+      <button on:click={() => navigate(`/${org?.address}`)}>Done</button>
     </span>
   </Modal>
-{:else} <!-- Org creation flow -->
+{:else}
+  <!-- Org creation flow -->
   <Modal floating on:close center>
     <span slot="title">
       <div>🎪</div>
@@ -159,7 +164,9 @@
       {#if state === State.Idle}
         <div class="highlight">Select how you'd like to create your org</div>
       {:else if state === State.Signing}
-        <div class="highlight">Please confirm the transaction in your wallet.</div>
+        <div class="highlight">
+          Please confirm the transaction in your wallet.
+        </div>
       {:else if state === State.Pending}
         <div class="highlight">Waiting for transaction to be processed...</div>
       {/if}
@@ -169,18 +176,27 @@
       {#if state === State.Idle}
         <div class="configuration">
           <div class="notice">
-            <strong>Notice:</strong> Orgs V1 are being deprecated. It is recommended
-            not to create new orgs at this point.
+            <strong>Notice:</strong>
+            Orgs V1 are being deprecated. It is recommended not to create new orgs
+            at this point.
           </div>
 
           <div class="governance">
-            <Options name="governance" disabled={state !== State.Idle}
-                     selected="{governance}" options={orgTypes}
-                     on:changed={onGovernanceChanged} />
+            <Options
+              name="governance"
+              disabled={state !== State.Idle}
+              selected={governance}
+              options={orgTypes}
+              on:changed={onGovernanceChanged} />
           </div>
 
           <label class="input" for="address">Ethereum account address</label>
-          <input name="address" class="small" type="text" maxlength="42" bind:value={owner} />
+          <input
+            name="address"
+            class="small"
+            type="text"
+            maxlength="42"
+            bind:value={owner} />
         </div>
       {:else}
         <Loading center small />
@@ -193,12 +209,11 @@
           on:click={createOrg}
           class="primary regular"
           data-waiting={[State.Signing, State.Pending].includes(state) || null}
-          disabled={state !== State.Idle}
-        >
+          disabled={state !== State.Idle}>
           Create
         </button>
 
-        <button on:click={() => dispatch('close')} class="text regular">
+        <button on:click={() => dispatch("close")} class="text regular">
           Close
         </button>
       {/if}

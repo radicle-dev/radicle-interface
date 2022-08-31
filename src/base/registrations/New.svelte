@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { navigate } from 'svelte-routing';
-  import { formatAddress } from '@app/utils';
-  import { session } from '@app/session';
-  import type { Config } from '@app/config';
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import { formatAddress } from "@app/utils";
+  import { session } from "@app/session";
+  import type { Config } from "@app/config";
 
-  import Connect from '@app/Connect.svelte';
-  import Modal from '@app/Modal.svelte';
-  import Loading from '@app/Loading.svelte';
-  import Message from '@app/Message.svelte';
+  import Connect from "@app/Connect.svelte";
+  import Modal from "@app/Modal.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Message from "@app/Message.svelte";
 
-  import { registrar } from './registrar';
+  import { registrar } from "./registrar";
 
   enum State {
     CheckingAvailability,
@@ -31,9 +31,13 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(`/registrations/${name}/submit?${
-      registrationOwner ? new URLSearchParams({ owner: registrationOwner }) : ''
-    }`);
+    navigate(
+      `/registrations/${name}/submit?${
+        registrationOwner
+          ? new URLSearchParams({ owner: registrationOwner })
+          : ""
+      }`,
+    );
   }
 
   onMount(async () => {
@@ -69,18 +73,23 @@
   <span slot="body">
     {#if state === State.NameAvailable}
       {#if registrationOwner}
-        The name <strong>{name}</strong> is available for registration
-        under account <strong>{formatAddress(registrationOwner)}</strong>.
+        The name <strong>{name}</strong>
+        is available for registration under account
+        <strong>{formatAddress(registrationOwner)}</strong>
+        .
       {:else}
-        The name <strong>{name}</strong> is available.
+        The name <strong>{name}</strong>
+        is available.
       {/if}
     {:else if state === State.NameUnavailable}
-      This name is <strong>not available</strong> for registration.
+      This name is <strong>not available</strong>
+      for registration.
     {:else if state === State.CheckingAvailability}
       <Loading small center />
     {:else if state === State.CheckingFailed && error}
       <Message error>
-        <strong>Error:</strong> {error}
+        <strong>Error:</strong>
+        {error}
       </Message>
     {/if}
   </span>
@@ -99,9 +108,7 @@
         Cancel
       </button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <button on:click={() => navigate("/registrations")} class="">
-        Back
-      </button>
+      <button on:click={() => navigate("/registrations")} class="">Back</button>
     {/if}
   </span>
 </Modal>

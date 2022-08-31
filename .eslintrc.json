@@ -4,10 +4,7 @@
     "browser": true,
     "node": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -25,18 +22,31 @@
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
     "no-implicit-globals": ["error"],
-    "no-restricted-globals": ["error", "name", "event", "frames", "history", "length", "content", "origin", "status"],
+    "no-restricted-globals": [
+      "error",
+      "name",
+      "event",
+      "frames",
+      "history",
+      "length",
+      "content",
+      "origin",
+      "status"
+    ],
     "no-trailing-spaces": ["error"],
     "no-multi-spaces": ["error"],
     "no-multiple-empty-lines": ["error"],
     "space-before-blocks": ["error"],
     "object-curly-spacing": ["error", "always"],
     "array-bracket-spacing": ["error", "never"],
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "eol-last": ["error"],
     "key-spacing": ["error"],
     "@typescript-eslint/object-curly-spacing": ["error", "always"],
@@ -77,7 +87,8 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [
-      "error", {
+      "error",
+      {
         "multiline": {
           "delimiter": "semi",
           "requireLast": true
@@ -90,7 +101,10 @@
     ],
     // Disallow Unused Variables.
     // https://eslint.org/docs/rules/no-unused-vars
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
+    ],
     // Require using arrow functions as callbacks.
     // https://eslint.org/docs/rules/prefer-arrow-callback
     "prefer-arrow-callback": "error",

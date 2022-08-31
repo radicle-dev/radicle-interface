@@ -1,23 +1,23 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte';
-  import { session } from '@app/session';
-  import Create from '@app/base/orgs/Create.svelte';
-  import { Org } from '@app/base/orgs/Org';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Message from '@app/Message.svelte';
-  import Cards from '@app/Cards.svelte';
-  import { setOpenGraphMetaTag } from '@app/utils';
+  import type { SvelteComponent } from "svelte";
+  import { session } from "@app/session";
+  import Create from "@app/base/orgs/Create.svelte";
+  import { Org } from "@app/base/orgs/Org";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Loading.svelte";
+  import Message from "@app/Message.svelte";
+  import Cards from "@app/Cards.svelte";
+  import { setOpenGraphMetaTag } from "@app/utils";
 
   export let config: Config;
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Orgs" },
     { prop: "og:description", content: "Orgs of the Radicle Network" },
-    { prop: "og:url", content: window.location.href }
+    { prop: "og:url", content: window.location.href },
   ]);
 
-  const onCreate = () => modal = Create;
+  const onCreate = () => (modal = Create);
   let modal: typeof SvelteComponent | null = null;
 
   $: account = $session && $session.address;
@@ -65,8 +65,13 @@
   {#if account}
     <div class="my-orgs">
       <header>
-        <span>My <strong>Orgs</strong></span>
-        <button class="create regular secondary" on:click={onCreate} disabled={!account}>
+        <span>
+          My <strong>Orgs</strong>
+        </span>
+        <button
+          class="create regular secondary"
+          on:click={onCreate}
+          disabled={!account}>
           Create
         </button>
       </header>
@@ -82,7 +87,8 @@
       {:catch}
         <div>
           <Message error>
-            <strong>Error: </strong> failed to load orgs.
+            <strong>Error:</strong>
+            failed to load orgs.
           </Message>
         </div>
       {/await}
@@ -90,7 +96,10 @@
   {/if}
 
   <header>
-    <span><strong>Orgs</strong> of the Radicle network</span>
+    <span>
+      <strong>Orgs</strong>
+      of the Radicle network
+    </span>
   </header>
 
   {#await Org.getAll(config)}
@@ -104,10 +113,15 @@
   {:catch}
     <div>
       <Message error>
-        <strong>Error: </strong> failed to load orgs.
+        <strong>Error:</strong>
+        failed to load orgs.
       </Message>
     </div>
   {/await}
 </main>
 
-<svelte:component this={modal} owner={account} {config} on:close={() => modal = null} />
+<svelte:component
+  this={modal}
+  owner={account}
+  {config}
+  on:close={() => (modal = null)} />

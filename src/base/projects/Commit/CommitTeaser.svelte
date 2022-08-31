@@ -100,7 +100,10 @@
       </div>
     {/if}
     <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
-    <div class="browse" title="View file" on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
+    <div
+      class="browse"
+      title="View file"
+      on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
       <Icon name="browse" />
     </div>
   </div>

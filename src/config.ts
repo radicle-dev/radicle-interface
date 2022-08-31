@@ -1,13 +1,12 @@
 import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { ethers } from "ethers";
-import type { TypedDataSigner } from '@ethersproject/abstract-signer';
+import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
-import { Core } from '@self.id/core';
+import { Core } from "@self.id/core";
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
-
 
 declare global {
   interface Window {
@@ -24,7 +23,7 @@ const gasLimits = {
 };
 
 export type WalletConnectState =
-    { state: "close" }
+  | { state: "close" }
   | { state: "open"; uri: string; onClose: any };
 
 export class Config {
@@ -39,21 +38,23 @@ export class Config {
   seeds: { pinned: Record<string, { emoji: string }> };
   gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
-  signer: ethers.Signer & TypedDataSigner | WalletConnectSigner | null;
+  signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
   walletConnect: {
     client: WalletConnect;
     bridge: string;
     signer: WalletConnectSigner;
     state: Writable<WalletConnectState>;
   };
-  metamask: {
-    connected: true;
-    signer: ethers.Signer & TypedDataSigner;
-    session: { address: string };
-  } | {
-    connected: false;
-    signer: ethers.Signer & TypedDataSigner | null;
-  };
+  metamask:
+    | {
+        connected: true;
+        signer: ethers.Signer & TypedDataSigner;
+        session: { address: string };
+      }
+    | {
+        connected: false;
+        signer: (ethers.Signer & TypedDataSigner) | null;
+      };
   safe: {
     api?: string;
     client?: SafeServiceClient;
@@ -66,8 +67,8 @@ export class Config {
     link: { port: number };
   };
   ceramic: {
-   client: Core;
-   registry: string;
+    client: Core;
+    registry: string;
   };
   tokens: string[];
   token: ethers.Contract;
@@ -75,31 +76,32 @@ export class Config {
   constructor(
     network: { name: string; chainId: number },
     provider: ethers.providers.JsonRpcProvider,
-    metamaskSigner: ethers.Signer & TypedDataSigner | null,
+    metamaskSigner: (ethers.Signer & TypedDataSigner) | null,
   ) {
-    const cfg = (<Record<string, any>> config)[network.name];
+    const cfg = (<Record<string, any>>config)[network.name];
     const ceramic = new Core({ ceramic: config.ceramic.api });
 
-    const walletConnectState = writable<WalletConnectState>(
-      { state: "close" }
-    );
+    const walletConnectState = writable<WalletConnectState>({ state: "close" });
     const wc = Config.initializeWalletConnect(
       config.walletConnect.bridge,
       walletConnectState,
-      provider
+      provider,
     );
     const metamaskSession = window.localStorage.getItem("metamask");
     const metamask = metamaskSession ? JSON.parse(metamaskSession) : null;
 
     this.network = network;
-    this.metamask = metamask && metamaskSigner ? {
-      connected: true,
-      session: { address: metamask["address"] },
-      signer: metamaskSigner,
-    } : {
-      connected: false,
-      signer: metamaskSigner,
-    };
+    this.metamask =
+      metamask && metamaskSigner
+        ? {
+            connected: true,
+            session: { address: metamask["address"] },
+            signer: metamaskSigner,
+          }
+        : {
+            connected: false,
+            signer: metamaskSigner,
+          };
     this.walletConnect = {
       bridge: config.walletConnect.bridge,
       client: wc.connector,
@@ -125,7 +127,7 @@ export class Config {
     this.abi = config.abi;
     this.ceramic = {
       client: ceramic,
-      registry: config.ceramic.registry
+      registry: config.ceramic.registry,
     };
     this.tokens = cfg.tokens;
     this.token = new ethers.Contract(
@@ -139,7 +141,9 @@ export class Config {
     this.network = ethers.providers.getNetwork(chainId);
   }
 
-  setSigner(signer: ethers.Signer & TypedDataSigner | WalletConnectSigner): void {
+  setSigner(
+    signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner,
+  ): void {
     this.signer = signer;
   }
 
@@ -151,7 +155,7 @@ export class Config {
     const wc = Config.initializeWalletConnect(
       this.walletConnect.bridge,
       this.walletConnect.state,
-      this.provider
+      this.provider,
     );
     this.walletConnect.client = wc.connector;
     this.walletConnect.signer = wc.signer;
@@ -163,7 +167,7 @@ export class Config {
   static initializeWalletConnect(
     bridge: string,
     state: Writable<WalletConnectState>,
-    provider: ethers.providers.JsonRpcProvider
+    provider: ethers.providers.JsonRpcProvider,
   ): {
     connector: WalletConnect;
     signer: WalletConnectSigner;
@@ -176,8 +180,8 @@ export class Config {
         },
         close: () => {
           // We handle the "close" event through the "disconnect" handler.
-        }
-      }
+        },
+      },
     });
     walletConnect.on("modal_closed", () => {
       state.set({ state: "close" });
@@ -196,10 +200,13 @@ export class Config {
     // designed for browsers and not mobile apps which often show a much bigger
     // icon, resulting in a blurry image.
     (walletConnect as any)._clientMeta.icons = [
-      `${window.location.protocol}//${window.location.host}/logo.png`
+      `${window.location.protocol}//${window.location.host}/logo.png`,
     ];
 
-    const walletConnectSigner = new WalletConnectSigner(walletConnect, provider);
+    const walletConnectSigner = new WalletConnectSigner(
+      walletConnect,
+      provider,
+    );
 
     return {
       connector: walletConnect,
@@ -219,7 +226,10 @@ function getProvider(
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
   if (import.meta.env.PROD) {
-    return new ethers.providers.AlchemyWebSocketProvider(network.name, config.alchemy.key);
+    return new ethers.providers.AlchemyWebSocketProvider(
+      network.name,
+      config.alchemy.key,
+    );
   } else if (metamask) {
     return metamask;
   } else if (import.meta.env.DEV) {
@@ -233,8 +243,10 @@ function getProvider(
 }
 
 // Checks if the promise metamask.ready returns the network, else timesout after 4 seconds.
-function checkMetaMask(metamask: ethers.providers.Web3Provider): Promise<ethers.providers.Network | null> {
-  return new Promise((resolve) => {
+function checkMetaMask(
+  metamask: ethers.providers.Web3Provider,
+): Promise<ethers.providers.Network | null> {
+  return new Promise(resolve => {
     setTimeout(() => {
       resolve(null);
     }, 4000);
@@ -258,17 +270,13 @@ export async function getConfig(): Promise<Config> {
     if (ready) network = ready;
   }
 
-  const networkConfig = (<Record<string, any>> config)[network.name];
-  if (! networkConfig) {
+  const networkConfig = (<Record<string, any>>config)[network.name];
+  if (!networkConfig) {
     throw new Error(`Network ${network.name} is not supported`);
   }
 
   const provider = getProvider(network, networkConfig, metamask);
-  const cfg = new Config(
-    network,
-    provider,
-    metamaskSigner,
-  );
+  const cfg = new Config(network, provider, metamaskSigner);
   console.debug("config", cfg);
 
   return cfg;

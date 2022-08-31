@@ -16,7 +16,9 @@
 
   let branchLabel: string | null = null;
 
-  $: branchList = Object.keys(branches).sort().map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
+  $: branchList = Object.keys(branches)
+    .sort()
+    .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
   $: head = project.head ?? branches[project.defaultBranch];
   $: commit = getOid(revision, branches) || head;
@@ -82,7 +84,7 @@
           <Dropdown
             items={branchList}
             selected={branchLabel}
-            on:select={(e) => switchBranch(e.detail)} />
+            on:select={e => switchBranch(e.detail)} />
         </svelte:fragment>
       </Floating>
       <div class="hash desktop">
@@ -96,7 +98,7 @@
     <div class="hash mobile">
       {formatCommit(commit)}
     </div>
-  <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
+    <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
   {:else if commit === head}
     <div class="stat branch not-allowed">
       {project.defaultBranch}

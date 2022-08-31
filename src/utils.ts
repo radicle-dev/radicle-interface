@@ -2,17 +2,29 @@ import { ethers } from "ethers";
 import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
-import multibase from 'multibase';
-import multihashes from 'multihashes';
-import EthersSafe, { EthersAdapter, TransactionResult } from "@gnosis.pm/safe-core-sdk";
+import multibase from "multibase";
+import multihashes from "multihashes";
+import EthersSafe, {
+  EthersAdapter,
+  TransactionResult,
+} from "@gnosis.pm/safe-core-sdk";
 import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
-import type { Config } from '@app/config';
+import type { Config } from "@app/config";
 import config from "@app/config.json";
-import { assert } from '@app/error';
-import { EnsProfile, getAddress, getResolver } from "@app/base/registrations/registrar";
-import { getAvatar, getSeed, getAnchorsAccount, getRegistration } from '@app/base/registrations/registrar';
-import type { BasicProfile } from '@datamodels/identity-profile-basic';
-import { ProfileType } from '@app/profile';
+import { assert } from "@app/error";
+import {
+  EnsProfile,
+  getAddress,
+  getResolver,
+} from "@app/base/registrations/registrar";
+import {
+  getAvatar,
+  getSeed,
+  getAnchorsAccount,
+  getRegistration,
+} from "@app/base/registrations/registrar";
+import type { BasicProfile } from "@datamodels/identity-profile-basic";
+import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
 import { GetSafe } from "@app/base/orgs/Org";
 import * as cache from "@app/cache";
@@ -53,12 +65,16 @@ export enum Status {
 }
 
 export type State =
-    { status: Status.Signing }
+  | { status: Status.Signing }
   | { status: Status.Pending }
   | { status: Status.Success }
   | { status: Status.Failed; error: string };
 
-export async function isReverseRecordSet(address: string, domain: string, config: Config): Promise<boolean> {
+export async function isReverseRecordSet(
+  address: string,
+  domain: string,
+  config: Config,
+): Promise<boolean> {
   const name = await lookupAddress(address, config);
   return name === domain;
 }
@@ -67,11 +83,13 @@ export async function toClipboard(text: string): Promise<void> {
   return navigator.clipboard.writeText(text);
 }
 
-export function setOpenGraphMetaTag(data: { prop: string; content: string; attr?: string }[]): void {
+export function setOpenGraphMetaTag(
+  data: { prop: string; content: string; attr?: string }[],
+): void {
   const elements = Array.from<HTMLElement>(document.querySelectorAll(`meta`));
   elements.forEach((element: any) => {
     const foundElement = data.find(data => {
-      return data.prop === element.getAttribute(data.attr || 'property');
+      return data.prop === element.getAttribute(data.attr || "property");
     });
     if (foundElement) element.content = foundElement.content;
   });
@@ -85,7 +103,11 @@ export function isAddressEqual(left: string, right: string): boolean {
   return left.toLowerCase() === right.toLowerCase();
 }
 
-export function formatSeedAddress(id: string, host: string, port: number): string {
+export function formatSeedAddress(
+  id: string,
+  host: string,
+  port: number,
+): string {
   return `${id}@${host}:${port}`;
 }
 
@@ -107,13 +129,13 @@ export function formatIssueId(id: string): string {
 }
 
 export function formatSeedId(id: string): string {
-  return id.substring(0, 6)
-    + '…'
-    + id.substring(id.length - 6, id.length);
+  return id.substring(0, 6) + "…" + id.substring(id.length - 6, id.length);
 }
 
 export function removePrefix(hash: string): string {
-  if (! hash.startsWith("0x")) { return hash; }
+  if (!hash.startsWith("0x")) {
+    return hash;
+  }
 
   return hash.substring(2);
 }
@@ -121,16 +143,20 @@ export function removePrefix(hash: string): string {
 export function formatRadicleUrn(id: string): string {
   assert(isRadicleId(id));
 
-  return id.substring(0, 14)
-    + '…'
-    + id.substring(id.length - 6, id.length);
+  return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
 }
 
 export function formatBalance(n: BigNumber, decimals?: number): string {
-  return ethers.utils.commify(parseFloat(ethers.utils.formatUnits(n, decimals)).toFixed(2));
+  return ethers.utils.commify(
+    parseFloat(ethers.utils.formatUnits(n, decimals)).toFixed(2),
+  );
 }
 
-export function formatCAIP10Address(address: string, protocol: string, impl: number): string {
+export function formatCAIP10Address(
+  address: string,
+  protocol: string,
+  impl: number,
+): string {
   return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
@@ -138,9 +164,9 @@ export function formatCAIP10Address(address: string, protocol: string, impl: num
 export function formatAddress(input: string): string {
   const addr = ethers.utils.getAddress(input).replace(/^0x/, "");
 
-  return addr.substring(0, 4)
-    + ' – '
-    + addr.substring(addr.length - 4, addr.length);
+  return (
+    addr.substring(0, 4) + " – " + addr.substring(addr.length - 4, addr.length)
+  );
 }
 
 export function formatIpfsFile(ipfs: string | undefined): string | undefined {
@@ -151,9 +177,9 @@ export function formatIpfsFile(ipfs: string | undefined): string | undefined {
 // If the string is less than 10 characters the entire string is returned.
 export function formatHash(hash: string): string {
   if (hash.length < 10) return hash;
-  return hash.substring(0, 6)
-    + '...'
-    + hash.substring(hash.length - 4, hash.length);
+  return (
+    hash.substring(0, 6) + "..." + hash.substring(hash.length - 4, hash.length)
+  );
 }
 
 export function formatCommit(oid: string): string {
@@ -181,10 +207,13 @@ export function parseEnsLabel(name: string, config: Config): string {
   return label;
 }
 
-export function clickOutside(node: HTMLElement, onEventFunction: () => void): any {
+export function clickOutside(
+  node: HTMLElement,
+  onEventFunction: () => void,
+): any {
   const handleClick = (event: any) => {
     const path = event.composedPath();
-    if (! path.includes(node)) {
+    if (!path.includes(node)) {
       onEventFunction();
     }
   };
@@ -193,7 +222,7 @@ export function clickOutside(node: HTMLElement, onEventFunction: () => void): an
   return {
     destroy() {
       document.removeEventListener("click", handleClick, true);
-    }
+    },
   };
 }
 
@@ -201,13 +230,13 @@ export function clickOutside(node: HTMLElement, onEventFunction: () => void): an
 // Returns `null` if unknown.
 export function getImageMime(path: string): string | null {
   const mimes: Record<string, string> = {
-    'apng': 'image/apng',
-    'png': 'image/png',
-    'svg': 'image/svg+xml',
-    'gif': 'image/gif',
-    'jpeg': 'image/jpeg',
-    'jpg': 'image/jpeg',
-    'webp': 'image/webp',
+    apng: "image/apng",
+    png: "image/png",
+    svg: "image/svg+xml",
+    gif: "image/gif",
+    jpeg: "image/jpeg",
+    jpg: "image/jpeg",
+    webp: "image/webp",
   };
   const ext = path.split(".").pop();
 
@@ -221,7 +250,11 @@ export function getImageMime(path: string): string | null {
 
 // Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
 // Returns the resolved path.
-export function canonicalize(path: string, base: string, origin = document.location.origin): string {
+export function canonicalize(
+  path: string,
+  base: string,
+  origin = document.location.origin,
+): string {
   path = path.replace(/^\//, ""); // Remove leading slash
   const finalPath = base
     .split("/")
@@ -248,19 +281,25 @@ export function unixTime(): number {
   return Math.floor(Date.now() / 1000);
 }
 
-export const formatTimestamp = (timestamp: number, current = new Date().getTime()): string => {
+export const formatTimestamp = (
+  timestamp: number,
+  current = new Date().getTime(),
+): string => {
   const units: Record<string, number> = {
     year: 24 * 60 * 60 * 1000 * 365,
-    month: 24 * 60 * 60 * 1000 * 365 / 12,
+    month: (24 * 60 * 60 * 1000 * 365) / 12,
     day: 24 * 60 * 60 * 1000,
     hour: 60 * 60 * 1000,
     minute: 60 * 1000,
-    second: 1000
+    second: 1000,
   };
 
   // Multiplying timestamp with 1000 to convert from seconds to milliseconds
   timestamp = timestamp * 1000;
-  const rtf = new Intl.RelativeTimeFormat('en', { numeric: "auto", style: 'long' });
+  const rtf = new Intl.RelativeTimeFormat("en", {
+    numeric: "auto",
+    style: "long",
+  });
   const elapsed = current - timestamp;
 
   if (elapsed > units["year"]) {
@@ -270,9 +309,12 @@ export const formatTimestamp = (timestamp: number, current = new Date().getTime(
   }
 
   for (const u in units) {
-    if (elapsed > units[u] || u === 'second') {
+    if (elapsed > units[u] || u === "second") {
       // We convert the division result to a negative number to get "XX [unit] ago"
-      return rtf.format(Math.round(elapsed / units[u]) * -1, u as Intl.RelativeTimeFormatUnit);
+      return rtf.format(
+        Math.round(elapsed / units[u]) * -1,
+        u as Intl.RelativeTimeFormatUnit,
+      );
     }
   }
 
@@ -316,7 +358,10 @@ export function isAddress(input: string): boolean {
 }
 
 // Get search parameters from location.
-export function getSearchParam(key: string, location: RouteLocation): string | null {
+export function getSearchParam(
+  key: string,
+  location: RouteLocation,
+): string | null {
   const params = new URLSearchParams(location.search);
   return params.get(key);
 }
@@ -342,17 +387,17 @@ export async function querySubgraphWithRetry(
   url: string,
   query: string,
   variables: Record<string, any>,
-  retries = 3
+  retries = 3,
 ): Promise<null | any> {
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query,
       variables,
-    })
+    }),
   });
   const json = await response.json();
 
@@ -368,8 +413,9 @@ export async function querySubgraphWithRetry(
 
 export const querySubgraph = cache.cached(
   querySubgraphWithRetry,
-  (url: string, query: string, variables: Record<string, any>) => JSON.stringify({ url, query, variables }),
-  { max: 500, ttl: 5 * 60 * 1000 } // Cache results for 5 minutes.
+  (url: string, query: string, variables: Record<string, any>) =>
+    JSON.stringify({ url, query, variables }),
+  { max: 500, ttl: 5 * 60 * 1000 }, // Cache results for 5 minutes.
 );
 
 // Format a name.
@@ -397,9 +443,7 @@ export function parseRadicleId(urn: string): string {
 
 // Get amount of days passed between two dates without including the end date
 export function getDaysPassed(from: Date, to: Date): number {
-  return Math.floor(
-    (to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000)
-  );
+  return Math.floor((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
 }
 
 // Decode a Radicle Id (URN).
@@ -414,11 +458,14 @@ export function decodeRadicleId(urn: string): Uint8Array {
 // Create a project hash from a hash and format.
 export function formatProjectHash(multihash: Uint8Array): string {
   const decoded = multihashes.decode(multihash);
-  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, '');
+  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, "");
 }
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
-export async function identifyAddress(address: string, config: Config): Promise<AddressType> {
+export async function identifyAddress(
+  address: string,
+  config: Config,
+): Promise<AddressType> {
   const safe = await isSafe(address, config);
   if (safe) {
     return AddressType.Safe;
@@ -437,7 +484,10 @@ export async function identifyAddress(address: string, config: Config): Promise<
 }
 
 // Resolve a label under the radicle domain.
-export async function resolveLabel(label: string | undefined, config: Config): Promise<string | null> {
+export async function resolveLabel(
+  label: string | undefined,
+  config: Config,
+): Promise<string | null> {
   if (label) return config.provider.resolveName(label);
   return null;
 }
@@ -452,18 +502,22 @@ export const resolveIdxProfile = cache.cached(
     }
   },
   (caip10: string) => caip10,
-  { max: 500, ttl: 30 * 60 * 1000 } // Cache results for 30 minutes.
+  { max: 500, ttl: 30 * 60 * 1000 }, // Cache results for 30 minutes.
 );
 
 // Resolves an ENS profile or return null
-export async function resolveEnsProfile(addressOrName: string, profileType: ProfileType, config: Config): Promise<EnsProfile | null> {
+export async function resolveEnsProfile(
+  addressOrName: string,
+  profileType: ProfileType,
+  config: Config,
+): Promise<EnsProfile | null> {
   const name = ethers.utils.isAddress(addressOrName)
     ? await lookupAddress(addressOrName, config)
     : addressOrName;
 
   if (name) {
     const resolver = await getResolver(name, config);
-    if (! resolver) {
+    if (!resolver) {
       return null;
     }
 
@@ -473,9 +527,7 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
         return registration.profile;
       }
     } else {
-      const promises: [Promise<any>] = [
-        getAvatar(name, config, resolver),
-      ];
+      const promises: [Promise<any>] = [getAvatar(name, config, resolver)];
 
       if (addressOrName === name) {
         promises.push(getAddress(resolver));
@@ -494,7 +546,9 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
       const [avatar, address, seed, anchorsAccount] =
         // Just checking for r.value equal null and casting to undefined,
         // since resolver functions return null.
-        project.map(r => r.status === "fulfilled" && r.value ? r.value : null);
+        project.map(r =>
+          r.status === "fulfilled" && r.value ? r.value : null,
+        );
 
       return {
         name,
@@ -509,43 +563,66 @@ export async function resolveEnsProfile(addressOrName: string, profileType: Prof
 }
 
 // Check whether a Gnosis Safe exists at an address.
-export async function isSafe(address: string, config: Config): Promise<boolean> {
+export async function isSafe(
+  address: string,
+  config: Config,
+): Promise<boolean> {
   // For the subgraph we need to pass a lowercase address
-  const query = await querySubgraph(config.orgs.subgraph, GetSafe, { addr: address.toLowerCase() });
+  const query = await querySubgraph(config.orgs.subgraph, GetSafe, {
+    addr: address.toLowerCase(),
+  });
 
   return query.safe !== null ? true : false;
 }
 
 // Get a Gnosis Safe at an address.
-export async function getSafe(address: string, config: Config): Promise<Safe | null> {
+export async function getSafe(
+  address: string,
+  config: Config,
+): Promise<Safe | null> {
   // For the subgraph we need to pass a lowercase address
-  const query = await querySubgraph(config.orgs.subgraph, GetSafe, { addr: address.toLowerCase() });
+  const query = await querySubgraph(config.orgs.subgraph, GetSafe, {
+    addr: address.toLowerCase(),
+  });
 
-  if (! query?.safe) {
+  if (!query?.safe) {
     return null;
   }
 
   return {
     address: query.safe.id,
     owners: query.safe.owners,
-    threshold: query.safe.threshold
+    threshold: query.safe.threshold,
   };
 }
 
 // Get token balances for an address.
-export async function getTokens(address: string, config: Config): Promise<Array<Token>> {
-  const userBalances = await getRpcMethod("alchemy_getTokenBalances", [address, "DEFAULT_TOKENS"], config);
-  const balances = userBalances.tokenBalances.filter((token: any) => {
-    // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
-    if (token.tokenBalance !== "0x") {
-      if (! BigNumber.from(token.tokenBalance).isZero()) {
-        return token;
+export async function getTokens(
+  address: string,
+  config: Config,
+): Promise<Array<Token>> {
+  const userBalances = await getRpcMethod(
+    "alchemy_getTokenBalances",
+    [address, "DEFAULT_TOKENS"],
+    config,
+  );
+  const balances = userBalances.tokenBalances
+    .filter((token: any) => {
+      // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
+      if (token.tokenBalance !== "0x") {
+        if (!BigNumber.from(token.tokenBalance).isZero()) {
+          return token;
+        }
       }
-    }
-  }).map(async (token: any) => {
-    const tokenMetaData = await getRpcMethod("alchemy_getTokenMetadata", [token.contractAddress], config);
-    return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
-  });
+    })
+    .map(async (token: any) => {
+      const tokenMetaData = await getRpcMethod(
+        "alchemy_getTokenMetadata",
+        [token.contractAddress],
+        config,
+      );
+      return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
+    });
 
   return Promise.all(balances);
 }
@@ -555,7 +632,7 @@ export const getRpcMethod = cache.cached(
     return await config.provider.send(method, props);
   },
   (method, props) => JSON.stringify([method, props]),
-  { ttl: 2 * 60 * 1000, max: 1000 }
+  { ttl: 2 * 60 * 1000, max: 1000 },
 );
 
 // Check whether the given path has a markdown file extension.
@@ -566,8 +643,10 @@ export function isMarkdownPath(path: string): boolean {
 // Check whether the given input string is a domain, eg. `alt-clients.radicle.xyz.
 // Also accepts in dev env 0.0.0.0 as domain
 export function isDomain(input: string): boolean {
-  return (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input))
-    || (! import.meta.env.PROD && /^0.0.0.0$/.test(input));
+  return (
+    (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input)) ||
+    (!import.meta.env.PROD && /^0.0.0.0$/.test(input))
+  );
 }
 
 // Check whether the given address is a local host address.
@@ -587,7 +666,7 @@ export function gravatarURL(email: string): string {
 export async function proposeSafeTransaction(
   safeTx: SafeTransaction,
   safeAddress: string,
-  config: Config
+  config: Config,
 ): Promise<void> {
   assert(config.signer);
   assert(config.safe.client);
@@ -597,11 +676,12 @@ export async function proposeSafeTransaction(
     signer: config.signer,
   });
   const safeSdk = await EthersSafe.create({
-    ethAdapter, safeAddress,
+    ethAdapter,
+    safeAddress,
   });
   const estimation = await config.safe.client.estimateSafeTransaction(
     safeAddress,
-    safeTx
+    safeTx,
   );
   const transaction = await safeSdk.createTransaction({
     ...safeTx,
@@ -614,7 +694,7 @@ export async function proposeSafeTransaction(
     safeAddress,
     transaction.data,
     safeTxHash,
-    signature
+    signature,
   );
 }
 
@@ -622,15 +702,17 @@ export async function proposeSafeTransaction(
 export async function signSafeTransaction(
   safeAddress: string,
   safeTxHash: string,
-  config: Config
+  config: Config,
 ): Promise<SafeSignature> {
   assert(config.signer);
 
   const ethAdapter = new EthersAdapter({
-    ethers, signer: config.signer
+    ethers,
+    signer: config.signer,
   });
   const safeSdk = await EthersSafe.create({
-    ethAdapter, safeAddress
+    ethAdapter,
+    safeAddress,
   });
   return await safeSdk.signTransactionHash(safeTxHash);
 }
@@ -639,16 +721,18 @@ export async function signSafeTransaction(
 export async function executeSignedSafeTransaction(
   safeAddress: string,
   safeTxHash: string,
-  config: Config
+  config: Config,
 ): Promise<TransactionResult> {
   assert(config.signer);
   assert(config.safe.client);
 
   const ethAdapter = new EthersAdapter({
-    ethers, signer: config.signer
+    ethers,
+    signer: config.signer,
   });
   const safeSdk = await EthersSafe.create({
-    ethAdapter, safeAddress
+    ethAdapter,
+    safeAddress,
   });
 
   const signedTx = await config.safe.client.getTransaction(safeTxHash);
@@ -659,11 +743,14 @@ export async function executeSignedSafeTransaction(
   const safeTx = await safeSdk.createTransaction({
     ...signedTx,
     gasPrice: Number(signedTx.gasPrice),
-    data: signedTx.data
+    data: signedTx.data,
   });
 
   signedTx.confirmations.forEach(confirmation => {
-    const signature = new EthSignSignature(confirmation.owner, confirmation.signature);
+    const signature = new EthSignSignature(
+      confirmation.owner,
+      confirmation.signature,
+    );
     safeTx.addSignature(signature);
   });
 
@@ -682,7 +769,7 @@ export class EthSignSignature {
     return this.data;
   }
   dynamicPart(): string {
-    return '';
+    return "";
   }
 }
 
@@ -690,16 +777,16 @@ export const getCode = cache.cached(
   async (address: string, config: Config) => {
     return await config.provider.getCode(address);
   },
-  (address) => address,
-  { max: 1000 }
+  address => address,
+  { max: 1000 },
 );
 
 export const lookupAddress = cache.cached(
   async (address: string, config: Config) => {
     return await config.provider.lookupAddress(address);
   },
-  (address) => address,
-  { max: 1000 }
+  address => address,
+  { max: 1000 },
 );
 
 export const unreachable = (value: never): never => {

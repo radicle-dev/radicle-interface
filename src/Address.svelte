@@ -1,12 +1,19 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { link } from 'svelte-routing';
-  import { ethers } from 'ethers';
-  import { safeLink, explorerLink, identifyAddress, formatAddress, AddressType, parseEnsLabel } from '@app/utils';
-  import { Profile, ProfileType } from '@app/profile';
+  import { onMount } from "svelte";
+  import { link } from "svelte-routing";
+  import { ethers } from "ethers";
+  import {
+    safeLink,
+    explorerLink,
+    identifyAddress,
+    formatAddress,
+    AddressType,
+    parseEnsLabel,
+  } from "@app/utils";
+  import { Profile, ProfileType } from "@app/profile";
   import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
-  import type { Config } from '@app/config';
+  import type { Config } from "@app/config";
 
   export let address: string;
   export let config: Config;
@@ -25,18 +32,27 @@
   const nameOrAddress = profile?.ens?.name || address;
 
   onMount(async () => {
-    if (! profile) {
-      identifyAddress(address, config).then((t: AddressType) => addressType = t);
+    if (!profile) {
+      identifyAddress(address, config).then(
+        (t: AddressType) => (addressType = t),
+      );
 
       if (resolve) {
-        Profile.get(address, ProfileType.Minimal, config).then(p => profile = p);
+        Profile.get(address, ProfileType.Minimal, config).then(
+          p => (profile = p),
+        );
       }
     } else {
       // If there is a profile we can use the profile.type to avoid identifying it again.
       addressType = profile.type;
     }
   });
-  $: addressLabel = resolve && profile?.name ? compact ? parseEnsLabel(profile.name, config) : profile.name : checksumAddress;
+  $: addressLabel =
+    resolve && profile?.name
+      ? compact
+        ? parseEnsLabel(profile.name, config)
+        : profile.name
+      : checksumAddress;
   $: checksumAddress = compact
     ? formatAddress(address)
     : ethers.utils.getAddress(address);
@@ -65,15 +81,17 @@
   }
 </style>
 
-<div class="address" title={address}
+<div
+  class="address"
+  title={address}
   class:text-small={small}
   class:text-xsmall={xsmall}
   class:highlight>
   {#if !noAvatar}
     {#if resolve && profile?.avatar}
-      <Avatar inline source={profile.avatar} title={address}/>
+      <Avatar inline source={profile.avatar} title={address} />
     {:else}
-      <Avatar inline source={address} title={address}/>
+      <Avatar inline source={address} title={address} />
     {/if}
   {/if}
   <div class="wrapper">
@@ -94,7 +112,8 @@
       {/if}
     {:else if addressType === AddressType.EOA}
       <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
-    {:else} <!-- While we're waiting to find out what address type it is -->
+    {:else}
+      <!-- While we're waiting to find out what address type it is -->
       <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {/if}
   </div>

@@ -7,8 +7,13 @@
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
-  const lineNumbers = Array(lines).fill(0).map((_, index) => index + 1);
-  const parentDir = blob.path.match(/^.*\/|/)?.values().next().value;
+  const lineNumbers = Array(lines)
+    .fill(0)
+    .map((_, index) => index + 1);
+  const parentDir = blob.path
+    .match(/^.*\/|/)
+    ?.values()
+    .next().value;
 
   // Waiting onMount, due to the line numbers still loading.
   onMount(() => {
@@ -66,7 +71,8 @@
   .line-number {
     display: block;
   }
-  .line-number:hover, .line-number.highlighted {
+  .line-number:hover,
+  .line-number.highlighted {
     color: var(--color-foreground-90);
   }
 
@@ -80,7 +86,7 @@
     display: flex;
     border: 1px solid var(--color-foreground-subtle);
     border-top-style: dashed;
-	border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
   }
 
@@ -116,7 +122,8 @@
   }
 
   @media (max-width: 960px) {
-    .code, .line-numbers {
+    .code,
+    .line-numbers {
       font-size: 0.875rem;
     }
     .highlight {
@@ -130,9 +137,10 @@
     <header>
       <div class="file-header">
         <span class="file-name">
-          <span class="faded">{parentDir}</span><span>{blob.info.name}</span>
+          <span class="faded">{parentDir}</span>
+          <span>{blob.info.name}</span>
         </span>
-        <div class="last-commit" title="{lastCommit.author.name}">
+        <div class="last-commit" title={lastCommit.author.name}>
           <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
           {lastCommit.summary}
         </div>
@@ -146,14 +154,19 @@
         </div>
       {:else}
         {#if line}
-          <div class="highlight" style="top: {line === 1 ? 1 : (1.5 * line) - 0.5}rem" />
+          <div
+            class="highlight"
+            style="top: {line === 1 ? 1 : 1.5 * line - 0.5}rem" />
         {/if}
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
-            <a href="#L{lineNumber}"
-               class="line-number"
-               class:highlighted={lineNumber === line}
-               id="L{lineNumber}">{lineNumber}</a>
+            <a
+              href="#L{lineNumber}"
+              class="line-number"
+              class:highlighted={lineNumber === line}
+              id="L{lineNumber}">
+              {lineNumber}
+            </a>
           {/each}
         </div>
         {#if blob.html}

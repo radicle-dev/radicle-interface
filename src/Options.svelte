@@ -1,8 +1,12 @@
 <script lang="ts">
   import { marked } from "marked";
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
 
-  export let options: { label: string; value: string; description?: string[] }[];
+  export let options: {
+    label: string;
+    value: string;
+    description?: string[];
+  }[];
   export let name: string;
   export let selected = "";
   export let disabled = false;
@@ -27,7 +31,8 @@
   .options label:last-child {
     margin-bottom: 0.5rem;
   }
-  .options label, .options input {
+  .options label,
+  .options input {
     cursor: pointer;
   }
   .options input {
@@ -64,10 +69,15 @@
 <main>
   <div class="options">
     {#each options as option}
-      <label for="{option.value}">
-        <input type="radio" {disabled} checked={selected === option.value} {name}
-               id="{option.value}" value="{option.value}"
-               on:click={() => dispatch('changed', option.value)}>
+      <label for={option.value}>
+        <input
+          type="radio"
+          {disabled}
+          checked={selected === option.value}
+          {name}
+          id={option.value}
+          value={option.value}
+          on:click={() => dispatch("changed", option.value)} />
         {option.label}
       </label>
       {#if option.description}

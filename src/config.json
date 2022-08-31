@@ -24,9 +24,7 @@
       ]
     },
     "users": {
-      "pinned": [
-        "cloudhead.radicle.eth"
-      ]
+      "pinned": ["cloudhead.radicle.eth"]
     },
     "seeds": {
       "pinned": {
@@ -89,9 +87,7 @@
     "api": "https://gateway.ceramic.network",
     "registry": "https://self.id/"
   },
-  "reactions": [
-    "👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"
-  ],
+  "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "radicle": {
     "seed": {
       "api": { "port": 8777 },
@@ -175,9 +171,7 @@
       "function createOrg(address[], uint256) returns (address)",
       "event OrgCreated(address, address)"
     ],
-    "reverseRegistrar": [
-      "function setName(string) returns (bytes32)"
-    ],
+    "reverseRegistrar": ["function setName(string) returns (bytes32)"],
     "org": [
       "function owner() view returns (address)",
       "function anchors(bytes32) view returns (uint32, bytes)",

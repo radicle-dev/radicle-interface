@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Clipboard from '@app/Clipboard.svelte';
-  import { closeFocused } from '@app/Floating.svelte';
+  import Clipboard from "@app/Clipboard.svelte";
+  import { closeFocused } from "@app/Floating.svelte";
 
   export let name: string;
   export let value: string;

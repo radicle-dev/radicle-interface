@@ -1,10 +1,5 @@
 {
   "all": true,
-  "extension": [
-    ".svelte",
-    ".ts"
-  ],
-  "include": [
-    "src/**/*"
-  ]
+  "extension": [".svelte", ".ts"],
+  "include": ["src/**/*"]
 }

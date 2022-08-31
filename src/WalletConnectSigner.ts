@@ -1,11 +1,17 @@
 import type WalletConnect from "@walletconnect/client";
 import * as ethers from "ethers";
 import * as ethersBytes from "@ethersproject/bytes";
-import type { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
+import type {
+  TransactionRequest,
+  TransactionResponse,
+} from "@ethersproject/abstract-provider";
 import { resolveProperties } from "@ethersproject/properties";
 import type { Deferrable } from "@ethersproject/properties";
 import { _TypedDataEncoder } from "ethers/lib/utils";
-import type { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
+import type {
+  TypedDataDomain,
+  TypedDataField,
+} from "@ethersproject/abstract-signer";
 
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;
@@ -23,35 +29,49 @@ export class WalletConnectSigner extends ethers.Signer {
 
   async getAddress(): Promise<string> {
     const accountAddress = this.walletConnect.accounts[0];
-    if (! accountAddress) {
+    if (!accountAddress) {
       throw new Error(
-        "The connected wallet has no accounts or there is a connection problem"
+        "The connected wallet has no accounts or there is a connection problem",
       );
     }
     return ethers.utils.getAddress(accountAddress);
   }
 
-  async _signTypedData(domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>): Promise<string> {
+  async _signTypedData(
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>,
+  ): Promise<string> {
     // Populate any ENS names (in-place)
-    const populated = await _TypedDataEncoder.resolveNames(domain, types, value, async (name: string) => {
-      const address = await this.provider.resolveName(name);
-      if (address === null) throw Error("resolver or addr is not configured for ENS name");
-      return address;
-    });
+    const populated = await _TypedDataEncoder.resolveNames(
+      domain,
+      types,
+      value,
+      async (name: string) => {
+        const address = await this.provider.resolveName(name);
+        if (address === null) {
+          throw Error("resolver or addr is not configured for ENS name");
+        }
+        return address;
+      },
+    );
 
     const address = await this.getAddress();
     const signature = await this.walletConnect.signTypedData([
       address.toLowerCase(),
-      JSON.stringify(_TypedDataEncoder.getPayload(populated.domain, types, populated.value)),
+      JSON.stringify(
+        _TypedDataEncoder.getPayload(populated.domain, types, populated.value),
+      ),
     ]);
     return signature;
   }
 
   async signMessage(message: ethers.Bytes | string): Promise<string> {
     const prefix = ethers.utils.toUtf8Bytes(
-      `\x19Ethereum Signed Message:\n${message.length}`
+      `\x19Ethereum Signed Message:\n${message.length}`,
     );
-    const data = ((typeof (message) === "string") ? ethers.utils.toUtf8Bytes(message) : message);
+    const data =
+      typeof message === "string" ? ethers.utils.toUtf8Bytes(message) : message;
 
     const msg = ethers.utils.concat([prefix, data]);
     const address = await this.getAddress();
@@ -65,7 +85,7 @@ export class WalletConnectSigner extends ethers.Signer {
   }
 
   async sendTransaction(
-    transaction: Deferrable<TransactionRequest>
+    transaction: Deferrable<TransactionRequest>,
   ): Promise<TransactionResponse> {
     const tx = await resolveProperties(transaction);
     const from = tx.from || (await this.getAddress());
@@ -88,12 +108,12 @@ export class WalletConnectSigner extends ethers.Signer {
       from: from,
       wait: (confirmations?: number) => {
         return this.provider?.waitForTransaction(txHash, confirmations);
-      }
+      },
     };
   }
 
   async signTransaction(
-    transaction: Deferrable<TransactionRequest>
+    transaction: Deferrable<TransactionRequest>,
   ): Promise<string> {
     const tx = await resolveProperties(transaction);
     const from = tx.from || (await this.getAddress());
@@ -117,7 +137,7 @@ export class WalletConnectSigner extends ethers.Signer {
 }
 
 function maybeBigNumberToString(
-  bn: ethers.BigNumberish | undefined
+  bn: ethers.BigNumberish | undefined,
 ): string | undefined {
   if (bn === undefined) {
     return undefined;
@@ -127,7 +147,7 @@ function maybeBigNumberToString(
 }
 
 function bytesLikeToString(
-  bytes: ethersBytes.BytesLike | undefined
+  bytes: ethersBytes.BytesLike | undefined,
 ): string | undefined {
   if (bytes === undefined) {
     return undefined;

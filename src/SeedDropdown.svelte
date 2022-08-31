@@ -11,12 +11,19 @@
 
   // When a user signs into a new seed we want to update the seed listing
   $: formatSeeds = async () => {
-    return await Promise.all(Object.values(seeds).map(async session => {
-      const seed = await Seed.lookup(session.domain, config);
-      const key = `${seed.emoji} ${seed.host}`;
+    return await Promise.all(
+      Object.values(seeds).map(async session => {
+        const seed = await Seed.lookup(session.domain, config);
+        const key = `${seed.emoji} ${seed.host}`;
 
-      return { key, value: seed.host, title: `Go to ${seed.host}`, badge: null };
-    }));
+        return {
+          key,
+          value: seed.host,
+          title: `Go to ${seed.host}`,
+          badge: null,
+        };
+      }),
+    );
   };
 </script>
 
@@ -24,9 +31,8 @@
   <Dropdown
     {items}
     selected={null}
-    on:select={(item) => {
+    on:select={item => {
       closeFocused();
       navigate(`/seeds/${item.detail}`);
-    }}
-  />
+    }} />
 {/await}

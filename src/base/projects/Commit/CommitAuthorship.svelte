@@ -14,7 +14,8 @@
     color: var(--color-foreground-faded);
     padding: 0.125rem 0;
   }
-  .authorship .author, .authorship .committer {
+  .authorship .author,
+  .authorship .committer {
     color: var(--color-foreground);
     white-space: nowrap;
   }
@@ -37,23 +38,34 @@
 
 <span class="authorship text-xsmall">
   {#if commit.header.author.email === commit.header.committer.email}
-    <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.committer.email)}" />
+    <img
+      class="avatar"
+      alt="avatar"
+      src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
       <span class="bold committer verified-committer">
         {commit.context?.committer.peer.person.name}
       </span>
       <span>&nbsp;committed</span>
     {:else}
-      <span class="desktop-inline committer">{commit.header.committer.name}</span>
+      <span class="desktop-inline committer">
+        {commit.header.committer.name}
+      </span>
       <span>&nbsp;committed</span>
     {/if}
   {:else}
     {#if showAuthor}
-      <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.author.email)}" />
+      <img
+        class="avatar"
+        alt="avatar"
+        src={gravatarURL(commit.header.author.email)} />
       <span class="desktop-inline author">{commit.header.author.name}</span>
       <span>&nbsp;authored&nbsp;</span>
     {/if}
-    <img class="avatar" alt="avatar" src="{gravatarURL(commit.header.committer.email)}" />
+    <img
+      class="avatar"
+      alt="avatar"
+      src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
       <span class="bold committer verified-committer">
         {commit.context?.committer.peer.person.name}
@@ -68,6 +80,8 @@
   {/if}
   {#if showTime}
     <span>&nbsp;</span>
-    <span class="desktop-inline text-xsmall time">{formatTimestamp(commit.header.committerTime)}</span>
+    <span class="desktop-inline text-xsmall time">
+      {formatTimestamp(commit.header.committerTime)}
+    </span>
   {/if}
 </span>

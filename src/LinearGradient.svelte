@@ -1,6 +1,6 @@
 <script lang="ts">
   export let id: string;
-  export let fillColor="#ff55ff";
+  export let fillColor = "#ff55ff";
 </script>
 
 <svg style="height: 0; width: 0;" xmlns="http://www.w3.org/2000/svg">

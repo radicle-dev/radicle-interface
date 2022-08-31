@@ -1,7 +1,7 @@
-import * as ethers from 'ethers';
-import type { Config } from '@app/config';
-import { assert } from '@app/error';
-import type { TransactionResponse } from '@ethersproject/providers';
+import * as ethers from "ethers";
+import type { Config } from "@app/config";
+import { assert } from "@app/error";
+import type { TransactionResponse } from "@ethersproject/providers";
 
 export class User {
   address: string;
@@ -18,7 +18,7 @@ export class User {
     const reverseRegistrar = new ethers.Contract(
       config.reverseRegistrar.address,
       config.abi.reverseRegistrar,
-      config.signer
+      config.signer,
     );
     return reverseRegistrar.setName(name);
   }

@@ -38,9 +38,9 @@
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions"> {stats.additions} addition(s) </span>
+  <span class="additions">{stats.additions} addition(s)</span>
   and
-  <span class="deletions"> {stats.deletions} deletion(s) </span>
+  <span class="deletions">{stats.deletions} deletion(s)</span>
 </div>
 <div class="diff-listing">
   {#each diff.created as file}

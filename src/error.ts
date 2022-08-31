@@ -17,9 +17,9 @@ export const error = writable<Err | null>(null);
 export class Unreachable extends Error {
   constructor(value?: never) {
     if (value) {
-      super('unreachable value reached: ' + value);
+      super("unreachable value reached: " + value);
     } else {
-      super('unreachable code reached');
+      super("unreachable code reached");
     }
   }
 }
@@ -55,13 +55,19 @@ class AssertionError extends Error {
 }
 
 export function assert(value: unknown, message?: string): asserts value {
-  if (! value) {
+  if (!value) {
     throw new AssertionError(message);
   }
 }
 
-export function assertEq(actual: unknown, expected: unknown, message?: string): void {
+export function assertEq(
+  actual: unknown,
+  expected: unknown,
+  message?: string,
+): void {
   if (actual !== expected) {
-    throw new AssertionError(`assertion failed: expected '${expected}', got '${actual}': ${message}`);
+    throw new AssertionError(
+      `assertion failed: expected '${expected}', got '${actual}': ${message}`,
+    );
   }
 }

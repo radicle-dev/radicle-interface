@@ -48,9 +48,7 @@
 </style>
 
 <Floating>
-  <div slot="toggle" class="clone-button">
-    Clone
-  </div>
+  <div slot="toggle" class="clone-button">Clone</div>
   <svelte:fragment slot="modal">
     <div class="dropdown">
       <Input
@@ -62,7 +60,10 @@
         Use the <a
           target="_blank"
           href="https://radicle.xyz/get-started.html"
-          class="link">Radicle CLI</a> to clone this project.
+          class="link">
+          Radicle CLI
+        </a>
+        to clone this project.
       </label>
       <br />
       <Input
@@ -70,8 +71,9 @@
         value="https://{seedHost}/{utils.parseRadicleId(urn)}.git"
         class="yellow"
         clipboard />
-      <label for="git-clone-url"
-        >Use Git to clone this repository from the URL above.</label>
+      <label for="git-clone-url">
+        Use Git to clone this repository from the URL above.
+      </label>
     </div>
   </svelte:fragment>
 </Floating>

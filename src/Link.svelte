@@ -6,12 +6,12 @@
 
   function getProps(/* props: any */) {
     if (primary) {
-      return { "class": "primary link" };
+      return { class: "primary link" };
     }
-    return { "class": "link" };
+    return { class: "link" };
   }
 </script>
 
-<Link to="{to}" getProps="{getProps}">
+<Link {to} {getProps}>
   <slot />
 </Link>

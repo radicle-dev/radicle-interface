@@ -5,9 +5,7 @@
     "content": "did:3:kjzl6cwe1jw1481xu9oyww9bhmueqr8f5uryk4xha9jzhj6vi063e0blpnil383",
     "metadata": {
       "family": "caip10-eip155:1",
-      "controllers": [
-        "0x5e813e48a81977c6fdd565ed5097eb600c73c4f0@eip155:1"
-      ]
+      "controllers": ["0x5e813e48a81977c6fdd565ed5097eb600c73c4f0@eip155:1"]
     },
     "signature": 2,
     "anchorStatus": "ANCHORED",

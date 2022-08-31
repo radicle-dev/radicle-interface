@@ -126,7 +126,9 @@
         <Badge variant="negative">deleted</Badge>
       {/if}
     </div>
-    <div class="browse clickable" on:click|stopPropagation={() => dispatch("browse", file.path)}>
+    <div
+      class="browse clickable"
+      on:click|stopPropagation={() => dispatch("browse", file.path)}>
       <span title="View file" style="transform: scale(1.25);">
         <Icon name="browse" />
       </span>
@@ -145,14 +147,10 @@
             </tr>
             {#each hunk.lines as line}
               <tr class="diff-line" data-expanded data-type={lineSign(line)}>
-                <td
-                  class="diff-line-number left"
-                  data-type={lineSign(line)}>
+                <td class="diff-line-number left" data-type={lineSign(line)}>
                   {lineNumberL(line)}
                 </td>
-                <td
-                  class="diff-line-number right"
-                  data-type={lineSign(line)}>
+                <td class="diff-line-number right" data-type={lineSign(line)}>
                   {lineNumberR(line)}
                 </td>
                 <td class="diff-line-type" data-type={line.type}>

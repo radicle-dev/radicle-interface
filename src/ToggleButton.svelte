@@ -41,12 +41,14 @@
     border: none;
     min-width: 0;
   }
-  button:hover, button.active {
+  button:hover,
+  button.active {
     cursor: pointer;
     color: var(--color-foreground);
     background-color: var(--color-foreground-background);
   }
-  button[disabled], button[disabled]:hover {
+  button[disabled],
+  button[disabled]:hover {
     cursor: not-allowed;
     color: var(--color-foreground-80);
   }

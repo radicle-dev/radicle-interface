@@ -19,8 +19,12 @@
   <div class="reactions">
     {#each Object.entries(reactions) as [reaction, count]}
       <!-- TODO: Remove the disabled attribute once we are able to increment reactions -->
-      <button disabled class="reaction text-xsmall" on:click={() => dispatch("click", reaction)}>
-        {reaction} {count}
+      <button
+        disabled
+        class="reaction text-xsmall"
+        on:click={() => dispatch("click", reaction)}>
+        {reaction}
+        {count}
       </button>
     {/each}
   </div>

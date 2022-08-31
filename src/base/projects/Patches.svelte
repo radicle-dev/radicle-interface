@@ -25,16 +25,16 @@
   $: options = [
     {
       value: "proposed",
-      count: sortedPatches.proposed.length
+      count: sortedPatches.proposed.length,
     },
     {
       value: "draft",
-      count: sortedPatches.draft.length
+      count: sortedPatches.draft.length,
     },
     {
       value: "archived",
-      count: sortedPatches.archived.length
-    }
+      count: sortedPatches.archived.length,
+    },
   ];
 </script>
 
@@ -60,19 +60,26 @@
 
 <div class="patches">
   <div style="margin-bottom: 1rem;">
-    <ToggleButton {options} on:select={(e) => {state = e.detail;}} active={state} />
+    <ToggleButton
+      {options}
+      on:select={e => {
+        state = e.detail;
+      }}
+      active={state} />
   </div>
 
   {#if filteredPatches.length}
     <div class="patches-list">
       {#each filteredPatches as patch}
-        <div class="teaser" on:click={() => {
+        <div
+          class="teaser"
+          on:click={() => {
             project.navigateTo({
               content: ProjectContent.Patch,
               patch: patch.id,
               issue: null,
               revision: null,
-              path: null
+              path: null,
             });
           }}>
           <PatchTeaser {config} {patch} />

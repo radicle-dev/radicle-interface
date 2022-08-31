@@ -1,27 +1,27 @@
 <script lang="ts">
-  import type { Config } from '@app/config';
-  import type { State as IssueState } from './Issues.svelte';
+  import type { Config } from "@app/config";
+  import type { State as IssueState } from "./Issues.svelte";
 
-  import * as proj from '@app/project';
-  import Placeholder from '@app/Placeholder.svelte';
-  import Loading from '@app/Loading.svelte';
-  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from '@app/utils';
-  import { browserStore } from '@app/project';
-  import { fetchCommits } from '@app/commit';
+  import * as proj from "@app/project";
+  import Placeholder from "@app/Placeholder.svelte";
+  import Loading from "@app/Loading.svelte";
+  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from "@app/utils";
+  import { browserStore } from "@app/project";
+  import { fetchCommits } from "@app/commit";
   import * as patch from "@app/patch";
   import * as issue from "@app/issue";
 
-  import Header from '@app/base/projects/Header.svelte';
-  import Async from '@app/Async.svelte';
+  import Header from "@app/base/projects/Header.svelte";
+  import Async from "@app/Async.svelte";
 
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
   import History from "./History.svelte";
-  import Issues from './Issues.svelte';
-  import Issue from './Issue.svelte';
-  import ProjectMeta from './ProjectMeta.svelte';
-  import Patches from './Patches.svelte';
-  import Patch from './Patch.svelte';
+  import Issues from "./Issues.svelte";
+  import Issue from "./Issue.svelte";
+  import ProjectMeta from "./ProjectMeta.svelte";
+  import Patches from "./Patches.svelte";
+  import Patch from "./Patch.svelte";
 
   export let peer: string | null = null;
   export let config: Config;
@@ -29,14 +29,14 @@
   export let content: proj.ProjectContent;
   export let revision: string | null;
 
-  const parentName = project.profile ? formatProfile(project.profile.nameOrAddress, config) : null;
+  const parentName = project.profile
+    ? formatProfile(project.profile.nameOrAddress, config)
+    : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
 
-  $: issueFilter = $browserStore.search?.get("state") as IssueState ?? "open";
+  $: issueFilter = ($browserStore.search?.get("state") as IssueState) ?? "open";
 
-  const baseName = parentName
-    ? `${parentName}/${project.name}`
-    : project.name;
+  const baseName = parentName ? `${parentName}/${project.name}` : project.name;
 
   if (project.description) {
     pageTitle = `${baseName}: ${project.description}`;
@@ -47,7 +47,7 @@
   setOpenGraphMetaTag([
     { prop: "og:title", content: project.name },
     { prop: "og:description", content: project.description },
-    { prop: "og:url", content: window.location.href }
+    { prop: "og:url", content: window.location.href },
   ]);
 </script>
 
@@ -66,7 +66,10 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
-<ProjectMeta noDescription={content !== proj.ProjectContent.Tree} {project} {peer} />
+<ProjectMeta
+  noDescription={content !== proj.ProjectContent.Tree}
+  {project}
+  {peer} />
 
 {#if revision}
   {#await project.getRoot(revision)}
@@ -90,25 +93,43 @@
       <div class="error error-message text-xsmall">
         <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
-        API request to <code class="text-xsmall">{err.url}</code> failed
+        API request to
+        <code class="text-xsmall">{err.url}</code>
+        failed
       </div>
     </div>
   {/await}
 
   {#if content === proj.ProjectContent.Issues}
-    <Async fetch={issue.Issue.getIssues(project.urn, project.seed.api)} let:result>
+    <Async
+      fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
+      let:result>
       <Issues {project} state={issueFilter} {config} issues={result} />
     </Async>
   {:else if content === proj.ProjectContent.Issue && $browserStore.issue}
-    <Async fetch={issue.Issue.getIssue(project.urn, $browserStore.issue, project.seed.api)} let:result>
+    <Async
+      fetch={issue.Issue.getIssue(
+        project.urn,
+        $browserStore.issue,
+        project.seed.api,
+      )}
+      let:result>
       <Issue {project} {config} issue={result} />
     </Async>
   {:else if content === proj.ProjectContent.Patches}
-    <Async fetch={patch.Patch.getPatches(project.urn, project.seed.api)} let:result>
+    <Async
+      fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
+      let:result>
       <Patches {project} {config} patches={result} />
     </Async>
   {:else if content === proj.ProjectContent.Patch && $browserStore.patch}
-    <Async fetch={patch.Patch.getPatch(project.urn, $browserStore.patch, project.seed.api)} let:result>
+    <Async
+      fetch={patch.Patch.getPatch(
+        project.urn,
+        $browserStore.patch,
+        project.seed.api,
+      )}
+      let:result>
       <Patch {project} {config} patch={result} />
     </Async>
   {/if}

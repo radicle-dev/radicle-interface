@@ -7,11 +7,22 @@
   export let history: GroupedCommitsHistory;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({ content, revision, issue: null, patch: null, path: null });
+    project.navigateTo({
+      content,
+      revision,
+      issue: null,
+      patch: null,
+      path: null,
+    });
   };
 
   const browseCommit = (event: { detail: string }) => {
-    project.navigateTo({ content: ProjectContent.Tree, revision: event.detail, issue: null, path: null });
+    project.navigateTo({
+      content: ProjectContent.Tree,
+      revision: event.detail,
+      issue: null,
+      path: null,
+    });
   };
 </script>
 
@@ -53,19 +64,22 @@
   }
 </style>
 
-  <div class="history">
-    {#each history.headers as group (group.time)}
-      <div class="commit-group">
-        <header class="commit-date">
-          <p>{group.date}</p>
-        </header>
-        <div class="commit-group-headers">
-          {#each group.commits as commit (commit.header.sha1)}
-            <div class="commit" on:click={() => navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
-              <CommitTeaser {commit} on:browseCommit={browseCommit} />
-            </div>
-          {/each}
-        </div>
+<div class="history">
+  {#each history.headers as group (group.time)}
+    <div class="commit-group">
+      <header class="commit-date">
+        <p>{group.date}</p>
+      </header>
+      <div class="commit-group-headers">
+        {#each group.commits as commit (commit.header.sha1)}
+          <div
+            class="commit"
+            on:click={() =>
+              navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
+            <CommitTeaser {commit} on:browseCommit={browseCommit} />
+          </div>
+        {/each}
       </div>
-    {/each}
-  </div>
+    </div>
+  {/each}
+</div>

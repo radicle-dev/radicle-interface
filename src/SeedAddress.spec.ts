@@ -2,7 +2,7 @@ import SeedAddress from "./SeedAddress.svelte";
 import { render } from "@testing-library/svelte";
 import "@public/index.css";
 
-describe('SeedAddress', () => {
+describe("SeedAddress", () => {
   it("shows the seed emoji and seed host", () => {
     render(SeedAddress, {
       props: {
@@ -11,11 +11,13 @@ describe('SeedAddress', () => {
           emoji: "🐱",
           host: "seed.cloudhead.io",
         },
-        port: 8776
-      }
+        port: 8776,
+      },
     });
     cy.get("span.seed-icon").should("have.text", "🐱");
-    cy.findByText("seed.cloudhead.io").should("have.attr", "href", "/seeds/seed.cloudhead.io").should("be.visible");
+    cy.findByText("seed.cloudhead.io")
+      .should("have.attr", "href", "/seeds/seed.cloudhead.io")
+      .should("be.visible");
   });
 
   it("shows the full seed id", () => {
@@ -27,8 +29,8 @@ describe('SeedAddress', () => {
           host: "seed.cloudhead.io",
         },
         port: 8776,
-        full: true
-      }
+        full: true,
+      },
     });
     cy.get("span.seed-icon").should("have.text", "🐱");
     cy.findByText("hydkkk…coygh1@seed.cloudhead.io").should("be.visible");

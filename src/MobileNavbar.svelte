@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { link } from 'svelte-routing';
-  import { createEventDispatcher } from 'svelte';
-  import Search from './Search.svelte';
+  import { link } from "svelte-routing";
+  import { createEventDispatcher } from "svelte";
+  import Search from "./Search.svelte";
   import { clickOutside } from "@app/utils";
 
   const dispatch = createEventDispatcher();
@@ -25,10 +25,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #000000BF;
+    background-color: #000000bf;
   }
   .modal {
-    position:absolute;
+    position: absolute;
     top: 90px;
     right: 1.5rem;
     padding: 1.5rem;
@@ -66,9 +66,7 @@
         <Search size={20} on:search={() => dispatch("select")} />
       </div>
       <div>
-        <a use:link on:click={() => dispatch("select")} href="/orgs">
-          Orgs
-        </a>
+        <a use:link on:click={() => dispatch("select")} href="/orgs">Orgs</a>
         <a use:link on:click={() => dispatch("select")} href="/registrations">
           Register
         </a>

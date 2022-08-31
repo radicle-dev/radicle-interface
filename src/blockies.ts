@@ -29,9 +29,9 @@ function createColor(): string {
   // Saturation is the whole color spectrum.
   const h = Math.floor(rand() * 360);
   // Saturation goes from 40 to 100, it avoids greyish colors.
-  const s = rand() * 60 + 40 + '%';
+  const s = rand() * 60 + 40 + "%";
   // Lightness can be anything from 0 to 100, but probabilities are a bell curve around 50%.
-  const l = (rand() + rand() + rand() + rand()) * 25 + '%';
+  const l = (rand() + rand() + rand() + rand()) * 25 + "%";
 
   return `hsl(${h}, ${s}, ${l})`;
 }
@@ -68,15 +68,15 @@ function createCanvas(
   color: string,
   scale: number,
   bgcolor: string,
-  spotcolor: string
+  spotcolor: string,
 ): HTMLCanvasElement {
-  const c = document.createElement('canvas');
+  const c = document.createElement("canvas");
   const width = Math.sqrt(imageData.length);
   c.width = c.height = width * scale;
 
-  const cc = c.getContext('2d');
+  const cc = c.getContext("2d");
 
-  if (! cc) throw new Error("Can't get 2D context");
+  if (!cc) throw new Error("Can't get 2D context");
 
   cc.fillStyle = bgcolor;
   cc.fillRect(0, 0, c.width, c.height);

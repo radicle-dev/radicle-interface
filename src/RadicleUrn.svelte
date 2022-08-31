@@ -6,12 +6,13 @@
   let copied = false;
 
   const copy = () => {
-    return () => toClipboard(urn).then(() => {
-      copied = true;
-      setTimeout(() => {
-        copied = false;
-      }, 3000);
-    });
+    return () =>
+      toClipboard(urn).then(() => {
+        copied = true;
+        setTimeout(() => {
+          copied = false;
+        }, 3000);
+      });
   };
 </script>
 
@@ -31,7 +32,6 @@
     vertical-align: middle;
   }
 </style>
-
 
 <div class="desktop">
   <div class="urn">

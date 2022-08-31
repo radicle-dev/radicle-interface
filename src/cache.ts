@@ -7,7 +7,7 @@ import LruCache from "lru-cache";
 export function cached<Args extends unknown[], V>(
   f: (...args: Args) => Promise<V>,
   makeKey: (...args: Args) => string,
-  options?: LruCache.Options<string, { value: V }>
+  options?: LruCache.Options<string, { value: V }>,
 ): (...args: Args) => Promise<V> {
   const cache = new LruCache(options || { max: 500 });
   return async function (...args: Args): Promise<V> {

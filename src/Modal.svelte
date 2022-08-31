@@ -8,7 +8,8 @@
 </script>
 
 <style>
-  .modal-floating, .modal-overlay {
+  .modal-floating,
+  .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -24,7 +25,7 @@
   }
   .modal-overlay {
     z-index: 200;
-    background-color: rgba(0, 0, 0, .75);
+    background-color: rgba(0, 0, 0, 0.75);
   }
   .modal {
     padding: 2rem 3rem;
@@ -48,16 +49,10 @@
   .modal.modal-subtle {
     border: none;
     box-shadow: none;
-    background: radial-gradient(
-      var(--color-glow) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(var(--color-glow) 0%, transparent 70%);
   }
   .modal.modal-subtle.error {
-    background: radial-gradient(
-      var(--color-glow-error) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(var(--color-glow-error) 0%, transparent 70%);
   }
   .modal-title {
     color: var(--color-foreground);
@@ -100,27 +95,29 @@
 </style>
 
 {#if floating}
-  <div class="modal-overlay"></div>
+  <div class="modal-overlay" />
 {/if}
 
 <div class:modal-floating={floating} class:off-centered={!center}>
-  <div class="modal" class:error
-       class:modal-subtle={subtle}
-       class:modal-narrow={narrow}
-       class:modal-small={small}>
+  <div
+    class="modal"
+    class:error
+    class:modal-subtle={subtle}
+    class:modal-narrow={narrow}
+    class:modal-small={small}>
     <div class="modal-title">
-      <slot name="title"></slot>
+      <slot name="title" />
     </div>
     <div class="modal-subtitle">
-      <slot name="subtitle"></slot>
+      <slot name="subtitle" />
     </div>
     {#if $$slots.body && !small}
       <div class="modal-body">
-        <slot name="body"></slot>
+        <slot name="body" />
       </div>
     {/if}
     <div class="modal-actions">
-      <slot name="actions"></slot>
+      <slot name="actions" />
     </div>
   </div>
 </div>

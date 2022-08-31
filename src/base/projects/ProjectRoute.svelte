@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Writable } from 'svelte/store';
+  import type { Writable } from "svelte/store";
   import type { Config } from "@app/config";
-  import { formatLocationHash } from '@app/utils';
-  import * as proj from '@app/project';
+  import { formatLocationHash } from "@app/utils";
+  import * as proj from "@app/project";
   import type { RouteLocation } from "@app/index";
 
-  import Project from '@app/base/projects/Project.svelte';
+  import Project from "@app/base/projects/Project.svelte";
 
   export let browserStore: Writable<proj.Browser> = proj.browserStore;
   export let route: string | null = null;
@@ -56,5 +56,4 @@
   revision={browser.revision || head}
   content={browser.content}
   {project}
-  {config}
-/>
+  {config} />

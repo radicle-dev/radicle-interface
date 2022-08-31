@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Loading from '@app/Loading.svelte';
+  import Loading from "@app/Loading.svelte";
 
   export let active: boolean;
   export let loading: boolean;

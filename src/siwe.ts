@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { SiweMessage } from "siwe";
-import { Request, type Host } from '@app/api';
+import { Request, type Host } from "@app/api";
 import type { Config } from "@app/config";
 import { connectSeed } from "@app/session";
 import type { Seed } from "@app/base/seeds/Seed";
@@ -18,7 +18,12 @@ export interface SeedSession {
   resources: string[];
 }
 
-export function createSiweMessage(seed: Seed, address: string, nonce: string, config: Config): string {
+export function createSiweMessage(
+  seed: Seed,
+  address: string,
+  nonce: string,
+  config: Config,
+): string {
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
 
@@ -28,21 +33,26 @@ export function createSiweMessage(seed: Seed, address: string, nonce: string, co
     statement: "It's a Radicle world!",
     uri: window.location.origin,
     nonce,
-    version: '1',
+    version: "1",
     expirationTime: nextWeek.toISOString(),
-    chainId: config.network.chainId
+    chainId: config.network.chainId,
   });
 
   return message.prepareMessage();
 }
 
-export async function createUnauthorizedSession(host: Host): Promise<{ nonce: string; id: string }> {
+export async function createUnauthorizedSession(
+  host: Host,
+): Promise<{ nonce: string; id: string }> {
   return await new Request(`sessions`, host).post();
 }
 
 /// Signs the user into given seed and returns when successfull a session id
-export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ id: string } | null> {
-  if (! config.signer) {
+export async function signInWithEthereum(
+  seed: Seed,
+  config: Config,
+): Promise<{ id: string } | null> {
+  if (!config.signer) {
     return null;
   }
 
@@ -54,8 +64,10 @@ export async function signInWithEthereum(seed: Seed, config: Config): Promise<{ 
   const auth: {
     id: string;
     session: SeedSession;
-  } = await new Request(`sessions/${result.id}`, seed.api)
-    .put({ message, signature });
+  } = await new Request(`sessions/${result.id}`, seed.api).put({
+    message,
+    signature,
+  });
 
   connectSeed({ id: result.id, session: auth.session });
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Config } from '@app/config';
+  import type { Config } from "@app/config";
   import { Route, Router } from "svelte-routing";
-  import { Project, ProjectContent } from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import NotFound from '@app/NotFound.svelte';
+  import { Project, ProjectContent } from "@app/project";
+  import Loading from "@app/Loading.svelte";
+  import NotFound from "@app/NotFound.svelte";
 
   import ProjectRoute from "./ProjectRoute.svelte";
 
@@ -51,35 +51,82 @@
         <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
       <Route path="/tree/*" let:params let:location>
-        <ProjectRoute route={params["*"]} content={ProjectContent.Tree} {location} {peer} {project} {config} />
+        <ProjectRoute
+          route={params["*"]}
+          content={ProjectContent.Tree}
+          {location}
+          {peer}
+          {project}
+          {config} />
       </Route>
 
       <Route path="/history">
-        <ProjectRoute content={ProjectContent.History} {peer} {project} {config} />
+        <ProjectRoute
+          content={ProjectContent.History}
+          {peer}
+          {project}
+          {config} />
       </Route>
       <Route path="/history/*" let:params let:location>
-        <ProjectRoute route={params["*"]} content={ProjectContent.History} {location} {peer} {project} {config} />
+        <ProjectRoute
+          route={params["*"]}
+          content={ProjectContent.History}
+          {location}
+          {peer}
+          {project}
+          {config} />
       </Route>
 
       <Route path="/commits/:commit" let:params>
-        <ProjectRoute revision={params.commit} content={ProjectContent.Commit} {peer} {project} {config} />
+        <ProjectRoute
+          revision={params.commit}
+          content={ProjectContent.Commit}
+          {peer}
+          {project}
+          {config} />
       </Route>
       <Route path="/commits/*" let:params let:location>
-        <ProjectRoute route={params["*"]} content={ProjectContent.Commit} {location} {peer} {project} {config} />
+        <ProjectRoute
+          route={params["*"]}
+          content={ProjectContent.Commit}
+          {location}
+          {peer}
+          {project}
+          {config} />
       </Route>
 
       <Route path="/issues" let:location>
-        <ProjectRoute content={ProjectContent.Issues} {peer} {project} {location} {config} />
+        <ProjectRoute
+          content={ProjectContent.Issues}
+          {peer}
+          {project}
+          {location}
+          {config} />
       </Route>
       <Route path="/issues/:issue" let:params let:location>
-        <ProjectRoute content={ProjectContent.Issue} issue={params.issue} {peer} {project} {location} {config} />
+        <ProjectRoute
+          content={ProjectContent.Issue}
+          issue={params.issue}
+          {peer}
+          {project}
+          {location}
+          {config} />
       </Route>
 
       <Route path="/patches">
-        <ProjectRoute content={ProjectContent.Patches} {peer} {project} {config} />
+        <ProjectRoute
+          content={ProjectContent.Patches}
+          {peer}
+          {project}
+          {config} />
       </Route>
       <Route path="/patches/:patch" let:params>
-        <ProjectRoute content={ProjectContent.Patch} patch={params.patch} {peer} {project} {config} />
+        <ProjectRoute
+          content={ProjectContent.Patch}
+          patch={params.patch}
+          {peer}
+          {project}
+          {config} />
       </Route>
     </Router>
   {:catch}

@@ -6,7 +6,7 @@
   import * as utils from "@app/utils";
   import Modal from "@app/Modal.svelte";
   import Avatar from "@app/Avatar.svelte";
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
 
   export let safe: Safe;
@@ -44,7 +44,11 @@
     try {
       action = Action.Execute;
       state = State.Signing;
-      const txResult = await utils.executeSignedSafeTransaction(safe.address, safeTxHash, config);
+      const txResult = await utils.executeSignedSafeTransaction(
+        safe.address,
+        safeTxHash,
+        config,
+      );
 
       state = State.Submitting;
       await txResult.transactionResponse?.wait();
@@ -61,7 +65,11 @@
     try {
       action = Action.Sign;
       state = State.Signing;
-      const signature = await utils.signSafeTransaction(safe.address, safeTxHash, config);
+      const signature = await utils.signSafeTransaction(
+        safe.address,
+        safeTxHash,
+        config,
+      );
 
       state = State.Submitting;
       await config.safe.client?.confirmTransaction(safeTxHash, signature.data);
@@ -74,9 +82,7 @@
     }
   };
 
-  $: isSigned = anchor.confirmations.includes(
-    ethers.utils.getAddress(account)
-  );
+  $: isSigned = anchor.confirmations.includes(ethers.utils.getAddress(account));
 </script>
 
 <style>
@@ -89,10 +95,12 @@
     grid-gap: 1rem;
     text-align: left;
   }
-  .table > *:nth-child(odd) { /* Labels */
+  .table > *:nth-child(odd) {
+    /* Labels */
     color: var(--color-secondary);
   }
-  .table > *:nth-child(even) { /* Values */
+  .table > *:nth-child(even) {
+    /* Values */
     display: flex;
     align-items: center;
     justify-content: left;
@@ -110,7 +118,8 @@
 
 <span class="confirmations">
   {#if pending > 0}
-    <strong>{pending}</strong> signature(s) pending
+    <strong>{pending}</strong>
+    signature(s) pending
   {/if}
 </span>
 
@@ -122,20 +131,24 @@
 
 <!-- Check whether the threshold has been matched or passed -->
 {#if pending <= 0}
-  <button on:click|stopPropagation={() => {
-    action = Action.Execute;
-    state = State.Confirm;
-  }} class="small execute">
+  <button
+    on:click|stopPropagation={() => {
+      action = Action.Execute;
+      state = State.Confirm;
+    }}
+    class="small execute">
     <Avatar inline source={account} title={account} /> Execute
   </button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}
   <Badge variant="caution">✓ signed</Badge>
 {:else}
-  <button on:click|stopPropagation={() => {
-    action = Action.Sign;
-    state = State.Confirm;
-    }} class="small">
+  <button
+    on:click|stopPropagation={() => {
+      action = Action.Sign;
+      state = State.Confirm;
+    }}
+    class="small">
     Confirm
   </button>
 {/if}
@@ -165,8 +178,10 @@
     <span slot="body">
       {#if state === State.Confirm}
         <div class="table">
-          <div>Project</div><code>{anchor.id}</code>
-          <div>Hash</div><code>{anchor.anchor.stateHash}</code>
+          <div>Project</div>
+          <code>{anchor.id}</code>
+          <div>Hash</div>
+          <code>{anchor.anchor.stateHash}</code>
         </div>
       {:else if state === State.Failed}
         <div>{error}</div>
@@ -175,17 +190,20 @@
 
     <span slot="actions">
       {#if state === State.Confirm}
-        <button class="primary" on:click={() => confirmAnchor(anchor.safeTxHash)}>
+        <button
+          class="primary"
+          on:click={() => confirmAnchor(anchor.safeTxHash)}>
           Confirm
         </button>
-        <button class="text" on:click={close}>
-          Cancel
-        </button>
+        <button class="text" on:click={close}>Cancel</button>
       {:else if state === State.Success || state === State.Failed}
-        <button on:click={() => {
-          close();
-          dispatch("success");
-        }}>Done</button>
+        <button
+          on:click={() => {
+            close();
+            dispatch("success");
+          }}>
+          Done
+        </button>
       {/if}
     </span>
   </Modal>
@@ -213,8 +231,10 @@
     <span slot="body">
       {#if state === State.Confirm}
         <div class="table">
-          <div>TxHash</div><code>{utils.formatHash(anchor.safeTxHash)}</code>
-          <div>Quorum</div><code>{anchor.confirmations.length} of {safe.threshold}</code>
+          <div>TxHash</div>
+          <code>{utils.formatHash(anchor.safeTxHash)}</code>
+          <div>Quorum</div>
+          <code>{anchor.confirmations.length} of {safe.threshold}</code>
         </div>
       {:else if state === State.Failed}
         <div>{error}</div>
@@ -223,17 +243,20 @@
 
     <span slot="actions">
       {#if state === State.Confirm}
-        <button class="primary" on:click={() => executeTransaction(anchor.safeTxHash)}>
+        <button
+          class="primary"
+          on:click={() => executeTransaction(anchor.safeTxHash)}>
           Confirm
         </button>
-        <button class="text" on:click={close}>
-          Cancel
-        </button>
+        <button class="text" on:click={close}>Cancel</button>
       {:else if state === State.Success || state === State.Failed}
-        <button on:click={() => {
-          close();
-          dispatch("success");
-        }}>Done</button>
+        <button
+          on:click={() => {
+            close();
+            dispatch("success");
+          }}>
+          Done
+        </button>
       {/if}
     </span>
   </Modal>

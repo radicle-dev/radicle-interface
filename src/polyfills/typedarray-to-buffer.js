@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import isTypedArray from 'is-typedarray';
-import { Buffer } from 'buffer/';
+import isTypedArray from "is-typedarray";
+import { Buffer } from "buffer/";
 
 export default function typedarrayToBuffer(arr) {
   if (isTypedArray.strict(arr)) {

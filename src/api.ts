@@ -25,8 +25,8 @@ export class Request {
     const urlString = this.createUrl(search);
 
     return await Request.exec(urlString, {
-      method: 'GET',
-      headers: { ...headers, 'Accept': 'application/json' }
+      method: "GET",
+      headers: { ...headers, Accept: "application/json" },
     });
   }
 
@@ -38,9 +38,9 @@ export class Request {
     const urlString = this.createUrl();
 
     return await Request.exec(urlString, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(body),
-      headers: { ...headers, 'Content-Type': 'application/json' }
+      headers: { ...headers, "Content-Type": "application/json" },
     });
   }
 
@@ -52,14 +52,17 @@ export class Request {
     const urlString = this.createUrl();
 
     return await Request.exec(urlString, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(body),
-      headers: { ...headers, 'Content-Type': 'application/json' }
+      headers: { ...headers, "Content-Type": "application/json" },
     });
   }
 
   // Executes a request and returns the response.
-  static async exec(urlString: string, props: Record<string, any>): Promise<any> {
+  static async exec(
+    urlString: string,
+    props: Record<string, any>,
+  ): Promise<any> {
     let response = null;
     try {
       response = await fetch(urlString, props);
@@ -67,7 +70,7 @@ export class Request {
       throw new ApiError("API request failed", urlString);
     }
 
-    if (! response.ok) {
+    if (!response.ok) {
       throw new ApiError(response.statusText, urlString);
     }
     return response.json();

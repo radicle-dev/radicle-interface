@@ -37,7 +37,6 @@
   const updateRevision = (revision: string) => {
     project.navigateTo({ revision });
   };
-
 </script>
 
 <style>
@@ -96,14 +95,14 @@
     <PeerSelector
       {peers}
       peer={browser.peer}
-      on:peerChanged={(event) => updatePeer(event.detail)} />
+      on:peerChanged={event => updatePeer(event.detail)} />
   {/if}
 
   <BranchSelector
     {branches}
     {project}
     {revision}
-    on:branchChanged={(event) => updateRevision(event.detail)} />
+    on:branchChanged={event => updateRevision(event.detail)} />
 
   {#if !noAnchor}
     <div class="anchor widget">
@@ -111,12 +110,12 @@
         {commit}
         {anchors}
         head={project.head}
-        on:click={(event) => updateRevision(event.detail)} />
+        on:click={event => updateRevision(event.detail)} />
     </div>
   {/if}
 
   {#if seed.git.host}
-    <CloneButton seedHost={seed.git.host} {urn}/>
+    <CloneButton seedHost={seed.git.host} {urn} />
   {/if}
   <span>
     {#if seed.api.host}
@@ -132,7 +131,8 @@
     class="stat commit-count clickable widget"
     class:active={content === ProjectContent.History}
     on:click={() => toggleContent(ProjectContent.History, true)}>
-    <strong>{tree.stats.commits}</strong> commit(s)
+    <strong>{tree.stats.commits}</strong>
+    commit(s)
   </div>
   {#if project.issues}
     <div
@@ -141,7 +141,8 @@
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
       on:click={() => toggleContent(ProjectContent.Issues, false)}>
-      <strong>{project.issues}</strong> issue(s)
+      <strong>{project.issues}</strong>
+      issue(s)
     </div>
   {/if}
   {#if project.patches}
@@ -151,10 +152,12 @@
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
       on:click={() => toggleContent(ProjectContent.Patches, false)}>
-      <strong>{project.patches}</strong> patch(es)
+      <strong>{project.patches}</strong>
+      patch(es)
     </div>
   {/if}
   <div class="stat contributor-count widget">
-    <strong>{tree.stats.contributors}</strong> contributor(s)
+    <strong>{tree.stats.contributors}</strong>
+    contributor(s)
   </div>
 </header>

@@ -1,8 +1,14 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
-import type { BasicProfile } from '@datamodels/identity-profile-basic';
+import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import {
-  isAddress, formatCAIP10Address, formatIpfsFile, resolveEnsProfile,
-  resolveIdxProfile, parseUsername, AddressType, identifyAddress
+  isAddress,
+  formatCAIP10Address,
+  formatIpfsFile,
+  resolveEnsProfile,
+  resolveIdxProfile,
+  parseUsername,
+  AddressType,
+  identifyAddress,
 } from "@app/utils";
 import type { Config } from "@app/config";
 import { cached } from "@app/cache";
@@ -64,15 +70,23 @@ export class Profile {
   }
 
   get github(): string | undefined {
-    if (this.profile?.ens?.github) return parseUsername(this.profile.ens.github);
-    else if (this.profile?.idx?.affiliations) return this.profile.idx?.affiliations.find(item => item === "github");
-    else return undefined;
+    if (this.profile?.ens?.github) {
+      return parseUsername(this.profile.ens.github);
+    } else if (this.profile?.idx?.affiliations) {
+      return this.profile.idx?.affiliations.find(item => item === "github");
+    } else {
+      return undefined;
+    }
   }
 
   get twitter(): string | undefined {
-    if (this.profile?.ens?.twitter) return parseUsername(this.profile.ens.twitter);
-    else if (this.profile?.idx?.affiliations) return this.profile.idx.affiliations.find(item => item === "twitter");
-    else return undefined;
+    if (this.profile?.ens?.twitter) {
+      return parseUsername(this.profile.ens.twitter);
+    } else if (this.profile?.idx?.affiliations) {
+      return this.profile.idx.affiliations.find(item => item === "twitter");
+    } else {
+      return undefined;
+    }
   }
 
   get url(): string | undefined {
@@ -88,9 +102,13 @@ export class Profile {
   }
 
   get avatar(): string | undefined {
-    if (this.profile?.ens?.avatar) return this.profile.ens.avatar;
-    else if (this.profile?.idx?.image?.original?.src) return formatIpfsFile(this.profile.idx.image.original.src);
-    else return undefined;
+    if (this.profile?.ens?.avatar) {
+      return this.profile.ens.avatar;
+    } else if (this.profile?.idx?.image?.original?.src) {
+      return formatIpfsFile(this.profile.idx.image.original.src);
+    } else {
+      return undefined;
+    }
   }
 
   // We add null here to differentiate between a `undefined` and a invalid / null seed
@@ -104,7 +122,7 @@ export class Profile {
     if (addr) {
       // TODO: Workaround until caip package supports both CAIP10 formats.
       const [namespace, reference, address] = addr.split(":");
-      const id = { "chainId": { namespace, reference }, address };
+      const id = { chainId: { namespace, reference }, address };
 
       // Ethereum address.
       if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {
@@ -124,8 +142,15 @@ export class Profile {
   // Returns the corresponding registration form to edit a user profile.
   // We are not interested in a non-existant registry link, since we check before hand if the name exists.
   registry(config: Config): string {
-    if (this.profile?.ens) return `/registrations/${this.profile.ens.name}`;
-    else return `${config.ceramic.registry}${formatCAIP10Address(this.profile.address, "eip155", config.network.chainId)}`;
+    if (this.profile?.ens) {
+      return `/registrations/${this.profile.ens.name}`;
+    } else {
+      return `${config.ceramic.registry}${formatCAIP10Address(
+        this.profile.address,
+        "eip155",
+        config.network.chainId,
+      )}`;
+    }
   }
 
   // Get confirmed anchors.
@@ -162,7 +187,10 @@ export class Profile {
     }
   }
 
-  async confirmedProjectAnchors(urn: string, config: Config): Promise<string[]> {
+  async confirmedProjectAnchors(
+    urn: string,
+    config: Config,
+  ): Promise<string[]> {
     const storage = this.anchorsAccount || this.org?.address;
 
     if (storage) {
@@ -187,7 +215,7 @@ export class Profile {
   private static async lookupProfile(
     addressOrName: string,
     profileType: ProfileType,
-    config: Config
+    config: Config,
   ): Promise<IProfile> {
     let type = AddressType.EOA;
     let org: Org | null = null;
@@ -205,11 +233,10 @@ export class Profile {
           address: ens.address.toLowerCase(),
           type,
           ens: { ...ens, address: ens.address.toLowerCase() },
-          org: org ?? undefined
+          org: org ?? undefined,
         };
       }
       throw new MissingReverseRecord(`No address set for ${addressOrName}`);
-
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();
 
@@ -220,13 +247,14 @@ export class Profile {
 
       try {
         const idx = await resolveIdxProfile(
-          formatCAIP10Address(address, "eip155", config.network.chainId), config
+          formatCAIP10Address(address, "eip155", config.network.chainId),
+          config,
         );
         return {
           address,
           type,
           idx: idx ?? undefined,
-          org: org ?? undefined
+          org: org ?? undefined,
         };
       } catch (e: any) {
         // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
@@ -239,12 +267,17 @@ export class Profile {
     throw new NotFoundError(`Not able to resolve profile for ${addressOrName}`);
   }
 
-  static async getMulti(addressesOrNames: string[], config: Config): Promise<Profile[]> {
-    const profilePromises = addressesOrNames.map(
-      addressOrName => this.lookupProfile(addressOrName, ProfileType.Minimal, config)
+  static async getMulti(
+    addressesOrNames: string[],
+    config: Config,
+  ): Promise<Profile[]> {
+    const profilePromises = addressesOrNames.map(addressOrName =>
+      this.lookupProfile(addressOrName, ProfileType.Minimal, config),
     );
     const profiles = await Promise.all(profilePromises);
-    return profiles.map(profile => { return new Profile(profile); });
+    return profiles.map(profile => {
+      return new Profile(profile);
+    });
   }
 
   static async get(
@@ -252,7 +285,11 @@ export class Profile {
     profileType: ProfileType,
     config: Config,
   ): Promise<Profile> {
-    const profile = await this.lookupProfile(addressOrName, profileType, config);
+    const profile = await this.lookupProfile(
+      addressOrName,
+      profileType,
+      config,
+    );
     return new Profile(profile);
   }
 }
@@ -261,6 +298,6 @@ export const getBalance = cached(
   async (address: string, config: Config) => {
     return await config.provider.getBalance(address);
   },
-  (address) => address,
-  { max: 1000 }
+  address => address,
+  { max: 1000 },
 );

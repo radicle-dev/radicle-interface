@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { State, state } from './state';
-  import { getInfo, withdrawVested } from './vesting';
-  import type { VestingInfo } from './vesting';
-  import type { Session } from '@app/session';
-  import type { Config } from '@app/config';
-  import Modal from '@app/Modal.svelte';
-  import Address from '@app/Address.svelte';
-  import { formatAddress, isAddressEqual } from '@app/utils';
+  import { onMount } from "svelte";
+  import { State, state } from "./state";
+  import { getInfo, withdrawVested } from "./vesting";
+  import type { VestingInfo } from "./vesting";
+  import type { Session } from "@app/session";
+  import type { Config } from "@app/config";
+  import Modal from "@app/Modal.svelte";
+  import Address from "@app/Address.svelte";
+  import { formatAddress, isAddressEqual } from "@app/utils";
 
   let input: HTMLElement;
 
@@ -32,7 +32,8 @@
     state.set(State.Idle);
   }
 
-  $: isBeneficiary = info && session && isAddressEqual(info.beneficiary, session.address);
+  $: isBeneficiary =
+    info && session && isAddressEqual(info.beneficiary, session.address);
 </script>
 
 <style>
@@ -69,10 +70,37 @@
             Tokens successfully withdrawn to {formatAddress(info.beneficiary)}.
           {:else}
             <table>
-              <tr><td class="label">Beneficiary</td><td><Address {config} address={info.beneficiary} compact resolve /></td></tr>
-              <tr><td class="label">Allocation</td><td>{info.totalVesting} <strong>{info.symbol}</strong></td></tr>
-              <tr><td class="label">Withdrawn</td><td>{info.withdrawn} <strong>{info.symbol}</strong></td></tr>
-              <tr><td class="label">Withdrawable</td><td>{info.withdrawableBalance} <strong>{info.symbol}</strong></td></tr>
+              <tr>
+                <td class="label">Beneficiary</td>
+                <td>
+                  <Address
+                    {config}
+                    address={info.beneficiary}
+                    compact
+                    resolve />
+                </td>
+              </tr>
+              <tr>
+                <td class="label">Allocation</td>
+                <td>
+                  {info.totalVesting}
+                  <strong>{info.symbol}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td class="label">Withdrawn</td>
+                <td>
+                  {info.withdrawn}
+                  <strong>{info.symbol}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td class="label">Withdrawable</td>
+                <td>
+                  {info.withdrawableBalance}
+                  <strong>{info.symbol}</strong>
+                </td>
+              </tr>
             </table>
           {/if}
         </span>
@@ -87,19 +115,20 @@
                 Withdrawing...
               </button>
             {:else if $state === State.Idle}
-              <button on:click={() => withdrawVested(contractAddress, config)} class="primary regular">
+              <button
+                on:click={() => withdrawVested(contractAddress, config)}
+                class="primary regular">
                 Withdraw
               </button>
             {/if}
           {/if}
-          <button on:click={reset} class="regular">
-            Back
-          </button>
+          <button on:click={reset} class="regular">Back</button>
         </span>
       </Modal>
     {:else}
       <div class="input-caption">
-        Enter your Radicle <strong>vesting contract</strong> address
+        Enter your Radicle <strong>vesting contract</strong>
+        address
       </div>
       <div class="input-main">
         <span class="name">
@@ -111,16 +140,14 @@
               disabled={$state === State.Loading}
               type="text"
               bind:this={input}
-              bind:value={contractAddress}
-            />
+              bind:value={contractAddress} />
           </div>
         </span>
         <button
           on:click={() => loadContract(config)}
           class="primary"
           data-waiting={$state === State.Loading || null}
-          disabled={$state === State.Loading}
-        >
+          disabled={$state === State.Loading}>
           Load
         </button>
       </div>

@@ -15,7 +15,11 @@
 
   onMount(async () => {
     if (author.profile?.ens?.name) {
-      profile = await Profile.get(author.profile.ens.name, ProfileType.Minimal, config);
+      profile = await Profile.get(
+        author.profile.ens.name,
+        ProfileType.Minimal,
+        config,
+      );
     }
   });
 </script>
@@ -42,7 +46,14 @@
 <span class="authorship text-xsmall">
   {#if profile}
     <Address
-      xsmall highlight resolve noBadge compact {noAvatar} {config} {profile}
+      xsmall
+      highlight
+      resolve
+      noBadge
+      compact
+      {noAvatar}
+      {config}
+      {profile}
       address={profile.address} />
   {:else if author.profile}
     <span class="highlight">

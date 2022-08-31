@@ -20,8 +20,12 @@
   });
 
   const dispatch = createEventDispatcher();
-  const onClickConnect = () => { state.connectMetamask(config); };
-  const onClose = () => { dispatch("close"); };
+  const onClickConnect = () => {
+    state.connectMetamask(config);
+  };
+  const onClose = () => {
+    dispatch("close");
+  };
 </script>
 
 <style>
@@ -52,8 +56,10 @@
 
     <div slot="subtitle">
       <div class="text-small">
-        Scan the QR code with <strong>WalletConnect</strong> or use
-        <strong>Metamask</strong>.
+        Scan the QR code with <strong>WalletConnect</strong>
+        or use
+        <strong>Metamask</strong>
+        .
       </div>
     </div>
 
@@ -66,12 +72,13 @@
     </div>
 
     <div slot="actions">
-      <button class="secondary small text-small" on:click={onClickConnect} disabled={!config.metamask.signer}>
+      <button
+        class="secondary small text-small"
+        on:click={onClickConnect}
+        disabled={!config.metamask.signer}>
         Connect with Metamask
       </button>
-      <button class="text small text-small" on:click={onClose}>
-        Close
-      </button>
+      <button class="text small text-small" on:click={onClose}>Close</button>
     </div>
   </Modal>
 </div>

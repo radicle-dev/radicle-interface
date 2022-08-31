@@ -121,13 +121,15 @@
       <div
         class="summary-state"
         class:closed={issue.state.status === "closed"}
-        class:open={issue.state.status === "open"}
-      >
+        class:open={issue.state.status === "open"}>
         {capitalize(issue.state.status)}
       </div>
     </div>
-    <Authorship {config}
-      author={issue.author} timestamp={issue.timestamp} caption="opened on" />
+    <Authorship
+      {config}
+      author={issue.author}
+      timestamp={issue.timestamp}
+      caption="opened on" />
   </header>
   <main>
     <div class="comments">
@@ -145,18 +147,14 @@
     </div>
     <div class="metadata desktop">
       <div class="metadata-section">
-        <div class="metadata-section-header">
-          Labels
-        </div>
+        <div class="metadata-section-header">Labels</div>
         <div class="metadata-section-body">
           {#if issue.labels?.length}
             {#each issue.labels as label}
               <span class="label">{label}</span>
             {/each}
           {:else}
-            <div class="metadata-section-empty">
-              No labels.
-            </div>
+            <div class="metadata-section-empty">No labels.</div>
           {/if}
         </div>
       </div>

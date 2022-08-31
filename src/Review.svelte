@@ -19,7 +19,7 @@
       profile = await Profile.get(
         review.author.profile.ens.name,
         ProfileType.Minimal,
-        config
+        config,
       );
     }
   });
@@ -32,11 +32,16 @@
 </style>
 
 {#if review.comment.body}
-  <Comment {config} {getImage}
-    comment={review.comment} caption={formatVerdict(review.verdict)} />
+  <Comment
+    {config}
+    {getImage}
+    comment={review.comment}
+    caption={formatVerdict(review.verdict)} />
 {:else}
   <div>
-    <Authorship {config} {profile}
+    <Authorship
+      {config}
+      {profile}
       author={review.author}
       timestamp={review.timestamp}
       caption={formatVerdict(review.verdict)} />

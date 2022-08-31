@@ -14,13 +14,13 @@
   }
 
   const validationExamples: Record<string, string> = {
-    "URL": "https://acme.xyz/",
-    "URN": "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
-    "handle": "acme",
-    "id": "hydkkcf6k9be5fuszdhpqbctu3q3fuwagj874wx2puia8ti8coygh1",
-    "identity": "rad:git:hnrkqdpm9ub19oc8dccx44echy75hzfsezyio",
-    "domain": "seed.acme.xyz",
-    "address": "0x17a8c096733BD5F87aD43D7A2A4d1C42ab8A2A70",
+    URL: "https://acme.xyz/",
+    URN: "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
+    handle: "acme",
+    id: "hydkkcf6k9be5fuszdhpqbctu3q3fuwagj874wx2puia8ti8coygh1",
+    identity: "rad:git:hnrkqdpm9ub19oc8dccx44echy75hzfsezyio",
+    domain: "seed.acme.xyz",
+    address: "0x17a8c096733BD5F87aD43D7A2A4d1C42ab8A2A70",
   };
 
   const validationTypes: { [index: string]: RegExp } = {
@@ -45,11 +45,11 @@
 
 <script lang="ts">
   import { link } from "svelte-routing";
-  import { createEventDispatcher } from 'svelte';
-  import { marked } from 'marked';
-  import { capitalize, isUrl, isAddress, formatSeedId } from '@app/utils';
-  import Address from '@app/Address.svelte';
-  import type { Config } from '@app/config';
+  import { createEventDispatcher } from "svelte";
+  import { marked } from "marked";
+  import { capitalize, isUrl, isAddress, formatSeedId } from "@app/utils";
+  import Address from "@app/Address.svelte";
+  import type { Config } from "@app/config";
 
   export let fields: Field[];
   export let editable = false;
@@ -65,12 +65,14 @@
 
     formFields = formFields.map(field => {
       if (field.name === name && field.validate) {
-        hasErrors = value.length > 0 ? !validationTypes[field.validate].test(value) : false;
-        return { ...field,
+        hasErrors =
+          value.length > 0
+            ? !validationTypes[field.validate].test(value)
+            : false;
+        return {
+          ...field,
           value: value,
-          error: hasErrors
-            ? `Must be a valid ${field.validate}`
-            : undefined,
+          error: hasErrors ? `Must be a valid ${field.validate}` : undefined,
           example: validationExamples[field.validate],
         };
       }
@@ -79,20 +81,22 @@
   };
 
   const cleanup = (fields: Field[]): { name: string; value?: string }[] => {
-    return fields.filter(field => field.editable).map(field => {
-      return {
-        name: field.name,
-        // We only allow to have a trueish value or an empty string.
-        value: field.value ? field.value.trim() : "",
-      };
-    });
+    return fields
+      .filter(field => field.editable)
+      .map(field => {
+        return {
+          name: field.name,
+          // We only allow to have a trueish value or an empty string.
+          value: field.value ? field.value.trim() : "",
+        };
+      });
   };
   const dispatch = createEventDispatcher();
-  const save = () => dispatch('save', cleanup(formFields));
-  const validate = (event: Event) => dispatch('validate', check(event));
+  const save = () => dispatch("save", cleanup(formFields));
+  const validate = (event: Event) => dispatch("validate", check(event));
   const cancel = () => {
     formFields = fields;
-    dispatch('cancel');
+    dispatch("cancel");
   };
 </script>
 
@@ -184,28 +188,43 @@
     </div>
     <div>
       {#if field.editable && editable}
-        <input name={field.name} class="field" placeholder={field.placeholder}
-          on:change={validate} on:input={() => field.error = null}
-          value={field.value || ""} type="text" {disabled} />
+        <input
+          name={field.name}
+          class="field"
+          placeholder={field.placeholder}
+          on:change={validate}
+          on:input={() => (field.error = null)}
+          value={field.value || ""}
+          type="text"
+          {disabled} />
       {:else}
         <span class="field">
           {#if field.value}
             {#if isUrl(field.value)}
               <span class="ellipsis">
-                <a class="link" href="{field.value}" target="_blank">{field.value}</a>
+                <a class="link" href={field.value} target="_blank">
+                  {field.value}
+                </a>
               </span>
             {:else if isAddress(field.value)}
               <div class="desktop-inline">
-                <Address resolve={field.resolve ?? false} address={field.value} {config} />
+                <Address
+                  resolve={field.resolve ?? false}
+                  address={field.value}
+                  {config} />
               </div>
               <div class="mobile-inline">
-                <Address compact resolve={field.resolve ?? false} address={field.value} {config} />
+                <Address
+                  compact
+                  resolve={field.resolve ?? false}
+                  address={field.value}
+                  {config} />
               </div>
-            {:else if (field.url)}
+            {:else if field.url}
               <div>
-                <a class="link" use:link href="{field.url}">{field.value}</a>
+                <a class="link" use:link href={field.url}>{field.value}</a>
               </div>
-            {:else if (field.validate === "id")}
+            {:else if field.validate === "id"}
               <div class="mobile">
                 {formatSeedId(field.value)}
               </div>
@@ -223,7 +242,8 @@
       {#if field.error}
         <div class="description invalid text-small faded">
           {#if field.example}
-            {field.error}, eg. <em>{field.example}</em>
+            {field.error}, eg.
+            <em>{field.example}</em>
           {:else}
             {field.error}
           {/if}
@@ -238,10 +258,11 @@
 </div>
 
 <div class="actions" class:editable>
-  <button on:click={cancel} {disabled} class="regular">
-    Cancel
-  </button>
-  <button on:click={save} disabled={hasErrors || disabled} class="regular primary">
+  <button on:click={cancel} {disabled} class="regular">Cancel</button>
+  <button
+    on:click={save}
+    disabled={hasErrors || disabled}
+    class="regular primary">
     Save
   </button>
 </div>

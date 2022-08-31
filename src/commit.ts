@@ -82,20 +82,22 @@ export interface Commit {
 
 export function formatGroupTime(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("en-US", {
-    day: 'numeric',
-    weekday: 'long',
-    month: 'long',
-    year: 'numeric'
+    day: "numeric",
+    weekday: "long",
+    month: "long",
+    year: "numeric",
   });
 }
 
 export const groupCommitHistory = (
-  history: CommitsHistory
+  history: CommitsHistory,
 ): GroupedCommitsHistory => {
   return { ...history, headers: groupCommits(history.headers) };
 };
 
-export function groupCommits(commits: { header: CommitHeader; context: CommitContext }[]): CommitGroup[] {
+export function groupCommits(
+  commits: { header: CommitHeader; context: CommitContext }[],
+): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
@@ -125,7 +127,7 @@ export function groupCommits(commits: { header: CommitHeader; context: CommitCon
           date: formatGroupTime(time),
           time,
           commits: [],
-          week: 0
+          week: 0,
         });
         groupDate = date;
       }
@@ -133,13 +135,19 @@ export function groupCommits(commits: { header: CommitHeader; context: CommitCon
     }
     return groupedCommits;
   } catch (err) {
-    throw new ApiError("Not able to create commit history, please consider updating seed HTTP API.");
+    throw new ApiError(
+      "Not able to create commit history, please consider updating seed HTTP API.",
+    );
   }
 }
 
-export async function fetchCommits(project: Project, parentCommit: string): Promise<GroupedCommitsHistory> {
+export async function fetchCommits(
+  project: Project,
+  parentCommit: string,
+): Promise<GroupedCommitsHistory> {
   const commitsQuery = await Project.getCommits(project.urn, project.seed.api, {
-    parent: parentCommit, verified: true
+    parent: parentCommit,
+    verified: true,
   });
   return groupCommitHistory(commitsQuery);
 }
@@ -152,10 +160,12 @@ export function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
     return [];
   }
 
-  commits = commits.sort((a, b) => a > b ? -1 : a < b ? 1 : 0);
+  commits = commits.sort((a, b) => (a > b ? -1 : a < b ? 1 : 0));
 
   // A accumulator that increments by the amount of weeks between weekly commit groups
-  let weekAccumulator = Math.floor(getDaysPassed(new Date(commits[0] * 1000), new Date()) / 7);
+  let weekAccumulator = Math.floor(
+    getDaysPassed(new Date(commits[0] * 1000), new Date()) / 7,
+  );
 
   // Loops over all commits and stores them by week with some additional metadata in groupedCommits.
   for (const commit of commits) {
@@ -176,7 +186,7 @@ export function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
         date: formatGroupTime(time),
         time,
         commits: [],
-        week: Math.floor(daysPassed / 7) + weekAccumulator
+        week: Math.floor(daysPassed / 7) + weekAccumulator,
       });
       groupDate = date;
       weekAccumulator += Math.floor(daysPassed / 7);

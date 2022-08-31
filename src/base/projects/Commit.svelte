@@ -14,7 +14,7 @@
     project.navigateTo({
       content: proj.ProjectContent.Tree,
       revision: commit.header.sha1,
-      path: event.detail
+      path: event.detail,
     });
   };
 </script>

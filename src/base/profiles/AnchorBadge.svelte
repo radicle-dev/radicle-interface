@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -48,27 +48,46 @@
   <!-- commit is head and latest anchor  -->
   {#if commit === anchors[0] && commit === head}
     <span class="anchor-widget anchor-latest" class:no-bg={noBg}>
-      <span class="anchor-label" title="{anchors[0]}">{#if text}latest&nbsp;{/if}🔐</span>
+      <span class="anchor-label" title={anchors[0]}>
+        {#if text}latest&nbsp;{/if}🔐
+      </span>
     </span>
-  <!-- commit is not head but latest anchor  -->
+    <!-- commit is not head but latest anchor  -->
   {:else if commit === anchors[0] && commit !== head}
-    <span class="anchor-widget" class:no-bg={noBg} on:click={() => dispatch("click", head)}>
-      <span class="anchor-label" title="{anchors[0]}">{#if text}latest&nbsp;{/if}🔐</span>
+    <span
+      class="anchor-widget"
+      class:no-bg={noBg}
+      on:click={() => dispatch("click", head)}>
+      <span class="anchor-label" title={anchors[0]}>
+        {#if text}latest&nbsp;{/if}🔐
+      </span>
     </span>
-  <!-- commit is not head a stale anchor  -->
+    <!-- commit is not head a stale anchor  -->
   {:else if anchors.includes(commit)}
-    <span class="anchor-widget" class:no-bg={noBg} on:click={() => dispatch("click", anchors[0])}>
-      <span class="anchor-label" title="{commit}">{#if text}stale&nbsp;{/if}🔒</span>
+    <span
+      class="anchor-widget"
+      class:no-bg={noBg}
+      on:click={() => dispatch("click", anchors[0])}>
+      <span class="anchor-label" title={commit}>
+        {#if text}stale&nbsp;{/if}🔒
+      </span>
     </span>
-  <!-- commit is not anchored, could be head or any other commit  -->
+    <!-- commit is not anchored, could be head or any other commit  -->
   {:else}
-    <span class="anchor-widget not-anchored" class:no-bg={noBg} on:click={() => dispatch("click", anchors[0])}>
-      <span class="anchor-label">{#if text}not anchored&nbsp;{/if}🔓</span>
+    <span
+      class="anchor-widget not-anchored"
+      class:no-bg={noBg}
+      on:click={() => dispatch("click", anchors[0])}>
+      <span class="anchor-label">
+        {#if text}not anchored&nbsp;{/if}🔓
+      </span>
     </span>
   {/if}
 {:else}
   <!-- commit is not head and neither an anchor, and there are no anchors available  -->
   <span class="anchor-widget not-anchored not-allowed" class:no-bg={noBg}>
-    <span class="anchor-label">{#if text}not anchored&nbsp;{/if}🔓</span>
+    <span class="anchor-label">
+      {#if text}not anchored&nbsp;{/if}🔓
+    </span>
   </span>
 {/if}

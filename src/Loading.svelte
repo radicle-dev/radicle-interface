@@ -66,32 +66,48 @@
   }
 
   @-webkit-keyframes sk-bouncedelay-condensed {
-    0%, 100% { -webkit-transform: scale(0.2) }
-    50% { -webkit-transform: scale(1.0) }
+    0%,
+    100% {
+      -webkit-transform: scale(0.2);
+    }
+    50% {
+      -webkit-transform: scale(1);
+    }
   }
 
   @keyframes sk-bouncedelay-condensed {
-    0%, 100% {
+    0%,
+    100% {
       -webkit-transform: scale(0.2);
       transform: scale(0.2);
-    } 50% {
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+    }
+    50% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
     }
   }
 
   @-webkit-keyframes sk-bouncedelay {
-    0%, 80%, 100% { -webkit-transform: scale(0) }
-    40% { -webkit-transform: scale(1.0) }
+    0%,
+    80%,
+    100% {
+      -webkit-transform: scale(0);
+    }
+    40% {
+      -webkit-transform: scale(1);
+    }
   }
 
   @keyframes sk-bouncedelay {
-    0%, 80%, 100% {
+    0%,
+    80%,
+    100% {
       -webkit-transform: scale(0);
       transform: scale(0);
-    } 40% {
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+    }
+    40% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
     }
   }
 
@@ -103,21 +119,35 @@
   }
 
   @keyframes fadeIn {
-    0% { opacity: 0 }
-    100% { opacity: 1 }
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
   @-webkit-keyframes fadeIn {
-    0% { opacity: 0 }
-    100% { opacity: 1 }
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 </style>
 
 <div class="container">
-  <div class="spinner" class:fade-in={fadeIn} class:small class:center class:margins class:condensed>
-    <div class="bounce1" style="background-color: var(--color-{color})"></div>
+  <div
+    class="spinner"
+    class:fade-in={fadeIn}
+    class:small
+    class:center
+    class:margins
+    class:condensed>
+    <div class="bounce1" style="background-color: var(--color-{color})" />
     {#if !condensed}
-      <div class="bounce2" style="background-color: var(--color-{color})"></div>
-      <div class="bounce3" style="background-color: var(--color-{color})"></div>
+      <div class="bounce2" style="background-color: var(--color-{color})" />
+      <div class="bounce3" style="background-color: var(--color-{color})" />
     {/if}
   </div>
 </div>

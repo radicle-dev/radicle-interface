@@ -1,8 +1,8 @@
 <script lang="ts">
   import { navigate } from "svelte-routing";
-  import type { Config } from '@app/config';
+  import type { Config } from "@app/config";
 
-  import DomainInput from '@app/ens/DomainInput.svelte';
+  import DomainInput from "@app/ens/DomainInput.svelte";
 
   export let config: Config;
 
@@ -68,9 +68,12 @@
 <main class="off-centered">
   <div>
     <div class="input-caption">
-      Register a <strong>{config.registrar.domain}</strong> name
+      Register a <strong>{config.registrar.domain}</strong>
+      name
       <div class="text-small explainer">
-        Register a unique name with our ENS registrar, under the <strong>radicle.eth</strong>
+        Register a unique name with our ENS registrar, under the <strong>
+          radicle.eth
+        </strong>
         domain (e.g. cloudhead.radicle.eth). Radicle names never expire and free
         to register.
       </div>
@@ -81,8 +84,7 @@
           bind:value={input}
           autofocus
           placeholder=""
-          root={config.registrar.domain}
-        />
+          root={config.registrar.domain} />
         {#if errors}
           <div class="input-info">
             {#each errors as error}
@@ -92,12 +94,12 @@
         {/if}
       </span>
 
-        <button
-          disabled={!label || errors.length !== 0}
-          class="primary register regular"
-          on:click={register}>
-            Check
-        </button>
+      <button
+        disabled={!label || errors.length !== 0}
+        class="primary register regular"
+        on:click={register}>
+        Check
+      </button>
     </div>
   </div>
 </main>

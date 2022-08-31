@@ -1,9 +1,9 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import { Connection, state } from "@app/session";
-  import type { Err } from '@app/error';
-  import Error from '@app/Error.svelte';
-  import type { Config } from '@app/config';
+  import type { Err } from "@app/error";
+  import Error from "@app/Error.svelte";
+  import type { Config } from "@app/config";
   import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
 
   export let caption = "Connect";
@@ -39,8 +39,7 @@
   {style}
   class="connect {className}"
   disabled={connecting}
-  data-waiting={connecting || null}
->
+  data-waiting={connecting || null}>
   {#if connecting}
     Connecting...
   {:else}
@@ -49,8 +48,15 @@
 </button>
 
 {#if $walletConnectState.state === "open"}
-  <ConnectWallet {config} uri={$walletConnectState.uri} on:close={onModalClose} />
+  <ConnectWallet
+    {config}
+    uri={$walletConnectState.uri}
+    on:close={onModalClose} />
 {:else if error}
-  <Error floating emoji="👛" title="Connection failed" {error} on:close={() => error = null} />
+  <Error
+    floating
+    emoji="👛"
+    title="Connection failed"
+    {error}
+    on:close={() => (error = null)} />
 {/if}
-

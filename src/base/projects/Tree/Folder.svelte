@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  import Loading from '@app/Loading.svelte';
+  import Loading from "@app/Loading.svelte";
   import type { Tree } from "@app/project";
   import { ObjectType } from "@app/project";
 

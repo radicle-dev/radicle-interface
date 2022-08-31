@@ -45,8 +45,12 @@
 
 <Badge
   variant="tertiary"
-  on:mouseenter={() => {hover = true;}}
-  on:mouseleave={() => {hover = false;}}>
+  on:mouseenter={() => {
+    hover = true;
+  }}
+  on:mouseleave={() => {
+    hover = false;
+  }}>
   Verified
 </Badge>
 

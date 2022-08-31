@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Icon from '@app/Icon.svelte';
-  import { toClipboard } from '@app/utils';
+  import Icon from "@app/Icon.svelte";
+  import { toClipboard } from "@app/utils";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();

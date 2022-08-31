@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount } from "svelte";
 
   export let root: string;
   export let placeholder = "";
@@ -21,13 +21,13 @@
     /* margin: 1rem; */
     /* margin-left: 0; */
     /* margin-right: 0; */
-	/* padding: 0.7rem 2rem; */
-	padding: .4rem 1rem;
+    /* padding: 0.7rem 2rem; */
+    padding: 0.4rem 1rem;
     color: var(--color-secondary);
     border-radius: 0 var(--border-radius-round) var(--border-radius-round) 0;
     border: 1px solid var(--color-secondary);
     border-left: none;
-	height: var(--button-regular-height);
+    height: var(--button-regular-height);
   }
   input {
     line-height: 1.5;
@@ -55,9 +55,8 @@
     {disabled}
     {placeholder}
     bind:this={element}
-    bind:value={value}
+    bind:value
     on:input
-    on:click
-  />
+    on:click />
   <span class="root">.{root}</span>
 </main>

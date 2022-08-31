@@ -1,18 +1,21 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { Link } from 'svelte-routing';
-  import Avatar from '@app/Avatar.svelte';
-  import type { Profile } from '@app/profile';
-  import type { Config } from '@app/config';
-  import { formatName, formatAddress } from '@app/utils';
-  import type { Seed } from '@app/base/seeds/Seed';
-  import Loading from '@app/Loading.svelte';
+  import { onMount } from "svelte";
+  import { Link } from "svelte-routing";
+  import Avatar from "@app/Avatar.svelte";
+  import type { Profile } from "@app/profile";
+  import type { Config } from "@app/config";
+  import { formatName, formatAddress } from "@app/utils";
+  import type { Seed } from "@app/base/seeds/Seed";
+  import Loading from "@app/Loading.svelte";
 
-  export let profile: Profile | {
-    address: string;
-    avatar?: string;
-    name?: string;
-  } | null = null;
+  export let profile:
+    | Profile
+    | {
+        address: string;
+        avatar?: string;
+        name?: string;
+      }
+    | null = null;
   export let seed: Seed | null = null;
   export let config: Config;
   export let path: string;
@@ -43,7 +46,7 @@
   .card::last-child {
     margin-right: 0;
   }
-  .card:hover  {
+  .card:hover {
     background: var(--color-foreground-background-lighter);
   }
   .card-avatar {
@@ -88,7 +91,9 @@
   <div class="card" class:seed={!!seed}>
     <div class="card-avatar">
       {#if profile}
-        <Avatar source={profile.avatar ?? profile.address} title={profile.address} />
+        <Avatar
+          source={profile.avatar ?? profile.address}
+          title={profile.address} />
       {:else if seed}
         <span class="seed-emoji">
           {seed.emoji}

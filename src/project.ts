@@ -1,24 +1,26 @@
-import { navigate } from 'svelte-routing';
-import { get, writable } from 'svelte/store';
-import { type Host, Request } from '@app/api';
-import type { Commit, CommitHeader, CommitsHistory } from '@app/commit';
-import { isOid, isRadicleId } from '@app/utils';
-import { Profile, ProfileType } from '@app/profile';
-import { Seed } from '@app/base/seeds/Seed';
-import type { Config } from '@app/config';
+import { navigate } from "svelte-routing";
+import { get, writable } from "svelte/store";
+import { type Host, Request } from "@app/api";
+import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
+import { isOid, isRadicleId } from "@app/utils";
+import { Profile, ProfileType } from "@app/profile";
+import { Seed } from "@app/base/seeds/Seed";
+import type { Config } from "@app/config";
 
 export type Urn = string;
 export type PeerId = string;
 export type Branches = { [key: string]: string };
 
-export type Delegate = {
-  type: "indirect";
-  urn: Urn;
-  ids: PeerId[];
-} | {
-  type: "direct";
-  id: PeerId;
-};
+export type Delegate =
+  | {
+      type: "indirect";
+      urn: Urn;
+      ids: PeerId[];
+    }
+  | {
+      type: "direct";
+      id: PeerId;
+    };
 
 export interface Anchor {
   confirmed: true;
@@ -46,7 +48,7 @@ export enum ProjectContent {
   Issues,
   Issue,
   Patches,
-  Patch
+  Patch,
 }
 
 export interface ProjectInfo {
@@ -157,7 +159,8 @@ export function browse(browse: BrowseTo): void {
 }
 
 export function path(opts: PathOptions): string {
-  const { urn, profile, seed, peer, content, revision, path, issue, patch } = opts;
+  const { urn, profile, seed, peer, content, revision, path, issue, patch } =
+    opts;
   const result = [];
 
   if (profile) {
@@ -235,13 +238,21 @@ export function getOid(revision: string, branches?: Branches): string | null {
 }
 
 // Parses the path consisting of a revision (eg. branch or commit) and file path into a tuple [revision, file-path]
-export function parseRoute(input: string, branches: Branches): { path?: string; revision?: string } {
-  const branch = Object.entries(branches).find(([branchName,]) => input.startsWith(branchName));
+export function parseRoute(
+  input: string,
+  branches: Branches,
+): { path?: string; revision?: string } {
+  const branch = Object.entries(branches).find(([branchName]) =>
+    input.startsWith(branchName),
+  );
   const commitPath = [input.slice(0, 40), input.slice(41)];
   const parsed: { path?: string; revision?: string } = {};
 
   if (branch) {
-    const [rev, path] = [input.slice(0, branch[0].length), input.slice(branch[0].length + 1)];
+    const [rev, path] = [
+      input.slice(0, branch[0].length),
+      input.slice(branch[0].length + 1),
+    ];
 
     parsed.revision = rev;
     parsed.path = path ? path : "/";
@@ -271,7 +282,15 @@ export class Project implements ProjectInfo {
   patches?: number;
   issues?: number;
 
-  constructor(urn: string, info: ProjectInfo, seed: Seed, peers: Peer[], branches: Branches, profile: Profile | null, anchors: string[]) {
+  constructor(
+    urn: string,
+    info: ProjectInfo,
+    seed: Seed,
+    peers: Peer[],
+    branches: Branches,
+    profile: Profile | null,
+    anchors: string[],
+  ) {
     this.urn = urn;
     this.head = info.head;
     this.name = info.name;
@@ -294,7 +313,7 @@ export class Project implements ProjectInfo {
     const head = this.branches[this.defaultBranch];
     const commit = revision ? getOid(revision, this.branches) : head;
 
-    if (! commit) {
+    if (!commit) {
       throw new Error(`Revision ${revision} not found`);
     }
     const tree = await this.getTree(commit, "/");
@@ -307,7 +326,7 @@ export class Project implements ProjectInfo {
 
     return {
       ...info,
-      ...info.meta // Nb. This is only needed while we are upgrading to the new http-api.
+      ...info.meta, // Nb. This is only needed while we are upgrading to the new http-api.
     };
   }
 
@@ -315,11 +334,18 @@ export class Project implements ProjectInfo {
     return new Request("projects", host).get();
   }
 
-  static async getDelegateProjects(delegate: string, host: Host): Promise<ProjectInfo[]> {
+  static async getDelegateProjects(
+    delegate: string,
+    host: Host,
+  ): Promise<ProjectInfo[]> {
     return new Request(`delegates/${delegate}/projects`, host).get();
   }
 
-  static async getRemote(urn: string, peer: string, host: Host): Promise<Remote> {
+  static async getRemote(
+    urn: string,
+    peer: string,
+    host: Host,
+  ): Promise<Remote> {
     return new Request(`projects/${urn}/remotes/${peer}`, host).get();
   }
 
@@ -337,15 +363,15 @@ export class Project implements ProjectInfo {
       perPage?: number;
       page?: number;
       verified?: boolean;
-    }
+    },
   ): Promise<CommitsHistory> {
     const params: Record<string, any> = {
-      "parent": opts?.parent,
-      "since": opts?.since,
-      "until": opts?.until,
+      parent: opts?.parent,
+      since: opts?.since,
+      until: opts?.until,
       "per-page": opts?.perPage,
-      "page": opts?.page,
-      "verified": opts?.verified
+      page: opts?.page,
+      verified: opts?.verified,
     };
     return new Request(`projects/${urn}/commits`, host).get(params);
   }
@@ -358,15 +384,18 @@ export class Project implements ProjectInfo {
   }
 
   async getCommit(commit: string): Promise<Commit> {
-    return new Request(`projects/${this.urn}/commits/${commit}`, this.seed.api).get();
+    return new Request(
+      `projects/${this.urn}/commits/${commit}`,
+      this.seed.api,
+    ).get();
   }
 
-  async getTree(
-    commit: string,
-    path: string,
-  ): Promise<Tree> {
+  async getTree(commit: string, path: string): Promise<Tree> {
     if (path === "/") path = "";
-    return new Request(`projects/${this.urn}/tree/${commit}/${path}`, this.seed.api).get();
+    return new Request(
+      `projects/${this.urn}/tree/${commit}/${path}`,
+      this.seed.api,
+    ).get();
   }
 
   async getBlob(
@@ -374,13 +403,17 @@ export class Project implements ProjectInfo {
     path: string,
     options: { highlight: boolean },
   ): Promise<Blob> {
-    return new Request(`projects/${this.urn}/blob/${commit}/${path}`, this.seed.api).get(options);
+    return new Request(
+      `projects/${this.urn}/blob/${commit}/${path}`,
+      this.seed.api,
+    ).get(options);
   }
 
-  async getReadme(
-    commit: string,
-  ): Promise<Blob> {
-    return new Request(`projects/${this.urn}/readme/${commit}`, this.seed.api).get();
+  async getReadme(commit: string): Promise<Blob> {
+    return new Request(
+      `projects/${this.urn}/readme/${commit}`,
+      this.seed.api,
+    ).get();
   }
 
   navigateTo(browse: BrowseTo): void {
@@ -392,7 +425,7 @@ export class Project implements ProjectInfo {
     const options: PathOptions = {
       urn: this.urn,
       ...browser,
-      ...browse
+      ...browse,
     };
 
     if (this.profile) {
@@ -404,30 +437,44 @@ export class Project implements ProjectInfo {
     return path(options);
   }
 
-  static async get(id: string, peer: string | null, profileName: string | null, seedHost: string | null, config: Config): Promise<Project> {
-    const profile = profileName ? await Profile.get(profileName, ProfileType.Project, config) : null;
-    const seed = profile ? profile.seed : seedHost ? await Seed.lookup(seedHost, config) : null;
+  static async get(
+    id: string,
+    peer: string | null,
+    profileName: string | null,
+    seedHost: string | null,
+    config: Config,
+  ): Promise<Project> {
+    const profile = profileName
+      ? await Profile.get(profileName, ProfileType.Project, config)
+      : null;
+    const seed = profile
+      ? profile.seed
+      : seedHost
+      ? await Seed.lookup(seedHost, config)
+      : null;
 
     if (!profile && !seed) {
       throw new Error("Couldn't load project");
     }
-    if (! seed?.valid) {
+    if (!seed?.valid) {
       throw new Error("Couldn't load project: invalid seed");
     }
 
     const info = await Project.getInfo(id, seed.api);
     const urn = isRadicleId(id) ? id : info.urn;
-    const anchors = profile ? await profile.confirmedProjectAnchors(urn, config) : [];
+    const anchors = profile
+      ? await profile.confirmedProjectAnchors(urn, config)
+      : [];
 
     // Older versions of http-api don't include the URN.
-    if (! info.urn) info.urn = urn;
+    if (!info.urn) info.urn = urn;
 
     const peers: Peer[] = info.delegates
       ? await Project.getRemotes(urn, seed.api)
       : [];
 
     let remote: Remote = {
-      heads: info.head ? { [info.defaultBranch]: info.head } : {}
+      heads: info.head ? { [info.defaultBranch]: info.head } : {},
     };
 
     if (peer) {
@@ -441,18 +488,23 @@ export class Project implements ProjectInfo {
     return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
   }
 
-  static async getMulti(projs: { urn: Urn; seed: string }[]): Promise<{ info: ProjectInfo; seed: Host }[]> {
+  static async getMulti(
+    projs: { urn: Urn; seed: string }[],
+  ): Promise<{ info: ProjectInfo; seed: Host }[]> {
     const promises = [];
 
     for (const proj of projs) {
       const seed = { host: proj.seed, port: null };
-      promises.push(Project.getInfo(proj.urn, seed).then(info => {
-        return { info, seed };
-      }));
+      promises.push(
+        Project.getInfo(proj.urn, seed).then(info => {
+          return { info, seed };
+        }),
+      );
     }
     const results = await Promise.allSettled(promises);
-    const isFulfilled = <T>(input: PromiseSettledResult<T>):
-      input is PromiseFulfilledResult<T> => input.status === 'fulfilled';
+    const isFulfilled = <T>(
+      input: PromiseSettledResult<T>,
+    ): input is PromiseFulfilledResult<T> => input.status === "fulfilled";
 
     return results.filter(isFulfilled).map(r => r.value);
   }

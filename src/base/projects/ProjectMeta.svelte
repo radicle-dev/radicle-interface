@@ -37,6 +37,8 @@
   .title .peer-id {
     color: var(--color-foreground-subtle);
     font-weight: normal;
+    display: flex;
+    align-items: center;
   }
   .org-avatar {
     display: inline-block;
@@ -74,8 +76,13 @@
 <header class="content">
   <div class="title bold">
     {#if project.profile}
-      <a class="org-avatar" title={project.profile.nameOrAddress} href="/{project.profile.nameOrAddress}">
-        <Avatar source={project.profile.avatar || project.profile.address} title={project.profile.address}/>
+      <a
+        class="org-avatar"
+        title={project.profile.nameOrAddress}
+        href="/{project.profile.nameOrAddress}">
+        <Avatar
+          source={project.profile.avatar || project.profile.address}
+          title={project.profile.address} />
       </a>
       <span class="divider">/</span>
     {/if}
@@ -84,7 +91,9 @@
     </span>
     {#if peer}
       <span class="peer-id">
-        <span class="divider">/</span><span title={peer}>{formatSeedId(peer)}</span><Clipboard text={peer} />
+        <span class="divider">/</span>
+        <span title={peer}>{formatSeedId(peer)}</span>
+        <Clipboard text={peer} />
       </span>
     {/if}
   </div>

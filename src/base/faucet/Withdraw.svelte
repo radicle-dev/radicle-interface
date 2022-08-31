@@ -7,7 +7,7 @@
   import Err from "@app/Error.svelte";
   import { Status, State } from "@app/utils";
   import { withdraw } from "./lib";
-  import { session } from '@app/session';
+  import { session } from "@app/session";
 
   export let config: Config;
 
@@ -17,7 +17,7 @@
     status: Status.Failed,
     error: "Error withdrawing, something happened.",
   };
-  $: requester = ($session && $session.address);
+  $: requester = $session && $session.address;
 
   const back = () => navigate(`/faucet`);
 
@@ -49,11 +49,7 @@
 </style>
 
 {#if error}
-  <Err
-    title="Transaction failed"
-    message={error.message}
-    on:close={back}
-  />
+  <Err title="Transaction failed" message={error.message} on:close={back} />
 {:else}
   <Modal>
     <span slot="title">
@@ -84,7 +80,7 @@
 
     <span slot="actions">
       {#if state.status === Status.Success}
-        <button on:click={back}> Back </button>
+        <button on:click={back}>Back</button>
       {/if}
     </span>
   </Modal>

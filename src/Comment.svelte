@@ -20,15 +20,18 @@
 
   onMount(async () => {
     if (comment.author.profile?.ens?.name) {
-      profile = await Profile.get(comment.author.profile.ens.name, ProfileType.Minimal, config);
+      profile = await Profile.get(
+        comment.author.profile.ens.name,
+        ProfileType.Minimal,
+        config,
+      );
     }
   });
 
   $: source = profile?.avatar || comment.author.urn;
-  $: title = profile?.name ||
-    (comment.author.profile
-      ? comment.author.profile.name
-      : comment.author.urn);
+  $: title =
+    profile?.name ||
+    (comment.author.profile ? comment.author.profile.name : comment.author.urn);
 
   const selectReaction = (event: { detail: string }) => {
     // TODO: Once we allow adding reactions through the http-api, we should call it here.
@@ -78,7 +81,11 @@
   </div>
   <div class="card">
     <div class="card-header">
-      <Authorship noAvatar {config} {caption} {profile}
+      <Authorship
+        noAvatar
+        {config}
+        {caption}
+        {profile}
         author={comment.author}
         timestamp={comment.timestamp} />
       <ReactionSelector on:select={selectReaction} />

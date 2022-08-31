@@ -4,12 +4,12 @@
 
 "use strict";
 
-import { Buffer } from 'buffer/';
-import typedarrayToBuffer from 'typedarray-to-buffer';
+import { Buffer } from "buffer/";
+import typedarrayToBuffer from "typedarray-to-buffer";
 
-const ENC_UTF8 = 'utf8';
-const ENC_HEX = 'hex';
-const STRING_ZERO = '0';
+const ENC_UTF8 = "utf8";
+const ENC_HEX = "hex";
+const STRING_ZERO = "0";
 
 export function bufferToArray(buf) {
   return new Uint8Array(buf);
@@ -41,11 +41,11 @@ export function hexToBuffer(hex) {
 }
 
 export function removeHexPrefix(hex) {
-  return hex.replace(/^0x/, '');
+  return hex.replace(/^0x/, "");
 }
 
 export function addHexPrefix(hex) {
-  return hex.startsWith('0x') ? hex : `0x${hex}`;
+  return hex.startsWith("0x") ? hex : `0x${hex}`;
 }
 
 export function arrayToBuffer(arr) {
@@ -90,12 +90,7 @@ export function concatArrays(...args) {
   return new Uint8Array([...result]);
 }
 
-export function padString(
-  str,
-  length,
-  left,
-  padding = STRING_ZERO
-) {
+export function padString(str, length, left, padding = STRING_ZERO) {
   const diff = length - str.length;
   let result = str;
   if (diff > 0) {

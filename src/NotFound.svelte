@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from '@app/Modal.svelte';
+  import Modal from "@app/Modal.svelte";
 
   export let title = "";
   export let subtitle = "";
@@ -14,8 +14,6 @@
     <p>{subtitle}</p>
   </span>
   <span slot="actions">
-    <button on:click={back}>
-      Back
-    </button>
+    <button on:click={back}>Back</button>
   </span>
 </Modal>

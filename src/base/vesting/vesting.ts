@@ -14,10 +14,17 @@ export interface VestingInfo {
   withdrawn: string;
 }
 
-export async function withdrawVested(address: string, config: Config): Promise<void> {
+export async function withdrawVested(
+  address: string,
+  config: Config,
+): Promise<void> {
   assert(config.signer);
 
-  const contract = new ethers.Contract(address, config.abi.vesting, config.provider);
+  const contract = new ethers.Contract(
+    address,
+    config.abi.vesting,
+    config.provider,
+  );
   const signer = config.signer;
 
   state.set(State.WithdrawingSign);
@@ -30,15 +37,26 @@ export async function withdrawVested(address: string, config: Config): Promise<v
   state.set(State.Withdrawn);
 }
 
-export async function getInfo(address: string, config: Config): Promise<VestingInfo> {
-  const contract = new ethers.Contract(address, config.abi.vesting, config.provider);
+export async function getInfo(
+  address: string,
+  config: Config,
+): Promise<VestingInfo> {
+  const contract = new ethers.Contract(
+    address,
+    config.abi.vesting,
+    config.provider,
+  );
   const token = await contract.token();
   const beneficiary = await contract.beneficiary();
   const withdrawable = await contract.withdrawableBalance();
   const withdrawn = await contract.withdrawn();
   const total = await contract.totalVestingAmount();
 
-  const tokenContract = new ethers.Contract(token, config.abi.token, config.provider);
+  const tokenContract = new ethers.Contract(
+    token,
+    config.abi.token,
+    config.provider,
+  );
   const symbol = await tokenContract.symbol();
 
   return {
@@ -50,4 +68,3 @@ export async function getInfo(address: string, config: Config): Promise<VestingI
     withdrawn: formatBalance(withdrawn),
   };
 }
-

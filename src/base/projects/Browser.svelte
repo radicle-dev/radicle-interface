@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { Readable } from 'svelte/store';
-  import type * as proj from '@app/project';
-  import Loading from '@app/Loading.svelte';
-  import Placeholder from '@app/Placeholder.svelte';
-  import * as utils from '@app/utils';
+  import type { Readable } from "svelte/store";
+  import type * as proj from "@app/project";
+  import Loading from "@app/Loading.svelte";
+  import Placeholder from "@app/Placeholder.svelte";
+  import * as utils from "@app/utils";
 
-  import Tree from './Tree.svelte';
-  import Blob from './Blob.svelte';
-  import Readme from './Readme.svelte';
+  import Tree from "./Tree.svelte";
+  import Blob from "./Blob.svelte";
+  import Readme from "./Readme.svelte";
 
   enum Status {
     Loading,
@@ -15,7 +15,7 @@
   }
 
   type State =
-      { status: Status.Loading; path: string }
+    | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let project: proj.Project;
@@ -38,9 +38,10 @@
     }
 
     const isMarkdownPath = utils.isMarkdownPath(path);
-    const promise = path === "/"
-      ? project.getReadme(commit)
-      : project.getBlob(commit, path, { highlight: !isMarkdownPath });
+    const promise =
+      path === "/"
+        ? project.getReadme(commit)
+        : project.getBlob(commit, path, { highlight: !isMarkdownPath });
 
     state = { status: Status.Loading, path };
     state = { status: Status.Loaded, path, blob: await promise };
@@ -160,7 +161,9 @@
   <!-- Mobile navigation -->
   {#if tree.entries.length > 0}
     <nav class="mobile">
-      <button class="regular browse secondary center-content" on:click={toggleMobileFileTree}>
+      <button
+        class="regular browse secondary center-content"
+        on:click={toggleMobileFileTree}>
         Browse
       </button>
     </nav>
@@ -202,12 +205,8 @@
     {:else}
       <div class="placeholder">
         <Placeholder icon="👀">
-          <span slot="title">
-            Nothing to show
-          </span>
-          <span slot="body">
-            We couldn't find any files at this revision.
-          </span>
+          <span slot="title">Nothing to show</span>
+          <span slot="body">We couldn't find any files at this revision.</span>
         </Placeholder>
       </div>
     {/if}

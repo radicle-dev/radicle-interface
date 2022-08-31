@@ -14,13 +14,13 @@
   let thisComponent: HTMLDivElement;
 
   function clickOutside(ev: MouseEvent) {
-    if (! $focused?.contains(ev.target as HTMLDivElement)) {
+    if (!$focused?.contains(ev.target as HTMLDivElement)) {
       closeFocused();
     }
   }
 
   function toggle() {
-    if (! disabled) {
+    if (!disabled) {
       expanded = !expanded;
       if ($focused === thisComponent) {
         closeFocused();

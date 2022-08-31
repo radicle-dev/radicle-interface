@@ -1,16 +1,16 @@
-import * as ethers from 'ethers';
-import type { TransactionResponse } from '@ethersproject/providers';
-import type { ContractReceipt } from '@ethersproject/contracts';
+import * as ethers from "ethers";
+import type { TransactionResponse } from "@ethersproject/providers";
+import type { ContractReceipt } from "@ethersproject/contracts";
 import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
-import { assert } from '@app/error';
-import * as utils from '@app/utils';
+import { assert } from "@app/error";
+import * as utils from "@app/utils";
 import * as cache from "@app/cache";
-import type { SafeMultisigTransactionListResponse } from '@gnosis.pm/safe-service-client';
-import type SafeServiceClient from '@gnosis.pm/safe-service-client';
-import type { Safe } from '@app/utils';
-import type { Config } from '@app/config';
-import type { PendingAnchor, Anchor } from '@app/project';
+import type { SafeMultisigTransactionListResponse } from "@gnosis.pm/safe-service-client";
+import type SafeServiceClient from "@gnosis.pm/safe-service-client";
+import type { Safe } from "@app/utils";
+import type { Config } from "@app/config";
+import type { PendingAnchor, Anchor } from "@app/project";
 
 const GetProjects = `
   query GetProjects($org: ID!) {
@@ -75,7 +75,12 @@ export class Org {
   name?: string | null;
   safe?: Safe | null;
 
-  constructor(address: string, owner: string, name?: string | null, safe?: Safe | null) {
+  constructor(
+    address: string,
+    owner: string,
+    name?: string | null,
+    safe?: Safe | null,
+  ) {
     assert(ethers.utils.isAddress(address), "address must be valid");
 
     this.address = address.toLowerCase(); // Don't store address checksum.
@@ -90,10 +95,11 @@ export class Org {
     const org = new ethers.Contract(
       this.address,
       config.abi.org,
-      config.signer
+      config.signer,
     );
-    return org.setName(name, config.provider.network.ensAddress,
-      { gasLimit: 200_000 });
+    return org.setName(name, config.provider.network.ensAddress, {
+      gasLimit: 200_000,
+    });
   }
 
   async setNameMultisig(name: string, config: Config): Promise<void> {
@@ -105,7 +111,7 @@ export class Org {
     const org = new ethers.Contract(
       this.address,
       config.abi.org,
-      config.signer
+      config.signer,
     );
     const unsignedTx = await org.populateTransaction.setName(
       name,
@@ -113,8 +119,10 @@ export class Org {
     );
 
     const txData = unsignedTx.data;
-    if (! txData) {
-      throw new Error("Org::setNameMultisig: Could not generate transaction for `setName` call");
+    if (!txData) {
+      throw new Error(
+        "Org::setNameMultisig: Could not generate transaction for `setName` call",
+      );
     }
 
     const safeTx = {
@@ -126,13 +134,16 @@ export class Org {
     await utils.proposeSafeTransaction(safeTx, safeAddress, config);
   }
 
-  async setOwner(address: string, config: Config): Promise<TransactionResponse> {
+  async setOwner(
+    address: string,
+    config: Config,
+  ): Promise<TransactionResponse> {
     assert(config.signer);
 
     const org = new ethers.Contract(
       this.address,
       config.abi.org,
-      config.signer
+      config.signer,
     );
     return org.setOwner(address);
   }
@@ -146,15 +157,15 @@ export class Org {
     const org = new ethers.Contract(
       this.address,
       config.abi.org,
-      config.signer
+      config.signer,
     );
-    const unsignedTx = await org.populateTransaction.setOwner(
-      owner
-    );
+    const unsignedTx = await org.populateTransaction.setOwner(owner);
 
     const txData = unsignedTx.data;
-    if (! txData) {
-      throw new Error("Org::setOwnerMultisig: Could not generate transaction for `setOwner` call");
+    if (!txData) {
+      throw new Error(
+        "Org::setOwnerMultisig: Could not generate transaction for `setOwner` call",
+      );
     }
 
     const safeTx = {
@@ -191,7 +202,7 @@ export class Org {
     const result = await utils.querySubgraph(
       config.orgs.subgraph,
       GetProjects,
-      { org: this.address }
+      { org: this.address },
     );
     const projects: Anchor[] = [];
 
@@ -203,7 +214,7 @@ export class Org {
           anchor: {
             stateHash: utils.formatProjectHash(
               ethers.utils.arrayify(p.anchor.multihash),
-            )
+            ),
           },
         };
         projects.push(proj);
@@ -215,12 +226,13 @@ export class Org {
   }
 
   async getPendingProjects(config: Config): Promise<PendingAnchor[]> {
-    if (! config.safe.client) return [];
+    if (!config.safe.client) return [];
 
     try {
       const orgAddr = ethers.utils.getAddress(this.address);
       const response = await getPendingProjects(
-        ethers.utils.getAddress(this.owner), config.safe.client
+        ethers.utils.getAddress(this.owner),
+        config.safe.client,
       );
       const projects: PendingAnchor[] = [];
 
@@ -246,17 +258,17 @@ export class Org {
     }
   }
 
-  static async getAnchor(orgAddr: string, urn: string, config: Config): Promise<string | null> {
-    const org = new ethers.Contract(
-      orgAddr,
-      config.abi.org,
-      config.provider
-    );
+  static async getAnchor(
+    orgAddr: string,
+    urn: string,
+    config: Config,
+  ): Promise<string | null> {
+    const org = new ethers.Contract(orgAddr, config.abi.org, config.provider);
     const unpadded = utils.decodeRadicleId(urn);
     const id = ethers.utils.zeroPad(unpadded, 32);
 
     try {
-      const [,hash] = await org.anchors(id);
+      const [, hash] = await org.anchors(id);
       const anchor = utils.formatProjectHash(ethers.utils.arrayify(hash));
 
       return anchor;
@@ -288,7 +300,7 @@ export class Org {
   }
 
   static fromReceipt(receipt: ContractReceipt): Org | null {
-    const event = receipt.events?.find(e => e.event === 'OrgCreated');
+    const event = receipt.events?.find(e => e.event === "OrgCreated");
 
     if (event && event.args) {
       const address = event.args[0];
@@ -299,10 +311,7 @@ export class Org {
     return null;
   }
 
-  static async get(
-    addressOrName: string,
-    config: Config,
-  ): Promise<Org | null> {
+  static async get(addressOrName: string, config: Config): Promise<Org | null> {
     const org = await getOrgContract(addressOrName, config);
 
     try {
@@ -327,10 +336,20 @@ export class Org {
 
     // TODO: We use two subgraph queries since we can't do a filter query yet in the subgraph
     // https://github.com/graphprotocol/graph-node/issues/2539#issuecomment-855979841
-    const safesByOwner = await utils.querySubgraph(config.orgs.subgraph, GetSafesByOwners, { owners: [owner] });
+    const safesByOwner = await utils.querySubgraph(
+      config.orgs.subgraph,
+      GetSafesByOwners,
+      { owners: [owner] },
+    );
     const safes = safesByOwner.safes.reduce(
-      (prev: any, curr: Safe) => prev.concat(curr.id), []);
-    const orgsByOwner = await utils.querySubgraph(config.orgs.subgraph, GetOrgsByOwners, { owners: [...safes, owner] });
+      (prev: any, curr: Safe) => prev.concat(curr.id),
+      [],
+    );
+    const orgsByOwner = await utils.querySubgraph(
+      config.orgs.subgraph,
+      GetOrgsByOwners,
+      { owners: [...safes, owner] },
+    );
     const orgs: { id: string; owner: string }[] = [...orgsByOwner.orgs];
 
     return orgs.map(o => new Org(o.id, o.owner));
@@ -346,11 +365,11 @@ export class Org {
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
       config.abi.orgFactory,
-      config.signer
+      config.signer,
     );
 
-    return orgFactory['createOrg(address[],uint256)'](owners, threshold, {
-      gasLimit: config.gasLimits.createOrg
+    return orgFactory["createOrg(address[],uint256)"](owners, threshold, {
+      gasLimit: config.gasLimits.createOrg,
     });
   }
 
@@ -363,16 +382,19 @@ export class Org {
     const orgFactory = new ethers.Contract(
       config.orgFactory.address,
       config.abi.orgFactory,
-      config.signer
+      config.signer,
     );
 
-    return orgFactory['createOrg(address)'](owner, {
-      gasLimit: config.gasLimits.createOrg
+    return orgFactory["createOrg(address)"](owner, {
+      gasLimit: config.gasLimits.createOrg,
     });
   }
 }
 
-export function parseAnchorTx(data: string, config: Config): { id: string; stateHash: string } | null {
+export function parseAnchorTx(
+  data: string,
+  config: Config,
+): { id: string; stateHash: string } | null {
   const iface = new ethers.utils.Interface(config.abi.org);
   const parsedTx = iface.parseTransaction({ data });
 
@@ -380,7 +402,7 @@ export function parseAnchorTx(data: string, config: Config): { id: string; state
     const encodedProjectUrn = parsedTx.args[0];
     const encodedCommitHash = parsedTx.args[2];
     const id = utils.formatRadicleId(
-      ethers.utils.arrayify(`${encodedProjectUrn}`)
+      ethers.utils.arrayify(`${encodedProjectUrn}`),
     );
     const byteArray = ethers.utils.arrayify(encodedCommitHash);
     const stateHash = utils.formatProjectHash(byteArray);
@@ -392,35 +414,31 @@ export function parseAnchorTx(data: string, config: Config): { id: string; state
 
 export const getOrgContract = cache.cached(
   async (addressOrName: string, config: Config) => {
-    return new ethers.Contract(
-      addressOrName,
-      config.abi.org,
-      config.provider
-    );
+    return new ethers.Contract(addressOrName, config.abi.org, config.provider);
   },
-  (addressOrName) => addressOrName
+  addressOrName => addressOrName,
 );
 
 export const resolveOrgOwner = cache.cached(
   async (org: ethers.Contract) => {
-    return await Promise.all([
-      org.owner(),
-      org.resolvedAddress,
-    ]);
+    return await Promise.all([org.owner(), org.resolvedAddress]);
   },
-  (org) => org.address,
+  org => org.address,
 );
 
 export const getPendingProjects = cache.cached(
-  async (owner: string, client: SafeServiceClient): Promise<SafeMultisigTransactionListResponse> => {
+  async (
+    owner: string,
+    client: SafeServiceClient,
+  ): Promise<SafeMultisigTransactionListResponse> => {
     try {
       return await client.getPendingTransactions(
-        ethers.utils.getAddress(owner)
+        ethers.utils.getAddress(owner),
       );
     } catch (e) {
       return { count: 0, results: [] };
     }
   },
-  (owner) => owner,
-  { max: 1000, ttl: 5 * 60 * 1000 } // Cache results for 5 minutes.
+  owner => owner,
+  { max: 1000, ttl: 5 * 60 * 1000 }, // Cache results for 5 minutes.
 );

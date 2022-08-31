@@ -1,33 +1,36 @@
 <script lang="ts">
-  import { navigate } from 'svelte-routing';
-  import type { Config } from '@app/config';
-  import Loading from '@app/Loading.svelte';
-  import Widget from '@app/base/projects/Widget.svelte';
-  import { Project, ProjectInfo } from '@app/project';
-  import type { Host } from '@app/api';
+  import { navigate } from "svelte-routing";
+  import type { Config } from "@app/config";
+  import Loading from "@app/Loading.svelte";
+  import Widget from "@app/base/projects/Widget.svelte";
+  import { Project, ProjectInfo } from "@app/project";
+  import type { Host } from "@app/api";
   import * as proj from "@app/project";
-  import Message from '@app/Message.svelte';
-  import { setOpenGraphMetaTag } from '@app/utils';
+  import Message from "@app/Message.svelte";
+  import { setOpenGraphMetaTag } from "@app/utils";
 
   export let config: Config;
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Interface" },
     { prop: "og:description", content: "Interact with Radicle" },
-    { prop: "og:url", content: window.location.href }
+    { prop: "og:url", content: window.location.href },
   ]);
 
-  const getProjects = config.projects.pinned.length > 0
-    ? Project.getMulti(config.projects.pinned)
-    : Promise.resolve([]);
+  const getProjects =
+    config.projects.pinned.length > 0
+      ? Project.getMulti(config.projects.pinned)
+      : Promise.resolve([]);
 
   const onClick = (project: ProjectInfo, seed: Host) => {
-    navigate(proj.path({
-      urn: project.urn,
-      seed: seed.host,
-      profile: null,
-      revision: project.head,
-    }));
+    navigate(
+      proj.path({
+        urn: project.urn,
+        seed: seed.host,
+        profile: null,
+        revision: project.head,
+      }),
+    );
   };
 </script>
 
@@ -82,8 +85,10 @@
 
 <main>
   <div class="blurb">
-    <p>Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software over a
-    peer-to-peer network 🌐 built on Git.</p>
+    <p>
+      Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software
+      over a peer-to-peer network 🌐 built on Git.
+    </p>
   </div>
 
   {#await getProjects}
@@ -93,13 +98,17 @@
   {:then results}
     {#if results.length}
       <div class="heading">
-        Explore <strong>projects</strong> on the Radicle network.
+        Explore <strong>projects</strong>
+        on the Radicle network.
       </div>
 
       <div class="projects">
         {#each results as result}
           <div class="project">
-            <Widget compact project={result.info} seed={{ api: result.seed }}
+            <Widget
+              compact
+              project={result.info}
+              seed={{ api: result.seed }}
               on:click={() => onClick(result.info, result.seed)} />
           </div>
         {/each}
@@ -108,7 +117,8 @@
   {:catch}
     <div class="padding">
       <Message error>
-        <strong>Error: </strong> failed to load projects.
+        <strong>Error:</strong>
+        failed to load projects.
       </Message>
     </div>
   {/await}

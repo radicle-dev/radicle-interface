@@ -14,7 +14,11 @@
 
   onMount(async () => {
     if (patch.author.profile?.ens?.name) {
-      profile = await Profile.get(patch.author.profile.ens.name, ProfileType.Minimal, config);
+      profile = await Profile.get(
+        patch.author.profile.ens.name,
+        ProfileType.Minimal,
+        config,
+      );
     }
   });
 
@@ -100,8 +104,7 @@
     <div
       class="state-icon"
       class:closed={patch.state === "archived"}
-      class:open={patch.state === "proposed"}
-    />
+      class:open={patch.state === "proposed"} />
   </div>
   <div class="column-left">
     <div class="summary">
@@ -109,7 +112,9 @@
       {patch.title}
       <span class="patch-id">{formatObjectId(patch.id)}</span>
     </div>
-    <Authorship {profile} {config}
+    <Authorship
+      {profile}
+      {config}
       caption="opened"
       author={patch.author}
       timestamp={patch.timestamp} />

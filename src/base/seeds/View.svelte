@@ -105,7 +105,8 @@
     <header>
       <span class="title">
         <span class="bold">
-          {hostName} <span class="desktop inline">{seed.emoji}</span>
+          {hostName}
+          <span class="desktop inline">{seed.emoji}</span>
         </span>
       </span>
       <!-- User Session -->
@@ -114,13 +115,22 @@
           {#if siweSession}
             <div class="session-info">
               <span class="signed-in text-small">Signed in as</span>
-              <Address address={siweSession.address} {config} small compact resolve />
+              <Address
+                address={siweSession.address}
+                {config}
+                small
+                compact
+                resolve />
             </div>
           {:else}
             <SiweConnect {seed} address={session.address} {config} />
           {/if}
         {:else}
-          <SiweConnect disabled {seed} {config} tooltip={"Connect your wallet to sign in"} />
+          <SiweConnect
+            disabled
+            {seed}
+            {config}
+            tooltip={"Connect your wallet to sign in"} />
         {/if}
       </div>
     </header>
@@ -148,6 +158,5 @@
 {:catch}
   <NotFound
     title={host}
-    subtitle="Not able to query information from this seed."
-  />
+    subtitle="Not able to query information from this seed." />
 {/await}

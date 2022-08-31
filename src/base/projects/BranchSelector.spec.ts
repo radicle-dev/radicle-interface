@@ -7,26 +7,27 @@ const defaultProps = {
     head: "e678629cd37c770c640a2cd997fc76303c815772",
     urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
     name: "nakamoto",
-    description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+    description:
+      "Privacy-preserving Bitcoin light-client implementation in Rust",
     defaultBranch: "master",
-    maintainers: [
-      "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"
-    ],
-    delegates: [
-      "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"
-    ]
+    maintainers: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
+    delegates: ["hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"],
   },
-  branches: { "master": "e678629cd37c770c640a2cd997fc76303c815772" },
+  branches: { master: "e678629cd37c770c640a2cd997fc76303c815772" },
   revision: "e678629cd37c770c640a2cd997fc76303c815772",
 };
 
-describe('Logic', () => {
+describe("Logic", () => {
   it("should show defaultBranch label and head commit if revision === head", () => {
     const { rerender } = render(BranchSelector, {
       props: defaultProps,
     });
-    cy.get("div.stat.branch").should("be.visible").should("have.text", "master");
-    cy.get("div.hash.mobile").should("be.visible").should("have.text", "e678629");
+    cy.get("div.stat.branch")
+      .should("be.visible")
+      .should("have.text", "master");
+    cy.get("div.hash.mobile")
+      .should("be.visible")
+      .should("have.text", "e678629");
 
     // If project.head is null we should get the head from branches.
     rerender({
@@ -36,19 +37,20 @@ describe('Logic', () => {
           head: null,
           urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
           name: "nakamoto",
-          description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+          description:
+            "Privacy-preserving Bitcoin light-client implementation in Rust",
           defaultBranch: "master",
-          maintainers: [
-            "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"
-          ],
-          delegates: [
-            "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"
-          ]
-        }
-      }
+          maintainers: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
+          delegates: ["hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"],
+        },
+      },
     });
-    cy.get("div.stat.branch").should("be.visible").should("have.text", "master");
-    cy.get("div.hash.mobile").should("be.visible").should("have.text", "e678629");
+    cy.get("div.stat.branch")
+      .should("be.visible")
+      .should("have.text", "master");
+    cy.get("div.hash.mobile")
+      .should("be.visible")
+      .should("have.text", "e678629");
   });
 
   it("should show the branch dropdown if branches available", () => {
@@ -56,18 +58,19 @@ describe('Logic', () => {
       props: {
         ...defaultProps,
         branches: {
-          "master": "e678629cd37c770c640a2cd997fc76303c815772",
+          master: "e678629cd37c770c640a2cd997fc76303c815772",
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
-          "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+          xyz: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         },
-      }
+      },
     });
     cy.get("div.commit div.stat.branch").click();
     cy.get("div.dropdown div.dropdown-item")
       .first()
       .should("contain.text", "feature-branch")
       .next()
-      .should("contain.text", "master").should("have.class", "selected")
+      .should("contain.text", "master")
+      .should("have.class", "selected")
       .next()
       .should("contain.text", "xyz");
   });
@@ -75,16 +78,21 @@ describe('Logic', () => {
   it("should show feature-branch label and head commit, if branch label is passed as revision", () => {
     render(BranchSelector, {
       props: {
-        ...defaultProps, branches: {
-          "master": "e678629cd37c770c640a2cd997fc76303c815772",
+        ...defaultProps,
+        branches: {
+          master: "e678629cd37c770c640a2cd997fc76303c815772",
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
-          "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+          xyz: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         },
-        revision: "feature-branch"
-      }
+        revision: "feature-branch",
+      },
     });
-    cy.get("div.stat.branch").should("be.visible").should("have.text", "feature-branch");
-    cy.get("div.hash.mobile").should("be.visible").should("have.text", "29e8b7b");
+    cy.get("div.stat.branch")
+      .should("be.visible")
+      .should("have.text", "feature-branch");
+    cy.get("div.hash.mobile")
+      .should("be.visible")
+      .should("have.text", "29e8b7b");
   });
 
   it("should show only commit if no branchLabel nor branches are available", () => {
@@ -92,12 +100,16 @@ describe('Logic', () => {
       props: {
         ...defaultProps,
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
-        branches: {}
-      }
+        branches: {},
+      },
     });
-    cy.get("div.hash.mobile").should("be.visible").should("have.text", "debf82e");
+    cy.get("div.hash.mobile")
+      .should("be.visible")
+      .should("have.text", "debf82e");
     cy.viewport("macbook-13");
-    cy.get("div.hash.desktop").should("be.visible").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
+    cy.get("div.hash.desktop")
+      .should("be.visible")
+      .should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
 
   it("should show only commit if branches are available but no branchLabel", () => {
@@ -105,11 +117,15 @@ describe('Logic', () => {
       props: {
         ...defaultProps,
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
-      }
+      },
     });
-    cy.get("div.hash.mobile").should("be.visible").should("have.text", "debf82e");
+    cy.get("div.hash.mobile")
+      .should("be.visible")
+      .should("have.text", "debf82e");
     cy.viewport("macbook-13");
-    cy.get("div.hash.desktop").should("be.visible").should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
+    cy.get("div.hash.desktop")
+      .should("be.visible")
+      .should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
 
   it("should show defaultBranch label if revision === head", () => {
@@ -117,10 +133,12 @@ describe('Logic', () => {
       props: {
         ...defaultProps,
         revision: "e678629cd37c770c640a2cd997fc76303c815772",
-        branches: {}
-      }
+        branches: {},
+      },
     });
-    cy.get("div.stat.branch.not-allowed").should("be.visible").should("have.text", "master");
+    cy.get("div.stat.branch.not-allowed")
+      .should("be.visible")
+      .should("have.text", "master");
   });
 });
 
@@ -129,8 +147,8 @@ describe("Layout", () => {
     render(BranchSelector, {
       props: {
         ...defaultProps,
-        revision: "e678629cd37c770c640a2cd997fc76303c815772"
-      }
+        revision: "e678629cd37c770c640a2cd997fc76303c815772",
+      },
     });
     cy.viewport("iphone-x");
     cy.get("div.hash.mobile").should("be.visible");
@@ -149,19 +167,21 @@ describe("Events", () => {
         revision: "feature-branch",
         branches: {
           "feature-branch": "29e8b7b0f3019b8e8a6d9bfb0964ee78f4ff12f5",
-          "xyz": "debf82ef3623ec11751a993bda85bac2ff1c6f00",
-        }
-      }
+          xyz: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
+        },
+      },
     });
 
-    cy.get("div.commit div.stat.branch").click().then(() => {
-      const branchLabel = getByText("xyz");
+    cy.get("div.commit div.stat.branch")
+      .click()
+      .then(() => {
+        const branchLabel = getByText("xyz");
 
-      const mock = cy.spy();
-      component.$on("branchChanged", mock);
+        const mock = cy.spy();
+        component.$on("branchChanged", mock);
 
-      fireEvent.click(branchLabel);
-      expect(mock).to.have.been.calledOnce;
-    });
+        fireEvent.click(branchLabel);
+        expect(mock).to.have.been.calledOnce;
+      });
   });
 });

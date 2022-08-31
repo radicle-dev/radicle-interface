@@ -16,11 +16,19 @@ interface AnchorObject {
   multihash: string;
 }
 
-export async function getProjectAnchors(urn: string, anchorsStorage: string, config: Config): Promise<string[]> {
+export async function getProjectAnchors(
+  urn: string,
+  anchorsStorage: string,
+  config: Config,
+): Promise<string[]> {
   const unpadded = decodeRadicleId(urn);
   const id = ethers.utils.hexZeroPad(unpadded, 32);
-  const allAnchors = await querySubgraph(config.orgs.subgraph, GetAllAnchors, { project: id, org: anchorsStorage });
+  const allAnchors = await querySubgraph(config.orgs.subgraph, GetAllAnchors, {
+    project: id,
+    org: anchorsStorage,
+  });
 
-  return allAnchors.anchors
-    .map((anchor: AnchorObject) => formatProjectHash(ethers.utils.arrayify(anchor.multihash)));
+  return allAnchors.anchors.map((anchor: AnchorObject) =>
+    formatProjectHash(ethers.utils.arrayify(anchor.multihash)),
+  );
 }

@@ -25,7 +25,7 @@
 <button
   class="small secondary"
   title={tooltip}
-  disabled={disabled || (connection === Connection.Connecting)}
+  disabled={disabled || connection === Connection.Connecting}
   on:click={async () => {
     connection = Connection.Connecting;
     try {
@@ -34,8 +34,7 @@
       console.error("Sign in", e);
       connection = Connection.Disconnected;
     }
-  }}
->
+  }}>
   <span class="align">
     {#if address}
       <Avatar title={address} source={address} inline />

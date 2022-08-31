@@ -12,20 +12,36 @@
 
   let meta: Peer | undefined;
   // List of items to be created for the Dropdown component.
-  let items: { key: string; value: string; title: string; badge: string | null }[] = [];
+  let items: {
+    key: string;
+    value: string;
+    title: string;
+    badge: string | null;
+  }[] = [];
 
   function createTitle(p: Peer): string {
     const name = p.person?.name ? p.person.name : p.id;
-    return p.delegate ? `${name} is a delegate of this project` : `${name} is a peer tracked by this seed`;
+    return p.delegate
+      ? `${name} is a delegate of this project`
+      : `${name} is a peer tracked by this seed`;
   }
 
   onMount(() => {
     meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
-      if (! p.person?.name) console.debug("Not able to resolve peer identity for: ", p.id);
-      const key = p.person?.name ? `<strong>${p.person.name}</strong> ${p.id}` : p.id;
+      if (!p.person?.name) {
+        console.debug("Not able to resolve peer identity for: ", p.id);
+      }
+      const key = p.person?.name
+        ? `<strong>${p.person.name}</strong> ${p.id}`
+        : p.id;
 
-      return { key, value: p.id, title: createTitle(p), badge: p.delegate ? "delegate" : null };
+      return {
+        key,
+        value: p.id,
+        title: createTitle(p),
+        badge: p.delegate ? "delegate" : null,
+      };
     });
   });
 
@@ -80,7 +96,7 @@
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>
         {/if}
-      <!-- If the delegate metadata is not found -->
+        <!-- If the delegate metadata is not found -->
       {:else if peer}
         <span class="peer-id">
           {formatSeedId(peer)}
@@ -90,10 +106,6 @@
   </div>
 
   <svelte:fragment slot="modal">
-    <Dropdown
-      {items}
-      selected={peer}
-      on:select={(e) => switchPeer(e.detail)}
-    />
+    <Dropdown {items} selected={peer} on:select={e => switchPeer(e.detail)} />
   </svelte:fragment>
 </Floating>
