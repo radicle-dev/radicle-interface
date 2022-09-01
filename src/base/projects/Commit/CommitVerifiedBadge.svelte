@@ -1,14 +1,25 @@
 <script lang="ts">
   import type { CommitMetadata } from "@app/commit";
-  import CommitAuthorship from "./CommitAuthorship.svelte";
+
+  import { debounce } from "lodash";
+
   import Badge from "@app/Badge.svelte";
+  import CommitAuthorship from "./CommitAuthorship.svelte";
 
   export let commit: CommitMetadata;
 
-  let hover = false;
+  let visible = false;
+  const showDelay = 50; // ms
+
+  const setVisible = debounce((value: boolean) => {
+    visible = value;
+  }, showDelay);
 </script>
 
 <style>
+  .container {
+    cursor: default;
+  }
   .wrapper {
     position: absolute;
   }
@@ -18,7 +29,7 @@
     box-shadow: 16px 16px 32px 32px var(--color-shadow);
     color: var(--color-foreground);
     font-size: 0.75rem;
-    left: -1rem;
+    left: -10rem;
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     position: absolute;
@@ -43,35 +54,32 @@
   }
 </style>
 
-<Badge
-  variant="tertiary"
-  on:mouseenter={() => {
-    hover = true;
-  }}
-  on:mouseleave={() => {
-    hover = false;
-  }}>
-  Verified
-</Badge>
+<div
+  class="container"
+  on:click|stopPropagation
+  on:mouseenter={() => setVisible(true)}
+  on:mouseleave={() => setVisible(false)}>
+  <Badge variant="tertiary">Verified</Badge>
 
-{#if hover}
-  <div class="wrapper">
-    <div class="popup">
-      <div class="header">
-        <div class="highlight">✔</div>
-        <div>
-          This commit was <span class="highlight">signed</span>
-          with the committer's radicle key.
+  {#if visible}
+    <div class="wrapper">
+      <div class="popup">
+        <div class="header">
+          <div class="highlight">✔</div>
+          <div>
+            This commit was <span class="highlight">signed</span>
+            with the committer's radicle key.
+          </div>
+        </div>
+        <div class="committer">
+          <CommitAuthorship {commit} showAuthor={false} showTime={false} />
+          {#if commit.context.committer}
+            <div class="peer">
+              <span class="text-faded">{commit.context.committer.peer.id}</span>
+            </div>
+          {/if}
         </div>
       </div>
-      <div class="committer">
-        <CommitAuthorship {commit} showAuthor={false} showTime={false} />
-        {#if commit.context.committer}
-          <div class="peer">
-            <span class="text-faded">{commit.context.committer.peer.id}</span>
-          </div>
-        {/if}
-      </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>

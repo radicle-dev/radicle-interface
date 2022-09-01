@@ -220,7 +220,7 @@ describe("Project view", () => {
     // Checking that the initial commit has the Verified badge
     cy.get(".popup .header").should(
       "have.text",
-      "✔ This commit was signed\n          with the committer's radicle key.",
+      "✔ This commit was signed\n            with the committer's radicle key.",
     );
     cy.get(".popup .peer").should(
       "contain.text",

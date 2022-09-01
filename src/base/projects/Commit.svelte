@@ -2,10 +2,10 @@
   import * as proj from "@app/project";
   import { formatCommit } from "@app/utils";
   import type { Commit } from "@app/commit";
-  import Badge from "@app/Badge.svelte";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
+  import CommitVerifiedBadge from "@app/base/projects/Commit/CommitVerifiedBadge.svelte";
 
   export let project: proj.Project;
   export let commit: Commit;
@@ -70,7 +70,7 @@
     <div class="authorship">
       <CommitAuthorship {commit} />
       {#if commit.context?.committer}
-        <Badge variant="tertiary">Verified</Badge>
+        <CommitVerifiedBadge {commit} />
       {/if}
     </div>
   </header>
