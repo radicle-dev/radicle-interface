@@ -3,7 +3,11 @@
   import { marked } from "marked";
   import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
-  import { getImageMime, isUrl } from "@app/utils";
+  import {
+    markdownExtensions as extensions,
+    getImageMime,
+    isUrl,
+  } from "@app/utils";
   import xss, { getDefaultWhiteList } from "xss";
 
   export let content: string;
@@ -11,6 +15,7 @@
   export let doc = matter(content);
 
   const frontMatter = Object.entries(doc.data);
+  marked.use({ extensions });
 
   let container: HTMLElement;
 

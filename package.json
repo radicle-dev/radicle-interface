@@ -5,6 +5,7 @@
     "serve": "vite preview",
     "build": "scripts/build",
     "check": "scripts/check",
+    "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html)' --ignore-path .gitignore --write",
     "coverage": "npx nyc report",
     "test:unit": "TZ='UTC' vitest run",
     "test:components": "cypress run --component",

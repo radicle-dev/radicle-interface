@@ -1,6 +1,7 @@
 <script lang="ts">
   import { marked } from "marked";
   import { createEventDispatcher } from "svelte";
+  import { markdownExtensions as extensions } from "@app/utils";
 
   export let options: {
     label: string;
@@ -11,6 +12,7 @@
   export let selected = "";
   export let disabled = false;
 
+  marked.use({ extensions });
   const dispatch = createEventDispatcher();
 </script>
 

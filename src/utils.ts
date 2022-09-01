@@ -28,6 +28,8 @@ import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
 import { GetSafe } from "@app/base/orgs/Org";
 import * as cache from "@app/cache";
+import type { marked } from "marked";
+import emojis from "@app/emojis";
 
 export enum AddressType {
   Contract,
@@ -461,6 +463,14 @@ export function formatProjectHash(multihash: Uint8Array): string {
   return ethers.utils.hexlify(decoded.digest).replace(/^0x/, "");
 }
 
+export function parseEmoji(input: string): string {
+  if (input in emojis) {
+    return emojis[input];
+  }
+
+  return input;
+}
+
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(
   address: string,
@@ -792,3 +802,34 @@ export const lookupAddress = cache.cached(
 export const unreachable = (value: never): never => {
   throw new Error(`Unreachable code: ${value}`);
 };
+
+const markdownEmojiTokenizer: marked.TokenizerExtension = {
+  name: "emoji",
+  level: "inline",
+  start(src: string) {
+    return src.indexOf(":");
+  },
+  tokenizer(src: string) {
+    const rule = /^:[\w+-]+:/;
+    const match = rule.exec(src);
+    if (match) {
+      return {
+        type: "emoji",
+        raw: match[0],
+        emoji: match[1],
+      };
+    }
+  },
+};
+
+const markdownEmojiRenderer: marked.RendererExtension = {
+  name: "emoji",
+  renderer(token: marked.Tokens.Generic) {
+    return `<span>${parseEmoji(token.emoji)}</span>`;
+  },
+};
+
+export const markdownExtensions = [
+  markdownEmojiTokenizer,
+  markdownEmojiRenderer,
+];

@@ -48,7 +48,13 @@
   import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
-  import { capitalize, isUrl, isAddress, formatSeedId } from "@app/utils";
+  import {
+    markdownExtensions as extensions,
+    capitalize,
+    isUrl,
+    isAddress,
+    formatSeedId,
+  } from "@app/utils";
   import Address from "@app/Address.svelte";
   import type { Config } from "@app/config";
 
@@ -59,6 +65,8 @@
 
   let formFields = fields;
   let hasErrors = false;
+
+  marked.use({ extensions });
 
   const check = (event: Event) => {
     const name = (<HTMLInputElement>event.target).name;

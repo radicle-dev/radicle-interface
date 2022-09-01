@@ -102,6 +102,23 @@ describe("Format functions", () => {
 
   test.each([
     {
+      input: "seedling",
+      expected: "🌱",
+    },
+    {
+      input: "+1",
+      expected: "👍",
+    },
+    {
+      input: "radicle",
+      expected: "radicle",
+    },
+  ])("parseEmoji $input => $expected", ({ input, expected }) => {
+    expect(utils.parseEmoji(input)).toEqual(expected);
+  });
+
+  test.each([
+    {
       hash: "0x8f918133b56bb85c18ea192549503f0ea59e3beb1f88023f442656c660018e3a",
       expected: "0x8f91...8e3a",
     },
