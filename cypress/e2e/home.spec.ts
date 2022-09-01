@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { MockExtensionProvider } from "../support/e2e";
+import { MockProvider } from "@rsksmart/mock-web3-provider";
 
 describe("Landing page", () => {
   it("Loads projects", () => {
@@ -30,10 +30,14 @@ describe("Landing page", () => {
     );
     cy.visit("/", {
       onBeforeLoad(win) {
-        win.ethereum = new MockExtensionProvider(
-          "homestead",
-          "0x3256a804085C24f3451cAb2C98a37e16DEEc5721",
-        );
+        const address = "0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D";
+        const privateKey =
+          "de926db3012af759b4f24b5a51ef6afa397f04670f634aa4f48d4480417007f3";
+        win.ethereum = new MockProvider({
+          address,
+          privateKey,
+          networkVersion: 1,
+        });
       },
     });
     cy.get(".project .name")
