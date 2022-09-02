@@ -1,10 +1,22 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
+
   export let small = false;
   export let color = "secondary";
   export let center = false;
   export let fadeIn = false;
   export let margins = false;
   export let condensed = false;
+
+  let show: boolean = false;
+
+  const timeout = window.setTimeout(() => {
+    show = true;
+  }, 200);
+
+  onDestroy(() => {
+    window.clearTimeout(timeout);
+  });
 </script>
 
 <style>
@@ -136,18 +148,20 @@
   }
 </style>
 
-<div class="container">
-  <div
-    class="spinner"
-    class:fade-in={fadeIn}
-    class:small
-    class:center
-    class:margins
-    class:condensed>
-    <div class="bounce1" style="background-color: var(--color-{color})" />
-    {#if !condensed}
-      <div class="bounce2" style="background-color: var(--color-{color})" />
-      <div class="bounce3" style="background-color: var(--color-{color})" />
-    {/if}
+{#if show}
+  <div class="container">
+    <div
+      class="spinner"
+      class:fade-in={fadeIn}
+      class:small
+      class:center
+      class:margins
+      class:condensed>
+      <div class="bounce1" style="background-color: var(--color-{color})" />
+      {#if !condensed}
+        <div class="bounce2" style="background-color: var(--color-{color})" />
+        <div class="bounce3" style="background-color: var(--color-{color})" />
+      {/if}
+    </div>
   </div>
-</div>
+{/if}
