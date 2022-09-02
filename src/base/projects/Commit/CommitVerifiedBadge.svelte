@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { CommitMetadata } from "@app/commit";
 
-  import { debounce } from "lodash";
+  import debounce from "lodash/debounce";
 
   import Badge from "@app/Badge.svelte";
   import CommitAuthorship from "./CommitAuthorship.svelte";
