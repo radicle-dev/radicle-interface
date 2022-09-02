@@ -60,6 +60,7 @@
     font-size: 0.75rem;
     height: var(--button-tiny-height);
     padding: 0.25rem 0.5rem;
+    background-color: var(--color-background);
   }
   .revision-toggle:hover {
     background-color: var(--color-foreground-background);

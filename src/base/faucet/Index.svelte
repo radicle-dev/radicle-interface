@@ -10,6 +10,7 @@
     lastWithdrawalByUser,
     calculateTimeLock,
   } from "./lib";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
 
@@ -142,9 +143,7 @@
             placeholder="Set amount to withdraw"
             bind:value={amount}
             on:input={() => (error = "")} />
-          <button disabled={false} class="primary" on:click={withdraw}>
-            Withdraw
-          </button>
+          <Button variant="primary" on:click={withdraw}>Withdraw</Button>
         </div>
         {#if error}
           <div class="error description invalid text-small faded">

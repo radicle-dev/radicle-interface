@@ -167,102 +167,9 @@ section {
 
 body,
 input,
-textarea,
-button {
+textarea {
   font-family: var(--font-family-sans-serif);
   font-feature-settings: "ss01", "ss02", "cv01", "cv03";
-}
-
-button {
-  color: var(--color-foreground-6);
-  background: transparent;
-  font-size: 1rem;
-  padding: 0rem 1.5rem;
-  border: 1px solid var(--color-foreground-6);
-  border-radius: var(--border-radius-round);
-  cursor: pointer;
-  min-width: 6rem;
-  height: var(--button-regular-height);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-button:not([disabled]):hover {
-  color: var(--color-background);
-  background-color: var(--color-foreground);
-  border-color: transparent;
-}
-button.waiting {
-  cursor: wait;
-}
-button.secondary {
-  color: var(--color-secondary);
-  border-color: var(--color-secondary);
-}
-button.secondary[disabled] {
-  color: var(--color-secondary-faded);
-  border-color: var(--color-secondary-faded);
-}
-button.secondary:not([disabled]):hover {
-  background-color: var(--color-secondary);
-}
-button.primary {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-button.primary:hover,
-button.primary.active {
-  color: var(--color-background);
-  background-color: var(--color-primary);
-}
-button.primary[disabled] {
-  color: var(--color-primary-faded) !important;
-  border-color: var(--color-primary-faded) !important;
-  background-color: transparent;
-}
-button.faded {
-  color: var(--color-foreground-90);
-  border-color: var(--color-foreground-90);
-}
-button[disabled] {
-  cursor: not-allowed !important;
-  color: var(--color-foreground-faded);
-  border-color: var(--color-foreground-faded);
-}
-button[data-waiting] {
-  cursor: wait !important;
-}
-button.unstyled,
-button.unstyled:hover,
-button.unstyled:focus {
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-  border: none;
-  color: var(--color-foreground);
-  background: transparent;
-}
-
-button.text {
-  color: var(--color-foreground-6);
-  background-color: transparent;
-  border: none;
-  min-width: 3rem;
-}
-button.text:hover {
-  background-color: var(--color-foreground);
-}
-
-button.regular {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  min-width: 6rem;
-  height: var(--button-regular-height);
-}
-button.small {
-  min-width: auto;
-  padding: 0 0.75rem;
-  height: 2rem;
 }
 
 a {
@@ -290,8 +197,7 @@ a.address {
   border-bottom-color: transparent;
 }
 
-input[type="text"],
-button {
+input[type="text"] {
   line-height: 1.6;
 }
 input[type="text"] {

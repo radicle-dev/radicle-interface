@@ -8,6 +8,7 @@
   import Modal from "@app/Modal.svelte";
   import Address from "@app/Address.svelte";
   import { formatAddress, isAddressEqual } from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   let input: HTMLElement;
 
@@ -107,22 +108,22 @@
         <span slot="actions">
           {#if isBeneficiary}
             {#if $state === State.WithdrawingSign}
-              <button disabled data-waiting class="primary regular">
+              <Button disabled waiting={true} variant="primary">
                 Waiting for signature...
-              </button>
+              </Button>
             {:else if $state === State.Withdrawing}
-              <button disabled data-waiting class="primary regular">
+              <Button disabled waiting={true} variant="primary">
                 Withdrawing...
-              </button>
+              </Button>
             {:else if $state === State.Idle}
-              <button
+              <Button
                 on:click={() => withdrawVested(contractAddress, config)}
-                class="primary regular">
+                variant="primary">
                 Withdraw
-              </button>
+              </Button>
             {/if}
           {/if}
-          <button on:click={reset} class="regular">Back</button>
+          <Button on:click={reset} variant="primary">Back</Button>
         </span>
       </Modal>
     {:else}
@@ -143,13 +144,13 @@
               bind:value={contractAddress} />
           </div>
         </span>
-        <button
+        <Button
           on:click={() => loadContract(config)}
-          class="primary"
-          data-waiting={$state === State.Loading || null}
+          variant="primary"
+          waiting={$state === State.Loading}
           disabled={$state === State.Loading}>
           Load
-        </button>
+        </Button>
       </div>
     {/if}
   </div>

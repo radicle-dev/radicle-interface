@@ -5,6 +5,7 @@
   import { signInWithEthereum } from "@app/siwe";
   import Loading from "@app/Loading.svelte";
   import { Connection } from "@app/session";
+  import Button from "@app/Button.svelte";
 
   export let seed: Seed;
   export let config: Config;
@@ -16,14 +17,9 @@
   let connection: Connection = Connection.Disconnected;
 </script>
 
-<style>
-  button {
-    min-height: 32px;
-  }
-</style>
-
-<button
-  class="small secondary"
+<Button
+  variant="secondary"
+  size="small"
   title={tooltip}
   disabled={disabled || connection === Connection.Connecting}
   on:click={async () => {
@@ -45,4 +41,4 @@
       {caption}
     {/if}
   </span>
-</button>
+</Button>

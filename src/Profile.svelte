@@ -21,6 +21,7 @@
   import NotFound from "@app/NotFound.svelte";
   import RadicleUrn from "@app/RadicleUrn.svelte";
   import Badge from "@app/Badge.svelte";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
   export let addressOrName: string;
@@ -271,9 +272,12 @@
         <div class="desktop">
           {#await account && profile.org.isMember(account, config) then isMember}
             {#if isOwner(profile.org) || isMember}
-              <button class="small secondary" on:click={transferOwnership}>
+              <Button
+                variant="secondary"
+                size="small"
+                on:click={transferOwnership}>
                 Transfer
-              </button>
+              </Button>
             {/if}
           {/await}
         </div>
@@ -320,7 +324,9 @@
               <!-- Loading -->
             {:then authorized}
               {#if authorized}
-                <button class="small secondary" on:click={setName}>Set</button>
+                <Button variant="secondary" size="small" on:click={setName}>
+                  Set
+                </Button>
               {/if}
             {/await}
           </div>
@@ -348,7 +354,9 @@
         </div>
         <div class="desktop">
           {#if isUserAuthorized(profile.address)}
-            <button class="small secondary" on:click={setName}>Set</button>
+            <Button variant="secondary" size="small" on:click={setName}>
+              Set
+            </Button>
           {/if}
         </div>
       {/if}

@@ -9,6 +9,7 @@
   import Modal from "@app/Modal.svelte";
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
+  import Button from "@app/Button.svelte";
 
   import { registrar } from "./registrar";
 
@@ -97,18 +98,23 @@
   <span slot="actions">
     {#if state === State.NameAvailable}
       {#if $session}
-        <button on:click={begin} class="primary register">
+        <Button on:click={begin} variant="primary">
           Begin registration &rarr;
-        </button>
+        </Button>
       {:else}
-        <Connect caption="Connect to register" className="primary" {config} />
+        <Connect
+          caption="Connect to register"
+          buttonVariant="primary"
+          {config} />
       {/if}
 
-      <button on:click={() => navigate("/registrations")} class="text">
+      <Button on:click={() => navigate("/registrations")} variant="text">
         Cancel
-      </button>
+      </Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <button on:click={() => navigate("/registrations")} class="">Back</button>
+      <Button variant="foreground" on:click={() => navigate("/registrations")}>
+        Back
+      </Button>
     {/if}
   </span>
 </Modal>

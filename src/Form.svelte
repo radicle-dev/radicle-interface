@@ -1,4 +1,5 @@
 <script context="module" lang="ts">
+  import Button from "@app/Button.svelte";
   export interface Field {
     name: string;
     value?: string;
@@ -167,9 +168,9 @@
     margin-top: 2rem;
     text-align: center;
     visibility: hidden;
-  }
-  .actions button {
-    margin-left: 1rem;
+    gap: 1.5rem;
+    display: flex;
+    justify-content: center;
   }
   .actions.editable {
     visibility: visible;
@@ -258,11 +259,8 @@
 </div>
 
 <div class="actions" class:editable>
-  <button on:click={cancel} {disabled} class="regular">Cancel</button>
-  <button
-    on:click={save}
-    disabled={hasErrors || disabled}
-    class="regular primary">
+  <Button on:click={cancel} {disabled} variant="foreground">Cancel</Button>
+  <Button on:click={save} disabled={hasErrors || disabled} variant="primary">
     Save
-  </button>
+  </Button>
 </div>

@@ -9,6 +9,7 @@
   import Loading from "@app/Loading.svelte";
   import Options from "@app/Options.svelte";
   import Address from "@app/Address.svelte";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
   export let owner: string;
@@ -149,7 +150,11 @@
     </span>
 
     <span slot="actions">
-      <button on:click={() => navigate(`/${org?.address}`)}>Done</button>
+      <Button
+        variant="foreground"
+        on:click={() => navigate(`/${org?.address}`)}>
+        Done
+      </Button>
     </span>
   </Modal>
 {:else}
@@ -205,17 +210,15 @@
 
     <span slot="actions">
       {#if state === State.Idle}
-        <button
+        <Button
           on:click={createOrg}
-          class="primary regular"
-          data-waiting={[State.Signing, State.Pending].includes(state) || null}
+          variant="primary"
+          waiting={[State.Signing, State.Pending].includes(state)}
           disabled={state !== State.Idle}>
           Create
-        </button>
+        </Button>
 
-        <button on:click={() => dispatch("close")} class="text regular">
-          Close
-        </button>
+        <Button on:click={() => dispatch("close")} variant="text">Close</Button>
       {/if}
     </span>
   </Modal>

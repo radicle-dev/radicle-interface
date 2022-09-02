@@ -1,19 +1,19 @@
 <script lang="ts">
   import { parseRadicleId, toClipboard } from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   export let urn: string;
 
   let copied = false;
 
-  const copy = () => {
-    return () =>
-      toClipboard(urn).then(() => {
-        copied = true;
-        setTimeout(() => {
-          copied = false;
-        }, 3000);
-      });
-  };
+  function copy() {
+    toClipboard(urn).then(() => {
+      copied = true;
+      setTimeout(() => {
+        copied = false;
+      }, 1000);
+    });
+  }
 </script>
 
 <style>
@@ -41,11 +41,11 @@
   </div>
 </div>
 <div>
-  <button class="small faded" disabled={copied} on:click={copy()}>
+  <Button variant="foreground" size="small" disabled={copied} on:click={copy}>
     {#if copied}
       Copy ✓
     {:else}
       Copy
     {/if}
-  </button>
+  </Button>
 </div>

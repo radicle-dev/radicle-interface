@@ -15,6 +15,7 @@
   import Icon from "./Icon.svelte";
   import MobileNavbar from "./MobileNavbar.svelte";
   import SeedDropdown from "./SeedDropdown.svelte";
+  import Button from "@app/Button.svelte";
 
   export let session: Session | null;
   export let config: Config;
@@ -92,16 +93,6 @@
     margin-left: 1.5rem;
     display: inline-block;
   }
-  .address {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-left: 2rem;
-    width: 10rem;
-    padding-left: 0;
-    padding-right: 0;
-  }
   .connect {
     display: inline-block;
     margin-left: 2rem;
@@ -125,7 +116,7 @@
   }
 
   .balance {
-    margin-left: 2rem;
+    margin: 0 2rem;
     white-space: nowrap;
   }
 
@@ -209,8 +200,9 @@
         {/if}
       </span>
 
-      <button
-        class="address outline regular"
+      <Button
+        style="width: 10rem; white-space: nowrap;"
+        variant="foreground"
         on:click={() => disconnectWallet(config)}
         on:mouseover={() => (sessionButtonHover = true)}
         on:focus={() => (sessionButtonHover = true)}
@@ -228,10 +220,10 @@
               inline />{formatAddress(address)}
           {/if}
         {/await}
-      </button>
+      </Button>
     {:else if config}
       <span class="connect">
-        <Connect className="regular" {config} />
+        <Connect buttonVariant="foreground" {config} />
       </span>
     {/if}
     <div class="toggle" on:click={toggleNavbar}>

@@ -3,6 +3,7 @@
   import type { Config } from "@app/config";
 
   import DomainInput from "@app/ens/DomainInput.svelte";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
 
@@ -94,12 +95,13 @@
         {/if}
       </span>
 
-      <button
+      <Button
         disabled={!label || errors.length !== 0}
-        class="primary register regular"
+        variant="primary"
+        size="regular"
         on:click={register}>
         Check
-      </button>
+      </Button>
     </div>
   </div>
 </main>

@@ -5,11 +5,11 @@
   import Error from "@app/Error.svelte";
   import type { Config } from "@app/config";
   import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
+  import Button from "@app/Button.svelte";
 
   export let caption = "Connect";
-  export let className = "";
-  export let style = "";
   export let config: Config;
+  export let buttonVariant: "foreground" | "primary";
 
   let error: Err | null = null;
 
@@ -34,18 +34,17 @@
   $: walletConnectState = config.walletConnect.state;
 </script>
 
-<button
-  on:click|stopPropagation={onConnect}
-  {style}
-  class="connect {className}"
+<Button
+  on:click={onConnect}
+  variant={buttonVariant}
   disabled={connecting}
-  data-waiting={connecting || null}>
+  waiting={connecting}>
   {#if connecting}
     Connecting...
   {:else}
     {caption}
   {/if}
-</button>
+</Button>
 
 {#if $walletConnectState.state === "open"}
   <ConnectWallet

@@ -1,7 +1,9 @@
 <script lang="ts">
+  import type { Err } from "@app/error";
+
   import { createEventDispatcher } from "svelte";
   import Modal from "@app/Modal.svelte";
-  import type { Err } from "@app/error";
+  import Button from "@app/Button.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -38,9 +40,9 @@
 
   <span slot="actions">
     <slot name="actions">
-      <button on:click={() => dispatch("close")}>
+      <Button variant="negative" on:click={() => dispatch("close")}>
         {action}
-      </button>
+      </Button>
     </slot>
   </span>
 </Modal>

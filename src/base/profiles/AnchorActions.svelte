@@ -8,6 +8,7 @@
   import Avatar from "@app/Avatar.svelte";
   import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
+  import Button from "@app/Button.svelte";
 
   export let safe: Safe;
   export let anchor: PendingAnchor;
@@ -109,11 +110,6 @@
     display: flex;
     margin-right: 0.75rem;
   }
-  button.execute {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 </style>
 
 <span class="confirmations">
@@ -131,26 +127,28 @@
 
 <!-- Check whether the threshold has been matched or passed -->
 {#if pending <= 0}
-  <button
-    on:click|stopPropagation={() => {
+  <Button
+    on:click={() => {
       action = Action.Execute;
       state = State.Confirm;
     }}
-    class="small execute">
+    variant="foreground"
+    size="small">
     <Avatar inline source={account} title={account} /> Execute
-  </button>
+  </Button>
   <!-- Check whether or not we've signed this proposal -->
 {:else if isSigned}
   <Badge variant="caution">✓ signed</Badge>
 {:else}
-  <button
-    on:click|stopPropagation={() => {
+  <Button
+    on:click={() => {
       action = Action.Sign;
       state = State.Confirm;
     }}
-    class="small">
+    variant="foreground"
+    size="small">
     Confirm
-  </button>
+  </Button>
 {/if}
 
 <!-- We've initiated an action -->
@@ -190,20 +188,21 @@
 
     <span slot="actions">
       {#if state === State.Confirm}
-        <button
-          class="primary"
+        <Button
+          variant="primary"
           on:click={() => confirmAnchor(anchor.safeTxHash)}>
           Confirm
-        </button>
-        <button class="text" on:click={close}>Cancel</button>
+        </Button>
+        <Button variant="text" on:click={close}>Cancel</Button>
       {:else if state === State.Success || state === State.Failed}
-        <button
+        <Button
+          variant="foreground"
           on:click={() => {
             close();
             dispatch("success");
           }}>
           Done
-        </button>
+        </Button>
       {/if}
     </span>
   </Modal>
@@ -243,20 +242,21 @@
 
     <span slot="actions">
       {#if state === State.Confirm}
-        <button
-          class="primary"
+        <Button
+          variant="primary"
           on:click={() => executeTransaction(anchor.safeTxHash)}>
           Confirm
-        </button>
-        <button class="text" on:click={close}>Cancel</button>
+        </Button>
+        <Button variant="text" on:click={close}>Cancel</Button>
       {:else if state === State.Success || state === State.Failed}
-        <button
+        <Button
+          variant="foreground"
           on:click={() => {
             close();
             dispatch("success");
           }}>
           Done
-        </button>
+        </Button>
       {/if}
     </span>
   </Modal>

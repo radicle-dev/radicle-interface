@@ -7,6 +7,7 @@
   import { assert } from "@app/error";
   import * as utils from "@app/utils";
   import Address from "@app/Address.svelte";
+  import Button from "@app/Button.svelte";
 
   import type { Org } from "./Org";
 
@@ -84,7 +85,9 @@
     </div>
 
     <div slot="actions">
-      <button class="regular" on:click={() => dispatch("close")}>Done</button>
+      <Button variant="secondary" on:click={() => dispatch("close")}>
+        Done
+      </Button>
     </div>
   </Modal>
 {:else if state === State.Proposed && org}
@@ -104,7 +107,9 @@
     </div>
 
     <div slot="actions">
-      <button class="regular" on:click={() => dispatch("close")}>Done</button>
+      <Button variant="secondary" on:click={() => dispatch("close")}>
+        Done
+      </Button>
     </div>
   </Modal>
 {:else}
@@ -152,24 +157,24 @@
 
     <div slot="actions">
       {#if state === State.Signing}
-        <button class="regular" on:click={() => dispatch("close")}>
+        <Button variant="text" on:click={() => dispatch("close")}>
           Cancel
-        </button>
+        </Button>
       {:else if state === State.Pending}
-        <button class="regular" on:click={() => dispatch("close")}>
-          Close
-        </button>
+        <Button variant="text" on:click={() => dispatch("close")}>Close</Button>
       {:else if state === State.Failed}
-        <button class="regular" on:click={resetForm}>Back</button>
+        <Button variant="negative" on:click={resetForm}>Back</Button>
       {:else}
-        <button
-          class="primary"
+        <Button
+          variant="primary"
           on:click={onSubmit}
           disabled={!newOwner || state !== State.Idle}>
           Submit
-        </button>
+        </Button>
 
-        <button class="text" on:click={() => dispatch("close")}>Cancel</button>
+        <Button variant="text" on:click={() => dispatch("close")}>
+          Cancel
+        </Button>
       {/if}
     </div>
   </Modal>

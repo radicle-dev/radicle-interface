@@ -7,6 +7,7 @@
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import { Status, State } from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   export let domain: string;
   export let config: Config;
@@ -71,9 +72,9 @@
     {#if [Status.Signing, Status.Pending].includes(state.status)}
       <Loading center small />
     {:else if state.status === Status.Success}
-      <button on:click={onDone}>Done</button>
+      <Button variant="foreground" on:click={onDone}>Done</Button>
     {:else if state.status === Status.Failed}
-      <button on:click={onClose}>Close</button>
+      <Button variant="foreground" on:click={onClose}>Close</Button>
     {/if}
   </span>
 </Modal>

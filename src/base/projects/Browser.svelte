@@ -4,6 +4,7 @@
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
   import * as utils from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -128,10 +129,6 @@
   }
 
   @media (max-width: 720px) {
-    button.browse {
-      width: 100%;
-      border-color: var(--color-secondary-faded);
-    }
     .column-right {
       padding: 1.5rem 0;
       min-width: 0;
@@ -161,11 +158,12 @@
   <!-- Mobile navigation -->
   {#if tree.entries.length > 0}
     <nav class="mobile">
-      <button
-        class="regular browse secondary center-content"
+      <Button
+        style="width: 100%;"
+        variant="secondary"
         on:click={toggleMobileFileTree}>
         Browse
-      </button>
+      </Button>
     </nav>
   {/if}
 

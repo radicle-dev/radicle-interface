@@ -11,6 +11,7 @@
   import Error from "@app/Error.svelte";
   import Address from "@app/Address.svelte";
   import * as utils from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -83,7 +84,9 @@
     </div>
 
     <div slot="actions">
-      <button class="regular" on:click={() => dispatch("close")}>Done</button>
+      <Button variant="secondary" on:click={() => dispatch("close")}>
+        Done
+      </Button>
     </div>
   </Modal>
 {:else if state === State.Proposed && org}
@@ -103,7 +106,9 @@
     </div>
 
     <div slot="actions">
-      <button class="regular" on:click={() => dispatch("close")}>Done</button>
+      <Button variant="secondary" on:click={() => dispatch("close")}>
+        Done
+      </Button>
     </div>
   </Modal>
 {:else if state === State.Mismatch}
@@ -115,10 +120,14 @@
     to the correct address and try again.
 
     <div slot="actions">
-      <button on:click={() => navigate(`/registrations/${name}`)}>
+      <Button
+        variant="negative"
+        on:click={() => navigate(`/registrations/${name}`)}>
         Go to registration &rarr;
-      </button>
-      <button on:click={() => dispatch("close")} class="text">Close</button>
+      </Button>
+      <Button variant="negative" on:click={() => dispatch("close")}>
+        Close
+      </Button>
     </div>
   </Error>
 {:else if state === State.Failed && error}
@@ -161,16 +170,16 @@
 
     <div slot="actions">
       {#if state === State.Signing}
-        <button class="regular" on:click={() => dispatch("close")}>
+        <Button variant="secondary" on:click={() => dispatch("close")}>
           Cancel
-        </button>
+        </Button>
       {:else if state === State.Pending}
-        <button class="regular" on:click={() => dispatch("close")}>
+        <Button variant="secondary" on:click={() => dispatch("close")}>
           Close
-        </button>
+        </Button>
       {:else}
-        <button
-          class="primary"
+        <Button
+          variant="primary"
           on:click={onSubmit}
           disabled={!name || state !== State.Idle}>
           {#if state === State.Checking}
@@ -178,9 +187,11 @@
           {:else}
             Submit
           {/if}
-        </button>
+        </Button>
 
-        <button class="text" on:click={() => dispatch("close")}>Cancel</button>
+        <Button variant="text" on:click={() => dispatch("close")}>
+          Cancel
+        </Button>
       {/if}
     </div>
   </Modal>

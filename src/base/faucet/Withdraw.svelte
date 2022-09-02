@@ -8,6 +8,7 @@
   import { Status, State } from "@app/utils";
   import { withdraw } from "./lib";
   import { session } from "@app/session";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
 
@@ -80,7 +81,7 @@
 
     <span slot="actions">
       {#if state.status === Status.Success}
-        <button on:click={back}>Back</button>
+        <Button variant="foreground" on:click={back}>Back</Button>
       {/if}
     </span>
   </Modal>

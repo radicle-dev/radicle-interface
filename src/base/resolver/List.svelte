@@ -4,6 +4,7 @@
   import type { Config } from "@app/config";
   import { Profile } from "@app/profile";
   import Loading from "@app/Loading.svelte";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
 
@@ -40,6 +41,6 @@
     </div>
   </span>
   <span slot="actions">
-    <button on:click={back}>Back</button>
+    <Button variant="foreground" on:click={back}>Back</Button>
   </span>
 </Modal>

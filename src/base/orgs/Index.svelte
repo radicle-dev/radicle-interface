@@ -8,6 +8,7 @@
   import Message from "@app/Message.svelte";
   import Cards from "@app/Cards.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   export let config: Config;
 
@@ -37,6 +38,7 @@
     display: flex;
     align-items: center;
     padding: 1rem 0;
+    gap: 1.5rem;
   }
 
   .my-orgs {
@@ -46,10 +48,6 @@
     padding: 2rem 0 1rem 0;
     font-style: italic;
     color: var(--color-foreground-faded);
-  }
-
-  button.create {
-    margin-left: 1.5rem;
   }
 
   .loading {
@@ -68,12 +66,9 @@
         <span>
           My <strong>Orgs</strong>
         </span>
-        <button
-          class="create regular secondary"
-          on:click={onCreate}
-          disabled={!account}>
+        <Button variant="secondary" on:click={onCreate} disabled={!account}>
           Create
-        </button>
+        </Button>
       </header>
 
       {#await Org.getOrgsByMember(account, config)}

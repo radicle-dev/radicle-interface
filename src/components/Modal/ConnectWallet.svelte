@@ -1,10 +1,12 @@
 <script lang="ts">
+  import type { Config } from "@app/config";
+
   import { createEventDispatcher } from "svelte";
   import { qrcode } from "pure-svg-code";
 
   import Modal from "@app/Modal.svelte";
   import { state } from "@app/session";
-  import type { Config } from "@app/config";
+  import Button from "@app/Button.svelte";
 
   export let uri: string;
   export let config: Config;
@@ -72,13 +74,14 @@
     </div>
 
     <div slot="actions">
-      <button
-        class="secondary small text-small"
+      <Button
+        variant="secondary"
+        size="small"
         on:click={onClickConnect}
         disabled={!config.metamask.signer}>
         Connect with Metamask
-      </button>
-      <button class="text small text-small" on:click={onClose}>Close</button>
+      </Button>
+      <Button variant="text" size="small" on:click={onClose}>Close</Button>
     </div>
   </Modal>
 </div>

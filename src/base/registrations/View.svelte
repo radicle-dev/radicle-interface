@@ -12,6 +12,7 @@
   import { assert } from "@app/error";
   import Error from "@app/Error.svelte";
   import { isAddressEqual, isReverseRecordSet } from "@app/utils";
+  import Button from "@app/Button.svelte";
 
   import { getRegistration, getOwner } from "./registrar";
   import type { EnsRecord } from "./resolver";
@@ -261,15 +262,20 @@
   <main>
     <header>
       <h1 class="bold">{domain}</h1>
-      <button
-        style="min-width: 60px;"
-        class="small primary"
-        class:active={editable}
-        disabled={!isOwner(state.owner)}
-        title={!isOwner(state.owner) ? "Only owner can edit this profile" : ""}
-        on:click={() => (editable = !editable)}>
-        Edit
-      </button>
+      <div style="width: 4rem;">
+        {#if !editable}
+          <Button
+            size="small"
+            variant="primary"
+            disabled={!isOwner(state.owner)}
+            title={!isOwner(state.owner)
+              ? "Only owner can edit this profile"
+              : ""}
+            on:click={() => (editable = !editable)}>
+            Edit
+          </Button>
+        {/if}
+      </div>
     </header>
     <Form
       {config}

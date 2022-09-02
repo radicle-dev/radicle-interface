@@ -40,6 +40,7 @@
     padding: 0.25rem 0.5rem;
     border: none;
     min-width: 0;
+    background-color: var(--color-background);
   }
   button:hover,
   button.active {

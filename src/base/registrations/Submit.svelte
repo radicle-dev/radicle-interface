@@ -9,6 +9,7 @@
   import Modal from "@app/Modal.svelte";
   import Err from "@app/Error.svelte";
   import BlockTimer from "@app/BlockTimer.svelte";
+  import Button from "@app/Button.svelte";
 
   import { registerName, State, state } from "./registrar";
 
@@ -100,7 +101,7 @@
 
     <span slot="actions">
       {#if $state.connection === State.Registered}
-        <button on:click={view} class="register">View</button>
+        <Button on:click={view} variant="foreground">View</Button>
       {/if}
     </span>
   </Modal>

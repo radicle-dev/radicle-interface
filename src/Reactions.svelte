@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import Button from "@app/Button.svelte";
 
   export let reactions: Record<string, number> | null = null;
 
@@ -7,11 +8,9 @@
 </script>
 
 <style>
-  .reaction {
-    margin-right: 0.6rem;
-    padding: 0 0.6rem;
-    height: 26px;
-    min-width: unset; /* Resets min-width from button in public.css */
+  .reactions {
+    display: flex;
+    gap: 0.5rem;
   }
 </style>
 
@@ -19,13 +18,13 @@
   <div class="reactions">
     {#each Object.entries(reactions) as [reaction, count]}
       <!-- TODO: Remove the disabled attribute once we are able to increment reactions -->
-      <button
-        disabled
-        class="reaction text-xsmall"
+      <Button
+        variant="foreground"
+        size="tiny"
         on:click={() => dispatch("click", reaction)}>
         {reaction}
         {count}
-      </button>
+      </Button>
     {/each}
   </div>
 {/if}
