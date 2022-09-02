@@ -1,6 +1,5 @@
 <script lang="ts">
   import type * as proj from "@app/project";
-  import AnchorBadge from "@app/base/profiles/AnchorBadge.svelte";
   import Diagram from "@app/Diagram.svelte";
   import { groupCommitsByWeek } from "@app/commit";
   import type { Host } from "@app/api";
@@ -10,7 +9,6 @@
   export let project: proj.ProjectInfo;
   export let seed: { api: Host };
   export let faded = false;
-  export let anchor: proj.Anchor | null = null;
   export let compact = false;
 
   const loadCommits = async () => {
@@ -69,9 +67,6 @@
   article:hover {
     border-color: var(--color-secondary);
   }
-  article:hover .anchor {
-    display: block;
-  }
   article:hover .activity {
     display: none !important;
   }
@@ -94,22 +89,10 @@
     display: flex;
     align-items: center;
   }
-  article .anchor-info {
-    display: flex;
-    align-items: center;
-  }
-  article .actions {
-    margin-right: 1rem;
-  }
-  article .commit,
-  article .actions {
+  article .commit {
     font-family: var(--font-family-monospace);
   }
-  article.project-faded .anchor {
-    color: var(--color-foreground-faded);
-  }
-  article .id,
-  article .anchor {
+  article .id {
     display: flex;
     justify-content: space-between;
   }
@@ -120,14 +103,8 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
   }
-  article .anchor-badge {
-    display: none;
-  }
   article:hover .id .urn {
     visibility: visible;
-  }
-  article:hover .anchor-badge {
-    display: block;
   }
   @media (max-width: 720px) {
     article {
@@ -163,25 +140,6 @@
     <div class="right">
       <div class="id">
         <span class="urn desktop">{project.urn}</span>
-      </div>
-      <div class="anchor">
-        <span class="anchor-info">
-          <span class="actions">
-            <slot name="actions" />
-          </span>
-          <span class="anchor-badge">
-            <slot name="anchor">
-              {#if anchor && project.head}
-                <AnchorBadge
-                  commit={project.head}
-                  head={project.head}
-                  noText
-                  noBg
-                  anchors={[anchor.anchor.stateHash]} />
-              {/if}
-            </slot>
-          </span>
-        </span>
       </div>
       {#await loadCommits() then points}
         <div class="desktop activity">

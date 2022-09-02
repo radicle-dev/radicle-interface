@@ -22,24 +22,6 @@ export type Delegate =
       id: PeerId;
     };
 
-export interface Anchor {
-  confirmed: true;
-  id: string;
-  anchor: {
-    stateHash: string;
-  };
-}
-
-export interface PendingAnchor {
-  confirmed: false;
-  id: string;
-  safeTxHash: string; // Safe transaction hash.
-  confirmations: string[]; // Owner addresses who have confirmed.
-  anchor: {
-    stateHash: string;
-  };
-}
-
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
   Tree,
@@ -277,7 +259,6 @@ export class Project implements ProjectInfo {
   peers: Peer[];
   branches: Branches;
   profile: Profile | null;
-  anchors: string[];
   // At the moment we still have seed nodes which won't return neither patches or issues
   patches?: number;
   issues?: number;
@@ -289,7 +270,6 @@ export class Project implements ProjectInfo {
     peers: Peer[],
     branches: Branches,
     profile: Profile | null,
-    anchors: string[],
   ) {
     this.urn = urn;
     this.head = info.head;
@@ -304,7 +284,6 @@ export class Project implements ProjectInfo {
     this.patches = info.patches;
     this.issues = info.issues;
     this.profile = profile;
-    this.anchors = anchors;
   }
 
   async getRoot(
@@ -480,9 +459,6 @@ export class Project implements ProjectInfo {
 
     const info = await Project.getInfo(id, seed.api);
     const urn = isRadicleId(id) ? id : info.urn;
-    const anchors = profile
-      ? await profile.confirmedProjectAnchors(urn, config)
-      : [];
 
     // Older versions of http-api don't include the URN.
     if (!info.urn) info.urn = urn;
@@ -503,7 +479,7 @@ export class Project implements ProjectInfo {
       }
     }
 
-    return new Project(urn, info, seed, peers, remote.heads, profile, anchors);
+    return new Project(urn, info, seed, peers, remote.heads, profile);
   }
 
   static async getMulti(

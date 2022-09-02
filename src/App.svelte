@@ -6,8 +6,6 @@
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
-  import Orgs from "@app/base/orgs/Routes.svelte";
-  import Users from "@app/base/users/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
   import Projects from "@app/base/projects/Routes.svelte";
@@ -92,10 +90,8 @@
           <Vesting {config} session={$session} />
         </Route>
         <Registrations {config} session={$session} />
-        <Orgs />
         <Seeds {config} session={$session} />
         <Faucet {config} />
-        <Users />
         <Resolver {config} />
         <Route path="/:addressOrName" let:params>
           <Profile addressOrName={params.addressOrName} {config} />

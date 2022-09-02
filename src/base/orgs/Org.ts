@@ -1,37 +1,12 @@
 import * as ethers from "ethers";
 import type { TransactionResponse } from "@ethersproject/providers";
-import type { ContractReceipt } from "@ethersproject/contracts";
 import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
 import { assert } from "@app/error";
 import * as utils from "@app/utils";
 import * as cache from "@app/cache";
-import type { SafeMultisigTransactionListResponse } from "@gnosis.pm/safe-service-client";
-import type SafeServiceClient from "@gnosis.pm/safe-service-client";
 import type { Safe } from "@app/utils";
 import type { Config } from "@app/config";
-import type { PendingAnchor, Anchor } from "@app/project";
-
-const GetProjects = `
-  query GetProjects($org: ID!) {
-    projects(where: { org: $org }) {
-      anchor {
-        objectId
-        multihash
-        timestamp
-      }
-    }
-  }
-`;
-
-const GetOrgs = `
-  query GetOrgs {
-    orgs {
-      id
-      owner
-    }
-  }
-`;
 
 const GetSafesByOwners = `
   query GetSafesByOwners($owners: [String!]!) {
@@ -198,119 +173,6 @@ export class Org {
     return members.includes(address.toLowerCase());
   }
 
-  async getProjects(config: Config): Promise<Anchor[]> {
-    const result = await utils.querySubgraph(
-      config.orgs.subgraph,
-      GetProjects,
-      { org: this.address },
-    );
-    const projects: Anchor[] = [];
-
-    for (const p of result.projects) {
-      try {
-        const proj: Anchor = {
-          confirmed: true,
-          id: utils.formatRadicleId(ethers.utils.arrayify(p.anchor.objectId)),
-          anchor: {
-            stateHash: utils.formatProjectHash(
-              ethers.utils.arrayify(p.anchor.multihash),
-            ),
-          },
-        };
-        projects.push(proj);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return projects;
-  }
-
-  async getPendingProjects(config: Config): Promise<PendingAnchor[]> {
-    if (!config.safe.client) return [];
-
-    try {
-      const orgAddr = ethers.utils.getAddress(this.address);
-      const response = await getPendingProjects(
-        ethers.utils.getAddress(this.owner),
-        config.safe.client,
-      );
-      const projects: PendingAnchor[] = [];
-
-      for (const tx of response.results || []) {
-        if (tx.data && tx.to === orgAddr) {
-          const anchor = parseAnchorTx(tx.data, config);
-          const confirmations = tx.confirmations?.map(t => t.owner) || [];
-
-          if (anchor) {
-            projects.push({
-              id: anchor.id,
-              anchor: { stateHash: anchor.stateHash },
-              confirmations,
-              safeTxHash: tx.safeTxHash,
-              confirmed: false,
-            });
-          }
-        }
-      }
-      return projects;
-    } catch {
-      return [];
-    }
-  }
-
-  static async getAnchor(
-    orgAddr: string,
-    urn: string,
-    config: Config,
-  ): Promise<string | null> {
-    const org = new ethers.Contract(orgAddr, config.abi.org, config.provider);
-    const unpadded = utils.decodeRadicleId(urn);
-    const id = ethers.utils.zeroPad(unpadded, 32);
-
-    try {
-      const [, hash] = await org.anchors(id);
-      const anchor = utils.formatProjectHash(ethers.utils.arrayify(hash));
-
-      return anchor;
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }
-
-  static async getMulti(ids: string[], config: Config): Promise<Array<Org>> {
-    const results = await Promise.all(ids.map(addr => Org.get(addr, config)));
-    const orgs = results.filter((org): org is Org => org !== null);
-
-    return orgs;
-  }
-
-  static async getAll(config: Config): Promise<Array<Org>> {
-    const result = await utils.querySubgraph(config.orgs.subgraph, GetOrgs, {});
-    const orgs: Org[] = [];
-
-    for (const o of result.orgs) {
-      try {
-        orgs.push(new Org(o.id, o.owner));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return orgs;
-  }
-
-  static fromReceipt(receipt: ContractReceipt): Org | null {
-    const event = receipt.events?.find(e => e.event === "OrgCreated");
-
-    if (event && event.args) {
-      const address = event.args[0];
-      const owner = event.args[1];
-
-      return new Org(address, owner);
-    }
-    return null;
-  }
-
   static async get(addressOrName: string, config: Config): Promise<Org | null> {
     const org = await getOrgContract(addressOrName, config);
 
@@ -354,62 +216,6 @@ export class Org {
 
     return orgs.map(o => new Org(o.id, o.owner));
   }
-
-  static async createMultiSig(
-    owners: [string],
-    threshold: number,
-    config: Config,
-  ): Promise<TransactionResponse> {
-    assert(config.signer);
-
-    const orgFactory = new ethers.Contract(
-      config.orgFactory.address,
-      config.abi.orgFactory,
-      config.signer,
-    );
-
-    return orgFactory["createOrg(address[],uint256)"](owners, threshold, {
-      gasLimit: config.gasLimits.createOrg,
-    });
-  }
-
-  static async create(
-    owner: string,
-    config: Config,
-  ): Promise<TransactionResponse> {
-    assert(config.signer);
-
-    const orgFactory = new ethers.Contract(
-      config.orgFactory.address,
-      config.abi.orgFactory,
-      config.signer,
-    );
-
-    return orgFactory["createOrg(address)"](owner, {
-      gasLimit: config.gasLimits.createOrg,
-    });
-  }
-}
-
-export function parseAnchorTx(
-  data: string,
-  config: Config,
-): { id: string; stateHash: string } | null {
-  const iface = new ethers.utils.Interface(config.abi.org);
-  const parsedTx = iface.parseTransaction({ data });
-
-  if (parsedTx.name === "anchor") {
-    const encodedProjectUrn = parsedTx.args[0];
-    const encodedCommitHash = parsedTx.args[2];
-    const id = utils.formatRadicleId(
-      ethers.utils.arrayify(`${encodedProjectUrn}`),
-    );
-    const byteArray = ethers.utils.arrayify(encodedCommitHash);
-    const stateHash = utils.formatProjectHash(byteArray);
-
-    return { id, stateHash };
-  }
-  return null;
 }
 
 export const getOrgContract = cache.cached(
@@ -424,21 +230,4 @@ export const resolveOrgOwner = cache.cached(
     return await Promise.all([org.owner(), org.resolvedAddress]);
   },
   org => org.address,
-);
-
-export const getPendingProjects = cache.cached(
-  async (
-    owner: string,
-    client: SafeServiceClient,
-  ): Promise<SafeMultisigTransactionListResponse> => {
-    try {
-      return await client.getPendingTransactions(
-        ethers.utils.getAddress(owner),
-      );
-    } catch (e) {
-      return { count: 0, results: [] };
-    }
-  },
-  owner => owner,
-  { max: 1000, ttl: 5 * 60 * 1000 }, // Cache results for 5 minutes.
 );

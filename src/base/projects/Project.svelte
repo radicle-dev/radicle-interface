@@ -74,7 +74,7 @@
   {#await project.getRoot(revision)}
     <Loading center />
   {:then { tree, commit }}
-    <Header {tree} {commit} {browserStore} {project} noAnchor />
+    <Header {tree} {commit} {browserStore} {project} />
 
     {#if content === proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />

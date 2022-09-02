@@ -6,7 +6,7 @@
   import Icon from "@app/Icon.svelte";
   import SetName from "@app/ens/SetName.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
-  import TransferOwnership from "@app/base/orgs/TransferOwnership.svelte";
+  import TransferOwnership from "@app/components/TransferOwnership.svelte";
   import Link from "@app/Link.svelte";
   import { getBalance, Profile, ProfileType } from "@app/profile";
   import Loading from "@app/Loading.svelte";
@@ -16,7 +16,7 @@
   import Message from "@app/Message.svelte";
   import Error from "@app/Error.svelte";
   import { User } from "@app/base/users/User";
-  import Projects from "@app/base/orgs/View/Projects.svelte";
+  import Projects from "@app/base/seeds/View/Projects.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/error";
   import NotFound from "@app/NotFound.svelte";
   import RadicleUrn from "@app/RadicleUrn.svelte";
@@ -448,12 +448,7 @@
     {/if}
     {#if profile.seed?.valid}
       <Async fetch={profile.seed.getProjects(10, profile.id)} let:result>
-        <Projects
-          {profile}
-          seed={profile.seed}
-          {account}
-          projects={result}
-          {config} />
+        <Projects {profile} seed={profile.seed} projects={result} />
       </Async>
     {/if}
   </main>

@@ -6,7 +6,7 @@
   import SeedAddress from "@app/SeedAddress.svelte";
   import NotFound from "@app/NotFound.svelte";
   import Clipboard from "@app/Clipboard.svelte";
-  import Projects from "@app/base/orgs/View/Projects.svelte";
+  import Projects from "@app/base/seeds/View/Projects.svelte";
   import type { Session } from "@app/session";
   import Address from "@app/Address.svelte";
   import SiweConnect from "@app/SiweConnect.svelte";
@@ -158,7 +158,7 @@
     </div>
     <!-- Seed Projects -->
     <Async fetch={Project.getProjects(seedHost, { perPage: 10 })} let:result>
-      <Projects {seed} {config} projects={result} />
+      <Projects {seed} projects={result} />
     </Async>
   </main>
 {:catch}

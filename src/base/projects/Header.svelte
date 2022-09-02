@@ -2,7 +2,6 @@
   import type { Writable } from "svelte/store";
   import { navigate } from "svelte-routing";
   import { Browser, ProjectContent, Project } from "@app/project";
-  import AnchorBadge from "@app/base/profiles/AnchorBadge.svelte";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
@@ -12,9 +11,8 @@
   export let tree: Tree;
   export let commit: string;
   export let browserStore: Writable<Browser>;
-  export let noAnchor = false;
 
-  const { urn, peers, branches, seed, anchors } = project;
+  const { urn, peers, branches, seed } = project;
 
   $: browser = $browserStore;
   $: revision = browser.revision || commit;
@@ -53,9 +51,6 @@
   .widget {
     border-radius: var(--border-radius-small);
     min-width: max-content;
-  }
-  .anchor {
-    display: inline-flex;
   }
   .clickable {
     cursor: pointer;
@@ -103,16 +98,6 @@
     {project}
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />
-
-  {#if !noAnchor}
-    <div class="anchor widget">
-      <AnchorBadge
-        {commit}
-        {anchors}
-        head={project.head}
-        on:click={event => updateRevision(event.detail)} />
-    </div>
-  {/if}
 
   {#if seed.git.host}
     <CloneButton seedHost={seed.git.host} {urn} />

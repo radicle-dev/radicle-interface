@@ -9,7 +9,7 @@
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
 
-  import type { Org } from "./Org";
+  import type { Org } from "@app/base/orgs/Org";
 
   const dispatch = createEventDispatcher();
 
