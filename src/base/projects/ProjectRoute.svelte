@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
   import type { Config } from "@app/config";
+  import { router } from "tinro";
   import { formatLocationHash } from "@app/utils";
   import * as proj from "@app/project";
-  import type { RouteLocation } from "@app/index";
 
   import Project from "@app/base/projects/Project.svelte";
 
@@ -16,13 +16,13 @@
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
   export let config: Config;
-  export let location: RouteLocation | null = null;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
   const head = project.branches[project.defaultBranch] || null;
 
+  const hash = router.location.hash.get();
   // If line-number hash changes, we update the browser.
-  $: browse.line = formatLocationHash(location?.hash || null);
+  $: browse.line = formatLocationHash(hash);
 
   // `route` includes any unmatched path segments.
   $: if (route) {
@@ -34,17 +34,13 @@
     browse.revision = revision;
   } else if (issue) {
     browse.issue = issue;
-  } else if (location) {
-    browse.search = new URLSearchParams(location.search);
   } else if (patch) {
     browse.patch = patch;
   } else if (head) {
     browse.revision = head;
   } else {
     const branchNames = Object.keys(project.branches);
-    const firstBranch = branchNames.length >= 1 ? branchNames[0] : null;
-
-    browse.revision = firstBranch;
+    browse.revision = branchNames.length >= 1 ? branchNames[0] : null;
   }
 
   $: proj.browse({ ...browse, peer });

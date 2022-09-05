@@ -1,7 +1,6 @@
 <script lang="ts">
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
-  import { Link } from "svelte-routing";
   import { formatSeedId } from "@app/utils";
   import { type PeerId, type Project, ProjectContent } from "@app/project";
 
@@ -87,7 +86,7 @@
       <span class="divider">/</span>
     {/if}
     <span class="text-truncate">
-      <Link to={rootPath()}>{project.name}</Link>
+      <a href={rootPath()} class="link">{project.name}</a>
     </span>
     {#if peer}
       <span class="peer-id">

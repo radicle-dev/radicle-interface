@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { link } from "svelte-routing";
   import { formatAddress, formatBalance } from "@app/utils";
   import { error, Failure } from "@app/error";
   import { disconnectWallet } from "@app/session";
@@ -170,12 +169,12 @@
 
 <header>
   <div class="left">
-    <a use:link href="/" class="logo"><Logo /></a>
+    <a href="/" class="logo"><Logo /></a>
     <div class="search">
       <Search />
     </div>
     <div class="nav">
-      <a use:link class="nav-link" href="/registrations">Register</a>
+      <a class="nav-link" href="/registrations">Register</a>
 
       {#if session && Object.keys(session.siwe).length > 0}
         <span class="seeds-container">

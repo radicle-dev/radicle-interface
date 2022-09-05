@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
   import { formatAddress, isAddressEqual } from "@app/utils";
@@ -115,7 +115,7 @@
     to the correct address and try again.
 
     <div slot="actions">
-      <button on:click={() => navigate(`/registrations/${name}`)}>
+      <button on:click={() => router.goto(`/registrations/${name}`)}>
         Go to registration &rarr;
       </button>
       <button on:click={() => dispatch("close")} class="text">Close</button>

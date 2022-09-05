@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { ethers } from "ethers";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import type { Config } from "@app/config";
   import * as utils from "@app/utils";
   import Error from "@app/Error.svelte";
@@ -21,11 +21,11 @@
           addressType === utils.AddressType.Org ||
           addressType === utils.AddressType.EOA
         ) {
-          navigate(`/${query}`, { replace: true });
+          router.goto(`/${query}`);
         }
       } else if (utils.isRadicleId(query)) {
         // Go to Radicle project.
-        navigate(`/projects/${query}`, { replace: true });
+        router.goto(`/projects/${query}`);
       } else {
         // Jump straight to org, if the ENS entry points to an org. Otherwise it checks if the
         // address type is an EOA and jumps to the user page else it just goes to the registration.
@@ -36,13 +36,13 @@
           addressType === utils.AddressType.Org ||
           addressType === utils.AddressType.EOA
         ) {
-          navigate(`/${address}`, { replace: true });
+          router.goto(`/${address}`);
         } else {
-          navigate(`/registrations/${query}`, { replace: true });
+          router.goto(`/registrations/${query}`);
         }
       }
     } else {
-      navigate("/");
+      router.goto("/");
     }
   });
 </script>
@@ -53,7 +53,7 @@
 
 <main class="off-centered">
   {#if error}
-    <Error on:close={() => navigate("/")}>
+    <Error on:close={() => router.goto("/")}>
       Invalid query string “{query}”
     </Error>
   {:else}

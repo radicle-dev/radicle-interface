@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
 import multibase from "multibase";
@@ -360,9 +359,9 @@ export function isAddress(input: string): boolean {
 // Get search parameters from location.
 export function getSearchParam(
   key: string,
-  location: RouteLocation,
+  location: Record<string, string>,
 ): string | null {
-  const params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(location);
   return params.get(key);
 }
 

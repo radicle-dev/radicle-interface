@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import { formatAddress } from "@app/utils";
   import { session } from "@app/session";
   import type { Config } from "@app/config";
@@ -31,7 +31,7 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(
+    router.goto(
       `/registrations/${name}/submit?${
         registrationOwner
           ? new URLSearchParams({ owner: registrationOwner })
@@ -104,11 +104,13 @@
         <Connect caption="Connect to register" className="primary" {config} />
       {/if}
 
-      <button on:click={() => navigate("/registrations")} class="text">
+      <button on:click={() => router.goto("/registrations")} class="text">
         Cancel
       </button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <button on:click={() => navigate("/registrations")} class="">Back</button>
+      <button on:click={() => router.goto("/registrations")} class="">
+        Back
+      </button>
     {/if}
   </span>
 </Modal>

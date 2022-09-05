@@ -4,7 +4,7 @@
   import { session } from "@app/session";
   import { setOpenGraphMetaTag, toWei } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import {
     getMaxWithdrawAmount,
     lastWithdrawalByUser,
@@ -26,7 +26,7 @@
 
   async function withdraw() {
     const [state, message] = await isAbleToWithdraw(amount);
-    if (state === true) navigate("/faucet/withdraw", { state: { amount } });
+    if (state === true) router.goto(`/faucet/withdraw?amount=${amount}`);
     else error = message;
   }
 

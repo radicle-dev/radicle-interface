@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
   import Search from "./Search.svelte";
   import { clickOutside } from "@app/utils";
@@ -66,8 +65,8 @@
         <Search size={20} on:search={() => dispatch("select")} />
       </div>
       <div>
-        <a use:link on:click={() => dispatch("select")} href="/orgs">Orgs</a>
-        <a use:link on:click={() => dispatch("select")} href="/registrations">
+        <a on:click={() => dispatch("select")} href="/orgs">Orgs</a>
+        <a on:click={() => dispatch("select")} href="/registrations">
           Register
         </a>
       </div>

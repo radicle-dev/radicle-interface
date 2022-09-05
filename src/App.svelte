@@ -1,22 +1,24 @@
 <script lang="ts">
-  import { Router, Route } from "svelte-routing";
+  import { Route, router } from "tinro";
   import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
+  import { getSearchParam } from "@app/utils";
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
-  import Orgs from "@app/base/orgs/Routes.svelte";
-  import Users from "@app/base/users/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
-  import Projects from "@app/base/projects/Routes.svelte";
+  import NotFound from "@app/NotFound.svelte";
   import Profile from "@app/Profile.svelte";
-  import Resolver from "@app/base/resolver/Routes.svelte";
+  import Resolve from "@app/base/resolver/Query.svelte";
   import Header from "@app/Header.svelte";
+  import ProjectView from "@app/base/projects/View.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import LinearGradient from "@app/LinearGradient.svelte";
+
+  router.mode.history();
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {
@@ -81,24 +83,79 @@
   {:then config}
     <Header session={$session} {config} />
     <div class="wrapper">
-      <Router>
+      <Route firstmatch>
         <Route path="/">
           <Home {config} />
         </Route>
-        <Route path="vesting">
+
+        <Route path="/registrations/*" firstmatch>
+          <Registrations {config} session={$session} />
+        </Route>
+
+        <Route path="/seeds/*" firstmatch>
+          <Seeds {config} session={$session} />
+        </Route>
+
+        <Route path="/faucet/*" firstmatch>
+          <Faucet {config} />
+        </Route>
+
+        <Route path="/resolver/query" let:meta>
+          <Resolve {config} query={getSearchParam("q", meta.query)} />
+        </Route>
+
+        <Route path="/vesting">
           <Vesting {config} session={$session} />
         </Route>
-        <Registrations {config} session={$session} />
-        <Orgs />
-        <Seeds {config} session={$session} />
-        <Faucet {config} />
-        <Users />
-        <Resolver {config} />
-        <Route path="/:addressOrName" let:params>
-          <Profile addressOrName={params.addressOrName} {config} />
+
+        <Route path="/users/:addressOrName" let:meta firstmatch>
+          <Route path="/" redirect="/{meta.params.addressOrName}" />
+          <Route path="/users/:addressOrName/projects/:id/*" let:meta>
+            <Route
+              path="/"
+              redirect="/{meta.params.addressOrName}/{meta.params.id}/{meta
+                .params['*']}" />
+          </Route>
         </Route>
-        <Projects {config} />
-      </Router>
+
+        <Route path="/orgs/*" firstmatch>
+          <Route path="/">
+            <NotFound
+              title="404"
+              subtitle="Radicle Orgs are in the process of being re-designed." />
+          </Route>
+          <Route path="/:addressOrName" let:meta>
+            <Route path="/" redirect="/{meta.params.addressOrName}" />
+          </Route>
+          <Route path="/:addressOrName/projects/:id/*" let:meta>
+            <Route
+              path="/"
+              redirect="/{meta.params.addressOrName}/{meta.params.id}/{meta
+                .params['*']}" />
+          </Route>
+        </Route>
+
+        <Route path="/:addressOrName/*" firstmatch>
+          <Route path="/" let:meta>
+            <Profile addressOrName={meta.params.addressOrName} {config} />
+          </Route>
+          <Route path="/:id/*" firstmatch>
+            <Route path="/" let:meta>
+              <ProjectView
+                {config}
+                profileName={meta.params.addressOrName}
+                id={meta.params.id} />
+            </Route>
+            <Route path="/remotes/:peer/*" let:meta>
+              <ProjectView
+                {config}
+                profileName={meta.params.addressOrName}
+                id={meta.params.id}
+                peer={meta.params.peer} />
+            </Route>
+          </Route>
+        </Route>
+      </Route>
     </div>
   {:catch err}
     <div class="wrapper">

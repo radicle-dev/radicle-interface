@@ -1,19 +1,15 @@
 ///<reference types="vitest" />
 import path from "path";
-import { UserConfig } from "vite";
+import type { UserConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { ViteDevServer } from "vite";
+import type { ViteDevServer } from "vite";
 import IstanbulPlugin from "vite-plugin-istanbul";
 import history from "connect-history-api-fallback";
 import type { Request, Response } from "express-serve-static-core";
 
 const config: UserConfig = {
   optimizeDeps: {
-    exclude: [
-      "svelte-routing",
-      "@pedrouid/environment",
-      "@pedrouid/iso-crypto",
-    ],
+    exclude: ["@pedrouid/environment", "@pedrouid/iso-crypto", "tinro"],
   },
   test: {
     deps: {

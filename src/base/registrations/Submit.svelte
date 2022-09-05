@@ -2,7 +2,7 @@
   // TODO: When name is registered, prompt user to edit records.
   // TODO: When transfering name, warn about transfering to org.
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import type { Session } from "@app/session";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
@@ -20,8 +20,7 @@
   let error: Error | null = null;
   const registrationOwner = owner || session.address;
 
-  const view = () =>
-    navigate(`/registrations/${name}.radicle.eth`, { state: { retry: true } });
+  const view = () => router.goto(`/registrations/${name}.radicle.eth`);
 
   onMount(async () => {
     try {
@@ -51,7 +50,7 @@
   <Err
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate("/registrations")} />
+    on:close={() => router.goto("/registrations")} />
 {:else}
   <Modal>
     <span slot="title">

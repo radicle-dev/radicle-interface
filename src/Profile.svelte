@@ -7,7 +7,6 @@
   import SetName from "@app/ens/SetName.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
   import TransferOwnership from "@app/base/orgs/TransferOwnership.svelte";
-  import Link from "@app/Link.svelte";
   import { getBalance, Profile, ProfileType } from "@app/profile";
   import Loading from "@app/Loading.svelte";
   import * as utils from "@app/utils";
@@ -369,11 +368,11 @@
               {#each members as profile}
                 <div class="member">
                   <div class="member-icon">
-                    <Link to="/{profile.address}">
+                    <a href="/{profile.address}" class="link">
                       <Avatar
                         source={profile.avatar ?? profile.address}
                         title={profile.address} />
-                    </Link>
+                    </a>
                   </div>
                   <div class="desktop">
                     <Address
@@ -409,11 +408,11 @@
                   <Loading small margins />
                 {:then profile}
                   <div class="member-icon">
-                    <Link to="/{profile.address}">
+                    <a href="/{profile.address}" class="link">
                       <Avatar
                         source={profile.avatar ?? profile.address}
                         title={profile.address} />
-                    </Link>
+                    </a>
                   </div>
                   <div class="desktop">
                     <Address

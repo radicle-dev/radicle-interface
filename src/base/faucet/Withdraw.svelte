@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
@@ -12,18 +12,23 @@
   export let config: Config;
 
   let error: Error;
-  const amount: string = window.history.state.amount;
+  // TODO: Type should be fixed, once https://github.com/AlexxNB/tinro/pull/119 gets merged.
+  const amount = router.location.query.get("amount") as string | undefined;
+
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",
   };
   $: requester = $session && $session.address;
 
-  const back = () => navigate(`/faucet`);
+  const back = () => router.goto(`/faucet`);
 
   onMount(async () => {
     try {
       if ($session) {
+        if (!amount) {
+          throw Error("No amount has been specified");
+        }
         state.status = Status.Signing;
         const tx = await withdraw(amount, $session.signer, config);
         state.status = Status.Pending;

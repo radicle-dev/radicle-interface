@@ -44,7 +44,6 @@
 </script>
 
 <script lang="ts">
-  import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
   import { capitalize, isUrl, isAddress, formatSeedId } from "@app/utils";
@@ -222,7 +221,7 @@
               </div>
             {:else if field.url}
               <div>
-                <a class="link" use:link href={field.url}>{field.value}</a>
+                <a class="link" href={field.url}>{field.value}</a>
               </div>
             {:else if field.validate === "id"}
               <div class="mobile">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import { onMount } from "svelte";
   import type { Config } from "@app/config";
   import * as proj from "@app/project";
@@ -32,7 +32,7 @@
   };
 
   const onClick = (project: ProjectInfo) => {
-    navigate(
+    router.goto(
       proj.path({
         urn: project.urn,
         seed: seed?.host,

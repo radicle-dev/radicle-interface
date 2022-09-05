@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import Modal from "@app/Modal.svelte";
   import Error from "@app/Error.svelte";
   import type { Err } from "@app/error";
@@ -149,7 +149,7 @@
     </span>
 
     <span slot="actions">
-      <button on:click={() => navigate(`/${org?.address}`)}>Done</button>
+      <button on:click={() => router.goto(`/${org?.address}`)}>Done</button>
     </span>
   </Modal>
 {:else}

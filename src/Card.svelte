@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Link } from "svelte-routing";
   import Avatar from "@app/Avatar.svelte";
   import type { Profile } from "@app/profile";
   import type { Config } from "@app/config";
@@ -87,7 +86,7 @@
   }
 </style>
 
-<Link to={path}>
+<a href={path}>
   <div class="card" class:seed={!!seed}>
     <div class="card-avatar">
       {#if profile}
@@ -129,4 +128,4 @@
       {/if}
     </div>
   </div>
-</Link>
+</a>

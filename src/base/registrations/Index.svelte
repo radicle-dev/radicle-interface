@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
+  import { fade } from "svelte/transition";
   import type { Config } from "@app/config";
 
   import DomainInput from "@app/ens/DomainInput.svelte";
@@ -9,7 +10,7 @@
   let input = "";
 
   function register() {
-    navigate(`/registrations/${label}/form`);
+    router.goto(`/registrations/${label}/form`);
   }
 
   function validate(input: string): string[] {
@@ -65,7 +66,7 @@
   <title>Radicle: Register</title>
 </svelte:head>
 
-<main class="off-centered">
+<main class="off-centered" in:fade={{ duration: 200 }}>
   <div>
     <div class="input-caption">
       Register a <strong>{config.registrar.domain}</strong>

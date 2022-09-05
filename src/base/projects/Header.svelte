@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import { Browser, ProjectContent, Project } from "@app/project";
   import AnchorBadge from "@app/base/profiles/AnchorBadge.svelte";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
@@ -122,7 +122,7 @@
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
-        on:click={() => navigate(`/seeds/${seed.api.host}`)}>
+        on:click={() => router.goto(`/seeds/${seed.api.host}`)}>
         <span>{seed.api.host}</span>
       </div>
     {/if}

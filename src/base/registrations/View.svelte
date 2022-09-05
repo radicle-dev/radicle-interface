@@ -1,11 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import type { Config } from "@app/config";
   import type { ethers } from "ethers";
   import { session } from "@app/session";
   import Loading from "@app/Loading.svelte";
-  import Link from "@app/Link.svelte";
   import Modal from "@app/Modal.svelte";
   import Form from "@app/Form.svelte";
   import type { Field } from "@app/Form.svelte";
@@ -236,7 +235,7 @@
 {:else if state.status === Status.Failed}
   <Error
     title="Registration could not be loaded"
-    on:close={() => navigate("/registrations")}>
+    on:close={() => router.goto("/registrations")}>
     {state.error}
   </Error>
 {:else if state.status === Status.NotFound}
@@ -254,7 +253,9 @@
     </span>
 
     <span slot="actions">
-      <Link to={`/registrations/${domain}/form`} primary>Register &rarr;</Link>
+      <a href={`/registrations/${domain}/form`} class="primary link">
+        Register &rarr;
+      </a>
     </span>
   </Modal>
 {:else if state.status === Status.Found}

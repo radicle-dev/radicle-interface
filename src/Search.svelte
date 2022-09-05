@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import { createEventDispatcher } from "svelte";
 
   export let size = 40;
@@ -10,7 +10,7 @@
   const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       dispatch("search");
-      navigate(`/resolver/query?${new URLSearchParams({ q: input })}`);
+      router.goto(`/resolver/query?${new URLSearchParams({ q: input })}`);
     }
   };
 </script>

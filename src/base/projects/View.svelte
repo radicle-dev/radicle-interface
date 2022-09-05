@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { Route, Router } from "svelte-routing";
+  import { Route } from "tinro";
   import { Project, ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
   import NotFound from "@app/NotFound.svelte";
@@ -42,93 +42,99 @@
       <Loading center />
     </header>
   {:then project}
-    <Router>
-      <!-- The default action is to render Browser with the default branch head -->
+    <!-- The default action is to render Browser with the default branch head -->
+    <Route path="/">
+      <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
+    </Route>
+
+    <Route path="/tree/*" firstmatch>
       <Route path="/">
         <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
       </Route>
-      <Route path="/tree">
-        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
-      </Route>
-      <Route path="/tree/*" let:params let:location>
+
+      <Route path="/*" let:meta>
         <ProjectRoute
-          route={params["*"]}
+          route={meta.params["*"]}
           content={ProjectContent.Tree}
-          {location}
           {peer}
           {project}
           {config} />
       </Route>
+    </Route>
 
-      <Route path="/history">
+    <Route path="/history/*" firstmatch>
+      <Route path="/">
         <ProjectRoute
           content={ProjectContent.History}
           {peer}
           {project}
           {config} />
       </Route>
-      <Route path="/history/*" let:params let:location>
+      <Route path="/*" let:meta>
         <ProjectRoute
-          route={params["*"]}
+          route={meta.params["*"]}
           content={ProjectContent.History}
-          {location}
           {peer}
           {project}
           {config} />
       </Route>
+    </Route>
 
-      <Route path="/commits/:commit" let:params>
+    <Route path="/commits/*" firstmatch>
+      <Route path="/:commit" let:meta>
         <ProjectRoute
-          revision={params.commit}
+          revision={meta.params.commit}
           content={ProjectContent.Commit}
           {peer}
           {project}
           {config} />
       </Route>
-      <Route path="/commits/*" let:params let:location>
+
+      <Route path="/*" let:meta>
         <ProjectRoute
-          route={params["*"]}
+          route={meta.params["*"]}
           content={ProjectContent.Commit}
-          {location}
           {peer}
           {project}
           {config} />
       </Route>
+    </Route>
 
-      <Route path="/issues" let:location>
+    <Route path="/issues/*" firstmatch>
+      <Route path="/">
         <ProjectRoute
           content={ProjectContent.Issues}
           {peer}
           {project}
-          {location}
           {config} />
       </Route>
-      <Route path="/issues/:issue" let:params let:location>
+      <Route path="/:issue" let:meta>
         <ProjectRoute
           content={ProjectContent.Issue}
-          issue={params.issue}
+          issue={meta.params.issue}
           {peer}
           {project}
-          {location}
           {config} />
       </Route>
+    </Route>
 
-      <Route path="/patches">
+    <Route path="/patches/*" firstmatch>
+      <Route path="/">
         <ProjectRoute
           content={ProjectContent.Patches}
           {peer}
           {project}
           {config} />
       </Route>
-      <Route path="/patches/:patch" let:params>
+      <Route path="/:patch" let:meta>
         <ProjectRoute
           content={ProjectContent.Patch}
-          patch={params.patch}
+          patch={meta.params.patch}
           {peer}
           {project}
           {config} />
       </Route>
-    </Router>
+    </Route>
   {:catch}
     <NotFound title={id} subtitle="This project was not found." />
   {/await}

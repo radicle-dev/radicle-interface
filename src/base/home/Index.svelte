@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
+  import { fade } from "svelte/transition";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
@@ -23,7 +24,7 @@
       : Promise.resolve([]);
 
   const onClick = (project: ProjectInfo, seed: Host) => {
-    navigate(
+    router.goto(
       proj.path({
         urn: project.urn,
         seed: seed.host,
@@ -83,7 +84,7 @@
   <title>Radicle &ndash; Home</title>
 </svelte:head>
 
-<main>
+<main in:fade={{ duration: 200 }}>
   <div class="blurb">
     <p>
       Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software

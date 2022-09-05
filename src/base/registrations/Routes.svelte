@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Route, navigate } from "svelte-routing";
+  import { Route } from "tinro";
   import Index from "@app/base/registrations/Index.svelte";
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
@@ -13,28 +13,29 @@
   export let config: Config;
 </script>
 
-<Route path="registrations">
+<Route path="/">
   <Index {config} />
 </Route>
 
-<Route path="registrations/:name/form" let:params let:location>
-  <New {config} name={params.name} owner={getSearchParam("owner", location)} />
+<Route path="/:domain" let:meta>
+  <View {config} domain={meta.params.domain} />
 </Route>
 
-<Route path="registrations/:name/submit" let:params let:location>
+<Route path="/:domain/form" let:meta>
+  <New
+    {config}
+    name={meta.params.domain}
+    owner={getSearchParam("owner", meta.query)} />
+</Route>
+
+<Route path="/:domain/submit" let:meta>
   {#if session}
     <Submit
       {config}
-      name={params.name}
-      owner={getSearchParam("owner", location)}
+      name={meta.params.domain}
+      owner={getSearchParam("owner", meta.query)}
       {session} />
   {:else}
-    <Error
-      message={"You must connect your wallet to register"}
-      on:close={() => navigate("/registrations")} />
+    <Error message={"You must connect your wallet to register"} />
   {/if}
-</Route>
-
-<Route path="registrations/:domain" let:params>
-  <View {config} domain={params.domain} />
 </Route>

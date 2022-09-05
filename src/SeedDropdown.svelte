@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { router } from "tinro";
   import { Seed } from "@app/base/seeds/Seed";
   import type { Config } from "@app/config";
   import Dropdown from "@app/Dropdown.svelte";
@@ -33,6 +33,6 @@
     selected={null}
     on:select={item => {
       closeFocused();
-      navigate(`/seeds/${item.detail}`);
+      router.goto(`/seeds/${item.detail}`);
     }} />
 {/await}

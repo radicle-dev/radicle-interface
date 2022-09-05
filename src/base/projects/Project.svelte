@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { State as IssueState } from "./Issues.svelte";
+  import { router } from "tinro";
 
   import * as proj from "@app/project";
   import Placeholder from "@app/Placeholder.svelte";
@@ -34,7 +35,7 @@
     : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
 
-  $: issueFilter = ($browserStore.search?.get("state") as IssueState) ?? "open";
+  $: issueFilter = (router.location.query.get("state") as IssueState) ?? "open";
 
   const baseName = parentName ? `${parentName}/${project.name}` : project.name;
 
