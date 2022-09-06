@@ -114,7 +114,7 @@
 
 <span class="confirmations">
   {#if pending > 0}
-    <strong>{pending}</strong>
+    <span class="txt-bold">{pending}</span>
     signature(s) pending
   {/if}
 </span>
@@ -177,9 +177,9 @@
       {#if state === State.Confirm}
         <div class="table">
           <div>Project</div>
-          <code>{anchor.id}</code>
+          <span class="txt-monospace">{anchor.id}</span>
           <div>Hash</div>
-          <code>{anchor.anchor.stateHash}</code>
+          <span class="txt-monospace">{anchor.anchor.stateHash}</span>
         </div>
       {:else if state === State.Failed}
         <div>{error}</div>
@@ -231,9 +231,13 @@
       {#if state === State.Confirm}
         <div class="table">
           <div>TxHash</div>
-          <code>{utils.formatHash(anchor.safeTxHash)}</code>
+          <span class="txt-monospace">
+            {utils.formatHash(anchor.safeTxHash)}
+          </span>
           <div>Quorum</div>
-          <code>{anchor.confirmations.length} of {safe.threshold}</code>
+          <span class="txt-monospace">
+            {anchor.confirmations.length} of {safe.threshold}
+          </span>
         </div>
       {:else if state === State.Failed}
         <div>{error}</div>

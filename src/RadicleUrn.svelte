@@ -19,7 +19,7 @@
 <style>
   .urn {
     display: inline-flex;
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     line-height: 2rem;
     color: var(--color-foreground-90);
     vertical-align: middle;

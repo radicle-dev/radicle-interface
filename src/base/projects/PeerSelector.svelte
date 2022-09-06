@@ -33,7 +33,7 @@
         console.debug("Not able to resolve peer identity for: ", p.id);
       }
       const key = p.person?.name
-        ? `<strong>${p.person.name}</strong> ${p.id}`
+        ? `<span class="txt-bold">${p.person.name}</span> ${p.id}`
         : p.id;
 
       return {

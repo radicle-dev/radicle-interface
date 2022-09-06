@@ -24,7 +24,7 @@
     border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
   }
   input {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     padding: 0.5rem;
     border: none;

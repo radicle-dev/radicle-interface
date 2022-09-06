@@ -63,7 +63,7 @@
       <p>Your registration was successfully updated.</p>
     {:else if state.status === Status.Failed}
       <p class="error">
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         {state.error}
       </p>
     {/if}

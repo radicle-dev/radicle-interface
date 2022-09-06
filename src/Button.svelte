@@ -21,7 +21,7 @@
     cursor: pointer;
     font-family: var(--font-family-sans-serif);
     font-feature-settings: "ss01", "ss02", "cv01", "cv03";
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     line-height: 1.6rem;
     display: inline-flex;
     justify-content: center;
@@ -92,12 +92,12 @@
   }
 
   .tiny {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     height: var(--button-small-tiny);
     padding: 0 0.6rem;
   }
   .small {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     height: var(--button-small-height);
     padding: 0 0.75rem;
   }

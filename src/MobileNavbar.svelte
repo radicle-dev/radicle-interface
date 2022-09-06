@@ -41,7 +41,7 @@
   }
   .modal-title {
     color: var(--color-foreground);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     line-height: 2rem;
     text-align: left;
     text-overflow: ellipsis;

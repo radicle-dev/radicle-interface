@@ -19,7 +19,7 @@
   input {
     height: 100%;
     width: 100%;
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     text-overflow: ellipsis;
     margin: 0;
     padding: 0.5rem 1.25rem;

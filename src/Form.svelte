@@ -244,12 +244,12 @@
               {field.value}
             {/if}
           {:else}
-            <span class="subtle not-set">&cross; Not set</span>
+            <span class="txt-missing not-set">&cross; Not set</span>
           {/if}
         </span>
       {/if}
       {#if field.error}
-        <div class="description invalid text-small faded">
+        <div class="description invalid txt-small faded">
           {#if field.example}
             {field.error}, eg.
             <em>{field.example}</em>
@@ -258,7 +258,7 @@
           {/if}
         </div>
       {:else}
-        <div class="description text-small faded">
+        <div class="description txt-small faded">
           {@html marked(field.description)}
         </div>
       {/if}

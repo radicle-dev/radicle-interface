@@ -12,7 +12,7 @@
   .badge {
     border-radius: var(--border-radius);
     padding: 0.125rem 0.5rem;
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     line-height: 1.6;
     height: var(--button-tiny-height);
     display: flex;

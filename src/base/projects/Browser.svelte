@@ -187,7 +187,7 @@
           <Placeholder icon="🍂">
             <span slot="title">
               {#if path !== "/"}
-                <div><code>{path}</code></div>
+                <div class="txt-monospace">{path}</div>
               {/if}
             </span>
             <span slot="body">

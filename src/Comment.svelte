@@ -66,7 +66,7 @@
     padding: 0.5rem 1rem;
   }
   .card-body {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     padding: 0rem 1rem 1rem 1rem;
   }
   .reactions {
@@ -92,7 +92,7 @@
     </div>
     <div class="card-body">
       {#if comment.body === ""}
-        <span class="subtle">No description.</span>
+        <span class="txt-missing">No description.</span>
       {:else}
         <Markdown content={comment.body} {getImage} />
       {/if}

@@ -36,14 +36,14 @@
   }
 </style>
 
-<span class="authorship text-xsmall">
+<span class="authorship txt-tiny">
   {#if commit.header.author.email === commit.header.committer.email}
     <img
       class="avatar"
       alt="avatar"
       src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
-      <span class="bold committer verified-committer">
+      <span class="txt-bold committer verified-committer">
         {commit.context?.committer.peer.person.name}
       </span>
       <span>&nbsp;committed</span>
@@ -67,7 +67,7 @@
       alt="avatar"
       src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
-      <span class="bold committer verified-committer">
+      <span class="txt-bold committer verified-committer">
         {commit.context?.committer.peer.person.name}
       </span>
       <span>&nbsp;committed</span>
@@ -80,7 +80,7 @@
   {/if}
   {#if showTime}
     <span>&nbsp;</span>
-    <span class="desktop-inline text-xsmall time">
+    <span class="desktop-inline txt-tiny time">
       {formatTimestamp(commit.header.committerTime)}
     </span>
   {/if}

@@ -79,7 +79,7 @@
 
     <div slot="subtitle">
       The ENS name for {entity.address} was set to
-      <strong>{name}.{config.registrar.domain}</strong>
+      <span class="txt-bold">{name}.{config.registrar.domain}</span>
       .
     </div>
 
@@ -95,11 +95,11 @@
 
     <div slot="subtitle">
       <p>
-        The transaction to set the ENS name for <strong>
+        The transaction to set the ENS name for <span class="txt-bold">
           {formatAddress(entity.address)}
-        </strong>
+        </span>
         to
-        <strong>{name}.{config.registrar.domain}</strong>
+        <span class="txt-bold">{name}.{config.registrar.domain}</span>
         was proposed to:
       </p>
       <p><Address address={org.owner} {config} compact /></p>
@@ -113,9 +113,9 @@
   </Modal>
 {:else if state === State.Mismatch}
   <Error floating title="🧣" on:close>
-    The name <strong>{name}.{config.registrar.domain}</strong>
+    The name <span class="txt-bold">{name}.{config.registrar.domain}</span>
     does not resolve to
-    <strong>{entity.address}</strong>
+    <span class="txt-bold">{entity.address}</span>
     . Please update the ENS record for {name}.{config.registrar.domain} to point
     to the correct address and try again.
 
@@ -146,10 +146,12 @@
         Waiting for transaction to be processed...
       {:else if state === State.Proposing && org}
         Proposal is being submitted
-        <strong>{formatAddress(org.owner)}</strong>
+        <span class="txt-bold">{formatAddress(org.owner)}</span>
         , please sign the transaction in your wallet.
       {:else}
-        Set an ENS name for <strong>{formatAddress(entity.address)}</strong>
+        Set an ENS name for <span class="txt-bold">
+          {formatAddress(entity.address)}
+        </span>
         to associate a profile. ENS profiles provide human-identifiable data to your
         {label}, such as a unique name, avatar and URL, and help make your {label}
         more discoverable.

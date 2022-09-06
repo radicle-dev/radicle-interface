@@ -150,10 +150,7 @@ describe("project commits", () => {
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
       );
     });
-    cy.get("header .summary .text-medium").should(
-      "have.text",
-      "initial commit",
-    );
+    cy.get("header .summary .txt-medium").should("have.text", "initial commit");
     cy.get(".commit pre.description").should(
       "have.text",
       "this is the first commit of many",
@@ -163,7 +160,7 @@ describe("project commits", () => {
       "have.text",
       "1 file(s) changed, 1 file(s) created, 1 file(s) deleted\n  with\n  0 addition(s)\n  and\n  0 deletion(s)",
     );
-    cy.get("header.file-header:nth-child(1) p.file-path")
+    cy.get("header.file-header:nth-child(1) p")
       .first()
       .should("have.text", "test.md")
       .next()

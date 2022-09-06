@@ -35,7 +35,7 @@
     color: var(--color-foreground-80);
     cursor: pointer;
     font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     height: var(--button-tiny-height);
     padding: 0.25rem 0.5rem;
     border: none;

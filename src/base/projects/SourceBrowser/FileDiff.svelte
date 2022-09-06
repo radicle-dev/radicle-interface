@@ -108,9 +108,6 @@
   td.diff-line-number {
     color: var(--color-foreground-4);
   }
-  .file-path {
-    font-size: 1rem;
-  }
   .browse {
     display: flex;
   }
@@ -119,7 +116,7 @@
 <article id={file.path} class="changeset-file">
   <header class="file-header" on:click={collapse}>
     <div class="actions">
-      <p class="file-path">{file.path}</p>
+      <p class="txt-regular">{file.path}</p>
       {#if mode === "created"}
         <Badge variant="positive">created</Badge>
       {:else if mode === "deleted"}

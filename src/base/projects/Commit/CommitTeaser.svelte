@@ -19,7 +19,7 @@
 <style>
   .hash {
     font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     padding: 0 1.5rem;
   }
   .commit-teaser {

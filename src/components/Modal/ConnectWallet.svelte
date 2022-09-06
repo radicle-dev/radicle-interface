@@ -62,10 +62,10 @@
     </div>
 
     <div slot="subtitle">
-      <div class="text-small">
-        Scan the QR code with <strong>WalletConnect</strong>
+      <div class="txt-small">
+        Scan the QR code with <span class="txt-bold">WalletConnect</span>
         or use
-        <strong>Metamask</strong>
+        <span class="txt-bold">Metamask</span>
         .
       </div>
     </div>

@@ -8,7 +8,6 @@
 
 @font-face {
   font-family: "Inter";
-  font-style: bold;
   font-weight: 600;
   font-display: swap;
   src: url("fonts/Inter-SemiBold.otf");
@@ -16,22 +15,78 @@
 
 @font-face {
   font-family: "Inter";
-  font-style: bolder;
   font-weight: 700;
   font-display: swap;
   src: url("fonts/Inter-Bold.otf");
 }
 
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: bold;
-  font-weight: 600;
-  src: url("fonts/SourceCodePro-Semibold.otf");
+:root {
+  --font-family-sans-serif: Inter, sans-serif;
+  --font-family-monospace: monospace;
+  --font-weight-normal: 400;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+  --font-size-tiny: 0.75rem;
+  --font-size-small: 0.875rem;
+  --font-size-regular: 1rem;
+  --font-size-medium: 1.25rem;
+  --font-size-large: 1.75rem;
+  --font-size-huge: 2rem;
 }
 
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: bold;
-  font-weight: 700;
-  src: url("fonts/SourceCodePro-Bold.otf");
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--font-family-sans-serif);
+  font-feature-settings: "ss01", "ss02", "cv01", "cv03";
+  /* The root element font size has to be set in px,
+   * otherwise Safari breaks. */
+  font-size: 16px;
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+.txt-title {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-secondary);
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
+.txt-missing {
+  color: var(--color-foreground-faded);
+  font-style: italic;
+}
+
+.txt-tiny {
+  font-size: var(--font-size-tiny);
+}
+.txt-small {
+  font-size: var(--font-size-small);
+}
+.txt-regular {
+  font-size: var(--font-size-regular);
+}
+.txt-medium {
+  font-size: var(--font-size-medium);
+}
+.txt-large {
+  font-size: var(--font-size-large);
+}
+.txt-huge {
+  font-size: var(--font-size-huge);
+}
+
+.txt-monospace {
+  font-family: var(--font-family-monospace);
+}
+.txt-bold {
+  font-weight: var(--font-weight-bold) !important;
 }

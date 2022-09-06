@@ -39,7 +39,7 @@
 
 <style>
   div.input-caption {
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     text-align: left;
     margin-left: 1.5rem;
     padding-left: 1.5rem;
@@ -85,21 +85,21 @@
                 <td class="label">Allocation</td>
                 <td>
                   {info.totalVesting}
-                  <strong>{info.symbol}</strong>
+                  <span class="txt-bold">{info.symbol}</span>
                 </td>
               </tr>
               <tr>
                 <td class="label">Withdrawn</td>
                 <td>
                   {info.withdrawn}
-                  <strong>{info.symbol}</strong>
+                  <span class="txt-bold">{info.symbol}</span>
                 </td>
               </tr>
               <tr>
                 <td class="label">Withdrawable</td>
                 <td>
                   {info.withdrawableBalance}
-                  <strong>{info.symbol}</strong>
+                  <span class="txt-bold">{info.symbol}</span>
                 </td>
               </tr>
             </table>
@@ -128,7 +128,7 @@
       </Modal>
     {:else}
       <div class="input-caption">
-        Enter your Radicle <strong>vesting contract</strong>
+        Enter your Radicle <span class="txt-bold">vesting contract</span>
         address
       </div>
       <div class="input-main">

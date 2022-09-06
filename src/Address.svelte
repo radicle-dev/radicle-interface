@@ -22,7 +22,7 @@
   export let noAvatar = false;
   export let compact = false;
   export let small = false;
-  export let xsmall = false;
+  export let tiny = false;
   export let highlight = false;
   // This property allows components eg. Header.svelte to pass a resolved profile object.
   export let profile: Profile | null = null;
@@ -72,7 +72,7 @@
   }
   .highlight {
     color: var(--color-foreground-90);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
   }
   .wrapper {
     gap: 0.5rem;
@@ -84,8 +84,8 @@
 <div
   class="address"
   title={address}
-  class:text-small={small}
-  class:text-xsmall={xsmall}
+  class:txt-small={small}
+  class:txt-tiny={tiny}
   class:highlight>
   {#if !noAvatar}
     {#if resolve && profile?.avatar}

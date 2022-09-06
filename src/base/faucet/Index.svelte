@@ -80,7 +80,7 @@
 
 <style>
   div.input-caption {
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     text-align: left;
     margin-left: 1.5rem;
     padding-left: 1.5rem;
@@ -124,17 +124,23 @@
   <div>
     {#if config.network.name === "homestead"}
       <div class="input-caption">
-        To get RAD tokens on <strong>{config.network.name}</strong>
+        To get RAD tokens on <span class="txt-bold">
+          {config.network.name}
+        </span>
         , please check the known exchanges.
       </div>
     {:else if !$session}
       <div class="input-caption">
-        To get RAD tokens on <strong>{config.network.name}</strong>
+        To get RAD tokens on <span class="txt-bold">
+          {config.network.name}
+        </span>
         , please connect your wallet.
       </div>
     {:else}
       <div class="input-caption">
-        Obtain RAD tokens on <strong>{config.network.name}</strong>
+        Obtain RAD tokens on <span class="txt-bold">
+          {config.network.name}
+        </span>
       </div>
       <div class="input-main">
         <div class="name">
@@ -146,7 +152,7 @@
           <Button variant="primary" on:click={withdraw}>Withdraw</Button>
         </div>
         {#if error}
-          <div class="error description invalid text-small faded">
+          <div class="error description invalid txt-small faded">
             {error}
           </div>
         {/if}

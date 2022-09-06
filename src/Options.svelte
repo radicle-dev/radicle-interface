@@ -43,7 +43,7 @@
   }
   .options .description {
     color: var(--color-secondary);
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     margin-bottom: 2rem;
   }
   .options .description:last-child {

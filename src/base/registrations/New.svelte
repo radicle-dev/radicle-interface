@@ -82,22 +82,22 @@
   <span slot="body">
     {#if state === State.NameAvailable}
       {#if registrationOwner}
-        The name <strong>{name}</strong>
+        The name <span class="txt-bold">{name}</span>
         is available for registration under account
-        <strong>{formatAddress(registrationOwner)}</strong>
+        <span class="txt-bold">{formatAddress(registrationOwner)}</span>
         .
       {:else}
-        The name <strong>{name}</strong>
+        The name <span class="txt-bold">{name}</span>
         is available.
       {/if}
     {:else if state === State.NameUnavailable}
-      This name is <strong>not available</strong>
+      This name is <span class="txt-bold">not available</span>
       for registration.
     {:else if state === State.CheckingAvailability}
       <Loading small center />
     {:else if state === State.CheckingFailed && error}
       <Message error>
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         {error}
       </Message>
     {/if}

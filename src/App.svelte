@@ -59,6 +59,9 @@
     flex-direction: column;
     height: 100%;
   }
+  .emoji {
+    margin: 1rem 0;
+  }
 </style>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -104,7 +107,7 @@
     <div class="wrapper">
       <Modal error subtle>
         <span slot="title">
-          <h3>👻</h3>
+          <div class="emoji">👻</div>
           <div>Error connecting to network</div>
         </span>
 

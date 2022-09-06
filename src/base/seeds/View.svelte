@@ -107,8 +107,8 @@
 {:then seed}
   <main>
     <header>
-      <span class="title">
-        <span class="bold">
+      <span class="title txt-title">
+        <span class="txt-bold">
           {hostName}
           <span class="desktop inline">{seed.emoji}</span>
         </span>
@@ -118,7 +118,7 @@
         {#if session?.signer}
           {#if siweSession}
             <div class="session-info">
-              <span class="signed-in text-small">Signed in as</span>
+              <span class="signed-in txt-small">Signed in as</span>
               <Address
                 address={siweSession.address}
                 {config}

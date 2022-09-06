@@ -10,9 +10,9 @@
   <slot {result} />
 {:catch err}
   <div class="commit">
-    <div class="error error-message text-xsmall">
+    <div class="error error-message txt-tiny">
       <div>
-        API request to <code class="text-xsmall">{err.url}</code>
+        API request to <span class="txt-monospace">{err.url}</span>
         failed.
       </div>
     </div>

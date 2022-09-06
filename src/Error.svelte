@@ -33,7 +33,7 @@
 
   <span slot="body">
     <slot>
-      <strong>Error:</strong>
+      <span class="txt-bold">Error:</span>
       {body}
     </slot>
   </span>

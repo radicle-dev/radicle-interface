@@ -64,7 +64,7 @@
 
 <style>
   .front-matter {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     color: var(--color-foreground-90);
     border: 1px dashed var(--color-foreground-subtle);
@@ -96,8 +96,7 @@
   }
 
   .markdown :global(h1) {
-    font-family: var(--typeface-medium);
-    font-size: 1.5rem;
+    font-size: calc(var(--font-size-huge) * 0.75);
     font-weight: var(--font-weight-medium);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
@@ -105,15 +104,15 @@
   }
 
   .markdown :global(h2) {
-    font-size: 1.25rem;
-    font-weight: normal;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-normal);
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
     border-bottom: 1px dashed var(--color-foreground-subtle);
   }
 
   .markdown :global(h3) {
-    font-size: 1.125rem;
+    font-size: calc(var(--font-size-medium) * 0.9);
     font-weight: var(--font-weight-medium);
     padding: 0.5rem 0;
     margin: 1rem 0 0.25rem;
@@ -121,21 +120,21 @@
 
   .markdown :global(h4) {
     font-weight: var(--font-weight-medium);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     padding: 0.5rem 0;
     margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(h5) {
     font-weight: var(--font-weight-medium);
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     padding: 0.35rem 0;
     margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(h6) {
     font-weight: var(--font-weight-medium);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     padding: 0.25rem 0;
     margin: 1rem 0 0.125rem;
   }
@@ -167,7 +166,7 @@
 
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     color: var(--color-light);
   }
 
@@ -178,7 +177,7 @@
 
   .markdown :global(pre) {
     font-family: var(--font-family-monospace);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     background-color: var(--color-foreground-background);
     padding: 1rem !important;
     border-radius: var(--border-radius-small);
@@ -233,7 +232,7 @@
       <table>
         {#each frontMatter as [key, val]}
           <tr>
-            <td><strong>{key}</strong></td>
+            <td><span class="txt-bold">{key}</span></td>
             <td>{val}</td>
           </tr>
         {/each}

@@ -38,7 +38,7 @@
   }
 
   header .file-name {
-    font-weight: normal;
+    font-weight: var(--font-weight-normal);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -49,14 +49,14 @@
     padding: 0.5rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-background);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     border-radius: var(--border-radius-small);
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .last-commit .hash {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
     font-family: var(--font-family-monospace);
     margin-right: 0.25rem;
   }
@@ -124,7 +124,7 @@
   @media (max-width: 960px) {
     .code,
     .line-numbers {
-      font-size: 0.875rem;
+      font-size: var(--font-size-small);
     }
     .highlight {
       display: none;
@@ -150,7 +150,7 @@
       {#if blob.binary}
         <div class="binary">
           <div>👀</div>
-          <span class="small">Binary content</span>
+          <span class="txt-tiny">Binary content</span>
         </div>
       {:else}
         {#if line}

@@ -94,11 +94,11 @@
     {/if}
   {:catch err}
     <div class="container center-content">
-      <div class="error error-message text-xsmall">
+      <div class="error error-message txt-tiny">
         <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
         API request to
-        <code class="text-xsmall">{err.url}</code>
+        <span class="txt-monospace">{err.url}</span>
         failed
       </div>
     </div>
@@ -141,7 +141,9 @@
   <div class="content">
     {#if peer}
       <Placeholder icon="🍂">
-        <span slot="title"><code>{formatSeedId(peer)}</code></span>
+        <span slot="title">
+          <span class="txt-monospace">{formatSeedId(peer)}</span>
+        </span>
         <span slot="body">Couldn't load remote source tree.</span>
       </Placeholder>
     {:else}

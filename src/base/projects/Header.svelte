@@ -41,7 +41,7 @@
 
 <style>
   header {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     padding: 0 2rem 0 8rem;
     margin-bottom: 2rem;
     display: flex;
@@ -131,7 +131,7 @@
     class="stat commit-count clickable widget"
     class:active={content === ProjectContent.History}
     on:click={() => toggleContent(ProjectContent.History, true)}>
-    <strong>{tree.stats.commits}</strong>
+    <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
   </div>
   {#if project.issues}
@@ -141,7 +141,7 @@
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
       on:click={() => toggleContent(ProjectContent.Issues, false)}>
-      <strong>{project.issues}</strong>
+      <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
   {/if}
@@ -152,12 +152,12 @@
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
       on:click={() => toggleContent(ProjectContent.Patches, false)}>
-      <strong>{project.patches}</strong>
+      <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>
   {/if}
   <div class="stat contributor-count widget">
-    <strong>{tree.stats.contributors}</strong>
+    <span class="txt-bold">{tree.stats.contributors}</span>
     contributor(s)
   </div>
 </header>

@@ -42,7 +42,7 @@
   label {
     color: var(--color-foreground-faded);
     display: block;
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     padding: 0.5rem 0.5rem 0 0.25rem;
   }
 </style>

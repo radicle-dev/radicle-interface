@@ -55,7 +55,7 @@
     overflow-x: hidden;
   }
   .card-members {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     color: var(--color-foreground-faded);
   }
 

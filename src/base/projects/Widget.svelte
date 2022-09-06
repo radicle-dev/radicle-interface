@@ -79,17 +79,17 @@
     border-color: var(--color-foreground-faded);
   }
   article .id {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: var(--font-size-regular);
+    font-weight: var(--font-weight-medium);
     margin-bottom: 0.5rem;
   }
   article .description {
     margin-bottom: 0.25rem;
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
   }
   article .stateHash {
     color: var(--color-secondary);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     min-height: 2rem;
     display: flex;
     align-items: center;
@@ -116,9 +116,9 @@
   article .id .urn {
     visibility: hidden;
     color: var(--color-foreground-faded);
-    font-weight: normal;
+    font-weight: var(--font-weight-normal);
     font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
   }
   article .anchor-badge {
     display: none;
@@ -152,7 +152,7 @@
               {project.head}
             {/if}
           {:else}
-            <span class="subtle">✗ No head</span>
+            <span class="txt-missing">✗ No head</span>
           {/if}
         </slot>
       </span>

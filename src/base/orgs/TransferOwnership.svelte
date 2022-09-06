@@ -78,9 +78,11 @@
     <div slot="title">✅</div>
 
     <div slot="subtitle">
-      The ownership of <strong>{formatAddress(org.address)}</strong>
+      The ownership of <span class="txt-bold">
+        {formatAddress(org.address)}
+      </span>
       was successfully transfered to
-      <strong>{newOwner}</strong>
+      <span class="txt-bold">{newOwner}</span>
       .
     </div>
 
@@ -96,11 +98,11 @@
 
     <div slot="subtitle">
       <p>
-        The transaction to set the owner of <strong>
+        The transaction to set the owner of <span class="txt-bold">
           {formatAddress(org.address)}
-        </strong>
+        </span>
         to
-        <strong>{newOwner}</strong>
+        <span class="txt-bold">{newOwner}</span>
         was proposed to:
       </p>
       <p><Address address={org.owner} {config} compact /></p>
@@ -126,12 +128,12 @@
         Waiting for transaction to be processed...
       {:else if state === State.Proposing && org}
         Proposal is being submitted to the safe
-        <strong>{formatAddress(org.owner)}</strong>
+        <span class="txt-bold">{formatAddress(org.owner)}</span>
         , please sign the transaction in your wallet.
       {:else if state === State.Idle}
-        Transfer the ownership of Org <strong>
+        Transfer the ownership of Org <span class="txt-bold">
           {formatAddress(org.address)}
-        </strong>
+        </span>
         to a new address.
       {:else if state === State.Failed}
         <div class="error">

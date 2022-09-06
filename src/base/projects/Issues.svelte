@@ -44,7 +44,7 @@
 <style>
   .issues {
     padding: 0 2rem 0 8rem;
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
   }
   .issues-list {
     border-radius: var(--border-radius);

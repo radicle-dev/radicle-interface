@@ -23,8 +23,8 @@
 <Modal subtle>
   <span slot="title">️🔍</span>
   <span slot="subtitle">
-    <p class="highlight text-medium">
-      <strong>Multiple names found for {query}</strong>
+    <p class="highlight txt-medium">
+      <span class="txt-bold">Multiple names found for {query}</span>
     </p>
   </span>
   <span slot="body">

@@ -70,17 +70,17 @@
       {:else if $state.connection === State.SigningPermit}
         Approving registration fee. Please confirm in your wallet.
       {:else if $state.connection === State.SigningCommit}
-        Committing to <strong>{name}</strong>
+        Committing to <span class="txt-bold">{name}</span>
         . Please confirm transaction in your wallet.
       {:else if $state.connection === State.Committing}
-        Waiting for <strong>commit</strong>
+        Waiting for <span class="txt-bold">commit</span>
         transaction to be processed&hellip;
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         Waiting for commitment to mature. This may take a moment.
       {:else if $state.connection === State.SigningRegister}
         Proceeding with registration. Please confirm transaction in your wallet.
       {:else if $state.connection === State.Registering}
-        Waiting for <strong>register</strong>
+        Waiting for <span class="txt-bold">register</span>
         transaction to be processed&hellip;
       {/if}
     </span>

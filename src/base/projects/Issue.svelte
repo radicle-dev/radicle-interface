@@ -39,7 +39,7 @@
     flex-basis: 18rem;
     margin-left: 1rem;
     border-radius: var(--border-radius);
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     padding-left: 1rem;
   }
   .metadata-section {
@@ -47,7 +47,7 @@
     border-bottom: 1px dashed var(--color-foreground-subtle);
   }
   .metadata-section-header {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
     color: var(--color-foreground-faded);
   }
@@ -63,7 +63,7 @@
     background-color: var(--color-tertiary-background);
     padding: 0.25rem 0.75rem;
     margin-right: 0.5rem;
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     line-height: 1.6;
   }
 
@@ -82,7 +82,7 @@
     display: flex;
   }
   .id {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     margin-left: 0.75rem;
     color: var(--color-foreground-faded);
   }
@@ -112,11 +112,11 @@
   <header>
     <div class="summary">
       <div class="summary-left">
-        <span class="summary-title text-medium">
+        <span class="summary-title txt-medium">
           {issue.title}
         </span>
-        <span class="font-mono id desktop">{issue.id}</span>
-        <span class="font-mono id mobile">{formatObjectId(issue.id)}</span>
+        <span class="txt-monospace id desktop">{issue.id}</span>
+        <span class="txt-monospace id mobile">{formatObjectId(issue.id)}</span>
       </div>
       <div
         class="summary-state"

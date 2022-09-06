@@ -1,5 +1,3 @@
-@import url(./typography.css);
-
 * {
   outline: none !important;
   box-sizing: border-box;
@@ -70,10 +68,6 @@
   --color-glow-error: #ff555522;
   --color-scrollbar: var(--color-foreground-subtler);
 
-  --font-family-sans-serif: Inter, sans-serif;
-  --font-family-monospace: monospace;
-  --font-weight-medium: 600;
-  --font-weight-bold: 700;
   --border-radius: 0.75rem;
   --border-radius-small: 0.5rem;
   --border-radius-round: 10rem;
@@ -89,10 +83,14 @@
   --button-tiny-height: 1.5rem;
 }
 
+html {
+  height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: scrollbar;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
   min-width: var(--content-min-width);
   height: 100%;
   margin: 0;
@@ -100,7 +98,6 @@ body {
   color: white;
   text-align: left;
   background-color: var(--color-background);
-  -webkit-font-smoothing: antialiased;
   scrollbar-width: thin;
   scrollbar-height: thin;
   scrollbar-color: var(--color-scrollbar) transparent;
@@ -110,15 +107,6 @@ body {
   body {
     min-width: 0;
   }
-}
-
-html {
-  height: 100%;
-  overflow-y: scroll;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  -ms-overflow-style: scrollbar;
-  -webkit-tap-highlight-color: transparent;
 }
 
 ::-moz-selection {
@@ -155,21 +143,9 @@ body::-webkit-scrollbar-thumb {
   background: var(--color-negative);
 }
 
-code {
-  font-family: monospace;
-  font-size: 0.95rem;
-}
-
 main,
 section {
   display: block;
-}
-
-body,
-input,
-textarea {
-  font-family: var(--font-family-sans-serif);
-  font-feature-settings: "ss01", "ss02", "cv01", "cv03";
 }
 
 a {
@@ -198,12 +174,13 @@ a.address {
 }
 
 input[type="text"] {
+  font-family: var(--font-family-sans-serif);
   line-height: 1.6;
 }
 input[type="text"] {
   outline: none;
   border: none;
-  font-size: 1rem;
+  font-size: var(--font-size-regular);
   color: var(--color-foreground);
   background: transparent;
   border: 1px solid var(--color-secondary);
@@ -217,7 +194,7 @@ input[type="text"]::placeholder {
   opacity: 1 !important;
 }
 input[type="text"].small {
-  font-size: 0.875rem;
+  font-size: var(--font-size-small);
 }
 input.wide {
   width: 44ch;
@@ -245,15 +222,8 @@ label.input {
 .label {
   color: var(--color-secondary);
 }
-.subtle {
-  color: var(--color-foreground-faded);
-  font-style: italic;
-}
 .faded {
   color: var(--color-foreground-faded);
-}
-.bold {
-  font-weight: bold !important;
 }
 .yellow {
   color: var(--color-yellow);
@@ -267,10 +237,6 @@ label.input {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.font-mono {
-  font-family: var(--font-family-monospace);
 }
 
 .mobile,
@@ -302,28 +268,6 @@ span.align {
   align-items: center;
   justify-content: flex-start;
 }
-span.small,
-.text-xsmall {
-  font-size: 0.75rem;
-}
-.text-small {
-  font-size: 0.875rem;
-}
-.text-medium {
-  font-size: 1.25rem;
-}
-.text-big {
-  font-size: 1.5rem;
-}
-.text-truncate {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-.text-faded {
-  color: var(--color-foreground-faded);
-}
-
 button.error:hover {
   color: var(--color-background);
   background-color: var(--color-negative);
@@ -339,30 +283,5 @@ td {
   text-overflow: ellipsis;
 }
 td strong {
-  font-weight: 600;
-}
-
-h1,
-.title {
-  font-size: 1.75rem;
-  font-weight: normal;
-  color: var(--color-secondary);
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-h1 {
-  margin-bottom: 2rem;
-}
-
-h2 {
-  margin: 1.5rem 0;
-}
-
-h3 {
-  margin: 1rem 0;
-}
-
-p {
-  margin: 1rem 0;
+  font-weight: var(--font-weight-medium);
 }

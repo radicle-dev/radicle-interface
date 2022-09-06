@@ -9,7 +9,7 @@
     flex-basis: 18rem;
     margin-left: 1rem;
     border-radius: var(--border-radius-medium);
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     padding-left: 1rem;
   }
   .metadata-section {
@@ -17,7 +17,7 @@
     border-bottom: 1px dashed var(--color-foreground-subtle);
   }
   .metadata-section-header {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
     color: var(--color-foreground-faded);
   }
@@ -33,7 +33,7 @@
     background-color: var(--color-tertiary-background);
     padding: 0.25rem 0.75rem;
     margin-right: 0.5rem;
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     line-height: 1.6;
   }
 </style>

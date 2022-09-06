@@ -40,7 +40,7 @@
   }
   .sha1 {
     color: var(--color-foreground-80);
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
   }
   .authorship {
     display: flex;
@@ -58,15 +58,15 @@
 <div class="commit">
   <header>
     <div class="summary">
-      <div class="text-medium">{commit.header.summary}</div>
-      <div class="desktop font-mono sha1">
+      <div class="txt-medium">{commit.header.summary}</div>
+      <div class="desktop txt-monospace sha1">
         <span>{commit.header.sha1}</span>
       </div>
-      <div class="mobile font-mono sha1 text-small">
+      <div class="mobile txt-monospace sha1 txt-small">
         {formatCommit(commit.header.sha1)}
       </div>
     </div>
-    <pre class="description text-small">{commit.header.description}</pre>
+    <pre class="description txt-small">{commit.header.description}</pre>
     <div class="authorship">
       <CommitAuthorship {commit} />
       {#if commit.context?.committer}

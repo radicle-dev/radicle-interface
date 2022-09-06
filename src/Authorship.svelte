@@ -36,17 +36,17 @@
   }
   .highlight {
     color: var(--color-foreground-90);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
   }
   .date {
     color: var(--color-foreground-80);
   }
 </style>
 
-<span class="authorship text-xsmall">
+<span class="authorship txt-tiny">
   {#if profile}
     <Address
-      xsmall
+      tiny
       highlight
       resolve
       noBadge
@@ -65,7 +65,7 @@
     </span>
   {/if}
   <span class="caption">&nbsp;{caption}&nbsp;</span>
-  <span class="text-xsmall date">
+  <span class="txt-tiny date">
     {formatTimestamp(timestamp)}
   </span>
 </span>

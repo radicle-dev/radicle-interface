@@ -226,6 +226,9 @@
       padding-right: 1rem;
     }
   }
+  .domain {
+    margin-bottom: 2rem;
+  }
 </style>
 
 <svelte:head>
@@ -249,7 +252,7 @@
 
     <span slot="body">
       <p>
-        The name <strong>{domain}</strong>
+        The name <span class="txt-bold">{domain}</span>
         is not registered.
       </p>
     </span>
@@ -261,7 +264,7 @@
 {:else if state.status === Status.Found}
   <main>
     <header>
-      <h1 class="bold">{domain}</h1>
+      <div class="domain txt-title txt-bold">{domain}</div>
       <div style="width: 4rem;">
         {#if !editable}
           <Button

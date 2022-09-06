@@ -57,7 +57,7 @@
     border: none;
     color: var(--color-foreground-80);
     font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     height: var(--button-tiny-height);
     padding: 0.25rem 0.5rem;
     background-color: var(--color-background);
@@ -72,7 +72,7 @@
   }
 </style>
 
-<div class="bar text-small">
+<div class="bar txt-small">
   <ToggleButton
     {options}
     on:select={e => {
@@ -83,7 +83,7 @@
   <Floating disabled={revisions.length <= 1}>
     <button
       slot="toggle"
-      class="text-small revision-toggle"
+      class="txt-small revision-toggle"
       disabled={revisions.length <= 1}>
       {formatRevisionName(revisions[revisionNumber], revisionNumber)}
     </button>

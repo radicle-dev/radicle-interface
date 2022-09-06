@@ -56,8 +56,8 @@
   }
   .modal-title {
     color: var(--color-foreground);
-    font-size: 1.25rem;
-    font-weight: bold;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-bold);
     line-height: 2.625rem;
     margin-bottom: 0.5rem;
     text-align: center;
@@ -66,14 +66,14 @@
   }
   .modal-subtitle {
     color: var(--color-secondary);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     max-width: 90%;
     margin: 0 auto;
     line-height: 1.5;
   }
   .modal-body {
     color: var(--color-foreground);
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     overflow-x: hidden;
     text-overflow: ellipsis;
     margin: 3rem 0;

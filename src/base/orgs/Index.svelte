@@ -34,7 +34,7 @@
   }
   main header {
     color: var(--color-secondary);
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     display: flex;
     align-items: center;
     padding: 1rem 0;
@@ -46,8 +46,6 @@
   }
   .orgs-empty {
     padding: 2rem 0 1rem 0;
-    font-style: italic;
-    color: var(--color-foreground-faded);
   }
 
   .loading {
@@ -64,7 +62,7 @@
     <div class="my-orgs">
       <header>
         <span>
-          My <strong>Orgs</strong>
+          My <span class="txt-bold">Orgs</span>
         </span>
         <Button variant="secondary" on:click={onCreate} disabled={!account}>
           Create
@@ -77,12 +75,14 @@
         </div>
       {:then orgs}
         <Cards {config} {orgs}>
-          <div class="orgs-empty">Orgs you are a member of show up here.</div>
+          <div class="orgs-empty txt-missing">
+            Orgs you are a member of show up here.
+          </div>
         </Cards>
       {:catch}
         <div>
           <Message error>
-            <strong>Error:</strong>
+            <span class="txt-bold">Error:</span>
             failed to load orgs.
           </Message>
         </div>
@@ -92,7 +92,7 @@
 
   <header>
     <span>
-      <strong>Orgs</strong>
+      <span class="txt-bold">Orgs</span>
       of the Radicle network
     </span>
   </header>
@@ -108,7 +108,7 @@
   {:catch}
     <div>
       <Message error>
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         failed to load orgs.
       </Message>
     </div>

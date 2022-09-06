@@ -64,7 +64,7 @@
     margin-right: 0.75rem;
   }
   .id {
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     color: var(--color-foreground-faded);
   }
   .summary-state {
@@ -97,11 +97,11 @@
   <header>
     <div class="summary">
       <div class="summary-left">
-        <span class="summary-title text-medium">
+        <span class="summary-title txt-medium">
           {patch.title}
         </span>
-        <span class="font-mono id desktop">{patch.id}</span>
-        <span class="font-mono id mobile">{formatObjectId(patch.id)}</span>
+        <span class="txt-monospace id desktop">{patch.id}</span>
+        <span class="txt-monospace id mobile">{formatObjectId(patch.id)}</span>
       </div>
       <div
         class="summary-state"

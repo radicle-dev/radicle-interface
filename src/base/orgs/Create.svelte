@@ -111,7 +111,7 @@
   }
   label[for="address"] {
     margin-left: 1.5rem;
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     color: var(--color-secondary);
   }
   input[name="address"] {
@@ -119,7 +119,7 @@
     width: 100%;
   }
   .notice {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
     border-radius: var(--border-radius);
     color: var(--color-yellow);
     background-color: var(--color-yellow-background);
@@ -136,7 +136,7 @@
     <span slot="title">🎉</span>
 
     <span slot="subtitle">
-      <strong>Your org was successfully created.</strong>
+      <span class="txt-bold">Your org was successfully created.</span>
     </span>
 
     <span slot="body">
@@ -181,7 +181,7 @@
       {#if state === State.Idle}
         <div class="configuration">
           <div class="notice">
-            <strong>Notice:</strong>
+            <span class="txt-bold">Notice:</span>
             Orgs V1 are being deprecated. It is recommended not to create new orgs
             at this point.
           </div>

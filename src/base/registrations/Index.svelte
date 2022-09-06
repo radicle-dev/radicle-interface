@@ -35,7 +35,7 @@
 
 <style>
   div.input-caption {
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     text-align: left;
     margin-left: 1.5rem;
     padding-left: 1.5rem;
@@ -69,12 +69,13 @@
 <main class="off-centered">
   <div>
     <div class="input-caption">
-      Register a <strong>{config.registrar.domain}</strong>
+      Register a <span class="txt-bold">{config.registrar.domain}</span>
       name
-      <div class="text-small explainer">
-        Register a unique name with our ENS registrar, under the <strong>
+      <div class="txt-small explainer">
+        Register a unique name with our ENS registrar, under the <span
+          class="txt-bold">
           radicle.eth
-        </strong>
+        </span>
         domain (e.g. cloudhead.radicle.eth). Radicle names never expire and free
         to register.
       </div>

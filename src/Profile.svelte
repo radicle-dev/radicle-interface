@@ -201,13 +201,13 @@
           title={profile.address} />
       </div>
       <div class="info">
-        <span class="title">
-          <span class="bold desktop">
+        <span class="title txt-title">
+          <span class="txt-bold desktop">
             {profile.name
               ? utils.formatName(profile.name, config)
               : profile.address}
           </span>
-          <span class="bold mobile">
+          <span class="txt-bold mobile">
             {profile.name
               ? utils.formatName(profile.name, config)
               : utils.formatAddress(profile.address)}
@@ -317,7 +317,7 @@
             {#if profile.name}
               <a href={profile.registry(config)} class="link">{profile.name}</a>
             {:else}
-              <span class="subtle">Not set</span>
+              <span class="txt-missing">Not set</span>
             {/if}
           </div>
           <div class="desktop">
@@ -350,7 +350,7 @@
           {#if profile.name}
             <a href={profile.registry(config)} class="link">{profile.name}</a>
           {:else}
-            <span class="subtle">Not set</span>
+            <span class="txt-missing">Not set</span>
           {/if}
         </div>
         <div class="desktop">
@@ -401,7 +401,7 @@
         {/if}
       {:catch err}
         <Message error>
-          <strong>Error:</strong>
+          <span class="txt-bold">Error:</span>
           failed to load org members: {err.message}.
         </Message>
       {/await}
@@ -441,7 +441,7 @@
         {/if}
       {:catch err}
         <Message error>
-          <strong>Error:</strong>
+          <span class="txt-bold">Error:</span>
           failed to load orgs: {err.message}.
         </Message>
       {/await}

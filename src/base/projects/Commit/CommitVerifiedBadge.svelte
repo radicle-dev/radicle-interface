@@ -28,7 +28,7 @@
     border-radius: var(--border-radius-small);
     box-shadow: 16px 16px 32px 32px var(--color-shadow);
     color: var(--color-foreground);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     left: -10rem;
     margin-top: 0.5rem;
     padding: 0.5rem 0;
@@ -75,7 +75,7 @@
           <CommitAuthorship {commit} showAuthor={false} showTime={false} />
           {#if commit.context.committer}
             <div class="peer">
-              <span class="text-faded">{commit.context.committer.peer.id}</span>
+              <span class="faded">{commit.context.committer.peer.id}</span>
             </div>
           {/if}
         </div>

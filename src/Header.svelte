@@ -56,7 +56,6 @@
     display: inline-block;
     padding: 0.5rem 0.5rem;
     margin-right: 1.5rem;
-    font-weight: 500;
     cursor: pointer;
     user-select: none;
     color: var(--color-foreground-6);
@@ -147,10 +146,10 @@
   {#if $error.type === Failure.TransactionFailed}
     <div class="error">
       {#if $error.message}
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         {$error.message}
       {:else if $error.txHash}
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         Transaction
         <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a>
         failed.
@@ -194,7 +193,7 @@
       <span class="balance">
         {#if tokenBalance}
           {formatBalance(tokenBalance)}
-          <strong>RAD</strong>
+          <span class="txt-bold">RAD</span>
         {:else}
           <Loading small />
         {/if}

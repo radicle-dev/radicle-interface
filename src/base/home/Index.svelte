@@ -44,7 +44,7 @@
     color: var(--color-foreground-90);
     padding: 0rem;
     max-width: 70%;
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     text-align: left;
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
@@ -62,7 +62,7 @@
   .heading {
     color: var(--color-secondary);
     padding: 1rem 0rem;
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     margin-bottom: 1rem;
   }
   .loading {
@@ -71,10 +71,10 @@
   @media (max-width: 720px) {
     .blurb {
       max-width: none;
-      font-size: 1rem;
+      font-size: var(--font-size-regular);
     }
     .heading {
-      font-size: 1rem;
+      font-size: var(--font-size-regular);
     }
   }
 </style>
@@ -98,7 +98,7 @@
   {:then results}
     {#if results.length}
       <div class="heading">
-        Explore <strong>projects</strong>
+        Explore <span class="txt-bold">projects</span>
         on the Radicle network.
       </div>
 
@@ -117,7 +117,7 @@
   {:catch}
     <div class="padding">
       <Message error>
-        <strong>Error:</strong>
+        <span class="txt-bold">Error:</span>
         failed to load projects.
       </Message>
     </div>

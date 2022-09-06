@@ -26,17 +26,17 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    font-size: 2rem;
+    font-size: var(--font-size-huge);
     margin-bottom: 0.5rem;
   }
   .title .divider {
     color: var(--color-foreground-subtle);
     margin: 0 0.5rem;
-    font-weight: normal;
+    font-weight: var(--font-weight-normal);
   }
   .title .peer-id {
     color: var(--color-foreground-subtle);
-    font-weight: normal;
+    font-weight: var(--font-weight-normal);
     display: flex;
     align-items: center;
   }
@@ -47,7 +47,7 @@
   }
   .urn {
     font-family: var(--font-family-monospace);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     color: var(--color-foreground-faded);
     overflow-wrap: anywhere;
     display: flex;
@@ -66,6 +66,12 @@
     padding: 0 2rem 0 8rem;
   }
 
+  .truncate {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+  }
+
   @media (max-width: 960px) {
     .content {
       padding-left: 2rem;
@@ -74,7 +80,7 @@
 </style>
 
 <header class="content">
-  <div class="title bold">
+  <div class="title txt-bold txt-title">
     {#if project.profile}
       <a
         class="org-avatar"
@@ -86,7 +92,7 @@
       </a>
       <span class="divider">/</span>
     {/if}
-    <span class="text-truncate">
+    <span class="truncate">
       <Link to={rootPath()}>{project.name}</Link>
     </span>
     {#if peer}
@@ -98,7 +104,7 @@
     {/if}
   </div>
   <div class="urn">
-    <span class="text-truncate">{project.urn}</span>
+    <span class="truncate">{project.urn}</span>
     <Clipboard small text={project.urn} />
   </div>
   {#if !noDescription}

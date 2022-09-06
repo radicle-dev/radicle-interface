@@ -39,7 +39,7 @@
   }
   .patch-id {
     color: var(--color-foreground-faded);
-    font-size: 0.75rem;
+    font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     margin-left: 0.5rem;
   }
@@ -56,7 +56,7 @@
   }
   .comment-count {
     color: var(--color-foreground-70);
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
   }
   .comment-count .emoji {
     margin-right: 0.25rem;
@@ -122,7 +122,7 @@
   {#if commentCount > 0}
     <div class="column-right">
       <div class="comment-count">
-        <span class="text-xsmall emoji">💬</span>
+        <span class="txt-tiny emoji">💬</span>
         <span>{commentCount}</span>
       </div>
     </div>

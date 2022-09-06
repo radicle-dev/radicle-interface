@@ -12,17 +12,16 @@
   }
   .placeholder header {
     padding: 1rem 0;
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
   }
   .placeholder .icon {
-    font-size: 1.5rem;
     margin-bottom: 1rem;
   }
 </style>
 
 <div class="error error-message placeholder">
   <header>
-    <div class="icon">{icon}</div>
+    <div class="icon txt-large">{icon}</div>
     <slot name="title" />
   </header>
   <slot name="body" />
