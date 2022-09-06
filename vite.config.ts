@@ -15,7 +15,7 @@ const config: UserConfig = {
     deps: {
       inline: ["@ethersproject/signing-key", "@ethersproject/basex"],
     },
-    environment: "happy-dom",
+    environment: "jsdom",
     include: ["**/*.test.ts"],
     reporters: "verbose",
     coverage: {
