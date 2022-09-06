@@ -57,6 +57,14 @@
   });
 </script>
 
+<style>
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+</style>
+
 <svelte:head>
   <title>Radicle: Register {name}</title>
 </svelte:head>
@@ -95,7 +103,7 @@
     {/if}
   </span>
 
-  <span slot="actions">
+  <span class="actions" slot="actions">
     {#if state === State.NameAvailable}
       {#if $session}
         <Button on:click={begin} variant="primary">

@@ -47,6 +47,11 @@
     flex-direction: column;
     height: 100%;
   }
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+  }
 </style>
 
 <div class="wrapper">
@@ -73,7 +78,7 @@
       </div>
     </div>
 
-    <div slot="actions">
+    <div class="actions" slot="actions">
       <Button
         variant="secondary"
         size="small"
