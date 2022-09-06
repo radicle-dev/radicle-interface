@@ -11,3 +11,7 @@ cypress/screenshots
 
 # Mac OS
 .DS_Store
+
+# IDEs and Editors
+.idea
+.vscode
