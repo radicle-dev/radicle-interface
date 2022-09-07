@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 import { MockProvider } from "@rsksmart/mock-web3-provider";
 
-describe("Landing page", () => {
-  it("Loads projects", () => {
+describe("landing page", () => {
+  it("displays correctly projects", () => {
     cy.intercept(
       { pathname: "/v1/projects/*" },
       { fixture: "projectInfo.json" },

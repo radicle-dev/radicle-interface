@@ -51,7 +51,7 @@ const groupedCommits = [
   },
 ];
 
-describe("Project commits", () => {
+describe("project commits", () => {
   beforeEach(() => {
     cy.intercept("/", {
       fixture: "projectHome.json",
@@ -84,7 +84,7 @@ describe("Project commits", () => {
     ).as("seedCommit");
   });
 
-  it("Commit group & commit trailer", () => {
+  it("display commit groups and commit trailers", () => {
     cy.visit(
       "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/history",
       {
@@ -144,7 +144,7 @@ describe("Project commits", () => {
     cy.get(".commit").last().click();
   });
 
-  it("Commit detail view", () => {
+  it("display commit details", () => {
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a",

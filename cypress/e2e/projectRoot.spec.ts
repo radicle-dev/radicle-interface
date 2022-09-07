@@ -2,8 +2,8 @@
 /// <reference types="cypress" />
 import { MockProvider } from "@rsksmart/mock-web3-provider";
 
-describe("Root", () => {
-  it("Meta", () => {
+describe("project meta", () => {
+  it("displays the correct project information", () => {
     cy.intercept("https://willow.radicle.garden:8777/", {
       fixture: "projectHome.json",
     }).as("projectHome");

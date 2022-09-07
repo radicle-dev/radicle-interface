@@ -2,7 +2,7 @@
 /// <reference types="cypress" />
 import { MockProvider } from "@rsksmart/mock-web3-provider";
 
-describe("Project header", () => {
+describe("project header", () => {
   beforeEach(() => {
     cy.intercept("/", {
       fixture: "projectHome.json",
@@ -91,7 +91,7 @@ describe("Project header", () => {
     cy.get("div.clone-button").click();
   });
 
-  it("Peer Selector", () => {
+  it("lets user change peer", () => {
     cy.get("div.selector").click();
     cy.get("div.dropdown-item")
       .contains(
@@ -119,7 +119,7 @@ describe("Project header", () => {
     cy.get("div.stat.peer span.badge").should("have.text", "delegate");
   });
 
-  it("Branch selector", () => {
+  it("lets user on a specific peer change branches", () => {
     cy.get("div.commit div.stat.branch").click();
     cy.get("div.dropdown-item")
       .first()
@@ -137,7 +137,7 @@ describe("Project header", () => {
     cy.get("div.hash.desktop").should("have.text", "cbf5df4");
   });
 
-  it("Commits button", () => {
+  it("navigate to commit history", () => {
     cy.get("div.stat.commit-count").should("not.have.class", "active").click();
     cy.wait(["@projectTreecbf5df4", "@projectCommits"]);
     cy.location().should(location => {
@@ -148,7 +148,7 @@ describe("Project header", () => {
     cy.get("div.stat.commit-count").should("have.class", "active");
   });
 
-  it("Issues button", () => {
+  it("navigate to issues listing", () => {
     cy.get("div.stat.issue-count").click();
     cy.wait(["@projectTreecbf5df4", "@projectIssues"]);
     cy.location().should(location => {
@@ -159,7 +159,7 @@ describe("Project header", () => {
     cy.get("div.stat.issue-count").should("have.class", "active");
   });
 
-  it("Patches button", () => {
+  it("navigate to patches listing", () => {
     cy.get("div.stat.patch-count").click();
     cy.wait(["@projectTree56e4e02", "@projectPatches"]);
     cy.location().should(location => {
