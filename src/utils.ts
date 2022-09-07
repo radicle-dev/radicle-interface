@@ -810,7 +810,7 @@ const markdownEmojiTokenizer: marked.TokenizerExtension = {
     return src.indexOf(":");
   },
   tokenizer(src: string) {
-    const rule = /^:[\w+-]+:/;
+    const rule = /^:([\w+-]+):/;
     const match = rule.exec(src);
     if (match) {
       return {
