@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { Link } from "svelte-routing";
   import Avatar from "@app/Avatar.svelte";
   import type { Profile } from "@app/profile";
   import type { Config } from "@app/config";
   import { formatName, formatAddress } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
-  import Loading from "@app/Loading.svelte";
 
   export let profile:
     | Profile
@@ -20,15 +18,6 @@
   export let config: Config;
   export let path: string;
   export let members: string[] = [];
-
-  let numberOfProjects: number | null = null;
-
-  onMount(async () => {
-    if (seed) {
-      const projects = await seed.getProjects();
-      numberOfProjects = projects.length;
-    }
-  });
 </script>
 
 <style>
@@ -118,14 +107,6 @@
         {:else}
           {formatAddress(profile.address)}
         {/if}
-      {:else if numberOfProjects !== null}
-        {#if numberOfProjects > 0}
-          {numberOfProjects} project(s)
-        {:else}
-          No projects
-        {/if}
-      {:else if numberOfProjects === null}
-        <Loading center fadeIn small />
       {/if}
     </div>
   </div>
