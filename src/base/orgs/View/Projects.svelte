@@ -3,21 +3,23 @@
   import { onMount } from "svelte";
   import type { Config } from "@app/config";
   import * as proj from "@app/project";
-  import Loading from "@app/Loading.svelte";
-  import Message from "@app/Message.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
   import type { ProjectInfo, Anchor, PendingAnchor } from "@app/project";
   import type { Seed } from "@app/base/seeds/Seed";
   import AnchorActions from "@app/base/profiles/AnchorActions.svelte";
+  import List from "@app/List.svelte";
 
   export let seed: Seed;
   export let profile: Profile | null = null;
   export let account: string | null = null;
+  export let projects: proj.ProjectInfo[];
   export let config: Config;
 
   let anchors: Record<string, Anchor> = {};
   let pendingAnchors: Record<string, PendingAnchor> = {};
+  // A pointer to the current page of projects added to the listing
+  let page = 0;
 
   const loadAnchors = async () => {
     if (profile) {
@@ -29,6 +31,19 @@
       anchors = confirmed;
       pendingAnchors = pending;
     }
+  };
+
+  const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
+    const projects = await proj.Project.getProjects(seed.api, {
+      perPage: 10,
+      page: (page += 1),
+    });
+    if (projects.length > 0) {
+      return projects;
+    }
+
+    // We return an empty array, for when no more projects are found, since List is looking for an iterable.
+    return [];
   };
 
   const onClick = (project: ProjectInfo) => {
@@ -59,36 +74,31 @@
 </style>
 
 <div class="projects">
-  {#await seed.getProjects(profile?.id)}
-    <Loading center />
-  {:then projects}
-    {#each projects as project}
-      {@const anchor = anchors[project.urn]}
-      {@const pendingAnchor = pendingAnchors[project.urn]}
-      {#if project.head}
-        <div class="project">
-          <Widget {project} {seed} {anchor} on:click={() => onClick(project)}>
-            <span class="actions" slot="actions">
-              {#if profile?.org?.safe && account && anchor}
-                {#if pendingAnchor}
-                  <!-- Pending anchor -->
-                  <AnchorActions
-                    {account}
-                    {config}
-                    anchor={pendingAnchor}
-                    safe={profile.org.safe}
-                    on:success={() => loadAnchors()} />
+  <List items={projects} query={fetchMoreProjects}>
+    <svelte:fragment slot="list" let:items>
+      {#each items as project}
+        {@const anchor = anchors[project.urn]}
+        {@const pendingAnchor = pendingAnchors[project.urn]}
+        {#if project.head}
+          <div class="project">
+            <Widget {project} {seed} {anchor} on:click={() => onClick(project)}>
+              <span class="actions" slot="actions">
+                {#if profile?.org?.safe && account && anchor}
+                  {#if pendingAnchor}
+                    <!-- Pending anchor -->
+                    <AnchorActions
+                      {account}
+                      {config}
+                      anchor={pendingAnchor}
+                      safe={profile.org.safe}
+                      on:success={() => loadAnchors()} />
+                  {/if}
                 {/if}
-              {/if}
-            </span>
-          </Widget>
-        </div>
-      {/if}
-    {/each}
-  {:catch err}
-    <Message error>
-      <strong>Error:</strong>
-      failed to load projects: {err.message}.
-    </Message>
-  {/await}
+              </span>
+            </Widget>
+          </div>
+        {/if}
+      {/each}
+    </svelte:fragment>
+  </List>
 </div>

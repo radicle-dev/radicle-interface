@@ -330,15 +330,33 @@ export class Project implements ProjectInfo {
     };
   }
 
-  static async getProjects(host: Host): Promise<ProjectInfo[]> {
-    return new Request("projects", host).get();
+  static async getProjects(
+    host: Host,
+    opts?: {
+      perPage?: number;
+      page?: number;
+    },
+  ): Promise<ProjectInfo[]> {
+    const params: Record<string, any> = {
+      "per-page": opts?.perPage,
+      page: opts?.page,
+    };
+    return new Request("projects", host).get(params);
   }
 
   static async getDelegateProjects(
     delegate: string,
     host: Host,
+    opts?: {
+      perPage?: number;
+      page?: number;
+    },
   ): Promise<ProjectInfo[]> {
-    return new Request(`delegates/${delegate}/projects`, host).get();
+    const params: Record<string, any> = {
+      "per-page": opts?.perPage,
+      page: opts?.page,
+    };
+    return new Request(`delegates/${delegate}/projects`, host).get(params);
   }
 
   static async getRemote(

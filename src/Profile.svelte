@@ -20,6 +20,7 @@
   import { MissingReverseRecord, NotFoundError } from "@app/error";
   import NotFound from "@app/NotFound.svelte";
   import RadicleUrn from "@app/RadicleUrn.svelte";
+  import Async from "@app/Async.svelte";
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
 
@@ -446,7 +447,14 @@
       {/await}
     {/if}
     {#if profile.seed?.valid}
-      <Projects {profile} seed={profile.seed} {account} {config} />
+      <Async fetch={profile.seed.getProjects(10, profile.id)} let:result>
+        <Projects
+          {profile}
+          seed={profile.seed}
+          {account}
+          projects={result}
+          {config} />
+      </Async>
     {/if}
   </main>
 

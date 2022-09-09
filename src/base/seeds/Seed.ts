@@ -105,10 +105,10 @@ export class Seed {
     return proj.Project.getInfo(urn, this.api);
   }
 
-  async getProjects(id?: string): Promise<proj.ProjectInfo[]> {
+  async getProjects(perPage: number, id?: string): Promise<proj.ProjectInfo[]> {
     const result = id
-      ? await proj.Project.getDelegateProjects(id, this.api)
-      : await proj.Project.getProjects(this.api);
+      ? await proj.Project.getDelegateProjects(id, this.api, { perPage })
+      : await proj.Project.getProjects(this.api, { perPage });
 
     return result.map((project: proj.ProjectInfo) => ({
       ...project,

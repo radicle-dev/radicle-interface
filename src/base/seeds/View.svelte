@@ -11,12 +11,16 @@
   import Address from "@app/Address.svelte";
   import SiweConnect from "@app/SiweConnect.svelte";
   import type { SeedSession } from "@app/siwe";
+  import Async from "@app/Async.svelte";
+  import { Project } from "@app/project";
+  import type { Host } from "@app/api";
 
   export let config: Config;
   export let session: Session | null;
   export let host: string;
 
   const hostName = formatSeedHost(host);
+  const seedHost: Host = { host, port: null };
   let siweSession: SeedSession | null = null;
 
   $: if (session?.siwe) {
@@ -153,7 +157,9 @@
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->
-    <Projects {seed} {config} />
+    <Async fetch={Project.getProjects(seedHost, { perPage: 10 })} let:result>
+      <Projects {seed} {config} projects={result} />
+    </Async>
   </main>
 {:catch}
   <NotFound
