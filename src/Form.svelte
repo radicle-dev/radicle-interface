@@ -130,9 +130,6 @@
     margin: 0;
     white-space: nowrap;
   }
-  .field > div {
-    height: inherit;
-  }
   .ellipsis {
     width: 28rem;
     overflow: hidden;
