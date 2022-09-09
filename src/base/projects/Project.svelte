@@ -7,7 +7,6 @@
   import Loading from "@app/Loading.svelte";
   import { formatProfile, formatSeedId, setOpenGraphMetaTag } from "@app/utils";
   import { browserStore } from "@app/project";
-  import { fetchCommits } from "@app/commit";
   import * as patch from "@app/patch";
   import * as issue from "@app/issue";
 
@@ -80,7 +79,12 @@
     {#if content === proj.ProjectContent.Tree}
       <Browser {project} {commit} {tree} {browserStore} />
     {:else if content === proj.ProjectContent.History}
-      <Async fetch={fetchCommits(project, commit)} let:result>
+      <Async
+        fetch={proj.Project.getCommits(project.urn, project.seed.api, {
+          parent: commit,
+          verified: true,
+        })}
+        let:result>
         <History {project} history={result} />
       </Async>
     {:else if content === proj.ProjectContent.Commit}
