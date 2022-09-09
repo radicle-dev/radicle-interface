@@ -1,0 +1,59 @@
+<script lang="ts">
+  import Button from "@app/Button.svelte";
+  import Loading from "@app/Loading.svelte";
+  import { fade } from "svelte/transition";
+
+  type Item = $$Generic;
+
+  export let items: Item[];
+  export let query: () => Promise<Item[]>;
+
+  // Used to handle the display of the trigger to load more items, according to the current loading state.
+  let loading = false;
+  // Should be changed to true, once no more items are being returned.
+  let complete = false;
+
+  const transitionParams = { duration: 200 };
+
+  const fetchMore = async () => {
+    loading = true;
+    const response = await query();
+
+    if (response.length > 0) {
+      items = [...items, ...response];
+    } else {
+      complete = true;
+    }
+
+    loading = false;
+  };
+</script>
+
+<style>
+  .more {
+    margin-top: 1rem;
+    height: 40px;
+    text-align: center;
+  }
+</style>
+
+<slot name="list" {items} />
+{#if !complete}
+  <slot name="more" {fetchMore} {loading}>
+    {#if loading}
+      <div class="more" transition:fade={transitionParams}>
+        <Loading small />
+      </div>
+    {:else}
+      <div class="more" transition:fade={transitionParams}>
+        <Button
+          variant="secondary"
+          waiting={loading}
+          disabled={loading}
+          on:click={fetchMore}>
+          More
+        </Button>
+      </div>
+    {/if}
+  </slot>
+{/if}
