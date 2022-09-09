@@ -41,11 +41,11 @@
 {#if !complete}
   <slot name="more" {fetchMore} {loading}>
     {#if loading}
-      <div class="more" transition:fade={transitionParams}>
+      <div class="more" transition:fade|local={transitionParams}>
         <Loading small />
       </div>
     {:else}
-      <div class="more" transition:fade={transitionParams}>
+      <div class="more" transition:fade|local={transitionParams}>
         <Button
           variant="secondary"
           waiting={loading}
