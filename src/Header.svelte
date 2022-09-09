@@ -52,17 +52,6 @@
     margin-left: 1.5rem;
     white-space: nowrap;
   }
-  header .nav .nav-link {
-    display: inline-block;
-    padding: 0.5rem 0.5rem;
-    margin-right: 1.5rem;
-    cursor: pointer;
-    user-select: none;
-    color: var(--color-foreground-6);
-  }
-  header .nav .nav-link:hover {
-    color: var(--color-foreground);
-  }
   header .nav .seeds-container {
     display: inline-block;
   }
@@ -105,6 +94,7 @@
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-round);
+    margin-left: 2rem;
   }
   .network.unavailable {
     color: #888;
@@ -113,7 +103,16 @@
   .network:last-child {
     margin-right: 0;
   }
-
+  .register {
+    display: inline-block;
+    padding: 0.5rem 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    color: var(--color-foreground-6);
+  }
+  .register:hover {
+    color: var(--color-foreground);
+  }
   .balance {
     margin: 0 2rem;
     white-space: nowrap;
@@ -165,8 +164,6 @@
       <Search />
     </div>
     <div class="nav">
-      <a use:link class="nav-link" href="/registrations">Register</a>
-
       {#if session && Object.keys(session.siwe).length > 0}
         <span class="seeds-container">
           <Floating>
@@ -181,6 +178,7 @@
   </div>
 
   <div class="right">
+    <a use:link class="register" href="/registrations">Register</a>
     {#if config && config.network.name === "rinkeby"}
       <span class="network">Rinkeby</span>
     {:else if config && config.network.name === "homestead"}
