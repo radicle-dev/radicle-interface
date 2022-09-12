@@ -208,9 +208,3 @@ label.input {
     display: none !important;
   }
 }
-
-span.align {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}

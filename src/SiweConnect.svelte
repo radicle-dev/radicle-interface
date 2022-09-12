@@ -17,6 +17,14 @@
   let connection: Connection = Connection.Disconnected;
 </script>
 
+<style>
+  .align {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+</style>
+
 <Button
   variant="secondary"
   size="small"
