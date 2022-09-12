@@ -272,16 +272,3 @@ button.error:hover {
   color: var(--color-background);
   background-color: var(--color-negative);
 }
-
-table {
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 2rem 0;
-}
-td {
-  text-align: left;
-  text-overflow: ellipsis;
-}
-td strong {
-  font-weight: var(--font-weight-medium);
-}

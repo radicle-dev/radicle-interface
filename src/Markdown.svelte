@@ -91,11 +91,6 @@
     color: var(--color-foreground);
   }
 
-  .markdown :global(*:first-child) {
-    padding-top: 0;
-    margin-top: 0;
-  }
-
   .markdown :global(h1) {
     font-size: calc(var(--font-size-huge) * 0.75);
     font-weight: var(--font-weight-medium);
@@ -224,6 +219,27 @@
     list-style-type: inherit;
     padding-left: 1.25rem;
     margin-bottom: 1rem;
+  }
+  .markdown :global(table) {
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+    border-radius: 0.5rem;
+    border-style: hidden;
+    box-shadow: 0 0 0 1px var(--color-foreground-subtle);
+    overflow: hidden;
+  }
+  .markdown :global(td) {
+    text-align: left;
+    text-overflow: ellipsis;
+    border: 1px solid var(--color-foreground-subtle);
+    padding: 0.5rem 1rem;
+  }
+  .markdown :global(tr:nth-child(even)) {
+    background-color: var(--color-foreground-even-subtler);
+  }
+  .markdown :global(th) {
+    text-align: center;
+    padding: 0.5rem 1rem;
   }
 </style>
 

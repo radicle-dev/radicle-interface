@@ -53,6 +53,15 @@
     margin-left: 1.5rem;
     color: var(--color-secondary);
   }
+  table {
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 2rem 0;
+  }
+  td {
+    text-align: left;
+    text-overflow: ellipsis;
+  }
 </style>
 
 <svelte:head>
