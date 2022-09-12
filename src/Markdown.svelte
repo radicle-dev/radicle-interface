@@ -20,12 +20,13 @@
   let container: HTMLElement;
 
   const render = (content: string): string => {
-    return xss(marked.parse(content), {
+    return xss(marked.parse(content, { breaks: true }), {
       whiteList: {
         ...getDefaultWhiteList(),
         img: ["src"],
         audio: ["src"],
         video: ["src"],
+        a: ["href", "name"],
       },
       stripIgnoreTag: false,
     });
