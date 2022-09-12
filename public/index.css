@@ -214,7 +214,3 @@ span.align {
   align-items: center;
   justify-content: flex-start;
 }
-button.error:hover {
-  color: var(--color-background);
-  background-color: var(--color-negative);
-}
