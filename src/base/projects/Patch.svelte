@@ -69,7 +69,7 @@
   }
   .summary-state {
     padding: 0.5rem 1rem;
-    border-radius: 1.25rem;
+    border-radius: var(--border-radius-regular);
   }
   .proposed {
     color: var(--color-positive);

@@ -36,7 +36,7 @@
     margin: 0 auto;
     padding: 0.75rem;
     background-color: white;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-small);
   }
   .qrcode {
     width: 200px;

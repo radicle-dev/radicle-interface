@@ -70,6 +70,7 @@
 
   --border-radius: 0.75rem;
   --border-radius-small: 0.5rem;
+  --border-radius-regular: 1rem;
   --border-radius-round: 10rem;
   --box-shadow-color: var(--color-secondary-2);
 

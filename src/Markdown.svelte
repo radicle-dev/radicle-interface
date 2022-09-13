@@ -223,7 +223,7 @@
   .markdown :global(table) {
     margin: 1.5rem 0;
     border-collapse: collapse;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-small);
     border-style: hidden;
     box-shadow: 0 0 0 1px var(--color-foreground-subtle);
     overflow: hidden;

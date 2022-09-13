@@ -36,7 +36,7 @@
     min-width: 480px;
     max-width: 760px;
     text-align: center;
-    border-radius: 1rem;
+    border-radius: var(--border-radius-regular);
   }
   .modal.error .modal-title,
   .modal.error .modal-subtitle,

@@ -31,7 +31,6 @@
     display: flex;
     align-items: center;
     background: none;
-    border-radius: 0;
     padding: 1rem;
   }
   main {
