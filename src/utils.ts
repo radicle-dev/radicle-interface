@@ -508,6 +508,18 @@ export async function resolveLabel(
   return null;
 }
 
+export async function resolveMultiLabel(
+  labels: string[],
+  config: Config,
+): Promise<Record<string, string | null>> {
+  const addresses = await Promise.all(
+    labels.map(label => config.provider.resolveName(label)),
+  );
+  return labels.reduce((arr, curr, index) => {
+    return { ...arr, [curr]: addresses[index] };
+  }, {});
+}
+
 // Resolves an IDX profile or return null
 export const resolveIdxProfile = cache.cached(
   async (caip10: string, config: Config): Promise<BasicProfile | null> => {
