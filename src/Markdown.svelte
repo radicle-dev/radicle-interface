@@ -23,7 +23,7 @@
     return xss(marked.parse(content), {
       whiteList: {
         ...getDefaultWhiteList(),
-        img: ["src"],
+        img: ["src", "alt", "title"],
         audio: ["src"],
         video: ["src"],
         a: ["href", "name"],
