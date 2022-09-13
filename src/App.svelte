@@ -10,7 +10,6 @@
   import Faucet from "@app/base/faucet/Routes.svelte";
   import Projects from "@app/base/projects/Routes.svelte";
   import Profile from "@app/Profile.svelte";
-  import Resolver from "@app/base/resolver/Routes.svelte";
   import Header from "@app/Header.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
@@ -94,7 +93,6 @@
         <Registrations {config} session={$session} />
         <Seeds {config} session={$session} />
         <Faucet {config} />
-        <Resolver {config} />
         <Route path="/:addressOrName" let:params>
           <Profile addressOrName={params.addressOrName} {config} />
         </Route>

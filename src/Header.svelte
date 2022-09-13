@@ -15,17 +15,26 @@
   import Icon from "./Icon.svelte";
   import MobileNavbar from "./MobileNavbar.svelte";
   import SeedDropdown from "./SeedDropdown.svelte";
-  import Button from "@app/Button.svelte";
   import ThemeToggle from "./ThemeToggle.svelte";
+  import Button from "@app/Button.svelte";
+  import SearchResults from "@app/components/Modal/SearchResults.svelte";
+  import type { ResolvedSearch } from "@app/resolver";
 
   export let session: Session | null;
   export let config: Config;
 
+  let query: string;
+  let results: ResolvedSearch;
+
   let sessionButtonHover = false;
   let mobileNavbarDisplayed = false;
+  let searchResultsDisplayed = false;
 
   function toggleNavbar() {
     mobileNavbarDisplayed = !mobileNavbarDisplayed;
+  }
+  function toggleSearchResults() {
+    searchResultsDisplayed = !searchResultsDisplayed;
   }
 
   $: address = session && session.address;
@@ -162,7 +171,12 @@
   <div class="left">
     <a use:link href="/" class="logo"><Logo /></a>
     <div class="search">
-      <Search />
+      <Search
+        {config}
+        on:search={e => {
+          ({ query, results } = e.detail);
+          toggleSearchResults();
+        }} />
     </div>
     <div class="nav">
       {#if session && Object.keys(session.siwe).length > 0}
@@ -233,6 +247,15 @@
   </div>
 
   {#if mobileNavbarDisplayed}
-    <MobileNavbar on:select={toggleNavbar} />
+    <MobileNavbar
+      {config}
+      on:search={e => {
+        ({ query, results } = e.detail);
+        toggleSearchResults();
+        toggleNavbar();
+      }} />
+  {/if}
+  {#if searchResultsDisplayed}
+    <SearchResults {config} {results} {query} on:close={toggleSearchResults} />
   {/if}
 </header>

@@ -3,8 +3,11 @@
   import { createEventDispatcher } from "svelte";
   import Search from "./Search.svelte";
   import { clickOutside } from "@app/utils";
+  import type { Config } from "@app/config";
 
   const dispatch = createEventDispatcher();
+
+  export let config: Config;
 
   function handleClickOutside() {
     dispatch("select");
@@ -63,7 +66,7 @@
   <div use:clickOutside={handleClickOutside} class="modal">
     <div class="modal-title">
       <div style="padding-bottom: 1rem;">
-        <Search size={20} on:search={() => dispatch("select")} />
+        <Search size={20} {config} on:search />
       </div>
       <div>
         <a use:link on:click={() => dispatch("select")} href="/registrations">
