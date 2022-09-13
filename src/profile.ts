@@ -9,6 +9,7 @@ import {
   parseUsername,
   AddressType,
   identifyAddress,
+  isFulfilled,
 } from "@app/utils";
 import type { Config } from "@app/config";
 import { cached } from "@app/cache";
@@ -215,10 +216,10 @@ export class Profile {
     const profilePromises = addressesOrNames.map(addressOrName =>
       this.lookupProfile(addressOrName, ProfileType.Minimal, config),
     );
-    const profiles = await Promise.all(profilePromises);
-    return profiles.map(profile => {
-      return new Profile(profile);
-    });
+    const profiles = await Promise.allSettled(profilePromises);
+    return profiles
+      .filter(isFulfilled)
+      .map(profile => new Profile(profile.value));
   }
 
   static async get(

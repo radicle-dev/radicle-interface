@@ -2,7 +2,7 @@ import { navigate } from "svelte-routing";
 import { get, writable } from "svelte/store";
 import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
-import { isOid, isRadicleId } from "@app/utils";
+import { isFulfilled, isOid, isRadicleId } from "@app/utils";
 import { Profile, ProfileType } from "@app/profile";
 import { Seed } from "@app/base/seeds/Seed";
 import type { Config } from "@app/config";
@@ -498,9 +498,6 @@ export class Project implements ProjectInfo {
       );
     }
     const results = await Promise.allSettled(promises);
-    const isFulfilled = <T>(
-      input: PromiseSettledResult<T>,
-    ): input is PromiseFulfilledResult<T> => input.status === "fulfilled";
 
     return results.filter(isFulfilled).map(r => r.value);
   }

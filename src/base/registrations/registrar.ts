@@ -6,7 +6,7 @@ import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import * as session from "@app/session";
 import { Failure } from "@app/error";
 import type { Config } from "@app/config";
-import { unixTime } from "@app/utils";
+import { isFulfilled, unixTime } from "@app/utils";
 import { assert } from "@app/error";
 import { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import * as cache from "@app/cache";
@@ -105,9 +105,7 @@ export async function getRegistration(
     anchorsAccount,
     twitter,
     github,
-  ] = meta.map(r =>
-    r.status === "fulfilled" && r.value ? r.value : undefined,
-  );
+  ] = meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
 
   const profile: EnsProfile = {
     name,

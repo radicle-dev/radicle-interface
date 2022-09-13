@@ -350,13 +350,19 @@ export function isDid(input: string): boolean {
 
 export function isENSName(input: string, config: Config): boolean {
   const domain = config.registrar.domain.replace(".", "\\.");
-  const regEx = new RegExp(`^[a-zA-Z0-9]+.${domain}$`);
+  const regEx = new RegExp(`^[a-zA-Z0-9]+.(${domain}|eth)$`);
   return regEx.test(input);
 }
 
 // Check whether the input is an checksummed or all lowercase Ethereum address.
 export function isAddress(input: string): boolean {
   return ethers.utils.isAddress(input);
+}
+
+export function isFulfilled<T>(
+  input: PromiseSettledResult<T>,
+): input is PromiseFulfilledResult<T> {
+  return input.status === "fulfilled";
 }
 
 // Get search parameters from location.
@@ -556,9 +562,7 @@ export async function resolveEnsProfile(
       const [avatar, address, seed, anchorsAccount] =
         // Just checking for r.value equal null and casting to undefined,
         // since resolver functions return null.
-        project.map(r =>
-          r.status === "fulfilled" && r.value ? r.value : null,
-        );
+        project.filter(isFulfilled).map(r => (r.value ? r.value : null));
 
       return {
         name,
