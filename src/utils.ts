@@ -477,6 +477,16 @@ export function parseEmoji(input: string): string {
   return input;
 }
 
+// Fetch from config the emoji to the corresponding pinned seed, if non found return default emoji
+// @dev: This helper fn lets us get a seed emoji quick without multiLookups or complex type usage.
+// TODO: Should be revisited, when we have a stable implementation for seed avatars.
+export function getSeedEmoji(input: string, config: Config): string {
+  if (config.seeds.pinned[input]) {
+    return config.seeds.pinned[input].emoji;
+  }
+  return "🌱";
+}
+
 // Identify an address by checking whether it's a contract or an externally-owned address.
 export async function identifyAddress(
   address: string,
