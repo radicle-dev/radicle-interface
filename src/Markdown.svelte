@@ -20,7 +20,7 @@
   let container: HTMLElement;
 
   const render = (content: string): string => {
-    return xss(marked.parse(content, { breaks: true }), {
+    return xss(marked.parse(content), {
       whiteList: {
         ...getDefaultWhiteList(),
         img: ["src"],
