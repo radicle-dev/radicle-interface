@@ -162,6 +162,9 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
     color: var(--color-secondary-6);
+    background-color: var(--color-foreground-2);
+    border-radius: 0.5rem;
+    padding: 0.125rem 0.25rem;
   }
 
   .markdown :global(pre code) {
