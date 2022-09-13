@@ -94,8 +94,7 @@ body::-webkit-scrollbar-thumb {
   background: var(--color-negative);
 }
 
-main,
-section {
+main {
   display: block;
 }
 

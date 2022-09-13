@@ -24,7 +24,7 @@
 </script>
 
 <style>
-  section {
+  .timeline {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -37,7 +37,7 @@
   }
 </style>
 
-<section>
+<div class="timeline">
   {#each timeline as element}
     {#if element.type === TimelineType.Merge && element.inner.peer.person}
       <div class="element">
@@ -74,4 +74,4 @@
       </div>
     {/if}
   {/each}
-</section>
+</div>
