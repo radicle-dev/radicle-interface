@@ -121,7 +121,8 @@
     margin: 1rem 0 0.125rem;
   }
 
-  .markdown :global(h5) {
+  .markdown :global(h5),
+  .markdown :global(h6) {
     font-weight: var(--font-weight-medium);
     font-size: var(--font-size-small);
     padding: 0.35rem 0;
@@ -129,10 +130,7 @@
   }
 
   .markdown :global(h6) {
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-tiny);
-    padding: 0.25rem 0;
-    margin: 1rem 0 0.125rem;
+    color: var(--color-foreground-6);
   }
 
   .markdown :global(p) {
