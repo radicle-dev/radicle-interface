@@ -28,7 +28,7 @@
     color: var(--color-foreground-90);
   }
   .label {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     padding: 0.25rem 0.75rem;

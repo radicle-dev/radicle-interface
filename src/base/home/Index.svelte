@@ -46,7 +46,7 @@
     max-width: 70%;
     font-size: var(--font-size-medium);
     text-align: left;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     margin-bottom: 1.5rem;
   }
   .projects {

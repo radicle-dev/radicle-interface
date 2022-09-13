@@ -70,7 +70,7 @@
     flex-direction: row;
     background: var(--color-secondary-background);
     padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
   }
   .desktop {
     display: block !important;

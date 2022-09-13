@@ -23,7 +23,7 @@
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     margin-bottom: 2rem;
   }
   main {
@@ -38,7 +38,7 @@
   .metadata {
     flex-basis: 18rem;
     margin-left: 1rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     font-size: var(--font-size-small);
     padding-left: 1rem;
   }
@@ -58,7 +58,7 @@
     color: var(--color-foreground-90);
   }
   .label {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     color: var(--color-tertiary);
     background-color: var(--color-tertiary-background);
     padding: 0.25rem 0.75rem;
@@ -88,7 +88,7 @@
   }
   .summary-state {
     padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
   }
   .open {
     color: var(--color-positive);

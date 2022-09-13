@@ -22,7 +22,7 @@
   .authorship .avatar {
     width: 1rem;
     height: 1rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     margin-right: 0.25rem;
   }
   .authorship .avatar:not(:first-child) {

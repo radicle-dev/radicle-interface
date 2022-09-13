@@ -34,7 +34,7 @@
     fill: var(--color-positive);
   }
   .clipboard:hover {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
   }
 </style>
 

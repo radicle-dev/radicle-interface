@@ -43,7 +43,7 @@
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
   }
   .patch {
     padding: 0 2rem 0 8rem;

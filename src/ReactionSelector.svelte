@@ -17,7 +17,7 @@
     justify-content: center;
     position: relative;
     color: var(--color-foreground-faded);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     height: 1rem;
     width: 1rem;
     cursor: not-allowed;
@@ -30,7 +30,7 @@
     position: absolute;
     left: 1.5rem;
     background-color: var(--color-foreground-background);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
   }
   .modal > div {
     padding: 0.5rem;

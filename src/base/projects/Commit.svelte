@@ -26,7 +26,7 @@
   header {
     padding: 1rem;
     background: var(--color-foreground-background-subtle);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     margin-bottom: 1.5rem;
   }
   .summary {

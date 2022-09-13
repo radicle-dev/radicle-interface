@@ -47,7 +47,7 @@
     font-size: var(--font-size-small);
   }
   .issues-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     overflow: hidden;
   }
   .teaser:not(:last-child) {

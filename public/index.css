@@ -68,7 +68,7 @@
   --color-glow-error: #ff555522;
   --color-scrollbar: var(--color-foreground-subtler);
 
-  --border-radius: 0.75rem;
+  --border-radius-tiny: 0.75rem;
   --border-radius-small: 0.5rem;
   --border-radius-regular: 1rem;
   --border-radius-round: 10rem;
@@ -129,7 +129,7 @@ body {
 }
 *::-webkit-scrollbar-thumb {
   background: transparent;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-tiny);
 }
 *::-webkit-scrollbar-corner {
   background: transparent;

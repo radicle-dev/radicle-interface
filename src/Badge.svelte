@@ -10,7 +10,7 @@
 
 <style>
   .badge {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-tiny);
     padding: 0.125rem 0.5rem;
     font-size: var(--font-size-tiny);
     line-height: 1.6;
