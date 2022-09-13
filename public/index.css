@@ -150,11 +150,6 @@ input.wide {
   width: 44ch;
 }
 
-label.input {
-  text-align: left;
-  display: block;
-}
-
 .error {
   color: var(--color-negative) !important;
   border-color: var(--color-negative) !important;
