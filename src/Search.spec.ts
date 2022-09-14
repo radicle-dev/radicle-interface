@@ -8,7 +8,7 @@ describe("Logic", () => {
     cy.get("input").should(
       "have.attr",
       "placeholder",
-      "Search a name or address...",
+      "Search a name or address…",
     );
   });
 

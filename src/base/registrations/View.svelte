@@ -72,7 +72,7 @@
         {
           name: "address",
           validate: "address",
-          placeholder: "Ethereum address, eg. 0x4a9cf21...bc91",
+          placeholder: "Ethereum address, eg. 0x4a9cf21…bc91",
           description:
             "The address this name resolves to. " +
             (reverseRecord
@@ -121,7 +121,7 @@
           name: "id",
           label: "Radicle",
           validate: "identity",
-          placeholder: "Radicle URN, eg. rad:git:hnrkqdpm9ub19oc8d...",
+          placeholder: "Radicle URN, eg. rad:git:hnrkqdpm9ub19oc8d…",
           description: "The local radicle identity associated with this name.",
           value: r.profile.id,
           editable: true,
@@ -143,7 +143,7 @@
           name: "seed.id",
           label: "Seed ID",
           validate: "id",
-          placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88...",
+          placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88…",
           description:
             "The Device ID of a Radicle Link node that hosts entities associated with this name.",
           value: r.profile.seed?.id,
@@ -153,10 +153,10 @@
           name: "anchors",
           label: "Anchors",
           validate: "URN",
-          placeholder: "URN, eg. eip155:1:0x4a9cf21...",
+          placeholder: "URN, eg. eip155:1:0x4a9cf21…",
           description:
             "URN under which associated project anchors can be found. " +
-            "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21...*",
+            "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21…*",
           value: r.profile.anchorsAccount,
           editable: true,
         },

@@ -58,7 +58,7 @@
     {#if state.status === Status.Signing}
       <p>Please confirm the transaction in your wallet</p>
     {:else if state.status === Status.Pending}
-      <p>Waiting for transaction to be processed...</p>
+      <p>Waiting for transaction to be processed…</p>
     {:else if state.status === Status.Success}
       <p>Your registration was successfully updated.</p>
     {:else if state.status === Status.Failed}

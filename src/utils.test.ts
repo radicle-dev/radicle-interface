@@ -120,7 +120,7 @@ describe("Format functions", () => {
   test.each([
     {
       hash: "0x8f918133b56bb85c18ea192549503f0ea59e3beb1f88023f442656c660018e3a",
-      expected: "0x8f91...8e3a",
+      expected: "0x8f91…8e3a",
     },
     { hash: "0x8f91813", expected: "0x8f91813" }, // If the string length is less than 10 characters the entire string is returned.
   ])("formatHash $hash => $expected", ({ hash, expected }) => {

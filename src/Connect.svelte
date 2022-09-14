@@ -40,7 +40,7 @@
   disabled={connecting}
   waiting={connecting}>
   {#if connecting}
-    Connecting...
+    Connecting…
   {:else}
     {caption}
   {/if}

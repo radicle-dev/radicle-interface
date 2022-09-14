@@ -66,7 +66,7 @@
 
     <span slot="subtitle">
       {#if $state.connection === State.Connecting}
-        Connecting...
+        Connecting…
       {:else if $state.connection === State.SigningPermit}
         Approving registration fee. Please confirm in your wallet.
       {:else if $state.connection === State.SigningCommit}

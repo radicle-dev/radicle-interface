@@ -118,11 +118,11 @@
           {#if isBeneficiary}
             {#if $state === State.WithdrawingSign}
               <Button disabled waiting={true} variant="primary">
-                Waiting for signature...
+                Waiting for signature…
               </Button>
             {:else if $state === State.Withdrawing}
               <Button disabled waiting={true} variant="primary">
-                Withdrawing...
+                Withdrawing…
               </Button>
             {:else if $state === State.Idle}
               <Button

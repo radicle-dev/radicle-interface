@@ -180,7 +180,7 @@ export function formatIpfsFile(ipfs: string | undefined): string | undefined {
 export function formatHash(hash: string): string {
   if (hash.length < 10) return hash;
   return (
-    hash.substring(0, 6) + "..." + hash.substring(hash.length - 4, hash.length)
+    hash.substring(0, 6) + "…" + hash.substring(hash.length - 4, hash.length)
   );
 }
 

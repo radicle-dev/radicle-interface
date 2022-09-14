@@ -33,4 +33,4 @@
   type="text"
   bind:value={input}
   on:keydown={handleKeydown}
-  placeholder="Search a name or address..." />
+  placeholder="Search a name or address…" />

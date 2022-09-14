@@ -125,7 +125,7 @@
       {#if state === State.Signing}
         Please confirm the transaction in your wallet.
       {:else if state === State.Pending}
-        Waiting for transaction to be processed...
+        Waiting for transaction to be processed…
       {:else if state === State.Proposing && org}
         Proposal is being submitted to the safe
         <span class="txt-bold">{formatAddress(org.owner)}</span>
