@@ -1,10 +1,14 @@
 <script lang="ts">
   import * as utils from "@app/utils";
-  import Input from "@app/Input.svelte";
+  import Clipboard from "@app/Clipboard.svelte";
   import Floating from "@app/Floating.svelte";
+  import { closeFocused } from "@app/Floating.svelte";
 
   export let seedHost: string;
   export let urn: string;
+
+  $: radCloneUrl = `rad clone rad://${seedHost}/${utils.parseRadicleId(urn)}`;
+  $: gitCloneUrl = `https://${seedHost}/${utils.parseRadicleId(urn)}.git`;
 </script>
 
 <style>
@@ -45,15 +49,52 @@
     font-size: var(--font-size-tiny);
     padding: 0.5rem 0.5rem 0 0.25rem;
   }
+  .clone-url-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .clone-url {
+    background: var(--color-yellow-background-solid);
+    border-radius: var(--border-radius-small);
+    color: var(--color-yellow);
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-tiny);
+    height: 2rem;
+    overflow: hidden;
+    padding: 0.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+  .clipboard {
+    position: absolute;
+    right: 0;
+    color: var(--color-yellow);
+    background: var(--color-yellow-background-solid);
+    visibility: hidden;
+    width: 4rem;
+    height: 2rem;
+    text-align: right;
+    -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
+    mask: linear-gradient(90deg, transparent 0%, #fff 50%);
+    border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
+  }
+  .clone-url-wrapper:hover .clipboard {
+    visibility: visible;
+  }
 </style>
 
 <Floating>
   <div slot="toggle" class="clone-button">Clone</div>
   <svelte:fragment slot="modal">
     <div class="dropdown">
-      <Input
-        name="rad-clone-url"
-        value="rad clone rad://{seedHost}/{utils.parseRadicleId(urn)}" />
+      <div class="clone-url-wrapper">
+        <div class="clone-url" name="rad-clone-url">{radCloneUrl}</div>
+        <span class="clipboard">
+          <Clipboard text={radCloneUrl} on:copied={closeFocused} />
+        </span>
+      </div>
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
@@ -64,9 +105,12 @@
         to clone this project.
       </label>
       <br />
-      <Input
-        name="git-clone-url"
-        value="https://{seedHost}/{utils.parseRadicleId(urn)}.git" />
+      <div class="clone-url-wrapper">
+        <div class="clone-url" name="git-clone-url">{gitCloneUrl}</div>
+        <span class="clipboard">
+          <Clipboard text={gitCloneUrl} on:copied={closeFocused} />
+        </span>
+      </div>
       <label for="git-clone-url">
         Use Git to clone this repository from the URL above.
       </label>
