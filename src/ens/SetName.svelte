@@ -4,7 +4,6 @@
   import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
   import { formatAddress, isAddressEqual } from "@app/utils";
-  import DomainInput from "@app/ens/DomainInput.svelte";
   import { Org } from "@app/base/orgs/Org";
   import type { User } from "@app/base/users/User";
   import Loading from "@app/Loading.svelte";
@@ -12,6 +11,7 @@
   import Address from "@app/Address.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -72,6 +72,14 @@
     }
   };
 </script>
+
+<style>
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+</style>
 
 {#if state === State.Success}
   <Modal floating>
@@ -158,19 +166,24 @@
       {/if}
     </div>
 
-    <div slot="body">
+    <div slot="body" style="display: flex; justify-content:center;">
       {#if state === State.Idle || state === State.Checking}
-        <DomainInput
-          root={config.registrar.domain}
-          autofocus
-          disabled={state !== State.Idle}
-          bind:value={name} />
+        <div style="width: 22rem;">
+          <TextInput
+            autofocus
+            disabled={state !== State.Idle}
+            bind:value={name}>
+            <svelte:fragment slot="right">
+              .{config.registrar.domain}
+            </svelte:fragment>
+          </TextInput>
+        </div>
       {:else}
         <Loading small center />
       {/if}
     </div>
 
-    <div slot="actions">
+    <div slot="actions" class="actions">
       {#if state === State.Signing}
         <Button variant="secondary" on:click={() => dispatch("close")}>
           Cancel

@@ -2,7 +2,7 @@
   import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
 
-  import DomainInput from "@app/ens/DomainInput.svelte";
+  import TextInput from "@app/TextInput.svelte";
   import Button from "@app/Button.svelte";
 
   export let config: Config;
@@ -50,6 +50,7 @@
   }
   .name {
     margin: 1rem;
+    width: 22rem;
   }
   .input-info {
     position: absolute;
@@ -82,11 +83,11 @@
     </div>
     <div class="input-main">
       <span class="name">
-        <DomainInput
-          bind:value={input}
-          autofocus
-          placeholder=""
-          root={config.registrar.domain} />
+        <TextInput bind:value={input} autofocus>
+          <svelte:fragment slot="right">
+            .{config.registrar.domain}
+          </svelte:fragment>
+        </TextInput>
         {#if errors}
           <div class="input-info">
             {#each errors as error}

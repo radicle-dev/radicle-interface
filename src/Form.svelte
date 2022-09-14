@@ -1,8 +1,7 @@
 <script context="module" lang="ts">
-  import Button from "@app/Button.svelte";
   export interface Field {
     name: string;
-    value?: string;
+    value: string;
     label?: string;
     validate?: string;
     placeholder?: string;
@@ -45,6 +44,9 @@
 </script>
 
 <script lang="ts">
+  import type { Config } from "@app/config";
+
+  import cloneDeep from "lodash/cloneDeep";
   import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
@@ -55,15 +57,17 @@
     isAddress,
     formatSeedId,
   } from "@app/utils";
+
   import Address from "@app/Address.svelte";
-  import type { Config } from "@app/config";
+  import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   export let fields: Field[];
   export let editable = false;
   export let disabled = false;
   export let config: Config;
 
-  let formFields = fields;
+  let formFields = cloneDeep(fields);
   let hasErrors = false;
 
   marked.use({ extensions });
@@ -104,8 +108,7 @@
   const save = () => dispatch("save", cleanup(formFields));
   const validate = (event: Event) => dispatch("validate", check(event));
   const cancel = () => {
-    formFields = fields;
-    dispatch("cancel");
+    formFields = cloneDeep(fields);
   };
 </script>
 
@@ -124,7 +127,7 @@
     display: flex;
     align-items: center;
     width: 28rem;
-    height: 2.125rem;
+    height: 2.5rem;
     border: 1px dashed transparent;
     padding: 0.25rem 1rem;
     margin: 0;
@@ -145,21 +148,8 @@
     margin: 0;
   }
 
-  input.field {
-    border-radius: var(--border-radius-round);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-color: var(--color-secondary) !important;
-  }
   .description.invalid {
     color: var(--color-negative) !important;
-  }
-  input.field::placeholder {
-    color: var(--color-secondary);
-    font-style: italic;
-  }
-  input.field[disabled] {
-    color: var(--color-secondary);
   }
 
   .label {
@@ -180,9 +170,15 @@
   .actions.editable {
     visibility: visible;
   }
+  .text-input {
+    width: 28rem;
+  }
   @media (max-width: 720px) {
     .field {
       width: unset;
+    }
+    .text-input {
+      width: 14rem;
     }
   }
 </style>
@@ -194,15 +190,16 @@
     </div>
     <div>
       {#if field.editable && editable}
-        <input
-          name={field.name}
-          class="field"
-          placeholder={field.placeholder}
-          on:change={validate}
-          on:input={() => (field.error = null)}
-          value={field.value || ""}
-          type="text"
-          {disabled} />
+        <div class="text-input">
+          <TextInput
+            variant="dashed"
+            name={field.name}
+            placeholder={field.placeholder}
+            on:change={validate}
+            on:input={() => (field.error = null)}
+            bind:value={field.value}
+            {disabled} />
+        </div>
       {:else}
         <span class="field">
           {#if field.value}
@@ -241,7 +238,7 @@
               {field.value}
             {/if}
           {:else}
-            <span class="txt-missing not-set">&cross; Not set</span>
+            <span class="txt-missing">&cross; Not set</span>
           {/if}
         </span>
       {/if}

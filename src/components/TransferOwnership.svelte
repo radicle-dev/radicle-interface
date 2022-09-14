@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
   import { formatAddress, isAddress } from "@app/utils";
@@ -8,6 +8,7 @@
   import * as utils from "@app/utils";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   import type { Org } from "@app/base/orgs/Org";
 
@@ -31,14 +32,9 @@
     Failed,
   }
 
-  let newOwner: string | null = null;
+  let newOwner: string | undefined = undefined;
   let state = State.Idle;
   let error: string | null = null;
-  let input: HTMLInputElement | null = null;
-
-  onMount(() => {
-    input && input.focus();
-  });
 
   const resetForm = () => {
     state = State.Idle;
@@ -72,6 +68,14 @@
     }
   };
 </script>
+
+<style>
+  .actions {
+    gap: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+</style>
 
 {#if state === State.Success && newOwner}
   <Modal floating small>
@@ -142,14 +146,14 @@
       {/if}
     </div>
 
-    <div slot="body">
+    <div slot="body" style="display: flex;justify-content: center;">
       {#if state === State.Idle}
-        <input
-          type="text"
-          size="40"
-          disabled={state !== State.Idle}
-          bind:this={input}
-          bind:value={newOwner} />
+        <div style="width: 25rem;">
+          <TextInput
+            autofocus
+            disabled={state !== State.Idle}
+            bind:value={newOwner} />
+        </div>
       {:else if state === State.Pending || state === State.Proposing || state === State.Signing}
         <Loading small center />
       {:else if state === State.Failed}
@@ -157,7 +161,7 @@
       {/if}
     </div>
 
-    <div slot="actions">
+    <div slot="actions" class="actions">
       {#if state === State.Signing}
         <Button variant="text" on:click={() => dispatch("close")}>
           Cancel

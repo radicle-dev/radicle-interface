@@ -123,33 +123,6 @@ a.address {
   border-bottom-color: transparent;
 }
 
-input[type="text"] {
-  font-family: var(--font-family-sans-serif);
-  line-height: 1.6;
-}
-input[type="text"] {
-  outline: none;
-  border: none;
-  font-size: var(--font-size-regular);
-  color: var(--color-foreground);
-  background: transparent;
-  border: 1px solid var(--color-secondary);
-  border-radius: var(--border-radius-round);
-  padding: 1rem 1.5rem;
-  margin: 1rem;
-  height: var(--button-regular-height);
-}
-input[type="text"]::placeholder {
-  color: var(--color-secondary);
-  opacity: 1 !important;
-}
-input[type="text"].small {
-  font-size: var(--font-size-small);
-}
-input.wide {
-  width: 44ch;
-}
-
 .error {
   color: var(--color-negative) !important;
   border-color: var(--color-negative) !important;

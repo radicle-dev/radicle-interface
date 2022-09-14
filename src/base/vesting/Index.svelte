@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { State, state } from "./state";
   import { getInfo, withdrawVested } from "./vesting";
   import type { VestingInfo } from "./vesting";
@@ -9,12 +8,7 @@
   import Address from "@app/Address.svelte";
   import { formatAddress, isAddressEqual } from "@app/utils";
   import Button from "@app/Button.svelte";
-
-  let input: HTMLElement;
-
-  onMount(() => {
-    input.focus();
-  });
+  import TextInput from "@app/TextInput.svelte";
 
   export let config: Config;
   export let session: Session | null;
@@ -38,20 +32,21 @@
 </script>
 
 <style>
-  div.input-caption {
+  .input-caption {
     font-size: var(--font-size-medium);
     text-align: left;
     margin-left: 1.5rem;
-    padding-left: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     color: var(--color-secondary);
   }
-  div.input-main {
+  .input-main {
     display: flex;
     align-items: center;
     flex-direction: row;
     margin-left: 1.5rem;
     color: var(--color-secondary);
+    gap: 1rem;
+    justify-content: center;
   }
   table {
     table-layout: fixed;
@@ -142,14 +137,10 @@
       </div>
       <div class="input-main">
         <span class="name">
-          <div>
-            <input
-              size="40"
-              placeholder=""
-              class="subdomain"
+          <div style="width: 25rem;">
+            <TextInput
+              autofocus
               disabled={$state === State.Loading}
-              type="text"
-              bind:this={input}
               bind:value={contractAddress} />
           </div>
         </span>

@@ -11,6 +11,7 @@
     calculateTimeLock,
   } from "./lib";
   import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   export let config: Config;
 
@@ -79,29 +80,18 @@
 </script>
 
 <style>
-  div.input-caption {
+  .input-caption {
     font-size: var(--font-size-medium);
     text-align: left;
-    margin-left: 1.5rem;
-    padding-left: 1.5rem;
     color: var(--color-secondary);
+    margin-bottom: 2rem;
+    margin-left: 0.5rem;
   }
-  div.input-main {
+  .input-main {
     display: flex;
     align-items: flex-start;
-    flex-direction: column;
-    margin: 1rem 1.5rem 0rem;
     color: var(--color-secondary);
-  }
-  input[type="text"] {
-    margin: 0;
-    margin-right: 1.5rem;
-  }
-  .name {
-    display: flex;
-    flex-direction: row;
-    margin: 1rem;
-    margin-bottom: 0;
+    flex-direction: column;
   }
   .error {
     padding-left: 1rem;
@@ -113,6 +103,10 @@
   }
   .description.invalid {
     color: var(--color-negative) !important;
+  }
+  .name {
+    display: flex;
+    gap: 1.5rem;
   }
 </style>
 
@@ -144,11 +138,12 @@
       </div>
       <div class="input-main">
         <div class="name">
-          <input
-            type="text"
-            placeholder="Set amount to withdraw"
-            bind:value={amount}
-            on:input={() => (error = "")} />
+          <div style="width: 14.5rem;">
+            <TextInput
+              placeholder="Set amount to withdraw"
+              bind:value={amount}
+              on:input={() => (error = "")} />
+          </div>
           <Button variant="primary" on:click={withdraw}>Withdraw</Button>
         </div>
         {#if error}

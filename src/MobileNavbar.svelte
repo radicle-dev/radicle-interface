@@ -66,7 +66,7 @@
   <div use:clickOutside={handleClickOutside} class="modal">
     <div class="modal-title">
       <div style="padding-bottom: 1rem;">
-        <Search size={20} {config} on:search />
+        <Search {config} on:search />
       </div>
       <div>
         <a use:link on:click={() => dispatch("select")} href="/registrations">

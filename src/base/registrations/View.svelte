@@ -80,7 +80,7 @@
               : "The reverse record for this address is **not set**. " +
                 "For this name to be correctly associated with the address, " +
                 "a reverse record should be set."),
-          value: r.profile.address,
+          value: r.profile.address ?? "",
           editable: true,
         },
         {
@@ -89,7 +89,7 @@
           validate: "URL",
           placeholder: "https://acme.org",
           description: "A homepage or other URL associated with this name.",
-          value: r.profile.url,
+          value: r.profile.url ?? "",
           editable: true,
         },
         {
@@ -97,7 +97,7 @@
           validate: "URL",
           placeholder: "https://acme.org/avatar.png",
           description: "An avatar or square image associated with this name.",
-          value: r.profile.avatar,
+          value: r.profile.avatar ?? "",
           editable: true,
         },
         {
@@ -105,7 +105,7 @@
           validate: "handle",
           placeholder: "Twitter username, eg. 'acme'",
           description: "The Twitter handle associated with this name.",
-          value: r.profile.twitter,
+          value: r.profile.twitter ?? "",
           editable: true,
         },
         {
@@ -114,7 +114,7 @@
           label: "GitHub",
           placeholder: "GitHub username, eg. 'acme'",
           description: "The GitHub username associated with this name.",
-          value: r.profile.github,
+          value: r.profile.github ?? "",
           editable: true,
         },
         {
@@ -123,7 +123,7 @@
           validate: "identity",
           placeholder: "Radicle URN, eg. rad:git:hnrkqdpm9ub19oc8d…",
           description: "The local radicle identity associated with this name.",
-          value: r.profile.id,
+          value: r.profile.id ?? "",
           editable: true,
         },
         {
@@ -136,7 +136,7 @@
             "The seed host address. " +
             "Only domain names with TLS are supported. " +
             `HTTP(S) API requests use port ${config.seed.api.port}.`,
-          value: r.profile.seed?.host,
+          value: r.profile.seed?.host ?? "",
           editable: true,
         },
         {
@@ -146,7 +146,7 @@
           placeholder: "hynkyndc6w3p8urucakobzncqny7xxtw88…",
           description:
             "The Device ID of a Radicle Link node that hosts entities associated with this name.",
-          value: r.profile.seed?.id,
+          value: r.profile.seed?.id ?? "",
           editable: true,
         },
         {
@@ -157,7 +157,7 @@
           description:
             "URN under which associated project anchors can be found. " +
             "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21…*",
-          value: r.profile.anchorsAccount,
+          value: r.profile.anchorsAccount ?? "",
           editable: true,
         },
       ];

@@ -70,6 +70,7 @@
     display: flex;
     height: var(--button-regular-height);
     align-items: center;
+    margin-right: 0.5rem;
   }
   .error {
     text-align: center;
@@ -86,10 +87,7 @@
     text-decoration: none;
   }
   .search {
-    height: var(--button-regular-height);
     width: 16rem;
-    margin-left: 0.5rem;
-    display: inline-block;
   }
   .connect {
     display: inline-block;

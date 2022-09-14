@@ -3,8 +3,8 @@
   import type { Config } from "@app/config";
   import { createEventDispatcher } from "svelte";
   import Loading from "@app/Loading.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
-  export let size = 40;
   export let config: Config;
 
   let input = "";
@@ -25,43 +25,14 @@
   };
 </script>
 
-<style>
-  input {
-    height: 100%;
-    width: 100%;
-    font-size: var(--font-size-small);
-    text-overflow: ellipsis;
-    margin: 0;
-    padding: 0.5rem 1.25rem;
-    border-style: dashed;
-    height: var(--button-regular-height);
-  }
-  input[disabled] {
-    color: var(--color-secondary);
-  }
-  .wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .loading {
-    position: absolute;
-    right: 12px;
-  }
-</style>
-
-<div class="wrapper">
-  <input
-    {size}
-    type="text"
-    disabled={searching}
-    bind:value={input}
-    on:keydown={handleKeydown}
-    placeholder="Search a name or address…" />
-  {#if searching}
-    <div class="loading">
+<TextInput
+  variant="dashed"
+  bind:value={input}
+  on:keydown={handleKeydown}
+  placeholder="Search a name or address…">
+  <svelte:fragment slot="right">
+    {#if searching}
       <Loading small />
-    </div>
-  {/if}
-</div>
+    {/if}
+  </svelte:fragment>
+</TextInput>
