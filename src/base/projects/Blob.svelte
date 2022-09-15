@@ -138,6 +138,7 @@
       <div class="file-header">
         <span class="file-name">
           <span class="faded">{parentDir}</span>
+          &#8203;
           <span>{blob.info.name}</span>
         </span>
         <div class="last-commit" title={lastCommit.author.name}>

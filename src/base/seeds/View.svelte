@@ -78,6 +78,10 @@
   .inline {
     display: inline !important;
   }
+  .seed-label {
+    display: flex;
+    align-items: center;
+  }
 
   @media (max-width: 720px) {
     main {
@@ -145,7 +149,10 @@
       <SeedAddress {seed} port={seed.link.port} />
       <!-- Seed ID -->
       <div class="label">Seed ID</div>
-      <div>{formatSeedId(seed.id)} <Clipboard small text={seed.id} /></div>
+      <div class="seed-label">
+        {formatSeedId(seed.id)}
+        <Clipboard small text={seed.id} />
+      </div>
       <div class="desktop" />
       <!-- API Port -->
       <div class="label">API Port</div>

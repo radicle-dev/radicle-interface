@@ -70,7 +70,7 @@
     color: var(--color-foreground);
     border: 1px dashed var(--color-foreground-4);
     padding: 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
   .front-matter table {
     border-collapse: collapse;
@@ -240,6 +240,11 @@
   .markdown :global(th) {
     text-align: center;
     padding: 0.5rem 1rem;
+  }
+
+  .markdown > :global(*:first-child) {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
 </style>
 
