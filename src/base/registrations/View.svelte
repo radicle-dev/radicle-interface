@@ -226,9 +226,6 @@
       padding-right: 1rem;
     }
   }
-  .domain {
-    margin-bottom: 2rem;
-  }
 </style>
 
 <svelte:head>
@@ -264,7 +261,7 @@
 {:else if state.status === Status.Found}
   <main>
     <header>
-      <div class="domain txt-title txt-bold">{domain}</div>
+      <div class="txt-title txt-bold">{domain}</div>
       <div style="width: 4rem;">
         {#if !editable}
           <Button
