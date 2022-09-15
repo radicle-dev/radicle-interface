@@ -225,13 +225,13 @@ function getProvider(
   config: Record<string, any>,
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
-  if (import.meta.env.PROD) {
+  if (metamask) {
+    return metamask;
+  } else if (import.meta.env.PROD) {
     return new ethers.providers.AlchemyWebSocketProvider(
       network.name,
       config.alchemy.key,
     );
-  } else if (metamask) {
-    return metamask;
   } else if (import.meta.env.DEV) {
     // The ethers defaultProvider doesn't include a `send` method, which breaks the `utils.getTokens` fn.
     // Since Metamask nor WalletConnect provide an `alchemy_getTokenBalances` nor `alchemy_getTokenMetadata` endpoint,
