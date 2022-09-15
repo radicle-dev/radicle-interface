@@ -31,8 +31,7 @@
 
 <style>
   .more {
-    margin-top: 1rem;
-    height: 40px;
+    margin-top: 2rem;
     text-align: center;
   }
 </style>
@@ -47,7 +46,7 @@
     {:else}
       <div class="more" transition:fade|local={transitionParams}>
         <Button
-          variant="secondary"
+          variant="foreground"
           waiting={loading}
           disabled={loading}
           on:click={fetchMore}>
