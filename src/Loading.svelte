@@ -6,8 +6,9 @@
   export let fadeIn = false;
   export let margins = false;
   export let condensed = false;
+  export let nodelay = false;
 
-  let show: boolean = false;
+  let show: boolean = nodelay;
 
   const timeout = window.setTimeout(() => {
     show = true;

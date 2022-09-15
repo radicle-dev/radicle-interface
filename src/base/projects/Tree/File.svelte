@@ -50,7 +50,7 @@
   <span class="name">{name}</span>
   <div class="spinner">
     {#if loading}
-      <Loading small condensed />
+      <Loading small condensed nodelay />
     {/if}
   </div>
 </div>
