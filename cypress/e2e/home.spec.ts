@@ -7,6 +7,10 @@ describe("landing page", () => {
       { pathname: "/v1/projects/*" },
       { fixture: "projectInfo.json" },
     ).as("projectInfo");
+    cy.intercept(
+      { pathname: "/v1/projects/*/activity" },
+      { fixture: "projectActivity.json" },
+    ).as("projectActivity");
     cy.visit("/", {
       onBeforeLoad(win) {
         const address = "0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D";
@@ -19,7 +23,7 @@ describe("landing page", () => {
         });
       },
     });
-    cy.wait("@projectInfo");
+    cy.wait(["@projectInfo", "@projectActivity"]);
     cy.get(".project .name")
       .first()
       .should("have.text", "bright-forest-protocol");

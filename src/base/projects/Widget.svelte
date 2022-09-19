@@ -45,7 +45,7 @@
   }
   article.compact {
     min-width: 16rem;
-    height: 8rem;
+    height: 9rem;
   }
   article.compact .left {
     width: 100%;
@@ -68,9 +68,6 @@
     border-color: var(--color-secondary);
     background-color: var(--color-secondary-1);
   }
-  article:hover .activity {
-    display: none !important;
-  }
   article.project-faded:hover {
     border-color: var(--color-foreground-5);
   }
@@ -86,12 +83,10 @@
   article .stateHash {
     color: var(--color-secondary);
     font-size: var(--font-size-tiny);
+    font-family: var(--font-family-monospace);
     min-height: 2rem;
     display: flex;
     align-items: center;
-  }
-  article .commit {
-    font-family: var(--font-family-monospace);
   }
   article .id {
     display: flex;
@@ -121,20 +116,27 @@
     </div>
     <div class="description">{project.description || ""}</div>
     <div class="stateHash">
-      <span class="commit">
-        <slot name="stateHash">
-          {#if project.head}
-            {#if compact}
-              {formatCommit(project.head)}
-            {:else}
-              {project.head}
-            {/if}
-          {:else}
-            <span class="txt-missing">✗ No head</span>
-          {/if}
-        </slot>
-      </span>
+      {#if project.head}
+        {#if compact}
+          {formatCommit(project.head)}
+        {:else}
+          {project.head}
+        {/if}
+      {:else}
+        <span class="txt-missing">✗ No head</span>
+      {/if}
     </div>
+    {#if compact}
+      {#await loadCommits() then points}
+        <div class="activity">
+          <Diagram
+            {points}
+            strokeWidth={3}
+            viewBoxHeight={70}
+            viewBoxWidth={600} />
+        </div>
+      {/await}
+    {/if}
   </div>
 
   {#if !compact}
