@@ -65,7 +65,6 @@
   .revision-toggle:hover {
     background-color: var(--color-foreground-1);
     color: var(--color-foreground);
-    cursor: pointer;
   }
   .revision-toggle:disabled {
     color: var(--color-foreground-5);

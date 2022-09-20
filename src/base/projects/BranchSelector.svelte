@@ -39,12 +39,10 @@
     font-family: var(--font-family-monospace);
   }
   .commit .branch {
-    cursor: pointer;
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
-    user-select: none;
   }
   .commit .branch.not-allowed {
     cursor: not-allowed;

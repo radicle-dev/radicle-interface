@@ -59,12 +59,10 @@
     font-family: var(--font-family-monospace);
   }
   .selector .peer {
-    cursor: pointer;
     padding: 0.5rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small);
-    user-select: none;
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;

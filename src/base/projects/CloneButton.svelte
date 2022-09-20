@@ -16,11 +16,9 @@
     background-color: var(--color-caution-2);
     border-radius: var(--border-radius-small);
     color: var(--color-caution-6);
-    cursor: pointer;
     font-family: var(--font-family-monospace);
     min-width: max-content;
     padding: 0.5rem 0.75rem;
-    user-select: none;
   }
   .clone-button:hover {
     background-color: var(--color-caution-3);

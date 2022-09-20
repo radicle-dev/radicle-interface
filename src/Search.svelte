@@ -21,6 +21,7 @@
       }
       input = "";
       searching = false;
+      dispatch("finished");
     }
   };
 </script>

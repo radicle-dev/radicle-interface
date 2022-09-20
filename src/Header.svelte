@@ -1,24 +1,27 @@
 <script lang="ts">
-  import { link } from "svelte-routing";
-  import { formatAddress, formatBalance } from "@app/utils";
-  import { error, Failure } from "@app/error";
-  import { disconnectWallet } from "@app/session";
+  import type { Config } from "@app/config";
+  import type { ResolvedSearch } from "@app/resolver";
   import type { Session } from "@app/session";
+
+  import { link } from "svelte-routing";
+
+  import Avatar from "@app/Avatar.svelte";
+  import Button from "@app/Button.svelte";
+  import Connect from "@app/Connect.svelte";
+  import Floating from "@app/Floating.svelte";
+  import Icon from "@app/Icon.svelte";
   import Loading from "@app/Loading.svelte";
   import Logo from "@app/Logo.svelte";
-  import Connect from "@app/Connect.svelte";
-  import type { Config } from "@app/config";
-  import { Profile, ProfileType } from "@app/profile";
-  import Avatar from "@app/Avatar.svelte";
   import Search from "@app/Search.svelte";
-  import Floating from "@app/Floating.svelte";
-  import Icon from "./Icon.svelte";
-  import MobileNavbar from "./MobileNavbar.svelte";
-  import SeedDropdown from "./SeedDropdown.svelte";
-  import ThemeToggle from "./ThemeToggle.svelte";
-  import Button from "@app/Button.svelte";
   import SearchResults from "@app/components/Modal/SearchResults.svelte";
-  import type { ResolvedSearch } from "@app/resolver";
+  import SeedDropdown from "@app/SeedDropdown.svelte";
+  import ThemeToggle from "@app/ThemeToggle.svelte";
+
+  import { Profile, ProfileType } from "@app/profile";
+  import { closeFocused } from "@app/Floating.svelte";
+  import { disconnectWallet } from "@app/session";
+  import { error, Failure } from "@app/error";
+  import { formatAddress, formatBalance } from "@app/utils";
 
   export let session: Session | null;
   export let config: Config;
@@ -27,12 +30,8 @@
   let results: ResolvedSearch;
 
   let sessionButtonHover = false;
-  let mobileNavbarDisplayed = false;
   let searchResultsDisplayed = false;
 
-  function toggleNavbar() {
-    mobileNavbarDisplayed = !mobileNavbarDisplayed;
-  }
   function toggleSearchResults() {
     searchResultsDisplayed = !searchResultsDisplayed;
   }
@@ -123,9 +122,6 @@
     white-space: nowrap;
   }
 
-  div.toggle {
-    display: none;
-  }
   @media (max-width: 720px) {
     header .right {
       gap: 1rem;
@@ -137,15 +133,23 @@
     .balance {
       display: none;
     }
-    div.toggle {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 42px;
-      width: 42px;
-      z-index: 2;
-      cursor: pointer;
-    }
+  }
+  .modal {
+    background: var(--color-background);
+    border-radius: var(--border-radius);
+    max-width: 22.5rem;
+    min-width: 18rem;
+    padding: 1.5rem;
+    position: absolute;
+    right: 1.5rem;
+    top: 5rem;
+  }
+  .modal a {
+    color: var(--color-foreground-6);
+    padding-left: 0.5rem;
+  }
+  .modal a:hover {
+    color: var(--color-foreground);
   }
 </style>
 
@@ -180,7 +184,7 @@
       {#if session && Object.keys(session.siwe).length > 0}
         <span class="seeds-container">
           <Floating>
-            <span slot="toggle" class="nav-link">Seeds</span>
+            <span slot="toggle">Seeds</span>
             <svelte:fragment slot="modal">
               <SeedDropdown seeds={session.siwe} {config} />
             </svelte:fragment>
@@ -237,22 +241,41 @@
       </span>
     {/if}
     <ThemeToggle />
-    <div class="toggle" on:click={toggleNavbar}>
-      <span style="transform: scale(1.2);">
-        <Icon name="ellipsis" />
-      </span>
+    <div class="mobile">
+      <Floating overlay>
+        <div slot="toggle">
+          <span style="transform: scale(1.2);">
+            <Icon name="ellipsis" />
+          </span>
+        </div>
+
+        <svelte:fragment slot="modal">
+          <div class="modal">
+            <div style="padding-bottom: 1rem;">
+              <Search
+                {config}
+                on:finished={() => {
+                  closeFocused();
+                }}
+                on:search={e => {
+                  ({ query, results } = e.detail);
+                  toggleSearchResults();
+                }} />
+            </div>
+            <a
+              use:link
+              on:click={() => {
+                closeFocused();
+              }}
+              href="/registrations">
+              Register
+            </a>
+          </div>
+        </svelte:fragment>
+      </Floating>
     </div>
   </div>
 
-  {#if mobileNavbarDisplayed}
-    <MobileNavbar
-      {config}
-      on:search={e => {
-        ({ query, results } = e.detail);
-        toggleSearchResults();
-        toggleNavbar();
-      }} />
-  {/if}
   {#if searchResultsDisplayed}
     <SearchResults {config} {results} {query} on:close={toggleSearchResults} />
   {/if}

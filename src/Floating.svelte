@@ -9,6 +9,7 @@
 
 <script lang="ts">
   export let disabled = false;
+  export let overlay = false;
 
   let expanded = false;
   let thisComponent: HTMLDivElement;
@@ -33,14 +34,35 @@
   $: expanded = $focused === thisComponent;
 </script>
 
+<style>
+  .overlay {
+    background-color: #00000075;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .toggle {
+    user-select: none;
+  }
+</style>
+
 <svelte:window on:click={clickOutside} />
 
 <div bind:this={thisComponent}>
-  <div on:click={toggle}>
+  <div
+    on:click={toggle}
+    class="toggle"
+    style:cursor={disabled ? "not-allowed" : "pointer"}>
     <slot name="toggle" />
   </div>
 
   {#if expanded}
+    {#if overlay}
+      <div class="overlay" on:click={toggle} />
+    {/if}
     <slot name="modal" />
   {/if}
 </div>

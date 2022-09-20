@@ -209,25 +209,6 @@ export function parseEnsLabel(name: string, config: Config): string {
   return label;
 }
 
-export function clickOutside(
-  node: HTMLElement,
-  onEventFunction: () => void,
-): any {
-  const handleClick = (event: any) => {
-    const path = event.composedPath();
-    if (!path.includes(node)) {
-      onEventFunction();
-    }
-  };
-  document.addEventListener("click", handleClick, true);
-
-  return {
-    destroy() {
-      document.removeEventListener("click", handleClick, true);
-    },
-  };
-}
-
 // Get the mime type of an image, given a file path.
 // Returns `null` if unknown.
 export function getImageMime(path: string): string | null {
