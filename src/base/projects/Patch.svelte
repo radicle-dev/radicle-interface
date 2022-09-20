@@ -57,7 +57,7 @@
   }
   .summary-left {
     display: flex;
-    align-items: center;
+    flex-direction: column;
   }
   .summary-title {
     display: flex;
