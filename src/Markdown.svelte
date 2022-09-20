@@ -247,6 +247,13 @@
     padding-top: 0 !important;
     margin-top: 0 !important;
   }
+  .markdown :global(dl dt) {
+    font-style: italic;
+    margin-top: 1rem;
+  }
+  .markdown :global(dl dd) {
+    margin: 0 0 0 2rem;
+  }
 </style>
 
 {#if content}
