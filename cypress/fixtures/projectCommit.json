@@ -1,17 +1,19 @@
 {
   "header": {
-    "sha1": "cbf5df499ab4f4a908f1756fbe2c236a4530516a",
+    "id": "cbf5df499ab4f4a908f1756fbe2c236a4530516a",
     "author": {
       "name": "dabit3",
-      "email": "dabit3@gmail.com"
+      "email": "dabit3@gmail.com",
+      "time": 1646236685
     },
     "summary": "initial commit",
     "description": "this is the first commit of many",
     "committer": {
       "name": "dabit3",
-      "email": "dabit3@gmail.com"
+      "email": "dabit3@gmail.com",
+      "time": 1646236685
     },
-    "committerTime": 1646236685
+    "parents": []
   },
   "stats": {
     "additions": 0,
