@@ -7,11 +7,10 @@
 
   export let items: Item[];
   export let query: () => Promise<Item[]>;
+  export let complete = false;
 
   // Used to handle the display of the trigger to load more items, according to the current loading state.
   let loading = false;
-  // Should be changed to true, once no more items are being returned.
-  let complete = false;
 
   const transitionParams = { duration: 200 };
 

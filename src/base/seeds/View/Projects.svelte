@@ -6,6 +6,7 @@
   import type { ProjectInfo } from "@app/project";
   import type { Seed } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
+  import { Request } from "@app/api";
 
   export let seed: Seed;
   export let profile: Profile | null = null;
@@ -13,6 +14,11 @@
 
   // A pointer to the current page of projects added to the listing
   let page = 0;
+  let count: number | null = null;
+
+  new Request("stats", seed.api)
+    .get()
+    .then(({ projects }) => (count = projects.count));
 
   const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
     const projects = await proj.Project.getProjects(seed.api, {
@@ -49,7 +55,10 @@
 </style>
 
 <div class="projects">
-  <List items={projects} query={fetchMoreProjects}>
+  <List
+    bind:items={projects}
+    complete={projects.length === count}
+    query={fetchMoreProjects}>
     <svelte:fragment slot="list" let:items>
       {#each items as project}
         {#if project.head}

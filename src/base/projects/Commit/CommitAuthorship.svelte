@@ -81,7 +81,7 @@
   {#if showTime}
     <span>&nbsp;</span>
     <span class="desktop-inline txt-tiny time">
-      {formatTimestamp(commit.header.committerTime)}
+      {formatTimestamp(commit.header.committer.time)}
     </span>
   {/if}
 </span>
