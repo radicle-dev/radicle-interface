@@ -144,9 +144,9 @@
   }
 
   .markdown :global(blockquote) {
-    font-style: italic;
-    padding: 0.625rem 0;
-    margin: 0;
+    border-left: 0.3rem solid var(--color-foreground-4);
+    padding: 0 0 0 1rem;
+    margin: 0 0 0.625rem 0;
   }
 
   .markdown :global(strong) {
