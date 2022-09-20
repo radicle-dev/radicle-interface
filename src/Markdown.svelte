@@ -203,7 +203,7 @@
 
   .markdown :global(hr) {
     height: 0;
-    margin: 0rem 0;
+    margin: 1rem 0;
     overflow: hidden;
     background: transparent;
     border: 0;
