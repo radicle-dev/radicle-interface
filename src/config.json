@@ -133,9 +133,29 @@
         "seed": "maple.radicle.garden"
       },
       {
-        "name": "py_ecc",
-        "urn": "rad:git:hnrkba67x8poqt4d9qgoc4au39ro9dx7pdhfo",
+        "name": "astrolabe",
+        "urn": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
         "seed": "maple.radicle.garden"
+      },
+      {
+        "name": "svelte-dappkit",
+        "urn": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
+        "seed": "maple.radicle.garden"
+      },
+      {
+        "name": "tmyxer",
+        "urn": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
+        "seed": "pine.radicle.garden"
+      },
+      {
+        "name": "pax",
+        "urn": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
+        "seed": "pine.radicle.garden"
+      },
+      {
+        "name": "hexade",
+        "urn": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
+        "seed": "pine.radicle.garden"
       }
     ]
   },
