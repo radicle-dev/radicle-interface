@@ -53,9 +53,7 @@
     align-items: center;
   }
   .clone-url {
-    background: var(--color-yellow-background-solid);
     border-radius: var(--border-radius-small);
-    color: var(--color-yellow);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     height: 2rem;
@@ -64,12 +62,16 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 1.4;
+    color: var(--color-caution-6);
+    background: linear-gradient(var(--color-caution-2), var(--color-caution-2)),
+      linear-gradient(var(--color-background), var(--color-background));
   }
   .clipboard {
     position: absolute;
     right: 0;
-    color: var(--color-yellow);
-    background: var(--color-yellow-background-solid);
+    color: var(--color-caution-6);
+    background: linear-gradient(var(--color-caution-2), var(--color-caution-2)),
+      linear-gradient(var(--color-background), var(--color-background));
     visibility: hidden;
     width: 4rem;
     height: 2rem;
