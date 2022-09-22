@@ -114,7 +114,11 @@
     <div class="id">
       <span class="name">{project.name}</span>
     </div>
-    <div class="description">{project.description || ""}</div>
+    {#if project.description}
+      <div class="description">{project.description}</div>
+    {:else}
+      <div class="description txt-missing">No description</div>
+    {/if}
     <div class="stateHash">
       {#if project.head}
         {#if compact}
