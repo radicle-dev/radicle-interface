@@ -83,7 +83,7 @@
     {disabled}
     bind:value
     on:input
-    on:keydown
+    on:keydown|stopPropagation
     on:click
     on:change />
 
