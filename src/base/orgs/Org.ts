@@ -203,16 +203,24 @@ export class Org {
       GetSafesByOwners,
       { owners: [owner] },
     );
-    const safes = safesByOwner.safes.reduce(
-      (prev: any, curr: Safe) => prev.concat(curr.id),
-      [],
-    );
+
+    let safes = [];
+    if (safesByOwner && safesByOwner.safes.length > 0) {
+      safes = safesByOwner.safes.reduce(
+        (prev: any, curr: Safe) => prev.concat(curr.id),
+        [],
+      );
+    }
+
     const orgsByOwner = await utils.querySubgraph(
       config.orgs.subgraph,
       GetOrgsByOwners,
       { owners: [...safes, owner] },
     );
-    const orgs: { id: string; owner: string }[] = [...orgsByOwner.orgs];
+    let orgs: { id: string; owner: string }[] = [];
+    if (orgsByOwner && orgsByOwner.orgs) {
+      orgs = [...orgsByOwner.orgs];
+    }
 
     return orgs.map(o => new Org(o.id, o.owner));
   }

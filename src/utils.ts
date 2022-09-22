@@ -377,7 +377,7 @@ export async function querySubgraphWithRetry(
   query: string,
   variables: Record<string, any>,
   retries = 3,
-): Promise<null | any> {
+): Promise<Record<string, any> | null> {
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -393,11 +393,14 @@ export async function querySubgraphWithRetry(
   if (json.errors) {
     console.error("querySubgraph:", json.errors);
 
-    if (retries > 0) querySubgraphWithRetry(url, query, variables, retries - 1);
-    else return null;
+    if (retries > 0) {
+      return querySubgraphWithRetry(url, query, variables, retries - 1);
+    } else {
+      return null;
+    }
+  } else {
+    return json.data;
   }
-
-  return json.data;
 }
 
 export const querySubgraph = cache.cached(
@@ -589,7 +592,7 @@ export async function isSafe(
     addr: address.toLowerCase(),
   });
 
-  return query.safe !== null ? true : false;
+  return query?.safe !== null ? true : false;
 }
 
 // Get a Gnosis Safe at an address.
