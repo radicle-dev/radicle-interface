@@ -115,7 +115,6 @@ export class Config {
     this.reverseRegistrar = cfg.reverseRegistrar;
     this.orgs = cfg.orgs;
     this.users = cfg.users;
-    this.seeds = cfg.seeds;
     this.safe = cfg.safe;
     this.safe.client = this.safe.api
       ? new SafeServiceClient(this.safe.api)
@@ -124,6 +123,7 @@ export class Config {
     this.signer = null;
     this.gasLimits = gasLimits;
     this.projects = config.projects;
+    this.seeds = config.seeds;
     this.abi = config.abi;
     this.ceramic = {
       client: ceramic,

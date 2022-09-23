@@ -26,19 +26,6 @@
     "users": {
       "pinned": ["cloudhead.radicle.eth"]
     },
-    "seeds": {
-      "pinned": {
-        "willow.radicle.garden": {
-          "emoji": "🪵"
-        },
-        "pine.radicle.garden": {
-          "emoji": "🌲"
-        },
-        "maple.radicle.garden": {
-          "emoji": "🍁"
-        }
-      }
-    },
     "safe": {
       "api": "https://safe-transaction.gnosis.io",
       "viewer": "https://gnosis-safe.io/app/#/safes"
@@ -69,9 +56,6 @@
     "users": {
       "pinned": []
     },
-    "seeds": {
-      "pinned": []
-    },
     "safe": {
       "api": "https://safe-transaction.rinkeby.gnosis.io",
       "viewer": "https://rinkeby.gnosis-safe.io/app/#/safes"
@@ -93,6 +77,19 @@
       "api": { "port": 8777 },
       "link": { "port": 8776 },
       "git": { "port": 443 }
+    }
+  },
+  "seeds": {
+    "pinned": {
+      "willow.radicle.garden": {
+        "emoji": "🪵"
+      },
+      "pine.radicle.garden": {
+        "emoji": "🌲"
+      },
+      "maple.radicle.garden": {
+        "emoji": "🍁"
+      }
     }
   },
   "projects": {
