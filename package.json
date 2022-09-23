@@ -14,7 +14,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=18.12.1"
   },
   "devDependencies": {
     "@rsksmart/mock-web3-provider": "^1.0.1",

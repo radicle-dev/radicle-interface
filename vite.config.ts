@@ -26,6 +26,9 @@ const config: UserConfig = {
     pluginRewriteAll(),
   ],
   server: {
+    // We have to set host here, otherwise CI binds to the ipv6 address and
+    // e2e tests don't work.
+    host: "127.0.0.1",
     port: 3000,
   },
   resolve: {
