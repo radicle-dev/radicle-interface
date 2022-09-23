@@ -592,7 +592,7 @@ export async function isSafe(
     addr: address.toLowerCase(),
   });
 
-  return query?.safe !== null ? true : false;
+  return Boolean(query?.safe);
 }
 
 // Get a Gnosis Safe at an address.
