@@ -5,6 +5,10 @@ jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.9.0'
       - uses: actions/checkout@v2
       - run: npm ci
       - run: ./scripts/check-format

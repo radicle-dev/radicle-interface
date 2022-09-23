@@ -14,7 +14,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0",
