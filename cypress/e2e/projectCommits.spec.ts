@@ -129,7 +129,7 @@ describe("project commits", () => {
         });
       });
 
-    cy.get(".commit-teaser .badge").trigger("mouseenter");
+    cy.get(".commit-teaser .badge").last().trigger("mouseenter");
     // Checking that the initial commit has the Verified badge
     cy.get(".popup .header").should(
       "have.text",

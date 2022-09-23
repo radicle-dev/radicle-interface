@@ -33,7 +33,7 @@
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     position: absolute;
-    width: 14rem;
+    min-width: 14rem;
     z-index: 99;
   }
   .header {
@@ -73,7 +73,7 @@
           </div>
         </div>
         <div class="committer">
-          <CommitAuthorship {commit} showAuthor={false} showTime={false} />
+          <CommitAuthorship {commit} noAuthor noTime />
           {#if commit.context.committer}
             <div class="peer">
               {commit.context.committer.peer.id}

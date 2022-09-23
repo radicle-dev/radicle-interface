@@ -91,7 +91,7 @@
         {commit.header.summary}
       </div>
     </div>
-    <CommitAuthorship {commit} />
+    <CommitAuthorship {commit} noDelegate />
   </div>
   <div class="column-right">
     {#if commit.context.committer}
