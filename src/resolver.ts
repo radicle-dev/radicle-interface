@@ -1,10 +1,13 @@
-import { Project } from "@app/project";
-import type { ProjectInfo } from "@app/project";
-import * as utils from "@app/utils";
-import { ethers } from "ethers";
-import type { Config } from "@app/config";
-import { navigate } from "svelte-routing";
 import type { Host } from "@app/api";
+import type { Config } from "@app/config";
+import type { ProjectInfo } from "@app/project";
+
+import { navigate } from "svelte-routing";
+import { ethers } from "ethers";
+
+import * as utils from "@app/utils";
+import { Project } from "@app/project";
+import { NotFoundError } from "@app/error";
 import { Profile, ProfileType } from "@app/profile";
 
 export interface IProject {
@@ -111,9 +114,12 @@ export async function resolve(
       return results;
     }
 
-    return null;
+    throw new NotFoundError("No search results found");
   } catch (e) {
-    console.error(e);
-    return null;
+    if (e instanceof NotFoundError) {
+      throw new NotFoundError(e.message);
+    } else {
+      throw Error("Not able to resolve search query");
+    }
   }
 }
