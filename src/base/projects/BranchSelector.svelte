@@ -52,6 +52,8 @@
   }
   .commit .hash {
     display: inline-block;
+    height: 2rem;
+    line-height: initial;
     color: var(--color-secondary);
     background-color: var(--color-secondary-1);
     padding: 0.5rem 0.75rem;
@@ -63,6 +65,8 @@
   .stat {
     font-family: var(--font-family-monospace);
     padding: 0.5rem 0.75rem;
+    height: 2rem;
+    line-height: initial;
     background: var(--color-foreground-1);
   }
 </style>

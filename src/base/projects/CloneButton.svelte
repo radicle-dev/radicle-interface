@@ -18,6 +18,8 @@
     color: var(--color-caution-6);
     font-family: var(--font-family-monospace);
     min-width: max-content;
+    height: 2rem;
+    line-height: initial;
     padding: 0.5rem 0.75rem;
   }
   .clone-button:hover {
