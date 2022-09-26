@@ -1,11 +1,9 @@
 import Error from "./Error.svelte";
-import { render } from "@testing-library/svelte";
 import { Failure } from "@app/error";
-import "@public/index.css";
 
 describe("Error", () => {
   it("should show passed in props", () => {
-    render(Error, {
+    cy.mount(Error, {
       props: {
         subtitle: "Subtitle of Modal",
         error: {
@@ -16,24 +14,24 @@ describe("Error", () => {
         },
       },
     });
-    cy.findByText("Error");
-    cy.findByText("Subtitle of Modal");
-    cy.findByText("Not enough RAD");
-    cy.findByText("Back");
+    cy.get("body").contains("Error").should("be.visible");
+    cy.get("body").contains("Subtitle of Modal").should("be.visible");
+    cy.get("body").contains("Not enough RAD").should("be.visible");
+    cy.get("button").contains("Back").should("be.visible");
   });
 
   it("should show custom error message", () => {
-    render(Error, {
+    cy.mount(Error, {
       props: {
         subtitle: "Subtitle of Modal",
         message: "Error message to check for",
       },
     });
-    cy.findByText("Error message to check for");
+    cy.get("body").contains("Error message to check for").should("be.visible");
   });
 
   it("should change button label to Close when floating", () => {
-    render(Error, {
+    cy.mount(Error, {
       props: {
         title: "Title of Modal",
         subtitle: "Subtitle of Modal",
@@ -41,6 +39,6 @@ describe("Error", () => {
         floating: true,
       },
     });
-    cy.findByText("Close");
+    cy.get("button").contains("Close").should("be.visible");
   });
 });

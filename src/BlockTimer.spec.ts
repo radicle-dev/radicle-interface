@@ -1,56 +1,71 @@
 import BlockTimer from "./BlockTimer.svelte";
-import { render } from "@testing-library/svelte";
-import "@public/index.css";
-import type { EventType, Listener } from "@ethersproject/abstract-provider";
 
 describe("BlockTimer", () => {
-  it("increases correctly the loading bar", () => {
-    let block = 1;
-    const props = {
-      config: {
-        provider: {
-          on: (event: EventType, listener: Listener) => {
-            if (event === "block") {
-              listener(block);
-            }
-          },
+  describe("when latestBlock === startBlock", () => {
+    it("shows 0% progress", () => {
+      cy.mount(BlockTimer, {
+        props: {
+          latestBlock: 1,
+          startBlock: 1,
+          duration: 3,
         },
-      },
-      startBlock: 1,
-      duration: 3,
-    };
-
-    const { rerender } = render(BlockTimer, props);
-
-    cy.get("div.loader")
-      .should("have.attr", "style", "width: 0%;")
-      .then(() => {
-        block += 1;
-        rerender(props);
       });
 
-    cy.get("div.loader")
-      .last()
-      .should("have.attr", "style", "width: 33%;")
-      .then(() => {
-        block += 1;
-        rerender(props);
+      cy.get(".progress-bar").should("have.attr", "style", "width: 0%;");
+    });
+  });
+
+  describe("when latestBlock < duration + startBlock", () => {
+    it("shows 33% progress", () => {
+      cy.mount(BlockTimer, {
+        props: {
+          latestBlock: 2,
+          startBlock: 1,
+          duration: 3,
+        },
       });
 
-    cy.get("div.loader")
-      .last()
-      .should("have.attr", "style", "width: 66%;")
-      .then(() => {
-        block += 1;
-        rerender(props);
+      cy.get(".progress-bar").should("have.attr", "style", "width: 33%;");
+    });
+
+    it("shows 66% progress", () => {
+      cy.mount(BlockTimer, {
+        props: {
+          latestBlock: 3,
+          startBlock: 1,
+          duration: 3,
+        },
       });
 
-    cy.get("div.loader")
-      .last()
-      .should("have.attr", "style", "width: 99%;")
-      .then(() => {
-        block += 1;
-        rerender(props);
+      cy.get(".progress-bar").should("have.attr", "style", "width: 66%;");
+    });
+  });
+
+  describe("when latestBlock === duration + startBlock", () => {
+    it("shows 100% progress", () => {
+      cy.mount(BlockTimer, {
+        props: {
+          latestBlock: 4,
+          startBlock: 1,
+          duration: 3,
+        },
       });
+
+      cy.get(".progress-bar").should("have.attr", "style", "width: 100%;");
+    });
+  });
+
+  describe("when latestBlock > duration + startBlock", () => {
+    it("shows 100% progress", () => {
+      cy.mount(BlockTimer, {
+        props: {
+          latestBlock: 6,
+          startBlock: 1,
+          duration: 3,
+        },
+      });
+
+      cy.get(".progress-bar").should("have.attr", "style", "width: 100%;");
+    });
   });
 });

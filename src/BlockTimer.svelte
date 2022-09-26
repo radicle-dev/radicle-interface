@@ -1,26 +1,26 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
-
-  export let config: Config;
   export let startBlock: number;
   export let duration: number;
+  export let latestBlock: number;
 
-  let currentBlock: number = startBlock;
+  let progress: number = 0;
 
-  config.provider.on("block", (latestBlock: number) => {
-    if (startBlock + duration > currentBlock) currentBlock = latestBlock;
-  });
+  $: if (latestBlock < startBlock + duration) {
+    progress = (latestBlock - startBlock) * Math.floor(100 / duration);
+  } else {
+    progress = 100;
+  }
 </script>
 
 <style>
-  .parent {
+  .container {
     text-align: center;
     height: 0.5rem;
     width: 100%;
     border-radius: var(--border-radius-small);
     background-color: var(--color-secondary-2);
   }
-  .loader {
+  .progress-bar {
     height: 0.5rem;
     width: 0px;
     border-radius: var(--border-radius-small);
@@ -28,9 +28,6 @@
   }
 </style>
 
-<div class="parent">
-  <div
-    class="loader"
-    style="width: {(currentBlock - startBlock) *
-      Math.floor(100 / duration)}%" />
+<div class="container">
+  <div class="progress-bar" style:width={`${progress}%`} />
 </div>

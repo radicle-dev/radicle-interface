@@ -34,6 +34,11 @@
       error = e;
     }
   });
+
+  let latestBlock: number;
+  config.provider.on("block", (block: number) => {
+    latestBlock = block;
+  });
 </script>
 
 <style>
@@ -91,7 +96,7 @@
         <span class="highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         <BlockTimer
-          {config}
+          {latestBlock}
           startBlock={$state.commitmentBlock}
           duration={$state.minAge} />
       {:else}

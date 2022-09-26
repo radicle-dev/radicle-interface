@@ -1,25 +1,31 @@
+import type { ProjectInfo } from "@app/project";
+
 import BranchSelector from "./BranchSelector.svelte";
-import { fireEvent, render } from "@testing-library/svelte";
-import "@public/index.css";
+
+const project: ProjectInfo = {
+  head: "e678629cd37c770c640a2cd997fc76303c815772",
+  urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
+  name: "nakamoto",
+  description: "Privacy-preserving Bitcoin light-client implementation in Rust",
+  defaultBranch: "master",
+  remotes: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
+  delegates: [
+    {
+      type: "direct",
+      id: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+    },
+  ],
+};
 
 const defaultProps = {
-  project: {
-    head: "e678629cd37c770c640a2cd997fc76303c815772",
-    urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
-    name: "nakamoto",
-    description:
-      "Privacy-preserving Bitcoin light-client implementation in Rust",
-    defaultBranch: "master",
-    maintainers: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
-    delegates: ["hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"],
-  },
+  project,
   branches: { master: "e678629cd37c770c640a2cd997fc76303c815772" },
   revision: "e678629cd37c770c640a2cd997fc76303c815772",
 };
 
 describe("Logic", () => {
   it("should show defaultBranch label and head commit if revision === head", () => {
-    const { rerender } = render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: defaultProps,
     });
     cy.get("div.stat.branch")
@@ -28,9 +34,9 @@ describe("Logic", () => {
     cy.get("div.hash.mobile")
       .should("be.visible")
       .should("have.text", "e678629");
-
-    // If project.head is null we should get the head from branches.
-    rerender({
+  });
+  it("if project.head is null we should get the head from branches", () => {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         project: {
@@ -54,7 +60,7 @@ describe("Logic", () => {
   });
 
   it("should show the branch dropdown if branches available", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         branches: {
@@ -76,7 +82,7 @@ describe("Logic", () => {
   });
 
   it("should show feature-branch label and head commit, if branch label is passed as revision", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         branches: {
@@ -96,7 +102,7 @@ describe("Logic", () => {
   });
 
   it("should show only commit if no branchLabel nor branches are available", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
@@ -113,7 +119,7 @@ describe("Logic", () => {
   });
 
   it("should show only commit if branches are available but no branchLabel", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
@@ -129,7 +135,7 @@ describe("Logic", () => {
   });
 
   it("should show defaultBranch label if revision === head", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "e678629cd37c770c640a2cd997fc76303c815772",
@@ -144,7 +150,7 @@ describe("Logic", () => {
 
 describe("Layout", () => {
   it("should show shortened commit when on mobile, and full hash when on desktop", () => {
-    render(BranchSelector, {
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "e678629cd37c770c640a2cd997fc76303c815772",
@@ -161,7 +167,9 @@ describe("Layout", () => {
 
 describe("Events", () => {
   it("should dispatch a 'branchChanged' event on click", () => {
-    const { getByText, component } = render(BranchSelector, {
+    const branchChangedSpy = cy.spy().as("branchChangedSpy");
+
+    cy.mount(BranchSelector, {
       props: {
         ...defaultProps,
         revision: "feature-branch",
@@ -170,18 +178,12 @@ describe("Events", () => {
           xyz: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
         },
       },
+    }).then(({ component }) => {
+      component.$on("branchChanged", branchChangedSpy);
     });
 
-    cy.get("div.commit div.stat.branch")
-      .click()
-      .then(() => {
-        const branchLabel = getByText("xyz");
-
-        const mock = cy.spy();
-        component.$on("branchChanged", mock);
-
-        fireEvent.click(branchLabel);
-        expect(mock).to.have.been.calledOnce;
-      });
+    cy.get("body").contains("feature-branch").click();
+    cy.get("body").contains("xyz").click();
+    cy.get("@branchChangedSpy").should("have.been.called");
   });
 });

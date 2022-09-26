@@ -1,6 +1,4 @@
 import PeerSelector from "./PeerSelector.svelte";
-import { fireEvent, render } from "@testing-library/svelte";
-import "@public/index.css";
 
 const defaultProps = {
   peer: "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
@@ -15,7 +13,7 @@ const defaultProps = {
 
 describe("Logic", () => {
   it("show delegate name and badge", () => {
-    render(PeerSelector, {
+    cy.mount(PeerSelector, {
       props: defaultProps,
     });
     cy.get("span.peer-id").should("have.text", "sebastinez");
@@ -23,7 +21,7 @@ describe("Logic", () => {
   });
 
   it("show peer id with badge if no name available", () => {
-    render(PeerSelector, {
+    cy.mount(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [
@@ -39,12 +37,13 @@ describe("Logic", () => {
   });
 
   it("show only peer id if no additional data available", () => {
-    render(PeerSelector, {
+    cy.mount(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [
           {
             id: "hyyg555wwkkutaysg6yr67qnu5d5ji54iur3n5uzzszndh8dp7ofue",
+            delegate: false,
           },
         ],
       },
@@ -55,7 +54,7 @@ describe("Logic", () => {
 
 describe("Layout", () => {
   it("should highlight the current peer", () => {
-    render(PeerSelector, {
+    cy.mount(PeerSelector, {
       props: { ...defaultProps },
     });
     cy.get("div.selector").click();
@@ -65,8 +64,9 @@ describe("Layout", () => {
 
 describe("Events", () => {
   it("dispatch peerChanged event if clicking on a peer", () => {
-    cy.viewport("macbook-13");
-    const { getByText, component } = render(PeerSelector, {
+    const peerChangedSpy = cy.spy().as("peerChangedSpy");
+
+    cy.mount(PeerSelector, {
       props: {
         ...defaultProps,
         peers: [
@@ -82,17 +82,12 @@ describe("Events", () => {
           },
         ],
       },
+    }).then(({ component }) => {
+      component.$on("peerChanged", peerChangedSpy);
     });
 
-    cy.get("div.selector")
-      .click()
-      .then(() => {
-        const peer = getByText("cloudhead");
-        const mock = cy.spy();
-        component.$on("peerChanged", mock);
-
-        fireEvent.click(peer);
-        expect(mock).to.have.been.calledOnce;
-      });
+    cy.get("body").contains("sebastinez").click();
+    cy.get("body").contains("cloudhead").click();
+    cy.get("@peerChangedSpy").should("have.been.called");
   });
 });
