@@ -1,7 +1,8 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import { Project, ProjectContent } from "@app/project";
-  import { CommitMetadata, CommitsHistory, groupCommits } from "@app/commit";
+  import type { CommitMetadata, CommitsHistory } from "@app/commit";
+  import { groupCommits } from "@app/commit";
   import List from "@app/List.svelte";
 
   export let project: Project;

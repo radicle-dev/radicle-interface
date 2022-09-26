@@ -6,7 +6,8 @@
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import { Status, State } from "@app/utils";
+  import type { State } from "@app/utils";
+  import { Status } from "@app/utils";
   import Button from "@app/Button.svelte";
 
   export let domain: string;

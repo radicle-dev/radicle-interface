@@ -4,19 +4,14 @@ import md5 from "md5";
 import { BigNumber } from "ethers";
 import multibase from "multibase";
 import multihashes from "multihashes";
-import EthersSafe, {
-  EthersAdapter,
-  TransactionResult,
-} from "@gnosis.pm/safe-core-sdk";
+import type { TransactionResult } from "@gnosis.pm/safe-core-sdk";
+import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
 import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
 import type { Config } from "@app/config";
 import config from "@app/config.json";
 import { assert } from "@app/error";
-import {
-  EnsProfile,
-  getAddress,
-  getResolver,
-} from "@app/base/registrations/registrar";
+import type { EnsProfile } from "@app/base/registrations/registrar";
+import { getAddress, getResolver } from "@app/base/registrations/registrar";
 import {
   getAvatar,
   getSeed,

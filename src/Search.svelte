@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { resolve, ResolvedSearch } from "@app/resolver";
+  import type { ResolvedSearch } from "@app/resolver";
+  import { resolve } from "@app/resolver";
   import type { Config } from "@app/config";
   import { createEventDispatcher } from "svelte";
   import Loading from "@app/Loading.svelte";

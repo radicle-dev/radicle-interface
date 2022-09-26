@@ -5,7 +5,8 @@
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import Err from "@app/Error.svelte";
-  import { Status, State } from "@app/utils";
+  import type { State } from "@app/utils";
+  import { Status } from "@app/utils";
   import { withdraw } from "./lib";
   import { session } from "@app/session";
   import Button from "@app/Button.svelte";

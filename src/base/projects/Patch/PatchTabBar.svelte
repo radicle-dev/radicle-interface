@@ -5,7 +5,8 @@
   import Floating from "@app/Floating.svelte";
   import ToggleButton from "@app/ToggleButton.svelte";
 
-  import { PatchTab, Revision } from "@app/patch";
+  import type { Revision } from "@app/patch";
+  import { PatchTab } from "@app/patch";
   import { formatCommit, formatTimestamp } from "@app/utils";
   import { createEventDispatcher } from "svelte";
 
