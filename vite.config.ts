@@ -9,6 +9,9 @@ import type { Request, Response } from "express-serve-static-core";
 
 const config: UserConfig = {
   optimizeDeps: {
+    esbuildOptions: {
+      target: "es2020",
+    },
     exclude: [
       "svelte-routing",
       "@pedrouid/environment",
@@ -69,6 +72,7 @@ const config: UserConfig = {
     "process.env": { READABLE_STREAM: "disable" },
   },
   build: {
+    target: "es2020",
     outDir: "build",
     sourcemap: true,
   },
