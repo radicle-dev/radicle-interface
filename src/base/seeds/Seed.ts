@@ -5,7 +5,7 @@ import { isDomain, isLocal } from "@app/utils";
 import { assert } from "@app/error";
 
 export class InvalidSeed {
-  valid: false = false;
+  valid = false as const;
 
   host?: string;
   id?: string;
@@ -17,7 +17,7 @@ export class InvalidSeed {
 }
 
 export class Seed {
-  valid: true = true;
+  valid = true as const;
 
   api: { host: string; port: number | null };
   git: { host: string; port: number | null };
