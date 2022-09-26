@@ -53,9 +53,14 @@ export async function resolve(
         results.projects.push(...projects);
 
         // ========= ENS Names =========
+        const normalizedQuery = q.toLowerCase();
         let profile: Profile | null;
         try {
-          profile = await Profile.get(q, ProfileType.Minimal, config);
+          profile = await Profile.get(
+            normalizedQuery,
+            ProfileType.Minimal,
+            config,
+          );
         } catch (e) {
           profile = null;
         }
@@ -71,7 +76,10 @@ export async function resolve(
           let profiles: Profile[];
           try {
             profiles = await Profile.getMulti(
-              [`${q}.${config.registrar.domain}`, `${q}.eth`],
+              [
+                `${normalizedQuery}.${config.registrar.domain}`,
+                `${normalizedQuery}.eth`,
+              ],
               config,
             );
           } catch (e) {
