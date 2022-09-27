@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Config } from "@app/config";
-  import { formatVerdict, Review } from "@app/patch";
+  import type { Review } from "@app/patch";
+  import { formatVerdict } from "@app/patch";
   import type { Blob } from "@app/project";
   import { Profile, ProfileType } from "@app/profile";
   import Authorship from "@app/Authorship.svelte";

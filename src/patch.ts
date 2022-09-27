@@ -1,5 +1,6 @@
 import type { PeerId, Urn } from "@app/project";
-import { Host, Request } from "@app/api";
+import type { Host } from "@app/api";
+import { Request } from "@app/api";
 import type { Comment, Thread } from "@app/issue";
 import type { Author, PeerInfo } from "@app/cobs";
 import type { Diff } from "@app/diff";

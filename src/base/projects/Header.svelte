@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
   import { navigate } from "svelte-routing";
-  import { Browser, ProjectContent, Project } from "@app/project";
+  import type { Browser } from "@app/project";
+  import { ProjectContent, Project } from "@app/project";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
