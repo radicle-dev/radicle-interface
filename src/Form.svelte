@@ -109,6 +109,7 @@
   const validate = (event: Event) => dispatch("validate", check(event));
   const cancel = () => {
     formFields = cloneDeep(fields);
+    dispatch("cancel");
   };
 </script>
 
