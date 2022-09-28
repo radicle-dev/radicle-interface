@@ -101,7 +101,7 @@
     on:branchChanged={event => updateRevision(event.detail)} />
 
   {#if seed.git.host}
-    <CloneButton seedHost={seed.git.host} {urn} />
+    <CloneButton seedHost={seed.git.host} seedId={seed.id} {urn} />
   {/if}
   <span>
     {#if seed.api.host}
