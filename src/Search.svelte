@@ -1,42 +1,196 @@
-<script lang="ts">
+<script lang="ts" context="module">
+  import type { Host } from "@app/api";
+  import type { ProjectInfo } from "@app/project";
+
+  import { ethers } from "ethers";
+
+  import * as utils from "@app/utils";
+  import { Profile } from "@app/profile";
+  import { Project } from "@app/project";
+
+  export interface ProjectsAndProfiles {
+    projects: { info: ProjectInfo; seed: Host }[];
+    profiles: Profile[];
+  }
+
+  type SearchResult =
+    | { type: "nothing" }
+    | { type: "error"; message: string }
+    | { type: "singleProfile"; id: string }
+    | { type: "singleProject"; seedHost: string; id: string }
+    | { type: "projectsAndProfiles"; projectsAndProfiles: ProjectsAndProfiles };
+
+  async function searchProjectsAndProfiles(
+    query: string,
+    config: Config,
+  ): Promise<SearchResult> {
+    try {
+      // The query is a plain Ethereum address.
+      if (ethers.utils.isAddress(query)) {
+        return { type: "singleProfile", id: query };
+      }
+
+      const projectOnSeeds = Object.keys(config.seeds.pinned).map(seed => ({
+        nameOrUrn: query,
+        seed,
+      }));
+
+      // The query is a radicle project URN.
+      if (utils.isRadicleId(query)) {
+        const projects = await Project.getMulti(projectOnSeeds);
+
+        if (projects.length === 1) {
+          return {
+            type: "singleProject",
+            seedHost: projects[0].seed.host,
+            id: query,
+          };
+        } else {
+          return {
+            type: "projectsAndProfiles",
+            projectsAndProfiles: { projects, profiles: [] },
+          };
+        }
+      }
+
+      // The query is either a project or a profile name.
+      const normalizedQuery = query.toLowerCase();
+      const projectsAndProfiles: ProjectsAndProfiles = {
+        projects: [],
+        profiles: [],
+      };
+
+      try {
+        const projects = await Project.getMulti(projectOnSeeds);
+        projectsAndProfiles.projects.push(...projects);
+      } catch {
+        // TODO: collect errors and forward to user.
+      }
+
+      try {
+        let params: string[];
+        if (utils.isENSName(normalizedQuery, config)) {
+          params = [normalizedQuery];
+        } else {
+          params = [
+            `${normalizedQuery}.${config.registrar.domain}`,
+            `${normalizedQuery}.eth`,
+          ];
+        }
+        const profiles = await Profile.getMulti(params, config);
+        projectsAndProfiles.profiles.push(...profiles);
+      } catch {
+        // TODO: collect errors and forward to user.
+      }
+
+      const projectCount = projectsAndProfiles.projects.length;
+      const profileCount = projectsAndProfiles.profiles.length;
+
+      if (profileCount === 1 && projectCount === 0) {
+        return {
+          type: "singleProfile",
+          id: projectsAndProfiles.profiles[0].address,
+        };
+      }
+
+      if (profileCount === 0 && projectCount === 1) {
+        return {
+          type: "singleProject",
+          seedHost: projectsAndProfiles.projects[0].seed.host,
+          id: query,
+        };
+      }
+
+      if (profileCount > 0 || projectCount > 0) {
+        return {
+          type: "projectsAndProfiles",
+          projectsAndProfiles,
+        };
+      }
+
+      return { type: "nothing" };
+    } catch (error) {
+      let message = "An unknown error occoured while searching.";
+
+      if (error instanceof Error) {
+        message = error.message;
+      }
+
+      return { type: "error", message };
+    }
+  }
+</script>
+
+<script lang="ts" strictEvents>
   import type { Config } from "@app/config";
 
-  import { createEventDispatcher } from "svelte";
   import debounce from "lodash/debounce";
+  import { createEventDispatcher } from "svelte";
+  import { navigate } from "svelte-routing";
 
-  import { resolve } from "@app/resolver";
   import Loading from "@app/Loading.svelte";
   import TextInput from "@app/TextInput.svelte";
+  import { unreachable } from "@app/utils";
 
   export let config: Config;
 
+  const dispatch = createEventDispatcher<{
+    finished: boolean;
+    search: { query: string; results: ProjectsAndProfiles };
+  }>();
+
   let input = "";
   let searching = false;
-  let shake = false;
+  let shaking = false;
 
-  const dispatch = createEventDispatcher();
-  const handleKeydown = async (event: KeyboardEvent) => {
+  function shake() {
+    shaking = true;
+    debounce(() => (shaking = false), 500)();
+  }
+
+  async function search(event: KeyboardEvent) {
     if (event.key === "Enter") {
+      if (input === "") {
+        return;
+      }
+
       searching = true;
-      resolve(input, config)
-        .then(results => {
-          const query = input;
-          input = "";
-          searching = false;
-          if (results) dispatch("search", { query, results });
-        })
-        .catch(() => {
-          searching = false;
-          shake = true;
-          debounce(() => (shake = false), 500)();
-          dispatch("finished");
+
+      const query = input;
+      const searchResult = await searchProjectsAndProfiles(input, config);
+
+      if (searchResult.type === "nothing") {
+        searching = false;
+        shake();
+      } else if (searchResult.type === "error") {
+        // TODO: show some kind of notification to the user.
+        shake();
+      } else if (searchResult.type === "singleProfile") {
+        input = "";
+        navigate(`/${searchResult.id}`, { replace: true });
+      } else if (searchResult.type === "singleProject") {
+        input = "";
+        navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
+          replace: true,
         });
+      } else if (searchResult.type === "projectsAndProfiles") {
+        // TODO: show some kind of notification about any errors to the user.
+        input = "";
+        dispatch("search", {
+          query,
+          results: searchResult.projectsAndProfiles,
+        });
+      } else {
+        unreachable(searchResult);
+      }
+      searching = false;
+      dispatch("finished");
     }
-  };
+  }
 </script>
 
 <style>
-  .horizontal-shake {
+  .shaking {
     animation: horizontal-shaking 0.35s;
   }
   @keyframes horizontal-shaking {
@@ -58,12 +212,12 @@
   }
 </style>
 
-<div class:horizontal-shake={shake}>
+<div class:shaking>
   <TextInput
     variant="dashed"
     disabled={searching}
     bind:value={input}
-    on:keydown={handleKeydown}
+    on:keydown={search}
     placeholder="Search a name or address…">
     <svelte:fragment slot="right">
       {#if searching}

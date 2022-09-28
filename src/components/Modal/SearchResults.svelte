@@ -6,10 +6,10 @@
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { ResolvedSearch } from "@app/resolver";
+  import type { ProjectsAndProfiles } from "@app/Search.svelte";
 
   export let query: string;
-  export let results: ResolvedSearch;
+  export let results: ProjectsAndProfiles;
   export let config: Config;
 
   const dispatch = createEventDispatcher();
@@ -63,10 +63,10 @@
         {/each}
       </ul>
     {/if}
-    {#if results.ens.length > 0}
+    {#if results.profiles.length > 0}
       <p class="highlight txt-medium">ENS names</p>
       <ul>
-        {#each results.ens as profile}
+        {#each results.profiles as profile}
           <li>
             <Address address={profile.address} {profile} {config} resolve />
           </li>

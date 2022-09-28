@@ -485,14 +485,14 @@ export class Project implements ProjectInfo {
   }
 
   static async getMulti(
-    projs: { urn: Urn; seed: string }[],
+    projs: { nameOrUrn: Urn; seed: string }[],
   ): Promise<{ info: ProjectInfo; seed: Host }[]> {
     const promises = [];
 
     for (const proj of projs) {
       const seed = { host: proj.seed, port: null };
       promises.push(
-        Project.getInfo(proj.urn, seed).then(info => {
+        Project.getInfo(proj.nameOrUrn, seed).then(info => {
           return { info, seed };
         }),
       );

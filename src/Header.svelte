@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { ResolvedSearch } from "@app/resolver";
+  import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
   import { link } from "svelte-routing";
@@ -27,14 +27,9 @@
   export let config: Config;
 
   let query: string;
-  let results: ResolvedSearch;
+  let results: ProjectsAndProfiles | null = null;
 
   let sessionButtonHover = false;
-  let searchResultsDisplayed = false;
-
-  function toggleSearchResults() {
-    searchResultsDisplayed = !searchResultsDisplayed;
-  }
 
   $: address = session && session.address;
   $: tokenBalance = session && session.tokenBalance;
@@ -177,7 +172,6 @@
         {config}
         on:search={e => {
           ({ query, results } = e.detail);
-          toggleSearchResults();
         }} />
     </div>
     <div class="nav">
@@ -259,7 +253,6 @@
                 }}
                 on:search={e => {
                   ({ query, results } = e.detail);
-                  toggleSearchResults();
                 }} />
             </div>
             <a
@@ -276,7 +269,13 @@
     </div>
   </div>
 
-  {#if searchResultsDisplayed}
-    <SearchResults {config} {results} {query} on:close={toggleSearchResults} />
+  {#if results}
+    <SearchResults
+      {config}
+      {results}
+      {query}
+      on:close={() => {
+        results = null;
+      }} />
   {/if}
 </header>
