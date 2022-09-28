@@ -19,7 +19,12 @@
 
   const getProjects =
     config.projects.pinned.length > 0
-      ? Project.getMulti(config.projects.pinned)
+      ? Project.getMulti(
+          config.projects.pinned.map(project => ({
+            nameOrUrn: project.urn,
+            seed: project.seed,
+          })),
+        )
       : Promise.resolve([]);
 
   const onClick = (project: ProjectInfo, seed: Host) => {
