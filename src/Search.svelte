@@ -140,7 +140,7 @@
   }>();
 
   let input = "";
-  let searching = false;
+  let loading = false;
   let shaking = false;
 
   function shake() {
@@ -154,13 +154,12 @@
         return;
       }
 
-      searching = true;
+      loading = true;
 
       const query = input;
       const searchResult = await searchProjectsAndProfiles(input, config);
 
       if (searchResult.type === "nothing") {
-        searching = false;
         shake();
       } else if (searchResult.type === "error") {
         // TODO: show some kind of notification to the user.
@@ -168,11 +167,13 @@
       } else if (searchResult.type === "singleProfile") {
         input = "";
         navigate(`/${searchResult.id}`, { replace: true });
+        dispatch("finished");
       } else if (searchResult.type === "singleProject") {
         input = "";
         navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
           replace: true,
         });
+        dispatch("finished");
       } else if (searchResult.type === "projectsAndProfiles") {
         // TODO: show some kind of notification about any errors to the user.
         input = "";
@@ -180,11 +181,11 @@
           query,
           results: searchResult.projectsAndProfiles,
         });
+        dispatch("finished");
       } else {
         unreachable(searchResult);
       }
-      searching = false;
-      dispatch("finished");
+      loading = false;
     }
   }
 </script>
@@ -215,12 +216,12 @@
 <div class:shaking>
   <TextInput
     variant="dashed"
-    disabled={searching}
+    disabled={loading}
     bind:value={input}
     on:keydown={search}
     placeholder="Search a name or address…">
     <svelte:fragment slot="right">
-      {#if searching}
+      {#if loading}
         <Loading small />
       {/if}
     </svelte:fragment>
