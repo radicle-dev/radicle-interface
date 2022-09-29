@@ -49,8 +49,6 @@ const config: UserConfig = {
   },
   resolve: {
     alias: {
-      // This is needed for vite not to choke.
-      caip: path.resolve("./node_modules/caip/dist/umd/index.min.js"),
       "@public": path.resolve("./public"),
       "@app": path.resolve("./src"),
       // Polyfill for Node.js 'stream' library.
