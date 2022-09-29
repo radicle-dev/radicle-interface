@@ -97,17 +97,17 @@
       {
         "name": "radicle-cli",
         "urn": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
-        "seed": "seed.alt-clients.radicle.xyz"
+        "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-interface",
         "urn": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
-        "seed": "seed.alt-clients.radicle.xyz"
+        "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-client-services",
         "urn": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
-        "seed": "seed.alt-clients.radicle.xyz"
+        "seed": "clients.radicle.xyz"
       },
       {
         "name": "solmate",
