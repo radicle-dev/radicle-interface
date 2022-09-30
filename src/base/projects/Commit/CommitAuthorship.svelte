@@ -88,7 +88,7 @@
   {/if}
   {#if !noTime}
     <span class="layout-desktop-inline">
-      {formatTimestamp(commit.header.committerTime)}
+      {formatTimestamp(commit.header.committer.time)}
     </span>
   {/if}
 </span>

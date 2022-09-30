@@ -13,7 +13,7 @@
   const onBrowse = (event: { detail: string }) => {
     project.navigateTo({
       content: proj.ProjectContent.Tree,
-      revision: commit.header.sha1,
+      revision: commit.header.id,
       path: event.detail,
     });
   };
@@ -60,10 +60,10 @@
     <div class="summary">
       <div class="txt-medium">{commit.header.summary}</div>
       <div class="layout-desktop txt-monospace sha1">
-        <span>{commit.header.sha1}</span>
+        <span>{commit.header.id}</span>
       </div>
       <div class="layout-mobile txt-monospace sha1 txt-small">
-        {formatCommit(commit.header.sha1)}
+        {formatCommit(commit.header.id)}
       </div>
     </div>
     <pre class="description txt-small">{commit.header.description}</pre>

@@ -99,12 +99,12 @@
         <CommitVerifiedBadge {commit} />
       </div>
     {/if}
-    <span class="hash txt-highlight">{formatCommit(commit.header.sha1)}</span>
+    <span class="hash txt-highlight">{formatCommit(commit.header.id)}</span>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"
       title="View file"
-      on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
+      on:click|stopPropagation={() => browseCommit(commit.header.id)}>
       <Icon name="browse" />
     </div>
   </div>

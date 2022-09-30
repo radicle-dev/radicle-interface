@@ -8,14 +8,15 @@ const groupedCommits = [
     commits: [
       {
         header: {
-          sha: "9cd3532",
+          id: "9cd3532",
           summary: "Second commit",
           description: "",
           committer: {
             name: "dabit3",
             mail: "dabit3@gmail.com",
+            time: "06:51 GMT+1",
           },
-          committerTime: "06:51 GMT+1",
+          parents: ["e045b92"],
         },
       },
     ],
@@ -25,26 +26,28 @@ const groupedCommits = [
     commits: [
       {
         header: {
-          sha: "e045b92",
+          id: "e045b92",
           summary: "Update README",
           description: "",
           committer: {
             name: "dabit3",
             mail: "dabit3@gmail.com",
+            time: "17:14 GMT+1",
           },
-          committerTime: "17:14 GMT+1",
+          parents: ["cbf5df4"],
         },
       },
       {
         header: {
-          sha: "cbf5df4",
+          id: "cbf5df4",
           summary: "initial commit",
           description: "this is the first commit of many",
           committer: {
             name: "dabit3",
             mail: "dabit3@gmail.com",
+            time: "16:58 GMT+1",
           },
-          committerTime: "16:58 GMT+1",
+          parents: [],
         },
       },
     ],
@@ -118,7 +121,7 @@ describe("project commits", () => {
         const $el = Cypress.$(item.find(".commit-teaser"));
         cy.wrap($el).each((commit, commitIndex) => {
           expect(Cypress.$(commit).find(".hash").text()).to.eq(
-            groupedCommits[index].commits[commitIndex].header.sha,
+            groupedCommits[index].commits[commitIndex].header.id,
           );
           expect(Cypress.$(commit).find(".summary").text()).to.eq(
             groupedCommits[index].commits[commitIndex].header.summary,

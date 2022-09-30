@@ -16,6 +16,7 @@ export interface CommitMetadata {
 export interface Author {
   email: string;
   name: string;
+  time: number;
 }
 
 export interface CommitStats {
@@ -40,12 +41,13 @@ export interface CommitContext {
 }
 
 export interface CommitHeader {
+  id: string;
   author: Author;
   committer: Author;
-  committerTime: number;
   description: string;
-  sha1: string;
   summary: string;
+  message: string;
+  parents: string[];
 }
 
 // A set of commits grouped by time.
@@ -93,9 +95,9 @@ export function groupCommits(
 
   try {
     commits = commits.sort((a, b) => {
-      if (a.header.committerTime > b.header.committerTime) {
+      if (a.header.committer.time > b.header.committer.time) {
         return -1;
-      } else if (a.header.committerTime < b.header.committerTime) {
+      } else if (a.header.committer.time < b.header.committer.time) {
         return 1;
       }
 
@@ -103,7 +105,7 @@ export function groupCommits(
     });
 
     for (const commit of commits) {
-      const time = commit.header.committerTime * 1000;
+      const time = commit.header.committer.time * 1000;
       const date = new Date(time);
       const isNewDay =
         !groupedCommits.length ||

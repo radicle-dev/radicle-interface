@@ -142,7 +142,7 @@
           <span>{blob.info.name}</span>
         </span>
         <div class="last-commit" title={lastCommit.author.name}>
-          <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
+          <span class="hash">{lastCommit.id.slice(0, 7)}</span>
           {lastCommit.summary}
         </div>
       </div>

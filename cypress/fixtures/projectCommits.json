@@ -2,18 +2,20 @@
   "headers": [
     {
       "header": {
-        "sha1": "cbf5df499ab4f4a908f1756fbe2c236a4530516a",
+        "id": "cbf5df499ab4f4a908f1756fbe2c236a4530516a",
         "author": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646236685
         },
         "summary": "initial commit",
         "description": "",
         "committer": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646236685
         },
-        "committerTime": 1646236685
+        "parents": ["e045b92297d21a709f3dea84d692c482ee61f6b2"]
       },
       "context": {
         "committer": {
@@ -29,18 +31,20 @@
     },
     {
       "header": {
-        "sha1": "e045b92297d21a709f3dea84d692c482ee61f6b2",
+        "id": "e045b92297d21a709f3dea84d692c482ee61f6b2",
         "author": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646237685
         },
         "summary": "Update README",
         "description": "",
         "committer": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646237685
         },
-        "committerTime": 1646237685
+        "parents": ["9cd353282bec77fef5dd56227173fc675d2363ce"]
       },
       "context": {
         "committer": null
@@ -48,18 +52,20 @@
     },
     {
       "header": {
-        "sha1": "9cd353282bec77fef5dd56227173fc675d2363ce",
+        "id": "9cd353282bec77fef5dd56227173fc675d2363ce",
         "author": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646286685
         },
         "summary": "Second commit",
         "description": "",
         "committer": {
           "name": "dabit3",
-          "email": "dabit3@gmail.com"
+          "email": "dabit3@gmail.com",
+          "time": 1646286685
         },
-        "committerTime": 1646286685
+        "parents": []
       },
       "context": {
         "committer": null
