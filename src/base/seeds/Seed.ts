@@ -4,6 +4,11 @@ import * as proj from "@app/project";
 import { isDomain, isLocal } from "@app/utils";
 import { assert } from "@app/error";
 
+export interface Stats {
+  projects: { count: number };
+  users: { count: number };
+}
+
 export class InvalidSeed {
   valid = false as const;
 
@@ -114,6 +119,13 @@ export class Seed {
       ...project,
       id: project.urn,
     }));
+  }
+
+  async getStats(): Promise<{
+    projects: { count: number };
+    users: { count: number };
+  }> {
+    return new Request("/stats", this.api).get();
   }
 
   static async getPeer(host: Host): Promise<{ id: string }> {

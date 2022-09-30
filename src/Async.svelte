@@ -1,7 +1,9 @@
 <script lang="ts">
   import Loading from "@app/Loading.svelte";
 
-  export let fetch: any;
+  type T = $$Generic;
+
+  export let fetch: Promise<T>;
 </script>
 
 {#await fetch}

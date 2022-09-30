@@ -4,26 +4,33 @@
   import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
   import type { ProjectInfo } from "@app/project";
-  import type { Seed } from "@app/base/seeds/Seed";
+  import type { Seed, Stats } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
 
   export let seed: Seed;
   export let profile: Profile | null = null;
   export let projects: proj.ProjectInfo[];
+  export let stats: Stats;
 
   // A pointer to the current page of projects added to the listing
   let page = 0;
 
   const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
-    const projects = await proj.Project.getProjects(seed.api, {
-      perPage: 10,
-      page: (page += 1),
-    });
-    if (projects.length > 0) {
-      return projects;
+    try {
+      stats = await seed.getStats();
+      const projects = await proj.Project.getProjects(seed.api, {
+        perPage: 10,
+        page: (page += 1),
+      });
+      if (projects.length > 0) {
+        return projects;
+      }
+    } catch (e) {
+      console.error(e);
     }
 
-    // We return an empty array, for when no more projects are found, since List is looking for an iterable.
+    // We return an empty array, for when no more projects are found, or an error is thrown
+    // since List is looking for an iterable.
     return [];
   };
 
@@ -49,7 +56,10 @@
 </style>
 
 <div class="projects">
-  <List items={projects} query={fetchMoreProjects}>
+  <List
+    bind:items={projects}
+    complete={projects.length === stats.projects.count}
+    query={fetchMoreProjects}>
     <svelte:fragment slot="list" let:items>
       {#each items as project}
         {#if project.head}

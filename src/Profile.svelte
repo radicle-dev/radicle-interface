@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
   import type { Config } from "@app/config";
+  import type { Seed, Stats } from "@app/base/seeds/Seed";
+  import type { ProjectInfo } from "@app/project";
   import Address from "@app/Address.svelte";
   import Avatar from "@app/Avatar.svelte";
   import Icon from "@app/Icon.svelte";
@@ -37,6 +39,18 @@
   let transferOwnerForm: typeof SvelteComponent | null = null;
   const transferOwnership = () => {
     transferOwnerForm = TransferOwnership;
+  };
+
+  const getProjectsAndStats = async (
+    seed: Seed,
+    id?: string,
+  ): Promise<{
+    stats: Stats;
+    projects: ProjectInfo[];
+  }> => {
+    const stats = await seed.getStats();
+    const projects = await seed.getProjects(10, id);
+    return { stats, projects };
   };
 
   $: account = $session && $session.address;
@@ -447,8 +461,12 @@
       {/await}
     {/if}
     {#if profile.seed?.valid}
-      <Async fetch={profile.seed.getProjects(10, profile.id)} let:result>
-        <Projects {profile} seed={profile.seed} projects={result} />
+      <Async fetch={getProjectsAndStats(profile.seed, profile.id)} let:result>
+        <Projects
+          {profile}
+          seed={profile.seed}
+          stats={result.stats}
+          projects={result.projects} />
       </Async>
     {/if}
   </main>

@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Config } from "@app/config";
+  import type { Stats } from "@app/base/seeds/Seed";
+  import type { ProjectInfo } from "@app/project";
   import { formatSeedId, formatSeedHost } from "@app/utils";
   import { Seed } from "@app/base/seeds/Seed";
   import Loading from "@app/Loading.svelte";
@@ -22,6 +24,17 @@
   const hostName = formatSeedHost(host);
   const seedHost: Host = { host, port: null };
   let siweSession: SeedSession | null = null;
+
+  const getProjectsAndStats = async (
+    seed: Seed,
+  ): Promise<{
+    stats: Stats;
+    projects: ProjectInfo[];
+  }> => {
+    const stats = await seed.getStats();
+    const projects = await Project.getProjects(seedHost, { perPage: 10 });
+    return { stats, projects };
+  };
 
   $: if (session?.siwe) {
     const entries = Object.entries(session.siwe);
@@ -164,8 +177,8 @@
       <div class="desktop" />
     </div>
     <!-- Seed Projects -->
-    <Async fetch={Project.getProjects(seedHost, { perPage: 10 })} let:result>
-      <Projects {seed} projects={result} />
+    <Async fetch={getProjectsAndStats(seed)} let:result>
+      <Projects {seed} projects={result.projects} stats={result.stats} />
     </Async>
   </main>
 {:catch}
