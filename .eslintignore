@@ -1,5 +1,3 @@
 node_modules
 build
 public
-snowpack.config.js
-svelte.config.js
