@@ -3,7 +3,6 @@ import path from "path";
 import type { UserConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import type { ViteDevServer } from "vite";
-import IstanbulPlugin from "vite-plugin-istanbul";
 import history from "connect-history-api-fallback";
 import type { Request, Response } from "express-serve-static-core";
 
@@ -22,12 +21,6 @@ const config: UserConfig = {
     environment: "happy-dom",
     include: ["**/*.test.ts"],
     reporters: "verbose",
-    coverage: {
-      reporter: ["html"],
-      all: true,
-      excludeNodeModules: true,
-      extension: [".svelte", ".ts", ".js"],
-    },
   },
   plugins: [
     svelte({
@@ -37,12 +30,6 @@ const config: UserConfig = {
       },
     }),
     rewriteAll(),
-    IstanbulPlugin({
-      include: "src/**/*",
-      exclude: ["node_modules"],
-      extension: [".ts", ".svelte"],
-      cypress: true,
-    }),
   ],
   server: {
     port: 3000,
