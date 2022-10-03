@@ -3,6 +3,7 @@ import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
 import multibase from "multibase";
+import katex from "katex";
 import multihashes from "multihashes";
 import type { TransactionResult } from "@gnosis.pm/safe-core-sdk";
 import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
@@ -808,33 +809,42 @@ export const unreachable = (value: never): never => {
   throw new Error(`Unreachable code: ${value}`);
 };
 
-const markdownEmojiTokenizer: marked.TokenizerExtension = {
+const emojisMarkedExtension = {
   name: "emoji",
   level: "inline",
-  start(src: string) {
-    return src.indexOf(":");
-  },
+  start: (src: string) => src.indexOf(":"),
   tokenizer(src: string) {
-    const rule = /^:([\w+-]+):/;
-    const match = rule.exec(src);
+    const match = src.match(/^:([\w+-]+):/);
     if (match) {
       return {
         type: "emoji",
         raw: match[0],
-        emoji: match[1],
+        text: match[1].trim(),
       };
     }
   },
+  renderer: (token: marked.Tokens.Generic) =>
+    `<span>${parseEmoji(token.text)}</span>`,
 };
 
-const markdownEmojiRenderer: marked.RendererExtension = {
-  name: "emoji",
-  renderer(token: marked.Tokens.Generic) {
-    return `<span>${parseEmoji(token.emoji)}</span>`;
+const katexMarkedExtension = {
+  name: "katex",
+  level: "inline",
+  start: (src: string) => src.indexOf("$"),
+  tokenizer(src: string) {
+    const match = src.match(/^\$+([^$\n]+?)\$+/);
+    if (match) {
+      return {
+        type: "katex",
+        raw: match[0],
+        text: match[1].trim(),
+      };
+    }
   },
+  renderer: (token: marked.Tokens.Generic) =>
+    katex.renderToString(token.text, {
+      throwOnError: false,
+    }),
 };
 
-export const markdownExtensions = [
-  markdownEmojiTokenizer,
-  markdownEmojiRenderer,
-];
+export const markdownExtensions = [emojisMarkedExtension, katexMarkedExtension];

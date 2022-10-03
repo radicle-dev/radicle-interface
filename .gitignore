@@ -2,6 +2,12 @@ build/
 node_modules/
 NOTES
 
+# KaTeX files
+*.min.css
+KaTeX_**.ttf
+KaTeX_**.woff
+KaTeX_**.woff2
+
 # Integration Tests
 cypress/screenshots
 

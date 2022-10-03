@@ -8,7 +8,7 @@
     getImageMime,
     isUrl,
   } from "@app/utils";
-  import xss, { getDefaultWhiteList } from "xss";
+  import dompurify from "dompurify";
 
   export let content: string;
   export let getImage: (path: string) => Promise<proj.Blob>;
@@ -19,18 +19,8 @@
 
   let container: HTMLElement;
 
-  const render = (content: string): string => {
-    return xss(marked.parse(content), {
-      whiteList: {
-        ...getDefaultWhiteList(),
-        img: ["src", "alt", "title"],
-        audio: ["src"],
-        video: ["src"],
-        a: ["href", "name"],
-      },
-      stripIgnoreTag: false,
-    });
-  };
+  const render = (content: string): string =>
+    dompurify.sanitize(marked.parse(content));
 
   onMount(() => {
     // Don't underline <a> tags that contain images.

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+cp -r node_modules/katex/dist/katex.min.css public/katex.min.css
+cp -r node_modules/katex/dist/fonts/* public/fonts/
