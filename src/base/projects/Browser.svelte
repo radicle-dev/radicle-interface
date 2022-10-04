@@ -134,6 +134,11 @@
   nav {
     padding: 0 2rem;
   }
+  .sticky {
+    position: sticky;
+    top: 2rem;
+    max-height: 100vh;
+  }
 
   @media (max-width: 960px) {
     .container {
@@ -164,6 +169,9 @@
     .column-left-visible {
       display: block;
     }
+    .sticky {
+      max-height: initial;
+    }
   }
 </style>
 
@@ -183,7 +191,7 @@
   <div class="container center-content">
     {#if tree.entries.length > 0}
       <div class="column-left" class:column-left-visible={mobileFileTree}>
-        <div class="source-tree">
+        <div class="source-tree sticky">
           <Tree
             {tree}
             {path}
