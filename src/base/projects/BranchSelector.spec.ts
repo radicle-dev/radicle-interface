@@ -40,14 +40,8 @@ describe("Logic", () => {
       props: {
         ...defaultProps,
         project: {
+          ...project,
           head: null,
-          urn: "rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio",
-          name: "nakamoto",
-          description:
-            "Privacy-preserving Bitcoin light-client implementation in Rust",
-          defaultBranch: "master",
-          maintainers: ["rad:git:hnrkqdpm9ub19oc8dccx44echy76hzfsezyio"],
-          delegates: ["hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe"],
         },
       },
     });
