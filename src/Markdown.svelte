@@ -233,8 +233,10 @@
     padding: 0.5rem 1rem;
   }
 
-  .markdown > :global(*:first-child) {
+  .markdown :global(*:first-child:not(pre)) {
     padding-top: 0 !important;
+  }
+  .markdown :global(*:first-child) {
     margin-top: 0 !important;
   }
   .markdown :global(dl dt) {
