@@ -1,9 +1,11 @@
-import { ethers } from "ethers";
-import { formatBalance } from "@app/utils";
-import * as session from "@app/session";
-import { State, state } from "./state";
 import type { Config } from "@app/config";
+
+import { ethers } from "ethers";
 import { assert } from "@app/error";
+import { writable } from "svelte/store";
+
+import * as session from "@app/session";
+import * as utils from "@app/utils";
 
 export interface VestingInfo {
   token: string;
@@ -13,6 +15,10 @@ export interface VestingInfo {
   withdrawableBalance: string;
   withdrawn: string;
 }
+
+export const state = writable<
+  "idle" | "loading" | "withdrawingSign" | "withdrawing" | "withdrawn"
+>("idle");
 
 export async function withdrawVested(
   address: string,
@@ -27,14 +33,14 @@ export async function withdrawVested(
   );
   const signer = config.signer;
 
-  state.set(State.WithdrawingSign);
+  state.set("withdrawingSign");
 
   const tx = await contract.connect(signer).withdrawVested();
 
-  state.set(State.Withdrawing);
+  state.set("withdrawing");
   await tx.wait();
   session.state.refreshBalance(config);
-  state.set(State.Withdrawn);
+  state.set("withdrawn");
 }
 
 export async function getInfo(
@@ -63,8 +69,8 @@ export async function getInfo(
     token: token,
     symbol: symbol,
     beneficiary: beneficiary,
-    totalVesting: formatBalance(total),
-    withdrawableBalance: formatBalance(withdrawable),
-    withdrawn: formatBalance(withdrawn),
+    totalVesting: utils.formatBalance(total),
+    withdrawableBalance: utils.formatBalance(withdrawable),
+    withdrawn: utils.formatBalance(withdrawn),
   };
 }

@@ -1,21 +1,20 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import debounce from "lodash/debounce";
 
   export let small = false;
   export let center = false;
   export let fadeIn = false;
   export let margins = false;
   export let condensed = false;
+  export let noDelay = false;
 
   let show: boolean = false;
 
-  const timeout = window.setTimeout(() => {
+  if (noDelay) {
     show = true;
-  }, 200);
-
-  onDestroy(() => {
-    window.clearTimeout(timeout);
-  });
+  } else {
+    debounce(() => (show = true), 200)();
+  }
 </script>
 
 <style>

@@ -6,12 +6,12 @@
   import { formatAddress, isAddressEqual } from "@app/utils";
   import { Org } from "@app/base/orgs/Org";
   import type { User } from "@app/base/users/User";
-  import Loading from "@app/Loading.svelte";
-  import Error from "@app/Error.svelte";
+  import ErrorModal from "@app/Error.svelte";
   import Address from "@app/Address.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import TextInput from "@app/TextInput.svelte";
+  import Loading from "@app/Loading.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -44,6 +44,9 @@
   let error: string | null = null;
 
   const onSubmit = async () => {
+    if (!valid) {
+      return;
+    }
     state = State.Checking;
 
     const domain = `${name}.${config.registrar.domain}`;
@@ -62,15 +65,21 @@
           await tx.wait();
           state = State.Success;
         }
-      } catch (e: any) {
+      } catch (e) {
         console.error(e);
         state = State.Failed;
-        error = e.message;
+        if (e instanceof Error) {
+          error = e.message;
+        } else {
+          error = "Unknown error. Check dev console for details.";
+        }
       }
     } else {
       state = State.Mismatch;
     }
   };
+
+  $: valid = name !== "" && state === State.Idle;
 </script>
 
 <style>
@@ -120,7 +129,7 @@
     </div>
   </Modal>
 {:else if state === State.Mismatch}
-  <Error floating title="🧣" on:close>
+  <ErrorModal floating title="🧣" on:close>
     The name <span class="txt-bold">{name}.{config.registrar.domain}</span>
     does not resolve to
     <span class="txt-bold">{entity.address}</span>
@@ -137,9 +146,9 @@
         Close
       </Button>
     </div>
-  </Error>
+  </ErrorModal>
 {:else if state === State.Failed && error}
-  <Error floating title="Transaction failed" message={error} on:close />
+  <ErrorModal floating title="Transaction failed" message={error} on:close />
 {:else}
   <Modal floating>
     <div slot="title">
@@ -172,6 +181,9 @@
           <TextInput
             autofocus
             disabled={state !== State.Idle}
+            on:submit={onSubmit}
+            loading={state === State.Checking}
+            {valid}
             bind:value={name}>
             <svelte:fragment slot="right">
               .{config.registrar.domain}
@@ -193,15 +205,8 @@
           Close
         </Button>
       {:else}
-        <Button
-          variant="primary"
-          on:click={onSubmit}
-          disabled={!name || state !== State.Idle}>
-          {#if state === State.Checking}
-            Checking…
-          {:else}
-            Submit
-          {/if}
+        <Button variant="primary" on:click={onSubmit} disabled={!valid}>
+          Submit
         </Button>
 
         <Button variant="text" on:click={() => dispatch("close")}>

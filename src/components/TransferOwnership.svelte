@@ -1,72 +1,86 @@
-<script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import Modal from "@app/Modal.svelte";
+<script lang="ts" strictEvents>
+  import type { Org } from "@app/base/orgs/Org";
   import type { Config } from "@app/config";
-  import { formatAddress, isAddress } from "@app/utils";
-  import Loading from "@app/Loading.svelte";
-  import { assert } from "@app/error";
+
+  import { createEventDispatcher } from "svelte";
+
   import * as utils from "@app/utils";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import TextInput from "@app/TextInput.svelte";
-
-  import type { Org } from "@app/base/orgs/Org";
-
-  const dispatch = createEventDispatcher();
+  import { formatAddress, isAddress } from "@app/utils";
 
   export let org: Org;
   export let config: Config;
 
-  enum State {
-    Idle,
+  const dispatch = createEventDispatcher<{ close: boolean }>();
 
-    // Single sig states.
-    Signing,
-    Pending,
-    Success,
+  let state:
+    | "idle"
+    // Single sig.
+    | "signing"
+    | "pending"
+    | "success"
+    // Multi sig.
+    | "proposing"
+    | "proposed"
+    | "failed" = "idle";
 
-    // Multi sig states.
-    Proposing,
-    Proposed,
-
-    Failed,
-  }
-
-  let newOwner: string | undefined = undefined;
-  let state = State.Idle;
-  let error: string | null = null;
-
-  const resetForm = () => {
-    state = State.Idle;
-  };
+  let newOwner: string = "";
+  let errorMessage: string | null = null;
+  let valid: boolean = false;
+  let validationMessage: string | undefined = undefined;
 
   const onSubmit = async () => {
-    assert(newOwner);
-
-    if (!isAddress(newOwner)) {
-      state = State.Failed;
-      error = `"${newOwner}" is not a valid Ethereum address.`;
+    if (!valid) {
       return;
     }
 
     try {
       if (org && (await utils.isSafe(org.owner, config))) {
-        state = State.Proposing;
+        state = "proposing";
         await org.setOwnerMultisig(newOwner, config);
-        state = State.Proposed;
+        state = "proposed";
       } else {
-        state = State.Signing;
+        state = "signing";
         const tx = await org.setOwner(newOwner, config);
-        state = State.Pending;
+        state = "pending";
         await tx.wait();
-        state = State.Success;
+        state = "success";
       }
-    } catch (e: any) {
-      console.error(e);
-      state = State.Failed;
-      error = e.message;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else {
+        errorMessage = "Unknown error.";
+      }
+      console.error(error);
+      state = "failed";
     }
   };
+
+  function validate(address: string) {
+    if (address === "") {
+      return { valid: false };
+    }
+
+    if (state !== "idle") {
+      return { valid: false };
+    }
+
+    if (!isAddress(address)) {
+      return {
+        valid: false,
+        validationMessage: "Please enter a valid Ethereum address.",
+      };
+    }
+
+    return { valid: true };
+  }
+
+  $: ({ valid, validationMessage } = validate(newOwner));
 </script>
 
 <style>
@@ -74,10 +88,16 @@
     gap: 1rem;
     display: flex;
     justify-content: center;
+    margin-top: 2rem;
+  }
+  .message {
+    padding-left: 1rem;
+    padding-top: 1rem;
+    word-break: break-all;
   }
 </style>
 
-{#if state === State.Success && newOwner}
+{#if state === "success" && newOwner}
   <Modal floating small>
     <div slot="title">✅</div>
 
@@ -96,7 +116,7 @@
       </Button>
     </div>
   </Modal>
-{:else if state === State.Proposed && org}
+{:else if state === "proposed" && org}
   <Modal floating>
     <div slot="title">🪴</div>
 
@@ -118,63 +138,80 @@
       </Button>
     </div>
   </Modal>
-{:else}
-  <Modal floating error={state === State.Failed} small={state === State.Failed}>
+{:else if state === "failed"}
+  <Modal floating error small>
     <div slot="title">
       🔑
       <div>Transfer ownership</div>
     </div>
 
     <div slot="subtitle">
-      {#if state === State.Signing}
+      <div class="message">
+        {errorMessage}
+      </div>
+    </div>
+
+    <div slot="actions" class="actions">
+      <Button
+        variant="negative"
+        on:click={() => {
+          state = "idle";
+        }}>
+        Back
+      </Button>
+    </div>
+  </Modal>
+{:else}
+  <Modal floating>
+    <div slot="title">
+      🔑
+      <div>Transfer ownership</div>
+    </div>
+
+    <div slot="subtitle">
+      {#if state === "signing"}
         Please confirm the transaction in your wallet.
-      {:else if state === State.Pending}
+      {:else if state === "pending"}
         Waiting for transaction to be processed…
-      {:else if state === State.Proposing && org}
+      {:else if state === "proposing" && org}
         Proposal is being submitted to the safe
         <span class="txt-bold">{formatAddress(org.owner)}</span>
         , please sign the transaction in your wallet.
-      {:else if state === State.Idle}
+      {:else if state === "idle"}
         Transfer the ownership of Org <span class="txt-bold">
           {formatAddress(org.address)}
         </span>
         to a new address.
-      {:else if state === State.Failed}
-        <div class="error">
-          {error}
-        </div>
       {/if}
     </div>
 
     <div slot="body" style="display: flex;justify-content: center;">
-      {#if state === State.Idle}
-        <div style="width: 25rem;">
-          <TextInput
-            autofocus
-            disabled={state !== State.Idle}
-            bind:value={newOwner} />
+      {#if state === "idle"}
+        <div style="position: absolute; text-align: left;">
+          <div style="width: 31rem;">
+            <TextInput
+              autofocus
+              {valid}
+              {validationMessage}
+              on:submit={onSubmit}
+              disabled={state !== "idle"}
+              bind:value={newOwner} />
+          </div>
         </div>
-      {:else if state === State.Pending || state === State.Proposing || state === State.Signing}
+      {:else if state === "pending" || state === "proposing" || state === "signing"}
         <Loading small center />
-      {:else if state === State.Failed}
-        <!-- ... -->
       {/if}
     </div>
 
     <div slot="actions" class="actions">
-      {#if state === State.Signing}
+      {#if state === "signing"}
         <Button variant="text" on:click={() => dispatch("close")}>
           Cancel
         </Button>
-      {:else if state === State.Pending}
+      {:else if state === "pending"}
         <Button variant="text" on:click={() => dispatch("close")}>Close</Button>
-      {:else if state === State.Failed}
-        <Button variant="negative" on:click={resetForm}>Back</Button>
       {:else}
-        <Button
-          variant="primary"
-          on:click={onSubmit}
-          disabled={!newOwner || state !== State.Idle}>
+        <Button variant="primary" on:click={onSubmit} disabled={!valid}>
           Submit
         </Button>
 

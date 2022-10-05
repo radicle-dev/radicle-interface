@@ -190,7 +190,9 @@
 
   <div class="right">
     {#if config && config.network.name === "rinkeby"}
-      <span class="network">Rinkeby</span>
+      <a use:link href="/faucet">
+        <span class="network">Rinkeby</span>
+      </a>
     {:else if config && config.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}

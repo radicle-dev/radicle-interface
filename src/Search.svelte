@@ -128,7 +128,6 @@
   import { createEventDispatcher } from "svelte";
   import { navigate } from "svelte-routing";
 
-  import Loading from "@app/Loading.svelte";
   import TextInput from "@app/TextInput.svelte";
   import { unreachable } from "@app/utils";
 
@@ -148,49 +147,52 @@
     debounce(() => (shaking = false), 500)();
   }
 
-  async function search(event: KeyboardEvent) {
-    if (event.key === "Enter") {
-      if (input === "") {
-        return;
-      }
-
-      loading = true;
-
-      const query = input;
-      const searchResult = await searchProjectsAndProfiles(input, config);
-
-      if (searchResult.type === "nothing") {
-        shake();
-      } else if (searchResult.type === "error") {
-        // TODO: show some kind of notification to the user.
-        shake();
-      } else if (searchResult.type === "singleProfile") {
-        input = "";
-        navigate(`/${searchResult.id}`, { replace: true });
-        dispatch("finished");
-      } else if (searchResult.type === "singleProject") {
-        input = "";
-        navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
-          replace: true,
-        });
-        dispatch("finished");
-      } else if (searchResult.type === "projectsAndProfiles") {
-        // TODO: show some kind of notification about any errors to the user.
-        input = "";
-        dispatch("search", {
-          query,
-          results: searchResult.projectsAndProfiles,
-        });
-        dispatch("finished");
-      } else {
-        unreachable(searchResult);
-      }
-      loading = false;
+  async function search() {
+    if (!valid) {
+      return;
     }
+
+    loading = true;
+
+    const query = input;
+    const searchResult = await searchProjectsAndProfiles(input, config);
+
+    if (searchResult.type === "nothing") {
+      shake();
+    } else if (searchResult.type === "error") {
+      // TODO: show some kind of notification to the user.
+      shake();
+    } else if (searchResult.type === "singleProfile") {
+      input = "";
+      navigate(`/${searchResult.id}`, { replace: true });
+      dispatch("finished");
+    } else if (searchResult.type === "singleProject") {
+      input = "";
+      navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
+        replace: true,
+      });
+      dispatch("finished");
+    } else if (searchResult.type === "projectsAndProfiles") {
+      // TODO: show some kind of notification about any errors to the user.
+      input = "";
+      dispatch("search", {
+        query,
+        results: searchResult.projectsAndProfiles,
+      });
+      dispatch("finished");
+    } else {
+      unreachable(searchResult);
+    }
+    loading = false;
   }
+
+  $: valid = input !== "";
 </script>
 
 <style>
+  .search {
+    display: flex;
+  }
   .shaking {
     animation: horizontal-shaking 0.35s;
   }
@@ -213,17 +215,13 @@
   }
 </style>
 
-<div class:shaking>
+<div class="search" class:shaking>
   <TextInput
     variant="dashed"
+    valid={input !== ""}
+    {loading}
     disabled={loading}
     bind:value={input}
-    on:keydown={search}
-    placeholder="Search a name or address…">
-    <svelte:fragment slot="right">
-      {#if loading}
-        <Loading small />
-      {/if}
-    </svelte:fragment>
-  </TextInput>
+    on:submit={search}
+    placeholder="Search a name or address…" />
 </div>
