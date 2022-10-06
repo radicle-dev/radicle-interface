@@ -1,16 +1,15 @@
 <script lang="ts">
+  export let disabled: boolean = false;
+  export let size: "tiny" | "small" | "regular" = "regular";
+  export let style: string | undefined = undefined;
   export let title: string | undefined = undefined;
+  export let waiting: boolean = false;
   export let variant:
     | "foreground"
     | "negative"
     | "primary"
     | "secondary"
     | "text";
-  export let size: "tiny" | "small" | "regular" = "regular";
-
-  export let disabled: boolean = false;
-  export let waiting: boolean = false;
-  export let style: string | undefined = undefined;
 </script>
 
 <style>

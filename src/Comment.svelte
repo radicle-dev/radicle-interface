@@ -1,19 +1,20 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { Config } from "@app/config";
+  import type { Blob } from "@app/project";
   import type { Comment, Thread } from "@app/issue";
+  import type { Config } from "@app/config";
+
+  import { onMount } from "svelte";
+
+  import Authorship from "@app/Authorship.svelte";
   import Avatar from "@app/Avatar.svelte";
   import Markdown from "@app/Markdown.svelte";
   import ReactionSelector from "@app/ReactionSelector.svelte";
-  import type { Blob } from "@app/project";
+  import Reactions from "@app/Reactions.svelte";
   import { Profile, ProfileType } from "@app/profile";
 
-  import Authorship from "@app/Authorship.svelte";
-  import Reactions from "@app/Reactions.svelte";
-
+  export let caption = "left a comment";
   export let comment: Comment | Thread;
   export let config: Config;
-  export let caption = "left a comment";
   export let getImage: (path: string) => Promise<Blob>;
 
   let profile: Profile | null = null;

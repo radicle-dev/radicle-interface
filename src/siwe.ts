@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { SiweMessage } from "siwe";
-import { Request, type Host } from "@app/api";
 import type { Config } from "@app/config";
-import { connectSeed } from "@app/session";
+import type { Host } from "@app/api";
 import type { Seed } from "@app/base/seeds/Seed";
+
+import { SiweMessage } from "siwe";
+
+import { Request } from "@app/api";
+import { connectSeed } from "@app/session";
 
 export interface SeedSession {
   domain: string;

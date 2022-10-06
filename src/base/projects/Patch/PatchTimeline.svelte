@@ -1,17 +1,19 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
-  import { type Patch, TimelineType } from "@app/patch";
-  import { formatSeedId } from "@app/utils";
-  import { canonicalize } from "@app/utils";
-  import Comment from "@app/Comment.svelte";
   import type { Blob, Project } from "@app/project";
-  import Authorship from "@app/Authorship.svelte";
-  import Review from "@app/Review.svelte";
+  import type { Config } from "@app/config";
+  import type { Patch } from "@app/patch";
 
-  export let patch: Patch;
-  export let revisionNumber: number;
+  import Authorship from "@app/Authorship.svelte";
+  import Comment from "@app/Comment.svelte";
+  import Review from "@app/Review.svelte";
+  import { TimelineType } from "@app/patch";
+  import { canonicalize } from "@app/utils";
+  import { formatSeedId } from "@app/utils";
+
   export let config: Config;
+  export let patch: Patch;
   export let project: Project;
+  export let revisionNumber: number;
 
   $: timeline = patch.createTimeline(revisionNumber);
 

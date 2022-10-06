@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let startBlock: number;
   export let duration: number;
   export let latestBlock: number;
+  export let startBlock: number;
 
   let progress: number = 0;
 

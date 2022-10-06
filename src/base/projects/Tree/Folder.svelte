@@ -1,17 +1,17 @@
 <script lang="ts">
+  import type { Tree } from "@app/project";
+
   import { createEventDispatcher } from "svelte";
 
+  import File from "./File.svelte";
   import Loading from "@app/Loading.svelte";
-  import type { Tree } from "@app/project";
   import { ObjectType } from "@app/project";
 
-  import File from "./File.svelte";
-
+  export let currentPath: string;
   export let fetchTree: (path: string) => Promise<Tree>;
+  export let loadingPath: string | null = null;
   export let name: string;
   export let prefix: string;
-  export let currentPath: string;
-  export let loadingPath: string | null = null;
 
   let expanded = currentPath.indexOf(prefix) === 0;
   let tree: Promise<Tree> | null = expanded ? fetchTree(prefix) : null;

@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
   import type { Tree } from "@app/project";
-  import { ObjectType } from "@app/project";
+
+  import { createEventDispatcher } from "svelte";
 
   import File from "./Tree/File.svelte";
   import Folder from "./Tree/Folder.svelte";
+  import { ObjectType } from "@app/project";
 
   export let fetchTree: (path: string) => Promise<Tree>;
+  export let loadingPath: string | null = null;
   export let path: string;
   export let tree: Tree;
-  export let loadingPath: string | null = null;
 
   const dispatch = createEventDispatcher();
   const onSelect = ({ detail: path }: { detail: string }): void => {

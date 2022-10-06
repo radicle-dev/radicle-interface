@@ -1,9 +1,10 @@
+import type { Config } from "@app/config";
 import { ethers } from "ethers";
-import { formatBalance } from "@app/utils";
+
 import * as session from "@app/session";
 import { State, state } from "./state";
-import type { Config } from "@app/config";
 import { assert } from "@app/error";
+import { formatBalance } from "@app/utils";
 
 export interface VestingInfo {
   token: string;

@@ -2,10 +2,10 @@
   import { createIcon } from "@app/blockies";
   import { isAddress, isPeerId, isRadicleId } from "@app/utils";
 
-  export let title: string;
-  export let source: string;
-  export let inline = false;
   export let grayscale = false;
+  export let inline = false;
+  export let source: string;
+  export let title: string;
 
   function handleMissingFile() {
     console.warn("Not able to locate", source);

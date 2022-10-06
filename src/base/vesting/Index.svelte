@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { State, state } from "./state";
-  import { getInfo, withdrawVested } from "./vesting";
-  import type { VestingInfo } from "./vesting";
-  import type { Session } from "@app/session";
   import type { Config } from "@app/config";
-  import Modal from "@app/Modal.svelte";
+  import type { Session } from "@app/session";
+  import type { VestingInfo } from "./vesting";
+
   import Address from "@app/Address.svelte";
-  import { formatAddress, isAddressEqual } from "@app/utils";
   import Button from "@app/Button.svelte";
+  import Modal from "@app/Modal.svelte";
   import TextInput from "@app/TextInput.svelte";
+  import { State, state } from "./state";
+  import { formatAddress, isAddressEqual } from "@app/utils";
+  import { getInfo, withdrawVested } from "./vesting";
 
   export let config: Config;
   export let session: Session | null;

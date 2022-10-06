@@ -1,20 +1,20 @@
 <script lang="ts">
   import type { Err } from "@app/error";
 
-  import { createEventDispatcher } from "svelte";
-  import Modal from "@app/Modal.svelte";
   import Button from "@app/Button.svelte";
+  import Modal from "@app/Modal.svelte";
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
-  export let error: Err | null = null;
-  export let title = "Error";
-  export let emoji = "";
-  export let subtitle = "";
-  export let message = "";
   export let floating = false;
-  export let subtle = false;
   export let action = floating ? "Close" : "Back";
+  export let emoji = "";
+  export let error: Err | null = null;
+  export let message = "";
+  export let subtitle = "";
+  export let subtle = false;
+  export let title = "Error";
 
   const body = message || (error && error.message) || "";
 </script>

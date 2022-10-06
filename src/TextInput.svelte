@@ -1,14 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  export let autofocus: boolean = false;
+  export let disabled: boolean = false;
   export let name: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let value: string | undefined = undefined;
-
   export let variant: "regular" | "dashed" = "regular";
-
-  export let autofocus: boolean = false;
-  export let disabled: boolean = false;
 
   let rightContainerWidth: number;
   let inputElement: HTMLInputElement | undefined = undefined;

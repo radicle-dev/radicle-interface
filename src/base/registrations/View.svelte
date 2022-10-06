@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
-  import type { ethers } from "ethers";
-  import { session } from "@app/session";
-  import Loading from "@app/Loading.svelte";
-  import Link from "@app/Link.svelte";
-  import Modal from "@app/Modal.svelte";
-  import Form from "@app/Form.svelte";
-  import type { Field } from "@app/Form.svelte";
-  import { assert } from "@app/error";
-  import Error from "@app/Error.svelte";
-  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
-  import Button from "@app/Button.svelte";
-
-  import { getRegistration, getOwner } from "./registrar";
   import type { EnsRecord } from "./resolver";
+  import type { Field } from "@app/Form.svelte";
   import type { Registration } from "./registrar";
+  import type { ethers } from "ethers";
+
+  import Button from "@app/Button.svelte";
+  import Error from "@app/Error.svelte";
+  import Form from "@app/Form.svelte";
+  import Link from "@app/Link.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import Update from "./Update.svelte";
+  import { assert } from "@app/error";
+  import { getRegistration, getOwner } from "./registrar";
+  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
+  import { navigate } from "svelte-routing";
+  import { onMount } from "svelte";
+  import { session } from "@app/session";
 
   enum Status {
     Loading,

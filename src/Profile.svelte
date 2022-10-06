@@ -1,32 +1,33 @@
 <script lang="ts">
-  import type { SvelteComponent } from "svelte";
   import type { Config } from "@app/config";
-  import Address from "@app/Address.svelte";
-  import Avatar from "@app/Avatar.svelte";
-  import Icon from "@app/Icon.svelte";
-  import SetName from "@app/ens/SetName.svelte";
-  import SeedAddress from "@app/SeedAddress.svelte";
-  import TransferOwnership from "@app/components/TransferOwnership.svelte";
-  import Link from "@app/Link.svelte";
-  import { getBalance, Profile, ProfileType } from "@app/profile";
-  import Loading from "@app/Loading.svelte";
+  import type { SvelteComponent } from "svelte";
+
   import * as utils from "@app/utils";
-  import { session } from "@app/session";
-  import { Org } from "@app/base/orgs/Org";
-  import Message from "@app/Message.svelte";
-  import Error from "@app/Error.svelte";
-  import { User } from "@app/base/users/User";
-  import Projects from "@app/base/seeds/View/Projects.svelte";
-  import { MissingReverseRecord, NotFoundError } from "@app/error";
-  import NotFound from "@app/NotFound.svelte";
-  import RadicleUrn from "@app/RadicleUrn.svelte";
+  import Address from "@app/Address.svelte";
   import Async from "@app/Async.svelte";
+  import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
+  import Error from "@app/Error.svelte";
+  import Icon from "@app/Icon.svelte";
+  import Link from "@app/Link.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Message from "@app/Message.svelte";
+  import NotFound from "@app/NotFound.svelte";
+  import Projects from "@app/base/seeds/View/Projects.svelte";
+  import RadicleUrn from "@app/RadicleUrn.svelte";
+  import SeedAddress from "@app/SeedAddress.svelte";
+  import SetName from "@app/ens/SetName.svelte";
+  import TransferOwnership from "@app/components/TransferOwnership.svelte";
+  import { MissingReverseRecord, NotFoundError } from "@app/error";
+  import { Org } from "@app/base/orgs/Org";
+  import { User } from "@app/base/users/User";
+  import { getBalance, Profile, ProfileType } from "@app/profile";
+  import { session } from "@app/session";
 
-  export let config: Config;
-  export let addressOrName: string;
   export let action: string | null = null;
+  export let addressOrName: string;
+  export let config: Config;
 
   let setNameForm: typeof SvelteComponent | null =
     action === "setName" ? SetName : null;

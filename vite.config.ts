@@ -1,8 +1,9 @@
 ///<reference types="vitest" />
-import path from "path";
 import type { UserConfig } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+
+import path from "path";
 import pluginRewriteAll from "vite-plugin-rewrite-all";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 const config: UserConfig = {
   optimizeDeps: {

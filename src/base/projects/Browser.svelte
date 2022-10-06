@@ -1,17 +1,16 @@
 <script lang="ts">
-  import type { Readable } from "svelte/store";
   import type * as proj from "@app/project";
+  import type { Readable } from "svelte/store";
   import type { Theme } from "@app/ThemeToggle.svelte";
 
+  import * as utils from "@app/utils";
+  import Blob from "./Blob.svelte";
+  import Button from "@app/Button.svelte";
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
-  import * as utils from "@app/utils";
-  import Button from "@app/Button.svelte";
-  import { theme } from "@app/ThemeToggle.svelte";
-
-  import Tree from "./Tree.svelte";
-  import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
+  import Tree from "./Tree.svelte";
+  import { theme } from "@app/ThemeToggle.svelte";
 
   enum Status {
     Loading,

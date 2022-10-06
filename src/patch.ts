@@ -1,10 +1,11 @@
-import type { PeerId, Urn } from "@app/project";
-import type { Host } from "@app/api";
-import { Request } from "@app/api";
-import type { Comment, Thread } from "@app/issue";
 import type { Author, PeerInfo } from "@app/cobs";
-import type { Diff } from "@app/diff";
+import type { Comment, Thread } from "@app/issue";
 import type { Commit, DiffStats } from "@app/commit";
+import type { Diff } from "@app/diff";
+import type { Host } from "@app/api";
+import type { PeerId, Urn } from "@app/project";
+
+import { Request } from "@app/api";
 
 export interface IPatch {
   id: string;

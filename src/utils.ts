@@ -1,31 +1,32 @@
-import { ethers } from "ethers";
-import type { RouteLocation } from "@app/index";
-import md5 from "md5";
-import { BigNumber } from "ethers";
-import multibase from "multibase";
-import katex from "katex";
-import multihashes from "multihashes";
-import type { TransactionResult } from "@gnosis.pm/safe-core-sdk";
-import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
-import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
-import type { Config } from "@app/config";
-import config from "@app/config.json";
-import { assert } from "@app/error";
-import type { EnsProfile } from "@app/base/registrations/registrar";
-import { getAddress, getResolver } from "@app/base/registrations/registrar";
-import {
-  getAvatar,
-  getSeed,
-  getAnchorsAccount,
-  getRegistration,
-} from "@app/base/registrations/registrar";
 import type { BasicProfile } from "@datamodels/identity-profile-basic";
-import { ProfileType } from "@app/profile";
-import { parseUnits } from "@ethersproject/units";
-import { GetSafe } from "@app/base/orgs/Org";
-import * as cache from "@app/cache";
+import type { Config } from "@app/config";
+import type { EnsProfile } from "@app/base/registrations/registrar";
+import type { RouteLocation } from "@app/index";
+import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
+import type { TransactionResult } from "@gnosis.pm/safe-core-sdk";
 import type { marked } from "marked";
+
+import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
+import katex from "katex";
+import md5 from "md5";
+import multibase from "multibase";
+import multihashes from "multihashes";
+import { ethers, BigNumber } from "ethers";
+
+import * as cache from "@app/cache";
+import config from "@app/config.json";
 import emojis from "@app/emojis";
+import {
+  getAnchorsAccount,
+  getAvatar,
+  getRegistration,
+  getSeed,
+} from "@app/base/registrations/registrar";
+import { GetSafe } from "@app/base/orgs/Org";
+import { ProfileType } from "@app/profile";
+import { assert } from "@app/error";
+import { getAddress, getResolver } from "@app/base/registrations/registrar";
+import { parseUnits } from "@ethersproject/units";
 
 export enum AddressType {
   Contract,

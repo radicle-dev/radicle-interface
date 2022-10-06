@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { FileDiff } from "@app/diff";
+
   import { createEventDispatcher } from "svelte";
+
+  import Badge from "@app/Badge.svelte";
   import Icon from "@app/Icon.svelte";
   import { lineNumberL, lineNumberR, lineSign } from "@app/diff";
-  import type { FileDiff } from "@app/diff";
-  import Badge from "@app/Badge.svelte";
 
   const dispatch = createEventDispatcher();
 

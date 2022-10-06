@@ -1,12 +1,14 @@
 <script lang="ts">
-  import Modal from "@app/Modal.svelte";
-  import { link } from "svelte-routing";
-  import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
   import type { Config } from "@app/config";
+  import type { ProjectsAndProfiles } from "@app/Search.svelte";
+
+  import { createEventDispatcher } from "svelte";
+  import { link } from "svelte-routing";
+
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
-  import { createEventDispatcher } from "svelte";
-  import type { ProjectsAndProfiles } from "@app/Search.svelte";
+  import Modal from "@app/Modal.svelte";
+  import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
 
   export let query: string;
   export let results: ProjectsAndProfiles;

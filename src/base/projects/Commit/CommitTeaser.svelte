@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { CommitMetadata } from "@app/commit";
-  import { formatCommit } from "@app/utils";
+
   import { createEventDispatcher } from "svelte";
 
-  import Icon from "@app/Icon.svelte";
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import CommitVerifiedBadge from "./CommitVerifiedBadge.svelte";
+  import Icon from "@app/Icon.svelte";
+  import { formatCommit } from "@app/utils";
 
   export let commit: CommitMetadata;
 

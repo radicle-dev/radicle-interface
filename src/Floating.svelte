@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
   import { writable } from "svelte/store";
+
   const focused = writable<HTMLDivElement | undefined>(undefined);
 
   export function closeFocused() {

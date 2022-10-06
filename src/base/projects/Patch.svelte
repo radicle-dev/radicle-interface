@@ -1,20 +1,20 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { Project, ProjectContent } from "@app/project";
-  import { capitalize } from "@app/utils";
-  import { Patch, PatchTab } from "@app/patch";
-  import { formatObjectId } from "@app/cobs";
-  import Authorship from "@app/Authorship.svelte";
 
+  import Authorship from "@app/Authorship.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import PatchSideBar from "./Patch/PatchSideBar.svelte";
   import PatchTabBar from "./Patch/PatchTabBar.svelte";
   import PatchTimeline from "./Patch/PatchTimeline.svelte";
   import Placeholder from "@app/Placeholder.svelte";
+  import { Patch, PatchTab } from "@app/patch";
+  import { Project, ProjectContent } from "@app/project";
+  import { capitalize } from "@app/utils";
+  import { formatObjectId } from "@app/cobs";
 
+  export let config: Config;
   export let patch: Patch;
   export let project: Project;
-  export let config: Config;
 
   const onSwitch = ({ detail }: { detail: PatchTab }) => {
     activeTab = detail;

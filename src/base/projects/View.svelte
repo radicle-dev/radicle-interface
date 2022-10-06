@@ -1,17 +1,18 @@
 <script lang="ts">
   import type { Config } from "@app/config";
+
   import { Route, Router } from "svelte-routing";
-  import { Project, ProjectContent } from "@app/project";
+
   import Loading from "@app/Loading.svelte";
   import NotFound from "@app/NotFound.svelte";
-
   import ProjectRoute from "./ProjectRoute.svelte";
+  import { Project, ProjectContent } from "@app/project";
 
-  export let id: string; // Project name or URN.
-  export let seedHost: string | null = null;
-  export let profileName: string | null = null; // Address or name of parent profile.
-  export let peer: string | null = null;
   export let config: Config;
+  export let id: string; // Project name or URN.
+  export let peer: string | null = null;
+  export let profileName: string | null = null; // Address or name of parent profile.
+  export let seedHost: string | null = null;
 </script>
 
 <style>

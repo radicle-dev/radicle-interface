@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { parseRadicleId, toClipboard } from "@app/utils";
   import Button from "@app/Button.svelte";
+  import { parseRadicleId, toClipboard } from "@app/utils";
 
   export let urn: string;
 

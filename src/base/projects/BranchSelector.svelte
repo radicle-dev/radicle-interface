@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import type { ProjectInfo, Branches } from "@app/project";
-  import { getOid } from "@app/project";
-  import { formatCommit } from "@app/utils";
+
+  import { createEventDispatcher } from "svelte";
+
   import Dropdown from "@app/Dropdown.svelte";
   import Floating from "@app/Floating.svelte";
+  import { formatCommit } from "@app/utils";
+  import { getOid } from "@app/project";
 
   export let branches: Branches;
   export let project: ProjectInfo;

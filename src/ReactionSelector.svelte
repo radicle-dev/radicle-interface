@@ -1,6 +1,7 @@
 <!-- TODO: Once we are able to add reactions, we should allow people to interact with the reaction handler -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+
   import Icon from "@app/Icon.svelte";
   import config from "@app/config.json";
 

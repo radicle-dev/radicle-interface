@@ -1,5 +1,6 @@
-import type { Stats, Person } from "@app/project";
 import type { Diff } from "@app/diff";
+import type { Person, Stats } from "@app/project";
+
 import { ApiError } from "@app/api";
 import { getDaysPassed } from "@app/utils";
 

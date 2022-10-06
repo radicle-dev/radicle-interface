@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
-  import Clipboard from "@app/Clipboard.svelte";
 
-  export let seed: Seed;
-  export let port: number;
+  import Clipboard from "@app/Clipboard.svelte";
+  import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
+
   export let full = false;
+  export let port: number;
+  export let seed: Seed;
 </script>
 
 <style>

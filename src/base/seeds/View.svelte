@@ -1,23 +1,24 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { formatSeedId, formatSeedHost } from "@app/utils";
-  import { Seed } from "@app/base/seeds/Seed";
-  import Loading from "@app/Loading.svelte";
-  import SeedAddress from "@app/SeedAddress.svelte";
-  import NotFound from "@app/NotFound.svelte";
-  import Clipboard from "@app/Clipboard.svelte";
-  import Projects from "@app/base/seeds/View/Projects.svelte";
-  import type { Session } from "@app/session";
-  import Address from "@app/Address.svelte";
-  import SiweConnect from "@app/SiweConnect.svelte";
-  import type { SeedSession } from "@app/siwe";
-  import Async from "@app/Async.svelte";
-  import { Project } from "@app/project";
   import type { Host } from "@app/api";
+  import type { SeedSession } from "@app/siwe";
+  import type { Session } from "@app/session";
+
+  import Address from "@app/Address.svelte";
+  import Async from "@app/Async.svelte";
+  import Clipboard from "@app/Clipboard.svelte";
+  import Loading from "@app/Loading.svelte";
+  import NotFound from "@app/NotFound.svelte";
+  import Projects from "@app/base/seeds/View/Projects.svelte";
+  import SeedAddress from "@app/SeedAddress.svelte";
+  import SiweConnect from "@app/SiweConnect.svelte";
+  import { Project } from "@app/project";
+  import { Seed } from "@app/base/seeds/Seed";
+  import { formatSeedId, formatSeedHost } from "@app/utils";
 
   export let config: Config;
-  export let session: Session | null;
   export let host: string;
+  export let session: Session | null;
 
   const hostName = formatSeedHost(host);
   const seedHost: Host = { host, port: null };

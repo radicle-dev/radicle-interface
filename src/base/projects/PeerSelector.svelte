@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
-  import Icon from "@app/Icon.svelte";
-  import Dropdown from "@app/Dropdown.svelte";
-  import { formatSeedId } from "@app/utils";
   import type { Peer } from "@app/project";
-  import Floating from "@app/Floating.svelte";
+
+  import { createEventDispatcher, onMount } from "svelte";
+
   import Badge from "@app/Badge.svelte";
+  import Dropdown from "@app/Dropdown.svelte";
+  import Floating from "@app/Floating.svelte";
+  import Icon from "@app/Icon.svelte";
+  import { formatSeedId } from "@app/utils";
 
   export let peer: string | null = null;
   export let peers: Peer[];

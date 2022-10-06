@@ -1,12 +1,13 @@
 <script lang="ts">
-  import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { Project, ProjectContent } from "@app/project";
   import type { CommitMetadata, CommitsHistory } from "@app/commit";
-  import { groupCommits } from "@app/commit";
-  import List from "@app/List.svelte";
 
-  export let project: Project;
+  import CommitTeaser from "./Commit/CommitTeaser.svelte";
+  import List from "@app/List.svelte";
+  import { Project, ProjectContent } from "@app/project";
+  import { groupCommits } from "@app/commit";
+
   export let history: CommitsHistory;
+  export let project: Project;
 
   const navigateHistory = (revision: string, content?: ProjectContent) => {
     project.navigateTo({

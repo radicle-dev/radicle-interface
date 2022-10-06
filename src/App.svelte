@@ -1,20 +1,20 @@
 <script lang="ts">
   import { Router, Route } from "svelte-routing";
-  import { getConfig } from "@app/config";
-  import { Connection, state, session } from "@app/session";
 
-  import Home from "@app/base/home/Index.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
+  import ColorPalette from "@app/ColorPalette.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
-  import Projects from "@app/base/projects/Routes.svelte";
-  import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
+  import Home from "@app/base/home/Index.svelte";
+  import LinearGradient from "@app/LinearGradient.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import LinearGradient from "@app/LinearGradient.svelte";
-  import ColorPalette from "./ColorPalette.svelte";
+  import Profile from "@app/Profile.svelte";
+  import Projects from "@app/base/projects/Routes.svelte";
+  import Registrations from "@app/base/registrations/Routes.svelte";
+  import Seeds from "@app/base/seeds/Routes.svelte";
+  import Vesting from "@app/base/vesting/Index.svelte";
+  import { Connection, state, session } from "@app/session";
+  import { getConfig } from "@app/config";
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {

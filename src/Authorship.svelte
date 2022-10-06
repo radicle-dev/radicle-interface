@@ -1,17 +1,19 @@
 <script lang="ts">
+  import type { Author } from "@app/cobs";
   import type { Config } from "@app/config";
-  import { formatRadicleUrn, formatTimestamp } from "@app/utils";
+
+  import { onMount } from "svelte";
+
   import Address from "@app/Address.svelte";
   import { Profile, ProfileType } from "@app/profile";
-  import { onMount } from "svelte";
-  import type { Author } from "@app/cobs";
+  import { formatRadicleUrn, formatTimestamp } from "@app/utils";
 
-  export let noAvatar = false;
   export let author: Author;
-  export let timestamp: number;
   export let caption: string;
   export let config: Config;
+  export let noAvatar = false;
   export let profile: Profile | null = null;
+  export let timestamp: number;
 
   onMount(async () => {
     if (author.profile?.ens?.name) {

@@ -4,12 +4,12 @@
   import { createEventDispatcher } from "svelte";
   import { qrcode } from "pure-svg-code";
 
+  import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
   import { state } from "@app/session";
-  import Button from "@app/Button.svelte";
 
-  export let uri: string;
   export let config: Config;
+  export let uri: string;
 
   $: svgString = qrcode({
     content: uri,

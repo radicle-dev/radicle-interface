@@ -1,17 +1,19 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
-  import { setRecords } from "./resolver";
+  import type { Config } from "@app/config";
   import type { EnsRecord } from "./resolver";
   import type { Registration } from "./registrar";
-  import type { Config } from "@app/config";
+  import type { State } from "@app/utils";
+
+  import { onMount, createEventDispatcher } from "svelte";
+
+  import Button from "@app/Button.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import type { State } from "@app/utils";
   import { Status } from "@app/utils";
-  import Button from "@app/Button.svelte";
+  import { setRecords } from "./resolver";
 
-  export let domain: string;
   export let config: Config;
+  export let domain: string;
   export let records: EnsRecord[];
   export let registration: Registration;
 

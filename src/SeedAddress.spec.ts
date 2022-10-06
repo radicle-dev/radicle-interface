@@ -1,7 +1,6 @@
+import SeedAddress from "@app/SeedAddress.svelte";
 import { Seed } from "@app/base/seeds/Seed";
 import { getConfig } from "@app/config";
-
-import SeedAddress from "./SeedAddress.svelte";
 
 describe("SeedAddress", () => {
   it("shows the seed emoji and seed host", () => {

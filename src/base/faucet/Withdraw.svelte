@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
+  import type { State } from "@app/utils";
+
+  import { navigate } from "svelte-routing";
+  import { onMount } from "svelte";
+
+  import Button from "@app/Button.svelte";
+  import Err from "@app/Error.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Err from "@app/Error.svelte";
-  import type { State } from "@app/utils";
   import { Status } from "@app/utils";
-  import { withdraw } from "./lib";
   import { session } from "@app/session";
-  import Button from "@app/Button.svelte";
+  import { withdraw } from "./lib";
 
   export let config: Config;
 

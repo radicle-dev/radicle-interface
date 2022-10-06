@@ -1,12 +1,13 @@
-import * as ethers from "ethers";
+import type { Config } from "@app/config";
+import type { Safe } from "@app/utils";
 import type { TransactionResponse } from "@ethersproject/providers";
+
+import * as ethers from "ethers";
 import { OperationType } from "@gnosis.pm/safe-core-sdk-types";
 
-import { assert } from "@app/error";
-import * as utils from "@app/utils";
 import * as cache from "@app/cache";
-import type { Safe } from "@app/utils";
-import type { Config } from "@app/config";
+import * as utils from "@app/utils";
+import { assert } from "@app/error";
 
 const GetSafesByOwners = `
   query GetSafesByOwners($owners: [String!]!) {

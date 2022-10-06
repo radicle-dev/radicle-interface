@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { formatObjectId } from "@app/cobs";
-  import type { Patch } from "@app/patch";
   import type { Config } from "@app/config";
-  import { Profile, ProfileType } from "@app/profile";
+  import type { Patch } from "@app/patch";
+
+  import { onMount } from "svelte";
 
   import Authorship from "@app/Authorship.svelte";
+  import { Profile, ProfileType } from "@app/profile";
+  import { formatObjectId } from "@app/cobs";
 
-  export let patch: Patch;
   export let config: Config;
+  export let patch: Patch;
 
   let profile: Profile | null = null;
 

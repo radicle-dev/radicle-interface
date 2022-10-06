@@ -1,7 +1,9 @@
-import * as ethers from "ethers";
 import type { Config } from "@app/config";
-import { assert } from "@app/error";
 import type { TransactionResponse } from "@ethersproject/providers";
+
+import * as ethers from "ethers";
+
+import { assert } from "@app/error";
 
 export class User {
   address: string;

@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { get } from "svelte/store";
-  import { Connection, state } from "@app/session";
-  import type { Err } from "@app/error";
-  import Error from "@app/Error.svelte";
   import type { Config } from "@app/config";
-  import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
-  import Button from "@app/Button.svelte";
+  import type { Err } from "@app/error";
 
+  import { get } from "svelte/store";
+
+  import Button from "@app/Button.svelte";
+  import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
+  import Error from "@app/Error.svelte";
+  import { Connection, state } from "@app/session";
+
+  export let buttonVariant: "foreground" | "primary";
   export let caption = "Connect";
   export let config: Config;
-  export let buttonVariant: "foreground" | "primary";
 
   let error: Err | null = null;
 

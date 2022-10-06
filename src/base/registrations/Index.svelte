@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
+  import { navigate } from "svelte-routing";
 
-  import TextInput from "@app/TextInput.svelte";
   import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   export let config: Config;
 

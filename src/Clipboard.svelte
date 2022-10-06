@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
   import Icon from "@app/Icon.svelte";
   import { toClipboard } from "@app/utils";
-  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 

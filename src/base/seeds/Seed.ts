@@ -1,8 +1,9 @@
-import { Request, type Host } from "@app/api";
 import type { Config } from "@app/config";
+
 import * as proj from "@app/project";
-import { isDomain, isLocal } from "@app/utils";
+import { Request, type Host } from "@app/api";
 import { assert } from "@app/error";
+import { isDomain, isLocal } from "@app/utils";
 
 export class InvalidSeed {
   valid = false as const;

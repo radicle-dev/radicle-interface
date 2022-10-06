@@ -47,25 +47,25 @@
   import type { Config } from "@app/config";
 
   import cloneDeep from "lodash/cloneDeep";
-  import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
+  import { link } from "svelte-routing";
   import { marked } from "marked";
-  import {
-    markdownExtensions as extensions,
-    capitalize,
-    isUrl,
-    isAddress,
-    formatSeedId,
-  } from "@app/utils";
 
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
+  import {
+    capitalize,
+    formatSeedId,
+    isAddress,
+    isUrl,
+    markdownExtensions as extensions,
+  } from "@app/utils";
   import TextInput from "@app/TextInput.svelte";
 
-  export let fields: Field[];
-  export let editable = false;
-  export let disabled = false;
   export let config: Config;
+  export let disabled = false;
+  export let editable = false;
+  export let fields: Field[];
 
   let formFields = cloneDeep(fields);
   let hasErrors = false;

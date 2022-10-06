@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Link } from "svelte-routing";
 
-  export let to: string;
   export let primary = false;
+  export let to: string;
 
   function getProps(/* props: any */) {
     if (primary) {

@@ -1,18 +1,19 @@
 <script lang="ts">
-  import Avatar from "@app/Avatar.svelte";
   import type { Seed } from "@app/base/seeds/Seed";
   import type { Config } from "@app/config";
-  import { signInWithEthereum } from "@app/siwe";
+
+  import Avatar from "@app/Avatar.svelte";
+  import Button from "@app/Button.svelte";
   import Loading from "@app/Loading.svelte";
   import { Connection } from "@app/session";
-  import Button from "@app/Button.svelte";
+  import { signInWithEthereum } from "@app/siwe";
 
-  export let seed: Seed;
-  export let config: Config;
-  export let caption = "Sign in";
-  export let tooltip = "";
-  export let disabled = false;
   export let address: string | null = null;
+  export let caption = "Sign in";
+  export let config: Config;
+  export let disabled = false;
+  export let seed: Seed;
+  export let tooltip = "";
 
   let connection: Connection = Connection.Disconnected;
 </script>

@@ -16,15 +16,14 @@
   import SearchResults from "@app/components/Modal/SearchResults.svelte";
   import SeedDropdown from "@app/SeedDropdown.svelte";
   import ThemeToggle from "@app/ThemeToggle.svelte";
-
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
   import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
 
-  export let session: Session | null;
   export let config: Config;
+  export let session: Session | null;
 
   let query: string;
   let results: ProjectsAndProfiles | null = null;

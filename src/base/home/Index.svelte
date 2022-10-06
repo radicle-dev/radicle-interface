@@ -1,13 +1,15 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
   import type { Config } from "@app/config";
-  import Loading from "@app/Loading.svelte";
-  import Widget from "@app/base/projects/Widget.svelte";
-  import type { ProjectInfo } from "@app/project";
-  import { Project } from "@app/project";
   import type { Host } from "@app/api";
+  import type { ProjectInfo } from "@app/project";
+
+  import { navigate } from "svelte-routing";
+
   import * as proj from "@app/project";
+  import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
+  import Widget from "@app/base/projects/Widget.svelte";
+  import { Project } from "@app/project";
   import { setOpenGraphMetaTag } from "@app/utils";
 
   export let config: Config;

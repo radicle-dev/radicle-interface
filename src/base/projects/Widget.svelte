@@ -1,15 +1,16 @@
 <script lang="ts">
   import type * as proj from "@app/project";
-  import Diagram from "@app/Diagram.svelte";
-  import { groupCommitsByWeek } from "@app/commit";
   import type { Host } from "@app/api";
+
+  import Diagram from "@app/Diagram.svelte";
   import { Project } from "@app/project";
   import { formatCommit } from "@app/utils";
+  import { groupCommitsByWeek } from "@app/commit";
 
+  export let compact = false;
+  export let faded = false;
   export let project: proj.ProjectInfo;
   export let seed: { api: Host };
-  export let faded = false;
-  export let compact = false;
 
   const loadCommits = async () => {
     const commits = await Project.getActivity(project.urn, seed.api);

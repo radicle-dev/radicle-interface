@@ -9,11 +9,11 @@
 <script lang="ts" strictEvents>
   type T = $$Generic;
 
-  import { createEventDispatcher } from "svelte";
   import { capitalize } from "@app/utils";
+  import { createEventDispatcher } from "svelte";
 
-  export let options: ToggleButtonOption<T>[];
   export let active: T;
+  export let options: ToggleButtonOption<T>[];
 
   const dispatch = createEventDispatcher<{ select: T }>();
 

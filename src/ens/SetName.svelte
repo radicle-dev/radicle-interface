@@ -1,22 +1,24 @@
 <script lang="ts">
+  import type { Config } from "@app/config";
+  import type { User } from "@app/base/users/User";
+
   import { createEventDispatcher } from "svelte";
   import { navigate } from "svelte-routing";
-  import Modal from "@app/Modal.svelte";
-  import type { Config } from "@app/config";
-  import { formatAddress, isAddressEqual } from "@app/utils";
-  import { Org } from "@app/base/orgs/Org";
-  import type { User } from "@app/base/users/User";
-  import Loading from "@app/Loading.svelte";
-  import Error from "@app/Error.svelte";
-  import Address from "@app/Address.svelte";
+
   import * as utils from "@app/utils";
+  import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
+  import Error from "@app/Error.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import TextInput from "@app/TextInput.svelte";
+  import { Org } from "@app/base/orgs/Org";
+  import { formatAddress, isAddressEqual } from "@app/utils";
 
   const dispatch = createEventDispatcher();
 
-  export let entity: Org | User;
   export let config: Config;
+  export let entity: Org | User;
 
   const org = Org.hasOwnProperty.call(entity, "owner") ? (entity as Org) : null;
 

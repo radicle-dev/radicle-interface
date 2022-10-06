@@ -1,21 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
-  import { formatAddress, isAddress } from "@app/utils";
-  import Loading from "@app/Loading.svelte";
-  import { assert } from "@app/error";
+  import type { Org } from "@app/base/orgs/Org";
+
+  import { createEventDispatcher } from "svelte";
+
   import * as utils from "@app/utils";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import TextInput from "@app/TextInput.svelte";
-
-  import type { Org } from "@app/base/orgs/Org";
+  import { assert } from "@app/error";
+  import { formatAddress, isAddress } from "@app/utils";
 
   const dispatch = createEventDispatcher();
 
-  export let org: Org;
   export let config: Config;
+  export let org: Org;
 
   enum State {
     Idle,

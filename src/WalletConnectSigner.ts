@@ -1,17 +1,18 @@
-import type WalletConnect from "@walletconnect/client";
-import * as ethers from "ethers";
-import * as ethersBytes from "@ethersproject/bytes";
+import type { Deferrable } from "@ethersproject/properties";
 import type {
   TransactionRequest,
   TransactionResponse,
 } from "@ethersproject/abstract-provider";
-import { resolveProperties } from "@ethersproject/properties";
-import type { Deferrable } from "@ethersproject/properties";
-import { _TypedDataEncoder } from "ethers/lib/utils";
 import type {
   TypedDataDomain,
   TypedDataField,
 } from "@ethersproject/abstract-signer";
+
+import * as ethers from "ethers";
+import * as ethersBytes from "@ethersproject/bytes";
+import type WalletConnect from "@walletconnect/client";
+import { _TypedDataEncoder } from "ethers/lib/utils";
+import { resolveProperties } from "@ethersproject/properties";
 
 export class WalletConnectSigner extends ethers.Signer {
   public walletConnect: WalletConnect;

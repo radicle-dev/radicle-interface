@@ -1,22 +1,22 @@
 <script lang="ts">
-  import type { Writable } from "svelte/store";
   import type { Config } from "@app/config";
-  import { formatLocationHash } from "@app/utils";
-  import * as proj from "@app/project";
   import type { RouteLocation } from "@app/index";
+  import type { Writable } from "svelte/store";
 
+  import * as proj from "@app/project";
   import Project from "@app/base/projects/Project.svelte";
+  import { formatLocationHash } from "@app/utils";
 
   export let browserStore: Writable<proj.Browser> = proj.browserStore;
-  export let route: string | null = null;
-  export let revision: string | null = null;
+  export let config: Config;
+  export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let issue: string | null = null;
+  export let location: RouteLocation | null = null;
   export let patch: string | null = null;
   export let peer: string | null;
-  export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
-  export let config: Config;
-  export let location: RouteLocation | null = null;
+  export let revision: string | null = null;
+  export let route: string | null = null;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
   const head = project.branches[project.defaultBranch] || null;

@@ -22,10 +22,10 @@
   import Patches from "./Patches.svelte";
   import Patch from "./Patch.svelte";
 
-  export let peer: string | null = null;
   export let config: Config;
-  export let project: proj.Project;
   export let content: proj.ProjectContent;
+  export let peer: string | null = null;
+  export let project: proj.Project;
   export let revision: string | null;
 
   const parentName = project.profile

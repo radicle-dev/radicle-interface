@@ -1,8 +1,9 @@
-import type { TransactionResponse } from "@ethersproject/providers";
-import type { EnsResolver } from "@ethersproject/providers";
-import { ethers } from "ethers";
 import type { Config } from "@app/config";
+import type { EnsResolver } from "@ethersproject/providers";
+import type { TransactionResponse } from "@ethersproject/providers";
+
 import { assert } from "@app/error";
+import { ethers } from "ethers";
 
 export type EnsRecord = { name: string; value: string };
 

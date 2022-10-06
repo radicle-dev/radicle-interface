@@ -1,15 +1,17 @@
-import { ethers } from "ethers";
-import { writable } from "svelte/store";
 import type { BigNumber } from "ethers";
+import type { Config } from "@app/config";
 import type { EnsResolver } from "@ethersproject/providers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
+
+import { ethers } from "ethers";
+import { writable } from "svelte/store";
+
+import * as cache from "@app/cache";
 import * as session from "@app/session";
 import { Failure } from "@app/error";
-import type { Config } from "@app/config";
-import { isFulfilled, unixTime } from "@app/utils";
-import { assert } from "@app/error";
 import { Seed, InvalidSeed } from "@app/base/seeds/Seed";
-import * as cache from "@app/cache";
+import { assert } from "@app/error";
+import { isFulfilled, unixTime } from "@app/utils";
 
 export interface Registration {
   profile: EnsProfile;

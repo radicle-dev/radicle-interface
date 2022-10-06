@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
 
-  export let small = false;
   export let center = false;
+  export let condensed = false;
   export let fadeIn = false;
   export let margins = false;
-  export let condensed = false;
+  export let small = false;
 
   let show: boolean = false;
 

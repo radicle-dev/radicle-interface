@@ -1,17 +1,19 @@
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { BigNumber } from "@ethersproject/bignumber";
-  import { session } from "@app/session";
-  import { setOpenGraphMetaTag, toWei } from "@app/utils";
-  import { formatEther } from "@ethersproject/units";
+
   import { navigate } from "svelte-routing";
+
+  import Button from "@app/Button.svelte";
   import {
+    calculateTimeLock,
     getMaxWithdrawAmount,
     lastWithdrawalByUser,
-    calculateTimeLock,
   } from "./lib";
-  import Button from "@app/Button.svelte";
   import TextInput from "@app/TextInput.svelte";
+  import { formatEther } from "@ethersproject/units";
+  import { session } from "@app/session";
+  import { setOpenGraphMetaTag, toWei } from "@app/utils";
 
   export let config: Config;
 

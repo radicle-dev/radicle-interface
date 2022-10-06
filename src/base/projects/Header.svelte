@@ -1,17 +1,19 @@
 <script lang="ts">
-  import type { Writable } from "svelte/store";
-  import { navigate } from "svelte-routing";
   import type { Browser } from "@app/project";
-  import { ProjectContent, Project } from "@app/project";
+  import type { Writable } from "svelte/store";
+
+  import { navigate } from "svelte-routing";
+
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import type { Tree } from "@app/project";
+  import { ProjectContent, Project } from "@app/project";
 
+  export let browserStore: Writable<Browser>;
+  export let commit: string;
   export let project: Project;
   export let tree: Tree;
-  export let commit: string;
-  export let browserStore: Writable<Browser>;
 
   const { urn, peers, branches, seed } = project;
 

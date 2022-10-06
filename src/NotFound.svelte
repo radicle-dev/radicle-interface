@@ -2,8 +2,8 @@
   import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
 
-  export let title = "";
   export let subtitle = "";
+  export let title = "";
 
   const back = () => window.history.back();
 </script>

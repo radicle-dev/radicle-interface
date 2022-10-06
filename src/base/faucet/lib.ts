@@ -1,11 +1,12 @@
+import type { Config } from "@app/config";
+import type { TransactionResponse } from "@ethersproject/providers";
+import type { TypedDataSigner } from "@ethersproject/abstract-signer";
+import type { WalletConnectSigner } from "@app/WalletConnectSigner";
+
 import * as ethers from "ethers";
 
-import type { Config } from "@app/config";
 import { assert } from "@app/error";
-import type { TransactionResponse } from "@ethersproject/providers";
 import { toWei } from "@app/utils";
-import type { WalletConnectSigner } from "@app/WalletConnectSigner";
-import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 
 type Signer = (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
 

@@ -1,15 +1,18 @@
-import { navigate } from "svelte-routing";
-import { get, writable } from "svelte/store";
-import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
-import { isFulfilled, isOid, isRadicleId } from "@app/utils";
-import { Profile, ProfileType } from "@app/profile";
-import { Seed } from "@app/base/seeds/Seed";
 import type { Config } from "@app/config";
+import type { Host } from "@app/api";
 
-export type Urn = string;
-export type PeerId = string;
+import { get, writable } from "svelte/store";
+import { navigate } from "svelte-routing";
+
+import { Profile, ProfileType } from "@app/profile";
+import { Request } from "@app/api";
+import { Seed } from "@app/base/seeds/Seed";
+import { isFulfilled, isOid, isRadicleId } from "@app/utils";
+
 export type Branches = { [key: string]: string };
+export type PeerId = string;
+export type Urn = string;
 
 export type Delegate =
   | {

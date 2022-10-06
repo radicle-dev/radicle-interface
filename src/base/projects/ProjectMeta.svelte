@@ -1,13 +1,16 @@
 <script lang="ts">
+  import type { PeerId, Project } from "@app/project";
+
+  import { Link } from "svelte-routing";
+
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
-  import { Link } from "svelte-routing";
+  import { ProjectContent } from "@app/project";
   import { formatSeedId } from "@app/utils";
-  import { type PeerId, type Project, ProjectContent } from "@app/project";
 
-  export let project: Project;
-  export let peer: PeerId | null = null;
   export let noDescription = false;
+  export let peer: PeerId | null = null;
+  export let project: Project;
 
   function rootPath(): string {
     return project.pathTo({

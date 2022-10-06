@@ -1,15 +1,16 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
   import type { Blob, Project } from "@app/project";
+  import type { Config } from "@app/config";
+  import type { Issue } from "@app/issue";
+
+  import Authorship from "@app/Authorship.svelte";
+  import Comment from "@app/Comment.svelte";
   import { canonicalize, capitalize } from "@app/utils";
   import { formatObjectId } from "@app/cobs";
-  import Comment from "@app/Comment.svelte";
-  import type { Issue } from "@app/issue";
-  import Authorship from "@app/Authorship.svelte";
 
+  export let config: Config;
   export let issue: Issue;
   export let project: Project;
-  export let config: Config;
 
   // Get an image blob based on a relative path.
   const getImage = async (imagePath: string): Promise<Blob> => {

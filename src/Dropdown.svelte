@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let items: {
     key: string;

@@ -1,7 +1,8 @@
+import type { Config } from "@app/config";
+
+import * as utils from "@app/utils";
 import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
-import type { Config } from "./config";
-import * as utils from "./utils";
 
 describe("Conversions", () => {
   test("toWei", () => {

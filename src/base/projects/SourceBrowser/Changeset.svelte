@@ -1,6 +1,7 @@
 <script lang="ts">
-  import type { DiffStats } from "@app/commit";
   import type { Diff } from "@app/diff";
+  import type { DiffStats } from "@app/commit";
+
   import FileDiff from "@app/base/projects/SourceBrowser/FileDiff.svelte";
 
   export let diff: Diff;

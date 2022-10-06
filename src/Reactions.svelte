@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+
   import Button from "@app/Button.svelte";
 
   export let reactions: Record<string, number> | null = null;

@@ -1,16 +1,18 @@
-import { get, writable, derived } from "svelte/store";
 import type { Readable } from "svelte/store";
 import type { BigNumber } from "ethers";
+import type { SeedSession } from "@app/siwe";
 import type {
   TransactionReceipt,
   TransactionResponse,
 } from "@ethersproject/providers";
-import { Config, getConfig } from "@app/config";
-import { Unreachable, assert, assertEq } from "@app/error";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import type { WalletConnectSigner } from "./WalletConnectSigner";
+
 import * as ethers from "ethers";
-import type { SeedSession } from "./siwe";
+import { get, writable, derived } from "svelte/store";
+
+import { Config, getConfig } from "@app/config";
+import { Unreachable, assert, assertEq } from "@app/error";
 
 export enum Connection {
   Disconnected,

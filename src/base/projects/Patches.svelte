@@ -13,10 +13,10 @@
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
 
-  export let state: State = "proposed";
   export let config: Config;
   export let patches: Patch[];
   export let project: Project;
+  export let state: State = "proposed";
 
   let options: ToggleButtonOption<State>[];
   const sortedPatches = groupPatches(patches);

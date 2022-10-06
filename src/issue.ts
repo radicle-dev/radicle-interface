@@ -1,5 +1,7 @@
-import { type Host, Request } from "@app/api";
 import type { Author } from "@app/cobs";
+import type { Host } from "@app/api";
+
+import { Request } from "@app/api";
 
 export interface TimelineItem {
   person: Author;

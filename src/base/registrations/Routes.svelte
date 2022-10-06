@@ -1,16 +1,18 @@
 <script lang="ts">
+  import type { Config } from "@app/config";
+  import type { Session } from "@app/session";
+
   import { Route, navigate } from "svelte-routing";
+
+  import Error from "@app/Error.svelte";
   import Index from "@app/base/registrations/Index.svelte";
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
-  import Error from "@app/Error.svelte";
-  import type { Config } from "@app/config";
-  import type { Session } from "@app/session";
   import { getSearchParam } from "@app/utils";
 
-  export let session: Session | null;
   export let config: Config;
+  export let session: Session | null;
 </script>
 
 <Route path="registrations">

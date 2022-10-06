@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { WeeklyActivity } from "./commit";
 
-  export let strokeWidth: number;
+  import { onMount } from "svelte";
+
   export let points: WeeklyActivity[];
-  export let viewBoxWidth: number;
+  export let strokeWidth: number;
   export let viewBoxHeight: number;
+  export let viewBoxWidth: number;
 
   // The path strings to be inserted into the svg <path>
   let path = "";

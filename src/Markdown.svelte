@@ -1,18 +1,20 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { marked } from "marked";
-  import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
+
+  import dompurify from "dompurify";
+  import matter from "@radicle/gray-matter";
+  import { marked } from "marked";
+  import { onMount } from "svelte";
+
   import {
-    markdownExtensions as extensions,
     getImageMime,
     isUrl,
+    markdownExtensions as extensions,
   } from "@app/utils";
-  import dompurify from "dompurify";
 
   export let content: string;
-  export let getImage: (path: string) => Promise<proj.Blob>;
   export let doc = matter(content);
+  export let getImage: (path: string) => Promise<proj.Blob>;
 
   const frontMatter = Object.entries(doc.data);
   marked.use({ extensions });

@@ -1,10 +1,10 @@
 <script lang="ts">
-  export let floating = false;
-  export let error = false;
-  export let subtle = false;
-  export let small = false;
-  export let narrow = false;
   export let center = false;
+  export let error = false;
+  export let floating = false;
+  export let narrow = false;
+  export let small = false;
+  export let subtle = false;
 </script>
 
 <style>

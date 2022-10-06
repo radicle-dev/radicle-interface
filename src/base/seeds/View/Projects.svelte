@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
-  import * as proj from "@app/project";
-  import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
   import type { ProjectInfo } from "@app/project";
   import type { Seed } from "@app/base/seeds/Seed";
+
+  import { navigate } from "svelte-routing";
+
+  import * as proj from "@app/project";
   import List from "@app/List.svelte";
+  import Widget from "@app/base/projects/Widget.svelte";
 
   export let seed: Seed;
   export let profile: Profile | null = null;

@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
-  import { formatAddress } from "@app/utils";
-  import { session } from "@app/session";
   import type { Config } from "@app/config";
 
+  import { navigate } from "svelte-routing";
+  import { onMount } from "svelte";
+
+  import Button from "@app/Button.svelte";
   import Connect from "@app/Connect.svelte";
-  import Modal from "@app/Modal.svelte";
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
-  import Button from "@app/Button.svelte";
-
+  import Modal from "@app/Modal.svelte";
+  import { formatAddress } from "@app/utils";
   import { registrar } from "./registrar";
+  import { session } from "@app/session";
 
   enum State {
     CheckingAvailability,

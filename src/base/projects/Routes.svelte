@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { Route } from "svelte-routing";
-  import View from "@app/base/projects/View.svelte";
   import type { Config } from "@app/config";
+
+  import { Route } from "svelte-routing";
+
   import Redirect from "@app/Redirect.svelte";
+  import View from "@app/base/projects/View.svelte";
 
   export let config: Config;
 </script>

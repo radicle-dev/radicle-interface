@@ -1,14 +1,14 @@
 <script lang="ts">
-  import * as proj from "@app/project";
-  import { formatCommit } from "@app/utils";
   import type { Commit } from "@app/commit";
 
+  import * as proj from "@app/project";
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
   import CommitVerifiedBadge from "@app/base/projects/Commit/CommitVerifiedBadge.svelte";
+  import { formatCommit } from "@app/utils";
 
-  export let project: proj.Project;
   export let commit: Commit;
+  export let project: proj.Project;
 
   const onBrowse = (event: { detail: string }) => {
     project.navigateTo({

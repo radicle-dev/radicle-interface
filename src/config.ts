@@ -1,12 +1,14 @@
-import { get, writable } from "svelte/store";
-import type { Writable } from "svelte/store";
-import { ethers } from "ethers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
+import type { Writable } from "svelte/store";
+
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
-import { Core } from "@self.id/core";
 import WalletConnect from "@walletconnect/client";
+import { Core } from "@self.id/core";
+import { ethers } from "ethers";
+import { get, writable } from "svelte/store";
+
 import config from "@app/config.json";
-import { WalletConnectSigner } from "./WalletConnectSigner";
+import { WalletConnectSigner } from "@app/WalletConnectSigner";
 
 declare global {
   interface Window {

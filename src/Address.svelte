@@ -1,31 +1,34 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { link } from "svelte-routing";
-  import { ethers } from "ethers";
-  import {
-    safeLink,
-    explorerLink,
-    identifyAddress,
-    formatAddress,
-    AddressType,
-    parseEnsLabel,
-  } from "@app/utils";
-  import { Profile, ProfileType } from "@app/profile";
-  import Avatar from "@app/Avatar.svelte";
-  import Badge from "@app/Badge.svelte";
   import type { Config } from "@app/config";
 
+  import { ethers } from "ethers";
+  import { link } from "svelte-routing";
+  import { onMount } from "svelte";
+
+  import {
+    AddressType,
+    explorerLink,
+    formatAddress,
+    identifyAddress,
+    parseEnsLabel,
+    safeLink,
+  } from "@app/utils";
+
+  import Avatar from "@app/Avatar.svelte";
+  import Badge from "@app/Badge.svelte";
+  import { Profile, ProfileType } from "@app/profile";
+
   export let address: string;
-  export let config: Config;
-  export let resolve = false;
-  export let noBadge = false;
-  export let noAvatar = false;
   export let compact = false;
-  export let small = false;
-  export let tiny = false;
+  export let config: Config;
   export let highlight = false;
+  export let noAvatar = false;
+  export let noBadge = false;
   // This property allows components eg. Header.svelte to pass a resolved profile object.
   export let profile: Profile | null = null;
+  export let resolve = false;
+  export let small = false;
+  export let tiny = false;
 
   let addressType: AddressType | null = null;
 
