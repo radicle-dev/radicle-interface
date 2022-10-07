@@ -6,7 +6,7 @@
   import { formatAddress, isAddressEqual } from "@app/utils";
   import { Org } from "@app/base/orgs/Org";
   import type { User } from "@app/base/users/User";
-  import ErrorModal from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import Address from "@app/Address.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";

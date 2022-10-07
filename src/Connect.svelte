@@ -2,7 +2,7 @@
   import { get } from "svelte/store";
   import { Connection, state } from "@app/session";
   import type { Err } from "@app/error";
-  import Error from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import type { Config } from "@app/config";
   import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
   import Button from "@app/Button.svelte";
@@ -52,7 +52,7 @@
     uri={$walletConnectState.uri}
     on:close={onModalClose} />
 {:else if error}
-  <Error
+  <ErrorModal
     floating
     emoji="👛"
     title="Connection failed"

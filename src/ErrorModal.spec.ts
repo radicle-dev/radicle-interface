@@ -1,9 +1,9 @@
-import Error from "./Error.svelte";
+import ErrorModal from "./ErrorModal.svelte";
 import { Failure } from "@app/error";
 
 describe("Error", () => {
   it("should show passed in props", () => {
-    cy.mount(Error, {
+    cy.mount(ErrorModal, {
       props: {
         subtitle: "Subtitle of Modal",
         error: {
@@ -21,7 +21,7 @@ describe("Error", () => {
   });
 
   it("should show custom error message", () => {
-    cy.mount(Error, {
+    cy.mount(ErrorModal, {
       props: {
         subtitle: "Subtitle of Modal",
         message: "Error message to check for",
@@ -31,7 +31,7 @@ describe("Error", () => {
   });
 
   it("should change button label to Close when floating", () => {
-    cy.mount(Error, {
+    cy.mount(ErrorModal, {
       props: {
         title: "Title of Modal",
         subtitle: "Subtitle of Modal",

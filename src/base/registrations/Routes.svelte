@@ -4,7 +4,7 @@
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
-  import Error from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import type { Config } from "@app/config";
   import type { Session } from "@app/session";
   import { getSearchParam } from "@app/utils";
@@ -29,7 +29,7 @@
       owner={getSearchParam("owner", location)}
       {session} />
   {:else}
-    <Error
+    <ErrorModal
       message={"You must connect your wallet to register"}
       on:close={() => navigate("/registrations")} />
   {/if}

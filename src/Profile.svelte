@@ -16,7 +16,7 @@
   import { session } from "@app/session";
   import { Org } from "@app/base/orgs/Org";
   import Message from "@app/Message.svelte";
-  import Error from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import { User } from "@app/base/users/User";
   import Projects from "@app/base/seeds/View/Projects.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/error";
@@ -491,6 +491,6 @@
       title={addressOrName}
       subtitle="Sorry, the requested name has no reverse record set." />
   {:else}
-    <Error error={err} />
+    <ErrorModal error={err} />
   {/if}
 {/await}

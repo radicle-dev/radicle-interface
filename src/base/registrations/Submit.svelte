@@ -7,7 +7,7 @@
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Err from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import BlockTimer from "@app/BlockTimer.svelte";
   import Button from "@app/Button.svelte";
 
@@ -54,7 +54,7 @@
 </svelte:head>
 
 {#if error}
-  <Err
+  <ErrorModal
     title="Transaction failed"
     message={error.message}
     on:close={() => navigate("/registrations")} />

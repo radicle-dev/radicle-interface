@@ -10,7 +10,7 @@
   import Form from "@app/Form.svelte";
   import type { Field } from "@app/Form.svelte";
   import { assert } from "@app/error";
-  import Error from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import { isAddressEqual, isReverseRecordSet } from "@app/utils";
   import Button from "@app/Button.svelte";
 
@@ -235,11 +235,11 @@
 {#if state.status === Status.Loading}
   <Loading />
 {:else if state.status === Status.Failed}
-  <Error
+  <ErrorModal
     title="Registration could not be loaded"
     on:close={() => navigate("/registrations")}>
     {state.error}
-  </Error>
+  </ErrorModal>
 {:else if state.status === Status.NotFound}
   <Modal subtle>
     <span slot="title" class="secondary">

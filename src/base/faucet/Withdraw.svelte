@@ -4,7 +4,7 @@
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Err from "@app/Error.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import type { State } from "@app/utils";
   import { Status } from "@app/utils";
   import { withdraw } from "./lib";
@@ -51,7 +51,10 @@
 </style>
 
 {#if error}
-  <Err title="Transaction failed" message={error.message} on:close={back} />
+  <ErrorModal
+    title="Transaction failed"
+    message={error.message}
+    on:close={back} />
 {:else}
   <Modal>
     <span slot="title">
