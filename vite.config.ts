@@ -36,8 +36,6 @@ const config: UserConfig = {
     alias: {
       "@public": path.resolve("./public"),
       "@app": path.resolve("./src"),
-      // Polyfill for Node.js 'stream' library.
-      stream: path.resolve("./src/polyfills/stream.ts"),
       "typedarray-to-buffer": path.resolve(
         "./src/polyfills/typedarray-to-buffer.js",
       ),

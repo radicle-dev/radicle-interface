@@ -8,14 +8,10 @@
   import Icon from "@app/Icon.svelte";
   import SetName from "@app/ens/SetName.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
-  import TransferOwnership from "@app/components/TransferOwnership.svelte";
-  import Link from "@app/Link.svelte";
-  import { getBalance, Profile, ProfileType } from "@app/profile";
+  import { Profile, ProfileType } from "@app/profile";
   import Loading from "@app/Loading.svelte";
   import * as utils from "@app/utils";
   import { session } from "@app/session";
-  import { Org } from "@app/base/orgs/Org";
-  import Message from "@app/Message.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
   import { User } from "@app/base/users/User";
   import Projects from "@app/base/seeds/View/Projects.svelte";
@@ -36,11 +32,6 @@
     setNameForm = SetName;
   };
 
-  let transferOwnerForm: typeof SvelteComponent | null = null;
-  const transferOwnership = () => {
-    transferOwnerForm = TransferOwnership;
-  };
-
   const getProjectsAndStats = async (
     seed: Seed,
     id?: string,
@@ -53,50 +44,8 @@
     return { stats, projects };
   };
 
-  $: account = $session && $session.address;
-  $: isOwner = (org: Org): boolean =>
-    $session ? utils.isAddressEqual(org.owner, $session.address) : false;
-  $: getOrgTreasury = async (
-    org: Org,
-  ): Promise<Array<utils.Token> | undefined> => {
-    const addressType = await utils.identifyAddress(org.owner, config);
-    // We query the org treasury only for Gnosis Safes, to maintain some privacy for EOA org owners.
-    if (addressType === utils.AddressType.Safe) {
-      try {
-        const tokens = await utils.getTokens(org.owner, config);
-        const balance = await getBalance(org.owner, config);
-
-        if (!balance.isZero()) {
-          // To maintain the format we hardcode the ETH specs.
-          return [
-            {
-              balance,
-              decimals: 18,
-              logo: "",
-              name: "Ethereum",
-              symbol: "ETH",
-            },
-            ...tokens,
-          ];
-        } else {
-          return tokens;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
   $: isUserAuthorized = (address: string): boolean | null => {
     return $session && utils.isAddressEqual(address, $session.address);
-  };
-  $: isOrgAuthorized = async (org: Org): Promise<boolean> => {
-    if ($session) {
-      if (isOwner(org)) {
-        return true;
-      }
-      return await org.isMember($session.address, config);
-    }
-    return false;
   };
 </script>
 
@@ -161,29 +110,6 @@
     height: 1.6rem;
     align-items: center;
   }
-  .members {
-    margin-top: 2rem;
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .members.loading {
-    padding-bottom: 1rem;
-  }
-  .members .member {
-    display: flex;
-    align-items: center;
-    margin-right: 2rem;
-    margin-bottom: 1rem;
-  }
-  .members .member:last-child {
-    margin-right: 0;
-  }
-  .members .member-icon {
-    width: 2rem;
-    height: 2rem;
-    margin-right: 1rem;
-  }
   @media (max-width: 720px) {
     main {
       width: 100%;
@@ -191,9 +117,6 @@
     }
     .fields {
       grid-template-columns: 5rem auto;
-    }
-    .members .member {
-      margin-right: 1rem;
     }
   }
 </style>
@@ -284,32 +207,7 @@
         <div class="mobile">
           <Address compact resolve {config} address={profile.org.owner} />
         </div>
-        <div class="desktop">
-          {#await account && profile.org.isMember(account, config) then isMember}
-            {#if isOwner(profile.org) || isMember}
-              <Button
-                variant="secondary"
-                size="small"
-                on:click={transferOwnership}>
-                Transfer
-              </Button>
-            {/if}
-          {/await}
-        </div>
-        <!-- Org Treasury -->
-        {#await getOrgTreasury(profile.org) then tokens}
-          {#if tokens && tokens.length > 0}
-            <div class="label">Treasury</div>
-            <div>
-              {#each tokens as token}
-                {` ${utils.formatBalance(token.balance, token.decimals)} ${
-                  token.symbol
-                } `}
-              {/each}
-            </div>
-            <div class="desktop" />
-          {/if}
-        {/await}
+        <div class="desktop" />
       {/if}
       <!-- Org Name/Profile -->
       <div class="label">Profile</div>
@@ -324,30 +222,7 @@
               <span class="txt-missing">Not set</span>
             {/if}
           </div>
-          <div class="desktop">
-            {#await isOrgAuthorized(profile.org)}
-              <!-- Loading -->
-            {:then authorized}
-              {#if authorized}
-                <Button variant="secondary" size="small" on:click={setName}>
-                  Set
-                </Button>
-              {/if}
-            {/await}
-          </div>
         {/if}
-        <!-- Quorum -->
-        {#await profile.org.getSafe(config) then safe}
-          {#if safe}
-            <div class="label">Quorum</div>
-            <div>
-              {safe.threshold}
-              <span class="faded">of</span>
-              {safe.owners.length}
-            </div>
-            <div class="desktop" />
-          {/if}
-        {/await}
       {:else}
         <!-- User Profile -->
         <div>
@@ -360,7 +235,7 @@
           {/if}
         </div>
         <div class="desktop">
-          {#if isUserAuthorized(profile.address)}
+          {#if isUserAuthorized(profile.address) && !profile.org}
             <Button variant="secondary" size="small" on:click={setName}>
               Set
             </Button>
@@ -369,89 +244,6 @@
       {/if}
     </div>
 
-    {#if profile.org}
-      {#await profile.org.getMembers(config)}
-        <Loading center />
-      {:then members}
-        {#if members.length > 0}
-          <!-- We don't need to catch errors here, since it's not defined by user input and defaults to ETH addresses -->
-          {#await Profile.getMulti(members, config)}
-            <div class="members loading">
-              <Loading small />
-            </div>
-          {:then members}
-            <div class="members">
-              {#each members as profile}
-                <div class="member">
-                  <div class="member-icon">
-                    <Link to="/{profile.address}">
-                      <Avatar
-                        source={profile.avatar ?? profile.address}
-                        title={profile.address} />
-                    </Link>
-                  </div>
-                  <div class="desktop">
-                    <Address
-                      address={profile.address}
-                      compact
-                      resolve
-                      noBadge
-                      noAvatar
-                      {profile}
-                      {config} />
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {/await}
-        {/if}
-      {:catch err}
-        <Message error>
-          <span class="txt-bold">Error:</span>
-          failed to load org members: {err.message}.
-        </Message>
-      {/await}
-    {:else}
-      {#await Org.getOrgsByMember(profile.address, config)}
-        <Loading center />
-      {:then orgs}
-        {#if orgs.length > 0}
-          <div class="members">
-            {#each orgs as org}
-              <div class="member">
-                <!-- We don't need to catch errors here, since it's not defined by user input and defaults to ETH addresses -->
-                {#await Profile.get(org.address, ProfileType.Minimal, config)}
-                  <Loading small margins />
-                {:then profile}
-                  <div class="member-icon">
-                    <Link to="/{profile.address}">
-                      <Avatar
-                        source={profile.avatar ?? profile.address}
-                        title={profile.address} />
-                    </Link>
-                  </div>
-                  <div class="desktop">
-                    <Address
-                      address={profile.address}
-                      compact
-                      resolve
-                      noBadge
-                      noAvatar
-                      {profile}
-                      {config} />
-                  </div>
-                {/await}
-              </div>
-            {/each}
-          </div>
-        {/if}
-      {:catch err}
-        <Message error>
-          <span class="txt-bold">Error:</span>
-          failed to load orgs: {err.message}.
-        </Message>
-      {/await}
-    {/if}
     {#if profile.seed?.valid}
       <Async fetch={getProjectsAndStats(profile.seed, profile.id)} let:result>
         <Projects
@@ -465,14 +257,9 @@
 
   <svelte:component
     this={setNameForm}
-    entity={profile.org ?? new User(profile.address)}
+    entity={new User(profile.address)}
     {config}
     on:close={() => (setNameForm = null)} />
-  <svelte:component
-    this={transferOwnerForm}
-    org={profile.org}
-    {config}
-    on:close={() => (transferOwnerForm = null)} />
 {:catch err}
   {#if err instanceof NotFoundError}
     <NotFound

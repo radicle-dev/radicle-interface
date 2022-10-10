@@ -7,21 +7,6 @@
     "radToken": {
       "address": "0x31c8EAcBFFdD875c74b94b077895Bd78CF1E64A3"
     },
-    "orgFactory": {
-      "address": "0xa15bEb4876F20018b6b4A4116B7560c5fcC9336e"
-    },
-    "orgs": {
-      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74",
-      "pinned": [
-        "alt-clients.radicle.eth",
-        "community.radicle.eth",
-        "upstream.radicle.eth",
-        "gnosisguild.radicle.eth",
-        "grants.radicle.eth",
-        "gip-editors.radicle.eth",
-        "dxdao.radicle.eth"
-      ]
-    },
     "users": {
       "pinned": ["cloudhead.radicle.eth"]
     },
@@ -43,13 +28,6 @@
     "radToken": {
       "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948",
       "faucet": "0x9Aa75397eD632A3060aCb5dE7f96e2457bceED8d"
-    },
-    "orgFactory": {
-      "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"
-    },
-    "orgs": {
-      "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74",
-      "pinned": []
     },
     "users": {
       "pinned": []
@@ -177,17 +155,8 @@
       "function setAddr(bytes32 node, address addr)",
       "function setText(bytes32 node, string calldata key, string calldata value)"
     ],
-    "orgFactory": [
-      "function createOrg(address) returns (address)",
-      "function createOrg(address[], uint256) returns (address)",
-      "event OrgCreated(address, address)"
-    ],
     "reverseRegistrar": ["function setName(string) returns (bytes32)"],
-    "org": [
-      "function owner() view returns (address)",
-      "function setOwner(address)",
-      "function setName(string, address) returns (bytes32)"
-    ],
+    "org": ["function owner() view returns (address)"],
     "vesting": [
       "function token() view returns (address)",
       "function totalVestingAmount() view returns (uint256)",

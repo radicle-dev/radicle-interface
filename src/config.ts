@@ -2,7 +2,6 @@ import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { ethers } from "ethers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
-import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
@@ -16,11 +15,6 @@ declare global {
   }
 }
 
-/// Gas limits for various transactions.
-const gasLimits = {
-  createOrg: 1_200_000,
-};
-
 export type WalletConnectState =
   | { state: "close" }
   | { state: "open"; uri: string; onClose: any };
@@ -29,13 +23,10 @@ export class Config {
   network: { name: string; chainId: number };
   registrar: { address: string; domain: string };
   radToken: { address: string; faucet: string };
-  orgFactory: { address: string };
   reverseRegistrar: { address: string };
-  orgs: { contractHash: string; pinned: string[] };
   users: { pinned: string[] };
   projects: { pinned: { urn: string; name: string; seed: string }[] };
   seeds: { pinned: Record<string, { emoji: string }> };
-  gasLimits: { createOrg: number };
   provider: ethers.providers.JsonRpcProvider;
   signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
   walletConnect: {
@@ -56,7 +47,6 @@ export class Config {
       };
   safe: {
     api?: string;
-    client?: SafeServiceClient;
     viewer: string | null;
   };
   abi: { [contract: string]: string[] };
@@ -105,17 +95,11 @@ export class Config {
     this.seed = config.radicle.seed;
     this.registrar = cfg.registrar;
     this.radToken = cfg.radToken;
-    this.orgFactory = cfg.orgFactory;
     this.reverseRegistrar = cfg.reverseRegistrar;
-    this.orgs = cfg.orgs;
     this.users = cfg.users;
     this.safe = cfg.safe;
-    this.safe.client = this.safe.api
-      ? new SafeServiceClient(this.safe.api)
-      : undefined;
     this.provider = provider;
     this.signer = null;
-    this.gasLimits = gasLimits;
     this.projects = config.projects;
     this.seeds = config.seeds;
     this.abi = config.abi;

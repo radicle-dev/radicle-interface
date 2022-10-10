@@ -5,9 +5,6 @@ import { BigNumber } from "ethers";
 import multibase from "multibase";
 import katex from "katex";
 import multihashes from "multihashes";
-import type { TransactionResult } from "@gnosis.pm/safe-core-sdk";
-import EthersSafe, { EthersAdapter } from "@gnosis.pm/safe-core-sdk";
-import type { SafeSignature } from "@gnosis.pm/safe-core-sdk-types";
 import type { Config } from "@app/config";
 import config from "@app/config.json";
 import { assert } from "@app/error";
@@ -422,18 +419,10 @@ export async function identifyAddress(
   address: string,
   config: Config,
 ): Promise<AddressType> {
-  const safe = await isSafe(address, config);
-  if (safe) {
-    return AddressType.Safe;
-  }
-
   const code = await getCode(address, config);
   const bytes = ethers.utils.arrayify(code);
 
   if (bytes.length > 0) {
-    if (ethers.utils.keccak256(bytes) === config.orgs.contractHash) {
-      return AddressType.Org;
-    }
     return AddressType.Contract;
   }
   return AddressType.EOA;
@@ -513,22 +502,6 @@ export async function resolveEnsProfile(
   return null;
 }
 
-// Check whether a Gnosis Safe exists at an address.
-export async function isSafe(
-  _address: string,
-  _config: Config,
-): Promise<boolean> {
-  return false;
-}
-
-// Get a Gnosis Safe at an address.
-export async function getSafe(
-  _address: string,
-  _config: Config,
-): Promise<Safe | null> {
-  return null;
-}
-
 // Get token balances for an address.
 export async function getTokens(
   address: string,
@@ -593,101 +566,6 @@ export function gravatarURL(email: string): string {
   const hash = md5(address);
 
   return `https://www.gravatar.com/avatar/${hash}`;
-}
-
-// Propose a Gnosis Safe multi-sig transaction.
-export async function proposeSafeTransaction(
-  safeTx: SafeTransaction,
-  safeAddress: string,
-  config: Config,
-): Promise<void> {
-  assert(config.signer);
-  assert(config.safe.client);
-
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signer: config.signer,
-  });
-  const safeSdk = await EthersSafe.create({
-    ethAdapter,
-    safeAddress,
-  });
-  const estimation = await config.safe.client.estimateSafeTransaction(
-    safeAddress,
-    safeTx,
-  );
-  const transaction = await safeSdk.createTransaction({
-    ...safeTx,
-    safeTxGas: Number(estimation.safeTxGas),
-  });
-  const safeTxHash = await safeSdk.getTransactionHash(transaction);
-  const signature = await safeSdk.signTransactionHash(safeTxHash);
-
-  await config.safe.client.proposeTransaction(
-    safeAddress,
-    transaction.data,
-    safeTxHash,
-    signature,
-  );
-}
-
-// Sign a Gnosis Safe multi-sig transaction.
-export async function signSafeTransaction(
-  safeAddress: string,
-  safeTxHash: string,
-  config: Config,
-): Promise<SafeSignature> {
-  assert(config.signer);
-
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signer: config.signer,
-  });
-  const safeSdk = await EthersSafe.create({
-    ethAdapter,
-    safeAddress,
-  });
-  return await safeSdk.signTransactionHash(safeTxHash);
-}
-
-// Execute a Gnosis Safe signed transaction by safeTxHash.
-export async function executeSignedSafeTransaction(
-  safeAddress: string,
-  safeTxHash: string,
-  config: Config,
-): Promise<TransactionResult> {
-  assert(config.signer);
-  assert(config.safe.client);
-
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signer: config.signer,
-  });
-  const safeSdk = await EthersSafe.create({
-    ethAdapter,
-    safeAddress,
-  });
-
-  const signedTx = await config.safe.client.getTransaction(safeTxHash);
-
-  assert(signedTx.data);
-  assert(signedTx.confirmations);
-
-  const safeTx = await safeSdk.createTransaction({
-    ...signedTx,
-    gasPrice: Number(signedTx.gasPrice),
-    data: signedTx.data,
-  });
-
-  signedTx.confirmations.forEach(confirmation => {
-    const signature = new EthSignSignature(
-      confirmation.owner,
-      confirmation.signature,
-    );
-    safeTx.addSignature(signature);
-  });
-
-  return await safeSdk.executeTransaction(safeTx);
 }
 
 export class EthSignSignature {

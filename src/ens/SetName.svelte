@@ -4,36 +4,24 @@
   import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
   import { formatAddress, isAddressEqual } from "@app/utils";
-  import { Org } from "@app/base/orgs/Org";
   import type { User } from "@app/base/users/User";
   import ErrorModal from "@app/ErrorModal.svelte";
-  import Address from "@app/Address.svelte";
-  import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import TextInput from "@app/TextInput.svelte";
   import Loading from "@app/Loading.svelte";
 
   const dispatch = createEventDispatcher();
 
-  export let entity: Org | User;
+  export let entity: User;
   export let config: Config;
-
-  const org = Org.hasOwnProperty.call(entity, "owner") ? (entity as Org) : null;
-
-  const label = org ? "org" : "profile";
 
   enum State {
     Idle,
     Checking,
 
-    // Single-sig states.
     Signing,
     Pending,
     Success,
-
-    // Multi-sig states.
-    Proposing,
-    Proposed,
 
     Failed,
     Mismatch,
@@ -54,17 +42,11 @@
 
     if (resolved && isAddressEqual(resolved, entity.address)) {
       try {
-        if (org && (await utils.isSafe(org.owner, config))) {
-          state = State.Proposing;
-          await org.setNameMultisig(domain, config);
-          state = State.Proposed;
-        } else {
-          state = State.Signing;
-          const tx = await entity.setName(domain, config);
-          state = State.Pending;
-          await tx.wait();
-          state = State.Success;
-        }
+        state = State.Signing;
+        const tx = await entity.setName(domain, config);
+        state = State.Pending;
+        await tx.wait();
+        state = State.Success;
       } catch (e) {
         console.error(e);
         state = State.Failed;
@@ -106,28 +88,6 @@
       </Button>
     </div>
   </Modal>
-{:else if state === State.Proposed && org}
-  <Modal floating>
-    <div slot="title">🪴</div>
-
-    <div slot="subtitle">
-      <p>
-        The transaction to set the ENS name for <span class="txt-bold">
-          {formatAddress(entity.address)}
-        </span>
-        to
-        <span class="txt-bold">{name}.{config.registrar.domain}</span>
-        was proposed to:
-      </p>
-      <p><Address address={org.owner} {config} compact /></p>
-    </div>
-
-    <div slot="actions">
-      <Button variant="secondary" on:click={() => dispatch("close")}>
-        Done
-      </Button>
-    </div>
-  </Modal>
 {:else if state === State.Mismatch}
   <ErrorModal floating title="🧣" on:close>
     The name <span class="txt-bold">{name}.{config.registrar.domain}</span>
@@ -161,16 +121,12 @@
         Please confirm the transaction in your wallet.
       {:else if state === State.Pending}
         Waiting for transaction to be processed…
-      {:else if state === State.Proposing && org}
-        Proposal is being submitted
-        <span class="txt-bold">{formatAddress(org.owner)}</span>
-        , please sign the transaction in your wallet.
       {:else}
         Set an ENS name for <span class="txt-bold">
           {formatAddress(entity.address)}
         </span>
         to associate a profile. ENS profiles provide human-identifiable data to your
-        {label}, such as a unique name, avatar and URL, and help make your {label}
+        profile, such as a unique name, avatar and URL, and help make your profile
         more discoverable.
       {/if}
     </div>
