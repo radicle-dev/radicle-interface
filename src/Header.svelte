@@ -5,34 +5,22 @@
 
   import { link } from "svelte-routing";
 
-  import Avatar from "@app/Avatar.svelte";
-  import Button from "@app/Button.svelte";
-  import Connect from "@app/Connect.svelte";
   import Floating from "@app/Floating.svelte";
   import Icon from "@app/Icon.svelte";
-  import Loading from "@app/Loading.svelte";
   import Logo from "@app/Logo.svelte";
   import Search from "@app/Search.svelte";
   import SearchResults from "@app/components/Modal/SearchResults.svelte";
   import SeedDropdown from "@app/SeedDropdown.svelte";
   import ThemeToggle from "@app/ThemeToggle.svelte";
 
-  import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
-  import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
-  import { formatAddress, formatBalance } from "@app/utils";
 
   export let session: Session | null;
   export let config: Config;
 
   let query: string;
   let results: ProjectsAndProfiles | null = null;
-
-  let sessionButtonHover = false;
-
-  $: address = session && session.address;
-  $: tokenBalance = session && session.tokenBalance;
 </script>
 
 <style>
@@ -83,26 +71,6 @@
   .search {
     width: 16rem;
   }
-  .connect {
-    display: inline-block;
-  }
-  .network {
-    color: var(--color-tertiary-6);
-    background-color: var(--color-tertiary-1);
-    line-height: 1.5em;
-    padding: 0rem 1rem;
-    height: var(--button-regular-height);
-    display: flex;
-    align-items: center;
-    border-radius: var(--border-radius-round);
-  }
-  .network.unavailable {
-    color: var(--color-foreground-5);
-    background-color: var(--color-foreground-3);
-  }
-  .network:last-child {
-    margin-right: 0;
-  }
   .register {
     display: inline-block;
     padding: 0.5rem 0.5rem;
@@ -113,19 +81,14 @@
   .register:hover {
     color: var(--color-foreground);
   }
-  .balance {
-    white-space: nowrap;
-  }
 
   @media (max-width: 720px) {
     header .right {
       gap: 1rem;
     }
-    .network,
     .search,
     header .nav,
-    .register,
-    .balance {
+    .register {
       display: none;
     }
   }
@@ -189,53 +152,8 @@
   </div>
 
   <div class="right">
-    {#if config && config.network.name === "rinkeby"}
-      <a use:link href="/faucet">
-        <span class="network">Rinkeby</span>
-      </a>
-    {:else if config && config.network.name === "homestead"}
-      <!-- Don't show anything -->
-    {:else}
-      <span class="network unavailable">No Network</span>
-    {/if}
     <a use:link class="register" href="/registrations">Register</a>
 
-    {#if address}
-      <span class="balance">
-        {#if tokenBalance}
-          {formatBalance(tokenBalance)}
-          <span class="txt-bold">RAD</span>
-        {:else}
-          <Loading small />
-        {/if}
-      </span>
-
-      <Button
-        style="width: 10rem; white-space: nowrap;"
-        variant="foreground"
-        on:click={() => disconnectWallet(config)}
-        on:mouseover={() => (sessionButtonHover = true)}
-        on:focus={() => (sessionButtonHover = true)}
-        on:mouseout={() => (sessionButtonHover = false)}
-        on:blur={() => (sessionButtonHover = false)}>
-        {#await Profile.get(address, ProfileType.Minimal, config)}
-          <Loading small center />
-        {:then profile}
-          {#if sessionButtonHover}
-            Disconnect
-          {:else}
-            <Avatar
-              source={profile.avatar ?? address}
-              title={address}
-              inline />{formatAddress(address)}
-          {/if}
-        {/await}
-      </Button>
-    {:else if config}
-      <span class="connect">
-        <Connect buttonVariant="foreground" {config} />
-      </span>
-    {/if}
     <ThemeToggle />
     <div class="mobile">
       <Floating overlay>
