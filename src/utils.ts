@@ -21,7 +21,6 @@ import {
 } from "@app/base/registrations/registrar";
 import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
-import { GetSafe } from "@app/base/orgs/Org";
 import * as cache from "@app/cache";
 import type { marked } from "marked";
 import emojis from "@app/emojis";
@@ -358,45 +357,6 @@ export function safeLink(addr: string, config: Config): string {
   return explorerLink(addr, config);
 }
 
-// Query a subgraph.
-export async function querySubgraphWithRetry(
-  url: string,
-  query: string,
-  variables: Record<string, any>,
-  retries = 3,
-): Promise<Record<string, any> | null> {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  });
-  const json = await response.json();
-
-  if (json.errors) {
-    console.error("querySubgraph:", json.errors);
-
-    if (retries > 0) {
-      return querySubgraphWithRetry(url, query, variables, retries - 1);
-    } else {
-      return null;
-    }
-  } else {
-    return json.data;
-  }
-}
-
-export const querySubgraph = cache.cached(
-  querySubgraphWithRetry,
-  (url: string, query: string, variables: Record<string, any>) =>
-    JSON.stringify({ url, query, variables }),
-  { max: 500, ttl: 5 * 60 * 1000 }, // Cache results for 5 minutes.
-);
-
 // Format a name.
 export function formatName(input: string, config: Config): string {
   return parseEnsLabel(input, config);
@@ -558,36 +518,18 @@ export async function resolveEnsProfile(
 
 // Check whether a Gnosis Safe exists at an address.
 export async function isSafe(
-  address: string,
-  config: Config,
+  _address: string,
+  _config: Config,
 ): Promise<boolean> {
-  // For the subgraph we need to pass a lowercase address
-  const query = await querySubgraph(config.orgs.subgraph, GetSafe, {
-    addr: address.toLowerCase(),
-  });
-
-  return Boolean(query?.safe);
+  return false;
 }
 
 // Get a Gnosis Safe at an address.
 export async function getSafe(
-  address: string,
-  config: Config,
+  _address: string,
+  _config: Config,
 ): Promise<Safe | null> {
-  // For the subgraph we need to pass a lowercase address
-  const query = await querySubgraph(config.orgs.subgraph, GetSafe, {
-    addr: address.toLowerCase(),
-  });
-
-  if (!query?.safe) {
-    return null;
-  }
-
-  return {
-    address: query.safe.id,
-    owners: query.safe.owners,
-    threshold: query.safe.threshold,
-  };
+  return null;
 }
 
 // Get token balances for an address.

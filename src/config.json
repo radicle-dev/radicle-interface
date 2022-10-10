@@ -11,7 +11,6 @@
       "address": "0xa15bEb4876F20018b6b4A4116B7560c5fcC9336e"
     },
     "orgs": {
-      "subgraph": "https://gateway.thegraph.com/api/1758a78ae257ad4906f9c638e4a68c19/subgraphs/id/0x2f0963e77ca6ac0c2dad1bf4147b6b40e0dd8728-0",
       "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74",
       "pinned": [
         "alt-clients.radicle.eth",
@@ -49,7 +48,6 @@
       "address": "0xF3D04e874D07d680e8b26332eEae5b9B1c263121"
     },
     "orgs": {
-      "subgraph": "https://api.thegraph.com/subgraphs/name/radicle-dev/radicle-orgs-rinkeby",
       "contractHash": "0x5c34bb0755876de98e801805e6685456eea739ad0abba1cc450a7ee0f2a70b74",
       "pinned": []
     },

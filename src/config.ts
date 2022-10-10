@@ -31,7 +31,7 @@ export class Config {
   radToken: { address: string; faucet: string };
   orgFactory: { address: string };
   reverseRegistrar: { address: string };
-  orgs: { subgraph: string; contractHash: string; pinned: string[] };
+  orgs: { contractHash: string; pinned: string[] };
   users: { pinned: string[] };
   projects: { pinned: { urn: string; name: string; seed: string }[] };
   seeds: { pinned: Record<string, { emoji: string }> };

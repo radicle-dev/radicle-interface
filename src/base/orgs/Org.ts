@@ -8,42 +8,6 @@ import * as cache from "@app/cache";
 import type { Safe } from "@app/utils";
 import type { Config } from "@app/config";
 
-const GetSafesByOwners = `
-  query GetSafesByOwners($owners: [String!]!) {
-    safes(where: { owners_contains: $owners }) {
-      id
-      owners
-      threshold
-    }
-  }
-`;
-
-const GetOrgsByOwners = `
-  query GetOrgsByOwners($owners: [String!]!) {
-    orgs(where: { owner_in: $owners }) {
-      id
-      owner
-      safe {
-        id
-        owners
-        threshold
-      }
-      creator
-      timestamp
-    }
-  }
-`;
-
-export const GetSafe = `
-  query GetSafe($addr: ID!) {
-    safe(id: $addr) {
-      id
-      owners
-      threshold
-    }
-  }
-`;
-
 export class Org {
   address: string;
   owner: string;
@@ -193,36 +157,11 @@ export class Org {
     }
   }
 
-  static async getOrgsByMember(owner: string, config: Config): Promise<Org[]> {
-    type Safe = { id: string; owners: string[]; threshold: number };
-
-    // TODO: We use two subgraph queries since we can't do a filter query yet in the subgraph
-    // https://github.com/graphprotocol/graph-node/issues/2539#issuecomment-855979841
-    const safesByOwner = await utils.querySubgraph(
-      config.orgs.subgraph,
-      GetSafesByOwners,
-      { owners: [owner] },
-    );
-
-    let safes = [];
-    if (safesByOwner && safesByOwner.safes.length > 0) {
-      safes = safesByOwner.safes.reduce(
-        (prev: any, curr: Safe) => prev.concat(curr.id),
-        [],
-      );
-    }
-
-    const orgsByOwner = await utils.querySubgraph(
-      config.orgs.subgraph,
-      GetOrgsByOwners,
-      { owners: [...safes, owner] },
-    );
-    let orgs: { id: string; owner: string }[] = [];
-    if (orgsByOwner && orgsByOwner.orgs) {
-      orgs = [...orgsByOwner.orgs];
-    }
-
-    return orgs.map(o => new Org(o.id, o.owner));
+  static async getOrgsByMember(
+    _owner: string,
+    _config: Config,
+  ): Promise<Org[]> {
+    return [];
   }
 }
 
