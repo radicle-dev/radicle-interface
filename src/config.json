@@ -67,10 +67,6 @@
     "alchemy": { "key": "1T6h-0rxu7SRzKEtmukIoxaJOXazLDNs" }
   },
   "walletConnect": { "bridge": "https://radicle.bridge.walletconnect.org" },
-  "ceramic": {
-    "api": "https://gateway.ceramic.network",
-    "registry": "https://self.id/"
-  },
   "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "radicle": {
     "seed": {

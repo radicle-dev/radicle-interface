@@ -80,16 +80,6 @@ describe("Format functions", () => {
     ).toThrow();
   });
 
-  test("formatCAIP10Address", () => {
-    expect(
-      utils.formatCAIP10Address(
-        "0x1234567890123456789012345678901234567890",
-        "eip155",
-        1,
-      ),
-    ).toEqual("0x1234567890123456789012345678901234567890@eip155:1");
-  });
-
   test("formatAddress", () => {
     expect(
       utils.formatAddress("0xb5d85cbf7cb3ee0d56b3bb207d5fc4b82f43f511"),
