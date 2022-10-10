@@ -352,8 +352,7 @@ export const session = derived(state, s => {
 });
 
 window.ethereum?.on("chainChanged", () => {
-  // We disconnect the wallet to avoid out of sync state
-  // between the account address and IDX DIDs
+  // We disconnect the wallet to avoid out of sync state.
   disconnectMetamask();
 });
 

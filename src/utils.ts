@@ -19,7 +19,6 @@ import {
   getAnchorsAccount,
   getRegistration,
 } from "@app/base/registrations/registrar";
-import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
 import { GetSafe } from "@app/base/orgs/Org";
@@ -148,14 +147,6 @@ export function formatBalance(n: BigNumber, decimals?: number): string {
   return ethers.utils.commify(
     parseFloat(ethers.utils.formatUnits(n, decimals)).toFixed(2),
   );
-}
-
-export function formatCAIP10Address(
-  address: string,
-  protocol: string,
-  impl: number,
-): string {
-  return `${address.toLowerCase()}@${protocol}:${impl.toString()}`;
 }
 
 // Returns a checksummed, shortened, without 0x prefix Ethereum address
@@ -509,19 +500,6 @@ export async function resolveMultiLabel(
     return { ...arr, [curr]: addresses[index] };
   }, {});
 }
-
-// Resolves an IDX profile or return null
-export const resolveIdxProfile = cache.cached(
-  async (caip10: string, config: Config): Promise<BasicProfile | null> => {
-    try {
-      return await config.ceramic.client.get("basicProfile", caip10);
-    } catch (e) {
-      return null;
-    }
-  },
-  (caip10: string) => caip10,
-  { max: 500, ttl: 30 * 60 * 1000 }, // Cache results for 30 minutes.
-);
 
 // Resolves an ENS profile or return null
 export async function resolveEnsProfile(

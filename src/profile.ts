@@ -1,11 +1,7 @@
 import type { EnsProfile } from "@app/base/registrations/registrar";
-import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import {
   isAddress,
-  formatCAIP10Address,
-  formatIpfsFile,
   resolveEnsProfile,
-  resolveIdxProfile,
   parseUsername,
   AddressType,
   identifyAddress,
@@ -21,7 +17,6 @@ export interface IProfile {
   address: string;
   type: AddressType;
   ens?: EnsProfile;
-  idx?: BasicProfile;
   org?: Org;
 }
 
@@ -63,16 +58,9 @@ export class Profile {
     return this.profile.ens;
   }
 
-  // Get the IDX profle
-  get idx(): BasicProfile | undefined {
-    return this.profile.idx;
-  }
-
   get github(): string | undefined {
     if (this.profile?.ens?.github) {
       return parseUsername(this.profile.ens.github);
-    } else if (this.profile?.idx?.affiliations) {
-      return this.profile.idx?.affiliations.find(item => item === "github");
     } else {
       return undefined;
     }
@@ -81,8 +69,6 @@ export class Profile {
   get twitter(): string | undefined {
     if (this.profile?.ens?.twitter) {
       return parseUsername(this.profile.ens.twitter);
-    } else if (this.profile?.idx?.affiliations) {
-      return this.profile.idx.affiliations.find(item => item === "twitter");
     } else {
       return undefined;
     }
@@ -90,21 +76,17 @@ export class Profile {
 
   get url(): string | undefined {
     if (this.profile?.ens?.url) return this.profile.ens.url;
-    else if (this.profile?.idx?.url) return this.profile.idx.url;
     else return undefined;
   }
 
   get name(): string | undefined {
     if (this.profile?.ens?.name) return this.profile.ens.name;
-    else if (this.profile?.idx?.name) return this.profile.idx.name;
     else return undefined;
   }
 
   get avatar(): string | undefined {
     if (this.profile?.ens?.avatar) {
       return this.profile.ens.avatar;
-    } else if (this.profile?.idx?.image?.original?.src) {
-      return formatIpfsFile(this.profile.idx.image.original.src);
     } else {
       return undefined;
     }
@@ -119,7 +101,6 @@ export class Profile {
     const addr = this.profile?.ens?.anchorsAccount;
 
     if (addr) {
-      // TODO: Workaround until caip package supports both CAIP10 formats.
       const [namespace, reference, address] = addr.split(":");
       const id = { chainId: { namespace, reference }, address };
 
@@ -136,20 +117,6 @@ export class Profile {
   // Get the name, and if not available, the address.
   get nameOrAddress(): string {
     return this.name ?? this.address;
-  }
-
-  // Returns the corresponding registration form to edit a user profile.
-  // We are not interested in a non-existant registry link, since we check before hand if the name exists.
-  registry(config: Config): string {
-    if (this.profile?.ens) {
-      return `/registrations/${this.profile.ens.name}`;
-    } else {
-      return `${config.ceramic.registry}${formatCAIP10Address(
-        this.profile.address,
-        "eip155",
-        config.network.chainId,
-      )}`;
-    }
   }
 
   // Keeping this function private since the desired entrypoint is .get()
@@ -188,20 +155,13 @@ export class Profile {
       }
 
       try {
-        const idx = await resolveIdxProfile(
-          formatCAIP10Address(address, "eip155", config.network.chainId),
-          config,
-        );
         return {
           address,
           type,
-          idx: idx ?? undefined,
           org: org ?? undefined,
         };
       } catch (e: any) {
-        // Look for the No DID found for error by the resolveIdxProfile fn and send it to console.debug
-        if (e.message.match("No DID found for")) console.debug(e.message);
-        else console.error(e);
+        console.error(e);
 
         return { address, type, org: org ?? undefined };
       }

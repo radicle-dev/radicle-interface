@@ -155,8 +155,7 @@
           validate: "URN",
           placeholder: "URN, eg. eip155:1:0x4a9cf21…",
           description:
-            "URN under which associated project anchors can be found. " +
-            "To point to a Radicle org on Ethereum, use the CAIP-10 ID, eg. *eip155:1:0x4a9cf21…*",
+            "URN under which associated project anchors can be found.",
           value: r.profile.anchorsAccount ?? "",
           editable: true,
         },

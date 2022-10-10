@@ -328,8 +328,10 @@
       {#if profile.org}
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">
-            {#if profile.name}
-              <a href={profile.registry(config)} class="link">{profile.name}</a>
+            {#if profile.name && profile.ens}
+              <a href={`/registrations/${profile.ens.name}`} class="link">
+                {profile.name}
+              </a>
             {:else}
               <span class="txt-missing">Not set</span>
             {/if}
@@ -361,8 +363,10 @@
       {:else}
         <!-- User Profile -->
         <div>
-          {#if profile.name}
-            <a href={profile.registry(config)} class="link">{profile.name}</a>
+          {#if profile.name && profile.ens}
+            <a href={`/registrations/${profile.ens.name}`} class="link">
+              {profile.name}
+            </a>
           {:else}
             <span class="txt-missing">Not set</span>
           {/if}
