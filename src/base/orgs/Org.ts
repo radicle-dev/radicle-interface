@@ -8,42 +8,6 @@ import * as cache from "@app/cache";
 import type { Safe } from "@app/utils";
 import type { Config } from "@app/config";
 
-const GetSafesByOwners = `
-  query GetSafesByOwners($owners: [String!]!) {
-    safes(where: { owners_contains: $owners }) {
-      id
-      owners
-      threshold
-    }
-  }
-`;
-
-const GetOrgsByOwners = `
-  query GetOrgsByOwners($owners: [String!]!) {
-    orgs(where: { owner_in: $owners }) {
-      id
-      owner
-      safe {
-        id
-        owners
-        threshold
-      }
-      creator
-      timestamp
-    }
-  }
-`;
-
-export const GetSafe = `
-  query GetSafe($addr: ID!) {
-    safe(id: $addr) {
-      id
-      owners
-      threshold
-    }
-  }
-`;
-
 export class Org {
   address: string;
   owner: string;
@@ -152,77 +116,23 @@ export class Org {
     await utils.proposeSafeTransaction(safeTx, safeAddress, config);
   }
 
-  async getMembers(config: Config): Promise<Array<string>> {
-    if (this.safe) return this.safe.owners;
-
-    const safe = await this.getSafe(config);
-    if (safe) {
-      return safe.owners;
-    }
-    return [];
-  }
-
-  async getSafe(config: Config): Promise<Safe | null> {
-    if (this.safe) return this.safe;
-
-    return utils.getSafe(this.owner, config);
-  }
-
-  async isMember(address: string, config: Config): Promise<boolean> {
-    const members = await this.getMembers(config);
-    return members.includes(address.toLowerCase());
-  }
-
   static async get(addressOrName: string, config: Config): Promise<Org | null> {
     const org = await getOrgContract(addressOrName, config);
 
     try {
       const [owner, resolved] = await resolveOrgOwner(org);
 
-      const safe = await utils.getSafe(owner, config);
       // If what is resolved is not the same as the input, it's because we
       // were given a name.
       if (utils.isAddressEqual(addressOrName, resolved)) {
-        return new Org(resolved, owner, null, safe);
+        return new Org(resolved, owner, null, null);
       } else {
-        return new Org(resolved, owner, addressOrName, safe);
+        return new Org(resolved, owner, addressOrName, null);
       }
     } catch (e) {
       console.error(e);
       return null;
     }
-  }
-
-  static async getOrgsByMember(owner: string, config: Config): Promise<Org[]> {
-    type Safe = { id: string; owners: string[]; threshold: number };
-
-    // TODO: We use two subgraph queries since we can't do a filter query yet in the subgraph
-    // https://github.com/graphprotocol/graph-node/issues/2539#issuecomment-855979841
-    const safesByOwner = await utils.querySubgraph(
-      config.orgs.subgraph,
-      GetSafesByOwners,
-      { owners: [owner] },
-    );
-
-    let safes = [];
-    if (safesByOwner && safesByOwner.safes.length > 0) {
-      safes = safesByOwner.safes.reduce(
-        (prev: any, curr: Safe) => prev.concat(curr.id),
-        [],
-      );
-    }
-
-    const orgsByOwner = await utils.querySubgraph(
-      config.orgs.subgraph,
-      GetOrgsByOwners,
-      { owners: [...safes, owner] },
-    );
-    let orgs: { id: string; owner: string }[] = [];
-    if (orgsByOwner && orgsByOwner.orgs) {
-      orgs = [...orgsByOwner.orgs];
-    }
-
-    return orgs.map(o => new Org(o.id, o.owner));
   }
 }
 
