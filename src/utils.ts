@@ -16,7 +16,6 @@ import { getAddress, getResolver } from "@app/base/registrations/registrar";
 import {
   getAvatar,
   getSeed,
-  getAnchorsAccount,
   getRegistration,
 } from "@app/base/registrations/registrar";
 import { ProfileType } from "@app/profile";
@@ -493,13 +492,12 @@ export async function resolveEnsProfile(
 
       if (profileType === ProfileType.Project) {
         promises.push(getSeed(name, config, resolver));
-        promises.push(getAnchorsAccount(name, config, resolver));
       } else if (profileType === ProfileType.Minimal) {
         promises.push(Promise.resolve(null));
       }
 
       const project = await Promise.allSettled(promises);
-      const [avatar, address, seed, anchorsAccount] =
+      const [avatar, address, seed] =
         // Just checking for r.value equal null and casting to undefined,
         // since resolver functions return null.
         project.filter(isFulfilled).map(r => (r.value ? r.value : null));
@@ -509,7 +507,6 @@ export async function resolveEnsProfile(
         avatar,
         address,
         seed,
-        anchorsAccount,
       };
     }
   }

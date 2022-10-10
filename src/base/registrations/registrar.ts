@@ -22,7 +22,6 @@ export interface EnsProfile {
   owner?: string;
   address?: string;
   seed?: Seed | InvalidSeed;
-  anchorsAccount?: string;
   url?: string;
   avatar?: string;
   twitter?: string;
@@ -88,7 +87,6 @@ export async function getRegistration(
     getText(resolver, "eth.radicle.seed.host"),
     getText(resolver, "eth.radicle.seed.git"),
     getText(resolver, "eth.radicle.seed.api"),
-    getText(resolver, "eth.radicle.anchors"),
     getText(resolver, "com.twitter"),
     getText(resolver, "com.github"),
   ]);
@@ -102,7 +100,6 @@ export async function getRegistration(
     seedHost,
     seedGit,
     seedApi,
-    anchorsAccount,
     twitter,
     github,
   ] = meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
@@ -112,7 +109,6 @@ export async function getRegistration(
     id,
     url,
     avatar,
-    anchorsAccount,
     address,
     twitter,
     github,
@@ -151,20 +147,6 @@ export async function getAvatar(
     return null;
   }
   return getText(resolver, "avatar");
-}
-
-export async function getAnchorsAccount(
-  name: string,
-  config: Config,
-  resolver?: EnsResolver | null,
-): Promise<string | null> {
-  name = name.toLowerCase();
-
-  resolver = resolver ?? (await getResolver(name, config));
-  if (!resolver) {
-    return null;
-  }
-  return getText(resolver, "eth.radicle.anchors");
 }
 
 export async function getSeed(

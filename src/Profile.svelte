@@ -310,18 +310,6 @@
             <div class="desktop" />
           {/if}
         {/await}
-      {:else}
-        <!-- Project anchors -->
-        {#if profile.anchorsAccount}
-          <div class="label">Anchors</div>
-          <div class="desktop">
-            <Address {config} address={profile.anchorsAccount} />
-          </div>
-          <div class="mobile">
-            <Address compact {config} address={profile.anchorsAccount} />
-          </div>
-          <div class="desktop" />
-        {/if}
       {/if}
       <!-- Org Name/Profile -->
       <div class="label">Profile</div>

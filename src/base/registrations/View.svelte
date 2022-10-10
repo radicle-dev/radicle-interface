@@ -149,16 +149,6 @@
           value: r.profile.seed?.id ?? "",
           editable: true,
         },
-        {
-          name: "anchors",
-          label: "Anchors",
-          validate: "URN",
-          placeholder: "URN, eg. eip155:1:0x4a9cf21…",
-          description:
-            "URN under which associated project anchors can be found.",
-          value: r.profile.anchorsAccount ?? "",
-          editable: true,
-        },
       ];
       state = { status: Status.Found, registration: r, owner };
     } else {

@@ -46,7 +46,6 @@ export async function setRecords(
       case "seed.host":
       case "seed.git":
       case "seed.api":
-      case "anchors":
         calls.push(
           iface.encodeFunctionData("setText", [
             node,

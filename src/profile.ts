@@ -97,23 +97,6 @@ export class Profile {
     return this.profile?.ens?.seed ?? null;
   }
 
-  get anchorsAccount(): string | undefined {
-    const addr = this.profile?.ens?.anchorsAccount;
-
-    if (addr) {
-      const [namespace, reference, address] = addr.split(":");
-      const id = { chainId: { namespace, reference }, address };
-
-      // Ethereum address.
-      if (typeof id.chainId === "object" && id.chainId.namespace === "eip155") {
-        return id.address;
-      }
-      if (typeof id.chainId === "string" && /^eip155/.test(id.chainId)) {
-        return id.address;
-      }
-    }
-  }
-
   // Get the name, and if not available, the address.
   get nameOrAddress(): string {
     return this.name ?? this.address;
