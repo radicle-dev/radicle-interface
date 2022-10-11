@@ -36,12 +36,6 @@ const config: UserConfig = {
     alias: {
       "@public": path.resolve("./public"),
       "@app": path.resolve("./src"),
-      "typedarray-to-buffer": path.resolve(
-        "./src/polyfills/typedarray-to-buffer.js",
-      ),
-      // "Buffer" is not defined in the published package..
-      "@walletconnect/encoding": path.resolve("./src/polyfills/enc-utils.js"),
-      "enc-utils": path.resolve("./src/polyfills/enc-utils.js"),
     },
   },
   define: {
