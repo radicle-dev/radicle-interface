@@ -11,45 +11,12 @@ describe("Conversions", () => {
 
 describe("Format functions", () => {
   test.each([
-    {
-      cid: "Qm1234567890123456789012345678901234567890",
-      expected:
-        "https://ipfs.io/ipfs/Qm1234567890123456789012345678901234567890",
-    },
-    { cid: undefined, expected: undefined },
-  ])("formatIpfsFile $cid => $expected", ({ cid, expected }) => {
-    expect(utils.formatIpfsFile(cid)).toEqual(expected);
-  });
-
-  test.each([
     { amount: "1000", digits: 2, expected: "10.0" },
     { amount: "10000000000000000000", expected: "10.0" },
   ])("formatBalance", ({ amount, digits, expected }) => {
     expect(utils.formatBalance(BigNumber.from(amount), digits)).toEqual(
       expected,
     );
-  });
-
-  test("formatRadicleId", () => {
-    expect(
-      utils.formatRadicleId(
-        new Uint8Array([
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 156, 38, 115, 99, 61, 118, 237,
-          10, 20, 115, 111, 188, 10, 117, 137, 59, 107, 76, 77, 86,
-        ]),
-      ),
-    ).toEqual("rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy");
-  });
-
-  test("formatProjectHash", () => {
-    expect(
-      utils.formatProjectHash(
-        new Uint8Array([
-          17, 20, 69, 234, 87, 208, 172, 127, 33, 22, 110, 216, 52, 69, 104,
-          219, 88, 66, 50, 152, 115, 23,
-        ]),
-      ),
-    ).toEqual("45ea57d0ac7f21166ed8344568db584232987317");
   });
 
   test.each([
@@ -105,16 +72,6 @@ describe("Format functions", () => {
     },
   ])("parseEmoji $input => $expected", ({ input, expected }) => {
     expect(utils.parseEmoji(input)).toEqual(expected);
-  });
-
-  test.each([
-    {
-      hash: "0x8f918133b56bb85c18ea192549503f0ea59e3beb1f88023f442656c660018e3a",
-      expected: "0x8f91…8e3a",
-    },
-    { hash: "0x8f91813", expected: "0x8f91813" }, // If the string length is less than 10 characters the entire string is returned.
-  ])("formatHash $hash => $expected", ({ hash, expected }) => {
-    expect(utils.formatHash(hash)).toEqual(expected);
   });
 
   test.each([
@@ -197,19 +154,6 @@ describe("String Assertions", () => {
   ])("isUrl $url => $expected", ({ url, expected }) => {
     expect(utils.isUrl(url)).toBe(expected);
   });
-
-  test.each([
-    {
-      did: "did:3:kjzl6cwe1jw1481xu9oyww9bhmueqr8f5uryk4xha9jzhj6vi063e0blpnil383",
-      expected: true,
-    },
-    {
-      did: "did:kjzl6cwe1jw1481xu9oyww9bhmueqr8f5uryk4xha9jzhj6vi063e0blpnil383",
-      expected: false,
-    },
-  ])("isDid $did => $expected", ({ did, expected }) => {
-    expect(utils.isDid(did)).toBe(expected);
-  });
 });
 
 describe("Others", () => {
@@ -258,25 +202,6 @@ describe("Others", () => {
         },
       } as Config),
     ).toEqual(expected);
-  });
-
-  test.each([
-    {
-      id: "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
-      expected: new Uint8Array([
-        156, 38, 115, 99, 61, 118, 237, 10, 20, 115, 111, 188, 10, 117, 137, 59,
-        107, 76, 77, 86,
-      ]),
-    },
-    {
-      id: "hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
-      expected: new Uint8Array([
-        156, 38, 115, 99, 61, 118, 237, 10, 20, 115, 111, 188, 10, 117, 137, 59,
-        107, 76, 77, 86,
-      ]),
-    },
-  ])("decodeRadicleId", ({ id, expected }) => {
-    expect(utils.decodeRadicleId(id)).toEqual(expected);
   });
 });
 

@@ -52,8 +52,6 @@
     "lru-cache": "^7.14.0",
     "marked": "^4.1.0",
     "md5": "^2.3.0",
-    "multibase": "^4.0.4",
-    "multihashes": "^4.0.2",
     "pure-svg-code": "^1.0.6",
     "siwe": "^2.0.5",
     "svelte": "^3.50.1",

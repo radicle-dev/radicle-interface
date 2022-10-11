@@ -2,11 +2,8 @@ import { ethers } from "ethers";
 import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
-import multibase from "multibase";
 import katex from "katex";
-import multihashes from "multihashes";
 import type { Config } from "@app/config";
-import config from "@app/config.json";
 import { assert } from "@app/error";
 import type { EnsProfile } from "@app/base/registrations/registrar";
 import { getAddress, getResolver } from "@app/base/registrations/registrar";
@@ -32,13 +29,6 @@ export interface Safe {
   address: string;
   owners: string[];
   threshold: number;
-}
-
-export interface SafeTransaction {
-  to: string;
-  value: string;
-  data: string;
-  operation: number;
 }
 
 export interface Token {
@@ -116,20 +106,8 @@ export function formatLocationHash(hash: string | null): number | null {
   return null;
 }
 
-export function formatIssueId(id: string): string {
-  return id.substring(0, 11);
-}
-
 export function formatSeedId(id: string): string {
   return id.substring(0, 6) + "…" + id.substring(id.length - 6, id.length);
-}
-
-export function removePrefix(hash: string): string {
-  if (!hash.startsWith("0x")) {
-    return hash;
-  }
-
-  return hash.substring(2);
 }
 
 export function formatRadicleUrn(id: string): string {
@@ -150,19 +128,6 @@ export function formatAddress(input: string): string {
 
   return (
     addr.substring(0, 4) + " – " + addr.substring(addr.length - 4, addr.length)
-  );
-}
-
-export function formatIpfsFile(ipfs: string | undefined): string | undefined {
-  if (ipfs) return `${config.ipfs.gateway}${ipfs.replace("ipfs://", "")}`;
-  return undefined;
-}
-
-// If the string is less than 10 characters the entire string is returned.
-export function formatHash(hash: string): string {
-  if (hash.length < 10) return hash;
-  return (
-    hash.substring(0, 6) + "…" + hash.substring(hash.length - 4, hash.length)
   );
 }
 
@@ -306,11 +271,6 @@ export function isUrl(input: string): boolean {
   return /^https?:\/\//.test(input);
 }
 
-// Check whether the input is a DID
-export function isDid(input: string): boolean {
-  return /^did:[a-zA-Z0-9]+:[a-zA-Z0-9]+$/.test(input);
-}
-
 export function isENSName(input: string, config: Config): boolean {
   const domain = config.registrar.domain.replace(".", "\\.");
   const regEx = new RegExp(`^[a-zA-Z0-9]+.(${domain}|eth)$`);
@@ -358,19 +318,6 @@ export function formatName(input: string, config: Config): string {
   return parseEnsLabel(input, config);
 }
 
-// Create a Radicle ID from a root hash.
-export function formatRadicleId(hash: Uint8Array): string {
-  // Remove any zero-padding from the byte array. SHA1 is 20 bytes long.
-  const sha1Bytes = 20;
-  const suffix = hash.slice(hash.length - sha1Bytes);
-
-  // Create a multihash by adding prefix 17 for SHA-1 and 20 for the hash length.
-  const multihash = new Uint8Array([17, 20, ...suffix]);
-  const payload = multibase.encode("base32z", multihash);
-
-  return `rad:git:${new TextDecoder().decode(payload)}`;
-}
-
 // Parse a Radicle Id (URN).
 export function parseRadicleId(urn: string): string {
   return urn.replace(/^rad:[a-z]+:/, "");
@@ -379,21 +326,6 @@ export function parseRadicleId(urn: string): string {
 // Get amount of days passed between two dates without including the end date
 export function getDaysPassed(from: Date, to: Date): number {
   return Math.floor((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
-}
-
-// Decode a Radicle Id (URN).
-export function decodeRadicleId(urn: string): Uint8Array {
-  const encoded = parseRadicleId(urn);
-  const multihash = multibase.decode(encoded);
-  const hash = multihashes.decode(multihash);
-
-  return hash.digest;
-}
-
-// Create a project hash from a hash and format.
-export function formatProjectHash(multihash: Uint8Array): string {
-  const decoded = multihashes.decode(multihash);
-  return ethers.utils.hexlify(decoded.digest).replace(/^0x/, "");
 }
 
 export function parseEmoji(input: string): string {
@@ -426,27 +358,6 @@ export async function identifyAddress(
     return AddressType.Contract;
   }
   return AddressType.EOA;
-}
-
-// Resolve a label under the radicle domain.
-export async function resolveLabel(
-  label: string | undefined,
-  config: Config,
-): Promise<string | null> {
-  if (label) return config.provider.resolveName(label);
-  return null;
-}
-
-export async function resolveMultiLabel(
-  labels: string[],
-  config: Config,
-): Promise<Record<string, string | null>> {
-  const addresses = await Promise.all(
-    labels.map(label => config.provider.resolveName(label)),
-  );
-  return labels.reduce((arr, curr, index) => {
-    return { ...arr, [curr]: addresses[index] };
-  }, {});
 }
 
 // Resolves an ENS profile or return null
@@ -566,22 +477,6 @@ export function gravatarURL(email: string): string {
   const hash = md5(address);
 
   return `https://www.gravatar.com/avatar/${hash}`;
-}
-
-export class EthSignSignature {
-  signer: string;
-  data: string;
-
-  constructor(signer: string, signature: string) {
-    this.signer = signer;
-    this.data = signature;
-  }
-  staticPart(): string {
-    return this.data;
-  }
-  dynamicPart(): string {
-    return "";
-  }
 }
 
 export const getCode = cache.cached(
