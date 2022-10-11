@@ -2,7 +2,7 @@
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
   import Dropdown from "@app/Dropdown.svelte";
-  import Floating from "@app/Floating.svelte";
+  import Floating, { closeFocused } from "@app/Floating.svelte";
   import ToggleButton from "@app/ToggleButton.svelte";
 
   import type { Revision } from "@app/patch";
@@ -30,6 +30,7 @@
   }));
 
   const onRevisionChange = ({ detail }: { detail: string }) => {
+    closeFocused();
     dispatch("revisionChanged", detail);
   };
 
