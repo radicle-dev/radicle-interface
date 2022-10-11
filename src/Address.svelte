@@ -3,7 +3,6 @@
   import { link } from "svelte-routing";
   import { ethers } from "ethers";
   import {
-    safeLink,
     explorerLink,
     identifyAddress,
     formatAddress,
@@ -99,11 +98,6 @@
       <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
       {#if !noBadge}
         <Badge variant="foreground">org</Badge>
-      {/if}
-    {:else if addressType === AddressType.Safe}
-      <a href={safeLink(address, config)} target="_blank">{addressLabel}</a>
-      {#if !noBadge}
-        <Badge variant="caution">safe</Badge>
       {/if}
     {:else if addressType === AddressType.Contract}
       <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>

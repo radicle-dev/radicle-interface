@@ -159,32 +159,6 @@ describe("String Assertions", () => {
 describe("Others", () => {
   test.each([
     {
-      viewer: "https://gnosis-safe.io/app/#/safes",
-      name: "",
-      expected:
-        "https://gnosis-safe.io/app/#/safes/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-    {
-      viewer: null,
-      name: "",
-      expected:
-        "https://etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-  ])("safeLink $viewer => $expected", ({ name, viewer, expected }) => {
-    expect(
-      utils.safeLink("0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0", {
-        network: {
-          name,
-        },
-        safe: {
-          viewer,
-        },
-      } as Config),
-    ).toEqual(expected);
-  });
-
-  test.each([
-    {
       name: "rinkeby",
       expected:
         "https://rinkeby.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",

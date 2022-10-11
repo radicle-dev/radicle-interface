@@ -21,14 +21,7 @@ import emojis from "@app/emojis";
 export enum AddressType {
   Contract,
   Org,
-  Safe,
   EOA,
-}
-
-export interface Safe {
-  address: string;
-  owners: string[];
-  threshold: number;
 }
 
 export interface Token {
@@ -303,14 +296,6 @@ export function explorerLink(addr: string, config: Config): string {
     return `https://rinkeby.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
-}
-
-// Get the Gnosis Safe link of an address, eg. Etherscan.
-export function safeLink(addr: string, config: Config): string {
-  if (config.safe.viewer) {
-    return `${config.safe.viewer}/${addr}`;
-  }
-  return explorerLink(addr, config);
 }
 
 // Format a name.

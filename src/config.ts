@@ -45,10 +45,6 @@ export class Config {
         connected: false;
         signer: (ethers.Signer & TypedDataSigner) | null;
       };
-  safe: {
-    api?: string;
-    viewer: string | null;
-  };
   abi: { [contract: string]: string[] };
   seed: {
     api: { port: number };
@@ -97,7 +93,6 @@ export class Config {
     this.radToken = cfg.radToken;
     this.reverseRegistrar = cfg.reverseRegistrar;
     this.users = cfg.users;
-    this.safe = cfg.safe;
     this.provider = provider;
     this.signer = null;
     this.projects = config.projects;
