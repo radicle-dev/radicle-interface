@@ -52,6 +52,7 @@
 <svelte:window on:click={clickOutside} />
 
 <div bind:this={thisComponent}>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     on:click={toggle}
     class="toggle"
@@ -61,6 +62,7 @@
 
   {#if expanded}
     {#if overlay}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div class="overlay" on:click={toggle} />
     {/if}
     <slot name="modal" />

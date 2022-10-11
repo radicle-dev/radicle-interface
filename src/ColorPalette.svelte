@@ -164,6 +164,7 @@
 <svelte:window on:keydown={onKeydown} on:click={clickOutside} />
 
 {#if show}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     bind:this={thisComponent}
     class="container"

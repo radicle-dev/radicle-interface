@@ -106,6 +106,7 @@
   {/if}
   <span>
     {#if seed.api.host}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
@@ -114,6 +115,7 @@
       </div>
     {/if}
   </span>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
     class:active={content === ProjectContent.History}
@@ -122,6 +124,7 @@
     commit(s)
   </div>
   {#if project.issues}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
       class:active={content === ProjectContent.Issues}
@@ -133,6 +136,7 @@
     </div>
   {/if}
   {#if project.patches}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
       class:active={content === ProjectContent.Patches}

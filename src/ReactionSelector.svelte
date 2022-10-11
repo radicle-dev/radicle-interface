@@ -51,6 +51,7 @@
 <div class="selector">
   <Icon name="ellipsis" />
   {#if showReactions}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="modal">
       {#each config.reactions as reaction}
         <div on:click={() => dispatch("select", reaction)}>

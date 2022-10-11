@@ -74,6 +74,7 @@
   {#if filteredIssues.length}
     <div class="issues-list">
       {#each sortedIssues as issue}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="teaser"
           on:click={() => {

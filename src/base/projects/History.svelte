@@ -88,6 +88,7 @@
           </header>
           <div class="commit-group-headers">
             {#each group.commits as commit (commit.header.sha1)}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
                 on:click={() =>

@@ -47,6 +47,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="theme-button"
   role="button"

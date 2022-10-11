@@ -21,6 +21,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <svg
   role="img"
   on:click

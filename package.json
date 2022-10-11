@@ -54,7 +54,7 @@
     "md5": "^2.3.0",
     "pure-svg-code": "^1.0.6",
     "siwe": "^2.0.5",
-    "svelte": "^3.50.1",
+    "svelte": "^3.51.0",
     "svelte-preprocess": "^4.10.7",
     "svelte-routing": "^1.6.0",
     "util": "^0.12.4"

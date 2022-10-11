@@ -109,6 +109,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <article on:click class:project-faded={faded} class:compact>
   <div class="left">
     <div class="id">

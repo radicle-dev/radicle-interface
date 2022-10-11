@@ -38,6 +38,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <span class="clipboard" class:small on:click|stopPropagation={copy}>
   {#if small}
     <Icon name="clipboard-small" />

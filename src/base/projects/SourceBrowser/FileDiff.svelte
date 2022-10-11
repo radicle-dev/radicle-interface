@@ -114,6 +114,7 @@
 </style>
 
 <article id={file.path} class="changeset-file">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <header class="file-header" on:click={collapse}>
     <div class="actions">
       <p class="txt-regular">{file.path}</p>

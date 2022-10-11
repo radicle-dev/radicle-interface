@@ -50,6 +50,7 @@
 <div class="dropdown">
   {#each items as { key, value, badge, title }}
     {#if key && value}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="dropdown-item"
         class:selected={value === selected}

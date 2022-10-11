@@ -61,6 +61,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="folder" on:click={onClick}>
   <span class="folder-name">{name}/</span>
 </div>

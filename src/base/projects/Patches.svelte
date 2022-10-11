@@ -71,6 +71,7 @@
   {#if filteredPatches.length}
     <div class="patches-list">
       {#each filteredPatches as patch}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="teaser"
           on:click={() => {
