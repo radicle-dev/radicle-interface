@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import * as proj from "@app/project";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";

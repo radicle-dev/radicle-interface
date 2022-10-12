@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from "@app/Modal.svelte";
-  import { link } from "svelte-routing";
+  import { link } from "@app/router";
   import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
   import type { Config } from "@app/config";
   import Address from "@app/Address.svelte";

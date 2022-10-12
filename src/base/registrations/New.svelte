@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import { formatAddress } from "@app/utils";
   import { session } from "@app/session";
   import type { Config } from "@app/config";

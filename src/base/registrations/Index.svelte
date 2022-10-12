@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Config } from "@app/config";
 
   import TextInput from "@app/TextInput.svelte";

@@ -1,4 +1,4 @@
-import { navigate } from "svelte-routing";
+import { navigate } from "@app/router";
 import { get, writable } from "svelte/store";
 import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
