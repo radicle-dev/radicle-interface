@@ -292,8 +292,8 @@ export function getSearchParam(
 
 // Get the explorer link of an address, eg. Etherscan.
 export function explorerLink(addr: string, config: Config): string {
-  if (config.network.name === "rinkeby") {
-    return `https://rinkeby.etherscan.io/address/${addr}`;
+  if (config.network.name === "goerli") {
+    return `https://goerli.etherscan.io/address/${addr}`;
   }
   return `https://etherscan.io/address/${addr}`;
 }

@@ -21,7 +21,9 @@
   const registrationOwner = owner || session.address;
 
   const view = () =>
-    navigate(`/registrations/${name}.radicle.eth`, { state: { retry: true } });
+    navigate(`/registrations/${name}.${config.registrar.domain}`, {
+      state: { retry: true },
+    });
 
   onMount(async () => {
     try {

@@ -2,7 +2,7 @@
   import type { Config } from "@app/config";
 
   import { session } from "@app/session";
-  import { setOpenGraphMetaTag, toWei } from "@app/utils";
+  import { setOpenGraphMetaTag, toWei, capitalize } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
   import { navigate } from "svelte-routing";
   import {
@@ -22,7 +22,7 @@
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Faucet" },
-    { prop: "og:description", content: "Rinkeby Testnet Faucet" },
+    { prop: "og:description", content: "Goerli Testnet Faucet" },
     { prop: "og:url", content: window.location.href },
   ]);
 
@@ -120,14 +120,14 @@
 <main>
   <div class="title">
     Obtain RAD tokens on <span class="txt-bold">
-      {config.network.name}
+      {capitalize(config.network.name)}
     </span>
   </div>
 
   {#if config.network.name === "homestead"}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {config.network.name},
+        {capitalize(config.network.name)},
       </span>
       please
       <br />
@@ -140,7 +140,7 @@
   {:else if !$session}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {config.network.name}
+        {capitalize(config.network.name)}
       </span>
       &#8203;,
       <br />

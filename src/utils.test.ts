@@ -159,9 +159,9 @@ describe("String Assertions", () => {
 describe("Others", () => {
   test.each([
     {
-      name: "rinkeby",
+      name: "goerli",
       expected:
-        "https://rinkeby.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
+        "https://goerli.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
     },
     {
       name: "",

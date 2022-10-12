@@ -86,8 +86,8 @@
   <div class="subtitle">
     Register a unique name with our ENS registrar, under <br />
     the
-    <span class="txt-bold">radicle.eth</span>
-    domain (e.g. cloudhead.radicle.eth).
+    <span class="txt-bold">{config.registrar.domain}</span>
+    domain (e.g. cloudhead.{config.registrar.domain}).
     <br />
     Radicle names never expire and free to register.
   </div>

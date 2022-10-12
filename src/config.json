@@ -16,20 +16,20 @@
     "tokens": [],
     "alchemy": { "key": "cQFlLK8EokIGlJhd_soImwEyUoC7Ec8r" }
   },
-  "rinkeby": {
+  "goerli": {
     "registrar": {
-      "domain": "radicle.eth",
-      "address": "0x80b68878442b6510D768Be1bd88712710B86eAcD"
+      "domain": "radicle-goerli.eth",
+      "address": "0xD88303A92577bFDF5A82FddeF342F3A27A972405"
     },
     "radToken": {
-      "address": "0x7b6CbebC5646D996d258dcD4ca1d334B282e9948",
-      "faucet": "0x9Aa75397eD632A3060aCb5dE7f96e2457bceED8d"
+      "address": "0x3EE94D192397aAFAe438C9803825eb1Aa4402e09",
+      "faucet": "0xc627191d2BB8839eAcbb7191f9500B84d201A066"
     },
     "users": {
       "pinned": []
     },
     "reverseRegistrar": {
-      "address": "0x6F628b68b30Dc3c17f345c9dbBb1E483c2b7aE5c"
+      "address": "0xD5610A08E370051a01fdfe4bB3ddf5270af1aA48"
     },
     "tokens": [],
     "alchemy": { "key": "1T6h-0rxu7SRzKEtmukIoxaJOXazLDNs" }

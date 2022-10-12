@@ -5,6 +5,7 @@ import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import WalletConnect from "@walletconnect/client";
 import config from "@app/config.json";
 import { WalletConnectSigner } from "./WalletConnectSigner";
+import { capitalize } from "@app/utils";
 
 declare global {
   interface Window {
@@ -241,7 +242,11 @@ export async function getConfig(): Promise<Config> {
 
   const networkConfig = (<Record<string, any>>config)[network.name];
   if (!networkConfig) {
-    throw new Error(`Network ${network.name} is not supported`);
+    throw new Error(
+      `${capitalize(
+        network.name,
+      )} is not supported. Connect to Homestead or Goerli instead.`,
+    );
   }
 
   const provider = getProvider(network, networkConfig, metamask);
