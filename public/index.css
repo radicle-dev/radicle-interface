@@ -60,10 +60,6 @@ body {
   }
 }
 
-::-moz-selection {
-  background: var(--color-primary);
-  color: var(--color-background);
-}
 ::selection {
   background: var(--color-primary);
   color: var(--color-background);
@@ -87,11 +83,6 @@ body {
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
   background-color: var(--color-foreground-4);
-}
-
-.error::selection,
-.error ::selection {
-  background: var(--color-negative);
 }
 
 main {
@@ -121,18 +112,6 @@ a.link.primary:hover {
 }
 a.address {
   border-bottom-color: transparent;
-}
-
-.error {
-  color: var(--color-negative) !important;
-  border-color: var(--color-negative) !important;
-}
-.error-message {
-  background-color: var(--color-negative-2);
-  word-wrap: break-word;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-  padding: 1rem;
 }
 .off-centered {
   height: 100%;

@@ -51,6 +51,18 @@
 </script>
 
 <style>
+  .error {
+    color: var(--color-negative);
+    background-color: var(--color-negative-2);
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    padding: 1rem;
+  }
+  .error::selection,
+  .error ::selection {
+    background-color: var(--color-negative);
+  }
   .content {
     padding: 0 2rem 0 8rem;
   }
@@ -93,8 +105,8 @@
       </Async>
     {/if}
   {:catch err}
-    <div class="container center-content">
-      <div class="error error-message txt-tiny">
+    <div class="content">
+      <div class="error txt-tiny">
         <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
         API request to

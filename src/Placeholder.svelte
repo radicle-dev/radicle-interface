@@ -4,11 +4,14 @@
 
 <style>
   .placeholder {
-    text-align: center;
-    border-radius: var(--border-radius-small);
-    padding-bottom: 2rem;
-    color: var(--color-foreground-5) !important;
     background-color: var(--color-foreground-1);
+    border-radius: var(--border-radius-small);
+    color: var(--color-foreground-5);
+    overflow-x: hidden;
+    padding: 1rem 1rem 2rem 1rem;
+    text-align: center;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
   }
   .placeholder header {
     padding: 1rem 0;
@@ -19,7 +22,7 @@
   }
 </style>
 
-<div class="error error-message placeholder">
+<div class="placeholder">
   <header>
     <div class="icon txt-large">{icon}</div>
     <slot name="title" />

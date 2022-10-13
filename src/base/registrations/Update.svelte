@@ -63,10 +63,8 @@
     {:else if state.status === Status.Success}
       <p>Your registration was successfully updated.</p>
     {:else if state.status === Status.Failed}
-      <p class="error">
-        <span class="txt-bold">Error:</span>
-        {state.error}
-      </p>
+      <span class="txt-bold">Error:</span>
+      {state.error}
     {/if}
   </span>
   <span slot="actions">
@@ -75,7 +73,7 @@
     {:else if state.status === Status.Success}
       <Button variant="foreground" on:click={onDone}>Done</Button>
     {:else if state.status === Status.Failed}
-      <Button variant="foreground" on:click={onClose}>Close</Button>
+      <Button variant="negative" on:click={onClose}>Close</Button>
     {/if}
   </span>
 </Modal>

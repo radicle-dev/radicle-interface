@@ -8,8 +8,8 @@
 </script>
 
 <style>
-  .modal-floating,
-  .modal-overlay {
+  .floating,
+  .overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -17,13 +17,13 @@
     height: 100%;
     overflow: hidden;
   }
-  .modal-floating {
+  .floating {
     z-index: 300;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .modal-overlay {
+  .overlay {
     z-index: 200;
     background-color: #00000075;
   }
@@ -37,27 +37,18 @@
     max-width: 760px;
     text-align: center;
   }
-  .modal.error {
-    box-shadow: var(--elevation-high-negative);
-  }
-  .modal.error .modal-title,
-  .modal.error .modal-subtitle,
-  .modal.error .modal-body,
-  .modal.error .modal-actions {
-    color: var(--color-negative);
-  }
-  .modal.modal-narrow {
+  .narrow {
     max-width: 600px;
   }
-  .modal.modal-subtle {
+  .subtle {
     border: none;
     box-shadow: none;
     background: radial-gradient(var(--glow) 0%, transparent 70%);
   }
-  .modal.modal-subtle.error {
+  .subtle.error {
     background: radial-gradient(var(--glow-error) 0%, transparent 70%);
   }
-  .modal-title {
+  .title {
     color: var(--color-foreground);
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-bold);
@@ -67,28 +58,37 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  .modal-subtitle {
+  .subtitle {
     color: var(--color-secondary);
     font-size: var(--font-size-regular);
     max-width: 90%;
     margin: 0 auto;
     line-height: 1.5;
   }
-  .modal-body {
+  .body {
     color: var(--color-foreground);
     font-size: var(--font-size-regular);
     overflow-x: hidden;
     text-overflow: ellipsis;
     margin: 3rem 0;
   }
-  .modal-actions {
+  .actions {
     padding-top: 0.5rem;
     margin-top: 2rem;
     text-align: center;
   }
-  .modal-small .modal-subtitle {
+  .small .subtitle {
     color: var(--color-foreground);
   }
+  .error {
+    box-shadow: var(--elevation-high-negative);
+    border-color: var(--color-negative);
+  }
+
+  .error > * {
+    color: var(--color-negative);
+  }
+
   @media (max-width: 720px) {
     .modal {
       width: 90%;
@@ -98,28 +98,23 @@
 </style>
 
 {#if floating}
-  <div class="modal-overlay" />
+  <div class="overlay" />
 {/if}
 
-<div class:modal-floating={floating} class:off-centered={!center}>
-  <div
-    class="modal"
-    class:error
-    class:modal-subtle={subtle}
-    class:modal-narrow={narrow}
-    class:modal-small={small}>
-    <div class="modal-title">
+<div class:floating class:off-centered={!center}>
+  <div class="modal" class:subtle class:narrow class:small class:error>
+    <div class="title">
       <slot name="title" />
     </div>
-    <div class="modal-subtitle">
+    <div class="subtitle">
       <slot name="subtitle" />
     </div>
     {#if $$slots.body && !small}
-      <div class="modal-body">
+      <div class="body">
         <slot name="body" />
       </div>
     {/if}
-    <div class="modal-actions">
+    <div class="actions">
       <slot name="actions" />
     </div>
   </div>
