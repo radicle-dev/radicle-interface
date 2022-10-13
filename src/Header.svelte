@@ -20,7 +20,6 @@
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
   import { disconnectWallet } from "@app/session";
-  import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
 
   export let session: Session | null;
@@ -65,20 +64,6 @@
     height: var(--button-regular-height);
     align-items: center;
     margin-right: 0.5rem;
-  }
-  .error {
-    text-align: center;
-    color: var(--color-negative);
-    border: 1px solid var(--color-negative);
-    padding: 0.5rem;
-  }
-  .error a {
-    color: var(--color-negative);
-    text-decoration: none;
-    border-bottom: dotted var(--color-negative) 1px;
-  }
-  .error a:hover {
-    text-decoration: none;
   }
   .search {
     width: 16rem;
@@ -147,22 +132,6 @@
     color: var(--color-foreground);
   }
 </style>
-
-{#if $error}
-  {#if $error.type === Failure.TransactionFailed}
-    <div class="error">
-      {#if $error.message}
-        <span class="txt-bold">Error:</span>
-        {$error.message}
-      {:else if $error.txHash}
-        <span class="txt-bold">Error:</span>
-        Transaction
-        <a href="https://etherscan.io/tx/{$error.txHash}">{$error.txHash}</a>
-        failed.
-      {/if}
-    </div>
-  {/if}
-{/if}
 
 <header>
   <div class="left">

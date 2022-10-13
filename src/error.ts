@@ -1,5 +1,3 @@
-import { writable } from "svelte/store";
-
 export interface Err {
   type: Failure;
   txHash?: string;
@@ -11,8 +9,6 @@ export enum Failure {
   NotAuthenticated = 2,
   InsufficientBalance = 3,
 }
-
-export const error = writable<Err | null>(null);
 
 export class Unreachable extends Error {
   constructor(value?: never) {
