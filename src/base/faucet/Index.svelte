@@ -132,7 +132,9 @@
       please
       <br />
       check
-      <a class="link" href="https://docs.radicle.xyz/get-involved/obtain-rad">
+      <a
+        href="https://docs.radicle.xyz/get-involved/obtain-rad"
+        class="txt-link">
         popular exchanges
       </a>
       &#8203;.

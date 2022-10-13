@@ -35,14 +35,14 @@
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span>
-        <a href="/seeds/{formatSeedHost(seed.host)}" class="link">
+        <a href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
           {formatSeedId(seed.id)}@{seed.host}
         </a>
       </span>
       <span class="txt-faded">:{port}</span>
     {:else}
       <span>
-        <a href="/seeds/{formatSeedHost(seed.host)}" class="link">
+        <a href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
           {formatSeedHost(seed.host)}
         </a>
       </span>

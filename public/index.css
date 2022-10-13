@@ -93,26 +93,12 @@ a {
   color: inherit;
   text-decoration: none;
 }
-a.link {
-  color: var(--color-foreground-6);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--color-foreground-5);
-}
-a.link:hover {
+
+a:hover {
   color: var(--color-foreground);
   border-bottom-color: var(--color-foreground);
 }
-a.link.primary {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary-5);
-}
-a.link.primary:hover {
-  color: var(--color-primary-5);
-  border-bottom-color: var(--color-primary-5);
-}
-a.address {
-  border-bottom-color: transparent;
-}
+
 .off-centered {
   height: 100%;
   padding-top: 5rem;

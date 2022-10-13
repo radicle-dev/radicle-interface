@@ -1,11 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { link, navigate } from "svelte-routing";
   import type { Config } from "@app/config";
   import type { ethers } from "ethers";
   import { session } from "@app/session";
   import Loading from "@app/Loading.svelte";
-  import Link from "@app/Link.svelte";
   import Modal from "@app/Modal.svelte";
   import Form from "@app/Form.svelte";
   import type { Field } from "@app/Form.svelte";
@@ -205,6 +204,14 @@
     justify-content: left;
     margin-bottom: 2rem;
   }
+  .register {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary-5);
+  }
+  .register:hover {
+    color: var(--color-primary-5);
+    border-bottom-color: var(--color-primary-5);
+  }
   main > header > * {
     margin: 0 1rem 0 0;
   }
@@ -244,7 +251,12 @@
     </span>
 
     <span slot="actions">
-      <Link to={`/registrations/${domain}/form`} primary>Register &rarr;</Link>
+      <a
+        use:link
+        href={`/registrations/${domain}/form`}
+        class="txt-link register">
+        Register &rarr;
+      </a>
     </span>
   </Modal>
 {:else if state.status === Status.Found}

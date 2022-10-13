@@ -215,7 +215,7 @@
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">
             {#if profile.name && profile.ens}
-              <a href={`/registrations/${profile.ens.name}`} class="link">
+              <a href={`/registrations/${profile.ens.name}`} class="txt-link">
                 {profile.name}
               </a>
             {:else}
@@ -227,7 +227,7 @@
         <!-- User Profile -->
         <div>
           {#if profile.name && profile.ens}
-            <a href={`/registrations/${profile.ens.name}`} class="link">
+            <a href={`/registrations/${profile.ens.name}`} class="txt-link">
               {profile.name}
             </a>
           {:else}

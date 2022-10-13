@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { link } from "svelte-routing";
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
-  import { Link } from "svelte-routing";
   import { formatSeedId } from "@app/utils";
   import { type PeerId, type Project, ProjectContent } from "@app/project";
 
@@ -44,6 +44,9 @@
     display: inline-block;
     width: 2rem;
     height: 2rem;
+  }
+  .project-name:hover {
+    color: inherit;
   }
   .urn {
     font-family: var(--font-family-monospace);
@@ -93,7 +96,7 @@
       <span class="divider">/</span>
     {/if}
     <span class="truncate">
-      <Link to={rootPath()}>{project.name}</Link>
+      <a use:link class="project-name" href={rootPath()}>{project.name}</a>
     </span>
     {#if peer}
       <span class="peer-id">

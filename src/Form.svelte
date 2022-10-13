@@ -207,8 +207,8 @@
             {#if isUrl(field.value)}
               <span class="ellipsis">
                 <a
-                  class="link"
                   href={field.value}
+                  class="txt-link"
                   target="_blank"
                   rel="noreferrer">
                   {field.value}
@@ -230,7 +230,7 @@
               </div>
             {:else if field.url}
               <div>
-                <a class="link" use:link href={field.url}>{field.value}</a>
+                <a use:link href={field.url} class="txt-link">{field.value}</a>
               </div>
             {:else if field.validate === "id"}
               <div class="mobile">
