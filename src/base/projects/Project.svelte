@@ -38,7 +38,7 @@
   export let peer: string | null = null;
   export let config: Config;
   export let project: proj.Project;
-  export let content: proj.ProjectContent;
+  export let content: string;
   export let revision: string | null;
 
   const parentName = project.profile
@@ -64,6 +64,16 @@
 </script>
 
 <style>
+  main {
+    width: 100%;
+    max-width: var(--content-max-width);
+    min-width: var(--content-min-width);
+    padding: 4rem 0;
+  }
+  main > header {
+    padding: 0 2rem 0 8rem;
+  }
+
   .content {
     padding: 0 2rem 0 8rem;
   }
@@ -78,91 +88,92 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
-<ProjectMeta
-  noDescription={content !== proj.ProjectContent.Tree}
-  {project}
-  {peer} />
+<main>
+  <ProjectMeta noDescription={content !== "tree"} {project} {peer} />
 
-{#if revision}
-  {#await project.getRoot(revision)}
-    <Loading center />
-  {:then { tree, commit }}
-    <Header {tree} {commit} {browserStore} {project} />
+  {#if revision}
+    {#await project.getRoot(revision)}
+      <header>
+        <Loading center />
+      </header>
+    {:then { tree, commit }}
+      <Header {tree} {commit} {browserStore} {project} />
 
-    {#if content === proj.ProjectContent.Tree}
-      <Browser {project} {commit} {tree} {browserStore} />
-    {:else if content === proj.ProjectContent.History}
-      <Async
-        fetch={proj.Project.getCommits(project.urn, project.seed.api, {
-          parent: commit,
-          verified: true,
-        })}
-        let:result>
-        <History {project} history={result} />
-      </Async>
-    {:else if content === proj.ProjectContent.Commit}
-      <Async fetch={project.getCommit(commit)} let:result>
-        <Commit {project} commit={result} />
-      </Async>
-    {/if}
-  {:catch err}
-    <div class="container center-content">
-      <div class="error error-message txt-tiny">
-        <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+      {#if content === "tree"}
+        <Browser {project} {commit} {tree} {browserStore} />
+      {:else if content === "history"}
+        <Async
+          fetch={proj.Project.getCommits(project.urn, project.seed.api, {
+            parent: commit,
+            verified: true,
+          })}
+          let:result>
+          <History {project} history={result} />
+        </Async>
+      {:else if content === "commit"}
+        <Async fetch={project.getCommit(commit)} let:result>
+          <Commit {project} commit={result} />
+        </Async>
+      {/if}
+    {:catch err}
+      <div class="container center-content">
+        <div class="error error-message txt-tiny">
+          <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
-        API request to
-        <span class="txt-monospace">{err.url}</span>
-        failed
+          API request to
+          <span class="txt-monospace">{err.url}</span>
+          failed
+        </div>
       </div>
-    </div>
-  {/await}
+    {/await}
 
-  {#if content === proj.ProjectContent.Issues}
-    <Async
-      fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
-      let:result>
-      <Issues {project} state={issueFilter} {config} issues={result} />
-    </Async>
-  {:else if content === proj.ProjectContent.Issue && $browserStore.issue}
-    <Async
-      fetch={issue.Issue.getIssue(
-        project.urn,
-        $browserStore.issue,
-        project.seed.api,
-      )}
-      let:result>
-      <Issue {project} {config} issue={result} />
-    </Async>
-  {:else if content === proj.ProjectContent.Patches}
-    <Async
-      fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
-      let:result>
-      <Patches {project} {config} patches={result} />
-    </Async>
-  {:else if content === proj.ProjectContent.Patch && $browserStore.patch}
-    <Async
-      fetch={patch.Patch.getPatch(
-        project.urn,
-        $browserStore.patch,
-        project.seed.api,
-      )}
-      let:result>
-      <Patch {project} {config} patch={result} />
-    </Async>
-  {/if}
-{:else}
-  <div class="content">
-    {#if peer}
-      <Placeholder icon="🍂">
-        <span slot="title">
-          <span class="txt-monospace">{formatSeedId(peer)}</span>
-        </span>
-        <span slot="body">Couldn't load remote source tree.</span>
-      </Placeholder>
-    {:else}
-      <Placeholder icon="🍂">
-        <span slot="body">Couldn't load source tree.</span>
-      </Placeholder>
+    {#if content === "issues"}
+      <Async
+        fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
+        let:result>
+        <Issues {project} state={issueFilter} {config} issues={result} />
+      </Async>
+    {:else if content === "issue" && $browserStore.issue}
+      <Async
+        fetch={issue.Issue.getIssue(
+          project.urn,
+          $browserStore.issue,
+          project.seed.api,
+        )}
+        let:result>
+        <Issue {project} {config} issue={result} />
+      </Async>
+    {:else if content === "patches"}
+      <Async
+        fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
+        let:result>
+        <Patches {project} {config} patches={result} />
+      </Async>
+    {:else if content === "patch" && $browserStore.patch}
+      <Async
+        fetch={patch.Patch.getPatch(
+          project.urn,
+          $browserStore.patch,
+          project.seed.api,
+        )}
+        let:result>
+        <Patch {project} {config} patch={result} />
+      </Async>
     {/if}
-  </div>
-{/if}
+  {:else}
+    <div class="content">
+      {#if peer}
+        <Placeholder icon="🍂">
+          <span slot="title">
+            <span class="txt-monospace">{formatSeedId(peer)}</span>
+          </span>
+          <span slot="body">Couldn't load remote source tree.</span>
+        </Placeholder>
+      {:else}
+        <Placeholder icon="🍂">
+          <span slot="body">Couldn't load source tree.</span>
+        </Placeholder>
+      {/if}
+    </div>
+  {/if}
+</main>
