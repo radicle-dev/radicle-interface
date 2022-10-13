@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+  export interface Params {
+    profileName: string;
+  }
+</script>
+
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
   import type { Config } from "@app/config";
@@ -248,7 +254,7 @@
       <Async fetch={getProjectsAndStats(profile.seed, profile.id)} let:result>
         <Projects
           {profile}
-          seed={profile.seed}
+          seed={null}
           stats={result.stats}
           projects={result.projects} />
       </Async>

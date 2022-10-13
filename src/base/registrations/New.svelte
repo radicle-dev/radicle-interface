@@ -32,13 +32,10 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(
-      `/registrations/${name}/submit?${
-        registrationOwner
-          ? new URLSearchParams({ owner: registrationOwner })
-          : ""
-      }`,
-    );
+    navigate({
+      type: "registrations",
+      params: { nameOrDomain: name, view: "submit", owner: registrationOwner },
+    });
   }
 
   onMount(async () => {
@@ -116,11 +113,13 @@
           {config} />
       {/if}
 
-      <Button on:click={() => navigate("/registrations")} variant="text">
+      <Button on:click={() => navigate({ type: "register" })} variant="text">
         Cancel
       </Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button variant="foreground" on:click={() => navigate("/registrations")}>
+      <Button
+        variant="foreground"
+        on:click={() => navigate({ type: "register" })}>
         Back
       </Button>
     {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Config } from "@app/config";
   import type { ethers } from "ethers";
   import { session } from "@app/session";
@@ -226,7 +226,7 @@
 {:else if state.status === Status.Failed}
   <ErrorModal
     title="Registration could not be loaded"
-    on:close={() => navigate("/registrations")}>
+    on:close={() => navigate({ type: "register" })}>
     {state.error}
   </ErrorModal>
 {:else if state.status === Status.NotFound}
@@ -244,7 +244,13 @@
     </span>
 
     <span slot="actions">
-      <Link to={`/registrations/${domain}/form`} primary>Register &rarr;</Link>
+      <Link
+        to={{
+          type: "registrations",
+          params: { nameOrDomain: domain, owner: null, view: "form" },
+        }}>
+        Register &rarr;
+      </Link>
     </span>
   </Modal>
 {:else if state.status === Status.Found}

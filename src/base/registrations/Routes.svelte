@@ -1,40 +1,40 @@
+<script lang="ts" context="module">
+  export interface Params {
+    nameOrDomain: string;
+    owner: string | null;
+    view: string;
+  }
+</script>
+
 <script lang="ts">
-  import { Route, navigate } from "svelte-routing";
-  import Index from "@app/base/registrations/Index.svelte";
+  import { navigate } from "@app/router";
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
   import type { Config } from "@app/config";
   import type { Session } from "@app/session";
-  import { getSearchParam } from "@app/utils";
 
   export let session: Session | null;
   export let config: Config;
+  export let params: Params;
+  export let type: string;
 </script>
 
-<Route path="registrations">
-  <Index {config} />
-</Route>
-
-<Route path="registrations/:name/form" let:params let:location>
-  <New {config} name={params.name} owner={getSearchParam("owner", location)} />
-</Route>
-
-<Route path="registrations/:name/submit" let:params let:location>
+{#if type === "registrations" && params.view === "form"}
+  <New {config} name={params.nameOrDomain} owner={params.owner || null} />
+{:else if type === "registrations" && params.view === "submit"}
   {#if session}
     <Submit
       {config}
-      name={params.name}
-      owner={getSearchParam("owner", location)}
+      name={params.nameOrDomain}
+      owner={params.owner || null}
       {session} />
   {:else}
     <ErrorModal
       message={"You must connect your wallet to register"}
-      on:close={() => navigate("/registrations")} />
+      on:close={() => navigate({ type: "register" })} />
   {/if}
-</Route>
-
-<Route path="registrations/:domain" let:params>
-  <View {config} domain={params.domain} />
-</Route>
+{:else if type === "registrations" && params.view === "view"}
+  <View {config} domain={params.nameOrDomain} />
+{/if}

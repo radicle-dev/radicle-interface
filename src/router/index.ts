@@ -3,67 +3,58 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event
 
+import type * as Registrations from "@app/base/registrations/Routes.svelte";
+import type * as Faucet from "@app/base/faucet/Routes.svelte";
+import type * as Profile from "@app/Profile.svelte";
+import type * as Seeds from "@app/base/seeds/Routes.svelte";
+import type * as Projects from "@app/base/projects/Routes.svelte";
 import type { Writable } from "svelte/store";
 
 import { get, writable } from "svelte/store";
+import { getSearchParam } from "@app/utils";
 
 export type Route =
   | { type: "home" }
+  | { type: "404"; params: { path: string } }
   | { type: "vesting" }
-  | {
-      type: "registrations";
-    }
-  | {
-      type: "registrationsActions";
-      params: { activeView: string; nameOrDomain: string };
-    }
-  | {
-      type: "registrationsView";
-      params: { nameOrDomain: string };
-    }
-  | { type: "faucet" }
-  | { type: "withdraw" }
-  | { type: "seeds"; params: { host: string } }
-  | { type: "profile"; params: { profile: string } }
-  | {
-      type: "project";
-      params: {
-        seed: boolean;
-        activeView: string;
-        urn: string;
-        line?: number;
-        path?: string;
-        patch?: string;
-        issue?: string;
-        profile?: string;
-        host?: string;
-        peer?: string;
-        revision?: string;
-      };
-    };
+  | { type: "faucet"; params: Faucet.Params }
+  | { type: "seeds"; params: Seeds.Params }
+  | { type: "register" }
+  | { type: "registrations"; params: Registrations.Params }
+  | { type: "profile"; params: Profile.Params }
+  | { type: "projects"; params: Projects.Params };
 
 const BOOT_ROUTE: Route = { type: "home" };
+
+// This is only respected by Safari.
+const documentTitle = "Radicle Upstream";
 
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
 
 export const push = (newRoute: Route): void => {
-  window.history.pushState({}, "", routeToPath(newRoute));
+  window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
   const history = get(historyStore);
   // Limit history to a maximum of 10 steps. We shouldn't be doing more than
   // one subsequent pop() anyway.
   setHistory([...history, newRoute].slice(-10));
 };
 
-window.addEventListener("popstate", ({ state }) => {
-  setHistory(state);
+// Replaces history on any user interaction with forward and backwards buttons
+// with the current window.history.state
+window.addEventListener("popstate", e => {
+  setHistory(e.state);
 });
 
-export function navigate(path: string, opts = { replace: false }) {
+export function navigate(route: Route | string, opts = { replace: false }) {
+  if (typeof route === "string") {
+    route = pathToRoute(route);
+  }
+
   if (opts.replace) {
-    setHistory([pathToRoute(path)]);
+    setHistory([route]);
   } else {
-    push(pathToRoute(path));
+    push(route);
   }
 }
 
@@ -76,162 +67,138 @@ function setHistory(history: Route[]): void {
   activeRouteStore.set(history.slice(-1)[0]);
   window.history.replaceState(
     history,
-    "",
+    documentTitle,
     routeToPath(history[history.length - 1]),
   );
 }
 
-// Takes the window.location.pathname which is a the URL without origin
-// Strips the first "/" from the pathname
-// Sets the historyStore to a Route type
 export const initialize = async (): Promise<void> => {
-  const segments = window.location.pathname;
-
-  setHistory([pathToRoute(segments)]);
+  setHistory([pathToRoute(window.location.pathname)]);
 };
 
-export function routeToPath(route: Route): string {
-  if (route.type === "home") {
-    return "/";
-  } else if (route.type === "profile") {
-    return `/${route.params.profile}`;
-  } else if (route.type === "vesting") {
-    return "/vesting";
-  } else if (route.type === "seeds") {
-    return `/seeds/${route.params.host}`;
-  } else if (route.type === "registrations") {
-    return `/registrations`;
-  } else if (route.type === "registrationsActions") {
-    return `/registrations/${route.params.nameOrDomain}/${route.params.activeView}`;
-  } else if (route.type === "registrationsView") {
-    return `/registrations/${route.params.nameOrDomain}`;
-  } else if (route.type === "project") {
-    if (route.params.activeView) {
-      if (route.params.revision) {
-        return `/${route.params.seed && "seeds/"}${route.params.host}/${
-          route.params.urn
-        }/${route.params.activeView}/${route.params.revision}`;
-      }
-      return `/${route.params.seed && "seeds/"}${route.params.host}/${
-        route.params.urn
-      }/${route.params.activeView}`;
-    }
-    return `/${route.params.seed && "seeds/"}${route.params.host}/${
-      route.params.urn
-    }`;
-  }
-  return "/";
-}
-
-// When provided a URL in split into segments, we need to convert them to Route objects
 export function pathToRoute(path: string): Route {
-  const segments = path.substring(1).split("/");
+  // Pathname starts usually with a "/", we remove it to avoid mal interpretations
+  path = path.startsWith("/") ? path.substring(1) : path;
+  const segments = path.split("/");
   const type = segments.shift();
   switch (type) {
-    case "seeds": {
-      const host = segments.shift();
-      const urn = segments.shift();
-      if (host && !urn) {
-        return { type: "seeds", params: { host } };
-      } else if (host && urn) {
-        const projectType = segments.shift();
-        if (projectType === "tree") {
+    case "registrations": {
+      const nameOrDomain = segments.shift();
+      const action = segments.shift();
+      if (nameOrDomain) {
+        if (!action) {
           return {
-            type: "project",
-            params: {
-              seed: true,
-              host,
-              urn,
-              activeView: projectType,
-            },
+            type: "registrations",
+            params: { view: "view", nameOrDomain, owner: null },
           };
-        } else if (projectType === "patches") {
-          const patch = segments.shift();
+        } else if (action) {
+          const owner = getSearchParam("owner");
           return {
-            type: "project",
-            params: {
-              seed: true,
-              host,
-              urn,
-              patch,
-              activeView: projectType,
-            },
-          };
-        } else if (projectType === "issues") {
-          const issue = segments.shift();
-          return {
-            type: "project",
-            params: {
-              seed: true,
-              host,
-              urn,
-              issue,
-              activeView: projectType,
-            },
+            type: "registrations",
+            params: { view: action, nameOrDomain, owner },
           };
         }
       }
-      return { type: "home" };
+      return {
+        type: "register",
+      };
+    }
+    case "faucet": {
+      const view = segments.shift();
+      if (view === "withdraw") {
+        return { type: "faucet", params: { type: "withdraw" } };
+      }
+      return { type: "faucet", params: { type: "form" } };
     }
     case "vesting":
       return { type: "vesting" };
-    case "registrations": {
-      const nameOrDomain = segments.shift();
-      if (!nameOrDomain) {
-        return { type: "registrations" };
+    case "seeds": {
+      const host = segments.shift();
+      if (host) {
+        const urn = segments.shift();
+        if (urn) {
+          const content = segments.shift();
+          let peer;
+          if (content === "remotes") {
+            peer = segments.shift();
+          }
+          return {
+            type: "projects",
+            params: {
+              profileName: type,
+              urn,
+              peer: peer || null,
+              seedHost: null,
+              revision: null,
+              content: content || "tree",
+            },
+          };
+        }
+        return { type: "seeds", params: { host } };
       }
-      const activeView = segments.shift();
-      if (activeView) {
-        return {
-          type: "registrationsActions",
-          params: { activeView, nameOrDomain },
-        };
-      }
-      return { type: "registrationsView", params: { nameOrDomain } };
+      return { type: "404", params: { path } };
     }
-    default:
+    case "":
+      return { type: "home" };
+    default: {
       if (type) {
         const urn = segments.shift();
         if (urn) {
-          const projectType = segments.shift();
-          const revision = segments.shift();
+          const content = segments.shift();
           return {
-            type: "project",
+            type: "projects",
             params: {
-              seed: false,
-              profile: type,
+              profileName: type,
               urn,
-              revision,
-              activeView: projectType || "tree",
+              peer: null,
+              seedHost: null,
+              revision: null,
+              content: content || "tree",
             },
           };
-        } else {
-          return { type: "profile", params: { profile: type } };
         }
-      } else {
-        return { type: "home" };
+        return { type: "profile", params: { profileName: type } };
       }
+    }
   }
 }
 
-export function link(node: HTMLElement) {
-  function onClick(event: any) {
-    const anchor = event.currentTarget;
-
-    if (anchor.target === "") {
-      event.preventDefault();
-      console.log(anchor.pathname);
-      navigate(anchor.pathname, {
-        replace: anchor.hasAttribute("replace"),
-      });
+export function routeToPath(route: Route): string {
+  if (route.type === "home") {
+    return `/`;
+  } else if (route.type === "faucet" && route.params.type === "form") {
+    return `/faucet`;
+  } else if (route.type === "vesting") {
+    return `/vesting`;
+  } else if (route.type === "seeds") {
+    return `/seeds/${route.params.host}`;
+  } else if (route.type === "faucet" && route.params.type === "withdraw") {
+    return `/faucet/withdraw`;
+  } else if (route.type === "projects") {
+    let hostPrefix;
+    if (route.params.seedHost) {
+      hostPrefix = `/seeds/${route.params.seedHost}`;
+    } else {
+      hostPrefix = `/${route.params.profileName}`;
     }
+
+    if (route.params.peer) {
+      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}/${route.params.content}/${route.params.revision}`;
+    }
+
+    return `${hostPrefix}/${route.params.urn}/${route.params.content}/${route.params.revision}`;
+  } else if (route.type === "register") {
+    return `/registrations`;
+  } else if (route.type === "registrations" && route.params.nameOrDomain) {
+    return `/registrations/${route.params.nameOrDomain}`;
+  } else if (route.type === "registrations" && route.params.view) {
+    if (route.params.owner) {
+      return `/registrations/${route.params.nameOrDomain}/${route.params.view}?owner=${route.params.owner}`;
+    }
+    return `/registrations/${route.params.nameOrDomain}/${route.params.view}`;
+  } else if (route.type === "profile") {
+    return `/${route.params.profileName}`;
+  } else if (route.type === "404") {
+    return route.params.path;
   }
-
-  node.addEventListener("click", onClick);
-
-  return {
-    destroy() {
-      node.removeEventListener("click", onClick);
-    },
-  };
 }

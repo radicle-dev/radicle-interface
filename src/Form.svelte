@@ -47,7 +47,7 @@
   import type { Config } from "@app/config";
 
   import cloneDeep from "lodash/cloneDeep";
-  import { link } from "svelte-routing";
+  import Link from "@app/Link.svelte";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
   import {
@@ -226,7 +226,7 @@
               </div>
             {:else if field.url}
               <div>
-                <a class="link" use:link href={field.url}>{field.value}</a>
+                <Link class="link" to={field.url}>{field.value}</Link>
               </div>
             {:else if field.validate === "id"}
               <div class="mobile">

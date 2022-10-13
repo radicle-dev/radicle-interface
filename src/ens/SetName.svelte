@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import Modal from "@app/Modal.svelte";
   import type { Config } from "@app/config";
   import { formatAddress, isAddressEqual } from "@app/utils";

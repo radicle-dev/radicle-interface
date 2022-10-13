@@ -1,40 +1,31 @@
-<script lang="ts">
-  import { Route } from "svelte-routing";
-  import View from "@app/base/projects/View.svelte";
-  import type { Config } from "@app/config";
-  import Redirect from "@app/Redirect.svelte";
-
-  export let config: Config;
+<script lang="ts" context="module">
+  export interface Params {
+    seedHost: string | null;
+    profileName: string | null;
+    peer: string | null;
+    revision: string | null;
+    urn: string;
+    content: string;
+  }
 </script>
 
-<!-- With a seed context -->
+<script lang="ts">
+  import type { Config } from "@app/config";
+  import Project from "./Project.svelte";
+  import * as proj from "@app/project";
+  import Loading from "@app/Loading.svelte";
 
-<Route path="/seeds/:seed/:id/*" let:params>
-  <View {config} seedHost={params.seed} id={params.id} />
-</Route>
+  export let config: Config;
+  export let params: Params;
+</script>
 
-<Route path="/seeds/:seed/:id/remotes/:peer/*" let:params>
-  <View {config} seedHost={params.seed} peer={params.peer} id={params.id} />
-</Route>
-
-<!-- Explicit user and org context, will at some point be replaced by the generic route -->
-<Route path="/orgs/:addressOrName/projects/:id/*" let:params>
-  <Redirect to="/{params.addressOrName}/{params.id}/{params['*']}" />
-</Route>
-
-<Route path="/users/:addressOrName/projects/:id/*" let:params>
-  <Redirect to="/{params.addressOrName}/{params.id}/{params['*']}" />
-</Route>
-<!-- End of eventual dropped routes -->
-
-<Route path="/:profile/:id/remotes/:peer/*" let:params>
-  <View
+{#await proj.Project.get(params.urn, params.peer, params.profileName, params.seedHost, config)}
+  <Loading center />
+{:then project}
+  <Project
     {config}
-    profileName={params.profile}
-    id={params.id}
-    peer={params.peer} />
-</Route>
-
-<Route path="/:profile/:id/*" let:params>
-  <View {config} profileName={params.profile} id={params.id} />
-</Route>
+    {project}
+    peer={params.peer}
+    content={params.content}
+    revision={params.revision || project.head} />
+{/await}

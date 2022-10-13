@@ -3,7 +3,7 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import { link } from "@app/router";
+  import { navigate } from "@app/router";
 
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";
@@ -22,6 +22,7 @@
   import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
+  import Link from "./Link.svelte";
 
   export let session: Session | null;
   export let config: Config;
@@ -166,7 +167,7 @@
 
 <header>
   <div class="left">
-    <a use:link href="/" class="logo"><Logo /></a>
+    <Link to={{ type: "home" }} class="logo"><Logo /></Link>
     <div class="search">
       <Search
         {config}
@@ -190,15 +191,15 @@
 
   <div class="right">
     {#if config && config.network.name === "goerli"}
-      <a use:link href="/faucet">
+      <Link to={{ type: "faucet", params: { type: "form" } }}>
         <span class="network">Goerli</span>
-      </a>
+      </Link>
     {:else if config && config.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <a use:link class="register" href="/registrations">Register</a>
+    <Link to={{ type: "register" }}>Register</Link>
 
     {#if address}
       <span class="balance">
@@ -257,14 +258,7 @@
                   ({ query, results } = e.detail);
                 }} />
             </div>
-            <a
-              use:link
-              on:click={() => {
-                closeFocused();
-              }}
-              href="/registrations">
-              Register
-            </a>
+            <Link to={{ type: "register" }}>Register</Link>
           </div>
         </svelte:fragment>
       </Floating>

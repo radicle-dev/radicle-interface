@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Browser } from "@app/project";
   import { ProjectContent, Project } from "@app/project";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";

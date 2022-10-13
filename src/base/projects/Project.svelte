@@ -1,3 +1,16 @@
+<script lang="ts" context="module">
+  export type View =
+    | { type: "issues"; params: any }
+    | { type: "commits"; params: any }
+    | { type: "patches"; params: any }
+    | { type: "history"; params: any };
+
+  export interface Params {
+    urn: string;
+    view: View;
+  }
+</script>
+
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { State as IssueState } from "./Issues.svelte";

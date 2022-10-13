@@ -1,6 +1,5 @@
 <script lang="ts">
   import Modal from "@app/Modal.svelte";
-  import { link } from "@app/router";
   import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
   import type { Config } from "@app/config";
   import Address from "@app/Address.svelte";
@@ -48,7 +47,7 @@
       <ul>
         {#each results.projects as project}
           <li>
-            <a use:link href="/seeds/{project.seed.host}/{project.info.urn}">
+            <a href="/seeds/{project.seed.host}/{project.info.urn}">
               <span title={project.seed.host}>
                 <span>
                   {getSeedEmoji(project.seed.host, config)}&nbsp;{project.info

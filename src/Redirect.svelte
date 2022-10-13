@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import type { Route } from "@app/router";
+  import { navigate } from "@app/router";
 
-  export let to;
+  export let to: Route;
 
   onMount(() => {
     navigate(to, { replace: true });

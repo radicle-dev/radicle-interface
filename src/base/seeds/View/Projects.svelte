@@ -7,7 +7,7 @@
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
 
-  export let seed: Seed;
+  export let seed: Seed | null = null;
   export let profile: Profile | null = null;
   export let projects: proj.ProjectInfo[];
   export let stats: Stats;
@@ -17,13 +17,15 @@
 
   const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
     try {
-      stats = await seed.getStats();
-      const projects = await proj.Project.getProjects(seed.api, {
-        perPage: 10,
-        page: (page += 1),
-      });
-      if (projects.length > 0) {
-        return projects;
+      if (profile && profile.seed?.valid) {
+        stats = await profile.seed.getStats();
+        const projects = await proj.Project.getProjects(profile.seed.api, {
+          perPage: 10,
+          page: (page += 1),
+        });
+        if (projects.length > 0) {
+          return projects;
+        }
       }
     } catch (e) {
       console.error(e);
@@ -35,14 +37,17 @@
   };
 
   const onClick = (project: ProjectInfo) => {
-    navigate(
-      proj.path({
+    navigate({
+      type: "projects",
+      params: {
         urn: project.urn,
-        seed: seed?.host,
-        profile: profile?.name ?? profile?.address,
+        seedHost: seed?.host || null,
+        profileName: (profile?.name ?? profile?.address) || null,
         revision: project.head,
-      }),
-    );
+        peer: null,
+        content: "tree",
+      },
+    });
   };
 </script>
 

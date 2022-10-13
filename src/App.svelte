@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { Router, Route } from "svelte-routing";
   import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
+  import { activeRouteStore, initialize } from "@app/router";
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
   import Projects from "@app/base/projects/Routes.svelte";
@@ -15,6 +14,11 @@
   import Modal from "@app/Modal.svelte";
   import LinearGradient from "@app/LinearGradient.svelte";
   import ColorPalette from "./ColorPalette.svelte";
+  import Register from "@app/base/registrations/Index.svelte";
+  import Registrations from "@app/base/registrations/Routes.svelte";
+  import NotFound from "./NotFound.svelte";
+
+  initialize();
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {
@@ -40,6 +44,8 @@
       }
     }
   }
+
+  activeRouteStore.subscribe(console.log);
 </script>
 
 <style>
@@ -83,21 +89,27 @@
     <ColorPalette />
     <Header session={$session} {config} />
     <div class="wrapper">
-      <Router>
-        <Route path="/">
-          <Home {config} />
-        </Route>
-        <Route path="vesting">
-          <Vesting {config} session={$session} />
-        </Route>
-        <Registrations {config} session={$session} />
-        <Seeds {config} session={$session} />
-        <Faucet {config} />
-        <Route path="/:addressOrName" let:params>
-          <Profile addressOrName={params.addressOrName} {config} />
-        </Route>
-        <Projects {config} />
-      </Router>
+      {#if $activeRouteStore.type === "home"}
+        <Home {config} />
+      {:else if $activeRouteStore.type === "faucet"}
+        <Faucet {config} {...$activeRouteStore} />
+      {:else if $activeRouteStore.type === "seeds"}
+        <Seeds {config} session={$session} {...$activeRouteStore} />
+      {:else if $activeRouteStore.type === "register"}
+        <Register {config} />
+      {:else if $activeRouteStore.type === "registrations"}
+        <Registrations session={$session} {config} {...$activeRouteStore} />
+      {:else if $activeRouteStore.type === "vesting"}
+        <Vesting {config} session={$session} />
+      {:else if $activeRouteStore.type === "projects"}
+        <Projects {config} {...$activeRouteStore} />
+      {:else if $activeRouteStore.type === "profile"}
+        <Profile
+          {config}
+          addressOrName={$activeRouteStore.params.profileName} />
+      {:else}
+        <NotFound title="404" subtitle="Nothing here" />
+      {/if}
     </div>
   {:catch err}
     <div class="wrapper">

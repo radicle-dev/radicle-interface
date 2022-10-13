@@ -10,7 +10,7 @@
   import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -66,7 +66,7 @@
     <ToggleButton
       {options}
       on:select={e => {
-        navigate(`?state=${e.detail}`);
+        navigate({ type: "home" });
       }}
       active={state} />
   </div>

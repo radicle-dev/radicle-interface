@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
@@ -21,7 +21,7 @@
   };
   $: requester = $session && $session.address;
 
-  const back = () => navigate(`/faucet`);
+  const back = () => navigate({ type: "faucet", params: { type: "form" } });
 
   onMount(async () => {
     try {

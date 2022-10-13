@@ -282,11 +282,8 @@ export function isFulfilled<T>(
 }
 
 // Get search parameters from location.
-export function getSearchParam(
-  key: string,
-  location: RouteLocation,
-): string | null {
-  const params = new URLSearchParams(location.search);
+export function getSearchParam(key: string): string | null {
+  const params = new URLSearchParams(window.location.search);
   return params.get(key);
 }
 

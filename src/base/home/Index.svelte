@@ -6,7 +6,6 @@
   import type { ProjectInfo } from "@app/project";
   import { Project } from "@app/project";
   import type { Host } from "@app/api";
-  import * as proj from "@app/project";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
 
@@ -29,14 +28,17 @@
       : Promise.resolve([]);
 
   const onClick = (project: ProjectInfo, seed: Host) => {
-    navigate(
-      proj.path({
+    navigate({
+      type: "projects",
+      params: {
         urn: project.urn,
-        seed: seed.host,
-        profile: null,
+        seedHost: seed.host,
+        profileName: null,
         revision: project.head,
-      }),
-    );
+        peer: null,
+        content: "tree",
+      },
+    });
   };
 </script>
 
