@@ -150,7 +150,7 @@
   }
 
   .description.invalid {
-    color: var(--color-negative) !important;
+    color: var(--color-negative);
   }
 
   .label {
@@ -248,7 +248,7 @@
         </span>
       {/if}
       {#if field.error}
-        <div class="description invalid txt-small faded">
+        <div class="description txt-faded txt-small invalid">
           {#if field.example}
             {field.error}, eg.
             <em>{field.example}</em>
@@ -257,7 +257,7 @@
           {/if}
         </div>
       {:else}
-        <div class="description txt-small faded">
+        <div class="description txt-faded txt-small">
           {@html marked(field.description)}
         </div>
       {/if}

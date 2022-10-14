@@ -54,20 +54,6 @@ p {
   color: var(--color-secondary);
 }
 
-.txt-title {
-  font-size: var(--font-size-large);
-  font-weight: var(--font-weight-normal);
-  color: var(--color-secondary);
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-
-.txt-missing {
-  color: var(--color-foreground-5);
-  font-style: italic;
-}
-
 .txt-tiny {
   font-size: var(--font-size-tiny);
 }
@@ -92,4 +78,19 @@ p {
 }
 .txt-bold {
   font-weight: var(--font-weight-bold) !important;
+}
+.txt-missing {
+  color: var(--color-foreground-5);
+  font-style: italic;
+}
+.txt-faded {
+  color: var(--color-foreground-5);
+}
+.txt-title {
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-secondary);
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
 }

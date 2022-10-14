@@ -36,7 +36,7 @@
 <div class="desktop">
   <div class="urn">
     <span class="icon">🌱</span>
-    <span class="faded">rad:git:</span>
+    <span class="txt-faded">rad:git:</span>
     <span>{parseRadicleId(urn)}</span>
   </div>
 </div>

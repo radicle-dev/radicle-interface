@@ -134,9 +134,6 @@ a.address {
   overflow-x: hidden;
   padding: 1rem;
 }
-.faded {
-  color: var(--color-foreground-5);
-}
 .off-centered {
   height: 100%;
   padding-top: 5rem;

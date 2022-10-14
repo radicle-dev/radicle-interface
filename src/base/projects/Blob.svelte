@@ -137,7 +137,7 @@
     <header>
       <div class="file-header">
         <span class="file-name">
-          <span class="faded">{parentDir}</span>
+          <span class="txt-faded">{parentDir}</span>
           &#8203;
           <span>{blob.info.name}</span>
         </span>

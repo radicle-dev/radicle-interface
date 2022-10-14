@@ -39,7 +39,7 @@
           {formatSeedId(seed.id)}@{seed.host}
         </a>
       </span>
-      <span class="faded">:{port}</span>
+      <span class="txt-faded">:{port}</span>
     {:else}
       <span>
         <a href="/seeds/{formatSeedHost(seed.host)}" class="link">
