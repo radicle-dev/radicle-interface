@@ -1,10 +1,9 @@
 <script lang="ts">
   import type { Theme } from "@app/ThemeToggle.svelte";
-  import type { ProjectParams } from "@app/router/definitions";
+  import type * as proj from "@app/project";
 
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
-  import * as proj from "@app/project";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
@@ -23,14 +22,11 @@
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob; theme: Theme };
 
-  export let params: ProjectParams;
+  export let path: string;
+  export let line: number | null;
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let commit: string;
-
-  $: parsed = proj.parseRoute(params.restRoute || "", project.branches);
-  $: path = parsed.path || "/";
-  $: revision = parsed.revision || project.head;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -85,7 +81,7 @@
         type: "projects",
         params: {
           ...getCurrentRouteParams("projects"),
-          restRoute: `${revision}/${newPath}`,
+          restRoute: `${commit}/${newPath}`,
         },
       });
     }
@@ -216,7 +212,7 @@
           {#if utils.isMarkdownPath(blob.path)}
             <Readme content={blob.content} {getImage} />
           {:else}
-            <Blob line={params.line} {blob} />
+            <Blob {line} {blob} />
           {/if}
         {:catch}
           <Placeholder icon="🍂">

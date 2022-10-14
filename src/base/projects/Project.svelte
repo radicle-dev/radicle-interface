@@ -6,7 +6,6 @@
   import Placeholder from "@app/Placeholder.svelte";
   import Loading from "@app/Loading.svelte";
   import { formatSeedId } from "@app/utils";
-  import { browserStore } from "@app/project";
   import * as patch from "@app/patch";
   import * as issue from "@app/issue";
 
@@ -28,6 +27,10 @@
 
   let project: proj.Project | null = null;
 
+  let revision: string | null = null;
+  let path: string | null = null;
+  let line: number | null = null;
+
   onMount(async () => {
     project = await proj.Project.get(
       params.urn,
@@ -38,9 +41,15 @@
     );
   });
 
+  $: if (project) {
+    const parsed = proj.parseRoute(params.restRoute || "", project.branches);
+    path = parsed.path || "/";
+    revision = parsed.revision || project.head;
+    line = parsed.line || null;
+  }
+
   $: content = params.content;
   $: peer = params.peer;
-  $: revision = params.revision || project?.head;
 </script>
 
 <style>
@@ -72,7 +81,7 @@
   <main>
     <ProjectMeta noDescription={content !== "tree"} {project} {peer} />
 
-    {#if revision}
+    {#if revision && path}
       {#await project.getRoot(revision)}
         <header>
           <Loading center />
@@ -86,7 +95,7 @@
           content={params.content} />
 
         {#if content === "tree"}
-          <Browser {params} {project} {commit} {tree} />
+          <Browser {path} {line} {project} {commit} {tree} />
         {:else if content === "history"}
           <Async
             fetch={proj.Project.getCommits(project.urn, project.seed.api, {

@@ -1,7 +1,12 @@
 import { get, writable } from "svelte/store";
 import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
-import { isFulfilled, isOid, isRadicleId } from "@app/utils";
+import {
+  formatLocationHash,
+  isFulfilled,
+  isOid,
+  isRadicleId,
+} from "@app/utils";
 import { Profile, ProfileType } from "@app/profile";
 import { Seed } from "@app/base/seeds/Seed";
 import type { Config } from "@app/config";
@@ -222,12 +227,18 @@ export function getOid(revision: string, branches?: Branches): string | null {
 export function parseRoute(
   input: string,
   branches: Branches,
-): { path?: string; revision?: string } {
+): { path: string | null; revision: string | null; line: number | null } {
   const branch = Object.entries(branches).find(([branchName]) =>
     input.startsWith(branchName),
   );
   const commitPath = [input.slice(0, 40), input.slice(41)];
-  const parsed: { path?: string; revision?: string } = {};
+  const line = input.split("#");
+  const parsed: {
+    path: string | null;
+    revision: string | null;
+    line: number | null;
+  } = { path: null, revision: null, line: null };
+  parsed.line = formatLocationHash(line[line.length - 1]);
 
   if (branch) {
     const [rev, path] = [
