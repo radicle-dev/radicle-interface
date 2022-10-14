@@ -66,7 +66,7 @@
     <ToggleButton
       {options}
       on:select={e => {
-        navigate({ type: "home" });
+        navigate(`?state=${e.detail}`);
       }}
       active={state} />
   </div>

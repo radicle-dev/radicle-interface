@@ -1,20 +1,25 @@
 <script lang="ts">
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { Project, ProjectContent } from "@app/project";
+  import { Project } from "@app/project";
   import type { CommitMetadata, CommitsHistory } from "@app/commit";
   import { groupCommits } from "@app/commit";
   import List from "@app/List.svelte";
+  import { navigate, activeRouteStore } from "@app/router";
 
   export let project: Project;
   export let history: CommitsHistory;
 
-  const navigateHistory = (revision: string, content?: ProjectContent) => {
-    project.navigateTo({
-      content,
-      revision,
-      issue: null,
-      patch: null,
-      path: null,
+  const navigateHistory = (revision: string, content: string) => {
+    navigate({
+      type: "projects",
+      params: {
+        ...($activeRouteStore.type === "projects" && $activeRouteStore.params),
+        content,
+        revision,
+        issue: null,
+        patch: null,
+        path: null,
+      },
     });
   };
 
@@ -30,11 +35,15 @@
   };
 
   const browseCommit = (event: { detail: string }) => {
-    project.navigateTo({
-      content: ProjectContent.Tree,
-      revision: event.detail,
-      issue: null,
-      path: null,
+    navigate({
+      type: "projects",
+      params: {
+        ...($activeRouteStore.type === "projects" && $activeRouteStore.params),
+        content: "tree",
+        revision: event.detail,
+        issue: null,
+        path: null,
+      },
     });
   };
 </script>
@@ -91,8 +100,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() =>
-                  navigateHistory(commit.header.sha1, ProjectContent.Commit)}>
+                on:click={() => navigateHistory(commit.header.sha1, "commit")}>
                 <CommitTeaser {commit} on:browseCommit={browseCommit} />
               </div>
             {/each}

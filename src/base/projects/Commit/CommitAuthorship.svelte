@@ -2,7 +2,7 @@
   import type { CommitMetadata } from "@app/commit";
 
   import Badge from "@app/Badge.svelte";
-  import { formatTimestamp, gravatarURL } from "@app/utils";
+  import { formatSeedId, formatTimestamp, gravatarURL } from "@app/utils";
 
   export let commit: CommitMetadata;
   export let noTime = false;
@@ -44,9 +44,10 @@
       src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
       <span class="txt-bold committer">
-        {commit.context?.committer.peer.person.name}
+        {commit.context.committer.peer.person?.name ||
+          formatSeedId(commit.context.committer.peer.id)}
       </span>
-      {#if !noDelegate && commit.context?.committer.peer.delegate}
+      {#if !noDelegate && commit.context.committer.peer.delegate}
         <Badge variant="tertiary">delegate</Badge>
       {/if}
       <span>committed</span>

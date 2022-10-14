@@ -96,7 +96,7 @@ export interface Peer {
 }
 
 export interface Browser {
-  content: ProjectContent;
+  content: string;
   revision: string | null;
   issue: string | null;
   patch: string | null;
@@ -107,7 +107,7 @@ export interface Browser {
 }
 
 export const browserStore = writable({
-  content: ProjectContent.Tree,
+  content: "tree",
   branches: {},
   revision: null,
   issue: null,
@@ -119,7 +119,7 @@ export const browserStore = writable({
 } as Browser);
 
 export interface BrowseTo {
-  content?: ProjectContent;
+  content?: string;
   revision?: string | null;
   issue?: string | null;
   patch?: string | null;
@@ -157,27 +157,27 @@ export function path(opts: PathOptions): string {
   }
 
   switch (content) {
-    case ProjectContent.History:
+    case "history":
       result.push("history");
       break;
 
-    case ProjectContent.Commit:
+    case "commit":
       result.push("commits");
       break;
 
-    case ProjectContent.Issues:
+    case "issues":
       result.push("issues");
       break;
 
-    case ProjectContent.Issue:
+    case "issue":
       result.push("issues");
       break;
 
-    case ProjectContent.Patches:
+    case "patches":
       result.push("patches");
       break;
 
-    case ProjectContent.Patch:
+    case "patch":
       result.push("patches");
       break;
 

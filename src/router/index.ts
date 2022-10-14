@@ -14,15 +14,15 @@ import { get, writable } from "svelte/store";
 import { getSearchParam } from "@app/utils";
 
 export type Route =
-  | { type: "home" }
   | { type: "404"; params: { path: string } }
-  | { type: "vesting" }
   | { type: "faucet"; params: Faucet.Params }
-  | { type: "seeds"; params: Seeds.Params }
+  | { type: "home" }
+  | { type: "profile"; params: Profile.Params }
+  | { type: "projects"; params: Projects.Params }
   | { type: "register" }
   | { type: "registrations"; params: Registrations.Params }
-  | { type: "profile"; params: Profile.Params }
-  | { type: "projects"; params: Projects.Params };
+  | { type: "seeds"; params: Seeds.Params }
+  | { type: "vesting" };
 
 const BOOT_ROUTE: Route = { type: "home" };
 
@@ -122,13 +122,35 @@ export function pathToRoute(path: string): Route {
           if (content === "remotes") {
             peer = segments.shift();
           }
+          const revision = segments.shift();
+          if (revision) {
+            return {
+              type: "projects",
+              params: {
+                profileName: null,
+                urn,
+                peer: peer || null,
+                seedHost: host,
+                revision,
+                content: content || "tree",
+                path: null,
+                line: null,
+                issue: null,
+                patch: null,
+              },
+            };
+          }
           return {
             type: "projects",
             params: {
-              profileName: type,
+              profileName: null,
               urn,
               peer: peer || null,
-              seedHost: null,
+              seedHost: host,
+              path: null,
+              line: null,
+              issue: null,
+              patch: null,
               revision: null,
               content: content || "tree",
             },
@@ -154,6 +176,10 @@ export function pathToRoute(path: string): Route {
               seedHost: null,
               revision: null,
               content: content || "tree",
+              path: null,
+              line: null,
+              issue: null,
+              patch: null,
             },
           };
         }
@@ -182,11 +208,16 @@ export function routeToPath(route: Route): string {
       hostPrefix = `/${route.params.profileName}`;
     }
 
-    if (route.params.peer) {
-      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}/${route.params.content}/${route.params.revision}`;
+    let path = "";
+    if (route.params.path !== null) {
+      path = `/${route.params.path}`;
     }
 
-    return `${hostPrefix}/${route.params.urn}/${route.params.content}/${route.params.revision}`;
+    if (route.params.peer) {
+      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}/${route.params.content}/${route.params.revision}${path}`;
+    }
+
+    return `${hostPrefix}/${route.params.urn}/${route.params.content}/${route.params.revision}${path}`;
   } else if (route.type === "register") {
     return `/registrations`;
   } else if (route.type === "registrations" && route.params.nameOrDomain) {

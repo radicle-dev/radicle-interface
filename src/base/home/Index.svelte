@@ -8,6 +8,7 @@
   import type { Host } from "@app/api";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
+  import { onMount } from "svelte";
 
   export let config: Config;
 
@@ -27,6 +28,8 @@
         )
       : Promise.resolve([]);
 
+  onMount(() => console.log("Mounting home"));
+
   const onClick = (project: ProjectInfo, seed: Host) => {
     navigate({
       type: "projects",
@@ -37,6 +40,7 @@
         revision: project.head,
         peer: null,
         content: "tree",
+        path: null,
       },
     });
   };

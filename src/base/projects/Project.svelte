@@ -1,24 +1,25 @@
 <script lang="ts" context="module">
-  export type View =
-    | { type: "issues"; params: any }
-    | { type: "commits"; params: any }
-    | { type: "patches"; params: any }
-    | { type: "history"; params: any };
-
   export interface Params {
     urn: string;
-    view: View;
+    content: string;
+    seedHost: string | null;
+    profileName: string | null;
+    peer: string | null;
+    revision: string | null;
+    issue: string | null;
+    patch: string | null;
+    path: string | null;
+    line: number | null;
   }
 </script>
 
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { State as IssueState } from "./Issues.svelte";
 
   import * as proj from "@app/project";
   import Placeholder from "@app/Placeholder.svelte";
   import Loading from "@app/Loading.svelte";
-  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from "@app/utils";
+  import { formatSeedId } from "@app/utils";
   import { browserStore } from "@app/project";
   import * as patch from "@app/patch";
   import * as issue from "@app/issue";
@@ -34,33 +35,26 @@
   import ProjectMeta from "./ProjectMeta.svelte";
   import Patches from "./Patches.svelte";
   import Patch from "./Patch.svelte";
+  import { onMount } from "svelte";
 
-  export let peer: string | null = null;
+  export let params: Params;
   export let config: Config;
-  export let project: proj.Project;
-  export let content: string;
-  export let revision: string | null;
 
-  const parentName = project.profile
-    ? formatProfile(project.profile.nameOrAddress, config)
-    : null;
-  let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
+  let project: proj.Project | null = null;
 
-  $: issueFilter = ($browserStore.search?.get("state") as IssueState) ?? "open";
+  onMount(async () => {
+    project = await proj.Project.get(
+      params.urn,
+      peer,
+      params.profileName,
+      params.seedHost,
+      config,
+    );
+  });
 
-  const baseName = parentName ? `${parentName}/${project.name}` : project.name;
-
-  if (project.description) {
-    pageTitle = `${baseName}: ${project.description}`;
-  } else {
-    pageTitle = baseName;
-  }
-
-  setOpenGraphMetaTag([
-    { prop: "og:title", content: project.name },
-    { prop: "og:description", content: project.description },
-    { prop: "og:url", content: window.location.href },
-  ]);
+  $: content = params.content;
+  $: peer = params.peer;
+  $: revision = params.revision || project?.head;
 </script>
 
 <style>
@@ -85,95 +79,97 @@
 </style>
 
 <svelte:head>
-  <title>{pageTitle}</title>
+  <title>title</title>
 </svelte:head>
 
-<main>
-  <ProjectMeta noDescription={content !== "tree"} {project} {peer} />
+{#if project}
+  <main>
+    <ProjectMeta noDescription={content !== "tree"} {project} {peer} />
 
-  {#if revision}
-    {#await project.getRoot(revision)}
-      <header>
-        <Loading center />
-      </header>
-    {:then { tree, commit }}
-      <Header {tree} {commit} {browserStore} {project} />
+    {#if revision}
+      {#await project.getRoot(revision)}
+        <header>
+          <Loading center />
+        </header>
+      {:then { tree, commit }}
+        <Header {tree} {params} {project} revision={commit} />
 
-      {#if content === "tree"}
-        <Browser {project} {commit} {tree} {browserStore} />
-      {:else if content === "history"}
-        <Async
-          fetch={proj.Project.getCommits(project.urn, project.seed.api, {
-            parent: commit,
-            verified: true,
-          })}
-          let:result>
-          <History {project} history={result} />
-        </Async>
-      {:else if content === "commit"}
-        <Async fetch={project.getCommit(commit)} let:result>
-          <Commit {project} commit={result} />
-        </Async>
-      {/if}
-    {:catch err}
-      <div class="container center-content">
-        <div class="error error-message txt-tiny">
-          <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
+        {#if content === "tree"}
+          <Browser {params} {project} {commit} {tree} />
+        {:else if content === "history"}
+          <Async
+            fetch={proj.Project.getCommits(project.urn, project.seed.api, {
+              parent: commit,
+              verified: true,
+            })}
+            let:result>
+            <History {project} history={result} />
+          </Async>
+        {:else if content === "commit"}
+          <Async fetch={project.getCommit(commit)} let:result>
+            <Commit {project} commit={result} />
+          </Async>
+        {/if}
+      {:catch err}
+        <div class="container center-content">
+          <div class="error error-message txt-tiny">
+            <!-- TODO: Differentiate between (1) commit doesn't exist and (2) failed
              to fetch - this needs a change to the backend. -->
-          API request to
-          <span class="txt-monospace">{err.url}</span>
-          failed
+            API request to
+            <span class="txt-monospace">{err.url}</span>
+            failed
+          </div>
         </div>
-      </div>
-    {/await}
+      {/await}
 
-    {#if content === "issues"}
-      <Async
-        fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
-        let:result>
-        <Issues {project} state={issueFilter} {config} issues={result} />
-      </Async>
-    {:else if content === "issue" && $browserStore.issue}
-      <Async
-        fetch={issue.Issue.getIssue(
-          project.urn,
-          $browserStore.issue,
-          project.seed.api,
-        )}
-        let:result>
-        <Issue {project} {config} issue={result} />
-      </Async>
-    {:else if content === "patches"}
-      <Async
-        fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
-        let:result>
-        <Patches {project} {config} patches={result} />
-      </Async>
-    {:else if content === "patch" && $browserStore.patch}
-      <Async
-        fetch={patch.Patch.getPatch(
-          project.urn,
-          $browserStore.patch,
-          project.seed.api,
-        )}
-        let:result>
-        <Patch {project} {config} patch={result} />
-      </Async>
-    {/if}
-  {:else}
-    <div class="content">
-      {#if peer}
-        <Placeholder icon="🍂">
-          <span slot="title">
-            <span class="txt-monospace">{formatSeedId(peer)}</span>
-          </span>
-          <span slot="body">Couldn't load remote source tree.</span>
-        </Placeholder>
-      {:else}
-        <Placeholder icon="🍂">
-          <span slot="body">Couldn't load source tree.</span>
-        </Placeholder>
+      {#if content === "issues"}
+        <Async
+          fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
+          let:result>
+          <Issues {project} {config} issues={result} />
+        </Async>
+      {:else if content === "issue" && $browserStore.issue}
+        <Async
+          fetch={issue.Issue.getIssue(
+            project.urn,
+            $browserStore.issue,
+            project.seed.api,
+          )}
+          let:result>
+          <Issue {project} {config} issue={result} />
+        </Async>
+      {:else if content === "patches"}
+        <Async
+          fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
+          let:result>
+          <Patches {project} {config} patches={result} />
+        </Async>
+      {:else if content === "patch" && $browserStore.patch}
+        <Async
+          fetch={patch.Patch.getPatch(
+            project.urn,
+            $browserStore.patch,
+            project.seed.api,
+          )}
+          let:result>
+          <Patch {project} {config} patch={result} />
+        </Async>
       {/if}
-    </div>
-  {/if}
-</main>
+    {:else}
+      <div class="content">
+        {#if peer}
+          <Placeholder icon="🍂">
+            <span slot="title">
+              <span class="txt-monospace">{formatSeedId(peer)}</span>
+            </span>
+            <span slot="body">Couldn't load remote source tree.</span>
+          </Placeholder>
+        {:else}
+          <Placeholder icon="🍂">
+            <span slot="body">Couldn't load source tree.</span>
+          </Placeholder>
+        {/if}
+      </div>
+    {/if}
+  </main>
+{/if}

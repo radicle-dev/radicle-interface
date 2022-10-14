@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Readable } from "svelte/store";
   import type * as proj from "@app/project";
   import type { Theme } from "@app/ThemeToggle.svelte";
 
@@ -12,6 +11,8 @@
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
+  import type { Params } from "./Project.svelte";
+  import { navigate, activeRouteStore } from "@app/router";
 
   enum Status {
     Loading,
@@ -22,14 +23,13 @@
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob; theme: Theme };
 
+  export let params: Params;
   export let project: proj.Project;
   export let tree: proj.Tree;
-  export let browserStore: Readable<proj.Browser>;
   export let commit: string;
 
-  $: browser = $browserStore;
-  $: path = browser.path || "/";
-  $: revision = browser.revision;
+  $: path = params.path || "/";
+  $: revision = params.revision;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -80,7 +80,16 @@
     mobileFileTree = false;
 
     if (path) {
-      project.navigateTo({ path: newPath, revision, line: null });
+      navigate({
+        type: "projects",
+        params: {
+          ...($activeRouteStore.type === "projects" &&
+            $activeRouteStore.params),
+          path: newPath,
+          revision,
+          line: null,
+        },
+      });
     }
   };
 
@@ -209,7 +218,7 @@
           {#if utils.isMarkdownPath(blob.path)}
             <Readme content={blob.content} {getImage} />
           {:else}
-            <Blob line={browser.line} {blob} />
+            <Blob line={params.line} {blob} />
           {/if}
         {:catch}
           <Placeholder icon="🍂">
