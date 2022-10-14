@@ -2,13 +2,14 @@ import { describe, expect, test } from "vitest";
 import { pathToRoute, routeToPath } from "./index";
 
 const defaultProjectRouteParams = {
+  urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
+  content: "tree",
+  restRoute: "",
   peer: null,
   profileName: null,
   seedHost: null,
   issue: null,
   patch: null,
-  path: null,
-  line: null,
 };
 
 describe("Route parsing", () => {
@@ -36,44 +37,51 @@ describe("Route parsing", () => {
       type: "projects",
       params: {
         ...defaultProjectRouteParams,
-        urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
-        content: "tree",
         seedHost: "willow.radicle.garden",
-        revision: "a67a075c10ac4155b3188dd8af9ea6c706657425",
       },
     },
     {
       type: "projects",
       params: {
         ...defaultProjectRouteParams,
-        urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
-        content: "tree",
         profileName: "cloudhead.eth",
-        revision: "a67a075c10ac4155b3188dd8af9ea6c706657425",
       },
     },
     {
       type: "projects",
       params: {
         ...defaultProjectRouteParams,
-        urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
-        content: "tree",
+        peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
         profileName: "cloudhead.eth",
-        revision: "a67a075c10ac4155b3188dd8af9ea6c706657425",
       },
     },
     {
       type: "projects",
       params: {
         ...defaultProjectRouteParams,
-        urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
-        content: "tree",
+        restRoute: "04aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
         profileName: "cloudhead.eth",
-        revision: null,
-        path: "src/App.svelte",
+      },
+    },
+    {
+      type: "projects",
+      params: {
+        ...defaultProjectRouteParams,
+        restRoute: "master/src/App.svelte",
+        profileName: "cloudhead.eth",
+      },
+    },
+    {
+      type: "projects",
+      params: {
+        ...defaultProjectRouteParams,
+        restRoute: "cloudhead/ci/src/App.svelte",
+        profileName: "cloudhead.eth",
       },
     },
   ])("$type", (route: any) => {
-    expect(pathToRoute(routeToPath(route))).toEqual(route);
+    const path = routeToPath(route);
+    console.log(path);
+    expect(pathToRoute(path)).toEqual(route);
   });
 });

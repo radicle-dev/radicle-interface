@@ -119,11 +119,11 @@
           let:result>
           <Issues {config} issues={result} state="open" />
         </Async>
-      {:else if content === "issue" && $browserStore.issue}
+      {:else if content === "issue" && params.issue}
         <Async
           fetch={issue.Issue.getIssue(
             project.urn,
-            $browserStore.issue,
+            params.issue,
             project.seed.api,
           )}
           let:result>
@@ -135,11 +135,11 @@
           let:result>
           <Patches {config} patches={result} />
         </Async>
-      {:else if content === "patch" && $browserStore.patch}
+      {:else if content === "patch" && params.patch}
         <Async
           fetch={patch.Patch.getPatch(
             project.urn,
-            $browserStore.patch,
+            params.patch,
             project.seed.api,
           )}
           let:result>

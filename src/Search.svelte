@@ -175,7 +175,7 @@
         {
           type: "projects",
           params: {
-            ...getCurrentRouteParams(),
+            ...getCurrentRouteParams("projects"),
             seedHost: searchResult.seedHost,
             urn: searchResult.id,
           },

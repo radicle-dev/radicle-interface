@@ -20,7 +20,7 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         issue: null, // Removing issue here to not contaminate path on navigation.
         patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
         content: content === input ? "tree" : input,
@@ -31,14 +31,14 @@
   const updatePeer = (peer: string) => {
     navigate({
       type: "projects",
-      params: { ...getCurrentRouteParams(), peer, revision: null },
+      params: { ...getCurrentRouteParams("projects"), peer, revision: null },
     });
   };
 
   const updateRevision = (revision: string) => {
     navigate({
       type: "projects",
-      params: { ...getCurrentRouteParams(), revision },
+      params: { ...getCurrentRouteParams("projects"), revision },
     });
   };
 </script>

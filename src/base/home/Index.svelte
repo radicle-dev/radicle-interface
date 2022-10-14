@@ -31,13 +31,15 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         urn: project.urn,
+        content: "tree",
         seedHost: seed.host,
         profileName: null,
-        revision: project.head,
-        content: "tree",
-        path: null,
+        restRoute: project.head,
+        peer: null,
+        issue: null,
+        patch: null,
       },
     });
   };

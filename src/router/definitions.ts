@@ -1,11 +1,9 @@
-import type { Branches } from "@app/project";
-
 export type Route =
-  | { type: "404"; params: { path: string } }
+  | { type: "404"; params: NotFoundParams }
   | { type: "faucet"; params: FaucetParams }
   | { type: "home" }
   | { type: "profile"; params: ProfileParams }
-  | { type: "projects"; params: ProjectParams; state: ProjectState }
+  | { type: "projects"; params: ProjectParams }
   | { type: "register" }
   | { type: "registrations"; params: RegistrationsParams }
   | { type: "seeds"; params: SeedParams }
@@ -14,21 +12,23 @@ export type Route =
 export interface ProjectParams {
   urn: string;
   content: string;
+  restRoute: string;
   seedHost: string | null;
   profileName: string | null;
   peer: string | null;
-  revision: string | null;
   issue: string | null;
   patch: string | null;
-  path: string | null;
-  line: number | null;
 }
 
-export interface ProjectState {
-  branches: Branches | null;
-}
+export type Params =
+  | NotFoundParams
+  | SeedParams
+  | ProfileParams
+  | ProjectParams
+  | RegistrationsParams;
 
 export type SeedParams = { host: string };
+export type NotFoundParams = { path: string };
 
 export type FaucetParams =
   | { type: "form" }

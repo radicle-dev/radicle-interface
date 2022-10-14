@@ -8,7 +8,6 @@ import type { Writable } from "svelte/store";
 
 import { get, writable } from "svelte/store";
 import { getSearchParam } from "@app/utils";
-import { parseRoute, type Branches } from "@app/project";
 
 const BOOT_ROUTE: Route = { type: "home" };
 
@@ -18,12 +17,13 @@ const documentTitle = "Radicle Interface";
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
 
-export function getCurrentRouteParams(): any {
+// Returns the current route params to be spread onto new navigate calls
+export function getCurrentRouteParams(type: string): any {
   const activeRoute = get(activeRouteStore);
-  if ("params" in activeRoute) {
+  if (type === activeRoute.type && "params" in activeRoute) {
     return activeRoute.params;
   }
-  return;
+  return { path: "/" };
 }
 
 export function link(node: any) {
@@ -96,7 +96,10 @@ export const initialize = (): void => {
   setHistory([route]);
 };
 
-export function pathToRoute(path: string, branches?: Branches): Route {
+export function pathToRoute(path: string | null): Route {
+  if (!path) {
+    return { type: "404", params: { path: "/" } };
+  }
   // Pathname starts usually with a "/", we remove it to avoid mal interpretations
   path = path.startsWith("/") ? path.substring(1) : path;
   const segments = path.split("/");
@@ -139,33 +142,24 @@ export function pathToRoute(path: string, branches?: Branches): Route {
       if (host) {
         const urn = segments.shift();
         if (urn) {
-          const content = segments.shift();
+          let content = segments.shift();
           let peer;
           if (content === "remotes") {
             peer = segments.shift();
-          }
-          if (branches) {
-            const { path, revision } = parseRoute(segments.join("/"), branches);
-            console.log(path, revision);
-            return {
-              type: "projects",
-              params: {
-                urn,
-                seedHost: host,
-                content: content || "tree",
-                profileName: null,
-                peer: peer || null,
-                path: path || null,
-                revision: revision || null,
-                line: null,
-                issue: null,
-                patch: null,
-              },
-            };
+            content = segments.shift();
           }
           return {
             type: "projects",
-            params: { ...getCurrentRouteParams(), seedHost: host, urn },
+            params: {
+              urn,
+              seedHost: host,
+              content: content || "tree",
+              peer: peer || null,
+              restRoute: segments.join("/"),
+              profileName: null,
+              issue: null,
+              patch: null,
+            },
           };
         }
         return { type: "seeds", params: { host } };
@@ -178,28 +172,25 @@ export function pathToRoute(path: string, branches?: Branches): Route {
       if (type) {
         const urn = segments.shift();
         if (urn) {
-          const content = segments.shift();
+          let content = segments.shift() || "tree";
+          console.log("pathToRoute:", content);
           let peer;
           if (content === "remotes") {
             peer = segments.shift();
+            content = segments.shift() || "tree";
           }
-          const revision = segments.shift();
-          if (revision) {
-            return {
-              type: "projects",
-              params: {
-                profileName: type,
-                urn,
-                peer: peer || null,
-                seedHost: null,
-                revision,
-                content: content || "tree",
-                path: null,
-                line: null,
-                issue: null,
-                patch: null,
-              },
-            };
+          if (
+            ![
+              "tree",
+              "issue",
+              "issues",
+              "patch",
+              "patches",
+              "history",
+              "commit",
+            ].includes(content)
+          ) {
+            return { type: "404", params: { path } };
           }
           return {
             type: "projects",
@@ -208,12 +199,10 @@ export function pathToRoute(path: string, branches?: Branches): Route {
               urn,
               peer: peer || null,
               seedHost: null,
-              path: null,
-              line: null,
+              restRoute: segments.join("/"),
               issue: null,
               patch: null,
-              revision: null,
-              content: content || "tree",
+              content,
             },
           };
         }
@@ -243,21 +232,16 @@ export function routeToPath(route: Route): string | null {
       hostPrefix = `/${route.params.profileName}`;
     }
 
-    let path = "";
-    if (route.params.path) {
-      path = `/${route.params.path}`;
-    }
-
-    let revision = "";
-    if (route.params.revision) {
-      revision = `/${route.params.revision}`;
-    }
+    const content = route.params.content ? `/${route.params.content}` : "";
+    const restRoute = route.params.restRoute
+      ? `/${route.params.restRoute}`
+      : "";
 
     if (route.params.peer) {
-      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}${route.params.content}/${revision}${path}`;
+      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}${content}${restRoute}`;
     }
 
-    return `${hostPrefix}/${route.params.urn}/${route.params.content}${revision}${path}`;
+    return `${hostPrefix}/${route.params.urn}${content}${restRoute}`;
   } else if (route.type === "register") {
     return `/registrations`;
   } else if (

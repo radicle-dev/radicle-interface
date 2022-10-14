@@ -14,7 +14,7 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         content: "tree",
         revision: commit.header.sha1,
         path: event.detail,

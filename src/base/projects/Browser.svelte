@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type * as proj from "@app/project";
   import type { Theme } from "@app/ThemeToggle.svelte";
   import type { ProjectParams } from "@app/router/definitions";
 
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
+  import * as proj from "@app/project";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
@@ -28,8 +28,9 @@
   export let tree: proj.Tree;
   export let commit: string;
 
-  $: path = params.path || "/";
-  $: revision = params.revision;
+  $: parsed = proj.parseRoute(params.restRoute || "", project.branches);
+  $: path = parsed.path || "/";
+  $: revision = parsed.revision || project.head;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -83,10 +84,8 @@
       navigate({
         type: "projects",
         params: {
-          ...getCurrentRouteParams(),
-          path: newPath,
-          revision,
-          line: null,
+          ...getCurrentRouteParams("projects"),
+          restRoute: `${revision}/${newPath}`,
         },
       });
     }

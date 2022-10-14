@@ -77,7 +77,7 @@
             navigate({
               type: "projects",
               params: {
-                ...getCurrentRouteParams(),
+                ...getCurrentRouteParams("projects"),
                 content: "patch",
                 patch: patch.id,
                 issue: null,

@@ -13,7 +13,7 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         content,
         revision,
         issue: null,
@@ -38,7 +38,7 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         content: "tree",
         revision: event.detail,
         issue: null,

@@ -77,12 +77,13 @@
           class="teaser"
           on:click={() => {
             navigate({
-              ...getCurrentRouteParams(),
-              content: "issue",
-              issue: issue.id,
-              patch: null,
-              revision: null,
-              path: null,
+              type: "projects",
+              params: {
+                ...getCurrentRouteParams("projects"),
+                content: "issue",
+                issue: issue.id,
+                patch: null,
+              },
             });
           }}>
           <IssueTeaser {config} {issue} />

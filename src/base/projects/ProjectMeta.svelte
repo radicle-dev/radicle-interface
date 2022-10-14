@@ -88,7 +88,7 @@
           to={{
             type: "projects",
             params: {
-              ...getCurrentRouteParams(),
+              ...getCurrentRouteParams("projects"),
               peer: null,
               content: "tree",
             },

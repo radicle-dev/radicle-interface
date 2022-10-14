@@ -30,7 +30,7 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams(),
+        ...getCurrentRouteParams("projects"),
         content: "tree",
         revision,
         patch: null,
