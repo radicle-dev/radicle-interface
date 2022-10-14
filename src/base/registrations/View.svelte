@@ -231,7 +231,7 @@
   </ErrorModal>
 {:else if state.status === Status.NotFound}
   <Modal subtle>
-    <span slot="title" class="secondary">
+    <span slot="title" class="txt-highlight">
       <div>🍄</div>
       {domain}
     </span>

@@ -103,27 +103,27 @@
       {:else}
         <table>
           <tr>
-            <td class="label">Beneficiary</td>
+            <td class="txt-highlight">Beneficiary</td>
             <td>
               <Address {config} address={info.beneficiary} compact resolve />
             </td>
           </tr>
           <tr>
-            <td class="label">Allocation</td>
+            <td class="txt-highlight">Allocation</td>
             <td>
               {info.totalVesting}
               <span class="txt-bold">{info.symbol}</span>
             </td>
           </tr>
           <tr>
-            <td class="label">Withdrawn</td>
+            <td class="txt-highlight">Withdrawn</td>
             <td>
               {info.withdrawn}
               <span class="txt-bold">{info.symbol}</span>
             </td>
           </tr>
           <tr>
-            <td class="label">Withdrawable</td>
+            <td class="txt-highlight">Withdrawable</td>
             <td>
               {info.withdrawableBalance}
               <span class="txt-bold">{info.symbol}</span>

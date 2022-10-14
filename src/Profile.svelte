@@ -181,16 +181,16 @@
     <div class="fields">
       <!-- ID -->
       {#if profile.id}
-        <div class="label">ID</div>
+        <div class="txt-highlight">ID</div>
         <RadicleUrn urn={profile.id} />
       {/if}
       <!-- Seed Address -->
       {#if profile.seed && profile.seed.valid}
-        <div class="label">Seed</div>
+        <div class="txt-highlight">Seed</div>
         <SeedAddress seed={profile.seed} port={config.seed.link.port} />
       {/if}
       <!-- Address -->
-      <div class="label">Address</div>
+      <div class="txt-highlight">Address</div>
       <div class="desktop">
         <Address {config} {profile} address={profile.address} />
       </div>
@@ -200,7 +200,7 @@
       <div class="desktop" />
       <!-- Owner -->
       {#if profile.org}
-        <div class="label">Owner</div>
+        <div class="txt-highlight">Owner</div>
         <div class="desktop">
           <Address resolve {config} address={profile.org.owner} />
         </div>
@@ -210,7 +210,7 @@
         <div class="desktop" />
       {/if}
       <!-- Org Name/Profile -->
-      <div class="label">Profile</div>
+      <div class="txt-highlight">Profile</div>
       {#if profile.org}
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">

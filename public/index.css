@@ -134,11 +134,6 @@ a.address {
   overflow-x: hidden;
   padding: 1rem;
 }
-.highlight,
-.secondary,
-.label {
-  color: var(--color-secondary);
-}
 .faded {
   color: var(--color-foreground-5);
 }

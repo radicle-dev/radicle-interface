@@ -11,7 +11,9 @@
 <Modal subtle>
   <span slot="title">🏜️</span>
   <span slot="body">
-    <p class="highlight txt-medium"><span class="txt-bold">{title}</span></p>
+    <p class="txt-medium txt-highlight">
+      <span class="txt-bold">{title}</span>
+    </p>
     <p>{subtitle}</p>
   </span>
   <span slot="actions">

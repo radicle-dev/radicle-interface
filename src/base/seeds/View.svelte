@@ -158,21 +158,21 @@
 
     <div class="fields">
       <!-- Seed Address -->
-      <div class="label">Address</div>
+      <div class="txt-highlight">Address</div>
       <SeedAddress {seed} port={seed.link.port} />
       <!-- Seed ID -->
-      <div class="label">Seed ID</div>
+      <div class="txt-highlight">Seed ID</div>
       <div class="seed-label">
         {formatSeedId(seed.id)}
         <Clipboard small text={seed.id} />
       </div>
       <div class="desktop" />
       <!-- API Port -->
-      <div class="label">API Port</div>
+      <div class="txt-highlight">API Port</div>
       <div>{seed.api.port}</div>
       <div class="desktop" />
       <!-- API Version -->
-      <div class="label">Version</div>
+      <div class="txt-highlight">Version</div>
       <div>{seed.version}</div>
       <div class="desktop" />
     </div>

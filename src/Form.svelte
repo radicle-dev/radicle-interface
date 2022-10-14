@@ -186,7 +186,7 @@
 
 <div class="fields">
   {#each formFields as field}
-    <div class="label">
+    <div class="label txt-highlight">
       {field.label || capitalize(field.name)}
     </div>
     <div>

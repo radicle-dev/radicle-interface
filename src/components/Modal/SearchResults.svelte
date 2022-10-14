@@ -36,7 +36,7 @@
 <Modal center floating>
   <span slot="title">️🔍</span>
   <span slot="subtitle">
-    <p class="highlight txt-medium">
+    <p class="txt-highlight txt-medium">
       <span class="txt-bold">
         Results for <q>{query}</q>
       </span>
@@ -44,7 +44,7 @@
   </span>
   <span class="results" slot="body">
     {#if results.projects.length > 0}
-      <p class="highlight txt-medium">Projects</p>
+      <p class="txt-highlight txt-medium">Projects</p>
       <ul>
         {#each results.projects as project}
           <li>
@@ -64,7 +64,7 @@
       </ul>
     {/if}
     {#if results.profiles.length > 0}
-      <p class="highlight txt-medium">ENS names</p>
+      <p class="txt-highlight txt-medium">ENS names</p>
       <ul>
         {#each results.profiles as profile}
           <li>

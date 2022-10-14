@@ -99,7 +99,7 @@
         <CommitVerifiedBadge {commit} />
       </div>
     {/if}
-    <span class="secondary hash">{formatCommit(commit.header.sha1)}</span>
+    <span class="hash txt-highlight">{formatCommit(commit.header.sha1)}</span>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"

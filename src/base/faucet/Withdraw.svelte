@@ -77,7 +77,7 @@
     <span slot="body" class="loader">
       {#if state.status === Status.Success}
         The amount of {amount} RAD tokens has been successfully transfered to
-        <span class="highlight">{requester}</span>
+        <span class="txt-highlight">{requester}</span>
       {:else}
         <Loading small center />
       {/if}

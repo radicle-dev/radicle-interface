@@ -50,6 +50,9 @@ html {
 p {
   margin: 1rem 0;
 }
+.txt-highlight {
+  color: var(--color-secondary);
+}
 
 .txt-title {
   font-size: var(--font-size-large);

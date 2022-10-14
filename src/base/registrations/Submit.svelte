@@ -94,7 +94,7 @@
     <span slot="body" class="loader">
       {#if $state.connection === State.Registered}
         This name has been successfully registered to
-        <span class="highlight">{registrationOwner}</span>
+        <span class="txt-highlight">{registrationOwner}</span>
       {:else if $state.connection === State.WaitingToRegister && $state.commitmentBlock}
         <BlockTimer
           {latestBlock}
