@@ -52,4 +52,4 @@
     small
     text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host} />
 </div>
-<div class="desktop" />
+<div class="layout-desktop" />

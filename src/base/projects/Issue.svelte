@@ -116,8 +116,10 @@
         <span class="summary-title txt-medium">
           {issue.title}
         </span>
-        <span class="txt-monospace id desktop">{issue.id}</span>
-        <span class="txt-monospace id mobile">{formatObjectId(issue.id)}</span>
+        <span class="txt-monospace id layout-desktop">{issue.id}</span>
+        <span class="txt-monospace id layout-mobile">
+          {formatObjectId(issue.id)}
+        </span>
       </div>
       <div
         class="summary-state"
@@ -146,7 +148,7 @@
         {/if}
       {/each}
     </div>
-    <div class="metadata desktop">
+    <div class="metadata layout-desktop">
       <div class="metadata-section">
         <div class="metadata-section-header">Labels</div>
         <div class="metadata-section-body">

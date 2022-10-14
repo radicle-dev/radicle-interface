@@ -101,7 +101,7 @@
   <div class="overlay" />
 {/if}
 
-<div class:floating class:off-centered={!center}>
+<div class:floating class:layout-centered={!center}>
   <div class="modal" class:subtle class:narrow class:small class:error>
     <div class="title">
       <slot name="title" />

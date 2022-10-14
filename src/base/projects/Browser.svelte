@@ -178,7 +178,7 @@
 <main>
   <!-- Mobile navigation -->
   {#if tree.entries.length > 0}
-    <nav class="mobile">
+    <nav class="layout-mobile">
       <Button
         style="width: 100%;"
         variant="secondary"

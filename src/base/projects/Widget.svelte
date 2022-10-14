@@ -147,10 +147,10 @@
   {#if !compact}
     <div class="right">
       <div class="id">
-        <span class="urn desktop">{project.urn}</span>
+        <span class="urn layout-desktop">{project.urn}</span>
       </div>
       {#await loadCommits() then points}
-        <div class="desktop activity">
+        <div class="layout-desktop activity">
           <Diagram
             {points}
             strokeWidth={3}

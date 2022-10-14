@@ -1,0 +1,33 @@
+.layout-centered {
+  height: 100%;
+  padding-top: 5rem;
+  padding-bottom: 24vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-mobile,
+.layout-mobile-inline {
+  display: none !important;
+}
+.layout-desktop {
+  display: block !important;
+}
+.layout-desktop-inline {
+  display: inline !important;
+}
+
+@media (max-width: 720px) {
+  .layout-mobile {
+    display: block !important;
+  }
+  .layout-mobile-inline {
+    display: inline !important;
+  }
+  .layout-desktop,
+  .layout-desktop-inline {
+    display: none !important;
+  }
+}

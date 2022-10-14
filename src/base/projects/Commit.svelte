@@ -59,10 +59,10 @@
   <header>
     <div class="summary">
       <div class="txt-medium">{commit.header.summary}</div>
-      <div class="desktop txt-monospace sha1">
+      <div class="layout-desktop txt-monospace sha1">
         <span>{commit.header.sha1}</span>
       </div>
-      <div class="mobile txt-monospace sha1 txt-small">
+      <div class="layout-mobile txt-monospace sha1 txt-small">
         {formatCommit(commit.header.sha1)}
       </div>
     </div>

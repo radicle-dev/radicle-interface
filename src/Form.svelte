@@ -215,13 +215,13 @@
                 </a>
               </span>
             {:else if isAddress(field.value)}
-              <div class="desktop-inline">
+              <div class="layout-desktop-inline">
                 <Address
                   resolve={field.resolve ?? false}
                   address={field.value}
                   {config} />
               </div>
-              <div class="mobile-inline">
+              <div class="layout-mobile-inline">
                 <Address
                   compact
                   resolve={field.resolve ?? false}
@@ -233,10 +233,10 @@
                 <a use:link href={field.url} class="txt-link">{field.value}</a>
               </div>
             {:else if field.validate === "id"}
-              <div class="mobile">
+              <div class="layout-mobile">
                 {formatSeedId(field.value)}
               </div>
-              <div class="desktop">
+              <div class="layout-desktop">
                 {field.value}
               </div>
             {:else}

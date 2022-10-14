@@ -51,7 +51,7 @@
       {/if}
       <span>committed</span>
     {:else}
-      <span class="desktop-inline committer">
+      <span class="layout-desktop-inline committer">
         {commit.header.committer.name}
       </span>
       <span>committed</span>
@@ -62,7 +62,9 @@
         class="avatar"
         alt="avatar"
         src={gravatarURL(commit.header.author.email)} />
-      <span class="desktop-inline author">{commit.header.author.name}</span>
+      <span class="layout-desktop-inline author">
+        {commit.header.author.name}
+      </span>
       <span>authored</span>
     {/if}
     <img
@@ -78,14 +80,14 @@
       {/if}
       <span>committed</span>
     {:else}
-      <span class="desktop-inline committer">
+      <span class="layout-desktop-inline committer">
         {commit.header.committer.name}
       </span>
       <span>committed</span>
     {/if}
   {/if}
   {#if !noTime}
-    <span class="desktop-inline">
+    <span class="layout-desktop-inline">
       {formatTimestamp(commit.header.committerTime)}
     </span>
   {/if}

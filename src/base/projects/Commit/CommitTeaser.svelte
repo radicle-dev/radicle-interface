@@ -95,7 +95,7 @@
   </div>
   <div class="column-right">
     {#if commit.context.committer}
-      <div class="desktop">
+      <div class="layout-desktop">
         <CommitVerifiedBadge {commit} />
       </div>
     {/if}

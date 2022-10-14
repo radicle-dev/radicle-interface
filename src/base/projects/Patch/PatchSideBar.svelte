@@ -38,7 +38,7 @@
   }
 </style>
 
-<div class="metadata desktop">
+<div class="metadata layout-desktop">
   <div class="metadata-section">
     <div class="metadata-section-header">Labels</div>
     <div class="metadata-section-body">

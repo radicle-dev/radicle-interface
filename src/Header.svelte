@@ -209,7 +209,7 @@
       </span>
     {/if}
     <ThemeToggle />
-    <div class="mobile">
+    <div class="layout-mobile">
       <Floating overlay>
         <div slot="toggle">
           <span style="transform: scale(1.2);">

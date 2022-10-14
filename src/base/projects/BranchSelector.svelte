@@ -90,15 +90,15 @@
             on:select={e => switchBranch(e.detail)} />
         </svelte:fragment>
       </Floating>
-      <div class="hash desktop">
+      <div class="hash layout-desktop">
         {formatCommit(commit)}
       </div>
     {:else}
-      <div class="unlabeled hash desktop">
+      <div class="unlabeled hash layout-desktop">
         {commit}
       </div>
     {/if}
-    <div class="hash mobile">
+    <div class="hash layout-mobile">
       {formatCommit(commit)}
     </div>
     <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
@@ -110,10 +110,10 @@
       {formatCommit(commit)}
     </div>
   {:else}
-    <div class="unlabeled hash desktop">
+    <div class="unlabeled hash layout-desktop">
       {commit}
     </div>
-    <div class="hash mobile">
+    <div class="hash layout-mobile">
       {formatCommit(commit)}
     </div>
   {/if}

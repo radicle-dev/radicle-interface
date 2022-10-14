@@ -85,12 +85,6 @@
     padding: 0.25rem 0.5rem;
     border-radius: var(--border-radius);
   }
-  .desktop {
-    display: block !important;
-  }
-  .inline {
-    display: inline !important;
-  }
   .seed-label {
     display: flex;
     align-items: center;
@@ -107,9 +101,6 @@
     .fields {
       grid-template-columns: 5rem auto;
     }
-    .desktop {
-      display: none !important;
-    }
   }
 </style>
 
@@ -118,7 +109,7 @@
 </svelte:head>
 
 {#await Seed.lookup(host, config)}
-  <main class="off-centered">
+  <main class="layout-centered">
     <Loading center />
   </main>
 {:then seed}
@@ -127,7 +118,7 @@
       <span class="title txt-title">
         <span class="txt-bold">
           {hostName}
-          <span class="desktop inline">{seed.emoji}</span>
+          <span class="layout-desktop-inline">{seed.emoji}</span>
         </span>
       </span>
       <!-- User Session -->
@@ -166,15 +157,15 @@
         {formatSeedId(seed.id)}
         <Clipboard small text={seed.id} />
       </div>
-      <div class="desktop" />
+      <div class="layout-desktop" />
       <!-- API Port -->
       <div class="txt-highlight">API Port</div>
       <div>{seed.api.port}</div>
-      <div class="desktop" />
+      <div class="layout-desktop" />
       <!-- API Version -->
       <div class="txt-highlight">Version</div>
       <div>{seed.version}</div>
-      <div class="desktop" />
+      <div class="layout-desktop" />
     </div>
     <!-- Seed Projects -->
     <Async fetch={getProjectsAndStats(seed)} let:result>

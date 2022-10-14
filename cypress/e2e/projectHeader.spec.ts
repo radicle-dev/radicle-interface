@@ -87,7 +87,7 @@ describe("project header", () => {
     cy.get("div.stat.branch")
       .should("have.class", "not-allowed")
       .should("have.text", "main");
-    cy.get("div.hash.desktop").should("have.text", "56e4e02");
+    cy.get("div.hash.layout-desktop").should("have.text", "56e4e02");
     cy.get("div.clone-button").click();
   });
 
@@ -134,7 +134,7 @@ describe("project header", () => {
       );
     });
     cy.get("div.stat.branch").should("have.text", "master");
-    cy.get("div.hash.desktop").should("have.text", "cbf5df4");
+    cy.get("div.hash.layout-desktop").should("have.text", "cbf5df4");
   });
 
   it("navigate to commit history", () => {

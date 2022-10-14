@@ -31,7 +31,7 @@ describe("Logic", () => {
     cy.get("div.stat.branch")
       .should("be.visible")
       .should("have.text", "master");
-    cy.get("div.hash.mobile")
+    cy.get("div.hash.layout-mobile")
       .should("be.visible")
       .should("have.text", "e678629");
   });
@@ -48,7 +48,7 @@ describe("Logic", () => {
     cy.get("div.stat.branch")
       .should("be.visible")
       .should("have.text", "master");
-    cy.get("div.hash.mobile")
+    cy.get("div.hash.layout-mobile")
       .should("be.visible")
       .should("have.text", "e678629");
   });
@@ -90,7 +90,7 @@ describe("Logic", () => {
     cy.get("div.stat.branch")
       .should("be.visible")
       .should("have.text", "feature-branch");
-    cy.get("div.hash.mobile")
+    cy.get("div.hash.layout-mobile")
       .should("be.visible")
       .should("have.text", "29e8b7b");
   });
@@ -103,11 +103,11 @@ describe("Logic", () => {
         branches: {},
       },
     });
-    cy.get("div.hash.mobile")
+    cy.get("div.hash.layout-mobile")
       .should("be.visible")
       .should("have.text", "debf82e");
     cy.viewport("macbook-13");
-    cy.get("div.hash.desktop")
+    cy.get("div.hash.layout-desktop")
       .should("be.visible")
       .should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
@@ -119,11 +119,11 @@ describe("Logic", () => {
         revision: "debf82ef3623ec11751a993bda85bac2ff1c6f00",
       },
     });
-    cy.get("div.hash.mobile")
+    cy.get("div.hash.layout-mobile")
       .should("be.visible")
       .should("have.text", "debf82e");
     cy.viewport("macbook-13");
-    cy.get("div.hash.desktop")
+    cy.get("div.hash.layout-desktop")
       .should("be.visible")
       .should("have.text", "debf82ef3623ec11751a993bda85bac2ff1c6f00");
   });
@@ -151,11 +151,11 @@ describe("Layout", () => {
       },
     });
     cy.viewport("iphone-x");
-    cy.get("div.hash.mobile").should("be.visible");
-    cy.get("div.hash.desktop").should("not.be.visible");
+    cy.get("div.hash.layout-mobile").should("be.visible");
+    cy.get("div.hash.layout-desktop").should("not.be.visible");
     cy.viewport("macbook-15");
-    cy.get("div.hash.mobile").should("not.be.visible");
-    cy.get("div.hash.desktop").should("be.visible");
+    cy.get("div.hash.layout-mobile").should("not.be.visible");
+    cy.get("div.hash.layout-desktop").should("be.visible");
   });
 });
 

@@ -101,8 +101,10 @@
         <span class="summary-title txt-medium">
           {patch.title}
         </span>
-        <span class="txt-monospace id desktop">{patch.id}</span>
-        <span class="txt-monospace id mobile">{formatObjectId(patch.id)}</span>
+        <span class="txt-monospace id layout-desktop">{patch.id}</span>
+        <span class="txt-monospace id layout-mobile">
+          {formatObjectId(patch.id)}
+        </span>
       </div>
       <div
         class="summary-state"

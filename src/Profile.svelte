@@ -126,7 +126,7 @@
 </svelte:head>
 
 {#await Profile.get(addressOrName, ProfileType.Full, config)}
-  <div class="off-centered">
+  <div class="layout-centered">
     <Loading center />
   </div>
 {:then profile}
@@ -139,12 +139,12 @@
       </div>
       <div class="info">
         <span class="title txt-title">
-          <span class="txt-bold desktop">
+          <span class="txt-bold layout-desktop">
             {profile.name
               ? utils.formatName(profile.name, config)
               : profile.address}
           </span>
-          <span class="txt-bold mobile">
+          <span class="txt-bold layout-mobile">
             {profile.name
               ? utils.formatName(profile.name, config)
               : utils.formatAddress(profile.address)}
@@ -156,10 +156,10 @@
         <div class="links">
           {#if profile.url}
             <a class="url" href={profile.url}>
-              <span class="mobile">
+              <span class="layout-mobile">
                 <Icon name="url" />
               </span>
-              <span class="desktop" style="margin-right: 0.3rem;">
+              <span class="layout-desktop" style="margin-right: 0.3rem;">
                 {profile.url}
               </span>
             </a>
@@ -191,23 +191,23 @@
       {/if}
       <!-- Address -->
       <div class="txt-highlight">Address</div>
-      <div class="desktop">
+      <div class="layout-desktop">
         <Address {config} {profile} address={profile.address} />
       </div>
-      <div class="mobile">
+      <div class="layout-mobile">
         <Address compact {config} {profile} address={profile.address} />
       </div>
-      <div class="desktop" />
+      <div class="layout-desktop" />
       <!-- Owner -->
       {#if profile.org}
         <div class="txt-highlight">Owner</div>
-        <div class="desktop">
+        <div class="layout-desktop">
           <Address resolve {config} address={profile.org.owner} />
         </div>
-        <div class="mobile">
+        <div class="layout-mobile">
           <Address compact resolve {config} address={profile.org.owner} />
         </div>
-        <div class="desktop" />
+        <div class="layout-desktop" />
       {/if}
       <!-- Org Name/Profile -->
       <div class="txt-highlight">Profile</div>
@@ -234,7 +234,7 @@
             <span class="txt-missing">Not set</span>
           {/if}
         </div>
-        <div class="desktop">
+        <div class="layout-desktop">
           {#if isUserAuthorized(profile.address) && !profile.org}
             <Button variant="secondary" size="small" on:click={setName}>
               Set
