@@ -1,41 +1,45 @@
 <script lang="ts">
   import type { Project } from "@app/project";
   import type { Tree } from "@app/project";
-  import type { Params } from "./Routes.svelte";
 
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
-  import { navigate } from "@app/router";
+  import { getCurrentRouteParams, navigate } from "@app/router";
 
-  export let params: Params;
+  export let peer: string | null;
   export let project: Project;
   export let tree: Tree;
   export let revision: string;
+  export let content: string;
 
   const { urn, peers, branches, seed } = project;
-
-  $: content = params.content;
 
   // Switches between project views.
   const toggleContent = (input: string) => {
     navigate({
       type: "projects",
       params: {
-        ...params,
+        ...getCurrentRouteParams(),
         issue: null, // Removing issue here to not contaminate path on navigation.
         patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
-        content: params.content === input ? "tree" : input,
+        content: content === input ? "tree" : input,
       },
     });
   };
 
   const updatePeer = (peer: string) => {
-    navigate({ type: "projects", params: { ...params, peer, revision: null } });
+    navigate({
+      type: "projects",
+      params: { ...getCurrentRouteParams(), peer, revision: null },
+    });
   };
 
   const updateRevision = (revision: string) => {
-    navigate({ type: "projects", params: { ...params, revision } });
+    navigate({
+      type: "projects",
+      params: { ...getCurrentRouteParams(), revision },
+    });
   };
 </script>
 
@@ -92,7 +96,7 @@
   {#if peers.length > 0}
     <PeerSelector
       {peers}
-      peer={params.peer}
+      {peer}
       on:peerChanged={event => updatePeer(event.detail)} />
   {/if}
 

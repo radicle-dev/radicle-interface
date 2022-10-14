@@ -3,8 +3,6 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import { navigate } from "@app/router";
-
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";
   import Connect from "@app/Connect.svelte";
@@ -19,6 +17,7 @@
 
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
+  import { link } from "@app/router";
   import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
@@ -167,7 +166,7 @@
 
 <header>
   <div class="left">
-    <Link to={{ type: "home" }} class="logo"><Logo /></Link>
+    <a use:link href="/" class="logo"><Logo /></a>
     <div class="search">
       <Search
         {config}
@@ -199,7 +198,7 @@
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <Link to={{ type: "register" }}>Register</Link>
+    <a use:link class="register" href="/registrations">Register</a>
 
     {#if address}
       <span class="balance">
@@ -258,7 +257,9 @@
                   ({ query, results } = e.detail);
                 }} />
             </div>
-            <Link to={{ type: "register" }}>Register</Link>
+            <a use:link on:click={() => closeFocused()} href="/registrations">
+              Register
+            </a>
           </div>
         </svelte:fragment>
       </Floating>

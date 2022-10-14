@@ -4,7 +4,7 @@
   import type { CommitMetadata, CommitsHistory } from "@app/commit";
   import { groupCommits } from "@app/commit";
   import List from "@app/List.svelte";
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate, getCurrentRouteParams } from "@app/router";
 
   export let project: Project;
   export let history: CommitsHistory;
@@ -13,7 +13,7 @@
     navigate({
       type: "projects",
       params: {
-        ...($activeRouteStore.type === "projects" && $activeRouteStore.params),
+        ...getCurrentRouteParams(),
         content,
         revision,
         issue: null,
@@ -38,7 +38,7 @@
     navigate({
       type: "projects",
       params: {
-        ...($activeRouteStore.type === "projects" && $activeRouteStore.params),
+        ...getCurrentRouteParams(),
         content: "tree",
         revision: event.detail,
         issue: null,

@@ -4,7 +4,7 @@
   import Link from "@app/Link.svelte";
   import { formatSeedId } from "@app/utils";
   import type { PeerId, Project } from "@app/project";
-  import { activeRouteStore } from "@app/router";
+  import { activeRouteStore, getCurrentRouteParams } from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
@@ -88,7 +88,8 @@
           to={{
             type: "projects",
             params: {
-              ...$activeRouteStore.params,
+              ...getCurrentRouteParams(),
+              peer: null,
               content: "tree",
             },
           }}>

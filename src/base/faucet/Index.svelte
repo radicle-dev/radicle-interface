@@ -62,10 +62,10 @@
         return;
       }
 
-      navigate(
-        { type: "faucet", params: { type: "withdraw" } },
-        { state: { amount } },
-      );
+      navigate({
+        type: "faucet",
+        params: { type: "withdraw", amount },
+      });
     } catch (error) {
       validationMessage = "There was an error, check the dev console.";
       console.error(error);

@@ -1,6 +1,7 @@
 <script lang="ts">
+  import type { Route } from "@app/router/definitions";
+
   import { onMount } from "svelte";
-  import type { Route } from "@app/router";
   import { navigate } from "@app/router";
 
   export let to: Route;

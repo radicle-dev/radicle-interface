@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { navigate, routeToPath, type Route } from "./router";
+  import type { Route } from "./router/definitions";
+  import { navigate, routeToPath } from "./router";
 
   export let to: Route;
   export let replace = false;

@@ -1,4 +1,3 @@
-import { navigate } from "@app/router";
 import { get, writable } from "svelte/store";
 import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
@@ -301,12 +300,7 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrUrn: string, host: Host): Promise<ProjectInfo> {
-    const info = await new Request(`projects/${nameOrUrn}`, host).get();
-
-    return {
-      ...info,
-      ...info.meta, // Nb. This is only needed while we are upgrading to the new http-api.
-    };
+    return await new Request(`projects/${nameOrUrn}`, host).get();
   }
 
   static async getProjects(
@@ -413,27 +407,6 @@ export class Project implements ProjectInfo {
       `projects/${this.urn}/readme/${commit}`,
       this.seed.api,
     ).get();
-  }
-
-  navigateTo(browse: BrowseTo): void {
-    navigate(this.pathTo(browse));
-  }
-
-  pathTo(browse: BrowseTo): string {
-    const browser = get(browserStore);
-    const options: PathOptions = {
-      urn: this.urn,
-      ...browser,
-      ...browse,
-    };
-
-    if (this.profile) {
-      options.profile = this.profile?.nameOrAddress;
-    } else {
-      options.seed = this.seed.host;
-    }
-
-    return path(options);
   }
 
   static async get(

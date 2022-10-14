@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import { Project, ProjectContent } from "@app/project";
+  import type { Project } from "@app/project";
+
   import { capitalize } from "@app/utils";
   import { Patch, PatchTab } from "@app/patch";
   import { formatObjectId } from "@app/cobs";
@@ -11,6 +12,7 @@
   import PatchTabBar from "./Patch/PatchTabBar.svelte";
   import PatchTimeline from "./Patch/PatchTimeline.svelte";
   import Placeholder from "@app/Placeholder.svelte";
+  import { getCurrentRouteParams, navigate } from "@app/router";
 
   export let patch: Patch;
   export let project: Project;
@@ -25,11 +27,15 @@
   };
 
   const onBrowse = (event: { detail: string }, revision: string) => {
-    project.navigateTo({
-      content: ProjectContent.Tree,
-      revision,
-      patch: null,
-      path: event.detail,
+    navigate({
+      type: "projects",
+      params: {
+        ...getCurrentRouteParams(),
+        content: "tree",
+        revision,
+        patch: null,
+        path: event.detail,
+      },
     });
   };
 

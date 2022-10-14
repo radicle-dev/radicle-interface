@@ -1,20 +1,6 @@
-<script lang="ts" context="module">
-  export interface Params {
-    urn: string;
-    content: string;
-    seedHost: string | null;
-    profileName: string | null;
-    peer: string | null;
-    revision: string | null;
-    issue: string | null;
-    patch: string | null;
-    path: string | null;
-    line: number | null;
-  }
-</script>
-
 <script lang="ts">
   import type { Config } from "@app/config";
+  import type { ProjectParams } from "@app/router/definitions";
 
   import * as proj from "@app/project";
   import Placeholder from "@app/Placeholder.svelte";
@@ -37,7 +23,7 @@
   import Patch from "./Patch.svelte";
   import { onMount } from "svelte";
 
-  export let params: Params;
+  export let params: ProjectParams;
   export let config: Config;
 
   let project: proj.Project | null = null;
@@ -79,7 +65,7 @@
 </style>
 
 <svelte:head>
-  <title>title</title>
+  <title>{project?.name}</title>
 </svelte:head>
 
 {#if project}
@@ -92,7 +78,12 @@
           <Loading center />
         </header>
       {:then { tree, commit }}
-        <Header {tree} {params} {project} revision={commit} />
+        <Header
+          {tree}
+          {peer}
+          {project}
+          revision={commit}
+          content={params.content} />
 
         {#if content === "tree"}
           <Browser {params} {project} {commit} {tree} />
@@ -107,7 +98,7 @@
           </Async>
         {:else if content === "commit"}
           <Async fetch={project.getCommit(commit)} let:result>
-            <Commit {project} commit={result} />
+            <Commit commit={result} />
           </Async>
         {/if}
       {:catch err}
@@ -126,7 +117,7 @@
         <Async
           fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
           let:result>
-          <Issues {project} {config} issues={result} />
+          <Issues {config} issues={result} state="open" />
         </Async>
       {:else if content === "issue" && $browserStore.issue}
         <Async
@@ -142,7 +133,7 @@
         <Async
           fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
           let:result>
-          <Patches {project} {config} patches={result} />
+          <Patches {config} patches={result} />
         </Async>
       {:else if content === "patch" && $browserStore.patch}
         <Async

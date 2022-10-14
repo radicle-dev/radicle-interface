@@ -2,15 +2,12 @@
   import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
   import { activeRouteStore, initialize } from "@app/router";
-  import * as proj from "@app/project";
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
-  import Async from "@app/Async.svelte";
   import Project from "@app/base/projects/Project.svelte";
-  import ProjectMeta from "@app/base/projects/ProjectMeta.svelte";
   import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
   import Loading from "@app/Loading.svelte";
@@ -47,8 +44,6 @@
       }
     }
   }
-
-  activeRouteStore.subscribe(console.log);
 </script>
 
 <style>

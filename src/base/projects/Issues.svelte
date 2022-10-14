@@ -7,10 +7,9 @@
   import type { Issue } from "@app/issue";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
-  import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { navigate } from "@app/router";
+  import { getCurrentRouteParams, navigate } from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -18,7 +17,6 @@
 
   export let config: Config;
   export let issues: Issue[];
-  export let project: Project;
   export let state: State;
 
   let options: ToggleButtonOption<State>[];
@@ -78,8 +76,9 @@
         <div
           class="teaser"
           on:click={() => {
-            project.navigateTo({
-              content: ProjectContent.Issue,
+            navigate({
+              ...getCurrentRouteParams(),
+              content: "issue",
               issue: issue.id,
               patch: null,
               revision: null,

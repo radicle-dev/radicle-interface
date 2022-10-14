@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "@app/router";
+  import { getCurrentRouteParams, navigate } from "@app/router";
   import * as proj from "@app/project";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
@@ -7,7 +7,7 @@
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
 
-  export let seed: Seed | null = null;
+  export let seed: Seed;
   export let profile: Profile | null = null;
   export let projects: proj.ProjectInfo[];
   export let stats: Stats;
@@ -40,12 +40,15 @@
     navigate({
       type: "projects",
       params: {
+        ...getCurrentRouteParams(),
         urn: project.urn,
         seedHost: seed?.host || null,
         profileName: (profile?.name ?? profile?.address) || null,
         revision: project.head,
-        peer: null,
         content: "tree",
+      },
+      state: {
+        branches: project.branches,
       },
     });
   };

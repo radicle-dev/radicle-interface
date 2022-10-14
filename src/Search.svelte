@@ -126,7 +126,7 @@
 
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
-  import { navigate } from "@app/router";
+  import { getCurrentRouteParams, navigate } from "@app/router";
 
   import TextInput from "@app/TextInput.svelte";
   import { unreachable } from "@app/utils";
@@ -164,13 +164,26 @@
       shake();
     } else if (searchResult.type === "singleProfile") {
       input = "";
-      navigate(`/${searchResult.id}`, { replace: true });
+      navigate(
+        { type: "profile", params: { profileName: searchResult.id } },
+        { replace: true },
+      );
       dispatch("finished");
     } else if (searchResult.type === "singleProject") {
       input = "";
-      navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
-        replace: true,
-      });
+      navigate(
+        {
+          type: "projects",
+          params: {
+            ...getCurrentRouteParams(),
+            seedHost: searchResult.seedHost,
+            urn: searchResult.id,
+          },
+        },
+        {
+          replace: true,
+        },
+      );
       dispatch("finished");
     } else if (searchResult.type === "projectsAndProfiles") {
       // TODO: show some kind of notification about any errors to the user.

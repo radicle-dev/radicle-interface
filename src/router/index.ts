@@ -3,34 +3,49 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event
 
-import type * as Registrations from "@app/base/registrations/Routes.svelte";
-import type * as Faucet from "@app/base/faucet/Routes.svelte";
-import type * as Profile from "@app/Profile.svelte";
-import type * as Seeds from "@app/base/seeds/Routes.svelte";
-import type * as Projects from "@app/base/projects/Routes.svelte";
+import type { Route } from "./definitions";
 import type { Writable } from "svelte/store";
 
 import { get, writable } from "svelte/store";
 import { getSearchParam } from "@app/utils";
-
-export type Route =
-  | { type: "404"; params: { path: string } }
-  | { type: "faucet"; params: Faucet.Params }
-  | { type: "home" }
-  | { type: "profile"; params: Profile.Params }
-  | { type: "projects"; params: Projects.Params }
-  | { type: "register" }
-  | { type: "registrations"; params: Registrations.Params }
-  | { type: "seeds"; params: Seeds.Params }
-  | { type: "vesting" };
+import { parseRoute, type Branches } from "@app/project";
 
 const BOOT_ROUTE: Route = { type: "home" };
 
 // This is only respected by Safari.
-const documentTitle = "Radicle Upstream";
+const documentTitle = "Radicle Interface";
 
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
+
+export function getCurrentRouteParams(): any {
+  const activeRoute = get(activeRouteStore);
+  if ("params" in activeRoute) {
+    return activeRoute.params;
+  }
+  return;
+}
+
+export function link(node: any) {
+  function onClick(event: any) {
+    const anchor = event.currentTarget;
+
+    if (anchor.target === "") {
+      event.preventDefault();
+      navigate(pathToRoute(anchor.pathname), {
+        replace: anchor.hasAttribute("replace"),
+      });
+    }
+  }
+
+  node.addEventListener("click", onClick);
+
+  return {
+    destroy() {
+      node.removeEventListener("click", onClick);
+    },
+  };
+}
 
 export const push = (newRoute: Route): void => {
   window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
@@ -46,12 +61,15 @@ window.addEventListener("popstate", e => {
   setHistory(e.state);
 });
 
-export function navigate(route: Route | string, opts = { replace: false }) {
+export function navigate(
+  route: Route | string,
+  opts?: { retry?: boolean; replace?: boolean },
+) {
   if (typeof route === "string") {
     route = pathToRoute(route);
   }
 
-  if (opts.replace) {
+  if (opts?.replace) {
     setHistory([route]);
   } else {
     push(route);
@@ -72,11 +90,13 @@ function setHistory(history: Route[]): void {
   );
 }
 
-export const initialize = async (): Promise<void> => {
-  setHistory([pathToRoute(window.location.pathname)]);
+export const initialize = (): void => {
+  const route = pathToRoute(window.location.pathname);
+  console.log(route);
+  setHistory([route]);
 };
 
-export function pathToRoute(path: string): Route {
+export function pathToRoute(path: string, branches?: Branches): Route {
   // Pathname starts usually with a "/", we remove it to avoid mal interpretations
   path = path.startsWith("/") ? path.substring(1) : path;
   const segments = path.split("/");
@@ -84,20 +104,19 @@ export function pathToRoute(path: string): Route {
   switch (type) {
     case "registrations": {
       const nameOrDomain = segments.shift();
-      const action = segments.shift();
+      const view = segments.shift();
       if (nameOrDomain) {
-        if (!action) {
-          return {
-            type: "registrations",
-            params: { view: "view", nameOrDomain, owner: null },
-          };
-        } else if (action) {
+        if (view) {
           const owner = getSearchParam("owner");
           return {
             type: "registrations",
-            params: { view: action, nameOrDomain, owner },
+            params: { view, nameOrDomain, owner },
           };
         }
+        return {
+          type: "registrations",
+          params: { nameOrDomain, owner: null, view: null },
+        };
       }
       return {
         type: "register",
@@ -106,7 +125,10 @@ export function pathToRoute(path: string): Route {
     case "faucet": {
       const view = segments.shift();
       if (view === "withdraw") {
-        return { type: "faucet", params: { type: "withdraw" } };
+        return {
+          type: "faucet",
+          params: { type: "withdraw", amount: getSearchParam("amount") || "0" },
+        };
       }
       return { type: "faucet", params: { type: "form" } };
     }
@@ -122,18 +144,19 @@ export function pathToRoute(path: string): Route {
           if (content === "remotes") {
             peer = segments.shift();
           }
-          const revision = segments.shift();
-          if (revision) {
+          if (branches) {
+            const { path, revision } = parseRoute(segments.join("/"), branches);
+            console.log(path, revision);
             return {
               type: "projects",
               params: {
-                profileName: null,
                 urn,
-                peer: peer || null,
                 seedHost: host,
-                revision,
                 content: content || "tree",
-                path: null,
+                profileName: null,
+                peer: peer || null,
+                path: path || null,
+                revision: revision || null,
                 line: null,
                 issue: null,
                 patch: null,
@@ -142,18 +165,7 @@ export function pathToRoute(path: string): Route {
           }
           return {
             type: "projects",
-            params: {
-              profileName: null,
-              urn,
-              peer: peer || null,
-              seedHost: host,
-              path: null,
-              line: null,
-              issue: null,
-              patch: null,
-              revision: null,
-              content: content || "tree",
-            },
+            params: { ...getCurrentRouteParams(), seedHost: host, urn },
           };
         }
         return { type: "seeds", params: { host } };
@@ -167,39 +179,62 @@ export function pathToRoute(path: string): Route {
         const urn = segments.shift();
         if (urn) {
           const content = segments.shift();
+          let peer;
+          if (content === "remotes") {
+            peer = segments.shift();
+          }
+          const revision = segments.shift();
+          if (revision) {
+            return {
+              type: "projects",
+              params: {
+                profileName: type,
+                urn,
+                peer: peer || null,
+                seedHost: null,
+                revision,
+                content: content || "tree",
+                path: null,
+                line: null,
+                issue: null,
+                patch: null,
+              },
+            };
+          }
           return {
             type: "projects",
             params: {
               profileName: type,
               urn,
-              peer: null,
+              peer: peer || null,
               seedHost: null,
-              revision: null,
-              content: content || "tree",
               path: null,
               line: null,
               issue: null,
               patch: null,
+              revision: null,
+              content: content || "tree",
             },
           };
         }
         return { type: "profile", params: { profileName: type } };
       }
+      return { type: "home" };
     }
   }
 }
 
-export function routeToPath(route: Route): string {
+export function routeToPath(route: Route): string | null {
   if (route.type === "home") {
-    return `/`;
+    return "/";
   } else if (route.type === "faucet" && route.params.type === "form") {
-    return `/faucet`;
+    return "/faucet";
   } else if (route.type === "vesting") {
-    return `/vesting`;
+    return "/vesting";
   } else if (route.type === "seeds") {
     return `/seeds/${route.params.host}`;
   } else if (route.type === "faucet" && route.params.type === "withdraw") {
-    return `/faucet/withdraw`;
+    return "/faucet/withdraw";
   } else if (route.type === "projects") {
     let hostPrefix;
     if (route.params.seedHost) {
@@ -209,18 +244,27 @@ export function routeToPath(route: Route): string {
     }
 
     let path = "";
-    if (route.params.path !== null) {
+    if (route.params.path) {
       path = `/${route.params.path}`;
     }
 
-    if (route.params.peer) {
-      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}/${route.params.content}/${route.params.revision}${path}`;
+    let revision = "";
+    if (route.params.revision) {
+      revision = `/${route.params.revision}`;
     }
 
-    return `${hostPrefix}/${route.params.urn}/${route.params.content}/${route.params.revision}${path}`;
+    if (route.params.peer) {
+      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}${route.params.content}/${revision}${path}`;
+    }
+
+    return `${hostPrefix}/${route.params.urn}/${route.params.content}${revision}${path}`;
   } else if (route.type === "register") {
     return `/registrations`;
-  } else if (route.type === "registrations" && route.params.nameOrDomain) {
+  } else if (
+    route.type === "registrations" &&
+    route.params.nameOrDomain &&
+    !route.params.view
+  ) {
     return `/registrations/${route.params.nameOrDomain}`;
   } else if (route.type === "registrations" && route.params.view) {
     if (route.params.owner) {
@@ -232,4 +276,5 @@ export function routeToPath(route: Route): string {
   } else if (route.type === "404") {
     return route.params.path;
   }
+  return null;
 }

@@ -1,23 +1,17 @@
-<script lang="ts" context="module">
-  export interface Params {
-    nameOrDomain: string;
-    owner: string | null;
-    view: string;
-  }
-</script>
-
 <script lang="ts">
-  import { navigate } from "@app/router";
+  import type { Config } from "@app/config";
+  import type { RegistrationsParams } from "@app/router/definitions";
+  import type { Session } from "@app/session";
+
+  import ErrorModal from "@app/ErrorModal.svelte";
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
-  import ErrorModal from "@app/ErrorModal.svelte";
-  import type { Config } from "@app/config";
-  import type { Session } from "@app/session";
+  import { navigate } from "@app/router";
 
   export let session: Session | null;
   export let config: Config;
-  export let params: Params;
+  export let params: RegistrationsParams;
   export let type: string;
 </script>
 

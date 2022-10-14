@@ -27,11 +27,11 @@
         params: {
           nameOrDomain: `${name}.${config.registrar.domain}`,
           owner: null,
-          view: "view",
+          view: null,
         },
       },
       {
-        state: { retry: true },
+        retry: true,
       },
     );
 

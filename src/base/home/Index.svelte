@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "@app/router";
+  import { getCurrentRouteParams, navigate } from "@app/router";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
@@ -8,7 +8,6 @@
   import type { Host } from "@app/api";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
-  import { onMount } from "svelte";
 
   export let config: Config;
 
@@ -28,17 +27,15 @@
         )
       : Promise.resolve([]);
 
-  onMount(() => console.log("Mounting home"));
-
   const onClick = (project: ProjectInfo, seed: Host) => {
     navigate({
       type: "projects",
       params: {
+        ...getCurrentRouteParams(),
         urn: project.urn,
         seedHost: seed.host,
         profileName: null,
         revision: project.head,
-        peer: null,
         content: "tree",
         path: null,
       },

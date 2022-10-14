@@ -1,6 +1,7 @@
 <script lang="ts">
   import type * as proj from "@app/project";
   import type { Theme } from "@app/ThemeToggle.svelte";
+  import type { ProjectParams } from "@app/router/definitions";
 
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -11,8 +12,7 @@
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
-  import type { Params } from "./Project.svelte";
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate, getCurrentRouteParams } from "@app/router";
 
   enum Status {
     Loading,
@@ -23,7 +23,7 @@
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: proj.Blob; theme: Theme };
 
-  export let params: Params;
+  export let params: ProjectParams;
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let commit: string;
@@ -83,8 +83,7 @@
       navigate({
         type: "projects",
         params: {
-          ...($activeRouteStore.type === "projects" &&
-            $activeRouteStore.params),
+          ...getCurrentRouteParams(),
           path: newPath,
           revision,
           line: null,

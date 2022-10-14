@@ -9,14 +9,13 @@
   import Placeholder from "@app/Placeholder.svelte";
   import ToggleButton from "@app/ToggleButton.svelte";
 
-  import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
+  import { getCurrentRouteParams, navigate } from "@app/router";
 
   export let state: State = "proposed";
   export let config: Config;
   export let patches: Patch[];
-  export let project: Project;
 
   let options: ToggleButtonOption<State>[];
   const sortedPatches = groupPatches(patches);
@@ -75,12 +74,16 @@
         <div
           class="teaser"
           on:click={() => {
-            project.navigateTo({
-              content: ProjectContent.Patch,
-              patch: patch.id,
-              issue: null,
-              revision: null,
-              path: null,
+            navigate({
+              type: "projects",
+              params: {
+                ...getCurrentRouteParams(),
+                content: "patch",
+                patch: patch.id,
+                issue: null,
+                revision: null,
+                path: null,
+              },
             });
           }}>
           <PatchTeaser {config} {patch} />

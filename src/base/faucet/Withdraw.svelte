@@ -12,9 +12,9 @@
   import Button from "@app/Button.svelte";
 
   export let config: Config;
+  export let amount: string;
 
   let error: Error;
-  const amount: string = window.history.state.amount;
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",
