@@ -10,11 +10,11 @@
 <!-- With a seed context -->
 
 <Route path="/seeds/:seed/:id/*" let:params>
-  <View {config} seedHost={params.seed} id={params.id} />
+  <View {config} host={params.seed} id={params.id} />
 </Route>
 
 <Route path="/seeds/:seed/:id/remotes/:peer/*" let:params>
-  <View {config} seedHost={params.seed} peer={params.peer} id={params.id} />
+  <View {config} host={params.seed} peer={params.peer} id={params.id} />
 </Route>
 
 <!-- Explicit user and org context, will at some point be replaced by the generic route -->

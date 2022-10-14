@@ -26,7 +26,7 @@ describe("project meta", () => {
       "https://willow.radicle.garden:8777/v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/readme/56e4e029c294b08546386e1fb706b772c7433c49",
       { fixture: "projectReadme.json" },
     ).as("projectReadme");
-    cy.visit("/seeds/willow.radicle.garden/bright-forest-protocol", {
+    cy.visit("/seeds/willow.radicle.garden:8777/bright-forest-protocol", {
       onBeforeLoad(win) {
         const address = "0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D";
         const privateKey =

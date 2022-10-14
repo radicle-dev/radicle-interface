@@ -54,6 +54,13 @@ export class Seed {
         const url = new URL(seed.api);
         api = url.hostname;
         apiPort = url.port ? Number(url.port) : null;
+        if (url.protocol === "http:" && url.port === "") {
+          apiPort = 80;
+        }
+
+        if (url.protocol === "https:" && url.port === "") {
+          apiPort = 443;
+        }
       } catch {
         api = seed.api;
       }
@@ -71,7 +78,7 @@ export class Seed {
       assert(isDomain(git), `invalid seed git host ${git}`);
     }
 
-    const meta = cfg.seeds.pinned[seed.host];
+    const meta = cfg.seeds.pinned.find(s => s.name === seed.host);
     if (meta) {
       this.emoji = meta.emoji;
     } else if (isLocal(seed.host)) {
@@ -136,24 +143,20 @@ export class Seed {
     return new Request("/", host).get();
   }
 
-  static async lookup(hostname: string, cfg: Config): Promise<Seed> {
-    const host = { host: hostname, port: cfg.seed.api.port };
+  static async lookup(seedHost: Host, cfg: Config): Promise<Seed> {
     const [info, peer] = await Promise.all([
-      Seed.getInfo(host),
-      Seed.getPeer(host),
+      Seed.getInfo(seedHost),
+      Seed.getPeer(seedHost),
     ]);
 
     return new Seed(
       {
-        host: hostname,
+        host: seedHost.host,
         id: peer.id,
         version: info.version,
+        api: `https://${seedHost.host}:${seedHost.port}`,
       },
       cfg,
     );
-  }
-
-  static async lookupMulti(hostnames: string[], cfg: Config): Promise<Seed[]> {
-    return await Promise.all(hostnames.map(h => Seed.lookup(h, cfg)));
   }
 }

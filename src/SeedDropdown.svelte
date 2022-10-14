@@ -13,7 +13,10 @@
   $: formatSeeds = async () => {
     return await Promise.all(
       Object.values(seeds).map(async session => {
-        const seed = await Seed.lookup(session.domain, config);
+        const seed = await Seed.lookup(
+          { host: session.domain, port: null },
+          config,
+        );
         const key = `${seed.emoji} ${seed.host}`;
 
         return {

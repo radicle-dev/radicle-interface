@@ -21,8 +21,16 @@
   export let session: Session | null;
   export let host: string;
 
-  const hostName = formatSeedHost(host);
-  const seedHost: Host = { host, port: null };
+  let seedHost: Host;
+
+  if (host.split(":").length === 2) {
+    const [h, p] = host.split(":");
+    seedHost = { host: h, port: Number(p) };
+  } else {
+    seedHost = { host, port: null };
+  }
+
+  const hostName = formatSeedHost(seedHost.host);
   let siweSession: SeedSession | null = null;
 
   const getProjectsAndStats = async (
@@ -38,7 +46,9 @@
 
   $: if (session?.siwe) {
     const entries = Object.entries(session.siwe);
-    const result = entries.find(([, session]) => session.domain === host);
+    const result = entries.find(
+      ([, session]) => session.domain === seedHost.host,
+    );
     if (result) {
       siweSession = result[1];
     }
@@ -117,7 +127,7 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(host, config)}
+{#await Seed.lookup(seedHost, config)}
   <main class="off-centered">
     <Loading center />
   </main>
@@ -183,6 +193,6 @@
   </main>
 {:catch}
   <NotFound
-    title={host}
+    title={seedHost.host}
     subtitle="Not able to query information from this seed." />
 {/await}

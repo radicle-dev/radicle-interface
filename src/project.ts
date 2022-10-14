@@ -132,7 +132,7 @@ export interface BrowseTo {
 export interface PathOptions extends BrowseTo {
   urn: string;
   profile?: string | null;
-  seed?: string | null;
+  seed?: Host | null;
 }
 
 export function browse(browse: BrowseTo): void {
@@ -148,7 +148,7 @@ export function path(opts: PathOptions): string {
   if (profile) {
     result.push(profile);
   } else if (seed) {
-    result.push("seeds", seed);
+    result.push("seeds", `${seed.host}:${seed.port}`);
   }
   result.push(urn);
 
@@ -430,7 +430,7 @@ export class Project implements ProjectInfo {
     if (this.profile) {
       options.profile = this.profile?.nameOrAddress;
     } else {
-      options.seed = this.seed.host;
+      options.seed = this.seed.api;
     }
 
     return path(options);
@@ -440,12 +440,13 @@ export class Project implements ProjectInfo {
     id: string,
     peer: string | null,
     profileName: string | null,
-    seedHost: string | null,
+    seedHost: Host | null,
     config: Config,
   ): Promise<Project> {
     const profile = profileName
       ? await Profile.get(profileName, ProfileType.Project, config)
       : null;
+
     const seed = profile
       ? profile.seed
       : seedHost
@@ -485,15 +486,14 @@ export class Project implements ProjectInfo {
   }
 
   static async getMulti(
-    projs: { nameOrUrn: Urn; seed: string }[],
+    projs: { nameOrUrn: Urn; seed: Host }[],
   ): Promise<{ info: ProjectInfo; seed: Host }[]> {
     const promises = [];
 
     for (const proj of projs) {
-      const seed = { host: proj.seed, port: null };
       promises.push(
-        Project.getInfo(proj.nameOrUrn, seed).then(info => {
-          return { info, seed };
+        Project.getInfo(proj.nameOrUrn, proj.seed).then(info => {
+          return { info, seed: proj.seed };
         }),
       );
     }

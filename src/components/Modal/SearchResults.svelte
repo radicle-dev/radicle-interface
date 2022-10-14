@@ -48,7 +48,10 @@
       <ul>
         {#each results.projects as project}
           <li>
-            <a use:link href="/seeds/{project.seed.host}/{project.info.urn}">
+            <a
+              use:link
+              href="/seeds/{project.seed.host}:{project.seed.port}/{project.info
+                .urn}">
               <span title={project.seed.host}>
                 <span>
                   {getSeedEmoji(project.seed.host, config)}&nbsp;{project.info

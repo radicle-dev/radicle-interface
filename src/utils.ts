@@ -325,8 +325,9 @@ export function parseEmoji(input: string): string {
 // @dev: This helper fn lets us get a seed emoji quick without multiLookups or complex type usage.
 // TODO: Should be revisited, when we have a stable implementation for seed avatars.
 export function getSeedEmoji(input: string, config: Config): string {
-  if (config.seeds.pinned[input]) {
-    return config.seeds.pinned[input].emoji;
+  const seed = config.seeds.pinned.find(s => s.name === input);
+  if (seed) {
+    return seed.emoji;
   }
   return "🌱";
 }

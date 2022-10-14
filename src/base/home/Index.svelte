@@ -32,7 +32,7 @@
     navigate(
       proj.path({
         urn: project.urn,
-        seed: seed.host,
+        seed: seed,
         profile: null,
         revision: project.head,
       }),

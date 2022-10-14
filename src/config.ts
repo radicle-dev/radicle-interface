@@ -1,3 +1,4 @@
+import type { Host } from "@app/api";
 import { get, writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { ethers } from "ethers";
@@ -26,8 +27,8 @@ export class Config {
   radToken: { address: string; faucet: string };
   reverseRegistrar: { address: string };
   users: { pinned: string[] };
-  projects: { pinned: { urn: string; name: string; seed: string }[] };
-  seeds: { pinned: Record<string, { emoji: string }> };
+  projects: { pinned: { urn: string; name: string; seed: Host }[] };
+  seeds: { pinned: { name: string; emoji: string; api: Host }[] };
   provider: ethers.providers.JsonRpcProvider;
   signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
   walletConnect: {

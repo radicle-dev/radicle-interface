@@ -17,7 +17,7 @@
     | { type: "nothing" }
     | { type: "error"; message: string }
     | { type: "singleProfile"; id: string }
-    | { type: "singleProject"; seedHost: string; id: string }
+    | { type: "singleProject"; seedHost: Host; id: string }
     | { type: "projectsAndProfiles"; projectsAndProfiles: ProjectsAndProfiles };
 
   async function searchProjectsAndProfiles(
@@ -30,9 +30,9 @@
         return { type: "singleProfile", id: query };
       }
 
-      const projectOnSeeds = Object.keys(config.seeds.pinned).map(seed => ({
+      const projectOnSeeds = config.seeds.pinned.map(seed => ({
         nameOrUrn: query,
-        seed,
+        seed: seed.api,
       }));
 
       // The query is a radicle project URN.
@@ -42,7 +42,7 @@
         if (projects.length === 1) {
           return {
             type: "singleProject",
-            seedHost: projects[0].seed.host,
+            seedHost: projects[0].seed,
             id: query,
           };
         } else {
@@ -96,7 +96,7 @@
       if (profileCount === 0 && projectCount === 1) {
         return {
           type: "singleProject",
-          seedHost: projectsAndProfiles.projects[0].seed.host,
+          seedHost: projectsAndProfiles.projects[0].seed,
           id: query,
         };
       }
@@ -168,9 +168,12 @@
       dispatch("finished");
     } else if (searchResult.type === "singleProject") {
       input = "";
-      navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
-        replace: true,
-      });
+      navigate(
+        `/seeds/${searchResult.seedHost.host}:${searchResult.seedHost.port}/${searchResult.id}`,
+        {
+          replace: true,
+        },
+      );
       dispatch("finished");
     } else if (searchResult.type === "projectsAndProfiles") {
       // TODO: show some kind of notification about any errors to the user.

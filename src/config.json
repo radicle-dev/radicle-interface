@@ -44,79 +44,85 @@
     }
   },
   "seeds": {
-    "pinned": {
-      "willow.radicle.garden": {
-        "emoji": "🪵"
+    "pinned": [
+      {
+        "name": "willow.radicle.garden",
+        "emoji": "🪵",
+        "api": { "host": "willow.radicle.garden", "port": 8777 }
       },
-      "pine.radicle.garden": {
-        "emoji": "🌲"
+      {
+        "name": "pine.radicle.garden",
+        "emoji": "🌲",
+        "api": { "host": "pine.radicle.garden", "port": 8777 }
       },
-      "maple.radicle.garden": {
-        "emoji": "🍁"
+      {
+        "name": "maple.radicle.garden",
+        "emoji": "🍁",
+        "api": { "host": "maple.radicle.garden", "port": 8777 }
       }
-    }
+    ]
   },
   "projects": {
     "pinned": [
       {
         "name": "radicle-cli",
         "urn": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
-        "seed": "clients.radicle.xyz"
+        "seed": { "host": "clients.radicle.xyz", "port": 8777 }
       },
       {
         "name": "radicle-interface",
         "urn": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
-        "seed": "clients.radicle.xyz"
+        "seed": { "host": "clients.radicle.xyz", "port": 8777 }
       },
       {
         "name": "radicle-client-services",
         "urn": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
-        "seed": "clients.radicle.xyz"
+        "seed": { "host": "clients.radicle.xyz", "port": 8777 }
       },
       {
         "name": "solmate",
         "urn": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
-        "seed": "willow.radicle.garden"
+        "seed": { "host": "willow.radicle.garden", "port": 8777 }
       },
       {
         "name": "openzeppelin-contracts",
         "urn": "rad:git:hnrkbx9xzjg8tf9hj9uh5qdxwuyjddsxyaw6o",
-        "seed": "willow.radicle.garden"
+        "seed": { "host": "willow.radicle.garden", "port": 8777 }
       },
       {
         "name": "haskell-language-server",
         "urn": "rad:git:hnrkf1jaje1e93rua64zgphg7zb14qo9zexgy",
-        "seed": "pine.radicle.garden"
+        "seed": { "host": "pine.radicle.garden", "port": 8777 }
       },
       {
         "name": "rx",
         "urn": "rad:git:hnrk8aoks6w3tdbcwt9dqnor9aqy8tjha3k5o",
-        "seed": "maple.radicle.garden"
+        "seed": { "host": "maple.radicle.garden", "port": 8777 }
       },
       {
         "name": "astrolabe",
         "urn": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
-        "seed": "willow.radicle.garden"
+        "seed": { "host": "willow.radicle.garden", "port": 8777 }
       },
       {
         "name": "svelte-dappkit",
         "urn": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
-        "seed": "maple.radicle.garden"
+        "seed": { "host": "maple.radicle.garden", "port": 8777 }
       },
       {
         "name": "tmyxer",
         "urn": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
-        "seed": "pine.radicle.garden"
+        "seed": { "host": "pine.radicle.garden", "port": 8777 }
       },
       {
         "name": "pax",
         "urn": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
-        "seed": "pine.radicle.garden"
+        "seed": { "host": "pine.radicle.garden", "port": 8777 }
       },
       {
         "name": "hexade",
         "urn": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
-        "seed": "pine.radicle.garden"
+        "seed": { "host": "pine.radicle.garden", "port": 8777 }
       }
     ]
   },

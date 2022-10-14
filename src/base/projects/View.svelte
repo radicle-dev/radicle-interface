@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
+  import type { Host } from "@app/api";
   import { Route, Router } from "svelte-routing";
   import { Project, ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
@@ -8,10 +9,21 @@
   import ProjectRoute from "./ProjectRoute.svelte";
 
   export let id: string; // Project name or URN.
-  export let seedHost: string | null = null;
+  export let host: string | null = null;
   export let profileName: string | null = null; // Address or name of parent profile.
   export let peer: string | null = null;
   export let config: Config;
+
+  let seedHost: Host | null = null;
+
+  if (host) {
+    if (host.split(":").length === 2) {
+      const [h, p] = host.split(":");
+      seedHost = { host: h, port: Number(p) };
+    } else {
+      seedHost = { host, port: null };
+    }
+  }
 </script>
 
 <style>
