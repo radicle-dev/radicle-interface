@@ -81,6 +81,9 @@
     align-items: center;
     border-radius: var(--border-radius-round);
   }
+  .network:hover {
+    background-color: var(--color-tertiary-3);
+  }
   .network.unavailable {
     color: var(--color-foreground-5);
     background-color: var(--color-foreground-3);
