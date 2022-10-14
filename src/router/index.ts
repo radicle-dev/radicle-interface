@@ -185,7 +185,7 @@ export function pathToRoute(path: string | null): Route {
               "patch",
               "patches",
               "history",
-              "commit",
+              "commits",
             ].includes(content)
           ) {
             return { type: "404", params: { path } };

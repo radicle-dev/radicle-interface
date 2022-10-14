@@ -15,10 +15,9 @@
       params: {
         ...getCurrentRouteParams("projects"),
         content,
-        revision,
+        restRoute: revision,
         issue: null,
         patch: null,
-        path: null,
       },
     });
   };
@@ -40,9 +39,9 @@
       params: {
         ...getCurrentRouteParams("projects"),
         content: "tree",
-        revision: event.detail,
+        restRoute: event.detail,
         issue: null,
-        path: null,
+        patch: null,
       },
     });
   };
@@ -100,7 +99,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() => navigateHistory(commit.header.sha1, "commit")}>
+                on:click={() => navigateHistory(commit.header.sha1, "commits")}>
                 <CommitTeaser {commit} on:browseCommit={browseCommit} />
               </div>
             {/each}

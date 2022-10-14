@@ -16,13 +16,14 @@
   const { urn, peers, branches, seed } = project;
 
   // Switches between project views.
-  const toggleContent = (input: string) => {
+  const toggleContent = (input: string, removeSource = false) => {
     navigate({
       type: "projects",
       params: {
         ...getCurrentRouteParams("projects"),
-        issue: null, // Removing issue here to not contaminate path on navigation.
-        patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
+        restRoute: removeSource ? "",
+        issue: null,
+        patch: null,
         content: content === input ? "tree" : input,
       },
     });
@@ -31,14 +32,22 @@
   const updatePeer = (peer: string) => {
     navigate({
       type: "projects",
-      params: { ...getCurrentRouteParams("projects"), peer, revision: null },
+      params: {
+        ...getCurrentRouteParams("projects"),
+        urn,
+        peer,
+      },
     });
   };
 
   const updateRevision = (revision: string) => {
     navigate({
       type: "projects",
-      params: { ...getCurrentRouteParams("projects"), revision },
+      params: {
+        ...getCurrentRouteParams("projects"),
+        urn,
+        restRoute: revision,
+      },
     });
   };
 </script>
@@ -135,7 +144,7 @@
       class:active={content === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
-      on:click={() => toggleContent("issues")}>
+      on:click={() => toggleContent("issues", false)}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
@@ -147,7 +156,7 @@
       class:active={content === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
-      on:click={() => toggleContent("patches")}>
+      on:click={() => toggleContent("patches", false)}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>

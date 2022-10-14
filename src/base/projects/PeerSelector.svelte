@@ -4,13 +4,14 @@
   import Dropdown from "@app/Dropdown.svelte";
   import { formatSeedId } from "@app/utils";
   import type { Peer } from "@app/project";
-  import Floating from "@app/Floating.svelte";
+  import Floating, { closeFocused } from "@app/Floating.svelte";
   import Badge from "@app/Badge.svelte";
 
   export let peer: string | null = null;
   export let peers: Peer[];
 
-  let meta: Peer | undefined;
+  $: meta = peers.find(p => p.id === peer);
+
   // List of items to be created for the Dropdown component.
   let items: {
     key: string;
@@ -27,7 +28,6 @@
   }
 
   onMount(() => {
-    meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
       if (!p.person?.name) {
         console.debug("Not able to resolve peer identity for: ", p.id);
@@ -47,6 +47,7 @@
 
   const dispatch = createEventDispatcher();
   const switchPeer = (peer: string) => {
+    closeFocused();
     dispatch("peerChanged", peer);
   };
 </script>

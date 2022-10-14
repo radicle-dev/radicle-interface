@@ -98,15 +98,6 @@ describe("project header", () => {
         "dabit3 hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke delegate",
       )
       .click();
-    cy.wait([
-      "@projectHome",
-      "@projectPeer",
-      "@projectInfo",
-      "@projectRemotes",
-      "@projectBranches",
-      "@projectTree56e4e02",
-      "@projectReadme",
-    ]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree",
@@ -127,7 +118,6 @@ describe("project header", () => {
       .next()
       .contains("master")
       .click();
-    cy.wait(["@projectTreecbf5df4", "@projectReadme"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree/master",

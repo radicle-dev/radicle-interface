@@ -31,15 +31,13 @@
   let path: string | null = null;
   let line: number | null = null;
 
-  onMount(async () => {
-    project = await proj.Project.get(
-      params.urn,
-      peer,
-      params.profileName,
-      params.seedHost,
-      config,
-    );
-  });
+  $: proj.Project.get(
+    params.urn,
+    peer,
+    params.profileName,
+    params.seedHost,
+    config,
+  ).then(p => (project = p));
 
   $: if (project) {
     const parsed = proj.parseRoute(params.restRoute || "", project.branches);
@@ -105,7 +103,7 @@
             let:result>
             <History {project} history={result} />
           </Async>
-        {:else if content === "commit"}
+        {:else if content === "commits"}
           <Async fetch={project.getCommit(commit)} let:result>
             <Commit commit={result} />
           </Async>
