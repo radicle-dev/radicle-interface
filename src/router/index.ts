@@ -92,7 +92,6 @@ function setHistory(history: Route[]): void {
 
 export const initialize = (): void => {
   const route = pathToRoute(window.location.pathname);
-  console.log(route);
   setHistory([route]);
 };
 
@@ -173,7 +172,6 @@ export function pathToRoute(path: string | null): Route {
         const urn = segments.shift();
         if (urn) {
           let content = segments.shift() || "tree";
-          console.log("pathToRoute:", content);
           let peer;
           if (content === "remotes") {
             peer = segments.shift();

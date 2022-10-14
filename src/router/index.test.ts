@@ -14,74 +14,154 @@ const defaultProjectRouteParams = {
 
 describe("Route parsing", () => {
   test.each([
-    { type: "home" },
-    { type: "vesting" },
-    { type: "register" },
-    { type: "faucet", params: { type: "form" } },
-    { type: "profile", params: { profileName: "cloudhead.eth" } },
-    { type: "profile", params: { profileName: "cloudhead.eth" } },
-    { type: "seeds", params: { host: "willow.radicle.garden" } },
+    { input: { type: "home" }, description: "Home Route" },
+    { input: { type: "vesting" }, description: "Vesting Route" },
+    { input: { type: "register" }, description: "Register Route" },
     {
-      type: "registrations",
-      params: { nameOrDomain: "sebastinez", owner: null, view: null },
+      input: { type: "faucet", params: { type: "form" } },
+      description: "Faucet Form Route",
     },
     {
-      type: "registrations",
-      params: { nameOrDomain: "sebastinez", owner: null, view: "form" },
+      input: { type: "profile", params: { profileName: "cloudhead.eth" } },
+      description: "Profile Route",
     },
     {
-      type: "registrations",
-      params: { nameOrDomain: "sebastinez", owner: null, view: "submit" },
+      input: { type: "seeds", params: { host: "willow.radicle.garden" } },
+      description: "Seed View Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        seedHost: "willow.radicle.garden",
+      input: {
+        type: "registrations",
+        params: { nameOrDomain: "sebastinez", owner: null, view: null },
       },
+      description: "Registration View Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        profileName: "cloudhead.eth",
+      input: {
+        type: "registrations",
+        params: { nameOrDomain: "sebastinez", owner: null, view: "form" },
       },
+      description: "Registration Form Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
-        profileName: "cloudhead.eth",
+      input: {
+        type: "registrations",
+        params: { nameOrDomain: "sebastinez", owner: null, view: "submit" },
       },
+      description: "Registration Submit Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        restRoute: "04aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
-        profileName: "cloudhead.eth",
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          seedHost: "willow.radicle.garden",
+        },
       },
+      description: "Seed Project Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        restRoute: "master/src/App.svelte",
-        profileName: "cloudhead.eth",
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+          seedHost: "willow.radicle.garden",
+        },
       },
+      description: "Seed Project With Peer Route",
     },
     {
-      type: "projects",
-      params: {
-        ...defaultProjectRouteParams,
-        restRoute: "cloudhead/ci/src/App.svelte",
-        profileName: "cloudhead.eth",
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+          restRoute: "04aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
+          seedHost: "willow.radicle.garden",
+        },
       },
+      description: "Seed Project With Peer, Oid And Path Route",
     },
-  ])("$type", (route: any) => {
-    const path = routeToPath(route);
-    console.log(path);
-    expect(pathToRoute(path)).toEqual(route);
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+          restRoute: "master/src/App.svelte",
+          seedHost: "willow.radicle.garden",
+        },
+      },
+      description: "Seed Project With Peer, Branch And Path Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+          restRoute: "cloudhead/ci/src/App.svelte",
+          seedHost: "willow.radicle.garden",
+        },
+      },
+      description: "Seed Project With Peer, Feature Branch And Path Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          profileName: "cloudhead.eth",
+        },
+      },
+      description: "Profile Project Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          peer: "hyn9diwfnytahjq8u3iw63h9jte1ydcatxax3saymwdxqu1zo645pe",
+          profileName: "cloudhead.eth",
+        },
+      },
+      description: "Profile Project With Peer Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          restRoute: "04aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
+          profileName: "cloudhead.eth",
+        },
+      },
+      description: "Profile Project With Oid And Path Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          restRoute: "master/src/App.svelte",
+          profileName: "cloudhead.eth",
+        },
+      },
+      description: "Profile Project With Branch And Path Route",
+    },
+    {
+      input: {
+        type: "projects",
+        params: {
+          ...defaultProjectRouteParams,
+          restRoute: "cloudhead/ci/src/App.svelte",
+          profileName: "cloudhead.eth",
+        },
+      },
+      description: "Profile Project With Feature Branch And Path Route",
+    },
+  ])("$description", (route: any) => {
+    expect(pathToRoute(routeToPath(route.input))).toEqual(route.input);
   });
 });
