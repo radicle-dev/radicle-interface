@@ -105,13 +105,13 @@
     <CloneButton seedHost={seed.git.host} {urn} />
   {/if}
   <span>
-    {#if seed.api.host}
+    {#if seed.httpApi.host}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
-        on:click={() => navigate(`/seeds/${seed.api.host}`)}>
-        <span>{seed.api.host}</span>
+        on:click={() => navigate(`/seeds/${seed.httpApi.host}`)}>
+        <span>{seed.httpApi.host}</span>
       </div>
     {/if}
   </span>

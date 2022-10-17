@@ -28,7 +28,7 @@ export function createSiweMessage(
   nextWeek.setDate(nextWeek.getDate() + 7);
 
   const message = new SiweMessage({
-    domain: seed.api.host,
+    domain: seed.httpApi.host,
     address,
     statement: "It's a Radicle world!",
     uri: window.location.origin,
@@ -57,14 +57,14 @@ export async function signInWithEthereum(
   }
 
   const address = await config.signer.getAddress();
-  const result = await createUnauthorizedSession(seed.api);
+  const result = await createUnauthorizedSession(seed.httpApi);
   const message = createSiweMessage(seed, address, result.nonce, config);
   const signature = await config.signer.signMessage(message);
 
   const auth: {
     id: string;
     session: SeedSession;
-  } = await new Request(`sessions/${result.id}`, seed.api).put({
+  } = await new Request(`sessions/${result.id}`, seed.httpApi).put({
     message,
     signature,
   });

@@ -18,7 +18,7 @@
   const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
     try {
       stats = await seed.getStats();
-      const projects = await proj.Project.getProjects(seed.api, {
+      const projects = await proj.Project.getProjects(seed.httpApi, {
         perPage: 10,
         page: (page += 1),
       });
@@ -38,7 +38,7 @@
     navigate(
       proj.path({
         urn: project.urn,
-        seed: seed.api,
+        seed: seed.httpApi,
         profile: profile?.name ?? profile?.address,
         revision: project.head,
       }),

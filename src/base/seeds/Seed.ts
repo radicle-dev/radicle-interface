@@ -24,8 +24,8 @@ export class InvalidSeed {
 export class Seed {
   valid = true as const;
 
-  api: { host: string; port: number | null };
-  git: { host: string; port: number | null };
+  httpApi: Host;
+  git: Host;
   link: { host: string; id: string; port: number };
 
   version?: string;
@@ -46,20 +46,20 @@ export class Seed {
 
     let api = null;
     let git = null;
-    let apiPort: number | null = cfg.seed.api.port;
+    let httpApiPort: number | null = cfg.seed.httpApi.port;
     let gitPort: number | null = cfg.seed.git.port;
 
     if (seed.api) {
       try {
         const url = new URL(seed.api);
         api = url.hostname;
-        apiPort = url.port ? Number(url.port) : null;
+        httpApiPort = url.port ? Number(url.port) : null;
         if (url.protocol === "http:" && url.port === "") {
-          apiPort = 80;
+          httpApiPort = 80;
         }
 
         if (url.protocol === "https:" && url.port === "") {
-          apiPort = 443;
+          httpApiPort = 443;
         }
       } catch {
         api = seed.api;
@@ -92,7 +92,7 @@ export class Seed {
     api = api ?? seed.host;
     git = git ?? seed.host;
 
-    this.api = { host: api, port: apiPort };
+    this.httpApi = { host: api, port: httpApiPort };
     this.git = { host: git, port: gitPort };
     this.link = { host: seed.host, id: seed.id, port: cfg.seed.link.port };
 
@@ -106,21 +106,21 @@ export class Seed {
   }
 
   get host(): string {
-    return this.api.host;
+    return this.httpApi.host;
   }
 
   async getPeer(): Promise<{ id: string }> {
-    return Seed.getPeer(this.api);
+    return Seed.getPeer(this.httpApi);
   }
 
   async getProject(urn: string): Promise<proj.ProjectInfo> {
-    return proj.Project.getInfo(urn, this.api);
+    return proj.Project.getInfo(urn, this.httpApi);
   }
 
   async getProjects(perPage: number, id?: string): Promise<proj.ProjectInfo[]> {
     const result = id
-      ? await proj.Project.getDelegateProjects(id, this.api, { perPage })
-      : await proj.Project.getProjects(this.api, { perPage });
+      ? await proj.Project.getDelegateProjects(id, this.httpApi, { perPage })
+      : await proj.Project.getProjects(this.httpApi, { perPage });
 
     return result.map((project: proj.ProjectInfo) => ({
       ...project,
@@ -132,29 +132,29 @@ export class Seed {
     projects: { count: number };
     users: { count: number };
   }> {
-    return new Request("/stats", this.api).get();
+    return new Request("/stats", this.httpApi).get();
   }
 
-  static async getPeer(host: Host): Promise<{ id: string }> {
-    return new Request("/peer", host).get();
+  static async getPeer(httpApi: Host): Promise<{ id: string }> {
+    return new Request("/peer", httpApi).get();
   }
 
-  static async getInfo(host: Host): Promise<{ version: string }> {
-    return new Request("/", host).get();
+  static async getInfo(httpApi: Host): Promise<{ version: string }> {
+    return new Request("/", httpApi).get();
   }
 
-  static async lookup(seedHost: Host, cfg: Config): Promise<Seed> {
+  static async lookup(httpApi: Host, cfg: Config): Promise<Seed> {
     const [info, peer] = await Promise.all([
-      Seed.getInfo(seedHost),
-      Seed.getPeer(seedHost),
+      Seed.getInfo(httpApi),
+      Seed.getPeer(httpApi),
     ]);
 
     return new Seed(
       {
-        host: seedHost.host,
+        host: httpApi.host,
         id: peer.id,
         version: info.version,
-        api: `https://${seedHost.host}:${seedHost.port}`,
+        api: `https://${httpApi.host}:${httpApi.port}`,
       },
       cfg,
     );

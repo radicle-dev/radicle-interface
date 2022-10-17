@@ -32,7 +32,7 @@
 
       const projectOnSeeds = config.seeds.pinned.map(seed => ({
         nameOrUrn: query,
-        seed: seed.api,
+        seedHttpApi: seed.httpApi,
       }));
 
       // The query is a radicle project URN.

@@ -383,7 +383,7 @@ export class Project implements ProjectInfo {
   async getCommit(commit: string): Promise<Commit> {
     return new Request(
       `projects/${this.urn}/commits/${commit}`,
-      this.seed.api,
+      this.seed.httpApi,
     ).get();
   }
 
@@ -391,7 +391,7 @@ export class Project implements ProjectInfo {
     if (path === "/") path = "";
     return new Request(
       `projects/${this.urn}/tree/${commit}/${path}`,
-      this.seed.api,
+      this.seed.httpApi,
     ).get();
   }
 
@@ -404,14 +404,14 @@ export class Project implements ProjectInfo {
   ): Promise<Blob> {
     return new Request(
       `projects/${this.urn}/blob/${commit}/${path}`,
-      this.seed.api,
+      this.seed.httpApi,
     ).get(options);
   }
 
   async getReadme(commit: string): Promise<Blob> {
     return new Request(
       `projects/${this.urn}/readme/${commit}`,
-      this.seed.api,
+      this.seed.httpApi,
     ).get();
   }
 
@@ -430,7 +430,7 @@ export class Project implements ProjectInfo {
     if (this.profile) {
       options.profile = this.profile?.nameOrAddress;
     } else {
-      options.seed = this.seed.api;
+      options.seed = this.seed.httpApi;
     }
 
     return path(options);
@@ -460,14 +460,14 @@ export class Project implements ProjectInfo {
       throw new Error("Couldn't load project: invalid seed");
     }
 
-    const info = await Project.getInfo(id, seed.api);
+    const info = await Project.getInfo(id, seed.httpApi);
     const urn = isRadicleId(id) ? id : info.urn;
 
     // Older versions of http-api don't include the URN.
     if (!info.urn) info.urn = urn;
 
     const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(urn, seed.api)
+      ? await Project.getRemotes(urn, seed.httpApi)
       : [];
 
     let remote: Remote = {
@@ -476,7 +476,7 @@ export class Project implements ProjectInfo {
 
     if (peer) {
       try {
-        remote = await Project.getRemote(urn, peer, seed.api);
+        remote = await Project.getRemote(urn, peer, seed.httpApi);
       } catch {
         remote.heads = {};
       }
@@ -486,14 +486,14 @@ export class Project implements ProjectInfo {
   }
 
   static async getMulti(
-    projs: { nameOrUrn: Urn; seed: Host }[],
+    projs: { nameOrUrn: Urn; seedHttpApi: Host }[],
   ): Promise<{ info: ProjectInfo; seed: Host }[]> {
     const promises = [];
 
     for (const proj of projs) {
       promises.push(
-        Project.getInfo(proj.nameOrUrn, proj.seed).then(info => {
-          return { info, seed: proj.seed };
+        Project.getInfo(proj.nameOrUrn, proj.seedHttpApi).then(info => {
+          return { info, seed: proj.seedHttpApi };
         }),
       );
     }

@@ -135,7 +135,7 @@
           description:
             "The seed host address. " +
             "Only domain names with TLS are supported. " +
-            `HTTP(S) API requests use port ${config.seed.api.port}.`,
+            `HTTP(S) API requests use port ${config.seed.httpApi.port}.`,
           value: r.profile.seed?.host ?? "",
           editable: true,
         },

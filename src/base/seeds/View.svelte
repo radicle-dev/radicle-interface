@@ -179,7 +179,7 @@
       <div class="desktop" />
       <!-- API Port -->
       <div class="label">API Port</div>
-      <div>{seed.api.port}</div>
+      <div>{seed.httpApi.port}</div>
       <div class="desktop" />
       <!-- API Version -->
       <div class="label">Version</div>

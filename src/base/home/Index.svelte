@@ -23,7 +23,7 @@
       ? Project.getMulti(
           config.projects.pinned.map(project => ({
             nameOrUrn: project.urn,
-            seed: project.seed,
+            seedHttpApi: project.seed.httpApi,
           })),
         )
       : Promise.resolve([]);
@@ -114,7 +114,7 @@
             <Widget
               compact
               project={result.info}
-              seed={{ api: result.seed }}
+              seed={{ httpApi: result.seed }}
               on:click={() => onClick(result.info, result.seed)} />
           </div>
         {/each}

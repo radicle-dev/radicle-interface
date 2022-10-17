@@ -19,12 +19,16 @@
   };
 
   const fetchMoreCommits = async (): Promise<CommitMetadata[]> => {
-    const response = await Project.getCommits(project.urn, project.seed.api, {
-      // Fetching 31 elements since we remove the first one
-      parent: history.headers[history.headers.length - 1].header.sha1,
-      perPage: 31,
-      verified: true,
-    });
+    const response = await Project.getCommits(
+      project.urn,
+      project.seed.httpApi,
+      {
+        // Fetching 31 elements since we remove the first one
+        parent: history.headers[history.headers.length - 1].header.sha1,
+        perPage: 31,
+        verified: true,
+      },
+    );
     // Removing the first element of the array, since it's the same as the last of the current list
     return response.headers.slice(1);
   };

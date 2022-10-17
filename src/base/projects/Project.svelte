@@ -80,7 +80,7 @@
       <Browser {project} {commit} {tree} {browserStore} />
     {:else if content === proj.ProjectContent.History}
       <Async
-        fetch={proj.Project.getCommits(project.urn, project.seed.api, {
+        fetch={proj.Project.getCommits(project.urn, project.seed.httpApi, {
           parent: commit,
           verified: true,
         })}
@@ -106,7 +106,7 @@
 
   {#if content === proj.ProjectContent.Issues}
     <Async
-      fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
+      fetch={issue.Issue.getIssues(project.urn, project.seed.httpApi)}
       let:result>
       <Issues {project} state={issueFilter} {config} issues={result} />
     </Async>
@@ -115,14 +115,14 @@
       fetch={issue.Issue.getIssue(
         project.urn,
         $browserStore.issue,
-        project.seed.api,
+        project.seed.httpApi,
       )}
       let:result>
       <Issue {project} {config} issue={result} />
     </Async>
   {:else if content === proj.ProjectContent.Patches}
     <Async
-      fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
+      fetch={patch.Patch.getPatches(project.urn, project.seed.httpApi)}
       let:result>
       <Patches {project} {config} patches={result} />
     </Async>
@@ -131,7 +131,7 @@
       fetch={patch.Patch.getPatch(
         project.urn,
         $browserStore.patch,
-        project.seed.api,
+        project.seed.httpApi,
       )}
       let:result>
       <Patch {project} {config} patch={result} />

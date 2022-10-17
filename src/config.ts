@@ -27,8 +27,10 @@ export class Config {
   radToken: { address: string; faucet: string };
   reverseRegistrar: { address: string };
   users: { pinned: string[] };
-  projects: { pinned: { urn: string; name: string; seed: Host }[] };
-  seeds: { pinned: { name: string; emoji: string; api: Host }[] };
+  projects: {
+    pinned: { urn: string; name: string; seed: { httpApi: Host } }[];
+  };
+  seeds: { pinned: { name: string; emoji: string; httpApi: Host }[] };
   provider: ethers.providers.JsonRpcProvider;
   signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
   walletConnect: {
@@ -49,7 +51,7 @@ export class Config {
       };
   abi: { [contract: string]: string[] };
   seed: {
-    api: { port: number };
+    httpApi: { port: number };
     git: { port: number };
     link: { port: number };
   };
