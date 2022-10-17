@@ -27,7 +27,7 @@
   {:else}
     <ErrorModal
       message={"You must connect your wallet to register"}
-      on:close={() => navigate({ type: "register" })} />
+      on:close={() => navigate("/registrations")} />
   {/if}
 {:else if type === "registrations" && !params.view}
   <View {config} domain={params.nameOrDomain} />

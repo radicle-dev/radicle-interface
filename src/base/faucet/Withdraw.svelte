@@ -21,7 +21,7 @@
   };
   $: requester = $session && $session.address;
 
-  const back = () => navigate({ type: "faucet", params: { type: "form" } });
+  const back = () => navigate(`/faucet`);
 
   onMount(async () => {
     try {

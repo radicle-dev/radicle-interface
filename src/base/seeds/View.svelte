@@ -1,12 +1,3 @@
-<script lang="ts" context="module">
-  export type View = { type: "form" } | { type: "withdraw" };
-
-  export interface Params {
-    host: string;
-    view: View;
-  }
-</script>
-
 <script lang="ts">
   import type { Config } from "@app/config";
   import type { Stats } from "@app/base/seeds/Seed";

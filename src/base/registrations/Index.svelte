@@ -15,10 +15,7 @@
     if (!valid) {
       return;
     }
-    navigate({
-      type: "registrations",
-      params: { nameOrDomain: ensName, view: "form", owner: null },
-    });
+    navigate(`/registrations/${ensName}/form`);
   }
 
   function validate(input: string) {

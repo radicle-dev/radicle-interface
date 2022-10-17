@@ -225,7 +225,7 @@
 {:else if state.status === Status.Failed}
   <ErrorModal
     title="Registration could not be loaded"
-    on:close={() => navigate({ type: "register" })}>
+    on:close={() => navigate("/registrations")}>
     {state.error}
   </ErrorModal>
 {:else if state.status === Status.NotFound}

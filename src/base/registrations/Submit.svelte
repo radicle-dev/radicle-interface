@@ -21,19 +21,7 @@
   const registrationOwner = owner || session.address;
 
   const view = () =>
-    navigate(
-      {
-        type: "registrations",
-        params: {
-          nameOrDomain: `${name}.${config.registrar.domain}`,
-          owner: null,
-          view: null,
-        },
-      },
-      {
-        retry: true,
-      },
-    );
+    navigate(`/registrations/${name}.${config.registrar.domain}`);
 
   onMount(async () => {
     try {
@@ -68,7 +56,7 @@
   <ErrorModal
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate({ type: "register" })} />
+    on:close={() => navigate("/registrations")} />
 {:else}
   <Modal>
     <span slot="title">

@@ -33,6 +33,6 @@
     selected={null}
     on:select={item => {
       closeFocused();
-      navigate({ type: "seeds", params: { host: item.detail } });
+      navigate(`/seeds/${item.detail}`);
     }} />
 {/await}

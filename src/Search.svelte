@@ -164,26 +164,13 @@
       shake();
     } else if (searchResult.type === "singleProfile") {
       input = "";
-      navigate(
-        { type: "profile", params: { profileName: searchResult.id } },
-        { replace: true },
-      );
+      navigate(`/${searchResult.id}`, { replace: true });
       dispatch("finished");
     } else if (searchResult.type === "singleProject") {
       input = "";
-      navigate(
-        {
-          type: "projects",
-          params: {
-            ...getCurrentRouteParams("projects"),
-            seedHost: searchResult.seedHost,
-            urn: searchResult.id,
-          },
-        },
-        {
-          replace: true,
-        },
-      );
+      navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
+        replace: true,
+      });
       dispatch("finished");
     } else if (searchResult.type === "projectsAndProfiles") {
       // TODO: show some kind of notification about any errors to the user.

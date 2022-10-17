@@ -113,13 +113,11 @@
           {config} />
       {/if}
 
-      <Button on:click={() => navigate({ type: "register" })} variant="text">
+      <Button on:click={() => navigate("/registrations")} variant="text">
         Cancel
       </Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button
-        variant="foreground"
-        on:click={() => navigate({ type: "register" })}>
+      <Button variant="foreground" on:click={() => navigate("/registrations")}>
         Back
       </Button>
     {/if}
