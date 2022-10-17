@@ -126,7 +126,7 @@
 
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
 
   import TextInput from "@app/TextInput.svelte";
   import { unreachable } from "@app/utils";

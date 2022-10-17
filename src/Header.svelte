@@ -17,7 +17,7 @@
 
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
-  import { link, pathToRoute } from "@app/router";
+  import { link } from "@app/router";
   import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
