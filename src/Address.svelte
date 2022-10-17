@@ -9,6 +9,7 @@
     parseEnsLabel,
   } from "@app/utils";
   import { Profile, ProfileType } from "@app/profile";
+  import { link } from "@app/router";
   import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
   import type { Config } from "@app/config";
@@ -94,7 +95,7 @@
   {/if}
   <div class="wrapper">
     {#if addressType === AddressType.Org}
-      <a href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
       {#if !noBadge}
         <Badge variant="foreground">org</Badge>
       {/if}
@@ -104,7 +105,7 @@
         <Badge variant="foreground">contract</Badge>
       {/if}
     {:else if addressType === AddressType.EOA}
-      <a href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
       <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>

@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
   import { activeRouteStore, initializeRouter } from "@app/router";
+  import { getConfig } from "@app/config";
 
-  import Home from "@app/base/home/Index.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
+  import ColorPalette from "@app/ColorPalette.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
-  import Project from "@app/base/projects/Project.svelte";
-  import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
+  import Home from "@app/base/home/Index.svelte";
+  import LinearGradient from "@app/LinearGradient.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import LinearGradient from "@app/LinearGradient.svelte";
-  import ColorPalette from "./ColorPalette.svelte";
+  import NotFound from "@app/NotFound.svelte";
+  import Profile from "@app/Profile.svelte";
+  import Project from "@app/base/projects/Project.svelte";
   import Register from "@app/base/registrations/Index.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
-  import NotFound from "./NotFound.svelte";
+  import Seeds from "@app/base/seeds/Routes.svelte";
+  import Vesting from "@app/base/vesting/Index.svelte";
 
   // Sets the required router stores and parses the entered URL
   initializeRouter();

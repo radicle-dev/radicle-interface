@@ -226,7 +226,7 @@
               </div>
             {:else if field.url}
               <div>
-                <a use:link class="link" href={field.url}>{field.value}</a>
+                <a class="link" use:link href={field.url}>{field.value}</a>
               </div>
             {:else if field.validate === "id"}
               <div class="mobile">

@@ -17,11 +17,10 @@
 
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
-  import { link } from "@app/router";
+  import { link, pathToRoute } from "@app/router";
   import { disconnectWallet } from "@app/session";
   import { error, Failure } from "@app/error";
   import { formatAddress, formatBalance } from "@app/utils";
-  import Link from "./Link.svelte";
 
   export let session: Session | null;
   export let config: Config;
@@ -190,9 +189,9 @@
 
   <div class="right">
     {#if config && config.network.name === "goerli"}
-      <Link to={{ type: "faucet", params: { type: "form" } }}>
+      <a use:link href="/faucet">
         <span class="network">Goerli</span>
-      </Link>
+      </a>
     {:else if config && config.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}
