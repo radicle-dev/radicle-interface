@@ -100,9 +100,7 @@
         <Badge variant="foreground">org</Badge>
       {/if}
     {:else if addressType === AddressType.Contract}
-      <a href={explorerLink(address, config)} target="_blank" rel="noreferrer">
-        {addressLabel}
-      </a>
+      <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
       {#if !noBadge}
         <Badge variant="foreground">contract</Badge>
       {/if}
@@ -110,9 +108,7 @@
       <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
-      <a href={explorerLink(address, config)} target="_blank" rel="noreferrer">
-        {addressLabel}
-      </a>
+      <a href={explorerLink(address, config)} target="_blank">{addressLabel}</a>
     {/if}
   </div>
 </div>

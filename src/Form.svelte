@@ -206,11 +206,7 @@
           {#if field.value}
             {#if isUrl(field.value)}
               <span class="ellipsis">
-                <a
-                  class="link"
-                  href={field.value}
-                  target="_blank"
-                  rel="noreferrer">
+                <a class="link" href={field.value} target="_blank">
                   {field.value}
                 </a>
               </span>
