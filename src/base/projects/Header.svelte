@@ -6,6 +6,7 @@
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import { getCurrentRouteParams, navigate } from "@app/router";
+  import { onMount } from "svelte";
 
   export let peer: string | null;
   export let project: Project;
@@ -15,13 +16,15 @@
 
   const { urn, peers, branches, seed } = project;
 
+  onMount(() => console.log("mounting project header"));
+
   // Switches between project views.
   const toggleContent = (input: string, removeSource = false) => {
     navigate({
       type: "projects",
       params: {
         ...getCurrentRouteParams("projects"),
-        restRoute: removeSource ? "",
+        restRoute: removeSource && "",
         issue: null,
         patch: null,
         content: content === input ? "tree" : input,
