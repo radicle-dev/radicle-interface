@@ -8,7 +8,7 @@ import { Failure } from "@app/error";
 import type { Config } from "@app/config";
 import { isFulfilled, unixTime } from "@app/utils";
 import { assert } from "@app/error";
-import { Seed, InvalidSeed } from "@app/base/seeds/Seed";
+import { Seed } from "@app/base/seeds/Seed";
 import * as cache from "@app/cache";
 
 export interface Registration {
@@ -21,7 +21,7 @@ export interface EnsProfile {
   id?: string;
   owner?: string;
   address?: string;
-  seed?: Seed | InvalidSeed;
+  seed?: Seed;
   url?: string;
   avatar?: string;
   twitter?: string;
@@ -126,9 +126,8 @@ export async function getRegistration(
         },
         config,
       );
-    } catch (e: any) {
-      console.debug(e, seedHost, seedId);
-      profile.seed = new InvalidSeed(seedHost, seedId);
+    } catch (error) {
+      console.debug({ error, seedHost, seedId });
     }
   }
 
@@ -153,7 +152,7 @@ export async function getSeed(
   name: string,
   config: Config,
   resolver?: EnsResolver | null,
-): Promise<Seed | InvalidSeed | null> {
+): Promise<Seed | null> {
   name = name.toLowerCase();
 
   resolver = resolver ?? (await getResolver(name, config));
@@ -175,9 +174,9 @@ export async function getSeed(
 
   try {
     return new Seed({ host, id, git, api }, config);
-  } catch (e: any) {
-    console.debug(e, host, id);
-    return new InvalidSeed(id, host);
+  } catch (error: unknown) {
+    console.debug({ error, host, id, api });
+    return null;
   }
 }
 

@@ -9,7 +9,7 @@ import {
 } from "@app/utils";
 import type { Config } from "@app/config";
 import { cached } from "@app/cache";
-import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
+import type { Seed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
 import { NotFoundError, MissingReverseRecord } from "@app/error";
 
@@ -92,8 +92,7 @@ export class Profile {
     }
   }
 
-  // We add null here to differentiate between a `undefined` and a invalid / null seed
-  get seed(): Seed | InvalidSeed | null {
+  get seed(): Seed | null {
     return this.profile?.ens?.seed ?? null;
   }
 

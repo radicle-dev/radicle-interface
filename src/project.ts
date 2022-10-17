@@ -453,11 +453,8 @@ export class Project implements ProjectInfo {
       ? await Seed.lookup(seedHost, config)
       : null;
 
-    if (!profile && !seed) {
+    if (!seed) {
       throw new Error("Couldn't load project");
-    }
-    if (!seed?.valid) {
-      throw new Error("Couldn't load project: invalid seed");
     }
 
     const info = await Project.getInfo(id, seed.httpApi);

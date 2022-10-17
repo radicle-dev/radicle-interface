@@ -10,21 +10,7 @@ export interface Stats {
   users: { count: number };
 }
 
-export class InvalidSeed {
-  valid = false as const;
-
-  host?: string;
-  id?: string;
-
-  constructor(host?: string, id?: string) {
-    this.host = host;
-    this.id = id;
-  }
-}
-
 export class Seed {
-  public valid = true as const;
-
   public httpApi: Host;
   public git: Host;
   public link: { host: string; id: string; port: number };

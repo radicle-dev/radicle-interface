@@ -185,7 +185,7 @@
         <RadicleUrn urn={profile.id} />
       {/if}
       <!-- Seed Address -->
-      {#if profile.seed && profile.seed.valid}
+      {#if profile.seed}
         <div class="label">Seed</div>
         <SeedAddress seed={profile.seed} port={config.seed.link.port} />
       {/if}
@@ -244,7 +244,7 @@
       {/if}
     </div>
 
-    {#if profile.seed?.valid}
+    {#if profile.seed}
       <Async fetch={getProjectsAndStats(profile.seed, profile.id)} let:result>
         <Projects
           {profile}
