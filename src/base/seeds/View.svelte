@@ -169,7 +169,7 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="label">Address</div>
-      <SeedAddress {seed} port={seed.link.port} />
+      <SeedAddress {seed} />
       <!-- Seed ID -->
       <div class="label">Seed ID</div>
       <div class="seed-label">

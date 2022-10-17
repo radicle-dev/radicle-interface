@@ -131,7 +131,9 @@
           label: "Seed Host",
           validate: "domain",
           placeholder: "seed.acme.org",
-          url: r.profile.seed && `/seeds/${r.profile.seed.host}`,
+          url:
+            r.profile.seed &&
+            `/seeds/${r.profile.seed.host}:${config.seed.httpApi.port}`,
           description:
             "The seed host address. " +
             "Only domain names with TLS are supported. " +
