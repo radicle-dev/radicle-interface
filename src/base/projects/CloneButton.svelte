@@ -100,6 +100,7 @@
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
+          rel="noreferrer"
           href="https://radicle.xyz/get-started.html"
           class="link">
           Radicle CLI
