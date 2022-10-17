@@ -1,11 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "@app/router";
+  import { link, navigate } from "@app/router";
   import type { Config } from "@app/config";
   import type { ethers } from "ethers";
   import { session } from "@app/session";
   import Loading from "@app/Loading.svelte";
-  import Link from "@app/Link.svelte";
   import Modal from "@app/Modal.svelte";
   import Form from "@app/Form.svelte";
   import type { Field } from "@app/Form.svelte";
@@ -244,13 +243,7 @@
     </span>
 
     <span slot="actions">
-      <Link
-        to={{
-          type: "registrations",
-          params: { nameOrDomain: domain, owner: null, view: "form" },
-        }}>
-        Register &rarr;
-      </Link>
+      <a use:link href={`/registrations/${domain}/form`}>Register &rarr;</a>
     </span>
   </Modal>
 {:else if state.status === Status.Found}

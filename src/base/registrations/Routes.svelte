@@ -29,6 +29,6 @@
       message={"You must connect your wallet to register"}
       on:close={() => navigate({ type: "register" })} />
   {/if}
-{:else if type === "registrations" && params.view === "view"}
+{:else if type === "registrations" && !params.view}
   <View {config} domain={params.nameOrDomain} />
 {/if}

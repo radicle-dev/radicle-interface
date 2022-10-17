@@ -1,10 +1,14 @@
 <script lang="ts">
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
-  import Link from "@app/Link.svelte";
   import { formatSeedId } from "@app/utils";
   import type { PeerId, Project } from "@app/project";
-  import { activeRouteStore, getCurrentRouteParams } from "@app/router";
+  import {
+    activeRouteStore,
+    getCurrentRouteParams,
+    routeToPath,
+    link,
+  } from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
@@ -84,17 +88,18 @@
     {/if}
     <span class="truncate">
       {#if $activeRouteStore.type === "projects"}
-        <Link
-          to={{
+        <a
+          use:link
+          href={routeToPath({
             type: "projects",
             params: {
               ...getCurrentRouteParams("projects"),
               peer: null,
               content: "tree",
             },
-          }}>
+          })}>
           {project.name}
-        </Link>
+        </a>
       {/if}
     </span>
     {#if peer}
