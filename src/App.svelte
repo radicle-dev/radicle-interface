@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getConfig } from "@app/config";
   import { Connection, state, session } from "@app/session";
-  import { activeRouteStore, initialize } from "@app/router";
+  import { activeRouteStore, initializeRouter } from "@app/router";
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
@@ -18,7 +18,8 @@
   import Registrations from "@app/base/registrations/Routes.svelte";
   import NotFound from "./NotFound.svelte";
 
-  initialize();
+  // Sets the required router stores and parses the entered URL
+  initializeRouter();
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {

@@ -90,7 +90,7 @@ function setHistory(history: Route[]): void {
   );
 }
 
-export const initialize = (): void => {
+export const initializeRouter = (): void => {
   const route = pathToRoute(window.location.pathname);
   setHistory([route]);
 };

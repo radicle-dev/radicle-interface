@@ -7,14 +7,17 @@
   import { formatCommit } from "@app/utils";
 
   export let project: proj.ProjectInfo;
-  export let seed: { api: Host };
+  export let seed: { api: Host } | null;
   export let faded = false;
   export let compact = false;
 
   const loadCommits = async () => {
-    const commits = await Project.getActivity(project.urn, seed.api);
+    if (seed) {
+      const commits = await Project.getActivity(project.urn, seed.api);
+      return groupCommitsByWeek(commits.activity);
+    }
 
-    return groupCommitsByWeek(commits.activity);
+    return [];
   };
 </script>
 

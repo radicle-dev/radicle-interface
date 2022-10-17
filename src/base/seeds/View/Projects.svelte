@@ -7,7 +7,7 @@
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
 
-  export let seed: Seed;
+  export let seed: Seed | null = null;
   export let profile: Profile | null = null;
   export let projects: proj.ProjectInfo[];
   export let stats: Stats;
@@ -72,7 +72,10 @@
       {#each items as project}
         {#if project.head}
           <div class="project">
-            <Widget {project} {seed} on:click={() => onClick(project)} />
+            <Widget
+              {project}
+              seed={profile?.seed?.valid ? profile.seed : seed}
+              on:click={() => onClick(project)} />
           </div>
         {/if}
       {/each}

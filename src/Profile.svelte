@@ -246,11 +246,7 @@
 
     {#if profile.seed?.valid}
       <Async fetch={getProjectsAndStats(profile.seed, profile.id)} let:result>
-        <Projects
-          {profile}
-          seed={profile.seed}
-          stats={result.stats}
-          projects={result.projects} />
+        <Projects {profile} stats={result.stats} projects={result.projects} />
       </Async>
     {/if}
   </main>

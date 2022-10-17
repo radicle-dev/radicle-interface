@@ -43,7 +43,7 @@
   import * as patch from "@app/patch";
   import * as proj from "@app/project";
   import Placeholder from "@app/Placeholder.svelte";
-  import { formatProfile, formatSeedId } from "@app/utils";
+  import { formatProfile, formatSeedId, setOpenGraphMetaTag } from "@app/utils";
 
   import Async from "@app/Async.svelte";
   import Header from "@app/base/projects/Header.svelte";
@@ -56,10 +56,11 @@
   import Patch from "./Patch.svelte";
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
+  import Loading from "@app/Loading.svelte";
 
   export let config: Config;
   export let params: ProjectParams;
-  export let type: string;
+  export const type = "projects";
 
   let revision: string | null = null;
   let commit: string | null = null;
@@ -84,6 +85,12 @@
     } else {
       pageTitle = baseName;
     }
+
+    setOpenGraphMetaTag([
+      { prop: "og:title", content: project.name },
+      { prop: "og:description", content: project.description },
+      { prop: "og:url", content: window.location.href },
+    ]);
   }
 
   resolveProject(params, config).then(result => {
@@ -103,6 +110,9 @@
     min-width: var(--content-min-width);
     padding: 4rem 0;
   }
+  header {
+    padding: 0 2rem 0 8rem;
+  }
 
   .content {
     padding: 0 2rem 0 8rem;
@@ -118,14 +128,18 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
-{#if project}
-  <main>
+<main>
+  {#if !project}
+    <header>
+      <Loading center />
+    </header>
+  {:else}
     <ProjectMeta
       {project}
       noDescription={params.content !== "tree"}
       peer={params.peer} />
 
-    {#if tree && commit && path}
+    {#if tree && revision && commit && path}
       <Header
         {tree}
         {project}
@@ -199,5 +213,5 @@
         {/if}
       </div>
     {/if}
-  </main>
-{/if}
+  {/if}
+</main>
