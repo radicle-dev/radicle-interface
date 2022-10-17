@@ -1,17 +1,19 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
+  type T = $$Generic;
+
   import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
 
   export let items: {
     key: string;
     title: string;
-    value: string;
+    value: T;
     badge: string | null;
   }[];
-  export let selected: string | null = null;
+  export let selected: T | null = null;
 
-  const dispatch = createEventDispatcher();
-  const onSelect = (item: string) => {
+  const dispatch = createEventDispatcher<{ select: T }>();
+  const onSelect = (item: T) => {
     dispatch("select", item);
   };
 </script>

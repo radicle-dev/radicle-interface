@@ -110,7 +110,8 @@
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
-        on:click={() => navigate(`/seeds/${seed.httpApi.host}`)}>
+        on:click={() =>
+          navigate(`/seeds/${seed.httpApi.host}:${seed.httpApi.port}`)}>
         <span>{seed.httpApi.host}</span>
       </div>
     {/if}

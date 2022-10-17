@@ -21,7 +21,7 @@
 
         return {
           key,
-          value: seed.host,
+          value: `${seed.httpApi.host}:${seed.httpApi.port}`,
           title: `Go to ${seed.host}`,
           badge: null,
         };
