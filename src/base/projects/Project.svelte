@@ -6,6 +6,7 @@
   import * as patch from "@app/patch";
   import * as proj from "@app/project";
   import { formatProfile, setOpenGraphMetaTag } from "@app/utils";
+  import { routeLoading } from "@app/base/projects/route";
 
   import Async from "@app/Async.svelte";
   import Header from "@app/base/projects/Header.svelte";
@@ -18,6 +19,7 @@
   import Patch from "./Patch.svelte";
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
+  import Loading from "@app/Loading.svelte";
 
   export let config: Config;
   export let project: proj.Project;
@@ -69,7 +71,9 @@
     {revision}
     content={activeView.type} />
 
-  {#if activeView.type === "tree"}
+  {#if $routeLoading}
+    <Loading center />
+  {:else if activeView.type === "tree"}
     <Browser
       {path}
       line={activeView.line || null}

@@ -1,6 +1,9 @@
 import type { Config } from "@app/config";
+import type { Writable } from "svelte/store";
+
 import { parseRoute, type Tree } from "@app/project";
 import { Project } from "@app/project";
+import { writable } from "svelte/store";
 
 export type Content = "tree" | "history" | "commits" | "issues" | "patches";
 
@@ -17,6 +20,8 @@ export interface Params {
   restRoute?: string; // The resting URL to be parsed with project data.
 }
 
+export const routeLoading: Writable<boolean> = writable(false);
+
 export interface LoadedRoute {
   type: "projects";
   project: Project;
@@ -31,7 +36,6 @@ export interface LoadedRoute {
 }
 
 export type ProjectView =
-  | { type: "loading" }
   | {
       type: "tree";
       line?: number;
@@ -71,6 +75,8 @@ export async function load(
   params: Params,
   config: Config,
 ): Promise<LoadedRoute> {
+  routeLoading.set(true);
+
   const project = await Project.get(
     params.urn,
     params.peer || null,
@@ -135,6 +141,8 @@ export async function load(
         commit: root.commit,
       };
   }
+
+  routeLoading.set(false);
   return {
     type: "projects",
     urn: params.urn,
