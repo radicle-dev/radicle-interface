@@ -96,6 +96,10 @@
   let checkers = false;
 
   const onKeydown = (event: KeyboardEvent) => {
+    if (import.meta.env.PROD) {
+      return;
+    }
+
     const hasInputTarget =
       event.target &&
       ((event.target as HTMLInputElement).type === "text" ||
