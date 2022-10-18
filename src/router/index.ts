@@ -19,10 +19,8 @@ const documentTitle = "Radicle Interface";
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<LoadedRoute> = writable(BOOT_ROUTE);
 
-activeRouteStore.subscribe(console.log);
-
-export async function link(node: any) {
-  async function onClick(event: any) {
+export function link(node: any) {
+  async function onClick(event: any): Promise<void> {
     const anchor = event.currentTarget;
 
     if (anchor.target === "") {
@@ -33,7 +31,7 @@ export async function link(node: any) {
     }
   }
 
-  node.addEventListener("click", onClick);
+  node.addEventListener("click", () => onClick);
 
   return {
     destroy() {
@@ -83,29 +81,24 @@ async function setHistory(history: Route[]): Promise<void> {
   if (history.length === 0) {
     throw Error("Cannot set empty history");
   }
+  const currentRoute = history.slice(-2)[0];
+  const targetRoute = history.slice(-1)[0];
 
   // In case of switching between different route types, pass through a loading screen
-  if (
-    history.length >= 2 &&
-    history.slice(-2)[0].type !== history.slice(-1)[0].type
-  ) {
+  if (history.length >= 2 && currentRoute.type !== targetRoute.type) {
     activeRouteStore.set({ type: "loading" });
   }
 
   const config = await getConfig();
-  const loadedRoute = await loadRoute(history.slice(-1)[0], config);
+  const loadedRoute = await loadRoute(targetRoute, config);
 
   historyStore.set(history);
   activeRouteStore.set(loadedRoute);
-  window.history.replaceState(
-    history,
-    documentTitle,
-    routeToPath(history[history.length - 1]),
-  );
+  window.history.replaceState(history, documentTitle, routeToPath(targetRoute));
 }
 
-export const initialize = () => {
-  setHistory([pathToRoute(window.location.pathname)]);
+export const initialize = async () => {
+  await setHistory([pathToRoute(window.location.pathname)]);
 };
 
 export function pathToRoute(path: string | null): Route {

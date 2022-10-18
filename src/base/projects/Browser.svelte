@@ -29,8 +29,6 @@
   export let tree: proj.Tree;
   export let commit: string;
 
-  $: console.log("browser path:", path);
-
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
   // Whether the mobile file tree is visible.
@@ -80,7 +78,7 @@
     mobileFileTree = false;
 
     if (newPath) {
-      navigate({
+      await navigate({
         type: "projects",
         params: {
           urn: project.urn,

@@ -12,8 +12,6 @@
   export let tree: Tree;
   export let loadingPath: string | null = null;
 
-  console.log("tree path:", path);
-
   const dispatch = createEventDispatcher();
   const onSelect = ({ detail: path }: { detail: string }): void => {
     dispatch("select", path);

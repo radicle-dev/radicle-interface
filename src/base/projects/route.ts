@@ -148,7 +148,7 @@ export async function load(
     urn: params.urn,
     peer: params.peer,
     revision: params.revision || root.commit,
-    restRoute: params.restRoute,
+    restRoute: `${params.revision || root.commit}/${path}`,
     path,
     seedHost: params.seedHost,
     profileName: params.profileName,
