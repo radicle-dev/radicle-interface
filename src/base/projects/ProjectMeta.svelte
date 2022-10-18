@@ -3,7 +3,7 @@
   import Clipboard from "@app/Clipboard.svelte";
   import { formatSeedId } from "@app/utils";
   import type { PeerId, Project } from "@app/project";
-  import { activeRouteStore, routeToPath, link } from "@app/router";
+  import { link, routeToPath } from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
@@ -68,6 +68,7 @@
   <div class="title txt-bold txt-title">
     {#if project.profile}
       <a
+        use:link
         class="org-avatar"
         title={project.profile.nameOrAddress}
         href="/{project.profile.nameOrAddress}">
@@ -77,27 +78,21 @@
       </a>
       <span class="divider">/</span>
     {/if}
-    {#if $activeRouteStore.type === "projects"}
-      <span class="truncate">
-        <a
-          use:link
-          href={routeToPath({
-            type: "projects",
-            params: {
-              urn: project.urn,
-              seedHost: $activeRouteStore.seedHost,
-              revision: $activeRouteStore.revision,
-              path: $activeRouteStore.path,
-              content: $activeRouteStore.activeView.type,
-              peer: $activeRouteStore.peer,
-              profileName: $activeRouteStore.profileName,
-              restRoute: "",
-            },
-          })}>
-          {project.name}
-        </a>
-      </span>
-    {/if}
+    <span class="truncate">
+      <a
+        use:link
+        href={routeToPath({
+          type: "projects",
+          params: {
+            urn: project.urn,
+            seedHost: !project.profile ? project.seed.host : undefined,
+            profileName: project.profile?.nameOrAddress,
+            content: "tree",
+          },
+        })}>
+        {project.name}
+      </a>
+    </span>
     {#if peer}
       <span class="peer-id">
         <span class="divider">/</span>
