@@ -67,6 +67,7 @@
   <Header
     tree={activeView.tree}
     {project}
+    branches={project.branches}
     {peer}
     {revision}
     content={activeView.type} />

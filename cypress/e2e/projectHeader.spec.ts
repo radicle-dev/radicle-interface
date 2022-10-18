@@ -43,19 +43,23 @@ describe("project header", () => {
     cy.intercept(
       "v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/readme/56e4e029c294b08546386e1fb706b772c7433c49",
       { fixture: "projectReadme.json" },
-    ).as("projectReadme");
+    ).as("projectReadme56e4e02");
     cy.intercept(
       "v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits?parent=cbf5df499ab4f4a908f1756fbe2c236a4530516a?verified=true",
       { fixture: "projectCommits.json" },
-    ).as("projectCommits");
+    ).as("projectCommitscbf5df4");
+    cy.intercept(
+      "v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits?parent=56e4e029c294b08546386e1fb706b772c7433c49?verified=true",
+      { fixture: "projectCommits.json" },
+    ).as("projectCommits56e4e02");
     cy.intercept(
       "v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/readme/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
       { fixture: "projectReadme.json" },
-    ).as("projectReadme");
+    ).as("projectReadmecbf5df4");
     cy.intercept(
       "v1/projects/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
       { fixture: "projectCommit.json" },
-    ).as("projectCommit");
+    ).as("projectCommitcbf5df4");
   });
   it("renders header correctly", () => {
     cy.visit("/seeds/willow.radicle.garden/bright-forest-protocol", {
@@ -76,7 +80,7 @@ describe("project header", () => {
       "@projectInfo",
       "@projectRemotes",
       "@projectTree56e4e02",
-      "@projectReadme",
+      "@projectReadme56e4e02",
     ]);
     cy.get("div.stat.seed span").should("have.text", "willow.radicle.garden");
     cy.get("div.stat.commit-count").should("have.text", "3\n    commit(s)");
@@ -105,7 +109,7 @@ describe("project header", () => {
       "@projectRemotes",
       "@projectBranches",
       "@projectTree56e4e02",
-      "@projectReadme",
+      "@projectReadme56e4e02",
     ]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
@@ -127,10 +131,10 @@ describe("project header", () => {
       .next()
       .contains("master")
       .click();
-    cy.wait(["@projectTreecbf5df4", "@projectReadme"]);
+    cy.wait(["@projectTree56e4e02", "@projectReadme56e4e02"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
-        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree/master",
+        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree",
       );
     });
     cy.get("div.stat.branch").should("have.text", "master");
@@ -139,10 +143,10 @@ describe("project header", () => {
 
   it("navigate to commit history", () => {
     cy.get("div.stat.commit-count").should("not.have.class", "active").click();
-    cy.wait(["@projectTreecbf5df4", "@projectCommits"]);
+    cy.wait(["@projectTree56e4e02", "@projectCommits56e4e02"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
-        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/history/master",
+        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/history",
       );
     });
     cy.get("div.stat.commit-count").should("have.class", "active");
@@ -150,7 +154,7 @@ describe("project header", () => {
 
   it("navigate to issues listing", () => {
     cy.get("div.stat.issue-count").click();
-    cy.wait(["@projectTreecbf5df4", "@projectIssues"]);
+    cy.wait(["@projectTree56e4e02", "@projectIssues"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/issues",

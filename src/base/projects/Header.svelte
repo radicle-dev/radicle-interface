@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Project } from "@app/project";
+  import type { Branches, Project } from "@app/project";
   import type { Tree } from "@app/project";
   import type { Content } from "./route";
 
@@ -10,11 +10,12 @@
 
   export let peer: string | undefined;
   export let project: Project;
+  export let branches: Branches;
   export let tree: Tree;
   export let revision: string;
   export let content: Content;
 
-  const { urn, peers, branches, seed } = project;
+  const { urn, peers, seed } = project;
 
   // Switches between project views.
   const toggleContent = (input: Content) => {
