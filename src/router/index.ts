@@ -11,7 +11,7 @@ import { getSearchParam } from "@app/utils";
 import { getConfig } from "@app/config";
 import type { Content } from "@app/base/projects/route";
 
-const BOOT_ROUTE: Route & LoadedRoute = { type: "home" };
+const BOOT_ROUTE: Route & LoadedRoute = { type: "loading" };
 
 // This is only respected by Safari.
 const documentTitle = "Radicle Interface";
@@ -64,7 +64,7 @@ export function navigate(
     route = pathToRoute(route);
   }
 
-  // If current and new route have route params, use old ones and overwrite with new ones
+  // If current and new route have route params, and spreads old and new ones.
   const currentRoute = get(historyStore).slice(-1)[0];
   if ("params" in currentRoute && "params" in route) {
     const newRouteParams = route.params;

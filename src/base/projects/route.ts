@@ -31,6 +31,7 @@ export interface LoadedRoute {
 }
 
 export type ProjectView =
+  | { type: "loading" }
   | {
       type: "tree";
       line?: number;
