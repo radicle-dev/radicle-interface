@@ -21,13 +21,13 @@ export const activeRouteStore: Writable<LoadedRoute> = writable(BOOT_ROUTE);
 
 activeRouteStore.subscribe(console.log);
 
-export function link(node: any) {
-  function onClick(event: any) {
+export async function link(node: any) {
+  async function onClick(event: any) {
     const anchor = event.currentTarget;
 
     if (anchor.target === "") {
       event.preventDefault();
-      navigate(pathToRoute(anchor.pathname), {
+      await navigate(pathToRoute(anchor.pathname), {
         replace: anchor.hasAttribute("replace"),
       });
     }
@@ -42,12 +42,12 @@ export function link(node: any) {
   };
 }
 
-export const push = (newRoute: Route): void => {
+export const push = async (newRoute: Route): Promise<void> => {
   window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
   const history = get(historyStore);
   // Limit history to a maximum of 10 steps. We shouldn't be doing more than
   // one subsequent pop() anyway.
-  setHistory([...history, newRoute].slice(-10));
+  await setHistory([...history, newRoute].slice(-10));
 };
 
 // Replaces history on any user interaction with forward and backwards buttons
@@ -56,10 +56,10 @@ window.addEventListener("popstate", e => {
   setHistory(e.state);
 });
 
-export function navigate(
+export async function navigate(
   route: Route | string,
   opts?: { retry?: boolean; replace?: boolean },
-) {
+): Promise<void> {
   if (typeof route === "string") {
     route = pathToRoute(route);
   }
@@ -73,9 +73,9 @@ export function navigate(
   }
 
   if (opts?.replace) {
-    setHistory([route]);
+    await setHistory([route]);
   } else {
-    push(route);
+    await push(route);
   }
 }
 
@@ -104,7 +104,7 @@ async function setHistory(history: Route[]): Promise<void> {
   );
 }
 
-export const initializeRouter = (): void => {
+export const initialize = () => {
   setHistory([pathToRoute(window.location.pathname)]);
 };
 

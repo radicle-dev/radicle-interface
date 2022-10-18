@@ -1,18 +1,18 @@
 <script lang="ts">
-  import type { Theme } from "@app/ThemeToggle.svelte";
   import type * as proj from "@app/project";
+  import type { Theme } from "@app/ThemeToggle.svelte";
 
-  import Loading from "@app/Loading.svelte";
-  import Placeholder from "@app/Placeholder.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Placeholder from "@app/Placeholder.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
 
-  import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
-  import { navigate } from "@app/router";
+  import Tree from "./Tree.svelte";
   import type { Content } from "./route";
+  import { navigate } from "@app/router";
 
   enum Status {
     Loading,
@@ -28,6 +28,8 @@
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let commit: string;
+
+  $: console.log("browser path:", path);
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -67,7 +69,7 @@
     return project.getBlob(commit, finalPath, { highlight: false });
   };
 
-  const onSelect = async (newPath: string, theme: Theme) => {
+  const onSelect = async (revision: string, newPath: string, theme: Theme) => {
     // Ensure we don't spend any time in a "loading" state. This means
     // the loading spinner won't be shown, and instead the blob will be
     // displayed once loaded.
@@ -77,13 +79,13 @@
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
 
-    if (path) {
+    if (newPath) {
       navigate({
         type: "projects",
         params: {
           urn: project.urn,
           content: "tree" as Content,
-          path: newPath,
+          restRoute: `${revision}/${newPath}`,
         },
       });
     }
@@ -203,7 +205,7 @@
             {fetchTree}
             {loadingPath}
             on:select={e => {
-              onSelect(e.detail, $theme);
+              onSelect(commit, e.detail, $theme);
             }} />
         </div>
       </div>

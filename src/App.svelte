@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Connection, state, session } from "@app/session";
-  import { activeRouteStore, initializeRouter } from "@app/router";
+  import { activeRouteStore, initialize } from "@app/router";
   import { getConfig } from "@app/config";
 
   import ColorPalette from "@app/ColorPalette.svelte";
@@ -18,7 +18,7 @@
   import Vesting from "@app/base/vesting/Index.svelte";
 
   // Sets the required router stores and parses the entered URL
-  initializeRouter();
+  initialize();
 
   const loadConfig = getConfig().then(async cfg => {
     if ($state.connection === Connection.Connected) {
