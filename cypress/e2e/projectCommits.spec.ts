@@ -52,7 +52,7 @@ const groupedCommits = [
 ];
 
 describe("project commits", () => {
-  beforeEach(() => {
+  before(() => {
     cy.intercept("/", {
       fixture: "projectHome.json",
     }).as("seedHome");
