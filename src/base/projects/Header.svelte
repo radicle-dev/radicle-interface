@@ -24,6 +24,8 @@
       params: {
         urn,
         content: content === input ? "tree" : input,
+        issue: undefined,
+        patch: undefined,
       },
     });
   };
