@@ -3,26 +3,20 @@ import { pathToRoute, routeToPath } from "./index";
 
 const defaultProjectRouteParams = {
   urn: "rad:git:hnrkbtw9t1of4ykjy6er4qqwxtc54k9943eto",
-  content: "tree",
   restRoute: "",
-  peer: null,
-  profileName: null,
-  seedHost: null,
-  issue: null,
-  patch: null,
+  content: "tree",
 };
 
 describe("Route parsing", () => {
   test.each([
     { input: { type: "home" }, description: "Home Route" },
     { input: { type: "vesting" }, description: "Vesting Route" },
-    { input: { type: "register" }, description: "Register Route" },
     {
-      input: { type: "faucet", params: { type: "form" } },
+      input: { type: "faucet", params: { activeView: "form", amount: null } },
       description: "Faucet Form Route",
     },
     {
-      input: { type: "profile", params: { profileName: "cloudhead.eth" } },
+      input: { type: "profile", params: { addressOrName: "cloudhead.eth" } },
       description: "Profile Route",
     },
     {
@@ -32,21 +26,32 @@ describe("Route parsing", () => {
     {
       input: {
         type: "registrations",
-        params: { nameOrDomain: "sebastinez", owner: null, view: null },
+        params: { nameOrDomain: null, owner: null, activeView: null },
+      },
+      description: "Registration Index Route",
+    },
+    {
+      input: {
+        type: "registrations",
+        params: { nameOrDomain: "sebastinez", owner: null, activeView: null },
       },
       description: "Registration View Route",
     },
     {
       input: {
         type: "registrations",
-        params: { nameOrDomain: "sebastinez", owner: null, view: "form" },
+        params: { nameOrDomain: "sebastinez", owner: null, activeView: "form" },
       },
       description: "Registration Form Route",
     },
     {
       input: {
         type: "registrations",
-        params: { nameOrDomain: "sebastinez", owner: null, view: "submit" },
+        params: {
+          nameOrDomain: "sebastinez",
+          owner: null,
+          activeView: "submit",
+        },
       },
       description: "Registration Submit Route",
     },
@@ -133,7 +138,7 @@ describe("Route parsing", () => {
         type: "projects",
         params: {
           ...defaultProjectRouteParams,
-          restRoute: "04aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
+          restRoute: "14aa53a1711ff9deaf9e9da5e896bc9b7d1b3995/src/App.svelte",
           profileName: "cloudhead.eth",
         },
       },

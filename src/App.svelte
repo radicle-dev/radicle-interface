@@ -13,9 +13,8 @@
   import NotFound from "@app/NotFound.svelte";
   import Profile from "@app/Profile.svelte";
   import Project from "@app/base/projects/Project.svelte";
-  import Register from "@app/base/registrations/Index.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
+  import Seeds from "@app/base/seeds/View.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
 
   // Sets the required router stores and parses the entered URL
@@ -90,22 +89,43 @@
     <div class="wrapper">
       {#if $activeRouteStore.type === "home"}
         <Home {config} />
+      {:else if $activeRouteStore.type === "loading"}
+        <Loading center />
       {:else if $activeRouteStore.type === "faucet"}
-        <Faucet {config} {...$activeRouteStore} />
+        <Faucet
+          {config}
+          activeView={$activeRouteStore.activeView}
+          amount={$activeRouteStore.amount} />
       {:else if $activeRouteStore.type === "seeds"}
-        <Seeds {config} session={$session} {...$activeRouteStore} />
-      {:else if $activeRouteStore.type === "register"}
-        <Register {config} />
+        <Seeds
+          {config}
+          session={$session}
+          projects={$activeRouteStore.projects}
+          stats={$activeRouteStore.stats}
+          seed={$activeRouteStore.seed} />
       {:else if $activeRouteStore.type === "registrations"}
-        <Registrations session={$session} {config} {...$activeRouteStore} />
+        <Registrations
+          {config}
+          activeView={$activeRouteStore.activeView}
+          nameOrDomain={$activeRouteStore.nameOrDomain}
+          owner={$activeRouteStore.owner}
+          session={$session} />
       {:else if $activeRouteStore.type === "vesting"}
         <Vesting {config} session={$session} />
       {:else if $activeRouteStore.type === "projects"}
-        <Project {config} {...$activeRouteStore} />
+        <Project
+          {config}
+          activeView={$activeRouteStore.activeView}
+          project={$activeRouteStore.project}
+          peer={$activeRouteStore.peer}
+          revision={$activeRouteStore.revision}
+          path={$activeRouteStore.path} />
       {:else if $activeRouteStore.type === "profile"}
         <Profile
           {config}
-          addressOrName={$activeRouteStore.params.profileName} />
+          stats={$activeRouteStore.stats}
+          projects={$activeRouteStore.projects}
+          profile={$activeRouteStore.profile} />
       {:else}
         <NotFound title="404" subtitle="Nothing here" />
       {/if}

@@ -12,7 +12,7 @@
   import PatchTabBar from "./Patch/PatchTabBar.svelte";
   import PatchTimeline from "./Patch/PatchTimeline.svelte";
   import Placeholder from "@app/Placeholder.svelte";
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
 
   export let patch: Patch;
   export let project: Project;
@@ -30,10 +30,9 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
+        urn: project.urn,
         content: "tree",
         revision,
-        patch: null,
         path: event.detail,
       },
     });

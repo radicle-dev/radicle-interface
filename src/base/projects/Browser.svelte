@@ -11,7 +11,8 @@
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
-  import { navigate, getCurrentRouteParams } from "@app/router";
+  import { navigate } from "@app/router";
+  import type { Content } from "./route";
 
   enum Status {
     Loading,
@@ -80,8 +81,9 @@
       navigate({
         type: "projects",
         params: {
-          ...getCurrentRouteParams("projects"),
-          restRoute: `${commit}/${newPath}`,
+          urn: project.urn,
+          content: "tree" as Content,
+          path: newPath,
         },
       });
     }

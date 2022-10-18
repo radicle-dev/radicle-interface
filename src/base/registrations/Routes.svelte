@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { RegistrationsParams } from "@app/router/definitions";
   import type { Session } from "@app/session";
 
   import ErrorModal from "@app/ErrorModal.svelte";
@@ -8,27 +7,27 @@
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
   import { navigate } from "@app/router";
+  import Index from "@app/base/registrations/Index.svelte";
 
+  export let activeView: string | null;
+  export let owner: string | null;
+  export let nameOrDomain: string | null;
   export let session: Session | null;
   export let config: Config;
-  export let params: RegistrationsParams;
-  export let type: string;
 </script>
 
-{#if type === "registrations" && params.view === "form"}
-  <New {config} name={params.nameOrDomain} owner={params.owner || null} />
-{:else if type === "registrations" && params.view === "submit"}
+{#if activeView === "form" && nameOrDomain}
+  <New {config} name={nameOrDomain} {owner} />
+{:else if activeView === "submit" && nameOrDomain}
   {#if session}
-    <Submit
-      {config}
-      name={params.nameOrDomain}
-      owner={params.owner || null}
-      {session} />
+    <Submit {config} name={nameOrDomain} {owner} {session} />
   {:else}
     <ErrorModal
       message={"You must connect your wallet to register"}
       on:close={() => navigate("/registrations")} />
   {/if}
-{:else if type === "registrations" && !params.view}
-  <View {config} domain={params.nameOrDomain} />
+{:else if !activeView && nameOrDomain}
+  <View {config} domain={nameOrDomain} />
+{:else}
+  <Index {config} />
 {/if}

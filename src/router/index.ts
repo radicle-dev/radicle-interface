@@ -3,28 +3,23 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event
 
-import type { Route } from "./definitions";
+import { loadRoute, type LoadedRoute, type Route } from "./definitions";
 import type { Writable } from "svelte/store";
 
 import { get, writable } from "svelte/store";
 import { getSearchParam } from "@app/utils";
+import { getConfig } from "@app/config";
+import type { Content } from "@app/base/projects/route";
 
-const BOOT_ROUTE: Route = { type: "home" };
+const BOOT_ROUTE: Route & LoadedRoute = { type: "home" };
 
 // This is only respected by Safari.
 const documentTitle = "Radicle Interface";
 
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
-export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
+export const activeRouteStore: Writable<LoadedRoute> = writable(BOOT_ROUTE);
 
-// Returns the current route params to be spread onto new navigate calls
-export function getCurrentRouteParams(type: string): any {
-  const activeRoute = get(activeRouteStore);
-  if (type === activeRoute.type && "params" in activeRoute) {
-    return activeRoute.params;
-  }
-  return { path: "/" };
-}
+activeRouteStore.subscribe(console.log);
 
 export function link(node: any) {
   function onClick(event: any) {
@@ -69,6 +64,14 @@ export function navigate(
     route = pathToRoute(route);
   }
 
+  // If current and new route have route params, use old ones and overwrite with new ones
+  const currentRoute = get(historyStore).slice(-1)[0];
+  if ("params" in currentRoute && "params" in route) {
+    const newRouteParams = route.params;
+    const currentRouteParams = currentRoute.params;
+    route.params = { ...currentRouteParams, ...newRouteParams };
+  }
+
   if (opts?.replace) {
     setHistory([route]);
   } else {
@@ -76,13 +79,24 @@ export function navigate(
   }
 }
 
-function setHistory(history: Route[]): void {
+async function setHistory(history: Route[]): Promise<void> {
   if (history.length === 0) {
     throw Error("Cannot set empty history");
   }
 
+  // In case of switching between different route types, pass through a loading screen
+  if (
+    history.length >= 2 &&
+    history.slice(-2)[0].type !== history.slice(-1)[0].type
+  ) {
+    activeRouteStore.set({ type: "loading" });
+  }
+
+  const config = await getConfig();
+  const loadedRoute = await loadRoute(history.slice(-1)[0], config);
+
   historyStore.set(history);
-  activeRouteStore.set(history.slice(-1)[0]);
+  activeRouteStore.set(loadedRoute);
   window.history.replaceState(
     history,
     documentTitle,
@@ -91,8 +105,7 @@ function setHistory(history: Route[]): void {
 }
 
 export const initializeRouter = (): void => {
-  const route = pathToRoute(window.location.pathname);
-  setHistory([route]);
+  setHistory([pathToRoute(window.location.pathname)]);
 };
 
 export function pathToRoute(path: string | null): Route {
@@ -106,22 +119,23 @@ export function pathToRoute(path: string | null): Route {
   switch (type) {
     case "registrations": {
       const nameOrDomain = segments.shift();
-      const view = segments.shift();
+      const activeView = segments.shift();
       if (nameOrDomain) {
-        if (view) {
+        if (activeView) {
           const owner = getSearchParam("owner");
           return {
             type: "registrations",
-            params: { view, nameOrDomain, owner },
+            params: { activeView, nameOrDomain, owner },
           };
         }
         return {
           type: "registrations",
-          params: { nameOrDomain, owner: null, view: null },
+          params: { nameOrDomain, owner: null, activeView: null },
         };
       }
       return {
-        type: "register",
+        type: "registrations",
+        params: { nameOrDomain: null, owner: null, activeView: null },
       };
     }
     case "faucet": {
@@ -129,10 +143,13 @@ export function pathToRoute(path: string | null): Route {
       if (view === "withdraw") {
         return {
           type: "faucet",
-          params: { type: "withdraw", amount: getSearchParam("amount") || "0" },
+          params: {
+            activeView: "withdraw",
+            amount: getSearchParam("amount"),
+          },
         };
       }
-      return { type: "faucet", params: { type: "form" } };
+      return { type: "faucet", params: { activeView: "form", amount: null } };
     }
     case "vesting":
       return { type: "vesting" };
@@ -145,19 +162,18 @@ export function pathToRoute(path: string | null): Route {
           let peer;
           if (content === "remotes") {
             peer = segments.shift();
-            content = segments.shift();
+            content = segments.shift() || "tree";
+          } else if (!content) {
+            content = "tree";
           }
           return {
             type: "projects",
             params: {
               urn,
               seedHost: host,
-              content: content || "tree",
-              peer: peer || null,
+              content: content as Content,
+              peer,
               restRoute: segments.join("/"),
-              profileName: null,
-              issue: null,
-              patch: null,
             },
           };
         }
@@ -171,22 +187,18 @@ export function pathToRoute(path: string | null): Route {
       if (type) {
         const urn = segments.shift();
         if (urn) {
-          let content = segments.shift() || "tree";
+          let content = segments.shift();
           let peer;
           if (content === "remotes") {
             peer = segments.shift();
             content = segments.shift() || "tree";
+          } else if (!content) {
+            content = "tree";
           }
           if (
-            ![
-              "tree",
-              "issue",
-              "issues",
-              "patch",
-              "patches",
-              "history",
-              "commits",
-            ].includes(content)
+            !["tree", "issues", "patches", "history", "commits"].includes(
+              content,
+            )
           ) {
             return { type: "404", params: { path } };
           }
@@ -195,16 +207,13 @@ export function pathToRoute(path: string | null): Route {
             params: {
               profileName: type,
               urn,
-              peer: peer || null,
-              seedHost: null,
+              peer,
               restRoute: segments.join("/"),
-              issue: null,
-              patch: null,
-              content,
+              content: content as Content,
             },
           };
         }
-        return { type: "profile", params: { profileName: type } };
+        return { type: "profile", params: { addressOrName: type } };
       }
       return { type: "home" };
     }
@@ -214,13 +223,16 @@ export function pathToRoute(path: string | null): Route {
 export function routeToPath(route: Route): string | null {
   if (route.type === "home") {
     return "/";
-  } else if (route.type === "faucet" && route.params.type === "form") {
+  } else if (route.type === "faucet" && route.params.activeView === "form") {
     return "/faucet";
   } else if (route.type === "vesting") {
     return "/vesting";
   } else if (route.type === "seeds") {
     return `/seeds/${route.params.host}`;
-  } else if (route.type === "faucet" && route.params.type === "withdraw") {
+  } else if (
+    route.type === "faucet" &&
+    route.params.activeView === "withdraw"
+  ) {
     return "/faucet/withdraw";
   } else if (route.type === "projects") {
     let hostPrefix;
@@ -231,6 +243,7 @@ export function routeToPath(route: Route): string | null {
     }
 
     const content = route.params.content ? `/${route.params.content}` : "";
+
     const restRoute = route.params.restRoute
       ? `/${route.params.restRoute}`
       : "";
@@ -240,21 +253,25 @@ export function routeToPath(route: Route): string | null {
     }
 
     return `${hostPrefix}/${route.params.urn}${content}${restRoute}`;
-  } else if (route.type === "register") {
+  } else if (
+    route.type === "registrations" &&
+    !route.params.nameOrDomain &&
+    !route.params.activeView
+  ) {
     return `/registrations`;
   } else if (
     route.type === "registrations" &&
     route.params.nameOrDomain &&
-    !route.params.view
+    !route.params.activeView
   ) {
     return `/registrations/${route.params.nameOrDomain}`;
-  } else if (route.type === "registrations" && route.params.view) {
+  } else if (route.type === "registrations" && route.params.activeView) {
     if (route.params.owner) {
-      return `/registrations/${route.params.nameOrDomain}/${route.params.view}?owner=${route.params.owner}`;
+      return `/registrations/${route.params.nameOrDomain}/${route.params.activeView}?owner=${route.params.owner}`;
     }
-    return `/registrations/${route.params.nameOrDomain}/${route.params.view}`;
+    return `/registrations/${route.params.nameOrDomain}/${route.params.activeView}`;
   } else if (route.type === "profile") {
-    return `/${route.params.profileName}`;
+    return `/${route.params.addressOrName}`;
   } else if (route.type === "404") {
     return route.params.path;
   }

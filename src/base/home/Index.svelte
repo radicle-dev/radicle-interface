@@ -1,5 +1,11 @@
+<script lang="ts" context="module">
+  export type LoadedRoute = {
+    type: "home";
+  };
+</script>
+
 <script lang="ts">
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
   import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
@@ -8,6 +14,7 @@
   import type { Host } from "@app/api";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
+  import type { Content } from "../projects/route";
 
   export let config: Config;
 
@@ -31,15 +38,9 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
         urn: project.urn,
-        content: "tree",
+        content: "tree" as Content,
         seedHost: seed.host,
-        profileName: null,
-        restRoute: project.head,
-        peer: null,
-        issue: null,
-        patch: null,
       },
     });
   };

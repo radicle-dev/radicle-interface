@@ -1,44 +1,29 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { Stats } from "@app/base/seeds/Seed";
+  import type { Seed, Stats } from "@app/base/seeds/Seed";
+  import type { Session } from "@app/session";
+  import type { SeedSession } from "@app/siwe";
   import type { ProjectInfo } from "@app/project";
+
   import { formatSeedId, formatSeedHost } from "@app/utils";
-  import { Seed } from "@app/base/seeds/Seed";
-  import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
-  import NotFound from "@app/NotFound.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import Projects from "@app/base/seeds/View/Projects.svelte";
-  import type { Session } from "@app/session";
   import Address from "@app/Address.svelte";
   import SiweConnect from "@app/SiweConnect.svelte";
-  import type { SeedSession } from "@app/siwe";
-  import Async from "@app/Async.svelte";
-  import { Project } from "@app/project";
-  import type { Host } from "@app/api";
 
   export let config: Config;
   export let session: Session | null;
-  export let host: string;
+  export let seed: Seed;
+  export let projects: ProjectInfo[];
+  export let stats: Stats;
 
-  const hostName = formatSeedHost(host);
-  const seedHost: Host = { host, port: null };
+  const hostName = formatSeedHost(seed.host);
   let siweSession: SeedSession | null = null;
-
-  const getProjectsAndStats = async (
-    seed: Seed,
-  ): Promise<{
-    stats: Stats;
-    projects: ProjectInfo[];
-  }> => {
-    const stats = await seed.getStats();
-    const projects = await Project.getProjects(seedHost, { perPage: 10 });
-    return { stats, projects };
-  };
 
   $: if (session?.siwe) {
     const entries = Object.entries(session.siwe);
-    const result = entries.find(([, session]) => session.domain === host);
+    const result = entries.find(([, session]) => session.domain === seed.host);
     if (result) {
       siweSession = result[1];
     }
@@ -117,72 +102,60 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(host, config)}
-  <main class="off-centered">
-    <Loading center />
-  </main>
-{:then seed}
-  <main>
-    <header>
-      <span class="title txt-title">
-        <span class="txt-bold">
-          {hostName}
-          <span class="desktop inline">{seed.emoji}</span>
-        </span>
+<main>
+  <header>
+    <span class="title txt-title">
+      <span class="txt-bold">
+        {hostName}
+        <span class="desktop inline">{seed.emoji}</span>
       </span>
-      <!-- User Session -->
-      <div class="siwe">
-        {#if session?.signer}
-          {#if siweSession}
-            <div class="session-info">
-              <span class="signed-in txt-small">Signed in as</span>
-              <Address
-                address={siweSession.address}
-                {config}
-                small
-                compact
-                resolve />
-            </div>
-          {:else}
-            <SiweConnect {seed} address={session.address} {config} />
-          {/if}
+    </span>
+    <!-- User Session -->
+    <div class="siwe">
+      {#if session?.signer}
+        {#if siweSession}
+          <div class="session-info">
+            <span class="signed-in txt-small">Signed in as</span>
+            <Address
+              address={siweSession.address}
+              {config}
+              small
+              compact
+              resolve />
+          </div>
         {:else}
-          <SiweConnect
-            disabled
-            {seed}
-            {config}
-            tooltip={"Connect your wallet to sign in"} />
+          <SiweConnect {seed} address={session.address} {config} />
         {/if}
-      </div>
-    </header>
-
-    <div class="fields">
-      <!-- Seed Address -->
-      <div class="label">Address</div>
-      <SeedAddress {seed} port={seed.link.port} />
-      <!-- Seed ID -->
-      <div class="label">Seed ID</div>
-      <div class="seed-label">
-        {formatSeedId(seed.id)}
-        <Clipboard small text={seed.id} />
-      </div>
-      <div class="desktop" />
-      <!-- API Port -->
-      <div class="label">API Port</div>
-      <div>{seed.api.port}</div>
-      <div class="desktop" />
-      <!-- API Version -->
-      <div class="label">Version</div>
-      <div>{seed.version}</div>
-      <div class="desktop" />
+      {:else}
+        <SiweConnect
+          disabled
+          {seed}
+          {config}
+          tooltip={"Connect your wallet to sign in"} />
+      {/if}
     </div>
-    <!-- Seed Projects -->
-    <Async fetch={getProjectsAndStats(seed)} let:result>
-      <Projects {seed} projects={result.projects} stats={result.stats} />
-    </Async>
-  </main>
-{:catch}
-  <NotFound
-    title={host}
-    subtitle="Not able to query information from this seed." />
-{/await}
+  </header>
+
+  <div class="fields">
+    <!-- Seed Address -->
+    <div class="label">Address</div>
+    <SeedAddress {seed} port={seed.link.port} />
+    <!-- Seed ID -->
+    <div class="label">Seed ID</div>
+    <div class="seed-label">
+      {formatSeedId(seed.id)}
+      <Clipboard small text={seed.id} />
+    </div>
+    <div class="desktop" />
+    <!-- API Port -->
+    <div class="label">API Port</div>
+    <div>{seed.api.port}</div>
+    <div class="desktop" />
+    <!-- API Version -->
+    <div class="label">Version</div>
+    <div>{seed.version}</div>
+    <div class="desktop" />
+  </div>
+  <!-- Seed Projects -->
+  <Projects {seed} {projects} {stats} />
+</main>

@@ -2,22 +2,22 @@
   import type { Commit } from "@app/commit";
 
   import { formatCommit } from "@app/utils";
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
   import CommitVerifiedBadge from "@app/base/projects/Commit/CommitVerifiedBadge.svelte";
 
   export let commit: Commit;
+  export let urn: string;
 
   const onBrowse = (event: { detail: string }) => {
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
+        urn,
         content: "tree",
-        revision: commit.header.sha1,
-        path: event.detail,
+        restRoute: `${commit.header.sha1}/${event.detail}`,
       },
     });
   };

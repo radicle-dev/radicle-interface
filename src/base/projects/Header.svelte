@@ -1,32 +1,27 @@
 <script lang="ts">
   import type { Project } from "@app/project";
   import type { Tree } from "@app/project";
+  import type { Content } from "./route";
 
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
-  import { getCurrentRouteParams, navigate } from "@app/router";
-  import { onMount } from "svelte";
+  import { navigate } from "@app/router";
 
-  export let peer: string | null;
+  export let peer: string | undefined;
   export let project: Project;
   export let tree: Tree;
   export let revision: string;
-  export let content: string;
+  export let content: Content;
 
   const { urn, peers, branches, seed } = project;
 
-  onMount(() => console.log("mounting project header"));
-
   // Switches between project views.
-  const toggleContent = (input: string, removeSource = false) => {
+  const toggleContent = (input: Content) => {
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
-        restRoute: removeSource && "",
-        issue: null,
-        patch: null,
+        urn,
         content: content === input ? "tree" : input,
       },
     });
@@ -36,8 +31,8 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
         urn,
+        content,
         peer,
       },
     });
@@ -47,9 +42,9 @@
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
         urn,
-        restRoute: revision,
+        content,
+        revision,
       },
     });
   };
@@ -147,7 +142,7 @@
       class:active={content === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
-      on:click={() => toggleContent("issues", false)}>
+      on:click={() => toggleContent("issues")}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
@@ -159,7 +154,7 @@
       class:active={content === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
-      on:click={() => toggleContent("patches", false)}>
+      on:click={() => toggleContent("patches")}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>

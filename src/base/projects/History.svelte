@@ -1,23 +1,23 @@
 <script lang="ts">
-  import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { Project } from "@app/project";
   import type { CommitMetadata, CommitsHistory } from "@app/commit";
-  import { groupCommits } from "@app/commit";
+  import type { Content } from "./route";
+
+  import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import List from "@app/List.svelte";
-  import { navigate, getCurrentRouteParams } from "@app/router";
+  import { Project } from "@app/project";
+  import { groupCommits } from "@app/commit";
+  import { navigate } from "@app/router";
 
-  export let project: Project;
   export let history: CommitsHistory;
+  export let project: Project;
 
-  const navigateHistory = (revision: string, content: string) => {
+  const navigateHistory = (revision: string, content: Content) => {
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
+        urn: project.urn,
         content,
         restRoute: revision,
-        issue: null,
-        patch: null,
       },
     });
   };
@@ -33,15 +33,13 @@
     return response.headers.slice(1);
   };
 
-  const browseCommit = (event: { detail: string }) => {
+  const browseCommit = (revision: string, newPath: string) => {
     navigate({
       type: "projects",
       params: {
-        ...getCurrentRouteParams("projects"),
+        urn: project.urn,
         content: "tree",
-        restRoute: event.detail,
-        issue: null,
-        patch: null,
+        restRoute: `${revision}/${newPath}`,
       },
     });
   };
@@ -100,7 +98,10 @@
               <div
                 class="commit"
                 on:click={() => navigateHistory(commit.header.sha1, "commits")}>
-                <CommitTeaser {commit} on:browseCommit={browseCommit} />
+                <CommitTeaser
+                  {commit}
+                  on:browseCommit={({ detail }) =>
+                    browseCommit(commit.header.sha1, detail)} />
               </div>
             {/each}
           </div>

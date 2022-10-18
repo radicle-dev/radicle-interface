@@ -34,7 +34,11 @@
   function begin() {
     navigate({
       type: "registrations",
-      params: { nameOrDomain: name, view: "submit", owner: registrationOwner },
+      params: {
+        nameOrDomain: name,
+        activeView: "submit",
+        owner: registrationOwner,
+      },
     });
   }
 

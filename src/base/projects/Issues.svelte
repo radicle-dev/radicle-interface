@@ -9,7 +9,7 @@
 
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -18,6 +18,7 @@
   export let config: Config;
   export let issues: Issue[];
   export let state: State;
+  export let urn: string;
 
   let options: ToggleButtonOption<State>[];
   const { open, closed } = groupIssues(issues);
@@ -79,10 +80,9 @@
             navigate({
               type: "projects",
               params: {
-                ...getCurrentRouteParams("projects"),
-                content: "issue",
+                urn,
+                content: "issues",
                 issue: issue.id,
-                patch: null,
               },
             });
           }}>

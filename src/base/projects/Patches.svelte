@@ -11,10 +11,11 @@
 
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
-  import { getCurrentRouteParams, navigate } from "@app/router";
+  import { navigate } from "@app/router";
 
   export let state: State = "proposed";
   export let config: Config;
+  export let urn: string;
   export let patches: Patch[];
 
   let options: ToggleButtonOption<State>[];
@@ -77,12 +78,9 @@
             navigate({
               type: "projects",
               params: {
-                ...getCurrentRouteParams("projects"),
-                content: "patch",
+                urn,
+                content: "patches",
                 patch: patch.id,
-                issue: null,
-                revision: null,
-                path: null,
               },
             });
           }}>

@@ -1,45 +1,43 @@
+import * as projectRoute from "@app/base/projects/route";
+import * as seedRoute from "@app/base/seeds/route";
+import * as faucetRoute from "@app/base/faucet/route";
+import * as registrationsRoute from "@app/base/registrations/route";
+import * as profileRoute from "@app/base/profiles/route";
+import type { Config } from "@app/config";
+
 export type Route =
-  | { type: "404"; params: NotFoundParams }
-  | { type: "faucet"; params: FaucetParams }
+  | { type: "404"; params: { path: string } }
+  | { type: "faucet"; params: faucetRoute.Params }
   | { type: "home" }
-  | { type: "profile"; params: ProfileParams }
-  | { type: "projects"; params: ProjectParams }
-  | { type: "register" }
-  | { type: "registrations"; params: RegistrationsParams }
-  | { type: "seeds"; params: SeedParams }
+  | { type: "profile"; params: profileRoute.Params }
+  | { type: "projects"; params: projectRoute.Params }
+  | { type: "registrations"; params: registrationsRoute.Params }
+  | { type: "seeds"; params: seedRoute.Params }
   | { type: "vesting" };
 
-export interface ProjectParams {
-  urn: string;
-  content: string;
-  restRoute: string;
-  seedHost: string | null;
-  profileName: string | null;
-  peer: string | null;
-  issue: string | null;
-  patch: string | null;
-}
+export type LoadedRoute =
+  | { type: "loading" }
+  | { type: "home" }
+  | { type: "vesting" }
+  | profileRoute.LoadedRoute
+  | registrationsRoute.LoadedRoute
+  | faucetRoute.LoadedRoute
+  | seedRoute.LoadedRoute
+  | projectRoute.LoadedRoute;
 
-export type Params =
-  | NotFoundParams
-  | SeedParams
-  | ProfileParams
-  | ProjectParams
-  | RegistrationsParams;
-
-export type SeedParams = { host: string };
-export type NotFoundParams = { path: string };
-
-export type FaucetParams =
-  | { type: "form" }
-  | { type: "withdraw"; amount: string };
-
-export interface ProfileParams {
-  profileName: string;
-}
-
-export interface RegistrationsParams {
-  nameOrDomain: string;
-  view: string | null;
-  owner: string | null;
+export async function loadRoute(route: Route, config: Config): Promise<any> {
+  switch (route.type) {
+    case "projects":
+      return projectRoute.load(route.params, config);
+    case "seeds":
+      return seedRoute.load(route.params, config);
+    case "faucet":
+      return faucetRoute.load(route.params);
+    case "registrations":
+      return registrationsRoute.load(route.params);
+    case "profile":
+      return profileRoute.load(route.params, config);
+    default:
+      return { type: route.type };
+  }
 }
