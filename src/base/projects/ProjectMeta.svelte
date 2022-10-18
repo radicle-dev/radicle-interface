@@ -7,7 +7,6 @@
 
   export let project: Project;
   export let peer: PeerId | null = null;
-  export let noDescription = false;
 </script>
 
 <style>
@@ -46,9 +45,6 @@
   }
   .description {
     margin: 1rem 0 1.5rem 0;
-  }
-  .placeholder {
-    height: 2rem;
   }
 
   .content {
@@ -114,9 +110,5 @@
     <span class="truncate">{project.urn}</span>
     <Clipboard small text={project.urn} />
   </div>
-  {#if !noDescription}
-    <div class="description">{project.description}</div>
-  {:else}
-    <div class="placeholder" />
-  {/if}
+  <div class="description">{project.description}</div>
 </header>

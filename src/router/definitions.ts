@@ -8,8 +8,8 @@ import type { Config } from "@app/config";
 export type Route =
   | { type: "404"; params: { path: string } }
   | { type: "faucet"; params: faucetRoute.Params }
-  | { type: "loading" }
   | { type: "home" }
+  | { type: "loading" }
   | { type: "profile"; params: profileRoute.Params }
   | { type: "projects"; params: projectRoute.Params }
   | { type: "registrations"; params: registrationsRoute.Params }

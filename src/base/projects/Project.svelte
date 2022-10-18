@@ -62,7 +62,7 @@
 </svelte:head>
 
 <main>
-  <ProjectMeta {project} {peer} noDescription={activeView.type !== "tree"} />
+  <ProjectMeta {project} {peer} />
 
   <Header
     tree={activeView.tree}
