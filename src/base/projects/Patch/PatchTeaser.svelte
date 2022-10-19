@@ -2,13 +2,13 @@
   import { onMount } from "svelte";
   import { formatObjectId } from "@app/cobs";
   import type { Patch } from "@app/patch";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { Profile, ProfileType } from "@app/profile";
 
   import Authorship from "@app/Authorship.svelte";
 
   export let patch: Patch;
-  export let config: Config;
+  export let wallet: Wallet;
 
   let profile: Profile | null = null;
 
@@ -17,7 +17,7 @@
       profile = await Profile.get(
         patch.author.profile.ens.name,
         ProfileType.Minimal,
-        config,
+        wallet,
       );
     }
   });
@@ -114,7 +114,7 @@
     </div>
     <Authorship
       {profile}
-      {config}
+      {wallet}
       caption="opened"
       author={patch.author}
       timestamp={patch.timestamp} />

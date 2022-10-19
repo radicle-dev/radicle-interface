@@ -7,7 +7,7 @@ import {
   identifyAddress,
   isFulfilled,
 } from "@app/utils";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 import { cached } from "@app/cache";
 import type { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import { Org } from "@app/base/orgs/Org";
@@ -107,18 +107,18 @@ export class Profile {
   private static async lookupProfile(
     addressOrName: string,
     profileType: ProfileType,
-    config: Config,
+    wallet: Wallet,
   ): Promise<IProfile> {
     let type = AddressType.EOA;
     let org: Org | null = null;
-    const ens = await resolveEnsProfile(addressOrName, profileType, config);
+    const ens = await resolveEnsProfile(addressOrName, profileType, wallet);
 
     if (ens) {
       if (ens.address) {
-        type = await identifyAddress(ens.address, config);
+        type = await identifyAddress(ens.address, wallet);
 
         if (type === AddressType.Org) {
-          org = await Org.get(ens.address, config);
+          org = await Org.get(ens.address, wallet);
         }
 
         return {
@@ -132,9 +132,9 @@ export class Profile {
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();
 
-      type = await identifyAddress(address, config);
+      type = await identifyAddress(address, wallet);
       if (type === AddressType.Org) {
-        org = await Org.get(address, config);
+        org = await Org.get(address, wallet);
       }
 
       try {
@@ -154,10 +154,10 @@ export class Profile {
 
   static async getMulti(
     addressesOrNames: string[],
-    config: Config,
+    wallet: Wallet,
   ): Promise<Profile[]> {
     const profilePromises = addressesOrNames.map(addressOrName =>
-      this.lookupProfile(addressOrName, ProfileType.Minimal, config),
+      this.lookupProfile(addressOrName, ProfileType.Minimal, wallet),
     );
     const profiles = await Promise.allSettled(profilePromises);
     return profiles
@@ -168,20 +168,20 @@ export class Profile {
   static async get(
     addressOrName: string,
     profileType: ProfileType,
-    config: Config,
+    wallet: Wallet,
   ): Promise<Profile> {
     const profile = await this.lookupProfile(
       addressOrName,
       profileType,
-      config,
+      wallet,
     );
     return new Profile(profile);
   }
 }
 
 export const getBalance = cached(
-  async (address: string, config: Config) => {
-    return await config.provider.getBalance(address);
+  async (address: string, wallet: Wallet) => {
+    return await wallet.provider.getBalance(address);
   },
   address => address,
   { max: 1000 },

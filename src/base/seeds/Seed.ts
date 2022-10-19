@@ -1,8 +1,8 @@
 import { Request, type Host } from "@app/api";
-import type { Config } from "@app/config";
 import * as proj from "@app/project";
-import { isDomain, isLocal } from "@app/utils";
+import { isDomain } from "@app/utils";
 import { assert } from "@app/error";
+import { getSeedEmoji } from "@app/utils";
 
 export interface Stats {
   projects: { count: number };
@@ -21,6 +21,10 @@ export class InvalidSeed {
   }
 }
 
+export const defaultHttpApiPort = 8777;
+export const defaultLinkPort = 8776;
+export const defaultGitPort = 443;
+
 export class Seed {
   valid = true as const;
 
@@ -31,23 +35,20 @@ export class Seed {
   version?: string;
   emoji: string;
 
-  constructor(
-    seed: {
-      host: string;
-      id: string;
-      git?: string | null;
-      api?: string | null;
-      version?: string | null;
-    },
-    cfg: Config,
-  ) {
+  constructor(seed: {
+    host: string;
+    id: string;
+    git?: string | null;
+    api?: string | null;
+    version?: string | null;
+  }) {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
     assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
     let api = null;
     let git = null;
-    let apiPort: number | null = cfg.seed.api.port;
-    let gitPort: number | null = cfg.seed.git.port;
+    let apiPort: number | null = defaultHttpApiPort;
+    let gitPort: number | null = defaultGitPort;
 
     if (seed.api) {
       try {
@@ -71,14 +72,7 @@ export class Seed {
       assert(isDomain(git), `invalid seed git host ${git}`);
     }
 
-    const meta = cfg.seeds.pinned[seed.host];
-    if (meta) {
-      this.emoji = meta.emoji;
-    } else if (isLocal(seed.host)) {
-      this.emoji = "🏠";
-    } else {
-      this.emoji = "🌱";
-    }
+    this.emoji = getSeedEmoji(seed.host);
 
     // The `git` and `api` keys being more specific take
     // precedence over the `host`, if available.
@@ -87,7 +81,7 @@ export class Seed {
 
     this.api = { host: api, port: apiPort };
     this.git = { host: git, port: gitPort };
-    this.link = { host: seed.host, id: seed.id, port: cfg.seed.link.port };
+    this.link = { host: seed.host, id: seed.id, port: defaultLinkPort };
 
     if (seed.version) {
       this.version = seed.version;
@@ -136,24 +130,21 @@ export class Seed {
     return new Request("/", host).get();
   }
 
-  static async lookup(hostname: string, cfg: Config): Promise<Seed> {
-    const host = { host: hostname, port: cfg.seed.api.port };
+  static async lookup(hostname: string): Promise<Seed> {
+    const host = { host: hostname, port: defaultHttpApiPort };
     const [info, peer] = await Promise.all([
       Seed.getInfo(host),
       Seed.getPeer(host),
     ]);
 
-    return new Seed(
-      {
-        host: hostname,
-        id: peer.id,
-        version: info.version,
-      },
-      cfg,
-    );
+    return new Seed({
+      host: hostname,
+      id: peer.id,
+      version: info.version,
+    });
   }
 
-  static async lookupMulti(hostnames: string[], cfg: Config): Promise<Seed[]> {
-    return await Promise.all(hostnames.map(h => Seed.lookup(h, cfg)));
+  static async lookupMulti(hostnames: string[]): Promise<Seed[]> {
+    return await Promise.all(hostnames.map(h => Seed.lookup(h)));
   }
 }

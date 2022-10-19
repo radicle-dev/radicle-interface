@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
   import type { Session } from "@app/session";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
@@ -12,7 +12,7 @@
 
   import { registerName, State, state } from "./registrar";
 
-  export let config: Config;
+  export let wallet: Wallet;
   export let name: string;
   export let owner: string | null;
   export let session: Session;
@@ -21,13 +21,13 @@
   const registrationOwner = owner || session.address;
 
   const view = () =>
-    navigate(`/registrations/${name}.${config.registrar.domain}`, {
+    navigate(`/registrations/${name}.${wallet.registrar.domain}`, {
       state: { retry: true },
     });
 
   onMount(async () => {
     try {
-      await registerName(name, registrationOwner, config);
+      await registerName(name, registrationOwner, wallet);
     } catch (e: any) {
       console.error("Error", e);
 
@@ -37,7 +37,7 @@
   });
 
   let latestBlock: number;
-  config.provider.on("block", (block: number) => {
+  wallet.provider.on("block", (block: number) => {
     latestBlock = block;
   });
 </script>
@@ -67,7 +67,7 @@
       {:else}
         <div>🌐</div>
       {/if}
-      {name}.{config.registrar.domain}
+      {name}.{wallet.registrar.domain}
     </span>
 
     <span slot="subtitle">

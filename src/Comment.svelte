@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Comment, Thread } from "@app/issue";
   import Avatar from "@app/Avatar.svelte";
   import Markdown from "@app/Markdown.svelte";
@@ -12,7 +12,7 @@
   import Reactions from "@app/Reactions.svelte";
 
   export let comment: Comment | Thread;
-  export let config: Config;
+  export let wallet: Wallet;
   export let caption = "left a comment";
   export let getImage: (path: string) => Promise<Blob>;
 
@@ -23,7 +23,7 @@
       profile = await Profile.get(
         comment.author.profile.ens.name,
         ProfileType.Minimal,
-        config,
+        wallet,
       );
     }
   });
@@ -83,7 +83,7 @@
     <div class="card-header">
       <Authorship
         noAvatar
-        {config}
+        {wallet}
         {caption}
         {profile}
         author={comment.author}

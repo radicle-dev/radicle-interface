@@ -1,11 +1,33 @@
-import { get, writable } from "svelte/store";
-import type { Writable } from "svelte/store";
-import { ethers } from "ethers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
+import type { Writable } from "svelte/store";
+
 import WalletConnect from "@walletconnect/client";
-import config from "@app/config.json";
-import { WalletConnectSigner } from "./WalletConnectSigner";
+import { ethers } from "ethers";
+import { get, writable } from "svelte/store";
+
+import { WalletConnectSigner } from "@app/WalletConnectSigner";
 import { capitalize } from "@app/utils";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
+import homestead from "@app/ethereum/networks/homestead.json";
+import goerli from "@app/ethereum/networks/goerli.json";
+import config from "@app/config.json";
+
+interface NetworkConfig {
+  name: string;
+  chainId: number;
+  registrar: {
+    domain: string;
+    address: string;
+  };
+  radToken: {
+    address: string;
+    faucet?: string;
+  };
+  reverseRegistrar: {
+    address: string;
+  };
+  alchemy: { key: string };
+}
 
 declare global {
   interface Window {
@@ -20,14 +42,11 @@ export type WalletConnectState =
   | { state: "close" }
   | { state: "open"; uri: string; onClose: any };
 
-export class Config {
+export class Wallet {
   network: { name: string; chainId: number };
   registrar: { address: string; domain: string };
-  radToken: { address: string; faucet: string };
+  radToken: { address: string; faucet?: string };
   reverseRegistrar: { address: string };
-  users: { pinned: string[] };
-  projects: { pinned: { urn: string; name: string; seed: string }[] };
-  seeds: { pinned: Record<string, { emoji: string }> };
   provider: ethers.providers.JsonRpcProvider;
   signer: (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
   walletConnect: {
@@ -46,24 +65,15 @@ export class Config {
         connected: false;
         signer: (ethers.Signer & TypedDataSigner) | null;
       };
-  abi: { [contract: string]: string[] };
-  seed: {
-    api: { port: number };
-    git: { port: number };
-    link: { port: number };
-  };
-  tokens: string[];
   token: ethers.Contract;
 
   constructor(
-    network: { name: string; chainId: number },
+    network: NetworkConfig,
     provider: ethers.providers.JsonRpcProvider,
     metamaskSigner: (ethers.Signer & TypedDataSigner) | null,
   ) {
-    const cfg = (<Record<string, any>>config)[network.name];
-
     const walletConnectState = writable<WalletConnectState>({ state: "close" });
-    const wc = Config.initializeWalletConnect(
+    const wc = Wallet.initializeWalletConnect(
       config.walletConnect.bridge,
       walletConnectState,
       provider,
@@ -89,20 +99,14 @@ export class Config {
       signer: wc.signer,
       state: walletConnectState,
     };
-    this.seed = config.radicle.seed;
-    this.registrar = cfg.registrar;
-    this.radToken = cfg.radToken;
-    this.reverseRegistrar = cfg.reverseRegistrar;
-    this.users = cfg.users;
+    this.registrar = network.registrar;
+    this.radToken = network.radToken;
+    this.reverseRegistrar = network.reverseRegistrar;
     this.provider = provider;
     this.signer = null;
-    this.projects = config.projects;
-    this.seeds = config.seeds;
-    this.abi = config.abi;
-    this.tokens = cfg.tokens;
     this.token = new ethers.Contract(
       this.radToken.address,
-      this.abi.token,
+      ethereumContractAbis.token,
       this.provider,
     );
   }
@@ -122,7 +126,7 @@ export class Config {
       this.setSigner(this.walletConnect.signer);
       return this.walletConnect.signer;
     }
-    const wc = Config.initializeWalletConnect(
+    const wc = Wallet.initializeWalletConnect(
       this.walletConnect.bridge,
       this.walletConnect.state,
       this.provider,
@@ -191,16 +195,15 @@ export function isMetamaskInstalled(): boolean {
 }
 
 function getProvider(
-  network: { name: string },
-  config: Record<string, any>,
+  networkConfig: NetworkConfig,
   metamask: ethers.providers.JsonRpcProvider | null,
 ): ethers.providers.JsonRpcProvider {
   if (metamask) {
     return metamask;
   } else if (import.meta.env.PROD) {
     return new ethers.providers.AlchemyWebSocketProvider(
-      network.name,
-      config.alchemy.key,
+      networkConfig.name,
+      networkConfig.alchemy.key,
     );
   } else if (import.meta.env.DEV) {
     // The ethers defaultProvider doesn't include a `send` method, which breaks the `utils.getTokens` fn.
@@ -224,34 +227,38 @@ function checkMetaMask(
   });
 }
 
-export async function getConfig(): Promise<Config> {
+export async function getWallet(): Promise<Wallet> {
   const metamask = isMetamaskInstalled()
     ? new ethers.providers.Web3Provider(window.ethereum)
     : null;
   const metamaskSigner = metamask?.getSigner() || null;
 
-  console.debug("metamask", metamask);
-  console.debug("metamaskSigner", metamaskSigner);
+  let selectedNetwork: NetworkConfig;
 
-  let network = { name: "homestead", chainId: 1 };
   if (metamask) {
-    // If Metamask is detected, we use the network configured there.
     const ready = await checkMetaMask(metamask);
-    if (ready) network = ready;
+    if (ready) {
+      if (ready.name === "homestead") {
+        selectedNetwork = homestead;
+      } else if (ready.name === "goerli") {
+        selectedNetwork = goerli;
+      } else {
+        throw new Error(
+          `${capitalize(
+            ready.name,
+          )} is not supported. Connect to Homestead or Goerli instead.`,
+        );
+      }
+    } else {
+      throw new Error("Metamask was not ready after 4 seconds.");
+    }
+  } else {
+    // Fall back to homestead.
+    selectedNetwork = homestead;
   }
 
-  const networkConfig = (<Record<string, any>>config)[network.name];
-  if (!networkConfig) {
-    throw new Error(
-      `${capitalize(
-        network.name,
-      )} is not supported. Connect to Homestead or Goerli instead.`,
-    );
-  }
-
-  const provider = getProvider(network, networkConfig, metamask);
-  const cfg = new Config(network, provider, metamaskSigner);
-  console.debug("config", cfg);
+  const provider = getProvider(selectedNetwork, metamask);
+  const cfg = new Wallet(selectedNetwork, provider, metamaskSigner);
 
   return cfg;
 }

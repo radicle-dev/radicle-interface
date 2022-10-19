@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Session } from "@app/session";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { VestingInfo } from "./vesting";
 
   import * as utils from "@app/utils";
@@ -10,7 +10,7 @@
   import TextInput from "@app/TextInput.svelte";
   import { state, getInfo, withdrawVested } from "./vesting";
 
-  export let config: Config;
+  export let wallet: Wallet;
   export let session: Session | null;
 
   let contractAddress = "";
@@ -18,14 +18,14 @@
   let validationMessage: string | undefined = undefined;
   let valid: boolean = false;
 
-  async function loadContract(config: Config) {
+  async function loadContract(wallet: Wallet) {
     if (!valid) {
       return;
     }
 
     state.set("loading");
     try {
-      info = await getInfo(contractAddress, config);
+      info = await getInfo(contractAddress, wallet);
     } catch (error) {
       validationMessage =
         "Couldn't load contract, check dev console for details.";
@@ -105,7 +105,7 @@
           <tr>
             <td class="txt-highlight">Beneficiary</td>
             <td>
-              <Address {config} address={info.beneficiary} compact resolve />
+              <Address {wallet} address={info.beneficiary} compact resolve />
             </td>
           </tr>
           <tr>
@@ -145,7 +145,7 @@
           </Button>
         {:else if $state === "idle"}
           <Button
-            on:click={() => withdrawVested(contractAddress, config)}
+            on:click={() => withdrawVested(contractAddress, wallet)}
             variant="primary">
             Withdraw
           </Button>
@@ -176,12 +176,12 @@
         loading={$state === "loading"}
         disabled={$state === "loading"}
         on:submit={() => {
-          loadContract(config);
+          loadContract(wallet);
         }}
         bind:value={contractAddress} />
 
       <Button
-        on:click={() => loadContract(config)}
+        on:click={() => loadContract(wallet)}
         variant="primary"
         waiting={$state === "loading"}
         disabled={!valid || $state === "loading"}>

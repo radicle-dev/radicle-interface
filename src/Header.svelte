@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
@@ -23,7 +23,7 @@
   import { formatAddress, formatBalance } from "@app/utils";
 
   export let session: Session | null;
-  export let config: Config;
+  export let wallet: Wallet;
 
   let query: string;
   let results: ProjectsAndProfiles | null = null;
@@ -141,7 +141,7 @@
     <a use:link href="/" class="logo"><Logo /></a>
     <div class="search">
       <Search
-        {config}
+        {wallet}
         on:search={e => {
           ({ query, results } = e.detail);
         }} />
@@ -152,7 +152,7 @@
           <Floating>
             <span slot="toggle">Seeds</span>
             <svelte:fragment slot="modal">
-              <SeedDropdown seeds={session.siwe} {config} />
+              <SeedDropdown seeds={session.siwe} />
             </svelte:fragment>
           </Floating>
         </span>
@@ -161,11 +161,11 @@
   </div>
 
   <div class="right">
-    {#if config && config.network.name === "goerli"}
+    {#if wallet && wallet.network.name === "goerli"}
       <a use:link href="/faucet">
         <span class="network">Goerli</span>
       </a>
-    {:else if config && config.network.name === "homestead"}
+    {:else if wallet && wallet.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}
       <span class="network unavailable">No Network</span>
@@ -185,12 +185,12 @@
       <Button
         style="width: 10rem; white-space: nowrap;"
         variant="foreground"
-        on:click={() => disconnectWallet(config)}
+        on:click={() => disconnectWallet(wallet)}
         on:mouseover={() => (sessionButtonHover = true)}
         on:focus={() => (sessionButtonHover = true)}
         on:mouseout={() => (sessionButtonHover = false)}
         on:blur={() => (sessionButtonHover = false)}>
-        {#await Profile.get(address, ProfileType.Minimal, config)}
+        {#await Profile.get(address, ProfileType.Minimal, wallet)}
           <Loading small center />
         {:then profile}
           {#if sessionButtonHover}
@@ -203,9 +203,9 @@
           {/if}
         {/await}
       </Button>
-    {:else if config}
+    {:else if wallet}
       <span class="connect">
-        <Connect buttonVariant="foreground" {config} />
+        <Connect buttonVariant="foreground" {wallet} />
       </span>
     {/if}
     <ThemeToggle />
@@ -221,7 +221,7 @@
           <div class="modal">
             <div style="padding-bottom: 1rem;">
               <Search
-                {config}
+                {wallet}
                 on:finished={() => {
                   closeFocused();
                 }}
@@ -245,7 +245,7 @@
 
   {#if results}
     <SearchResults
-      {config}
+      {wallet}
       {results}
       {query}
       on:close={() => {

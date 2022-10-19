@@ -44,7 +44,7 @@
 </script>
 
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   import cloneDeep from "lodash/cloneDeep";
   import { link } from "svelte-routing";
@@ -65,7 +65,7 @@
   export let fields: Field[];
   export let editable = false;
   export let disabled = false;
-  export let config: Config;
+  export let wallet: Wallet;
 
   let formFields = cloneDeep(fields);
   let hasErrors = false;
@@ -219,14 +219,14 @@
                 <Address
                   resolve={field.resolve ?? false}
                   address={field.value}
-                  {config} />
+                  {wallet} />
               </div>
               <div class="layout-mobile-inline">
                 <Address
                   compact
                   resolve={field.resolve ?? false}
                   address={field.value}
-                  {config} />
+                  {wallet} />
               </div>
             {:else if field.url}
               <div>

@@ -3,7 +3,7 @@
   import { setRecords } from "./resolver";
   import type { EnsRecord } from "./resolver";
   import type { Registration } from "./registrar";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import type { State } from "@app/utils";
@@ -11,7 +11,7 @@
   import Button from "@app/Button.svelte";
 
   export let domain: string;
-  export let config: Config;
+  export let wallet: Wallet;
   export let records: EnsRecord[];
   export let registration: Registration;
 
@@ -29,7 +29,7 @@
         domain,
         records,
         registration.resolver,
-        config,
+        wallet,
       );
       state.status = Status.Pending;
       await tx.wait();

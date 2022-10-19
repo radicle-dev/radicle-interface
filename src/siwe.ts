@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { SiweMessage } from "siwe";
 import { Request, type Host } from "@app/api";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 import { connectSeed } from "@app/session";
 import type { Seed } from "@app/base/seeds/Seed";
 
@@ -22,7 +22,7 @@ export function createSiweMessage(
   seed: Seed,
   address: string,
   nonce: string,
-  config: Config,
+  wallet: Wallet,
 ): string {
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
@@ -35,7 +35,7 @@ export function createSiweMessage(
     nonce,
     version: "1",
     expirationTime: nextWeek.toISOString(),
-    chainId: config.network.chainId,
+    chainId: wallet.network.chainId,
   });
 
   return message.prepareMessage();
@@ -50,16 +50,16 @@ export async function createUnauthorizedSession(
 /// Signs the user into given seed and returns when successfull a session id
 export async function signInWithEthereum(
   seed: Seed,
-  config: Config,
+  wallet: Wallet,
 ): Promise<{ id: string } | null> {
-  if (!config.signer) {
+  if (!wallet.signer) {
     return null;
   }
 
-  const address = await config.signer.getAddress();
+  const address = await wallet.signer.getAddress();
   const result = await createUnauthorizedSession(seed.api);
-  const message = createSiweMessage(seed, address, result.nonce, config);
-  const signature = await config.signer.signMessage(message);
+  const message = createSiweMessage(seed, address, result.nonce, wallet);
+  const signature = await wallet.signer.signMessage(message);
 
   const auth: {
     id: string;

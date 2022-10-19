@@ -7,6 +7,7 @@
   import * as utils from "@app/utils";
   import { Profile } from "@app/profile";
   import { Project } from "@app/project";
+  import config from "@app/config.json";
 
   export interface ProjectsAndProfiles {
     projects: { info: ProjectInfo; seed: Host }[];
@@ -22,7 +23,7 @@
 
   async function searchProjectsAndProfiles(
     query: string,
-    config: Config,
+    wallet: Wallet,
   ): Promise<SearchResult> {
     try {
       // The query is a plain Ethereum address.
@@ -30,9 +31,9 @@
         return { type: "singleProfile", id: query };
       }
 
-      const projectOnSeeds = Object.keys(config.seeds.pinned).map(seed => ({
+      const projectOnSeeds = config.seeds.pinned.map(seed => ({
         nameOrUrn: query,
-        seed,
+        seed: seed.host,
       }));
 
       // The query is a radicle project URN.
@@ -69,15 +70,15 @@
 
       try {
         let params: string[];
-        if (utils.isENSName(normalizedQuery, config)) {
+        if (utils.isENSName(normalizedQuery, wallet)) {
           params = [normalizedQuery];
         } else {
           params = [
-            `${normalizedQuery}.${config.registrar.domain}`,
+            `${normalizedQuery}.${wallet.registrar.domain}`,
             `${normalizedQuery}.eth`,
           ];
         }
-        const profiles = await Profile.getMulti(params, config);
+        const profiles = await Profile.getMulti(params, wallet);
         projectsAndProfiles.profiles.push(...profiles);
       } catch {
         // TODO: collect errors and forward to user.
@@ -122,7 +123,7 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
@@ -131,7 +132,7 @@
   import TextInput from "@app/TextInput.svelte";
   import { unreachable } from "@app/utils";
 
-  export let config: Config;
+  export let wallet: Wallet;
 
   const dispatch = createEventDispatcher<{
     finished: boolean;
@@ -155,7 +156,7 @@
     loading = true;
 
     const query = input;
-    const searchResult = await searchProjectsAndProfiles(input, config);
+    const searchResult = await searchProjectsAndProfiles(input, wallet);
 
     if (searchResult.type === "nothing") {
       shake();

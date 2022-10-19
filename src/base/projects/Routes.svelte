@@ -1,20 +1,20 @@
 <script lang="ts">
   import { Route } from "svelte-routing";
   import View from "@app/base/projects/View.svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import Redirect from "@app/Redirect.svelte";
 
-  export let config: Config;
+  export let wallet: Wallet;
 </script>
 
 <!-- With a seed context -->
 
 <Route path="/seeds/:seed/:id/*" let:params>
-  <View {config} seedHost={params.seed} id={params.id} />
+  <View {wallet} seedHost={params.seed} id={params.id} />
 </Route>
 
 <Route path="/seeds/:seed/:id/remotes/:peer/*" let:params>
-  <View {config} seedHost={params.seed} peer={params.peer} id={params.id} />
+  <View {wallet} seedHost={params.seed} peer={params.peer} id={params.id} />
 </Route>
 
 <!-- Explicit user and org context, will at some point be replaced by the generic route -->
@@ -29,12 +29,12 @@
 
 <Route path="/:profile/:id/remotes/:peer/*" let:params>
   <View
-    {config}
+    {wallet}
     profileName={params.profile}
     id={params.id}
     peer={params.peer} />
 </Route>
 
 <Route path="/:profile/:id/*" let:params>
-  <View {config} profileName={params.profile} id={params.id} />
+  <View {wallet} profileName={params.profile} id={params.id} />
 </Route>

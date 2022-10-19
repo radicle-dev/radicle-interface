@@ -3,27 +3,27 @@
   import { Connection, state } from "@app/session";
   import type { Err } from "@app/error";
   import ErrorModal from "@app/ErrorModal.svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import ConnectWallet from "@app/components/Modal/ConnectWallet.svelte";
   import Button from "@app/Button.svelte";
 
   export let caption = "Connect";
-  export let config: Config;
+  export let wallet: Wallet;
   export let buttonVariant: "foreground" | "primary";
 
   let error: Err | null = null;
 
   const onModalClose = () => {
-    const wcs = get(config.walletConnect.state);
+    const wcs = get(wallet.walletConnect.state);
 
     if (wcs.state === "open") {
-      config.walletConnect.state.set({ state: "close" });
+      wallet.walletConnect.state.set({ state: "close" });
       wcs.onClose();
     }
   };
   const onConnect = async () => {
     try {
-      await state.connectWalletConnect(config);
+      await state.connectWalletConnect(wallet);
     } catch (e: any) {
       walletConnectState.set({ state: "close" });
       error = e;
@@ -31,7 +31,7 @@
   };
 
   $: connecting = $state.connection === Connection.Connecting;
-  $: walletConnectState = config.walletConnect.state;
+  $: walletConnectState = wallet.walletConnect.state;
 </script>
 
 <Button
@@ -48,7 +48,7 @@
 
 {#if $walletConnectState.state === "open"}
   <ConnectWallet
-    {config}
+    {wallet}
     uri={$walletConnectState.uri}
     on:close={onModalClose} />
 {:else if error}

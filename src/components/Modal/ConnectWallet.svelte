@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   import { createEventDispatcher } from "svelte";
   import { qrcode } from "pure-svg-code";
@@ -9,7 +9,7 @@
   import Button from "@app/Button.svelte";
 
   export let uri: string;
-  export let config: Config;
+  export let wallet: Wallet;
 
   $: svgString = qrcode({
     content: uri,
@@ -23,7 +23,7 @@
 
   const dispatch = createEventDispatcher();
   const onClickConnect = () => {
-    state.connectMetamask(config);
+    state.connectMetamask(wallet);
   };
   const onClose = () => {
     dispatch("close");
@@ -83,7 +83,7 @@
         variant="secondary"
         size="small"
         on:click={onClickConnect}
-        disabled={!config.metamask.signer}>
+        disabled={!wallet.metamask.signer}>
         Connect with Metamask
       </Button>
       <Button variant="text" size="small" on:click={onClose}>Close</Button>

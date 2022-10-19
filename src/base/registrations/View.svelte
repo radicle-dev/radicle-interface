@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { link, navigate } from "svelte-routing";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { ethers } from "ethers";
   import { session } from "@app/session";
   import Loading from "@app/Loading.svelte";
@@ -12,6 +12,7 @@
   import ErrorModal from "@app/ErrorModal.svelte";
   import { isAddressEqual, isReverseRecordSet } from "@app/utils";
   import Button from "@app/Button.svelte";
+  import { defaultHttpApiPort } from "@app/base/seeds/Seed";
 
   import { getRegistration, getOwner } from "./registrar";
   import type { EnsRecord } from "./resolver";
@@ -32,7 +33,7 @@
     | { status: Status.Failed; error: string };
 
   export let domain: string;
-  export let config: Config;
+  export let wallet: Wallet;
 
   domain = domain.toLowerCase();
 
@@ -52,10 +53,10 @@
         reverseRecord = await isReverseRecordSet(
           r.profile.address,
           domain,
-          config,
+          wallet,
         );
       }
-      const owner = await getOwner(domain, config);
+      const owner = await getOwner(domain, wallet);
       resolver = r.resolver;
 
       fields = [
@@ -134,7 +135,7 @@
           description:
             "The seed host address. " +
             "Only domain names with TLS are supported. " +
-            `HTTP(S) API requests use port ${config.seed.api.port}.`,
+            `HTTP(S) API requests use port ${defaultHttpApiPort}.`,
           value: r.profile.seed?.host ?? "",
           editable: true,
         },
@@ -158,7 +159,7 @@
   }
 
   onMount(() => {
-    getRegistration(domain, config, resolver)
+    getRegistration(domain, wallet, resolver)
       .then(parseRecords)
       .catch(err => {
         state = { status: Status.Failed, error: err };
@@ -182,7 +183,7 @@
     state.status === Status.NotFound &&
     retries > 0
   ) {
-    getRegistration(domain, config, resolver)
+    getRegistration(domain, wallet, resolver)
       .then(parseRecords)
       .catch(err => {
         state = { status: Status.Failed, error: err };
@@ -279,7 +280,7 @@
       </div>
     </header>
     <Form
-      {config}
+      {wallet}
       {editable}
       {fields}
       on:save={onSave}
@@ -288,7 +289,7 @@
 
   {#if updateRecords}
     <Update
-      {config}
+      {wallet}
       {domain}
       on:close={() => (updateRecords = null)}
       registration={state.registration}

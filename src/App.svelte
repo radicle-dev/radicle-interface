@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Router, Route } from "svelte-routing";
-  import { getConfig } from "@app/config";
+  import { getWallet } from "@app/wallet";
   import { Connection, state, session } from "@app/session";
 
   import Home from "@app/base/home/Index.svelte";
@@ -15,19 +15,19 @@
   import Modal from "@app/Modal.svelte";
   import ColorPalette from "./ColorPalette.svelte";
 
-  const loadConfig = getConfig().then(async cfg => {
+  const loadWallet = getWallet().then(async wallet => {
     if ($state.connection === Connection.Connected) {
-      state.refreshBalance(cfg);
+      state.refreshBalance(wallet);
     } else if ($state.connection === Connection.Disconnected) {
       // Update the session state if we're already connected to WalletConnect
       // from a previous session.
-      if (cfg.walletConnect.client.connected) {
-        await state.connectWalletConnect(cfg);
-      } else if (cfg.metamask.connected) {
-        await state.connectMetamask(cfg);
+      if (wallet.walletConnect.client.connected) {
+        await state.connectWalletConnect(wallet);
+      } else if (wallet.metamask.connected) {
+        await state.connectMetamask(wallet);
       }
     }
-    return cfg;
+    return wallet;
   });
 
   function handleKeydown(event: KeyboardEvent) {
@@ -73,29 +73,29 @@
 </svelte:head>
 
 <div class="app">
-  {#await loadConfig}
+  {#await loadWallet}
     <!-- Loading wallet -->
     <div class="wrapper">
       <Loading center />
     </div>
-  {:then config}
+  {:then wallet}
     <ColorPalette />
-    <Header session={$session} {config} />
+    <Header session={$session} {wallet} />
     <div class="wrapper">
       <Router>
         <Route path="/">
-          <Home {config} />
+          <Home />
         </Route>
         <Route path="vesting">
-          <Vesting {config} session={$session} />
+          <Vesting {wallet} session={$session} />
         </Route>
-        <Registrations {config} session={$session} />
-        <Seeds {config} session={$session} />
-        <Faucet {config} />
+        <Registrations {wallet} session={$session} />
+        <Seeds {wallet} session={$session} />
+        <Faucet {wallet} />
         <Route path="/:addressOrName" let:params>
-          <Profile addressOrName={params.addressOrName} {config} />
+          <Profile addressOrName={params.addressOrName} {wallet} />
         </Route>
-        <Projects {config} />
+        <Projects {wallet} />
       </Router>
     </div>
   {:catch err}

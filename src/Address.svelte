@@ -12,10 +12,10 @@
   import { Profile, ProfileType } from "@app/profile";
   import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   export let address: string;
-  export let config: Config;
+  export let wallet: Wallet;
   export let resolve = false;
   export let noBadge = false;
   export let noAvatar = false;
@@ -32,12 +32,12 @@
 
   onMount(async () => {
     if (!profile) {
-      identifyAddress(address, config).then(
+      identifyAddress(address, wallet).then(
         (t: AddressType) => (addressType = t),
       );
 
       if (resolve) {
-        Profile.get(address, ProfileType.Minimal, config).then(
+        Profile.get(address, ProfileType.Minimal, wallet).then(
           p => (profile = p),
         );
       }
@@ -49,7 +49,7 @@
   $: addressLabel =
     resolve && profile?.name
       ? compact
-        ? parseEnsLabel(profile.name, config)
+        ? parseEnsLabel(profile.name, wallet)
         : profile.name
       : checksumAddress;
   $: checksumAddress = compact
@@ -100,7 +100,7 @@
         <Badge variant="foreground">org</Badge>
       {/if}
     {:else if addressType === AddressType.Contract}
-      <a href={explorerLink(address, config)} target="_blank" rel="noreferrer">
+      <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">
         {addressLabel}
       </a>
       {#if !noBadge}
@@ -110,7 +110,7 @@
       <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
-      <a href={explorerLink(address, config)} target="_blank" rel="noreferrer">
+      <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">
         {addressLabel}
       </a>
     {/if}

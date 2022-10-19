@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { type Patch, TimelineType } from "@app/patch";
   import { formatSeedId } from "@app/utils";
   import { canonicalize } from "@app/utils";
@@ -10,7 +10,7 @@
 
   export let patch: Patch;
   export let revisionNumber: number;
-  export let config: Config;
+  export let wallet: Wallet;
   export let project: Project;
 
   $: timeline = patch.createTimeline(revisionNumber);
@@ -49,26 +49,26 @@
           }}
           caption={`merged to ${formatSeedId(element.inner.peer.id)}`}
           timestamp={element.timestamp}
-          {config} />
+          {wallet} />
       </div>
     {:else if element.type === TimelineType.Review && element.inner.author.profile?.ens?.name}
       <div class="margin-left">
-        <Review review={element.inner} {config} {getImage} />
+        <Review review={element.inner} {wallet} {getImage} />
       </div>
     {:else if element.type === TimelineType.Comment}
       <div class="margin-left">
         <!-- Since the element variable only experiences changes on the inner property,
         this component has to be forced to be rerendered when element.inner changes -->
         {#key element.inner}
-          <Comment comment={element.inner} {config} {getImage} />
+          <Comment comment={element.inner} {wallet} {getImage} />
         {/key}
       </div>
     {:else if element.type === TimelineType.Thread}
       <div class="margin-left">
-        <Comment comment={element.inner} {config} {getImage} />
+        <Comment comment={element.inner} {wallet} {getImage} />
         <div class="replies">
           {#each element.inner.replies as comment}
-            <Comment caption="replied" {comment} {config} {getImage} />
+            <Comment caption="replied" {comment} {wallet} {getImage} />
           {/each}
         </div>
       </div>

@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import { navigate } from "svelte-routing";
   import Modal from "@app/Modal.svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { formatAddress, isAddressEqual } from "@app/utils";
   import type { User } from "@app/base/users/User";
   import ErrorModal from "@app/ErrorModal.svelte";
@@ -13,7 +13,7 @@
   const dispatch = createEventDispatcher();
 
   export let entity: User;
-  export let config: Config;
+  export let wallet: Wallet;
 
   enum State {
     Idle,
@@ -37,13 +37,13 @@
     }
     state = State.Checking;
 
-    const domain = `${name}.${config.registrar.domain}`;
-    const resolved = await config.provider.resolveName(domain);
+    const domain = `${name}.${wallet.registrar.domain}`;
+    const resolved = await wallet.provider.resolveName(domain);
 
     if (resolved && isAddressEqual(resolved, entity.address)) {
       try {
         state = State.Signing;
-        const tx = await entity.setName(domain, config);
+        const tx = await entity.setName(domain, wallet);
         state = State.Pending;
         await tx.wait();
         state = State.Success;
@@ -78,7 +78,7 @@
 
     <div slot="subtitle">
       The ENS name for {entity.address} was set to
-      <span class="txt-bold">{name}.{config.registrar.domain}</span>
+      <span class="txt-bold">{name}.{wallet.registrar.domain}</span>
       .
     </div>
 
@@ -90,11 +90,11 @@
   </Modal>
 {:else if state === State.Mismatch}
   <ErrorModal floating title="🧣" on:close>
-    The name <span class="txt-bold">{name}.{config.registrar.domain}</span>
+    The name <span class="txt-bold">{name}.{wallet.registrar.domain}</span>
     does not resolve to
     <span class="txt-bold">{entity.address}</span>
-    . Please update the ENS record for {name}.{config.registrar.domain} to point
-    to the correct address and try again.
+    . Please update the ENS record for {name}.{wallet.registrar.domain} to to the
+    correct address and try again.
 
     <div slot="actions">
       <Button
@@ -142,7 +142,7 @@
             {valid}
             bind:value={name}>
             <svelte:fragment slot="right">
-              .{config.registrar.domain}
+              .{wallet.registrar.domain}
             </svelte:fragment>
           </TextInput>
         </div>

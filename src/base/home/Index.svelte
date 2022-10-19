@@ -1,6 +1,5 @@
 <script lang="ts">
   import { navigate } from "svelte-routing";
-  import type { Config } from "@app/config";
   import Loading from "@app/Loading.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { ProjectInfo } from "@app/project";
@@ -9,8 +8,7 @@
   import * as proj from "@app/project";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
-
-  export let config: Config;
+  import config from "@app/config.json";
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Interface" },

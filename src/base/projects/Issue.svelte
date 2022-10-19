@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Blob, Project } from "@app/project";
   import { canonicalize, capitalize } from "@app/utils";
   import { formatObjectId } from "@app/cobs";
@@ -9,7 +9,7 @@
 
   export let issue: Issue;
   export let project: Project;
-  export let config: Config;
+  export let wallet: Wallet;
 
   // Get an image blob based on a relative path.
   const getImage = async (imagePath: string): Promise<Blob> => {
@@ -129,20 +129,20 @@
       </div>
     </div>
     <Authorship
-      {config}
+      {wallet}
       author={issue.author}
       timestamp={issue.timestamp}
       caption="opened on" />
   </header>
   <main>
     <div class="comments">
-      <Comment comment={issue.comment} {getImage} {config} />
+      <Comment comment={issue.comment} {getImage} {wallet} />
       {#each issue.discussion as comment}
-        <Comment {comment} {getImage} {config} />
+        <Comment {comment} {getImage} {wallet} />
         {#if comment.replies}
           <div class="replies">
             {#each comment.replies as reply}
-              <Comment comment={reply} {getImage} {config} />
+              <Comment comment={reply} {getImage} {wallet} />
             {/each}
           </div>
         {/if}

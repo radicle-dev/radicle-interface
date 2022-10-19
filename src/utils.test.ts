@@ -1,6 +1,7 @@
+import type { Wallet } from "@app/wallet";
+
 import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
-import type { Config } from "./config";
 import * as utils from "./utils";
 
 describe("Conversions", () => {
@@ -174,7 +175,7 @@ describe("Others", () => {
         network: {
           name,
         },
-      } as Config),
+      } as Wallet),
     ).toEqual(expected);
   });
 });
@@ -190,7 +191,7 @@ describe("Parse Strings", () => {
           address: "0x1234567890123456789012345678901234567890",
           domain: "radicle.eth",
         },
-      } as Config),
+      } as Wallet),
     ).toEqual(expected);
   });
 

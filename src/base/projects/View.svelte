@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { Route, Router } from "svelte-routing";
   import { Project, ProjectContent } from "@app/project";
   import Loading from "@app/Loading.svelte";
@@ -11,7 +11,7 @@
   export let seedHost: string | null = null;
   export let profileName: string | null = null; // Address or name of parent profile.
   export let peer: string | null = null;
-  export let config: Config;
+  export let wallet: Wallet;
 </script>
 
 <style>
@@ -37,7 +37,7 @@
 </style>
 
 <main>
-  {#await Project.get(id, peer, profileName, seedHost, config)}
+  {#await Project.get(id, peer, profileName, seedHost, wallet)}
     <header>
       <Loading center />
     </header>
@@ -45,10 +45,10 @@
     <Router>
       <!-- The default action is to render Browser with the default branch head -->
       <Route path="/">
-        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
+        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {wallet} />
       </Route>
       <Route path="/tree">
-        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {config} />
+        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {wallet} />
       </Route>
       <Route path="/tree/*" let:params let:location>
         <ProjectRoute
@@ -57,7 +57,7 @@
           {location}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
 
       <Route path="/history">
@@ -65,7 +65,7 @@
           content={ProjectContent.History}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
       <Route path="/history/*" let:params let:location>
         <ProjectRoute
@@ -74,7 +74,7 @@
           {location}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
 
       <Route path="/commits/:commit" let:params>
@@ -83,7 +83,7 @@
           content={ProjectContent.Commit}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
       <Route path="/commits/*" let:params let:location>
         <ProjectRoute
@@ -92,7 +92,7 @@
           {location}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
 
       <Route path="/issues" let:location>
@@ -101,7 +101,7 @@
           {peer}
           {project}
           {location}
-          {config} />
+          {wallet} />
       </Route>
       <Route path="/issues/:issue" let:params let:location>
         <ProjectRoute
@@ -110,7 +110,7 @@
           {peer}
           {project}
           {location}
-          {config} />
+          {wallet} />
       </Route>
 
       <Route path="/patches">
@@ -118,7 +118,7 @@
           content={ProjectContent.Patches}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
       <Route path="/patches/:patch" let:params>
         <ProjectRoute
@@ -126,7 +126,7 @@
           patch={params.patch}
           {peer}
           {project}
-          {config} />
+          {wallet} />
       </Route>
     </Router>
   {:catch}

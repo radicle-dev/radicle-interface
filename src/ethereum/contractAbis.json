@@ -1,0 +1,48 @@
+{
+  "ens": ["function owner(bytes32 node) view returns (address)"],
+  "faucet": [
+    "function lastWithdrawalByUser(address) view returns (uint256)",
+    "function maxWithdrawAmount() view returns (uint256)",
+    "function calculateTimeLock(uint256) view returns (uint256)",
+    "function withdraw(address, uint256)"
+  ],
+  "org": ["function owner() view returns (address)"],
+  "registrar": [
+    "function rad() view returns (address)",
+    "function radNode() view returns (bytes32)",
+    "function minCommitmentAge() view returns (uint256)",
+    "function registrationFeeRad() view returns (uint256)",
+    "function commit(bytes32)",
+    "function commitWithPermit(bytes32, address, uint256, uint256, uint8, bytes32, bytes32)",
+    "function register(string, address, uint256)",
+    "function valid(string) pure returns (bool)",
+    "function available(string) view returns (bool)"
+  ],
+  "resolver": [
+    "function multicall(bytes[] calldata data) returns(bytes[] memory results)",
+    "function setAddr(bytes32 node, address addr)",
+    "function setText(bytes32 node, string calldata key, string calldata value)"
+  ],
+  "reverseRegistrar": ["function setName(string) returns (bytes32)"],
+  "token": [
+    "function balanceOf(address) view returns (uint256)",
+    "function approve(address, uint256) returns (bool)",
+    "function allowance(address, address) view returns (uint256)",
+    "function DOMAIN_SEPARATOR() view returns (bytes32)",
+    "function name() pure returns (string)",
+    "function symbol() pure returns (string)",
+    "function nonces(address) view returns (uint256)"
+  ],
+  "vesting": [
+    "function token() view returns (address)",
+    "function totalVestingAmount() view returns (uint256)",
+    "function vestingStartTime() view returns (uint256)",
+    "function vestingPeriod() view returns (uint256)",
+    "function cliffPeriod() view returns (uint256)",
+    "function beneficiary() view returns (address)",
+    "function interrupted() view returns (bool)",
+    "function withdrawn() view returns (uint256)",
+    "function withdrawableBalance() view returns (uint256)",
+    "function withdrawVested()"
+  ]
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   import { session } from "@app/session";
   import { setOpenGraphMetaTag, toWei, capitalize } from "@app/utils";
@@ -13,7 +13,7 @@
   import Button from "@app/Button.svelte";
   import TextInput from "@app/TextInput.svelte";
 
-  export let config: Config;
+  export let wallet: Wallet;
 
   let amount: string = "";
   let loading: boolean = false;
@@ -34,14 +34,14 @@
     loading = true;
     try {
       const currentTime = new Date().getTime();
-      const timelock = await calculateTimeLock(amount, $session.signer, config);
+      const timelock = await calculateTimeLock(amount, $session.signer, wallet);
       const lastWithdrawal = await lastWithdrawalByUser(
         $session.signer,
-        config,
+        wallet,
       );
       const maxWithdrawAmount = await getMaxWithdrawAmount(
         $session.signer,
-        config,
+        wallet,
       );
 
       if (toWei(amount).gt(maxWithdrawAmount)) {
@@ -120,14 +120,14 @@
 <main>
   <div class="title">
     Obtain RAD tokens on <span class="txt-bold">
-      {capitalize(config.network.name)}
+      {capitalize(wallet.network.name)}
     </span>
   </div>
 
-  {#if config.network.name === "homestead"}
+  {#if wallet.network.name === "homestead"}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {capitalize(config.network.name)},
+        {capitalize(wallet.network.name)},
       </span>
       please
       <br />
@@ -142,7 +142,7 @@
   {:else if !$session}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {capitalize(config.network.name)}
+        {capitalize(wallet.network.name)}
       </span>
       &#8203;,
       <br />

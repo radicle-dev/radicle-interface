@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { State as IssueState } from "./Issues.svelte";
 
   import * as proj from "@app/project";
@@ -23,13 +23,13 @@
   import Patch from "./Patch.svelte";
 
   export let peer: string | null = null;
-  export let config: Config;
+  export let wallet: Wallet;
   export let project: proj.Project;
   export let content: proj.ProjectContent;
   export let revision: string | null;
 
   const parentName = project.profile
-    ? formatProfile(project.profile.nameOrAddress, config)
+    ? formatProfile(project.profile.nameOrAddress, wallet)
     : null;
   let pageTitle = parentName ? `${parentName}/${project.name}` : project.name;
 
@@ -120,7 +120,7 @@
     <Async
       fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
       let:result>
-      <Issues {project} state={issueFilter} {config} issues={result} />
+      <Issues {project} state={issueFilter} {wallet} issues={result} />
     </Async>
   {:else if content === proj.ProjectContent.Issue && $browserStore.issue}
     <Async
@@ -130,13 +130,13 @@
         project.seed.api,
       )}
       let:result>
-      <Issue {project} {config} issue={result} />
+      <Issue {project} {wallet} issue={result} />
     </Async>
   {:else if content === proj.ProjectContent.Patches}
     <Async
       fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
       let:result>
-      <Patches {project} {config} patches={result} />
+      <Patches {project} {wallet} patches={result} />
     </Async>
   {:else if content === proj.ProjectContent.Patch && $browserStore.patch}
     <Async
@@ -146,7 +146,7 @@
         project.seed.api,
       )}
       let:result>
-      <Patch {project} {config} patch={result} />
+      <Patch {project} {wallet} patch={result} />
     </Async>
   {/if}
 {:else}

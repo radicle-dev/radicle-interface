@@ -5,11 +5,12 @@ import type { EnsResolver } from "@ethersproject/providers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import * as session from "@app/session";
 import { Failure } from "@app/error";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 import { isFulfilled, unixTime } from "@app/utils";
 import { assert } from "@app/error";
 import { Seed, InvalidSeed } from "@app/base/seeds/Seed";
 import * as cache from "@app/cache";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 
 export interface Registration {
   profile: EnsProfile;
@@ -65,13 +66,13 @@ state.subscribe((s: Connection) => {
 
 export async function getRegistration(
   name: string,
-  config: Config,
+  wallet: Wallet,
   resolver?: EnsResolver | null,
 ): Promise<Registration | null> {
   name = name.toLowerCase();
 
   if (!resolver) {
-    resolver = await getResolver(name, config);
+    resolver = await getResolver(name, wallet);
 
     if (!resolver) {
       return null;
@@ -117,15 +118,12 @@ export async function getRegistration(
   // If no seed provided profile.seed ends up being undefined
   if (seedHost && seedId) {
     try {
-      profile.seed = new Seed(
-        {
-          host: seedHost,
-          id: seedId,
-          git: seedGit,
-          api: seedApi,
-        },
-        config,
-      );
+      profile.seed = new Seed({
+        host: seedHost,
+        id: seedId,
+        git: seedGit,
+        api: seedApi,
+      });
     } catch (e: any) {
       console.debug(e, seedHost, seedId);
       profile.seed = new InvalidSeed(seedHost, seedId);
@@ -137,12 +135,12 @@ export async function getRegistration(
 
 export async function getAvatar(
   name: string,
-  config: Config,
+  wallet: Wallet,
   resolver?: EnsResolver | null,
 ): Promise<string | null> {
   name = name.toLowerCase();
 
-  resolver = resolver ?? (await getResolver(name, config));
+  resolver = resolver ?? (await getResolver(name, wallet));
   if (!resolver) {
     return null;
   }
@@ -151,12 +149,12 @@ export async function getAvatar(
 
 export async function getSeed(
   name: string,
-  config: Config,
+  wallet: Wallet,
   resolver?: EnsResolver | null,
 ): Promise<Seed | InvalidSeed | null> {
   name = name.toLowerCase();
 
-  resolver = resolver ?? (await getResolver(name, config));
+  resolver = resolver ?? (await getResolver(name, wallet));
   if (!resolver) {
     return null;
   }
@@ -174,31 +172,31 @@ export async function getSeed(
   }
 
   try {
-    return new Seed({ host, id, git, api }, config);
+    return new Seed({ host, id, git, api });
   } catch (e: any) {
     console.debug(e, host, id);
     return new InvalidSeed(id, host);
   }
 }
 
-export function registrar(config: Config): ethers.Contract {
+export function registrar(wallet: Wallet): ethers.Contract {
   return new ethers.Contract(
-    config.registrar.address,
-    config.abi.registrar,
-    config.provider,
+    wallet.registrar.address,
+    ethereumContractAbis.registrar,
+    wallet.provider,
   );
 }
 
-export async function registrationFee(config: Config): Promise<BigNumber> {
-  return await registrar(config).registrationFeeRad();
+export async function registrationFee(wallet: Wallet): Promise<BigNumber> {
+  return await registrar(wallet).registrationFeeRad();
 }
 
 export async function registerName(
   name: string,
   owner: string,
-  config: Config,
+  wallet: Wallet,
 ): Promise<void> {
-  assert(config.signer, "signer is not available");
+  assert(wallet.signer, "signer is not available");
 
   if (!name) return;
 
@@ -210,9 +208,9 @@ export async function registerName(
   try {
     // Try to recover an existing commitment.
     if (commitment && commitment.name === name && commitment.owner === owner) {
-      await register(name, owner, commitment.salt, config);
+      await register(name, owner, commitment.salt, wallet);
     } else {
-      await commitAndRegister(name, owner, config);
+      await commitAndRegister(name, owner, wallet);
     }
   } catch (e: any) {
     throw {
@@ -226,14 +224,14 @@ export async function registerName(
 async function commitAndRegister(
   name: string,
   owner: string,
-  config: Config,
+  wallet: Wallet,
 ): Promise<void> {
   const salt = ethers.utils.randomBytes(32);
-  const minAge = (await registrar(config).minCommitmentAge()).toNumber();
-  const fee = await registrationFee(config);
+  const minAge = (await registrar(wallet).minCommitmentAge()).toNumber();
+  const fee = await registrationFee(wallet);
   // Avoids gas spent by the owner, trying to commit to a name and not having
   // enough RAD balance
-  if ((await config.token.balanceOf(owner)).lt(fee)) {
+  if ((await wallet.token.balanceOf(owner)).lt(fee)) {
     throw {
       type: Failure.InsufficientBalance,
       message: "Not enough RAD funds",
@@ -241,8 +239,8 @@ async function commitAndRegister(
   }
   name = name.toLowerCase();
 
-  await commit(name, owner, salt, fee, minAge, config);
-  await register(name, owner, salt, config);
+  await commit(name, owner, salt, fee, minAge, wallet);
+  await register(name, owner, salt, wallet);
 }
 
 async function commit(
@@ -251,26 +249,26 @@ async function commit(
   salt: Uint8Array,
   fee: BigNumber,
   minAge: number,
-  config: Config,
+  wallet: Wallet,
 ): Promise<void> {
-  assert(config.signer, "signer is not available");
+  assert(wallet.signer, "signer is not available");
 
   const commitment = makeCommitment(name, owner, salt);
-  const spender = config.registrar.address;
+  const spender = wallet.registrar.address;
   const deadline = ethers.BigNumber.from(unixTime()).add(3600); // Expire one hour from now.
-  const token = config.token;
+  const token = wallet.token;
 
   let tx = null;
 
   if (fee.isZero()) {
     state.set({ connection: State.SigningCommit });
 
-    tx = await registrar(config)
-      .connect(config.signer)
+    tx = await registrar(wallet)
+      .connect(wallet.signer)
       .commit(commitment, { gasLimit: 180000 });
   } else {
     const signature = await permitSignature(
-      config.signer,
+      wallet.signer,
       token,
       spender,
       fee,
@@ -279,8 +277,8 @@ async function commit(
 
     state.set({ connection: State.SigningCommit });
 
-    tx = await registrar(config)
-      .connect(config.signer)
+    tx = await registrar(wallet)
+      .connect(wallet.signer)
       .commitWithPermit(
         commitment,
         owner,
@@ -361,13 +359,13 @@ async function register(
   name: string,
   owner: string,
   salt: Uint8Array,
-  config: Config,
+  wallet: Wallet,
 ) {
-  assert(config.signer, "signer is not available");
+  assert(wallet.signer, "signer is not available");
   state.set({ connection: State.SigningRegister });
 
-  const tx = await registrar(config)
-    .connect(config.signer)
+  const tx = await registrar(wallet)
+    .connect(wallet.signer)
     .register(name, owner, ethers.BigNumber.from(salt), { gasLimit: 150000 });
   state.set({ connection: State.Registering });
 
@@ -387,16 +385,16 @@ function makeCommitment(name: string, owner: string, salt: Uint8Array): string {
   return ethers.utils.keccak256(bytes);
 }
 
-export async function getOwner(name: string, config: Config): Promise<string> {
-  const ensAddr = config.provider.network.ensAddress;
+export async function getOwner(name: string, wallet: Wallet): Promise<string> {
+  const ensAddr = wallet.provider.network.ensAddress;
   if (!ensAddr) {
     throw new Error("ENS address is not defined");
   }
 
   const registry = new ethers.Contract(
     ensAddr,
-    config.abi.ens,
-    config.provider,
+    ethereumContractAbis.ens,
+    wallet.provider,
   );
   const owner = await registry.owner(ethers.utils.namehash(name));
 
@@ -404,8 +402,8 @@ export async function getOwner(name: string, config: Config): Promise<string> {
 }
 
 export const getResolver = cache.cached(
-  async (name: string, config: Config) => {
-    return await config.provider.getResolver(name);
+  async (name: string, wallet: Wallet) => {
+    return await wallet.provider.getResolver(name);
   },
   name => name,
   { max: 1000 },

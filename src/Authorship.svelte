@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { formatRadicleUrn, formatTimestamp } from "@app/utils";
   import Address from "@app/Address.svelte";
   import { Profile, ProfileType } from "@app/profile";
@@ -10,7 +10,7 @@
   export let author: Author;
   export let timestamp: number;
   export let caption: string;
-  export let config: Config;
+  export let wallet: Wallet;
   export let profile: Profile | null = null;
 
   onMount(async () => {
@@ -18,7 +18,7 @@
       profile = await Profile.get(
         author.profile.ens.name,
         ProfileType.Minimal,
-        config,
+        wallet,
       );
     }
   });
@@ -52,7 +52,7 @@
       noBadge
       compact
       {noAvatar}
-      {config}
+      {wallet}
       {profile}
       address={profile.address} />
   {:else if author.profile}

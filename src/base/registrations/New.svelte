@@ -3,7 +3,7 @@
   import { navigate } from "svelte-routing";
   import { formatAddress } from "@app/utils";
   import { session } from "@app/session";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
 
   import Connect from "@app/Connect.svelte";
   import Modal from "@app/Modal.svelte";
@@ -20,7 +20,7 @@
     NameUnavailable,
   }
 
-  export let config: Config;
+  export let wallet: Wallet;
   export let name: string;
   export let owner: string | null;
 
@@ -43,7 +43,7 @@
 
   onMount(async () => {
     try {
-      const isAvailable = await registrar(config).available(name);
+      const isAvailable = await registrar(wallet).available(name);
 
       if (isAvailable) {
         state = State.NameAvailable;
@@ -76,7 +76,7 @@
   </span>
 
   <span slot="subtitle">
-    {name}.{config.registrar.domain}
+    {name}.{wallet.registrar.domain}
   </span>
 
   <span slot="body">
@@ -113,7 +113,7 @@
         <Connect
           caption="Connect to register"
           buttonVariant="primary"
-          {config} />
+          {wallet} />
       {/if}
 
       <Button on:click={() => navigate("/registrations")} variant="text">

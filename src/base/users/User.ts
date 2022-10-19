@@ -1,7 +1,8 @@
 import * as ethers from "ethers";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 import { assert } from "@app/error";
 import type { TransactionResponse } from "@ethersproject/providers";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 
 export class User {
   address: string;
@@ -12,13 +13,13 @@ export class User {
     this.address = address.toLowerCase(); // Don't store address checksum.
   }
 
-  async setName(name: string, config: Config): Promise<TransactionResponse> {
-    assert(config.signer);
+  async setName(name: string, wallet: Wallet): Promise<TransactionResponse> {
+    assert(wallet.signer);
 
     const reverseRegistrar = new ethers.Contract(
-      config.reverseRegistrar.address,
-      config.abi.reverseRegistrar,
-      config.signer,
+      wallet.reverseRegistrar.address,
+      ethereumContractAbis.reverseRegistrar,
+      wallet.signer,
     );
     return reverseRegistrar.setName(name);
   }

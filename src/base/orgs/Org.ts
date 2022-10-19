@@ -1,10 +1,11 @@
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 
 import * as ethers from "ethers";
 
 import * as cache from "@app/cache";
 import * as utils from "@app/utils";
 import { assert } from "@app/error";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 
 export class Org {
   address: string;
@@ -19,8 +20,8 @@ export class Org {
     this.name = name;
   }
 
-  static async get(addressOrName: string, config: Config): Promise<Org | null> {
-    const org = await getOrgContract(addressOrName, config);
+  static async get(addressOrName: string, wallet: Wallet): Promise<Org | null> {
+    const org = await getOrgContract(addressOrName, wallet);
 
     try {
       const [owner, resolved] = await resolveOrgOwner(org);
@@ -40,8 +41,12 @@ export class Org {
 }
 
 export const getOrgContract = cache.cached(
-  async (addressOrName: string, config: Config) => {
-    return new ethers.Contract(addressOrName, config.abi.org, config.provider);
+  async (addressOrName: string, wallet: Wallet) => {
+    return new ethers.Contract(
+      addressOrName,
+      ethereumContractAbis.org,
+      wallet.provider,
+    );
   },
   addressOrName => addressOrName,
 );

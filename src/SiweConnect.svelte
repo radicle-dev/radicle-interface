@@ -1,14 +1,14 @@
 <script lang="ts">
   import Avatar from "@app/Avatar.svelte";
   import type { Seed } from "@app/base/seeds/Seed";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { signInWithEthereum } from "@app/siwe";
   import Loading from "@app/Loading.svelte";
   import { Connection } from "@app/session";
   import Button from "@app/Button.svelte";
 
   export let seed: Seed;
-  export let config: Config;
+  export let wallet: Wallet;
   export let caption = "Sign in";
   export let tooltip = "";
   export let disabled = false;
@@ -33,7 +33,7 @@
   on:click={async () => {
     connection = Connection.Connecting;
     try {
-      await signInWithEthereum(seed, config);
+      await signInWithEthereum(seed, wallet);
     } catch (e) {
       console.error("Sign in", e);
       connection = Connection.Disconnected;

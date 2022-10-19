@@ -1,4 +1,4 @@
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 
 import { ethers } from "ethers";
 import { assert } from "@app/error";
@@ -6,6 +6,7 @@ import { writable } from "svelte/store";
 
 import * as session from "@app/session";
 import * as utils from "@app/utils";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 
 export interface VestingInfo {
   token: string;
@@ -22,16 +23,16 @@ export const state = writable<
 
 export async function withdrawVested(
   address: string,
-  config: Config,
+  wallet: Wallet,
 ): Promise<void> {
-  assert(config.signer);
+  assert(wallet.signer);
 
   const contract = new ethers.Contract(
     address,
-    config.abi.vesting,
-    config.provider,
+    ethereumContractAbis.vesting,
+    wallet.provider,
   );
-  const signer = config.signer;
+  const signer = wallet.signer;
 
   state.set("withdrawingSign");
 
@@ -39,18 +40,18 @@ export async function withdrawVested(
 
   state.set("withdrawing");
   await tx.wait();
-  session.state.refreshBalance(config);
+  session.state.refreshBalance(wallet);
   state.set("withdrawn");
 }
 
 export async function getInfo(
   address: string,
-  config: Config,
+  wallet: Wallet,
 ): Promise<VestingInfo> {
   const contract = new ethers.Contract(
     address,
-    config.abi.vesting,
-    config.provider,
+    ethereumContractAbis.vesting,
+    wallet.provider,
   );
   const token = await contract.token();
   const beneficiary = await contract.beneficiary();
@@ -60,8 +61,8 @@ export async function getInfo(
 
   const tokenContract = new ethers.Contract(
     token,
-    config.abi.token,
-    config.provider,
+    ethereumContractAbis.vesting,
+    wallet.provider,
   );
   const symbol = await tokenContract.symbol();
 

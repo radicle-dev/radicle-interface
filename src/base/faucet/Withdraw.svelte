@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { navigate } from "svelte-routing";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
@@ -11,7 +11,7 @@
   import { session } from "@app/session";
   import Button from "@app/Button.svelte";
 
-  export let config: Config;
+  export let wallet: Wallet;
 
   let error: Error;
   const amount: string = window.history.state.amount;
@@ -27,7 +27,7 @@
     try {
       if ($session) {
         state.status = Status.Signing;
-        const tx = await withdraw(amount, $session.signer, config);
+        const tx = await withdraw(amount, $session.signer, wallet);
         state.status = Status.Pending;
         await tx.wait();
         state.status = Status.Success;

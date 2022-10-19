@@ -1,7 +1,7 @@
 <script lang="ts">
   type State = "proposed" | "draft" | "archived";
 
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Patch } from "@app/patch";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
@@ -14,7 +14,7 @@
   import { groupPatches } from "@app/patch";
 
   export let state: State = "proposed";
-  export let config: Config;
+  export let wallet: Wallet;
   export let patches: Patch[];
   export let project: Project;
 
@@ -83,7 +83,7 @@
               path: null,
             });
           }}>
-          <PatchTeaser {config} {patch} />
+          <PatchTeaser {wallet} {patch} />
         </div>
       {/each}
     </div>

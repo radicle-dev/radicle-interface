@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Stats } from "@app/base/seeds/Seed";
   import type { ProjectInfo } from "@app/project";
   import { formatSeedId, formatSeedHost } from "@app/utils";
@@ -17,7 +17,7 @@
   import { Project } from "@app/project";
   import type { Host } from "@app/api";
 
-  export let config: Config;
+  export let wallet: Wallet;
   export let session: Session | null;
   export let host: string;
 
@@ -108,7 +108,7 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(host, config)}
+{#await Seed.lookup(host)}
   <main class="layout-centered">
     <Loading center />
   </main>
@@ -129,19 +129,19 @@
               <span class="signed-in txt-small">Signed in as</span>
               <Address
                 address={siweSession.address}
-                {config}
+                {wallet}
                 small
                 compact
                 resolve />
             </div>
           {:else}
-            <SiweConnect {seed} address={session.address} {config} />
+            <SiweConnect {seed} address={session.address} {wallet} />
           {/if}
         {:else}
           <SiweConnect
             disabled
             {seed}
-            {config}
+            {wallet}
             tooltip={"Connect your wallet to sign in"} />
         {/if}
       </div>

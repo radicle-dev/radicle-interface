@@ -5,26 +5,26 @@
   import Submit from "@app/base/registrations/Submit.svelte";
   import View from "@app/base/registrations/View.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Session } from "@app/session";
   import { getSearchParam } from "@app/utils";
 
   export let session: Session | null;
-  export let config: Config;
+  export let wallet: Wallet;
 </script>
 
 <Route path="registrations">
-  <Index {config} />
+  <Index {wallet} />
 </Route>
 
 <Route path="registrations/:name/form" let:params let:location>
-  <New {config} name={params.name} owner={getSearchParam("owner", location)} />
+  <New {wallet} name={params.name} owner={getSearchParam("owner", location)} />
 </Route>
 
 <Route path="registrations/:name/submit" let:params let:location>
   {#if session}
     <Submit
-      {config}
+      {wallet}
       name={params.name}
       owner={getSearchParam("owner", location)}
       {session} />
@@ -36,5 +36,5 @@
 </Route>
 
 <Route path="registrations/:domain" let:params>
-  <View {config} domain={params.domain} />
+  <View {wallet} domain={params.domain} />
 </Route>

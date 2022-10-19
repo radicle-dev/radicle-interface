@@ -2,7 +2,7 @@
   import Modal from "@app/Modal.svelte";
   import { link } from "svelte-routing";
   import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
   import { createEventDispatcher } from "svelte";
@@ -10,7 +10,7 @@
 
   export let query: string;
   export let results: ProjectsAndProfiles;
-  export let config: Config;
+  export let wallet: Wallet;
 
   const dispatch = createEventDispatcher();
 </script>
@@ -51,8 +51,7 @@
             <a use:link href="/seeds/{project.seed.host}/{project.info.urn}">
               <span title={project.seed.host}>
                 <span>
-                  {getSeedEmoji(project.seed.host, config)}&nbsp;{project.info
-                    .name}
+                  {getSeedEmoji(project.seed.host)}&nbsp;{project.info.name}
                 </span>
                 <span class="urn">
                   &nbsp;{formatRadicleUrn(project.info.urn)}
@@ -68,7 +67,7 @@
       <ul>
         {#each results.profiles as profile}
           <li>
-            <Address address={profile.address} {profile} {config} resolve />
+            <Address address={profile.address} {profile} {wallet} resolve />
           </li>
         {/each}
       </ul>

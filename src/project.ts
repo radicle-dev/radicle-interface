@@ -5,7 +5,7 @@ import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
 import { isFulfilled, isOid, isRadicleId } from "@app/utils";
 import { Profile, ProfileType } from "@app/profile";
 import { Seed } from "@app/base/seeds/Seed";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 
 export type Urn = string;
 export type PeerId = string;
@@ -441,15 +441,15 @@ export class Project implements ProjectInfo {
     peer: string | null,
     profileName: string | null,
     seedHost: string | null,
-    config: Config,
+    wallet: Wallet,
   ): Promise<Project> {
     const profile = profileName
-      ? await Profile.get(profileName, ProfileType.Project, config)
+      ? await Profile.get(profileName, ProfileType.Project, wallet)
       : null;
     const seed = profile
       ? profile.seed
       : seedHost
-      ? await Seed.lookup(seedHost, config)
+      ? await Seed.lookup(seedHost)
       : null;
 
     if (!profile && !seed) {

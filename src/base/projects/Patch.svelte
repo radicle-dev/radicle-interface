@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { Patch, PatchTab } from "@app/patch";
@@ -14,7 +14,7 @@
 
   export let patch: Patch;
   export let project: Project;
-  export let config: Config;
+  export let wallet: Wallet;
 
   const onSwitch = ({ detail }: { detail: PatchTab }) => {
     activeTab = detail;
@@ -116,7 +116,7 @@
     </div>
     <Authorship
       noAvatar
-      {config}
+      {wallet}
       author={patch.author}
       timestamp={patch.timestamp}
       caption="opened" />
@@ -132,7 +132,7 @@
   <main>
     {#if activeTab === PatchTab.Timeline}
       <div class="flex">
-        <PatchTimeline {patch} {revisionNumber} {config} {project} />
+        <PatchTimeline {patch} {revisionNumber} {wallet} {project} />
         <PatchSideBar {patch} />
       </div>
     {:else if activeTab === PatchTab.Diff && revision.changeset}

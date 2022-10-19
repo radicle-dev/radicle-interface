@@ -6,9 +6,6 @@ simple guidelines.
 * Make sure you run `npx eslint .` to check for code formatting problems.
   You can use the `--fix` flag to automatically fix any issues the linter catches.
 * Before adding any code dependencies, check with the maintainers if this is okay.
-* When using configuration parameters, eg. API URLs, API tokens or contract addresses,
-  add them to `config.json` and pass the `Config` object to functions that require
-  access to this configuraiton.
 * Write properly formatted comments: they should be english sentences, eg:
 
       // Return the current UNIX time.

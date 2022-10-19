@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import type { ProjectInfo } from "@app/project";
   import Address from "@app/Address.svelte";
@@ -21,8 +21,9 @@
   import Async from "@app/Async.svelte";
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
+  import { defaultLinkPort } from "@app/base/seeds/Seed";
 
-  export let config: Config;
+  export let wallet: Wallet;
   export let addressOrName: string;
   export let action: string | null = null;
 
@@ -125,7 +126,7 @@
   <title>{addressOrName}</title>
 </svelte:head>
 
-{#await Profile.get(addressOrName, ProfileType.Full, config)}
+{#await Profile.get(addressOrName, ProfileType.Full, wallet)}
   <div class="layout-centered">
     <Loading center />
   </div>
@@ -141,12 +142,12 @@
         <span class="title txt-title">
           <span class="txt-bold layout-desktop">
             {profile.name
-              ? utils.formatName(profile.name, config)
+              ? utils.formatName(profile.name, wallet)
               : profile.address}
           </span>
           <span class="txt-bold layout-mobile">
             {profile.name
-              ? utils.formatName(profile.name, config)
+              ? utils.formatName(profile.name, wallet)
               : utils.formatAddress(profile.address)}
           </span>
           {#if profile.name && profile.org}
@@ -187,25 +188,25 @@
       <!-- Seed Address -->
       {#if profile.seed && profile.seed.valid}
         <div class="txt-highlight">Seed</div>
-        <SeedAddress seed={profile.seed} port={config.seed.link.port} />
+        <SeedAddress seed={profile.seed} port={defaultLinkPort} />
       {/if}
       <!-- Address -->
       <div class="txt-highlight">Address</div>
       <div class="layout-desktop">
-        <Address {config} {profile} address={profile.address} />
+        <Address {wallet} {profile} address={profile.address} />
       </div>
       <div class="layout-mobile">
-        <Address compact {config} {profile} address={profile.address} />
+        <Address compact {wallet} {profile} address={profile.address} />
       </div>
       <div class="layout-desktop" />
       <!-- Owner -->
       {#if profile.org}
         <div class="txt-highlight">Owner</div>
         <div class="layout-desktop">
-          <Address resolve {config} address={profile.org.owner} />
+          <Address resolve {wallet} address={profile.org.owner} />
         </div>
         <div class="layout-mobile">
-          <Address compact resolve {config} address={profile.org.owner} />
+          <Address compact resolve {wallet} address={profile.org.owner} />
         </div>
         <div class="layout-desktop" />
       {/if}
@@ -258,7 +259,7 @@
   <svelte:component
     this={setNameForm}
     entity={new User(profile.address)}
-    {config}
+    {wallet}
     on:close={() => (setNameForm = null)} />
 {:catch err}
   {#if err instanceof NotFoundError}

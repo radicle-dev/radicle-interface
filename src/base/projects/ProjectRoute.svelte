@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
-  import type { Config } from "@app/config";
+  import type { Wallet } from "@app/wallet";
   import { formatLocationHash } from "@app/utils";
   import * as proj from "@app/project";
   import type { RouteLocation } from "@app/index";
@@ -15,7 +15,7 @@
   export let peer: string | null;
   export let content: proj.ProjectContent = proj.ProjectContent.Tree;
   export let project: proj.Project;
-  export let config: Config;
+  export let wallet: Wallet;
   export let location: RouteLocation | null = null;
 
   const browse: proj.BrowseTo = { content, peer, path: "/" };
@@ -56,4 +56,4 @@
   revision={browser.revision || head}
   content={browser.content}
   {project}
-  {config} />
+  {wallet} />

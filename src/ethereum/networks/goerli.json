@@ -1,0 +1,16 @@
+{
+  "name": "goerli",
+  "chainId": 5,
+  "registrar": {
+    "domain": "radicle-goerli.eth",
+    "address": "0xD88303A92577bFDF5A82FddeF342F3A27A972405"
+  },
+  "radToken": {
+    "address": "0x3EE94D192397aAFAe438C9803825eb1Aa4402e09",
+    "faucet": "0xc627191d2BB8839eAcbb7191f9500B84d201A066"
+  },
+  "reverseRegistrar": {
+    "address": "0xD5610A08E370051a01fdfe4bB3ddf5270af1aA48"
+  },
+  "alchemy": { "key": "1T6h-0rxu7SRzKEtmukIoxaJOXazLDNs" }
+}

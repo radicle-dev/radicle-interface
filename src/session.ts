@@ -5,7 +5,7 @@ import type {
   TransactionReceipt,
   TransactionResponse,
 } from "@ethersproject/providers";
-import { Config, getConfig } from "@app/config";
+import { Wallet, getWallet } from "@app/wallet";
 import { Unreachable, assert, assertEq } from "@app/error";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import type { WalletConnectSigner } from "./WalletConnectSigner";
@@ -55,11 +55,11 @@ export interface Session {
 }
 
 export interface Store extends Readable<State> {
-  connectMetamask(config: Config): Promise<void>;
-  connectWalletConnect(config: Config): Promise<void>;
+  connectMetamask(wallet: Wallet): Promise<void>;
+  connectWalletConnect(wallet: Wallet): Promise<void>;
   updateBalance(n: BigNumber): void;
   connectSeed(seed: { id: string; session: SeedSession }): void;
-  refreshBalance(config: Config): Promise<void>;
+  refreshBalance(wallet: Wallet): Promise<void>;
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
   setTxConfirmed(tx: TransactionReceipt): void;
@@ -73,15 +73,15 @@ export const loadState = (initial: State): Store => {
 
   return {
     subscribe: store.subscribe,
-    connectMetamask: async (config: Config) => {
-      assert(config.metamask.signer);
-      // We use config.metamask.signer here, because config.signer is still null on page reload.
-      const signer = config.metamask.signer;
+    connectMetamask: async (wallet: Wallet) => {
+      assert(wallet.metamask.signer);
+      // We use wallet.metamask.signer here, because wallet.signer is still null on page reload.
+      const signer = wallet.metamask.signer;
 
       // Re-connect using previous session.
-      if (config.metamask.connected) {
-        const metamask = config.metamask.session;
-        const tokenBalance: BigNumber = await config.token.balanceOf(
+      if (wallet.metamask.connected) {
+        const metamask = wallet.metamask.session;
+        const tokenBalance: BigNumber = await wallet.token.balanceOf(
           metamask.address,
         );
         const session = {
@@ -94,7 +94,7 @@ export const loadState = (initial: State): Store => {
         };
 
         store.set({ connection: Connection.Connected, session });
-        config.setSigner(signer);
+        wallet.setSigner(signer);
 
         return;
       }
@@ -110,14 +110,14 @@ export const loadState = (initial: State): Store => {
       await window.ethereum.request({ method: "eth_requestAccounts" });
       const address = await signer.getAddress();
 
-      config.setSigner(signer);
+      wallet.setSigner(signer);
 
       try {
         // Closes the wallet modal.
         // TODO: We should move this into the session store.
-        config.walletConnect.state.set({ state: "close" });
+        wallet.walletConnect.state.set({ state: "close" });
 
-        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+        const tokenBalance: BigNumber = await wallet.token.balanceOf(address);
         const session = {
           address,
           signer,
@@ -137,17 +137,17 @@ export const loadState = (initial: State): Store => {
       }
     },
 
-    connectWalletConnect: async (config: Config) => {
+    connectWalletConnect: async (wallet: Wallet) => {
       store.set({ connection: Connection.Connecting });
-      // We fetch the walletConnect signer here, because config.signer is still null on page reload.
-      const signer = config.getWalletConnectSigner();
+      // We fetch the walletConnect signer here, because wallet.signer is still null on page reload.
+      const signer = wallet.getWalletConnectSigner();
 
       try {
-        await config.walletConnect.client.connect();
+        await wallet.walletConnect.client.connect();
         console.debug("WalletConnect: connected.");
 
         const address = await signer.getAddress();
-        const tokenBalance: BigNumber = await config.token.balanceOf(address);
+        const tokenBalance: BigNumber = await wallet.token.balanceOf(address);
         const session = {
           address,
           signer,
@@ -161,11 +161,11 @@ export const loadState = (initial: State): Store => {
         );
 
         // Instead of killing the WalletConnect session, we force the UI to change network
-        if (network.chainId !== config.network.chainId) {
-          config.changeNetwork(network.chainId);
+        if (network.chainId !== wallet.network.chainId) {
+          wallet.changeNetwork(network.chainId);
         }
 
-        config.walletConnect.client.on(
+        wallet.walletConnect.client.on(
           "session_update",
           async (
             error,
@@ -178,12 +178,12 @@ export const loadState = (initial: State): Store => {
             }
 
             try {
-              // We update config to reflect the new signer address.
-              const signer = config.getWalletConnectSigner();
+              // We update wallet to reflect the new signer address.
+              const signer = wallet.getWalletConnectSigner();
               changeAccounts(accounts[0], signer);
 
               // Check the current chainId, and request Metamask to change, or reload the window to get the correct chain.
-              if (chainId !== config.network.chainId) {
+              if (chainId !== wallet.network.chainId) {
                 if (session.signerType === SignerType.MetaMask) {
                   await window.ethereum.request({
                     method: "wallet_switchEthereumChain",
@@ -242,13 +242,13 @@ export const loadState = (initial: State): Store => {
       });
     },
 
-    refreshBalance: async (config: Config) => {
+    refreshBalance: async (wallet: Wallet) => {
       const state = get(store);
       assert(state.connection === Connection.Connected);
       const addr = state.session.address;
 
       try {
-        const tokenBalance: BigNumber = await config.token.balanceOf(addr);
+        const tokenBalance: BigNumber = await wallet.token.balanceOf(addr);
 
         state.session.tokenBalance = tokenBalance;
         store.set(state);
@@ -371,9 +371,9 @@ export async function changeAccounts(
   address: string,
   signer: Signer,
 ): Promise<void> {
-  const config = await getConfig();
+  const wallet = await getWallet();
   state.setChangedAccount(address, signer);
-  state.refreshBalance(config);
+  state.refreshBalance(wallet);
 }
 
 export function loadSeedSessions(): { [key: string]: SeedSession } {
@@ -411,17 +411,17 @@ state.subscribe(s => {
 export async function approveSpender(
   spender: string,
   amount: BigNumber,
-  config: Config,
+  wallet: Wallet,
 ): Promise<void> {
-  assert(config.signer);
+  assert(wallet.signer);
 
-  const signer = config.signer;
+  const signer = wallet.signer;
   const addr = await signer.getAddress();
 
-  const allowance = await config.token.allowance(addr, spender);
+  const allowance = await wallet.token.allowance(addr, spender);
 
   if (allowance < amount) {
-    const tx = await config.token.connect(signer).approve(spender, amount);
+    const tx = await wallet.token.connect(signer).approve(spender, amount);
     await tx.wait();
   }
 }
@@ -431,9 +431,9 @@ export function disconnectMetamask(): void {
   window.location.reload();
 }
 
-export function disconnectWallet(config: Config): void {
-  if (config.walletConnect.client.connected) {
-    config.walletConnect.client.killSession();
+export function disconnectWallet(wallet: Wallet): void {
+  if (wallet.walletConnect.client.connected) {
+    wallet.walletConnect.client.killSession();
   }
   disconnectMetamask();
 }
@@ -449,7 +449,7 @@ function saveMetamaskSession(session: Session): void {
       address: session.address,
       tokenBalance: null,
       tx: null,
-      config: null,
+      wallet: null,
     }),
   );
 }

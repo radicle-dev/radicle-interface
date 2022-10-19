@@ -1,8 +1,9 @@
 import type { TransactionResponse } from "@ethersproject/providers";
 import type { EnsResolver } from "@ethersproject/providers";
 import { ethers } from "ethers";
-import type { Config } from "@app/config";
+import type { Wallet } from "@app/wallet";
 import { assert } from "@app/error";
+import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 
 export type EnsRecord = { name: string; value: string };
 
@@ -10,19 +11,19 @@ export async function setRecords(
   name: string,
   records: EnsRecord[],
   resolver: EnsResolver,
-  config: Config,
+  wallet: Wallet,
 ): Promise<TransactionResponse> {
-  assert(config.signer, "no signer available");
+  assert(wallet.signer, "no signer available");
 
   const resolverContract = new ethers.Contract(
     resolver.address,
-    config.abi.resolver,
-    config.signer,
+    ethereumContractAbis.resolver,
+    wallet.signer,
   );
   const node = ethers.utils.namehash(name);
 
   const calls = [];
-  const iface = new ethers.utils.Interface(config.abi.resolver);
+  const iface = new ethers.utils.Interface(ethereumContractAbis.resolver);
 
   for (const r of records) {
     switch (r.name) {
