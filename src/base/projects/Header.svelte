@@ -7,6 +7,7 @@
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import { navigate } from "@app/router";
+  import { closeFocused } from "@app/Floating.svelte";
 
   export let peer: string | undefined;
   export let project: Project;
@@ -18,8 +19,8 @@
   const { urn, peers, seed } = project;
 
   // Switches between project views.
-  const toggleContent = (input: Content) => {
-    navigate({
+  const toggleContent = async (input: Content) => {
+    await navigate({
       type: "projects",
       params: {
         urn,
@@ -28,10 +29,11 @@
         patch: undefined,
       },
     });
+    closeFocused();
   };
 
-  const updatePeer = (peer: string) => {
-    navigate({
+  const updatePeer = async (peer: string) => {
+    await navigate({
       type: "projects",
       params: {
         urn,
@@ -39,10 +41,11 @@
         peer,
       },
     });
+    closeFocused();
   };
 
-  const updateRevision = (revision: string) => {
-    navigate({
+  const updateRevision = async (revision: string) => {
+    await navigate({
       type: "projects",
       params: {
         urn,
@@ -50,6 +53,7 @@
         revision,
       },
     });
+    closeFocused();
   };
 </script>
 
