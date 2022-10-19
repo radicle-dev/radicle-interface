@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Branches, Project } from "@app/project";
-  import type { Tree } from "@app/project";
-  import type { Content } from "./route";
+  import type { Content, LoadedProjectView, LoadedRoute } from "./route";
 
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
@@ -12,22 +11,16 @@
   export let peer: string | undefined;
   export let project: Project;
   export let branches: Branches;
-  export let tree: Tree;
   export let revision: string;
-  export let content: Content;
+  export let activeView: LoadedProjectView;
 
   const { urn, peers, seed } = project;
 
   // Switches between project views.
-  const toggleContent = async (input: Content) => {
+  const toggleContent = async (type: Content) => {
     await navigate({
       type: "projects",
-      params: {
-        urn,
-        content: content === input ? "tree" : input,
-        issue: undefined,
-        patch: undefined,
-      },
+      params: { activeView: { type } },
     });
     closeFocused();
   };
@@ -35,11 +28,7 @@
   const updatePeer = async (peer: string) => {
     await navigate({
       type: "projects",
-      params: {
-        urn,
-        content,
-        peer,
-      },
+      params: { peer },
     });
     closeFocused();
   };
@@ -49,8 +38,7 @@
       type: "projects",
       params: {
         urn,
-        content,
-        revision,
+        activeView: { type: activeView.type, restRoute: revision },
       },
     });
     closeFocused();
@@ -137,16 +125,16 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
-    class:active={content === "history"}
-    on:click={() => toggleContent("history")}>
-    <span class="txt-bold">{tree.stats.commits}</span>
+    class:active={activeView.type === "commits"}
+    on:click={() => toggleContent("commits")}>
+    <span class="txt-bold">{activeView.tree.stats.commits}</span>
     commit(s)
   </div>
   {#if project.issues}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
-      class:active={content === "issues"}
+      class:active={activeView.type === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
       on:click={() => toggleContent("issues")}>
@@ -158,7 +146,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
-      class:active={content === "patches"}
+      class:active={activeView.type === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
       on:click={() => toggleContent("patches")}>
@@ -167,7 +155,7 @@
     </div>
   {/if}
   <div class="stat contributor-count widget">
-    <span class="txt-bold">{tree.stats.contributors}</span>
+    <span class="txt-bold">{activeView.tree.stats.contributors}</span>
     contributor(s)
   </div>
 </header>

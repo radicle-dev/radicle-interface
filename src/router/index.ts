@@ -9,7 +9,7 @@ import type { Writable } from "svelte/store";
 import { get, writable } from "svelte/store";
 import { getSearchParam } from "@app/utils";
 import { getConfig } from "@app/config";
-import type { Content } from "@app/base/projects/route";
+import type { ProjectView } from "@app/base/projects/route";
 
 const BOOT_ROUTE: Route & LoadedRoute = { type: "loading" };
 
@@ -151,24 +151,7 @@ export function pathToRoute(path: string | null): Route {
       if (host) {
         const urn = segments.shift();
         if (urn) {
-          let content = segments.shift();
-          let peer;
-          if (content === "remotes") {
-            peer = segments.shift();
-            content = segments.shift() || "tree";
-          } else if (!content) {
-            content = "tree";
-          }
-          return {
-            type: "projects",
-            params: {
-              urn,
-              seedHost: host,
-              content: content as Content,
-              peer,
-              restRoute: segments.join("/"),
-            },
-          };
+          resolveProjectRoute("seedHost", segments, path, urn, host);
         }
         return { type: "seeds", params: { host } };
       }
@@ -180,31 +163,7 @@ export function pathToRoute(path: string | null): Route {
       if (type) {
         const urn = segments.shift();
         if (urn) {
-          let content = segments.shift();
-          let peer;
-          if (content === "remotes") {
-            peer = segments.shift();
-            content = segments.shift() || "tree";
-          } else if (!content) {
-            content = "tree";
-          }
-          if (
-            !["tree", "issues", "patches", "history", "commits"].includes(
-              content,
-            )
-          ) {
-            return { type: "404", params: { path } };
-          }
-          return {
-            type: "projects",
-            params: {
-              profileName: type,
-              urn,
-              peer,
-              restRoute: segments.join("/"),
-              content: content as Content,
-            },
-          };
+          resolveProjectRoute("profileName", segments, path, urn, type);
         }
         return { type: "profile", params: { addressOrName: type } };
       }
@@ -214,6 +173,7 @@ export function pathToRoute(path: string | null): Route {
 }
 
 export function routeToPath(route: Route): string | null {
+  console.log(route);
   if (route.type === "home") {
     return "/";
   } else if (route.type === "faucet" && route.params.activeView === "form") {
@@ -235,17 +195,32 @@ export function routeToPath(route: Route): string | null {
       hostPrefix = `/${route.params.profileName}`;
     }
 
-    const content = route.params.content ? `/${route.params.content}` : "";
-
-    const restRoute = route.params.restRoute
-      ? `/${route.params.restRoute}`
+    const content = route.params.activeView.type
+      ? `/${route.params.activeView.type}`
       : "";
 
+    let peer = "";
     if (route.params.peer) {
-      return `${hostPrefix}/${route.params.urn}/remotes/${route.params.peer}${content}${restRoute}`;
+      peer = `/remotes/${route.params.peer}`;
     }
 
-    return `${hostPrefix}/${route.params.urn}${content}${restRoute}`;
+    if (
+      route.params.activeView.type === "tree" ||
+      route.params.activeView.type === "commits" ||
+      route.params.activeView.type === "commit"
+    ) {
+      const restRoute = route.params.activeView.restRoute
+        ? `/${route.params.activeView.restRoute}`
+        : "";
+
+      return `${hostPrefix}/${route.params.urn}${peer}${content}${restRoute}`;
+    } else if (route.params.activeView.type === "patch") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.patch}`;
+    } else if (route.params.activeView.type === "issue") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.issue}`;
+    } else {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}`;
+    }
   } else if (
     route.type === "registrations" &&
     !route.params.nameOrDomain &&
@@ -269,4 +244,53 @@ export function routeToPath(route: Route): string | null {
     return route.params.path;
   }
   return null;
+}
+
+function resolveProjectRoute(
+  key: "seedHost" | "profileName",
+  segments: any,
+  path: string,
+  urn: string,
+  input?: string,
+): Route {
+  let content = segments.shift();
+  let peer;
+  let activeView: ProjectView = { type: "tree", restRoute: "" };
+  if (content === "remotes") {
+    peer = segments.shift();
+    content = segments.shift();
+  }
+
+  if (content === "tree") {
+    const restRoute = segments.shift() || "";
+    activeView = { type: "tree", restRoute };
+  } else if (content === "commits") {
+    const restRoute = segments.shift() || "";
+    activeView = { type: "commits", restRoute };
+  } else if (content === "commit") {
+    const restRoute = segments.shift() || "";
+    activeView = { type: "commit", restRoute };
+  } else if (content === "patch") {
+    const patch = segments.shift();
+    if (patch) {
+      activeView = { type: "patch", patch };
+    }
+    return { type: "404", params: { path } };
+  } else if (content === "issue") {
+    const issue = segments.shift();
+    if (issue) {
+      activeView = { type: "issue", issue };
+    }
+    return { type: "404", params: { path } };
+  }
+
+  const params = {
+    urn,
+    peer,
+    activeView,
+  };
+  return {
+    type: "projects",
+    params: { ...params, [key]: input },
+  };
 }

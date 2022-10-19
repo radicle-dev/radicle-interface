@@ -80,7 +80,7 @@
               params: {
                 urn,
                 content: "patches",
-                patch: patch.id,
+                restRoute: patch.id,
               },
             });
           }}>

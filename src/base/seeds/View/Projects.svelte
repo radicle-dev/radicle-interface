@@ -6,7 +6,6 @@
   import type { ProjectInfo } from "@app/project";
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import List from "@app/List.svelte";
-  import type { Content } from "@app/base/projects/route";
 
   export let seed: Seed | null = null;
   export let profile: Profile | null = null;
@@ -42,10 +41,13 @@
       type: "projects",
       params: {
         urn: project.urn,
-        content: "tree" as Content,
         seedHost: seed?.host,
-        peer: undefined,
         profileName: profile?.name ?? profile?.address,
+        peer: undefined,
+        activeView: {
+          type: "tree",
+          restRoute: "",
+        },
       },
     });
   };

@@ -116,6 +116,7 @@
         <Project
           {config}
           activeView={$activeRouteStore.activeView}
+          activeRoute={$activeRouteStore}
           project={$activeRouteStore.project}
           peer={$activeRouteStore.peer}
           revision={$activeRouteStore.revision}

@@ -11,13 +11,15 @@
   export let history: CommitsHistory;
   export let project: Project;
 
-  const navigateHistory = (revision: string, content: Content) => {
+  const navigateHistory = (commit: string) => {
     navigate({
       type: "projects",
       params: {
         urn: project.urn,
-        content,
-        restRoute: revision,
+        activeView: {
+          type: "commit",
+          restRoute: commit,
+        },
       },
     });
   };
@@ -38,8 +40,10 @@
       type: "projects",
       params: {
         urn: project.urn,
-        content: "tree",
-        restRoute: `${revision}/${newPath}`,
+        activeView: {
+          type: "tree",
+          restRoute: `${revision}/${newPath}`,
+        },
       },
     });
   };

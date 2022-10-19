@@ -1,13 +1,11 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { ProjectView } from "./route";
+  import type { LoadedProjectView, LoadedRoute } from "./route";
+  import { routeLoading } from "./route";
 
-  import * as issue from "@app/issue";
-  import * as patch from "@app/patch";
-  import * as proj from "@app/project";
+  import type * as proj from "@app/project";
   import { formatProfile, setOpenGraphMetaTag } from "@app/utils";
 
-  import Async from "@app/Async.svelte";
   import Header from "@app/base/projects/Header.svelte";
 
   import Browser from "./Browser.svelte";
@@ -18,10 +16,12 @@
   import Patch from "./Patch.svelte";
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
+  import Loading from "@app/Loading.svelte";
 
   export let config: Config;
   export let project: proj.Project;
-  export let activeView: ProjectView;
+  export let activeView: LoadedProjectView;
+  export let activeRoute: LoadedRoute;
   export let revision: string;
   export let path: string;
   export let peer: string | undefined;
@@ -63,66 +63,36 @@
   <ProjectMeta {project} {peer} />
 
   <Header
-    tree={activeView.tree}
+    {activeView}
     {project}
-    branches={project.branches}
     {peer}
     {revision}
-    content={activeView.type} />
+    branches={project.branches} />
 
-  {#if activeView.type === "tree"}
+  {#if $routeLoading}
+    <Loading center />
+  {:else if activeView.type === "tree"}
     <Browser
       {path}
       line={activeView.line || null}
       {project}
       commit={activeView.commit}
       tree={activeView.tree} />
-  {:else if activeView.type === "history"}
-    <Async
-      fetch={proj.Project.getCommits(project.urn, project.seed.api, {
-        parent: activeView.commit,
-        verified: true,
-      })}
-      let:result>
-      <History {project} history={result} />
-    </Async>
   {:else if activeView.type === "commits"}
-    <Async fetch={project.getCommit(activeView.commit)} let:result>
-      <Commit commit={result} urn={project.urn} />
-    </Async>
-  {/if}
-
-  {#if activeView.type === "issues" && !activeView.issue}
-    <Async
-      fetch={issue.Issue.getIssues(project.urn, project.seed.api)}
-      let:result>
-      <Issues {config} urn={project.urn} issues={result} state="open" />
-    </Async>
-  {:else if activeView.type === "issues" && activeView.issue}
-    <Async
-      fetch={issue.Issue.getIssue(
-        project.urn,
-        activeView.issue,
-        project.seed.api,
-      )}
-      let:result>
-      <Issue {project} {config} issue={result} />
-    </Async>
-  {:else if activeView.type === "patches" && !activeView.patch}
-    <Async
-      fetch={patch.Patch.getPatches(project.urn, project.seed.api)}
-      let:result>
-      <Patches {config} urn={project.urn} patches={result} />
-    </Async>
-  {:else if activeView.type === "patches" && activeView.patch}
-    <Async
-      fetch={patch.Patch.getPatch(
-        project.urn,
-        activeView.patch,
-        project.seed.api,
-      )}
-      let:result>
-      <Patch {project} {config} patch={result} />
-    </Async>
+    <History {project} history={activeView.commits} />
+  {:else if activeView.type === "commit"}
+    <Commit commit={activeView.commit} urn={project.urn} />
+  {:else if activeView.type === "issues"}
+    <Issues
+      {config}
+      urn={project.urn}
+      issues={activeView.issues}
+      state="open" />
+  {:else if activeView.type === "issue"}
+    <Issue {project} {config} issue={activeView.issue} />
+  {:else if activeView.type === "patches"}
+    <Patches {config} urn={project.urn} patches={activeView.patches} />
+  {:else if activeView.type === "patch"}
+    <Patch {project} {config} patch={activeView.patch} />
   {/if}
 </main>

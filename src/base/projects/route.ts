@@ -4,20 +4,25 @@ import type { Writable } from "svelte/store";
 import { parseRoute, type Tree } from "@app/project";
 import { Project } from "@app/project";
 import { writable } from "svelte/store";
+import { Patch } from "@app/patch";
+import { Issue } from "@app/issue";
+import type { Commit, CommitsHistory } from "@app/commit";
 
-export type Content = "tree" | "history" | "commits" | "issues" | "patches";
+export type Content =
+  | "tree"
+  | "commits"
+  | "commit"
+  | "issues"
+  | "issue"
+  | "patches"
+  | "patch";
 
 export interface Params {
   urn: string;
-  content: Content;
   seedHost?: string;
   profileName?: string;
-  revision?: string;
-  path?: string;
   peer?: string;
-  issue?: string;
-  patch?: string;
-  restRoute?: string; // The resting URL to be parsed with project data.
+  activeView: ProjectView;
 }
 
 export const routeLoading: Writable<boolean> = writable(false);
@@ -32,48 +37,79 @@ export interface LoadedRoute {
   seedHost?: string;
   profileName?: string;
   restRoute?: string; // The resting URL to be parsed with project data.
-  activeView: ProjectView;
+  activeView: LoadedProjectView;
 }
 
 export type ProjectView =
   | {
       type: "tree";
-      line?: number;
-      peer?: string;
-      tree: Tree;
-      commit: string;
-    }
-  | {
-      type: "history";
-      peer?: string;
-      tree: Tree;
-      commit: string;
+      restRoute: string; // The resting URL to be parsed for revision and path.
     }
   | {
       type: "commits";
-      peer?: string;
-      tree: Tree;
-      commit: string;
+      restRoute: string; // The resting URL to be parsed for revision and path.
     }
   | {
-      type: "commits";
-      commit: string;
-      tree: Tree;
+      type: "commit";
+      restRoute: string; // The resting URL to be parsed for revision and path.
     }
   | {
       type: "patches";
-      patch?: string;
+    }
+  | {
+      type: "patch";
+      patch: string;
+    }
+  | {
+      type: "issues";
+    }
+  | {
+      type: "issue";
+      issue: string;
+    };
+
+export type LoadedProjectView =
+  | {
+      type: "tree";
+      line?: number;
+      tree: Tree;
+      commit: string;
+    }
+  | {
+      type: "commits";
+      tree: Tree;
+      commits: CommitsHistory;
+    }
+  | {
+      type: "commit";
+      tree: Tree;
+      commit: Commit;
+    }
+  | {
+      type: "patches";
+      patches: Patch[];
+      tree: Tree;
+    }
+  | {
+      type: "patch";
+      patch: Patch;
       tree: Tree;
     }
   | {
       type: "issues";
-      issue?: string;
+      issues: Issue[];
+      tree: Tree;
+    }
+  | {
+      type: "issue";
+      issue: Issue;
       tree: Tree;
     };
 
 export async function load(
   params: Params,
   config: Config,
+  restRoute?: string,
 ): Promise<LoadedRoute> {
   routeLoading.set(true);
 
@@ -85,58 +121,91 @@ export async function load(
     config,
   );
 
-  const parsed = parseRoute(params.restRoute || "", project.branches);
+  const parsed = parseRoute(restRoute || "", project.branches);
   const path = parsed.path || "/";
   const revision = parsed.revision || project.head;
   const line = parsed.line || undefined;
 
   const root = await project.getRoot(revision);
-  let activeView: ProjectView;
-  switch (params.content) {
+  let activeView: LoadedProjectView;
+  switch (params.activeView.type) {
     case "tree":
       activeView = {
         type: "tree",
         line,
-        peer: params.peer,
         tree: root.tree,
         commit: root.commit,
       };
       break;
-    case "history":
-      activeView = {
-        type: "history",
-        peer: params.peer,
-        tree: root.tree,
-        commit: root.commit,
-      };
-      break;
-    case "commits":
+    case "commits": {
+      const commits = await Project.getCommits(project.urn, project.seed.api, {
+        parent: revision,
+        verified: true,
+      });
       activeView = {
         type: "commits",
-        peer: params.peer,
         tree: root.tree,
-        commit: root.commit,
+        commits,
       };
       break;
-    case "issues":
+    }
+    case "commit": {
+      const commit = await project.getCommit(revision || root.commit);
+      activeView = {
+        type: "commit",
+        tree: root.tree,
+        commit,
+      };
+      break;
+    }
+    case "issues": {
+      const issues = await Issue.getIssues(project.urn, project.seed.api);
       activeView = {
         type: "issues",
-        issue: params.issue,
+        issues,
         tree: root.tree,
       };
       break;
-    case "patches":
+    }
+    case "issue": {
+      const issue = await Issue.getIssue(
+        project.urn,
+        params.activeView.issue,
+        project.seed.api,
+      );
+      activeView = {
+        type: "issue",
+        issue,
+        tree: root.tree,
+      };
+      break;
+    }
+    case "patches": {
+      const patches = await Patch.getPatches(project.urn, project.seed.api);
       activeView = {
         type: "patches",
-        patch: params.patch,
+        patches,
         tree: root.tree,
       };
       break;
+    }
+    case "patch": {
+      const patch = await Patch.getPatch(
+        params.urn,
+        params.activeView.patch,
+        project.seed.api,
+      );
+      activeView = {
+        type: "patch",
+        patch,
+        tree: root.tree,
+      };
+      break;
+    }
     default:
       activeView = {
         type: "tree",
         line,
-        peer: params.peer,
         tree: root.tree,
         commit: root.commit,
       };
@@ -147,12 +216,33 @@ export async function load(
     type: "projects",
     urn: params.urn,
     peer: params.peer,
-    revision: params.revision || root.commit,
-    restRoute: `${params.revision || root.commit}/${path}`,
+    revision: revision || root.commit,
+    restRoute: `${revision || root.commit}/${path}`,
     path,
     seedHost: params.seedHost,
     profileName: params.profileName,
     project,
     activeView,
+  };
+}
+
+export function convertLoadingToRoute(route: LoadedRoute): Params {
+  let activeViewParams: ProjectView = {
+    type: "tree",
+    restRoute: `${route.revision}/${route.path}`,
+  };
+  if (route.activeView.type === "issue") {
+    activeViewParams = { type: "issue", issue: route.activeView.issue.id };
+  } else if (route.activeView.type === "patch") {
+    activeViewParams = { type: "patch", patch: route.activeView.patch.id };
+  }
+  return {
+    urn: route.urn,
+    seedHost: route.seedHost,
+    profileName: route.profileName,
+    peer: route.peer,
+    activeView: {
+      ...activeViewParams,
+    },
   };
 }

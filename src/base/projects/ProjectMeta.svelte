@@ -87,7 +87,7 @@
             urn: project.urn,
             seedHost: !project.profile ? project.seed.host : undefined,
             profileName: project.profile?.nameOrAddress,
-            content: "tree",
+            activeView: { type: "tree", restRoute: "" },
           },
         })}>
         {project.name}
