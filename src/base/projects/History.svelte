@@ -12,13 +12,15 @@
   export let project: Project;
 
   const navigateHistory = (commit: string) => {
+    console.log(commit);
     navigate({
       type: "projects",
       params: {
         urn: project.urn,
         activeView: {
           type: "commit",
-          restRoute: commit,
+          commit,
+          path: "/",
         },
       },
     });
@@ -35,14 +37,15 @@
     return response.headers.slice(1);
   };
 
-  const browseCommit = (revision: string, newPath: string) => {
+  const browseCommit = (revision: string) => {
     navigate({
       type: "projects",
       params: {
         urn: project.urn,
         activeView: {
           type: "tree",
-          restRoute: `${revision}/${newPath}`,
+          revision,
+          path: "/",
         },
       },
     });
@@ -101,11 +104,10 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() => navigateHistory(commit.header.sha1, "commits")}>
+                on:click={() => navigateHistory(commit.header.sha1)}>
                 <CommitTeaser
                   {commit}
-                  on:browseCommit={({ detail }) =>
-                    browseCommit(commit.header.sha1, detail)} />
+                  on:browseCommit={({ detail }) => browseCommit(detail)} />
               </div>
             {/each}
           </div>

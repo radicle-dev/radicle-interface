@@ -19,6 +19,8 @@ const documentTitle = "Radicle Interface";
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<LoadedRoute> = writable(BOOT_ROUTE);
 
+activeRouteStore.subscribe(console.log);
+
 export function link(node: any) {
   async function onClick(event: any): Promise<void> {
     const anchor = event.currentTarget;
@@ -64,9 +66,10 @@ export async function navigate(
 
   // If current and new route have route params, and spreads old and new ones.
   const currentRoute = get(historyStore).slice(-1)[0];
-  if ("params" in currentRoute && "params" in route) {
+  if ("params" in route) {
     const newRouteParams = route.params;
-    const currentRouteParams = currentRoute.params;
+    const currentRouteParams =
+      "params" in currentRoute ? currentRoute.params : {};
     route.params = { ...currentRouteParams, ...newRouteParams };
   }
 
@@ -151,7 +154,7 @@ export function pathToRoute(path: string | null): Route {
       if (host) {
         const urn = segments.shift();
         if (urn) {
-          resolveProjectRoute("seedHost", segments, path, urn, host);
+          return resolveProjectRoute("seedHost", segments, path, urn, host);
         }
         return { type: "seeds", params: { host } };
       }
@@ -163,7 +166,7 @@ export function pathToRoute(path: string | null): Route {
       if (type) {
         const urn = segments.shift();
         if (urn) {
-          resolveProjectRoute("profileName", segments, path, urn, type);
+          return resolveProjectRoute("profileName", segments, path, urn, type);
         }
         return { type: "profile", params: { addressOrName: type } };
       }
@@ -173,7 +176,6 @@ export function pathToRoute(path: string | null): Route {
 }
 
 export function routeToPath(route: Route): string | null {
-  console.log(route);
   if (route.type === "home") {
     return "/";
   } else if (route.type === "faucet" && route.params.activeView === "form") {
@@ -195,7 +197,7 @@ export function routeToPath(route: Route): string | null {
       hostPrefix = `/${route.params.profileName}`;
     }
 
-    const content = route.params.activeView.type
+    const content = route.params.activeView?.type
       ? `/${route.params.activeView.type}`
       : "";
 
@@ -204,19 +206,33 @@ export function routeToPath(route: Route): string | null {
       peer = `/remotes/${route.params.peer}`;
     }
 
-    if (
-      route.params.activeView.type === "tree" ||
-      route.params.activeView.type === "commits" ||
-      route.params.activeView.type === "commit"
-    ) {
-      const restRoute = route.params.activeView.restRoute
-        ? `/${route.params.activeView.restRoute}`
-        : "";
-
-      return `${hostPrefix}/${route.params.urn}${peer}${content}${restRoute}`;
-    } else if (route.params.activeView.type === "patch") {
+    if (route.params.activeView?.type === "tree") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}${
+        route.params.activeView.revision
+          ? `/${route.params.activeView.revision}`
+          : ""
+      }${
+        route.params.activeView.path ? `/${route.params.activeView.path}` : ""
+      }`;
+    } else if (route.params.activeView?.type === "commits") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}${
+        route.params.activeView.parent
+          ? `/${route.params.activeView.parent}`
+          : ""
+      }${
+        route.params.activeView.path ? `/${route.params.activeView.path}` : ""
+      }`;
+    } else if (route.params.activeView?.type === "commit") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}${
+        route.params.activeView.commit
+          ? `/${route.params.activeView.commit}`
+          : ""
+      }${
+        route.params.activeView.path ? `/${route.params.activeView.path}` : ""
+      }`;
+    } else if (route.params.activeView?.type === "patch") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.patch}`;
-    } else if (route.params.activeView.type === "issue") {
+    } else if (route.params.activeView?.type === "issue") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.issue}`;
     } else {
       return `${hostPrefix}/${route.params.urn}${peer}${content}`;
@@ -255,7 +271,7 @@ function resolveProjectRoute(
 ): Route {
   let content = segments.shift();
   let peer;
-  let activeView: ProjectView = { type: "tree", restRoute: "" };
+  let activeView: ProjectView = { type: "tree", revision: "", path: "/" };
   if (content === "remotes") {
     peer = segments.shift();
     content = segments.shift();
@@ -263,13 +279,13 @@ function resolveProjectRoute(
 
   if (content === "tree") {
     const restRoute = segments.shift() || "";
-    activeView = { type: "tree", restRoute };
+    activeView = { type: "tree", revision: restRoute, path: "/" };
   } else if (content === "commits") {
     const restRoute = segments.shift() || "";
-    activeView = { type: "commits", restRoute };
+    activeView = { type: "commits", parent: restRoute, path: "/" };
   } else if (content === "commit") {
     const restRoute = segments.shift() || "";
-    activeView = { type: "commit", restRoute };
+    activeView = { type: "commit", commit: restRoute, path: "/" };
   } else if (content === "patch") {
     const patch = segments.shift();
     if (patch) {

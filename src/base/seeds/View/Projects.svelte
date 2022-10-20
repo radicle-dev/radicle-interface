@@ -46,7 +46,8 @@
         peer: undefined,
         activeView: {
           type: "tree",
-          restRoute: "",
+          revision: project.defaultBranch,
+          path: "/",
         },
       },
     });

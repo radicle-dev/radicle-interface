@@ -22,7 +22,8 @@ export interface Params {
   seedHost?: string;
   profileName?: string;
   peer?: string;
-  activeView: ProjectView;
+  restRoute?: string;
+  activeView?: ProjectView;
 }
 
 export const routeLoading: Writable<boolean> = writable(false);
@@ -31,27 +32,28 @@ export interface LoadedRoute {
   type: "projects";
   project: Project;
   urn: string;
-  path: string;
   revision: string;
   peer?: string;
   seedHost?: string;
   profileName?: string;
-  restRoute?: string; // The resting URL to be parsed with project data.
   activeView: LoadedProjectView;
 }
 
 export type ProjectView =
   | {
       type: "tree";
-      restRoute: string; // The resting URL to be parsed for revision and path.
+      revision: string;
+      path: string;
     }
   | {
       type: "commits";
-      restRoute: string; // The resting URL to be parsed for revision and path.
+      parent: string;
+      path: string;
     }
   | {
       type: "commit";
-      restRoute: string; // The resting URL to be parsed for revision and path.
+      commit: string;
+      path: string;
     }
   | {
       type: "patches";
@@ -71,19 +73,21 @@ export type ProjectView =
 export type LoadedProjectView =
   | {
       type: "tree";
-      line?: number;
+      line: number | null;
       tree: Tree;
-      commit: string;
+      path: string;
     }
   | {
       type: "commits";
       tree: Tree;
       commits: CommitsHistory;
+      path: string;
     }
   | {
       type: "commit";
       tree: Tree;
       commit: Commit;
+      path: string;
     }
   | {
       type: "patches";
@@ -109,7 +113,6 @@ export type LoadedProjectView =
 export async function load(
   params: Params,
   config: Config,
-  restRoute?: string,
 ): Promise<LoadedRoute> {
   routeLoading.set(true);
 
@@ -121,39 +124,39 @@ export async function load(
     config,
   );
 
-  const parsed = parseRoute(restRoute || "", project.branches);
-  const path = parsed.path || "/";
-  const revision = parsed.revision || project.head;
-  const line = parsed.line || undefined;
+  const parsed = parseRoute(params.restRoute || "", project.branches);
+  const root = await project.getRoot(parsed.revision);
 
-  const root = await project.getRoot(revision);
   let activeView: LoadedProjectView;
-  switch (params.activeView.type) {
-    case "tree":
+  switch (params.activeView?.type) {
+    case "tree": {
       activeView = {
         type: "tree",
-        line,
         tree: root.tree,
-        commit: root.commit,
+        line: parsed.line,
+        path: parsed.path,
       };
       break;
+    }
     case "commits": {
       const commits = await Project.getCommits(project.urn, project.seed.api, {
-        parent: revision,
+        parent: parsed.revision,
         verified: true,
       });
       activeView = {
         type: "commits",
         tree: root.tree,
+        path: parsed.path,
         commits,
       };
       break;
     }
     case "commit": {
-      const commit = await project.getCommit(revision || root.commit);
+      const commit = await project.getCommit(parsed.revision || root.commit);
       activeView = {
         type: "commit",
         tree: root.tree,
+        path: parsed.path,
         commit,
       };
       break;
@@ -162,8 +165,8 @@ export async function load(
       const issues = await Issue.getIssues(project.urn, project.seed.api);
       activeView = {
         type: "issues",
-        issues,
         tree: root.tree,
+        issues,
       };
       break;
     }
@@ -175,8 +178,8 @@ export async function load(
       );
       activeView = {
         type: "issue",
-        issue,
         tree: root.tree,
+        issue,
       };
       break;
     }
@@ -184,8 +187,8 @@ export async function load(
       const patches = await Patch.getPatches(project.urn, project.seed.api);
       activeView = {
         type: "patches",
-        patches,
         tree: root.tree,
+        patches,
       };
       break;
     }
@@ -197,18 +200,20 @@ export async function load(
       );
       activeView = {
         type: "patch",
-        patch,
         tree: root.tree,
+        patch,
       };
       break;
     }
-    default:
+    default: {
       activeView = {
         type: "tree",
-        line,
+        line: parsed.line || null,
         tree: root.tree,
-        commit: root.commit,
+        path: parsed.path,
       };
+      break;
+    }
   }
 
   routeLoading.set(false);
@@ -216,33 +221,10 @@ export async function load(
     type: "projects",
     urn: params.urn,
     peer: params.peer,
-    revision: revision || root.commit,
-    restRoute: `${revision || root.commit}/${path}`,
-    path,
     seedHost: params.seedHost,
+    revision: parsed.revision || root.commit,
     profileName: params.profileName,
     project,
     activeView,
-  };
-}
-
-export function convertLoadingToRoute(route: LoadedRoute): Params {
-  let activeViewParams: ProjectView = {
-    type: "tree",
-    restRoute: `${route.revision}/${route.path}`,
-  };
-  if (route.activeView.type === "issue") {
-    activeViewParams = { type: "issue", issue: route.activeView.issue.id };
-  } else if (route.activeView.type === "patch") {
-    activeViewParams = { type: "patch", patch: route.activeView.patch.id };
-  }
-  return {
-    urn: route.urn,
-    seedHost: route.seedHost,
-    profileName: route.profileName,
-    peer: route.peer,
-    activeView: {
-      ...activeViewParams,
-    },
   };
 }

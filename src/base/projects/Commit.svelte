@@ -18,7 +18,8 @@
         urn,
         activeView: {
           type: "tree",
-          restRoute: `${commit.header.sha1}/${event.detail}`,
+          revision: commit.header.sha1,
+          path: event.detail,
         },
       },
     });

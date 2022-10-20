@@ -116,17 +116,17 @@ export function getOid(revision: string, branches?: Branches): string | null {
 export function parseRoute(
   input: string,
   branches: Branches,
-): { path: string | null; revision: string | null; line: number | null } {
+): { path: string; revision: string | null; line: number | null } {
   const branch = Object.entries(branches).find(([branchName]) =>
     input.startsWith(branchName),
   );
   const commitPath = [input.slice(0, 40), input.slice(41)];
   const line = input.split("#");
   const parsed: {
-    path: string | null;
+    path: string;
     revision: string | null;
     line: number | null;
-  } = { path: null, revision: null, line: null };
+  } = { path: "/", revision: null, line: null };
   parsed.line = formatLocationHash(line[line.length - 1]);
 
   if (branch) {

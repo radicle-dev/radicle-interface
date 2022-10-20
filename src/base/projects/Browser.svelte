@@ -11,7 +11,6 @@
   import Blob from "./Blob.svelte";
   import Readme from "./Readme.svelte";
   import Tree from "./Tree.svelte";
-  import type { Content } from "./route";
   import { navigate } from "@app/router";
 
   enum Status {
@@ -28,6 +27,8 @@
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let commit: string;
+
+  $: console.log("browser path:", path);
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -84,7 +85,8 @@
           urn: project.urn,
           activeView: {
             type: "tree",
-            restRoute: `${revision}/${newPath}`,
+            revision,
+            path: newPath,
           },
         },
       });

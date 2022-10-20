@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Config } from "@app/config";
-  import type { LoadedProjectView, LoadedRoute } from "./route";
+  import type { LoadedProjectView } from "./route";
   import { routeLoading } from "./route";
 
   import type * as proj from "@app/project";
@@ -21,9 +21,7 @@
   export let config: Config;
   export let project: proj.Project;
   export let activeView: LoadedProjectView;
-  export let activeRoute: LoadedRoute;
   export let revision: string;
-  export let path: string;
   export let peer: string | undefined;
 
   const parentName = project.profile
@@ -73,10 +71,10 @@
     <Loading center />
   {:else if activeView.type === "tree"}
     <Browser
-      {path}
-      line={activeView.line || null}
       {project}
-      commit={activeView.commit}
+      path={activeView.path}
+      line={activeView.line}
+      commit={revision}
       tree={activeView.tree} />
   {:else if activeView.type === "commits"}
     <History {project} history={activeView.commits} />

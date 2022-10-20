@@ -116,11 +116,9 @@
         <Project
           {config}
           activeView={$activeRouteStore.activeView}
-          activeRoute={$activeRouteStore}
           project={$activeRouteStore.project}
           peer={$activeRouteStore.peer}
-          revision={$activeRouteStore.revision}
-          path={$activeRouteStore.path} />
+          revision={$activeRouteStore.revision} />
       {:else if $activeRouteStore.type === "profile"}
         <Profile
           {config}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Branches, Project } from "@app/project";
-  import type { Content, LoadedProjectView, LoadedRoute } from "./route";
+  import type { LoadedProjectView, ProjectView } from "./route";
 
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
@@ -17,10 +17,10 @@
   const { urn, peers, seed } = project;
 
   // Switches between project views.
-  const toggleContent = async (type: Content) => {
+  const toggleContent = async (activeView: ProjectView) => {
     await navigate({
       type: "projects",
-      params: { activeView: { type } },
+      params: { urn, activeView },
     });
     closeFocused();
   };
@@ -28,7 +28,7 @@
   const updatePeer = async (peer: string) => {
     await navigate({
       type: "projects",
-      params: { peer },
+      params: { urn, peer },
     });
     closeFocused();
   };
@@ -38,7 +38,11 @@
       type: "projects",
       params: {
         urn,
-        activeView: { type: activeView.type, restRoute: revision },
+        activeView: {
+          type: "tree",
+          revision,
+          path: "path" in activeView ? activeView.path : "",
+        },
       },
     });
     closeFocused();
@@ -126,7 +130,7 @@
   <div
     class="stat commit-count clickable widget"
     class:active={activeView.type === "commits"}
-    on:click={() => toggleContent("commits")}>
+    on:click={() => toggleContent({ type: "commits", parent: "", path: "" })}>
     <span class="txt-bold">{activeView.tree.stats.commits}</span>
     commit(s)
   </div>
@@ -137,7 +141,7 @@
       class:active={activeView.type === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
-      on:click={() => toggleContent("issues")}>
+      on:click={() => toggleContent({ type: "issues" })}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
@@ -149,7 +153,7 @@
       class:active={activeView.type === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
-      on:click={() => toggleContent("patches")}>
+      on:click={() => toggleContent({ type: "patches" })}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>
