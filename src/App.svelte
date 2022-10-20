@@ -13,7 +13,6 @@
   import Header from "@app/Header.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import LinearGradient from "@app/LinearGradient.svelte";
   import ColorPalette from "./ColorPalette.svelte";
 
   const loadConfig = getConfig().then(async cfg => {
@@ -113,6 +112,4 @@
       </Modal>
     </div>
   {/await}
-  <!-- Adds a svg linear gradient that can be used by any other svg under the id #gradient -->
-  <LinearGradient id="gradient" />
 </div>
