@@ -82,8 +82,10 @@
         type: "projects",
         params: {
           urn: project.urn,
-          content: "tree" as Content,
-          restRoute: `${revision}/${newPath}`,
+          activeView: {
+            type: "tree",
+            restRoute: `${revision}/${newPath}`,
+          },
         },
       });
     }

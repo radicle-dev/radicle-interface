@@ -81,8 +81,10 @@
               type: "projects",
               params: {
                 urn,
-                content: "issues",
-                issue: issue.id,
+                activeView: {
+                  type: "issue",
+                  issue: issue.id,
+                },
               },
             });
           }}>

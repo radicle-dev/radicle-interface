@@ -39,8 +39,11 @@
       type: "projects",
       params: {
         urn: project.urn,
-        content: "tree" as Content,
         seedHost: seed.host,
+        activeView: {
+          type: "tree",
+          restRoute: "",
+        },
       },
     });
   };

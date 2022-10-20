@@ -79,8 +79,10 @@
               type: "projects",
               params: {
                 urn,
-                content: "patches",
-                restRoute: patch.id,
+                activeView: {
+                  type: "patch",
+                  patch: patch.id,
+                },
               },
             });
           }}>

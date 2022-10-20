@@ -31,9 +31,10 @@
       type: "projects",
       params: {
         urn: project.urn,
-        content: "tree",
-        revision,
-        path: event.detail,
+        activeView: {
+          type: "tree",
+          restRoute: `${revision}/${event.detail}`,
+        },
       },
     });
   };

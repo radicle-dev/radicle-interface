@@ -16,8 +16,10 @@
       type: "projects",
       params: {
         urn,
-        content: "tree",
-        restRoute: `${commit.header.sha1}/${event.detail}`,
+        activeView: {
+          type: "tree",
+          restRoute: `${commit.header.sha1}/${event.detail}`,
+        },
       },
     });
   };
