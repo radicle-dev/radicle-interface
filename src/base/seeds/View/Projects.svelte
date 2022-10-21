@@ -38,7 +38,9 @@
     navigate(
       proj.path({
         urn: project.urn,
-        seed: seed?.host,
+        seed: seed.api.port
+          ? `${seed.api.host}:${seed.api.port}`
+          : seed.api.host,
         profile: profile?.name ?? profile?.address,
         revision: project.head,
       }),

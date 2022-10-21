@@ -9,9 +9,9 @@
 </script>
 
 <Route path="/seeds/radicle.local">
-  <View {wallet} {session} host={"0.0.0.0"} />
+  <View {wallet} {session} hostAndPort={"0.0.0.0"} />
 </Route>
 
 <Route path="/seeds/:seed" let:params>
-  <View {wallet} {session} host={params.seed} />
+  <View {wallet} {session} hostAndPort={params.seed} />
 </Route>

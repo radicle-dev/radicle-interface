@@ -6,6 +6,10 @@
   export let seed: Seed;
   export let port: number;
   export let full = false;
+
+  const linkToSeed = seed.api.port
+    ? `/seeds/${seed.api.host}:${seed.api.port}`
+    : `/seeds/${formatSeedHost(seed.api.host)}`;
 </script>
 
 <style>
@@ -35,14 +39,14 @@
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span>
-        <a href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
+        <a href={linkToSeed} class="txt-link">
           {formatSeedId(seed.id)}@{seed.host}
         </a>
       </span>
       <span class="txt-faded">:{port}</span>
     {:else}
       <span>
-        <a href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
+        <a href={linkToSeed} class="txt-link">
           {formatSeedHost(seed.host)}
         </a>
       </span>

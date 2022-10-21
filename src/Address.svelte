@@ -100,7 +100,7 @@
         <Badge variant="foreground">org</Badge>
       {/if}
     {:else if addressType === AddressType.Contract}
-      <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">
+      <a use:link href={`/${address}`}>
         {addressLabel}
       </a>
       {#if !noBadge}

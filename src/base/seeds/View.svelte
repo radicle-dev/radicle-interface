@@ -19,10 +19,14 @@
 
   export let wallet: Wallet;
   export let session: Session | null;
-  export let host: string;
+  export let hostAndPort: string;
+
+  const [host, port] = hostAndPort.includes(":")
+    ? hostAndPort.split(":")
+    : [hostAndPort, 8777];
 
   const hostName = formatSeedHost(host);
-  const seedHost: Host = { host, port: null };
+  const seedHost: Host = { host, port: Number(port) };
   let siweSession: SeedSession | null = null;
 
   const getProjectsAndStats = async (
@@ -108,7 +112,7 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(host)}
+{#await Seed.lookup(host, Number(port))}
   <main class="layout-centered">
     <Loading center />
   </main>
@@ -160,7 +164,7 @@
       <div class="layout-desktop" />
       <!-- API Port -->
       <div class="txt-highlight">API Port</div>
-      <div>{seed.api.port}</div>
+      <div>{port}</div>
       <div class="layout-desktop" />
       <!-- API Version -->
       <div class="txt-highlight">Version</div>

@@ -36,6 +36,14 @@
   const updateRevision = (revision: string) => {
     project.navigateTo({ revision });
   };
+
+  function goToSeed() {
+    if (seed.api.port) {
+      navigate(`/seeds/${seed.api.host}:${seed.api.port}`);
+    } else {
+      navigate(`/seeds/${seed.api.host}`);
+    }
+  }
 </script>
 
 <style>
@@ -110,7 +118,7 @@
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
-        on:click={() => navigate(`/seeds/${seed.api.host}`)}>
+        on:click={goToSeed}>
         <span>{seed.api.host}</span>
       </div>
     {/if}

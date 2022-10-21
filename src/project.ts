@@ -430,7 +430,11 @@ export class Project implements ProjectInfo {
     if (this.profile) {
       options.profile = this.profile?.nameOrAddress;
     } else {
-      options.seed = this.seed.host;
+      if (this.seed.api.port) {
+        options.seed = `${this.seed.api.host}:${this.seed.api.port}`;
+      } else {
+        options.seed = this.seed.host;
+      }
     }
 
     return path(options);
@@ -446,10 +450,15 @@ export class Project implements ProjectInfo {
     const profile = profileName
       ? await Profile.get(profileName, ProfileType.Project, wallet)
       : null;
+
+    const [host, port] = seedHost?.includes(":")
+      ? seedHost.split(":")
+      : [seedHost, "8777"];
+
     const seed = profile
       ? profile.seed
-      : seedHost
-      ? await Seed.lookup(seedHost)
+      : host
+      ? await Seed.lookup(host, Number(port))
       : null;
 
     if (!profile && !seed) {

@@ -54,7 +54,17 @@ export class Seed {
       try {
         const url = new URL(seed.api);
         api = url.hostname;
-        apiPort = url.port ? Number(url.port) : null;
+
+        if (url.port) {
+          apiPort = Number(url.port);
+        } else if (url.protocol === "http:" && url.port === "") {
+          apiPort = 80;
+        }
+        if (url.protocol === "https:" && url.port === "") {
+          apiPort = 443;
+        } else {
+          apiPort = null;
+        }
       } catch {
         api = seed.api;
       }
@@ -130,8 +140,11 @@ export class Seed {
     return new Request("/", host).get();
   }
 
-  static async lookup(hostname: string): Promise<Seed> {
-    const host = { host: hostname, port: defaultHttpApiPort };
+  static async lookup(
+    hostname: string,
+    port: number = defaultHttpApiPort,
+  ): Promise<Seed> {
+    const host = { host: hostname, port };
     const [info, peer] = await Promise.all([
       Seed.getInfo(host),
       Seed.getPeer(host),
@@ -141,6 +154,7 @@ export class Seed {
       host: hostname,
       id: peer.id,
       version: info.version,
+      api: `https://${host.host}:${host.port}`,
     });
   }
 
