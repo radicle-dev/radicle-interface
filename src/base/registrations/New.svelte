@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
-  import { formatAddress } from "@app/utils";
-  import { session } from "@app/session";
   import type { Wallet } from "@app/wallet";
 
+  import { onMount } from "svelte";
+
+  import * as router from "@app/router";
+  import Button from "@app/Button.svelte";
   import Connect from "@app/Connect.svelte";
-  import Modal from "@app/Modal.svelte";
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
-  import Button from "@app/Button.svelte";
-
+  import Modal from "@app/Modal.svelte";
+  import { formatAddress } from "@app/utils";
   import { registrar } from "./registrar";
+  import { session } from "@app/session";
 
   enum State {
     CheckingAvailability,
@@ -32,13 +32,15 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(
-      `/registrations/${name}/submit?${
-        registrationOwner
-          ? new URLSearchParams({ owner: registrationOwner })
-          : ""
-      }`,
-    );
+    router.push({
+      resource: "registrations",
+      params: {
+        view: {
+          resource: "register",
+          params: { nameOrDomain: name, owner: registrationOwner },
+        },
+      },
+    });
   }
 
   onMount(async () => {
@@ -55,6 +57,13 @@
       error = err.message;
     }
   });
+
+  function goToValidateName() {
+    router.push({
+      resource: "registrations",
+      params: { view: { resource: "validateName" } },
+    });
+  }
 </script>
 
 <style>
@@ -116,13 +125,9 @@
           {wallet} />
       {/if}
 
-      <Button on:click={() => navigate("/registrations")} variant="text">
-        Cancel
-      </Button>
+      <Button on:click={goToValidateName} variant="text">Cancel</Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button variant="foreground" on:click={() => navigate("/registrations")}>
-        Back
-      </Button>
+      <Button variant="foreground" on:click={goToValidateName}>Back</Button>
     {/if}
   </span>
 </Modal>

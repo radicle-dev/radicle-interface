@@ -1,24 +1,14 @@
 <script lang="ts">
-  import { link } from "svelte-routing";
+  import type { PeerId, Project } from "@app/project";
+
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
+  import Link from "@app/router/Link.svelte";
+  import ProjectLink from "@app/router/ProjectLink.svelte";
   import { formatSeedId } from "@app/utils";
-  import { type PeerId, type Project, ProjectContent } from "@app/project";
 
   export let project: Project;
   export let peer: PeerId | null = null;
-  export let noDescription = false;
-
-  function rootPath(): string {
-    return project.pathTo({
-      content: ProjectContent.Tree,
-      peer: null,
-      path: "/",
-      revision: null,
-      issue: null,
-      patch: null,
-    });
-  }
 </script>
 
 <style>
@@ -61,9 +51,6 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
-  .placeholder {
-    height: 2rem;
-  }
 
   .content {
     padding: 0 2rem 0 8rem;
@@ -85,18 +72,33 @@
 <header class="content">
   <div class="title txt-bold txt-title">
     {#if project.profile}
-      <a
-        class="org-avatar"
-        title={project.profile.nameOrAddress}
-        href="/{project.profile.nameOrAddress}">
-        <Avatar
-          source={project.profile.avatar || project.profile.address}
-          title={project.profile.address} />
-      </a>
+      <Link
+        route={{
+          resource: "profile",
+          params: { addressOrName: project.profile.addressOrName },
+        }}
+        title={project.profile.addressOrName}>
+        <span class="org-avatar">
+          <Avatar
+            source={project.profile.avatar || project.profile.address}
+            title={project.profile.address} />
+        </span>
+      </Link>
       <span class="divider">/</span>
     {/if}
     <span class="truncate">
-      <a use:link class="project-name" href={rootPath()}>{project.name}</a>
+      <ProjectLink
+        projectParams={{
+          view: { resource: "tree" },
+          path: "/",
+          peer: undefined,
+          route: undefined,
+          revision: undefined,
+        }}>
+        <span class="project-name">
+          {project.name}
+        </span>
+      </ProjectLink>
     </span>
     {#if peer}
       <span class="peer-id">
@@ -110,9 +112,5 @@
     <span class="truncate">{project.urn}</span>
     <Clipboard small text={project.urn} />
   </div>
-  {#if !noDescription}
-    <div class="description">{project.description}</div>
-  {:else}
-    <div class="placeholder" />
-  {/if}
+  <div class="description">{project.description}</div>
 </header>

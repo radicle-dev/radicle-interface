@@ -1,13 +1,14 @@
 <script lang="ts">
-  import type { Readable } from "svelte/store";
-  import type * as proj from "@app/project";
   import type { Theme } from "@app/ThemeToggle.svelte";
+  import type { ProjectRoute } from "@app/router/definitions";
+  import type * as proj from "@app/project";
 
   import Loading from "@app/Loading.svelte";
   import Placeholder from "@app/Placeholder.svelte";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
+  import * as router from "@app/router";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -24,12 +25,11 @@
 
   export let project: proj.Project;
   export let tree: proj.Tree;
-  export let browserStore: Readable<proj.Browser>;
   export let commit: string;
+  export let activeRoute: ProjectRoute;
 
-  $: browser = $browserStore;
-  $: path = browser.path || "/";
-  $: revision = browser.revision;
+  $: path = activeRoute.params.path || "/";
+  $: line = activeRoute.params.hash || null;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -79,9 +79,10 @@
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
 
-    if (path) {
-      project.navigateTo({ path: newPath, revision, line: null });
-    }
+    router.updateProjectRoute({
+      view: { resource: "tree" },
+      path: newPath,
+    });
   };
 
   const fetchTree = async (path: string) => {
@@ -207,9 +208,9 @@
           <Loading small center />
         {:then blob}
           {#if utils.isMarkdownPath(blob.path)}
-            <Readme content={blob.content} {getImage} />
+            <Readme {activeRoute} content={blob.content} {getImage} />
           {:else}
-            <Blob line={browser.line} {blob} />
+            <Blob {line} {blob} />
           {/if}
         {:catch}
           <Placeholder icon="🍂">

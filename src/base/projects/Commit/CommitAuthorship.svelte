@@ -44,7 +44,8 @@
       src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
       <span class="txt-bold committer">
-        {commit.context?.committer.peer.person.name}
+        {commit.context.committer.peer.person?.name ||
+          commit.context.committer.peer.id}
       </span>
       {#if !noDelegate && commit.context?.committer.peer.delegate}
         <Badge variant="tertiary">delegate</Badge>
@@ -73,7 +74,8 @@
       src={gravatarURL(commit.header.committer.email)} />
     {#if commit.context?.committer}
       <span class="txt-bold committer">
-        {commit.context?.committer.peer.person.name}
+        {commit.context.committer.peer.person?.name ||
+          commit.context.committer.peer.id}
       </span>
       {#if !noDelegate && commit.context?.committer.peer.delegate}
         <Badge variant="tertiary">delegate</Badge>

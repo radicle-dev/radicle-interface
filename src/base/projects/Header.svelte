@@ -1,47 +1,61 @@
 <script lang="ts">
-  import type { Writable } from "svelte/store";
-  import { navigate } from "svelte-routing";
-  import type { Browser } from "@app/project";
-  import { ProjectContent, Project } from "@app/project";
+  import type { Project } from "@app/project";
+  import type { Tree } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
+
+  import * as router from "@app/router";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
-  import type { Tree } from "@app/project";
+  import { closeFocused } from "@app/Floating.svelte";
 
+  export let activeRoute: ProjectRoute;
   export let project: Project;
   export let tree: Tree;
   export let commit: string;
-  export let browserStore: Writable<Browser>;
 
   const { urn, peers, branches, seed } = project;
 
-  $: browser = $browserStore;
-  $: revision = browser.revision || commit;
-  $: content = browser.content;
+  $: revision = activeRoute.params.revision ?? commit;
 
   // Switches between project views.
-  const toggleContent = (input: ProjectContent, keepSourceInPath: boolean) => {
-    project.navigateTo({
-      content: content === input ? ProjectContent.Tree : input,
-      issue: null, // Removing issue here from browserStore to not contaminate path on navigation.
-      patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
-      ...(keepSourceInPath ? null : { revision: null, path: null }),
+  const toggleContent = (
+    input: "patches" | "issues" | "history",
+    keepSourceInPath: boolean,
+  ) => {
+    router.updateProjectRoute({
+      view: {
+        resource: activeRoute.params.view.resource === input ? "tree" : input,
+      },
+      urn: project.urn,
+      revision: revision,
+      ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
     });
   };
 
   const updatePeer = (peer: string) => {
-    project.navigateTo({ peer, revision: null });
+    router.updateProjectRoute({
+      peer,
+      revision: undefined,
+    });
+    closeFocused();
   };
 
   const updateRevision = (revision: string) => {
-    project.navigateTo({ revision });
+    router.updateProjectRoute({
+      revision,
+    });
+    closeFocused();
   };
 
   function goToSeed() {
     if (seed.api.port) {
-      navigate(`/seeds/${seed.api.host}:${seed.api.port}`);
+      router.push({
+        resource: "seeds",
+        params: { host: `${seed.api.host}:${seed.api.port}` },
+      });
     } else {
-      navigate(`/seeds/${seed.api.host}`);
+      router.push({ resource: "seeds", params: { host: seed.api.host } });
     }
   }
 </script>
@@ -99,7 +113,7 @@
   {#if peers.length > 0}
     <PeerSelector
       {peers}
-      peer={browser.peer}
+      peer={activeRoute.params.peer}
       on:peerChanged={event => updatePeer(event.detail)} />
   {/if}
 
@@ -126,8 +140,8 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
-    class:active={content === ProjectContent.History}
-    on:click={() => toggleContent(ProjectContent.History, true)}>
+    class:active={activeRoute.params.view.resource === "history"}
+    on:click={() => toggleContent("history", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
   </div>
@@ -135,10 +149,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
-      class:active={content === ProjectContent.Issues}
+      class:active={activeRoute.params.view.resource === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
-      on:click={() => toggleContent(ProjectContent.Issues, false)}>
+      on:click={() => toggleContent("issues", false)}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
@@ -147,10 +161,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
-      class:active={content === ProjectContent.Patches}
+      class:active={activeRoute.params.view.resource === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
-      on:click={() => toggleContent(ProjectContent.Patches, false)}>
+      on:click={() => toggleContent("patches", false)}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>

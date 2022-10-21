@@ -1,23 +1,25 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { link, navigate } from "svelte-routing";
+  import type { EnsRecord } from "./resolver";
+  import type { Field } from "@app/Form.svelte";
+  import type { Registration } from "./registrar";
   import type { Wallet } from "@app/wallet";
   import type { ethers } from "ethers";
-  import { session } from "@app/session";
+
+  import { onMount } from "svelte";
+
+  import * as router from "@app/router";
+  import Button from "@app/Button.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import Form from "@app/Form.svelte";
+  import Link from "@app/router/Link.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Form from "@app/Form.svelte";
-  import type { Field } from "@app/Form.svelte";
-  import { assert } from "@app/error";
-  import ErrorModal from "@app/ErrorModal.svelte";
-  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
-  import Button from "@app/Button.svelte";
-  import { defaultHttpApiPort } from "@app/base/seeds/Seed";
-
-  import { getRegistration, getOwner } from "./registrar";
-  import type { EnsRecord } from "./resolver";
-  import type { Registration } from "./registrar";
   import Update from "./Update.svelte";
+  import { assert } from "@app/error";
+  import { defaultHttpApiPort } from "@app/base/seeds/Seed";
+  import { getRegistration, getOwner } from "./registrar";
+  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
+  import { session } from "@app/session";
 
   enum Status {
     Loading,
@@ -34,6 +36,7 @@
 
   export let domain: string;
   export let wallet: Wallet;
+  export let retry: boolean;
 
   domain = domain.toLowerCase();
 
@@ -154,7 +157,7 @@
     } else {
       state = { status: Status.NotFound };
     }
-    if (window.history.state?.retry) retries -= 1;
+    if (retry) retries -= 1;
     return r;
   }
 
@@ -178,11 +181,7 @@
       });
   };
 
-  $: if (
-    window.history.state?.retry &&
-    state.status === Status.NotFound &&
-    retries > 0
-  ) {
+  $: if (retry && state.status === Status.NotFound && retries > 0) {
     getRegistration(domain, wallet, resolver)
       .then(parseRecords)
       .catch(err => {
@@ -234,7 +233,11 @@
 {:else if state.status === Status.Failed}
   <ErrorModal
     title="Registration could not be loaded"
-    on:close={() => navigate("/registrations")}>
+    on:close={() =>
+      router.push({
+        resource: "registrations",
+        params: { view: { resource: "validateName" } },
+      })}>
     {state.error}
   </ErrorModal>
 {:else if state.status === Status.NotFound}
@@ -252,12 +255,18 @@
     </span>
 
     <span slot="actions">
-      <a
-        use:link
-        href={`/registrations/${domain}/form`}
-        class="txt-link register">
-        Register &rarr;
-      </a>
+      <Link
+        route={{
+          resource: "registrations",
+          params: {
+            view: {
+              resource: "register",
+              params: { nameOrDomain: domain, owner: null },
+            },
+          },
+        }}>
+        <span class="txt-link register">Register &rarr;</span>
+      </Link>
     </span>
   </Modal>
 {:else if state.status === Status.Found}

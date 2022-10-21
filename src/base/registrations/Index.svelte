@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
   import type { Wallet } from "@app/wallet";
 
-  import TextInput from "@app/TextInput.svelte";
+  import * as router from "@app/router";
+
   import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
 
   export let wallet: Wallet;
 
@@ -15,7 +16,15 @@
     if (!valid) {
       return;
     }
-    navigate(`/registrations/${ensName}/form`);
+    router.push({
+      resource: "registrations",
+      params: {
+        view: {
+          resource: "checkNameAvailability",
+          params: { nameOrDomain: ensName, owner: null },
+        },
+      },
+    });
   }
 
   function validate(input: string) {

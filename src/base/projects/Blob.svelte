@@ -1,24 +1,33 @@
 <script lang="ts">
   import type { Blob } from "@app/project";
+
   import { onMount } from "svelte";
 
+  import { scrollIntoView } from "@app/utils";
+  import ProjectLink from "@app/router/ProjectLink.svelte";
+
   export let blob: Blob;
-  export let line: number | null;
+  export let line: string | null;
+
+  $: lineNumber = line ? parseInt(line.substring(1)) : null;
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
   const lineNumbers = Array(lines)
     .fill(0)
-    .map((_, index) => index + 1);
+    .map((_, index) => (index + 1).toString());
   const parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
     .next().value;
 
+  $: if (line) {
+    scrollIntoView(line);
+  }
+
   // Waiting onMount, due to the line numbers still loading.
   onMount(() => {
-    const lineElement = document.getElementById(`L${line}`);
-    if (lineElement) lineElement.scrollIntoView();
+    if (line) scrollIntoView(line);
   });
 </script>
 
@@ -154,20 +163,21 @@
           <span class="txt-tiny">Binary content</span>
         </div>
       {:else}
-        {#if line}
+        {#if lineNumber}
           <div
             class="highlight"
-            style="top: {line === 1 ? 1 : 1.5 * line - 0.5}rem" />
+            style="top: {lineNumber === 1 ? 1 : 1.5 * lineNumber - 0.5}rem" />
         {/if}
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
-            <a
-              href="#L{lineNumber}"
-              class="line-number"
-              class:highlighted={lineNumber === line}
+            <ProjectLink
+              projectParams={{ hash: `L${lineNumber}` }}
               id="L{lineNumber}">
+              <span
+                class="line-number"
+                class:highlighted={lineNumber === line} />
               {lineNumber}
-            </a>
+            </ProjectLink>
           {/each}
         </div>
         {#if blob.html}

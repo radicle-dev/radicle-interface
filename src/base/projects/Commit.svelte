@@ -1,19 +1,18 @@
 <script lang="ts">
-  import * as proj from "@app/project";
-  import { formatCommit } from "@app/utils";
   import type { Commit } from "@app/commit";
+
+  import { formatCommit } from "@app/utils";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
   import CommitVerifiedBadge from "@app/base/projects/Commit/CommitVerifiedBadge.svelte";
+  import * as router from "@app/router";
 
-  export let project: proj.Project;
   export let commit: Commit;
 
   const onBrowse = (event: { detail: string }) => {
-    project.navigateTo({
-      content: proj.ProjectContent.Tree,
-      revision: commit.header.sha1,
+    router.updateProjectRoute({
+      view: { resource: "tree" },
       path: event.detail,
     });
   };

@@ -3,25 +3,26 @@
   import type { Wallet } from "@app/wallet";
   import type { Seed, Stats } from "@app/base/seeds/Seed";
   import type { ProjectInfo } from "@app/project";
-  import Address from "@app/Address.svelte";
-  import Avatar from "@app/Avatar.svelte";
-  import Icon from "@app/Icon.svelte";
-  import SetName from "@app/ens/SetName.svelte";
-  import SeedAddress from "@app/SeedAddress.svelte";
-  import { Profile, ProfileType } from "@app/profile";
-  import Loading from "@app/Loading.svelte";
   import * as utils from "@app/utils";
-  import { session } from "@app/session";
-  import ErrorModal from "@app/ErrorModal.svelte";
-  import { User } from "@app/base/users/User";
-  import Projects from "@app/base/seeds/View/Projects.svelte";
-  import { MissingReverseRecord, NotFoundError } from "@app/error";
-  import NotFound from "@app/NotFound.svelte";
-  import RadicleUrn from "@app/RadicleUrn.svelte";
+  import Address from "@app/Address.svelte";
   import Async from "@app/Async.svelte";
+  import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import Icon from "@app/Icon.svelte";
+  import Link from "@app/router/Link.svelte";
+  import Loading from "@app/Loading.svelte";
+  import NotFound from "@app/NotFound.svelte";
+  import Projects from "@app/base/seeds/View/Projects.svelte";
+  import RadicleUrn from "@app/RadicleUrn.svelte";
+  import SeedAddress from "@app/SeedAddress.svelte";
+  import SetName from "@app/ens/SetName.svelte";
+  import { MissingReverseRecord, NotFoundError } from "@app/error";
+  import { Profile, ProfileType } from "@app/profile";
+  import { User } from "@app/base/users/User";
   import { defaultLinkPort } from "@app/base/seeds/Seed";
+  import { session } from "@app/session";
 
   export let wallet: Wallet;
   export let addressOrName: string;
@@ -216,9 +217,18 @@
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">
             {#if profile.name && profile.ens}
-              <a href={`/registrations/${profile.ens.name}`} class="txt-link">
-                {profile.name}
-              </a>
+              <Link
+                route={{
+                  resource: "registrations",
+                  params: {
+                    view: {
+                      resource: "view",
+                      params: { nameOrDomain: profile.ens.name, retry: false },
+                    },
+                  },
+                }}>
+                <span class="txt-link">{profile.name}</span>
+              </Link>
             {:else}
               <span class="txt-missing">Not set</span>
             {/if}
@@ -228,9 +238,18 @@
         <!-- User Profile -->
         <div>
           {#if profile.name && profile.ens}
-            <a href={`/registrations/${profile.ens.name}`} class="txt-link">
-              {profile.name}
-            </a>
+            <Link
+              route={{
+                resource: "registrations",
+                params: {
+                  view: {
+                    resource: "view",
+                    params: { nameOrDomain: profile.ens.name, retry: false },
+                  },
+                },
+              }}>
+              <span class="txt-link">{profile.name}</span>
+            </Link>
           {:else}
             <span class="txt-missing">Not set</span>
           {/if}

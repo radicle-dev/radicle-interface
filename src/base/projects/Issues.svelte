@@ -7,10 +7,9 @@
   import type { Issue } from "@app/issue";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
-  import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { navigate } from "svelte-routing";
+  import * as router from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -18,7 +17,6 @@
 
   export let wallet: Wallet;
   export let issues: Issue[];
-  export let project: Project;
   export let state: State;
 
   let options: ToggleButtonOption<State>[];
@@ -66,7 +64,9 @@
     <ToggleButton
       {options}
       on:select={e => {
-        navigate(`?state=${e.detail}`);
+        router.updateProjectRoute({
+          search: e.detail,
+        });
       }}
       active={state} />
   </div>
@@ -78,12 +78,11 @@
         <div
           class="teaser"
           on:click={() => {
-            project.navigateTo({
-              content: ProjectContent.Issue,
-              issue: issue.id,
-              patch: null,
-              revision: null,
-              path: null,
+            router.updateProjectRoute({
+              view: {
+                resource: "issue",
+                params: { issue: issue.id },
+              },
             });
           }}>
           <IssueTeaser {wallet} {issue} />

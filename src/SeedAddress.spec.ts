@@ -16,9 +16,7 @@ describe("SeedAddress", () => {
       },
     });
     cy.get("span.seed-icon").should("have.text", "🌱");
-    cy.contains("seed.cloudhead.io")
-      .should("have.attr", "href", "/seeds/seed.cloudhead.io:8777")
-      .should("be.visible");
+    cy.contains("seed.cloudhead.io").should("be.visible");
   });
 
   it("shows the full seed id", () => {

@@ -1,18 +1,19 @@
 <script lang="ts">
+  import type { Wallet } from "@app/wallet";
+
   import { onMount } from "svelte";
-  import { link } from "svelte-routing";
   import { ethers } from "ethers";
   import {
-    explorerLink,
-    identifyAddress,
-    formatAddress,
     AddressType,
+    explorerLink,
+    formatAddress,
+    identifyAddress,
     parseEnsLabel,
   } from "@app/utils";
   import { Profile, ProfileType } from "@app/profile";
   import Avatar from "@app/Avatar.svelte";
   import Badge from "@app/Badge.svelte";
-  import type { Wallet } from "@app/wallet";
+  import Link from "@app/router/Link.svelte";
 
   export let address: string;
   export let wallet: Wallet;
@@ -28,7 +29,7 @@
 
   let addressType: AddressType | null = null;
 
-  const nameOrAddress = profile?.ens?.name || address;
+  const addressOrName = profile?.ens?.name || address;
 
   onMount(async () => {
     if (!profile) {
@@ -95,19 +96,31 @@
   {/if}
   <div class="wrapper">
     {#if addressType === AddressType.Org}
-      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <Link
+        route={{
+          resource: "profile",
+          params: { addressOrName: addressOrName },
+        }}>
+        {addressLabel}
+      </Link>
       {#if !noBadge}
         <Badge variant="foreground">org</Badge>
       {/if}
     {:else if addressType === AddressType.Contract}
-      <a use:link href={`/${address}`}>
+      <Link route={{ resource: "profile", params: { addressOrName: address } }}>
         {addressLabel}
-      </a>
+      </Link>
       {#if !noBadge}
         <Badge variant="foreground">contract</Badge>
       {/if}
     {:else if addressType === AddressType.EOA}
-      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <Link
+        route={{
+          resource: "profile",
+          params: { addressOrName: addressOrName },
+        }}>
+        {addressLabel}
+      </Link>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
       <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">

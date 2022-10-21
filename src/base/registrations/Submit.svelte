@@ -1,15 +1,15 @@
 <script lang="ts">
-  // TODO: When name is registered, prompt user to edit records.
-  import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
   import type { Session } from "@app/session";
   import type { Wallet } from "@app/wallet";
-  import Loading from "@app/Loading.svelte";
-  import Modal from "@app/Modal.svelte";
-  import ErrorModal from "@app/ErrorModal.svelte";
+
+  import { onMount } from "svelte";
+
+  import * as router from "@app/router";
   import BlockTimer from "@app/BlockTimer.svelte";
   import Button from "@app/Button.svelte";
-
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
   import { registerName, State, state } from "./registrar";
 
   export let wallet: Wallet;
@@ -20,10 +20,20 @@
   let error: Error | null = null;
   const registrationOwner = owner || session.address;
 
-  const view = () =>
-    navigate(`/registrations/${name}.${wallet.registrar.domain}`, {
-      state: { retry: true },
+  function view() {
+    router.push({
+      resource: "registrations",
+      params: {
+        view: {
+          resource: "view",
+          params: {
+            nameOrDomain: `${name}.${wallet.registrar.domain}`,
+            retry: true,
+          },
+        },
+      },
     });
+  }
 
   onMount(async () => {
     try {
@@ -58,7 +68,11 @@
   <ErrorModal
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate("/registrations")} />
+    on:close={() =>
+      router.push({
+        resource: "registrations",
+        params: { view: { resource: "validateName" } },
+      })} />
 {:else}
   <Modal>
     <span slot="title">

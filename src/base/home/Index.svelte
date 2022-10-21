@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
-  import Loading from "@app/Loading.svelte";
-  import Widget from "@app/base/projects/Widget.svelte";
-  import type { ProjectInfo } from "@app/project";
-  import { Project } from "@app/project";
   import type { Host } from "@app/api";
-  import * as proj from "@app/project";
+  import type { ProjectInfo } from "@app/project";
+
+  import * as router from "@app/router";
+  import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
-  import { setOpenGraphMetaTag } from "@app/utils";
+  import Widget from "@app/base/projects/Widget.svelte";
   import config from "@app/config.json";
+  import { Project } from "@app/project";
+  import { setOpenGraphMetaTag } from "@app/utils";
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Interface" },
@@ -26,16 +26,19 @@
         )
       : Promise.resolve([]);
 
-  const onClick = (project: ProjectInfo, seed: Host) => {
-    navigate(
-      proj.path({
+  function onClick(project: ProjectInfo, seed: Host) {
+    router.push({
+      resource: "projects",
+      params: {
+        view: { resource: "tree" },
         urn: project.urn,
+        peer: undefined,
         seed: seed.host,
-        profile: null,
-        revision: project.head,
-      }),
-    );
-  };
+        profile: undefined,
+        revision: project.head ?? undefined,
+      },
+    });
+  }
 </script>
 
 <style>

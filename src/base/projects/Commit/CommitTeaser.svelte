@@ -103,7 +103,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"
-      title="View file"
+      title="Browse the repository at this point in the history"
       on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
       <Icon name="browse" />
     </div>

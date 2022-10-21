@@ -51,11 +51,11 @@
   }
 </style>
 
-<!-- svelte-ignore a11y-missing-attribute -->
 <img
   {title}
   src={source}
   class="avatar"
+  alt="avatar"
   on:error={handleMissingFile}
   class:inline
   class:grayscale />

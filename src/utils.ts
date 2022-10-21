@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import type { RouteLocation } from "@app/index";
 import md5 from "md5";
 import { BigNumber } from "ethers";
 import katex from "katex";
@@ -282,15 +281,6 @@ export function isFulfilled<T>(
   return input.status === "fulfilled";
 }
 
-// Get search parameters from location.
-export function getSearchParam(
-  key: string,
-  location: RouteLocation,
-): string | null {
-  const params = new URLSearchParams(location.search);
-  return params.get(key);
-}
-
 // Get the explorer link of an address, eg. Etherscan.
 export function explorerLink(addr: string, wallet: Wallet): string {
   if (wallet.network.name === "goerli") {
@@ -320,6 +310,11 @@ export function parseEmoji(input: string): string {
   }
 
   return input;
+}
+
+export function scrollIntoView(id: string) {
+  const lineElement = document.getElementById(id);
+  if (lineElement) lineElement.scrollIntoView();
 }
 
 export function getSeedEmoji(seedHost: string): string {

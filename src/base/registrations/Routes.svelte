@@ -1,40 +1,51 @@
 <script lang="ts">
-  import { Route, navigate } from "svelte-routing";
-  import Index from "@app/base/registrations/Index.svelte";
+  import type { RegistrationRoute } from "@app/router/definitions";
+  import type { Session } from "@app/session";
+  import { unreachable } from "@app/utils";
+  import type { Wallet } from "@app/wallet";
+
+  import * as router from "@app/router";
+
   import New from "@app/base/registrations/New.svelte";
   import Submit from "@app/base/registrations/Submit.svelte";
+  import Index from "@app/base/registrations/Index.svelte";
   import View from "@app/base/registrations/View.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
-  import type { Wallet } from "@app/wallet";
-  import type { Session } from "@app/session";
-  import { getSearchParam } from "@app/utils";
 
-  export let session: Session | null;
   export let wallet: Wallet;
+  export let activeRoute: RegistrationRoute;
+  export let session: Session | null;
 </script>
 
-<Route path="registrations">
+{#if activeRoute.params.view.resource === "validateName"}
   <Index {wallet} />
-</Route>
-
-<Route path="registrations/:name/form" let:params let:location>
-  <New {wallet} name={params.name} owner={getSearchParam("owner", location)} />
-</Route>
-
-<Route path="registrations/:name/submit" let:params let:location>
+{:else if activeRoute.params.view.resource === "checkNameAvailability"}
+  <New
+    {wallet}
+    name={activeRoute.params.view.params.nameOrDomain}
+    owner={activeRoute.params.view.params.owner} />
+{:else if activeRoute.params.view.resource === "register"}
   {#if session}
     <Submit
       {wallet}
-      name={params.name}
-      owner={getSearchParam("owner", location)}
+      name={activeRoute.params.view.params.nameOrDomain}
+      owner={activeRoute.params.view.params.owner}
       {session} />
   {:else}
     <ErrorModal
       message={"You must connect your wallet to register"}
-      on:close={() => navigate("/registrations")} />
+      on:close={() => {
+        router.push({
+          resource: "registrations",
+          params: { view: { resource: "validateName" } },
+        });
+      }} />
   {/if}
-</Route>
-
-<Route path="registrations/:domain" let:params>
-  <View {wallet} domain={params.domain} />
-</Route>
+{:else if activeRoute.params.view.resource === "view"}
+  <View
+    {wallet}
+    retry={activeRoute.params.view.params.retry}
+    domain={activeRoute.params.view.params.nameOrDomain} />
+{:else}
+  {unreachable(activeRoute.params.view)}
+{/if}

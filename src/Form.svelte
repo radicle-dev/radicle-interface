@@ -47,7 +47,6 @@
   import type { Wallet } from "@app/wallet";
 
   import cloneDeep from "lodash/cloneDeep";
-  import { link } from "svelte-routing";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
   import {
@@ -230,7 +229,7 @@
               </div>
             {:else if field.url}
               <div>
-                <a use:link href={field.url} class="txt-link">{field.value}</a>
+                <a href={field.url} class="txt-link">{field.value}</a>
               </div>
             {:else if field.validate === "id"}
               <div class="layout-mobile">

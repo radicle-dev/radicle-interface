@@ -7,11 +7,13 @@
     markdownExtensions as extensions,
     getImageMime,
     isUrl,
+    scrollIntoView,
   } from "@app/utils";
   import dompurify from "dompurify";
 
   export let content: string;
   export let getImage: (path: string) => Promise<proj.Blob>;
+  export let hash: string | null = null;
   export let doc = matter(content);
 
   const frontMatter = Object.entries(doc.data);
@@ -31,6 +33,8 @@
         e.classList.add("no-underline");
       }
     }
+
+    if (hash) scrollIntoView(hash);
 
     // Iterate over all images, and fetch their data from the API, then
     // replace the source with a Data-URL. We do this due to the absence

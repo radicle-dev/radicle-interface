@@ -2,14 +2,15 @@
   import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
   import Clipboard from "@app/Clipboard.svelte";
+  import Link from "@app/router/Link.svelte";
 
   export let seed: Seed;
   export let port: number;
   export let full = false;
 
-  const linkToSeed = seed.api.port
-    ? `/seeds/${seed.api.host}:${seed.api.port}`
-    : `/seeds/${formatSeedHost(seed.api.host)}`;
+  const seedHost = seed.api.port
+    ? `${seed.api.host}:${seed.api.port}`
+    : `${formatSeedHost(seed.api.host)}`;
 </script>
 
 <style>
@@ -39,16 +40,24 @@
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span>
-        <a href={linkToSeed} class="txt-link">
-          {formatSeedId(seed.id)}@{seed.host}
-        </a>
+        <Link
+          route={{
+            resource: "seeds",
+            params: { host: formatSeedHost(seedHost) },
+          }}>
+          <span class="txt-link">{formatSeedId(seed.id)}@{seed.host}</span>
+        </Link>
       </span>
       <span class="txt-faded">:{port}</span>
     {:else}
       <span>
-        <a href={linkToSeed} class="txt-link">
-          {formatSeedHost(seed.host)}
-        </a>
+        <Link
+          route={{
+            resource: "seeds",
+            params: { host: seedHost },
+          }}>
+          <span class="txt-link">{formatSeedHost(seedHost)}</span>
+        </Link>
       </span>
     {/if}
   </div>

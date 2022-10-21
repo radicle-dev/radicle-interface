@@ -6,11 +6,7 @@ import pluginRewriteAll from "vite-plugin-rewrite-all";
 
 const config: UserConfig = {
   optimizeDeps: {
-    exclude: [
-      "svelte-routing",
-      "@pedrouid/environment",
-      "@pedrouid/iso-crypto",
-    ],
+    exclude: ["@pedrouid/environment", "@pedrouid/iso-crypto"],
   },
   test: {
     deps: {

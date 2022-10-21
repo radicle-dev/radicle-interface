@@ -3,13 +3,12 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import { link } from "svelte-routing";
-
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";
   import Connect from "@app/Connect.svelte";
   import Floating from "@app/Floating.svelte";
   import Icon from "@app/Icon.svelte";
+  import Link from "@app/router/Link.svelte";
   import Loading from "@app/Loading.svelte";
   import Logo from "@app/Logo.svelte";
   import Search from "@app/Search.svelte";
@@ -127,18 +126,18 @@
     right: 1.5rem;
     top: 5rem;
   }
-  .modal a {
+  .modal-register {
     color: var(--color-foreground-6);
     padding-left: 0.5rem;
   }
-  .modal a:hover {
+  .modal-register:hover {
     color: var(--color-foreground);
   }
 </style>
 
 <header>
   <div class="left">
-    <a use:link href="/" class="logo"><Logo /></a>
+    <Link route={{ resource: "home" }}><span class="logo"><Logo /></span></Link>
     <div class="search">
       <Search
         {wallet}
@@ -162,15 +161,25 @@
 
   <div class="right">
     {#if wallet && wallet.network.name === "goerli"}
-      <a use:link href="/faucet">
+      <Link
+        route={{
+          resource: "faucet",
+          params: { view: { resource: "form" } },
+        }}>
         <span class="network">Goerli</span>
-      </a>
+      </Link>
     {:else if wallet && wallet.network.name === "homestead"}
       <!-- Don't show anything -->
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <a use:link class="register" href="/registrations">Register</a>
+    <Link
+      route={{
+        resource: "registrations",
+        params: { view: { resource: "validateName" } },
+      }}>
+      <span class="register">Register</span>
+    </Link>
 
     {#if address}
       <span class="balance">
@@ -229,14 +238,16 @@
                   ({ query, results } = e.detail);
                 }} />
             </div>
-            <a
-              use:link
+            <Link
+              route={{
+                resource: "registrations",
+                params: { view: { resource: "validateName" } },
+              }}
               on:click={() => {
                 closeFocused();
-              }}
-              href="/registrations">
-              Register
-            </a>
+              }}>
+              <span class="modal-register">Register</span>
+            </Link>
           </div>
         </svelte:fragment>
       </Floating>

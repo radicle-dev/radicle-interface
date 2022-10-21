@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Wallet } from "@app/wallet";
-  import { Project, ProjectContent } from "@app/project";
+  import type { Project } from "@app/project";
+
   import { capitalize } from "@app/utils";
   import { Patch, PatchTab } from "@app/patch";
   import { formatObjectId } from "@app/cobs";
@@ -11,6 +12,7 @@
   import PatchTabBar from "./Patch/PatchTabBar.svelte";
   import PatchTimeline from "./Patch/PatchTimeline.svelte";
   import Placeholder from "@app/Placeholder.svelte";
+  import * as router from "@app/router";
 
   export let patch: Patch;
   export let project: Project;
@@ -25,10 +27,9 @@
   };
 
   const onBrowse = (event: { detail: string }, revision: string) => {
-    project.navigateTo({
-      content: ProjectContent.Tree,
+    router.updateProjectRoute({
+      view: { resource: "tree" },
       revision,
-      patch: null,
       path: event.detail,
     });
   };

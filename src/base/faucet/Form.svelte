@@ -1,17 +1,18 @@
 <script lang="ts">
   import type { Wallet } from "@app/wallet";
 
-  import { session } from "@app/session";
-  import { setOpenGraphMetaTag, toWei, capitalize } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
-  import { navigate } from "svelte-routing";
+
+  import * as router from "@app/router";
+  import Button from "@app/Button.svelte";
+  import TextInput from "@app/TextInput.svelte";
   import {
     calculateTimeLock,
     getMaxWithdrawAmount,
     lastWithdrawalByUser,
   } from "./lib";
-  import Button from "@app/Button.svelte";
-  import TextInput from "@app/TextInput.svelte";
+  import { session } from "@app/session";
+  import { setOpenGraphMetaTag, toWei, capitalize } from "@app/utils";
 
   export let wallet: Wallet;
 
@@ -62,7 +63,10 @@
         return;
       }
 
-      navigate("/faucet/withdraw", { state: { amount } });
+      router.push({
+        resource: "faucet",
+        params: { view: { resource: "withdraw", params: { amount } } },
+      });
     } catch (error) {
       validationMessage = "There was an error, check the dev console.";
       console.error(error);

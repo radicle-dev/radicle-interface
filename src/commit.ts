@@ -33,7 +33,7 @@ export interface CommitContext {
   committer?: {
     peer: {
       id: string;
-      person: Person;
+      person: Person | null;
       delegate: boolean;
     };
   };
