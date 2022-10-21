@@ -1,5 +1,3 @@
-import { navigate } from "svelte-routing";
-import { get, writable } from "svelte/store";
 import { type Host, Request } from "@app/api";
 import type { Commit, CommitHeader, CommitsHistory } from "@app/commit";
 import { isFulfilled, isOid, isRadicleId } from "@app/utils";
@@ -93,116 +91,6 @@ export interface Peer {
   id: PeerId;
   person?: Person;
   delegate: boolean;
-}
-
-export interface Browser {
-  content: ProjectContent;
-  revision: string | null;
-  issue: string | null;
-  patch: string | null;
-  peer: string | null;
-  path: string | null;
-  line: number | null;
-  search: URLSearchParams | null;
-}
-
-export const browserStore = writable({
-  content: ProjectContent.Tree,
-  branches: {},
-  revision: null,
-  issue: null,
-  patch: null,
-  peer: null,
-  path: null,
-  line: null,
-  search: null,
-} as Browser);
-
-export interface BrowseTo {
-  content?: ProjectContent;
-  revision?: string | null;
-  issue?: string | null;
-  patch?: string | null;
-  path?: string | null;
-  peer?: string | null;
-  line?: number | null;
-  search?: URLSearchParams | null;
-}
-
-export interface PathOptions extends BrowseTo {
-  urn: string;
-  profile?: string | null;
-  seed?: string | null;
-}
-
-export function browse(browse: BrowseTo): void {
-  const browser = get(browserStore);
-  browserStore.set({ ...browser, ...browse });
-}
-
-export function path(opts: PathOptions): string {
-  const { urn, profile, seed, peer, content, revision, path, issue, patch } =
-    opts;
-  const result = [];
-
-  if (profile) {
-    result.push(profile);
-  } else if (seed) {
-    result.push("seeds", seed);
-  }
-  result.push(urn);
-
-  if (peer) {
-    result.push("remotes", peer);
-  }
-
-  switch (content) {
-    case ProjectContent.History:
-      result.push("history");
-      break;
-
-    case ProjectContent.Commit:
-      result.push("commits");
-      break;
-
-    case ProjectContent.Issues:
-      result.push("issues");
-      break;
-
-    case ProjectContent.Issue:
-      result.push("issues");
-      break;
-
-    case ProjectContent.Patches:
-      result.push("patches");
-      break;
-
-    case ProjectContent.Patch:
-      result.push("patches");
-      break;
-
-    default:
-      result.push("tree");
-      break;
-  }
-
-  if (issue) {
-    result.push(issue);
-  }
-
-  if (patch) {
-    result.push(patch);
-  }
-
-  if (revision) {
-    result.push(revision);
-  }
-
-  // Avoids appending a slash when the path is the root directory.
-  if (path && path !== "/") {
-    result.push(path);
-  }
-  return "/" + result.join("/");
 }
 
 // We need a SHA1 commit in some places, so we return early if the revision is a SHA and else we look into branches.
@@ -301,12 +189,7 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrUrn: string, host: Host): Promise<ProjectInfo> {
-    const info = await new Request(`projects/${nameOrUrn}`, host).get();
-
-    return {
-      ...info,
-      ...info.meta, // Nb. This is only needed while we are upgrading to the new http-api.
-    };
+    return await new Request(`projects/${nameOrUrn}`, host).get();
   }
 
   static async getProjects(
@@ -413,27 +296,6 @@ export class Project implements ProjectInfo {
       `projects/${this.urn}/readme/${commit}`,
       this.seed.api,
     ).get();
-  }
-
-  navigateTo(browse: BrowseTo): void {
-    navigate(this.pathTo(browse));
-  }
-
-  pathTo(browse: BrowseTo): string {
-    const browser = get(browserStore);
-    const options: PathOptions = {
-      urn: this.urn,
-      ...browser,
-      ...browse,
-    };
-
-    if (this.profile) {
-      options.profile = this.profile?.nameOrAddress;
-    } else {
-      options.seed = this.seed.host;
-    }
-
-    return path(options);
   }
 
   static async get(

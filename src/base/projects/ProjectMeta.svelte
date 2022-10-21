@@ -1,24 +1,30 @@
 <script lang="ts">
-  import { link } from "svelte-routing";
+  import type { PeerId, Project } from "@app/project";
+
+  import { link, routeToPath, activeRouteStore } from "@app/router";
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import { formatSeedId } from "@app/utils";
-  import { type PeerId, type Project, ProjectContent } from "@app/project";
+  import type { ProjectRoute, Route } from "@app/router/definitions";
 
   export let project: Project;
   export let peer: PeerId | null = null;
-  export let noDescription = false;
 
-  function rootPath(): string {
-    return project.pathTo({
-      content: ProjectContent.Tree,
+  const route = $activeRouteStore as ProjectRoute;
+  const rootPath: Route = {
+    type: "projects",
+    params: {
+      ...route.params,
+      urn: project.urn,
+      content: "tree",
       peer: null,
       path: "/",
+      route: null,
       revision: null,
       issue: null,
       patch: null,
-    });
-  }
+    },
+  };
 </script>
 
 <style>
@@ -61,9 +67,6 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
-  .placeholder {
-    height: 2rem;
-  }
 
   .content {
     padding: 0 2rem 0 8rem;
@@ -86,6 +89,7 @@
   <div class="title txt-bold txt-title">
     {#if project.profile}
       <a
+        use:link
         class="org-avatar"
         title={project.profile.nameOrAddress}
         href="/{project.profile.nameOrAddress}">
@@ -96,7 +100,9 @@
       <span class="divider">/</span>
     {/if}
     <span class="truncate">
-      <a use:link class="project-name" href={rootPath()}>{project.name}</a>
+      <a use:link={rootPath} class="project-name" href={routeToPath(rootPath)}>
+        {project.name}
+      </a>
     </span>
     {#if peer}
       <span class="peer-id">
@@ -110,9 +116,5 @@
     <span class="truncate">{project.urn}</span>
     <Clipboard small text={project.urn} />
   </div>
-  {#if !noDescription}
-    <div class="description">{project.description}</div>
-  {:else}
-    <div class="placeholder" />
-  {/if}
+  <div class="description">{project.description}</div>
 </header>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { link } from "svelte-routing";
+  import { link } from "@app/router";
   import { ethers } from "ethers";
   import {
     explorerLink,

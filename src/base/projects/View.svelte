@@ -1,17 +1,65 @@
 <script lang="ts">
   import type { Wallet } from "@app/wallet";
-  import { Route, Router } from "svelte-routing";
-  import { Project, ProjectContent } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
+  import type { Writable } from "svelte/store";
+  import type { State as IssueState } from "./Issues.svelte";
+  import type { State as PatchState } from "./Patches.svelte";
+
+  import * as proj from "@app/project";
+  import * as patch from "@app/patch";
+  import * as issue from "@app/issue";
   import Loading from "@app/Loading.svelte";
   import NotFound from "@app/NotFound.svelte";
+  import { activeRouteStore } from "@app/router";
 
-  import ProjectRoute from "./ProjectRoute.svelte";
+  import Header from "./Header.svelte";
+  import Browser from "./Browser.svelte";
+  import History from "./History.svelte";
+  import Commit from "./Commit.svelte";
+  import Issues from "./Issues.svelte";
+  import Issue from "./Issue.svelte";
+  import Patches from "./Patches.svelte";
+  import Patch from "./Patch.svelte";
+  import ProjectMeta from "./ProjectMeta.svelte";
+  import Message from "@app/Message.svelte";
 
-  export let id: string; // Project name or URN.
-  export let seedHost: string | null = null;
-  export let profileName: string | null = null; // Address or name of parent profile.
-  export let peer: string | null = null;
   export let wallet: Wallet;
+  export let urn: string;
+  export let seed: string | null;
+  export let profile: string | null;
+  export let peer: string | null;
+
+  // Casting activeRouteStore to a projectRoute store
+  $: activeRoute = activeRouteStore as Writable<ProjectRoute>;
+
+  $: searchParams = new URLSearchParams($activeRoute.params.search || "");
+  $: issueFilter = (searchParams.get("state") as IssueState) || "open";
+  $: patchFilter = (searchParams.get("state") as PatchState) || "proposed";
+
+  // Passing peer as param to allow to react to peer change.
+  const getProject = async (peer: string | null) => {
+    const project = await proj.Project.get(urn, peer, profile, seed, wallet);
+    if ($activeRoute.params.route) {
+      const { revision, path } = proj.parseRoute(
+        $activeRoute.params.route,
+        project.branches,
+      );
+      // Updating revision and patch with resolved route and nulling the route param.
+      const params = {
+        ...$activeRoute.params,
+        revision,
+        path,
+        route: null,
+      };
+      activeRoute.update(s => ({ ...s, params }));
+    }
+
+    return project;
+  };
+
+  // Content can be altered in child components.
+  $: revision = $activeRoute.params.revision || null;
+  $: content = $activeRoute.params.content || "tree";
 </script>
 
 <style>
@@ -22,6 +70,9 @@
     padding: 4rem 0;
   }
   main > header {
+    padding: 0 2rem 0 8rem;
+  }
+  .message {
     padding: 0 2rem 0 8rem;
   }
 
@@ -37,99 +88,83 @@
 </style>
 
 <main>
-  {#await Project.get(id, peer, profileName, seedHost, wallet)}
+  {#await getProject(peer)}
     <header>
       <Loading center />
     </header>
   {:then project}
-    <Router>
-      <!-- The default action is to render Browser with the default branch head -->
-      <Route path="/">
-        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {wallet} />
-      </Route>
-      <Route path="/tree">
-        <ProjectRoute content={ProjectContent.Tree} {peer} {project} {wallet} />
-      </Route>
-      <Route path="/tree/*" let:params let:location>
-        <ProjectRoute
-          route={params["*"]}
-          content={ProjectContent.Tree}
-          {location}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
+    <ProjectMeta {project} {peer} />
 
-      <Route path="/history">
-        <ProjectRoute
-          content={ProjectContent.History}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
-      <Route path="/history/*" let:params let:location>
-        <ProjectRoute
-          route={params["*"]}
-          content={ProjectContent.History}
-          {location}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
+    {#await project.getRoot(revision)}
+      <Loading center />
+    {:then { tree, commit }}
+      <Header {tree} {commit} {project} />
 
-      <Route path="/commits/:commit" let:params>
-        <ProjectRoute
-          revision={params.commit}
-          content={ProjectContent.Commit}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
-      <Route path="/commits/*" let:params let:location>
-        <ProjectRoute
-          route={params["*"]}
-          content={ProjectContent.Commit}
-          {location}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
-
-      <Route path="/issues" let:location>
-        <ProjectRoute
-          content={ProjectContent.Issues}
-          {peer}
-          {project}
-          {location}
-          {wallet} />
-      </Route>
-      <Route path="/issues/:issue" let:params let:location>
-        <ProjectRoute
-          content={ProjectContent.Issue}
-          issue={params.issue}
-          {peer}
-          {project}
-          {location}
-          {wallet} />
-      </Route>
-
-      <Route path="/patches">
-        <ProjectRoute
-          content={ProjectContent.Patches}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
-      <Route path="/patches/:patch" let:params>
-        <ProjectRoute
-          content={ProjectContent.Patch}
-          patch={params.patch}
-          {peer}
-          {project}
-          {wallet} />
-      </Route>
-    </Router>
+      {#if content === "tree"}
+        <Browser {project} {commit} {tree} />
+      {:else if content === "commits"}
+        {#await proj.Project.getCommits( project.urn, project.seed.api, { parent: commit, verified: true }, )}
+          <Loading center />
+        {:then history}
+          <History {project} {history} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if content === "commit"}
+        {#await project.getCommit(commit)}
+          <Loading center />
+        {:then commit}
+          <Commit {project} {commit} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if content === "issues"}
+        {#await issue.Issue.getIssues(project.urn, project.seed.api)}
+          <Loading center />
+        {:then issues}
+          <Issues {project} state={issueFilter} {wallet} {issues} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if content === "issue" && $activeRoute.params.issue}
+        {#await issue.Issue.getIssue(project.urn, $activeRoute.params.issue, project.seed.api)}
+          <Loading center />
+        {:then issue}
+          <Issue {project} {wallet} {issue} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if content === "patches"}
+        {#await patch.Patch.getPatches(project.urn, project.seed.api)}
+          <Loading center />
+        {:then patches}
+          <Patches {project} {wallet} state={patchFilter} {patches} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if content === "patch" && $activeRoute.params.patch}
+        {#await patch.Patch.getPatch(project.urn, $activeRoute.params.patch, project.seed.api)}
+          <Loading center />
+        {:then patch}
+          <Patch {project} {wallet} {patch} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {/if}
+    {/await}
   {:catch}
-    <NotFound title={id} subtitle="This project was not found." />
+    <NotFound title={urn} subtitle="This project was not found." />
   {/await}
 </main>

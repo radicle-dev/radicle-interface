@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import Loading from "@app/Loading.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { ProjectInfo } from "@app/project";
   import { Project } from "@app/project";
   import type { Host } from "@app/api";
-  import * as proj from "@app/project";
   import Message from "@app/Message.svelte";
   import { setOpenGraphMetaTag } from "@app/utils";
   import config from "@app/config.json";
@@ -27,14 +26,17 @@
       : Promise.resolve([]);
 
   const onClick = (project: ProjectInfo, seed: Host) => {
-    navigate(
-      proj.path({
+    navigate({
+      type: "projects",
+      params: {
         urn: project.urn,
+        peer: null,
         seed: seed.host,
         profile: null,
+        content: "tree",
         revision: project.head,
-      }),
-    );
+      },
+    });
   };
 </script>
 

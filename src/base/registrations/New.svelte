@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import { formatAddress } from "@app/utils";
   import { session } from "@app/session";
   import type { Wallet } from "@app/wallet";
@@ -32,13 +32,15 @@
   $: registrationOwner = owner || ($session && $session.address);
 
   function begin() {
-    navigate(
-      `/registrations/${name}/submit?${
-        registrationOwner
-          ? new URLSearchParams({ owner: registrationOwner })
-          : ""
-      }`,
-    );
+    navigate({
+      type: "registrations",
+      params: {
+        nameOrDomain: name,
+        activeView: "submit",
+        owner: registrationOwner,
+        retry: false,
+      },
+    });
   }
 
   onMount(async () => {

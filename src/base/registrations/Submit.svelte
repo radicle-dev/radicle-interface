@@ -1,7 +1,7 @@
 <script lang="ts">
   // TODO: When name is registered, prompt user to edit records.
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Session } from "@app/session";
   import type { Wallet } from "@app/wallet";
   import Loading from "@app/Loading.svelte";
@@ -22,7 +22,7 @@
 
   const view = () =>
     navigate(`/registrations/${name}.${wallet.registrar.domain}`, {
-      state: { retry: true },
+      retry: true,
     });
 
   onMount(async () => {

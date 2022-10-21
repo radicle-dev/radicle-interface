@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import type { Wallet } from "@app/wallet";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
@@ -12,9 +12,9 @@
   import Button from "@app/Button.svelte";
 
   export let wallet: Wallet;
+  export let amount: string;
 
   let error: Error;
-  const amount: string = window.history.state.amount;
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",

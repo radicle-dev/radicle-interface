@@ -55,7 +55,6 @@
     "siwe": "^2.0.5",
     "svelte": "^3.52.0",
     "svelte-preprocess": "^4.10.7",
-    "svelte-routing": "^1.6.0",
     "util": "^0.12.5"
   }
 }

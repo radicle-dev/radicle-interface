@@ -6,11 +6,12 @@
   import type { Wallet } from "@app/wallet";
   import type { Issue } from "@app/issue";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
+  import type { Project } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
 
-  import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { navigate } from "svelte-routing";
+  import { navigate, activeRouteStore } from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -18,11 +19,12 @@
 
   export let wallet: Wallet;
   export let issues: Issue[];
-  export let project: Project;
   export let state: State;
+  export let project: Project;
 
   let options: ToggleButtonOption<State>[];
   const { open, closed } = groupIssues(issues);
+  const activeRoute = $activeRouteStore as ProjectRoute;
 
   $: filteredIssues = state === "open" ? open : closed;
   $: sortedIssues = filteredIssues.sort(
@@ -66,7 +68,10 @@
     <ToggleButton
       {options}
       on:select={e => {
-        navigate(`?state=${e.detail}`);
+        navigate({
+          type: "projects",
+          params: { ...activeRoute.params, search: e.detail },
+        });
       }}
       active={state} />
   </div>
@@ -78,12 +83,16 @@
         <div
           class="teaser"
           on:click={() => {
-            project.navigateTo({
-              content: ProjectContent.Issue,
-              issue: issue.id,
-              patch: null,
-              revision: null,
-              path: null,
+            navigate({
+              type: "projects",
+              params: {
+                urn: project.urn,
+                content: "issue",
+                issue: issue.id,
+                patch: null,
+                revision: null,
+                path: null,
+              },
             });
           }}>
           <IssueTeaser {wallet} {issue} />

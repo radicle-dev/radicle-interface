@@ -4,7 +4,7 @@
   import { session } from "@app/session";
   import { setOpenGraphMetaTag, toWei, capitalize } from "@app/utils";
   import { formatEther } from "@ethersproject/units";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import {
     calculateTimeLock,
     getMaxWithdrawAmount,
@@ -62,7 +62,7 @@
         return;
       }
 
-      navigate("/faucet/withdraw", { state: { amount } });
+      navigate({ type: "faucet", params: { activeView: "withdraw", amount } });
     } catch (error) {
       validationMessage = "There was an error, check the dev console.";
       console.error(error);

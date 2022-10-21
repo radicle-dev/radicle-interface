@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Router, Route } from "svelte-routing";
+  import { initialize, activeRouteStore } from "@app/router";
   import { getWallet } from "@app/wallet";
   import { Connection, state, session } from "@app/session";
 
@@ -8,12 +8,15 @@
   import Registrations from "@app/base/registrations/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
-  import Projects from "@app/base/projects/Routes.svelte";
+  import Projects from "@app/base/projects/View.svelte";
   import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import ColorPalette from "./ColorPalette.svelte";
+  import ColorPalette from "@app/ColorPalette.svelte";
+  import NotFound from "@app/NotFound.svelte";
+
+  initialize();
 
   const loadWallet = getWallet().then(async wallet => {
     if ($state.connection === Connection.Connected) {
@@ -82,21 +85,41 @@
     <ColorPalette />
     <Header session={$session} {wallet} />
     <div class="wrapper">
-      <Router>
-        <Route path="/">
-          <Home />
-        </Route>
-        <Route path="vesting">
-          <Vesting {wallet} session={$session} />
-        </Route>
-        <Registrations {wallet} session={$session} />
-        <Seeds {wallet} session={$session} />
-        <Faucet {wallet} />
-        <Route path="/:addressOrName" let:params>
-          <Profile addressOrName={params.addressOrName} {wallet} />
-        </Route>
-        <Projects {wallet} />
-      </Router>
+      {#if $activeRouteStore.type === "home"}
+        <Home />
+      {:else if $activeRouteStore.type === "faucet"}
+        <Faucet
+          {wallet}
+          activeView={$activeRouteStore.params.activeView}
+          amount={$activeRouteStore.params.amount} />
+      {:else if $activeRouteStore.type === "seeds"}
+        <Seeds
+          {wallet}
+          session={$session}
+          host={$activeRouteStore.params.host} />
+      {:else if $activeRouteStore.type === "registrations"}
+        <Registrations
+          {wallet}
+          activeView={$activeRouteStore.params.activeView}
+          owner={$activeRouteStore.params.owner}
+          nameOrDomain={$activeRouteStore.params.nameOrDomain}
+          session={$session} />
+      {:else if $activeRouteStore.type === "vesting"}
+        <Vesting {wallet} session={$session} />
+      {:else if $activeRouteStore.type === "projects"}
+        <Projects
+          {wallet}
+          profile={$activeRouteStore.params.profile || null}
+          seed={$activeRouteStore.params.seed || null}
+          peer={$activeRouteStore.params.peer || null}
+          urn={$activeRouteStore.params.urn} />
+      {:else if $activeRouteStore.type === "profile"}
+        <Profile
+          addressOrName={$activeRouteStore.params.addressOrName}
+          {wallet} />
+      {:else}
+        <NotFound title="404" subtitle="Nothing here" />
+      {/if}
     </div>
   {:catch err}
     <div class="wrapper">

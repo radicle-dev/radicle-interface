@@ -1,40 +1,54 @@
 <script lang="ts">
-  import type { Writable } from "svelte/store";
-  import { navigate } from "svelte-routing";
-  import type { Browser } from "@app/project";
-  import { ProjectContent, Project } from "@app/project";
+  import type { Project } from "@app/project";
+  import type { Tree } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
+
+  import { navigate, activeRouteStore } from "@app/router";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
-  import type { Tree } from "@app/project";
+  import { closeFocused } from "@app/Floating.svelte";
 
   export let project: Project;
   export let tree: Tree;
   export let commit: string;
-  export let browserStore: Writable<Browser>;
 
   const { urn, peers, branches, seed } = project;
 
-  $: browser = $browserStore;
-  $: revision = browser.revision || commit;
-  $: content = browser.content;
+  $: route = $activeRouteStore as ProjectRoute;
+  $: revision = route.params.revision || commit;
+  $: content = route.params.content;
+  $: peer = route.params.peer;
 
   // Switches between project views.
-  const toggleContent = (input: ProjectContent, keepSourceInPath: boolean) => {
-    project.navigateTo({
-      content: content === input ? ProjectContent.Tree : input,
-      issue: null, // Removing issue here from browserStore to not contaminate path on navigation.
-      patch: null, // Removing patch here from browserStore to not contaminate path on navigation.
-      ...(keepSourceInPath ? null : { revision: null, path: null }),
+  const toggleContent = (input: string, keepSourceInPath: boolean) => {
+    navigate({
+      type: "projects",
+      params: {
+        urn: project.urn,
+        content: content === input ? "tree" : input,
+        revision,
+        issue: null,
+        patch: null,
+        ...(keepSourceInPath ? null : { revision: null, path: null }),
+      },
     });
   };
 
   const updatePeer = (peer: string) => {
-    project.navigateTo({ peer, revision: null });
+    navigate({
+      type: "projects",
+      params: { urn: project.urn, peer, revision: null, path: null },
+    });
+    closeFocused();
   };
 
   const updateRevision = (revision: string) => {
-    project.navigateTo({ revision });
+    navigate({
+      type: "projects",
+      params: { urn: project.urn, route: null, revision },
+    });
+    closeFocused();
   };
 </script>
 
@@ -91,7 +105,7 @@
   {#if peers.length > 0}
     <PeerSelector
       {peers}
-      peer={browser.peer}
+      {peer}
       on:peerChanged={event => updatePeer(event.detail)} />
   {/if}
 
@@ -118,8 +132,8 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
-    class:active={content === ProjectContent.History}
-    on:click={() => toggleContent(ProjectContent.History, true)}>
+    class:active={content === "commits"}
+    on:click={() => toggleContent("commits", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
   </div>
@@ -127,10 +141,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
-      class:active={content === ProjectContent.Issues}
+      class:active={content === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
-      on:click={() => toggleContent(ProjectContent.Issues, false)}>
+      on:click={() => toggleContent("issues", false)}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
     </div>
@@ -139,10 +153,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
-      class:active={content === ProjectContent.Patches}
+      class:active={content === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
-      on:click={() => toggleContent(ProjectContent.Patches, false)}>
+      on:click={() => toggleContent("patches", false)}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
     </div>

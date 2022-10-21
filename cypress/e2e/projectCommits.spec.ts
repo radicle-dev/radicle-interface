@@ -86,7 +86,7 @@ describe("project commits", () => {
 
   it("display commit groups and commit trailers", () => {
     cy.visit(
-      "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/history",
+      "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits",
       {
         onBeforeLoad(win) {
           const address = "0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D";
@@ -147,7 +147,7 @@ describe("project commits", () => {
   it("display commit details", () => {
     cy.location().should(location => {
       expect(location.pathname).to.eq(
-        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
+        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commit/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
       );
     });
     cy.get("header .summary .txt-medium").should("have.text", "initial commit");

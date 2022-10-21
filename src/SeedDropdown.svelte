@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import { Seed } from "@app/base/seeds/Seed";
   import Dropdown from "@app/Dropdown.svelte";
   import type { SeedSession } from "@app/siwe";

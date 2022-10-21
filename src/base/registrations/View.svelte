@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { link, navigate } from "svelte-routing";
+  import { link, navigate } from "@app/router";
   import type { Wallet } from "@app/wallet";
   import type { ethers } from "ethers";
   import { session } from "@app/session";

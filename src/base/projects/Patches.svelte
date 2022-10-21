@@ -1,25 +1,30 @@
-<script lang="ts">
-  type State = "proposed" | "draft" | "archived";
+<script lang="ts" context="module">
+  export type State = "proposed" | "draft" | "archived";
+</script>
 
+<script lang="ts">
   import type { Wallet } from "@app/wallet";
   import type { Patch } from "@app/patch";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
+  import type { Project } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
 
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
   import ToggleButton from "@app/ToggleButton.svelte";
 
-  import { Project, ProjectContent } from "@app/project";
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
+  import { navigate, activeRouteStore } from "@app/router";
 
-  export let state: State = "proposed";
+  export let state: State;
   export let wallet: Wallet;
   export let patches: Patch[];
   export let project: Project;
 
   let options: ToggleButtonOption<State>[];
   const sortedPatches = groupPatches(patches);
+  const activeRoute = $activeRouteStore as ProjectRoute;
 
   $: filteredPatches = sortedPatches[state];
   $: options = [
@@ -63,7 +68,10 @@
     <ToggleButton
       {options}
       on:select={e => {
-        state = e.detail;
+        navigate({
+          type: "projects",
+          params: { ...activeRoute.params, search: e.detail },
+        });
       }}
       active={state} />
   </div>
@@ -75,12 +83,16 @@
         <div
           class="teaser"
           on:click={() => {
-            project.navigateTo({
-              content: ProjectContent.Patch,
-              patch: patch.id,
-              issue: null,
-              revision: null,
-              path: null,
+            navigate({
+              type: "projects",
+              params: {
+                urn: project.urn,
+                content: "patch",
+                patch: patch.id,
+                issue: null,
+                revision: null,
+                path: null,
+              },
             });
           }}>
           <PatchTeaser {wallet} {patch} />

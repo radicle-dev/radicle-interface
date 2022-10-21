@@ -3,7 +3,7 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import { link } from "svelte-routing";
+  import { link } from "@app/router";
 
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";

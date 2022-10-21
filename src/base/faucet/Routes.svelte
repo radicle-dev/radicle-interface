@@ -1,16 +1,15 @@
 <script lang="ts">
-  import { Route } from "svelte-routing";
   import Index from "@app/base/faucet/Index.svelte";
   import type { Wallet } from "@app/wallet";
   import Withdraw from "./Withdraw.svelte";
 
   export let wallet: Wallet;
+  export let activeView: string;
+  export let amount: string | null;
 </script>
 
-<Route path="faucet">
+{#if activeView === "form"}
   <Index {wallet} />
-</Route>
-
-<Route path="faucet/withdraw">
-  <Withdraw {wallet} />
-</Route>
+{:else if activeView === "withdraw" && amount}
+  <Withdraw {wallet} {amount} />
+{/if}

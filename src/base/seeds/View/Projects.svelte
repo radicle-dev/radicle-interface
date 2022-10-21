@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
+  import { navigate } from "@app/router";
   import * as proj from "@app/project";
   import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
@@ -35,14 +35,16 @@
   };
 
   const onClick = (project: ProjectInfo) => {
-    navigate(
-      proj.path({
+    navigate({
+      type: "projects",
+      params: {
         urn: project.urn,
         seed: seed?.host,
+        content: "tree",
         profile: profile?.name ?? profile?.address,
         revision: project.head,
-      }),
-    );
+      },
+    });
   };
 </script>
 
