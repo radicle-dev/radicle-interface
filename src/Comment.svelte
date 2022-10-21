@@ -28,6 +28,11 @@
     }
   });
 
+  const templateComment = `<!--
+Please enter a comment message for your patch update. Leaving this
+blank is also okay.
+-->`;
+
   $: source = profile?.avatar || comment.author.urn;
   $: title =
     profile?.name ||
@@ -91,7 +96,7 @@
       <ReactionSelector on:select={selectReaction} />
     </div>
     <div class="card-body">
-      {#if comment.body === ""}
+      {#if comment.body.trim() === "" || comment.body.trim() === templateComment}
         <span class="txt-missing">No description.</span>
       {:else}
         <Markdown content={comment.body} {getImage} />
