@@ -27,7 +27,6 @@
     "cypress": "^10.10.0",
     "eslint": "^8.25.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "happy-dom": "^7.5.13",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.8.0",
     "svelte-check": "^2.9.2",
