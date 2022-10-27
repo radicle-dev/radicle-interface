@@ -7,7 +7,8 @@
   import Vesting from "@app/base/vesting/Index.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
-  import Faucet from "@app/base/faucet/Routes.svelte";
+  import FaucetForm from "@app/base/faucet/Form.svelte";
+  import FaucetWithdraw from "@app/base/faucet/Withdraw.svelte";
   import Projects from "@app/base/projects/View.svelte";
   import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
@@ -88,7 +89,13 @@
       {#if $activeRouteStore.type === "home"}
         <Home />
       {:else if $activeRouteStore.type === "faucet"}
-        <Faucet {wallet} activeView={$activeRouteStore.params.activeView} />
+        {#if $activeRouteStore.params.activeView.type === "form"}
+          <FaucetForm {wallet} />
+        {:else if $activeRouteStore.params.activeView.type === "withdraw"}
+          <FaucetWithdraw
+            {wallet}
+            amount={$activeRouteStore.params.activeView.params.amount} />
+        {/if}
       {:else if $activeRouteStore.type === "seeds"}
         <Seeds
           {wallet}
