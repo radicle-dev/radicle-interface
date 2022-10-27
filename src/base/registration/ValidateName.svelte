@@ -15,7 +15,7 @@
     if (!valid) {
       return;
     }
-    navigate(`/registration/${ensName}/form`);
+    navigate(`/registration/${ensName}/checkNameAvailability`);
   }
 
   function validate(input: string) {

@@ -35,10 +35,10 @@
     navigate({
       type: "registration",
       params: {
-        nameOrDomain: name,
-        activeView: "submit",
-        owner: registrationOwner,
-        retry: false,
+        activeView: {
+          type: "register",
+          params: { nameOrDomain: name, owner: registrationOwner },
+        },
       },
     });
   }
