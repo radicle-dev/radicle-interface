@@ -16,7 +16,7 @@ export type Route =
 
 export type FaucetRoute =
   | { type: "form" }
-  | { type: "withdraw"; params: { amount: string } };
+  | { type: "withdraw"; params: { amount: string | null } };
 
 export interface ProjectsParams {
   content?: string;
