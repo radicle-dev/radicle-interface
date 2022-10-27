@@ -1,10 +1,11 @@
-///<reference types="vitest" />
-import type { UserConfig } from "vite";
+/// <reference types="vitest" />
+
 import path from "path";
 import pluginRewriteAll from "vite-plugin-rewrite-all";
+import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
-const config: UserConfig = {
+export default defineConfig({
   optimizeDeps: {
     exclude: ["@pedrouid/environment", "@pedrouid/iso-crypto"],
   },
@@ -37,13 +38,6 @@ const config: UserConfig = {
       "@app": path.resolve("./src"),
     },
   },
-  define: {
-    "process.env": {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      READABLE_STREAM: "disable",
-      hashRouting: Boolean(process.env.HASH_ROUTING),
-    },
-  },
   build: {
     outDir: "build",
     rollupOptions: {
@@ -58,11 +52,12 @@ const config: UserConfig = {
       },
     },
   },
-};
 
-// For Vitest to work we need to unset READABLE_STREAM.
-if (process.env.VITEST || process.env.Cypress) {
-  config.define = undefined;
-}
-
-export default config;
+  define: {
+    "process.env": {
+      hashRouting: Boolean(process.env.HASH_ROUTING),
+    },
+    VITEST: process.env.VITEST !== undefined,
+    PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
+  },
+});

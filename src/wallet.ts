@@ -10,7 +10,7 @@ import { capitalize } from "@app/utils";
 import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 import homestead from "@app/ethereum/networks/homestead.json";
 import goerli from "@app/ethereum/networks/goerli.json";
-import config from "@app/config.json";
+import { config } from "@app/config";
 
 interface NetworkConfig {
   name: string;

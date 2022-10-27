@@ -7,7 +7,7 @@
   import * as utils from "@app/utils";
   import { Profile } from "@app/profile";
   import { Project } from "@app/project";
-  import config from "@app/config.json";
+  import { config } from "@app/config";
 
   export interface ProjectsAndProfiles {
     projects: { info: ProjectInfo; seed: Host }[];
