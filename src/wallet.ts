@@ -29,15 +29,6 @@ interface NetworkConfig {
   alchemy: { key: string };
 }
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    Cypress: any;
-    ethereum: any;
-    registrarState: any;
-  }
-}
-
 export type WalletConnectState =
   | { state: "close" }
   | { state: "open"; uri: string; onClose: any };
