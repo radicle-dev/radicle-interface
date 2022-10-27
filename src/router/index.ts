@@ -108,31 +108,37 @@ export function pathToRoute(path: string | null): Route {
     case "registration": {
       const nameOrDomain = segments.shift();
       const activeView = segments.shift();
+      const owner = url.searchParams.get("owner");
+
       if (nameOrDomain) {
-        if (activeView) {
+        if (
+          activeView === "checkNameAvailability" ||
+          activeView === "register"
+        ) {
           return {
             type: "registration",
             params: {
-              activeView,
-              nameOrDomain,
-              owner: url.searchParams.get("owner"),
-              retry: false,
+              activeView: {
+                type: activeView,
+                params: { nameOrDomain, owner },
+              },
+            },
+          };
+        } else if (activeView === undefined) {
+          return {
+            type: "registration",
+            params: {
+              activeView: {
+                type: "view",
+                params: { nameOrDomain },
+              },
             },
           };
         }
-        return {
-          type: "registration",
-          params: { nameOrDomain, owner: null, activeView: null, retry: false },
-        };
       }
       return {
         type: "registration",
-        params: {
-          nameOrDomain: null,
-          owner: null,
-          activeView: null,
-          retry: false,
-        },
+        params: { activeView: { type: "validateName" } },
       };
     }
     case "faucet": {
@@ -300,21 +306,23 @@ export function routeToPath(route: Route): string | null {
     }
   } else if (
     route.type === "registration" &&
-    !route.params.nameOrDomain &&
-    !route.params.activeView
+    route.params.activeView.type === "validateName"
   ) {
     return `/registration`;
   } else if (
     route.type === "registration" &&
-    route.params.nameOrDomain &&
-    !route.params.activeView
+    route.params.activeView.type === "view"
   ) {
-    return `/registration/${route.params.nameOrDomain}`;
-  } else if (route.type === "registration" && route.params.activeView) {
-    if (route.params.owner) {
-      return `/registration/${route.params.nameOrDomain}/${route.params.activeView}?owner=${route.params.owner}`;
+    return `/registration/${route.params.activeView.params.nameOrDomain}`;
+  } else if (
+    route.type === "registration" &&
+    (route.params.activeView.type === "checkNameAvailability" ||
+      route.params.activeView.type === "register")
+  ) {
+    if (route.params.activeView.params.owner) {
+      return `/registration/${route.params.activeView.params.nameOrDomain}/${route.params.activeView.type}?owner=${route.params.activeView.params.owner}`;
     }
-    return `/registration/${route.params.nameOrDomain}/${route.params.activeView}`;
+    return `/registration/${route.params.activeView.params.nameOrDomain}/${route.params.activeView.type}`;
   } else if (route.type === "profile") {
     return `/${route.params.addressOrName}`;
   } else if (route.type === "404") {

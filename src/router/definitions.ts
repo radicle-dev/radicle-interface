@@ -3,20 +3,38 @@ export type Route =
   | {
       type: "faucet";
       params: {
-        activeView: FaucetRoute;
+        activeView:
+          | { type: "form" }
+          | { type: "withdraw"; params: { amount: string | null } };
       };
     }
   | { type: "home" }
   | { type: "boot" }
   | { type: "profile"; params: { addressOrName: string } }
   | { type: "projects"; params: ProjectsParams }
-  | { type: "registration"; params: RegistrationParams }
+  | {
+      type: "registration";
+      params: {
+        activeView:
+          | {
+              type: "validateName";
+            }
+          | {
+              type: "checkNameAvailability";
+              params: { nameOrDomain: string; owner: string | null };
+            }
+          | {
+              type: "register";
+              params: { nameOrDomain: string; owner: string | null };
+            }
+          | {
+              type: "view";
+              params: { nameOrDomain: string };
+            };
+      };
+    }
   | { type: "seeds"; params: { host: string } }
   | { type: "vesting" };
-
-export type FaucetRoute =
-  | { type: "form" }
-  | { type: "withdraw"; params: { amount: string | null } };
 
 export interface ProjectsParams {
   content?: string;
@@ -34,10 +52,3 @@ export interface ProjectsParams {
 }
 
 export type ProjectRoute = { type: "projects"; params: ProjectsParams };
-
-export interface RegistrationParams {
-  nameOrDomain: string | null;
-  activeView: string | null;
-  owner: string | null;
-  retry: boolean;
-}

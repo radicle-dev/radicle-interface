@@ -1,11 +1,17 @@
 <script lang="ts">
-  import { initialize, activeRouteStore } from "@app/router";
-  import { getWallet } from "@app/wallet";
   import { Connection, state, session } from "@app/session";
+  import { getWallet } from "@app/wallet";
+  import { initialize, activeRouteStore } from "@app/router";
+  import { navigate } from "@app/router";
+  import { unreachable } from "@app/utils";
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
-  import Registration from "@app/base/registration/Routes.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import RegistrationValidateName from "@app/base/registration/ValidateName.svelte";
+  import RegistrationCheckNameAvailability from "@app/base/registration/CheckNameAvailability.svelte";
+  import RegistrationRegister from "@app/base/registration/Register.svelte";
+  import RegistrationView from "@app/base/registration/View.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import FaucetForm from "@app/base/faucet/Form.svelte";
   import FaucetWithdraw from "@app/base/faucet/Withdraw.svelte";
@@ -102,12 +108,32 @@
           session={$session}
           host={$activeRouteStore.params.host} />
       {:else if $activeRouteStore.type === "registration"}
-        <Registration
-          {wallet}
-          activeView={$activeRouteStore.params.activeView}
-          owner={$activeRouteStore.params.owner}
-          nameOrDomain={$activeRouteStore.params.nameOrDomain}
-          session={$session} />
+        {#if $activeRouteStore.params.activeView.type === "validateName"}
+          <RegistrationValidateName {wallet} />
+        {:else if $activeRouteStore.params.activeView.type === "checkNameAvailability"}
+          <RegistrationCheckNameAvailability
+            {wallet}
+            name={$activeRouteStore.params.activeView.params.nameOrDomain}
+            owner={$activeRouteStore.params.activeView.params.owner} />
+        {:else if $activeRouteStore.params.activeView.type === "register"}
+          {#if $session}
+            <RegistrationRegister
+              {wallet}
+              name={$activeRouteStore.params.activeView.params.nameOrDomain}
+              owner={$activeRouteStore.params.activeView.params.owner}
+              session={$session} />
+          {:else}
+            <ErrorModal
+              message={"You must connect your wallet to register"}
+              on:close={() => navigate("/registration")} />
+          {/if}
+        {:else if $activeRouteStore.params.activeView.type === "view"}
+          <RegistrationView
+            {wallet}
+            domain={$activeRouteStore.params.activeView.params.nameOrDomain} />
+        {:else}
+          {unreachable($activeRouteStore.params.activeView)}
+        {/if}
       {:else if $activeRouteStore.type === "vesting"}
         <Vesting {wallet} session={$session} />
       {:else if $activeRouteStore.type === "projects"}

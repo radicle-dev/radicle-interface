@@ -28,10 +28,7 @@ describe("routeToPath", () => {
       input: {
         type: "registration",
         params: {
-          nameOrDomain: null,
-          owner: null,
-          activeView: null,
-          retry: false,
+          activeView: { type: "validateName" },
         },
       },
       output: "/registration",
@@ -41,10 +38,7 @@ describe("routeToPath", () => {
       input: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: null,
-          retry: false,
+          activeView: { type: "view", params: { nameOrDomain: "sebastinez" } },
         },
       },
       output: "/registration/sebastinez",
@@ -54,26 +48,28 @@ describe("routeToPath", () => {
       input: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: "form",
-          retry: false,
+          activeView: {
+            type: "checkNameAvailability",
+            params: {
+              nameOrDomain: "sebastinez",
+            },
+          },
         },
       },
-      output: "/registration/sebastinez/form",
+      output: "/registration/sebastinez/checkNameAvailability",
       description: "Registration Form Route",
     },
     {
       input: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: "submit",
-          retry: false,
+          activeView: {
+            type: "register",
+            params: { nameOrDomain: "sebastinez" },
+          },
         },
       },
-      output: "/registration/sebastinez/submit",
+      output: "/registration/sebastinez/register",
       description: "Registration Submit Route",
     },
     {
@@ -129,10 +125,7 @@ describe("pathToRoute", () => {
       output: {
         type: "registration",
         params: {
-          nameOrDomain: null,
-          owner: null,
-          activeView: null,
-          retry: false,
+          activeView: { type: "validateName" },
         },
       },
       description: "Registration Index Route",
@@ -142,36 +135,36 @@ describe("pathToRoute", () => {
       output: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: null,
-          retry: false,
+          activeView: { type: "view", params: { nameOrDomain: "sebastinez" } },
         },
       },
       description: "Registration View Route",
     },
     {
-      input: "/registration/sebastinez/form",
+      input: "/registration/sebastinez/checkNameAvailability",
       output: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: "form",
-          retry: false,
+          activeView: {
+            type: "checkNameAvailability",
+            params: {
+              nameOrDomain: "sebastinez",
+              owner: null,
+            },
+          },
         },
       },
       description: "Registration Form Route",
     },
     {
-      input: "/registration/sebastinez/submit",
+      input: "/registration/sebastinez/register",
       output: {
         type: "registration",
         params: {
-          nameOrDomain: "sebastinez",
-          owner: null,
-          activeView: "submit",
-          retry: false,
+          activeView: {
+            type: "register",
+            params: { nameOrDomain: "sebastinez", owner: null },
+          },
         },
       },
       description: "Registration Submit Route",

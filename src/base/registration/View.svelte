@@ -254,7 +254,7 @@
     <span slot="actions">
       <a
         use:link
-        href={`/registration/${domain}/form`}
+        href={`/registration/${domain}/register`}
         class="txt-link register">
         Register &rarr;
       </a>
