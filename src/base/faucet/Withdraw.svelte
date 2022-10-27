@@ -12,7 +12,7 @@
   import Button from "@app/Button.svelte";
 
   export let wallet: Wallet;
-  export let amount: string;
+  export let amount: string | null;
 
   let error: Error;
   let state: State = {
@@ -25,6 +25,9 @@
 
   onMount(async () => {
     try {
+      if (!amount) {
+        throw new Error("You must supply the withdrawable amount.");
+      }
       if ($session) {
         state.status = Status.Signing;
         const tx = await withdraw(amount, $session.signer, wallet);

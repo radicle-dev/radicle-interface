@@ -143,7 +143,7 @@ export function pathToRoute(path: string | null): Route {
           params: {
             activeView: {
               type: "withdraw",
-              params: { amount: url.searchParams.get("amount") ?? "0" },
+              params: { amount: url.searchParams.get("amount") },
             },
           },
         };
