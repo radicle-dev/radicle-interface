@@ -2,7 +2,7 @@ import type { Wallet } from "@app/wallet";
 
 import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
-import * as utils from "./utils";
+import * as utils from "@app/utils";
 
 describe("Conversions", () => {
   test("toWei", () => {

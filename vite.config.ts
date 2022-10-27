@@ -15,7 +15,7 @@ export default defineConfig({
     },
     setupFiles: "./vitest/setupVitest",
     environment: "happy-dom",
-    include: ["**/*.test.ts"],
+    include: ["tests/unit/**/*.test.ts"],
     reporters: "verbose",
   },
   plugins: [
