@@ -1,6 +1,11 @@
 export type Route =
   | { type: "404" }
-  | { type: "faucet"; params: { activeView: string; amount: string | null } }
+  | {
+      type: "faucet";
+      params: {
+        activeView: FaucetRoute;
+      };
+    }
   | { type: "home" }
   | { type: "boot" }
   | { type: "profile"; params: { addressOrName: string } }
@@ -8,6 +13,10 @@ export type Route =
   | { type: "registrations"; params: RegistrationParams }
   | { type: "seeds"; params: { host: string } }
   | { type: "vesting" };
+
+export type FaucetRoute =
+  | { type: "form" }
+  | { type: "withdraw"; params: { amount: string } };
 
 export interface ProjectsParams {
   content?: string;

@@ -88,10 +88,7 @@
       {#if $activeRouteStore.type === "home"}
         <Home />
       {:else if $activeRouteStore.type === "faucet"}
-        <Faucet
-          {wallet}
-          activeView={$activeRouteStore.params.activeView}
-          amount={$activeRouteStore.params.amount} />
+        <Faucet {wallet} activeView={$activeRouteStore.params.activeView} />
       {:else if $activeRouteStore.type === "seeds"}
         <Seeds
           {wallet}

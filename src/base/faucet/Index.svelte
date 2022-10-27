@@ -62,7 +62,10 @@
         return;
       }
 
-      navigate({ type: "faucet", params: { activeView: "withdraw", amount } });
+      navigate({
+        type: "faucet",
+        params: { activeView: { type: "withdraw", params: { amount } } },
+      });
     } catch (error) {
       validationMessage = "There was an error, check the dev console.";
       console.error(error);
