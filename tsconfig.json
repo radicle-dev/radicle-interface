@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src", "cypress/support"],
+  "include": ["src", "cypress/support", "tests"],
   "exclude": ["node_modules/*"],
   "compilerOptions": {
     "target": "es2020",
@@ -18,7 +18,8 @@
     "skipLibCheck": true,
     "paths": {
       "@public/*": ["./public/*"],
-      "@app/*": ["./src/*"]
+      "@app/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
     }
   },
   "noEmit": true
