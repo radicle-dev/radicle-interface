@@ -33,7 +33,7 @@
 
   function begin() {
     navigate({
-      type: "registrations",
+      type: "registration",
       params: {
         nameOrDomain: name,
         activeView: "submit",
@@ -118,11 +118,11 @@
           {wallet} />
       {/if}
 
-      <Button on:click={() => navigate("/registrations")} variant="text">
+      <Button on:click={() => navigate("/registration")} variant="text">
         Cancel
       </Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button variant="foreground" on:click={() => navigate("/registrations")}>
+      <Button variant="foreground" on:click={() => navigate("/registration")}>
         Back
       </Button>
     {/if}

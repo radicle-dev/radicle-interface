@@ -4,13 +4,13 @@ import { BigNumber } from "ethers";
 import katex from "katex";
 import type { Wallet } from "@app/wallet";
 import { assert } from "@app/error";
-import type { EnsProfile } from "@app/base/registrations/registrar";
-import { getAddress, getResolver } from "@app/base/registrations/registrar";
+import type { EnsProfile } from "@app/base/registration/registrar";
+import { getAddress, getResolver } from "@app/base/registration/registrar";
 import {
   getAvatar,
   getSeed,
   getRegistration,
-} from "@app/base/registrations/registrar";
+} from "@app/base/registration/registrar";
 import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
 import * as cache from "@app/cache";

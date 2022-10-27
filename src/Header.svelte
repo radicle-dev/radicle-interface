@@ -170,7 +170,7 @@
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <a use:link class="register" href="/registrations">Register</a>
+    <a use:link class="register" href="/registration">Register</a>
 
     {#if address}
       <span class="balance">
@@ -234,7 +234,7 @@
               on:click={() => {
                 closeFocused();
               }}
-              href="/registrations">
+              href="/registration">
               Register
             </a>
           </div>

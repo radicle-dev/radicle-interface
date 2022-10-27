@@ -26,7 +26,7 @@ describe("routeToPath", () => {
     },
     {
       input: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: null,
           owner: null,
@@ -34,12 +34,12 @@ describe("routeToPath", () => {
           retry: false,
         },
       },
-      output: "/registrations",
+      output: "/registration",
       description: "Registration Index Route",
     },
     {
       input: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,
@@ -47,12 +47,12 @@ describe("routeToPath", () => {
           retry: false,
         },
       },
-      output: "/registrations/sebastinez",
+      output: "/registration/sebastinez",
       description: "Registration View Route",
     },
     {
       input: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,
@@ -60,12 +60,12 @@ describe("routeToPath", () => {
           retry: false,
         },
       },
-      output: "/registrations/sebastinez/form",
+      output: "/registration/sebastinez/form",
       description: "Registration Form Route",
     },
     {
       input: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,
@@ -73,7 +73,7 @@ describe("routeToPath", () => {
           retry: false,
         },
       },
-      output: "/registrations/sebastinez/submit",
+      output: "/registration/sebastinez/submit",
       description: "Registration Submit Route",
     },
     {
@@ -125,9 +125,9 @@ describe("pathToRoute", () => {
       description: "Seed View Route",
     },
     {
-      input: "/registrations",
+      input: "/registration",
       output: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: null,
           owner: null,
@@ -138,9 +138,9 @@ describe("pathToRoute", () => {
       description: "Registration Index Route",
     },
     {
-      input: "/registrations/sebastinez",
+      input: "/registration/sebastinez",
       output: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,
@@ -151,9 +151,9 @@ describe("pathToRoute", () => {
       description: "Registration View Route",
     },
     {
-      input: "/registrations/sebastinez/form",
+      input: "/registration/sebastinez/form",
       output: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,
@@ -164,9 +164,9 @@ describe("pathToRoute", () => {
       description: "Registration Form Route",
     },
     {
-      input: "/registrations/sebastinez/submit",
+      input: "/registration/sebastinez/submit",
       output: {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: "sebastinez",
           owner: null,

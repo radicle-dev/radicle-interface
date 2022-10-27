@@ -105,13 +105,13 @@ export function pathToRoute(path: string | null): Route {
 
   const type = segments.shift();
   switch (type) {
-    case "registrations": {
+    case "registration": {
       const nameOrDomain = segments.shift();
       const activeView = segments.shift();
       if (nameOrDomain) {
         if (activeView) {
           return {
-            type: "registrations",
+            type: "registration",
             params: {
               activeView,
               nameOrDomain,
@@ -121,12 +121,12 @@ export function pathToRoute(path: string | null): Route {
           };
         }
         return {
-          type: "registrations",
+          type: "registration",
           params: { nameOrDomain, owner: null, activeView: null, retry: false },
         };
       }
       return {
-        type: "registrations",
+        type: "registration",
         params: {
           nameOrDomain: null,
           owner: null,
@@ -299,22 +299,22 @@ export function routeToPath(route: Route): string | null {
       return `${hostPrefix}/${route.params.urn}${peer}${content}`;
     }
   } else if (
-    route.type === "registrations" &&
+    route.type === "registration" &&
     !route.params.nameOrDomain &&
     !route.params.activeView
   ) {
-    return `/registrations`;
+    return `/registration`;
   } else if (
-    route.type === "registrations" &&
+    route.type === "registration" &&
     route.params.nameOrDomain &&
     !route.params.activeView
   ) {
-    return `/registrations/${route.params.nameOrDomain}`;
-  } else if (route.type === "registrations" && route.params.activeView) {
+    return `/registration/${route.params.nameOrDomain}`;
+  } else if (route.type === "registration" && route.params.activeView) {
     if (route.params.owner) {
-      return `/registrations/${route.params.nameOrDomain}/${route.params.activeView}?owner=${route.params.owner}`;
+      return `/registration/${route.params.nameOrDomain}/${route.params.activeView}?owner=${route.params.owner}`;
     }
-    return `/registrations/${route.params.nameOrDomain}/${route.params.activeView}`;
+    return `/registration/${route.params.nameOrDomain}/${route.params.activeView}`;
   } else if (route.type === "profile") {
     return `/${route.params.addressOrName}`;
   } else if (route.type === "404") {

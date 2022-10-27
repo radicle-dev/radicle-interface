@@ -21,7 +21,7 @@
   const registrationOwner = owner || session.address;
 
   const view = () =>
-    navigate(`/registrations/${name}.${wallet.registrar.domain}`, {
+    navigate(`/registration/${name}.${wallet.registrar.domain}`, {
       retry: true,
     });
 
@@ -58,7 +58,7 @@
   <ErrorModal
     title="Transaction failed"
     message={error.message}
-    on:close={() => navigate("/registrations")} />
+    on:close={() => navigate("/registration")} />
 {:else}
   <Modal>
     <span slot="title">

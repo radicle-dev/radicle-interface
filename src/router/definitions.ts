@@ -10,7 +10,7 @@ export type Route =
   | { type: "boot" }
   | { type: "profile"; params: { addressOrName: string } }
   | { type: "projects"; params: ProjectsParams }
-  | { type: "registrations"; params: RegistrationParams }
+  | { type: "registration"; params: RegistrationParams }
   | { type: "seeds"; params: { host: string } }
   | { type: "vesting" };
 

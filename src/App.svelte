@@ -5,7 +5,7 @@
 
   import Home from "@app/base/home/Index.svelte";
   import Vesting from "@app/base/vesting/Index.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
+  import Registration from "@app/base/registration/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
   import FaucetForm from "@app/base/faucet/Form.svelte";
   import FaucetWithdraw from "@app/base/faucet/Withdraw.svelte";
@@ -101,8 +101,8 @@
           {wallet}
           session={$session}
           host={$activeRouteStore.params.host} />
-      {:else if $activeRouteStore.type === "registrations"}
-        <Registrations
+      {:else if $activeRouteStore.type === "registration"}
+        <Registration
           {wallet}
           activeView={$activeRouteStore.params.activeView}
           owner={$activeRouteStore.params.owner}
