@@ -234,7 +234,7 @@
 {:else if state.status === Status.Failed}
   <ErrorModal
     title="Registration could not be loaded"
-    on:close={() => navigate("/registrations")}>
+    on:close={() => navigate("/registration")}>
     {state.error}
   </ErrorModal>
 {:else if state.status === Status.NotFound}
@@ -254,7 +254,7 @@
     <span slot="actions">
       <a
         use:link
-        href={`/registrations/${domain}/form`}
+        href={`/registration/${domain}/form`}
         class="txt-link register">
         Register &rarr;
       </a>

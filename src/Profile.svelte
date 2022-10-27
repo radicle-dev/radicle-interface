@@ -219,7 +219,7 @@
             {#if profile.name && profile.ens}
               <a
                 use:link
-                href={`/registrations/${profile.ens.name}`}
+                href={`/registration/${profile.ens.name}`}
                 class="txt-link">
                 {profile.name}
               </a>
@@ -234,7 +234,7 @@
           {#if profile.name && profile.ens}
             <a
               use:link
-              href={`/registrations/${profile.ens.name}`}
+              href={`/registration/${profile.ens.name}`}
               class="txt-link">
               {profile.name}
             </a>

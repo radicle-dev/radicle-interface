@@ -15,7 +15,7 @@
     if (!valid) {
       return;
     }
-    navigate(`/registrations/${ensName}/form`);
+    navigate(`/registration/${ensName}/form`);
   }
 
   function validate(input: string) {

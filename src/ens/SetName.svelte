@@ -99,7 +99,7 @@
     <div slot="actions">
       <Button
         variant="negative"
-        on:click={() => navigate(`/registrations/${name}`)}>
+        on:click={() => navigate(`/registration/${name}`)}>
         Go to registration &rarr;
       </Button>
       <Button variant="negative" on:click={() => dispatch("close")}>

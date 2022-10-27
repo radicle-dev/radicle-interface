@@ -1,9 +1,9 @@
 <script lang="ts">
   import { navigate } from "@app/router";
-  import Index from "@app/base/registrations/Index.svelte";
-  import New from "@app/base/registrations/New.svelte";
-  import Submit from "@app/base/registrations/Submit.svelte";
-  import View from "@app/base/registrations/View.svelte";
+  import Index from "@app/base/registration/Index.svelte";
+  import New from "@app/base/registration/New.svelte";
+  import Submit from "@app/base/registration/Submit.svelte";
+  import View from "@app/base/registration/View.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
   import type { Wallet } from "@app/wallet";
   import type { Session } from "@app/session";
@@ -23,7 +23,7 @@
   {:else}
     <ErrorModal
       message={"You must connect your wallet to register"}
-      on:close={() => navigate("/registrations")} />
+      on:close={() => navigate("/registration")} />
   {/if}
 {:else if !activeView && nameOrDomain}
   <View {wallet} domain={nameOrDomain} />

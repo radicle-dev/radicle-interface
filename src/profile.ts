@@ -1,4 +1,4 @@
-import type { EnsProfile } from "@app/base/registrations/registrar";
+import type { EnsProfile } from "@app/base/registration/registrar";
 import {
   isAddress,
   resolveEnsProfile,
