@@ -10,7 +10,7 @@ describe("routeToPath", () => {
       description: "Vesting Route",
     },
     {
-      input: { type: "faucet", params: { activeView: "form", amount: null } },
+      input: { type: "faucet", params: { activeView: { type: "form" } } },
       output: "/faucet",
       description: "Faucet Form Route",
     },
@@ -103,14 +103,14 @@ describe("pathToRoute", () => {
     },
     {
       input: "/faucet",
-      output: { type: "faucet", params: { activeView: "form", amount: null } },
+      output: { type: "faucet", params: { activeView: { type: "form" } } },
       description: "Faucet Form Route",
     },
     {
       input: "/faucet/withdraw?amount=10",
       output: {
         type: "faucet",
-        params: { activeView: "withdraw", amount: "10" },
+        params: { activeView: { type: "withdraw", params: { amount: "10" } } },
       },
       description: "Faucet Withdraw Route",
     },

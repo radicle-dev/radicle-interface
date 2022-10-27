@@ -141,12 +141,14 @@ export function pathToRoute(path: string | null): Route {
         return {
           type: "faucet",
           params: {
-            activeView: "withdraw",
-            amount: url.searchParams.get("amount"),
+            activeView: {
+              type: "withdraw",
+              params: { amount: url.searchParams.get("amount") ?? "0" },
+            },
           },
         };
       }
-      return { type: "faucet", params: { activeView: "form", amount: null } };
+      return { type: "faucet", params: { activeView: { type: "form" } } };
     }
     case "vesting":
       return { type: "vesting" };
@@ -228,13 +230,16 @@ export function pathToRoute(path: string | null): Route {
 export function routeToPath(route: Route): string | null {
   if (route.type === "home") {
     return "/";
-  } else if (route.type === "faucet" && route.params.activeView === "form") {
+  } else if (
+    route.type === "faucet" &&
+    route.params.activeView.type === "form"
+  ) {
     return "/faucet";
   } else if (
     route.type === "faucet" &&
-    route.params.activeView === "withdraw"
+    route.params.activeView.type === "withdraw"
   ) {
-    return `/faucet/withdraw?amount=${route.params.amount}`;
+    return `/faucet/withdraw?amount=${route.params.activeView.params.amount}`;
   } else if (route.type === "vesting") {
     return "/vesting";
   } else if (route.type === "seeds") {
