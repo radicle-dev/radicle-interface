@@ -10,7 +10,7 @@ import { capitalize } from "@app/utils";
 import ethereumContractAbis from "@app/ethereum/contractAbis.json";
 import homestead from "@app/ethereum/networks/homestead.json";
 import goerli from "@app/ethereum/networks/goerli.json";
-import config from "@app/config.json";
+import { config } from "@app/config";
 
 interface NetworkConfig {
   name: string;
@@ -27,15 +27,6 @@ interface NetworkConfig {
     address: string;
   };
   alchemy: { key: string };
-}
-
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    Cypress: any;
-    ethereum: any;
-    registrarState: any;
-  }
 }
 
 export type WalletConnectState =
@@ -200,12 +191,19 @@ function getProvider(
 ): ethers.providers.JsonRpcProvider {
   if (metamask) {
     return metamask;
-  } else if (import.meta.env.PROD) {
+  } else if (
+    import.meta.env.PROD &&
+    window.location.host !== "localhost:4173"
+  ) {
     return new ethers.providers.AlchemyWebSocketProvider(
       networkConfig.name,
       networkConfig.alchemy.key,
     );
-  } else if (import.meta.env.DEV) {
+  }
+  // Run the production smoke test with the ethers provider,
+  // because we block requests from localhost on Alchemy,
+  // which in turn throws an exception.
+  else if (import.meta.env.DEV || window.location.host === "localhost:4173") {
     // The ethers defaultProvider doesn't include a `send` method, which breaks the `utils.getTokens` fn.
     // Since Metamask nor WalletConnect provide an `alchemy_getTokenBalances` nor `alchemy_getTokenMetadata` endpoint,
     // we can rely on not using `config.provider.send`.

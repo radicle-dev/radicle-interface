@@ -85,7 +85,7 @@
 </style>
 
 <Floating>
-  <div slot="toggle" class="selector" title="Switch peers">
+  <div slot="toggle" class="selector" title="Change peer">
     <div class="stat peer" class:not-allowed={!peers}>
       <Icon name="fork" />
       {#if meta}

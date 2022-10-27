@@ -16,13 +16,15 @@ export const activeRouteStore: Readable<Route> = derived(
   },
 );
 
-export const base = process.env.hashRouting ? "./" : "/";
+export const base = window.HASH_ROUTING ? "./" : "/";
 
 // Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
 // Allows the jump to a anchor hash
 window.addEventListener("hashchange", e => {
-  const url = new URL(e.newURL);
-  updateProjectRoute({ hash: url.hash.substring(1) });
+  const route = pathToRoute(e.newURL);
+  if (route?.resource === "projects" && route.params.hash) {
+    updateProjectRoute({ hash: route.params.hash });
+  }
 });
 
 // Replaces history on any user interaction with forward and backwards buttons
@@ -62,12 +64,17 @@ export function projectLinkHref(
 
 export function updateProjectRoute(
   projectRouteParams: Partial<ProjectsParams>,
+  opts: { replace: boolean } = { replace: false },
 ) {
   const activeRoute = get(activeRouteStore);
 
   if (activeRoute.resource === "projects") {
     const updatedRoute = createProjectRoute(activeRoute, projectRouteParams);
-    push(updatedRoute);
+    if (opts.replace) {
+      replace(updatedRoute);
+    } else {
+      push(updatedRoute);
+    }
   } else {
     throw new Error(
       "Don't use project specific navigation outside of project views",
@@ -82,7 +89,7 @@ export const push = (newRoute: Route): void => {
   // one subsequent pop() anyway.
   historyStore.set([...history, newRoute].slice(-10));
 
-  const path = process.env.hashRouting
+  const path = window.HASH_ROUTING
     ? "#" + routeToPath(newRoute)
     : routeToPath(newRoute);
 
@@ -101,7 +108,7 @@ export const pop = (): void => {
 export function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
 
-  const path = process.env.hashRouting
+  const path = window.HASH_ROUTING
     ? "#" + routeToPath(newRoute)
     : routeToPath(newRoute);
 
@@ -127,7 +134,7 @@ function pathToRoute(path: string): Route | null {
   }
 
   const url = new URL(path, window.origin);
-  const segments = process.env.hashRouting
+  const segments = window.HASH_ROUTING
     ? url.hash.substring(2).split("#")[0].split("/") // Try to remove any additional hashes at the end of the URL.
     : url.pathname.substring(1).split("/");
 

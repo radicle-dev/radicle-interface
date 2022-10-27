@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-
-npm run test:unit
-npm run test:components

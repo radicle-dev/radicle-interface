@@ -20,12 +20,14 @@
 
   initialize();
 
-  const plausible = Plausible({
-    domain: "app.radicle.xyz",
-    hashMode: Boolean(process.env.hashRouting),
-  });
+  if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
+    const plausible = Plausible({
+      domain: "app.radicle.xyz",
+      hashMode: window.HASH_ROUTING,
+    });
 
-  plausible.enableAutoPageviews();
+    plausible.enableAutoPageviews();
+  }
 
   const loadWallet = getWallet().then(async wallet => {
     if ($state.connection === Connection.Connected) {

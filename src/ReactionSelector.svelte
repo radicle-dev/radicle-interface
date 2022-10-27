@@ -2,7 +2,7 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import Icon from "@app/Icon.svelte";
-  import config from "@app/config.json";
+  import { config } from "@app/config";
 
   const showReactions = false;
 

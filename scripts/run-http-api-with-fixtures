@@ -1,0 +1,132 @@
+#!/bin/sh
+set -e
+
+REV=40bdc662b2d48cbfaa87182b21457ef8f861b04a
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
+WORKSPACE=$REPO_ROOT/tests/tmp/palm
+PASSPHRASE=asdf
+CONTAINER_NAME=radicle-http-api-with-fixtures
+HTTP_API_BINARY=radicle-http-api
+
+show_usage()
+{
+  echo
+  echo "Starts a http-api backend with test fixtures."
+  echo
+  echo "USAGE:"
+  echo "  run-http-api-with-fixtures [-b|d|h|n]"
+  echo
+  echo "OPTIONS:"
+  echo "  -b --binary            Use a ${HTTP_API_BINARY} binary that is in PATH to avoid using Docker."
+  echo "  -d --detach            Daemonize the docker process."
+  echo "  -h --help              Print this Help."
+  echo "  -n --non-interactive   Run in non-interactive mode, no user prompts."
+  echo
+}
+
+prompt_workspace_removal()
+{
+  echo "This will irrevocably destroy the following directories:"
+  echo
+  echo $WORKSPACE
+  echo
+
+  read -r -p "Are you sure you want to continue? [yes/no]: " confirm
+  case "$confirm" in
+      [yY][eE][sS] )
+          rm -rf $WORKSPACE
+          echo "Done"
+          ;;
+      * )
+          echo "Ok, I won't touch your data."
+          exit
+          ;;
+  esac
+}
+
+prepare_workspace()
+{
+  echo
+  echo "Unpacking fixture $FIXTURE"
+  mkdir -p $WORKSPACE
+  tar -xf $FIXTURE -C $WORKSPACE
+}
+
+run_docker() {
+  echo "Starting docker at container $CONTAINER_NAME at $REV"
+  echo "  http-api --root $WORKSPACE --passphrase $PASSPHRASE"
+  echo
+
+  exec docker run \
+    --init \
+    --publish 8777:8777 \
+    --rm \
+    --name $CONTAINER_NAME \
+    --volume $WORKSPACE:/app/radicle \
+    "$@" \
+    "gcr.io/radicle-services/http-api:$REV" \
+    --passphrase $PASSPHRASE
+}
+
+run_binary() {
+  if ! [ -x "$(command -v $HTTP_API_BINARY)" ]; then
+    echo
+    echo "Couldn't find the $HTTP_API_BINARY binary in your PATH."
+    echo "You can compile it from source:"
+    echo "  👉 https://github.com/radicle-dev/radicle-client-services/tree/${REV}/http-api"
+    echo
+    exit 1
+  fi
+
+  echo
+  echo "Starting $HTTP_API_BINARY"
+  echo "  $HTTP_API_BINARY --listen 0.0.0.0:8777 --root ${WORKSPACE} --passphrase $PASSPHRASE"
+  echo
+
+  $HTTP_API_BINARY --listen 0.0.0.0:8777 --root $WORKSPACE --passphrase $PASSPHRASE
+}
+
+BINADY=false
+NON_INTERACTIVE=false
+DETACH=false
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --binary|-b)
+      BINARY=true
+      ;;
+    --detach|-d)
+      DETACH=true
+      ;;
+    --non-interactive|-n)
+      NON_INTERACTIVE=true
+      ;;
+    *)
+      show_usage
+      exit
+      ;;
+  esac
+
+  shift
+done
+
+if [ "$NON_INTERACTIVE" = true ]; then
+  rm -rf $WORKSPACE
+  prepare_workspace
+else
+  prompt_workspace_removal
+  prepare_workspace
+fi
+
+
+if [ "$BINARY" = true ]; then
+  run_binary
+else
+  if [ "$DETACH" = true ]; then
+    run_docker --detach
+  else
+    run_docker
+  fi
+fi

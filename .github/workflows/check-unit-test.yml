@@ -2,15 +2,14 @@ name: check-unit-test
 on: [push, pull_request]
 
 jobs:
-  check:
+  check-unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '18.12.1'
       - name: Checkout
         uses: actions/checkout@v2
       - run: npm ci
-      - run: ./scripts/unit-test
-        shell: bash
+      - run: npm run test:unit

@@ -1,8 +1,11 @@
-name: check-build
+name: check-e2e
 on: [push, pull_request]
 
 jobs:
-  check-build:
+  check-e2e:
+    strategy:
+      matrix:
+        browser: [chromium, firefox]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -14,10 +17,10 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Build app
-      run: npm run build
-    - name: Run Playwright build smoke test
-      run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts tests/e2e/buildSmoke.spec.ts
+    - name: Start http-api test server
+      run: ./scripts/run-http-api-with-fixtures --non-interactive --detach
+    - name: Run Playwright tests
+      run: npm run test:e2e -- --project ${{ matrix.browser }}
     - uses: actions/upload-artifact@v3
       if: always()
       with:

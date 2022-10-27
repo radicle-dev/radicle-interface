@@ -1,11 +1,11 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src", "cypress/support"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules/*"],
   "compilerOptions": {
     "target": "es2020",
     "module": "es2020",
-    "types": ["svelte", "vite/client", "cypress"],
+    "types": ["svelte", "vite/client"],
     "sourceMap": true,
     "baseUrl": "./",
     "moduleResolution": "node",
@@ -18,7 +18,8 @@
     "skipLibCheck": true,
     "paths": {
       "@public/*": ["./public/*"],
-      "@app/*": ["./src/*"]
+      "@app/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
     }
   },
   "noEmit": true

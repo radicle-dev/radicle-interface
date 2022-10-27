@@ -12,7 +12,8 @@ KaTeX_**.woff2
 public/twemoji/*.svg
 
 # Integration Tests
-cypress/screenshots
+tests/tmp/**/*
+tests/artifacts/**/*
 
 # Mac OS
 .DS_Store

@@ -48,13 +48,16 @@
         activeRoute.params.route,
         project.branches,
       );
-      router.updateProjectRoute({
-        revision,
-        path,
-        line: activeRoute.params.line,
-        hash: activeRoute.params.hash,
-        route: undefined,
-      });
+      router.updateProjectRoute(
+        {
+          revision,
+          path,
+          line: activeRoute.params.line,
+          hash: activeRoute.params.hash,
+          route: undefined,
+        },
+        { replace: true },
+      );
     }
     if (!activeRoute.params.revision) {
       // We need a revision to fetch `getRoot`.

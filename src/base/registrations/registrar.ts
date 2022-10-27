@@ -60,10 +60,6 @@ export const state = writable<Connection>({ connection: State.Connecting });
 
 window.registrarState = state;
 
-state.subscribe((s: Connection) => {
-  console.debug("register.state", s);
-});
-
 export async function getRegistration(
   name: string,
   wallet: Wallet,

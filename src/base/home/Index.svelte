@@ -6,7 +6,7 @@
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
   import Widget from "@app/base/projects/Widget.svelte";
-  import config from "@app/config.json";
+  import { config } from "@app/config";
   import { Project } from "@app/project";
   import { setOpenGraphMetaTag, twemoji } from "@app/utils";
 

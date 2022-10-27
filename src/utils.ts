@@ -3,7 +3,6 @@ import type { Wallet } from "@app/wallet";
 import type { marked } from "marked";
 
 import * as cache from "@app/cache";
-import config from "@app/config.json";
 import emojis from "@app/emojis";
 import katex from "katex";
 import md5 from "md5";
@@ -12,6 +11,7 @@ import { BigNumber } from "ethers";
 import { ProfileType } from "@app/profile";
 import { assert } from "@app/error";
 import { base } from "@app/router";
+import { config } from "@app/config";
 import { ethers } from "ethers";
 import { getAddress, getResolver } from "@app/base/registrations/registrar";
 import {
