@@ -1,11 +1,11 @@
 <script lang="ts">
+  import * as router from "@app/router";
+
   import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
 
   export let title = "";
   export let subtitle = "";
-
-  const back = () => window.history.back();
 </script>
 
 <Modal subtle>
@@ -17,6 +17,6 @@
     <p>{subtitle}</p>
   </span>
   <span slot="actions">
-    <Button variant="foreground" on:click={back}>Back</Button>
+    <Button variant="foreground" on:click={router.pop}>Back</Button>
   </span>
 </Modal>

@@ -83,6 +83,16 @@ export const push = (newRoute: Route): void => {
   window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
 };
 
+export const pop = (): void => {
+  const history = get(historyStore);
+  const newRoute = history.pop();
+  if (newRoute) {
+    historyStore.set(history);
+    activeRouteStore.set(newRoute);
+    window.history.back();
+  }
+};
+
 function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
   activeRouteStore.set(newRoute);
