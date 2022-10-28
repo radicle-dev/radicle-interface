@@ -29,7 +29,7 @@ export type Route =
             }
           | {
               type: "view";
-              params: { nameOrDomain: string };
+              params: { nameOrDomain: string; retry: boolean };
             };
       };
     }

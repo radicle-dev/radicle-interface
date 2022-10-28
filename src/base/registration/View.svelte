@@ -34,6 +34,7 @@
 
   export let domain: string;
   export let wallet: Wallet;
+  export let retry: boolean;
 
   domain = domain.toLowerCase();
 
@@ -154,7 +155,7 @@
     } else {
       state = { status: Status.NotFound };
     }
-    if (window.history.state?.retry) retries -= 1;
+    if (retry) retries -= 1;
     return r;
   }
 
@@ -178,11 +179,7 @@
       });
   };
 
-  $: if (
-    window.history.state?.retry &&
-    state.status === Status.NotFound &&
-    retries > 0
-  ) {
+  $: if (retry && state.status === Status.NotFound && retries > 0) {
     getRegistration(domain, wallet, resolver)
       .then(parseRecords)
       .catch(err => {

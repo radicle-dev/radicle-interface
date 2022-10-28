@@ -21,9 +21,7 @@
   const registrationOwner = owner || session.address;
 
   const view = () =>
-    navigate(`/registration/${name}.${wallet.registrar.domain}`, {
-      retry: true,
-    });
+    navigate(`/registration/${name}.${wallet.registrar.domain}?retry=true`);
 
   onMount(async () => {
     try {
