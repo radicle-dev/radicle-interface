@@ -248,21 +248,19 @@
   }
 </style>
 
-{#if content}
-  {#if frontMatter.length > 0}
-    <div class="front-matter">
-      <table>
-        {#each frontMatter as [key, val]}
-          <tr>
-            <td><span class="txt-bold">{key}</span></td>
-            <td>{val}</td>
-          </tr>
-        {/each}
-      </table>
-    </div>
-  {/if}
-
-  <div class="markdown" bind:this={container}>
-    {@html render(doc.content)}
+{#if frontMatter.length > 0}
+  <div class="front-matter">
+    <table>
+      {#each frontMatter as [key, val]}
+        <tr>
+          <td><span class="txt-bold">{key}</span></td>
+          <td>{val}</td>
+        </tr>
+      {/each}
+    </table>
   </div>
 {/if}
+
+<div class="markdown" bind:this={container}>
+  {@html render(doc.content)}
+</div>
