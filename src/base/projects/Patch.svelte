@@ -32,7 +32,6 @@
       params: {
         activeView: { type: "tree" },
         urn: project.urn,
-        content: "tree",
         revision,
         path: event.detail,
       },

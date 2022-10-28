@@ -35,7 +35,6 @@
         peer: null,
         seed: seed.host,
         profile: null,
-        content: "tree",
         revision: project.head,
       },
     });

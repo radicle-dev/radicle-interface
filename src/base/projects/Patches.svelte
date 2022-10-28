@@ -88,7 +88,6 @@
               params: {
                 activeView: { type: "patch", params: { patch: patch.id } },
                 urn: project.urn,
-                content: "patch",
                 revision: null,
                 path: null,
               },

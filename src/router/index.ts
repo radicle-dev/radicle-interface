@@ -183,7 +183,6 @@ export function pathToRoute(path: string | null): Route {
                 peer: null,
                 profile: null,
                 seed: host,
-                content: "tree",
               },
             };
           }
@@ -220,7 +219,6 @@ export function pathToRoute(path: string | null): Route {
                 peer: null,
                 profile: type,
                 seed: null,
-                content: "tree",
               },
             };
           } else {
@@ -271,7 +269,7 @@ export function routeToPath(route: Route): string | null {
       hostPrefix = `/seeds/${route.params.seed}`;
     }
 
-    const content = route.params.content ? `/${route.params.content}` : "";
+    const content = `/${route.params.activeView.type}`;
 
     let peer = "";
     if (route.params.peer) {
@@ -302,13 +300,13 @@ export function routeToPath(route: Route): string | null {
       }
     }
 
-    if (route.params.content === "tree") {
+    if (route.params.activeView.type === "tree") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
-    } else if (route.params.content === "commits") {
+    } else if (route.params.activeView.type === "commits") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
-    } else if (route.params.content === "commit") {
+    } else if (route.params.activeView.type === "commit") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
-    } else if (route.params.content === "patches") {
+    } else if (route.params.activeView.type === "patches") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
     } else if (route.params.activeView.type === "patch") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.params.patch}`;
@@ -361,7 +359,6 @@ function resolveProjectRoute(
       activeView: { type: "tree" },
       urn,
       peer,
-      content: "tree",
       path: null,
       revision: null,
       hash: url.hash.substring(1),
@@ -372,7 +369,6 @@ function resolveProjectRoute(
       activeView: { type: "commits" },
       urn,
       peer,
-      content: "commits",
       path: null,
       revision: null,
       route: segments.join("/"),
@@ -382,7 +378,6 @@ function resolveProjectRoute(
       activeView: { type: "commit" },
       urn,
       peer,
-      content: "commit",
       path: null,
       revision: null,
       route: segments.join("/"),
@@ -394,7 +389,6 @@ function resolveProjectRoute(
         activeView: { type: "patch", params: { patch } },
         urn,
         peer,
-        content: "patch",
         path: null,
         revision: null,
       };
@@ -405,7 +399,6 @@ function resolveProjectRoute(
       activeView: { type: "patches" },
       urn,
       peer,
-      content: "patches",
       path: null,
       revision: null,
     };
@@ -414,7 +407,6 @@ function resolveProjectRoute(
       activeView: { type: "issues" },
       urn,
       peer,
-      content: "issues",
       path: null,
       revision: null,
     };
@@ -425,7 +417,6 @@ function resolveProjectRoute(
         activeView: { type: "issue", params: { issue } },
         urn,
         peer,
-        content: "issue",
         path: null,
         revision: null,
       };

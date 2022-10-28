@@ -46,7 +46,6 @@ export interface ProjectsParams {
     | { type: "patch"; params: { patch: string } }
     | { type: "patches" };
 
-  content?: string;
   hash?: string | null;
   path?: string | null;
   peer?: string | null;

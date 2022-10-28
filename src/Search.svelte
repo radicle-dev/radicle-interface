@@ -180,7 +180,6 @@
           peer: null,
           profile: null,
           seed: searchResult.seedHost,
-          content: "tree",
           hash: null,
           search: null,
         },

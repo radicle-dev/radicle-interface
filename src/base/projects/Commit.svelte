@@ -18,7 +18,6 @@
       params: {
         activeView: { type: "tree" },
         urn: project.urn,
-        content: "tree",
         revision: commit.header.sha1,
         path: event.detail,
         route: null,

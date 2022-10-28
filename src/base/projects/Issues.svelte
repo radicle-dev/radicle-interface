@@ -91,7 +91,6 @@
                   params: { issue: issue.id },
                 },
                 urn: project.urn,
-                content: "issue",
                 revision: null,
                 path: null,
               },

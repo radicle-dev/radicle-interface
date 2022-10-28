@@ -42,7 +42,6 @@
         activeView: { type: "tree" },
         urn: project.urn,
         seed: seed?.host,
-        content: "tree",
         profile: profile?.name ?? profile?.address,
         revision: project.head,
         hash: null,

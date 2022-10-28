@@ -17,7 +17,7 @@
 
   $: route = $activeRouteStore as ProjectRoute;
   $: revision = route.params.revision || commit;
-  $: content = route.params.content;
+  $: activeViewType = route.params.activeView.type;
   $: peer = route.params.peer;
 
   // Switches between project views.
@@ -28,9 +28,8 @@
     navigate({
       type: "projects",
       params: {
-        activeView: { type: content === input ? "tree" : input },
+        activeView: { type: activeViewType === input ? "tree" : input },
         urn: project.urn,
-        content: content === input ? "tree" : input,
         revision,
         ...(keepSourceInPath ? null : { revision: null, path: null }),
       },
@@ -145,7 +144,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
-    class:active={content === "commits"}
+    class:active={activeViewType === "commits"}
     on:click={() => toggleContent("commits", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
@@ -154,7 +153,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
-      class:active={content === "issues"}
+      class:active={activeViewType === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
       on:click={() => toggleContent("issues", false)}>
@@ -166,7 +165,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
-      class:active={content === "patches"}
+      class:active={activeViewType === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
       on:click={() => toggleContent("patches", false)}>

@@ -16,7 +16,6 @@
     params: {
       ...route.params,
       urn: project.urn,
-      content: "tree",
       peer: null,
       path: "/",
       route: null,

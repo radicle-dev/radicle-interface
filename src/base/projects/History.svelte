@@ -16,7 +16,6 @@
       params: {
         activeView: { type: "commit" },
         urn: project.urn,
-        content: "commit",
         revision,
         path: null,
       },
@@ -40,7 +39,6 @@
       params: {
         activeView: { type: "tree" },
         urn: project.urn,
-        content: "tree",
         revision: event.detail,
       },
     });
