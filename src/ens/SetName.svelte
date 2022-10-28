@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { navigate } from "@app/router";
-  import Modal from "@app/Modal.svelte";
   import type { Wallet } from "@app/wallet";
-  import { formatAddress, isAddressEqual } from "@app/utils";
   import type { User } from "@app/base/users/User";
-  import ErrorModal from "@app/ErrorModal.svelte";
+
+  import { createEventDispatcher } from "svelte";
+
+  import * as router from "@app/router";
   import Button from "@app/Button.svelte";
-  import TextInput from "@app/TextInput.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import Loading from "@app/Loading.svelte";
+  import Modal from "@app/Modal.svelte";
+  import TextInput from "@app/TextInput.svelte";
+  import { formatAddress, isAddressEqual } from "@app/utils";
 
   const dispatch = createEventDispatcher();
 
@@ -99,7 +101,16 @@
     <div slot="actions">
       <Button
         variant="negative"
-        on:click={() => navigate(`/registration/${name}`)}>
+        on:click={() =>
+          router.push({
+            type: "registration",
+            params: {
+              activeView: {
+                type: "view",
+                params: { nameOrDomain: name, retry: false },
+              },
+            },
+          })}>
         Go to registration &rarr;
       </Button>
       <Button variant="negative" on:click={() => dispatch("close")}>

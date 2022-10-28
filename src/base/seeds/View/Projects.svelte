@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { navigate } from "@app/router";
-  import * as proj from "@app/project";
-  import Widget from "@app/base/projects/Widget.svelte";
   import type { Profile } from "@app/profile";
   import type { ProjectInfo } from "@app/project";
   import type { Seed, Stats } from "@app/base/seeds/Seed";
+
+  import * as proj from "@app/project";
+  import * as router from "@app/router";
   import List from "@app/List.svelte";
+  import Widget from "@app/base/projects/Widget.svelte";
 
   export let seed: Seed;
   export let profile: Profile | null = null;
@@ -35,7 +36,7 @@
   };
 
   const onClick = (project: ProjectInfo) => {
-    navigate({
+    router.push({
       type: "projects",
       params: {
         urn: project.urn,
@@ -43,6 +44,8 @@
         content: "tree",
         profile: profile?.name ?? profile?.address,
         revision: project.head,
+        hash: null,
+        search: null,
       },
     });
   };

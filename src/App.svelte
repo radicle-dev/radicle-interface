@@ -1,27 +1,27 @@
 <script lang="ts">
+  import * as router from "@app/router";
   import { Connection, state, session } from "@app/session";
   import { getWallet } from "@app/wallet";
   import { initialize, activeRouteStore } from "@app/router";
-  import { navigate } from "@app/router";
   import { unreachable } from "@app/utils";
 
-  import Home from "@app/base/home/Index.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
+  import ColorPalette from "@app/ColorPalette.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
-  import RegistrationValidateName from "@app/base/registration/ValidateName.svelte";
-  import RegistrationCheckNameAvailability from "@app/base/registration/CheckNameAvailability.svelte";
-  import RegistrationRegister from "@app/base/registration/Register.svelte";
-  import RegistrationView from "@app/base/registration/View.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
   import FaucetForm from "@app/base/faucet/Form.svelte";
   import FaucetWithdraw from "@app/base/faucet/Withdraw.svelte";
-  import Projects from "@app/base/projects/View.svelte";
-  import Profile from "@app/Profile.svelte";
   import Header from "@app/Header.svelte";
+  import Home from "@app/base/home/Index.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import ColorPalette from "@app/ColorPalette.svelte";
   import NotFound from "@app/NotFound.svelte";
+  import Profile from "@app/Profile.svelte";
+  import Projects from "@app/base/projects/View.svelte";
+  import RegistrationCheckNameAvailability from "@app/base/registration/CheckNameAvailability.svelte";
+  import RegistrationRegister from "@app/base/registration/Register.svelte";
+  import RegistrationValidateName from "@app/base/registration/ValidateName.svelte";
+  import RegistrationView from "@app/base/registration/View.svelte";
+  import Seeds from "@app/base/seeds/Routes.svelte";
+  import Vesting from "@app/base/vesting/Index.svelte";
 
   initialize();
 
@@ -125,7 +125,12 @@
           {:else}
             <ErrorModal
               message={"You must connect your wallet to register"}
-              on:close={() => navigate("/registration")} />
+              on:close={() => {
+                router.push({
+                  type: "registration",
+                  params: { activeView: { type: "validateName" } },
+                });
+              }} />
           {/if}
         {:else if $activeRouteStore.params.activeView.type === "view"}
           <RegistrationView

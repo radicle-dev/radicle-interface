@@ -127,7 +127,7 @@
 
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
 
   import TextInput from "@app/TextInput.svelte";
   import { unreachable } from "@app/utils";
@@ -165,12 +165,24 @@
       shake();
     } else if (searchResult.type === "singleProfile") {
       input = "";
-      navigate(`/${searchResult.id}`, { replace: true });
+      router.replace({
+        type: "profile",
+        params: { addressOrName: searchResult.id },
+      });
       dispatch("finished");
     } else if (searchResult.type === "singleProject") {
       input = "";
-      navigate(`/seeds/${searchResult.seedHost}/${searchResult.id}`, {
-        replace: true,
+      router.replace({
+        type: "projects",
+        params: {
+          urn: searchResult.id,
+          peer: null,
+          profile: null,
+          seed: searchResult.seedHost,
+          content: "tree",
+          hash: null,
+          search: null,
+        },
       });
       dispatch("finished");
     } else if (searchResult.type === "projectsAndProfiles") {

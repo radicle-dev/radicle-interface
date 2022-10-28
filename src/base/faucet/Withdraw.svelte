@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { navigate } from "@app/router";
+  import type { State } from "@app/utils";
   import type { Wallet } from "@app/wallet";
+
+  import { onMount } from "svelte";
+
+  import * as router from "@app/router";
+  import Button from "@app/Button.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import ErrorModal from "@app/ErrorModal.svelte";
-  import type { State } from "@app/utils";
   import { Status } from "@app/utils";
-  import { withdraw } from "./lib";
   import { session } from "@app/session";
-  import Button from "@app/Button.svelte";
+  import { withdraw } from "./lib";
 
   export let wallet: Wallet;
   export let amount: string | null;
@@ -21,7 +23,9 @@
   };
   $: requester = $session && $session.address;
 
-  const back = () => navigate(`/faucet`);
+  function back() {
+    router.push({ type: "faucet", params: { activeView: { type: "form" } } });
+  }
 
   onMount(async () => {
     try {

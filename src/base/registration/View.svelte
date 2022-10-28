@@ -1,23 +1,24 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { link, navigate } from "@app/router";
+  import type { EnsRecord } from "./resolver";
+  import type { Field } from "@app/Form.svelte";
+  import type { Registration } from "./registrar";
   import type { Wallet } from "@app/wallet";
   import type { ethers } from "ethers";
-  import { session } from "@app/session";
+
+  import { onMount } from "svelte";
+
+  import * as router from "@app/router";
+  import Button from "@app/Button.svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import Form from "@app/Form.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Form from "@app/Form.svelte";
-  import type { Field } from "@app/Form.svelte";
-  import { assert } from "@app/error";
-  import ErrorModal from "@app/ErrorModal.svelte";
-  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
-  import Button from "@app/Button.svelte";
-  import { defaultHttpApiPort } from "@app/base/seeds/Seed";
-
-  import { getRegistration, getOwner } from "./registrar";
-  import type { EnsRecord } from "./resolver";
-  import type { Registration } from "./registrar";
   import Update from "./Update.svelte";
+  import { assert } from "@app/error";
+  import { defaultHttpApiPort } from "@app/base/seeds/Seed";
+  import { getRegistration, getOwner } from "./registrar";
+  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
+  import { session } from "@app/session";
 
   enum Status {
     Loading,
@@ -231,7 +232,11 @@
 {:else if state.status === Status.Failed}
   <ErrorModal
     title="Registration could not be loaded"
-    on:close={() => navigate("/registration")}>
+    on:close={() =>
+      router.push({
+        type: "registration",
+        params: { activeView: { type: "validateName" } },
+      })}>
     {state.error}
   </ErrorModal>
 {:else if state.status === Status.NotFound}
@@ -250,7 +255,7 @@
 
     <span slot="actions">
       <a
-        use:link
+        use:router.link
         href={`/registration/${domain}/register`}
         class="txt-link register">
         Register &rarr;

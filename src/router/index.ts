@@ -93,7 +93,7 @@ export const pop = (): void => {
   }
 };
 
-function replace(newRoute: Route): void {
+export function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
   activeRouteStore.set(newRoute);
   window.history.replaceState(newRoute, documentTitle, routeToPath(newRoute));

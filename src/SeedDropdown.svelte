@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { navigate } from "@app/router";
-  import { Seed } from "@app/base/seeds/Seed";
-  import Dropdown from "@app/Dropdown.svelte";
   import type { SeedSession } from "@app/siwe";
+
+  import * as router from "@app/router";
+  import Dropdown from "@app/Dropdown.svelte";
+  import { Seed } from "@app/base/seeds/Seed";
   import { closeFocused } from "@app/Floating.svelte";
 
   export let seeds: { [key: string]: SeedSession };
@@ -31,6 +32,6 @@
     selected={null}
     on:select={item => {
       closeFocused();
-      navigate(`/seeds/${item.detail}`);
+      router.push({ type: "seeds", params: { host: item.detail } });
     }} />
 {/await}
