@@ -30,6 +30,7 @@
     navigate({
       type: "projects",
       params: {
+        activeView: { type: "tree" },
         urn: project.urn,
         content: "tree",
         revision,

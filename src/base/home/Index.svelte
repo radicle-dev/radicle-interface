@@ -30,6 +30,7 @@
     router.push({
       type: "projects",
       params: {
+        activeView: { type: "tree" },
         urn: project.urn,
         peer: null,
         seed: seed.host,

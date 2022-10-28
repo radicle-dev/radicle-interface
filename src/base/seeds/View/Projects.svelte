@@ -39,6 +39,7 @@
     router.push({
       type: "projects",
       params: {
+        activeView: { type: "tree" },
         urn: project.urn,
         seed: seed?.host,
         content: "tree",

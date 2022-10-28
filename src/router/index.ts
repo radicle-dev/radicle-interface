@@ -178,6 +178,7 @@ export function pathToRoute(path: string | null): Route {
             return {
               type: "projects",
               params: {
+                activeView: { type: "tree" },
                 urn,
                 peer: null,
                 profile: null,
@@ -186,7 +187,7 @@ export function pathToRoute(path: string | null): Route {
               },
             };
           }
-          const params = resolveProjectRoute(url, segments);
+          const params = resolveProjectRoute(url, urn, segments);
           if (params) {
             return {
               type: "projects",
@@ -214,6 +215,7 @@ export function pathToRoute(path: string | null): Route {
             return {
               type: "projects",
               params: {
+                activeView: { type: "tree" },
                 urn,
                 peer: null,
                 profile: type,
@@ -222,7 +224,7 @@ export function pathToRoute(path: string | null): Route {
               },
             };
           } else {
-            const params = resolveProjectRoute(url, segments);
+            const params = resolveProjectRoute(url, urn, segments);
             if (params) {
               return {
                 type: "projects",
@@ -344,8 +346,9 @@ export function routeToPath(route: Route): string | null {
 
 function resolveProjectRoute(
   url: URL,
+  urn: string,
   segments: string[],
-): Partial<ProjectsParams> | null {
+): ProjectsParams | null {
   let content = segments.shift();
   let peer = null;
   if (content === "remotes") {
@@ -355,6 +358,8 @@ function resolveProjectRoute(
 
   if (content === "tree") {
     return {
+      activeView: { type: "tree" },
+      urn,
       peer,
       content: "tree",
       path: null,
@@ -364,6 +369,8 @@ function resolveProjectRoute(
     };
   } else if (content === "commits") {
     return {
+      activeView: { type: "commits" },
+      urn,
       peer,
       content: "commits",
       path: null,
@@ -372,6 +379,8 @@ function resolveProjectRoute(
     };
   } else if (content === "commit") {
     return {
+      activeView: { type: "commit" },
+      urn,
       peer,
       content: "commit",
       path: null,
@@ -382,6 +391,8 @@ function resolveProjectRoute(
     const patch = segments.shift();
     if (patch) {
       return {
+        activeView: { type: "patch" },
+        urn,
         peer,
         content: "patch",
         path: null,
@@ -392,6 +403,8 @@ function resolveProjectRoute(
     return null;
   } else if (content === "patches") {
     return {
+      activeView: { type: "patches" },
+      urn,
       peer,
       content: "patches",
       path: null,
@@ -399,6 +412,8 @@ function resolveProjectRoute(
     };
   } else if (content === "issues") {
     return {
+      activeView: { type: "issues" },
+      urn,
       peer,
       content: "issues",
       path: null,
@@ -408,6 +423,8 @@ function resolveProjectRoute(
     const issue = segments.shift();
     if (issue) {
       return {
+        activeView: { type: "issue" },
+        urn,
         peer,
         content: "issue",
         issue,

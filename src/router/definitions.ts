@@ -11,7 +11,7 @@ export type Route =
   | { type: "home" }
   | { type: "boot" }
   | { type: "profile"; params: { addressOrName: string } }
-  | { type: "projects"; params: ProjectsParams }
+  | ProjectRoute
   | {
       type: "registration";
       params: {
@@ -37,6 +37,15 @@ export type Route =
   | { type: "vesting" };
 
 export interface ProjectsParams {
+  activeView:
+    | { type: "tree" }
+    | { type: "commit" }
+    | { type: "commits" }
+    | { type: "issue" }
+    | { type: "issues" }
+    | { type: "patch" }
+    | { type: "patches" };
+
   content?: string;
   hash?: string | null;
   issue?: string | null;

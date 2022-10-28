@@ -175,6 +175,7 @@
       router.replace({
         type: "projects",
         params: {
+          activeView: { type: "tree" },
           urn: searchResult.id,
           peer: null,
           profile: null,

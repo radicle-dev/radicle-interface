@@ -21,10 +21,14 @@
   $: peer = route.params.peer;
 
   // Switches between project views.
-  const toggleContent = (input: string, keepSourceInPath: boolean) => {
+  const toggleContent = (
+    input: "patches" | "issues" | "commits",
+    keepSourceInPath: boolean,
+  ) => {
     navigate({
       type: "projects",
       params: {
+        activeView: { type: content === input ? "tree" : input },
         urn: project.urn,
         content: content === input ? "tree" : input,
         revision,
@@ -38,7 +42,13 @@
   const updatePeer = (peer: string) => {
     navigate({
       type: "projects",
-      params: { urn: project.urn, peer, revision: null, path: null },
+      params: {
+        activeView: { type: "tree" },
+        urn: project.urn,
+        peer,
+        revision: null,
+        path: null,
+      },
     });
     closeFocused();
   };
@@ -46,7 +56,12 @@
   const updateRevision = (revision: string) => {
     navigate({
       type: "projects",
-      params: { urn: project.urn, route: null, revision },
+      params: {
+        activeView: { type: "tree" },
+        urn: project.urn,
+        route: null,
+        revision,
+      },
     });
     closeFocused();
   };

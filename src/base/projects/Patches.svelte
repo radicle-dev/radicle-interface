@@ -86,6 +86,7 @@
             navigate({
               type: "projects",
               params: {
+                activeView: { type: "patch" },
                 urn: project.urn,
                 content: "patch",
                 patch: patch.id,

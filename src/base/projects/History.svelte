@@ -10,12 +10,13 @@
   export let project: Project;
   export let history: CommitsHistory;
 
-  const navigateHistory = (revision: string, content?: string) => {
+  const navigateHistory = (revision: string) => {
     navigate({
       type: "projects",
       params: {
+        activeView: { type: "commit" },
         urn: project.urn,
-        content,
+        content: "commit",
         revision,
         issue: null,
         patch: null,
@@ -39,6 +40,7 @@
     navigate({
       type: "projects",
       params: {
+        activeView: { type: "tree" },
         urn: project.urn,
         content: "tree",
         revision: event.detail,
@@ -101,7 +103,7 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() => navigateHistory(commit.header.sha1, "commit")}>
+                on:click={() => navigateHistory(commit.header.sha1)}>
                 <CommitTeaser {commit} on:browseCommit={browseCommit} />
               </div>
             {/each}

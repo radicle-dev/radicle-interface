@@ -83,6 +83,7 @@
     navigate({
       type: "projects",
       params: {
+        activeView: { type: "tree" },
         urn: project.urn,
         path: newPath,
         route: null,
