@@ -10,6 +10,7 @@
   import * as router from "@app/router";
   import Loading from "@app/Loading.svelte";
   import NotFound from "@app/NotFound.svelte";
+  import { unreachable } from "@app/utils";
 
   import Header from "./Header.svelte";
   import Browser from "./Browser.svelte";
@@ -60,7 +61,6 @@
 
   // Content can be altered in child components.
   $: revision = activeRoute.params.revision || null;
-  $: content = activeRoute.params.content || "tree";
 
   $: console.log(activeRoute.params.activeView);
 </script>
@@ -103,9 +103,9 @@
     {:then { tree, commit }}
       <Header {tree} {commit} {project} />
 
-      {#if content === "tree"}
+      {#if activeRoute.params.activeView.type === "tree"}
         <Browser {project} {commit} {tree} />
-      {:else if content === "commits"}
+      {:else if activeRoute.params.activeView.type === "commits"}
         {#await proj.Project.getCommits( project.urn, project.seed.api, { parent: commit, verified: true }, )}
           <Loading center />
         {:then history}
@@ -115,7 +115,7 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "commit"}
+      {:else if activeRoute.params.activeView.type === "commit"}
         {#await project.getCommit(commit)}
           <Loading center />
         {:then commit}
@@ -125,7 +125,7 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "issues"}
+      {:else if activeRoute.params.activeView.type === "issues"}
         {#await issue.Issue.getIssues(project.urn, project.seed.api)}
           <Loading center />
         {:then issues}
@@ -135,8 +135,8 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "issue" && activeRoute.params.issue}
-        {#await issue.Issue.getIssue(project.urn, activeRoute.params.issue, project.seed.api)}
+      {:else if activeRoute.params.activeView.type === "issue"}
+        {#await issue.Issue.getIssue(project.urn, activeRoute.params.activeView.params.issue, project.seed.api)}
           <Loading center />
         {:then issue}
           <Issue {project} {wallet} {issue} />
@@ -145,7 +145,7 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "patches"}
+      {:else if activeRoute.params.activeView.type === "patches"}
         {#await patch.Patch.getPatches(project.urn, project.seed.api)}
           <Loading center />
         {:then patches}
@@ -155,8 +155,8 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "patch" && activeRoute.params.patch}
-        {#await patch.Patch.getPatch(project.urn, activeRoute.params.patch, project.seed.api)}
+      {:else if activeRoute.params.activeView.type === "patch"}
+        {#await patch.Patch.getPatch(project.urn, activeRoute.params.activeView.params.patch, project.seed.api)}
           <Loading center />
         {:then patch}
           <Patch {project} {wallet} {patch} />
@@ -165,6 +165,8 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
+      {:else}
+        {unreachable(activeRoute.params.activeView)}
       {/if}
     {/await}
   {:catch}

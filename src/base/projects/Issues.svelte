@@ -88,11 +88,10 @@
               params: {
                 activeView: {
                   type: "issue",
+                  params: { issue: issue.id },
                 },
                 urn: project.urn,
                 content: "issue",
-                issue: issue.id,
-                patch: null,
                 revision: null,
                 path: null,
               },

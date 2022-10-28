@@ -21,8 +21,6 @@
       path: "/",
       route: null,
       revision: null,
-      issue: null,
-      patch: null,
     },
   };
 </script>

@@ -41,15 +41,13 @@ export interface ProjectsParams {
     | { type: "tree" }
     | { type: "commit" }
     | { type: "commits" }
-    | { type: "issue" }
+    | { type: "issue"; params: { issue: string } }
     | { type: "issues" }
-    | { type: "patch" }
+    | { type: "patch"; params: { patch: string } }
     | { type: "patches" };
 
   content?: string;
   hash?: string | null;
-  issue?: string | null;
-  patch?: string | null;
   path?: string | null;
   peer?: string | null;
   profile?: string | null;

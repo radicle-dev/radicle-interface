@@ -86,11 +86,9 @@
             navigate({
               type: "projects",
               params: {
-                activeView: { type: "patch" },
+                activeView: { type: "patch", params: { patch: patch.id } },
                 urn: project.urn,
                 content: "patch",
-                patch: patch.id,
-                issue: null,
                 revision: null,
                 path: null,
               },

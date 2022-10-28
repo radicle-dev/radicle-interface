@@ -18,8 +18,6 @@
         urn: project.urn,
         content: "commit",
         revision,
-        issue: null,
-        patch: null,
         path: null,
       },
     });
@@ -44,8 +42,6 @@
         urn: project.urn,
         content: "tree",
         revision: event.detail,
-        issue: null,
-        path: null,
       },
     });
   };

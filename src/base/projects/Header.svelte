@@ -32,8 +32,6 @@
         urn: project.urn,
         content: content === input ? "tree" : input,
         revision,
-        issue: null,
-        patch: null,
         ...(keepSourceInPath ? null : { revision: null, path: null }),
       },
     });

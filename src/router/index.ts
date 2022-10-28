@@ -310,10 +310,10 @@ export function routeToPath(route: Route): string | null {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
     } else if (route.params.content === "patches") {
       return `${hostPrefix}/${route.params.urn}${peer}${content}${suffix}`;
-    } else if (route.params.content === "patch") {
-      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.patch}`;
-    } else if (route.params.content === "issue") {
-      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.issue}`;
+    } else if (route.params.activeView.type === "patch") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.params.patch}`;
+    } else if (route.params.activeView.type === "issue") {
+      return `${hostPrefix}/${route.params.urn}${peer}${content}/${route.params.activeView.params.issue}`;
     } else {
       return `${hostPrefix}/${route.params.urn}${peer}${content}`;
     }
@@ -391,13 +391,12 @@ function resolveProjectRoute(
     const patch = segments.shift();
     if (patch) {
       return {
-        activeView: { type: "patch" },
+        activeView: { type: "patch", params: { patch } },
         urn,
         peer,
         content: "patch",
         path: null,
         revision: null,
-        patch,
       };
     }
     return null;
@@ -423,11 +422,10 @@ function resolveProjectRoute(
     const issue = segments.shift();
     if (issue) {
       return {
-        activeView: { type: "issue" },
+        activeView: { type: "issue", params: { issue } },
         urn,
         peer,
         content: "issue",
-        issue,
         path: null,
         revision: null,
       };

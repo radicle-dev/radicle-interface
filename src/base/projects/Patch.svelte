@@ -34,7 +34,6 @@
         urn: project.urn,
         content: "tree",
         revision,
-        patch: null,
         path: event.detail,
       },
     });
