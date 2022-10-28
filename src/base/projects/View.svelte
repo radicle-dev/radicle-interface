@@ -1,16 +1,15 @@
 <script lang="ts">
   import type { Wallet } from "@app/wallet";
   import type { ProjectRoute } from "@app/router/definitions";
-  import type { Writable } from "svelte/store";
   import type { State as IssueState } from "./Issues.svelte";
   import type { State as PatchState } from "./Patches.svelte";
 
-  import * as proj from "@app/project";
-  import * as patch from "@app/patch";
   import * as issue from "@app/issue";
+  import * as patch from "@app/patch";
+  import * as proj from "@app/project";
+  import * as router from "@app/router";
   import Loading from "@app/Loading.svelte";
   import NotFound from "@app/NotFound.svelte";
-  import { activeRouteStore } from "@app/router";
 
   import Header from "./Header.svelte";
   import Browser from "./Browser.svelte";
@@ -24,42 +23,46 @@
   import Message from "@app/Message.svelte";
 
   export let wallet: Wallet;
-  export let urn: string;
-  export let seed: string | null;
-  export let profile: string | null;
-  export let peer: string | null;
+  export let activeRoute: ProjectRoute;
 
-  // Casting activeRouteStore to a projectRoute store
-  $: activeRoute = activeRouteStore as Writable<ProjectRoute>;
+  $: urn = activeRoute.params.urn;
+  $: seed = activeRoute.params.seed ?? null;
+  $: profile = activeRoute.params.profile ?? null;
+  $: peer = activeRoute.params.peer ?? null;
 
-  $: searchParams = new URLSearchParams($activeRoute.params.search || "");
+  $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueState) || "open";
   $: patchFilter = (searchParams.get("state") as PatchState) || "proposed";
 
   // Passing peer as param to allow to react to peer change.
   const getProject = async (peer: string | null) => {
     const project = await proj.Project.get(urn, peer, profile, seed, wallet);
-    if ($activeRoute.params.route) {
+    if (activeRoute.params.route) {
       const { revision, path } = proj.parseRoute(
-        $activeRoute.params.route,
+        activeRoute.params.route,
         project.branches,
       );
       // Updating revision and patch with resolved route and nulling the route param.
-      const params = {
-        ...$activeRoute.params,
-        revision,
-        path,
-        route: null,
+      const params: ProjectRoute = {
+        type: "projects",
+        params: {
+          ...activeRoute.params,
+          revision,
+          path,
+          route: null,
+        },
       };
-      activeRoute.update(s => ({ ...s, params }));
+      router.activeRouteStore.set(params);
     }
 
     return project;
   };
 
   // Content can be altered in child components.
-  $: revision = $activeRoute.params.revision || null;
-  $: content = $activeRoute.params.content || "tree";
+  $: revision = activeRoute.params.revision || null;
+  $: content = activeRoute.params.content || "tree";
+
+  $: console.log(activeRoute.params.activeView);
 </script>
 
 <style>
@@ -132,8 +135,8 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "issue" && $activeRoute.params.issue}
-        {#await issue.Issue.getIssue(project.urn, $activeRoute.params.issue, project.seed.api)}
+      {:else if content === "issue" && activeRoute.params.issue}
+        {#await issue.Issue.getIssue(project.urn, activeRoute.params.issue, project.seed.api)}
           <Loading center />
         {:then issue}
           <Issue {project} {wallet} {issue} />
@@ -152,8 +155,8 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
-      {:else if content === "patch" && $activeRoute.params.patch}
-        {#await patch.Patch.getPatch(project.urn, $activeRoute.params.patch, project.seed.api)}
+      {:else if content === "patch" && activeRoute.params.patch}
+        {#await patch.Patch.getPatch(project.urn, activeRoute.params.patch, project.seed.api)}
           <Loading center />
         {:then patch}
           <Patch {project} {wallet} {patch} />

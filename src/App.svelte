@@ -143,12 +143,7 @@
       {:else if $activeRouteStore.type === "vesting"}
         <Vesting {wallet} session={$session} />
       {:else if $activeRouteStore.type === "projects"}
-        <Projects
-          {wallet}
-          profile={$activeRouteStore.params.profile || null}
-          seed={$activeRouteStore.params.seed || null}
-          peer={$activeRouteStore.params.peer || null}
-          urn={$activeRouteStore.params.urn} />
+        <Projects {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.type === "profile"}
         <Profile
           addressOrName={$activeRouteStore.params.addressOrName}
