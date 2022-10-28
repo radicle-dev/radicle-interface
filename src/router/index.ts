@@ -49,7 +49,7 @@ window.addEventListener("popstate", e => {
 
 export function navigate(
   route: Route | string,
-  opts?: { retry?: boolean; replace?: boolean },
+  opts?: { replace?: boolean },
 ): void {
   if (typeof route === "string") {
     route = pathToRoute(route);
@@ -119,6 +119,7 @@ export function pathToRoute(path: string | null): Route {
       const nameOrDomain = segments.shift();
       const activeView = segments.shift();
       const owner = url.searchParams.get("owner");
+      const retry = url.searchParams.get("retry");
 
       if (nameOrDomain) {
         if (
@@ -140,7 +141,7 @@ export function pathToRoute(path: string | null): Route {
             params: {
               activeView: {
                 type: "view",
-                params: { nameOrDomain },
+                params: { nameOrDomain, retry: retry === "true" },
               },
             },
           };
@@ -323,7 +324,7 @@ export function routeToPath(route: Route): string | null {
     route.type === "registration" &&
     route.params.activeView.type === "view"
   ) {
-    return `/registration/${route.params.activeView.params.nameOrDomain}`;
+    return `/registration/${route.params.activeView.params.nameOrDomain}?retry=${route.params.activeView.params.retry}`;
   } else if (
     route.type === "registration" &&
     (route.params.activeView.type === "checkNameAvailability" ||

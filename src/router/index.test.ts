@@ -38,10 +38,26 @@ describe("routeToPath", () => {
       input: {
         type: "registration",
         params: {
-          activeView: { type: "view", params: { nameOrDomain: "sebastinez" } },
+          activeView: {
+            type: "view",
+            params: { nameOrDomain: "sebastinez", retry: true },
+          },
         },
       },
-      output: "/registration/sebastinez",
+      output: "/registration/sebastinez?retry=true",
+      description: "Registration View Route",
+    },
+    {
+      input: {
+        type: "registration",
+        params: {
+          activeView: {
+            type: "view",
+            params: { nameOrDomain: "sebastinez", retry: false },
+          },
+        },
+      },
+      output: "/registration/sebastinez?retry=false",
       description: "Registration View Route",
     },
     {
@@ -135,7 +151,23 @@ describe("pathToRoute", () => {
       output: {
         type: "registration",
         params: {
-          activeView: { type: "view", params: { nameOrDomain: "sebastinez" } },
+          activeView: {
+            type: "view",
+            params: { nameOrDomain: "sebastinez", retry: false },
+          },
+        },
+      },
+      description: "Registration View Route",
+    },
+    {
+      input: "/registration/sebastinez?retry=true",
+      output: {
+        type: "registration",
+        params: {
+          activeView: {
+            type: "view",
+            params: { nameOrDomain: "sebastinez", retry: true },
+          },
         },
       },
       description: "Registration View Route",

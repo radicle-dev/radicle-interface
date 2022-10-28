@@ -130,6 +130,7 @@
         {:else if $activeRouteStore.params.activeView.type === "view"}
           <RegistrationView
             {wallet}
+            retry={$activeRouteStore.params.activeView.params.retry}
             domain={$activeRouteStore.params.activeView.params.nameOrDomain} />
         {:else}
           {unreachable($activeRouteStore.params.activeView)}
