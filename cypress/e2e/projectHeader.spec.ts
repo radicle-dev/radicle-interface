@@ -109,7 +109,7 @@ describe("project header", () => {
     ]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
-        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree",
+        "/seeds/willow.radicle.garden/bright-forest-protocol/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree",
       );
     });
     cy.get(
@@ -130,7 +130,7 @@ describe("project header", () => {
     cy.wait(["@projectTreecbf5df4", "@projectReadme"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
-        "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree/master",
+        "/seeds/willow.radicle.garden/bright-forest-protocol/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree/master",
       );
     });
     cy.get("div.stat.branch").should("have.text", "master");

@@ -92,12 +92,13 @@ describe("routeToPath", () => {
       input: {
         type: "projects",
         params: {
+          activeView: { type: "tree" },
           seed: "willow.radicle.garden",
           urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
         },
       },
       output:
-        "/seeds/willow.radicle.garden/rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+        "/seeds/willow.radicle.garden/rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao/tree",
       description: "Seed Project Route",
     },
   ])("$description", (route: any) => {
@@ -207,8 +208,8 @@ describe("pathToRoute", () => {
       output: {
         type: "projects",
         params: {
+          activeView: { type: "tree" },
           seed: "willow.radicle.garden",
-          content: "tree",
           profile: null,
           peer: null,
           urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
