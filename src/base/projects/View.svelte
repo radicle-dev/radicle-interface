@@ -101,7 +101,7 @@
     {#await project.getRoot(revision)}
       <Loading center />
     {:then { tree, commit }}
-      <Header {tree} {commit} {project} />
+      <Header {tree} {commit} {project} {activeRoute} />
 
       {#if activeRoute.params.activeView.type === "tree"}
         <Browser {project} {commit} {tree} />

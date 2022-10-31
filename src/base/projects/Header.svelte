@@ -3,22 +3,20 @@
   import type { Tree } from "@app/project";
   import type { ProjectRoute } from "@app/router/definitions";
 
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate } from "@app/router";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import { closeFocused } from "@app/Floating.svelte";
 
+  export let activeRoute: ProjectRoute;
   export let project: Project;
   export let tree: Tree;
   export let commit: string;
 
   const { urn, peers, branches, seed } = project;
 
-  $: route = $activeRouteStore as ProjectRoute;
-  $: revision = route.params.revision || commit;
-  $: activeViewType = route.params.activeView.type;
-  $: peer = route.params.peer;
+  $: revision = activeRoute.params.revision || commit;
 
   // Switches between project views.
   const toggleContent = (
@@ -28,7 +26,9 @@
     navigate({
       type: "projects",
       params: {
-        activeView: { type: activeViewType === input ? "tree" : input },
+        activeView: {
+          type: activeRoute.params.activeView.type === input ? "tree" : input,
+        },
         urn: project.urn,
         revision,
         ...(keepSourceInPath ? null : { revision: null, path: null }),
@@ -38,27 +38,16 @@
 
   const updatePeer = (peer: string) => {
     navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "tree" },
-        urn: project.urn,
-        peer,
-        revision: null,
-        path: null,
-      },
+      ...activeRoute,
+      params: { ...activeRoute.params, peer, revision: null, path: null },
     });
     closeFocused();
   };
 
   const updateRevision = (revision: string) => {
     navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "tree" },
-        urn: project.urn,
-        route: null,
-        revision,
-      },
+      ...activeRoute,
+      params: { ...activeRoute.params, revision, route: null },
     });
     closeFocused();
   };
@@ -117,7 +106,7 @@
   {#if peers.length > 0}
     <PeerSelector
       {peers}
-      {peer}
+      peer={activeRoute.params.peer}
       on:peerChanged={event => updatePeer(event.detail)} />
   {/if}
 
@@ -144,7 +133,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     class="stat commit-count clickable widget"
-    class:active={activeViewType === "commits"}
+    class:active={activeRoute.params.activeView.type === "commits"}
     on:click={() => toggleContent("commits", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
@@ -153,7 +142,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat issue-count clickable widget"
-      class:active={activeViewType === "issues"}
+      class:active={activeRoute.params.activeView.type === "issues"}
       class:not-allowed={project.issues === 0}
       class:clickable={project.issues > 0}
       on:click={() => toggleContent("issues", false)}>
@@ -165,7 +154,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="stat patch-count clickable widget"
-      class:active={activeViewType === "patches"}
+      class:active={activeRoute.params.activeView.type === "patches"}
       class:not-allowed={project.patches === 0}
       class:clickable={project.patches > 0}
       on:click={() => toggleContent("patches", false)}>
