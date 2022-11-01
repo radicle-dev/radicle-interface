@@ -109,7 +109,7 @@ export const initialize = () => {
   replace(pathToRoute(pathname + search + hash));
 };
 
-export function pathToRoute(path: string | null): Route {
+function pathToRoute(path: string | null): Route {
   if (!path) {
     return { type: "404" };
   }
@@ -249,7 +249,7 @@ export function pathToRoute(path: string | null): Route {
   }
 }
 
-export function routeToPath(route: Route): string | null {
+function routeToPath(route: Route): string | null {
   if (route.type === "home") {
     return "/";
   } else if (
@@ -431,3 +431,5 @@ function resolveProjectRoute(
 
   return null;
 }
+
+export const testExports = { pathToRoute, routeToPath };

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { pathToRoute, routeToPath } from "./index";
+import { testExports } from "./index";
 
 describe("routeToPath", () => {
   test.each([
@@ -102,7 +102,7 @@ describe("routeToPath", () => {
       description: "Seed Project Route",
     },
   ])("$description", (route: any) => {
-    expect(routeToPath(route.input)).toEqual(route.output);
+    expect(testExports.routeToPath(route.input)).toEqual(route.output);
   });
 });
 
@@ -218,6 +218,6 @@ describe("pathToRoute", () => {
       description: "Seed Project Route",
     },
   ])("$description", (route: any) => {
-    expect(pathToRoute(route.input)).toEqual(route.output);
+    expect(testExports.pathToRoute(route.input)).toEqual(route.output);
   });
 });
