@@ -3,13 +3,12 @@
   import type { ProjectRoute } from "@app/router/definitions";
 
   import Markdown from "@app/Markdown.svelte";
-  import { activeRouteStore } from "@app/router";
 
   export let content: string;
   export let getImage: (path: string) => Promise<proj.Blob>;
+  export let activeRoute: ProjectRoute;
 
-  $: route = $activeRouteStore as ProjectRoute;
-  $: hash = route.params.hash || null;
+  $: hash = activeRoute.params.hash || null;
 </script>
 
 <style>

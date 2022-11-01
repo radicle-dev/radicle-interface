@@ -208,9 +208,9 @@
           <Loading small center />
         {:then blob}
           {#if utils.isMarkdownPath(blob.path)}
-            <Readme content={blob.content} {getImage} />
+            <Readme {activeRoute} content={blob.content} {getImage} />
           {:else}
-            <Blob {line} {blob} />
+            <Blob {activeRoute} {line} {blob} />
           {/if}
         {:catch}
           <Placeholder icon="🍂">

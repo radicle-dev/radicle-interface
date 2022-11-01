@@ -2,14 +2,14 @@
   import type { Blob } from "@app/project";
   import type { ProjectRoute, Route } from "@app/router/definitions";
 
-  import { link, activeRouteStore, routeToPath } from "@app/router";
+  import { link, routeToPath } from "@app/router";
   import { onMount } from "svelte";
   import { scrollIntoView } from "@app/utils";
 
   export let blob: Blob;
   export let line: string | null;
+  export let activeRoute: ProjectRoute;
 
-  const activeRoute = $activeRouteStore as ProjectRoute;
   $: lineNumber = line ? parseInt(line.substring(1)) : null;
 
   const lastCommit = blob.info.lastCommit;
