@@ -6,8 +6,6 @@
   import type { Wallet } from "@app/wallet";
   import type { Patch } from "@app/patch";
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
-  import type { Project } from "@app/project";
-  import type { ProjectRoute } from "@app/router/definitions";
 
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -15,13 +13,11 @@
 
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
 
   export let state: State;
   export let wallet: Wallet;
   export let patches: Patch[];
-  export let project: Project;
-  export let activeRoute: ProjectRoute;
 
   let options: ToggleButtonOption<State>[];
   const sortedPatches = groupPatches(patches);
@@ -68,9 +64,8 @@
     <ToggleButton
       {options}
       on:select={e => {
-        navigate({
-          type: "projects",
-          params: { ...activeRoute.params, search: e.detail },
+        router.updateProjectRoute({
+          search: e.detail,
         });
       }}
       active={state} />
@@ -83,14 +78,8 @@
         <div
           class="teaser"
           on:click={() => {
-            navigate({
-              type: "projects",
-              params: {
-                activeView: { type: "patch", params: { patch: patch.id } },
-                urn: project.urn,
-                revision: null,
-                path: null,
-              },
+            router.updateProjectRoute({
+              activeView: { type: "patch", params: { patch: patch.id } },
             });
           }}>
           <PatchTeaser {wallet} {patch} />

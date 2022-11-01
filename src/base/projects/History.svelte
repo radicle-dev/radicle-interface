@@ -5,22 +5,10 @@
   import { Project } from "@app/project";
   import { groupCommits } from "@app/commit";
   import List from "@app/List.svelte";
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
 
   export let project: Project;
   export let history: CommitsHistory;
-
-  const navigateHistory = (revision: string) => {
-    navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "commit" },
-        urn: project.urn,
-        revision,
-        path: null,
-      },
-    });
-  };
 
   const fetchMoreCommits = async (): Promise<CommitMetadata[]> => {
     const response = await Project.getCommits(project.urn, project.seed.api, {
@@ -34,13 +22,9 @@
   };
 
   const browseCommit = (event: { detail: string }) => {
-    navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "tree" },
-        urn: project.urn,
-        revision: event.detail,
-      },
+    router.updateProjectRoute({
+      activeView: { type: "tree" },
+      revision: event.detail,
     });
   };
 </script>
@@ -97,7 +81,12 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() => navigateHistory(commit.header.sha1)}>
+                on:click={() => {
+                  router.updateProjectRoute({
+                    activeView: { type: "commit" },
+                    revision: commit.header.sha1,
+                  });
+                }}>
                 <CommitTeaser {commit} on:browseCommit={browseCommit} />
               </div>
             {/each}

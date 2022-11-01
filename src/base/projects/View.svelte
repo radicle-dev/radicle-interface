@@ -119,7 +119,7 @@
         {#await project.getCommit(commit)}
           <Loading center />
         {:then commit}
-          <Commit {project} {commit} />
+          <Commit {commit} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -129,12 +129,7 @@
         {#await issue.Issue.getIssues(project.urn, project.seed.api)}
           <Loading center />
         {:then issues}
-          <Issues
-            {project}
-            state={issueFilter}
-            {wallet}
-            {issues}
-            {activeRoute} />
+          <Issues state={issueFilter} {wallet} {issues} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -154,12 +149,7 @@
         {#await patch.Patch.getPatches(project.urn, project.seed.api)}
           <Loading center />
         {:then patches}
-          <Patches
-            {project}
-            {wallet}
-            state={patchFilter}
-            {patches}
-            {activeRoute} />
+          <Patches {wallet} state={patchFilter} {patches} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>

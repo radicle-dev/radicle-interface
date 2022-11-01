@@ -3,7 +3,7 @@
   import type { Tree } from "@app/project";
   import type { ProjectRoute } from "@app/router/definitions";
 
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
   import BranchSelector from "@app/base/projects/BranchSelector.svelte";
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
@@ -23,31 +23,26 @@
     input: "patches" | "issues" | "commits",
     keepSourceInPath: boolean,
   ) => {
-    navigate({
-      type: "projects",
-      params: {
-        activeView: {
-          type: activeRoute.params.activeView.type === input ? "tree" : input,
-        },
-        urn: project.urn,
-        revision,
-        ...(keepSourceInPath ? null : { revision: null, path: null }),
+    router.updateProjectRoute({
+      activeView: {
+        type: activeRoute.params.activeView.type === input ? "tree" : input,
       },
+      urn: project.urn,
+      revision,
+      ...(keepSourceInPath ? null : { revision: null, path: null }),
     });
   };
 
   const updatePeer = (peer: string) => {
-    navigate({
-      ...activeRoute,
-      params: { ...activeRoute.params, peer, revision: null, path: null },
+    router.updateProjectRoute({
+      peer,
     });
     closeFocused();
   };
 
   const updateRevision = (revision: string) => {
-    navigate({
-      ...activeRoute,
-      params: { ...activeRoute.params, revision, route: null },
+    router.updateProjectRoute({
+      revision,
     });
     closeFocused();
   };
@@ -125,7 +120,8 @@
       <div
         class="stat seed clickable widget"
         title="Project data is fetched from this seed"
-        on:click={() => navigate(`/seeds/${seed.api.host}`)}>
+        on:click={() =>
+          router.push({ type: "seeds", params: { host: seed.api.host } })}>
         <span>{seed.api.host}</span>
       </div>
     {/if}

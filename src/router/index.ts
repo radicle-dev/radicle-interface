@@ -1,4 +1,4 @@
-import type { ProjectsParams, Route } from "./definitions";
+import type { ProjectsParams, Route, ProjectRoute } from "./definitions";
 import type { Writable } from "svelte/store";
 
 import { get, writable } from "svelte/store";
@@ -41,16 +41,7 @@ export function link(node: any, route?: Route) {
   };
 }
 
-// Replaces history on any user interaction with forward and backwards buttons
-// with the current window.history.state
-window.addEventListener("popstate", e => {
-  if (e.state) replace(e.state);
-});
-
-export function navigate(
-  route: Route | string,
-  opts?: { replace?: boolean },
-): void {
+function navigate(route: Route | string, opts?: { replace?: boolean }): void {
   if (typeof route === "string") {
     route = pathToRoute(route);
   }
@@ -70,6 +61,40 @@ export function navigate(
     replace(route);
   } else {
     push(route);
+  }
+}
+
+// Replaces history on any user interaction with forward and backwards buttons
+// with the current window.history.state
+window.addEventListener("popstate", e => {
+  if (e.state) replace(e.state);
+});
+
+export function updateProjectRoute(
+  projectRouteParams: Partial<ProjectsParams>,
+) {
+  const activeRoute = get(activeRouteStore);
+
+  let overrides = {};
+  if (!projectRouteParams.hash) {
+    overrides = { hash: null, search: null };
+  }
+
+  if (activeRoute.type === "projects") {
+    const updatedRoute: ProjectRoute = {
+      type: "projects",
+      params: {
+        ...activeRoute.params,
+        ...projectRouteParams,
+        ...overrides,
+      },
+    };
+
+    push(updatedRoute);
+  } else {
+    throw new Error(
+      "Don't use project specific navigation outside of project views",
+    );
   }
 }
 

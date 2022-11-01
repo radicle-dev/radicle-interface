@@ -12,7 +12,7 @@
   import PatchTabBar from "./Patch/PatchTabBar.svelte";
   import PatchTimeline from "./Patch/PatchTimeline.svelte";
   import Placeholder from "@app/Placeholder.svelte";
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
 
   export let patch: Patch;
   export let project: Project;
@@ -27,14 +27,10 @@
   };
 
   const onBrowse = (event: { detail: string }, revision: string) => {
-    navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "tree" },
-        urn: project.urn,
-        revision,
-        path: event.detail,
-      },
+    router.updateProjectRoute({
+      activeView: { type: "tree" },
+      revision,
+      path: event.detail,
     });
   };
 

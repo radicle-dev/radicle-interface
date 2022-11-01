@@ -8,7 +8,7 @@
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
-  import { navigate } from "@app/router";
+  import * as router from "@app/router";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -30,7 +30,6 @@
 
   $: path = activeRoute.params.path || "/";
   $: line = activeRoute.params.hash || null;
-  $: revision = activeRoute.params.revision || commit;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -80,15 +79,9 @@
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
 
-    navigate({
-      type: "projects",
-      params: {
-        activeView: { type: "tree" },
-        urn: project.urn,
-        path: newPath,
-        route: null,
-        revision,
-      },
+    router.updateProjectRoute({
+      activeView: { type: "tree" },
+      path: newPath,
     });
   };
 
