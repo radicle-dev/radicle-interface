@@ -28,7 +28,7 @@
 
   let addressType: AddressType | null = null;
 
-  const nameOrAddress = profile?.ens?.name || address;
+  const addressOrName = profile?.ens?.name || address;
 
   onMount(async () => {
     if (!profile) {
@@ -99,7 +99,7 @@
       <a
         use:link={{
           type: "profile",
-          params: { addressOrName: nameOrAddress },
+          params: { addressOrName: addressOrName },
         }}
         href="">
         {addressLabel}
@@ -119,7 +119,7 @@
       <a
         use:link={{
           type: "profile",
-          params: { addressOrName: nameOrAddress },
+          params: { addressOrName: addressOrName },
         }}
         href="">
         {addressLabel}

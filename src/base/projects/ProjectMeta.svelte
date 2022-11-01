@@ -75,10 +75,10 @@
       <a
         use:link={{
           type: "profile",
-          params: { addressOrName: project.profile.nameOrAddress },
+          params: { addressOrName: project.profile.addressOrName },
         }}
         class="org-avatar"
-        title={project.profile.nameOrAddress}
+        title={project.profile.addressOrName}
         href="">
         <Avatar
           source={project.profile.avatar || project.profile.address}

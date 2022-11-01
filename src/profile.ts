@@ -98,7 +98,7 @@ export class Profile {
   }
 
   // Get the name, and if not available, the address.
-  get nameOrAddress(): string {
+  get addressOrName(): string {
     return this.name ?? this.address;
   }
 
