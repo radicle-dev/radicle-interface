@@ -61,8 +61,6 @@
 
   // Content can be altered in child components.
   $: revision = activeRoute.params.revision || null;
-
-  $: console.log(activeRoute.params.activeView);
 </script>
 
 <style>
