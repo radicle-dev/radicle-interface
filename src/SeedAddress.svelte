@@ -2,7 +2,7 @@
   import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
   import Clipboard from "@app/Clipboard.svelte";
-  import { link } from "@app/router";
+  import * as router from "@app/router";
 
   export let seed: Seed;
   export let port: number;
@@ -36,14 +36,20 @@
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span>
-        <a use:link href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
+        <a
+          use:router.link
+          href="/seeds/{formatSeedHost(seed.host)}"
+          class="txt-link">
           {formatSeedId(seed.id)}@{seed.host}
         </a>
       </span>
       <span class="txt-faded">:{port}</span>
     {:else}
       <span>
-        <a use:link href="/seeds/{formatSeedHost(seed.host)}" class="txt-link">
+        <a
+          use:router.link
+          href="/seeds/{formatSeedHost(seed.host)}"
+          class="txt-link">
           {formatSeedHost(seed.host)}
         </a>
       </span>

@@ -2,8 +2,9 @@
   import type { Blob } from "@app/project";
   import type { ProjectRoute, Route } from "@app/router/definitions";
 
-  import { link, routeToPath } from "@app/router";
   import { onMount } from "svelte";
+
+  import * as router from "@app/router";
   import { scrollIntoView } from "@app/utils";
 
   export let blob: Blob;
@@ -177,8 +178,8 @@
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
             <a
-              use:link={lineNumberRoute(lineNumber)}
-              href={routeToPath(lineNumberRoute(lineNumber))}
+              use:router.link={lineNumberRoute(lineNumber)}
+              href={router.routeToPath(lineNumberRoute(lineNumber))}
               class="line-number"
               class:highlighted={lineNumber === line}
               id="L{lineNumber}">

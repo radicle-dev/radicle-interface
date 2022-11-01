@@ -3,7 +3,7 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import { link } from "@app/router";
+  import * as router from "@app/router";
 
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";
@@ -138,7 +138,7 @@
 
 <header>
   <div class="left">
-    <a use:link href="/" class="logo"><Logo /></a>
+    <a use:router.link href="/" class="logo"><Logo /></a>
     <div class="search">
       <Search
         {wallet}
@@ -162,7 +162,7 @@
 
   <div class="right">
     {#if wallet && wallet.network.name === "goerli"}
-      <a use:link href="/faucet">
+      <a use:router.link href="/faucet">
         <span class="network">Goerli</span>
       </a>
     {:else if wallet && wallet.network.name === "homestead"}
@@ -170,7 +170,7 @@
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <a use:link class="register" href="/registration">Register</a>
+    <a use:router.link class="register" href="/registration">Register</a>
 
     {#if address}
       <span class="balance">
@@ -230,7 +230,7 @@
                 }} />
             </div>
             <a
-              use:link
+              use:router.link
               on:click={() => {
                 closeFocused();
               }}

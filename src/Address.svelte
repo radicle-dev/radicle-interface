@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { link } from "@app/router";
+  import * as router from "@app/router";
   import { ethers } from "ethers";
   import {
     explorerLink,
@@ -95,7 +95,7 @@
   {/if}
   <div class="wrapper">
     {#if addressType === AddressType.Org}
-      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <a use:router.link href={`/${nameOrAddress}`}>{addressLabel}</a>
       {#if !noBadge}
         <Badge variant="foreground">org</Badge>
       {/if}
@@ -107,7 +107,7 @@
         <Badge variant="foreground">contract</Badge>
       {/if}
     {:else if addressType === AddressType.EOA}
-      <a use:link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <a use:router.link href={`/${nameOrAddress}`}>{addressLabel}</a>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
       <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">

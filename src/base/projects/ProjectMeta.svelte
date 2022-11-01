@@ -5,7 +5,7 @@
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import { formatSeedId } from "@app/utils";
-  import { link, routeToPath } from "@app/router";
+  import * as router from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
@@ -86,7 +86,7 @@
   <div class="title txt-bold txt-title">
     {#if project.profile}
       <a
-        use:link
+        use:router.link
         class="org-avatar"
         title={project.profile.nameOrAddress}
         href="/{project.profile.nameOrAddress}">
@@ -97,7 +97,10 @@
       <span class="divider">/</span>
     {/if}
     <span class="truncate">
-      <a use:link={rootPath} class="project-name" href={routeToPath(rootPath)}>
+      <a
+        use:router.link={rootPath}
+        class="project-name"
+        href={router.routeToPath(rootPath)}>
         {project.name}
       </a>
     </span>

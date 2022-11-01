@@ -22,7 +22,7 @@
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
   import { defaultLinkPort } from "@app/base/seeds/Seed";
-  import { link } from "@app/router";
+  import * as router from "@app/router";
 
   export let wallet: Wallet;
   export let addressOrName: string;
@@ -218,7 +218,7 @@
           <div class="overflow-text">
             {#if profile.name && profile.ens}
               <a
-                use:link
+                use:router.link
                 href={`/registration/${profile.ens.name}`}
                 class="txt-link">
                 {profile.name}
@@ -233,7 +233,7 @@
         <div>
           {#if profile.name && profile.ens}
             <a
-              use:link
+              use:router.link
               href={`/registration/${profile.ens.name}`}
               class="txt-link">
               {profile.name}
