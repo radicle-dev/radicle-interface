@@ -7,6 +7,7 @@
 
   import { onMount } from "svelte";
 
+  import { link } from "@app/router";
   import * as router from "@app/router";
   import Button from "@app/Button.svelte";
   import ErrorModal from "@app/ErrorModal.svelte";
@@ -256,7 +257,7 @@
     <span slot="actions">
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={{
+        use:link={{
           type: "registration",
           params: {
             activeView: {

@@ -4,7 +4,7 @@
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import { formatSeedId } from "@app/utils";
-  import * as router from "@app/router";
+  import { link, projectLink } from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
@@ -73,7 +73,7 @@
     {#if project.profile}
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={{
+        use:link={{
           type: "profile",
           params: { addressOrName: project.profile.nameOrAddress },
         }}
@@ -90,7 +90,7 @@
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
         href=""
-        use:router.projectLink={{
+        use:projectLink={{
           activeView: { type: "tree" },
           path: "/",
           peer: null,

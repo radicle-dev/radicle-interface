@@ -3,7 +3,7 @@
   import type { ProjectsAndProfiles } from "@app/Search.svelte";
   import type { Session } from "@app/session";
 
-  import * as router from "@app/router";
+  import { link } from "@app/router";
 
   import Avatar from "@app/Avatar.svelte";
   import Button from "@app/Button.svelte";
@@ -139,7 +139,7 @@
 <header>
   <div class="left">
     <!-- svelte-ignore a11y-invalid-attribute -->
-    <a use:router.link={{ type: "home" }} href="" class="logo"><Logo /></a>
+    <a use:link={{ type: "home" }} href="" class="logo"><Logo /></a>
     <div class="search">
       <Search
         {wallet}
@@ -165,7 +165,7 @@
     {#if wallet && wallet.network.name === "goerli"}
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={{
+        use:link={{
           type: "faucet",
           params: { activeView: { type: "form" } },
         }}
@@ -179,7 +179,7 @@
     {/if}
     <!-- svelte-ignore a11y-invalid-attribute -->
     <a
-      use:router.link={{
+      use:link={{
         type: "registration",
         params: { activeView: { type: "validateName" } },
       }}
@@ -247,7 +247,7 @@
             </div>
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              use:router.link={{
+              use:link={{
                 type: "registration",
                 params: { activeView: { type: "validateName" } },
               }}

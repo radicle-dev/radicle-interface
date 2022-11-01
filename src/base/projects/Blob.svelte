@@ -3,7 +3,7 @@
 
   import { onMount } from "svelte";
 
-  import * as router from "@app/router";
+  import { projectLink } from "@app/router";
   import { scrollIntoView } from "@app/utils";
 
   export let blob: Blob;
@@ -171,7 +171,7 @@
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
             <a
-              use:router.projectLink={{ hash: `L${lineNumber}` }}
+              use:projectLink={{ hash: `L${lineNumber}` }}
               class="line-number"
               class:highlighted={lineNumber === line}
               id="L{lineNumber}">

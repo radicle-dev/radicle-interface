@@ -22,7 +22,7 @@
   import Badge from "@app/Badge.svelte";
   import Button from "@app/Button.svelte";
   import { defaultLinkPort } from "@app/base/seeds/Seed";
-  import * as router from "@app/router";
+  import { link } from "@app/router";
 
   export let wallet: Wallet;
   export let addressOrName: string;
@@ -219,7 +219,7 @@
             {#if profile.name && profile.ens}
               <!-- svelte-ignore a11y-invalid-attribute -->
               <a
-                use:router.link={{
+                use:link={{
                   type: "registration",
                   params: {
                     activeView: {
@@ -243,7 +243,7 @@
           {#if profile.name && profile.ens}
             <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              use:router.link={{
+              use:link={{
                 type: "registration",
                 params: {
                   activeView: {

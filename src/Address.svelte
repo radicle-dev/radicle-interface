@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import * as router from "@app/router";
+  import { link } from "@app/router";
   import { ethers } from "ethers";
   import {
     explorerLink,
@@ -97,7 +97,7 @@
     {#if addressType === AddressType.Org}
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={{
+        use:link={{
           type: "profile",
           params: { addressOrName: nameOrAddress },
         }}
@@ -117,7 +117,7 @@
     {:else if addressType === AddressType.EOA}
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={{
+        use:link={{
           type: "profile",
           params: { addressOrName: nameOrAddress },
         }}

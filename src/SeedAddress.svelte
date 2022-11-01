@@ -2,7 +2,7 @@
   import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
   import Clipboard from "@app/Clipboard.svelte";
-  import * as router from "@app/router";
+  import { link } from "@app/router";
 
   export let seed: Seed;
   export let port: number;
@@ -38,7 +38,7 @@
       <span>
         <!-- svelte-ignore a11y-invalid-attribute -->
         <a
-          use:router.link={{
+          use:link={{
             type: "seeds",
             params: { host: formatSeedHost(seed.host) },
           }}
@@ -52,7 +52,7 @@
       <span>
         <!-- svelte-ignore a11y-invalid-attribute -->
         <a
-          use:router.link={{
+          use:link={{
             type: "seeds",
             params: { host: formatSeedHost(seed.host) },
           }}

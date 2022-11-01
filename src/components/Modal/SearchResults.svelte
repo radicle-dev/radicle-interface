@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from "@app/Modal.svelte";
-  import * as router from "@app/router";
+  import { link } from "@app/router";
   import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
   import type { Wallet } from "@app/wallet";
   import Address from "@app/Address.svelte";
@@ -50,7 +50,7 @@
           <li>
             <!-- svelte-ignore a11y-missing-attribute -->
             <a
-              use:router.link={{
+              use:link={{
                 type: "seeds",
                 params: { host: project.info.urn },
               }}>
