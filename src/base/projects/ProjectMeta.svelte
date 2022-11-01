@@ -91,6 +91,7 @@
       <a
         href=""
         use:router.projectLink={{
+          activeView: { type: "tree" },
           path: "/",
           peer: null,
           route: null,
