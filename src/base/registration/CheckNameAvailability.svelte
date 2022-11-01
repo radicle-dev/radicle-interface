@@ -58,7 +58,7 @@
     }
   });
 
-  function goBack() {
+  function goToValidateName() {
     router.push({
       type: "registration",
       params: { activeView: { type: "validateName" } },
@@ -125,9 +125,9 @@
           {wallet} />
       {/if}
 
-      <Button on:click={goBack} variant="text">Cancel</Button>
+      <Button on:click={goToValidateName} variant="text">Cancel</Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button variant="foreground" on:click={goBack}>Back</Button>
+      <Button variant="foreground" on:click={goToValidateName}>Back</Button>
     {/if}
   </span>
 </Modal>
