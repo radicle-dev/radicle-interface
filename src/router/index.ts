@@ -1,7 +1,7 @@
 import type { ProjectsParams, Route, ProjectRoute } from "./definitions";
-import type { Writable } from "svelte/store";
+import type { Readable, Writable } from "svelte/store";
 
-import { get, writable } from "svelte/store";
+import { get, writable, derived } from "svelte/store";
 
 const BOOT_ROUTE: Route = { type: "boot" };
 
@@ -9,7 +9,12 @@ const BOOT_ROUTE: Route = { type: "boot" };
 const documentTitle = "Radicle Interface";
 
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
-export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
+const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
+
+export const activeRoute: Readable<Route> = derived(
+  activeRouteStore,
+  store => store,
+);
 
 // Replaces history on any user interaction with forward and backwards buttons
 // with the current window.history.state

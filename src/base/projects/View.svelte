@@ -43,17 +43,7 @@
         activeRoute.params.route,
         project.branches,
       );
-      // Updating revision and patch with resolved route and nulling the route param.
-      const params: ProjectRoute = {
-        type: "projects",
-        params: {
-          ...activeRoute.params,
-          revision,
-          path,
-          route: null,
-        },
-      };
-      router.activeRouteStore.set(params);
+      router.updateProjectRoute({ revision, path, route: null });
     }
 
     return project;
