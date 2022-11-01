@@ -43,7 +43,7 @@
         activeRoute.params.route,
         project.branches,
       );
-      router.updateProjectRoute({ revision, path, route: null });
+      router.updateProjectRoute({ revision, path, route: undefined });
     }
 
     return project;

@@ -177,11 +177,11 @@
         params: {
           activeView: { type: "tree" },
           urn: searchResult.id,
-          peer: null,
-          profile: null,
+          peer: undefined,
+          profile: undefined,
           seed: searchResult.seedHost,
-          hash: null,
-          search: null,
+          hash: undefined,
+          search: undefined,
         },
       });
       dispatch("finished");

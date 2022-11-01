@@ -16,7 +16,7 @@
 
   const { urn, peers, branches, seed } = project;
 
-  $: revision = activeRoute.params.revision || commit;
+  $: revision = activeRoute.params.revision ?? commit;
 
   // Switches between project views.
   const toggleContent = (
@@ -28,8 +28,8 @@
         type: activeRoute.params.activeView.type === input ? "tree" : input,
       },
       urn: project.urn,
-      revision,
-      ...(keepSourceInPath ? null : { revision: null, path: null }),
+      revision: revision,
+      ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
     });
   };
 

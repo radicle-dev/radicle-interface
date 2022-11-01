@@ -43,9 +43,9 @@
         urn: project.urn,
         seed: seed?.host,
         profile: profile?.name ?? profile?.address,
-        revision: project.head,
-        hash: null,
-        search: null,
+        revision: project.head ?? undefined,
+        hash: undefined,
+        search: undefined,
       },
     });
   };

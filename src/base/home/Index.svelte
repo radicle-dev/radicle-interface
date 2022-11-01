@@ -32,10 +32,10 @@
       params: {
         activeView: { type: "tree" },
         urn: project.urn,
-        peer: null,
+        peer: undefined,
         seed: seed.host,
-        profile: null,
-        revision: project.head,
+        profile: undefined,
+        revision: project.head ?? undefined,
       },
     });
   }

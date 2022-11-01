@@ -93,9 +93,9 @@
         use:projectLink={{
           activeView: { type: "tree" },
           path: "/",
-          peer: null,
-          route: null,
-          revision: null,
+          peer: undefined,
+          route: undefined,
+          revision: undefined,
         }}
         class="project-name">
         {project.name}

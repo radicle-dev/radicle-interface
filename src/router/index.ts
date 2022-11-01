@@ -188,8 +188,8 @@ function pathToRoute(path: string | null): Route {
               params: {
                 activeView: { type: "tree" },
                 urn,
-                peer: null,
-                profile: null,
+                peer: undefined,
+                profile: undefined,
                 seed: host,
               },
             };
@@ -224,9 +224,9 @@ function pathToRoute(path: string | null): Route {
               params: {
                 activeView: { type: "tree" },
                 urn,
-                peer: null,
+                peer: undefined,
                 profile: type,
-                seed: null,
+                seed: undefined,
               },
             };
           } else {
@@ -356,9 +356,9 @@ function resolveProjectRoute(
   segments: string[],
 ): ProjectsParams | null {
   let content = segments.shift();
-  let peer = null;
+  let peer;
   if (content === "remotes") {
-    peer = segments.shift() || null;
+    peer = segments.shift();
     content = segments.shift();
   }
 
@@ -367,8 +367,8 @@ function resolveProjectRoute(
       activeView: { type: "tree" },
       urn,
       peer,
-      path: null,
-      revision: null,
+      path: undefined,
+      revision: undefined,
       hash: url.hash.substring(1),
       route: segments.join("/"),
     };
@@ -377,8 +377,8 @@ function resolveProjectRoute(
       activeView: { type: "commits" },
       urn,
       peer,
-      path: null,
-      revision: null,
+      path: undefined,
+      revision: undefined,
       route: segments.join("/"),
     };
   } else if (content === "commit") {
@@ -386,8 +386,8 @@ function resolveProjectRoute(
       activeView: { type: "commit" },
       urn,
       peer,
-      path: null,
-      revision: null,
+      path: undefined,
+      revision: undefined,
       route: segments.join("/"),
     };
   } else if (content === "patch") {
@@ -397,8 +397,8 @@ function resolveProjectRoute(
         activeView: { type: "patch", params: { patch } },
         urn,
         peer,
-        path: null,
-        revision: null,
+        path: undefined,
+        revision: undefined,
       };
     }
     return null;
@@ -407,16 +407,16 @@ function resolveProjectRoute(
       activeView: { type: "patches" },
       urn,
       peer,
-      path: null,
-      revision: null,
+      path: undefined,
+      revision: undefined,
     };
   } else if (content === "issues") {
     return {
       activeView: { type: "issues" },
       urn,
       peer,
-      path: null,
-      revision: null,
+      path: undefined,
+      revision: undefined,
     };
   } else if (content === "issue") {
     const issue = segments.shift();
@@ -425,8 +425,8 @@ function resolveProjectRoute(
         activeView: { type: "issue", params: { issue } },
         urn,
         peer,
-        path: null,
-        revision: null,
+        path: undefined,
+        revision: undefined,
       };
     }
     return null;

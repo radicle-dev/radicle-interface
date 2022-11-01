@@ -37,6 +37,7 @@ export type Route =
   | { type: "vesting" };
 
 export interface ProjectsParams {
+  urn: string;
   activeView:
     | { type: "tree" }
     | { type: "commit" }
@@ -45,16 +46,14 @@ export interface ProjectsParams {
     | { type: "issues" }
     | { type: "patch"; params: { patch: string } }
     | { type: "patches" };
-
-  hash?: string | null;
-  path?: string | null;
-  peer?: string | null;
-  profile?: string | null;
-  revision?: string | null;
-  route?: string | null;
-  search?: string | null;
-  seed?: string | null;
-  urn: string;
+  hash?: string;
+  path?: string;
+  peer?: string;
+  profile?: string;
+  revision?: string;
+  route?: string;
+  search?: string;
+  seed?: string;
 }
 
 export type ProjectRoute = { type: "projects"; params: ProjectsParams };

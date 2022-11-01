@@ -210,8 +210,8 @@ describe("pathToRoute", () => {
         params: {
           activeView: { type: "tree" },
           seed: "willow.radicle.garden",
-          profile: null,
-          peer: null,
+          profile: undefined,
+          peer: undefined,
           urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
         },
       },
