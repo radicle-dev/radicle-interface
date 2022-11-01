@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Blob } from "@app/project";
-  import type { ProjectRoute, Route } from "@app/router/definitions";
 
   import { onMount } from "svelte";
 
@@ -9,7 +8,6 @@
 
   export let blob: Blob;
   export let line: string | null;
-  export let activeRoute: ProjectRoute;
 
   $: lineNumber = line ? parseInt(line.substring(1)) : null;
 
@@ -26,11 +24,6 @@
   $: if (line) {
     scrollIntoView(line);
   }
-
-  const lineNumberRoute = (lineNumber: string): Route => ({
-    type: "projects",
-    params: { ...activeRoute.params, hash: `L${lineNumber}` },
-  });
 
   // Waiting onMount, due to the line numbers still loading.
   onMount(() => {
@@ -178,8 +171,7 @@
         <div class="line-numbers">
           {#each lineNumbers as lineNumber}
             <a
-              use:router.link={lineNumberRoute(lineNumber)}
-              href={router.routeToPath(lineNumberRoute(lineNumber))}
+              use:router.projectLink={{ hash: `L${lineNumber}` }}
               class="line-number"
               class:highlighted={lineNumber === line}
               id="L{lineNumber}">

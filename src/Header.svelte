@@ -138,7 +138,8 @@
 
 <header>
   <div class="left">
-    <a use:router.link href="/" class="logo"><Logo /></a>
+    <!-- svelte-ignore a11y-invalid-attribute -->
+    <a use:router.link={{ type: "home" }} href="" class="logo"><Logo /></a>
     <div class="search">
       <Search
         {wallet}
@@ -162,7 +163,13 @@
 
   <div class="right">
     {#if wallet && wallet.network.name === "goerli"}
-      <a use:router.link href="/faucet">
+      <!-- svelte-ignore a11y-invalid-attribute -->
+      <a
+        use:router.link={{
+          type: "faucet",
+          params: { activeView: { type: "form" } },
+        }}
+        href="">
         <span class="network">Goerli</span>
       </a>
     {:else if wallet && wallet.network.name === "homestead"}
@@ -170,7 +177,16 @@
     {:else}
       <span class="network unavailable">No Network</span>
     {/if}
-    <a use:router.link class="register" href="/registration">Register</a>
+    <!-- svelte-ignore a11y-invalid-attribute -->
+    <a
+      use:router.link={{
+        type: "registration",
+        params: { activeView: { type: "validateName" } },
+      }}
+      class="register"
+      href="">
+      Register
+    </a>
 
     {#if address}
       <span class="balance">
@@ -229,12 +245,16 @@
                   ({ query, results } = e.detail);
                 }} />
             </div>
+            <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              use:router.link
+              use:router.link={{
+                type: "registration",
+                params: { activeView: { type: "validateName" } },
+              }}
               on:click={() => {
                 closeFocused();
               }}
-              href="/registration">
+              href="">
               Register
             </a>
           </div>

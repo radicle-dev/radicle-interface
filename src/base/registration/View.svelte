@@ -254,9 +254,18 @@
     </span>
 
     <span slot="actions">
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link
-        href={`/registration/${domain}/register`}
+        use:router.link={{
+          type: "registration",
+          params: {
+            activeView: {
+              type: "register",
+              params: { nameOrDomain: domain, owner: null },
+            },
+          },
+        }}
+        href=""
         class="txt-link register">
         Register &rarr;
       </a>

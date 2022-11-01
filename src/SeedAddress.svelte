@@ -36,9 +36,13 @@
     <span class="seed-icon">{seed.emoji}</span>
     {#if full}
       <span>
+        <!-- svelte-ignore a11y-invalid-attribute -->
         <a
-          use:router.link
-          href="/seeds/{formatSeedHost(seed.host)}"
+          use:router.link={{
+            type: "seeds",
+            params: { host: formatSeedHost(seed.host) },
+          }}
+          href=""
           class="txt-link">
           {formatSeedId(seed.id)}@{seed.host}
         </a>
@@ -46,9 +50,13 @@
       <span class="txt-faded">:{port}</span>
     {:else}
       <span>
+        <!-- svelte-ignore a11y-invalid-attribute -->
         <a
-          use:router.link
-          href="/seeds/{formatSeedHost(seed.host)}"
+          use:router.link={{
+            type: "seeds",
+            params: { host: formatSeedHost(seed.host) },
+          }}
+          href=""
           class="txt-link">
           {formatSeedHost(seed.host)}
         </a>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { PeerId, Project } from "@app/project";
-  import type { ProjectRoute, Route } from "@app/router/definitions";
 
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
@@ -9,19 +8,6 @@
 
   export let project: Project;
   export let peer: PeerId | null = null;
-  export let activeRoute: ProjectRoute;
-
-  const rootPath: Route = {
-    type: "projects",
-    params: {
-      ...activeRoute.params,
-      urn: project.urn,
-      peer: null,
-      path: "/",
-      route: null,
-      revision: null,
-    },
-  };
 </script>
 
 <style>
@@ -85,11 +71,15 @@
 <header class="content">
   <div class="title txt-bold txt-title">
     {#if project.profile}
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link
+        use:router.link={{
+          type: "profile",
+          params: { addressOrName: project.profile.nameOrAddress },
+        }}
         class="org-avatar"
         title={project.profile.nameOrAddress}
-        href="/{project.profile.nameOrAddress}">
+        href="">
         <Avatar
           source={project.profile.avatar || project.profile.address}
           title={project.profile.address} />
@@ -97,10 +87,16 @@
       <span class="divider">/</span>
     {/if}
     <span class="truncate">
+      <!-- svelte-ignore a11y-invalid-attribute -->
       <a
-        use:router.link={rootPath}
-        class="project-name"
-        href={router.routeToPath(rootPath)}>
+        href=""
+        use:router.projectLink={{
+          path: "/",
+          peer: null,
+          route: null,
+          revision: null,
+        }}
+        class="project-name">
         {project.name}
       </a>
     </span>

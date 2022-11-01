@@ -48,9 +48,12 @@
       <ul>
         {#each results.projects as project}
           <li>
+            <!-- svelte-ignore a11y-missing-attribute -->
             <a
-              use:router.link
-              href="/seeds/{project.seed.host}/{project.info.urn}">
+              use:router.link={{
+                type: "seeds",
+                params: { host: project.info.urn },
+              }}>
               <span title={project.seed.host}>
                 <span>
                   {getSeedEmoji(project.seed.host)}&nbsp;{project.info.name}

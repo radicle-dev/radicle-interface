@@ -217,9 +217,18 @@
         {#if utils.isAddressEqual(profile.address, profile.org.address)}
           <div class="overflow-text">
             {#if profile.name && profile.ens}
+              <!-- svelte-ignore a11y-invalid-attribute -->
               <a
-                use:router.link
-                href={`/registration/${profile.ens.name}`}
+                use:router.link={{
+                  type: "registration",
+                  params: {
+                    activeView: {
+                      type: "view",
+                      params: { nameOrDomain: profile.ens.name, retry: false },
+                    },
+                  },
+                }}
+                href=""
                 class="txt-link">
                 {profile.name}
               </a>
@@ -232,9 +241,18 @@
         <!-- User Profile -->
         <div>
           {#if profile.name && profile.ens}
+            <!-- svelte-ignore a11y-invalid-attribute -->
             <a
-              use:router.link
-              href={`/registration/${profile.ens.name}`}
+              use:router.link={{
+                type: "registration",
+                params: {
+                  activeView: {
+                    type: "view",
+                    params: { nameOrDomain: profile.ens.name, retry: false },
+                  },
+                },
+              }}
+              href=""
               class="txt-link">
               {profile.name}
             </a>

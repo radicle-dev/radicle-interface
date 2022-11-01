@@ -11,25 +11,16 @@ const documentTitle = "Radicle Interface";
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
 export const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
 
-export function link(node: any, route?: Route) {
-  function onClick(event: any): void {
-    const anchor = event.currentTarget;
-    let path: string | Route;
+// Replaces history on any user interaction with forward and backwards buttons
+// with the current window.history.state
+window.addEventListener("popstate", e => {
+  if (e.state) replace(e.state);
+});
 
-    // Checking if we passed a route param into use:link
-    if (!route) {
-      const url = new URL(anchor.href);
-      path = url.pathname + url.search + url.hash;
-    } else {
-      path = route;
-    }
-
-    if (anchor.target === "") {
-      event.preventDefault();
-      navigate(path, {
-        replace: anchor.hasAttribute("replace"),
-      });
-    }
+export function link(node: HTMLElement, route: Route) {
+  function onClick(event: MouseEvent): void {
+    event.preventDefault();
+    push(route);
   }
 
   node.addEventListener("click", onClick);
@@ -41,34 +32,23 @@ export function link(node: any, route?: Route) {
   };
 }
 
-function navigate(route: Route | string, opts?: { replace?: boolean }): void {
-  if (typeof route === "string") {
-    route = pathToRoute(route);
+export function projectLink(
+  node: HTMLElement,
+  projectRouteParams: Partial<ProjectsParams>,
+) {
+  function onClick(event: MouseEvent): void {
+    event.preventDefault();
+    updateProjectRoute(projectRouteParams);
   }
 
-  // If we don't explicitly pass a anchor tag hash or query string, we should reset it globally
-  if (route.type === "projects" && !route.params.hash) {
-    route.params = { ...route.params, hash: null, search: null };
-  }
+  node.addEventListener("click", onClick);
 
-  // If activeRoute and newRoute are type === "projects" combine the route params
-  const activeRoute = get(activeRouteStore);
-  if (route.type === "projects" && activeRoute.type === "projects") {
-    route.params = { ...activeRoute.params, ...route.params };
-  }
-
-  if (opts?.replace) {
-    replace(route);
-  } else {
-    push(route);
-  }
+  return {
+    destroy() {
+      node.removeEventListener("click", onClick);
+    },
+  };
 }
-
-// Replaces history on any user interaction with forward and backwards buttons
-// with the current window.history.state
-window.addEventListener("popstate", e => {
-  if (e.state) replace(e.state);
-});
 
 export function updateProjectRoute(
   projectRouteParams: Partial<ProjectsParams>,

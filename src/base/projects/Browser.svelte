@@ -210,7 +210,7 @@
           {#if utils.isMarkdownPath(blob.path)}
             <Readme {activeRoute} content={blob.content} {getImage} />
           {:else}
-            <Blob {activeRoute} {line} {blob} />
+            <Blob {line} {blob} />
           {/if}
         {:catch}
           <Placeholder icon="🍂">

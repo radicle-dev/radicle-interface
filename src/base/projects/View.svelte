@@ -96,7 +96,7 @@
       <Loading center />
     </header>
   {:then project}
-    <ProjectMeta {project} {peer} {activeRoute} />
+    <ProjectMeta {project} {peer} />
 
     {#await project.getRoot(revision)}
       <Loading center />

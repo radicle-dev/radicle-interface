@@ -95,7 +95,15 @@
   {/if}
   <div class="wrapper">
     {#if addressType === AddressType.Org}
-      <a use:router.link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <!-- svelte-ignore a11y-invalid-attribute -->
+      <a
+        use:router.link={{
+          type: "profile",
+          params: { addressOrName: nameOrAddress },
+        }}
+        href="">
+        {addressLabel}
+      </a>
       {#if !noBadge}
         <Badge variant="foreground">org</Badge>
       {/if}
@@ -107,7 +115,15 @@
         <Badge variant="foreground">contract</Badge>
       {/if}
     {:else if addressType === AddressType.EOA}
-      <a use:router.link href={`/${nameOrAddress}`}>{addressLabel}</a>
+      <!-- svelte-ignore a11y-invalid-attribute -->
+      <a
+        use:router.link={{
+          type: "profile",
+          params: { addressOrName: nameOrAddress },
+        }}
+        href="">
+        {addressLabel}
+      </a>
     {:else}
       <!-- While we're waiting to find out what address type it is -->
       <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">
