@@ -2,7 +2,7 @@
   import * as router from "@app/router";
   import { Connection, state, session } from "@app/session";
   import { getWallet } from "@app/wallet";
-  import { initialize, activeRoute } from "@app/router";
+  import { initialize, activeRouteStore } from "@app/router";
   import { unreachable } from "@app/utils";
 
   import ColorPalette from "@app/ColorPalette.svelte";
@@ -92,32 +92,35 @@
     <ColorPalette />
     <Header session={$session} {wallet} />
     <div class="wrapper">
-      {#if $activeRoute.type === "home"}
+      {#if $activeRouteStore.type === "home"}
         <Home />
-      {:else if $activeRoute.type === "faucet"}
-        {#if $activeRoute.params.activeView.type === "form"}
+      {:else if $activeRouteStore.type === "faucet"}
+        {#if $activeRouteStore.params.activeView.type === "form"}
           <FaucetForm {wallet} />
-        {:else if $activeRoute.params.activeView.type === "withdraw"}
+        {:else if $activeRouteStore.params.activeView.type === "withdraw"}
           <FaucetWithdraw
             {wallet}
-            amount={$activeRoute.params.activeView.params.amount} />
+            amount={$activeRouteStore.params.activeView.params.amount} />
         {/if}
-      {:else if $activeRoute.type === "seeds"}
-        <Seeds {wallet} session={$session} host={$activeRoute.params.host} />
-      {:else if $activeRoute.type === "registration"}
-        {#if $activeRoute.params.activeView.type === "validateName"}
+      {:else if $activeRouteStore.type === "seeds"}
+        <Seeds
+          {wallet}
+          session={$session}
+          host={$activeRouteStore.params.host} />
+      {:else if $activeRouteStore.type === "registration"}
+        {#if $activeRouteStore.params.activeView.type === "validateName"}
           <RegistrationValidateName {wallet} />
-        {:else if $activeRoute.params.activeView.type === "checkNameAvailability"}
+        {:else if $activeRouteStore.params.activeView.type === "checkNameAvailability"}
           <RegistrationCheckNameAvailability
             {wallet}
-            name={$activeRoute.params.activeView.params.nameOrDomain}
-            owner={$activeRoute.params.activeView.params.owner} />
-        {:else if $activeRoute.params.activeView.type === "register"}
+            name={$activeRouteStore.params.activeView.params.nameOrDomain}
+            owner={$activeRouteStore.params.activeView.params.owner} />
+        {:else if $activeRouteStore.params.activeView.type === "register"}
           {#if $session}
             <RegistrationRegister
               {wallet}
-              name={$activeRoute.params.activeView.params.nameOrDomain}
-              owner={$activeRoute.params.activeView.params.owner}
+              name={$activeRouteStore.params.activeView.params.nameOrDomain}
+              owner={$activeRouteStore.params.activeView.params.owner}
               session={$session} />
           {:else}
             <ErrorModal
@@ -129,21 +132,21 @@
                 });
               }} />
           {/if}
-        {:else if $activeRoute.params.activeView.type === "view"}
+        {:else if $activeRouteStore.params.activeView.type === "view"}
           <RegistrationView
             {wallet}
-            retry={$activeRoute.params.activeView.params.retry}
-            domain={$activeRoute.params.activeView.params.nameOrDomain} />
+            retry={$activeRouteStore.params.activeView.params.retry}
+            domain={$activeRouteStore.params.activeView.params.nameOrDomain} />
         {:else}
-          {unreachable($activeRoute.params.activeView)}
+          {unreachable($activeRouteStore.params.activeView)}
         {/if}
-      {:else if $activeRoute.type === "vesting"}
+      {:else if $activeRouteStore.type === "vesting"}
         <Vesting {wallet} session={$session} />
-      {:else if $activeRoute.type === "projects"}
-        <Projects {wallet} activeRoute={$activeRoute} />
-      {:else if $activeRoute.type === "profile"}
+      {:else if $activeRouteStore.type === "projects"}
+        <Projects {wallet} activeRoute={$activeRouteStore} />
+      {:else if $activeRouteStore.type === "profile"}
         <Profile
-          addressOrName={$activeRoute.params.addressOrName}
+          addressOrName={$activeRouteStore.params.addressOrName}
           {wallet} />
       {:else}
         <NotFound title="404" subtitle="Nothing here" />

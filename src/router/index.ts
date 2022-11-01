@@ -1,5 +1,5 @@
 import type { ProjectsParams, Route, ProjectRoute } from "./definitions";
-import type { Readable, Writable } from "svelte/store";
+import type { Readable } from "svelte/store";
 
 import { get, writable, derived } from "svelte/store";
 
@@ -9,11 +9,12 @@ const BOOT_ROUTE: Route = { type: "boot" };
 const documentTitle = "Radicle Interface";
 
 export const historyStore = writable<Route[]>([BOOT_ROUTE]);
-const activeRouteStore: Writable<Route> = writable(BOOT_ROUTE);
 
-export const activeRoute: Readable<Route> = derived(
-  activeRouteStore,
-  store => store,
+export const activeRouteStore: Readable<Route> = derived(
+  historyStore,
+  store => {
+    return store.slice(-1)[0];
+  },
 );
 
 // Replaces history on any user interaction with forward and backwards buttons
@@ -89,7 +90,6 @@ export const push = (newRoute: Route): void => {
   // Limit history to a maximum of 10 steps. We shouldn't be doing more than
   // one subsequent pop() anyway.
   historyStore.set([...history, newRoute].slice(-10));
-  activeRouteStore.set(newRoute);
   window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
 };
 
@@ -98,14 +98,12 @@ export const pop = (): void => {
   const newRoute = history.pop();
   if (newRoute) {
     historyStore.set(history);
-    activeRouteStore.set(newRoute);
     window.history.back();
   }
 };
 
 export function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
-  activeRouteStore.set(newRoute);
   window.history.replaceState(newRoute, documentTitle, routeToPath(newRoute));
 }
 
