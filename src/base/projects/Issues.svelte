@@ -11,7 +11,7 @@
 
   import { capitalize } from "@app/utils";
   import { groupIssues } from "@app/issue";
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate } from "@app/router";
 
   import IssueTeaser from "@app/base/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/Placeholder.svelte";
@@ -21,10 +21,10 @@
   export let issues: Issue[];
   export let state: State;
   export let project: Project;
+  export let activeRoute: ProjectRoute;
 
   let options: ToggleButtonOption<State>[];
   const { open, closed } = groupIssues(issues);
-  const activeRoute = $activeRouteStore as ProjectRoute;
 
   $: filteredIssues = state === "open" ? open : closed;
   $: sortedIssues = filteredIssues.sort(

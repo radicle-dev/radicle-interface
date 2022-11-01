@@ -15,16 +15,16 @@
 
   import { capitalize } from "@app/utils";
   import { groupPatches } from "@app/patch";
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate } from "@app/router";
 
   export let state: State;
   export let wallet: Wallet;
   export let patches: Patch[];
   export let project: Project;
+  export let activeRoute: ProjectRoute;
 
   let options: ToggleButtonOption<State>[];
   const sortedPatches = groupPatches(patches);
-  const activeRoute = $activeRouteStore as ProjectRoute;
 
   $: filteredPatches = sortedPatches[state];
   $: options = [

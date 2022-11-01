@@ -96,7 +96,7 @@
       <Loading center />
     </header>
   {:then project}
-    <ProjectMeta {project} {peer} />
+    <ProjectMeta {project} {peer} {activeRoute} />
 
     {#await project.getRoot(revision)}
       <Loading center />
@@ -104,7 +104,7 @@
       <Header {tree} {commit} {project} {activeRoute} />
 
       {#if activeRoute.params.activeView.type === "tree"}
-        <Browser {project} {commit} {tree} />
+        <Browser {project} {commit} {tree} {activeRoute} />
       {:else if activeRoute.params.activeView.type === "commits"}
         {#await proj.Project.getCommits( project.urn, project.seed.api, { parent: commit, verified: true }, )}
           <Loading center />
@@ -129,7 +129,12 @@
         {#await issue.Issue.getIssues(project.urn, project.seed.api)}
           <Loading center />
         {:then issues}
-          <Issues {project} state={issueFilter} {wallet} {issues} />
+          <Issues
+            {project}
+            state={issueFilter}
+            {wallet}
+            {issues}
+            {activeRoute} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -149,7 +154,12 @@
         {#await patch.Patch.getPatches(project.urn, project.seed.api)}
           <Loading center />
         {:then patches}
-          <Patches {project} {wallet} state={patchFilter} {patches} />
+          <Patches
+            {project}
+            {wallet}
+            state={patchFilter}
+            {patches}
+            {activeRoute} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>

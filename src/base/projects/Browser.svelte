@@ -8,7 +8,7 @@
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
   import { theme } from "@app/ThemeToggle.svelte";
-  import { navigate, activeRouteStore } from "@app/router";
+  import { navigate } from "@app/router";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -26,11 +26,11 @@
   export let project: proj.Project;
   export let tree: proj.Tree;
   export let commit: string;
+  export let activeRoute: ProjectRoute;
 
-  $: route = $activeRouteStore as ProjectRoute;
-  $: path = route.params.path || "/";
-  $: line = route.params.hash || null;
-  $: revision = route.params.revision || commit;
+  $: path = activeRoute.params.path || "/";
+  $: line = activeRoute.params.hash || null;
+  $: revision = activeRoute.params.revision || commit;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };

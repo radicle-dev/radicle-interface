@@ -1,20 +1,20 @@
 <script lang="ts">
   import type { PeerId, Project } from "@app/project";
+  import type { ProjectRoute, Route } from "@app/router/definitions";
 
-  import { link, routeToPath, activeRouteStore } from "@app/router";
   import Avatar from "@app/Avatar.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import { formatSeedId } from "@app/utils";
-  import type { ProjectRoute, Route } from "@app/router/definitions";
+  import { link, routeToPath } from "@app/router";
 
   export let project: Project;
   export let peer: PeerId | null = null;
+  export let activeRoute: ProjectRoute;
 
-  const route = $activeRouteStore as ProjectRoute;
   const rootPath: Route = {
     type: "projects",
     params: {
-      ...route.params,
+      ...activeRoute.params,
       urn: project.urn,
       peer: null,
       path: "/",
