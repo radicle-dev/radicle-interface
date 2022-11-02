@@ -61,9 +61,9 @@ export function updateProjectRoute(
 ) {
   const activeRoute = get(activeRouteStore);
 
-  let overrides = {};
+  let overrides: Partial<ProjectsParams> = {};
   if (!projectRouteParams.hash) {
-    overrides = { hash: null, search: null };
+    overrides = { hash: undefined, search: undefined };
   }
 
   if (activeRoute.type === "projects") {
