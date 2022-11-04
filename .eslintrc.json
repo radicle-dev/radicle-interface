@@ -99,6 +99,12 @@
         }
       }
     ],
+    "@typescript-eslint/member-ordering": [
+      "error",
+      { "default": ["field", "signature", "constructor", "method"] }
+    ],
+
+    "@typescript-eslint/no-invalid-void-type": ["error"],
     // Disallow Unused Variables.
     // https://eslint.org/docs/rules/no-unused-vars
     "@typescript-eslint/no-unused-vars": [
