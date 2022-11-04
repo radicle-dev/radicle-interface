@@ -12,7 +12,6 @@
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
-  import Readme from "./Readme.svelte";
 
   enum Status {
     Loading,
@@ -207,11 +206,7 @@
         {#await getBlob}
           <Loading small center />
         {:then blob}
-          {#if utils.isMarkdownPath(blob.path)}
-            <Readme {activeRoute} content={blob.content} {getImage} />
-          {:else}
-            <Blob {line} {blob} />
-          {/if}
+          <Blob {line} {blob} {getImage} {activeRoute} />
         {:catch}
           <Placeholder icon="🍂">
             <span slot="title">

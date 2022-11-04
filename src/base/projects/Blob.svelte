@@ -1,13 +1,17 @@
 <script lang="ts">
   import type { Blob } from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
 
-  import { onMount } from "svelte";
-
-  import { scrollIntoView } from "@app/utils";
+  import Readme from "@app/base/projects/Readme.svelte";
+  import HeaderToggleLabel from "@app/base/projects/HeaderToggleLabel.svelte";
   import ProjectLink from "@app/router/ProjectLink.svelte";
+  import { isMarkdownPath, scrollIntoView } from "@app/utils";
+  import { updateProjectRoute } from "@app/router";
 
   export let blob: Blob;
   export let line: string | null;
+  export let getImage: (path: string) => Promise<Blob>;
+  export let activeRoute: ProjectRoute;
 
   $: lineNumber = line ? parseInt(line.substring(1)) : null;
 
@@ -24,11 +28,13 @@
   $: if (line) {
     scrollIntoView(line);
   }
-
-  // Waiting onMount, due to the line numbers still loading.
-  onMount(() => {
-    if (line) scrollIntoView(line);
-  });
+  const isMarkdown = isMarkdownPath(blob.path);
+  // If we have a line number we should show the raw output.
+  let showMarkdown = line ? false : isMarkdown;
+  const toggleMarkdown = () => {
+    updateProjectRoute({ hash: undefined });
+    showMarkdown = !showMarkdown;
+  };
 </script>
 
 <style>
@@ -44,6 +50,12 @@
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
+  }
+
+  .file-header .right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
 
   header .file-name {
@@ -68,6 +80,10 @@
     font-weight: var(--font-weight-bold);
     font-family: var(--font-family-monospace);
     margin-right: 0.25rem;
+  }
+
+  .markdown-toggle {
+    margin-right: 0.5rem;
   }
 
   .line-numbers {
@@ -126,6 +142,10 @@
     scrollbar-width: none;
   }
 
+  .markdown {
+    max-width: 64rem;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -141,51 +161,61 @@
   }
 </style>
 
-<div>
-  <div class="file-source">
-    <header>
-      <div class="file-header">
-        <span class="file-name">
-          <span class="txt-faded">{parentDir}</span>
-          &#8203;
-          <span>{blob.info.name}</span>
-        </span>
+<div class:markdown={isMarkdown}>
+  <header>
+    <div class="file-header">
+      <span class="file-name">
+        <span class="txt-faded">{parentDir}</span>
+        &#8203;
+        <span>{blob.info.name}</span>
+      </span>
+      <div class="right">
+        {#if isMarkdown}
+          <div class="markdown-toggle">
+            <HeaderToggleLabel
+              active={!showMarkdown}
+              clickable
+              on:click={toggleMarkdown}>
+              Raw
+            </HeaderToggleLabel>
+          </div>
+        {/if}
         <div class="last-commit" title={lastCommit.author.name}>
           <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
           {lastCommit.summary}
         </div>
       </div>
-    </header>
-    <div class="container">
-      {#if blob.binary}
-        <div class="binary">
-          <div>👀</div>
-          <span class="txt-tiny">Binary content</span>
-        </div>
-      {:else}
-        {#if lineNumber}
-          <div
-            class="highlight"
-            style="top: {lineNumber === 1 ? 1 : 1.5 * lineNumber - 0.5}rem" />
-        {/if}
-        <div class="line-numbers">
-          {#each lineNumbers as lineNumber}
-            <ProjectLink
-              projectParams={{ hash: `L${lineNumber}` }}
-              id="L{lineNumber}">
-              <span
-                class="line-number"
-                class:highlighted={lineNumber === line} />
-              {lineNumber}
-            </ProjectLink>
-          {/each}
-        </div>
-        {#if blob.html}
-          <pre class="code no-scrollbar">{@html blob.content}</pre>
-        {:else}
-          <pre class="code no-scrollbar">{blob.content}</pre>
-        {/if}
-      {/if}
     </div>
+  </header>
+  <div class="container">
+    {#if blob.binary}
+      <div class="binary">
+        <div>👀</div>
+        <span class="txt-tiny">Binary content</span>
+      </div>
+    {:else if showMarkdown}
+      <Readme content={blob.content} {getImage} {activeRoute} />
+    {:else}
+      {#if lineNumber}
+        <div
+          class="highlight"
+          style="top: {lineNumber === 1 ? 1 : 1.5 * lineNumber - 0.5}rem" />
+      {/if}
+      <div class="line-numbers">
+        {#each lineNumbers as lineNumber}
+          <ProjectLink
+            projectParams={{ hash: `L${lineNumber}` }}
+            id="L{lineNumber}">
+            <span class="line-number" class:highlighted={lineNumber === line} />
+            {lineNumber}
+          </ProjectLink>
+        {/each}
+      </div>
+      {#if blob.html}
+        <pre class="code no-scrollbar">{@html blob.content}</pre>
+      {:else}
+        <pre class="code no-scrollbar">{blob.content}</pre>
+      {/if}
+    {/if}
   </div>
 </div>

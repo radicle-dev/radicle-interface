@@ -14,9 +14,8 @@
 <style>
   article {
     padding: 2rem;
-    max-width: 64rem;
+    width: 100%;
     background: var(--color-foreground-1);
-    border-radius: var(--border-radius);
   }
 </style>
 

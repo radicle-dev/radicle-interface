@@ -78,9 +78,15 @@ describe("project header", () => {
       "@projectTree56e4e02",
       "@projectReadme",
     ]);
-    cy.get("div.stat.seed span").should("have.text", "willow.radicle.garden");
-    cy.get("div.stat.commit-count").should("have.text", "3\n    commit(s)");
-    cy.get("div.stat.contributor-count").should(
+    cy.get('[aria-label="Seed"] span').should(
+      "have.text",
+      "willow.radicle.garden",
+    );
+    cy.get('[aria-label="Commit count"]').should(
+      "have.text",
+      "3\n    commit(s)",
+    );
+    cy.get('[aria-label="Contributor count"]').should(
       "have.text",
       "1\n    contributor(s)",
     );
@@ -138,35 +144,37 @@ describe("project header", () => {
   });
 
   it("navigate to commit history", () => {
-    cy.get("div.stat.commit-count").should("not.have.class", "active").click();
+    cy.get('[aria-label="Commit count"]')
+      .should("not.have.class", "active")
+      .click();
     cy.wait(["@projectCommits"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/history/master",
       );
     });
-    cy.get("div.stat.commit-count").should("have.class", "active");
+    cy.get('[aria-label="Commit count"]').should("have.class", "active");
   });
 
   it("navigate to issues listing", () => {
-    cy.get("div.stat.issue-count").click();
+    cy.get('[aria-label="Issue count"]').click();
     cy.wait(["@projectIssues"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/issues",
       );
     });
-    cy.get("div.stat.issue-count").should("have.class", "active");
+    cy.get('[aria-label="Issue count"]').should("have.class", "active");
   });
 
   it("navigate to patches listing", () => {
-    cy.get("div.stat.patch-count").click();
+    cy.get('[aria-label="Patch count"]').click();
     cy.wait(["@projectPatches"]);
     cy.location().should(location => {
       expect(location.pathname).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/patches",
       );
     });
-    cy.get("div.stat.patch-count").should("have.class", "active");
+    cy.get('[aria-label="Patch count"]').should("have.class", "active");
   });
 });

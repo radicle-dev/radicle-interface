@@ -8,7 +8,7 @@
   import CloneButton from "@app/base/projects/CloneButton.svelte";
   import PeerSelector from "@app/base/projects/PeerSelector.svelte";
   import { closeFocused } from "@app/Floating.svelte";
-  import Stat from "@app/base/projects/Stat.svelte";
+  import HeaderToggleLabel from "@app/base/projects/HeaderToggleLabel.svelte";
 
   export let activeRoute: ProjectRoute;
   export let project: Project;
@@ -72,27 +72,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  .widget {
-    border-radius: var(--border-radius-small);
-    min-width: max-content;
-  }
-  .not-allowed {
-    cursor: not-allowed;
-  }
-  .not-allowed.widget {
-    color: var(--color-foreground-5);
-  }
-  .stat {
-    font-family: var(--font-family-monospace);
-    padding: 0.5rem 0.75rem;
-    height: 2rem;
-    line-height: initial;
-    background: var(--color-foreground-1);
-  }
-  .stat.active {
-    color: var(--color-background);
-    background: var(--color-foreground);
-  }
 
   @media (max-width: 960px) {
     header {
@@ -123,43 +102,47 @@
   {/if}
   <span>
     {#if seed.api.host}
-      <Stat
+      <HeaderToggleLabel
         clickable
+        ariaLabel="Seed"
         title="Project data is fetched from this seed"
         on:click={goToSeed}>
         <span>{seed.api.host}</span>
-      </Stat>
+      </HeaderToggleLabel>
     {/if}
   </span>
-  <Stat
+  <HeaderToggleLabel
+    ariaLabel="Commit count"
     clickable
     active={activeRoute.params.view.resource === "history"}
     on:click={() => toggleContent("history", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
-  </Stat>
+  </HeaderToggleLabel>
   {#if project.issues}
-    <Stat
+    <HeaderToggleLabel
+      ariaLabel="Issue count"
       active={activeRoute.params.view.resource === "issues"}
-      notAllowed={project.issues === 0}
+      disabled={project.issues === 0}
       clickable={project.issues > 0}
       on:click={() => toggleContent("issues", false)}>
       <span class="txt-bold">{project.issues}</span>
       issue(s)
-    </Stat>
+    </HeaderToggleLabel>
   {/if}
   {#if project.patches}
-    <Stat
+    <HeaderToggleLabel
+      ariaLabel="Patch count"
       clickable={project.patches > 0}
       active={activeRoute.params.view.resource === "patches"}
       disabled={project.patches === 0}
       on:click={() => toggleContent("patches", false)}>
       <span class="txt-bold">{project.patches}</span>
       patch(es)
-    </Stat>
+    </HeaderToggleLabel>
   {/if}
-  <Stat>
+  <HeaderToggleLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>
     contributor(s)
-  </Stat>
+  </HeaderToggleLabel>
 </header>
