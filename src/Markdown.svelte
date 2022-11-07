@@ -205,12 +205,14 @@
   }
 
   .markdown :global(ol) {
+    line-height: 1.625;
     list-style-type: decimal;
     margin-bottom: 1rem;
     padding-left: 1.5rem;
   }
 
   .markdown :global(ul) {
+    line-height: 1.625;
     list-style-type: inherit;
     padding-left: 1.25rem;
     margin-bottom: 1rem;
