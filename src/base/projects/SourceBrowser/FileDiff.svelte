@@ -1,11 +1,11 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import Icon from "@app/Icon.svelte";
   import { lineNumberL, lineNumberR, lineSign } from "@app/diff";
   import type { FileDiff } from "@app/diff";
   import Badge from "@app/Badge.svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ browse: string }>();
 
   export let file: FileDiff;
   export let mode: string | null = null;

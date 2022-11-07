@@ -1,4 +1,9 @@
 <script context="module" lang="ts">
+  export interface RegistrationRecord {
+    name: string;
+    value: string;
+  }
+
   export interface Field {
     name: string;
     value: string;
@@ -43,7 +48,7 @@
   };
 </script>
 
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Wallet } from "@app/wallet";
 
   import cloneDeep from "lodash/cloneDeep";
@@ -71,7 +76,7 @@
 
   marked.use({ extensions });
 
-  const check = (event: Event) => {
+  const check = (event: Event): void => {
     const name = (<HTMLInputElement>event.target).name;
     const value = (<HTMLInputElement>event.target).value;
 
@@ -92,20 +97,26 @@
     });
   };
 
-  const cleanup = (fields: Field[]): { name: string; value?: string }[] => {
+  const cleanup = (fields: Field[]): RegistrationRecord[] => {
     return fields
       .filter(field => field.editable)
       .map(field => {
         return {
           name: field.name,
-          // We only allow to have a trueish value or an empty string.
           value: field.value ? field.value.trim() : "",
         };
       });
   };
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    save: RegistrationRecord[];
+    validate: never;
+    cancel: never;
+  }>();
   const save = () => dispatch("save", cleanup(formFields));
-  const validate = (event: Event) => dispatch("validate", check(event));
+  function validate(event: Event) {
+    check(event);
+    dispatch("validate");
+  }
   const cancel = () => {
     formFields = cloneDeep(fields);
     dispatch("cancel");

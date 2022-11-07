@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Wallet } from "@app/wallet";
 
   import { createEventDispatcher } from "svelte";
@@ -21,7 +21,7 @@
     ecl: "M",
   });
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ close: never }>();
   const onClickConnect = () => {
     state.connectMetamask(wallet);
   };

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
 
@@ -10,7 +10,7 @@
   }[];
   export let selected: string | null = null;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ select: string }>();
   const onSelect = (item: string) => {
     dispatch("select", item);
   };

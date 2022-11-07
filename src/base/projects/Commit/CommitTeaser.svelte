@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { CommitMetadata } from "@app/commit";
   import { formatCommit } from "@app/utils";
   import { createEventDispatcher } from "svelte";
@@ -9,7 +9,7 @@
 
   export let commit: CommitMetadata;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ browseCommit: string }>();
 
   function browseCommit(commit: string) {
     dispatch("browseCommit", commit);

@@ -1,9 +1,9 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import Icon from "@app/Icon.svelte";
   import { toClipboard } from "@app/utils";
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ copied: never }>();
 
   const copy = () => {
     toClipboard(text);

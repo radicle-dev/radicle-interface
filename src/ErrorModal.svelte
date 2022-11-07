@@ -1,11 +1,11 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Err } from "@app/error";
 
   import { createEventDispatcher } from "svelte";
   import Modal from "@app/Modal.svelte";
   import Button from "@app/Button.svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ close: never }>();
 
   export let error: Err | null = null;
   export let title = "Error";

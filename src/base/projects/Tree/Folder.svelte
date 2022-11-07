@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
   import Loading from "@app/Loading.svelte";
@@ -16,7 +16,7 @@
   let expanded = currentPath.indexOf(prefix) === 0;
   let tree: Promise<Tree> | null = expanded ? fetchTree(prefix) : null;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ select: string }>();
   const onSelectFile = ({ detail: path }: { detail: string }) =>
     dispatch("select", path);
 

@@ -1,10 +1,10 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import Button from "@app/Button.svelte";
 
   export let reactions: Record<string, number> | null = null;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ click: string }>();
 </script>
 
 <style>

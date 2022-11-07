@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { onMount, createEventDispatcher } from "svelte";
   import { setRecords } from "./resolver";
   import type { EnsRecord } from "./resolver";
@@ -15,7 +15,7 @@
   export let records: EnsRecord[];
   export let registration: Registration;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ close: never }>();
 
   let state: State = {
     status: Status.Failed,

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { ToggleButtonOption } from "@app/ToggleButton.svelte";
 
   import Dropdown from "@app/Dropdown.svelte";
@@ -14,7 +14,10 @@
   export let revisionNumber: number;
   export let activeTab: PatchTab;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    switchTab: PatchTab;
+    revisionChanged: string;
+  }>();
 
   const formatRevisionName = (revision: Revision, index: number) => {
     return `R${index} ${formatCommit(revision.oid)} ${formatTimestamp(

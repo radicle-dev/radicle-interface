@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
   import type { Tree } from "@app/project";
@@ -12,7 +12,7 @@
   export let tree: Tree;
   export let loadingPath: string | null = null;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ select: string }>();
   const onSelect = ({ detail: path }: { detail: string }): void => {
     dispatch("select", path);
   };

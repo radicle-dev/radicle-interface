@@ -135,7 +135,7 @@
   export let wallet: Wallet;
 
   const dispatch = createEventDispatcher<{
-    finished: boolean;
+    finished: never;
     search: { query: string; results: ProjectsAndProfiles };
   }>();
 

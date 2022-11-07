@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Wallet } from "@app/wallet";
   import type { User } from "@app/base/users/User";
 
@@ -12,7 +12,7 @@
   import TextInput from "@app/TextInput.svelte";
   import { formatAddress, isAddressEqual } from "@app/utils";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ close: never }>();
 
   export let entity: User;
   export let wallet: Wallet;

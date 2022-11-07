@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher, onMount } from "svelte";
   import Icon from "@app/Icon.svelte";
   import Dropdown from "@app/Dropdown.svelte";
@@ -45,7 +45,7 @@
     });
   });
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ peerChanged: string }>();
   const switchPeer = (peer: string) => {
     dispatch("peerChanged", peer);
   };

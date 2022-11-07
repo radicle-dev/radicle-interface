@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import Modal from "@app/Modal.svelte";
   import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
   import type { Wallet } from "@app/wallet";
@@ -12,7 +12,7 @@
   export let results: ProjectsAndProfiles;
   export let wallet: Wallet;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ close: never }>();
 </script>
 
 <style>

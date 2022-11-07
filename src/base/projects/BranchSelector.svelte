@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import type { ProjectInfo, Branches } from "@app/project";
   import { getOid } from "@app/project";
@@ -10,7 +10,7 @@
   export let project: ProjectInfo;
   export let revision: string;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ branchChanged: string }>();
   const switchBranch = (name: string) => {
     dispatch("branchChanged", name);
   };

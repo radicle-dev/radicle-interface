@@ -17,7 +17,7 @@
   export let validationMessage: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
-    submit: boolean;
+    submit: never;
   }>();
 
   let rightContainerWidth: number;

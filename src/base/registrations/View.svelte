@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { EnsRecord } from "./resolver";
-  import type { Field } from "@app/Form.svelte";
+  import type { Field, RegistrationRecord } from "@app/Form.svelte";
   import type { Registration } from "./registrar";
   import type { Wallet } from "@app/wallet";
   import type { ethers } from "ethers";
@@ -169,16 +169,12 @@
       });
   });
 
-  const onSave = async (event: {
-    detail: { name: string; value: string | null }[];
-  }) => {
+  const onSave = async (event: { detail: RegistrationRecord[] }) => {
     assert(state.status === Status.Found, "registration must be found");
 
-    updateRecords = event.detail
-      .filter(f => f.value !== null)
-      .map(f => {
-        return { name: f.name, value: f.value as string };
-      });
+    updateRecords = event.detail.map(f => {
+      return { name: f.name, value: f.value };
+    });
   };
 
   $: if (retry && state.status === Status.NotFound && retries > 0) {
