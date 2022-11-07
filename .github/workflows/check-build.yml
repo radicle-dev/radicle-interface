@@ -12,3 +12,10 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm ci
       - run: npm run build
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          browser: chrome
+          start: npm run serve
+          wait-on: "http://localhost:4173"
+          command: npx cypress run --config baseUrl="http://localhost:4173" --spec 'cypress/e2e/home.spec.ts'
