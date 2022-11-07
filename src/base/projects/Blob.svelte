@@ -56,10 +56,15 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-end;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
   }
 
   header .file-name {
     font-weight: var(--font-weight-normal);
+    flex-shrink: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -157,6 +162,12 @@
     }
     .highlight {
       display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .right {
+      justify-content: center;
     }
   }
 </style>
