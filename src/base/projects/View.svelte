@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Wallet } from "@app/wallet";
-  import type { ProjectRoute, ProjectsParams } from "@app/router/definitions";
+  import type { ProjectRoute } from "@app/router/definitions";
   import type { State as IssueState } from "./Issues.svelte";
   import type { State as PatchState } from "./Patches.svelte";
 
@@ -29,35 +29,36 @@
 
   $: urn = activeRoute.params.urn;
   $: peer = activeRoute.params.peer ?? null;
+  $: seed = activeRoute.params.seed ?? null;
+  $: profile = activeRoute.params.profile ?? null;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueState) || "open";
   $: patchFilter = (searchParams.get("state") as PatchState) || "proposed";
 
-  const getProject = async (params: ProjectsParams) => {
-    const project = await proj.Project.get(
-      params.urn,
-      params.peer ?? null,
-      params.profile ?? null,
-      params.seed ?? null,
-      wallet,
-    );
-    if (params.route) {
+  const getProject = async (
+    urn: string,
+    peer: string | null,
+    profile: string | null,
+    seed: string | null,
+  ) => {
+    const project = await proj.Project.get(urn, peer, profile, seed, wallet);
+    if (activeRoute.params.route) {
       const { revision, path } = proj.parseRoute(
-        params.route,
+        activeRoute.params.route,
         project.branches,
       );
       router.updateProjectRoute({
         revision,
         path,
-        hash: params.hash,
+        hash: activeRoute.params.hash,
         route: undefined,
       });
     }
-    if (!params.revision) {
+    if (!activeRoute.params.revision) {
       // We need a revision to fetch `getRoot`.
       // Don't use router.updateProjectRoute, to avoid changing the URL.
-      params.revision = project.defaultBranch;
+      activeRoute.params.revision = project.defaultBranch;
     }
 
     return project;
@@ -96,7 +97,7 @@
 </style>
 
 <main>
-  {#await getProject(activeRoute.params)}
+  {#await getProject(urn, peer, profile, seed)}
     <header>
       <Loading center />
     </header>
