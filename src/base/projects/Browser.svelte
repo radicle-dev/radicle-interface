@@ -28,7 +28,7 @@
   export let activeRoute: ProjectRoute;
 
   $: path = activeRoute.params.path || "/";
-  $: line = activeRoute.params.hash || null;
+  $: line = activeRoute.params.line;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };

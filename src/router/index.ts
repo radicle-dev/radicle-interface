@@ -16,6 +16,13 @@ export const activeRouteStore: Readable<Route> = derived(
   },
 );
 
+// Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
+// Allows the jump to a anchor hash
+window.addEventListener("hashchange", e => {
+  const url = new URL(e.newURL);
+  updateProjectRoute({ hash: url.hash.substring(1) });
+});
+
 // Replaces history on any user interaction with forward and backwards buttons
 // with the current window.history.state
 window.addEventListener("popstate", e => {
@@ -30,6 +37,7 @@ export function createProjectRoute(
     resource: "projects",
     params: {
       ...activeRoute.params,
+      line: undefined,
       hash: undefined,
       ...projectRouteParams,
     },
@@ -71,7 +79,12 @@ export const push = (newRoute: Route): void => {
   // Limit history to a maximum of 10 steps. We shouldn't be doing more than
   // one subsequent pop() anyway.
   historyStore.set([...history, newRoute].slice(-10));
-  window.history.pushState(newRoute, documentTitle, routeToPath(newRoute));
+
+  const path = process.env.hashRouting
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  window.history.replaceState(newRoute, documentTitle, path);
 };
 
 export const pop = (): void => {
@@ -85,7 +98,12 @@ export const pop = (): void => {
 
 export function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
-  window.history.replaceState(newRoute, documentTitle, routeToPath(newRoute));
+
+  const path = process.env.hashRouting
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  window.history.replaceState(newRoute, documentTitle, path);
 }
 
 export const initialize = () => {
@@ -107,8 +125,9 @@ function pathToRoute(path: string): Route | null {
   }
 
   const url = new URL(path, window.origin);
-  // Pathname starts usually with a "/", we remove it to avoid bad interpretations
-  const segments = url.pathname.substring(1).split("/");
+  const segments = process.env.hashRouting
+    ? url.hash.substring(2).split("#")[0].split("/") // Try to remove any additional hashes at the end of the URL.
+    : url.pathname.substring(1).split("/");
 
   const resource = segments.shift();
   switch (resource) {
@@ -274,7 +293,9 @@ export function routeToPath(route: Route) {
       if (route.params.path && route.params.path !== "/") {
         suffix += `/${route.params.path}`;
       }
-      if (route.params.hash) {
+      if (route.params.line) {
+        suffix += `#${route.params.line}`;
+      } else if (route.params.hash) {
         suffix += `#${route.params.hash}`;
       }
       if (route.params.search) {
@@ -285,7 +306,9 @@ export function routeToPath(route: Route) {
       if (route.params.search) {
         suffix += `${route.params.search}`;
       }
-      if (route.params.hash) {
+      if (route.params.line) {
+        suffix += `#${route.params.line}`;
+      } else if (route.params.hash) {
         suffix += `#${route.params.hash}`;
       }
     }
@@ -343,13 +366,16 @@ function resolveProjectRoute(
   }
 
   if (content === "tree") {
+    const line = url.href.match(/#L\d+$/)?.pop();
+    const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {
       view: { resource: "tree" },
       urn,
       peer,
       path: undefined,
       revision: undefined,
-      hash: url.hash.substring(1),
+      line: line?.substring(1),
+      hash: hash?.substring(1),
       route: segments.join("/"),
     };
   } else if (content === "history") {

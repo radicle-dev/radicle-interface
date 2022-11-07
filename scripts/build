@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-
-vite build
-cp _redirects build/_redirects

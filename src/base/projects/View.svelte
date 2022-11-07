@@ -51,6 +51,7 @@
       router.updateProjectRoute({
         revision,
         path,
+        line: activeRoute.params.line,
         hash: activeRoute.params.hash,
         route: undefined,
       });

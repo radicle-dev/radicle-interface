@@ -19,6 +19,7 @@ export interface ProjectsParams {
     | { resource: "patch"; params: { patch: string } }
     | { resource: "patches" };
   hash?: string;
+  line?: string;
   path?: string;
   peer?: string;
   profile?: string;

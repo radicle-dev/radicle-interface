@@ -1,8 +1,8 @@
 ///<reference types="vitest" />
-import path from "path";
 import type { UserConfig } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import path from "path";
 import pluginRewriteAll from "vite-plugin-rewrite-all";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 const config: UserConfig = {
   optimizeDeps: {
@@ -38,8 +38,11 @@ const config: UserConfig = {
     },
   },
   define: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    "process.env": { READABLE_STREAM: "disable" },
+    "process.env": {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      READABLE_STREAM: "disable",
+      hashRouting: Boolean(process.env.HASH_ROUTING),
+    },
   },
   build: {
     outDir: "build",

@@ -2,18 +2,19 @@
   import type { Blob } from "@app/project";
   import type { ProjectRoute } from "@app/router/definitions";
 
-  import Readme from "@app/base/projects/Readme.svelte";
   import HeaderToggleLabel from "@app/base/projects/HeaderToggleLabel.svelte";
   import ProjectLink from "@app/router/ProjectLink.svelte";
+  import Readme from "@app/base/projects/Readme.svelte";
   import { isMarkdownPath, scrollIntoView, twemoji } from "@app/utils";
+  import { onMount } from "svelte";
   import { updateProjectRoute } from "@app/router";
 
-  export let blob: Blob;
-  export let line: string | null;
-  export let getImage: (path: string) => Promise<Blob>;
   export let activeRoute: ProjectRoute;
+  export let blob: Blob;
+  export let getImage: (path: string) => Promise<Blob>;
+  export let line: string | undefined = undefined;
 
-  $: lineNumber = line ? parseInt(line.substring(1)) : null;
+  $: lineNumber = line ? parseInt(line.substring(1)) : undefined;
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
@@ -25,16 +26,23 @@
     ?.values()
     .next().value;
 
-  $: if (line) {
-    scrollIntoView(line);
-  }
+  // Waiting onMount, due to the line numbers still loading.
+  onMount(() => {
+    if (line) {
+      scrollIntoView(line);
+    }
+  });
   const isMarkdown = isMarkdownPath(blob.path);
   // If we have a line number we should show the raw output.
   let showMarkdown = line ? false : isMarkdown;
   const toggleMarkdown = () => {
-    updateProjectRoute({ hash: undefined });
+    updateProjectRoute({ line: undefined });
     showMarkdown = !showMarkdown;
   };
+
+  $: if (line) {
+    scrollIntoView(line);
+  }
 </script>
 
 <style>
@@ -215,7 +223,7 @@
       <div class="line-numbers">
         {#each lineNumbers as lineNumber}
           <ProjectLink
-            projectParams={{ hash: `L${lineNumber}` }}
+            projectParams={{ line: `L${lineNumber}` }}
             id="L{lineNumber}">
             <span class="line-number" class:highlighted={lineNumber === line} />
             {lineNumber}

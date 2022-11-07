@@ -85,6 +85,7 @@
       }
     ],
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-namespace": ["error", { "allowDeclarations": true }],
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [
       "error",

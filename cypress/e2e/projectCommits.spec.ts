@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /// <reference types="cypress" />
 import { MockProvider } from "@rsksmart/mock-web3-provider";
+import { getPath } from "../support/e2e";
 
 const groupedCommits = [
   {
@@ -146,7 +147,7 @@ describe("project commits", () => {
 
   it("display commit details", () => {
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/commits/cbf5df499ab4f4a908f1756fbe2c236a4530516a",
       );
     });

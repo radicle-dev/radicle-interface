@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /// <reference types="cypress" />
 import { MockProvider } from "@rsksmart/mock-web3-provider";
+import { getPath } from "../support/e2e";
 
 describe("project header", () => {
   beforeEach(() => {
@@ -114,7 +115,7 @@ describe("project header", () => {
       "@projectReadme",
     ]);
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/bright-forest-protocol/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree",
       );
     });
@@ -135,7 +136,7 @@ describe("project header", () => {
       .click();
     cy.wait(["@projectTreecbf5df4", "@projectReadme"]);
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/bright-forest-protocol/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/tree/master",
       );
     });
@@ -149,7 +150,7 @@ describe("project header", () => {
       .click();
     cy.wait(["@projectCommits"]);
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/history/master",
       );
     });
@@ -160,7 +161,7 @@ describe("project header", () => {
     cy.get('[aria-label="Issue count"]').click();
     cy.wait(["@projectIssues"]);
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/issues",
       );
     });
@@ -171,7 +172,7 @@ describe("project header", () => {
     cy.get('[aria-label="Patch count"]').click();
     cy.wait(["@projectPatches"]);
     cy.location().should(location => {
-      expect(location.pathname).to.eq(
+      expect(getPath(location)).to.eq(
         "/seeds/willow.radicle.garden/rad:git:hnrk8mbpirp7ua7sy66o4t9soasbq4y8uwgoy/remotes/hyndc7nx9keq76p1bkw9831arcndeeu3trwsc7kxt3osmpi6j9oeke/patches",
       );
     });

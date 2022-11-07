@@ -2,8 +2,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "vite",
+    "start:ipfs": "HASH_ROUTING=1 vite --base ./",
     "serve": "vite preview",
-    "build": "scripts/build",
+    "build": "vite build",
+    "build:ipfs": "HASH_ROUTING=1 vite build --base ./",
     "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
     "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html)' --ignore-path .gitignore --write",
