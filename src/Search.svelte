@@ -165,14 +165,14 @@
       shake();
     } else if (searchResult.type === "singleProfile") {
       input = "";
-      router.replace({
+      router.push({
         resource: "profile",
         params: { addressOrName: searchResult.id },
       });
       dispatch("finished");
     } else if (searchResult.type === "singleProject") {
       input = "";
-      router.replace({
+      router.push({
         resource: "projects",
         params: {
           view: { resource: "tree" },
