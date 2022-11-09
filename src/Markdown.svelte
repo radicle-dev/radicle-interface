@@ -24,7 +24,8 @@
   let container: HTMLElement;
 
   const render = (content: string): string =>
-    dompurify.sanitize(marked.parse(content, { headerIds: false }));
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    dompurify.sanitize(marked.parse(content), { SANITIZE_DOM: false });
 
   onMount(() => {
     // Don't underline <a> tags that contain images.

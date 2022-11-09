@@ -521,6 +521,27 @@ const katexMarkedExtension = {
     }),
 };
 
+// Converts self closing anchor tags into empty anchor tags, to avoid erratic wrapping behaviour
+// e.g. <a name="test"/> -> <a name="test"></a>
+const anchorMarkedExtension = {
+  name: "sanitizedAnchor",
+  level: "block",
+  start: (src: string) => src.match(/<a name="([\w]+)"\/>/)?.index,
+  tokenizer(src: string) {
+    const match = src.match(/^<a name="([\w]+)"\/>/);
+    if (match) {
+      return {
+        type: "sanitizedAnchor",
+        raw: match[0],
+        text: match[1].trim(),
+      };
+    }
+  },
+  renderer: (token: marked.Tokens.Generic) => {
+    return `<a name="${token.text}"></a>`;
+  },
+};
+
 // Overwrites the rendering of heading tokens.
 // Since there are possible non ASCII characters in headings,
 // we escape them by replacing them with dashes and,
@@ -536,8 +557,6 @@ export const renderer = {
   },
 };
 
-export const markdownExtensions = [emojisMarkedExtension, katexMarkedExtension];
-
 export function twemoji(node: HTMLElement) {
   twemojiModule.parse(node, {
     base: process.env.hashRouting ? "./" : "/",
@@ -546,3 +565,9 @@ export function twemoji(node: HTMLElement) {
     className: `txt-emoji`,
   });
 }
+
+export const markdownExtensions = [
+  emojisMarkedExtension,
+  katexMarkedExtension,
+  anchorMarkedExtension,
+];
