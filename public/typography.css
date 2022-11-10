@@ -22,7 +22,7 @@
 
 :root {
   --font-family-sans-serif: Inter, sans-serif;
-  --font-family-monospace: monospace;
+  --font-family-monospace: "JetBrains Mono", monospace;
   --font-weight-normal: 400;
   --font-weight-medium: 600;
   --font-weight-bold: 700;
