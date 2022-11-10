@@ -8,6 +8,9 @@ KaTeX_**.ttf
 KaTeX_**.woff
 KaTeX_**.woff2
 
+# Twemoji Assets
+public/twemoji/*.svg
+
 # Integration Tests
 cypress/screenshots
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { parseRadicleId, toClipboard } from "@app/utils";
+  import { parseRadicleId, toClipboard, twemoji } from "@app/utils";
   import Button from "@app/Button.svelte";
 
   export let urn: string;
@@ -35,7 +35,7 @@
 
 <div class="layout-desktop">
   <div class="urn">
-    <span class="icon">🌱</span>
+    <span class="icon" use:twemoji>🌱</span>
     <span class="txt-faded">rad:git:</span>
     <span>{parseRadicleId(urn)}</span>
   </div>

@@ -10,7 +10,7 @@
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
   import TextInput from "@app/TextInput.svelte";
-  import { formatAddress, isAddressEqual } from "@app/utils";
+  import { formatAddress, isAddressEqual, twemoji } from "@app/utils";
 
   const dispatch = createEventDispatcher<{ close: never }>();
 
@@ -76,7 +76,7 @@
 
 {#if state === State.Success}
   <Modal floating>
-    <div slot="title">✅</div>
+    <div slot="title" use:twemoji>✅</div>
 
     <div slot="subtitle">
       The ENS name for {entity.address} was set to
@@ -123,7 +123,7 @@
 {:else}
   <Modal floating>
     <div slot="title">
-      <div>🧣</div>
+      <div use:twemoji>🧣</div>
       <span>Associate profile</span>
     </div>
 

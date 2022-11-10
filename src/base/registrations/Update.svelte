@@ -1,14 +1,16 @@
 <script lang="ts" strictEvents>
-  import { onMount, createEventDispatcher } from "svelte";
-  import { setRecords } from "./resolver";
   import type { EnsRecord } from "./resolver";
   import type { Registration } from "./registrar";
   import type { Wallet } from "@app/wallet";
+  import type { State } from "@app/utils";
+
+  import Button from "@app/Button.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import type { State } from "@app/utils";
   import { Status } from "@app/utils";
-  import Button from "@app/Button.svelte";
+  import { onMount, createEventDispatcher } from "svelte";
+  import { setRecords } from "./resolver";
+  import { twemoji } from "@app/utils";
 
   export let domain: string;
   export let wallet: Wallet;
@@ -52,7 +54,7 @@
 
 <Modal floating error={state.status === Status.Failed}>
   <span slot="title">
-    <div>🧾</div>
+    <div use:twemoji>🧾</div>
     <div>Update registration</div>
   </span>
   <span slot="subtitle">

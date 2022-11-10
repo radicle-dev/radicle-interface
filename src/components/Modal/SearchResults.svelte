@@ -1,6 +1,6 @@
 <script lang="ts" strictEvents>
   import Modal from "@app/Modal.svelte";
-  import { formatRadicleUrn, getSeedEmoji } from "@app/utils";
+  import { formatRadicleUrn, getSeedEmoji, twemoji } from "@app/utils";
   import type { Wallet } from "@app/wallet";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
@@ -34,7 +34,7 @@
 <svelte:window on:click={() => dispatch("close")} />
 
 <Modal center floating>
-  <span slot="title">️🔍</span>
+  <span slot="title" use:twemoji>️🔍</span>
   <span slot="subtitle">
     <p class="txt-highlight txt-medium">
       <span class="txt-bold">

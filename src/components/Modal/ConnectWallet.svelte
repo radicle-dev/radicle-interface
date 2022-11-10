@@ -4,9 +4,10 @@
   import { createEventDispatcher } from "svelte";
   import { qrcode } from "pure-svg-code";
 
+  import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
   import { state } from "@app/session";
-  import Button from "@app/Button.svelte";
+  import { twemoji } from "@app/utils";
 
   export let uri: string;
   export let wallet: Wallet;
@@ -57,7 +58,7 @@
 <div class="wrapper">
   <Modal floating center>
     <div slot="title">
-      <div>👛</div>
+      <div use:twemoji>👛</div>
       <div>Connect your wallet</div>
     </div>
 

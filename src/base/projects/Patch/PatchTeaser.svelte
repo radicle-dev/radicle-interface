@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { formatObjectId } from "@app/cobs";
   import type { Patch } from "@app/patch";
   import type { Wallet } from "@app/wallet";
+
   import { Profile, ProfileType } from "@app/profile";
+  import { formatObjectId } from "@app/cobs";
+  import { onMount } from "svelte";
+  import { twemoji } from "@app/utils";
 
   import Authorship from "@app/Authorship.svelte";
 
@@ -122,7 +124,7 @@
   {#if commentCount > 0}
     <div class="column-right">
       <div class="comment-count">
-        <span class="txt-tiny emoji">💬</span>
+        <span class="txt-tiny emoji" use:twemoji>💬</span>
         <span>{commentCount}</span>
       </div>
     </div>

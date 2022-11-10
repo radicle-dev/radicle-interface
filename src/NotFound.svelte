@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as router from "@app/router";
+  import { twemoji } from "@app/utils";
 
   import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
@@ -9,7 +10,7 @@
 </script>
 
 <Modal subtle>
-  <span slot="title">🏜️</span>
+  <span slot="title" use:twemoji>🏜️</span>
   <span slot="body">
     <p class="txt-medium txt-highlight">
       <span class="txt-bold">{title}</span>

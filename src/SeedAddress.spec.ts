@@ -15,7 +15,12 @@ describe("SeedAddress", () => {
         port: 8776,
       },
     });
-    cy.get("span.seed-icon").should("have.text", "🌱");
+    cy.get("span.seed-icon img").should("have.attr", "alt", "🌱");
+    cy.get("span.seed-icon img").should(
+      "have.attr",
+      "src",
+      "/twemoji/1f331.svg",
+    );
     cy.contains("seed.cloudhead.io").should("be.visible");
   });
 
@@ -31,7 +36,12 @@ describe("SeedAddress", () => {
         full: true,
       },
     });
-    cy.get("span.seed-icon").should("have.text", "🌱");
+    cy.get("span.seed-icon img").should("have.attr", "alt", "🌱");
+    cy.get("span.seed-icon img").should(
+      "have.attr",
+      "src",
+      "/twemoji/1f331.svg",
+    );
     cy.get("body")
       .contains("hydkkk…coygh1@seed.cloudhead.io")
       .should("be.visible");

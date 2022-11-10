@@ -2,7 +2,7 @@
   import { Connection, state, session } from "@app/session";
   import { getWallet } from "@app/wallet";
   import { initialize, activeRouteStore } from "@app/router";
-  import { unreachable } from "@app/utils";
+  import { twemoji, unreachable } from "@app/utils";
 
   import ColorPalette from "@app/ColorPalette.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
@@ -118,7 +118,7 @@
     <div class="wrapper">
       <Modal error subtle>
         <span slot="title">
-          <div class="emoji">👻</div>
+          <div class="emoji" use:twemoji>👻</div>
           <div>Error connecting to network</div>
         </span>
 

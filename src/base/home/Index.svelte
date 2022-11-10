@@ -8,7 +8,7 @@
   import Widget from "@app/base/projects/Widget.svelte";
   import config from "@app/config.json";
   import { Project } from "@app/project";
-  import { setOpenGraphMetaTag } from "@app/utils";
+  import { setOpenGraphMetaTag, twemoji } from "@app/utils";
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Interface" },
@@ -92,7 +92,7 @@
 
 <main>
   <div class="blurb">
-    <p>
+    <p use:twemoji>
       Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software
       over a peer-to-peer network 🌐 built on Git.
     </p>

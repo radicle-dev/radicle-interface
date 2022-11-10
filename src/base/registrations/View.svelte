@@ -18,7 +18,7 @@
   import { assert } from "@app/error";
   import { defaultHttpApiPort } from "@app/base/seeds/Seed";
   import { getRegistration, getOwner } from "./registrar";
-  import { isAddressEqual, isReverseRecordSet } from "@app/utils";
+  import { isAddressEqual, isReverseRecordSet, twemoji } from "@app/utils";
   import { session } from "@app/session";
 
   enum Status {
@@ -239,7 +239,7 @@
 {:else if state.status === Status.NotFound}
   <Modal subtle>
     <span slot="title" class="txt-highlight">
-      <div>🍄</div>
+      <div use:twemoji>🍄</div>
       {domain}
     </span>
 

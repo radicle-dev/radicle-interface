@@ -142,7 +142,7 @@
         stats={revision.changeset.stats}
         on:browse={e => onBrowse(e, revision.oid)} />
     {:else if activeTab === PatchTab.Diff}
-      <Placeholder icon="🍳">
+      <Placeholder emoji="🍳">
         <span slot="title">No changeset found</span>
         <span slot="body">
           We couldn't find a changeset related to this patch or revision

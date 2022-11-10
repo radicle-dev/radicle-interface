@@ -4,7 +4,7 @@
     "start": "vite",
     "serve": "vite preview",
     "build": "scripts/build",
-    "postinstall": "scripts/copy-katex-assets",
+    "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
     "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html)' --ignore-path .gitignore --write",
     "test:unit": "TZ='UTC' vitest run",
@@ -55,6 +55,7 @@
     "siwe": "^2.0.5",
     "svelte": "^3.52.0",
     "svelte-preprocess": "^4.10.7",
+    "twemoji": "^14.0.2",
     "util": "^0.12.5"
   }
 }

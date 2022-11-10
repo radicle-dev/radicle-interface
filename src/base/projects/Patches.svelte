@@ -87,7 +87,7 @@
       {/each}
     </div>
   {:else}
-    <Placeholder icon="🍖">
+    <Placeholder emoji="🍖">
       <div slot="title">{capitalize(state)} patches</div>
       <div slot="body">No patches matched the current filter</div>
     </Placeholder>

@@ -5,8 +5,10 @@
   import type * as proj from "@app/project";
   import {
     markdownExtensions as extensions,
+    renderer,
     getImageMime,
     isUrl,
+    twemoji,
     scrollIntoView,
   } from "@app/utils";
   import dompurify from "dompurify";
@@ -17,12 +19,12 @@
   export let doc = matter(content);
 
   const frontMatter = Object.entries(doc.data);
-  marked.use({ extensions });
+  marked.use({ extensions, renderer });
 
   let container: HTMLElement;
 
   const render = (content: string): string =>
-    dompurify.sanitize(marked.parse(content));
+    dompurify.sanitize(marked.parse(content, { headerIds: false }));
 
   onMount(() => {
     // Don't underline <a> tags that contain images.
@@ -43,7 +45,7 @@
       const path = i.getAttribute("src");
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (path && !isUrl(path)) {
+      if (path && !isUrl(path) && !path.startsWith("/twemoji")) {
         getImage(path).then(blob => {
           if (blob.content) {
             const mime = getImageMime(path);
@@ -267,6 +269,6 @@
   </div>
 {/if}
 
-<div class="markdown" bind:this={container}>
+<div class="markdown" bind:this={container} use:twemoji>
   {@html render(doc.content)}
 </div>

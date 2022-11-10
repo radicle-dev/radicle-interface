@@ -5,7 +5,7 @@
   import Readme from "@app/base/projects/Readme.svelte";
   import HeaderToggleLabel from "@app/base/projects/HeaderToggleLabel.svelte";
   import ProjectLink from "@app/router/ProjectLink.svelte";
-  import { isMarkdownPath, scrollIntoView } from "@app/utils";
+  import { isMarkdownPath, scrollIntoView, twemoji } from "@app/utils";
   import { updateProjectRoute } from "@app/router";
 
   export let blob: Blob;
@@ -201,7 +201,7 @@
   <div class="container">
     {#if blob.binary}
       <div class="binary">
-        <div>👀</div>
+        <div use:twemoji>👀</div>
         <span class="txt-tiny">Binary content</span>
       </div>
     {:else if showMarkdown}

@@ -208,7 +208,7 @@
         {:then blob}
           <Blob {line} {blob} {getImage} {activeRoute} />
         {:catch}
-          <Placeholder icon="🍂">
+          <Placeholder emoji="🍂">
             <span slot="title">
               {#if path !== "/"}
                 <div class="txt-monospace">{path}</div>
@@ -226,7 +226,7 @@
       </div>
     {:else}
       <div class="placeholder">
-        <Placeholder icon="👀">
+        <Placeholder emoji="👀">
           <span slot="title">Nothing to show</span>
           <span slot="body">We couldn't find any files at this revision.</span>
         </Placeholder>

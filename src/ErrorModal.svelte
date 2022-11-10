@@ -1,9 +1,10 @@
 <script lang="ts" strictEvents>
   import type { Err } from "@app/error";
 
-  import { createEventDispatcher } from "svelte";
-  import Modal from "@app/Modal.svelte";
   import Button from "@app/Button.svelte";
+  import Modal from "@app/Modal.svelte";
+  import { createEventDispatcher } from "svelte";
+  import { twemoji } from "@app/utils";
 
   const dispatch = createEventDispatcher<{ close: never }>();
 
@@ -20,7 +21,7 @@
 </script>
 
 <Modal on:close error {floating} {subtle}>
-  <span slot="title">
+  <span slot="title" use:twemoji>
     {#if emoji}
       <div>{emoji}</div>
     {/if}

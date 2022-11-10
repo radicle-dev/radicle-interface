@@ -2,7 +2,7 @@
   import type { Wallet } from "@app/wallet";
   import type { Stats } from "@app/base/seeds/Seed";
   import type { ProjectInfo } from "@app/project";
-  import { formatSeedId, formatSeedHost } from "@app/utils";
+  import { formatSeedId, formatSeedHost, twemoji } from "@app/utils";
   import { Seed } from "@app/base/seeds/Seed";
   import Loading from "@app/Loading.svelte";
   import SeedAddress from "@app/SeedAddress.svelte";
@@ -122,7 +122,7 @@
       <span class="title txt-title">
         <span class="txt-bold">
           {hostName}
-          <span class="layout-desktop-inline">{seed.emoji}</span>
+          <span class="layout-desktop-inline" use:twemoji>{seed.emoji}</span>
         </span>
       </span>
       <!-- User Session -->

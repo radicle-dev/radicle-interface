@@ -1,5 +1,7 @@
 <script lang="ts">
-  export let icon: string;
+  import { twemoji } from "@app/utils";
+
+  export let emoji: string;
 </script>
 
 <style>
@@ -17,14 +19,14 @@
     padding: 1rem 0;
     font-weight: var(--font-weight-bold);
   }
-  .placeholder .icon {
+  .placeholder .emoji {
     margin-bottom: 1rem;
   }
 </style>
 
 <div class="placeholder">
   <header>
-    <div class="icon txt-large">{icon}</div>
+    <div class="emoji txt-large" use:twemoji>{emoji}</div>
     <slot name="title" />
   </header>
   <slot name="body" />

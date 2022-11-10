@@ -3,6 +3,7 @@
   import type { Wallet } from "@app/wallet";
 
   import { onMount } from "svelte";
+  import { twemoji } from "@app/utils";
 
   import * as router from "@app/router";
   import Button from "@app/Button.svelte";
@@ -64,7 +65,7 @@
     on:close={back} />
 {:else}
   <Modal>
-    <span slot="title">
+    <span slot="title" use:twemoji>
       {#if state.status === Status.Success}
         <div>🎉</div>
       {:else}

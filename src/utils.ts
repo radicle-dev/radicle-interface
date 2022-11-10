@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import twemojiModule from "twemoji";
 import md5 from "md5";
 import { BigNumber } from "ethers";
 import katex from "katex";
@@ -520,4 +521,28 @@ const katexMarkedExtension = {
     }),
 };
 
+// Overwrites the rendering of heading tokens.
+// Since there are possible non ASCII characters in headings,
+// we escape them by replacing them with dashes and,
+// trim eventual dashes on each side of the string.
+export const renderer = {
+  heading(text: string, level: 1 | 2 | 3 | 4 | 5 | 6) {
+    const escapedText = text
+      .toLowerCase()
+      .replace(/[^\w]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    return `<h${level} id="${escapedText}">${text}</h${level}>`;
+  },
+};
+
 export const markdownExtensions = [emojisMarkedExtension, katexMarkedExtension];
+
+export function twemoji(node: HTMLElement) {
+  twemojiModule.parse(node, {
+    base: "/",
+    folder: "twemoji",
+    ext: ".svg",
+    className: `txt-emoji`,
+  });
+}

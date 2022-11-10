@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { formatSeedAddress, formatSeedId, formatSeedHost } from "@app/utils";
+  import {
+    formatSeedAddress,
+    formatSeedId,
+    formatSeedHost,
+    twemoji,
+  } from "@app/utils";
   import type { Seed } from "@app/base/seeds/Seed";
   import Clipboard from "@app/Clipboard.svelte";
   import Link from "@app/router/Link.svelte";
@@ -37,7 +42,7 @@
 
 <div class="wrapper">
   <div class="seed-address">
-    <span class="seed-icon">{seed.emoji}</span>
+    <span class="seed-icon" use:twemoji>{seed.emoji}</span>
     {#if full}
       <span>
         <Link

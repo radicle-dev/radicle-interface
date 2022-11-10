@@ -10,7 +10,12 @@
   import ErrorModal from "@app/ErrorModal.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import { registerName, State, state } from "./registrar";
+  import {
+    registerName,
+    State,
+    state,
+  } from "@app/base/registrations/registrar";
+  import { twemoji } from "@app/utils";
 
   export let wallet: Wallet;
   export let name: string;
@@ -75,7 +80,7 @@
       })} />
 {:else}
   <Modal>
-    <span slot="title">
+    <span slot="title" use:twemoji>
       {#if $state.connection === State.Registered}
         <div>🎉</div>
       {:else}

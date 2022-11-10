@@ -1,6 +1,7 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
   import Badge from "@app/Badge.svelte";
+  import { twemoji } from "@app/utils";
 
   export let items: {
     key: string;
@@ -54,6 +55,7 @@
       <div
         class="dropdown-item"
         class:selected={value === selected}
+        use:twemoji
         on:click={() => onSelect(value)}
         {title}>
         {@html key}

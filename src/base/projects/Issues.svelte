@@ -90,7 +90,7 @@
       {/each}
     </div>
   {:else}
-    <Placeholder icon="🍣">
+    <Placeholder emoji="🍣">
       <div slot="title">{capitalize(state)} issues</div>
       <div slot="body">No issues matched the current filter</div>
     </Placeholder>

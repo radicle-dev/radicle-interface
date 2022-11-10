@@ -9,7 +9,7 @@
   import Loading from "@app/Loading.svelte";
   import Message from "@app/Message.svelte";
   import Modal from "@app/Modal.svelte";
-  import { formatAddress } from "@app/utils";
+  import { formatAddress, twemoji } from "@app/utils";
   import { registrar } from "./registrar";
   import { session } from "@app/session";
 
@@ -80,7 +80,7 @@
 
 <Modal narrow>
   <span slot="title">
-    <div>🌐</div>
+    <div use:twemoji>🌐</div>
     <span>Register a name</span>
   </span>
 

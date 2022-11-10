@@ -176,7 +176,7 @@
     {:catch e}
       <div class="message">
         {#if peer}
-          <Placeholder icon="🍂">
+          <Placeholder emoji="🍂">
             <span slot="title">
               <span class="txt-monospace">{formatSeedId(peer)}</span>
             </span>
@@ -188,7 +188,7 @@
             </span>
           </Placeholder>
         {:else}
-          <Placeholder icon="🍂">
+          <Placeholder emoji="🍂">
             <span slot="body">
               <span style="display: block">Couldn't load source tree.</span>
               <span>{e.message}</span>
