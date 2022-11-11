@@ -62,6 +62,9 @@
     color: var(--color-secondary);
     opacity: 1 !important;
   }
+  input:focus-visible {
+    border: 1.5px solid var(--color-secondary);
+  }
   input[disabled] {
     color: var(--color-secondary);
     cursor: not-allowed;

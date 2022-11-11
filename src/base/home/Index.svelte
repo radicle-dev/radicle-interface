@@ -116,7 +116,10 @@
               compact
               project={result.info}
               seed={{ api: result.seed }}
-              on:click={() => onClick(result.info, result.seed)} />
+              on:click={() => onClick(result.info, result.seed)}
+              on:keydown={({ code }) => {
+                if (code === "Enter") onClick(result.info, result.seed);
+              }} />
           </div>
         {/each}
       </div>

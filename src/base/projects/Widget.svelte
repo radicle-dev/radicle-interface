@@ -68,6 +68,9 @@
     border-color: var(--color-secondary);
     background-color: var(--color-secondary-1);
   }
+  article:focus-visible {
+    outline: solid !important;
+  }
   article.project-faded:hover {
     border-color: var(--color-foreground-5);
   }
@@ -110,7 +113,13 @@
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<article on:click class:project-faded={faded} class:compact>
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<article
+  on:click
+  on:keydown
+  tabindex="0"
+  class:project-faded={faded}
+  class:compact>
   <div class="left">
     <div class="id">
       <span class="name">{project.name}</span>

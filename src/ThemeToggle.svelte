@@ -40,7 +40,8 @@
     user-select: none;
   }
 
-  .theme-button:hover {
+  .theme-button:hover,
+  .theme-button:focus-visible {
     color: var(--color-background);
     background-color: var(--color-foreground);
     border-color: transparent;
@@ -50,7 +51,14 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="theme-button"
+  tabindex="0"
   role="button"
+  on:keydown={e => {
+    if (e.code === "Enter") {
+      theme.set($theme === "dark" ? "light" : "dark");
+      storeTheme($theme);
+    }
+  }}
   on:click={() => {
     theme.set($theme === "dark" ? "light" : "dark");
     storeTheme($theme);
