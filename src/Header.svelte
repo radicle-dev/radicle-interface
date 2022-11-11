@@ -14,7 +14,7 @@
   import Search from "@app/Search.svelte";
   import SearchResults from "@app/components/Modal/SearchResults.svelte";
   import SeedDropdown from "@app/SeedDropdown.svelte";
-  import ThemeToggle from "@app/ThemeToggle.svelte";
+  import SettingsDropdown from "@app/components/SettingsDropdown.svelte";
 
   import { Profile, ProfileType } from "@app/profile";
   import { closeFocused } from "@app/Floating.svelte";
@@ -119,6 +119,7 @@
   .modal {
     background: var(--color-background);
     border-radius: var(--border-radius);
+    box-shadow: var(--elevation-low);
     max-width: 22.5rem;
     min-width: 18rem;
     padding: 1.5rem;
@@ -127,11 +128,25 @@
     top: 5rem;
   }
   .modal-register {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground);
     padding-left: 0.5rem;
   }
   .modal-register:hover {
     color: var(--color-foreground);
+  }
+
+  .toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius-round);
+    border: 1px solid var(--color-foreground);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .toggle:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
   }
 </style>
 
@@ -217,9 +232,14 @@
         <Connect buttonVariant="foreground" {wallet} />
       </span>
     {/if}
-    <ThemeToggle />
+    <Floating>
+      <div class="toggle" slot="toggle">
+        <Icon name="gear" />
+      </div>
+      <SettingsDropdown slot="modal" />
+    </Floating>
     <div class="layout-mobile">
-      <Floating overlay>
+      <Floating>
         <div slot="toggle">
           <span style="transform: scale(1.2);">
             <Icon name="ellipsis" />

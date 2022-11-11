@@ -233,7 +233,7 @@
       {#if blob.html}
         <pre class="code no-scrollbar">{@html blob.content}</pre>
       {:else}
-        <pre class="code no-scrollbar">{blob.content}</pre>
+        <pre class="code txt-monospace no-scrollbar">{blob.content}</pre>
       {/if}
     {/if}
   </div>

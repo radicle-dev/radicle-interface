@@ -20,6 +20,52 @@
   src: url("fonts/Inter-Bold.otf");
 }
 
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Regular.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Bold.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Italic.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-SemiBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-BoldItalic.ttf");
+}
+
 :root {
   --font-family-sans-serif: Inter, sans-serif;
   --font-family-monospace: monospace;
@@ -32,6 +78,14 @@
   --font-size-medium: 1.25rem;
   --font-size-large: 1.75rem;
   --font-size-huge: 2rem;
+}
+
+[data-codefont="system"] {
+  --font-family-monospace: monospace;
+}
+
+[data-codefont="jetbrains"] {
+  --font-family-monospace: "JetBrains Mono";
 }
 
 html {
