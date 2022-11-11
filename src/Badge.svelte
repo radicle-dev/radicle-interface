@@ -1,3 +1,11 @@
+<!--
+ @component
+ ## Usage
+ A generic badge, with rounded edges, used besides text as identifier
+ 
+ ## Props
+ @param variant - Intent the text needs to convey
+-->
 <script lang="ts">
   export let variant:
     | "caution"

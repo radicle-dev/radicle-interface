@@ -1,3 +1,22 @@
+<!--
+ @component
+ ## Usage
+ A `img` wrapper to provide additional functionality to display avatars  
+ If the passed source isn't Address, URN or Peer ID it falls back to blockies
+ 
+ ## Best Practices
+ - The `grayscale` prop should be used for disabled things
+ - THe `title` prop shouldn't be "avatar", since `alt` is already equal to `avatar`
+ 
+ ## Error Handling
+ - If the image source isn't found, we fallback to a blockie
+ 
+ ## Props
+ @param title - The `image` `title` attribute
+ @param source - The `image` `src` attribute
+ @param inline - Changes the `image` element from `display: block` to `inline-block`
+ @param grayscale - Converts the avatar image to grayscale, used for a disabled look
+-->
 <script lang="ts">
   import { createIcon } from "@app/blockies";
   import { isAddress, isPeerId, isRadicleId } from "@app/utils";
