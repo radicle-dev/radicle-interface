@@ -12,6 +12,7 @@ const config: UserConfig = {
     deps: {
       inline: ["@ethersproject/signing-key", "@ethersproject/basex"],
     },
+    setupFiles: "./vitest/setupVitest",
     environment: "happy-dom",
     include: ["**/*.test.ts"],
     reporters: "verbose",

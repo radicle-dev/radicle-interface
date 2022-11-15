@@ -20,12 +20,12 @@
   },
   "devDependencies": {
     "@rsksmart/mock-web3-provider": "^1.0.1",
-    "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "@sveltejs/vite-plugin-svelte": "^1.2.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/dompurify": "^2.4.0",
     "@types/katex": "^0.14.0",
-    "@types/lodash": "^4.14.188",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@types/lodash": "^4.14.189",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
     "cypress": "^10.11.0",
     "eslint": "^8.27.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -33,9 +33,9 @@
     "prettier-plugin-svelte": "^2.8.0",
     "svelte-check": "^2.9.2",
     "typescript": "^4.8.4",
-    "vite": "^3.2.3",
+    "vite": "^3.2.4",
     "vite-plugin-rewrite-all": "^1.0.0",
-    "vitest": "^0.24.5"
+    "vitest": "^0.25.2"
   },
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.4.0",
@@ -55,7 +55,7 @@
     "md5": "^2.3.0",
     "pure-svg-code": "^1.0.6",
     "siwe": "^2.0.5",
-    "svelte": "^3.52.0",
+    "svelte": "^3.53.1",
     "svelte-preprocess": "^4.10.7",
     "twemoji": "^14.0.2",
     "util": "^0.12.5"
