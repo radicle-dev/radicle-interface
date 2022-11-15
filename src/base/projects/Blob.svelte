@@ -199,7 +199,7 @@
             </HeaderToggleLabel>
           </div>
         {/if}
-        <div class="last-commit" title={lastCommit.author.name}>
+        <div class="last-commit" title={lastCommit.author.name} use:twemoji>
           <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
           {lastCommit.summary}
         </div>

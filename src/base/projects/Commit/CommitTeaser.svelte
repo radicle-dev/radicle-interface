@@ -1,6 +1,6 @@
 <script lang="ts" strictEvents>
   import type { CommitMetadata } from "@app/commit";
-  import { formatCommit } from "@app/utils";
+  import { formatCommit, twemoji } from "@app/utils";
   import { createEventDispatcher } from "svelte";
 
   import Icon from "@app/Icon.svelte";
@@ -87,7 +87,7 @@
 <div class="commit-teaser">
   <div class="column-left">
     <div class="header">
-      <div class="summary">
+      <div class="summary" use:twemoji>
         {commit.header.summary}
       </div>
     </div>

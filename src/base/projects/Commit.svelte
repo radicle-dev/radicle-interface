@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Commit } from "@app/commit";
 
-  import { formatCommit } from "@app/utils";
+  import { formatCommit, twemoji } from "@app/utils";
 
   import Changeset from "@app/base/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/base/projects/Commit/CommitAuthorship.svelte";
@@ -57,7 +57,7 @@
 <div class="commit">
   <header>
     <div class="summary">
-      <div class="txt-medium">{commit.header.summary}</div>
+      <div class="txt-medium" use:twemoji>{commit.header.summary}</div>
       <div class="layout-desktop txt-monospace sha1">
         <span>{commit.header.sha1}</span>
       </div>
