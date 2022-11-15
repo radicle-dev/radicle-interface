@@ -540,7 +540,7 @@ export const markdownExtensions = [emojisMarkedExtension, katexMarkedExtension];
 
 export function twemoji(node: HTMLElement) {
   twemojiModule.parse(node, {
-    base: "/",
+    base: process.env.hashRouting ? "./" : "/",
     folder: "twemoji",
     ext: ".svg",
     className: `txt-emoji`,
