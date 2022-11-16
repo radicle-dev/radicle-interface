@@ -84,7 +84,7 @@ export const push = (newRoute: Route): void => {
     ? "#" + routeToPath(newRoute)
     : routeToPath(newRoute);
 
-  window.history.replaceState(newRoute, documentTitle, path);
+  window.history.pushState(newRoute, documentTitle, path);
 };
 
 export const pop = (): void => {
