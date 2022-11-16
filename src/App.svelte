@@ -78,42 +78,42 @@
     <Header session={$session} {wallet} />
     <div class="wrapper">
       {#if $activeRouteStore.resource === "home"}
-        <Preload path="/src/base/home/Index.svelte" />
+        <Preload path="../base/home/Index.svelte" />
       {:else if $activeRouteStore.resource === "faucet"}
         <Preload
-          path="/src/base/faucet/Routes.svelte"
+          path="../base/faucet/Routes.svelte"
           {wallet}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "seeds"}
         <Preload
-          path="/src/base/seeds/Routes.svelte"
+          path="../base/seeds/Routes.svelte"
           {wallet}
           host={$activeRouteStore.params.host}
           session={$session} />
       {:else if $activeRouteStore.resource === "registrations"}
         <Preload
-          path="/src/base/registrations/Routes.svelte"
+          path="../base/registrations/Routes.svelte"
           {wallet}
           activeRoute={$activeRouteStore}
           session={$session} />
       {:else if $activeRouteStore.resource === "vesting"}
         <Preload
-          path="/src/base/vesting/Index.svelte"
+          path="../base/vesting/Index.svelte"
           {wallet}
           session={$session} />
       {:else if $activeRouteStore.resource === "projects"}
         <Preload
-          path="/src/base/projects/View.svelte"
+          path="../base/projects/View.svelte"
           {wallet}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "profile"}
         <Preload
-          path="src/Profile.svelte"
+          path="../Profile.svelte"
           {wallet}
           addressOrName={$activeRouteStore.params.addressOrName} />
       {:else if $activeRouteStore.resource === "404"}
         <Preload
-          path="src/NotFound.svelte"
+          path="../NotFound.svelte"
           title="404"
           subtitle="Nothing here" />
       {:else}
