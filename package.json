@@ -53,6 +53,7 @@
     "lru-cache": "^7.14.1",
     "marked": "^4.2.2",
     "md5": "^2.3.0",
+    "plausible-tracker": "^0.3.8",
     "pure-svg-code": "^1.0.6",
     "siwe": "^2.0.5",
     "svelte": "^3.53.1",

@@ -3,6 +3,7 @@
   import { getWallet } from "@app/wallet";
   import { initialize, activeRouteStore } from "@app/router";
   import { twemoji, unreachable } from "@app/utils";
+  import Plausible from "plausible-tracker";
 
   import ColorPalette from "@app/ColorPalette.svelte";
   import Faucet from "@app/base/faucet/Routes.svelte";
@@ -18,6 +19,11 @@
   import Vesting from "@app/base/vesting/Index.svelte";
 
   initialize();
+
+  Plausible({
+    domain: "app.radicle.xyz",
+    hashMode: Boolean(process.env.hashRouting),
+  });
 
   const loadWallet = getWallet().then(async wallet => {
     if ($state.connection === Connection.Connected) {
@@ -68,12 +74,6 @@
 <svelte:window on:keydown={handleKeydown} />
 <svelte:head>
   <title>Radicle</title>
-  {#if import.meta.env.PROD}
-    <script
-      defer
-      data-domain="app.radicle.xyz"
-      src="https://plausible.io/js/plausible.js"></script>
-  {/if}
 </svelte:head>
 
 <div class="app">
