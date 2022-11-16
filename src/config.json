@@ -8,7 +8,8 @@
         "emoji": "🪵"
       },
       { "host": "pine.radicle.garden", "emoji": "🌲" },
-      { "host": "maple.radicle.garden", "emoji": "🍁" }
+      { "host": "maple.radicle.garden", "emoji": "🍁" },
+      { "host": "0.0.0.0", "emoji": "🍁" }
     ]
   },
   "projects": {

@@ -1,13 +1,11 @@
 import { test, expect } from "@tests/support/fixtures.js";
 
 test.describe("custom app configuration example", () => {
-  // When `customAppConfig` is set, we also _must_ add a `page.addInitScript`
-  // directly in the test.
   test.use({
     customAppConfig: true,
   });
 
-  test("landing page", async ({ page }) => {
+  test("landing page shows pinned projects", async ({ page }) => {
     await page.addInitScript(() => {
       window.APP_CONFIG = {
         walletConnect: {
@@ -15,14 +13,14 @@ test.describe("custom app configuration example", () => {
         },
         reactions: [],
         seeds: {
-          pinned: [],
+          pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
         },
         projects: {
           pinned: [
             {
-              name: "radicle-cli",
-              urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
-              seed: "clients.radicle.xyz",
+              name: "source-browsing",
+              urn: "rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+              seed: "0.0.0.0",
             },
           ],
         },
@@ -30,18 +28,13 @@ test.describe("custom app configuration example", () => {
     });
     await page.goto("/");
     await expect(
-      page.locator(
-        "text=Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software over a peer-to-peer network 🌐 built on Git.",
-      ),
+      page.locator("text=Explore projects on the Radicle network."),
     ).toBeVisible();
-  });
-});
 
-test("landing page", async ({ page }) => {
-  await page.goto("/");
-  await expect(
-    page.locator(
-      "text=Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software over a peer-to-peer network 🌐 built on Git.",
-    ),
-  ).toBeVisible();
+    // Shows pinned project.
+    await expect(page.locator("text=source-browsing")).toBeVisible();
+
+    // Shows latest commit.
+    await expect(page.locator("text=530aabd")).toBeVisible();
+  });
 });

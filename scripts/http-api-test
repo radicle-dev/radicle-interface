@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+TAG=40bdc662b2d48cbfaa87182b21457ef8f861b04a
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
+WORKSPACE=$REPO_ROOT/tests/tmp/palm
+
+echo $WORKSPACE
+
+rm -rf $WORKSPACE
+mkdir -p $WORKSPACE
+tar -xf $FIXTURE -C $WORKSPACE
+
+exec docker run \
+  --init \
+  --publish 8777:8777 \
+  --rm \
+  --name radicle-http-api-test \
+  --volume $WORKSPACE:/app/radicle \
+  "$@" \
+  "gcr.io/radicle-services/http-api:$TAG" \
+  --passphrase asdf

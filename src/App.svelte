@@ -22,7 +22,7 @@
 
   const plausible = Plausible({
     domain: "app.radicle.xyz",
-    hashMode: Boolean(process.env.hashRouting),
+    hashMode: window.HASH_ROUTING,
   });
 
   plausible.enableAutoPageviews();
