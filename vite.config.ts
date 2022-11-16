@@ -52,7 +52,6 @@ const config: UserConfig = {
           ethers: ["ethers", "@ethersproject/abstract-provider"],
           auth: ["siwe", "@walletconnect/client"],
           cache: ["lru-cache", "@stardazed/streams"],
-          markdown: ["katex", "dompurify", "marked", "@radicle/gray-matter"],
           dom: ["svelte", "pure-svg-code", "twemoji"],
         },
       },

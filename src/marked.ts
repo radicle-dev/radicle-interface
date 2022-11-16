@@ -1,5 +1,7 @@
 import type { marked } from "marked";
+
 import katex from "katex";
+import { parseEmoji } from "@app/utils";
 
 const emojisMarkedExtension = {
   name: "emoji",

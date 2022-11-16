@@ -7,7 +7,7 @@
   import Header from "@app/Header.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import Preload from "@app/router/Preload.svelte";
+  import DynamicComponentImport from "@app/router/DynamicComponentImport.svelte";
 
   initialize();
 
@@ -78,41 +78,41 @@
     <Header session={$session} {wallet} />
     <div class="wrapper">
       {#if $activeRouteStore.resource === "home"}
-        <Preload path="../base/home/Index.svelte" />
+        <DynamicComponentImport path="../base/home/Index.svelte" />
       {:else if $activeRouteStore.resource === "faucet"}
-        <Preload
+        <DynamicComponentImport
           path="../base/faucet/Routes.svelte"
           {wallet}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "seeds"}
-        <Preload
+        <DynamicComponentImport
           path="../base/seeds/Routes.svelte"
           {wallet}
-          host={$activeRouteStore.params.host}
-          session={$session} />
+          session={$session}
+          host={$activeRouteStore.params.host} />
       {:else if $activeRouteStore.resource === "registrations"}
-        <Preload
+        <DynamicComponentImport
           path="../base/registrations/Routes.svelte"
           {wallet}
-          activeRoute={$activeRouteStore}
-          session={$session} />
+          session={$session}
+          activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "vesting"}
-        <Preload
+        <DynamicComponentImport
           path="../base/vesting/Index.svelte"
           {wallet}
           session={$session} />
       {:else if $activeRouteStore.resource === "projects"}
-        <Preload
+        <DynamicComponentImport
           path="../base/projects/View.svelte"
           {wallet}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "profile"}
-        <Preload
+        <DynamicComponentImport
           path="../Profile.svelte"
           {wallet}
           addressOrName={$activeRouteStore.params.addressOrName} />
       {:else if $activeRouteStore.resource === "404"}
-        <Preload
+        <DynamicComponentImport
           path="../NotFound.svelte"
           title="404"
           subtitle="Nothing here" />

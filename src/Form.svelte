@@ -54,13 +54,8 @@
   import cloneDeep from "lodash/cloneDeep";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
-  import {
-    markdownExtensions as extensions,
-    capitalize,
-    isUrl,
-    isAddress,
-    formatSeedId,
-  } from "@app/utils";
+  import { markdownExtensions as extensions } from "@app/marked";
+  import { capitalize, isUrl, isAddress, formatSeedId } from "@app/utils";
 
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
