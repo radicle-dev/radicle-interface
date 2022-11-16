@@ -4,18 +4,10 @@
   import { initialize, activeRouteStore } from "@app/router";
   import { twemoji, unreachable } from "@app/utils";
 
-  import ColorPalette from "@app/ColorPalette.svelte";
-  import Faucet from "@app/base/faucet/Routes.svelte";
   import Header from "@app/Header.svelte";
-  import Home from "@app/base/home/Index.svelte";
   import Loading from "@app/Loading.svelte";
   import Modal from "@app/Modal.svelte";
-  import NotFound from "@app/NotFound.svelte";
-  import Profile from "@app/Profile.svelte";
-  import Projects from "@app/base/projects/View.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
+  import Preload from "@app/router/Preload.svelte";
 
   initialize();
 
@@ -83,33 +75,47 @@
       <Loading center />
     </div>
   {:then wallet}
-    <ColorPalette />
     <Header session={$session} {wallet} />
     <div class="wrapper">
       {#if $activeRouteStore.resource === "home"}
-        <Home />
+        <Preload path="/src/base/home/Index.svelte" />
       {:else if $activeRouteStore.resource === "faucet"}
-        <Faucet {wallet} activeRoute={$activeRouteStore} />
-      {:else if $activeRouteStore.resource === "seeds"}
-        <Seeds
+        <Preload
+          path="/src/base/faucet/Routes.svelte"
           {wallet}
-          session={$session}
-          host={$activeRouteStore.params.host} />
-      {:else if $activeRouteStore.resource === "registrations"}
-        <Registrations
-          {wallet}
-          session={$session}
           activeRoute={$activeRouteStore} />
+      {:else if $activeRouteStore.resource === "seeds"}
+        <Preload
+          path="/src/base/seeds/Routes.svelte"
+          {wallet}
+          host={$activeRouteStore.params.host}
+          session={$session} />
+      {:else if $activeRouteStore.resource === "registrations"}
+        <Preload
+          path="/src/base/registrations/Routes.svelte"
+          {wallet}
+          activeRoute={$activeRouteStore}
+          session={$session} />
       {:else if $activeRouteStore.resource === "vesting"}
-        <Vesting {wallet} session={$session} />
+        <Preload
+          path="/src/base/vesting/Index.svelte"
+          {wallet}
+          session={$session} />
       {:else if $activeRouteStore.resource === "projects"}
-        <Projects {wallet} activeRoute={$activeRouteStore} />
+        <Preload
+          path="/src/base/projects/View.svelte"
+          {wallet}
+          activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "profile"}
-        <Profile
-          addressOrName={$activeRouteStore.params.addressOrName}
-          {wallet} />
+        <Preload
+          path="src/Profile.svelte"
+          {wallet}
+          addressOrName={$activeRouteStore.params.addressOrName} />
       {:else if $activeRouteStore.resource === "404"}
-        <NotFound title="404" subtitle="Nothing here" />
+        <Preload
+          path="src/NotFound.svelte"
+          title="404"
+          subtitle="Nothing here" />
       {:else}
         {unreachable($activeRouteStore)}
       {/if}
