@@ -54,9 +54,8 @@ export default defineConfig({
   },
 
   define: {
-    "process.env": {
-      hashRouting: Boolean(process.env.HASH_ROUTING),
-    },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    HASH_ROUTING: Boolean(process.env.HASH_ROUTING),
     VITEST: process.env.VITEST !== undefined,
     PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
   },
