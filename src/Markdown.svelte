@@ -3,14 +3,8 @@
   import { marked } from "marked";
   import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
-  import {
-    markdownExtensions as extensions,
-    renderer,
-    getImageMime,
-    isUrl,
-    twemoji,
-    scrollIntoView,
-  } from "@app/utils";
+  import { markdownExtensions as extensions, renderer } from "@app/marked";
+  import { getImageMime, isUrl, twemoji, scrollIntoView } from "@app/utils";
   import dompurify from "dompurify";
 
   export let content: string;
