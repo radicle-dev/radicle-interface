@@ -16,6 +16,8 @@ export const activeRouteStore: Readable<Route> = derived(
   },
 );
 
+export const base = process.env.hashRouting ? "./" : "/";
+
 // Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
 // Allows the jump to a anchor hash
 window.addEventListener("hashchange", e => {

@@ -1,23 +1,25 @@
-import { ethers } from "ethers";
-import twemojiModule from "twemoji";
-import md5 from "md5";
-import { BigNumber } from "ethers";
-import katex from "katex";
-import type { Wallet } from "@app/wallet";
-import { assert } from "@app/error";
 import type { EnsProfile } from "@app/base/registrations/registrar";
+import type { Wallet } from "@app/wallet";
+import type { marked } from "marked";
+
+import * as cache from "@app/cache";
+import config from "@app/config.json";
+import emojis from "@app/emojis";
+import katex from "katex";
+import md5 from "md5";
+import twemojiModule from "twemoji";
+import { BigNumber } from "ethers";
+import { ProfileType } from "@app/profile";
+import { assert } from "@app/error";
+import { base } from "@app/router";
+import { ethers } from "ethers";
 import { getAddress, getResolver } from "@app/base/registrations/registrar";
 import {
   getAvatar,
   getSeed,
   getRegistration,
 } from "@app/base/registrations/registrar";
-import { ProfileType } from "@app/profile";
 import { parseUnits } from "@ethersproject/units";
-import * as cache from "@app/cache";
-import type { marked } from "marked";
-import emojis from "@app/emojis";
-import config from "@app/config.json";
 
 export enum AddressType {
   Contract,
@@ -559,7 +561,7 @@ export const renderer = {
 
 export function twemoji(node: HTMLElement) {
   twemojiModule.parse(node, {
-    base: process.env.hashRouting ? "./" : "/",
+    base,
     folder: "twemoji",
     ext: ".svg",
     className: `txt-emoji`,

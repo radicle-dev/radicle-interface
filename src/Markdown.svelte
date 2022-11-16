@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { marked } from "marked";
-  import matter from "@radicle/gray-matter";
   import type * as proj from "@app/project";
+
+  import dompurify from "dompurify";
+  import matter from "@radicle/gray-matter";
+  import { base } from "@app/router";
   import {
     markdownExtensions as extensions,
     renderer,
@@ -11,12 +12,13 @@
     twemoji,
     scrollIntoView,
   } from "@app/utils";
-  import dompurify from "dompurify";
+  import { marked } from "marked";
+  import { onMount } from "svelte";
 
   export let content: string;
+  export let doc = matter(content);
   export let getImage: (path: string) => Promise<proj.Blob>;
   export let hash: string | null = null;
-  export let doc = matter(content);
 
   const frontMatter = Object.entries(doc.data);
   marked.use({ extensions, renderer });
@@ -46,7 +48,7 @@
       const path = i.getAttribute("src");
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (path && !isUrl(path) && !path.startsWith("/twemoji")) {
+      if (path && !isUrl(path) && !path.startsWith(`${base}twemoji`)) {
         getImage(path).then(blob => {
           if (blob.content) {
             const mime = getImageMime(path);
