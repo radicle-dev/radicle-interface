@@ -19,7 +19,6 @@ const config: UserConfig = {
   },
   plugins: [
     svelte({
-      hot: !process.env.VITEST,
       compilerOptions: {
         dev: process.env.NODE_ENV !== "production",
       },
@@ -47,7 +46,17 @@ const config: UserConfig = {
   },
   build: {
     outDir: "build",
-    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          ethers: ["ethers", "@ethersproject/abstract-provider"],
+          auth: ["siwe", "@walletconnect/client"],
+          cache: ["lru-cache", "@stardazed/streams"],
+          markdown: ["katex", "dompurify", "marked", "@radicle/gray-matter"],
+          dom: ["svelte", "pure-svg-code", "twemoji"],
+        },
+      },
+    },
   },
 };
 
