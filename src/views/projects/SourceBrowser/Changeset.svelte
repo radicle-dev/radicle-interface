@@ -43,12 +43,12 @@
 </div>
 <div class="diff-listing">
   {#each diff.added as file}
-    <FileDiff on:browse {file} mode="added" />
+    <FileDiff {file} mode="added" />
   {/each}
   {#each diff.deleted as file}
-    <FileDiff on:browse {file} mode="deleted" />
+    <FileDiff {file} mode="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff on:browse {file} />
+    <FileDiff {file} />
   {/each}
 </div>

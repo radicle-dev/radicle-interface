@@ -1,11 +1,10 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import { lineNumberL, lineNumberR, lineSign } from "@app/lib/diff";
   import type { FileDiff } from "@app/lib/diff";
-  import Badge from "@app/components/Badge.svelte";
 
-  const dispatch = createEventDispatcher<{ browse: string }>();
+  import Badge from "@app/components/Badge.svelte";
+  import Icon from "@app/components/Icon.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import { lineNumberL, lineNumberR, lineSign } from "@app/lib/diff";
 
   export let file: FileDiff;
   export let mode: string | null = null;
@@ -124,13 +123,14 @@
         <Badge variant="negative">deleted</Badge>
       {/if}
     </div>
-    <div
-      class="browse clickable"
-      on:click|stopPropagation={() => dispatch("browse", file.path)}>
-      <span title="View file" style="transform: scale(1.25);">
-        <Icon name="browse" />
-      </span>
-    </div>
+    <ProjectLink
+      projectParams={{ view: { resource: "tree" }, path: file.path }}>
+      <div class="browse">
+        <span title="View file" style="transform: scale(1.25);">
+          <Icon name="browse" />
+        </span>
+      </div>
+    </ProjectLink>
   </header>
   {#if !collapsed}
     <main>

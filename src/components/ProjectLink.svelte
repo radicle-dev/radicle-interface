@@ -8,8 +8,8 @@
 
 <a
   {id}
-  on:click|preventDefault={() => {
-    updateProjectRoute(projectParams);
+  on:click|stopPropagation|preventDefault={e => {
+    updateProjectRoute(projectParams, { mouseEvent: e });
   }}
   href={projectLinkHref(projectParams)}>
   <slot />

@@ -3,7 +3,7 @@
   import type { MaybeHighlighted } from "@app/lib/syntax";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
+  import HeaderLabel from "@app/views/projects/HeaderLabel.svelte";
   import Readme from "@app/views/projects/Readme.svelte";
   import { afterUpdate, beforeUpdate, onMount } from "svelte";
   import { highlight } from "@app/lib/syntax";
@@ -218,12 +218,12 @@
       <div class="right">
         {#if isMarkdown}
           <div class="markdown-toggle">
-            <HeaderToggleLabel
+            <HeaderLabel
               active={!showMarkdown}
               clickable
               on:click={toggleMarkdown}>
               Raw
-            </HeaderToggleLabel>
+            </HeaderLabel>
           </div>
         {/if}
         <div class="last-commit" title={lastCommit.author.name} use:twemoji>

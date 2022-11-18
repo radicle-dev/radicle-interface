@@ -1,13 +1,14 @@
 <script lang="ts">
   import type { Host } from "@app/lib/api";
   import type { ProjectInfo } from "@app/lib/project";
+  import type { Route } from "@app/lib/router/definitions";
 
-  import * as router from "@app/lib/router";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Message from "@app/components/Message.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
-  import { config } from "@app/lib/config";
   import { Project } from "@app/lib/project";
+  import { config } from "@app/lib/config";
   import { setOpenGraphMetaTag, twemoji } from "@app/lib/utils";
 
   setOpenGraphMetaTag([
@@ -26,19 +27,17 @@
         )
       : Promise.resolve([]);
 
-  function onClick(project: ProjectInfo, seed: Host) {
-    router.push({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        id: project.id,
-        peer: undefined,
-        seed: seed.host,
-        profile: undefined,
-        revision: project.head ?? undefined,
-      },
-    });
-  }
+  const projectRoute = (project: ProjectInfo, seed: Host): Route => ({
+    resource: "projects",
+    params: {
+      view: { resource: "tree" },
+      id: project.id,
+      peer: undefined,
+      seed: seed.host,
+      profile: undefined,
+      revision: project.head ?? undefined,
+    },
+  });
 </script>
 
 <style>
@@ -112,11 +111,12 @@
       <div class="projects">
         {#each results as result}
           <div class="project">
-            <Widget
-              compact
-              project={result.info}
-              seed={{ addr: result.seed }}
-              on:click={() => onClick(result.info, result.seed)} />
+            <Link route={projectRoute(result.info, result.seed)}>
+              <Widget
+                compact
+                project={result.info}
+                seed={{ addr: result.seed }} />
+            </Link>
           </div>
         {/each}
       </div>

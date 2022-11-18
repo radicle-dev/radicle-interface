@@ -10,7 +10,6 @@
   import type * as proj from "@app/lib/project";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
-  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -65,31 +64,6 @@
     return project.getBlob(commit, finalPath).catch(() => {
       console.warn("Not able to load image blob:", finalPath);
       return undefined;
-    });
-  };
-
-  const onSelect = async (newPath: string) => {
-    browserErrorStore.set(undefined);
-    // Ensure we don't spend any time in a "loading" state. This means
-    // the loading spinner won't be shown, and instead the blob will be
-    // displayed once loaded.
-    const blob = await loadBlob(newPath).catch(() => {
-      browserErrorStore.set({
-        message: "Not able to load selected file",
-        path: newPath,
-      });
-      return undefined;
-    });
-    if (blob) {
-      getBlob = new Promise(resolve => resolve(blob));
-    }
-
-    // Close mobile tree if user navigates to other file
-    mobileFileTree = false;
-
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      path: newPath,
     });
   };
 
@@ -211,14 +185,7 @@
     {#if tree.entries.length > 0}
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree sticky">
-          <Tree
-            {tree}
-            {path}
-            {fetchTree}
-            {loadingPath}
-            on:select={e => {
-              onSelect(e.detail);
-            }} />
+          <Tree {tree} {path} {fetchTree} {loadingPath} />
         </div>
       </div>
       <div class="column-right">

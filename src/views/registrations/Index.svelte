@@ -12,19 +12,22 @@
   let valid: boolean = false;
   let validationMessage: string | undefined = undefined;
 
-  function register() {
+  function register(e?: MouseEvent) {
     if (!valid) {
       return;
     }
-    router.push({
-      resource: "registrations",
-      params: {
-        view: {
-          resource: "checkNameAvailability",
-          params: { nameOrDomain: ensName, owner: null },
+    router.push(
+      {
+        resource: "registrations",
+        params: {
+          view: {
+            resource: "checkNameAvailability",
+            params: { nameOrDomain: ensName, owner: null },
+          },
         },
       },
-    });
+      e,
+    );
   }
 
   function validate(input: string) {
@@ -105,7 +108,7 @@
     <TextInput
       bind:value={input}
       autofocus
-      on:submit={register}
+      on:submit={() => register}
       {valid}
       {validationMessage}>
       <svelte:fragment slot="right">
@@ -117,7 +120,8 @@
       disabled={!valid}
       variant="primary"
       size="regular"
-      on:click={register}>
+      on:click={register}
+      on:auxclick={register}>
       Check
     </Button>
   </div>

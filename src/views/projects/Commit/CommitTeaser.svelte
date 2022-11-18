@@ -1,19 +1,13 @@
 <script lang="ts" strictEvents>
   import type { CommitMetadata } from "@app/lib/commit";
-  import { formatCommit, twemoji } from "@app/lib/utils";
-  import { createEventDispatcher } from "svelte";
 
+  import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
+  import CommitVerifiedBadge from "@app/views/projects/Commit/CommitVerifiedBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import CommitAuthorship from "./CommitAuthorship.svelte";
-  import CommitVerifiedBadge from "./CommitVerifiedBadge.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import { formatCommit, twemoji } from "@app/lib/utils";
 
   export let commit: CommitMetadata;
-
-  const dispatch = createEventDispatcher<{ browseCommit: string }>();
-
-  function browseCommit(commit: string) {
-    dispatch("browseCommit", commit);
-  }
 </script>
 
 <style>
@@ -100,12 +94,16 @@
       </div>
     {/if}
     <span class="hash txt-highlight">{formatCommit(commit.header.sha1)}</span>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      class="browse"
-      title="Browse the repository at this point in the history"
-      on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
-      <Icon name="browse" />
-    </div>
+    <ProjectLink
+      projectParams={{
+        view: { resource: "tree" },
+        revision: commit.header.sha1,
+      }}>
+      <div
+        class="browse"
+        title="Browse the repository at this point in the history">
+        <Icon name="browse" />
+      </div>
+    </ProjectLink>
   </div>
 </div>

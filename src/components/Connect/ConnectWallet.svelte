@@ -84,6 +84,7 @@
         variant="secondary"
         size="small"
         on:click={onClickConnect}
+        on:auxclick={onClickConnect}
         disabled={!wallet.metamask.signer}>
         Connect with Metamask
       </Button>

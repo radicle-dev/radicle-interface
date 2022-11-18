@@ -1,14 +1,20 @@
 <script lang="ts">
   import type { Project } from "@app/lib/project";
+  import type {
+    ProjectRoute,
+    ProjectsParams,
+    Route,
+  } from "@app/lib/router/definitions";
   import type { Tree } from "@app/lib/project";
-  import type { ProjectRoute } from "@app/lib/router/definitions";
 
   import * as router from "@app/lib/router";
   import BranchSelector from "@app/views/projects/BranchSelector.svelte";
   import CloneButton from "@app/views/projects/CloneButton.svelte";
+  import HeaderLabel from "@app/views/projects/HeaderLabel.svelte";
+  import Link from "@app/components/Link.svelte";
   import PeerSelector from "@app/views/projects/PeerSelector.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
   import { closeFocused } from "@app/components/Floating.svelte";
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
 
   export let activeRoute: ProjectRoute;
   export let project: Project;
@@ -19,21 +25,19 @@
 
   $: revision = activeRoute.params.revision ?? commit;
 
-  // Switches between project views.
-  const toggleContent = (
+  const contentRoute = (
     input: "patches" | "issues" | "history",
+    resource: string,
     keepSourceInPath: boolean,
-  ) => {
-    router.updateProjectRoute({
-      view: {
-        resource: activeRoute.params.view.resource === input ? "tree" : input,
-      },
-      id: project.id,
-      revision: revision,
-      search: undefined,
-      ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
-    });
-  };
+  ): ProjectsParams => ({
+    view: {
+      resource: resource === input ? "tree" : input,
+    },
+    id: project.id,
+    revision: revision,
+    search: undefined,
+    ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
+  });
 
   const updatePeer = (peer: string) => {
     router.updateProjectRoute({
@@ -50,16 +54,12 @@
     closeFocused();
   };
 
-  function goToSeed() {
-    if (seed.addr.port) {
-      router.push({
+  const goToSeed: Route = seed.addr.port
+    ? {
         resource: "seeds",
         params: { host: `${seed.addr.host}:${seed.addr.port}` },
-      });
-    } else {
-      router.push({ resource: "seeds", params: { host: seed.addr.host } });
-    }
-  }
+      }
+    : { resource: "seeds", params: { host: seed.addr.host } };
 </script>
 
 <style>
@@ -106,47 +106,66 @@
 
   <span>
     {#if seed.addr.host}
-      <HeaderToggleLabel
-        clickable
-        ariaLabel="Seed"
-        title="Project data is fetched from this seed"
-        on:click={goToSeed}>
-        <span>{seed.addr.host}</span>
-      </HeaderToggleLabel>
+      <Link route={goToSeed}>
+        <HeaderLabel
+          clickable
+          ariaLabel="Seed"
+          title="Project data is fetched from this seed">
+          <span>{seed.addr.host}</span>
+        </HeaderLabel>
+      </Link>
     {/if}
   </span>
-  <HeaderToggleLabel
-    ariaLabel="Commit count"
-    clickable
-    active={activeRoute.params.view.resource === "history"}
-    on:click={() => toggleContent("history", true)}>
-    <span class="txt-bold">{tree.stats.commits}</span>
-    commit(s)
-  </HeaderToggleLabel>
+  <ProjectLink
+    projectParams={contentRoute(
+      "history",
+      activeRoute.params.view.resource,
+      true,
+    )}>
+    <HeaderLabel
+      ariaLabel="Commit count"
+      clickable
+      active={activeRoute.params.view.resource === "history"}>
+      <span class="txt-bold">{tree.stats.commits}</span>
+      commit(s)
+    </HeaderLabel>
+  </ProjectLink>
   {#if project.issues}
-    <HeaderToggleLabel
-      ariaLabel="Issue count"
-      active={activeRoute.params.view.resource === "issues"}
-      disabled={project.issues === 0}
-      clickable={project.issues > 0}
-      on:click={() => toggleContent("issues", false)}>
-      <span class="txt-bold">{project.issues}</span>
-      issue(s)
-    </HeaderToggleLabel>
+    <ProjectLink
+      projectParams={contentRoute(
+        "issues",
+        activeRoute.params.view.resource,
+        false,
+      )}>
+      <HeaderLabel
+        ariaLabel="Issue count"
+        active={activeRoute.params.view.resource === "issues"}
+        disabled={project.issues === 0}
+        clickable={project.issues > 0}>
+        <span class="txt-bold">{project.issues}</span>
+        issue(s)
+      </HeaderLabel>
+    </ProjectLink>
   {/if}
   {#if project.patches}
-    <HeaderToggleLabel
-      ariaLabel="Patch count"
-      clickable={project.patches > 0}
-      active={activeRoute.params.view.resource === "patches"}
-      disabled={project.patches === 0}
-      on:click={() => toggleContent("patches", false)}>
-      <span class="txt-bold">{project.patches}</span>
-      patch(es)
-    </HeaderToggleLabel>
+    <ProjectLink
+      projectParams={contentRoute(
+        "patches",
+        activeRoute.params.view.resource,
+        false,
+      )}>
+      <HeaderLabel
+        ariaLabel="Patch count"
+        clickable={project.patches > 0}
+        active={activeRoute.params.view.resource === "patches"}
+        disabled={project.patches === 0}>
+        <span class="txt-bold">{project.patches}</span>
+        patch(es)
+      </HeaderLabel>
+    </ProjectLink>
   {/if}
-  <HeaderToggleLabel ariaLabel="Contributor count">
+  <HeaderLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>
     contributor(s)
-  </HeaderToggleLabel>
+  </HeaderLabel>
 </header>

@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { CommitMetadata, CommitsHistory } from "@app/lib/commit";
 
-  import CommitTeaser from "./Commit/CommitTeaser.svelte";
+  import * as router from "@app/lib/router";
+  import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
+  import List from "@app/components/List.svelte";
   import { Project } from "@app/lib/project";
   import { groupCommits } from "@app/lib/commit";
-  import List from "@app/components/List.svelte";
-  import * as router from "@app/lib/router";
 
   export let project: Project;
   export let history: CommitsHistory;
@@ -21,12 +21,11 @@
     return response.headers.slice(1);
   };
 
-  const browseCommit = (event: { detail: string }) => {
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      revision: event.detail,
-    });
-  };
+  const onClick = (sha1: string, e: MouseEvent) =>
+    router.updateProjectRoute(
+      { view: { resource: "commits" }, revision: sha1 },
+      { mouseEvent: e },
+    );
 </script>
 
 <style>
@@ -81,13 +80,9 @@
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
-                on:click={() => {
-                  router.updateProjectRoute({
-                    view: { resource: "commits" },
-                    revision: commit.header.sha1,
-                  });
-                }}>
-                <CommitTeaser {commit} on:browseCommit={browseCommit} />
+                on:click={e => onClick(commit.header.sha1, e)}
+                on:auxclick={e => onClick(commit.header.sha1, e)}>
+                <CommitTeaser {commit} />
               </div>
             {/each}
           </div>

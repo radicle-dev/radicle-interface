@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { Profile } from "@app/lib/profile";
-  import type { ProjectInfo } from "@app/lib/project";
+  import type { Route } from "@app/lib/router/definitions";
   import type { Seed, Stats } from "@app/lib/seed";
 
   import * as proj from "@app/lib/project";
-  import * as router from "@app/lib/router";
   import List from "@app/components/List.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
+  import Link from "@app/components/Link.svelte";
 
   export let seed: Seed;
   export let profile: Profile | null = null;
@@ -35,22 +35,20 @@
     return [];
   };
 
-  const onClick = (project: ProjectInfo) => {
-    router.push({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        id: project.id,
-        seed: seed.addr.port
-          ? `${seed.addr.host}:${seed.addr.port}`
-          : seed.addr.host,
-        profile: profile?.name ?? profile?.address,
-        revision: project.head ?? undefined,
-        hash: undefined,
-        search: undefined,
-      },
-    });
-  };
+  const widgetRoute = (project: proj.ProjectInfo): Route => ({
+    resource: "projects",
+    params: {
+      view: { resource: "tree" },
+      id: project.id,
+      seed: seed.addr.port
+        ? `${seed.addr.host}:${seed.addr.port}`
+        : seed.addr.host,
+      profile: profile?.name ?? profile?.address,
+      revision: project.head ?? undefined,
+      hash: undefined,
+      search: undefined,
+    },
+  });
 </script>
 
 <style>
@@ -71,7 +69,9 @@
       {#each items as project}
         {#if project.head}
           <div class="project">
-            <Widget {project} {seed} on:click={() => onClick(project)} />
+            <Link route={widgetRoute(project)}>
+              <Widget {project} {seed} />
+            </Link>
           </div>
         {/if}
       {/each}

@@ -76,14 +76,16 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="teaser"
-          on:click={() => {
-            router.updateProjectRoute({
-              view: {
-                resource: "issue",
-                params: { issue: issue.id },
+          on:click={e =>
+            router.updateProjectRoute(
+              {
+                view: {
+                  resource: "issue",
+                  params: { issue: issue.id },
+                },
               },
-            });
-          }}>
+              { mouseEvent: e },
+            )}>
           <IssueTeaser {wallet} {issue} />
         </div>
       {/each}

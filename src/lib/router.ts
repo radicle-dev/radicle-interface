@@ -72,16 +72,21 @@ function sanitizeQueryString(queryString: string): string {
 
 export function updateProjectRoute(
   projectRouteParams: Partial<ProjectsParams>,
-  opts: { replace: boolean } = { replace: false },
+  opts: { replace?: boolean; mouseEvent?: MouseEvent } = { replace: false },
 ) {
   const activeRoute = get(activeRouteStore);
 
   if (activeRoute.resource === "projects") {
-    const updatedRoute = createProjectRoute(activeRoute, projectRouteParams);
-    if (opts.replace) {
-      replace(updatedRoute);
+    if (opts.mouseEvent?.button === 1) {
+      const href = projectLinkHref(projectRouteParams);
+      window.open(href, "_blank");
     } else {
-      push(updatedRoute);
+      const updatedRoute = createProjectRoute(activeRoute, projectRouteParams);
+      if (opts.replace) {
+        replace(updatedRoute);
+      } else {
+        push(updatedRoute);
+      }
     }
   } else {
     throw new Error(
@@ -90,18 +95,22 @@ export function updateProjectRoute(
   }
 }
 
-export const push = (newRoute: Route): void => {
+export const push = (newRoute: Route, e?: MouseEvent): void => {
   const history = get(historyStore);
 
-  // Limit history to a maximum of 10 steps. We shouldn't be doing more than
-  // one subsequent pop() anyway.
-  historyStore.set([...history, newRoute].slice(-10));
+  if (e?.button === 1) {
+    window.open(routeToPath(newRoute), "_blank");
+  } else {
+    // Limit history to a maximum of 10 steps. We shouldn't be doing more than
+    // one subsequent pop() anyway.
+    historyStore.set([...history, newRoute].slice(-10));
 
-  const path = window.HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
+    const path = window.HASH_ROUTING
+      ? "#" + routeToPath(newRoute)
+      : routeToPath(newRoute);
 
-  window.history.pushState(newRoute, documentTitle, path);
+    window.history.pushState(newRoute, documentTitle, path);
+  }
 };
 
 export const pop = (): void => {

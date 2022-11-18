@@ -12,8 +12,8 @@
     click: never;
   }>();
 
-  function onClick(): void {
-    push(route);
+  function onClick(e: MouseEvent): void {
+    push(route, e);
     dispatch("click");
   }
 </script>

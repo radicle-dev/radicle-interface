@@ -1,9 +1,18 @@
 <script lang="ts">
+  import type { ProjectsParams } from "@app/lib/router/definitions";
+
   import Loading from "@app/components/Loading.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let active: boolean;
   export let loading: boolean;
   export let name: string;
+  export let path: string;
+
+  const fileRoute: Partial<ProjectsParams> = {
+    view: { resource: "tree" },
+    path,
+  };
 </script>
 
 <style>
@@ -46,12 +55,13 @@
   }
 </style>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="file" class:active on:click>
-  <span class="name">{name}</span>
-  <div class="spinner">
-    {#if loading}
-      <Loading small condensed />
-    {/if}
+<ProjectLink projectParams={fileRoute}>
+  <div class="file" class:active>
+    <span class="name">{name}</span>
+    <div class="spinner">
+      {#if loading}
+        <Loading small condensed />
+      {/if}
+    </div>
   </div>
-</div>
+</ProjectLink>

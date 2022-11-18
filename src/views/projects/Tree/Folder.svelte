@@ -17,10 +17,6 @@
     if (expanded) return tree;
   });
 
-  const dispatch = createEventDispatcher<{ select: string }>();
-  const onSelectFile = ({ detail: path }: { detail: string }) =>
-    dispatch("select", path);
-
   const onClick = () => {
     expanded = !expanded;
 
@@ -36,19 +32,19 @@
     cursor: pointer;
     padding: 0.25rem;
     margin: 0.125rem 0;
-    color: var(--color-foreground-6);
+    margin-left: 0.25rem;
+    color: var(--color-secondary-6);
     user-select: none;
     line-height: 1.5rem;
     white-space: nowrap;
+    background: none;
+    border: none;
+    font-family: unset;
+    width: 100%;
   }
   .folder:hover {
     background-color: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
-  }
-
-  .folder-name {
-    margin-left: 0.25rem;
-    color: var(--color-secondary-6);
   }
 
   .container {
@@ -62,10 +58,7 @@
   }
 </style>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="folder" on:click={onClick}>
-  <span class="folder-name">{name}/</span>
-</div>
+<button class="txt-regular folder" on:click={onClick}>{name}/</button>
 
 <div class="container">
   {#if expanded}
@@ -78,7 +71,6 @@
             <svelte:self
               {fetchTree}
               name={window.HEARTWOOD ? entry.name : entry.info.name}
-              on:select={onSelectFile}
               prefix={`${entry.path}/`}
               {loadingPath}
               {currentPath} />
@@ -87,9 +79,7 @@
               active={entry.path === currentPath}
               loading={entry.path === loadingPath}
               name={window.HEARTWOOD ? entry.name : entry.info.name}
-              on:click={() => {
-                onSelectFile({ detail: entry.path });
-              }} />
+              path={entry.path} />
           {/if}
         {/each}
       {/if}

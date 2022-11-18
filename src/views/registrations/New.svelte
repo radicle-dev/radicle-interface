@@ -31,16 +31,19 @@
   let error: string | null = null;
   $: registrationOwner = owner || ($session && $session.address);
 
-  function begin() {
-    router.push({
-      resource: "registrations",
-      params: {
-        view: {
-          resource: "register",
-          params: { nameOrDomain: name, owner: registrationOwner },
+  function begin(e: MouseEvent) {
+    router.push(
+      {
+        resource: "registrations",
+        params: {
+          view: {
+            resource: "register",
+            params: { nameOrDomain: name, owner: registrationOwner },
+          },
         },
       },
-    });
+      e,
+    );
   }
 
   onMount(async () => {
@@ -58,11 +61,14 @@
     }
   });
 
-  function goToValidateName() {
-    router.push({
-      resource: "registrations",
-      params: { view: { resource: "validateName" } },
-    });
+  function goToValidateName(e: MouseEvent) {
+    router.push(
+      {
+        resource: "registrations",
+        params: { view: { resource: "validateName" } },
+      },
+      e,
+    );
   }
 </script>
 
@@ -115,7 +121,7 @@
   <span class="actions" slot="actions">
     {#if state === State.NameAvailable}
       {#if $session}
-        <Button on:click={begin} variant="primary">
+        <Button on:click={begin} on:auxclick={begin} variant="primary">
           Begin registration &rarr;
         </Button>
       {:else}
@@ -125,9 +131,19 @@
           {wallet} />
       {/if}
 
-      <Button on:click={goToValidateName} variant="text">Cancel</Button>
+      <Button
+        on:click={goToValidateName}
+        on:auxclick={goToValidateName}
+        variant="text">
+        Cancel
+      </Button>
     {:else if state === State.NameUnavailable || state === State.CheckingFailed}
-      <Button variant="foreground" on:click={goToValidateName}>Back</Button>
+      <Button
+        variant="foreground"
+        on:click={goToValidateName}
+        on:auxclick={goToValidateName}>
+        Back
+      </Button>
     {/if}
   </span>
 </Modal>

@@ -117,6 +117,7 @@
   {disabled}
   {style}
   on:click|stopPropagation
+  on:auxclick
   on:focus
   on:blur
   on:mouseout

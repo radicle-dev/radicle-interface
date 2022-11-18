@@ -1,21 +1,12 @@
 <script lang="ts">
   import type { Commit } from "@app/lib/commit";
 
-  import { formatCommit, twemoji } from "@app/lib/utils";
-
   import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import CommitVerifiedBadge from "@app/views/projects/Commit/CommitVerifiedBadge.svelte";
-  import * as router from "@app/lib/router";
+  import { formatCommit, twemoji } from "@app/lib/utils";
 
   export let commit: Commit;
-
-  const onBrowse = (event: { detail: string }) => {
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      path: event.detail,
-    });
-  };
 </script>
 
 <style>
@@ -75,6 +66,5 @@
   </header>
   <Changeset
     stats={window.HEARTWOOD ? commit.diff.stats : commit.stats}
-    diff={commit.diff}
-    on:browse={onBrowse} />
+    diff={commit.diff} />
 </div>
