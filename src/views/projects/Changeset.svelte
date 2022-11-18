@@ -101,7 +101,9 @@
         {baseUrl}
         {revision}
         filePath={file.newPath}
-        fileDiff={file.diff} />
+        oldFilePath={file.oldPath}
+        fileDiff={file.diff}
+        headerBadgeCaption="moved" />
     {:else}
       <FileLocationChange
         {projectId}

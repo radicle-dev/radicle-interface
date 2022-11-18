@@ -81,11 +81,14 @@ test("deleted file", async ({ page }) => {
 
 test("moved file", async ({ page }) => {
   await page.goto(
-    `${sourceBrowsingUrl}/remotes/${aliceRemote}/commits/835d9a52066c46d86cdee88f2863e9a804c7fa50/commits/`,
+    `${sourceBrowsingUrl}/remotes/${aliceRemote}/commits/f48a1056a5bd02277978f6e8a00517a967546340`,
   );
   await expect(
     page.locator("header").filter({ hasText: "moves/111.txt → moves/222.txt" }),
   ).toBeVisible();
+
+  // TODO: Add assertions for diff.
+  await expect(page.getByText("333")).toBeVisible();
 });
 
 // TODO: Add copy operation detection spec.

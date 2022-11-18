@@ -7,9 +7,15 @@
   import Link from "@app/components/Link.svelte";
 
   export let filePath: string;
+  export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
   export let revision: string;
-  export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
+  export let headerBadgeCaption:
+    | "added"
+    | "deleted"
+    | "moved"
+    | "copied"
+    | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let projectId: string;
 
@@ -324,11 +330,19 @@
       {/if}
     </div>
     <div class="actions">
-      <p class="txt-regular">{filePath}</p>
+      {#if headerBadgeCaption === "moved" || headerBadgeCaption === "copied"}
+        <p class="txt-regular">{oldFilePath} → {filePath}</p>
+      {:else}
+        <p class="txt-regular">{filePath}</p>
+      {/if}
       {#if headerBadgeCaption === "added"}
         <Badge variant="positive">added</Badge>
       {:else if headerBadgeCaption === "deleted"}
         <Badge variant="negative">deleted</Badge>
+      {:else if headerBadgeCaption === "moved"}
+        <Badge variant="foreground">moved</Badge>
+      {:else if headerBadgeCaption === "copied"}
+        <Badge variant="foreground">copied</Badge>
       {/if}
     </div>
     <div class="browse" title="View file">
