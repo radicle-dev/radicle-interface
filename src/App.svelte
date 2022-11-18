@@ -20,10 +20,12 @@
 
   initialize();
 
-  Plausible({
+  const plausible = Plausible({
     domain: "app.radicle.xyz",
     hashMode: Boolean(process.env.hashRouting),
   });
+
+  plausible.enableAutoPageviews();
 
   const loadWallet = getWallet().then(async wallet => {
     if ($state.connection === Connection.Connected) {
