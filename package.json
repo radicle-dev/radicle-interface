@@ -9,10 +9,7 @@
     "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
     "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html)' --ignore-path .gitignore --write",
-    "test:unit": "TZ='UTC' vitest run",
-    "test:components": "cypress run --component",
-    "test:e2e": "cypress run",
-    "test:open": "cypress open"
+    "test:unit": "TZ='UTC' vitest run"
   },
   "type": "module",
   "engines": {
@@ -31,12 +28,12 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "chalk": "^5.1.2",
-    "cypress": "^10.11.0",
     "eslint": "^8.28.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.8.1",
     "svelte-check": "^2.9.2",
+    "tslib": "^2.4.1",
     "typescript": "^4.9.3",
     "vite": "^3.2.4",
     "vite-plugin-rewrite-all": "^1.0.0",
