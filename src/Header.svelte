@@ -143,6 +143,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: transparent;
+    color: var(--color-foreground);
   }
   .toggle:hover {
     background-color: var(--color-foreground);
@@ -233,8 +235,10 @@
       </span>
     {/if}
     <Floating>
-      <div class="toggle" slot="toggle">
-        <Icon name="gear" />
+      <div slot="toggle">
+        <button class="toggle" name="Settings">
+          <Icon name="gear" />
+        </button>
       </div>
       <SettingsDropdown slot="modal" />
     </Floating>

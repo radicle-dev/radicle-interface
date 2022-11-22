@@ -35,7 +35,10 @@
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
 
-  const loadBlob = async (path: string, theme: Theme): Promise<proj.Blob> => {
+  const loadBlob = async (
+    path: string,
+    theme: Theme,
+  ): Promise<proj.Blob | undefined> => {
     if (
       state.status === Status.Loaded &&
       state.path === path &&
@@ -57,9 +60,12 @@
           );
 
     state = { status: Status.Loading, path };
-    state = { status: Status.Loaded, path, blob: await promise, theme };
-
-    return state.blob;
+    try {
+      state = { status: Status.Loaded, path, blob: await promise, theme };
+      return state.blob;
+    } catch (err) {
+      console.warn("Could not load blob.");
+    }
   };
 
   // Get an image blob based on a relative path.
@@ -206,7 +212,9 @@
         {#await getBlob}
           <Loading small center />
         {:then blob}
-          <Blob {line} {blob} {getImage} {activeRoute} />
+          {#if blob}
+            <Blob {line} {blob} {getImage} {activeRoute} />
+          {/if}
         {:catch}
           <Placeholder emoji="🍂">
             <span slot="title">

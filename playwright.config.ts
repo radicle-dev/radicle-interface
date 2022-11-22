@@ -3,19 +3,21 @@ import { devices } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/e2e",
-  timeout: 30 * 1000,
+  timeout: 30_000,
   expect: {
-    timeout: 5000,
+    timeout: 8000,
   },
   fullyParallel: true,
+  outputDir: "./tests/artifacts",
+  workers: process.env.CI ? 1 : undefined,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
   reporter: "list",
+  globalSetup: "./tests/support/globalSetup",
   use: {
     actionTimeout: 0,
     baseURL: "http://localhost:3000",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
   },
 
   projects: [

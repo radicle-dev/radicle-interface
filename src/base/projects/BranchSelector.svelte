@@ -72,13 +72,14 @@
   }
 </style>
 
-<div class="commit" title="Switch branches">
+<div class="commit" title="Current branch">
   <!-- Check for branches listing feature -->
   {#if branchList.length > 0}
     {#if branchLabel}
       <Floating disabled={!showSelector}>
         <div
           slot="toggle"
+          title="Change branch"
           class="stat branch"
           class:not-allowed={!showSelector}>
           {branchLabel}

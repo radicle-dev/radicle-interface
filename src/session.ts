@@ -404,10 +404,6 @@ export async function connectSeed(seedSession: {
   state.connectSeed(seedSession);
 }
 
-state.subscribe(s => {
-  console.debug("session.state", s);
-});
-
 export async function approveSpender(
   spender: string,
   amount: BigNumber,

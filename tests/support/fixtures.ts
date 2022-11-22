@@ -2,11 +2,11 @@ import type * as Stream from "node:stream";
 
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
-import { test as base } from "@playwright/test";
+import { test as base, expect } from "@playwright/test";
 
 import * as logLabel from "@tests/support/logLabel.js";
 
-export { expect } from "@playwright/test";
+export { expect };
 
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
@@ -21,7 +21,26 @@ export const test = base.extend<{
     async ({ customAppConfig, outputLog, page }, use) => {
       const browserLabel = logLabel.make("browser");
       page.on("console", msg => {
+        // Ignore common console logs that we don't care about.
+        if (
+          msg
+            .text()
+            .startsWith(
+              `Module "buffer" has been externalized for browser compatibility.`,
+            ) ||
+          msg.text().startsWith("[vite] connected.") ||
+          msg.text().startsWith("[vite] connecting...")
+        ) {
+          return;
+        }
         log(msg.text(), browserLabel, outputLog);
+      });
+
+      page.on("pageerror", msg => {
+        expect(
+          false,
+          `Test failed because there was a console error in the app: ${msg}`,
+        ).toBeTruthy();
       });
 
       if (!customAppConfig) {
@@ -50,6 +69,17 @@ export const test = base.extend<{
           route.request().url().startsWith("http://0.0.0.0")
         ) {
           return route.continue();
+        } else if (
+          route
+            .request()
+            .url()
+            .startsWith("https://www.gravatar.com/avatar/") ||
+          route.request().url().endsWith(".png")
+        ) {
+          route.fulfill({
+            status: 200,
+            path: "./public/favicon.ico",
+          });
         } else {
           log(
             `Aborted remote request: ${route.request().url()}`,
@@ -94,7 +124,10 @@ export const test = base.extend<{
 
   // eslint-disable-next-line no-empty-pattern
   stateDir: async ({}, use, testInfo) => {
-    const stateDir = await prepareStateDir(testInfo.file, testInfo.title);
+    const stateDir = testInfo.outputDir;
+    await Fs.rm(stateDir, { recursive: true, force: true });
+    await Fs.mkdir(stateDir, { recursive: true });
+
     await use(stateDir);
     if (process.env.CI && testInfo.status === "passed") {
       await Fs.rm(stateDir, { recursive: true });
@@ -112,17 +145,4 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
   if (!process.env.CI) {
     console.log(output);
   }
-}
-
-// Returns a path to a directory where the test can store files.
-//
-// The directory is cleared before it is returned.
-export async function prepareStateDir(
-  testPath: string,
-  testName: string,
-): Promise<string> {
-  const stateDir = Path.resolve(`${testPath}--state`, testName);
-  await Fs.rm(stateDir, { recursive: true, force: true });
-  await Fs.mkdir(stateDir, { recursive: true });
-  return stateDir;
 }

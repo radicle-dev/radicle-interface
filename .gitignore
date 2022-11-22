@@ -13,8 +13,8 @@ public/twemoji/*.svg
 
 # Integration Tests
 cypress/screenshots
-tests/**/*--state
-tests/tmp/*
+tests/tmp/**/*
+tests/artifacts/**/*
 
 # Mac OS
 .DS_Store

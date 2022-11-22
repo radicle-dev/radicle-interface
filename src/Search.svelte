@@ -46,6 +46,8 @@
             seedHost: projects[0].seed.host,
             id: query,
           };
+        } else if (projects.length === 0) {
+          return { type: "nothing" };
         } else {
           return {
             type: "projectsAndProfiles",
@@ -203,7 +205,7 @@
 </script>
 
 <style>
-  .search {
+  .search-bar {
     display: flex;
   }
   .shaking {
@@ -228,7 +230,7 @@
   }
 </style>
 
-<div class="search" class:shaking>
+<div class="search-bar" class:shaking>
   <TextInput
     variant="dashed"
     valid={input !== ""}

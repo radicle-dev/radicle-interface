@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { Config } from "@app/config";
+import type { FakeTimers } from "@sinonjs/fake-timers";
 
 declare global {
   interface Window {
@@ -14,6 +15,11 @@ declare global {
     //   tests/support/fixtures.ts
     //   src/config.ts
     APP_CONFIG: Config;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    initializeTestStubs: Function;
+    e2eTestStubs: {
+      FakeTimers: FakeTimers;
+    };
 
     // Used in
     //   src/session.ts

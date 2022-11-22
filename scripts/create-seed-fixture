@@ -83,7 +83,7 @@ LNK_HOME=$BOB_LNK_HOME rad clone $PROJECT_URN --seed 0.0.0.0:8778 --no-confirm
 cd $TEST_REPO_NAME
 echo "Updated readme" > README.md
 git add README.md
-git commit --message "Update readme"
+git commit --message "Update readme" --date "Mon Nov 21 14:00 2022 +0100"
 LNK_HOME=$BOB_LNK_HOME rad push --seed 0.0.0.0:8778
 LNK_HOME=$BOB_LNK_HOME rad sync --seed 0.0.0.0:8778 --self
 LNK_HOME=$BOB_LNK_HOME rad sync --seed 0.0.0.0:8778

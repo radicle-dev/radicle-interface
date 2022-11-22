@@ -1,0 +1,27 @@
+name: check-build
+on: [push, pull_request]
+
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18.12.1'
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Build app
+      run: npm run build
+    - name: Run Playwright build smoke test
+      run: npx playwright test --config playwright.buildSmoke.config.ts tests/e2e/buildSmoke.spec.ts
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-artifacts-${{ runner.os }}
+        retention-days: 30
+        path: |
+          tests/artifacts/**/*
