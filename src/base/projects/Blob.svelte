@@ -18,7 +18,8 @@
 
   const lastCommit = blob.info.lastCommit;
   const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
-  const lineNumbers = Array(lines)
+  const hasFinalNewline = blob.content.endsWith("\n");
+  const lineNumbers = Array(hasFinalNewline ? lines : lines + 1)
     .fill(0)
     .map((_, index) => (index + 1).toString());
   const parentDir = blob.path
