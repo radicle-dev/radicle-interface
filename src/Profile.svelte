@@ -77,12 +77,11 @@
   .fields {
     display: grid;
     grid-template-columns: 5rem 4fr 2fr;
-    grid-gap: 1rem 2rem;
+    gap: 1rem 2rem;
     margin-bottom: 1rem;
   }
   .fields > div {
-    justify-self: start;
-    align-self: center;
+    place-self: center start;
     height: 2rem;
     line-height: 2rem;
   }

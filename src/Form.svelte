@@ -127,16 +127,15 @@
   .fields {
     display: grid;
     grid-template-columns: 6rem auto;
-    grid-gap: 1rem 1.5rem;
+    gap: 1rem 1.5rem;
   }
   .fields > div {
-    justify-self: start;
-    align-self: center;
+    place-self: center start;
   }
 
   .field {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     width: 28rem;
     height: 2.5rem;
     border: 1px dashed transparent;
