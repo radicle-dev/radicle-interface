@@ -16,6 +16,8 @@
     padding: 2rem;
     width: 100%;
     background: var(--color-foreground-1);
+    border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
 </style>
 
