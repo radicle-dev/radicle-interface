@@ -11,7 +11,7 @@ function loadCodeFont(): CodeFont {
   const storedCodeFont = window.localStorage.getItem("codefont");
 
   if (storedCodeFont === null) {
-    return "system";
+    return "jetbrains";
   } else {
     return storedCodeFont as CodeFont;
   }
@@ -27,5 +27,5 @@ export const codeFonts: {
     fontFamily: "JetBrains Mono",
     displayName: "JetBrains Mono",
   },
-  { storedName: "system", fontFamily: "monospace", displayName: "system" },
+  { storedName: "system", fontFamily: "monospace", displayName: "System" },
 ];

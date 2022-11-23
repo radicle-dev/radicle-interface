@@ -61,6 +61,9 @@
   .fonts {
     width: 100%;
   }
+  .fonts > .item {
+    border-bottom: none;
+  }
   .font {
     color: var(--color-foreground-5);
     cursor: pointer;
