@@ -61,7 +61,7 @@ export async function getInfo(
 
   const tokenContract = new ethers.Contract(
     token,
-    ethereumContractAbis.vesting,
+    ethereumContractAbis.token,
     wallet.provider,
   );
   const symbol = await tokenContract.symbol();
