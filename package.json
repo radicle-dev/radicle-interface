@@ -4,7 +4,7 @@
     "start": "vite",
     "start:ipfs": "HASH_ROUTING=1 vite --base ./",
     "serve": "vite preview",
-    "build": "vite build",
+    "build": "vite build && scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "build:ipfs": "HASH_ROUTING=1 vite build --base ./",
     "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
