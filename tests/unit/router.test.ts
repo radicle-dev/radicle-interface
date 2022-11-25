@@ -9,7 +9,7 @@ describe("routeToPath", () => {
   test.each([
     { input: { resource: "home" }, output: "/", description: "Home Route" },
     {
-      input: { resource: "vesting" },
+      input: { resource: "vesting", params: { view: { resource: "form" } } },
       output: "/vesting",
       description: "Vesting Route",
     },
@@ -124,7 +124,7 @@ describe("pathToRoute", () => {
     { input: "/", output: { resource: "home" }, description: "Home Route" },
     {
       input: "/vesting",
-      output: { resource: "vesting" },
+      output: { resource: "vesting", params: { view: { resource: "form" } } },
       description: "Vesting Route",
     },
     {

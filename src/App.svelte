@@ -16,7 +16,7 @@
   import Projects from "@app/base/projects/View.svelte";
   import Registrations from "@app/base/registrations/Routes.svelte";
   import Seeds from "@app/base/seeds/Routes.svelte";
-  import Vesting from "@app/base/vesting/Index.svelte";
+  import Vesting from "@app/base/vesting/Routes.svelte";
 
   initialize();
 
@@ -105,7 +105,7 @@
           session={$session}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "vesting"}
-        <Vesting {wallet} session={$session} />
+        <Vesting {wallet} session={$session} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "projects"}
         <Projects {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "profile"}

@@ -189,8 +189,16 @@ function pathToRoute(path: string): Route | null {
       }
       return { resource: "faucet", params: { view: { resource: "form" } } };
     }
-    case "vesting":
-      return { resource: "vesting" };
+    case "vesting": {
+      const contract = segments.shift();
+      if (contract) {
+        return {
+          resource: "vesting",
+          params: { view: { resource: "view", params: { contract } } },
+        };
+      }
+      return { resource: "vesting", params: { view: { resource: "form" } } };
+    }
     case "seeds": {
       const host = segments.shift();
       if (host) {
@@ -276,7 +284,11 @@ export function routeToPath(route: Route) {
       return `/faucet/withdraw?amount=${route.params.view.params.amount}`;
     }
   } else if (route.resource === "vesting") {
-    return "/vesting";
+    if (route.params.view.resource === "form") {
+      return "/vesting";
+    } else if (route.params.view.resource === "view") {
+      return `/vesting/${route.params.view.params.contract}`;
+    }
   } else if (route.resource === "seeds") {
     return `/seeds/${route.params.host}`;
   } else if (route.resource === "projects") {

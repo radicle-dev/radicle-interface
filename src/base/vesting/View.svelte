@@ -3,77 +3,44 @@
   import type { Wallet } from "@app/wallet";
   import type { VestingInfo } from "./vesting";
 
+  import * as router from "@app/router";
   import * as utils from "@app/utils";
   import Address from "@app/Address.svelte";
   import Button from "@app/Button.svelte";
   import Modal from "@app/Modal.svelte";
-  import TextInput from "@app/TextInput.svelte";
   import { state, getInfo, withdrawVested } from "./vesting";
+  import { onMount } from "svelte";
+  import ErrorModal from "@app/ErrorModal.svelte";
+  import Loading from "@app/Loading.svelte";
 
-  export let wallet: Wallet;
+  export let contractAddress: string;
+  export let info: VestingInfo | null = null;
   export let session: Session | null;
+  export let wallet: Wallet;
 
-  let contractAddress = "";
-  let info: VestingInfo | null = null;
-  let validationMessage: string | undefined = undefined;
-  let valid: boolean = false;
+  let error: Error | undefined = undefined;
 
-  async function loadContract(wallet: Wallet) {
-    if (!valid) {
-      return;
-    }
-
-    state.set("loading");
-    try {
-      info = await getInfo(contractAddress, wallet);
-    } catch (error) {
-      validationMessage =
-        "Couldn't load contract, check dev console for details.";
-      console.error(error);
+  onMount(async () => {
+    if (!info) {
+      state.set("loading");
+      try {
+        info = await getInfo(contractAddress, wallet);
+      } catch (e) {
+        error = e as Error;
+      }
     }
     state.set("idle");
-  }
+  });
 
-  $: isBeneficiary =
-    info && session && utils.isAddressEqual(info.beneficiary, session.address);
-
-  function validate(address: string) {
-    if (address === "") {
-      return { valid: false };
-    }
-
-    if (!utils.isAddress(address)) {
-      return {
-        valid: false,
-        validationMessage: "Please enter a valid Ethereum address.",
-      };
-    }
-
-    return { valid: true };
-  }
-
-  $: ({ valid, validationMessage } = validate(contractAddress));
+  const parseVestingPeriods = (input: string[]): string => {
+    const total = input
+      .map(s => parseInt(s))
+      .reduce((prev, curr) => prev + curr, 0);
+    return new Date(total * 1000).toDateString();
+  };
 </script>
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    height: 100%;
-    justify-content: center;
-    padding-bottom: 24vh;
-    padding-top: 5rem;
-    width: 38rem;
-  }
-  .title {
-    color: var(--color-secondary);
-    font-size: var(--font-size-medium);
-  }
-  .form {
-    display: flex;
-    gap: 1rem;
-  }
   table {
     table-layout: fixed;
     border-collapse: separate;
@@ -89,7 +56,16 @@
   <title>Radicle &ndash; Vesting</title>
 </svelte:head>
 
-{#if info}
+{#if error}
+  <ErrorModal
+    title="Failed to obtain contract information"
+    message={error.message}
+    on:close={() => router.pop()} />
+{:else if $state === "loading"}
+  <Loading center />
+{:else if info}
+  {@const isBeneficiary =
+    session && utils.isAddressEqual(info.beneficiary, session.address)}
   <Modal>
     <span slot="title">
       {contractAddress}
@@ -129,6 +105,33 @@
               <span class="txt-bold">{info.symbol}</span>
             </td>
           </tr>
+          <tr>
+            <td class="txt-highlight">Start Time</td>
+            <td>
+              <span class="txt-bold">
+                {parseVestingPeriods([info.vestingStartTime])}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="txt-highlight">Cliff Period End</td>
+            <td>
+              <span class="txt-bold">
+                {parseVestingPeriods([info.vestingStartTime, info.cliffPeriod])}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="txt-highlight">Vesting Period End</td>
+            <td>
+              <span class="txt-bold">
+                {parseVestingPeriods([
+                  info.vestingStartTime,
+                  info.vestingPeriod,
+                ])}
+              </span>
+            </td>
+          </tr>
         </table>
       {/if}
     </span>
@@ -151,42 +154,7 @@
           </Button>
         {/if}
       {/if}
-      <Button
-        on:click={() => {
-          info = null;
-          state.set("idle");
-        }}
-        variant="primary">
-        Back
-      </Button>
+      <Button on:click={() => router.pop()} variant="primary">Back</Button>
     </span>
   </Modal>
-{:else}
-  <main>
-    <div class="title">
-      Your Radicle <span class="txt-bold">vesting contract</span>
-    </div>
-
-    <div class="form">
-      <TextInput
-        autofocus
-        placeholder="Enter vesting contract address"
-        {valid}
-        {validationMessage}
-        loading={$state === "loading"}
-        disabled={$state === "loading"}
-        on:submit={() => {
-          loadContract(wallet);
-        }}
-        bind:value={contractAddress} />
-
-      <Button
-        on:click={() => loadContract(wallet)}
-        variant="primary"
-        waiting={$state === "loading"}
-        disabled={!valid || $state === "loading"}>
-        Load
-      </Button>
-    </div>
-  </main>
 {/if}

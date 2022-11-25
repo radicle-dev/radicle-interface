@@ -15,6 +15,9 @@ export interface VestingInfo {
   totalVesting: string;
   withdrawableBalance: string;
   withdrawn: string;
+  cliffPeriod: string;
+  vestingStartTime: string;
+  vestingPeriod: string;
 }
 
 export const state = writable<
@@ -58,6 +61,9 @@ export async function getInfo(
   const withdrawable = await contract.withdrawableBalance();
   const withdrawn = await contract.withdrawn();
   const total = await contract.totalVestingAmount();
+  const vestingStartTime = await contract.vestingStartTime();
+  const vestingPeriod = await contract.vestingPeriod();
+  const cliffPeriod = await contract.cliffPeriod();
 
   const tokenContract = new ethers.Contract(
     token,
@@ -67,11 +73,14 @@ export async function getInfo(
   const symbol = await tokenContract.symbol();
 
   return {
-    token: token,
-    symbol: symbol,
-    beneficiary: beneficiary,
+    token,
+    symbol,
+    beneficiary,
     totalVesting: utils.formatBalance(total),
     withdrawableBalance: utils.formatBalance(withdrawable),
     withdrawn: utils.formatBalance(withdrawn),
+    vestingStartTime,
+    vestingPeriod,
+    cliffPeriod,
   };
 }

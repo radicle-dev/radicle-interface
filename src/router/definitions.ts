@@ -1,12 +1,14 @@
+import type { VestingInfo } from "@app/base/vesting/vesting";
+
 export type Route =
   | FaucetRoute
   | ProjectRoute
   | RegistrationRoute
+  | VestingRoute
   | { resource: "home" }
   | { resource: "404"; params: { url: string } }
   | { resource: "profile"; params: { addressOrName: string } }
-  | { resource: "seeds"; params: { host: string } }
-  | { resource: "vesting" };
+  | { resource: "seeds"; params: { host: string } };
 
 export interface ProjectsParams {
   urn: string;
@@ -27,6 +29,12 @@ export interface ProjectsParams {
   route?: string;
   search?: string;
   seed?: string;
+}
+
+export interface VestingParams {
+  view:
+    | { resource: "form" }
+    | { resource: "view"; params: { contract: string; info?: VestingInfo } };
 }
 
 export interface FaucetParams {
@@ -56,6 +64,7 @@ export interface RegistrationParams {
 
 export type ProjectRoute = { resource: "projects"; params: ProjectsParams };
 export type FaucetRoute = { resource: "faucet"; params: FaucetParams };
+export type VestingRoute = { resource: "vesting"; params: VestingParams };
 export type RegistrationRoute = {
   resource: "registrations";
   params: RegistrationParams;
