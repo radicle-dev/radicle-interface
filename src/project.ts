@@ -8,6 +8,8 @@ import type { Wallet } from "@app/wallet";
 export type Urn = string;
 export type PeerId = string;
 export type Branches = { [key: string]: string };
+export type MaybeBlob = Blob | undefined;
+export type MaybeTree = Tree | undefined;
 
 export type Delegate =
   | {

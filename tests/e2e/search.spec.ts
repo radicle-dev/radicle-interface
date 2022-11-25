@@ -4,14 +4,14 @@ test("navigate to existing project", async ({ page }) => {
   await page.goto("/");
   const searchInput = page.getByPlaceholder("Search a name or address…");
   await searchInput.click();
-  await searchInput.fill("rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o");
+  await searchInput.fill("rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy");
   await searchInput.press("Enter");
 
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree",
+    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree",
   );
   await expect(searchInput).not.toHaveValue(
-    "rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+    "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
   );
 });
 

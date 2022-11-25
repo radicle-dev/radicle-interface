@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Blob } from "@app/project";
+  import type { MaybeBlob, Blob } from "@app/project";
   import type { MaybeHighlighted } from "@app/syntax";
   import type { ProjectRoute } from "@app/router/definitions";
 
@@ -14,7 +14,7 @@
 
   export let activeRoute: ProjectRoute;
   export let blob: Blob;
-  export let getImage: (path: string) => Promise<Blob>;
+  export let getImage: (path: string) => Promise<MaybeBlob>;
   export let line: string | undefined = undefined;
 
   const fileExtension = blob.path.split(".").pop() ?? "";

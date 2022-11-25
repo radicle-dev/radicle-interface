@@ -173,7 +173,7 @@ export function appConfigWithFixture() {
       pinned: [
         {
           name: "source-browsing",
-          urn: "rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+          urn: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
           seed: "0.0.0.0",
         },
       ],
@@ -181,5 +181,4 @@ export function appConfigWithFixture() {
   };
 }
 
-export const projectFixtureUrl =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
+export const projectFixtureUrl = `/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy`;

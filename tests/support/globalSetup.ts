@@ -8,7 +8,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 // error that explains how to run it.
 async function assertHttpApiRunning(): Promise<void> {
   const palmTestFixtureSeedId =
-    "hyb6i8oggc3mgra9siy8yuohhtz34r98pcybja97c9o789wpsg6nn4";
+    "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";
 
   const notRunningMessage =
     "The http-api server with test fixtures needs to be running.\n" +

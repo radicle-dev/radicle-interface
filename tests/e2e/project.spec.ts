@@ -21,7 +21,7 @@ test("navigate to project", async ({ page }) => {
   {
     const name = page.locator("text=source-browsing");
     const urn = page.locator(
-      "text=rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+      "text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
     );
     const description = page.locator(
       "text=Git repository for source browsing tests",
@@ -35,9 +35,9 @@ test("navigate to project", async ({ page }) => {
   // Project menu shows default selected branch and commit and contributor counts.
   {
     await expect(page.getByTitle("Current branch")).toContainText(
-      "main 530aabd",
+      "main fcc9294",
     );
-    await expectCounts({ commits: 7, contributors: 1 }, page);
+    await expectCounts({ commits: 8, contributors: 1 }, page);
   }
 
   // Navigate to the project README.md by default.
@@ -85,7 +85,7 @@ test("navigate line numbers", async ({ page }) => {
   await page.locator('[href="#L5"]').click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/markdown/cheatsheet.md#L5",
+    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#L5",
   );
 
   await expectUrlPersistsReload(page);
@@ -95,12 +95,12 @@ test("navigate line numbers", async ({ page }) => {
   await expect(page.locator("#L5")).not.toHaveClass("line highlight");
   await expect(page.locator("#L30")).toHaveClass("line highlight");
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/markdown/cheatsheet.md#L30",
+    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#L30",
   );
 
   await page.getByText(".hidden").click();
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/.hidden",
+    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/.hidden",
   );
 });
 
@@ -231,7 +231,7 @@ test("markdown files", async ({ page }) => {
   {
     await page.getByRole("link", { name: "YouTube Videos" }).click();
     await expect(page).toHaveURL(
-      "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/markdown/cheatsheet.md#videos",
+      "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#videos",
     );
   }
 });
@@ -245,15 +245,15 @@ test("peer and branch switching", async ({ page }) => {
     await page.locator("text=alice").click();
     await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
     await expect(
-      page.locator("text=source-browsing / hyn1mj…qx7bun"),
+      page.locator("text=source-browsing / hybg18…dizfxy"),
     ).toBeVisible();
 
     // Default `main` branch.
     {
       await expect(page.getByTitle("Current branch")).toContainText(
-        "main 530aabd",
+        "main fcc9294",
       );
-      await expectCounts({ commits: 7, contributors: 1 }, page);
+      await expectCounts({ commits: 8, contributors: 1 }, page);
     }
 
     // Feature branch with a slash in the name.
@@ -291,7 +291,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
 
     await expect(page.getByTitle("Current branch")).toContainText(
-      "main 530aabd",
+      "main fcc9294",
     );
     await expect(page.locator("text=Git test repository")).toBeVisible();
   }
@@ -307,10 +307,10 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByTitle("Current branch")).toContainText(
-        "main 0be0f03",
+        "main 2b32f6f",
       );
-      await expectCounts({ commits: 8, contributors: 2 }, page);
-      await expect(page.locator("text=0be0f03 Update readme")).toBeVisible();
+      await expectCounts({ commits: 9, contributors: 2 }, page);
+      await expect(page.locator("text=2b32f6f Update readme")).toBeVisible();
     }
   }
 });
@@ -321,12 +321,12 @@ test("clone modal", async ({ page }) => {
   await page.getByText("Clone").click();
   await expect(
     page.locator(
-      "text=rad clone rad://0.0.0.0/hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+      "text=rad clone rad://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
     ),
   ).toBeVisible();
   await expect(
     page.locator(
-      "text=https://0.0.0.0/hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o.git",
+      "text=https://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy.git",
     ),
   ).toBeVisible();
 });
@@ -335,29 +335,98 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.locator("text=alice hyn1mj").click();
+  await page.locator("text=alice hybg18").click();
 
   await page.getByText("Clone").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).toBeVisible();
-  await expect(page.locator("text=bob hyy1k6g")).not.toBeVisible();
+  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyy1k6g")).not.toBeVisible();
+  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
   await expect(page.locator("text=feature/branch")).toBeVisible();
 
   await page.getByTitle("Change peer").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyy1k6g")).toBeVisible();
+  await expect(page.locator("text=bob hyyzz9")).toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
   page.locator('button[name="Settings"]').click();
   await expect(page.locator("text=Code font")).toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyy1k6g")).not.toBeVisible();
+  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
+});
+
+test.describe("browser error handling", () => {
+  test("error appears when folder can't be loaded", async ({ page }) => {
+    await page.route(
+      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842/markdown/",
+      route => route.fulfill({ status: 500 }),
+    );
+
+    await page.goto(projectFixtureUrl);
+
+    const sourceTree = page.locator(".source-tree");
+    await sourceTree.locator("text=markdown/").click();
+
+    await expect(
+      page.locator("text=Not able to expand directory"),
+    ).toBeVisible();
+  });
+  test("error appears when file can't be loaded", async ({ page }) => {
+    await page.route(
+      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/.hidden",
+      route => route.fulfill({ status: 500 }),
+    );
+
+    await page.goto(projectFixtureUrl);
+    await page.locator("text=.hidden").click();
+
+    await expect(page.locator("text=Not able to load file")).toBeVisible();
+  });
+  test("error appears when README can't be loaded", async ({ page }) => {
+    await page.route(
+      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/readme/fcc929424b82984b7cbff9c01d2e20d9b1249842",
+      route => route.fulfill({ status: 500 }),
+    );
+
+    await page.goto(projectFixtureUrl);
+    await expect(
+      page.locator("text=The README could not be loaded."),
+    ).toBeVisible();
+  });
+  test("error appears when navigating to missing file", async ({ page }) => {
+    await page.route(
+      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/.hidden",
+      route => route.fulfill({ status: 500 }),
+    );
+
+    await page.goto(`${projectFixtureUrl}/tree/master/.hidden`);
+
+    await expect(page.locator("text=Not able to load file")).toBeVisible();
+  });
+  test("error appears when a image with a relative path can't be loaded", async ({
+    page,
+  }) => {
+    await page.route(
+      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/src/black-square.png",
+      route => route.fulfill({ status: 404 }),
+    );
+
+    await page.goto(projectFixtureUrl);
+    const sourceTree = page.locator(".source-tree");
+    await sourceTree.locator("text=markdown/").click();
+    await sourceTree.locator("text=loading-image.md").click();
+
+    // By having a relative path, this gives away that the image has not loaded
+    // else it would have been converted into a data base64 string
+    await expect(
+      page.locator("img[src='../src/black-square.png']"),
+    ).toBeVisible();
+  });
 });

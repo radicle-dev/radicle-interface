@@ -13,7 +13,7 @@ test("seed metadata", async ({ page }) => {
     "alt",
     "🚀",
   );
-  await expect(page.locator("text=hyb6i8…sg6nn4")).toBeVisible();
+  await expect(page.locator("text=hybuyt…7m4d3o")).toBeVisible();
   await expect(page.locator("text=8777")).toBeVisible();
   await expect(page.locator("text=0.2.0")).toBeVisible();
 });
@@ -29,18 +29,18 @@ test("seed projects", async ({ page }) => {
       project.locator("text=Git repository for source browsing tests"),
     ).toBeVisible();
     await expect(
-      project.locator("text=530aabdcc80397af254bc488b767169b92496e81"),
+      project.locator("text=fcc929424b82984b7cbff9c01d2e20d9b1249842"),
     ).toBeVisible();
   }
 
   // Show project URN on hover.
   {
     await expect(
-      project.locator("text=rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o"),
+      project.locator("text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy"),
     ).not.toBeVisible();
     await project.hover();
     await expect(
-      project.locator("text=rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o"),
+      project.locator("text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy"),
     ).toBeVisible();
   }
 });

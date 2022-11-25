@@ -5,7 +5,7 @@
   import Markdown from "@app/Markdown.svelte";
 
   export let content: string;
-  export let getImage: (path: string) => Promise<proj.Blob>;
+  export let getImage: (path: string) => Promise<proj.MaybeBlob>;
   export let activeRoute: ProjectRoute;
 
   $: hash = activeRoute.params.hash || null;

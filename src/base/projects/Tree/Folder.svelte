@@ -1,20 +1,22 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
+  import type { MaybeTree } from "@app/project";
 
   import Loading from "@app/Loading.svelte";
-  import type { Tree } from "@app/project";
   import { ObjectType } from "@app/project";
+  import { createEventDispatcher } from "svelte";
 
   import File from "./File.svelte";
 
-  export let fetchTree: (path: string) => Promise<Tree>;
+  export let fetchTree: (path: string) => Promise<MaybeTree>;
   export let name: string;
   export let prefix: string;
   export let currentPath: string;
   export let loadingPath: string | null = null;
 
   let expanded = currentPath.indexOf(prefix) === 0;
-  let tree: Promise<Tree> | null = expanded ? fetchTree(prefix) : null;
+  let tree: Promise<MaybeTree> = fetchTree(prefix).then(tree => {
+    if (expanded) return tree;
+  });
 
   const dispatch = createEventDispatcher<{ select: string }>();
   const onSelectFile = ({ detail: path }: { detail: string }) =>
@@ -23,9 +25,9 @@
   const onClick = () => {
     expanded = !expanded;
 
-    if (expanded) {
-      tree = fetchTree(prefix);
-    }
+    tree = fetchTree(prefix).then(tree => {
+      if (expanded) return tree;
+    });
   };
 </script>
 

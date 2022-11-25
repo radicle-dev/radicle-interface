@@ -1,11 +1,11 @@
 import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
 
-const modifiedFileFixture = `${projectFixtureUrl}/remotes/hyy1k6ggg45pi7ip7ksyn1wt1ob4w5zh1awtg4qu3cxmbh5mws8pj1/commits/0be0f0302269b362be0bfe72aa4843eceaac5e3f`;
+const modifiedFileFixture = `${projectFixtureUrl}/remotes/hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6/commits/2b32f6fe50090ebdb4cd7441e943330da3e6ff04`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
-  await page.locator("text=bob hyy1k6").click();
+  await page.locator("text=bob hyyzz9").click();
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.locator("text=Update readme").click();
@@ -16,7 +16,7 @@ test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
+        now: new Date("December 21 2022 12:00:00").valueOf(),
         shouldClearNativeTimers: true,
         shouldAdvanceTime: false,
       });
@@ -24,7 +24,7 @@ test("relative timestamps", async ({ page }) => {
   });
   await page.goto(modifiedFileFixture);
   await expect(
-    page.locator(".commit header >> text=bob committed 3 days ago"),
+    page.locator(".commit header >> text=bob committed 22 hours ago"),
   ).toBeVisible();
 });
 
@@ -37,7 +37,7 @@ test("modified file", async ({ page }) => {
     await expect(header.locator("text=Update readme")).toBeVisible();
     await expect(header.locator("text=Verified")).toBeVisible();
     await expect(
-      header.locator("text=0be0f0302269b362be0bfe72aa4843eceaac5e3f"),
+      header.locator("text=2b32f6fe50090ebdb4cd7441e943330da3e6ff04"),
     ).toBeVisible();
   }
 
@@ -53,7 +53,7 @@ test("modified file", async ({ page }) => {
 
 test("created file", async ({ page }) => {
   await page.goto(
-    `${projectFixtureUrl}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
+    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(
     page.locator("text=1 file(s) created with 9 addition(s) and 0 deletion(s)"),
@@ -63,7 +63,7 @@ test("created file", async ({ page }) => {
 
 test("deleted file", async ({ page }) => {
   await page.goto(
-    `${projectFixtureUrl}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
+    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
   );
   await expect(
     page.locator("text=1 file(s) deleted with 0 addition(s) and 1 deletion(s)"),

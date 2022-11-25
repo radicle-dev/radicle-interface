@@ -66,6 +66,8 @@ git checkout orphaned-branch
 git checkout main
 
 RAD_HOME=$ALICE_RAD_HOME rad init --name "source-browsing" --description "Git repository for source browsing tests" --default-branch "main" --no-confirm
+
+sleep 10
 RAD_HOME=$ALICE_RAD_HOME rad push --seed 0.0.0.0:8778 --all --sync
 PROJECT_URN=$(rad .)
 

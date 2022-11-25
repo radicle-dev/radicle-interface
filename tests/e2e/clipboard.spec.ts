@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { test, expect } from "@tests/support/fixtures.js";
 
 const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
+  "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
 
 async function expectClipboard(content: string, page: Page) {
   const clipboardContent = await page.evaluate<string>(
@@ -34,21 +34,21 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
       "navigator.clipboard.readText()",
     );
     expect(clipboardContent).toBe(
-      "rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+      "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
     );
   }
 
   // `rad clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator("text=rad clone rad://0.0.0.0/hnrkgd").hover();
+    await page.locator("text=rad clone rad://0.0.0.0/hnrkdi").hover();
     await page
       .locator(".clone-url-wrapper > span")
       .first()
       .locator(".clipboard")
       .click();
     await expectClipboard(
-      "rad clone rad://0.0.0.0/hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+      "rad clone rad://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
       page,
     );
   }
@@ -56,14 +56,14 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // `git clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator("text=https://0.0.0.0/hnrkgd").hover();
+    await page.locator("text=https://0.0.0.0/hnrkdi").hover();
     await page
       .locator(".clone-url-wrapper > span")
       .last()
       .locator(".clipboard")
       .click();
     await expectClipboard(
-      "https://0.0.0.0/hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o.git",
+      "https://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy.git",
       page,
     );
   }
@@ -76,7 +76,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
 
     await page.locator(".clipboard").last().click();
     await expectClipboard(
-      "hyb6i8oggc3mgra9siy8yuohhtz34r98pcybja97c9o789wpsg6nn4",
+      "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o",
       page,
     );
   }

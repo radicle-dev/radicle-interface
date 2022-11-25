@@ -20,5 +20,5 @@ test("show pinned projects", async ({ page }) => {
   ).toBeVisible();
 
   // Shows latest commit.
-  await expect(page.locator("text=530aabd")).toBeVisible();
+  await expect(page.locator("text=fcc9294")).toBeVisible();
 });

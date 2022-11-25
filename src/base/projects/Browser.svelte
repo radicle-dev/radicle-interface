@@ -1,14 +1,21 @@
-<script lang="ts">
-  import type { Theme } from "@app/ThemeToggle.svelte";
-  import type { ProjectRoute } from "@app/router/definitions";
-  import type * as proj from "@app/project";
+<script lang="ts" context="module">
+  import { writable } from "svelte/store";
 
-  import Loading from "@app/Loading.svelte";
-  import Placeholder from "@app/Placeholder.svelte";
+  export const browserErrorStore = writable<
+    { message: string; path: string } | undefined
+  >();
+</script>
+
+<script lang="ts">
+  import type * as proj from "@app/project";
+  import type { ProjectRoute } from "@app/router/definitions";
+
+  import * as router from "@app/router";
   import * as utils from "@app/utils";
   import Button from "@app/Button.svelte";
-  import { theme } from "@app/ThemeToggle.svelte";
-  import * as router from "@app/router";
+  import Loading from "@app/Loading.svelte";
+  import Placeholder from "@app/Placeholder.svelte";
+  import { onMount } from "svelte";
 
   import Tree from "./Tree.svelte";
   import Blob from "./Blob.svelte";
@@ -20,7 +27,7 @@
 
   type State =
     | { status: Status.Loading; path: string }
-    | { status: Status.Loaded; path: string; blob: proj.Blob; theme: Theme };
+    | { status: Status.Loaded; path: string; blob: proj.Blob };
 
   export let project: proj.Project;
   export let tree: proj.Tree;
@@ -35,15 +42,8 @@
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
 
-  const loadBlob = async (
-    path: string,
-    theme: Theme,
-  ): Promise<proj.Blob | undefined> => {
-    if (
-      state.status === Status.Loaded &&
-      state.path === path &&
-      state.theme === theme
-    ) {
+  const loadBlob = async (path: string) => {
+    if (state.status === Status.Loaded && state.path === path) {
       return state.blob;
     }
 
@@ -51,26 +51,38 @@
       path === "/" ? project.getReadme(commit) : project.getBlob(commit, path);
 
     state = { status: Status.Loading, path };
-    try {
-      state = { status: Status.Loaded, path, blob: await promise, theme };
-      return state.blob;
-    } catch (err) {
-      console.warn("Could not load blob.");
-    }
+    state = { status: Status.Loaded, path, blob: await promise };
+    return state.blob;
   };
+
+  onMount(() => {
+    browserErrorStore.set(undefined);
+  });
 
   // Get an image blob based on a relative path.
-  const getImage = async (imagePath: string): Promise<proj.Blob> => {
+  const getImage = async (imagePath: string) => {
     const finalPath = utils.canonicalize(imagePath, path);
-    return project.getBlob(commit, finalPath);
+    return project.getBlob(commit, finalPath).catch(() => {
+      console.warn("Not able to load image blob:", finalPath);
+      return undefined;
+    });
   };
 
-  const onSelect = async (newPath: string, theme: Theme) => {
+  const onSelect = async (newPath: string) => {
+    browserErrorStore.set(undefined);
     // Ensure we don't spend any time in a "loading" state. This means
     // the loading spinner won't be shown, and instead the blob will be
     // displayed once loaded.
-    const blob = await loadBlob(newPath, theme);
-    getBlob = new Promise(resolve => resolve(blob));
+    const blob = await loadBlob(newPath).catch(() => {
+      browserErrorStore.set({
+        message: "Not able to load selected file",
+        path: newPath,
+      });
+      return undefined;
+    });
+    if (blob) {
+      getBlob = new Promise(resolve => resolve(blob));
+    }
 
     // Close mobile tree if user navigates to other file
     mobileFileTree = false;
@@ -82,15 +94,25 @@
   };
 
   const fetchTree = async (path: string) => {
-    return project.getTree(commit, path);
+    return project.getTree(commit, path).catch(() => {
+      browserErrorStore.set({
+        message: "Not able to expand directory",
+        path,
+      });
+      return undefined;
+    });
   };
 
   const toggleMobileFileTree = () => {
     mobileFileTree = !mobileFileTree;
   };
 
-  $: getBlob = loadBlob(path, $theme);
-  $: loadingPath = state.status === Status.Loading ? state.path : null;
+  $: getBlob = loadBlob(path).catch(() => {
+    browserErrorStore.set({ message: "Not able to load file", path });
+    return undefined;
+  });
+  $: loadingPath =
+    !$browserErrorStore && state.status === Status.Loading ? state.path : null;
 </script>
 
 <style>
@@ -195,33 +217,35 @@
             {fetchTree}
             {loadingPath}
             on:select={e => {
-              onSelect(e.detail, $theme);
+              onSelect(e.detail);
             }} />
         </div>
       </div>
       <div class="column-right">
-        {#await getBlob}
-          <Loading small center />
-        {:then blob}
-          {#if blob}
-            <Blob {line} {blob} {getImage} {activeRoute} />
-          {/if}
-        {:catch}
+        {#if $browserErrorStore}
           <Placeholder emoji="🍂">
             <span slot="title">
-              {#if path !== "/"}
-                <div class="txt-monospace">{path}</div>
-              {/if}
+              <div class="txt-monospace">{$browserErrorStore.path}</div>
             </span>
             <span slot="body">
-              {#if path === "/"}
-                The README could not be loaded.
-              {:else}
-                This path could not be loaded.
-              {/if}
+              <span>
+                {#if $browserErrorStore.path === "/"}
+                  The README could not be loaded.
+                {:else}
+                  {$browserErrorStore.message}
+                {/if}
+              </span>
             </span>
           </Placeholder>
-        {/await}
+        {:else}
+          {#await getBlob}
+            <Loading small center />
+          {:then blob}
+            {#if blob}
+              <Blob {line} {blob} {getImage} {activeRoute} />
+            {/if}
+          {/await}
+        {/if}
       </div>
     {:else}
       <div class="placeholder">

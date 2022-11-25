@@ -19,7 +19,7 @@
 
   export let content: string;
   export let doc = matter(content);
-  export let getImage: (path: string) => Promise<proj.Blob>;
+  export let getImage: (path: string) => Promise<proj.MaybeBlob>;
   export let hash: string | null = null;
 
   const frontMatter = Object.entries(doc.data).filter(
@@ -54,7 +54,7 @@
       // Make sure the source isn't a URL before trying to fetch it from the repo
       if (path && !isUrl(path) && !path.startsWith(`${base}twemoji`)) {
         getImage(path).then(blob => {
-          if (blob.content) {
+          if (blob?.content) {
             const mime = getImageMime(path);
             if (mime) {
               i.setAttribute("src", `data:${mime};base64,${blob.content}`);

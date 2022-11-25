@@ -7,17 +7,19 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator("text=alice hyn1mj").click();
+    await page.locator("text=alice hybg18").click();
     await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(
       page.locator(".commit-group-headers .commit-teaser"),
-    ).toHaveCount(7);
+    ).toHaveCount(8);
 
     const latestCommit = page.locator(".commit-teaser").first();
-    await expect(latestCommit).toContainText("Add Markdown cheat sheet");
-    await expect(latestCommit).toContainText("530aabd");
+    await expect(latestCommit).toContainText(
+      "Adds a new markdown file with an image with a relative path",
+    );
+    await expect(latestCommit).toContainText("fcc9294");
 
     const earliestCommit = page.locator(".commit-teaser").last();
     await expect(earliestCommit).toContainText(
@@ -49,23 +51,23 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator("text=bob hyy1k6").click();
+    await page.locator("text=bob hyyzz9").click();
     await expect(page.getByTitle("Change peer")).toHaveText("bob");
 
-    await expect(page.getByText("Monday, November 21, 2022")).toBeVisible();
+    await expect(page.getByText("Tuesday, December 20, 2022")).toBeVisible();
     await expect(
       page.locator(".commit-group-headers").first().locator(".commit-teaser"),
-    ).toHaveCount(1);
+    ).toHaveCount(3);
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(
       page.locator(".commit-group-headers").last().locator(".commit-teaser"),
-    ).toHaveCount(7);
+    ).toHaveCount(6);
 
     await page.pause();
     const latestCommit = page.locator(".commit-teaser").first();
     await expect(latestCommit).toContainText("Update readme");
-    await expect(latestCommit).toContainText("0be0f03");
+    await expect(latestCommit).toContainText("2b32f6f");
 
     const earliestCommit = page.locator(".commit-teaser").last();
     await expect(earliestCommit).toContainText(
@@ -80,7 +82,7 @@ test("verified badge", async ({ page }) => {
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.getByTitle("Change peer").click();
-  await page.locator("text=bob hyy1k6").click();
+  await page.locator("text=bob hyyzz9").click();
   await expect(page.getByTitle("Change peer")).toHaveText("bob");
 
   await page.locator("text=Verified").hover();
@@ -92,7 +94,7 @@ test("verified badge", async ({ page }) => {
   ).toBeVisible();
   await expect(
     page.locator(
-      "text=bob committed hyy1k6ggg45pi7ip7ksyn1wt1ob4w5zh1awtg4qu3cxmbh5mws8pj1",
+      "text=bob committed hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6",
     ),
   ).toBeVisible();
 });
@@ -101,7 +103,7 @@ test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
+        now: new Date("December 21 2022 12:00:00").valueOf(),
         shouldClearNativeTimers: true,
         shouldAdvanceTime: false,
       });
@@ -112,15 +114,15 @@ test("relative timestamps", async ({ page }) => {
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.getByTitle("Change peer").click();
-  await page.locator("text=bob hyy1k6").click();
+  await page.locator("text=bob hyyzz9").click();
   await expect(page.getByTitle("Change peer")).toHaveText("bob");
 
   const latestCommit = page.locator(".commit-teaser").first();
-  await expect(latestCommit).toContainText("bob committed 3 days ago");
-  await expect(latestCommit).toContainText("0be0f03");
+  await expect(latestCommit).toContainText("bob committed 22 hours ago");
+  await expect(latestCommit).toContainText("2b32f6f");
 
   const earliestCommit = page.locator(".commit").last();
   await expect(earliestCommit).toContainText(
-    "Alice Liddell committed 7 days ago",
+    "Alice Liddell committed last month",
   );
 });
