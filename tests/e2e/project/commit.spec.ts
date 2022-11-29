@@ -14,13 +14,28 @@ test("navigation from commit list", async ({ page }) => {
   await expect(page).toHaveURL(modifiedFileFixture);
 });
 
+test("relative timestamps", async ({ page }) => {
+  page.addInitScript(() => {
+    window.initializeTestStubs = () => {
+      window.e2eTestStubs.FakeTimers.install({
+        now: new Date("November 24 2022 12:00:00").valueOf(),
+        shouldClearNativeTimers: true,
+        shouldAdvanceTime: false,
+      });
+    };
+  });
+  await page.goto(modifiedFileFixture);
+  await expect(
+    page.locator(".commit header >> text=bob committed 3 days ago"),
+  ).toBeVisible();
+});
+
 test("modified file", async ({ page }) => {
   await page.goto(modifiedFileFixture);
 
   // Commit header.
   {
     const header = page.locator(".commit header");
-    await expect(header.locator("text=bob committed 7 days ago")).toBeVisible();
     await expect(header.locator("text=Update readme")).toBeVisible();
     await expect(header.locator("text=Verified")).toBeVisible();
     await expect(
