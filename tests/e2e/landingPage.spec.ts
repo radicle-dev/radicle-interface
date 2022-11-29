@@ -40,10 +40,4 @@ test("show pinned projects", async ({ page }) => {
 
   // Shows latest commit.
   await expect(page.locator("text=530aabd")).toBeVisible();
-
-  // Navigate to a project.
-  await page.locator("text=source-browsing").click();
-  await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/530aabdcc80397af254bc488b767169b92496e81",
-  );
 });
