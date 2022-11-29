@@ -12,5 +12,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - run: npm ci
-      - run: ./scripts/unit-test
-        shell: bash
+      - run: npm run test:unit

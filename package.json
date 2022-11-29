@@ -9,7 +9,8 @@
     "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
     "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html)' --ignore-path .gitignore --write",
-    "test:unit": "TZ='UTC' vitest run"
+    "test:unit": "TZ='UTC' vitest run",
+    "test:e2e": "TZ='UTC' playwright test"
   },
   "type": "module",
   "engines": {
