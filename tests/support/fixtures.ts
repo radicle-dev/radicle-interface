@@ -29,7 +29,10 @@ export const test = base.extend<{
               `Module "buffer" has been externalized for browser compatibility.`,
             ) ||
           msg.text().startsWith("[vite] connected.") ||
-          msg.text().startsWith("[vite] connecting...")
+          msg.text().startsWith("[vite] connecting...") ||
+          msg
+            .text()
+            .includes("Please make sure it wasn't preloaded for nothing.")
         ) {
           return;
         }
