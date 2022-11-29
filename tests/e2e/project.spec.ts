@@ -147,7 +147,9 @@ test("files with special characters in the filename", async ({ page }) => {
   await sourceTree.getByText("_underscore_").click();
   await expect(page.locator(".file-name")).toContainText("_underscore_");
 
-  // TODO: fix the error in the app for these edge cases.
+  // TODO: fix these errors in `racdicle-client-services/http-api` for the
+  // following edge cases.
+  //
   // await sourceTree.getByText("back\\slash").click();
   // await expect(page.locator(".file-name")).toContainText("back\\slash");
   // await sourceTree.getByText("qs?param1=value?param2=value2#hash").click();
