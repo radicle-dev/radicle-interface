@@ -1,25 +1,124 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
+#!/bin/sh
+set -e
 
 TAG=40bdc662b2d48cbfaa87182b21457ef8f861b04a
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+CLIENT_SERVICES_REPO=$REPO_ROOT/../radicle-client-services
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
 WORKSPACE=$REPO_ROOT/tests/tmp/palm
+PASSPHRASE=asdf
+CONTAINER_NAME=radicle-http-api-test
 
-echo $WORKSPACE
+show_usage()
+{
+  echo
+  echo "Start a http-api backend with test fixtures."
+  echo
+  echo "USAGE:"
+  echo "  http-api-test [-c|d|h|n]"
+  echo
+  echo "OPTIONS:"
+  echo "  -c --cargo             Compile and run http-api from a repository without Docker."
+  echo "  -d --detach            Daemonize the docker process."
+  echo "  -h --help              Print this Help."
+  echo "  -n --non-interactive   Run in non-interactive mode, no user prompts."
+  echo
+}
 
-rm -rf $WORKSPACE
-mkdir -p $WORKSPACE
-tar -xf $FIXTURE -C $WORKSPACE
+prompt_workspace_removal()
+{
+  echo "This will irrevocably destroy the following directories:"
+  echo
+  echo $WORKSPACE
+  echo
 
-exec docker run \
-  --init \
-  --publish 8777:8777 \
-  --rm \
-  --name radicle-http-api-test \
-  --volume $WORKSPACE:/app/radicle \
-  "$@" \
-  "gcr.io/radicle-services/http-api:$TAG" \
-  --passphrase asdf
+  read -r -p "Are you sure you want to continue? [yes/no]: " confirm
+  case "$confirm" in
+      [yY][eE][sS] )
+          rm -rf $WORKSPACE
+          echo "Done"
+          ;;
+      * )
+          echo "Ok, I won't touch your data."
+          exit
+          ;;
+  esac
+}
+
+prepare_workspace()
+{
+  echo "Unpacking fixture $FIXTURE"
+  mkdir -p $WORKSPACE
+  tar -xf $FIXTURE -C $WORKSPACE
+}
+
+run_docker() {
+  echo "Starting docker at container $CONTAINER_NAME at $TAG"
+  echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
+  echo
+
+  exec docker run \
+    --init \
+    --publish 8777:8777 \
+    --rm \
+    --name $CONTAINER_NAME \
+    --volume $WORKSPACE:/app/radicle \
+    "$@" \
+    "gcr.io/radicle-services/http-api:$TAG" \
+    --passphrase $PASSPHRASE
+}
+
+run_cargo() {
+  HTTP_API_PATH=$CLIENT_SERVICES_REPO/http-api
+
+  echo "Starting http-api at $TAG from $HTTP_API_PATH"
+  echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
+  echo
+
+  git -C $HTTP_API_PATH checkout $TAG
+  (cd $HTTP_API_PATH && cargo run --release -- --listen 0.0.0.0:8777 --root $WORKSPACE --passphrase $PASSPHRASE)
+}
+
+CARGO=false
+NON_INTERACTIVE=false
+DETACH=false
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --cargo|-c)
+      CARGO=true
+      ;;
+    --detach|-d)
+      DETACH=true
+      ;;
+    --non-interactive|-n)
+      NON_INTERACTIVE=true
+      ;;
+    *)
+      show_usage
+      exit
+      ;;
+  esac
+
+  shift
+done
+
+if [ "$NON_INTERACTIVE" = true ]; then
+  rm -rf $WORKSPACE
+  prepare_workspace
+else
+  prompt_workspace_removal
+  prepare_workspace
+fi
+
+
+if [ "$CARGO" = true ]; then
+  run_cargo
+else
+  if [ "$DETACH" = true ]; then
+    run_docker --detach
+  else
+    run_docker
+  fi
+fi
