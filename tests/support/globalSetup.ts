@@ -12,7 +12,7 @@ async function assertHttpApiRunning(): Promise<void> {
 
   const notRunningMessage =
     "The http-api server with test fixtures needs to be running.\n" +
-    "👉 You can start it with `./scripts/http-api-test`\n";
+    "👉 You can start it with `./scripts/run-http-api-with-fixtures`\n";
 
   let peerId: string | undefined = undefined;
 

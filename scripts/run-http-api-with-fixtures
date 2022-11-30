@@ -8,7 +8,7 @@ CLIENT_SERVICES_REPO=$REPO_ROOT/../radicle-client-services
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
 WORKSPACE=$REPO_ROOT/tests/tmp/palm
 PASSPHRASE=asdf
-CONTAINER_NAME=radicle-http-api-test
+CONTAINER_NAME=radicle-http-api-with-fixtures
 
 show_usage()
 {
@@ -16,7 +16,7 @@ show_usage()
   echo "Start a http-api backend with test fixtures."
   echo
   echo "USAGE:"
-  echo "  http-api-test [-c|d|h|n]"
+  echo "  run-http-api-with-fixtures [-c|d|h|n]"
   echo
   echo "OPTIONS:"
   echo "  -c --cargo             Compile and run http-api from a repository without Docker."
