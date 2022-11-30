@@ -55,7 +55,7 @@ prepare_workspace()
 
 run_docker() {
   echo "Starting docker at container $CONTAINER_NAME at $REV"
-  echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
+  echo "  http-api --root $WORKSPACE --passphrase $PASSPHRASE"
   echo
 
   exec docker run \
@@ -73,7 +73,7 @@ run_cargo() {
   HTTP_API_PATH=$CLIENT_SERVICES_REPO/http-api
 
   echo "Starting http-api at $REV from $HTTP_API_PATH"
-  echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
+  echo "  http-api --root ${WORKSPACE} --passphrase $PASSPHRASE"
   echo
 
   git -C $HTTP_API_PATH checkout $REV

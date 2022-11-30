@@ -18,22 +18,22 @@ TEST_REPO_ARCHIVE=$REPO_ROOT/tests/fixtures/repos/source-browsing.tar.bz2
 TEST_REPO_NAME=source-browsing
 TEST_REPO_PATH=$BASE_PATH/repos/$TEST_REPO_NAME
 
-PALM_LNK_HOME=$BASE_PATH/seeds/palm
-ALICE_LNK_HOME=$BASE_PATH/peers/alice
+PALM_RAD_HOME=$BASE_PATH/seeds/palm
+ALICE_RAD_HOME=$BASE_PATH/peers/alice
 ALICE_CHECKOUT=$BASE_PATH/checkout/alice
-BOB_LNK_HOME=$BASE_PATH/peers/bob
+BOB_RAD_HOME=$BASE_PATH/peers/bob
 BOB_CHECKOUT=$BASE_PATH/checkout/bob
 
-mkdir -p $PALM_LNK_HOME
-mkdir -p $ALICE_LNK_HOME
+mkdir -p $PALM_RAD_HOME
+mkdir -p $ALICE_RAD_HOME
 mkdir -p $ALICE_CHECKOUT
-mkdir -p $BOB_LNK_HOME
+mkdir -p $BOB_RAD_HOME
 mkdir -p $BOB_CHECKOUT
 mkdir -p $TEST_REPO_PATH
 
 tar -xf $TEST_REPO_ARCHIVE -C $TEST_REPO_PATH
 
-LNK_HOME=$PALM_LNK_HOME rad auth --init --name palm --passphrase $PASSPHRASE
+RAD_HOME=$PALM_RAD_HOME rad auth --init --name palm --passphrase $PASSPHRASE
 
 docker run \
   --detach \
@@ -42,7 +42,7 @@ docker run \
   --rm \
   --env RAD_HOME=/app/radicle \
   --name radicle-git-server-test \
-  --volume $PALM_LNK_HOME:/app/radicle \
+  --volume $PALM_RAD_HOME:/app/radicle \
   "gcr.io/radicle-services/git-server:$REV" \
   --passphrase $PASSPHRASE \
   --allow-unauthorized-keys
@@ -55,7 +55,7 @@ GIT_AUTHOR_EMAIL="alice@radicle.xyz"
 GIT_COMMITTER_NAME="Alice Liddell"
 GIT_COMMITTER_EMAIL="alice@radicle.xyz"
 
-LNK_HOME=$ALICE_LNK_HOME rad auth --init --name alice --passphrase $PASSPHRASE
+RAD_HOME=$ALICE_RAD_HOME rad auth --init --name alice --passphrase $PASSPHRASE
 
 cd $ALICE_CHECKOUT
 
@@ -65,8 +65,8 @@ git checkout feature/branch
 git checkout orphaned-branch
 git checkout main
 
-LNK_HOME=$ALICE_LNK_HOME rad init --name "source-browsing" --description "Git repository for source browsing tests" --default-branch "main" --no-confirm
-LNK_HOME=$ALICE_LNK_HOME rad push --seed 0.0.0.0:8778 --all --sync
+RAD_HOME=$ALICE_RAD_HOME rad init --name "source-browsing" --description "Git repository for source browsing tests" --default-branch "main" --no-confirm
+RAD_HOME=$ALICE_RAD_HOME rad push --seed 0.0.0.0:8778 --all --sync
 PROJECT_URN=$(rad .)
 
 
@@ -75,18 +75,18 @@ GIT_AUTHOR_EMAIL="bob@radicle.xyz"
 GIT_COMMITTER_NAME="Bob Belcher"
 GIT_COMMITTER_EMAIL="bob@radicle.xyz"
 
-LNK_HOME=$BOB_LNK_HOME rad auth --init --name bob --passphrase $PASSPHRASE
+RAD_HOME=$BOB_RAD_HOME rad auth --init --name bob --passphrase $PASSPHRASE
 
 cd $BOB_CHECKOUT
-LNK_HOME=$BOB_LNK_HOME rad clone $PROJECT_URN --seed 0.0.0.0:8778 --no-confirm
+RAD_HOME=$BOB_RAD_HOME rad clone $PROJECT_URN --seed 0.0.0.0:8778 --no-confirm
 
 cd $TEST_REPO_NAME
 echo "Updated readme" > README.md
 git add README.md
 git commit --message "Update readme" --date "Mon Nov 21 14:00 2022 +0100"
-LNK_HOME=$BOB_LNK_HOME rad push --seed 0.0.0.0:8778
-LNK_HOME=$BOB_LNK_HOME rad sync --seed 0.0.0.0:8778 --self
-LNK_HOME=$BOB_LNK_HOME rad sync --seed 0.0.0.0:8778
+RAD_HOME=$BOB_RAD_HOME rad push --seed 0.0.0.0:8778
+RAD_HOME=$BOB_RAD_HOME rad sync --seed 0.0.0.0:8778 --self
+RAD_HOME=$BOB_RAD_HOME rad sync --seed 0.0.0.0:8778
 
 cd $BASE_PATH
-tar -cjf palm.tar.bz2 --exclude "post-receive" --exclude "pre-receive" -C $PALM_LNK_HOME .
+tar -cjf palm.tar.bz2 --exclude "post-receive" --exclude "pre-receive" -C $PALM_RAD_HOME .
