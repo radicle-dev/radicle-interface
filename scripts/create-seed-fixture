@@ -8,7 +8,7 @@ trap cleanup EXIT
 
 
 PASSPHRASE=asdf
-TAG=40bdc662b2d48cbfaa87182b21457ef8f861b04a
+REV=40bdc662b2d48cbfaa87182b21457ef8f861b04a
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 ID=$(echo $RANDOM | md5sum | head -c 8)
@@ -43,7 +43,7 @@ docker run \
   --env RAD_HOME=/app/radicle \
   --name radicle-git-server-test \
   --volume $PALM_LNK_HOME:/app/radicle \
-  "gcr.io/radicle-services/git-server:$TAG" \
+  "gcr.io/radicle-services/git-server:$REV" \
   --passphrase $PASSPHRASE \
   --allow-unauthorized-keys
 

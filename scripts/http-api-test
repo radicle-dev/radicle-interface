@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-TAG=40bdc662b2d48cbfaa87182b21457ef8f861b04a
+REV=40bdc662b2d48cbfaa87182b21457ef8f861b04a
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 CLIENT_SERVICES_REPO=$REPO_ROOT/../radicle-client-services
@@ -54,7 +54,7 @@ prepare_workspace()
 }
 
 run_docker() {
-  echo "Starting docker at container $CONTAINER_NAME at $TAG"
+  echo "Starting docker at container $CONTAINER_NAME at $REV"
   echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
   echo
 
@@ -65,18 +65,18 @@ run_docker() {
     --name $CONTAINER_NAME \
     --volume $WORKSPACE:/app/radicle \
     "$@" \
-    "gcr.io/radicle-services/http-api:$TAG" \
+    "gcr.io/radicle-services/http-api:$REV" \
     --passphrase $PASSPHRASE
 }
 
 run_cargo() {
   HTTP_API_PATH=$CLIENT_SERVICES_REPO/http-api
 
-  echo "Starting http-api at $TAG from $HTTP_API_PATH"
+  echo "Starting http-api at $REV from $HTTP_API_PATH"
   echo "  LNK_HOME=$WORKSPACE http-api --passphrase $PASSPHRASE"
   echo
 
-  git -C $HTTP_API_PATH checkout $TAG
+  git -C $HTTP_API_PATH checkout $REV
   (cd $HTTP_API_PATH && cargo run --release -- --listen 0.0.0.0:8777 --root $WORKSPACE --passphrase $PASSPHRASE)
 }
 
