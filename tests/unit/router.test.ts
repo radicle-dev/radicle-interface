@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { routeToPath } from "./index";
-import { testExports } from "./index";
+import { routeToPath } from "@app/router/index";
+import { testExports } from "@app/router/index";
 
 // Defining the window.origin value, since vitest doesn't provide one.
 window.origin = "http://localhost:3000";

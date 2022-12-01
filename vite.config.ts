@@ -29,7 +29,7 @@ export default defineConfig({
     deps: {
       inline: ["@ethersproject/signing-key", "@ethersproject/basex"],
     },
-    setupFiles: "./vitest/setupVitest",
+    setupFiles: "./tests/support/setupVitest",
     environment: "happy-dom",
     include: ["tests/unit/**/*.test.ts"],
     reporters: "verbose",
