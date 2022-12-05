@@ -32,12 +32,19 @@
     state.set("idle");
   });
 
-  const parseVestingPeriods = (input: string[]): string => {
-    const total = input
+  const parseVestingPeriods = (...timestamps: string[]): string => {
+    const sum = timestamps
       .map(s => parseInt(s))
       .reduce((prev, curr) => prev + curr, 0);
-    return new Date(total * 1000).toDateString();
+
+    return new Date(sum * 1000).toDateString();
   };
+
+  const navigateToVestingForm = () =>
+    router.push({
+      resource: "vesting",
+      params: { view: { resource: "form" } },
+    });
 </script>
 
 <style>
@@ -60,7 +67,7 @@
   <ErrorModal
     title="Failed to obtain contract information"
     message={error.message}
-    on:close={() => router.pop()} />
+    on:close={navigateToVestingForm} />
 {:else if $state === "loading"}
   <Loading center />
 {:else if info}
@@ -109,7 +116,7 @@
             <td class="txt-highlight">Start Time</td>
             <td>
               <span class="txt-bold">
-                {parseVestingPeriods([info.vestingStartTime])}
+                {parseVestingPeriods(info.vestingStartTime)}
               </span>
             </td>
           </tr>
@@ -117,7 +124,7 @@
             <td class="txt-highlight">Cliff Period End</td>
             <td>
               <span class="txt-bold">
-                {parseVestingPeriods([info.vestingStartTime, info.cliffPeriod])}
+                {parseVestingPeriods(info.vestingStartTime, info.cliffPeriod)}
               </span>
             </td>
           </tr>
@@ -125,10 +132,7 @@
             <td class="txt-highlight">Vesting Period End</td>
             <td>
               <span class="txt-bold">
-                {parseVestingPeriods([
-                  info.vestingStartTime,
-                  info.vestingPeriod,
-                ])}
+                {parseVestingPeriods(info.vestingStartTime, info.vestingPeriod)}
               </span>
             </td>
           </tr>
@@ -154,7 +158,7 @@
           </Button>
         {/if}
       {/if}
-      <Button on:click={() => router.pop()} variant="primary">Back</Button>
+      <Button on:click={navigateToVestingForm} variant="primary">Back</Button>
     </span>
   </Modal>
 {/if}
