@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
 
+import type { ViteDevServer } from "vite";
+
 import path from "path";
-import pluginRewriteAll from "vite-plugin-rewrite-all";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
@@ -71,3 +72,17 @@ export default defineConfig({
 
   define: defineConstants(),
 });
+
+function pluginRewriteAll() {
+  return {
+    name: "rewrite-all",
+    configureServer(server: ViteDevServer) {
+      return () => {
+        server.middlewares.use((req, _res, next) => {
+          req.url = "/index.html";
+          next();
+        });
+      };
+    },
+  };
+}
