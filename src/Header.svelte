@@ -13,7 +13,6 @@
   import Logo from "@app/Logo.svelte";
   import Search from "@app/Search.svelte";
   import SearchResults from "@app/components/Modal/SearchResults.svelte";
-  import SeedDropdown from "@app/SeedDropdown.svelte";
   import SettingsDropdown from "@app/components/SettingsDropdown.svelte";
 
   import { Profile, ProfileType } from "@app/profile";
@@ -48,15 +47,6 @@
     align-items: center;
     height: var(--button-regular-height);
     gap: 1rem;
-  }
-  .nav {
-    display: inline-block;
-    height: 100%;
-    margin-left: 1.5rem;
-    white-space: nowrap;
-  }
-  .nav .seeds-container {
-    display: inline-block;
   }
   .logo {
     display: flex;
@@ -110,7 +100,6 @@
     }
     .network,
     .search,
-    header .nav,
     .register,
     .balance {
       display: none;
@@ -161,18 +150,6 @@
         on:search={e => {
           ({ query, results } = e.detail);
         }} />
-    </div>
-    <div class="nav">
-      {#if session && Object.keys(session.siwe).length > 0}
-        <span class="seeds-container">
-          <Floating>
-            <span slot="toggle">Seeds</span>
-            <svelte:fragment slot="modal">
-              <SeedDropdown seeds={session.siwe} />
-            </svelte:fragment>
-          </Floating>
-        </span>
-      {/if}
     </div>
   </div>
 

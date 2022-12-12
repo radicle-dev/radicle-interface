@@ -57,7 +57,6 @@
     "md5": "^2.3.0",
     "plausible-tracker": "^0.3.8",
     "pure-svg-code": "^1.0.6",
-    "siwe": "^2.0.5",
     "svelte": "^3.54.0",
     "twemoji": "^14.0.2",
     "util": "^0.12.5"

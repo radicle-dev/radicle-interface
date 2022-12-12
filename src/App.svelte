@@ -95,10 +95,7 @@
       {:else if $activeRouteStore.resource === "faucet"}
         <Faucet {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "seeds"}
-        <Seeds
-          {wallet}
-          session={$session}
-          host={$activeRouteStore.params.host} />
+        <Seeds host={$activeRouteStore.params.host} />
       {:else if $activeRouteStore.resource === "registrations"}
         <Registrations
           {wallet}

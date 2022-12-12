@@ -63,8 +63,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          ethers: ["ethers", "@ethersproject/abstract-provider"],
-          auth: ["siwe", "@walletconnect/client"],
+          ethereum: [
+            "ethers",
+            "@ethersproject/abstract-provider",
+            "@walletconnect/client",
+          ],
           cache: ["lru-cache", "@stardazed/streams"],
           markdown: ["katex", "dompurify", "marked", "@radicle/gray-matter"],
           dom: ["svelte", "pure-svg-code", "twemoji"],

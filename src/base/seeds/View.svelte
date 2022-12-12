@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Wallet } from "@app/wallet";
   import type { Stats } from "@app/base/seeds/Seed";
   import type { ProjectInfo } from "@app/project";
   import { formatSeedId, formatSeedHost, twemoji } from "@app/utils";
@@ -9,16 +8,10 @@
   import NotFound from "@app/NotFound.svelte";
   import Clipboard from "@app/Clipboard.svelte";
   import Projects from "@app/base/seeds/View/Projects.svelte";
-  import type { Session } from "@app/session";
-  import Address from "@app/Address.svelte";
-  import SiweConnect from "@app/SiweConnect.svelte";
-  import type { SeedSession } from "@app/siwe";
   import Async from "@app/Async.svelte";
   import { Project } from "@app/project";
   import type { Host } from "@app/api";
 
-  export let wallet: Wallet;
-  export let session: Session | null;
   export let hostAndPort: string;
 
   const [host, port] = hostAndPort.includes(":")
@@ -27,7 +20,6 @@
 
   const hostName = formatSeedHost(host);
   const seedHost: Host = { host, port: Number(port) };
-  let siweSession: SeedSession | null = null;
 
   const getProjectsAndStats = async (
     seed: Seed,
@@ -39,14 +31,6 @@
     const projects = await Project.getProjects(seedHost, { perPage: 10 });
     return { stats, projects };
   };
-
-  $: if (session?.siwe) {
-    const entries = Object.entries(session.siwe);
-    const result = entries.find(([, session]) => session.domain === host);
-    if (result) {
-      siweSession = result[1];
-    }
-  }
 </script>
 
 <style>
@@ -77,17 +61,6 @@
     display: flex;
     align-items: center;
   }
-  .signed-in {
-    color: var(--color-foreground-5);
-    margin-right: 0.5rem;
-  }
-  .session-info {
-    display: flex;
-    flex-direction: row;
-    background: var(--color-secondary-2);
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius);
-  }
   .seed-label {
     display: flex;
     align-items: center;
@@ -97,9 +70,6 @@
     main {
       width: 100%;
       padding: 1.5rem;
-    }
-    .signed-in {
-      display: none;
     }
     .fields {
       grid-template-columns: 5rem auto;
@@ -124,30 +94,6 @@
           <span class="layout-desktop-inline" use:twemoji>{seed.emoji}</span>
         </span>
       </span>
-      <!-- User Session -->
-      <div class="siwe">
-        {#if session?.signer}
-          {#if siweSession}
-            <div class="session-info">
-              <span class="signed-in txt-small">Signed in as</span>
-              <Address
-                address={siweSession.address}
-                {wallet}
-                small
-                compact
-                resolve />
-            </div>
-          {:else}
-            <SiweConnect {seed} address={session.address} {wallet} />
-          {/if}
-        {:else}
-          <SiweConnect
-            disabled
-            {seed}
-            {wallet}
-            tooltip={"Connect your wallet to sign in"} />
-        {/if}
-      </div>
     </header>
 
     <div class="fields">

@@ -10,7 +10,6 @@ import { Unreachable, assert, assertEq } from "@app/error";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import type { WalletConnectSigner } from "./WalletConnectSigner";
 import * as ethers from "ethers";
-import type { SeedSession } from "./siwe";
 
 export enum Connection {
   Disconnected,
@@ -49,7 +48,6 @@ export interface Session {
   address: string;
   signer: Signer | null;
   signerType: SignerType;
-  siwe: { [key: string]: SeedSession };
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
   tx: TxState;
 }
@@ -58,7 +56,6 @@ export interface Store extends Readable<State> {
   connectMetamask(wallet: Wallet): Promise<void>;
   connectWalletConnect(wallet: Wallet): Promise<void>;
   updateBalance(n: BigNumber): void;
-  connectSeed(seed: { id: string; session: SeedSession }): void;
   refreshBalance(wallet: Wallet): Promise<void>;
   setTxSigning(): void;
   setTxPending(tx: TransactionResponse): void;
@@ -68,8 +65,6 @@ export interface Store extends Readable<State> {
 
 export const loadState = (initial: State): Store => {
   const store = writable<State>(initial);
-  // Loads from localStorage all active seed sessions.
-  const siwe = loadSeedSessions();
 
   return {
     subscribe: store.subscribe,
@@ -88,7 +83,6 @@ export const loadState = (initial: State): Store => {
           address: metamask.address,
           signer,
           signerType: SignerType.MetaMask,
-          siwe,
           tokenBalance,
           tx: null,
         };
@@ -122,7 +116,6 @@ export const loadState = (initial: State): Store => {
           address,
           signer,
           signerType: SignerType.MetaMask,
-          siwe,
           tokenBalance,
           tx: null,
         };
@@ -152,7 +145,6 @@ export const loadState = (initial: State): Store => {
           address,
           signer,
           signerType: SignerType.WalletConnect,
-          siwe,
           tokenBalance,
           tx: null,
         };
@@ -213,20 +205,6 @@ export const loadState = (initial: State): Store => {
           throw e;
         }
       }
-    },
-
-    connectSeed: ({ id, session }: { id: string; session: SeedSession }) => {
-      store.update((s: State) => {
-        switch (s.connection) {
-          case Connection.Connected:
-            s.session.siwe[id] = session;
-            saveSeedSession(s.session);
-
-            return s;
-          default:
-            return s;
-        }
-      });
     },
 
     updateBalance: (n: BigNumber) => {
@@ -376,34 +354,6 @@ export async function changeAccounts(
   state.refreshBalance(wallet);
 }
 
-export function loadSeedSessions(): { [key: string]: SeedSession } {
-  const siweStorage = localStorage.getItem("siwe");
-
-  if (siweStorage) {
-    const siwe: { [key: string]: SeedSession } = JSON.parse(siweStorage);
-
-    // We only keep the sessions that are still valid, and remove expired ones from `localStorage`.
-    // For a session to be valid the expiration time has to be bigger or equal than the current time.
-    const activeSessions = Object.fromEntries(
-      Object.entries(siwe).filter(([, value]) => {
-        return new Date(value.expirationTime) >= new Date();
-      }),
-    );
-    window.localStorage.setItem("siwe", JSON.stringify({ ...activeSessions }));
-
-    return activeSessions;
-  }
-
-  return {};
-}
-
-export async function connectSeed(seedSession: {
-  id: string;
-  session: SeedSession;
-}): Promise<void> {
-  state.connectSeed(seedSession);
-}
-
 export async function approveSpender(
   spender: string,
   amount: BigNumber,
@@ -432,10 +382,6 @@ export function disconnectWallet(wallet: Wallet): void {
     wallet.walletConnect.client.killSession();
   }
   disconnectMetamask();
-}
-
-function saveSeedSession(session: Session): void {
-  window.localStorage.setItem("siwe", JSON.stringify(session.siwe));
 }
 
 function saveMetamaskSession(session: Session): void {
