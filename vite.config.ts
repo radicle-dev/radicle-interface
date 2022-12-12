@@ -1,8 +1,10 @@
 /// <reference types="vitest" />
 
-import type { ViteDevServer } from "vite";
+import type { Connect, ViteDevServer } from "vite";
+import type http from "node:http";
 
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
@@ -41,7 +43,8 @@ export default defineConfig({
         dev: process.env.NODE_ENV !== "production",
       },
     }),
-    pluginRewriteAll(),
+    configureDevServer(),
+    configurePreviewServer(),
   ],
   server: {
     // We have to set host here, otherwise CI binds to the ipv6 address and
@@ -73,9 +76,9 @@ export default defineConfig({
   define: defineConstants(),
 });
 
-function pluginRewriteAll() {
+function configureDevServer() {
   return {
-    name: "rewrite-all",
+    name: "configure-dev-server",
     configureServer(server: ViteDevServer) {
       return () => {
         server.middlewares.use((req, _res, next) => {
@@ -83,6 +86,27 @@ function pluginRewriteAll() {
           next();
         });
       };
+    },
+  };
+}
+
+function configurePreviewServer() {
+  return {
+    name: "configure-preview-server",
+    configurePreviewServer(server: {
+      middlewares: Connect.Server;
+      httpServer: http.Server;
+    }) {
+      server.middlewares.use((req, _res, next) => {
+        if (
+          fs.existsSync(`./public${req.url}`) ||
+          req.url?.startsWith("/assets")
+        ) {
+          return next();
+        }
+        req.url = "/index.html";
+        next();
+      });
     },
   };
 }
