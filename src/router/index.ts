@@ -23,7 +23,11 @@ export const base = window.HASH_ROUTING ? "./" : "/";
 window.addEventListener("hashchange", e => {
   const route = pathToRoute(e.newURL);
   if (route?.resource === "projects" && route.params.hash) {
-    updateProjectRoute({ hash: route.params.hash });
+    if (route.params.hash.match(/^L\d+$/)) {
+      updateProjectRoute({ line: route.params.hash });
+    } else {
+      updateProjectRoute({ hash: route.params.hash });
+    }
   }
 });
 

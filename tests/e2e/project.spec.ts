@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import { test, expect } from "@tests/support/fixtures.js";
+import { expectUrlPersistsReload } from "@tests/support/router";
 
 const sourceBrowsingFixture =
   "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
@@ -74,9 +75,32 @@ test("source file highlighting", async ({ page }) => {
   await page.getByText("src/").click();
   await page.getByText("true.c").click();
 
-  await expect(page.getByText("return")).toHaveCSS(
-    "color",
-    "rgb(180, 142, 173)",
+  await expect(page.getByText("return")).toHaveCSS("color", "rgb(207, 34, 46)");
+});
+
+test("navigate line numbers", async ({ page }) => {
+  await page.goto(`${sourceBrowsingFixture}/tree/main/markdown/cheatsheet.md`);
+  await page.locator('role=button[name="Raw"]').click();
+
+  await page.locator('[href="#L5"]').click();
+  await expect(page.locator("#L5")).toHaveClass("line highlight");
+  await expect(page).toHaveURL(
+    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/markdown/cheatsheet.md#L5",
+  );
+
+  await expectUrlPersistsReload(page);
+  await expect(page.locator("#L5")).toHaveClass("line highlight");
+
+  await page.locator('[href="#L30"]').click();
+  await expect(page.locator("#L5")).not.toHaveClass("line highlight");
+  await expect(page.locator("#L30")).toHaveClass("line highlight");
+  await expect(page).toHaveURL(
+    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/markdown/cheatsheet.md#L30",
+  );
+
+  await page.getByText(".hidden").click();
+  await expect(page).toHaveURL(
+    "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/.hidden",
   );
 });
 

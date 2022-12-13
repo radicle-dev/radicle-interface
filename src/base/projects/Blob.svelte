@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { Blob } from "@app/project";
+  import type { MaybeHighlighted } from "@app/syntax";
   import type { ProjectRoute } from "@app/router/definitions";
 
   import HeaderToggleLabel from "@app/base/projects/HeaderToggleLabel.svelte";
-  import ProjectLink from "@app/router/ProjectLink.svelte";
   import Readme from "@app/base/projects/Readme.svelte";
+  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { highlight } from "@app/syntax";
   import { isMarkdownPath, scrollIntoView, twemoji } from "@app/utils";
-  import { onMount } from "svelte";
+  import { lineNumbersGutter } from "@app/syntax";
+  import { toHtml } from "hast-util-to-html";
   import { updateProjectRoute } from "@app/router";
 
   export let activeRoute: ProjectRoute;
@@ -14,25 +17,42 @@
   export let getImage: (path: string) => Promise<Blob>;
   export let line: string | undefined = undefined;
 
-  $: lineNumber = line ? parseInt(line.substring(1)) : undefined;
-
+  const fileExtension = blob.path.split(".").pop() ?? "";
   const lastCommit = blob.info.lastCommit;
-  const lines = blob.binary ? 0 : (blob.content.match(/\n/g) || []).length;
-  const hasFinalNewline = blob.content.endsWith("\n");
-  const lineNumbers = Array(hasFinalNewline ? lines : lines + 1)
-    .fill(0)
-    .map((_, index) => (index + 1).toString());
   const parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
     .next().value;
+  let content: MaybeHighlighted = undefined;
 
-  // Waiting onMount, due to the line numbers still loading.
-  onMount(() => {
-    if (line) {
-      scrollIntoView(line);
+  // Any time a user clicks on a line number, the `line` prop gets updated,
+  // and the line is highlighted, but the previous line is not unhighlighted.
+  // So we have to make sure here that any previous highlighting gets removed,
+  // before updating the component.
+  beforeUpdate(() => {
+    for (const item of document.getElementsByClassName("highlight")) {
+      item.classList.remove("highlight");
     }
   });
+
+  onMount(async () => {
+    const output = await highlight(blob.content, fileExtension);
+    if (output) {
+      content = lineNumbersGutter(output);
+    }
+  });
+
+  afterUpdate(() => {
+    if (line) {
+      scrollIntoView(line);
+
+      const element = document.getElementById(line);
+      if (element) {
+        element.classList.add("highlight");
+      }
+    }
+  });
+
   const isMarkdown = isMarkdownPath(blob.path);
   // If we have a line number we should show the raw output.
   let showMarkdown = line ? false : isMarkdown;
@@ -40,10 +60,6 @@
     updateProjectRoute({ line: undefined });
     showMarkdown = !showMarkdown;
   };
-
-  $: if (line) {
-    scrollIntoView(line);
-  }
 </script>
 
 <style>
@@ -100,29 +116,51 @@
     margin-right: 0.5rem;
   }
 
-  .line-numbers {
+  .code :global(.line-number) {
     color: var(--color-foreground-4);
-    font-family: var(--font-family-sans-serif);
     text-align: right;
-    user-select: none;
-    padding: 1rem 1rem 0.5rem 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
   }
-  .line-number {
-    display: block;
+  .code :global(.line-number:hover) {
+    cursor: pointer;
+    color: var(--color-foreground);
   }
-  .line-number:hover,
-  .line-number.highlighted {
-    color: var(--color-foreground-6);
+
+  .code :global(.content) {
+    display: inline;
+    font-family: var(--font-family-monospace);
+    margin: 0;
+  }
+
+  .code :global(.line) {
+    line-height: 22px; /* This seems to be the line-height of a pre code block */
+  }
+  .code :global(.highlight) {
+    background-color: var(--color-caution-3);
+  }
+  .code :global(.highlight td a) {
+    color: var(--color-foreground);
+  }
+
+  .code :global(.line-content) {
+    padding: 0;
+    width: 100%;
   }
 
   .code {
-    padding-bottom: 0.5rem;
+    width: 100%;
+    border-spacing: 0;
     overflow-x: auto;
+    font-size: 1rem;
+    padding-top: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .container {
     position: relative;
     display: flex;
+    overflow-x: auto;
     border: 1px solid var(--color-foreground-3);
     border-top-style: dashed;
     border-bottom-left-radius: var(--border-radius-small);
@@ -144,14 +182,6 @@
     margin-bottom: 1rem;
   }
 
-  .highlight {
-    position: absolute;
-    width: 100%;
-    height: 1.5rem;
-    top: 1rem;
-    background-color: var(--color-caution-3);
-  }
-
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -165,12 +195,8 @@
   }
 
   @media (max-width: 960px) {
-    .code,
-    .line-numbers {
+    .code {
       font-size: var(--font-size-small);
-    }
-    .highlight {
-      display: none;
     }
   }
 
@@ -215,27 +241,10 @@
       </div>
     {:else if showMarkdown}
       <Readme content={blob.content} {getImage} {activeRoute} />
-    {:else}
-      {#if lineNumber}
-        <div
-          class="highlight"
-          style="top: {lineNumber === 1 ? 1 : 1.5 * lineNumber - 0.5}rem" />
-      {/if}
-      <div class="line-numbers">
-        {#each lineNumbers as lineNumber}
-          <ProjectLink
-            projectParams={{ line: `L${lineNumber}` }}
-            id="L{lineNumber}">
-            <span class="line-number" class:highlighted={lineNumber === line} />
-            {lineNumber}
-          </ProjectLink>
-        {/each}
-      </div>
-      {#if blob.html}
-        <pre class="code no-scrollbar">{@html blob.content}</pre>
-      {:else}
-        <pre class="code txt-monospace no-scrollbar">{blob.content}</pre>
-      {/if}
+    {:else if content}
+      <table class="code no-scrollbar">
+        {@html toHtml(content)}
+      </table>
     {/if}
   </div>
 </div>

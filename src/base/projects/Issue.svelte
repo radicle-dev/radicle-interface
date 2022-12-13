@@ -15,7 +15,7 @@
   const getImage = async (imagePath: string): Promise<Blob> => {
     const finalPath = canonicalize(imagePath, "/"); // We only use the root path in issues.
     const commit = project.branches[project.defaultBranch]; // We suppose that all issues are only looked at on HEAD of the default branch.
-    return project.getBlob(commit, finalPath, { highlight: false });
+    return project.getBlob(commit, finalPath);
   };
 </script>
 

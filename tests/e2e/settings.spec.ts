@@ -44,7 +44,7 @@ test("change theme", async ({ page }) => {
     "rgb(243, 246, 253)",
   );
   // Source highlighting reacts to theme change.
-  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(79, 91, 102)");
+  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(26, 26, 44)");
 
   await page.locator(".theme .toggle").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -53,7 +53,7 @@ test("change theme", async ({ page }) => {
     "rgb(11, 19, 26)",
   );
   // Source highlighting reacts to theme change.
-  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(192, 197, 206)");
+  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(255, 255, 255)");
 });
 
 test("change code font", async ({ page }) => {

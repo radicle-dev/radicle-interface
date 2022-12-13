@@ -47,17 +47,8 @@
       return state.blob;
     }
 
-    const isMarkdownPath = utils.isMarkdownPath(path);
     const promise =
-      path === "/"
-        ? project.getReadme(commit)
-        : project.getBlob(
-            commit,
-            path,
-            isMarkdownPath
-              ? { highlight: false }
-              : { highlight: true, theme: `base16-ocean.${theme}` },
-          );
+      path === "/" ? project.getReadme(commit) : project.getBlob(commit, path);
 
     state = { status: Status.Loading, path };
     try {
@@ -71,7 +62,7 @@
   // Get an image blob based on a relative path.
   const getImage = async (imagePath: string): Promise<proj.Blob> => {
     const finalPath = utils.canonicalize(imagePath, path);
-    return project.getBlob(commit, finalPath, { highlight: false });
+    return project.getBlob(commit, finalPath);
   };
 
   const onSelect = async (newPath: string, theme: Theme) => {

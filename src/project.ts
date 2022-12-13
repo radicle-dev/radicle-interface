@@ -278,17 +278,11 @@ export class Project implements ProjectInfo {
     ).get();
   }
 
-  async getBlob(
-    commit: string,
-    path: string,
-    options:
-      | { highlight: false }
-      | { highlight: true; theme: "base16-ocean.dark" | "base16-ocean.light" },
-  ): Promise<Blob> {
+  async getBlob(commit: string, path: string): Promise<Blob> {
     return new Request(
       `projects/${this.urn}/blob/${commit}/${path}`,
       this.seed.api,
-    ).get(options);
+    ).get();
   }
 
   async getReadme(commit: string): Promise<Blob> {

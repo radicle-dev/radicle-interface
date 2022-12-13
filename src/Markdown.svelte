@@ -4,6 +4,7 @@
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { base } from "@app/router";
+  import { highlight } from "@app/syntax";
   import {
     markdownExtensions as extensions,
     renderer,
@@ -14,6 +15,7 @@
   } from "@app/utils";
   import { marked } from "marked";
   import { onMount } from "svelte";
+  import { toDom } from "hast-util-to-dom";
 
   export let content: string;
   export let doc = matter(content);
@@ -29,7 +31,7 @@
     // eslint-disable-next-line @typescript-eslint/naming-convention
     dompurify.sanitize(marked.parse(content), { SANITIZE_DOM: false });
 
-  onMount(() => {
+  onMount(async () => {
     // Don't underline <a> tags that contain images.
     const elems = container.querySelectorAll("a");
 
@@ -59,6 +61,31 @@
         });
       }
     }
+
+    // Replaces code blocks in the background with highlighted code.
+    const prefix = "language-";
+    const nodes = Array.from(document.body.querySelectorAll("pre code"));
+
+    const treeChanges: Promise<void>[] = [];
+
+    for (const node of nodes) {
+      const className = Array.from(node.classList).find(name =>
+        name.startsWith(prefix),
+      );
+      if (!className) continue;
+
+      treeChanges.push(
+        highlight(node.textContent ?? "", className.slice(prefix.length))
+          .then(tree => {
+            if (tree) {
+              node.replaceChildren(toDom(tree, { fragment: true }));
+            }
+          })
+          .catch(e => console.warn("Not able to highlight code block", e)),
+      );
+    }
+
+    await Promise.allSettled(treeChanges);
   });
 </script>
 
@@ -160,7 +187,7 @@
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    color: var(--color-secondary-6);
+    color: var(--color-foreground);
     background-color: var(--color-foreground-2);
     border-radius: 0.5rem;
     padding: 0.125rem 0.25rem;
