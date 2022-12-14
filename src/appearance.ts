@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-export type CodeFont = "jetbrains" | "system";
+export type CodeFont = typeof codeFonts[number]["storedName"];
 export const codeFont = writable<CodeFont>(loadCodeFont());
 
 export function storeCodeFont(codeFont: CodeFont): void {
@@ -17,15 +17,11 @@ function loadCodeFont(): CodeFont {
   }
 }
 
-export const codeFonts: {
-  storedName: CodeFont;
-  fontFamily: string;
-  displayName: string;
-}[] = [
+export const codeFonts = [
   {
     storedName: "jetbrains",
     fontFamily: "JetBrains Mono",
     displayName: "JetBrains Mono",
   },
   { storedName: "system", fontFamily: "monospace", displayName: "System" },
-];
+] as const;
