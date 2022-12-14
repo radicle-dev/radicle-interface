@@ -156,3 +156,24 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
     console.log(output);
   }
 }
+
+export function appConfigWithFixture() {
+  window.APP_CONFIG = {
+    walletConnect: {
+      bridge: "https://radicle.bridge.walletconnect.org",
+    },
+    reactions: [],
+    seeds: {
+      pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
+    },
+    projects: {
+      pinned: [
+        {
+          name: "source-browsing",
+          urn: "rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o",
+          seed: "0.0.0.0",
+        },
+      ],
+    },
+  };
+}
