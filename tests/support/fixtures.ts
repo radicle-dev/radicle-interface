@@ -177,3 +177,6 @@ export function appConfigWithFixture() {
     },
   };
 }
+
+export const projectFixtureUrl =
+  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";

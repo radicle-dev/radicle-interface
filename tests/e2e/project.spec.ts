@@ -1,9 +1,6 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "@tests/support/fixtures.js";
+import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
 import { expectUrlPersistsReload } from "@tests/support/router";
-
-const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
 
 async function expectCounts(
   params: { commits: number; contributors: number },
@@ -18,7 +15,7 @@ async function expectCounts(
 }
 
 test("navigate to project", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   // Header.
   {
@@ -54,7 +51,7 @@ test("navigate to project", async ({ page }) => {
 });
 
 test("show source tree at specific revision", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
   await page
@@ -70,7 +67,7 @@ test("show source tree at specific revision", async ({ page }) => {
 });
 
 test("source file highlighting", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   await page.getByText("src/").click();
   await page.getByText("true.c").click();
@@ -82,7 +79,7 @@ test("source file highlighting", async ({ page }) => {
 });
 
 test("navigate line numbers", async ({ page }) => {
-  await page.goto(`${sourceBrowsingFixture}/tree/main/markdown/cheatsheet.md`);
+  await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
   await page.locator('role=button[name="Raw"]').click();
 
   await page.locator('[href="#L5"]').click();
@@ -108,7 +105,7 @@ test("navigate line numbers", async ({ page }) => {
 });
 
 test("navigate deep file hierarchies", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   const sourceTree = page.locator(".source-tree");
 
@@ -151,7 +148,7 @@ test("navigate deep file hierarchies", async ({ page }) => {
 });
 
 test("files with special characters in the filename", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   const sourceTree = page.locator(".source-tree");
   await sourceTree.getByText("special/").click();
@@ -195,7 +192,7 @@ test("files with special characters in the filename", async ({ page }) => {
 });
 
 test("binary files", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   await page.getByText("bin/").click();
   await page.getByText("true").click();
@@ -204,7 +201,7 @@ test("binary files", async ({ page }) => {
 });
 
 test("hidden files", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   await page.getByText(".hidden").click();
 
@@ -212,7 +209,7 @@ test("hidden files", async ({ page }) => {
 });
 
 test("markdown files", async ({ page }) => {
-  await page.goto(`${sourceBrowsingFixture}/tree/main/markdown/cheatsheet.md`);
+  await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
 
   await expect(
     page.locator("text=This is intended as a quick reference and showcase."),
@@ -240,7 +237,7 @@ test("markdown files", async ({ page }) => {
 });
 
 test("peer and branch switching", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   // Alice's peer.
   {
@@ -319,7 +316,7 @@ test("peer and branch switching", async ({ page }) => {
 });
 
 test("clone modal", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   await page.getByText("Clone").click();
   await expect(
@@ -335,7 +332,7 @@ test("clone modal", async ({ page }) => {
 });
 
 test("only one modal can be open at a time", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
   await page.locator("text=alice hyn1mj").click();

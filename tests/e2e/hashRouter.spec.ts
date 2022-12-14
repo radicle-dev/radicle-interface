@@ -1,4 +1,9 @@
-import { test, expect, appConfigWithFixture } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  appConfigWithFixture,
+  projectFixtureUrl,
+} from "@tests/support/fixtures.js";
 import {
   expectBackAndForwardNavigationWorks,
   expectUrlPersistsReload,
@@ -18,7 +23,7 @@ test("navigate between landing and project page", async ({ page }) => {
 
   await page.locator("text=source-browsing").click();
   await expect(page).toHaveURL(
-    "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/530aabdcc80397af254bc488b767169b92496e81",
+    `/#${projectFixtureUrl}/tree/530aabdcc80397af254bc488b767169b92496e81`,
   );
 
   await expectBackAndForwardNavigationWorks("/#/", page);
@@ -31,7 +36,7 @@ test("navigation between seed and project pages", async ({ page }) => {
   const project = page.locator(".project");
   await project.click();
   await expect(page).toHaveURL(
-    "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/530aabdcc80397af254bc488b767169b92496e81",
+    `/#${projectFixtureUrl}/tree/530aabdcc80397af254bc488b767169b92496e81`,
   );
 
   await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
@@ -45,13 +50,12 @@ test.describe("project page navigation", () => {
   test("navigation between commit history and single commit", async ({
     page,
   }) => {
-    const projectHistoryURL =
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/history/530aabdcc80397af254bc488b767169b92496e81";
+    const projectHistoryURL = `/#${projectFixtureUrl}/history/530aabdcc80397af254bc488b767169b92496e81`;
     await page.goto(projectHistoryURL);
 
     await page.locator("text=Add Markdown cheat sheet").click();
     await expect(page).toHaveURL(
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/commits/530aabdcc80397af254bc488b767169b92496e81",
+      `/#${projectFixtureUrl}/commits/530aabdcc80397af254bc488b767169b92496e81`,
     );
 
     await expectBackAndForwardNavigationWorks(projectHistoryURL, page);
@@ -59,15 +63,14 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate between tree and commit history", async ({ page }) => {
-    const projectTreeURL =
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/530aabdcc80397af254bc488b767169b92496e81";
+    const projectTreeURL = `/#${projectFixtureUrl}/tree/530aabdcc80397af254bc488b767169b92496e81`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.locator('role=button[name="Commit count"]').click();
     await expect(page).toHaveURL(
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/history/530aabdcc80397af254bc488b767169b92496e81",
+      `/#${projectFixtureUrl}/history/530aabdcc80397af254bc488b767169b92496e81`,
     );
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
@@ -75,8 +78,7 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths", async ({ page }) => {
-    const projectTreeURL =
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/530aabdcc80397af254bc488b767169b92496e81";
+    const projectTreeURL = `/#${projectFixtureUrl}/tree/530aabdcc80397af254bc488b767169b92496e81`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
@@ -96,8 +98,7 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths with a selected peer", async ({ page }) => {
-    const projectTreeURL =
-      "/#/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/tree";
+    const projectTreeURL = `/#${projectFixtureUrl}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/tree`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);

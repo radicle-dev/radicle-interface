@@ -1,10 +1,7 @@
-import { test, expect } from "@tests/support/fixtures.js";
-
-const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
+import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
 
 test("peer and branch switching", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
   // Alice's peer.
@@ -79,7 +76,7 @@ test("peer and branch switching", async ({ page }) => {
 });
 
 test("verified badge", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.getByTitle("Change peer").click();
@@ -111,7 +108,7 @@ test("relative timestamps", async ({ page }) => {
     };
   });
 
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.getByTitle("Change peer").click();

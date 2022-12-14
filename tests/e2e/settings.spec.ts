@@ -1,7 +1,6 @@
-import { test, expect } from "@tests/support/fixtures.js";
+import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
 
-const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o/tree/main/src/true.c";
+const sourceBrowsingFixture = `${projectFixtureUrl}/tree/main/src/true.c`;
 
 test("default settings", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);

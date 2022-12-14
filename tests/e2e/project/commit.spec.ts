@@ -1,11 +1,9 @@
-import { test, expect } from "@tests/support/fixtures.js";
+import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
 
-const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkgd7sjt79k4j59ddh11ooxg18rk7soej8o";
-const modifiedFileFixture = `${sourceBrowsingFixture}/remotes/hyy1k6ggg45pi7ip7ksyn1wt1ob4w5zh1awtg4qu3cxmbh5mws8pj1/commits/0be0f0302269b362be0bfe72aa4843eceaac5e3f`;
+const modifiedFileFixture = `${projectFixtureUrl}/remotes/hyy1k6ggg45pi7ip7ksyn1wt1ob4w5zh1awtg4qu3cxmbh5mws8pj1/commits/0be0f0302269b362be0bfe72aa4843eceaac5e3f`;
 
 test("navigation from commit list", async ({ page }) => {
-  await page.goto(sourceBrowsingFixture);
+  await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
   await page.locator("text=bob hyy1k6").click();
   await page.locator('role=button[name="Commit count"]').click();
@@ -55,7 +53,7 @@ test("modified file", async ({ page }) => {
 
 test("created file", async ({ page }) => {
   await page.goto(
-    `${sourceBrowsingFixture}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
+    `${projectFixtureUrl}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(
     page.locator("text=1 file(s) created with 9 addition(s) and 0 deletion(s)"),
@@ -65,7 +63,7 @@ test("created file", async ({ page }) => {
 
 test("deleted file", async ({ page }) => {
   await page.goto(
-    `${sourceBrowsingFixture}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
+    `${projectFixtureUrl}/remotes/hyn1mjueopwzrmb18c3zmgg8ei8qunn5wpg76ouymytfqkfxqx7bun/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
   );
   await expect(
     page.locator("text=1 file(s) deleted with 0 addition(s) and 1 deletion(s)"),
@@ -75,7 +73,7 @@ test("deleted file", async ({ page }) => {
 
 test("navigation to source tree at specific revision", async ({ page }) => {
   await page.goto(
-    `${sourceBrowsingFixture}/commits/0801aceeab500033f8d608778218657bd626ef73`,
+    `${projectFixtureUrl}/commits/0801aceeab500033f8d608778218657bd626ef73`,
   );
 
   // Go to source tree at this revision.
@@ -84,7 +82,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
     page.locator("text=Add a deeply nested directory tree"),
   ).toBeVisible();
   await expect(page).toHaveURL(
-    `${sourceBrowsingFixture}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,
+    `${projectFixtureUrl}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,
   );
   await expect(page.getByTitle("Current branch")).toContainText(
     "0801aceeab500033f8d608778218657bd626ef73",
