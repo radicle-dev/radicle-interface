@@ -139,7 +139,10 @@ export const test = base.extend<{
     await Fs.mkdir(stateDir, { recursive: true });
 
     await use(stateDir);
-    if (process.env.CI && testInfo.status === "passed") {
+    if (
+      process.env.CI &&
+      (testInfo.status === "passed" || testInfo.status === "skipped")
+    ) {
       await Fs.rm(stateDir, { recursive: true });
     }
   },

@@ -3,12 +3,12 @@ import { devices } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/e2e",
+  outputDir: "./tests/artifacts",
   timeout: 30_000,
   expect: {
     timeout: 8000,
   },
   fullyParallel: true,
-  outputDir: "./tests/artifacts",
   workers: process.env.CI ? 1 : undefined,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -37,6 +37,27 @@ const config: PlaywrightTestConfig = {
       name: "webkit",
       use: {
         ...devices["Desktop Safari"],
+      },
+    },
+    {
+      name: "visual",
+      expect: {
+        timeout: 16_000,
+        toHaveScreenshot: {
+          threshold: 0.1,
+          scale: "device",
+          animations: "disabled",
+        },
+      },
+      testDir: "./tests/visual",
+      snapshotDir: "./tests/visual/snapshots",
+      retries: 0,
+      use: {
+        ...devices["Desktop Chrome"],
+        actionTimeout: 0,
+        deviceScaleFactor: 2,
+        baseURL: "http://localhost:3000",
+        trace: "off",
       },
     },
   ],
