@@ -23,7 +23,7 @@ jobs:
     - name: Build app
       run: npm run build
     - name: Run Playwright build smoke test
-      run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts tests/e2e/buildSmoke.spec.ts
+      run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts
     - uses: actions/upload-artifact@v3
       if: always()
       with:

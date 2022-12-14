@@ -4,6 +4,7 @@ import base from "./playwright.config.js";
 
 const config: PlaywrightTestConfig = {
   ...base,
+  testDir: "./tests/build",
   use: {
     ...base.use,
     baseURL: "http://localhost:4173",
