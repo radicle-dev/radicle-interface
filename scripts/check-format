@@ -2,4 +2,4 @@
 set -euo pipefail
 
 npx eslint .
-npx prettier "**/*.@(ts|js|svelte|json|css|html)" --ignore-path .gitignore --check
+npx prettier "**/*.@(ts|js|svelte|json|css|html|yml)" --ignore-path .gitignore --check

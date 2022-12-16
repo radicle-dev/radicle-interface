@@ -52,11 +52,11 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-              if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
-                npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
-              else
-                npm run test:e2e -- --project ${{ matrix.browser }};
-              fi
+          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
+            npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
+          else
+            npm run test:e2e -- --project ${{ matrix.browser }};
+          fi
 
       - uses: actions/upload-artifact@v3
         if: always()
