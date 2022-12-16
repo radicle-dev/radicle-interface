@@ -25,7 +25,6 @@
     justify-content: space-between;
     padding: 1rem;
     border: 1px solid var(--color-secondary-5);
-    border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
   }
