@@ -9,6 +9,7 @@ on:
 
 jobs:
   check-build:
+    if: github.event.pull_request.merged == false
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:

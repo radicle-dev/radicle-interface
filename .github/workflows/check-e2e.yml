@@ -9,6 +9,7 @@ on:
 
 jobs:
   check-e2e:
+    if: github.event.pull_request.merged == false
     continue-on-error: true
     strategy:
       matrix:
