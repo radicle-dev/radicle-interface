@@ -22,7 +22,9 @@
   export let getImage: (path: string) => Promise<proj.Blob>;
   export let hash: string | null = null;
 
-  const frontMatter = Object.entries(doc.data);
+  const frontMatter = Object.entries(doc.data).filter(
+    ([, val]) => typeof val === "string" || typeof val === "number",
+  );
   marked.use({ extensions, renderer });
 
   let container: HTMLElement;
