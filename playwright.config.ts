@@ -41,8 +41,9 @@ const config: PlaywrightTestConfig = {
     },
     {
       name: "visual",
+      timeout: 60_000,
       expect: {
-        timeout: 16_000,
+        timeout: 30_000,
         toHaveScreenshot: {
           threshold: 0.1,
           scale: "device",

@@ -9,7 +9,6 @@ on:
 
 jobs:
   check-build:
-    if: github.event.pull_request.merged == false
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -25,10 +24,12 @@ jobs:
         run: npm run build
       - name: Run Playwright build smoke test
         run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts
-      - uses: actions/upload-artifact@v3
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-artifacts-${{ runner.os }}
           retention-days: 30
+          if-no-files-found: "ignore"
           path: |
             tests/artifacts/**/*
