@@ -75,7 +75,10 @@ test("source file highlighting", async ({ page }) => {
   await page.getByText("src/").click();
   await page.getByText("true.c").click();
 
-  await expect(page.getByText("return")).toHaveCSS("color", "rgb(207, 34, 46)");
+  await expect(page.getByText("return")).toHaveCSS(
+    "color",
+    "rgb(255, 123, 114)",
+  );
 });
 
 test("navigate line numbers", async ({ page }) => {
