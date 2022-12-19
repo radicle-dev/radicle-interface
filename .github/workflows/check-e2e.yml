@@ -18,6 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Evict playwright snapshot cache when pushing to master
+        run: |
+          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
+            echo "Deleting ${{ runner.os }}-snapshots cache"
+            gh extension install actions/gh-actions-cache
+            gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
+            echo "Done"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: "18.12.1"
