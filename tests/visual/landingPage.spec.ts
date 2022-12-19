@@ -6,6 +6,6 @@ test.use({
 
 test("landing page", async ({ page }) => {
   await page.addInitScript(appConfigWithFixture);
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });

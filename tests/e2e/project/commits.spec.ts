@@ -98,7 +98,7 @@ test("verified badge", async ({ page }) => {
 });
 
 test("relative timestamps", async ({ page }) => {
-  page.addInitScript(() => {
+  await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
         now: new Date("November 24 2022 12:00:00").valueOf(),
