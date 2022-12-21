@@ -127,14 +127,16 @@ jobs:
 
       - name: Run Playwright tests
         id: run-playwright-tests
+        # run: |
+        #   if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
+        #     npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
+        #   elif [ ${{ matrix.browser }} = "visual" ]; then
+        #     npm run test:e2e -- --project visual || echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
+        #   else
+        #     npm run test:e2e -- --project ${{ matrix.browser }};
+        #   fi
         run: |
-          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
-            npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
-          elif [ ${{ matrix.browser }} = "visual" ]; then
-            npm run test:e2e -- --project visual || echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
-          else
-            npm run test:e2e -- --project ${{ matrix.browser }};
-          fi
+            echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -155,10 +157,10 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log(context);
+            console.log(JSON.stringify(${{needs}}))
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 hi: ' + context.needs["check-e2e"].outputs.visual-state
+              body: '👋 hi: ' + ${{ toJSON(needs) }}.needs["check-e2e"].outputs.visual-state
             });
