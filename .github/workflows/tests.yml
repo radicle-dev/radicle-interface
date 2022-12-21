@@ -149,15 +149,16 @@ jobs:
   post-summary:
     needs: check-e2e
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master' && needs["check-e2e"].outputs.visual-state != ''
+    if: github.ref != 'refs/heads/master' && needs.check-e2e.outputs.visual-state != ''
     steps:
       - uses: actions/github-script@v5
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            console.log(context);
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: '👋 hi: ' + context.needs["check-e2e"].outputs.visual-state
-            })
+            });
