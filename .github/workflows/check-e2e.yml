@@ -15,6 +15,8 @@ jobs:
         browser: [chromium, firefox, visual]
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    outputs:
+      visual-state: ${{ steps.run-playwright-tests.outputs.visual-state }}
     steps:
       - uses: actions/checkout@v3
 
@@ -62,9 +64,12 @@ jobs:
         run: ./scripts/run-http-api-with-fixtures --non-interactive --detach
 
       - name: Run Playwright tests
+        id: run-playwright-tests
         run: |
           if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
             npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
+          elif [ ${{ matrix.browser }} = "visual" ]
+            npm run test:e2e -- --project visual || echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
           else
             npm run test:e2e -- --project ${{ matrix.browser }};
           fi
@@ -82,7 +87,7 @@ jobs:
   post-summary:
     needs: check-e2e
     runs-on: ubuntu-latest
-    if: github.ref != "refs/heads/master"
+    if: github.ref != 'refs/heads/master' && needs.check-e2e.outputs.visual-state != ''
     steps:
       - uses: actions/github-script@v5
         with:
@@ -92,5 +97,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 hi'
+              body: '👋 hi: ' + needs.check-e2e.outputs.visual-state
             })
