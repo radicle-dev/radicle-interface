@@ -79,14 +79,15 @@ jobs:
           path: |
             tests/artifacts/**/*
 
+  post-summary:
+    needs: check-e2e
+    runs-on: ubuntu-latest
+    if: github.ref != "refs/heads/master"
+    steps:
       - uses: actions/github-script@v5
-        if: always()
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            if(github.ref === "refs/heads/master") {
-              return
-            }
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
