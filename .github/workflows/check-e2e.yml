@@ -68,7 +68,7 @@ jobs:
         run: |
           if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
             npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
-          elif [ ${{ matrix.browser }} = "visual" ]
+          elif [ ${{ matrix.browser }} = "visual" ]; then
             npm run test:e2e -- --project visual || echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
           else
             npm run test:e2e -- --project ${{ matrix.browser }};
