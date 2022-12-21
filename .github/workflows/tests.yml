@@ -8,72 +8,73 @@ on:
       - master
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.1"
-      - uses: actions/checkout@v3
-      - run: npm ci
-      - run: npm run check
+  # check:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "18.12.1"
+  #     - uses: actions/checkout@v3
+  #     - run: npm ci
+  #     - run: npm run check
 
-  check-build:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.1"
-      - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Build app
-        run: npm run build
-      - name: Run Playwright build smoke test
-        run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-artifacts-${{ runner.os }}
-          retention-days: 30
-          if-no-files-found: "ignore"
-          path: |
-            tests/artifacts/**/*
+  # check-build:
+  #   timeout-minutes: 30
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "18.12.1"
+  #     - name: Install dependencies
+  #       run: npm ci
+  #     - name: Install Playwright Browsers
+  #       run: npx playwright install --with-deps
+  #     - name: Build app
+  #       run: npm run build
+  #     - name: Run Playwright build smoke test
+  #       run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: test-artifacts-${{ runner.os }}
+  #         retention-days: 30
+  #         if-no-files-found: "ignore"
+  #         path: |
+  #           tests/artifacts/**/*
 
-  check-format:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.1"
-      - uses: actions/checkout@v3
-      - run: npm ci
-      - run: ./scripts/check-format
-        shell: bash
+  # check-format:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "18.12.1"
+  #     - uses: actions/checkout@v3
+  #     - run: npm ci
+  #     - run: ./scripts/check-format
+  #       shell: bash
 
-  check-unit-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.1"
-      - name: Checkout
-        uses: actions/checkout@v3
-      - run: npm ci
-      - run: npm run test:unit
+  # check-unit-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "18.12.1"
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - run: npm ci
+  #     - run: npm run test:unit
 
   check-e2e:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox, visual]
+        #browser: [chromium, firefox, visual]
+        browser: [visual]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     outputs:
@@ -148,7 +149,7 @@ jobs:
   post-summary:
     needs: check-e2e
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master' && needs.check-e2e.outputs.visual-state != ''
+    if: github.ref != 'refs/heads/master' && needs["check-e2e"].outputs.visual-state != ''
     steps:
       - uses: actions/github-script@v5
         with:
@@ -158,5 +159,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 hi: ' + context.needs.check-e2e.outputs.visual-state
+              body: '👋 hi: ' + context.needs["check-e2e"].outputs.visual-state
             })
