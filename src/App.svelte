@@ -105,7 +105,7 @@
           session={$session}
           activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "vesting"}
-        <Vesting {wallet} session={$session} activeRoute={$activeRouteStore} />
+        <Vesting {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "projects"}
         <Projects {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "profile"}

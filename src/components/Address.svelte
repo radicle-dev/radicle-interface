@@ -9,7 +9,6 @@
   import Link from "@app/components/Link.svelte";
   import {
     AddressType,
-    explorerLink,
     formatAddress,
     identifyAddress,
     parseEnsLabel,
@@ -65,12 +64,6 @@
     align-items: center;
     height: 100%;
   }
-  .address a {
-    color: var(--color-foreground-6);
-  }
-  .address a:hover {
-    color: var(--color-foreground);
-  }
   .highlight {
     color: var(--color-foreground-6);
     font-weight: var(--font-weight-bold);
@@ -96,37 +89,18 @@
     {/if}
   {/if}
   <div class="wrapper">
-    {#if addressType === AddressType.Org}
-      <Link
-        route={{
-          resource: "profile",
-          params: { addressOrName: addressOrName },
-        }}>
-        {addressLabel}
-      </Link>
-      {#if !noBadge}
+    <Link route={{ resource: "profile", params: { addressOrName } }}>
+      {addressLabel}
+    </Link>
+
+    {#if !noBadge}
+      {#if addressType === AddressType.Org}
         <Badge variant="foreground">org</Badge>
-      {/if}
-    {:else if addressType === AddressType.Contract}
-      <Link route={{ resource: "profile", params: { addressOrName: address } }}>
-        {addressLabel}
-      </Link>
-      {#if !noBadge}
+      {:else if addressType === AddressType.Vesting}
+        <Badge variant="foreground">vesting contract</Badge>
+      {:else if addressType === AddressType.Contract}
         <Badge variant="foreground">contract</Badge>
       {/if}
-    {:else if addressType === AddressType.EOA}
-      <Link
-        route={{
-          resource: "profile",
-          params: { addressOrName: addressOrName },
-        }}>
-        {addressLabel}
-      </Link>
-    {:else}
-      <!-- While we're waiting to find out what address type it is -->
-      <a href={explorerLink(address, wallet)} target="_blank" rel="noreferrer">
-        {addressLabel}
-      </a>
     {/if}
   </div>
 </div>

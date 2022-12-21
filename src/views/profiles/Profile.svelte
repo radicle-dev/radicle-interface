@@ -3,6 +3,8 @@
   import type { Wallet } from "@app/lib/wallet";
   import type { Seed, Stats } from "@app/lib/seed";
   import type { ProjectInfo } from "@app/lib/project";
+  import type { VestingInfo } from "@app/lib/vesting";
+
   import * as utils from "@app/lib/utils";
   import Address from "@app/components/Address.svelte";
   import Async from "@app/components/Async.svelte";
@@ -18,19 +20,30 @@
   import RadicleId from "@app/components/RadicleId.svelte";
   import SeedAddress from "@app/components/SeedAddress.svelte";
   import SetName from "./SetName.svelte";
+  import Withdraw from "@app/views/vesting/Withdraw.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/lib/error";
   import { User, Profile, ProfileType } from "@app/lib/profile";
   import { defaultNodePort } from "@app/lib/seed";
+  import {
+    getInfo,
+    getVestingContract,
+    handleEtherErrorState,
+    parseVestingPeriods,
+  } from "@app/lib/vesting";
+  import { onMount } from "svelte";
   import { session } from "@app/lib/session";
 
   export let wallet: Wallet;
   export let addressOrName: string;
-  export let action: string | null = null;
 
-  let setNameForm: typeof SvelteComponent | null =
-    action === "setName" ? SetName : null;
+  let vestingInfo: VestingInfo | undefined = undefined;
+  let setNameForm: typeof SvelteComponent | undefined = undefined;
+  let withdrawVestingModal: typeof SvelteComponent | undefined = undefined;
   const setName = () => {
     setNameForm = SetName;
+  };
+  const withdrawVesting = () => {
+    withdrawVestingModal = Withdraw;
   };
 
   const getProjectsAndStats = async (
@@ -44,6 +57,49 @@
     const projects = await seed.getProjects(10, id);
     return { stats, projects };
   };
+
+  // Refresh vestingInfo and close modal if addressOrName changes
+  $: {
+    vestingInfo = undefined;
+    withdrawVestingModal = undefined;
+    getInfo(addressOrName, wallet)
+      .then(info => {
+        vestingInfo = info;
+      })
+      .catch(() => {
+        console.warn("Not able to get vesting contract info");
+      });
+  }
+
+  onMount(async () => {
+    const addressType = await utils.identifyAddress(addressOrName, wallet);
+    if (addressType === utils.AddressType.Contract) {
+      try {
+        vestingInfo = await getInfo(addressOrName, wallet);
+      } catch (e) {
+        handleEtherErrorState(e, "Not able to get vesting contract info");
+      }
+    }
+  });
+
+  const vestingContract = getVestingContract(addressOrName, wallet);
+
+  wallet.provider.on("block", async () => {
+    if (vestingInfo) {
+      try {
+        const updatedAmounts = await Promise.all([
+          vestingContract.withdrawableBalance(),
+          vestingContract.withdrawn(),
+        ]);
+        vestingInfo.withdrawableBalance = utils.formatBalance(
+          updatedAmounts[0],
+        );
+        vestingInfo.withdrawn = utils.formatBalance(updatedAmounts[1]);
+      } catch (e) {
+        handleEtherErrorState(e, "Not able to update the balance");
+      }
+    }
+  });
 
   $: isUserAuthorized = (address: string): boolean | null => {
     return $session && utils.isAddressEqual(address, $session.address);
@@ -75,7 +131,7 @@
   }
   .fields {
     display: grid;
-    grid-template-columns: 5rem 4fr 2fr;
+    grid-template-columns: max-content 4fr 2fr;
     gap: 1rem 2rem;
     margin-bottom: 1rem;
   }
@@ -116,7 +172,7 @@
       padding: 1.5rem;
     }
     .fields {
-      grid-template-columns: 5rem auto;
+      grid-template-columns: max-content auto;
     }
   }
 </style>
@@ -167,6 +223,14 @@
           {#if profile.github}
             <a class="url" href="https://github.com/{profile.github}">
               <Icon name="github" />
+            </a>
+          {/if}
+          {#if utils.isAddress(profile.address)}
+            <a
+              class="url"
+              title="Lookup address on Etherscan"
+              href={utils.explorerLink(profile.address, wallet)}>
+              <Icon name="etherscan" />
             </a>
           {/if}
         </div>
@@ -255,6 +319,64 @@
           {/if}
         </div>
       {/if}
+      {#if vestingInfo}
+        <div class="txt-highlight">Vesting Beneficiary</div>
+        <div style:display="flex" style:gap="1rem">
+          <Address address={vestingInfo.beneficiary} {wallet} resolve compact />
+        </div>
+        <div class="layout-desktop" />
+        <div class="txt-highlight">Allocation</div>
+        <div>
+          {vestingInfo.totalVesting}
+          <span class="txt-bold">{vestingInfo.symbol}</span>
+        </div>
+        <div class="layout-desktop" />
+        <div class="txt-highlight">Withdrawn</div>
+        <div>
+          {vestingInfo.withdrawn}
+          <span class="txt-bold">{vestingInfo.symbol}</span>
+        </div>
+        <div class="layout-desktop" />
+        <div class="txt-highlight">Withdrawable</div>
+        <div>
+          {vestingInfo.withdrawableBalance}
+          <span class="txt-bold">{vestingInfo.symbol}</span>
+        </div>
+        <div class="layout-desktop">
+          {#if isUserAuthorized(vestingInfo.beneficiary) && parseFloat(vestingInfo.withdrawableBalance) > 0}
+            <Button variant="secondary" size="small" on:click={withdrawVesting}>
+              Withdraw
+            </Button>
+          {/if}
+        </div>
+        <div class="txt-highlight">Start Time</div>
+        <div>
+          <span>
+            {parseVestingPeriods(vestingInfo.vestingStartTime)}
+          </span>
+        </div>
+        <div class="layout-desktop" />
+        <div class="txt-highlight">Cliff Period End</div>
+        <div>
+          <span>
+            {parseVestingPeriods(
+              vestingInfo.vestingStartTime,
+              vestingInfo.cliffPeriod,
+            )}
+          </span>
+        </div>
+        <div class="layout-desktop" />
+        <div class="txt-highlight">Vesting Period End</div>
+        <div>
+          <span>
+            {parseVestingPeriods(
+              vestingInfo.vestingStartTime,
+              vestingInfo.vestingPeriod,
+            )}
+          </span>
+        </div>
+        <div class="layout-desktop" />
+      {/if}
     </div>
 
     {#if profile.seed?.valid}
@@ -269,10 +391,17 @@
   </main>
 
   <svelte:component
+    this={withdrawVestingModal}
+    info={vestingInfo}
+    contractAddress={addressOrName}
+    {wallet}
+    on:close={() => (withdrawVestingModal = undefined)} />
+
+  <svelte:component
     this={setNameForm}
     entity={new User(profile.address)}
     {wallet}
-    on:close={() => (setNameForm = null)} />
+    on:close={() => (setNameForm = undefined)} />
 {:catch err}
   {#if err instanceof NotFoundError}
     <NotFound

@@ -18,24 +18,23 @@
       : "";
 
   const loadContract = async () => {
-    state.set("loading");
+    state.set({ type: "loading" });
     try {
       const info = await getInfo(contractAddress, wallet);
-      router.push({
-        resource: "vesting",
-        params: {
-          view: {
-            resource: "view",
-            params: { contract: contractAddress, info },
-          },
-        },
-      });
+      if (info) {
+        router.push({
+          resource: "profile",
+          params: { addressOrName: contractAddress },
+        });
+      } else {
+        validationMessage = "No vesting account found under this address.";
+      }
     } catch (error) {
       validationMessage =
         "Couldn't load contract, check dev console for details.";
-      console.error(error);
+      console.warn(error);
     }
-    state.set("idle");
+    state.set({ type: "idle" });
   };
 </script>
 
@@ -75,16 +74,16 @@
       placeholder="Enter vesting contract address"
       {valid}
       {validationMessage}
-      loading={$state === "loading"}
-      disabled={$state === "loading"}
+      loading={$state.type === "loading"}
+      disabled={$state.type === "loading"}
       on:submit={loadContract}
       bind:value={contractAddress} />
 
     <Button
       on:click={loadContract}
       variant="primary"
-      waiting={$state === "loading"}
-      disabled={!valid || $state === "loading"}>
+      waiting={$state.type === "loading"}
+      disabled={!valid || $state.type === "loading"}>
       Load
     </Button>
   </div>

@@ -16,10 +16,12 @@ import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
 import { getAddress, getResolver } from "@app/lib/registrar";
 import { getAvatar, getSeed, getRegistration } from "@app/lib/registrar";
+import { getInfo } from "@app/lib/vesting";
 
 export enum AddressType {
   Contract,
   Org,
+  Vesting,
   EOA,
 }
 
@@ -125,6 +127,11 @@ export function formatAddress(input: string): string {
   return (
     addr.substring(0, 4) + " – " + addr.substring(addr.length - 4, addr.length)
   );
+}
+
+// Returns a shortened Ethereum transaction hash
+export function formatTx(input: string): string {
+  return input.substring(0, 20) + "…";
 }
 
 export function formatCommit(oid: string): string {
@@ -288,12 +295,13 @@ export function isFulfilled<T>(
   return input.status === "fulfilled";
 }
 
-// Get the explorer link of an address, eg. Etherscan.
-export function explorerLink(addr: string, wallet: Wallet): string {
+// Get the explorer link of an address or tx, eg. Etherscan.
+export function explorerLink(addrOrTx: string, wallet: Wallet): string {
+  const type = isAddress(addrOrTx) ? "address" : "tx";
   if (wallet.network.name === "goerli") {
-    return `https://goerli.etherscan.io/address/${addr}`;
+    return `https://goerli.etherscan.io/${type}/${addrOrTx}`;
   }
-  return `https://etherscan.io/address/${addr}`;
+  return `https://etherscan.io/${type}/${addrOrTx}`;
 }
 
 // Format a name.
@@ -349,6 +357,10 @@ export async function identifyAddress(
   const bytes = ethers.utils.arrayify(code);
 
   if (bytes.length > 0) {
+    const info = await getInfo(address, wallet);
+    if (info) {
+      return AddressType.Vesting;
+    }
     return AddressType.Contract;
   }
   return AddressType.EOA;

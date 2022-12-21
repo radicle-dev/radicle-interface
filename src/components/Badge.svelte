@@ -16,6 +16,7 @@
     line-height: 1.6;
     height: var(--button-tiny-height);
     display: flex;
+    white-space: nowrap;
   }
   .foreground {
     color: var(--color-foreground-6);

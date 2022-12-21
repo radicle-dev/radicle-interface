@@ -31,7 +31,7 @@
   });
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && valid) {
       dispatch("submit");
     }
   }
