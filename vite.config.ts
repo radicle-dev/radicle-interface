@@ -54,8 +54,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@public": path.resolve("./public"),
       "@app": path.resolve("./src"),
+      "@public": path.resolve("./public"),
     },
   },
   build: {

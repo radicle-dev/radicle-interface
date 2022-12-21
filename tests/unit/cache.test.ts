@@ -1,4 +1,4 @@
-import { cached } from "@app/cache";
+import { cached } from "@app/lib/cache";
 import { expect, test, vi } from "vitest";
 
 test("it caches undefined return values", async () => {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { Config } from "@app/config";
+import type { Config } from "@app/lib/config";
 import type { FakeTimers } from "@sinonjs/fake-timers";
 
 declare global {

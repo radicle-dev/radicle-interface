@@ -1,5 +1,5 @@
-if (window.PLAYWRIGHT) import("./e2eTestStubs");
-import App from "./App.svelte";
+if (window.PLAYWRIGHT) import("@app/lib/e2eTestStubs");
+import App from "@app/App.svelte";
 
 const app = new App({
   target: document.body,

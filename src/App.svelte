@@ -1,22 +1,25 @@
 <script lang="ts">
-  import { Connection, state, session } from "@app/session";
-  import { getWallet } from "@app/wallet";
-  import { initialize, activeRouteStore } from "@app/router";
-  import { twemoji, unreachable } from "@app/utils";
   import Plausible from "plausible-tracker";
 
-  import ColorPalette from "@app/ColorPalette.svelte";
-  import Faucet from "@app/base/faucet/Routes.svelte";
-  import Header from "@app/Header.svelte";
-  import Home from "@app/base/home/Index.svelte";
-  import Loading from "@app/Loading.svelte";
-  import Modal from "@app/Modal.svelte";
-  import NotFound from "@app/NotFound.svelte";
-  import Profile from "@app/Profile.svelte";
-  import Projects from "@app/base/projects/View.svelte";
-  import Registrations from "@app/base/registrations/Routes.svelte";
-  import Seeds from "@app/base/seeds/Routes.svelte";
-  import Vesting from "@app/base/vesting/Routes.svelte";
+  import { Connection, state, session } from "@app/lib/session";
+  import { getWallet } from "@app/lib/wallet";
+  import { initialize, activeRouteStore } from "@app/lib/router";
+  import { twemoji, unreachable } from "@app/lib/utils";
+
+  import ColorPalette from "./App/ColorPalette.svelte";
+  import Header from "./App/Header.svelte";
+
+  import Loading from "@app/components/Loading.svelte";
+  import Modal from "@app/components/Modal.svelte";
+  import NotFound from "@app/components/NotFound.svelte";
+
+  import Faucet from "@app/views/faucet/Routes.svelte";
+  import Home from "@app/views/home/Index.svelte";
+  import Profile from "@app/views/profiles/Profile.svelte";
+  import Projects from "@app/views/projects/View.svelte";
+  import Registrations from "@app/views/registrations/Routes.svelte";
+  import Seeds from "@app/views/seeds/Routes.svelte";
+  import Vesting from "@app/views/vesting/Routes.svelte";
 
   initialize();
 

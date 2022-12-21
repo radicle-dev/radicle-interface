@@ -17,8 +17,8 @@
     "importsNotUsedAsValues": "error",
     "skipLibCheck": true,
     "paths": {
-      "@public/*": ["./public/*"],
       "@app/*": ["./src/*"],
+      "@public/*": ["./public/*"],
       "@tests/*": ["./tests/*"]
     }
   },

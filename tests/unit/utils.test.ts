@@ -1,8 +1,8 @@
-import type { Wallet } from "@app/wallet";
+import type { Wallet } from "@app/lib/wallet";
 
 import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
-import * as utils from "@app/utils";
+import * as utils from "@app/lib/utils";
 
 describe("Conversions", () => {
   test("toWei", () => {
