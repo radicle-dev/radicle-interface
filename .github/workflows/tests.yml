@@ -158,9 +158,9 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             console.log(JSON.stringify(process.env, null, 2));
-            # github.rest.issues.createComment({
-            #   issue_number: context.issue.number,
-            #   owner: context.repo.owner,
-            #   repo: context.repo.repo,
-            #   body: '👋 hi: ' + ${{ toJSON(needs) }}.needs["check-e2e"].outputs.visual-state
-            # });
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 hi'
+            });
