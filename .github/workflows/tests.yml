@@ -82,48 +82,48 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Evict playwright snapshot cache when pushing to master
-        run: |
-          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
-            echo "Deleting ${{ runner.os }}-snapshots cache"
-            gh extension install actions/gh-actions-cache
-            gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
-            echo "Done"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Evict playwright snapshot cache when pushing to master
+      #   run: |
+      #     if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
+      #       echo "Deleting ${{ runner.os }}-snapshots cache"
+      #       gh extension install actions/gh-actions-cache
+      #       gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
+      #       echo "Done"
+      #     fi
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.1"
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: "18.12.1"
 
-      - name: Install dependencies
-        run: npm ci
+      # - name: Install dependencies
+      #   run: npm ci
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
-        id: playwright-dep-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+      # - name: Cache Playwright browsers
+      #   uses: actions/cache@v3
+      #   id: playwright-dep-cache
+      #   with:
+      #     path: ~/.cache/ms-playwright
+      #     key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
 
-      - name: Cache Playwright visual snapshots
-        uses: actions/cache@v3
-        id: playwright-snapshot-cache
-        with:
-          path: tests/visual/snapshots/**/*
-          key: ${{ runner.os }}-snapshots
+      # - name: Cache Playwright visual snapshots
+      #   uses: actions/cache@v3
+      #   id: playwright-snapshot-cache
+      #   with:
+      #     path: tests/visual/snapshots/**/*
+      #     key: ${{ runner.os }}-snapshots
 
-      - name: Install Playwright browsers and OS dependencies if cache miss
-        if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+      # - name: Install Playwright browsers and OS dependencies if cache miss
+      #   if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
+      #   run: npx playwright install --with-deps
 
-      - name: Install only Playwright OS dependencies if cache hit
-        if: steps.playwright-dep-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
+      # - name: Install only Playwright OS dependencies if cache hit
+      #   if: steps.playwright-dep-cache.outputs.cache-hit == 'true'
+      #   run: npx playwright install-deps
 
-      - name: Start http-api test server
-        run: ./scripts/run-http-api-with-fixtures --non-interactive --detach
+      # - name: Start http-api test server
+      #   run: ./scripts/run-http-api-with-fixtures --non-interactive --detach
 
       - name: Run Playwright tests
         id: run-playwright-tests
@@ -138,15 +138,15 @@ jobs:
         run: |
             echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-artifacts-${{ runner.os }}
-          retention-days: 30
-          if-no-files-found: "ignore"
-          path: |
-            tests/artifacts/**/*
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: test-artifacts-${{ runner.os }}
+      #     retention-days: 30
+      #     if-no-files-found: "ignore"
+      #     path: |
+      #       tests/artifacts/**/*
 
   post-summary:
     needs: check-e2e
@@ -157,10 +157,10 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log(JSON.stringify(${{needs}}))
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 hi: ' + ${{ toJSON(needs) }}.needs["check-e2e"].outputs.visual-state
-            });
+            console.log(JSON.stringify(process.env, null, 2));
+            # github.rest.issues.createComment({
+            #   issue_number: context.issue.number,
+            #   owner: context.repo.owner,
+            #   repo: context.repo.repo,
+            #   body: '👋 hi: ' + ${{ toJSON(needs) }}.needs["check-e2e"].outputs.visual-state
+            # });
