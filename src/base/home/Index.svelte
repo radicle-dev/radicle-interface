@@ -94,7 +94,7 @@
   <div class="blurb">
     <p use:twemoji>
       Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software
-      over a peer-to-peer network 🌐 built on Git.
+      over a peer-to-peer network 🌐 built on GitHub.
     </p>
   </div>
 
