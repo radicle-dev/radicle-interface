@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: "list",
+  reporter: process.env.CI ? "github" : "list",
   globalSetup: "./tests/support/globalSetup",
   use: {
     actionTimeout: 0,
