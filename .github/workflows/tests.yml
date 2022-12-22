@@ -136,7 +136,12 @@ jobs:
         #     npm run test:e2e -- --project ${{ matrix.browser }};
         #   fi
         run: |
-            echo "visual-state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
+            echo "visual_state=Visuals failed please check artifacts" >> $GITHUB_OUTPUT
+
+      - name: Generate summary
+        run: |
+          echo "Visual test state: ${{ steps.run-playwright-tests.outputs.visual_state }}" >> $GITHUB_STEP_SUMMARY
+          echo "Hey @${{ github.event.pull_request.user.login }}, check out the visual diffs" >> $GITHUB_STEP_SUMMARY
 
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3
@@ -147,20 +152,3 @@ jobs:
       #     if-no-files-found: "ignore"
       #     path: |
       #       tests/artifacts/**/*
-
-  post-summary:
-    needs: check-e2e
-    runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master' && needs.check-e2e.outputs.visual-state != ''
-    steps:
-      - uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            console.log(JSON.stringify(process.env, null, 2));
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 hi'
-            });
