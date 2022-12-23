@@ -1,17 +1,17 @@
 <script lang="ts">
-  import type { SvelteComponent } from "svelte";
   import type { Wallet } from "@app/lib/wallet";
   import type { Seed, Stats } from "@app/lib/seed";
   import type { ProjectInfo } from "@app/lib/project";
   import type { VestingInfo } from "@app/lib/vesting";
 
+  import * as modal from "@app/lib/modal";
   import * as utils from "@app/lib/utils";
   import Address from "@app/components/Address.svelte";
   import Async from "@app/components/Async.svelte";
   import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
-  import ErrorModal from "@app/components/ErrorModal.svelte";
+  import Error from "@app/components/Error.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -19,8 +19,8 @@
   import Projects from "@app/views/seeds/View/Projects.svelte";
   import RadicleId from "@app/components/RadicleId.svelte";
   import SeedAddress from "@app/components/SeedAddress.svelte";
-  import SetName from "./SetName.svelte";
-  import Withdraw from "@app/views/vesting/Withdraw.svelte";
+  import SetNameModal from "@app/views/profiles/SetNameModal.svelte";
+  import WithdrawModal from "@app/views/vesting/WithdrawModal.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/lib/error";
   import { User, Profile, ProfileType } from "@app/lib/profile";
   import { defaultNodePort } from "@app/lib/seed";
@@ -37,15 +37,6 @@
   export let addressOrName: string;
 
   let vestingInfo: VestingInfo | undefined = undefined;
-  let setNameForm: typeof SvelteComponent | undefined = undefined;
-  let withdrawVestingModal: typeof SvelteComponent | undefined = undefined;
-  const setName = () => {
-    setNameForm = SetName;
-  };
-  const withdrawVesting = () => {
-    withdrawVestingModal = Withdraw;
-  };
-
   const getProjectsAndStats = async (
     seed: Seed,
     id?: string,
@@ -61,7 +52,7 @@
   // Refresh vestingInfo and close modal if addressOrName changes
   $: {
     vestingInfo = undefined;
-    withdrawVestingModal = undefined;
+    modal.hide();
     getInfo(addressOrName, wallet)
       .then(info => {
         vestingInfo = info;
@@ -174,6 +165,12 @@
     .fields {
       grid-template-columns: max-content auto;
     }
+  }
+  .container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 
@@ -313,7 +310,18 @@
         </div>
         <div class="layout-desktop">
           {#if isUserAuthorized(profile.address) && !profile.org}
-            <Button variant="secondary" size="small" on:click={setName}>
+            <Button
+              variant="secondary"
+              size="small"
+              on:click={() => {
+                modal.show({
+                  component: SetNameModal,
+                  props: {
+                    entity: new User(profile.address),
+                    wallet,
+                  },
+                });
+              }}>
               Set
             </Button>
           {/if}
@@ -344,7 +352,23 @@
         </div>
         <div class="layout-desktop">
           {#if isUserAuthorized(vestingInfo.beneficiary) && parseFloat(vestingInfo.withdrawableBalance) > 0}
-            <Button variant="secondary" size="small" on:click={withdrawVesting}>
+            <Button
+              variant="secondary"
+              size="small"
+              on:click={() => {
+                if (vestingInfo) {
+                  modal.show({
+                    component: WithdrawModal,
+                    props: {
+                      beneficiary: vestingInfo.beneficiary,
+                      contractAddress: addressOrName,
+                      balance: vestingInfo.withdrawableBalance,
+                      currency: vestingInfo.symbol,
+                      wallet,
+                    },
+                  });
+                }
+              }}>
               Withdraw
             </Button>
           {/if}
@@ -389,29 +413,20 @@
       </Async>
     {/if}
   </main>
-
-  <svelte:component
-    this={withdrawVestingModal}
-    info={vestingInfo}
-    contractAddress={addressOrName}
-    {wallet}
-    on:close={() => (withdrawVestingModal = undefined)} />
-
-  <svelte:component
-    this={setNameForm}
-    entity={new User(profile.address)}
-    {wallet}
-    on:close={() => (setNameForm = undefined)} />
 {:catch err}
-  {#if err instanceof NotFoundError}
-    <NotFound
-      title={addressOrName}
-      subtitle="Sorry, the requested address or domain was not found." />
-  {:else if err instanceof MissingReverseRecord}
-    <NotFound
-      title={addressOrName}
-      subtitle="Sorry, the requested name has no reverse record set." />
-  {:else}
-    <ErrorModal error={err} />
-  {/if}
+  <div class="container">
+    {#if err instanceof NotFoundError}
+      <NotFound
+        title={addressOrName}
+        subtitle="Sorry, the requested address or domain was not found." />
+    {:else if err instanceof MissingReverseRecord}
+      <NotFound
+        title={addressOrName}
+        subtitle="Sorry, the requested name has no reverse record set." />
+    {:else}
+      <Error
+        title={`Could not load "${addressOrName}".`}
+        message={`Error: ${err.message}`} />
+    {/if}
+  </div>
 {/await}

@@ -1,51 +1,83 @@
-<script lang="ts" strictEvents>
-  import type { Err } from "@app/lib/error";
+<script lang="ts">
+  import type {
+    CloseAction,
+    PrimaryAction,
+  } from "@app/components/Modal.svelte";
 
-  import { createEventDispatcher } from "svelte";
-
-  import Button from "@app/components/Button.svelte";
+  import debounce from "lodash/debounce";
   import Modal from "@app/components/Modal.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
-  import { twemoji } from "@app/lib/utils";
+  import { toClipboard } from "@app/lib/utils";
 
-  const dispatch = createEventDispatcher<{ close: never }>();
+  export let title: string;
+  export let caption: string = "There was an error with your transaction.";
+  export let error: string | undefined = undefined;
 
-  export let error: Err | null = null;
-  export let title = "Error";
-  export let emoji = "";
-  export let subtitle = "";
-  export let message = "";
-  export let floating = false;
-  export let subtle = false;
-  export let action = floating ? "Close" : "Back";
+  export let closeAction: CloseAction = undefined;
+  export let primaryAction: PrimaryAction = undefined;
 
-  const body = message || (error && error.message) || "";
+  const emoji = "🚨";
+  let clipboardIcon: "clipboard" | "checkmark" = "clipboard";
+
+  const resetIcon = debounce(() => {
+    clipboardIcon = "clipboard";
+  }, 800);
+
+  function copy() {
+    if (error) {
+      toClipboard(error);
+    }
+    clipboardIcon = "checkmark";
+    resetIcon();
+  }
 </script>
 
-<Modal on:close error {floating} {subtle}>
-  <span slot="title" use:twemoji>
-    {#if emoji}
-      <div>{emoji}</div>
-    {/if}
-    {title}
-  </span>
+<style>
+  .container {
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    position: relative;
+  }
 
-  <span slot="subtitle">
-    {subtitle}
-  </span>
+  .copy {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 2px;
+    background-color: var(--color-foreground-2);
+    border-radius: var(--border-radius-round);
+    cursor: pointer;
+  }
 
-  <span slot="body">
-    <slot>
-      <span class="txt-bold">Error:</span>
-      {body}
-    </slot>
-  </span>
+  .message {
+    font-size: var(--font-size-tiny);
+    word-wrap: break-word;
+    max-height: 8rem;
+    background-color: var(--color-foreground-2);
+    overflow-y: auto;
+    padding: 1rem;
+    text-align: left;
+  }
+</style>
 
-  <span slot="actions">
-    <slot name="actions">
-      <Button variant="negative" on:click={() => dispatch("close")}>
-        {action}
-      </Button>
-    </slot>
-  </span>
-</Modal>
+{#if error}
+  <Modal {title} {emoji} {closeAction} {primaryAction}>
+    <div slot="subtitle">{caption}</div>
+    <div slot="body">
+      <div class="container">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div class="copy" on:click={copy}>
+          <Icon name={clipboardIcon} />
+        </div>
+        <div class="message txt-monospace txt-small">
+          {error}
+        </div>
+      </div>
+    </div>
+  </Modal>
+{:else}
+  <Modal {title} {emoji} {closeAction} {primaryAction}>
+    <div slot="subtitle">{caption}</div>
+  </Modal>
+{/if}

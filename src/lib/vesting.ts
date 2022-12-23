@@ -5,9 +5,12 @@ import { BigNumber, ethers } from "ethers";
 import { writable } from "svelte/store";
 
 import * as cache from "@app/lib/cache";
+import * as modal from "@app/lib/modal";
 import * as session from "@app/lib/session";
 import * as utils from "@app/lib/utils";
 import ethereumContractAbis from "@app/lib/ethereum/contractAbis.json";
+
+import ErrorModal from "@app/components/ErrorModal.svelte";
 
 export interface VestingInfo {
   token: string;
@@ -24,7 +27,6 @@ export interface VestingInfo {
 export type VestingState =
   | { type: "idle" }
   | { type: "loading" }
-  | { type: "error"; error: string }
   | { type: "withdrawingSign" }
   | { type: "withdrawing"; tx: TransactionResponse }
   | { type: "withdrawn" };
@@ -36,7 +38,13 @@ export async function withdrawVested(
   wallet: Wallet,
 ): Promise<void> {
   if (!wallet.signer) {
-    state.set({ type: "error", error: "No signer available" });
+    modal.show({
+      component: ErrorModal,
+      props: {
+        title: "Withdraw failed",
+        caption: "No signer available. Is your wallet connected?",
+      },
+    });
     return;
   }
 
@@ -160,6 +168,12 @@ export function handleEtherErrorState(e: unknown, message: string): void {
       ? e.reason
       : message;
 
-  state.set({ type: "error", error });
+  modal.show({
+    component: ErrorModal,
+    props: {
+      title: "Withdraw failed",
+      error,
+    },
+  });
   console.warn(e);
 }

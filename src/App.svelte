@@ -4,16 +4,17 @@
   import { Connection, state, session } from "@app/lib/session";
   import { getWallet } from "@app/lib/wallet";
   import { initialize, activeRouteStore } from "@app/lib/router";
-  import { twemoji, unreachable } from "@app/lib/utils";
+  import { unreachable } from "@app/lib/utils";
 
-  import ColorPalette from "./App/ColorPalette.svelte";
   import Header from "./App/Header.svelte";
+  import ModalPortal from "./App/ModalPortal.svelte";
+  import Hotkeys from "./App/Hotkeys.svelte";
 
   import Loading from "@app/components/Loading.svelte";
-  import Modal from "@app/components/Modal.svelte";
   import NotFound from "@app/components/NotFound.svelte";
+  import Error from "@app/components/Error.svelte";
 
-  import Faucet from "@app/views/faucet/Routes.svelte";
+  import Faucet from "@app/views/faucet/Faucet.svelte";
   import Home from "@app/views/home/Index.svelte";
   import Profile from "@app/views/profiles/Profile.svelte";
   import Projects from "@app/views/projects/View.svelte";
@@ -46,16 +47,6 @@
     }
     return wallet;
   });
-
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter") {
-      const elems = document.querySelectorAll<HTMLElement>("button.primary");
-      if (elems.length === 1) {
-        // We only allow this when there's one primary button.
-        elems[0].click();
-      }
-    }
-  }
 </script>
 
 <style>
@@ -73,37 +64,31 @@
     flex-direction: column;
     height: 100%;
   }
-  .emoji {
-    margin: 1rem 0;
-  }
 </style>
 
-<svelte:window on:keydown={handleKeydown} />
 <svelte:head>
   <title>Radicle</title>
 </svelte:head>
 
+<ModalPortal />
+<Hotkeys />
+
 <div class="app">
   {#await loadWallet}
-    <!-- Loading wallet -->
     <div class="wrapper">
       <Loading center />
     </div>
   {:then wallet}
-    <ColorPalette />
     <Header session={$session} {wallet} />
     <div class="wrapper">
       {#if $activeRouteStore.resource === "home"}
         <Home />
       {:else if $activeRouteStore.resource === "faucet"}
-        <Faucet {wallet} activeRoute={$activeRouteStore} />
+        <Faucet {wallet} />
       {:else if $activeRouteStore.resource === "seeds"}
         <Seeds host={$activeRouteStore.params.host} />
       {:else if $activeRouteStore.resource === "registrations"}
-        <Registrations
-          {wallet}
-          session={$session}
-          activeRoute={$activeRouteStore} />
+        <Registrations {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "vesting"}
         <Vesting {wallet} activeRoute={$activeRouteStore} />
       {:else if $activeRouteStore.resource === "projects"}
@@ -113,23 +98,18 @@
           addressOrName={$activeRouteStore.params.addressOrName}
           {wallet} />
       {:else if $activeRouteStore.resource === "404"}
-        <NotFound title="404" subtitle="Nothing here" />
+        <div class="wrapper" style:justify-content="center">
+          <NotFound title="404" subtitle="Nothing here" />
+        </div>
       {:else}
         {unreachable($activeRouteStore)}
       {/if}
     </div>
   {:catch err}
-    <div class="wrapper">
-      <Modal error subtle>
-        <span slot="title">
-          <div class="emoji" use:twemoji>👻</div>
-          <div>Error connecting to network</div>
-        </span>
-
-        <span slot="body">
-          {err.message ? err.message : JSON.stringify(err)}
-        </span>
-      </Modal>
+    <div class="wrapper" style:justify-content="center">
+      <Error
+        title="Error connecting to network"
+        message={err.message ? err.message : JSON.stringify(err)} />
     </div>
   {/await}
 </div>

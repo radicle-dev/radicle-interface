@@ -2,6 +2,8 @@
   import type { Wallet } from "@app/lib/wallet";
   import type { VestingRoute } from "@app/lib/router/definitions";
 
+  import { unreachable } from "@app/lib/utils";
+
   import Form from "@app/views/vesting/Form.svelte";
   import Profile from "@app/views/profiles/Profile.svelte";
 
@@ -13,4 +15,6 @@
   <Form {wallet} />
 {:else if activeRoute.params.view.resource === "view"}
   <Profile {wallet} addressOrName={activeRoute.params.view.params.contract} />
+{:else}
+  {unreachable(activeRoute.params.view)}
 {/if}

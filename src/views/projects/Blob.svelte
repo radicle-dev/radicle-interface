@@ -153,7 +153,7 @@
     width: 100%;
     border-spacing: 0;
     overflow-x: auto;
-    font-size: 1rem;
+    font-size: var(--font-size-regular);
     padding-top: 1rem;
     margin-bottom: 1.5rem;
   }

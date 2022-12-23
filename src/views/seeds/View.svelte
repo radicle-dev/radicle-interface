@@ -122,7 +122,9 @@
     </Async>
   </main>
 {:catch}
-  <NotFound
-    title={host}
-    subtitle="Not able to query information from this seed." />
+  <main class="layout-centered">
+    <NotFound
+      title={host}
+      subtitle="Not able to query information from this seed." />
+  </main>
 {/await}

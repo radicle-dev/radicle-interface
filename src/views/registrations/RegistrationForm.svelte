@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { Wallet } from "@app/lib/wallet";
 
-  import * as router from "@app/lib/router";
+  import * as modal from "@app/lib/modal";
 
+  import CheckNameModal from "@app/views/registrations/CheckNameModal.svelte";
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
@@ -16,13 +17,12 @@
     if (!valid) {
       return;
     }
-    router.push({
-      resource: "registrations",
-      params: {
-        view: {
-          resource: "checkNameAvailability",
-          params: { nameOrDomain: ensName, owner: null },
-        },
+    modal.show({
+      component: CheckNameModal,
+      props: {
+        wallet,
+        name: ensName,
+        owner: null,
       },
     });
   }

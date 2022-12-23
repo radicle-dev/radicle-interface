@@ -14,7 +14,7 @@ describe("routeToPath", () => {
       description: "Vesting Route",
     },
     {
-      input: { resource: "faucet", params: { view: { resource: "form" } } },
+      input: { resource: "faucet" },
       output: "/faucet",
       description: "Faucet Form Route",
     },
@@ -35,7 +35,7 @@ describe("routeToPath", () => {
       input: {
         resource: "registrations",
         params: {
-          view: { resource: "validateName" },
+          view: { resource: "form" },
         },
       },
       output: "/registrations",
@@ -66,34 +66,6 @@ describe("routeToPath", () => {
       },
       output: "/registrations/sebastinez?retry=false",
       description: "registrations View Route",
-    },
-    {
-      input: {
-        resource: "registrations",
-        params: {
-          view: {
-            resource: "checkNameAvailability",
-            params: {
-              nameOrDomain: "sebastinez",
-            },
-          },
-        },
-      },
-      output: "/registrations/sebastinez/checkNameAvailability",
-      description: "registrations Form Route",
-    },
-    {
-      input: {
-        resource: "registrations",
-        params: {
-          view: {
-            resource: "register",
-            params: { nameOrDomain: "sebastinez" },
-          },
-        },
-      },
-      output: "/registrations/sebastinez/register",
-      description: "registrations Submit Route",
     },
     {
       input: {
@@ -129,16 +101,8 @@ describe("pathToRoute", () => {
     },
     {
       input: "/faucet",
-      output: { resource: "faucet", params: { view: { resource: "form" } } },
+      output: { resource: "faucet" },
       description: "Faucet Form Route",
-    },
-    {
-      input: "/faucet/withdraw?amount=10",
-      output: {
-        resource: "faucet",
-        params: { view: { resource: "withdraw", params: { amount: "10" } } },
-      },
-      description: "Faucet Withdraw Route",
     },
     {
       input: "/cloudhead.eth",
@@ -158,7 +122,7 @@ describe("pathToRoute", () => {
       output: {
         resource: "registrations",
         params: {
-          view: { resource: "validateName" },
+          view: { resource: "form" },
         },
       },
       description: "registrations Index Route",
@@ -188,35 +152,6 @@ describe("pathToRoute", () => {
         },
       },
       description: "registrations View Route",
-    },
-    {
-      input: "/registrations/sebastinez/checkNameAvailability",
-      output: {
-        resource: "registrations",
-        params: {
-          view: {
-            resource: "checkNameAvailability",
-            params: {
-              nameOrDomain: "sebastinez",
-              owner: null,
-            },
-          },
-        },
-      },
-      description: "registrations Form Route",
-    },
-    {
-      input: "/registrations/sebastinez/register",
-      output: {
-        resource: "registrations",
-        params: {
-          view: {
-            resource: "register",
-            params: { nameOrDomain: "sebastinez", owner: null },
-          },
-        },
-      },
-      description: "registrations Submit Route",
     },
     {
       input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",

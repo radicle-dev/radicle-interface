@@ -86,6 +86,13 @@
     padding: 0 2rem 0 8rem;
   }
 
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
   @media (max-width: 960px) {
     main > header {
       padding-left: 2rem;
@@ -100,12 +107,14 @@
   }
 </style>
 
-<main>
-  {#await getProject(id, peer, profile, seed)}
+{#await getProject(id, peer, profile, seed)}
+  <main>
     <header>
       <Loading center />
     </header>
-  {:then project}
+  </main>
+{:then project}
+  <main>
     <ProjectMeta {project} {peer} />
     {#await project.getRoot(revision)}
       <Loading center />
@@ -201,7 +210,9 @@
         {/if}
       </div>
     {/await}
-  {:catch}
-    <NotFound title={id} subtitle="This project was not found." />
-  {/await}
-</main>
+  </main>
+{:catch}
+  <div class="container">
+    <NotFound subtitle={id} title="This project was not found" />
+  </div>
+{/await}

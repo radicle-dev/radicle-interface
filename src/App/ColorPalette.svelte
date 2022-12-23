@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Modal from "@app/components/Modal.svelte";
+
   function extractCssVariables(variableName: string) {
     return Array.from(document.styleSheets)
       .filter(
@@ -75,10 +77,14 @@
     "--color-tertiary",
     "--color-tertiary-1",
     "--color-tertiary-2",
+    "--color-tertiary-3",
     "--color-tertiary-6",
   ];
 
-  const colors = extractCssVariables("--color");
+  const colors = extractCssVariables("--color").filter(c => {
+    return !c.startsWith("--color-prettylights-syntax");
+  });
+
   const colorGroups = [
     ...new Set(
       colors.map(color => {
@@ -92,70 +98,29 @@
     ),
   ];
 
-  let show = false;
   let checkers = false;
-
-  const onKeydown = (event: KeyboardEvent) => {
-    if (import.meta.env.PROD) {
-      return;
-    }
-
-    const hasInputTarget =
-      event.target &&
-      ((event.target as HTMLInputElement).type === "text" ||
-        (event.target as HTMLTextAreaElement).type === "textarea");
-
-    if (
-      hasInputTarget ||
-      event.repeat ||
-      event.altKey ||
-      event.metaKey ||
-      event.ctrlKey
-    ) {
-      return false;
-    }
-
-    if (event.key === "d") {
-      show = !show;
-    }
-  };
-
-  function clickOutside(ev: MouseEvent) {
-    if (thisComponent && !thisComponent.contains(ev.target as HTMLDivElement)) {
-      show = !show;
-    }
-  }
-
-  let thisComponent: HTMLDivElement;
 </script>
 
 <style>
-  .container {
-    position: fixed;
-    background: var(--color-background);
-    padding: 2rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: var(--elevation-low);
-    border-radius: 1rem;
-    z-index: 100;
-    min-width: 46rem;
-  }
-
   .checkers {
     background: repeating-conic-gradient(#88888833 0% 25%, transparent 0% 50%)
       50% / 20px 20px;
     border-radius: 1rem;
   }
 
+  .container {
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
   .color {
-    width: 4rem;
-    height: 4rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 0.5rem;
     outline-style: solid !important;
     outline-color: #88888899 !important;
-    outline-offset: 0.5rem;
+    outline-offset: 0.3rem;
     margin: 1rem;
   }
 
@@ -165,30 +130,27 @@
   }
 </style>
 
-<svelte:window on:keydown={onKeydown} on:click={clickOutside} />
-
-{#if show}
+<Modal closeAction={false}>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    bind:this={thisComponent}
-    class="container"
-    on:click={() => (checkers = !checkers)}>
-    <div class:checkers>
-      {#each colorGroups as colorGroup}
-        <div>
-          {#each colors.filter(color => {
-            return color.match(`--color-${colorGroup}`);
-          }) as color}
-            <div style="display: inline-flex;">
-              <div
-                class:unused={!usedColors.includes(color)}
-                title={color}
-                class="color"
-                style={`background-color: var(${color});`} />
-            </div>
-          {/each}
-        </div>
-      {/each}
+  <div slot="body">
+    <div class="container" on:click={() => (checkers = !checkers)}>
+      <div class:checkers>
+        {#each colorGroups as colorGroup}
+          <div style:display="flex">
+            {#each colors.filter(color => {
+              return color.match(`--color-${colorGroup}`);
+            }) as color}
+              <div style:display="inline-flex">
+                <div
+                  class:unused={!usedColors.includes(color)}
+                  title={color}
+                  class="color"
+                  style:background-color={`var(${color})`} />
+              </div>
+            {/each}
+          </div>
+        {/each}
+      </div>
     </div>
   </div>
-{/if}
+</Modal>

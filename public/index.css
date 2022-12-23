@@ -17,8 +17,6 @@
   --button-small-height: 2rem;
   --button-tiny-height: 1.5rem;
 
-  --glow: var(--color-secondary-3);
-  --glow-error: var(--color-negative-3);
   --header-gradient: linear-gradient(
     180deg,
     var(--color-secondary-3) 0%,

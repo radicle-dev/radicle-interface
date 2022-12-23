@@ -8,6 +8,7 @@
     | "text";
   export let size: "tiny" | "small" | "regular" = "regular";
 
+  export let autofocus: boolean = false;
   export let disabled: boolean = false;
   export let waiting: boolean = false;
   export let style: string | undefined = undefined;
@@ -112,10 +113,12 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-autofocus -->
 <button
   {title}
   {disabled}
   {style}
+  {autofocus}
   on:click|stopPropagation
   on:focus
   on:blur

@@ -34,6 +34,10 @@
     if (event.key === "Enter" && valid) {
       dispatch("submit");
     }
+
+    if (event.key === "Escape") {
+      inputElement?.blur();
+    }
   }
 </script>
 
@@ -101,10 +105,12 @@
   }
 
   .key-hint {
-    border-radius: 0.25rem;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
-    padding: 0 0.5rem;
+    color: var(--color-foreground-6);
+    background-color: var(--color-secondary-1);
+    border: 1px solid var(--color-secondary-5);
+    border-radius: 6px;
+    box-shadow: inset 0 -3px 0 var(--color-secondary-5);
+    padding: 0 5px;
   }
 </style>
 

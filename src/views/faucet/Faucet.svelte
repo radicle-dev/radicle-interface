@@ -3,7 +3,8 @@
 
   import { formatEther } from "@ethersproject/units";
 
-  import * as router from "@app/lib/router";
+  import * as modal from "@app/lib/modal";
+  import WithdrawModal from "@app/views/faucet/WithdrawModal.svelte";
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import {
@@ -63,10 +64,7 @@
         return;
       }
 
-      router.push({
-        resource: "faucet",
-        params: { view: { resource: "withdraw", params: { amount } } },
-      });
+      modal.show({ component: WithdrawModal, props: { amount, wallet } });
     } catch (error) {
       validationMessage = "There was an error, check the dev console.";
       console.error(error);

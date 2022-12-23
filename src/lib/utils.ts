@@ -33,19 +33,6 @@ export interface Token {
   balance: BigNumber;
 }
 
-export enum Status {
-  Signing,
-  Pending,
-  Success,
-  Failed,
-}
-
-export type State =
-  | { status: Status.Signing }
-  | { status: Status.Pending }
-  | { status: Status.Success }
-  | { status: Status.Failed; error: string };
-
 export async function isReverseRecordSet(
   address: string,
   domain: string,

@@ -7,32 +7,21 @@
 
   import { onMount } from "svelte";
 
+  import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
-  import Button from "@app/components/Button.svelte";
-  import ErrorModal from "@app/components/ErrorModal.svelte";
-  import Form from "@app/components/Form.svelte";
-  import Link from "@app/components/Link.svelte";
-  import Loading from "@app/components/Loading.svelte";
-  import Modal from "@app/components/Modal.svelte";
-  import Update from "./Update.svelte";
   import { assert } from "@app/lib/error";
   import { defaultSeedPort } from "@app/lib/seed";
   import { getRegistration, getOwner } from "@app/lib/registrar";
   import { isAddressEqual, isReverseRecordSet, twemoji } from "@app/lib/utils";
   import { session } from "@app/lib/session";
 
-  enum Status {
-    Loading,
-    Found,
-    NotFound,
-    Failed,
-  }
+  import Button from "@app/components/Button.svelte";
+  import Form from "@app/components/Form.svelte";
+  import Loading from "@app/components/Loading.svelte";
+  import ErrorModal from "@app/components/ErrorModal.svelte";
 
-  type State =
-    | { status: Status.Loading }
-    | { status: Status.NotFound }
-    | { status: Status.Found; registration: Registration; owner: string }
-    | { status: Status.Failed; error: string };
+  import Update from "@app/views/registrations/Update.svelte";
+  import CheckNameModal from "@app/views/registrations/CheckNameModal.svelte";
 
   export let domain: string;
   export let wallet: Wallet;
@@ -40,7 +29,17 @@
 
   domain = domain.toLowerCase();
 
-  let state: State = { status: Status.Loading };
+  if (!domain.includes(".")) {
+    domain = `${domain}.${wallet.registrar.domain}`;
+  }
+
+  let state:
+    | { type: "loading" }
+    | { type: "notFound" }
+    | { type: "found"; registration: Registration; owner: string } = {
+    type: "loading",
+  };
+
   let editable = false;
   let fields: Field[] = [];
   let updateRecords: EnsRecord[] | null = null;
@@ -155,35 +154,64 @@
           editable: true,
         },
       ];
-      state = { status: Status.Found, registration: r, owner };
+      state = { type: "found", registration: r, owner };
     } else {
-      state = { status: Status.NotFound };
+      state = { type: "notFound" };
     }
     if (retry) retries -= 1;
     return r;
   }
 
+  function showErrorModal(message: string) {
+    modal.show({
+      component: ErrorModal,
+      props: {
+        title: "Registration could not be loaded",
+        error: message,
+        closeAction: {
+          callback: () => {
+            router.push({
+              resource: "registrations",
+              params: { view: { resource: "form" } },
+            });
+            modal.hide();
+          },
+        },
+      },
+    });
+  }
+
   onMount(() => {
     getRegistration(domain, wallet, resolver)
       .then(parseRecords)
-      .catch(err => {
-        state = { status: Status.Failed, error: err };
+      .catch(error => {
+        showErrorModal(error.message);
       });
   });
 
   const onSave = async (event: { detail: RegistrationRecord[] }) => {
-    assert(state.status === Status.Found, "registration must be found");
+    assert(state.type === "found", "registration must be found");
 
     updateRecords = event.detail.map(f => {
       return { name: f.name, value: f.value };
     });
+
+    modal.show({
+      component: Update,
+      props: {
+        wallet,
+        domain,
+        registration: state.registration,
+        records: updateRecords,
+      },
+    });
   };
 
-  $: if (retry && state.status === Status.NotFound && retries > 0) {
+  $: if (retry && state.type === "notFound" && retries > 0) {
     getRegistration(domain, wallet, resolver)
       .then(parseRecords)
-      .catch(err => {
-        state = { status: Status.Failed, error: err };
+      .catch(error => {
+        showErrorModal(error.message);
       });
   }
 
@@ -202,16 +230,11 @@
     justify-content: left;
     margin-bottom: 2rem;
   }
-  .register {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary-5);
-  }
-  .register:hover {
-    color: var(--color-primary-5);
-    border-bottom-color: var(--color-primary-5);
-  }
   main > header > * {
     margin: 0 1rem 0 0;
+  }
+  .emoji {
+    font-size: var(--font-size-xx-large);
   }
   @media (max-width: 720px) {
     main {
@@ -220,54 +243,50 @@
       padding-right: 1rem;
     }
   }
+
+  .placeholder {
+    text-align: center;
+  }
+  .container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 
 <svelte:head>
   <title>{domain}</title>
 </svelte:head>
 
-{#if state.status === Status.Loading}
+{#if state.type === "loading"}
   <Loading />
-{:else if state.status === Status.Failed}
-  <ErrorModal
-    title="Registration could not be loaded"
-    on:close={() =>
-      router.push({
-        resource: "registrations",
-        params: { view: { resource: "validateName" } },
-      })}>
-    {state.error}
-  </ErrorModal>
-{:else if state.status === Status.NotFound}
-  <Modal subtle>
-    <span slot="title" class="txt-highlight">
-      <div use:twemoji>🍄</div>
-      {domain}
-    </span>
-
-    <span slot="body">
-      <p>
+{:else if state.type === "notFound"}
+  <div class="container">
+    <div class="placeholder">
+      <div class="emoji" use:twemoji>🍄</div>
+      <div class="txt-highlight txt-medium txt-bold">{domain}</div>
+      <p style:margin-bottom="2rem">
         The name <span class="txt-bold">{domain}</span>
         is not registered.
       </p>
-    </span>
-
-    <span slot="actions">
-      <Link
-        route={{
-          resource: "registrations",
-          params: {
-            view: {
-              resource: "register",
-              params: { nameOrDomain: domain, owner: null },
+      <Button
+        on:click={() => {
+          modal.show({
+            component: CheckNameModal,
+            props: {
+              name: domain.replace(`.${wallet.registrar.domain}`, ""),
+              wallet,
+              owner: null,
             },
-          },
-        }}>
-        <span class="txt-link register">Register &rarr;</span>
-      </Link>
-    </span>
-  </Modal>
-{:else if state.status === Status.Found}
+          });
+        }}
+        variant="primary">
+        Register
+      </Button>
+    </div>
+  </div>
+{:else if state.type === "found"}
   <main>
     <header>
       <div class="txt-title txt-bold">{domain}</div>
@@ -293,13 +312,4 @@
       on:save={onSave}
       on:cancel={() => (editable = false)} />
   </main>
-
-  {#if updateRecords}
-    <Update
-      {wallet}
-      {domain}
-      on:close={() => (updateRecords = null)}
-      registration={state.registration}
-      records={updateRecords} />
-  {/if}
 {/if}

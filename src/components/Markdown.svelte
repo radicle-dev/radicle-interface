@@ -121,7 +121,7 @@
   }
 
   .markdown :global(h1) {
-    font-size: calc(var(--font-size-huge) * 0.75);
+    font-size: calc(var(--font-size-x-large) * 0.75);
     font-weight: var(--font-weight-medium);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;

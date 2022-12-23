@@ -77,7 +77,8 @@
   --font-size-regular: 1rem;
   --font-size-medium: 1.25rem;
   --font-size-large: 1.75rem;
-  --font-size-huge: 2rem;
+  --font-size-x-large: 2rem;
+  --font-size-xx-large: 3rem;
 }
 
 [data-codefont="system"] {
@@ -124,7 +125,10 @@ p {
   font-size: var(--font-size-large);
 }
 .txt-huge {
-  font-size: var(--font-size-huge);
+  font-size: var(--font-size-x-large);
+}
+.txt-humongous {
+  font-size: var(--font-size-xx-large);
 }
 
 .txt-monospace {

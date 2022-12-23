@@ -144,7 +144,7 @@ export class Wallet {
           state.set({ state: "open", uri, onClose });
         },
         close: () => {
-          // We handle the "close" event through the "disconnect" handler.
+          state.set({ state: "close" });
         },
       },
     });

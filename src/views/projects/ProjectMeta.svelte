@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    font-size: var(--font-size-huge);
+    font-size: var(--font-size-x-large);
     margin-bottom: 0.5rem;
   }
   .title .divider {

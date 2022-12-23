@@ -151,21 +151,10 @@ function pathToRoute(path: string): Route | null {
     case "registrations": {
       const nameOrDomain = segments.shift();
       const view = segments.shift();
-      const owner = url.searchParams.get("owner");
       const retry = url.searchParams.get("retry");
 
       if (nameOrDomain) {
-        if (view === "checkNameAvailability" || view === "register") {
-          return {
-            resource: "registrations",
-            params: {
-              view: {
-                resource: view,
-                params: { nameOrDomain, owner },
-              },
-            },
-          };
-        } else if (!view) {
+        if (!view) {
           return {
             resource: "registrations",
             params: {
@@ -179,23 +168,11 @@ function pathToRoute(path: string): Route | null {
       }
       return {
         resource: "registrations",
-        params: { view: { resource: "validateName" } },
+        params: { view: { resource: "form" } },
       };
     }
     case "faucet": {
-      const view = segments.shift();
-      if (view === "withdraw") {
-        return {
-          resource: "faucet",
-          params: {
-            view: {
-              resource: "withdraw",
-              params: { amount: url.searchParams.get("amount") },
-            },
-          },
-        };
-      }
-      return { resource: "faucet", params: { view: { resource: "form" } } };
+      return { resource: "faucet" };
     }
     case "vesting": {
       const contract = segments.shift();
@@ -284,11 +261,7 @@ export function routeToPath(route: Route) {
   if (route.resource === "home") {
     return "/";
   } else if (route.resource === "faucet") {
-    if (route.params.view.resource === "form") {
-      return "/faucet";
-    } else if (route.params.view.resource === "withdraw") {
-      return `/faucet/withdraw?amount=${route.params.view.params.amount}`;
-    }
+    return "/faucet";
   } else if (route.resource === "vesting") {
     if (route.params.view.resource === "form") {
       return "/vesting";
@@ -356,18 +329,10 @@ export function routeToPath(route: Route) {
       return `${hostPrefix}/${route.params.id}${peer}${content}`;
     }
   } else if (route.resource === "registrations") {
-    if (route.params.view.resource === "validateName") {
+    if (route.params.view.resource === "form") {
       return `/registrations`;
     } else if (route.params.view.resource === "view") {
       return `/registrations/${route.params.view.params.nameOrDomain}?retry=${route.params.view.params.retry}`;
-    } else if (
-      route.params.view.resource === "checkNameAvailability" ||
-      route.params.view.resource === "register"
-    ) {
-      if (route.params.view.params.owner) {
-        return `/registrations/${route.params.view.params.nameOrDomain}/${route.params.view.resource}?owner=${route.params.view.params.owner}`;
-      }
-      return `/registrations/${route.params.view.params.nameOrDomain}/${route.params.view.resource}`;
     }
   } else if (route.resource === "profile") {
     return `/${route.params.addressOrName}`;
