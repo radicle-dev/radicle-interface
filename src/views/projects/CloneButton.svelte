@@ -92,7 +92,7 @@
   <svelte:fragment slot="modal">
     <div class="dropdown">
       <div class="clone-url-wrapper">
-        <div class="clone-url" name="rad-clone-url">{radCloneUrl}</div>
+        <div class="clone-url" id="rad-clone-url">{radCloneUrl}</div>
         <span class="clipboard">
           <Clipboard text={radCloneUrl} on:copied={closeFocused} />
         </span>
@@ -109,7 +109,7 @@
       </label>
       <br />
       <div class="clone-url-wrapper">
-        <div class="clone-url" name="git-clone-url">{gitCloneUrl}</div>
+        <div class="clone-url" id="git-clone-url">{gitCloneUrl}</div>
         <span class="clipboard">
           <Clipboard text={gitCloneUrl} on:copied={closeFocused} />
         </span>
