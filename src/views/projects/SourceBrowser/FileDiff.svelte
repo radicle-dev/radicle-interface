@@ -1,14 +1,24 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import { lineNumberL, lineNumberR, lineSign } from "@app/lib/diff";
   import type { FileDiff } from "@app/lib/diff";
+
   import Badge from "@app/components/Badge.svelte";
+  import Icon from "@app/components/Icon.svelte";
+  import {
+    LineDiffType,
+    lineNumberL,
+    lineNumberR,
+    lineSign,
+  } from "@app/lib/diff";
+  import { createEventDispatcher } from "svelte";
+  import { highlight } from "@app/lib/syntax";
+  import { toHtml } from "hast-util-to-html";
 
   const dispatch = createEventDispatcher<{ browse: string }>();
 
   export let file: FileDiff;
   export let mode: string | null = null;
+
+  const fileExtension = file.path.split(".").pop() ?? "";
 
   function collapse() {
     collapsed = !collapsed;
@@ -154,7 +164,17 @@
                 <td class="diff-line-type" data-type={line.type}>
                   {lineSign(line)}
                 </td>
-                <td class="diff-line-content">{line.line}</td>
+                {#await highlight(line.line, fileExtension)}
+                  <td class="diff-line-content">{line.line}</td>
+                {:then content}
+                  {#if line.type === LineDiffType.Context && content}
+                    <td class="diff-line-content">
+                      {@html toHtml(content)}
+                    </td>
+                  {:else}
+                    <td class="diff-line-content">{line.line}</td>
+                  {/if}
+                {/await}
               </tr>
             {/each}
           {/each}
