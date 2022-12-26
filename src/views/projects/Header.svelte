@@ -30,6 +30,7 @@
       },
       id: project.id,
       revision: revision,
+      search: undefined,
       ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
     });
   };

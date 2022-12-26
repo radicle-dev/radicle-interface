@@ -66,6 +66,10 @@ export function projectLinkHref(
   }
 }
 
+function sanitizeQueryString(queryString: string): string {
+  return queryString.startsWith("?") ? queryString.substring(1) : queryString;
+}
+
 export function updateProjectRoute(
   projectRouteParams: Partial<ProjectsParams>,
   opts: { replace: boolean } = { replace: false },
@@ -226,7 +230,6 @@ function pathToRoute(path: string): Route | null {
               resource: "projects",
               params: {
                 ...params,
-                search: url.search,
                 seed: host,
                 id,
               },
@@ -263,7 +266,6 @@ function pathToRoute(path: string): Route | null {
                 params: {
                   ...params,
                   id,
-                  search: url.search,
                   profile: resource,
                 },
               };
@@ -311,31 +313,29 @@ export function routeToPath(route: Route) {
     }
 
     let suffix = "";
-    if (!route.params.route) {
-      if (route.params.revision) {
+    if (route.params.route) {
+      suffix = `/${route.params.route}`;
+    } else {
+      if (
+        (route.params.view.resource === "tree" ||
+          route.params.view.resource === "commits" ||
+          route.params.view.resource === "history") &&
+        route.params.revision
+      ) {
         suffix = `/${route.params.revision}`;
       }
       if (route.params.path && route.params.path !== "/") {
         suffix += `/${route.params.path}`;
       }
-      if (route.params.line) {
-        suffix += `#${route.params.line}`;
-      } else if (route.params.hash) {
-        suffix += `#${route.params.hash}`;
-      }
-      if (route.params.search) {
-        suffix += `${route.params.search}`;
-      }
-    } else {
-      suffix = `/${route.params.route}`;
-      if (route.params.search) {
-        suffix += `${route.params.search}`;
-      }
-      if (route.params.line) {
-        suffix += `#${route.params.line}`;
-      } else if (route.params.hash) {
-        suffix += `#${route.params.hash}`;
-      }
+    }
+
+    if (route.params.search) {
+      suffix += `?${route.params.search}`;
+    }
+    if (route.params.line) {
+      suffix += `#${route.params.line}`;
+    } else if (route.params.hash) {
+      suffix += `#${route.params.hash}`;
     }
 
     if (route.params.view.resource === "tree") {
@@ -399,6 +399,7 @@ function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
+      search: undefined,
       line: line?.substring(1),
       hash: hash?.substring(1),
       route: segments.join("/"),
@@ -410,6 +411,7 @@ function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
+      search: undefined,
       route: segments.join("/"),
     };
   } else if (content === "commits") {
@@ -419,6 +421,7 @@ function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
+      search: undefined,
       route: segments.join("/"),
     };
   } else if (content === "patches") {
@@ -429,6 +432,7 @@ function resolveProjectRoute(
         id,
         peer,
         path: undefined,
+        search: undefined,
         revision: undefined,
       };
     } else {
@@ -436,6 +440,7 @@ function resolveProjectRoute(
         view: { resource: "patches" },
         id,
         peer,
+        search: sanitizeQueryString(url.search),
         path: undefined,
         revision: undefined,
       };
@@ -449,12 +454,14 @@ function resolveProjectRoute(
         peer,
         path: undefined,
         revision: undefined,
+        search: undefined,
       };
     } else {
       return {
         view: { resource: "issues" },
         id,
         peer,
+        search: sanitizeQueryString(url.search),
         path: undefined,
         revision: undefined,
       };

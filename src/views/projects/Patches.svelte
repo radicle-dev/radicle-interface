@@ -63,11 +63,10 @@
   <div style="margin-bottom: 1rem;">
     <ToggleButton
       {options}
-      on:select={e => {
+      on:select={e =>
         router.updateProjectRoute({
-          search: e.detail,
-        });
-      }}
+          search: `state=${e.detail}`,
+        })}
       active={state} />
   </div>
 
