@@ -81,21 +81,17 @@ export class Issue {
     }, 0);
   }
 
-  static async getIssues(urn: string, host: Host): Promise<Issue[]> {
+  static async getIssues(id: string, host: Host): Promise<Issue[]> {
     const response: IIssue[] = await new Request(
-      `projects/${urn}/issues`,
+      `projects/${id}/issues`,
       host,
     ).get();
     return response.map(issue => new Issue(issue));
   }
 
-  static async getIssue(
-    urn: string,
-    issue: string,
-    host: Host,
-  ): Promise<Issue> {
+  static async getIssue(id: string, issue: string, host: Host): Promise<Issue> {
     const response: IIssue = await new Request(
-      `projects/${urn}/issues/${issue}`,
+      `projects/${id}/issues/${issue}`,
       host,
     ).get();
     return new Issue(response);

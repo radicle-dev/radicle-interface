@@ -102,7 +102,7 @@ export function formatSeedId(id: string): string {
   return id.substring(0, 6) + "…" + id.substring(id.length - 6, id.length);
 }
 
-export function formatRadicleUrn(id: string): string {
+export function formatRadicleId(id: string): string {
   assert(isRadicleId(id));
 
   return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
@@ -293,9 +293,9 @@ export function formatName(input: string, wallet: Wallet): string {
   return parseEnsLabel(input, wallet);
 }
 
-// Parse a Radicle Id (URN).
-export function parseRadicleId(urn: string): string {
-  return urn.replace(/^rad:[a-z]+:/, "");
+// Parse a Radicle Id.
+export function parseRadicleId(id: string): string {
+  return id.replace(/^rad:[a-z]+:/, "");
 }
 
 // Get amount of days passed between two dates without including the end date

@@ -15,7 +15,7 @@
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Projects from "@app/views/seeds/View/Projects.svelte";
-  import RadicleUrn from "@app/components/RadicleUrn.svelte";
+  import RadicleId from "@app/components/RadicleId.svelte";
   import SeedAddress from "@app/components/SeedAddress.svelte";
   import SetName from "./SetName.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/lib/error";
@@ -182,7 +182,7 @@
       <!-- ID -->
       {#if profile.id}
         <div class="txt-highlight">ID</div>
-        <RadicleUrn urn={profile.id} />
+        <RadicleId id={profile.id} />
       {/if}
       <!-- Seed Address -->
       {#if profile.seed && profile.seed.valid}

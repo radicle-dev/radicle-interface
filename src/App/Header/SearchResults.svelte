@@ -1,6 +1,6 @@
 <script lang="ts" strictEvents>
   import Modal from "@app/components/Modal.svelte";
-  import { formatRadicleUrn, getSeedEmoji, twemoji } from "@app/lib/utils";
+  import { formatRadicleId, getSeedEmoji, twemoji } from "@app/lib/utils";
   import type { Wallet } from "@app/lib/wallet";
   import Address from "@app/components/Address.svelte";
   import Button from "@app/components/Button.svelte";
@@ -26,7 +26,7 @@
   li {
     margin: 0.5rem 0;
   }
-  .urn {
+  .id {
     color: var(--color-foreground-5);
   }
 </style>
@@ -54,15 +54,15 @@
                 params: {
                   view: { resource: "tree" },
                   seed: project.seed.host,
-                  urn: project.info.urn,
+                  id: project.info.id,
                 },
               }}>
               <span title={project.seed.host}>
                 <span>
                   {getSeedEmoji(project.seed.host)}&nbsp;{project.info.name}
                 </span>
-                <span class="urn">
-                  &nbsp;{formatRadicleUrn(project.info.urn)}
+                <span class="id">
+                  &nbsp;{formatRadicleId(project.info.id)}
                 </span>
               </span>
             </Link>

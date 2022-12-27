@@ -20,7 +20,7 @@ test("navigate to project", async ({ page }) => {
   // Header.
   {
     const name = page.locator("text=source-browsing");
-    const urn = page.locator(
+    const id = page.locator(
       "text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
     );
     const description = page.locator(
@@ -28,7 +28,7 @@ test("navigate to project", async ({ page }) => {
     );
 
     await expect(name).toBeVisible();
-    await expect(urn).toBeVisible();
+    await expect(id).toBeVisible();
     await expect(description).toBeVisible();
   }
 

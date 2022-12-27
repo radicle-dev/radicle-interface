@@ -44,7 +44,7 @@
         <Authorship
           author={{
             peer: element.inner.peer.id,
-            urn: element.inner.peer.person.urn,
+            id: element.inner.peer.person.id,
             profile: element.inner.peer.person,
           }}
           caption={`merged to ${formatSeedId(element.inner.peer.id)}`}

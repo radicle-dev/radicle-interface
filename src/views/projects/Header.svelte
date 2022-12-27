@@ -15,7 +15,7 @@
   export let tree: Tree;
   export let commit: string;
 
-  const { urn, peers, branches, seed } = project;
+  const { id, peers, branches, seed } = project;
 
   $: revision = activeRoute.params.revision ?? commit;
 
@@ -28,7 +28,7 @@
       view: {
         resource: activeRoute.params.view.resource === input ? "tree" : input,
       },
-      urn: project.urn,
+      id: project.id,
       revision: revision,
       ...(keepSourceInPath ? null : { revision: undefined, path: undefined }),
     });
@@ -98,7 +98,7 @@
     on:branchChanged={event => updateRevision(event.detail)} />
 
   {#if seed.git.host}
-    <CloneButton seedHost={seed.git.host} {urn} />
+    <CloneButton seedHost={seed.git.host} {id} />
   {/if}
   <span>
     {#if seed.api.host}

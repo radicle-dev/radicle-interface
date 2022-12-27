@@ -2,12 +2,12 @@
   import { parseRadicleId, toClipboard, twemoji } from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
 
-  export let urn: string;
+  export let id: string;
 
   let copied = false;
 
   function copy() {
-    toClipboard(urn).then(() => {
+    toClipboard(id).then(() => {
       copied = true;
       setTimeout(() => {
         copied = false;
@@ -17,7 +17,7 @@
 </script>
 
 <style>
-  .urn {
+  .id {
     display: inline-flex;
     font-size: var(--font-size-regular);
     line-height: 2rem;
@@ -28,16 +28,16 @@
     width: 1rem;
     margin-right: 0.5rem;
   }
-  .urn > * {
+  .id > * {
     vertical-align: middle;
   }
 </style>
 
 <div class="layout-desktop">
-  <div class="urn">
+  <div class="id">
     <span class="icon" use:twemoji>🌱</span>
-    <span class="txt-faded">rad:git:</span>
-    <span>{parseRadicleId(urn)}</span>
+    <span class="txt-faded">rad:</span>
+    <span>{parseRadicleId(id)}</span>
   </div>
 </div>
 <div>

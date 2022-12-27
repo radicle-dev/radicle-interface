@@ -173,7 +173,7 @@ export function appConfigWithFixture() {
       pinned: [
         {
           name: "source-browsing",
-          urn: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
+          id: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
           seed: "0.0.0.0",
         },
       ],

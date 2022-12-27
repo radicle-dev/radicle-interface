@@ -40,7 +40,7 @@
       resource: "projects",
       params: {
         view: { resource: "tree" },
-        urn: project.urn,
+        id: project.id,
         seed: seed.api.port
           ? `${seed.api.host}:${seed.api.port}`
           : seed.api.host,

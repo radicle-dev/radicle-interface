@@ -6,7 +6,7 @@ import { Profile, ProfileType } from "@app/lib/profile";
 import { Seed } from "@app/lib/seed";
 import { isFulfilled, isOid, isRadicleId } from "@app/lib/utils";
 
-export type Urn = string;
+export type Id = string;
 export type PeerId = string;
 export type Branches = { [key: string]: string };
 export type MaybeBlob = Blob | undefined;
@@ -15,7 +15,7 @@ export type MaybeTree = Tree | undefined;
 export type Delegate =
   | {
       type: "indirect";
-      urn: Urn;
+      id: Id;
       ids: PeerId[];
     }
   | {
@@ -36,7 +36,7 @@ export enum ProjectContent {
 
 export interface ProjectInfo {
   head: string | null;
-  urn: string;
+  id: string;
   name: string;
   description: string;
   defaultBranch: string;
@@ -139,7 +139,7 @@ export function parseRoute(
 }
 
 export class Project implements ProjectInfo {
-  urn: string;
+  id: string;
   head: string | null;
   name: string;
   description: string;
@@ -155,14 +155,14 @@ export class Project implements ProjectInfo {
   issues?: number;
 
   constructor(
-    urn: string,
+    id: string,
     info: ProjectInfo,
     seed: Seed,
     peers: Peer[],
     branches: Branches,
     profile: Profile | null,
   ) {
-    this.urn = urn;
+    this.id = id;
     this.head = info.head;
     this.name = info.name;
     this.description = info.description;
@@ -191,8 +191,11 @@ export class Project implements ProjectInfo {
     return { tree, commit };
   }
 
-  static async getInfo(nameOrUrn: string, host: Host): Promise<ProjectInfo> {
-    return await new Request(`projects/${nameOrUrn}`, host).get();
+  static async getInfo(nameOrId: string, host: Host): Promise<ProjectInfo> {
+    const result = await new Request(`projects/${nameOrId}`, host).get();
+    result["id"] = result["urn"];
+    delete result["urn"];
+    return result;
   }
 
   static async getProjects(
@@ -206,7 +209,13 @@ export class Project implements ProjectInfo {
       "per-page": opts?.perPage,
       page: opts?.page,
     };
-    return new Request("projects", host).get(params);
+    const results = await new Request("projects", host).get(params);
+    results.forEach((result: { [x: string]: any }) => {
+      result["id"] = result["urn"];
+      delete result["urn"];
+    });
+
+    return results;
   }
 
   static async getDelegateProjects(
@@ -225,19 +234,19 @@ export class Project implements ProjectInfo {
   }
 
   static async getRemote(
-    urn: string,
+    id: string,
     peer: string,
     host: Host,
   ): Promise<Remote> {
-    return new Request(`projects/${urn}/remotes/${peer}`, host).get();
+    return new Request(`projects/${id}/remotes/${peer}`, host).get();
   }
 
-  static async getRemotes(urn: string, host: Host): Promise<Peer[]> {
-    return new Request(`projects/${urn}/remotes`, host).get();
+  static async getRemotes(id: string, host: Host): Promise<Peer[]> {
+    return new Request(`projects/${id}/remotes`, host).get();
   }
 
   static async getCommits(
-    urn: string,
+    id: string,
     host: Host,
     opts?: {
       parent?: string | null;
@@ -256,19 +265,19 @@ export class Project implements ProjectInfo {
       page: opts?.page,
       verified: opts?.verified,
     };
-    return new Request(`projects/${urn}/commits`, host).get(params);
+    return new Request(`projects/${id}/commits`, host).get(params);
   }
 
   static async getActivity(
-    urn: string,
+    id: string,
     host: Host,
   ): Promise<{ activity: number[] }> {
-    return new Request(`projects/${urn}/activity`, host).get();
+    return new Request(`projects/${id}/activity`, host).get();
   }
 
   async getCommit(commit: string): Promise<Commit> {
     return new Request(
-      `projects/${this.urn}/commits/${commit}`,
+      `projects/${this.id}/commits/${commit}`,
       this.seed.api,
     ).get();
   }
@@ -276,21 +285,21 @@ export class Project implements ProjectInfo {
   async getTree(commit: string, path: string): Promise<Tree> {
     if (path === "/") path = "";
     return new Request(
-      `projects/${this.urn}/tree/${commit}/${path}`,
+      `projects/${this.id}/tree/${commit}/${path}`,
       this.seed.api,
     ).get();
   }
 
   async getBlob(commit: string, path: string): Promise<Blob> {
     return new Request(
-      `projects/${this.urn}/blob/${commit}/${path}`,
+      `projects/${this.id}/blob/${commit}/${path}`,
       this.seed.api,
     ).get();
   }
 
   async getReadme(commit: string): Promise<Blob> {
     return new Request(
-      `projects/${this.urn}/readme/${commit}`,
+      `projects/${this.id}/readme/${commit}`,
       this.seed.api,
     ).get();
   }
@@ -324,13 +333,13 @@ export class Project implements ProjectInfo {
     }
 
     const info = await Project.getInfo(id, seed.api);
-    const urn = isRadicleId(id) ? id : info.urn;
+    id = isRadicleId(id) ? id : info.id;
 
-    // Older versions of http-api don't include the URN.
-    if (!info.urn) info.urn = urn;
+    // Older versions of http-api don't include the ID.
+    if (!info.id) info.id = id;
 
     const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(urn, seed.api)
+      ? await Project.getRemotes(id, seed.api)
       : [];
 
     let remote: Remote = {
@@ -339,24 +348,24 @@ export class Project implements ProjectInfo {
 
     if (peer) {
       try {
-        remote = await Project.getRemote(urn, peer, seed.api);
+        remote = await Project.getRemote(id, peer, seed.api);
       } catch {
         remote.heads = {};
       }
     }
 
-    return new Project(urn, info, seed, peers, remote.heads, profile);
+    return new Project(id, info, seed, peers, remote.heads, profile);
   }
 
   static async getMulti(
-    projs: { nameOrUrn: Urn; seed: string }[],
+    projs: { nameOrId: Id; seed: string }[],
   ): Promise<{ info: ProjectInfo; seed: Host }[]> {
     const promises = [];
 
     for (const proj of projs) {
       const seed = { host: proj.seed, port: null };
       promises.push(
-        Project.getInfo(proj.nameOrUrn, seed).then(info => {
+        Project.getInfo(proj.nameOrId, seed).then(info => {
           return { info, seed };
         }),
       );

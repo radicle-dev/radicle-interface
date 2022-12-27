@@ -36,15 +36,15 @@ describe("Format functions", () => {
     expect(utils.formatSeedId(id)).toEqual(expected);
   });
 
-  test("formatRadicleUrn", () => {
+  test("formatRadicleId", () => {
     expect(
-      utils.formatRadicleUrn("rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
+      utils.formatRadicleId("rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
     ).toEqual("rad:git:hnrkem…d84c9o");
   });
 
-  test("formatRadicleUrn throw when wrong URN", () => {
+  test("formatRadicleId throw when wrong ID", () => {
     expect(() =>
-      utils.formatRadicleUrn("hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
+      utils.formatRadicleId("hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
     ).toThrow();
   });
 

@@ -6,7 +6,7 @@
 
   import Address from "@app/components/Address.svelte";
   import { Profile, ProfileType } from "@app/lib/profile";
-  import { formatRadicleUrn, formatTimestamp } from "@app/lib/utils";
+  import { formatRadicleId, formatTimestamp } from "@app/lib/utils";
 
   export let noAvatar = false;
   export let author: Author;
@@ -63,7 +63,7 @@
     </span>
   {:else}
     <span class="highlight">
-      {formatRadicleUrn(author.urn)}
+      {formatRadicleId(author.id)}
     </span>
   {/if}
   <span class="caption">&nbsp;{caption}&nbsp;</span>

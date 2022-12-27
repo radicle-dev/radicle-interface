@@ -11,7 +11,7 @@ export type Route =
   | { resource: "seeds"; params: { host: string } };
 
 export interface ProjectsParams {
-  urn: string;
+  id: string;
   view:
     | { resource: "tree" }
     | { resource: "commits" }

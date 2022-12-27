@@ -38,7 +38,7 @@
   .project-name:hover {
     color: inherit;
   }
-  .urn {
+  .id {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     color: var(--color-foreground-5);
@@ -108,9 +108,9 @@
       </span>
     {/if}
   </div>
-  <div class="urn">
-    <span class="truncate">{project.urn}</span>
-    <Clipboard small text={project.urn} />
+  <div class="id">
+    <span class="truncate">{project.id}</span>
+    <Clipboard small text={project.id} />
   </div>
   <div class="description">{project.description}</div>
 </header>

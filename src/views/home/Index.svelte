@@ -20,7 +20,7 @@
     config.projects.pinned.length > 0
       ? Project.getMulti(
           config.projects.pinned.map(project => ({
-            nameOrUrn: project.urn,
+            nameOrId: project.id,
             seed: project.seed,
           })),
         )
@@ -31,7 +31,7 @@
       resource: "projects",
       params: {
         view: { resource: "tree" },
-        urn: project.urn,
+        id: project.id,
         peer: undefined,
         seed: seed.host,
         profile: undefined,

@@ -112,8 +112,8 @@ export class Seed {
     return Seed.getPeer(this.api);
   }
 
-  async getProject(urn: string): Promise<proj.ProjectInfo> {
-    return proj.Project.getInfo(urn, this.api);
+  async getProject(id: string): Promise<proj.ProjectInfo> {
+    return proj.Project.getInfo(id, this.api);
   }
 
   async getProjects(perPage: number, id?: string): Promise<proj.ProjectInfo[]> {
@@ -123,7 +123,7 @@ export class Seed {
 
     return result.map((project: proj.ProjectInfo) => ({
       ...project,
-      id: project.urn,
+      id: project.id,
     }));
   }
 

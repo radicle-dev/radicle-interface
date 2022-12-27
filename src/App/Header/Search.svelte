@@ -32,11 +32,11 @@
       }
 
       const projectOnSeeds = config.seeds.pinned.map(seed => ({
-        nameOrUrn: query,
+        nameOrId: query,
         seed: seed.host,
       }));
 
-      // The query is a radicle project URN.
+      // The query is a radicle project ID.
       if (utils.isRadicleId(query)) {
         const projects = await Project.getMulti(projectOnSeeds);
 
@@ -178,7 +178,7 @@
         resource: "projects",
         params: {
           view: { resource: "tree" },
-          urn: searchResult.id,
+          id: searchResult.id,
           peer: undefined,
           profile: undefined,
           seed: searchResult.seedHost,

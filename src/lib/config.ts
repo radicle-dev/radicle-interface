@@ -9,7 +9,7 @@ export interface Config {
   projects: {
     pinned: {
       name: string;
-      urn: string;
+      id: string;
       seed: string;
     }[];
   };

@@ -3,7 +3,7 @@ import type { Comment, Thread } from "@app/lib/issue";
 import type { Commit, DiffStats } from "@app/lib/commit";
 import type { Diff } from "@app/lib/diff";
 import type { Host } from "@app/lib/api";
-import type { PeerId, Urn } from "@app/lib/project";
+import type { PeerId, Id } from "@app/lib/project";
 
 import { Request } from "@app/lib/api";
 
@@ -30,7 +30,7 @@ export interface Revision {
   oid: string;
   comment: Comment;
   discussion: Thread[];
-  reviews: Record<Urn, Review>;
+  reviews: Record<Id, Review>;
   merges: Merge[];
   changeset: {
     diff: Diff;
@@ -142,21 +142,17 @@ export class Patch implements IPatch {
     return timeline.sort((a, b) => a.timestamp - b.timestamp);
   }
 
-  static async getPatches(urn: string, host: Host): Promise<Patch[]> {
+  static async getPatches(id: string, host: Host): Promise<Patch[]> {
     const response: IPatch[] = await new Request(
-      `projects/${urn}/patches`,
+      `projects/${id}/patches`,
       host,
     ).get();
     return response.map(patch => new Patch(patch));
   }
 
-  static async getPatch(
-    urn: string,
-    patch: string,
-    host: Host,
-  ): Promise<Patch> {
+  static async getPatch(id: string, patch: string, host: Host): Promise<Patch> {
     const response: IPatch = await new Request(
-      `projects/${urn}/patches/${patch}`,
+      `projects/${id}/patches/${patch}`,
       host,
     ).get();
     return new Patch(response);

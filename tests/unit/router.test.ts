@@ -101,7 +101,7 @@ describe("routeToPath", () => {
         params: {
           view: { resource: "tree" },
           seed: "willow.radicle.garden",
-          urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+          id: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
         },
       },
       output:
@@ -228,7 +228,7 @@ describe("pathToRoute", () => {
           seed: "willow.radicle.garden",
           profile: undefined,
           peer: undefined,
-          urn: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+          id: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
         },
       },
       description: "Seed Project Route",

@@ -69,7 +69,7 @@ RAD_HOME=$ALICE_RAD_HOME rad init --name "source-browsing" --description "Git re
 
 sleep 10
 RAD_HOME=$ALICE_RAD_HOME rad push --seed 0.0.0.0:8778 --all --sync
-PROJECT_URN=$(rad .)
+PROJECT_ID=$(rad .)
 
 
 GIT_AUTHOR_NAME="Bob Belcher"
@@ -80,7 +80,7 @@ GIT_COMMITTER_EMAIL="bob@radicle.xyz"
 RAD_HOME=$BOB_RAD_HOME rad auth --init --name bob --passphrase $PASSPHRASE
 
 cd $BOB_CHECKOUT
-RAD_HOME=$BOB_RAD_HOME rad clone $PROJECT_URN --seed 0.0.0.0:8778 --no-confirm
+RAD_HOME=$BOB_RAD_HOME rad clone $PROJECT_ID --seed 0.0.0.0:8778 --no-confirm
 
 cd $TEST_REPO_NAME
 echo "Updated readme" > README.md

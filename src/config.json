@@ -15,62 +15,62 @@
     "pinned": [
       {
         "name": "radicle-cli",
-        "urn": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+        "id": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-interface",
-        "urn": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
+        "id": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-client-services",
-        "urn": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
+        "id": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "solmate",
-        "urn": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
+        "id": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "openzeppelin-contracts",
-        "urn": "rad:git:hnrkbx9xzjg8tf9hj9uh5qdxwuyjddsxyaw6o",
+        "id": "rad:git:hnrkbx9xzjg8tf9hj9uh5qdxwuyjddsxyaw6o",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "haskell-language-server",
-        "urn": "rad:git:hnrkf1jaje1e93rua64zgphg7zb14qo9zexgy",
+        "id": "rad:git:hnrkf1jaje1e93rua64zgphg7zb14qo9zexgy",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "rx",
-        "urn": "rad:git:hnrk8aoks6w3tdbcwt9dqnor9aqy8tjha3k5o",
+        "id": "rad:git:hnrk8aoks6w3tdbcwt9dqnor9aqy8tjha3k5o",
         "seed": "maple.radicle.garden"
       },
       {
         "name": "astrolabe",
-        "urn": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
+        "id": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "svelte-dappkit",
-        "urn": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
+        "id": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
         "seed": "maple.radicle.garden"
       },
       {
         "name": "tmyxer",
-        "urn": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
+        "id": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "pax",
-        "urn": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
+        "id": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "hexade",
-        "urn": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
+        "id": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
         "seed": "pine.radicle.garden"
       }
     ]

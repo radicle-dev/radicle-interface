@@ -33,7 +33,7 @@ test("seed projects", async ({ page }) => {
     ).toBeVisible();
   }
 
-  // Show project URN on hover.
+  // Show project ID on hover.
   {
     await expect(
       project.locator("text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy"),

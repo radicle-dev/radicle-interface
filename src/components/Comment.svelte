@@ -35,10 +35,10 @@ Please enter a comment message for your patch update. Leaving this
 blank is also okay.
 -->`;
 
-  $: source = profile?.avatar || comment.author.urn;
+  $: source = profile?.avatar || comment.author.id;
   $: title =
     profile?.name ||
-    (comment.author.profile ? comment.author.profile.name : comment.author.urn);
+    (comment.author.profile ? comment.author.profile.name : comment.author.id);
 
   const selectReaction = (event: { detail: string }) => {
     // TODO: Once we allow adding reactions through the http-api, we should call it here.

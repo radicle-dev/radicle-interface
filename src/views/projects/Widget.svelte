@@ -12,7 +12,7 @@
   export let compact = false;
 
   const loadCommits = async () => {
-    const commits = await Project.getActivity(project.urn, seed.api);
+    const commits = await Project.getActivity(project.id, seed.api);
 
     return groupCommitsByWeek(commits.activity);
   };
@@ -92,14 +92,14 @@
     display: flex;
     justify-content: space-between;
   }
-  article .id .urn {
+  article .id .rid {
     visibility: hidden;
     color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
   }
-  article:hover .id .urn {
+  article:hover .id .rid {
     visibility: visible;
   }
   @media (max-width: 720px) {
@@ -147,7 +147,7 @@
   {#if !compact}
     <div class="right">
       <div class="id">
-        <span class="urn layout-desktop">{project.urn}</span>
+        <span class="rid layout-desktop">{project.id}</span>
       </div>
       {#await loadCommits() then points}
         <div class="layout-desktop activity">

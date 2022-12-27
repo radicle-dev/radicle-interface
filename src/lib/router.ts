@@ -206,21 +206,21 @@ function pathToRoute(path: string): Route | null {
     case "seeds": {
       const host = segments.shift();
       if (host) {
-        const urn = segments.shift();
-        if (urn) {
+        const id = segments.shift();
+        if (id) {
           if (segments.length === 0) {
             return {
               resource: "projects",
               params: {
                 view: { resource: "tree" },
-                urn,
+                id,
                 peer: undefined,
                 profile: undefined,
                 seed: host,
               },
             };
           }
-          const params = resolveProjectRoute(url, urn, segments);
+          const params = resolveProjectRoute(url, id, segments);
           if (params) {
             return {
               resource: "projects",
@@ -228,7 +228,7 @@ function pathToRoute(path: string): Route | null {
                 ...params,
                 search: url.search,
                 seed: host,
-                urn,
+                id,
               },
             };
           }
@@ -242,27 +242,27 @@ function pathToRoute(path: string): Route | null {
       return { resource: "home" };
     default: {
       if (resource) {
-        const urn = segments.shift();
-        if (urn) {
+        const id = segments.shift();
+        if (id) {
           if (segments.length === 0) {
             return {
               resource: "projects",
               params: {
                 view: { resource: "tree" },
-                urn,
+                id,
                 peer: undefined,
                 profile: resource,
                 seed: undefined,
               },
             };
           } else {
-            const params = resolveProjectRoute(url, urn, segments);
+            const params = resolveProjectRoute(url, id, segments);
             if (params) {
               return {
                 resource: "projects",
                 params: {
                   ...params,
-                  urn,
+                  id,
                   search: url.search,
                   profile: resource,
                 },
@@ -339,21 +339,21 @@ export function routeToPath(route: Route) {
     }
 
     if (route.params.view.resource === "tree") {
-      return `${hostPrefix}/${route.params.urn}${peer}/tree${suffix}`;
+      return `${hostPrefix}/${route.params.id}${peer}/tree${suffix}`;
     } else if (route.params.view.resource === "commits") {
-      return `${hostPrefix}/${route.params.urn}${peer}/commits${suffix}`;
+      return `${hostPrefix}/${route.params.id}${peer}/commits${suffix}`;
     } else if (route.params.view.resource === "history") {
-      return `${hostPrefix}/${route.params.urn}${peer}/history${suffix}`;
+      return `${hostPrefix}/${route.params.id}${peer}/history${suffix}`;
     } else if (route.params.view.resource === "patches") {
-      return `${hostPrefix}/${route.params.urn}${peer}/patches${suffix}`;
+      return `${hostPrefix}/${route.params.id}${peer}/patches${suffix}`;
     } else if (route.params.view.resource === "patch") {
-      return `${hostPrefix}/${route.params.urn}${peer}/patches/${route.params.view.params.patch}`;
+      return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}`;
     } else if (route.params.view.resource === "issues") {
-      return `${hostPrefix}/${route.params.urn}${peer}/issues${suffix}`;
+      return `${hostPrefix}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
-      return `${hostPrefix}/${route.params.urn}${peer}/issues/${route.params.view.params.issue}`;
+      return `${hostPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
     } else {
-      return `${hostPrefix}/${route.params.urn}${peer}${content}`;
+      return `${hostPrefix}/${route.params.id}${peer}${content}`;
     }
   } else if (route.resource === "registrations") {
     if (route.params.view.resource === "validateName") {
@@ -380,7 +380,7 @@ export function routeToPath(route: Route) {
 
 function resolveProjectRoute(
   url: URL,
-  urn: string,
+  id: string,
   segments: string[],
 ): ProjectsParams | null {
   let content = segments.shift();
@@ -395,7 +395,7 @@ function resolveProjectRoute(
     const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {
       view: { resource: "tree" },
-      urn,
+      id,
       peer,
       path: undefined,
       revision: undefined,
@@ -406,7 +406,7 @@ function resolveProjectRoute(
   } else if (content === "history") {
     return {
       view: { resource: "history" },
-      urn,
+      id,
       peer,
       path: undefined,
       revision: undefined,
@@ -415,7 +415,7 @@ function resolveProjectRoute(
   } else if (content === "commits") {
     return {
       view: { resource: "commits" },
-      urn,
+      id,
       peer,
       path: undefined,
       revision: undefined,
@@ -426,7 +426,7 @@ function resolveProjectRoute(
     if (patch) {
       return {
         view: { resource: "patch", params: { patch } },
-        urn,
+        id,
         peer,
         path: undefined,
         revision: undefined,
@@ -434,7 +434,7 @@ function resolveProjectRoute(
     } else {
       return {
         view: { resource: "patches" },
-        urn,
+        id,
         peer,
         path: undefined,
         revision: undefined,
@@ -445,7 +445,7 @@ function resolveProjectRoute(
     if (issue) {
       return {
         view: { resource: "issue", params: { issue } },
-        urn,
+        id,
         peer,
         path: undefined,
         revision: undefined,
@@ -453,7 +453,7 @@ function resolveProjectRoute(
     } else {
       return {
         view: { resource: "issues" },
-        urn,
+        id,
         peer,
         path: undefined,
         revision: undefined,

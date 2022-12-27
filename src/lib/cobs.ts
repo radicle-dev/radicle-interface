@@ -2,7 +2,7 @@ import type { PeerId } from "@app/lib/project";
 
 export interface Author {
   peer: PeerId;
-  urn: string;
+  id: string;
   profile: {
     name: string;
     ens: {
@@ -12,7 +12,7 @@ export interface Author {
 }
 
 export interface PeerIdentity {
-  urn: string;
+  id: string;
   name: string;
   ens: {
     name: string;

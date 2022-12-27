@@ -5,10 +5,10 @@
   import { closeFocused } from "@app/components/Floating.svelte";
 
   export let seedHost: string;
-  export let urn: string;
+  export let id: string;
 
-  $: radCloneUrl = `rad clone rad://${seedHost}/${utils.parseRadicleId(urn)}`;
-  $: gitCloneUrl = `https://${seedHost}/${utils.parseRadicleId(urn)}.git`;
+  $: radCloneUrl = `rad clone rad://${seedHost}/${utils.parseRadicleId(id)}`;
+  $: gitCloneUrl = `https://${seedHost}/${utils.parseRadicleId(id)}.git`;
 </script>
 
 <style>
