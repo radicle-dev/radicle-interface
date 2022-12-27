@@ -2,8 +2,6 @@
   import type { MaybeTree } from "@app/lib/project";
 
   import Loading from "@app/components/Loading.svelte";
-  import { createEventDispatcher } from "svelte";
-
   import File from "./File.svelte";
 
   export let fetchTree: (path: string) => Promise<MaybeTree>;

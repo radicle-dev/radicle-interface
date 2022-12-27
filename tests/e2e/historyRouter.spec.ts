@@ -8,11 +8,12 @@ import {
 } from "@tests/support/fixtures.js";
 import {
   expectBackAndForwardNavigationWorks,
+  expectBackAndTryMiddleClickWorks,
   expectUrlPersistsReload,
 } from "@tests/support/router.js";
 
-test("navigate between landing and project page", async ({ page }) => {
-  await page.addInitScript(appConfigWithFixture);
+test("navigate between landing and project page", async ({ context, page }) => {
+  await context.addInitScript(appConfigWithFixture);
 
   await page.goto("/");
   await expect(page).toHaveURL("/");
@@ -21,10 +22,17 @@ test("navigate between landing and project page", async ({ page }) => {
   await expect(page).toHaveURL(`${projectFixtureUrl}/tree/${aliceMainHead}`);
 
   await expectBackAndForwardNavigationWorks("/", page);
+  await expectBackAndTryMiddleClickWorks(
+    "/",
+    "text=source-browsing",
+    page,
+    context,
+  );
   await expectUrlPersistsReload(page);
 });
 
-test("navigation between seed and project pages", async ({ page }) => {
+test("navigation between seed and project pages", async ({ context, page }) => {
+  await context.addInitScript(appConfigWithFixture);
   await page.goto("/seeds/radicle.local");
 
   const project = page.locator(".project");
@@ -32,6 +40,12 @@ test("navigation between seed and project pages", async ({ page }) => {
   await expect(page).toHaveURL(`${projectFixtureUrl}/tree/${aliceMainHead}`);
 
   await expectBackAndForwardNavigationWorks("/seeds/radicle.local", page);
+  await expectBackAndTryMiddleClickWorks(
+    "/seeds/radicle.local",
+    ".project",
+    page,
+    context,
+  );
   await expectUrlPersistsReload(page);
 
   await page.locator('role=button[name="Seed"]').click();
@@ -40,8 +54,10 @@ test("navigation between seed and project pages", async ({ page }) => {
 
 test.describe("project page navigation", () => {
   test("navigation between commit history and single commit", async ({
+    context,
     page,
   }) => {
+    await context.addInitScript(appConfigWithFixture);
     const projectHistoryURL = `${projectFixtureUrl}/history/${aliceMainHead}`;
     await page.goto(projectHistoryURL);
 
@@ -51,10 +67,20 @@ test.describe("project page navigation", () => {
     );
 
     await expectBackAndForwardNavigationWorks(projectHistoryURL, page);
+    await expectBackAndTryMiddleClickWorks(
+      projectHistoryURL,
+      "text=Add Markdown cheat sheet",
+      page,
+      context,
+    );
     await expectUrlPersistsReload(page);
   });
 
-  test("navigate between tree and commit history", async ({ page }) => {
+  test("navigate between tree and commit history", async ({
+    context,
+    page,
+  }) => {
+    await context.addInitScript(appConfigWithFixture);
     const projectTreeURL = `${projectFixtureUrl}/tree/${aliceMainHead}`;
 
     await page.goto(projectTreeURL);
@@ -66,10 +92,17 @@ test.describe("project page navigation", () => {
     );
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
+    await expectBackAndTryMiddleClickWorks(
+      projectTreeURL,
+      'role=button[name="Commit count"]',
+      page,
+      context,
+    );
     await expectUrlPersistsReload(page);
   });
 
-  test("navigate project paths", async ({ page }) => {
+  test("navigate project paths", async ({ context, page }) => {
+    await context.addInitScript(appConfigWithFixture);
     const projectTreeURL = `${projectFixtureUrl}/tree/${aliceMainHead}`;
 
     await page.goto(projectTreeURL);
@@ -86,10 +119,20 @@ test.describe("project page navigation", () => {
       `${projectTreeURL}/.hidden`,
       page,
     );
+    await expectBackAndTryMiddleClickWorks(
+      `${projectTreeURL}/.hidden`,
+      "text=true",
+      page,
+      context,
+    );
     await expectUrlPersistsReload(page);
   });
 
-  test("navigate project paths with a selected peer", async ({ page }) => {
+  test("navigate project paths with a selected peer", async ({
+    context,
+    page,
+  }) => {
+    await context.addInitScript(appConfigWithFixture);
     const projectTreeURL = `${projectFixtureUrl}/remotes/${aliceRemote}/tree`;
 
     await page.goto(projectTreeURL);
@@ -105,6 +148,12 @@ test.describe("project page navigation", () => {
     await expectBackAndForwardNavigationWorks(
       `${projectTreeURL}/main/.hidden`,
       page,
+    );
+    await expectBackAndTryMiddleClickWorks(
+      `${projectTreeURL}/main/.hidden`,
+      "text=true",
+      page,
+      context,
     );
     await expectUrlPersistsReload(page);
   });
