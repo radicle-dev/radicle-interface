@@ -13,7 +13,7 @@ export class Request {
 
   constructor(path: string, api: Host) {
     this.port = api.port || defaultSeedPort;
-    this.base = api.host;
+    this.base = api.host + "/api";
     this.path = path.startsWith("/") ? path.slice(1) : path;
     this.protocol = api.host === "0.0.0.0" ? "http://" : "https://";
   }

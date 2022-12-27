@@ -12,7 +12,6 @@ export interface IIssue {
   author: Author;
   title: string;
   state: State;
-  comment: Comment;
   discussion: Thread[];
   tags: Tag[];
   timestamp: number;
@@ -32,7 +31,7 @@ export interface Comment<R = null> {
   body: string;
   reactions: Record<string, number>;
   timestamp: number;
-  replies: R;
+  replyTo: R;
 }
 
 export type Thread = Comment<Comment[]>;
@@ -57,7 +56,6 @@ export class Issue {
   author: Author;
   title: string;
   state: State;
-  comment: Comment;
   discussion: Thread[];
   tags: Tag[];
   timestamp: number;
@@ -67,16 +65,14 @@ export class Issue {
     this.author = issue.author;
     this.title = issue.title;
     this.state = issue.state;
-    this.comment = issue.comment;
     this.discussion = issue.discussion;
     this.tags = issue.tags;
-    this.timestamp = issue.timestamp;
+    this.timestamp = issue.discussion[0].timestamp;
   }
 
   // Counts the amount of comments and replies in a discussion
   countComments(): number {
-    return this.discussion.reduce((acc, comment) => {
-      if (comment.replies) return acc + comment.replies.length + 1; // We add all replies and 1 forathe comment in this loop.
+    return this.discussion.reduce(acc => {
       return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
     }, 0);
   }

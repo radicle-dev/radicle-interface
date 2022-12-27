@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { Diff, DiffStats } from "@app/lib/diff";
+  import type { Diff } from "@app/lib/diff";
   import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
 
   export let diff: Diff;
-  export let stats: DiffStats;
 
   const diffDescription = ({ modified, added, deleted }: Diff): string => {
     const s = [];
@@ -37,9 +36,9 @@
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions">{stats.insertions} insertion(s)</span>
+  <span class="additions">{diff.stats.insertions} insertion(s)</span>
   and
-  <span class="deletions">{stats.deletions} deletion(s)</span>
+  <span class="deletions">{diff.stats.deletions} deletion(s)</span>
 </div>
 <div class="diff-listing">
   {#each diff.added as file}

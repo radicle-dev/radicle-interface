@@ -29,9 +29,6 @@
     flex-direction: column;
     flex: 1;
   }
-  .replies {
-    margin-left: 2rem;
-  }
   .element {
     margin: 0 0 1rem 3rem;
   }
@@ -66,11 +63,6 @@
     {:else if element.type === TimelineType.Thread}
       <div class="margin-left">
         <Comment comment={element.inner} {wallet} {getImage} />
-        <div class="replies">
-          {#each element.inner.replies as comment}
-            <Comment caption="replied" {comment} {wallet} {getImage} />
-          {/each}
-        </div>
       </div>
     {/if}
   {/each}

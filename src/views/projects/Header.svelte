@@ -98,11 +98,9 @@
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />
 
-  {#if seed.git.host}
-    <CloneButton seedHost={seed.git.host} {id} />
-  {/if}
-  <span>
-    {#if seed.addr.host}
+  {#if seed.addr.host}
+    <CloneButton seedHost={seed.addr.host} {id} />
+    <span>
       <HeaderToggleLabel
         clickable
         ariaLabel="Seed"
@@ -110,8 +108,8 @@
         on:click={goToSeed}>
         <span>{seed.addr.host}</span>
       </HeaderToggleLabel>
-    {/if}
-  </span>
+    </span>
+  {/if}
   <HeaderToggleLabel
     ariaLabel="Commit count"
     clickable

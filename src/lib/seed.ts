@@ -23,15 +23,13 @@ export class InvalidSeed {
   }
 }
 
-export const defaultSeedPort = 8777;
-export const defaultNodePort = 8776;
-export const defaultGitPort = 443;
+export const defaultSeedPort = 8080;
+export const defaultNodePort = 9050;
 
 export class Seed {
   valid = true as const;
 
   addr: { host: string; port: number | null };
-  git: { host: string; port: number | null };
   node: { host: string; id: string; port: number };
 
   version?: string;
@@ -40,17 +38,14 @@ export class Seed {
   constructor(seed: {
     host: string;
     id: string;
-    git?: string | null;
     addr?: string | null;
     version?: string | null;
   }) {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
-    assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
+    assert(/^[a-zA-Z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
     let _seed = null;
-    let _git = null;
     let _seedPort: number | null = defaultSeedPort;
-    let _gitPort: number | null = defaultGitPort;
 
     if (seed.addr) {
       try {
@@ -73,26 +68,13 @@ export class Seed {
       assert(isDomain(_seed), `invalid seed host ${_seed}`);
     }
 
-    if (seed.git) {
-      try {
-        const url = new URL(seed.git);
-        _git = url.hostname;
-        _gitPort = url.port ? Number(url.port) : null;
-      } catch {
-        _git = seed.git;
-      }
-      assert(isDomain(_git), `invalid seed git host ${_git}`);
-    }
-
     this.emoji = getSeedEmoji(seed.host);
 
     // The `_seed` being more specific takes
     // precedence over the `host`, if available.
     _seed = _seed ?? seed.host;
-    _git = _git ?? seed.host;
 
     this.addr = { host: _seed, port: _seedPort };
-    this.git = { host: _git, port: _gitPort };
     this.node = { host: seed.host, id: seed.id, port: defaultNodePort };
 
     if (seed.version) {
@@ -121,10 +103,7 @@ export class Seed {
       ? await proj.Project.getDelegateProjects(id, this.addr, { perPage })
       : await proj.Project.getProjects(this.addr, { perPage });
 
-    return result.map((project: proj.ProjectInfo) => ({
-      ...project,
-      id: project.id,
-    }));
+    return result;
   }
 
   async getStats(): Promise<{
@@ -135,7 +114,7 @@ export class Seed {
   }
 
   static async getNode(host: Host): Promise<{ id: string }> {
-    return new Request("/peer", host).get();
+    return new Request("/node", host).get();
   }
 
   static async getInfo(host: Host): Promise<{ version: string }> {

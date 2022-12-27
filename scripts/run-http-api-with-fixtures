@@ -1,19 +1,19 @@
 #!/bin/sh
 set -e
 
-REV=40bdc662b2d48cbfaa87182b21457ef8f861b04a
+REV=1f55d7a32750b3e63c56aad00370411b90420a29
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
 WORKSPACE=$REPO_ROOT/tests/tmp/palm
 PASSPHRASE=asdf
-CONTAINER_NAME=radicle-http-api-with-fixtures
-HTTP_API_BINARY=radicle-http-api
+CONTAINER_NAME=radicle-httpd-with-fixtures
+HTTP_API_BINARY=radicle-httpd
 
 show_usage()
 {
   echo
-  echo "Starts a http-api backend with test fixtures."
+  echo "Starts a radicle-httpd backend with test fixtures."
   echo
   echo "USAGE:"
   echo "  run-http-api-with-fixtures [-b|d|h|n]"
@@ -52,22 +52,24 @@ prepare_workspace()
   echo "Unpacking fixture $FIXTURE"
   mkdir -p $WORKSPACE
   tar -xf $FIXTURE -C $WORKSPACE
+  sudo chown -R 0:0 $WORKSPACE
 }
 
 run_docker() {
   echo "Starting docker at container $CONTAINER_NAME at $REV"
-  echo "  http-api --root $WORKSPACE --passphrase $PASSPHRASE"
+  echo "  RAD_HOME=$WORKSPACE RAD_PASSPHRASE=$PASSPHRASE radicle-http"
   echo
 
   exec docker run \
     --init \
-    --publish 8777:8777 \
+    --publish 8080:8080 \
     --rm \
     --name $CONTAINER_NAME \
     --volume $WORKSPACE:/app/radicle \
     "$@" \
-    "gcr.io/radicle-services/http-api:$REV" \
-    --passphrase $PASSPHRASE
+	--env "RAD_HOME=/app/radicle" \
+	--env "RAD_PASSPHRASE=$PASSPHRASE" \
+	"gcr.io/radicle-services/radicle-httpd:$REV"
 }
 
 run_binary() {
@@ -75,17 +77,17 @@ run_binary() {
     echo
     echo "Couldn't find the $HTTP_API_BINARY binary in your PATH."
     echo "You can compile it from source:"
-    echo "  👉 https://github.com/radicle-dev/radicle-client-services/tree/${REV}/http-api"
+    echo "  👉 https://github.com/radicle-dev/heartwood"
     echo
     exit 1
   fi
 
   echo
   echo "Starting $HTTP_API_BINARY"
-  echo "  $HTTP_API_BINARY --listen 0.0.0.0:8777 --root ${WORKSPACE} --passphrase $PASSPHRASE"
+  echo "  RAD_HOME=$WORKSPACE $HTTP_API_BINARY"
   echo
 
-  $HTTP_API_BINARY --listen 0.0.0.0:8777 --root $WORKSPACE --passphrase $PASSPHRASE
+  RAD_HOME=$WORKSPACE RAD_PASSPHRASE=$PASSPHRASE $HTTP_API_BINARY
 }
 
 BINARY=false

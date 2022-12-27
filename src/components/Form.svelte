@@ -20,17 +20,17 @@
 
   const validationExamples: Record<string, string> = {
     URL: "https://acme.xyz/",
-    URN: "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
+    ID: "eip155:1:0xd1bb21bd5a432d2919c82bcefe1bc7f8cc9207d9",
     handle: "acme",
     id: "hydkkcf6k9be5fuszdhpqbctu3q3fuwagj874wx2puia8ti8coygh1",
-    identity: "rad:git:hnrkqdpm9ub19oc8dccx44echy75hzfsezyio",
+    identity: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
     domain: "seed.acme.xyz",
     address: "0x17a8c096733BD5F87aD43D7A2A4d1C42ab8A2A70",
   };
 
   const validationTypes: { [index: string]: RegExp } = {
     URL: /^(https:\/\/|http:\/\/|ipfs:\/\/)\S+/,
-    URN: /^[a-z]+:[a-zA-Z0-9:-]{1,64}$/,
+    ID: /^z[a-z]+:[a-zA-Z0-9:-]{1,64}$/,
     // Github
     //   Username may only contain alphanumeric characters or hyphens.
     //   Username cannot have multiple consecutive hyphens.
@@ -43,7 +43,7 @@
     handle: /^[a-zA-Z0-9-_]{1,39}$/,
     address: /^0x[a-zA-Z0-9]{40}$/,
     id: /^[a-z0-9]+$/,
-    identity: /^rad:git:[a-z0-9]{37}$/,
+    identity: /^rad:[a-z0-9]{37}$/,
     domain: /^[^/:$!_;,@#]+\.[a-z]{2,}$/,
   };
 </script>

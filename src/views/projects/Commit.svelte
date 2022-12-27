@@ -73,5 +73,5 @@
       {/if}
     </div>
   </header>
-  <Changeset stats={commit.stats} diff={commit.diff} on:browse={onBrowse} />
+  <Changeset diff={commit.diff} on:browse={onBrowse} />
 </div>

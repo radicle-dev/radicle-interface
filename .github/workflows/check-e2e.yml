@@ -3,16 +3,18 @@ on:
   push:
     branches:
       - master
+      - heartwood
   pull_request:
     branches:
       - master
+      - heartwood
 
 jobs:
   check-e2e:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox, visual]
+        browser: [chromium, firefox]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:

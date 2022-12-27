@@ -98,9 +98,6 @@
     color: var(--color-negative);
     background-color: var(--color-negative-2);
   }
-  .replies {
-    margin-left: 2rem;
-  }
 
   @media (max-width: 960px) {
     .issue {
@@ -136,16 +133,8 @@
   </header>
   <main>
     <div class="comments">
-      <Comment comment={issue.comment} {getImage} {wallet} />
       {#each issue.discussion as comment}
         <Comment {comment} {getImage} {wallet} />
-        {#if comment.replies}
-          <div class="replies">
-            {#each comment.replies as reply}
-              <Comment comment={reply} {getImage} {wallet} />
-            {/each}
-          </div>
-        {/if}
       {/each}
     </div>
     <div class="metadata layout-desktop">

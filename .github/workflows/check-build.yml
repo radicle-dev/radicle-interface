@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - heartwood
   pull_request:
     branches:
       - master
+      - heartwood
 
 jobs:
   check-build:

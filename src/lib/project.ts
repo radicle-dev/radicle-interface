@@ -12,17 +12,6 @@ export type Branches = { [key: string]: string };
 export type MaybeBlob = Blob | undefined;
 export type MaybeTree = Tree | undefined;
 
-export type Delegate =
-  | {
-      type: "indirect";
-      id: Id;
-      ids: PeerId[];
-    }
-  | {
-      type: "direct";
-      id: PeerId;
-    };
-
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
   Tree,
@@ -40,17 +29,17 @@ export interface ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
   patches?: number;
   issues?: number;
 }
 
 export interface Tree {
   path: string;
-  info: EntryInfo;
   entries: Array<Entry>;
   stats: Stats;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Stats {
@@ -58,20 +47,16 @@ export interface Stats {
   contributors: number;
 }
 
-export enum ObjectType {
-  Blob = "BLOB",
-  Tree = "TREE",
-}
-
-export interface EntryInfo {
-  name: string;
-  objectType: ObjectType;
-  lastCommit: CommitHeader;
+export enum Kind {
+  Blob = "blob",
+  Tree = "tree",
 }
 
 export interface Entry {
   path: string;
-  info: EntryInfo;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Blob {
@@ -79,7 +64,9 @@ export interface Blob {
   html?: boolean;
   content: string;
   path: string;
-  info: EntryInfo;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Remote {
@@ -144,8 +131,6 @@ export class Project implements ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
   seed: Seed;
   peers: Peer[];
   branches: Branches;
@@ -167,8 +152,6 @@ export class Project implements ProjectInfo {
     this.name = info.name;
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
-    this.delegates = info.delegates;
-    this.remotes = info.remotes;
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
@@ -192,10 +175,7 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrId: string, host: Host): Promise<ProjectInfo> {
-    const result = await new Request(`projects/${nameOrId}`, host).get();
-    result["id"] = result["urn"];
-    delete result["urn"];
-    return result;
+    return await new Request(`projects/${nameOrId}`, host).get();
   }
 
   static async getProjects(
@@ -209,13 +189,7 @@ export class Project implements ProjectInfo {
       "per-page": opts?.perPage,
       page: opts?.page,
     };
-    const results = await new Request("projects", host).get(params);
-    results.forEach((result: { [x: string]: any }) => {
-      result["id"] = result["urn"];
-      delete result["urn"];
-    });
-
-    return results;
+    return await new Request("projects", host).get(params);
   }
 
   static async getDelegateProjects(
@@ -280,33 +254,6 @@ export class Project implements ProjectInfo {
       `projects/${this.id}/commits/${commit}`,
       this.seed.addr,
     ).get();
-    result.stats["insertions"] = result.stats["additions"];
-    delete result.stats["additions"];
-    result.diff["added"] = result.diff["created"];
-    delete result.diff["created"];
-
-    for (const kind of ["added", "deleted", "modified"]) {
-      for (const file of result.diff[kind]) {
-        for (const hunk of file.diff.hunks) {
-          for (const line of hunk.lines) {
-            if (line["lineNumOld"]) {
-              line["lineNoOld"] = line["lineNumOld"];
-              delete line["lineNumOld"];
-            }
-
-            if (line["lineNumNew"]) {
-              line["lineNoNew"] = line["lineNumNew"];
-              delete line["lineNumNew"];
-            }
-
-            if (line["lineNum"]) {
-              line["lineNo"] = line["lineNum"];
-              delete line["lineNum"];
-            }
-          }
-        }
-      }
-    }
 
     return result;
   }
@@ -364,12 +311,7 @@ export class Project implements ProjectInfo {
     const info = await Project.getInfo(id, seed.addr);
     id = isRadicleId(id) ? id : info.id;
 
-    // Older versions of http-api don't include the ID.
-    if (!info.id) info.id = id;
-
-    const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(id, seed.addr)
-      : [];
+    const peers: Peer[] = await Project.getRemotes(id, seed.addr);
 
     let remote: Remote = {
       heads: info.head ? { [info.defaultBranch]: info.head } : {},

@@ -250,7 +250,7 @@ test("clone modal", async ({ page }) => {
   await expect(page.locator(`text=https://0.0.0.0/${rid}.git`)).toBeVisible();
 });
 
-test("peer and branch switching", async ({ page }) => {
+test.skip("peer and branch switching", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   // Alice's peer.
@@ -334,7 +334,7 @@ test("peer and branch switching", async ({ page }) => {
   }
 });
 
-test("only one modal can be open at a time", async ({ page }) => {
+test.skip("only one modal can be open at a time", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
@@ -365,7 +365,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 });
 
-test.describe("browser error handling", () => {
+test.describe.skip("browser error handling", () => {
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
       `**/v1/projects/${ridPrefix}${rid}/tree/${aliceMainHead}/markdown/`,

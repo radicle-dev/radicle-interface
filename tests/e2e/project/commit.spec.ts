@@ -7,7 +7,7 @@ import {
 
 const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote}/commits/2b32f6fe50090ebdb4cd7441e943330da3e6ff04`;
 
-test("navigation from commit list", async ({ page }) => {
+test.skip("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
   await page.locator("text=bob hyyzz9").click();
@@ -17,7 +17,7 @@ test("navigation from commit list", async ({ page }) => {
   await expect(page).toHaveURL(modifiedFileFixture);
 });
 
-test("relative timestamps", async ({ page }) => {
+test.skip("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
@@ -33,7 +33,7 @@ test("relative timestamps", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("modified file", async ({ page }) => {
+test.skip("modified file", async ({ page }) => {
   await page.goto(modifiedFileFixture);
 
   // Commit header.
@@ -58,7 +58,7 @@ test("modified file", async ({ page }) => {
   await expect(page.locator("text=+	Updated readme")).toBeVisible();
 });
 
-test("created file", async ({ page }) => {
+test.skip("created file", async ({ page }) => {
   await page.goto(
     `${projectFixtureUrl}/remotes/${bobRemote}/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
@@ -68,7 +68,7 @@ test("created file", async ({ page }) => {
   await expect(page.locator("text=subconscious.txt added")).toBeVisible();
 });
 
-test("deleted file", async ({ page }) => {
+test.skip("deleted file", async ({ page }) => {
   await page.goto(
     `${projectFixtureUrl}/remotes/${bobRemote}/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
   );

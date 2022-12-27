@@ -124,7 +124,7 @@
           name: "id",
           label: "Radicle",
           validate: "identity",
-          placeholder: "Radicle ID, eg. rad:git:hnrkqdpm9ub19oc8d…",
+          placeholder: "Radicle ID, eg. rad:zKtT7DmF9H34KkvcKj…",
           description: "The local radicle identity associated with this name.",
           value: r.profile.id ?? "",
           editable: true,

@@ -139,7 +139,6 @@
     {:else if activeTab === PatchTab.Diff && revision.changeset}
       <Changeset
         diff={revision.changeset.diff}
-        stats={revision.changeset.stats}
         on:browse={e => onBrowse(e, revision.oid)} />
     {:else if activeTab === PatchTab.Diff}
       <Placeholder emoji="🍳">

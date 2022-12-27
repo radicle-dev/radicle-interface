@@ -90,18 +90,8 @@ export async function getRegistration(
     getText(resolver, "com.github"),
   ]);
 
-  const [
-    address,
-    avatar,
-    url,
-    id,
-    seedId,
-    seedHost,
-    seedGit,
-    seedApi,
-    twitter,
-    github,
-  ] = meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
+  const [address, avatar, url, id, seedId, seedHost, seedApi, twitter, github] =
+    meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
 
   const profile: EnsProfile = {
     name,
@@ -119,7 +109,6 @@ export async function getRegistration(
       profile.seed = new Seed({
         host: seedHost,
         id: seedId,
-        git: seedGit,
         addr: seedApi,
       });
     } catch (e: any) {
@@ -157,10 +146,9 @@ export async function getSeed(
     return null;
   }
 
-  const [id, host, git, api] = await Promise.all([
+  const [id, host, api] = await Promise.all([
     getText(resolver, "eth.radicle.seed.id"),
     getText(resolver, "eth.radicle.seed.host"),
-    getText(resolver, "eth.radicle.seed.git"),
     getText(resolver, "eth.radicle.seed.api"),
   ]);
 
@@ -170,7 +158,7 @@ export async function getSeed(
   }
 
   try {
-    return new Seed({ host, id, git, addr: api });
+    return new Seed({ host, id, addr: api });
   } catch (e: any) {
     console.debug(e, host, id);
     return new InvalidSeed(id, host);

@@ -100,8 +100,7 @@ export class Patch implements IPatch {
 
   // Counts the amount of comments and replies in a discussion
   countComments(rev: number): number {
-    return this.revisions[rev].discussion.reduce((acc, comment) => {
-      if (comment.replies) return acc + comment.replies.length + 1; // We add all replies and 1 for each comment in this loop.
+    return this.revisions[rev].discussion.reduce(acc => {
       return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
     }, 0);
   }
