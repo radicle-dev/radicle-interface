@@ -1,4 +1,9 @@
-import { test, expect, appConfigWithFixture } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  appConfigWithFixture,
+  HEAD,
+} from "@tests/support/fixtures.js";
 
 test.use({
   customAppConfig: true,
@@ -20,5 +25,5 @@ test("show pinned projects", async ({ page }) => {
   ).toBeVisible();
 
   // Shows latest commit.
-  await expect(page.locator("text=fcc9294")).toBeVisible();
+  await expect(page.locator(`text=${HEAD.substring(0, 7)}`)).toBeVisible();
 });

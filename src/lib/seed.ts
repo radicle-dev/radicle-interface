@@ -23,16 +23,14 @@ export class InvalidSeed {
   }
 }
 
-export const defaultHttpApiPort = 8777;
-export const defaultLinkPort = 8776;
-export const defaultGitPort = 443;
+export const defaultSeedPort = 8080;
+export const defaultNodePort = 9050;
 
 export class Seed {
   valid = true as const;
 
-  api: { host: string; port: number | null };
-  git: { host: string; port: number | null };
-  link: { host: string; id: string; port: number };
+  addr: { host: string; port: number | null };
+  node: { host: string; id: string; port: number };
 
   version?: string;
   emoji: string;
@@ -40,60 +38,44 @@ export class Seed {
   constructor(seed: {
     host: string;
     id: string;
-    git?: string | null;
-    api?: string | null;
+    addr?: string | null;
     version?: string | null;
   }) {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
-    assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
+    assert(/^[a-zA-Z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
 
-    let api = null;
-    let git = null;
-    let apiPort: number | null = defaultHttpApiPort;
-    let gitPort: number | null = defaultGitPort;
+    let _seed = null;
+    let _seedPort: number | null = defaultSeedPort;
 
-    if (seed.api) {
+    if (seed.addr) {
       try {
-        const url = new URL(seed.api);
-        api = url.hostname;
+        const url = new URL(seed.addr);
+        _seed = url.hostname;
 
         if (url.port) {
-          apiPort = Number(url.port);
+          _seedPort = Number(url.port);
         } else if (url.protocol === "http:" && url.port === "") {
-          apiPort = 80;
+          _seedPort = 80;
         }
         if (url.protocol === "https:" && url.port === "") {
-          apiPort = 443;
+          _seedPort = 443;
         } else {
-          apiPort = null;
+          _seedPort = null;
         }
       } catch {
-        api = seed.api;
+        _seed = seed.addr;
       }
-      assert(isDomain(api), `invalid seed api host ${api}`);
-    }
-
-    if (seed.git) {
-      try {
-        const url = new URL(seed.git);
-        git = url.hostname;
-        gitPort = url.port ? Number(url.port) : null;
-      } catch {
-        git = seed.git;
-      }
-      assert(isDomain(git), `invalid seed git host ${git}`);
+      assert(isDomain(_seed), `invalid seed host ${_seed}`);
     }
 
     this.emoji = getSeedEmoji(seed.host);
 
-    // The `git` and `api` keys being more specific take
+    // The `_seed` being more specific takes
     // precedence over the `host`, if available.
-    api = api ?? seed.host;
-    git = git ?? seed.host;
+    _seed = _seed ?? seed.host;
 
-    this.api = { host: api, port: apiPort };
-    this.git = { host: git, port: gitPort };
-    this.link = { host: seed.host, id: seed.id, port: defaultLinkPort };
+    this.addr = { host: _seed, port: _seedPort };
+    this.node = { host: seed.host, id: seed.id, port: defaultNodePort };
 
     if (seed.version) {
       this.version = seed.version;
@@ -101,41 +83,38 @@ export class Seed {
   }
 
   get id(): string {
-    return this.link.id;
+    return this.node.id;
   }
 
   get host(): string {
-    return this.api.host;
+    return this.addr.host;
   }
 
-  async getPeer(): Promise<{ id: string }> {
-    return Seed.getPeer(this.api);
+  async getNode(): Promise<{ id: string }> {
+    return Seed.getNode(this.addr);
   }
 
   async getProject(id: string): Promise<proj.ProjectInfo> {
-    return proj.Project.getInfo(id, this.api);
+    return proj.Project.getInfo(id, this.addr);
   }
 
   async getProjects(perPage: number, id?: string): Promise<proj.ProjectInfo[]> {
     const result = id
-      ? await proj.Project.getDelegateProjects(id, this.api, { perPage })
-      : await proj.Project.getProjects(this.api, { perPage });
+      ? await proj.Project.getDelegateProjects(id, this.addr, { perPage })
+      : await proj.Project.getProjects(this.addr, { perPage });
 
-    return result.map((project: proj.ProjectInfo) => ({
-      ...project,
-      id: project.id,
-    }));
+    return result;
   }
 
   async getStats(): Promise<{
     projects: { count: number };
     users: { count: number };
   }> {
-    return new Request("/stats", this.api).get();
+    return new Request("/stats", this.addr).get();
   }
 
-  static async getPeer(host: Host): Promise<{ id: string }> {
-    return new Request("/peer", host).get();
+  static async getNode(host: Host): Promise<{ id: string }> {
+    return new Request("/node", host).get();
   }
 
   static async getInfo(host: Host): Promise<{ version: string }> {
@@ -144,19 +123,19 @@ export class Seed {
 
   static async lookup(
     hostname: string,
-    port: number = defaultHttpApiPort,
+    port: number = defaultSeedPort,
   ): Promise<Seed> {
     const host = { host: hostname, port };
-    const [info, peer] = await Promise.all([
+    const [info, node] = await Promise.all([
       Seed.getInfo(host),
-      Seed.getPeer(host),
+      Seed.getNode(host),
     ]);
 
     return new Seed({
       host: hostname,
-      id: peer.id,
+      id: node.id,
       version: info.version,
-      api: `https://${host.host}:${host.port}`,
+      addr: `https://${host.host}:${host.port}`,
     });
   }
 

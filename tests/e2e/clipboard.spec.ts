@@ -1,8 +1,7 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "@tests/support/fixtures.js";
+import { test, expect, remote, rid } from "@tests/support/fixtures.js";
 
-const sourceBrowsingFixture =
-  "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
+const sourceBrowsingFixture = `/seeds/0.0.0.0/rad:${rid}`;
 
 async function expectClipboard(content: string, page: Page) {
   const clipboardContent = await page.evaluate<string>(
@@ -33,39 +32,33 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );
-    expect(clipboardContent).toBe(
-      "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-    );
+    expect(clipboardContent).toBe(`rad:${rid}`);
   }
 
   // `rad clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator("text=rad clone rad://0.0.0.0/hnrkdi").hover();
+    await page
+      .locator(`text=rad clone rad://0.0.0.0/${rid.substring(0, 6)}`)
+      .hover();
     await page
       .locator(".clone-url-wrapper > span")
       .first()
       .locator(".clipboard")
       .click();
-    await expectClipboard(
-      "rad clone rad://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-      page,
-    );
+    await expectClipboard(`rad clone rad://0.0.0.0/${rid}`, page);
   }
 
   // `git clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator("text=https://0.0.0.0/hnrkdi").hover();
+    await page.locator(`text=https://0.0.0.0/${rid.substring(0, 6)}`).hover();
     await page
       .locator(".clone-url-wrapper > span")
       .last()
       .locator(".clipboard")
       .click();
-    await expectClipboard(
-      "https://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy.git",
-      page,
-    );
+    await expectClipboard(`https://0.0.0.0/${rid}.git`, page);
   }
 
   await page.goto("/seeds/radicle.local");
@@ -75,10 +68,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     await expectClipboard("0.0.0.0", page);
 
     await page.locator(".clipboard").last().click();
-    await expectClipboard(
-      "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o",
-      page,
-    );
+    await expectClipboard(remote, page);
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

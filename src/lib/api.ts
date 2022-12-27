@@ -1,3 +1,5 @@
+import { defaultSeedPort } from "@app/lib/seed";
+
 export interface Host {
   host: string;
   port: number | null;
@@ -10,8 +12,8 @@ export class Request {
   port: number;
 
   constructor(path: string, api: Host) {
-    this.port = api.port || 8777;
-    this.base = api.host;
+    this.port = api.port || defaultSeedPort;
+    this.base = api.host + "/api";
     this.path = path.startsWith("/") ? path.slice(1) : path;
     this.protocol = api.host === "0.0.0.0" ? "http://" : "https://";
   }

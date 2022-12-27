@@ -15,62 +15,62 @@
     "pinned": [
       {
         "name": "radicle-cli",
-        "id": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+        "id": "rad:",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-interface",
-        "id": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
+        "id": "rad:",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "radicle-client-services",
-        "id": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
+        "id": "rad:",
         "seed": "clients.radicle.xyz"
       },
       {
         "name": "solmate",
-        "id": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
+        "id": "rad:",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "openzeppelin-contracts",
-        "id": "rad:git:hnrkbx9xzjg8tf9hj9uh5qdxwuyjddsxyaw6o",
+        "id": "rad:",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "haskell-language-server",
-        "id": "rad:git:hnrkf1jaje1e93rua64zgphg7zb14qo9zexgy",
+        "id": "rad:",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "rx",
-        "id": "rad:git:hnrk8aoks6w3tdbcwt9dqnor9aqy8tjha3k5o",
+        "id": "rad:",
         "seed": "maple.radicle.garden"
       },
       {
         "name": "astrolabe",
-        "id": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
+        "id": "rad:",
         "seed": "willow.radicle.garden"
       },
       {
         "name": "svelte-dappkit",
-        "id": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
+        "id": "rad:",
         "seed": "maple.radicle.garden"
       },
       {
         "name": "tmyxer",
-        "id": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
+        "id": "rad:",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "pax",
-        "id": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
+        "id": "rad:",
         "seed": "pine.radicle.garden"
       },
       {
         "name": "hexade",
-        "id": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
+        "id": "rad:",
         "seed": "pine.radicle.garden"
       }
     ]

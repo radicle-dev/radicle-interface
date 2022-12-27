@@ -3,6 +3,8 @@ import {
   expect,
   appConfigWithFixture,
   projectFixtureUrl,
+  remote,
+  HEAD,
 } from "@tests/support/fixtures.js";
 import {
   expectBackAndForwardNavigationWorks,
@@ -22,9 +24,7 @@ test("navigate between landing and project page", async ({ page }) => {
   await expect(page).toHaveURL("/#/");
 
   await page.locator("text=source-browsing").click();
-  await expect(page).toHaveURL(
-    `/#${projectFixtureUrl}/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842`,
-  );
+  await expect(page).toHaveURL(`/#${projectFixtureUrl}/tree/${HEAD}`);
 
   await expectBackAndForwardNavigationWorks("/#/", page);
   await expectUrlPersistsReload(page);
@@ -35,9 +35,7 @@ test("navigation between seed and project pages", async ({ page }) => {
 
   const project = page.locator(".project");
   await project.click();
-  await expect(page).toHaveURL(
-    `/#${projectFixtureUrl}/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842`,
-  );
+  await expect(page).toHaveURL(`/#${projectFixtureUrl}/tree/${HEAD}`);
 
   await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
@@ -50,7 +48,7 @@ test.describe("project page navigation", () => {
   test("navigation between commit history and single commit", async ({
     page,
   }) => {
-    const projectHistoryURL = `/#${projectFixtureUrl}/history/f0b8db68847b01f0964380507a9db6800e5b5342`;
+    const projectHistoryURL = `/#${projectFixtureUrl}/history/${HEAD}`;
     await page.goto(projectHistoryURL);
 
     await page.locator("text=Add Markdown cheat sheet").click();
@@ -63,22 +61,20 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate between tree and commit history", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842`;
+    const projectTreeURL = `/#${projectFixtureUrl}/tree/${HEAD}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.locator('role=button[name="Commit count"]').click();
-    await expect(page).toHaveURL(
-      `/#${projectFixtureUrl}/history/fcc929424b82984b7cbff9c01d2e20d9b1249842`,
-    );
+    await expect(page).toHaveURL(`/#${projectFixtureUrl}/history/${HEAD}`);
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
     await expectUrlPersistsReload(page);
   });
 
   test("navigate project paths", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842`;
+    const projectTreeURL = `/#${projectFixtureUrl}/tree/${HEAD}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
@@ -98,7 +94,7 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths with a selected peer", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/tree`;
+    const projectTreeURL = `/#${projectFixtureUrl}/remotes/${remote}/tree`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);

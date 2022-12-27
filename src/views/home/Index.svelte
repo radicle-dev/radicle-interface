@@ -115,7 +115,7 @@
             <Widget
               compact
               project={result.info}
-              seed={{ api: result.seed }}
+              seed={{ addr: result.seed }}
               on:click={() => onClick(result.info, result.seed)} />
           </div>
         {/each}

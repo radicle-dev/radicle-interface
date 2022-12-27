@@ -11,7 +11,7 @@
   export let history: CommitsHistory;
 
   const fetchMoreCommits = async (): Promise<CommitMetadata[]> => {
-    const response = await Project.getCommits(project.id, project.seed.api, {
+    const response = await Project.getCommits(project.id, project.seed.addr, {
       // Fetching 31 elements since we remove the first one
       parent: history.headers[history.headers.length - 1].header.sha1,
       perPage: 31,

@@ -2,7 +2,7 @@
   import type { Stats } from "@app/lib/seed";
   import type { ProjectInfo } from "@app/lib/project";
   import { formatSeedId, formatSeedHost, twemoji } from "@app/lib/utils";
-  import { Seed } from "@app/lib/seed";
+  import { Seed, defaultSeedPort } from "@app/lib/seed";
   import Loading from "@app/components/Loading.svelte";
   import SeedAddress from "@app/components/SeedAddress.svelte";
   import NotFound from "@app/components/NotFound.svelte";
@@ -16,7 +16,7 @@
 
   const [host, port] = hostAndPort.includes(":")
     ? hostAndPort.split(":")
-    : [hostAndPort, 8777];
+    : [hostAndPort, defaultSeedPort];
 
   const hostName = formatSeedHost(host);
   const seedHost: Host = { host, port: Number(port) };
@@ -99,7 +99,7 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="txt-highlight">Address</div>
-      <SeedAddress {seed} port={seed.link.port} />
+      <SeedAddress {seed} port={seed.node.port} />
       <!-- Seed ID -->
       <div class="txt-highlight">Seed ID</div>
       <div class="seed-label">

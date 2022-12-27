@@ -1,7 +1,7 @@
 import type { Author, PeerInfo } from "@app/lib/cobs";
 import type { Comment, Thread } from "@app/lib/issue";
-import type { Commit, DiffStats } from "@app/lib/commit";
-import type { Diff } from "@app/lib/diff";
+import type { Commit } from "@app/lib/commit";
+import type { Diff, DiffStats } from "@app/lib/diff";
 import type { Host } from "@app/lib/api";
 import type { PeerId, Id } from "@app/lib/project";
 
@@ -100,8 +100,7 @@ export class Patch implements IPatch {
 
   // Counts the amount of comments and replies in a discussion
   countComments(rev: number): number {
-    return this.revisions[rev].discussion.reduce((acc, comment) => {
-      if (comment.replies) return acc + comment.replies.length + 1; // We add all replies and 1 for each comment in this loop.
+    return this.revisions[rev].discussion.reduce(acc => {
       return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
     }, 0);
   }

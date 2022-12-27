@@ -1,5 +1,7 @@
 import type { FullConfig } from "@playwright/test";
 
+import { seedPort } from "@tests/support/fixtures.js";
+
 export default async function globalSetup(_config: FullConfig): Promise<void> {
   assertHttpApiRunning();
 }
@@ -8,7 +10,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 // error that explains how to run it.
 async function assertHttpApiRunning(): Promise<void> {
   const palmTestFixtureSeedId =
-    "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";
+    "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
 
   const notRunningMessage =
     "The http-api server with test fixtures needs to be running.\n" +
@@ -17,17 +19,16 @@ async function assertHttpApiRunning(): Promise<void> {
   let peerId: string | undefined = undefined;
 
   try {
-    const response = await fetch("http://0.0.0.0:8777");
+    const response = await fetch(`http://0.0.0.0:${seedPort}/api`);
     const data = await response.json();
-    peerId = data.peer.id;
+    peerId = data.node.id;
   } catch (err) {
     console.error(err);
     throw new Error(notRunningMessage);
   }
 
   if (peerId !== palmTestFixtureSeedId) {
-    const wrongSeedMessage =
-      "The server on port 8777 doesn't have the right fixtures.\n";
+    const wrongSeedMessage = `The server on port ${seedPort} doesn't have the right fixtures.\n`;
     throw new Error(wrongSeedMessage + notRunningMessage);
   }
 }

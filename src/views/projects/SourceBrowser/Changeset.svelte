@@ -1,19 +1,18 @@
 <script lang="ts">
-  import type { DiffStats } from "@app/lib/commit";
   import type { Diff } from "@app/lib/diff";
+  import { setLinesType, LineDiffType } from "@app/lib/diff";
   import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
 
   export let diff: Diff;
-  export let stats: DiffStats;
 
-  const diffDescription = ({ modified, created, deleted }: Diff): string => {
+  const diffDescription = ({ modified, added, deleted }: Diff): string => {
     const s = [];
 
     if (modified.length) {
       s.push(`${modified.length} file(s) changed`);
     }
-    if (created.length) {
-      s.push(`${created.length} file(s) created`);
+    if (added.length) {
+      s.push(`${added.length} file(s) added`);
     }
     if (deleted.length) {
       s.push(`${deleted.length} file(s) deleted`);
@@ -38,16 +37,22 @@
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions">{stats.additions} addition(s)</span>
+  <span class="additions">{diff.stats.insertions} insertion(s)</span>
   and
-  <span class="deletions">{stats.deletions} deletion(s)</span>
+  <span class="deletions">{diff.stats.deletions} deletion(s)</span>
 </div>
 <div class="diff-listing">
-  {#each diff.created as file}
-    <FileDiff on:browse {file} mode="created" />
+  {#each diff.added as file}
+    <FileDiff
+      on:browse
+      file={setLinesType(file, LineDiffType.Addition)}
+      mode="added" />
   {/each}
   {#each diff.deleted as file}
-    <FileDiff on:browse {file} mode="deleted" />
+    <FileDiff
+      on:browse
+      file={setLinesType(file, LineDiffType.Deletion)}
+      mode="deleted" />
   {/each}
   {#each diff.modified as file}
     <FileDiff on:browse {file} />

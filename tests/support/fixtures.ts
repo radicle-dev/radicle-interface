@@ -173,7 +173,7 @@ export function appConfigWithFixture() {
       pinned: [
         {
           name: "source-browsing",
-          id: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
+          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
           seed: "0.0.0.0",
         },
       ],
@@ -181,4 +181,9 @@ export function appConfigWithFixture() {
   };
 }
 
-export const projectFixtureUrl = `/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy`;
+export const rid = "zKtT7DmF9H34KkvcKj9PHW19WzjT";
+export const projectFixtureUrl = `/seeds/0.0.0.0/rad:${rid}`;
+export const remote = "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
+export const seedPort = 8080;
+export const seedVersion = "0.1.0";
+export const HEAD = "fcc929424b82984b7cbff9c01d2e20d9b1249842";

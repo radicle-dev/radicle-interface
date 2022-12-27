@@ -3,7 +3,7 @@ import type { Wallet } from "@app/lib/wallet";
 import { type Host, Request } from "@app/lib/api";
 
 import { Profile, ProfileType } from "@app/lib/profile";
-import { Seed } from "@app/lib/seed";
+import { Seed, defaultSeedPort } from "@app/lib/seed";
 import { isFulfilled, isOid, isRadicleId } from "@app/lib/utils";
 
 export type Id = string;
@@ -11,17 +11,6 @@ export type PeerId = string;
 export type Branches = { [key: string]: string };
 export type MaybeBlob = Blob | undefined;
 export type MaybeTree = Tree | undefined;
-
-export type Delegate =
-  | {
-      type: "indirect";
-      id: Id;
-      ids: PeerId[];
-    }
-  | {
-      type: "direct";
-      id: PeerId;
-    };
 
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
@@ -40,17 +29,17 @@ export interface ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
   patches?: number;
   issues?: number;
 }
 
 export interface Tree {
   path: string;
-  info: EntryInfo;
   entries: Array<Entry>;
   stats: Stats;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Stats {
@@ -58,20 +47,16 @@ export interface Stats {
   contributors: number;
 }
 
-export enum ObjectType {
-  Blob = "BLOB",
-  Tree = "TREE",
-}
-
-export interface EntryInfo {
-  name: string;
-  objectType: ObjectType;
-  lastCommit: CommitHeader;
+export enum Kind {
+  Blob = "blob",
+  Tree = "tree",
 }
 
 export interface Entry {
   path: string;
-  info: EntryInfo;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Blob {
@@ -79,7 +64,9 @@ export interface Blob {
   html?: boolean;
   content: string;
   path: string;
-  info: EntryInfo;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Remote {
@@ -144,8 +131,6 @@ export class Project implements ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
   seed: Seed;
   peers: Peer[];
   branches: Branches;
@@ -167,8 +152,6 @@ export class Project implements ProjectInfo {
     this.name = info.name;
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
-    this.delegates = info.delegates;
-    this.remotes = info.remotes;
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
@@ -192,10 +175,7 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrId: string, host: Host): Promise<ProjectInfo> {
-    const result = await new Request(`projects/${nameOrId}`, host).get();
-    result["id"] = result["urn"];
-    delete result["urn"];
-    return result;
+    return await new Request(`projects/${nameOrId}`, host).get();
   }
 
   static async getProjects(
@@ -209,13 +189,7 @@ export class Project implements ProjectInfo {
       "per-page": opts?.perPage,
       page: opts?.page,
     };
-    const results = await new Request("projects", host).get(params);
-    results.forEach((result: { [x: string]: any }) => {
-      result["id"] = result["urn"];
-      delete result["urn"];
-    });
-
-    return results;
+    return await new Request("projects", host).get(params);
   }
 
   static async getDelegateProjects(
@@ -278,7 +252,7 @@ export class Project implements ProjectInfo {
   async getCommit(commit: string): Promise<Commit> {
     return new Request(
       `projects/${this.id}/commits/${commit}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
@@ -286,21 +260,21 @@ export class Project implements ProjectInfo {
     if (path === "/") path = "";
     return new Request(
       `projects/${this.id}/tree/${commit}/${path}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
   async getBlob(commit: string, path: string): Promise<Blob> {
     return new Request(
       `projects/${this.id}/blob/${commit}/${path}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
   async getReadme(commit: string): Promise<Blob> {
     return new Request(
       `projects/${this.id}/readme/${commit}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
@@ -317,7 +291,7 @@ export class Project implements ProjectInfo {
 
     const [host, port] = seedHost?.includes(":")
       ? seedHost.split(":")
-      : [seedHost, "8777"];
+      : [seedHost, defaultSeedPort];
 
     const seed = profile
       ? profile.seed
@@ -332,15 +306,10 @@ export class Project implements ProjectInfo {
       throw new Error("Couldn't load project: invalid seed");
     }
 
-    const info = await Project.getInfo(id, seed.api);
+    const info = await Project.getInfo(id, seed.addr);
     id = isRadicleId(id) ? id : info.id;
 
-    // Older versions of http-api don't include the ID.
-    if (!info.id) info.id = id;
-
-    const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(id, seed.api)
-      : [];
+    const peers: Peer[] = await Project.getRemotes(id, seed.addr);
 
     let remote: Remote = {
       heads: info.head ? { [info.defaultBranch]: info.head } : {},
@@ -348,7 +317,7 @@ export class Project implements ProjectInfo {
 
     if (peer) {
       try {
-        remote = await Project.getRemote(id, peer, seed.api);
+        remote = await Project.getRemote(id, peer, seed.addr);
       } catch {
         remote.heads = {};
       }

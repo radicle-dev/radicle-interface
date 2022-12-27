@@ -1,5 +1,5 @@
 import type { Stats, Person } from "@app/lib/project";
-import type { Diff } from "@app/lib/diff";
+import type { Diff, DiffStats } from "@app/lib/diff";
 import { ApiError } from "@app/lib/api";
 import { getDaysPassed } from "@app/lib/utils";
 
@@ -61,11 +61,6 @@ export interface WeeklyActivity {
   time: number;
   commits: number[];
   week: number;
-}
-
-export interface DiffStats {
-  additions: number;
-  deletions: number;
 }
 
 export interface Commit {
