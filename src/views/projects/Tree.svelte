@@ -3,8 +3,6 @@
 
   import { createEventDispatcher } from "svelte";
 
-  import { ObjectType } from "@app/lib/project";
-
   import File from "./Tree/File.svelte";
   import Folder from "./Tree/Folder.svelte";
 
@@ -20,11 +18,11 @@
 </script>
 
 {#each tree.entries as entry (entry.path)}
-  {#if entry.info.objectType === ObjectType.Tree}
+  {#if window.HEARTWOOD ? entry.kind === "tree" : entry.info.objectType === "TREE"}
     <Folder
       {fetchTree}
       {loadingPath}
-      name={entry.info.name}
+      name={window.HEARTWOOD ? entry.name : entry.info.name}
       prefix={`${entry.path}/`}
       currentPath={path}
       on:select={onSelect} />
@@ -32,7 +30,7 @@
     <File
       active={entry.path === path}
       loading={entry.path === loadingPath}
-      name={entry.info.name}
+      name={window.HEARTWOOD ? entry.name : entry.info.name}
       on:click={() => onSelect({ detail: entry.path })} />
   {/if}
 {/each}

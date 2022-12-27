@@ -12,6 +12,7 @@ export type Branches = { [key: string]: string };
 export type MaybeBlob = Blob | undefined;
 export type MaybeTree = Tree | undefined;
 
+// TODO: Remove this after we have migrated to Heartwood.
 export type Delegate =
   | {
       type: "indirect";
@@ -40,38 +41,43 @@ export interface ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
+  delegates: Delegate[]; // TODO: Remove this after we have migrated to Heartwood.
+  remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
   patches?: number;
   issues?: number;
 }
 
 export interface Tree {
   path: string;
-  info: EntryInfo;
+  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
   entries: Array<Entry>;
   stats: Stats;
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
+
+// TODO: Remove "TREE" and "BLOB" after we have migrated to Heartwood.
+type Kind = "tree" | "blob" | "TREE" | "BLOB";
 
 export interface Stats {
   commits: number;
   contributors: number;
 }
 
-export enum ObjectType {
-  Blob = "BLOB",
-  Tree = "TREE",
-}
-
+// TODO: Remove this after we have migrated to Heartwood.
 export interface EntryInfo {
   name: string;
-  objectType: ObjectType;
+  objectType: Kind;
   lastCommit: CommitHeader;
 }
 
 export interface Entry {
   path: string;
-  info: EntryInfo;
+  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Blob {
@@ -79,7 +85,10 @@ export interface Blob {
   html?: boolean;
   content: string;
   path: string;
-  info: EntryInfo;
+  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
+  name: string;
+  kind: Kind;
+  lastCommit: CommitHeader;
 }
 
 export interface Remote {
@@ -144,8 +153,8 @@ export class Project implements ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[];
-  remotes: PeerId[];
+  delegates: Delegate[]; // TODO: Remove this after we have migrated to Heartwood.
+  remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
   seed: Seed;
   peers: Peer[];
   branches: Branches;
@@ -167,8 +176,8 @@ export class Project implements ProjectInfo {
     this.name = info.name;
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
-    this.delegates = info.delegates;
-    this.remotes = info.remotes;
+    this.delegates = info.delegates; // TODO: Remove this after we have migrated to Heartwood.
+    this.remotes = info.remotes; // TODO: Remove this after we have migrated to Heartwood.
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
@@ -192,10 +201,14 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrId: string, host: Host): Promise<ProjectInfo> {
-    const result = await new Request(`projects/${nameOrId}`, host).get();
-    result["id"] = result["urn"];
-    delete result["urn"];
-    return result;
+    if (window.HEARTWOOD) {
+      return await new Request(`projects/${nameOrId}`, host).get();
+    } else {
+      const result = await new Request(`projects/${nameOrId}`, host).get();
+      result["id"] = result["urn"];
+      delete result["urn"];
+      return result;
+    }
   }
 
   static async getProjects(
@@ -209,13 +222,17 @@ export class Project implements ProjectInfo {
       "per-page": opts?.perPage,
       page: opts?.page,
     };
-    const results = await new Request("projects", host).get(params);
-    results.forEach((result: { [x: string]: any }) => {
-      result["id"] = result["urn"];
-      delete result["urn"];
-    });
+    if (window.HEARTWOOD) {
+      return await new Request("projects", host).get(params);
+    } else {
+      const results = await new Request("projects", host).get(params);
+      results.forEach((result: { [x: string]: any }) => {
+        result["id"] = result["urn"];
+        delete result["urn"];
+      });
 
-    return results;
+      return results;
+    }
   }
 
   static async getDelegateProjects(
@@ -280,28 +297,31 @@ export class Project implements ProjectInfo {
       `projects/${this.id}/commits/${commit}`,
       this.seed.addr,
     ).get();
-    result.stats["insertions"] = result.stats["additions"];
-    delete result.stats["additions"];
-    result.diff["added"] = result.diff["created"];
-    delete result.diff["created"];
 
-    for (const kind of ["added", "deleted", "modified"]) {
-      for (const file of result.diff[kind]) {
-        for (const hunk of file.diff.hunks) {
-          for (const line of hunk.lines) {
-            if (line["lineNumOld"]) {
-              line["lineNoOld"] = line["lineNumOld"];
-              delete line["lineNumOld"];
-            }
+    if (!window.HEARTWOOD) {
+      result.stats["insertions"] = result.stats["additions"];
+      delete result.stats["additions"];
+      result.diff["added"] = result.diff["created"];
+      delete result.diff["created"];
 
-            if (line["lineNumNew"]) {
-              line["lineNoNew"] = line["lineNumNew"];
-              delete line["lineNumNew"];
-            }
+      for (const kind of ["added", "deleted", "modified"]) {
+        for (const file of result.diff[kind]) {
+          for (const hunk of file.diff.hunks) {
+            for (const line of hunk.lines) {
+              if (line["lineNumOld"]) {
+                line["lineNoOld"] = line["lineNumOld"];
+                delete line["lineNumOld"];
+              }
 
-            if (line["lineNum"]) {
-              line["lineNo"] = line["lineNum"];
-              delete line["lineNum"];
+              if (line["lineNumNew"]) {
+                line["lineNoNew"] = line["lineNumNew"];
+                delete line["lineNumNew"];
+              }
+
+              if (line["lineNum"]) {
+                line["lineNo"] = line["lineNum"];
+                delete line["lineNum"];
+              }
             }
           }
         }
@@ -364,12 +384,16 @@ export class Project implements ProjectInfo {
     const info = await Project.getInfo(id, seed.addr);
     id = isRadicleId(id) ? id : info.id;
 
-    // Older versions of http-api don't include the ID.
-    if (!info.id) info.id = id;
+    let peers: Peer[] = [];
 
-    const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(id, seed.addr)
-      : [];
+    if (window.HEARTWOOD) {
+      peers = await Project.getRemotes(id, seed.addr);
+    } else {
+      // Older versions of http-api don't include the ID.
+      if (!info.id) info.id = id;
+
+      peers = info.delegates ? await Project.getRemotes(id, seed.addr) : [];
+    }
 
     let remote: Remote = {
       heads: info.head ? { [info.defaultBranch]: info.head } : {},

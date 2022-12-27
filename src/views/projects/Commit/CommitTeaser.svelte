@@ -94,7 +94,7 @@
     <CommitAuthorship {commit} noDelegate />
   </div>
   <div class="column-right">
-    {#if commit.context.committer}
+    {#if !window.HEARTWOOD && commit.context.committer}
       <div class="layout-desktop">
         <CommitVerifiedBadge {commit} />
       </div>

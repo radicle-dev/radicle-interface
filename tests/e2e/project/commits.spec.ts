@@ -6,6 +6,10 @@ import {
 } from "@tests/support/fixtures.js";
 
 test("peer and branch switching", async ({ page }) => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
@@ -83,6 +87,10 @@ test("peer and branch switching", async ({ page }) => {
 });
 
 test("verified badge", async ({ page }) => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   await page.goto(projectFixtureUrl);
   await page.locator('role=button[name="Commit count"]').click();
 
@@ -101,6 +109,10 @@ test("verified badge", async ({ page }) => {
 });
 
 test("relative timestamps", async ({ page }) => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({

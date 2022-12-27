@@ -6,7 +6,11 @@
 
   import Address from "@app/components/Address.svelte";
   import { Profile, ProfileType } from "@app/lib/profile";
-  import { formatRadicleId, formatTimestamp } from "@app/lib/utils";
+  import {
+    formatRadicleId,
+    formatSeedId,
+    formatTimestamp,
+  } from "@app/lib/utils";
 
   export let noAvatar = false;
   export let author: Author;
@@ -67,7 +71,7 @@
     </span>
   {:else}
     <span class="highlight">
-      {formatRadicleId(author.id)}
+      {window.HEARTWOOD ? formatSeedId(author.id) : formatRadicleId(author.id)}
     </span>
   {/if}
   <span class="caption">&nbsp;{caption}&nbsp;</span>

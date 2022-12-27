@@ -12,7 +12,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox, visual]
+        browser: [chromium, firefox, visual, heartwood]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -59,12 +59,19 @@ jobs:
         run: npx playwright install-deps
 
       - name: Start http-api test server
-        run: ./scripts/run-http-api-with-fixtures --non-interactive --detach
+        run: |
+          if [ ${{ matrix.browser }} = "heartwood" ]; then
+            ./scripts/run-httpd-with-fixtures --non-interactive --detach
+          else
+            ./scripts/run-http-api-with-fixtures --non-interactive --detach
+          fi
 
       - name: Run Playwright tests
         run: |
           if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
             npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
+          elif [ ${{ matrix.browser }} = "heartwood" ]; then
+            HEARTWOOD=true npm run test:e2e -- --project chromium;
           else
             npm run test:e2e -- --project ${{ matrix.browser }};
           fi

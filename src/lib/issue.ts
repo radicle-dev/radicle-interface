@@ -12,7 +12,7 @@ export interface IIssue {
   author: Author;
   title: string;
   state: State;
-  comment: Comment;
+  comment: Comment; // TODO: Remove this after we have migrated to Heartwood.
   discussion: Thread[];
   tags: Tag[];
   timestamp: number;
@@ -32,7 +32,8 @@ export interface Comment<R = null> {
   body: string;
   reactions: Record<string, number>;
   timestamp: number;
-  replies: R;
+  replies: R; // TODO: Remove this after we have migrated to Heartwood.
+  replyTo: R;
 }
 
 export type Thread = Comment<Comment[]>;
@@ -57,7 +58,7 @@ export class Issue {
   author: Author;
   title: string;
   state: State;
-  comment: Comment;
+  comment: Comment; // TODO: Remove this after we have migrated to Heartwood.
   discussion: Thread[];
   tags: Tag[];
   timestamp: number;
@@ -67,18 +68,28 @@ export class Issue {
     this.author = issue.author;
     this.title = issue.title;
     this.state = issue.state;
-    this.comment = issue.comment;
+    this.comment = issue.comment; // TODO: Remove this after we have migrated to Heartwood.
     this.discussion = issue.discussion;
     this.tags = issue.tags;
-    this.timestamp = issue.timestamp;
+    if (window.HEARTWOOD) {
+      this.timestamp = issue.discussion[0].timestamp;
+    } else {
+      this.timestamp = issue.timestamp;
+    }
   }
 
   // Counts the amount of comments and replies in a discussion
   countComments(): number {
-    return this.discussion.reduce((acc, comment) => {
-      if (comment.replies) return acc + comment.replies.length + 1; // We add all replies and 1 forathe comment in this loop.
-      return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
-    }, 0);
+    if (window.HEARTWOOD) {
+      return this.discussion.reduce(acc => {
+        return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
+      }, 0);
+    } else {
+      return this.discussion.reduce((acc, comment) => {
+        if (comment.replies) return acc + comment.replies.length + 1; // We add all replies and 1 forathe comment in this loop.
+        return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
+      }, 0);
+    }
   }
 
   static async getIssues(id: string, host: Host): Promise<Issue[]> {

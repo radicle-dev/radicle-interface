@@ -10,6 +10,8 @@ declare global {
     PLAYWRIGHT: boolean;
     HASH_ROUTING: boolean;
 
+    HEARTWOOD: boolean;
+
     // APP_CONFIG is set from within Playwright tests at runtime.
     // To better understand how it works together, have a look at:
     //   tests/support/fixtures.ts

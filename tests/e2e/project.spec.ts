@@ -251,6 +251,10 @@ test("clone modal", async ({ page }) => {
 });
 
 test("peer and branch switching", async ({ page }) => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   await page.goto(projectFixtureUrl);
 
   // Alice's peer.
@@ -335,6 +339,10 @@ test("peer and branch switching", async ({ page }) => {
 });
 
 test("only one modal can be open at a time", async ({ page }) => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
@@ -366,6 +374,10 @@ test("only one modal can be open at a time", async ({ page }) => {
 });
 
 test.describe("browser error handling", () => {
+  if (process.env.HEARTWOOD) {
+    test.skip();
+  }
+
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
       `**/v1/projects/${ridPrefix}${rid}/tree/${aliceMainHead}/markdown/`,

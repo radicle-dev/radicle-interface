@@ -101,11 +101,11 @@ describe("routeToPath", () => {
         params: {
           view: { resource: "tree" },
           seed: "willow.radicle.garden",
-          id: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         },
       },
       output:
-        "/seeds/willow.radicle.garden/rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao/tree",
+        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/tree",
       description: "Seed Project Route",
     },
   ])("$description", (route: any) => {
@@ -219,8 +219,7 @@ describe("pathToRoute", () => {
       description: "registrations Submit Route",
     },
     {
-      input:
-        "/seeds/willow.radicle.garden/rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+      input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       output: {
         resource: "projects",
         params: {
@@ -228,7 +227,7 @@ describe("pathToRoute", () => {
           seed: "willow.radicle.garden",
           profile: undefined,
           peer: undefined,
-          id: "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
+          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         },
       },
       description: "Seed Project Route",

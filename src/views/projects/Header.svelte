@@ -98,9 +98,12 @@
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />
 
-  {#if seed.git.host}
+  {#if window.HEARTWOOD && seed.addr.host}
+    <CloneButton seedHost={seed.addr.host} {id} />
+  {:else if seed.git.host}
     <CloneButton seedHost={seed.git.host} {id} />
   {/if}
+
   <span>
     {#if seed.addr.host}
       <HeaderToggleLabel

@@ -160,7 +160,11 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
   }
 }
 
-export function appConfigWithFixture() {
+export const appConfigWithFixture = process.env.HEARTWOOD
+  ? configFixtureHeartwood
+  : configFixture;
+
+export function configFixture() {
   window.APP_CONFIG = {
     walletConnect: {
       bridge: "https://radicle.bridge.walletconnect.org",
@@ -181,15 +185,41 @@ export function appConfigWithFixture() {
   };
 }
 
+export function configFixtureHeartwood() {
+  window.APP_CONFIG = {
+    walletConnect: {
+      bridge: "https://radicle.bridge.walletconnect.org",
+    },
+    reactions: [],
+    seeds: {
+      pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
+    },
+    projects: {
+      pinned: [
+        {
+          name: "source-browsing",
+          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+          seed: "0.0.0.0",
+        },
+      ],
+    },
+  };
+}
+
 export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
-export const aliceRemote =
-  "hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy";
+export const aliceRemote = process.env.HEARTWOOD
+  ? "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"
+  : "hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy";
+
 export const bobRemote =
   "hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6";
-export const rid = "hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
-export const ridPrefix = "rad:git:";
+export const rid = process.env.HEARTWOOD
+  ? "zKtT7DmF9H34KkvcKj9PHW19WzjT"
+  : "hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
+export const ridPrefix = process.env.HEARTWOOD ? "rad:" : "rad:git:";
 export const projectFixtureUrl = `/seeds/0.0.0.0/${ridPrefix}${rid}`;
-export const seedPort = 8777;
-export const seedVersion = "0.2.0";
-export const seedRemote =
-  "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";
+export const seedPort = process.env.HEARTWOOD ? 8080 : "8777";
+export const seedVersion = process.env.HEARTWOOD ? "0.1.0" : "0.2.0";
+export const seedRemote = process.env.HEARTWOOD
+  ? "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"
+  : "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";

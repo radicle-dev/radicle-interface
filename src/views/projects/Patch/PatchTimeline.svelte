@@ -66,11 +66,13 @@
     {:else if element.type === TimelineType.Thread}
       <div class="margin-left">
         <Comment comment={element.inner} {wallet} {getImage} />
-        <div class="replies">
-          {#each element.inner.replies as comment}
-            <Comment caption="replied" {comment} {wallet} {getImage} />
-          {/each}
-        </div>
+        {#if !window.HEARTWOOD}
+          <div class="replies">
+            {#each element.inner.replies as comment}
+              <Comment caption="replied" {comment} {wallet} {getImage} />
+            {/each}
+          </div>
+        {/if}
       </div>
     {/if}
   {/each}

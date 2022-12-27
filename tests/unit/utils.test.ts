@@ -37,9 +37,15 @@ describe("Format functions", () => {
   });
 
   test("formatRadicleId", () => {
-    expect(
-      utils.formatRadicleId("rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
-    ).toEqual("rad:git:hnrkem…d84c9o");
+    if (process.env.HEARTWOOD) {
+      expect(utils.formatRadicleId("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT")).toEqual(
+        "rad:zKtT7D…19WzjT",
+      );
+    } else {
+      expect(
+        utils.formatRadicleId("rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
+      ).toEqual("rad:git:hnrkem…d84c9o");
+    }
   });
 
   test("formatRadicleId throw when wrong ID", () => {
@@ -117,7 +123,9 @@ describe("String Assertions", () => {
   });
 
   test.each([
-    { id: "rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o", expected: true },
+    process.env.HEARTWOOD
+      ? { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: true }
+      : { id: "rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o", expected: true },
     { id: "0x1234567890123456789012345678901234567890", expected: false },
   ])("isRadicleId $id => $expected", ({ id, expected }) => {
     expect(utils.isRadicleId(id)).toEqual(expected);

@@ -136,15 +136,20 @@
   </header>
   <main>
     <div class="comments">
-      <Comment comment={issue.comment} {getImage} {wallet} />
+      {#if !window.HEARTWOOD}
+        <Comment comment={issue.comment} {getImage} {wallet} />
+      {/if}
+
       {#each issue.discussion as comment}
         <Comment {comment} {getImage} {wallet} />
-        {#if comment.replies}
-          <div class="replies">
-            {#each comment.replies as reply}
-              <Comment comment={reply} {getImage} {wallet} />
-            {/each}
-          </div>
+        {#if !window.HEARTWOOD}
+          {#if comment.replies}
+            <div class="replies">
+              {#each comment.replies as reply}
+                <Comment comment={reply} {getImage} {wallet} />
+              {/each}
+            </div>
+          {/if}
         {/if}
       {/each}
     </div>

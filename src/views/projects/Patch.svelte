@@ -138,8 +138,10 @@
       </div>
     {:else if activeTab === PatchTab.Diff && revision.changeset}
       <Changeset
+        stats={window.HEARTWOOD
+          ? revision.changeset.diff.stats
+          : revision.changeset.stats}
         diff={revision.changeset.diff}
-        stats={revision.changeset.stats}
         on:browse={e => onBrowse(e, revision.oid)} />
     {:else if activeTab === PatchTab.Diff}
       <Placeholder emoji="🍳">

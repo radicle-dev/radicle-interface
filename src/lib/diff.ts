@@ -89,6 +89,7 @@ export interface Diff {
   moved: string[];
   copied: string[];
   modified: FileDiff[];
+  stats: DiffStats;
 }
 
 export interface DiffStats {

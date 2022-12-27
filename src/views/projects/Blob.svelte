@@ -18,7 +18,7 @@
   export let line: string | undefined = undefined;
 
   const fileExtension = blob.path.split(".").pop() ?? "";
-  const lastCommit = blob.info.lastCommit;
+  const lastCommit = window.HEARTWOOD ? blob.lastCommit : blob.info.lastCommit;
   const parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
@@ -213,7 +213,7 @@
       <span class="file-name">
         <span class="txt-faded">{parentDir}</span>
         &#8203;
-        <span>{blob.info.name}</span>
+        <span>{window.HEARTWOOD ? blob.name : blob.info.name}</span>
       </span>
       <div class="right">
         {#if isMarkdown}

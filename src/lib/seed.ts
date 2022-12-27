@@ -23,15 +23,16 @@ export class InvalidSeed {
   }
 }
 
-export const defaultSeedPort = 8777;
+export const defaultSeedPort = window.HEARTWOOD ? 8080 : 8777;
 export const defaultNodePort = 8776;
+// TODO: Remove this after we have migrated to Heartwood.
 export const defaultGitPort = 443;
 
 export class Seed {
   valid = true as const;
 
   addr: { host: string; port: number | null };
-  git: { host: string; port: number | null };
+  git: { host: string; port: number | null }; // TODO: Remove this after we have migrated to Heartwood.
   node: { host: string; id: string; port: number };
 
   version?: string;
@@ -40,17 +41,21 @@ export class Seed {
   constructor(seed: {
     host: string;
     id: string;
-    git?: string | null;
+    git?: string | null; // TODO: Remove this after we have migrated to Heartwood.
     addr?: string | null;
     version?: string | null;
   }) {
     assert(isDomain(seed.host), `invalid seed host: ${seed.host}`);
-    assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
+    if (window.HEARTWOOD) {
+      assert(/^[a-zA-Z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
+    } else {
+      assert(/^[a-z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
+    }
 
     let _seed = null;
-    let _git = null;
+    let _git = null; // TODO: Remove this after we have migrated to Heartwood.
     let _seedPort: number | null = defaultSeedPort;
-    let _gitPort: number | null = defaultGitPort;
+    let _gitPort: number | null = defaultGitPort; // TODO: Remove this after we have migrated to Heartwood.
 
     if (seed.addr) {
       try {
@@ -73,15 +78,17 @@ export class Seed {
       assert(isDomain(_seed), `invalid seed host ${_seed}`);
     }
 
-    if (seed.git) {
-      try {
-        const url = new URL(seed.git);
-        _git = url.hostname;
-        _gitPort = url.port ? Number(url.port) : null;
-      } catch {
-        _git = seed.git;
+    if (window.HEARTWOOD) {
+      if (seed.git) {
+        try {
+          const url = new URL(seed.git);
+          _git = url.hostname;
+          _gitPort = url.port ? Number(url.port) : null;
+        } catch {
+          _git = seed.git;
+        }
+        assert(isDomain(_git), `invalid seed git host ${_git}`);
       }
-      assert(isDomain(_git), `invalid seed git host ${_git}`);
     }
 
     this.emoji = getSeedEmoji(seed.host);
@@ -89,10 +96,10 @@ export class Seed {
     // The `_seed` being more specific takes
     // precedence over the `host`, if available.
     _seed = _seed ?? seed.host;
-    _git = _git ?? seed.host;
+    _git = _git ?? seed.host; // TODO: Remove this after we have migrated to Heartwood.
 
     this.addr = { host: _seed, port: _seedPort };
-    this.git = { host: _git, port: _gitPort };
+    this.git = { host: _git, port: _gitPort }; // TODO: Remove this after we have migrated to Heartwood.
     this.node = { host: seed.host, id: seed.id, port: defaultNodePort };
 
     if (seed.version) {
@@ -121,10 +128,14 @@ export class Seed {
       ? await proj.Project.getDelegateProjects(id, this.addr, { perPage })
       : await proj.Project.getProjects(this.addr, { perPage });
 
-    return result.map((project: proj.ProjectInfo) => ({
-      ...project,
-      id: project.id,
-    }));
+    if (window.HEARTWOOD) {
+      return result;
+    } else {
+      return result.map((project: proj.ProjectInfo) => ({
+        ...project,
+        id: project.id,
+      }));
+    }
   }
 
   async getStats(): Promise<{
@@ -135,7 +146,11 @@ export class Seed {
   }
 
   static async getNode(host: Host): Promise<{ id: string }> {
-    return new Request("/peer", host).get();
+    if (window.HEARTWOOD) {
+      return new Request("/node", host).get();
+    } else {
+      return new Request("/peer", host).get();
+    }
   }
 
   static async getInfo(host: Host): Promise<{ version: string }> {

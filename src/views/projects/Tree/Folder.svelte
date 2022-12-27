@@ -2,7 +2,6 @@
   import type { MaybeTree } from "@app/lib/project";
 
   import Loading from "@app/components/Loading.svelte";
-  import { ObjectType } from "@app/lib/project";
   import { createEventDispatcher } from "svelte";
 
   import File from "./File.svelte";
@@ -75,10 +74,10 @@
     {:then tree}
       {#if tree}
         {#each tree.entries as entry (entry.path)}
-          {#if entry.info.objectType === ObjectType.Tree}
+          {#if window.HEARTWOOD ? entry.kind === "tree" : entry.info.objectType === "TREE"}
             <svelte:self
               {fetchTree}
-              name={entry.info.name}
+              name={window.HEARTWOOD ? entry.name : entry.info.name}
               on:select={onSelectFile}
               prefix={`${entry.path}/`}
               {loadingPath}
@@ -87,7 +86,7 @@
             <File
               active={entry.path === currentPath}
               loading={entry.path === loadingPath}
-              name={entry.info.name}
+              name={window.HEARTWOOD ? entry.name : entry.info.name}
               on:click={() => {
                 onSelectFile({ detail: entry.path });
               }} />

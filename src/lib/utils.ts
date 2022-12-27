@@ -105,7 +105,11 @@ export function formatSeedId(id: string): string {
 export function formatRadicleId(id: string): string {
   assert(isRadicleId(id));
 
-  return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
+  if (window.HEARTWOOD) {
+    return id.substring(0, 10) + "…" + id.substring(id.length - 6, id.length);
+  } else {
+    return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
+  }
 }
 
 export function formatBalance(n: BigNumber, decimals?: number): string {
@@ -245,7 +249,11 @@ export const formatTimestamp = (
 
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {
-  return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
+  if (window.HEARTWOOD) {
+    return /^rad:[a-zA-Z0-9]+$/.test(input);
+  } else {
+    return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
+  }
 }
 
 // Check whether the input is a Radicle Peer ID.
@@ -295,7 +303,11 @@ export function formatName(input: string, wallet: Wallet): string {
 
 // Parse a Radicle Id.
 export function parseRadicleId(id: string): string {
-  return id.replace(/^rad:[a-z]+:/, "");
+  if (window.HEARTWOOD) {
+    return id.replace(/^rad:/, "");
+  } else {
+    return id.replace(/^rad:[a-z]+:/, "");
+  }
 }
 
 // Get amount of days passed between two dates without including the end date
