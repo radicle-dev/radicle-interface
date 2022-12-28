@@ -276,10 +276,42 @@ export class Project implements ProjectInfo {
   }
 
   async getCommit(commit: string): Promise<Commit> {
-    return new Request(
+    const result = await new Request(
       `projects/${this.id}/commits/${commit}`,
       this.seed.addr,
     ).get();
+    result.stats["insertions"] = result.stats["additions"];
+    delete result.stats["additions"];
+    result.diff["added"] = result.diff["created"];
+    delete result.diff["created"];
+
+    for (const kind of ["added", "deleted", "modified"]) {
+      for (const file of result.diff[kind]) {
+        for (const hunk of file.diff.hunks) {
+          for (const line of hunk.lines) {
+            if (line["type"] === "addition") {
+              line["type"] = "insertion";
+            }
+            if (line["lineNumOld"]) {
+              line["lineNoOld"] = line["lineNumOld"];
+              delete line["lineNumOld"];
+            }
+
+            if (line["lineNumNew"]) {
+              line["lineNoNew"] = line["lineNumNew"];
+              delete line["lineNumNew"];
+            }
+
+            if (line["lineNum"]) {
+              line["lineNo"] = line["lineNum"];
+              delete line["lineNum"];
+            }
+          }
+        }
+      }
+    }
+
+    return result;
   }
 
   async getTree(commit: string, path: string): Promise<Tree> {

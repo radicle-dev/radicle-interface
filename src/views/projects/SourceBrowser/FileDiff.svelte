@@ -118,8 +118,8 @@
   <header class="file-header" on:click={collapse}>
     <div class="actions">
       <p class="txt-regular">{file.path}</p>
-      {#if mode === "created"}
-        <Badge variant="positive">created</Badge>
+      {#if mode === "added"}
+        <Badge variant="positive">added</Badge>
       {:else if mode === "deleted"}
         <Badge variant="negative">deleted</Badge>
       {/if}

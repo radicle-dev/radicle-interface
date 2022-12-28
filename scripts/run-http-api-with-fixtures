@@ -88,7 +88,7 @@ run_binary() {
   $HTTP_API_BINARY --listen 0.0.0.0:8777 --root $WORKSPACE --passphrase $PASSPHRASE
 }
 
-BINADY=false
+BINARY=false
 NON_INTERACTIVE=false
 DETACH=false
 

@@ -1,7 +1,7 @@
 import type { Author, PeerInfo } from "@app/lib/cobs";
 import type { Comment, Thread } from "@app/lib/issue";
-import type { Commit, DiffStats } from "@app/lib/commit";
-import type { Diff } from "@app/lib/diff";
+import type { Commit } from "@app/lib/commit";
+import type { Diff, DiffStats } from "@app/lib/diff";
 import type { Host } from "@app/lib/api";
 import type { PeerId, Id } from "@app/lib/project";
 
