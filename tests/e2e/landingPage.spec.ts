@@ -1,4 +1,9 @@
-import { test, expect, appConfigWithFixture } from "@tests/support/fixtures.js";
+import {
+  aliceMainHead,
+  appConfigWithFixture,
+  expect,
+  test,
+} from "@tests/support/fixtures.js";
 
 test.use({
   customAppConfig: true,
@@ -20,5 +25,7 @@ test("show pinned projects", async ({ page }) => {
   ).toBeVisible();
 
   // Shows latest commit.
-  await expect(page.locator("text=fcc9294")).toBeVisible();
+  await expect(
+    page.locator(`text=${aliceMainHead.substring(0, 7)}`),
+  ).toBeVisible();
 });

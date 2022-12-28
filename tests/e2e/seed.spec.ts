@@ -1,4 +1,13 @@
-import { test, expect } from "@tests/support/fixtures.js";
+import {
+  aliceMainHead,
+  expect,
+  rid,
+  ridPrefix,
+  seedPort,
+  seedRemote,
+  seedVersion,
+  test,
+} from "@tests/support/fixtures.js";
 
 test("seed metadata", async ({ page }) => {
   await page.goto("/seeds/radicle.local");
@@ -13,9 +22,11 @@ test("seed metadata", async ({ page }) => {
     "alt",
     "🚀",
   );
-  await expect(page.locator("text=hybuyt…7m4d3o")).toBeVisible();
-  await expect(page.locator("text=8777")).toBeVisible();
-  await expect(page.locator("text=0.2.0")).toBeVisible();
+  await expect(
+    page.locator(`text=${seedRemote.substring(0, 6)}…${seedRemote.slice(-6)}`),
+  ).toBeVisible();
+  await expect(page.locator(`text=${seedPort}`)).toBeVisible();
+  await expect(page.locator(`text=${seedVersion}`)).toBeVisible();
 });
 
 test("seed projects", async ({ page }) => {
@@ -28,19 +39,13 @@ test("seed projects", async ({ page }) => {
     await expect(
       project.locator("text=Git repository for source browsing tests"),
     ).toBeVisible();
-    await expect(
-      project.locator("text=fcc929424b82984b7cbff9c01d2e20d9b1249842"),
-    ).toBeVisible();
+    await expect(project.locator(`text=${aliceMainHead}`)).toBeVisible();
   }
 
   // Show project ID on hover.
   {
-    await expect(
-      project.locator("text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy"),
-    ).not.toBeVisible();
+    await expect(project.locator(`text=${ridPrefix}${rid}`)).not.toBeVisible();
     await project.hover();
-    await expect(
-      project.locator("text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy"),
-    ).toBeVisible();
+    await expect(project.locator(`text=${ridPrefix}${rid}`)).toBeVisible();
   }
 });

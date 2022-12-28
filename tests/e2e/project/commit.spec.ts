@@ -1,6 +1,11 @@
-import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  projectFixtureUrl,
+  bobRemote,
+} from "@tests/support/fixtures.js";
 
-const modifiedFileFixture = `${projectFixtureUrl}/remotes/hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6/commits/2b32f6fe50090ebdb4cd7441e943330da3e6ff04`;
+const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote}/commits/2b32f6fe50090ebdb4cd7441e943330da3e6ff04`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
@@ -53,7 +58,7 @@ test("modified file", async ({ page }) => {
 
 test("created file", async ({ page }) => {
   await page.goto(
-    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
+    `${projectFixtureUrl}/remotes/${bobRemote}/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(
     page.locator("text=1 file(s) created with 9 addition(s) and 0 deletion(s)"),
@@ -63,7 +68,7 @@ test("created file", async ({ page }) => {
 
 test("deleted file", async ({ page }) => {
   await page.goto(
-    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
+    `${projectFixtureUrl}/remotes/${bobRemote}/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
   );
   await expect(
     page.locator("text=1 file(s) deleted with 0 addition(s) and 1 deletion(s)"),

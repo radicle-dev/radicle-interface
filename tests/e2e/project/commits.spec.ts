@@ -1,4 +1,9 @@
-import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  projectFixtureUrl,
+  bobRemote,
+} from "@tests/support/fixtures.js";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(projectFixtureUrl);
@@ -92,11 +97,7 @@ test("verified badge", async ({ page }) => {
       "text=This commit was signed with the committer's radicle key.",
     ),
   ).toBeVisible();
-  await expect(
-    page.locator(
-      "text=bob committed hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6",
-    ),
-  ).toBeVisible();
+  await expect(page.locator(`text=bob committed ${bobRemote}`)).toBeVisible();
 });
 
 test("relative timestamps", async ({ page }) => {

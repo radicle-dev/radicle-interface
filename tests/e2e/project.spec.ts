@@ -1,5 +1,13 @@
 import type { Page } from "@playwright/test";
-import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
+import {
+  aliceMainHead,
+  aliceRemote,
+  expect,
+  projectFixtureUrl,
+  rid,
+  ridPrefix,
+  test,
+} from "@tests/support/fixtures.js";
 import { expectUrlPersistsReload } from "@tests/support/router";
 
 async function expectCounts(
@@ -20,9 +28,7 @@ test("navigate to project", async ({ page }) => {
   // Header.
   {
     const name = page.locator("text=source-browsing");
-    const id = page.locator(
-      "text=rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-    );
+    const id = page.locator(`text=${ridPrefix}${rid}`);
     const description = page.locator(
       "text=Git repository for source browsing tests",
     );
@@ -35,7 +41,7 @@ test("navigate to project", async ({ page }) => {
   // Project menu shows default selected branch and commit and contributor counts.
   {
     await expect(page.getByTitle("Current branch")).toContainText(
-      "main fcc9294",
+      `main ${aliceMainHead.substring(0, 7)}`,
     );
     await expectCounts({ commits: 8, contributors: 1 }, page);
   }
@@ -85,7 +91,7 @@ test("navigate line numbers", async ({ page }) => {
   await page.locator('[href="#L5"]').click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#L5",
+    `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#L5`,
   );
 
   await expectUrlPersistsReload(page);
@@ -95,13 +101,11 @@ test("navigate line numbers", async ({ page }) => {
   await expect(page.locator("#L5")).not.toHaveClass("line highlight");
   await expect(page.locator("#L30")).toHaveClass("line highlight");
   await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#L30",
+    `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#L30`,
   );
 
   await page.getByText(".hidden").click();
-  await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/.hidden",
-  );
+  await expect(page).toHaveURL(`${projectFixtureUrl}/tree/main/.hidden`);
 });
 
 test("navigate deep file hierarchies", async ({ page }) => {
@@ -231,9 +235,19 @@ test("markdown files", async ({ page }) => {
   {
     await page.getByRole("link", { name: "YouTube Videos" }).click();
     await expect(page).toHaveURL(
-      "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/main/markdown/cheatsheet.md#videos",
+      `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#videos`,
     );
   }
+});
+
+test("clone modal", async ({ page }) => {
+  await page.goto(projectFixtureUrl);
+
+  await page.getByText("Clone").click();
+  await expect(
+    page.locator(`text=rad clone rad://0.0.0.0/${rid}`),
+  ).toBeVisible();
+  await expect(page.locator(`text=https://0.0.0.0/${rid}.git`)).toBeVisible();
 });
 
 test("peer and branch switching", async ({ page }) => {
@@ -245,7 +259,12 @@ test("peer and branch switching", async ({ page }) => {
     await page.locator("text=alice").click();
     await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
     await expect(
-      page.locator("text=source-browsing / hybg18…dizfxy"),
+      page.locator(
+        `text=source-browsing / ${aliceRemote.substring(
+          0,
+          6,
+        )}…${aliceRemote.slice(-6)}`,
+      ),
     ).toBeVisible();
 
     // Default `main` branch.
@@ -315,27 +334,11 @@ test("peer and branch switching", async ({ page }) => {
   }
 });
 
-test("clone modal", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
-
-  await page.getByText("Clone").click();
-  await expect(
-    page.locator(
-      "text=rad clone rad://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.locator(
-      "text=https://0.0.0.0/hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy.git",
-    ),
-  ).toBeVisible();
-});
-
 test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.locator("text=alice hybg18").click();
+  await page.locator(`text=alice ${aliceRemote.substring(0, 6)}`).click();
 
   await page.getByText("Clone").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
@@ -365,7 +368,7 @@ test("only one modal can be open at a time", async ({ page }) => {
 test.describe("browser error handling", () => {
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
-      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree/fcc929424b82984b7cbff9c01d2e20d9b1249842/markdown/",
+      `**/v1/projects/${ridPrefix}${rid}/tree/${aliceMainHead}/markdown/`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -380,7 +383,7 @@ test.describe("browser error handling", () => {
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
-      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/.hidden",
+      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -391,7 +394,7 @@ test.describe("browser error handling", () => {
   });
   test("error appears when README can't be loaded", async ({ page }) => {
     await page.route(
-      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/readme/fcc929424b82984b7cbff9c01d2e20d9b1249842",
+      `**/v1/projects/${ridPrefix}${rid}/readme/${aliceMainHead}`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -402,7 +405,7 @@ test.describe("browser error handling", () => {
   });
   test("error appears when navigating to missing file", async ({ page }) => {
     await page.route(
-      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/.hidden",
+      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -414,7 +417,7 @@ test.describe("browser error handling", () => {
     page,
   }) => {
     await page.route(
-      "**/v1/projects/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/blob/fcc929424b82984b7cbff9c01d2e20d9b1249842/src/black-square.png",
+      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/src/black-square.png`,
       route => route.fulfill({ status: 404 }),
     );
 

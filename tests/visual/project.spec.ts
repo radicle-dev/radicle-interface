@@ -1,4 +1,9 @@
-import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  projectFixtureUrl,
+  aliceRemote,
+} from "@tests/support/fixtures.js";
 
 test("source tree page", async ({ page }) => {
   await page.goto(projectFixtureUrl, { waitUntil: "networkidle" });
@@ -16,10 +21,9 @@ test("commits page", async ({ page }) => {
     };
   });
 
-  await page.goto(
-    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/history`,
-    { waitUntil: "networkidle" },
-  );
+  await page.goto(`${projectFixtureUrl}/remotes/${aliceRemote}/history`, {
+    waitUntil: "networkidle",
+  });
 
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
@@ -36,7 +40,7 @@ test("commit page", async ({ page }) => {
   });
 
   await page.goto(
-    `${projectFixtureUrl}/remotes/hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
+    `${projectFixtureUrl}/remotes/${aliceRemote}/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

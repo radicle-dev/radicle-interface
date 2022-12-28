@@ -181,4 +181,15 @@ export function appConfigWithFixture() {
   };
 }
 
-export const projectFixtureUrl = `/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy`;
+export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
+export const aliceRemote =
+  "hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy";
+export const bobRemote =
+  "hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6";
+export const rid = "hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
+export const ridPrefix = "rad:git:";
+export const projectFixtureUrl = `/seeds/0.0.0.0/${ridPrefix}${rid}`;
+export const seedPort = 8777;
+export const seedVersion = "0.2.0";
+export const seedRemote =
+  "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";

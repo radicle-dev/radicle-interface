@@ -1,31 +1,33 @@
-import { test, expect } from "@tests/support/fixtures.js";
+import {
+  test,
+  expect,
+  rid,
+  ridPrefix,
+  projectFixtureUrl,
+} from "@tests/support/fixtures.js";
 
 test("navigate to existing project", async ({ page }) => {
   await page.goto("/");
   const searchInput = page.getByPlaceholder("Search a name or address…");
   await searchInput.click();
-  await searchInput.fill("rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy");
+  await searchInput.fill(`${ridPrefix}${rid}`);
   await searchInput.press("Enter");
 
-  await expect(page).toHaveURL(
-    "/seeds/0.0.0.0/rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy/tree",
-  );
-  await expect(searchInput).not.toHaveValue(
-    "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-  );
+  await expect(page).toHaveURL(`${projectFixtureUrl}/tree`);
+  await expect(searchInput).not.toHaveValue(`${ridPrefix}${rid}`);
 });
 
 test("navigate to a project that does not exist", async ({ page }) => {
   await page.goto("/");
   const searchInput = page.getByPlaceholder("Search a name or address…");
   await searchInput.click();
-  await searchInput.fill("rad:git:hnrkn1ah5im83fwt4u3jfs5ndwpt9hrnm9wby");
+
+  const nonExistantId = `${ridPrefix}:zt${rid.substring(2)}`;
+  await searchInput.fill(nonExistantId);
   await searchInput.press("Enter");
 
   await page.waitForSelector(".search-bar.shaking");
 
   await expect(page).toHaveURL("/");
-  await expect(searchInput).toHaveValue(
-    "rad:git:hnrkn1ah5im83fwt4u3jfs5ndwpt9hrnm9wby",
-  );
+  await expect(searchInput).toHaveValue(nonExistantId);
 });
