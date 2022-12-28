@@ -20,7 +20,7 @@
   import SetName from "./SetName.svelte";
   import { MissingReverseRecord, NotFoundError } from "@app/lib/error";
   import { User, Profile, ProfileType } from "@app/lib/profile";
-  import { defaultLinkPort } from "@app/lib/seed";
+  import { defaultNodePort } from "@app/lib/seed";
   import { session } from "@app/lib/session";
 
   export let wallet: Wallet;
@@ -187,7 +187,7 @@
       <!-- Seed Address -->
       {#if profile.seed && profile.seed.valid}
         <div class="txt-highlight">Seed</div>
-        <SeedAddress seed={profile.seed} port={defaultLinkPort} />
+        <SeedAddress seed={profile.seed} port={defaultNodePort} />
       {/if}
       <!-- Address -->
       <div class="txt-highlight">Address</div>

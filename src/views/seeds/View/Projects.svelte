@@ -19,7 +19,7 @@
   const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
     try {
       stats = await seed.getStats();
-      const projects = await proj.Project.getProjects(seed.api, {
+      const projects = await proj.Project.getProjects(seed.addr, {
         perPage: 10,
         page: (page += 1),
       });
@@ -41,9 +41,9 @@
       params: {
         view: { resource: "tree" },
         id: project.id,
-        seed: seed.api.port
-          ? `${seed.api.host}:${seed.api.port}`
-          : seed.api.host,
+        seed: seed.addr.port
+          ? `${seed.addr.host}:${seed.addr.port}`
+          : seed.addr.host,
         profile: profile?.name ?? profile?.address,
         revision: project.head ?? undefined,
         hash: undefined,

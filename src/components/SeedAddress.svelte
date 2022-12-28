@@ -14,9 +14,9 @@
   export let port: number;
   export let full = false;
 
-  const seedHost = seed.api.port
-    ? `${seed.api.host}:${seed.api.port}`
-    : `${formatSeedHost(seed.api.host)}`;
+  const seedHost = seed.addr.port
+    ? `${seed.addr.host}:${seed.addr.port}`
+    : `${formatSeedHost(seed.addr.host)}`;
 </script>
 
 <style>

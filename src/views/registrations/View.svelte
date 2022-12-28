@@ -16,7 +16,7 @@
   import Modal from "@app/components/Modal.svelte";
   import Update from "./Update.svelte";
   import { assert } from "@app/lib/error";
-  import { defaultHttpApiPort } from "@app/lib/seed";
+  import { defaultSeedPort } from "@app/lib/seed";
   import { getRegistration, getOwner } from "@app/lib/registrar";
   import { isAddressEqual, isReverseRecordSet, twemoji } from "@app/lib/utils";
   import { session } from "@app/lib/session";
@@ -138,7 +138,7 @@
           description:
             "The seed host address. " +
             "Only domain names with TLS are supported. " +
-            `HTTP(S) API requests use port ${defaultHttpApiPort}.`,
+            `HTTP(S) API requests use port ${defaultSeedPort}.`,
           value: r.profile.seed?.host ?? "",
           editable: true,
         },

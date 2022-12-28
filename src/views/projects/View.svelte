@@ -115,7 +115,7 @@
       {#if activeRoute.params.view.resource === "tree"}
         <Browser {project} {commit} {tree} {activeRoute} />
       {:else if activeRoute.params.view.resource === "history"}
-        {#await proj.Project.getCommits( project.id, project.seed.api, { parent: commit, verified: true }, )}
+        {#await proj.Project.getCommits( project.id, project.seed.addr, { parent: commit, verified: true }, )}
           <Loading center />
         {:then history}
           <History {project} {history} />
@@ -135,7 +135,7 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issues"}
-        {#await issue.Issue.getIssues(project.id, project.seed.api)}
+        {#await issue.Issue.getIssues(project.id, project.seed.addr)}
           <Loading center />
         {:then issues}
           <Issues state={issueFilter} {wallet} {issues} />
@@ -145,7 +145,7 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issue"}
-        {#await issue.Issue.getIssue(project.id, activeRoute.params.view.params.issue, project.seed.api)}
+        {#await issue.Issue.getIssue(project.id, activeRoute.params.view.params.issue, project.seed.addr)}
           <Loading center />
         {:then issue}
           <Issue {project} {wallet} {issue} />
@@ -155,7 +155,7 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patches"}
-        {#await patch.Patch.getPatches(project.id, project.seed.api)}
+        {#await patch.Patch.getPatches(project.id, project.seed.addr)}
           <Loading center />
         {:then patches}
           <Patches {wallet} state={patchFilter} {patches} />
@@ -165,7 +165,7 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patch"}
-        {#await patch.Patch.getPatch(project.id, activeRoute.params.view.params.patch, project.seed.api)}
+        {#await patch.Patch.getPatch(project.id, activeRoute.params.view.params.patch, project.seed.addr)}
           <Loading center />
         {:then patch}
           <Patch {project} {wallet} {patch} />

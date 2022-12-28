@@ -50,13 +50,13 @@
   };
 
   function goToSeed() {
-    if (seed.api.port) {
+    if (seed.addr.port) {
       router.push({
         resource: "seeds",
-        params: { host: `${seed.api.host}:${seed.api.port}` },
+        params: { host: `${seed.addr.host}:${seed.addr.port}` },
       });
     } else {
-      router.push({ resource: "seeds", params: { host: seed.api.host } });
+      router.push({ resource: "seeds", params: { host: seed.addr.host } });
     }
   }
 </script>
@@ -101,13 +101,13 @@
     <CloneButton seedHost={seed.git.host} {id} />
   {/if}
   <span>
-    {#if seed.api.host}
+    {#if seed.addr.host}
       <HeaderToggleLabel
         clickable
         ariaLabel="Seed"
         title="Project data is fetched from this seed"
         on:click={goToSeed}>
-        <span>{seed.api.host}</span>
+        <span>{seed.addr.host}</span>
       </HeaderToggleLabel>
     {/if}
   </span>

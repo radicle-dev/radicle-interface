@@ -120,7 +120,7 @@ export async function getRegistration(
         host: seedHost,
         id: seedId,
         git: seedGit,
-        api: seedApi,
+        addr: seedApi,
       });
     } catch (e: any) {
       console.debug(e, seedHost, seedId);
@@ -170,7 +170,7 @@ export async function getSeed(
   }
 
   try {
-    return new Seed({ host, id, git, api });
+    return new Seed({ host, id, git, addr: api });
   } catch (e: any) {
     console.debug(e, host, id);
     return new InvalidSeed(id, host);

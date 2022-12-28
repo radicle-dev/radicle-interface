@@ -3,7 +3,7 @@ import type { Wallet } from "@app/lib/wallet";
 import { type Host, Request } from "@app/lib/api";
 
 import { Profile, ProfileType } from "@app/lib/profile";
-import { Seed } from "@app/lib/seed";
+import { Seed, defaultSeedPort } from "@app/lib/seed";
 import { isFulfilled, isOid, isRadicleId } from "@app/lib/utils";
 
 export type Id = string;
@@ -278,7 +278,7 @@ export class Project implements ProjectInfo {
   async getCommit(commit: string): Promise<Commit> {
     return new Request(
       `projects/${this.id}/commits/${commit}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
@@ -286,21 +286,21 @@ export class Project implements ProjectInfo {
     if (path === "/") path = "";
     return new Request(
       `projects/${this.id}/tree/${commit}/${path}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
   async getBlob(commit: string, path: string): Promise<Blob> {
     return new Request(
       `projects/${this.id}/blob/${commit}/${path}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
   async getReadme(commit: string): Promise<Blob> {
     return new Request(
       `projects/${this.id}/readme/${commit}`,
-      this.seed.api,
+      this.seed.addr,
     ).get();
   }
 
@@ -317,7 +317,7 @@ export class Project implements ProjectInfo {
 
     const [host, port] = seedHost?.includes(":")
       ? seedHost.split(":")
-      : [seedHost, "8777"];
+      : [seedHost, defaultSeedPort];
 
     const seed = profile
       ? profile.seed
@@ -332,14 +332,14 @@ export class Project implements ProjectInfo {
       throw new Error("Couldn't load project: invalid seed");
     }
 
-    const info = await Project.getInfo(id, seed.api);
+    const info = await Project.getInfo(id, seed.addr);
     id = isRadicleId(id) ? id : info.id;
 
     // Older versions of http-api don't include the ID.
     if (!info.id) info.id = id;
 
     const peers: Peer[] = info.delegates
-      ? await Project.getRemotes(id, seed.api)
+      ? await Project.getRemotes(id, seed.addr)
       : [];
 
     let remote: Remote = {
@@ -348,7 +348,7 @@ export class Project implements ProjectInfo {
 
     if (peer) {
       try {
-        remote = await Project.getRemote(id, peer, seed.api);
+        remote = await Project.getRemote(id, peer, seed.addr);
       } catch {
         remote.heads = {};
       }
