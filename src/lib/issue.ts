@@ -14,7 +14,7 @@ export interface IIssue {
   state: State;
   comment: Comment;
   discussion: Thread[];
-  labels: Label[];
+  tags: Tag[];
   timestamp: number;
 }
 
@@ -37,7 +37,7 @@ export interface Comment<R = null> {
 
 export type Thread = Comment<Comment[]>;
 
-export type Label = string;
+export type Tag = string;
 
 export function groupIssues(issues: Issue[]): {
   open: Issue[];
@@ -59,7 +59,7 @@ export class Issue {
   state: State;
   comment: Comment;
   discussion: Thread[];
-  labels: Label[];
+  tags: Tag[];
   timestamp: number;
 
   constructor(issue: IIssue) {
@@ -69,7 +69,7 @@ export class Issue {
     this.state = issue.state;
     this.comment = issue.comment;
     this.discussion = issue.discussion;
-    this.labels = issue.labels;
+    this.tags = issue.tags;
     this.timestamp = issue.timestamp;
   }
 
