@@ -289,9 +289,6 @@ export class Project implements ProjectInfo {
       for (const file of result.diff[kind]) {
         for (const hunk of file.diff.hunks) {
           for (const line of hunk.lines) {
-            if (line["type"] === "addition") {
-              line["type"] = "insertion";
-            }
             if (line["lineNumOld"]) {
               line["lineNoOld"] = line["lineNumOld"];
               delete line["lineNumOld"];

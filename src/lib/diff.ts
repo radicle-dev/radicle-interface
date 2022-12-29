@@ -41,7 +41,7 @@ export const lineSign = (line: LineDiff): string => {
 };
 
 export enum LineDiffType {
-  Addition = "insertion",
+  Addition = "addition",
   Context = "context",
   Deletion = "deletion",
 }
