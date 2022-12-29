@@ -17,11 +17,15 @@
 
   onMount(async () => {
     if (author.profile?.ens?.name) {
-      profile = await Profile.get(
-        author.profile.ens.name,
-        ProfileType.Minimal,
-        wallet,
-      );
+      try {
+        profile = await Profile.get(
+          author.profile.ens.name,
+          ProfileType.Minimal,
+          wallet,
+        );
+      } catch {
+        // Ignore profile not found.
+      }
     }
   });
 </script>

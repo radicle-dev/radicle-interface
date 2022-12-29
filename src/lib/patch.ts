@@ -143,18 +143,61 @@ export class Patch implements IPatch {
   }
 
   static async getPatches(id: string, host: Host): Promise<Patch[]> {
-    const response: IPatch[] = await new Request(
-      `projects/${id}/patches`,
-      host,
-    ).get();
-    return response.map(patch => new Patch(patch));
+    const response = await new Request(`projects/${id}/patches`, host).get();
+    for (const patch of response) {
+      patch.author["id"] = patch.author["urn"];
+      delete patch.author["urn"];
+    }
+
+    return response.map((patch: IPatch) => new Patch(patch));
   }
 
   static async getPatch(id: string, patch: string, host: Host): Promise<Patch> {
-    const response: IPatch = await new Request(
+    const response = await new Request(
       `projects/${id}/patches/${patch}`,
       host,
     ).get();
+
+    response.author["id"] = response.author["urn"];
+    delete response.author["urn"];
+
+    for (const revision of response.revisions) {
+      if (revision.changeset?.diff) {
+        revision.changeset.diff["added"] = revision.changeset.diff["created"];
+        delete revision.changeset.diff["created"];
+
+        revision.comment.author["id"] = revision.comment.author["urn"];
+        delete revision.comment.author["urn"];
+
+        revision.changeset.stats["insertions"] =
+          revision.changeset.stats["additions"];
+        delete revision.changeset.stats["additions"];
+
+        for (const kind of ["added", "deleted", "modified"]) {
+          for (const file of revision.changeset.diff[kind]) {
+            for (const hunk of file.diff.hunks) {
+              for (const line of hunk.lines) {
+                if (line["lineNumOld"]) {
+                  line["lineNoOld"] = line["lineNumOld"];
+                  delete line["lineNumOld"];
+                }
+
+                if (line["lineNumNew"]) {
+                  line["lineNoNew"] = line["lineNumNew"];
+                  delete line["lineNumNew"];
+                }
+
+                if (line["lineNum"]) {
+                  line["lineNo"] = line["lineNum"];
+                  delete line["lineNum"];
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     return new Patch(response);
   }
 }
