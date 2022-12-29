@@ -93,7 +93,7 @@ export interface Diff {
 }
 
 export interface DiffStats {
-  additions: number;
+  insertions: number;
   deletions: number;
 }
 
