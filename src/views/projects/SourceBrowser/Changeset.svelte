@@ -36,7 +36,7 @@
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions">{diff.stats.insertions} insertion(s)</span>
+  <span class="additions">{diff.stats.additions} additions(s)</span>
   and
   <span class="deletions">{diff.stats.deletions} deletion(s)</span>
 </div>
