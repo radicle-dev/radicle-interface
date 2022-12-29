@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Wallet } from "@app/lib/wallet";
-  import { type Patch, TimelineType } from "@app/lib/patch";
+  import { Patch, TimelineType } from "@app/lib/patch";
   import { formatSeedId } from "@app/lib/utils";
   import { canonicalize } from "@app/lib/utils";
   import Comment from "@app/components/Comment.svelte";
