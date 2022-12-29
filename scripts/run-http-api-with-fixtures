@@ -52,7 +52,7 @@ prepare_workspace()
   echo "Unpacking fixture $FIXTURE"
   mkdir -p $WORKSPACE
   tar -xf $FIXTURE -C $WORKSPACE
-  if [[ "${CI:-}" = "true" ]]; then
+  if [ "$CI" = true ]; then
     sudo chown -R 0:0 $WORKSPACE
   fi
 }
