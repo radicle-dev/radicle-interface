@@ -52,7 +52,9 @@ prepare_workspace()
   echo "Unpacking fixture $FIXTURE"
   mkdir -p $WORKSPACE
   tar -xf $FIXTURE -C $WORKSPACE
-  sudo chown -R 0:0 $WORKSPACE
+  if [[ "${CI:-}" = "true" ]]; then
+    sudo chown -R 0:0 $WORKSPACE
+  fi
 }
 
 run_docker() {
