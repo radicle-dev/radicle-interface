@@ -173,9 +173,10 @@
   }
 
   .markdown :global(blockquote) {
+    color: var(--color-foreground-6);
     border-left: 0.3rem solid var(--color-foreground-4);
     padding: 0 0 0 1rem;
-    margin: 0 0 0.625rem 0;
+    margin: 1rem 0 1rem 0;
   }
 
   .markdown :global(strong) {
@@ -190,7 +191,7 @@
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    color: var(--color-foreground);
+    color: var(--color-foreground-6);
     background-color: var(--color-foreground-2);
     border-radius: 0.5rem;
     padding: 0.125rem 0.25rem;
