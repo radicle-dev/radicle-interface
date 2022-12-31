@@ -253,6 +253,12 @@
     padding-left: 1.25rem;
     margin-bottom: 1rem;
   }
+  .markdown :global(li > ul) {
+    margin-bottom: 0rem;
+  }
+  .markdown :global(li > ol) {
+    margin-bottom: 0rem;
+  }
   .markdown :global(table) {
     margin: 1.5rem 0;
     border-collapse: collapse;
