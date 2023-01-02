@@ -145,6 +145,9 @@
   let loading = false;
   let shaking = false;
 
+  // Clears search input on user navigation.
+  router.historyStore.subscribe(() => (input = ""));
+
   function shake() {
     shaking = true;
     debounce(() => (shaking = false), 500)();
