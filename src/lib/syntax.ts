@@ -1,14 +1,15 @@
 import type { Root } from "@wooorm/starry-night";
 import type { ElementContent } from "hast";
 
-import { createStarryNight, common } from "@wooorm/starry-night";
-import sourceTsx from "@wooorm/starry-night/lang/source.tsx";
-import sourceSvelte from "@wooorm/starry-night/lang/source.svelte.js";
-import sourceSolidity from "@wooorm/starry-night/lang/source.solidity.js";
-import sourceToml from "@wooorm/starry-night/lang/source.toml";
-import sourceErlang from "@wooorm/starry-night/lang/source.erlang.js";
-import sourceDockerfile from "@wooorm/starry-night/lang/source.dockerfile";
+import onigurumaWASMUrl from "vscode-oniguruma/release/onig.wasm?url";
 import sourceAsciiDoc from "@wooorm/starry-night/lang/text.html.asciidoc";
+import sourceDockerfile from "@wooorm/starry-night/lang/source.dockerfile";
+import sourceErlang from "@wooorm/starry-night/lang/source.erlang.js";
+import sourceSolidity from "@wooorm/starry-night/lang/source.solidity.js";
+import sourceSvelte from "@wooorm/starry-night/lang/source.svelte.js";
+import sourceToml from "@wooorm/starry-night/lang/source.toml";
+import sourceTsx from "@wooorm/starry-night/lang/source.tsx";
+import { createStarryNight, common } from "@wooorm/starry-night";
 
 export type MaybeHighlighted = Root | undefined;
 
@@ -37,7 +38,9 @@ export async function highlight(
   grammar: string,
 ): Promise<MaybeHighlighted> {
   if (starryNight === undefined) {
-    starryNight = await createStarryNight(grammars);
+    starryNight = await createStarryNight(grammars, {
+      getOnigurumaUrlFetch: () => new URL(onigurumaWASMUrl, import.meta.url),
+    });
   }
   const scope = starryNight.flagToScope(grammar);
   return starryNight.highlight(content, scope ?? "text.raw");

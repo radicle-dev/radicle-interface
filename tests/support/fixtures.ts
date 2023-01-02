@@ -83,13 +83,6 @@ export const test = base.extend<{
             status: 200,
             path: "./public/favicon.ico",
           });
-        } else if (
-          route.request().url().startsWith("https://esm.sh/vscode-oniguruma@1")
-        ) {
-          route.fulfill({
-            status: 200,
-            path: "./tests/support/onig.wasm",
-          });
         } else {
           log(
             `Aborted remote request: ${route.request().url()}`,
