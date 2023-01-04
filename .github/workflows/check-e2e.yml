@@ -76,6 +76,14 @@ jobs:
             npm run test:e2e -- --project ${{ matrix.browser }};
           fi
 
+      # We don't care about the logs in visual snapshot tests, only the images.
+      - name: Cleanup artifacts
+        if: always()
+        run: |
+          if [ ${{ matrix.browser }} = "visual" ]; then
+              shopt -s globstar
+              rm -rf tests/visual/snapshots/**/*.log
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         if: always()
