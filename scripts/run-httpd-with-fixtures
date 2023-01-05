@@ -49,9 +49,6 @@ prepare_workspace() {
   echo "Unpacking fixture $FIXTURE"
   mkdir -p $WORKSPACE
   tar -xf $FIXTURE -C $WORKSPACE
-  if [ "$CI" = true ]; then
-    sudo chown -R 0:0 $WORKSPACE
-  fi
 }
 
 run_docker() {
@@ -72,6 +69,13 @@ run_docker() {
 }
 
 run_binary() {
+  if [ $CI = true ]; then
+    local binaries_dir="$REPO_ROOT/tests/tmp"
+    gsutil cp "gs://heartwood-artifacts/${REV}/radicle-httpd" "$binaries_dir"
+    chmod a+x "${binaries_dir}/radicle-httpd"
+    export PATH="$binaries_dir:$PATH"
+  fi
+
   if ! [ -x "$(command -v $HTTP_API_BINARY)" ]; then
     echo
     echo "Couldn't find the $HTTP_API_BINARY binary in your PATH."
