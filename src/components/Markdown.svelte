@@ -8,15 +8,12 @@
   import { toDom } from "hast-util-to-dom";
 
   import { base } from "@app/lib/router";
+  import { getImageMime, isUrl, twemoji, scrollIntoView } from "@app/lib/utils";
   import { highlight } from "@app/lib/syntax";
   import {
     markdownExtensions as extensions,
     renderer,
-    getImageMime,
-    isUrl,
-    twemoji,
-    scrollIntoView,
-  } from "@app/lib/utils";
+  } from "@app/lib/markdown";
 
   export let content: string;
   export let doc = matter(content);
@@ -183,6 +180,12 @@
     font-weight: var(--font-weight-medium);
   }
 
+  .markdown :global(.footnote-ref > a),
+  .markdown :global(a.ref-arrow) {
+    border-bottom: none;
+    color: unset;
+  }
+
   .markdown :global(img) {
     border-style: none;
     max-width: 100%;
@@ -309,6 +312,6 @@
   </div>
 {/if}
 
-<div class="markdown" bind:this={container} use:twemoji>
+<div class="markdown" bind:this={container} use:twemoji={{ exclude: ["21a9"] }}>
   {@html render(doc.content)}
 </div>

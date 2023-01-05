@@ -37,23 +37,6 @@ describe("Format functions", () => {
   });
 
   test.each([
-    {
-      input: "seedling",
-      expected: "🌱",
-    },
-    {
-      input: "+1",
-      expected: "👍",
-    },
-    {
-      input: "radicle",
-      expected: "radicle",
-    },
-  ])("parseEmoji $input => $expected", ({ input, expected }) => {
-    expect(utils.parseEmoji(input)).toEqual(expected);
-  });
-
-  test.each([
     { commit: "a8a6a979a6261a2ec1ea85fc9a65a4a30aa22cc8", expected: "a8a6a97" },
     { commit: "a8a6a97", expected: "a8a6a97" },
   ])("formatCommit $commit => $expected", ({ commit, expected }) => {
