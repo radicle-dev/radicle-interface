@@ -3,12 +3,17 @@
 
   import Avatar from "@app/components/Avatar.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
+  import DOMPurify from "dompurify";
   import Link from "@app/components/Link.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import { formatSeedId } from "@app/lib/utils";
 
   export let project: Project;
   export let peer: PeerId | null = null;
+
+  const linkifyDescription = (text: string) => {
+    return text.replaceAll(/(https?:\/\/[^\s]+)/g, `<a href="$1">$1</a>`);
+  };
 </script>
 
 <style>
@@ -50,6 +55,10 @@
   }
   .description {
     margin: 1rem 0 1.5rem 0;
+  }
+
+  .description :global(a) {
+    border-bottom: 1px solid var(--color-foreground-6);
   }
 
   .content {
@@ -112,5 +121,7 @@
     <span class="truncate">{project.id}</span>
     <Clipboard small text={project.id} />
   </div>
-  <div class="description">{project.description}</div>
+  <div class="description">
+    {@html DOMPurify.sanitize(linkifyDescription(project.description))}
+  </div>
 </header>
