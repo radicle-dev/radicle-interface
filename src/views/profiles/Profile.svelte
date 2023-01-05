@@ -139,12 +139,7 @@
       </div>
       <div class="info">
         <span class="title txt-title">
-          <span class="txt-bold layout-desktop">
-            {profile.name
-              ? utils.formatName(profile.name, wallet)
-              : profile.address}
-          </span>
-          <span class="txt-bold layout-mobile">
+          <span class="txt-bold">
             {profile.name
               ? utils.formatName(profile.name, wallet)
               : utils.formatAddress(profile.address)}
