@@ -50,13 +50,9 @@ jobs:
           path: tests/visual/snapshots/**/*
           key: ${{ runner.os }}-snapshots
 
-      - name: Install Playwright browsers and OS dependencies if cache miss
+      - name: Install Playwright browsers
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
-
-      - name: Install only Playwright OS dependencies if cache hit
-        if: steps.playwright-dep-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
+        run: npx playwright install chromium firefox
 
       - name: Start http-api test server
         run: |
