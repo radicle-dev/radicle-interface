@@ -18,7 +18,7 @@ declare global {
     //   src/config.ts
     APP_CONFIG: Config;
     // eslint-disable-next-line @typescript-eslint/ban-types
-    initializeTestStubs: Function;
+    initializeTestStubs?: Function;
     e2eTestStubs: {
       FakeTimers: FakeTimers;
     };
