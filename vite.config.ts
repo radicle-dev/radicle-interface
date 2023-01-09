@@ -70,7 +70,14 @@ export default defineConfig({
             "@walletconnect/client",
           ],
           cache: ["lru-cache", "@stardazed/streams"],
-          markdown: ["katex", "dompurify", "marked", "@radicle/gray-matter"],
+          markdown: [
+            "@radicle/gray-matter",
+            "dompurify",
+            "hast-util-to-dom",
+            "hast-util-to-html",
+            "katex",
+            "marked",
+          ],
           syntax: ["@wooorm/starry-night"],
           grammarsTsx: [
             "@wooorm/starry-night/lang/source.ts.js",
