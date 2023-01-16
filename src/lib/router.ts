@@ -181,6 +181,20 @@ function pathToRoute(path: string): Route | null {
       }
       return null;
     }
+    case "session": {
+      const id = segments.shift();
+      if (id) {
+        return {
+          resource: "session",
+          params: {
+            id,
+            signature: url.searchParams.get("sig") ?? "",
+            publicKey: url.searchParams.get("pk") ?? "",
+          },
+        };
+      }
+      return { resource: "home" };
+    }
     case "": {
       return { resource: "home" };
     }
@@ -193,6 +207,8 @@ function pathToRoute(path: string): Route | null {
 export function routeToPath(route: Route) {
   if (route.resource === "home") {
     return "/";
+  } else if (route.resource === "session") {
+    return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "seeds") {
     return `/seeds/${route.params.host}`;
   } else if (route.resource === "projects") {

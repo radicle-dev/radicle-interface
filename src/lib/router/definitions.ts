@@ -1,6 +1,10 @@
 export type Route =
   | ProjectRoute
   | { resource: "home" }
+  | {
+      resource: "session";
+      params: { id: string; signature: string; publicKey: string };
+    }
   | { resource: "404"; params: { url: string } }
   | { resource: "seeds"; params: { host: string } };
 
