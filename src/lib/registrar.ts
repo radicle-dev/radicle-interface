@@ -90,8 +90,18 @@ export async function getRegistration(
     getText(resolver, "com.github"),
   ]);
 
-  const [address, avatar, url, id, seedId, seedHost, seedApi, twitter, github] =
-    meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
+  const [
+    address,
+    avatar,
+    url,
+    id,
+    seedId,
+    seedHost,
+    seedGit,
+    seedApi,
+    twitter,
+    github,
+  ] = meta.filter(isFulfilled).map(r => (r.value ? r.value : undefined));
 
   const profile: EnsProfile = {
     name,
@@ -109,6 +119,7 @@ export async function getRegistration(
       profile.seed = new Seed({
         host: seedHost,
         id: seedId,
+        git: seedGit,
         addr: seedApi,
       });
     } catch (e: any) {
