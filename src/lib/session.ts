@@ -15,19 +15,6 @@ export enum Connection {
   Connected,
 }
 
-export type TxState =
-  | { state: "signing" }
-  | { state: "pending"; hash: string }
-  | { state: "success"; hash: string; blockHash: string; blockNumber: number }
-  | {
-      state: "fail";
-      hash: string;
-      blockHash: string;
-      blockNumber: number;
-      error: string;
-    }
-  | null;
-
 export type Signer = (ethers.Signer & TypedDataSigner) | WalletConnectSigner;
 
 // Defines the type of signer we are using in the current session.
@@ -47,7 +34,6 @@ export interface Session {
   signer: Signer | null;
   signerType: SignerType;
   tokenBalance: BigNumber | null; // `null` means it isn't loaded yet.
-  tx: TxState;
 }
 
 export interface Store extends Readable<State> {
@@ -79,7 +65,6 @@ export const loadState = (initial: State): Store => {
           signer,
           signerType: SignerType.MetaMask,
           tokenBalance,
-          tx: null,
         };
 
         store.set({ connection: Connection.Connected, session });
@@ -112,7 +97,6 @@ export const loadState = (initial: State): Store => {
           signer,
           signerType: SignerType.MetaMask,
           tokenBalance,
-          tx: null,
         };
 
         store.set({
@@ -141,7 +125,6 @@ export const loadState = (initial: State): Store => {
           signer,
           signerType: SignerType.WalletConnect,
           tokenBalance,
-          tx: null,
         };
         const network = ethers.providers.getNetwork(
           signer.walletConnect.chainId,
@@ -328,7 +311,6 @@ function saveMetamaskSession(session: Session): void {
     JSON.stringify({
       address: session.address,
       tokenBalance: null,
-      tx: null,
       wallet: null,
     }),
   );
