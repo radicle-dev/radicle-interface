@@ -1,16 +1,12 @@
 import type { BigNumber } from "ethers";
 import type { Readable } from "svelte/store";
-import type {
-  TransactionReceipt,
-  TransactionResponse,
-} from "@ethersproject/providers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
 import type { WalletConnectSigner } from "@app/lib/walletConnectSigner";
 
 import * as ethers from "ethers";
 import { get, writable, derived } from "svelte/store";
 
-import { Unreachable, assert, assertEq } from "@app/lib/error";
+import { assert, assertEq } from "@app/lib/error";
 import { Wallet, getWallet } from "@app/lib/wallet";
 
 export enum Connection {
@@ -59,9 +55,6 @@ export interface Store extends Readable<State> {
   connectWalletConnect(wallet: Wallet): Promise<void>;
   updateBalance(n: BigNumber): void;
   refreshBalance(wallet: Wallet): Promise<void>;
-  setTxSigning(): void;
-  setTxPending(tx: TransactionResponse): void;
-  setTxConfirmed(tx: TransactionReceipt): void;
   setChangedAccount(address: string, signer: Signer): void;
 }
 
@@ -235,63 +228,6 @@ export const loadState = (initial: State): Store => {
       } catch (e) {
         console.error(e);
       }
-    },
-
-    setTxSigning: () => {
-      store.update(s => {
-        switch (s.connection) {
-          case Connection.Connected:
-            s.session.tx = { state: "signing" };
-            return s;
-          default:
-            throw new Unreachable();
-        }
-      });
-    },
-
-    setTxPending: (tx: TransactionResponse) => {
-      store.update(s => {
-        switch (s.connection) {
-          case Connection.Connected:
-            assert(s.session.tx !== null);
-            assert(s.session.tx.state === "signing");
-
-            s.session.tx = { state: "pending", hash: tx.hash };
-            return s;
-          default:
-            throw new Unreachable();
-        }
-      });
-    },
-
-    setTxConfirmed: (tx: TransactionReceipt) => {
-      store.update(s => {
-        switch (s.connection) {
-          case Connection.Connected:
-            assert(s.session.tx !== null);
-            assert(s.session.tx.state === "pending");
-
-            if (tx.status === 1) {
-              s.session.tx = {
-                state: "success",
-                hash: s.session.tx.hash,
-                blockHash: tx.blockHash,
-                blockNumber: tx.blockNumber,
-              };
-            } else {
-              s.session.tx = {
-                state: "fail",
-                hash: s.session.tx.hash,
-                blockHash: tx.blockHash,
-                blockNumber: tx.blockNumber,
-                error: "Failed",
-              };
-            }
-            return s;
-          default:
-            throw new Unreachable();
-        }
-      });
     },
 
     setChangedAccount: (address: string, signer: Signer) => {
