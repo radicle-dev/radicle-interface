@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Patch } from "@app/lib/patch";
-  import type { Wallet } from "@app/lib/wallet";
 
   import { Profile, ProfileType } from "@app/lib/profile";
   import { formatObjectId } from "@app/lib/cobs";
@@ -10,7 +9,6 @@
   import Authorship from "@app/components/Authorship.svelte";
 
   export let patch: Patch;
-  export let wallet: Wallet;
 
   let profile: Profile | null = null;
 
@@ -19,7 +17,6 @@
       profile = await Profile.get(
         patch.author.profile.ens.name,
         ProfileType.Minimal,
-        wallet,
       );
     }
   });
@@ -116,7 +113,6 @@
     </div>
     <Authorship
       {profile}
-      {wallet}
       caption="opened"
       author={patch.author}
       timestamp={patch.timestamp} />

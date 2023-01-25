@@ -1,16 +1,13 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-
   import * as router from "@app/lib/router";
-
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
-
-  export let wallet: Wallet;
+  import { networkStore } from "@app/lib/session";
 
   let input = "";
   let valid: boolean = false;
   let validationMessage: string | undefined = undefined;
+  let contracts = $networkStore;
 
   function register() {
     if (!valid) {
@@ -88,15 +85,15 @@
 
 <main>
   <div class="title">
-    Register a <span class="txt-bold">{wallet.registrar.domain}</span>
+    Register a <span class="txt-bold">{contracts.registrar.domain}</span>
     name
   </div>
 
   <div class="subtitle">
     Register a unique name with our ENS registrar, under <br />
     the
-    <span class="txt-bold">{wallet.registrar.domain}</span>
-    domain (e.g. cloudhead.{wallet.registrar.domain}).
+    <span class="txt-bold">{contracts.registrar.domain}</span>
+    domain (e.g. cloudhead.{contracts.registrar.domain}).
     <br />
     Radicle names never expire and free to register.
   </div>
@@ -109,7 +106,7 @@
       {valid}
       {validationMessage}>
       <svelte:fragment slot="right">
-        .{wallet.registrar.domain}
+        .{contracts.registrar.domain}
       </svelte:fragment>
     </TextInput>
 

@@ -1,28 +1,28 @@
 <script lang="ts">
   import type { State } from "@app/lib/utils";
-  import type { Wallet } from "@app/lib/wallet";
-
-  import { onMount } from "svelte";
-  import { twemoji } from "@app/lib/utils";
 
   import * as router from "@app/lib/router";
   import Button from "@app/components/Button.svelte";
   import ErrorModal from "@app/components/ErrorModal.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Modal from "@app/components/Modal.svelte";
+  import networks from "@app/lib/ethereum/networks";
   import { Status } from "@app/lib/utils";
-  import { session } from "@app/lib/session";
+  import { networkStore, sessionStore } from "@app/lib/session";
+  import { onMount } from "svelte";
+  import { twemoji } from "@app/lib/utils";
   import { withdraw } from "@app/lib/faucet";
 
-  export let wallet: Wallet;
   export let amount: string | null;
 
+  let contracts = networks[$networkStore.chainId];
   let error: Error;
   let state: State = {
     status: Status.Failed,
     error: "Error withdrawing, something happened.",
   };
-  $: requester = $session && $session.address;
+
+  const signer = $sessionStore?.signer;
 
   function back() {
     router.push({ resource: "faucet", params: { view: { resource: "form" } } });
@@ -33,9 +33,12 @@
       if (!amount) {
         throw new Error("You must supply the withdrawable amount.");
       }
-      if ($session) {
+      if (!contracts.radToken.faucet) {
+        throw new Error("Faucet contract not found.");
+      }
+      if (signer) {
         state.status = Status.Signing;
-        const tx = await withdraw(amount, $session.signer, wallet);
+        const tx = await withdraw(amount, contracts.radToken.faucet, signer);
         state.status = Status.Pending;
         await tx.wait();
         state.status = Status.Success;
@@ -85,7 +88,7 @@
     <span slot="body" class="loader">
       {#if state.status === Status.Success}
         The amount of {amount} RAD tokens has been successfully transfered to
-        <span class="txt-highlight">{requester}</span>
+        <span class="txt-highlight">{signer?.getAddress()}</span>
       {:else}
         <Loading small center />
       {/if}

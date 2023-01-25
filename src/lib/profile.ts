@@ -1,7 +1,6 @@
 import type { EnsProfile } from "@app/lib/registrar";
 import type { Seed, InvalidSeed } from "@app/lib/seed";
 import type { TransactionResponse } from "@ethersproject/providers";
-import type { Wallet } from "@app/lib/wallet";
 
 import * as ethers from "ethers";
 
@@ -19,6 +18,8 @@ import {
   identifyAddress,
   isFulfilled,
 } from "@app/lib/utils";
+import { networkStore, providerStore } from "@app/lib/session";
+import { get } from "svelte/store";
 
 class Org {
   address: string;
@@ -33,8 +34,8 @@ class Org {
     this.name = name;
   }
 
-  static async get(addressOrName: string, wallet: Wallet): Promise<Org | null> {
-    const org = await getOrgContract(addressOrName, wallet);
+  static async get(addressOrName: string): Promise<Org | null> {
+    const org = await getOrgContract(addressOrName);
 
     try {
       const [owner, resolved] = await resolveOrgOwner(org);
@@ -62,24 +63,27 @@ export class User {
     this.address = address.toLowerCase(); // Don't store address checksum.
   }
 
-  async setName(name: string, wallet: Wallet): Promise<TransactionResponse> {
-    assert(wallet.signer);
-
+  async setName(
+    name: string,
+    signer: ethers.providers.JsonRpcSigner,
+  ): Promise<TransactionResponse> {
+    const contracts = get(networkStore);
     const reverseRegistrar = new ethers.Contract(
-      wallet.reverseRegistrar.address,
+      contracts.reverseRegistrar.address,
       ethereumContractAbis.reverseRegistrar,
-      wallet.signer,
+      signer,
     );
     return reverseRegistrar.setName(name);
   }
 }
 
 const getOrgContract = cache.cached(
-  async (addressOrName: string, wallet: Wallet) => {
+  async (addressOrName: string) => {
+    const provider = get(providerStore);
     return new ethers.Contract(
       addressOrName,
       ethereumContractAbis.org,
-      wallet.provider,
+      provider,
     );
   },
   addressOrName => addressOrName,
@@ -186,18 +190,17 @@ export class Profile {
   private static async lookupProfile(
     addressOrName: string,
     profileType: ProfileType,
-    wallet: Wallet,
   ): Promise<IProfile> {
     let type = AddressType.EOA;
     let org: Org | null = null;
-    const ens = await resolveEnsProfile(addressOrName, profileType, wallet);
+    const ens = await resolveEnsProfile(addressOrName, profileType);
 
     if (ens) {
       if (ens.address) {
-        type = await identifyAddress(ens.address, wallet);
+        type = await identifyAddress(ens.address);
 
         if (type === AddressType.Org) {
-          org = await Org.get(ens.address, wallet);
+          org = await Org.get(ens.address);
         }
 
         return {
@@ -211,9 +214,9 @@ export class Profile {
     } else if (isAddress(addressOrName)) {
       const address = addressOrName.toLowerCase();
 
-      type = await identifyAddress(address, wallet);
+      type = await identifyAddress(address);
       if (type === AddressType.Org) {
-        org = await Org.get(address, wallet);
+        org = await Org.get(address);
       }
 
       try {
@@ -231,12 +234,9 @@ export class Profile {
     throw new NotFoundError(`Not able to resolve profile for ${addressOrName}`);
   }
 
-  static async getMulti(
-    addressesOrNames: string[],
-    wallet: Wallet,
-  ): Promise<Profile[]> {
+  static async getMulti(addressesOrNames: string[]): Promise<Profile[]> {
     const profilePromises = addressesOrNames.map(addressOrName =>
-      this.lookupProfile(addressOrName, ProfileType.Minimal, wallet),
+      this.lookupProfile(addressOrName, ProfileType.Minimal),
     );
     const profiles = await Promise.allSettled(profilePromises);
     return profiles
@@ -247,20 +247,16 @@ export class Profile {
   static async get(
     addressOrName: string,
     profileType: ProfileType,
-    wallet: Wallet,
   ): Promise<Profile> {
-    const profile = await this.lookupProfile(
-      addressOrName,
-      profileType,
-      wallet,
-    );
+    const profile = await this.lookupProfile(addressOrName, profileType);
     return new Profile(profile);
   }
 }
 
 export const getBalance = cached(
-  async (address: string, wallet: Wallet) => {
-    return await wallet.provider.getBalance(address);
+  async (address: string) => {
+    const provider = get(providerStore);
+    return await provider.getBalance(address);
   },
   address => address,
   { max: 1000 },

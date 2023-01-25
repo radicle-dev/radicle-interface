@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Blob } from "@app/lib/project";
   import type { Comment, Thread } from "@app/lib/issue";
-  import type { Wallet } from "@app/lib/wallet";
 
   import { onMount } from "svelte";
 
@@ -14,7 +13,6 @@
   import { Profile, ProfileType } from "@app/lib/profile";
 
   export let comment: Comment | Thread;
-  export let wallet: Wallet;
   export let caption = "left a comment";
   export let getImage: (path: string) => Promise<Blob>;
 
@@ -25,7 +23,6 @@
       profile = await Profile.get(
         comment.author.profile.ens.name,
         ProfileType.Minimal,
-        wallet,
       );
     }
   });
@@ -90,7 +87,6 @@ blank is also okay.
     <div class="card-header">
       <Authorship
         noAvatar
-        {wallet}
         {caption}
         {profile}
         author={comment.author}

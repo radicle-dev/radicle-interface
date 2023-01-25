@@ -1,16 +1,14 @@
 <script lang="ts" strictEvents>
-  import type { Wallet } from "@app/lib/wallet";
-
-  import { createEventDispatcher } from "svelte";
   import { qrcode } from "pure-svg-code";
 
   import Button from "@app/components/Button.svelte";
   import Modal from "@app/components/Modal.svelte";
-  import { state } from "@app/lib/session";
   import { twemoji } from "@app/lib/utils";
+  import { sessionStore } from "@app/lib/session";
 
   export let uri: string;
-  export let wallet: Wallet;
+
+  let signer = $sessionStore?.signer;
 
   $: svgString = qrcode({
     content: uri,
@@ -21,14 +19,6 @@
     background: "white",
     ecl: "M",
   });
-
-  const dispatch = createEventDispatcher<{ close: never }>();
-  const onClickConnect = () => {
-    state.connectMetamask(wallet);
-  };
-  const onClose = () => {
-    dispatch("close");
-  };
 </script>
 
 <style>
@@ -80,14 +70,10 @@
     </div>
 
     <div class="actions" slot="actions">
-      <Button
-        variant="secondary"
-        size="small"
-        on:click={onClickConnect}
-        disabled={!wallet.metamask.signer}>
+      <Button variant="secondary" size="small" disabled={!signer}>
         Connect with Metamask
       </Button>
-      <Button variant="text" size="small" on:click={onClose}>Close</Button>
+      <Button variant="text" size="small">Close</Button>
     </div>
   </Modal>
 </div>

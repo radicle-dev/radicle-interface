@@ -53,8 +53,6 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { Wallet } from "@app/lib/wallet";
-
   import cloneDeep from "lodash/cloneDeep";
   import { createEventDispatcher } from "svelte";
   import { marked } from "marked";
@@ -73,7 +71,6 @@
   export let fields: Field[];
   export let editable = false;
   export let disabled = false;
-  export let wallet: Wallet;
 
   let formFields = cloneDeep(fields);
   let hasErrors = false;
@@ -231,15 +228,13 @@
               <div class="layout-desktop-inline">
                 <Address
                   resolve={field.resolve ?? false}
-                  address={field.value}
-                  {wallet} />
+                  address={field.value} />
               </div>
               <div class="layout-mobile-inline">
                 <Address
                   compact
                   resolve={field.resolve ?? false}
-                  address={field.value}
-                  {wallet} />
+                  address={field.value} />
               </div>
             {:else if field.url}
               <div>

@@ -1,5 +1,4 @@
 import type { Commit, CommitHeader, CommitsHistory } from "@app/lib/commit";
-import type { Wallet } from "@app/lib/wallet";
 import { type Host, Request } from "@app/lib/api";
 
 import { Profile, ProfileType } from "@app/lib/profile";
@@ -358,10 +357,9 @@ export class Project implements ProjectInfo {
     peer: string | null,
     profileName: string | null,
     seedHost: string | null,
-    wallet: Wallet,
   ): Promise<Project> {
     const profile = profileName
-      ? await Profile.get(profileName, ProfileType.Project, wallet)
+      ? await Profile.get(profileName, ProfileType.Project)
       : null;
 
     const [host, port] = seedHost?.includes(":")

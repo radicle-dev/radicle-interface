@@ -1,5 +1,4 @@
 <script lang="ts" strictEvents>
-  import type { Wallet } from "@app/lib/wallet";
   import type { User } from "@app/lib/profile";
 
   import { createEventDispatcher } from "svelte";
@@ -11,11 +10,12 @@
   import Modal from "@app/components/Modal.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import { formatAddress, isAddressEqual, twemoji } from "@app/lib/utils";
+  import { get } from "svelte/store";
+  import { networkStore, providerStore, sessionStore } from "@app/lib/session";
 
   const dispatch = createEventDispatcher<{ close: never }>();
 
   export let entity: User;
-  export let wallet: Wallet;
 
   enum State {
     Idle,
@@ -33,19 +33,27 @@
   let state = State.Idle;
   let error: string | null = null;
 
+  const contracts = get(networkStore);
+  const session = get(sessionStore);
+  const provider = get(providerStore);
+
   const onSubmit = async () => {
     if (!valid) {
       return;
     }
     state = State.Checking;
 
-    const domain = `${name}.${wallet.registrar.domain}`;
-    const resolved = await wallet.provider.resolveName(domain);
+    const domain = `${name}.${contracts.registrar.domain}`;
+    const resolved = await provider.resolveName(domain);
 
-    if (resolved && isAddressEqual(resolved, entity.address)) {
+    if (
+      resolved &&
+      session?.signer &&
+      isAddressEqual(resolved, entity.address)
+    ) {
       try {
         state = State.Signing;
-        const tx = await entity.setName(domain, wallet);
+        const tx = await entity.setName(domain, session.signer);
         state = State.Pending;
         await tx.wait();
         state = State.Success;
@@ -80,7 +88,7 @@
 
     <div slot="subtitle">
       The ENS name for {entity.address} was set to
-      <span class="txt-bold">{name}.{wallet.registrar.domain}</span>
+      <span class="txt-bold">{name}.{contracts.registrar.domain}</span>
       .
     </div>
 
@@ -92,11 +100,11 @@
   </Modal>
 {:else if state === State.Mismatch}
   <ErrorModal floating title="🧣" on:close>
-    The name <span class="txt-bold">{name}.{wallet.registrar.domain}</span>
+    The name <span class="txt-bold">{name}.{contracts.registrar.domain}</span>
     does not resolve to
     <span class="txt-bold">{entity.address}</span>
-    . Please update the ENS record for {name}.{wallet.registrar.domain} to to the
-    correct address and try again.
+    . Please update the ENS record for {name}.{contracts.registrar.domain} to to
+    the correct address and try again.
 
     <div slot="actions">
       <Button
@@ -153,7 +161,7 @@
             {valid}
             bind:value={name}>
             <svelte:fragment slot="right">
-              .{wallet.registrar.domain}
+              .{contracts.registrar.domain}
             </svelte:fragment>
           </TextInput>
         </div>

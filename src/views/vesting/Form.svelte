@@ -1,13 +1,9 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-
-  import * as utils from "@app/lib/utils";
   import * as router from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import { state, getInfo } from "@app/lib/vesting";
-
-  export let wallet: Wallet;
 
   let contractAddress = "";
 
@@ -20,7 +16,7 @@
   const loadContract = async () => {
     state.set({ type: "loading" });
     try {
-      const info = await getInfo(contractAddress, wallet);
+      const info = await getInfo(contractAddress);
       if (info) {
         router.push({
           resource: "profile",

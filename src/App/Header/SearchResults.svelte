@@ -1,16 +1,15 @@
 <script lang="ts" strictEvents>
-  import Modal from "@app/components/Modal.svelte";
-  import { formatRadicleId, getSeedEmoji, twemoji } from "@app/lib/utils";
-  import type { Wallet } from "@app/lib/wallet";
+  import type { ProjectsAndProfiles } from "./Search.svelte";
+
   import Address from "@app/components/Address.svelte";
   import Button from "@app/components/Button.svelte";
-  import { createEventDispatcher } from "svelte";
-  import type { ProjectsAndProfiles } from "./Search.svelte";
   import Link from "@app/components/Link.svelte";
+  import Modal from "@app/components/Modal.svelte";
+  import { createEventDispatcher } from "svelte";
+  import { formatRadicleId, getSeedEmoji, twemoji } from "@app/lib/utils";
 
   export let query: string;
   export let results: ProjectsAndProfiles;
-  export let wallet: Wallet;
 
   const dispatch = createEventDispatcher<{ close: never }>();
 </script>
@@ -75,7 +74,7 @@
       <ul>
         {#each results.profiles as profile}
           <li>
-            <Address address={profile.address} {profile} {wallet} resolve />
+            <Address address={profile.address} {profile} resolve />
           </li>
         {/each}
       </ul>

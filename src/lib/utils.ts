@@ -1,5 +1,4 @@
 import type { EnsProfile } from "@app/lib/registrar";
-import type { Wallet } from "@app/lib/wallet";
 import type { marked } from "marked";
 
 import katex from "katex";
@@ -10,13 +9,16 @@ import { parseUnits } from "@ethersproject/units";
 
 import * as cache from "@app/lib/cache";
 import emojis from "@app/lib/emojis";
+import networks from "@app/lib/ethereum/networks";
 import { ProfileType } from "@app/lib/profile";
 import { assert } from "@app/lib/error";
 import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
+import { get } from "svelte/store";
 import { getAddress, getResolver } from "@app/lib/registrar";
 import { getAvatar, getSeed, getRegistration } from "@app/lib/registrar";
 import { getInfo } from "@app/lib/vesting";
+import { networkStore, providerStore } from "@app/lib/session";
 
 export enum AddressType {
   Contract,
@@ -49,9 +51,8 @@ export type State =
 export async function isReverseRecordSet(
   address: string,
   domain: string,
-  wallet: Wallet,
 ): Promise<boolean> {
-  const name = await lookupAddress(address, wallet);
+  const name = await lookupAddress(address);
   return name === domain;
 }
 
@@ -138,11 +139,11 @@ export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
 }
 
-export function formatProfile(input: string, wallet: Wallet): string {
+export function formatProfile(input: string): string {
   if (isAddress(input)) {
     return ethers.utils.getAddress(input);
   } else {
-    return parseEnsLabel(input, wallet);
+    return parseEnsLabel(input);
   }
 }
 
@@ -152,8 +153,9 @@ export function capitalize(s: string): string {
 }
 
 // Takes a domain name, eg. 'cloudhead.radicle.eth' and returns the label, eg. 'cloudhead'.
-export function parseEnsLabel(name: string, wallet: Wallet): string {
-  const domain = wallet.registrar.domain.replace(".", "\\.");
+export function parseEnsLabel(name: string): string {
+  const network = get(networkStore);
+  const domain = networks[network.chainId].registrar.domain.replace(".", "\\.");
   const label = name.replace(new RegExp(`\\.${domain}$`), "");
 
   return label;
@@ -278,8 +280,9 @@ export function isUrl(input: string): boolean {
   return /^https?:\/\//.test(input);
 }
 
-export function isENSName(input: string, wallet: Wallet): boolean {
-  const domain = wallet.registrar.domain.replace(".", "\\.");
+export function isENSName(input: string): boolean {
+  const network = get(networkStore);
+  const domain = networks[network.chainId].registrar.domain.replace(".", "\\.");
   const regEx = new RegExp(`^[a-zA-Z0-9]+.(${domain}|eth)$`);
   return regEx.test(input);
 }
@@ -296,17 +299,18 @@ export function isFulfilled<T>(
 }
 
 // Get the explorer link of an address or tx, eg. Etherscan.
-export function explorerLink(addrOrTx: string, wallet: Wallet): string {
+export function explorerLink(addrOrTx: string): string {
   const type = isAddress(addrOrTx) ? "address" : "tx";
-  if (wallet.network.name === "goerli") {
+  const network = get(networkStore);
+  if (network.name === "goerli") {
     return `https://goerli.etherscan.io/${type}/${addrOrTx}`;
   }
   return `https://etherscan.io/${type}/${addrOrTx}`;
 }
 
 // Format a name.
-export function formatName(input: string, wallet: Wallet): string {
-  return parseEnsLabel(input, wallet);
+export function formatName(input: string): string {
+  return parseEnsLabel(input);
 }
 
 // Parse a Radicle Id.
@@ -349,15 +353,12 @@ export function getSeedEmoji(seedHost: string): string {
 }
 
 // Identify an address by checking whether it's a contract or an externally-owned address.
-export async function identifyAddress(
-  address: string,
-  wallet: Wallet,
-): Promise<AddressType> {
-  const code = await getCode(address, wallet);
+export async function identifyAddress(address: string): Promise<AddressType> {
+  const code = await getCode(address);
   const bytes = ethers.utils.arrayify(code);
 
   if (bytes.length > 0) {
-    const info = await getInfo(address, wallet);
+    const info = await getInfo(address);
     if (info) {
       return AddressType.Vesting;
     }
@@ -370,25 +371,24 @@ export async function identifyAddress(
 export async function resolveEnsProfile(
   addressOrName: string,
   profileType: ProfileType,
-  wallet: Wallet,
 ): Promise<EnsProfile | null> {
   const name = ethers.utils.isAddress(addressOrName)
-    ? await lookupAddress(addressOrName, wallet)
+    ? await lookupAddress(addressOrName)
     : addressOrName;
 
   if (name) {
-    const resolver = await getResolver(name, wallet);
+    const resolver = await getResolver(name);
     if (!resolver) {
       return null;
     }
 
     if (profileType === ProfileType.Full) {
-      const registration = await getRegistration(name, wallet, resolver);
+      const registration = await getRegistration(name, resolver);
       if (registration) {
         return registration.profile;
       }
     } else {
-      const promises: [Promise<any>] = [getAvatar(name, wallet, resolver)];
+      const promises: [Promise<any>] = [getAvatar(name, resolver)];
 
       if (addressOrName === name) {
         promises.push(getAddress(resolver));
@@ -397,7 +397,7 @@ export async function resolveEnsProfile(
       }
 
       if (profileType === ProfileType.Project) {
-        promises.push(getSeed(name, wallet, resolver));
+        promises.push(getSeed(name, resolver));
       } else if (profileType === ProfileType.Minimal) {
         promises.push(Promise.resolve(null));
       }
@@ -420,15 +420,11 @@ export async function resolveEnsProfile(
 }
 
 // Get token balances for an address.
-export async function getTokens(
-  address: string,
-  wallet: Wallet,
-): Promise<Array<Token>> {
-  const userBalances = await getRpcMethod(
-    "alchemy_getTokenBalances",
-    [address, "DEFAULT_TOKENS"],
-    wallet,
-  );
+export async function getTokens(address: string): Promise<Array<Token>> {
+  const userBalances = await getRpcMethod("alchemy_getTokenBalances", [
+    address,
+    "DEFAULT_TOKENS",
+  ]);
   const balances = userBalances.tokenBalances
     .filter((token: any) => {
       // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
@@ -439,11 +435,9 @@ export async function getTokens(
       }
     })
     .map(async (token: any) => {
-      const tokenMetaData = await getRpcMethod(
-        "alchemy_getTokenMetadata",
-        [token.contractAddress],
-        wallet,
-      );
+      const tokenMetaData = await getRpcMethod("alchemy_getTokenMetadata", [
+        token.contractAddress,
+      ]);
       return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
     });
 
@@ -451,8 +445,9 @@ export async function getTokens(
 }
 
 export const getRpcMethod = cache.cached(
-  async (method: string, props: string[], wallet: Wallet) => {
-    return await wallet.provider.send(method, props);
+  async (method: string, props: string[]) => {
+    const provider = get(providerStore);
+    return await provider.send(method, props);
   },
   (method, props) => JSON.stringify([method, props]),
   { ttl: 2 * 60 * 1000, max: 1000 },
@@ -486,16 +481,18 @@ export function gravatarURL(email: string): string {
 }
 
 export const getCode = cache.cached(
-  async (address: string, wallet: Wallet) => {
-    return await wallet.provider.getCode(address);
+  async (address: string) => {
+    const provider = get(providerStore);
+    return await provider.getCode(address);
   },
   address => address,
   { max: 1000 },
 );
 
 export const lookupAddress = cache.cached(
-  async (address: string, wallet: Wallet) => {
-    return await wallet.provider.lookupAddress(address);
+  async (address: string) => {
+    const provider = get(providerStore);
+    return await provider.lookupAddress(address);
   },
   address => address,
   { max: 1000 },

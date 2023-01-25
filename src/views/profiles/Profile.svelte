@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
-  import type { Wallet } from "@app/lib/wallet";
   import type { Seed, Stats } from "@app/lib/seed";
   import type { ProjectInfo } from "@app/lib/project";
   import type { VestingInfo } from "@app/lib/vesting";
@@ -21,19 +20,19 @@
   import SeedAddress from "@app/components/SeedAddress.svelte";
   import SetName from "./SetName.svelte";
   import Withdraw from "@app/views/vesting/Withdraw.svelte";
+  import ethereumContractAbis from "@app/lib/ethereum/contractAbis.json";
   import { MissingReverseRecord, NotFoundError } from "@app/lib/error";
   import { User, Profile, ProfileType } from "@app/lib/profile";
   import { defaultNodePort } from "@app/lib/seed";
+  import { ethers } from "ethers";
   import {
     getInfo,
-    getVestingContract,
     handleEtherErrorState,
     parseVestingPeriods,
   } from "@app/lib/vesting";
   import { onMount } from "svelte";
-  import { session } from "@app/lib/session";
+  import { providerStore, sessionStore } from "@app/lib/session";
 
-  export let wallet: Wallet;
   export let addressOrName: string;
 
   let vestingInfo: VestingInfo | undefined = undefined;
@@ -62,7 +61,7 @@
   $: {
     vestingInfo = undefined;
     withdrawVestingModal = undefined;
-    getInfo(addressOrName, wallet)
+    getInfo(addressOrName)
       .then(info => {
         vestingInfo = info;
       })
@@ -72,19 +71,23 @@
   }
 
   onMount(async () => {
-    const addressType = await utils.identifyAddress(addressOrName, wallet);
+    const addressType = await utils.identifyAddress(addressOrName);
     if (addressType === utils.AddressType.Contract) {
       try {
-        vestingInfo = await getInfo(addressOrName, wallet);
+        vestingInfo = await getInfo(addressOrName);
       } catch (e) {
         handleEtherErrorState(e, "Not able to get vesting contract info");
       }
     }
   });
 
-  const vestingContract = getVestingContract(addressOrName, wallet);
+  const vestingContract = new ethers.Contract(
+    addressOrName,
+    ethereumContractAbis.vesting,
+    $providerStore,
+  );
 
-  wallet.provider.on("block", async () => {
+  $providerStore.on("block", async () => {
     if (vestingInfo) {
       try {
         const updatedAmounts = await Promise.all([
@@ -102,7 +105,7 @@
   });
 
   $: isUserAuthorized = (address: string): boolean | null => {
-    return $session && utils.isAddressEqual(address, $session.address);
+    return utils.isAddressEqual(address, $sessionStore?.address || "");
   };
 </script>
 
@@ -181,7 +184,7 @@
   <title>{addressOrName}</title>
 </svelte:head>
 
-{#await Profile.get(addressOrName, ProfileType.Full, wallet)}
+{#await Profile.get(addressOrName, ProfileType.Full)}
   <div class="layout-centered">
     <Loading center />
   </div>
@@ -197,7 +200,7 @@
         <span class="title txt-title">
           <span class="txt-bold">
             {profile.name
-              ? utils.formatName(profile.name, wallet)
+              ? utils.formatName(profile.name)
               : utils.formatAddress(profile.address)}
           </span>
           {#if profile.name && profile.org}
@@ -229,7 +232,7 @@
             <a
               class="url"
               title="Lookup address on Etherscan"
-              href={utils.explorerLink(profile.address, wallet)}>
+              href={utils.explorerLink(profile.address)}>
               <Icon name="etherscan" />
             </a>
           {/if}
@@ -251,20 +254,20 @@
       <!-- Address -->
       <div class="txt-highlight">Address</div>
       <div class="layout-desktop">
-        <Address {wallet} {profile} address={profile.address} />
+        <Address {profile} address={profile.address} />
       </div>
       <div class="layout-mobile">
-        <Address compact {wallet} {profile} address={profile.address} />
+        <Address compact {profile} address={profile.address} />
       </div>
       <div class="layout-desktop" />
       <!-- Owner -->
       {#if profile.org}
         <div class="txt-highlight">Owner</div>
         <div class="layout-desktop">
-          <Address resolve {wallet} address={profile.org.owner} />
+          <Address resolve address={profile.org.owner} />
         </div>
         <div class="layout-mobile">
-          <Address compact resolve {wallet} address={profile.org.owner} />
+          <Address compact resolve address={profile.org.owner} />
         </div>
         <div class="layout-desktop" />
       {/if}
@@ -322,7 +325,7 @@
       {#if vestingInfo}
         <div class="txt-highlight">Vesting Beneficiary</div>
         <div style:display="flex" style:gap="1rem">
-          <Address address={vestingInfo.beneficiary} {wallet} resolve compact />
+          <Address address={vestingInfo.beneficiary} resolve compact />
         </div>
         <div class="layout-desktop" />
         <div class="txt-highlight">Allocation</div>
@@ -394,13 +397,11 @@
     this={withdrawVestingModal}
     info={vestingInfo}
     contractAddress={addressOrName}
-    {wallet}
     on:close={() => (withdrawVestingModal = undefined)} />
 
   <svelte:component
     this={setNameForm}
     entity={new User(profile.address)}
-    {wallet}
     on:close={() => (setNameForm = undefined)} />
 {:catch err}
   {#if err instanceof NotFoundError}

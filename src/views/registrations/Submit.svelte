@@ -1,8 +1,5 @@
 <script lang="ts">
   import type { Session } from "@app/lib/session";
-  import type { Wallet } from "@app/lib/wallet";
-
-  import { onMount } from "svelte";
 
   import * as router from "@app/lib/router";
   import BlockTimer from "@app/views/registrations/BlockTimer.svelte";
@@ -10,15 +7,19 @@
   import ErrorModal from "@app/components/ErrorModal.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Modal from "@app/components/Modal.svelte";
+  import { onMount } from "svelte";
   import { registerName, State, state } from "@app/lib/registrar";
+  import { sessionStore, networkStore } from "@app/lib/session";
   import { twemoji } from "@app/lib/utils";
+  import networks from "@app/lib/ethereum/networks";
 
-  export let wallet: Wallet;
   export let name: string;
   export let owner: string | null;
-  export let session: Session;
+  export let session: Extract<Session, { connection: "connected" }>["session"];
 
   let error: Error | null = null;
+  const contracts = networks[$networkStore.chainId];
+  const signer = $sessionStore?.address;
   const registrationOwner = owner || session.address;
 
   function view() {
@@ -28,7 +29,7 @@
         view: {
           resource: "view",
           params: {
-            nameOrDomain: `${name}.${wallet.registrar.domain}`,
+            nameOrDomain: `${name}.${contracts.registrar.domain}`,
             retry: true,
           },
         },
@@ -38,7 +39,7 @@
 
   onMount(async () => {
     try {
-      await registerName(name, registrationOwner, wallet);
+      await registerName(name, registrationOwner, signer);
     } catch (e: any) {
       console.error("Error", e);
 
@@ -48,7 +49,7 @@
   });
 
   let latestBlock: number;
-  wallet.provider.on("block", (block: number) => {
+  provider.on("block", (block: number) => {
     latestBlock = block;
   });
 </script>
@@ -82,7 +83,7 @@
       {:else}
         <div>🌐</div>
       {/if}
-      {name}.{wallet.registrar.domain}
+      {name}.{contracts.registrar.domain}
     </span>
 
     <span slot="subtitle">

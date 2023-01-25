@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-
   import { onMount } from "svelte";
   import { ethers } from "ethers";
 
@@ -16,7 +14,6 @@
   import { Profile, ProfileType } from "@app/lib/profile";
 
   export let address: string;
-  export let wallet: Wallet;
   export let resolve = false;
   export let noBadge = false;
   export let noAvatar = false;
@@ -33,14 +30,10 @@
 
   onMount(async () => {
     if (!profile) {
-      identifyAddress(address, wallet).then(
-        (t: AddressType) => (addressType = t),
-      );
+      identifyAddress(address).then((t: AddressType) => (addressType = t));
 
       if (resolve) {
-        Profile.get(address, ProfileType.Minimal, wallet).then(
-          p => (profile = p),
-        );
+        Profile.get(address, ProfileType.Minimal).then(p => (profile = p));
       }
     } else {
       // If there is a profile we can use the profile.type to avoid identifying it again.
@@ -50,7 +43,7 @@
   $: addressLabel =
     resolve && profile?.name
       ? compact
-        ? parseEnsLabel(profile.name, wallet)
+        ? parseEnsLabel(profile.name)
         : profile.name
       : checksumAddress;
   $: checksumAddress = compact

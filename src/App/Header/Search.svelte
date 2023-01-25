@@ -2,12 +2,12 @@
   import type { Host } from "@app/lib/api";
   import type { ProjectInfo } from "@app/lib/project";
 
-  import { ethers } from "ethers";
-
   import * as utils from "@app/lib/utils";
   import { Profile } from "@app/lib/profile";
   import { Project } from "@app/lib/project";
   import { config } from "@app/lib/config";
+  import { ethers } from "ethers";
+  import { networkStore } from "@app/lib/session";
 
   export interface ProjectsAndProfiles {
     projects: { info: ProjectInfo; seed: Host }[];
@@ -23,7 +23,6 @@
 
   async function searchProjectsAndProfiles(
     query: string,
-    wallet: Wallet,
   ): Promise<SearchResult> {
     try {
       // The query is a plain Ethereum address.
@@ -72,15 +71,16 @@
 
       try {
         let params: string[];
-        if (utils.isENSName(normalizedQuery, wallet)) {
+        if (utils.isENSName(normalizedQuery)) {
           params = [normalizedQuery];
         } else {
+          const contracts = get(networkStore);
           params = [
-            `${normalizedQuery}.${wallet.registrar.domain}`,
+            `${normalizedQuery}.${contracts.registrar.domain}`,
             `${normalizedQuery}.eth`,
           ];
         }
-        const profiles = await Profile.getMulti(params, wallet);
+        const profiles = await Profile.getMulti(params);
         projectsAndProfiles.profiles.push(...profiles);
       } catch {
         // TODO: collect errors and forward to user.
@@ -125,16 +125,13 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { Wallet } from "@app/lib/wallet";
-
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
   import * as router from "@app/lib/router";
 
   import TextInput from "@app/components/TextInput.svelte";
   import { unreachable } from "@app/lib/utils";
-
-  export let wallet: Wallet;
+  import { get } from "svelte/store";
 
   const dispatch = createEventDispatcher<{
     finished: never;
@@ -161,7 +158,7 @@
     loading = true;
 
     const query = input;
-    const searchResult = await searchProjectsAndProfiles(input, wallet);
+    const searchResult = await searchProjectsAndProfiles(input);
 
     if (searchResult.type === "nothing") {
       shake();

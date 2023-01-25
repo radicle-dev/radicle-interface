@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-
   import { formatEther } from "@ethersproject/units";
 
   import * as router from "@app/lib/router";
+  import { state, networkStore, sessionStore } from "@app/lib/session";
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import {
@@ -11,15 +10,17 @@
     getMaxWithdrawAmount,
     lastWithdrawalByUser,
   } from "@app/lib/faucet";
-  import { session } from "@app/lib/session";
   import { setOpenGraphMetaTag, toWei, capitalize } from "@app/lib/utils";
-
-  export let wallet: Wallet;
+  import networks from "@app/lib/ethereum/networks";
 
   let amount: string = "";
   let loading: boolean = false;
   let validationMessage: string | undefined = undefined;
   let valid: boolean = false;
+
+  const signer = $sessionStore?.signer;
+  const contracts = networks[$networkStore.chainId];
+  const faucet = contracts?.radToken.faucet;
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Faucet" },
@@ -28,22 +29,16 @@
   ]);
 
   async function withdraw(amount: string) {
-    if (!valid || !$session) {
+    if (!valid || !faucet || !signer) {
       return;
     }
 
     loading = true;
     try {
       const currentTime = new Date().getTime();
-      const timelock = await calculateTimeLock(amount, $session.signer, wallet);
-      const lastWithdrawal = await lastWithdrawalByUser(
-        $session.signer,
-        wallet,
-      );
-      const maxWithdrawAmount = await getMaxWithdrawAmount(
-        $session.signer,
-        wallet,
-      );
+      const timelock = await calculateTimeLock(amount, faucet, signer);
+      const lastWithdrawal = await lastWithdrawalByUser(faucet, signer);
+      const maxWithdrawAmount = await getMaxWithdrawAmount(faucet, signer);
 
       if (toWei(amount).gt(maxWithdrawAmount)) {
         validationMessage = `Reduce amount, max withdrawal is ${formatEther(
@@ -124,14 +119,14 @@
 <main>
   <div class="title">
     Obtain RAD tokens on <span class="txt-bold">
-      {capitalize(wallet.network.name)}
+      {capitalize($networkStore.name)}
     </span>
   </div>
 
-  {#if wallet.network.name === "homestead"}
+  {#if $networkStore.name === "homestead"}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {capitalize(wallet.network.name)},
+        {capitalize($networkStore.name)},
       </span>
       please
       <br />
@@ -143,10 +138,10 @@
       </a>
       &#8203;.
     </div>
-  {:else if !$session}
+  {:else if $state.connection === "disconnected"}
     <div class="subtitle">
       To get RAD tokens on <span class="txt-bold">
-        {capitalize(wallet.network.name)}
+        {capitalize($networkStore.name)}
       </span>
       &#8203;,
       <br />

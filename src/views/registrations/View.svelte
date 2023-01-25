@@ -2,7 +2,6 @@
   import type { EnsRecord } from "@app/lib/resolver";
   import type { Field, RegistrationRecord } from "@app/components/Form.svelte";
   import type { Registration } from "@app/lib/registrar";
-  import type { Wallet } from "@app/lib/wallet";
   import type { ethers } from "ethers";
 
   import { onMount } from "svelte";
@@ -19,7 +18,7 @@
   import { defaultSeedPort } from "@app/lib/seed";
   import { getRegistration, getOwner } from "@app/lib/registrar";
   import { isAddressEqual, isReverseRecordSet, twemoji } from "@app/lib/utils";
-  import { session } from "@app/lib/session";
+  import { sessionStore } from "@app/lib/session";
 
   enum Status {
     Loading,
@@ -35,7 +34,6 @@
     | { status: Status.Failed; error: string };
 
   export let domain: string;
-  export let wallet: Wallet;
   export let retry: boolean;
 
   domain = domain.toLowerCase();
@@ -53,13 +51,9 @@
     if (r) {
       let reverseRecord = false;
       if (r.profile.address) {
-        reverseRecord = await isReverseRecordSet(
-          r.profile.address,
-          domain,
-          wallet,
-        );
+        reverseRecord = await isReverseRecordSet(r.profile.address, domain);
       }
-      const owner = await getOwner(domain, wallet);
+      const owner = await getOwner(domain);
       resolver = r.resolver;
 
       fields = [
@@ -164,7 +158,7 @@
   }
 
   onMount(() => {
-    getRegistration(domain, wallet, resolver)
+    getRegistration(domain, resolver)
       .then(parseRecords)
       .catch(err => {
         state = { status: Status.Failed, error: err };
@@ -180,7 +174,7 @@
   };
 
   $: if (retry && state.status === Status.NotFound && retries > 0) {
-    getRegistration(domain, wallet, resolver)
+    getRegistration(domain, resolver)
       .then(parseRecords)
       .catch(err => {
         state = { status: Status.Failed, error: err };
@@ -188,7 +182,7 @@
   }
 
   $: isOwner = (owner: string): boolean => {
-    return $session ? isAddressEqual(owner, $session.address) : false;
+    return $sessionStore ? isAddressEqual(owner, $sessionStore.address) : false;
   };
 </script>
 
@@ -287,19 +281,18 @@
       </div>
     </header>
     <Form
-      {wallet}
       {editable}
       {fields}
       on:save={onSave}
       on:cancel={() => (editable = false)} />
   </main>
 
-  {#if updateRecords}
+  {#if $sessionStore?.signer && updateRecords}
     <Update
-      {wallet}
       {domain}
       on:close={() => (updateRecords = null)}
       registration={state.registration}
+      signer={$sessionStore.signer}
       records={updateRecords} />
   {/if}
 {/if}

@@ -1,5 +1,3 @@
-import type { Wallet } from "@app/lib/wallet";
-
 import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
 import * as utils from "@app/lib/utils";
@@ -167,24 +165,12 @@ describe("String Assertions", () => {
 
 describe("Others", () => {
   test.each([
-    {
-      name: "goerli",
-      expected:
-        "https://goerli.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-    {
-      name: "",
-      expected:
-        "https://etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-  ])("explorerLink $name => $expected", ({ name, expected }) => {
+    "https://goerli.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
+    "https://etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
+  ])("explorerLink $name => $expected", link => {
     expect(
-      utils.explorerLink("0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0", {
-        network: {
-          name,
-        },
-      } as Wallet),
-    ).toEqual(expected);
+      utils.explorerLink("0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0"),
+    ).toEqual(link);
   });
 });
 
@@ -193,14 +179,7 @@ describe("Parse Strings", () => {
     { label: "sebastinez.radicle.eth", expected: "sebastinez" },
     { label: "sebastinez", expected: "sebastinez" },
   ])("parseEnsLabel", ({ label, expected }) => {
-    expect(
-      utils.parseEnsLabel(label, {
-        registrar: {
-          address: "0x1234567890123456789012345678901234567890",
-          domain: "radicle.eth",
-        },
-      } as Wallet),
-    ).toEqual(expected);
+    expect(utils.parseEnsLabel(label)).toEqual(expected);
   });
 
   test.each([

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Author } from "@app/lib/cobs";
-  import type { Wallet } from "@app/lib/wallet";
 
   import { onMount } from "svelte";
 
@@ -16,7 +15,6 @@
   export let author: Author;
   export let timestamp: number;
   export let caption: string;
-  export let wallet: Wallet;
   export let profile: Profile | null = null;
 
   onMount(async () => {
@@ -25,7 +23,6 @@
         profile = await Profile.get(
           author.profile.ens.name,
           ProfileType.Minimal,
-          wallet,
         );
       } catch {
         // Ignore profile not found.
@@ -62,7 +59,6 @@
       noBadge
       compact
       {noAvatar}
-      {wallet}
       {profile}
       address={profile.address} />
   {:else if author.profile}

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-
   import { onMount } from "svelte";
 
   import * as router from "@app/lib/router";
@@ -11,7 +9,8 @@
   import Modal from "@app/components/Modal.svelte";
   import { formatAddress, twemoji } from "@app/lib/utils";
   import { registrar } from "@app/lib/registrar";
-  import { session } from "@app/lib/session";
+  import { networkStore } from "@app/lib/session";
+  import { get } from "svelte/store";
 
   enum State {
     CheckingAvailability,
@@ -20,7 +19,6 @@
     NameUnavailable,
   }
 
-  export let wallet: Wallet;
   export let name: string;
   export let owner: string | null;
 
@@ -30,6 +28,7 @@
   let state = State.CheckingAvailability;
   let error: string | null = null;
   $: registrationOwner = owner || ($session && $session.address);
+  const contracts = get(networkStore);
 
   function begin() {
     router.push({
@@ -45,7 +44,7 @@
 
   onMount(async () => {
     try {
-      const isAvailable = await registrar(wallet).available(name);
+      const isAvailable = await registrar().available(name);
 
       if (isAvailable) {
         state = State.NameAvailable;
@@ -85,7 +84,7 @@
   </span>
 
   <span slot="subtitle">
-    {name}.{wallet.registrar.domain}
+    {`${name}.${contracts.registrar.domain}`}
   </span>
 
   <span slot="body">
@@ -119,10 +118,7 @@
           Begin registration &rarr;
         </Button>
       {:else}
-        <Connect
-          caption="Connect to register"
-          buttonVariant="primary"
-          {wallet} />
+        <Connect caption="Connect to register" buttonVariant="primary" />
       {/if}
 
       <Button on:click={goToValidateName} variant="text">Cancel</Button>

@@ -1,9 +1,7 @@
 import type { EnsResolver } from "@ethersproject/providers";
 import type { TransactionResponse } from "@ethersproject/providers";
-import type { Wallet } from "@app/lib/wallet";
 
 import ethereumContractAbis from "@app/lib/ethereum/contractAbis.json";
-import { assert } from "@app/lib/error";
 import { ethers } from "ethers";
 
 export type EnsRecord = { name: string; value: string };
@@ -12,14 +10,12 @@ export async function setRecords(
   name: string,
   records: EnsRecord[],
   resolver: EnsResolver,
-  wallet: Wallet,
+  signer: ethers.providers.JsonRpcSigner,
 ): Promise<TransactionResponse> {
-  assert(wallet.signer, "no signer available");
-
   const resolverContract = new ethers.Contract(
     resolver.address,
     ethereumContractAbis.resolver,
-    wallet.signer,
+    signer,
   );
   const node = ethers.utils.namehash(name);
 

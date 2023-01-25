@@ -1,7 +1,6 @@
 <script lang="ts" strictEvents>
   import type { EnsRecord } from "@app/lib/resolver";
   import type { Registration } from "@app/lib/registrar";
-  import type { Wallet } from "@app/lib/wallet";
   import type { State } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
@@ -11,11 +10,12 @@
   import { onMount, createEventDispatcher } from "svelte";
   import { setRecords } from "@app/lib/resolver";
   import { twemoji } from "@app/lib/utils";
+  import type { ethers } from "ethers";
 
   export let domain: string;
-  export let wallet: Wallet;
   export let records: EnsRecord[];
   export let registration: Registration;
+  export let signer: ethers.providers.JsonRpcSigner;
 
   const dispatch = createEventDispatcher<{ close: never }>();
 
@@ -31,7 +31,7 @@
         domain,
         records,
         registration.resolver,
-        wallet,
+        signer,
       );
       state.status = Status.Pending;
       await tx.wait();

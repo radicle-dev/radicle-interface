@@ -1,16 +1,15 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
-  import { Patch, TimelineType } from "@app/lib/patch";
-  import { formatSeedId } from "@app/lib/utils";
-  import { canonicalize } from "@app/lib/utils";
-  import Comment from "@app/components/Comment.svelte";
   import type { Blob, Project } from "@app/lib/project";
+
   import Authorship from "@app/components/Authorship.svelte";
+  import Comment from "@app/components/Comment.svelte";
   import Review from "@app/views/projects/Patch/Review.svelte";
+  import { Patch, TimelineType } from "@app/lib/patch";
+  import { canonicalize } from "@app/lib/utils";
+  import { formatSeedId } from "@app/lib/utils";
 
   export let patch: Patch;
   export let revisionNumber: number;
-  export let wallet: Wallet;
   export let project: Project;
 
   $: timeline = patch.createTimeline(revisionNumber);
@@ -48,28 +47,27 @@
             profile: element.inner.peer.person,
           }}
           caption={`merged to ${formatSeedId(element.inner.peer.id)}`}
-          timestamp={element.timestamp}
-          {wallet} />
+          timestamp={element.timestamp} />
       </div>
     {:else if element.type === TimelineType.Review && element.inner.author.profile?.ens?.name}
       <div class="margin-left">
-        <Review review={element.inner} {wallet} {getImage} />
+        <Review review={element.inner} {getImage} />
       </div>
     {:else if element.type === TimelineType.Comment}
       <div class="margin-left">
         <!-- Since the element variable only experiences changes on the inner property,
         this component has to be forced to be rerendered when element.inner changes -->
         {#key element.inner}
-          <Comment comment={element.inner} {wallet} {getImage} />
+          <Comment comment={element.inner} {getImage} />
         {/key}
       </div>
     {:else if element.type === TimelineType.Thread}
       <div class="margin-left">
-        <Comment comment={element.inner} {wallet} {getImage} />
+        <Comment comment={element.inner} {getImage} />
         {#if !window.HEARTWOOD}
           <div class="replies">
             {#each element.inner.replies as comment}
-              <Comment caption="replied" {comment} {wallet} {getImage} />
+              <Comment caption="replied" {comment} {getImage} />
             {/each}
           </div>
         {/if}

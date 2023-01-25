@@ -1,13 +1,12 @@
-import type { Wallet } from "@app/lib/wallet";
 import type { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { BigNumber, ethers } from "ethers";
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 
 import * as cache from "@app/lib/cache";
-import * as session from "@app/lib/session";
 import * as utils from "@app/lib/utils";
 import ethereumContractAbis from "@app/lib/ethereum/contractAbis.json";
+import { providerStore } from "@app/lib/session";
 
 export interface VestingInfo {
   token: string;
@@ -33,9 +32,10 @@ export const state = writable<VestingState>({ type: "idle" });
 
 export async function withdrawVested(
   address: string,
-  wallet: Wallet,
+  provider: ethers.providers.JsonRpcProvider,
+  signer: ethers.providers.JsonRpcSigner,
 ): Promise<void> {
-  if (!wallet.signer) {
+  if (!signer) {
     state.set({ type: "error", error: "No signer available" });
     return;
   }
@@ -43,9 +43,8 @@ export async function withdrawVested(
   const contract = new ethers.Contract(
     address,
     ethereumContractAbis.vesting,
-    wallet.provider,
+    provider,
   );
-  const signer = wallet.signer;
 
   state.set({ type: "withdrawingSign" });
 
@@ -60,13 +59,17 @@ export async function withdrawVested(
     handleEtherErrorState(e, "Unknown error, check the dev console");
     return;
   }
-  session.state.refreshBalance(wallet);
   state.set({ type: "withdrawn" });
 }
 
 export const getInfo = cache.cached(
-  async (address: string, wallet: Wallet): Promise<VestingInfo | undefined> => {
-    const contract = getVestingContract(address, wallet);
+  async (address: string): Promise<VestingInfo | undefined> => {
+    const provider = get(providerStore);
+    const contract = new ethers.Contract(
+      address,
+      ethereumContractAbis.vesting,
+      provider,
+    );
 
     let vestingInfo:
       | [
@@ -91,7 +94,7 @@ export const getInfo = cache.cached(
       const tokenContract = new ethers.Contract(
         token,
         ethereumContractAbis.token,
-        wallet.provider,
+        provider,
       );
 
       vestingInfo = await Promise.all([
@@ -141,14 +144,6 @@ export function parseVestingPeriods(...timestamps: string[]): string {
     .map(timestamp => parseInt(timestamp))
     .reduce((prev, curr) => prev + curr, 0);
   return new Date(sum * 1000).toDateString();
-}
-
-export function getVestingContract(address: string, wallet: Wallet) {
-  return new ethers.Contract(
-    address,
-    ethereumContractAbis.vesting,
-    wallet.provider,
-  );
 }
 
 export function handleEtherErrorState(e: unknown, message: string): void {

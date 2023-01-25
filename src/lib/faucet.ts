@@ -1,42 +1,36 @@
 import type { TransactionResponse } from "@ethersproject/providers";
 import type { TypedDataSigner } from "@ethersproject/abstract-signer";
-import type { Wallet } from "@app/lib/wallet";
-import type { WalletConnectSigner } from "@app/lib/walletConnectSigner";
 
 import * as ethers from "ethers";
-
 import ethereumContractAbis from "@app/lib/ethereum/contractAbis.json";
-import { assert } from "@app/lib/error";
+import networks from "./ethereum/networks";
+import { get } from "svelte/store";
+import { networkStore } from "./session";
 import { toWei } from "@app/lib/utils";
 
-type Signer = (ethers.Signer & TypedDataSigner) | WalletConnectSigner | null;
+type Signer = ethers.Signer & TypedDataSigner;
 
 export async function withdraw(
   amount: string,
+  faucetAddress: string,
   signer: Signer,
-  wallet: Wallet,
 ): Promise<TransactionResponse> {
-  assert(signer);
-  assert(wallet.radToken.faucet);
-
   const faucet = new ethers.Contract(
-    wallet.radToken.faucet,
+    faucetAddress,
     ethereumContractAbis.faucet,
     signer,
   );
-
-  return faucet.withdraw(wallet.radToken.address, toWei(amount));
+  const network = get(networkStore);
+  const contracts = networks[network.chainId];
+  return faucet.withdraw(contracts.radToken.address, toWei(amount));
 }
 
 export async function getMaxWithdrawAmount(
+  faucetAddress: string,
   signer: Signer,
-  wallet: Wallet,
 ): Promise<ethers.BigNumber> {
-  assert(signer);
-  assert(wallet.radToken.faucet);
-
   const faucet = new ethers.Contract(
-    wallet.radToken.faucet,
+    faucetAddress,
     ethereumContractAbis.faucet,
     signer,
   );
@@ -46,14 +40,11 @@ export async function getMaxWithdrawAmount(
 
 export async function calculateTimeLock(
   amount: string,
+  faucetAddress: string,
   signer: Signer,
-  wallet: Wallet,
 ): Promise<ethers.BigNumber> {
-  assert(signer);
-  assert(wallet.radToken.faucet);
-
   const faucet = new ethers.Contract(
-    wallet.radToken.faucet,
+    faucetAddress,
     ethereumContractAbis.faucet,
     signer,
   );
@@ -62,16 +53,13 @@ export async function calculateTimeLock(
 }
 
 export async function lastWithdrawalByUser(
+  faucetAddress: string,
   signer: Signer,
-  wallet: Wallet,
 ): Promise<ethers.BigNumber> {
-  assert(signer);
-  assert(wallet.radToken.faucet);
-
   const address = signer.getAddress();
 
   const faucet = new ethers.Contract(
-    wallet.radToken.faucet,
+    faucetAddress,
     ethereumContractAbis.faucet,
     signer,
   );

@@ -1,6 +1,5 @@
 <script lang="ts" strictEvents>
   import type { VestingInfo } from "@app/lib/vesting";
-  import type { Wallet } from "@app/lib/wallet";
 
   import * as utils from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
@@ -10,15 +9,17 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { state } from "@app/lib/vesting";
   import { withdrawVested } from "@app/lib/vesting";
+  import { providerStore, sessionStore } from "@app/lib/session";
 
   export let contractAddress: string;
   export let info: VestingInfo;
-  export let wallet: Wallet;
+
+  let signer = $sessionStore?.signer;
 
   const dispatch = createEventDispatcher<{ close: never }>();
 
   onMount(async () => {
-    await withdrawVested(contractAddress, wallet);
+    await withdrawVested(contractAddress, $providerStore, signer);
   });
 </script>
 
