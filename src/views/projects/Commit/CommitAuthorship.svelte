@@ -37,17 +37,17 @@
 </style>
 
 <span class="authorship txt-tiny">
-  {#if commit.header.author.email === commit.header.committer.email}
+  {#if commit.commit.author.email === commit.commit.committer.email}
     <img
       class="avatar"
       alt="avatar"
-      src={gravatarURL(commit.header.committer.email)} />
+      src={gravatarURL(commit.commit.committer.email)} />
     {#if commit.context?.committer}
       <span
         class="committer"
         class:txt-bold={Boolean(commit.context.committer.peer.person?.name)}>
         {commit.context.committer.peer.person?.name ||
-          commit.header.committer.name}
+          commit.commit.committer.name}
       </span>
       {#if !noDelegate && commit.context?.committer.peer.delegate}
         <Badge variant="tertiary">delegate</Badge>
@@ -55,7 +55,7 @@
       <span>committed</span>
     {:else}
       <span class="layout-desktop-inline committer">
-        {commit.header.committer.name}
+        {commit.commit.committer.name}
       </span>
       <span>committed</span>
     {/if}
@@ -64,22 +64,22 @@
       <img
         class="avatar"
         alt="avatar"
-        src={gravatarURL(commit.header.author.email)} />
+        src={gravatarURL(commit.commit.author.email)} />
       <span class="layout-desktop-inline author">
-        {commit.header.author.name}
+        {commit.commit.author.name}
       </span>
       <span>authored</span>
     {/if}
     <img
       class="avatar"
       alt="avatar"
-      src={gravatarURL(commit.header.committer.email)} />
+      src={gravatarURL(commit.commit.committer.email)} />
     {#if commit.context?.committer}
       <span
         class="committer"
         class:txt-bold={Boolean(commit.context.committer.peer.person?.name)}>
         {commit.context.committer.peer.person?.name ||
-          commit.header.committer.name}
+          commit.commit.committer.name}
       </span>
       {#if !noDelegate && commit.context?.committer.peer.delegate}
         <Badge variant="tertiary">delegate</Badge>
@@ -87,14 +87,14 @@
       <span>committed</span>
     {:else}
       <span class="layout-desktop-inline committer">
-        {commit.header.committer.name}
+        {commit.commit.committer.name}
       </span>
       <span>committed</span>
     {/if}
   {/if}
   {#if !noTime}
     <span class="layout-desktop-inline">
-      {formatTimestamp(commit.header.committerTime)}
+      {formatTimestamp(commit.commit.committer.time)}
     </span>
   {/if}
 </span>

@@ -19,6 +19,7 @@
 
   const fileExtension = blob.path.split(".").pop() ?? "";
   const lastCommit = window.HEARTWOOD ? blob.lastCommit : blob.info.lastCommit;
+
   const parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
@@ -227,7 +228,9 @@
           </div>
         {/if}
         <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-          <span class="hash">{lastCommit.sha1.slice(0, 7)}</span>
+          <span class="hash">
+            {lastCommit.id.slice(0, 7)}
+          </span>
           {lastCommit.summary}
         </div>
       </div>

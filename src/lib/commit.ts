@@ -4,18 +4,19 @@ import { ApiError } from "@app/lib/api";
 import { getDaysPassed } from "@app/lib/utils";
 
 export interface CommitsHistory {
-  headers: CommitMetadata[];
+  commits: CommitMetadata[];
   stats: Stats;
 }
 
 export interface CommitMetadata {
-  header: CommitHeader;
+  commit: CommitHeader;
   context: CommitContext;
 }
 
 export interface Author {
   email: string;
   name: string;
+  time: number;
 }
 
 export interface CommitStats {
@@ -25,7 +26,7 @@ export interface CommitStats {
 }
 
 export interface GroupedCommitsHistory {
-  headers: CommitGroup[];
+  commits: CommitGroup[];
   stats: Stats;
 }
 
@@ -42,9 +43,8 @@ export interface CommitContext {
 export interface CommitHeader {
   author: Author;
   committer: Author;
-  committerTime: number;
   description: string;
-  sha1: string;
+  id: string;
   summary: string;
 }
 
@@ -64,7 +64,7 @@ export interface WeeklyActivity {
 }
 
 export interface Commit {
-  header: CommitHeader;
+  commit: CommitHeader;
   stats: DiffStats;
   diff: Diff;
   branches: string[];
@@ -81,16 +81,16 @@ export function formatGroupTime(timestamp: number): string {
 }
 
 export function groupCommits(
-  commits: { header: CommitHeader; context: CommitContext }[],
+  commits: { commit: CommitHeader; context: CommitContext }[],
 ): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
   try {
     commits = commits.sort((a, b) => {
-      if (a.header.committerTime > b.header.committerTime) {
+      if (a.commit.committer.time > b.commit.committer.time) {
         return -1;
-      } else if (a.header.committerTime < b.header.committerTime) {
+      } else if (a.commit.committer.time < b.commit.committer.time) {
         return 1;
       }
 
@@ -98,7 +98,7 @@ export function groupCommits(
     });
 
     for (const commit of commits) {
-      const time = commit.header.committerTime * 1000;
+      const time = commit.commit.committer.time * 1000;
       const date = new Date(time);
       const isNewDay =
         !groupedCommits.length ||

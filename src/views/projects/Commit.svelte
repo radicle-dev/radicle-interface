@@ -57,15 +57,15 @@
 <div class="commit">
   <header>
     <div class="summary">
-      <div class="txt-medium" use:twemoji>{commit.header.summary}</div>
+      <div class="txt-medium" use:twemoji>{commit.commit.summary}</div>
       <div class="layout-desktop txt-monospace sha1">
-        <span>{commit.header.sha1}</span>
+        <span>{commit.commit.id}</span>
       </div>
       <div class="layout-mobile txt-monospace sha1 txt-small">
-        {formatCommit(commit.header.sha1)}
+        {formatCommit(commit.commit.id)}
       </div>
     </div>
-    <pre class="description txt-small">{commit.header.description}</pre>
+    <pre class="description txt-small">{commit.commit.description}</pre>
     <div class="authorship">
       <CommitAuthorship {commit} />
       {#if commit.context?.committer}

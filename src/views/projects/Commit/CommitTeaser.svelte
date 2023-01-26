@@ -88,7 +88,7 @@
   <div class="column-left">
     <div class="header">
       <div class="summary" use:twemoji>
-        {commit.header.summary}
+        {commit.commit.summary}
       </div>
     </div>
     <CommitAuthorship {commit} noDelegate />
@@ -99,12 +99,12 @@
         <CommitVerifiedBadge {commit} />
       </div>
     {/if}
-    <span class="hash txt-highlight">{formatCommit(commit.header.sha1)}</span>
+    <span class="hash txt-highlight">{formatCommit(commit.commit.id)}</span>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"
       title="Browse the repository at this point in the history"
-      on:click|stopPropagation={() => browseCommit(commit.header.sha1)}>
+      on:click|stopPropagation={() => browseCommit(commit.commit.id)}>
       <Icon name="browse" />
     </div>
   </div>

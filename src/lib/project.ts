@@ -282,7 +282,24 @@ export class Project implements ProjectInfo {
       page: opts?.page,
       verified: opts?.verified,
     };
-    return new Request(`projects/${id}/commits`, host).get(params);
+    const result = await new Request(`projects/${id}/commits`, host).get(
+      params,
+    );
+    if (!window.HEARTWOOD) {
+      for (const commit of result.headers) {
+        commit.commit = commit.header;
+        delete commit.header;
+
+        commit.commit.committer.time = commit.commit.committerTime;
+        delete commit.commit.committerTime;
+
+        commit.commit.id = commit.commit.sha1;
+        delete commit.commit.sha1;
+      }
+      result.commits = result.headers;
+      delete result.headers;
+    }
+    return result;
   }
 
   static async getActivity(
@@ -299,6 +316,15 @@ export class Project implements ProjectInfo {
     ).get();
 
     if (!window.HEARTWOOD) {
+      result.commit = result.header;
+      delete result.header;
+
+      result.commit.committer.time = result.commit.committerTime;
+      delete result.commit.committerTime;
+
+      result.commit.id = result.commit.sha1;
+      delete result.commit.sha1;
+
       result.stats["insertions"] = result.stats["additions"];
       delete result.stats["additions"];
       result.diff["added"] = result.diff["created"];
@@ -333,24 +359,46 @@ export class Project implements ProjectInfo {
 
   async getTree(commit: string, path: string): Promise<Tree> {
     if (path === "/") path = "";
-    return new Request(
+    const result = await new Request(
       `projects/${this.id}/tree/${commit}/${path}`,
       this.seed.addr,
     ).get();
+    if (!window.HEARTWOOD) {
+      if (result.info.lastCommit) {
+        result.info.lastCommit.id = result.info.lastCommit.sha1;
+        delete result.info.lastCommit.sha1;
+      }
+      for (const entry of result.entries) {
+        if (entry.info.lastCommit) {
+          entry.info.lastCommit.id = entry.info.lastCommit.sha1;
+        }
+      }
+    }
+    return result;
   }
 
   async getBlob(commit: string, path: string): Promise<Blob> {
-    return new Request(
+    const result = await new Request(
       `projects/${this.id}/blob/${commit}/${path}`,
       this.seed.addr,
     ).get();
+    if (!window.HEARTWOOD) {
+      result.info.lastCommit.id = result.info.lastCommit.sha1;
+      delete result.info.lastCommit.sha1;
+    }
+    return result;
   }
 
   async getReadme(commit: string): Promise<Blob> {
-    return new Request(
+    const result = await new Request(
       `projects/${this.id}/readme/${commit}`,
       this.seed.addr,
     ).get();
+    if (!window.HEARTWOOD && result.info.lastCommit) {
+      result.info.lastCommit.id = result.info.lastCommit.sha1;
+      delete result.info.lastCommit.sha1;
+    }
+    return result;
   }
 
   static async get(

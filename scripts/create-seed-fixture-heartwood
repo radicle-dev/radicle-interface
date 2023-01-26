@@ -34,7 +34,7 @@ GIT_AUTHOR_EMAIL="alice@radicle.xyz"
 GIT_COMMITTER_NAME="Alice Liddell"
 GIT_COMMITTER_EMAIL="alice@radicle.xyz"
 
-RAD_DEBUG=1 RAD_HOME=$ALICE_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad auth
+RAD_SEED=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff RAD_HOME=$ALICE_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad auth
 
 cd $ALICE_CHECKOUT
 

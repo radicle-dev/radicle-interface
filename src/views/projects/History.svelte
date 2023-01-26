@@ -13,12 +13,12 @@
   const fetchMoreCommits = async (): Promise<CommitMetadata[]> => {
     const response = await Project.getCommits(project.id, project.seed.addr, {
       // Fetching 31 elements since we remove the first one
-      parent: history.headers[history.headers.length - 1].header.sha1,
+      parent: history.commits[history.commits.length - 1].commit.id,
       perPage: 31,
       verified: true,
     });
     // Removing the first element of the array, since it's the same as the last of the current list
-    return response.headers.slice(1);
+    return response.commits.slice(1);
   };
 
   const browseCommit = (event: { detail: string }) => {
@@ -68,23 +68,23 @@
 </style>
 
 <div class="history">
-  <List bind:items={history.headers} query={fetchMoreCommits}>
+  <List bind:items={history.commits} query={fetchMoreCommits}>
     <svelte:fragment slot="list" let:items>
-      {@const headers = groupCommits(items)}
-      {#each headers as group (group.time)}
+      {@const commits = groupCommits(items)}
+      {#each commits as group (group.time)}
         <div class="commit-group">
           <header class="commit-date">
             <p>{group.date}</p>
           </header>
           <div class="commit-group-headers">
-            {#each group.commits as commit (commit.header.sha1)}
+            {#each group.commits as commit (commit.commit.id)}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
               <div
                 class="commit"
                 on:click={() => {
                   router.updateProjectRoute({
                     view: { resource: "commits" },
-                    revision: commit.header.sha1,
+                    revision: commit.commit.id,
                   });
                 }}>
                 <CommitTeaser {commit} on:browseCommit={browseCommit} />
