@@ -71,7 +71,7 @@ run_docker() {
 run_binary() {
   if [ $CI = true ]; then
     local binaries_dir="$REPO_ROOT/tests/tmp"
-    gsutil cp "gs://heartwood-artifacts/${REV}/radicle-httpd" "$binaries_dir"
+    gsutil cp "gs://heartwood-artifacts/${REV}/x86_64-unknown-linux-musl/radicle-httpd" "$binaries_dir"
     chmod a+x "${binaries_dir}/radicle-httpd"
     export PATH="$binaries_dir:$PATH"
   fi
