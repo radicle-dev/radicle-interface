@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
+
+killall radicle-node
+killall git-daemon
+
 set -euo pipefail
 
-PASSPHRASE=asdf
-SEED="0.0.0.0:8080"
+export RAD_PASSPHRASE=asdf
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-ID=$(echo $RANDOM | md5sum | head -c 8)
-BASE_PATH=$REPO_ROOT/tests/tmp/create-seed-fixture-$ID
+ID=$(echo $RANDOM | md5sum | head -c 4)
+BASE_PATH=$REPO_ROOT/tests/tmp/heartwood-$ID
 
 TEST_REPO_ARCHIVE=$REPO_ROOT/tests/fixtures/repos/source-browsing.tar.bz2
 TEST_REPO_NAME=source-browsing
 TEST_REPO_PATH=$BASE_PATH/repos/$TEST_REPO_NAME
 
 PALM_RAD_HOME=$BASE_PATH/seeds/palm
+PALM_CHECKOUT=$BASE_PATH/checkout/palm
 ALICE_RAD_HOME=$BASE_PATH/peers/alice
 ALICE_CHECKOUT=$BASE_PATH/checkout/alice
 BOB_RAD_HOME=$BASE_PATH/peers/bob
 BOB_CHECKOUT=$BASE_PATH/checkout/bob
 
 mkdir -p $PALM_RAD_HOME
+mkdir -p $PALM_CHECKOUT
 mkdir -p $ALICE_RAD_HOME
 mkdir -p $ALICE_CHECKOUT
 mkdir -p $BOB_RAD_HOME
@@ -27,25 +32,89 @@ mkdir -p $TEST_REPO_PATH
 
 tar -xf $TEST_REPO_ARCHIVE -C $TEST_REPO_PATH
 
-RAD_HOME=$PALM_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad auth
+### PALM NODE ###
 
-GIT_AUTHOR_NAME="Alice Liddell"
-GIT_AUTHOR_EMAIL="alice@radicle.xyz"
-GIT_COMMITTER_NAME="Alice Liddell"
-GIT_COMMITTER_EMAIL="alice@radicle.xyz"
+eval $(ssh-agent)
 
-RAD_SEED=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff RAD_HOME=$ALICE_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad auth
+export RAD_HOME=$PALM_RAD_HOME
+export RAD_SEED=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffee
+
+rad auth
+radicle-node --listen 0.0.0.0:3446 --git-daemon 0.0.0.0:4446 &
+
+### ALICE ###
+
+export RAD_HOME=$ALICE_RAD_HOME
+export RAD_SEED=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+
+export GIT_AUTHOR_NAME="Alice Liddell"
+export GIT_AUTHOR_EMAIL="alice@radicle.xyz"
+export GIT_COMMITTER_NAME="Alice Liddell"
+export GIT_COMMITTER_EMAIL="alice@radicle.xyz"
+
+rad auth
 
 cd $ALICE_CHECKOUT
 
 git clone $TEST_REPO_PATH
 cd $TEST_REPO_NAME
-git checkout feature/branch
-git checkout orphaned-branch
-git checkout main
 
-RAD_HOME=$ALICE_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad init --name "source-browsing" --description "Git repository for source browsing tests" --default-branch "main" --no-confirm
-PROJECT_ID=$(RAD_HOME=$ALICE_RAD_HOME RAD_PASSPHRASE=$PASSPHRASE rad .)
+git checkout main
+rad init --name "source-browsing" \
+	--description "Git repository for source browsing tests" \
+	--default-branch "main" \
+	--no-confirm
+
+git checkout feature/branch
+git push rad
+
+git checkout orphaned-branch
+git push rad
+
+radicle-node --listen 0.0.0.0:3444 --git-daemon 0.0.0.0:4444 \
+	--connect z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@0.0.0.0:3446 &
+
+sleep 1
+
+### PALM CLONE ###
+
+cd $PALM_CHECKOUT
+export RAD_HOME=$PALM_RAD_HOME
+rad clone rad:zKtT7DmF9H34KkvcKj9PHW19WzjT
+
+### BOB ###
+
+export GIT_AUTHOR_NAME="Bob Belcher"
+export GIT_AUTHOR_EMAIL="bob@radicle.xyz"
+export GIT_COMMITTER_NAME="Bob Belcher"
+export GIT_COMMITTER_EMAIL="bob@radicle.xyz"
+export GIT_COMMITTER_DATE="Mon Dec 21 14:00 2022 +0100"
+
+export RAD_HOME=$BOB_RAD_HOME
+export RAD_SEED=fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe
+
+rad auth
+rad auth
+radicle-node --listen 0.0.0.0:3445 --git-daemon 0.0.0.0:4445 \
+	--connect z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@0.0.0.0:3446 &
+
+sleep 2
+
+cd $BOB_CHECKOUT
+rad clone rad:zKtT7DmF9H34KkvcKj9PHW19WzjT
+
+cd $TEST_REPO_NAME
+echo "Updated readme" > README.md
+git add README.md
+git commit --message "Update readme" --date "$GIT_COMMITTER_DATE"
+git push rad
+
+### WAIT FOR SYNC WITH PALM ###
+
+sleep 2
 
 cd $BASE_PATH
-tar -cjf palm.tar.bz2 --exclude "post-receive" --exclude "pre-receive" -C $ALICE_RAD_HOME .
+tar -cjf palm.tar.bz2 --exclude "post-receive" --exclude "pre-receive" -C $PALM_RAD_HOME .
+
+killall radicle-node
+killall git-daemon

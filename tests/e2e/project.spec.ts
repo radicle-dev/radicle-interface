@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import {
   aliceMainHead,
   aliceRemote,
+  bobRemote,
   expect,
   projectFixtureUrl,
   rid,
@@ -251,17 +252,20 @@ test("clone modal", async ({ page }) => {
 });
 
 test("peer and branch switching", async ({ page }) => {
-  if (process.env.HEARTWOOD) {
-    test.skip();
-  }
-
   await page.goto(projectFixtureUrl);
 
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator("text=alice").click();
-    await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
+    if (process.env.HEARTWOOD) {
+      await page.locator(`text=${aliceRemote}`).click();
+      await expect(page.getByTitle("Change peer")).toHaveText(
+        `${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
+      );
+    } else {
+      await page.locator("text=alice").click();
+      await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
+    }
     await expect(
       page.locator(
         `text=source-browsing / ${aliceRemote.substring(
@@ -322,31 +326,45 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator("text=bob").click();
-
-    await expect(page.getByTitle("Change peer")).toHaveText("bob");
+    if (process.env.HEARTWOOD) {
+      await page.locator(`text=${bobRemote}`).click();
+      await expect(page.getByTitle("Change peer")).toHaveText(
+        `${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+      );
+    } else {
+      await page.locator("text=bob").click();
+      await expect(page.getByTitle("Change peer")).toHaveText("bob");
+    }
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
     // Default `main` branch.
     {
-      await expect(page.getByTitle("Current branch")).toContainText(
-        "main 2b32f6f",
-      );
-      await expectCounts({ commits: 9, contributors: 2 }, page);
-      await expect(page.locator("text=2b32f6f Update readme")).toBeVisible();
+      if (process.env.HEARTWOOD) {
+        await expect(page.getByTitle("Current branch")).toContainText(
+          "main 1e0bb83",
+        );
+        await expectCounts({ commits: 9, contributors: 2 }, page);
+        await expect(page.locator("text=1e0bb83 Update readme")).toBeVisible();
+      } else {
+        await expect(page.getByTitle("Current branch")).toContainText(
+          "main 2b32f6f",
+        );
+        await expectCounts({ commits: 9, contributors: 2 }, page);
+        await expect(page.locator("text=2b32f6f Update readme")).toBeVisible();
+      }
     }
   }
 });
 
 test("only one modal can be open at a time", async ({ page }) => {
-  if (process.env.HEARTWOOD) {
-    test.skip();
-  }
-
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=alice ${aliceRemote.substring(0, 6)}`).click();
+  if (process.env.HEARTWOOD) {
+    await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
+  } else {
+    await page.locator(`text=alice ${aliceRemote.substring(0, 6)}`).click();
+  }
 
   await page.getByText("Clone").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
@@ -363,7 +381,11 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.getByTitle("Change peer").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyyzz9")).toBeVisible();
+  if (process.env.HEARTWOOD) {
+    await expect(page.locator(`text=${bobRemote}`)).toBeVisible();
+  } else {
+    await expect(page.locator("text=bob hyyzz9")).toBeVisible();
+  }
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
   page.locator('button[name="Settings"]').click();
@@ -374,10 +396,6 @@ test("only one modal can be open at a time", async ({ page }) => {
 });
 
 test.describe("browser error handling", () => {
-  if (process.env.HEARTWOOD) {
-    test.skip();
-  }
-
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
       `**/v1/projects/${ridPrefix}${rid}/tree/${aliceMainHead}/markdown/`,

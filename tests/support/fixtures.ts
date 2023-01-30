@@ -168,9 +168,9 @@ export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
 export const aliceRemote = process.env.HEARTWOOD
   ? "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"
   : "hybg18bc4cu8z9xtj44skxperfdpxpp1wp8zygyzti5kfiggdizfxy";
-
-export const bobRemote =
-  "hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6";
+export const bobRemote = process.env.HEARTWOOD
+  ? "z6MksMTThc1aDU2Ztc43jJUivuyBLNWiLsDf4X65rABe7HbA"
+  : "hyyzz9w4ffg16zftjki3enajm4mkqkayb5ch1p6ns3f83np1hqkrp6";
 export const rid = process.env.HEARTWOOD
   ? "zKtT7DmF9H34KkvcKj9PHW19WzjT"
   : "hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy";
@@ -179,5 +179,5 @@ export const projectFixtureUrl = `/seeds/0.0.0.0/${ridPrefix}${rid}`;
 export const seedPort = process.env.HEARTWOOD ? 8080 : "8777";
 export const seedVersion = process.env.HEARTWOOD ? "0.1.0" : "0.2.0";
 export const seedRemote = process.env.HEARTWOOD
-  ? "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"
+  ? "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8"
   : "hybuytx44z9cfsm5739wecia9j4b7expgc15qkazph59szp57m4d3o";
