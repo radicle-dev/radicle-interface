@@ -53,6 +53,7 @@
     align-items: center;
     background-color: transparent;
     color: var(--color-foreground);
+    cursor: pointer;
   }
   .toggle:hover {
     background-color: var(--color-foreground);
