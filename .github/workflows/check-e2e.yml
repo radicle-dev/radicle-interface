@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: "read"
       id-token: "write"
+      actions: "write" # necessary for evicting snapshot cache
     continue-on-error: true
     strategy:
       matrix:
