@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  export interface ToggleButtonOption<T> {
+  export interface Tab<T> {
     title?: string;
     count?: number;
     value: T;
@@ -12,12 +12,12 @@
   import { createEventDispatcher } from "svelte";
   import { capitalize } from "@app/lib/utils";
 
-  export let options: ToggleButtonOption<T>[];
+  export let options: Tab<T>[];
   export let active: T;
 
   const dispatch = createEventDispatcher<{ select: T }>();
 
-  function onSelect(option: ToggleButtonOption<T>) {
+  function onSelect(option: Tab<T>) {
     if (option.count !== 0) {
       dispatch("select", option.value);
     }

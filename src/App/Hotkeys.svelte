@@ -1,8 +1,8 @@
 <script lang="ts">
   import * as modal from "@app/lib/modal";
 
-  import ColorPalette from "./ColorPalette.svelte";
-  import HelpModal from "./HelpModal.svelte";
+  import ColorPaletteModal from "@app/App/ColorPaletteModal.svelte";
+  import HotkeysModal from "@app/App/HotkeysModal.svelte";
 
   const onKeydown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
@@ -12,7 +12,7 @@
 
     switch (event.key) {
       case "?":
-        modal.toggle({ component: HelpModal, props: {} });
+        modal.toggle({ component: HotkeysModal, props: {} });
         break;
       case "/": {
         event.preventDefault();
@@ -26,7 +26,7 @@
         if (import.meta.env.PROD) {
           return;
         }
-        modal.toggle({ component: ColorPalette, props: {} });
+        modal.toggle({ component: ColorPaletteModal, props: {} });
         break;
     }
   };

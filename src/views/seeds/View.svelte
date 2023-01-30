@@ -1,15 +1,16 @@
 <script lang="ts">
-  import type { Stats } from "@app/lib/seed";
-  import type { ProjectInfo } from "@app/lib/project";
-  import { formatSeedId, formatSeedHost, twemoji } from "@app/lib/utils";
-  import { Seed, defaultSeedPort } from "@app/lib/seed";
-  import Loading from "@app/components/Loading.svelte";
-  import SeedAddress from "@app/components/SeedAddress.svelte";
-  import NotFound from "@app/components/NotFound.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
-  import Projects from "@app/views/seeds/View/Projects.svelte";
-  import { Project } from "@app/lib/project";
   import type { Host } from "@app/lib/api";
+  import type { ProjectInfo } from "@app/lib/project";
+  import type { Stats } from "@app/lib/seed";
+
+  import Clipboard from "@app/components/Clipboard.svelte";
+  import Loading from "@app/components/Loading.svelte";
+  import NotFound from "@app/components/NotFound.svelte";
+  import Projects from "@app/views/seeds/View/Projects.svelte";
+  import SeedAddress from "@app/views/seeds/View/SeedAddress.svelte";
+  import { Project } from "@app/lib/project";
+  import { Seed, defaultSeedPort } from "@app/lib/seed";
+  import { formatSeedId, formatSeedHost, twemoji } from "@app/lib/utils";
 
   export let hostAndPort: string;
 

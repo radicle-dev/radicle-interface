@@ -3,10 +3,10 @@
   import type { Comment, Thread } from "@app/lib/issue";
 
   import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Avatar.svelte";
+  import Avatar from "@app/components/Comment/Avatar.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import ReactionSelector from "./Comment/ReactionSelector.svelte";
-  import Reactions from "./Comment/Reactions.svelte";
+  import Reactions from "@app/components/Comment/Reactions.svelte";
 
   export let comment: Comment | Thread;
   export let caption = "left a comment";

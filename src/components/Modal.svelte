@@ -26,10 +26,12 @@
 </script>
 
 <script lang="ts">
+  import twemoji from "twemoji";
+
   import * as modal from "@app/lib/modal";
+  import { base } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
-  import Emoji from "@app/components/Emoji.svelte";
 
   export let emoji: string | undefined = undefined;
   export let title: string | undefined = undefined;
@@ -89,7 +91,12 @@
 <div class="modal">
   {#if emoji}
     <div style:font-size="var(--font-size-xx-large)">
-      <Emoji {emoji} />
+      {@html twemoji.parse(emoji, {
+        base,
+        folder: "twemoji",
+        ext: ".svg",
+        className: "txt-emoji",
+      })}
     </div>
   {/if}
 

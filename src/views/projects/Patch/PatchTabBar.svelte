@@ -1,9 +1,9 @@
 <script lang="ts" strictEvents>
-  import type { ToggleButtonOption } from "@app/components/ToggleButton.svelte";
+  import type { Tab } from "@app/components/TabBar.svelte";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
-  import ToggleButton from "@app/components/ToggleButton.svelte";
+  import TabBar from "@app/components/TabBar.svelte";
 
   import type { Revision } from "@app/lib/patch";
   import { PatchTab } from "@app/lib/patch";
@@ -37,7 +37,7 @@
     dispatch("revisionChanged", detail);
   };
 
-  let options: ToggleButtonOption<PatchTab>[];
+  let options: Tab<PatchTab>[];
   $: options = [
     {
       title: "Patch",
@@ -77,7 +77,7 @@
 </style>
 
 <div class="bar txt-small">
-  <ToggleButton
+  <TabBar
     {options}
     on:select={e => {
       dispatch("switchTab", e.detail);

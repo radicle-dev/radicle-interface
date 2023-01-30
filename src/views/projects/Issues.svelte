@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import type { Issue } from "@app/lib/issue";
-  import type { ToggleButtonOption } from "@app/components/ToggleButton.svelte";
+  import type { Tab } from "@app/components/TabBar.svelte";
 
   import { capitalize } from "@app/lib/utils";
   import { groupIssues } from "@app/lib/issue";
@@ -12,12 +12,12 @@
 
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import ToggleButton from "@app/components/ToggleButton.svelte";
+  import TabBar from "@app/components/TabBar.svelte";
 
   export let issues: Issue[];
   export let state: State;
 
-  let options: ToggleButtonOption<State>[];
+  let options: Tab<State>[];
   const { open, closed } = groupIssues(issues);
 
   $: filteredIssues = state === "open" ? open : closed;
@@ -59,7 +59,7 @@
 
 <div class="issues">
   <div style="margin-bottom: 1rem;">
-    <ToggleButton
+    <TabBar
       {options}
       on:select={e =>
         router.updateProjectRoute({

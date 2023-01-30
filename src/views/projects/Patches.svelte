@@ -4,11 +4,11 @@
 
 <script lang="ts">
   import type { Patch } from "@app/lib/patch";
-  import type { ToggleButtonOption } from "@app/components/ToggleButton.svelte";
+  import type { Tab } from "@app/components/TabBar.svelte";
 
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import ToggleButton from "@app/components/ToggleButton.svelte";
+  import TabBar from "@app/components/TabBar.svelte";
 
   import { capitalize } from "@app/lib/utils";
   import { groupPatches } from "@app/lib/patch";
@@ -17,7 +17,7 @@
   export let state: State;
   export let patches: Patch[];
 
-  let options: ToggleButtonOption<State>[];
+  let options: Tab<State>[];
   const sortedPatches = groupPatches(patches);
 
   $: filteredPatches = sortedPatches[state];
@@ -59,7 +59,7 @@
 
 <div class="patches">
   <div style="margin-bottom: 1rem;">
-    <ToggleButton
+    <TabBar
       {options}
       on:select={e =>
         router.updateProjectRoute({
