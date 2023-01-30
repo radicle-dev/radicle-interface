@@ -1,4 +1,4 @@
-name: check
+name: check-format
 on:
   push:
     branches:
@@ -8,7 +8,28 @@ on:
       - master
 
 jobs:
-  check:
+  continue-on-error: true
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.12.1"
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm run lint
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.12.1"
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm run format:check
+  typescript:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
