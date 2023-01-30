@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createIcon } from "@app/lib/blockies";
-  import { isAddress, isPeerId, isRadicleId } from "@app/lib/utils";
+  import { isPeerId, isRadicleId } from "@app/lib/utils";
 
   export let title: string;
   export let source: string;
@@ -22,7 +22,7 @@
     return avatar.toDataURL();
   }
 
-  if (isAddress(source) || isRadicleId(source) || isPeerId(source)) {
+  if (isRadicleId(source) || isPeerId(source)) {
     source = createContainer(source);
   }
   grayscale = isPeerId(title) || isRadicleId(title);

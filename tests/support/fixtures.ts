@@ -23,11 +23,6 @@ export const test = base.extend<{
       page.on("console", msg => {
         // Ignore common console logs that we don't care about.
         if (
-          msg
-            .text()
-            .startsWith(
-              `Module "buffer" has been externalized for browser compatibility.`,
-            ) ||
           msg.text().startsWith("[vite] connected.") ||
           msg.text().startsWith("[vite] connecting...") ||
           msg
@@ -52,9 +47,6 @@ export const test = base.extend<{
         // access to any variables that we have in the test.
         await page.addInitScript(() => {
           window.APP_CONFIG = {
-            walletConnect: {
-              bridge: "https://radicle.bridge.walletconnect.org",
-            },
             reactions: [],
             seeds: {
               pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
@@ -91,27 +83,6 @@ export const test = base.extend<{
           );
           return route.abort();
         }
-      });
-
-      page.on("websocket", ws => {
-        log(`WebSocket opened: ${ws.url()}`, playwrightLabel, outputLog);
-        ws.on("framesent", event =>
-          log(
-            `WebSocket framesent: ${event.payload}`,
-            playwrightLabel,
-            outputLog,
-          ),
-        );
-        ws.on("framereceived", event =>
-          log(
-            `WebSocket framereceived: ${event.payload}`,
-            playwrightLabel,
-            outputLog,
-          ),
-        );
-        ws.on("close", () =>
-          log(`WebSocket closed`, playwrightLabel, outputLog),
-        );
       });
 
       await use();
@@ -159,9 +130,6 @@ export const appConfigWithFixture = process.env.HEARTWOOD
 
 export function configFixture() {
   window.APP_CONFIG = {
-    walletConnect: {
-      bridge: "https://radicle.bridge.walletconnect.org",
-    },
     reactions: [],
     seeds: {
       pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
@@ -180,9 +148,6 @@ export function configFixture() {
 
 export function configFixtureHeartwood() {
   window.APP_CONFIG = {
-    walletConnect: {
-      bridge: "https://radicle.bridge.walletconnect.org",
-    },
     reactions: [],
     seeds: {
       pinned: [{ host: "0.0.0.0", emoji: "🚀" }],

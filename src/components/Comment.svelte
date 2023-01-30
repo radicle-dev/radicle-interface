@@ -1,9 +1,6 @@
 <script lang="ts">
   import type { Blob } from "@app/lib/project";
   import type { Comment, Thread } from "@app/lib/issue";
-  import type { Wallet } from "@app/lib/wallet";
-
-  import { onMount } from "svelte";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Avatar.svelte";
@@ -11,34 +8,19 @@
   import ReactionSelector from "./Comment/ReactionSelector.svelte";
   import Reactions from "./Comment/Reactions.svelte";
 
-  import { Profile, ProfileType } from "@app/lib/profile";
-
   export let comment: Comment | Thread;
-  export let wallet: Wallet;
   export let caption = "left a comment";
   export let getImage: (path: string) => Promise<Blob>;
-
-  let profile: Profile | null = null;
-
-  onMount(async () => {
-    if (comment.author.profile?.ens?.name) {
-      profile = await Profile.get(
-        comment.author.profile.ens.name,
-        ProfileType.Minimal,
-        wallet,
-      );
-    }
-  });
 
   const templateComment = `<!--
 Please enter a comment message for your patch update. Leaving this
 blank is also okay.
 -->`;
 
-  $: source = profile?.avatar || comment.author.id;
-  $: title =
-    profile?.name ||
-    (comment.author.profile ? comment.author.profile.name : comment.author.id);
+  $: source = comment.author.id;
+  $: title = comment.author.profile
+    ? comment.author.profile.name
+    : comment.author.id;
 
   const selectReaction = (event: { detail: string }) => {
     // TODO: Once we allow adding reactions through the http-api, we should call it here.
@@ -89,10 +71,7 @@ blank is also okay.
   <div class="card">
     <div class="card-header">
       <Authorship
-        noAvatar
-        {wallet}
         {caption}
-        {profile}
         author={comment.author}
         timestamp={comment.timestamp} />
       <ReactionSelector on:select={selectReaction} />

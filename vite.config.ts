@@ -26,13 +26,7 @@ function defineConstants() {
 }
 
 export default defineConfig({
-  optimizeDeps: {
-    exclude: ["@pedrouid/environment", "@pedrouid/iso-crypto"],
-  },
   test: {
-    deps: {
-      inline: ["@ethersproject/signing-key", "@ethersproject/basex"],
-    },
     setupFiles: "./tests/support/setupVitest",
     environment: "happy-dom",
     include: ["tests/unit/**/*.test.ts"],
@@ -64,12 +58,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          ethereum: [
-            "ethers",
-            "@ethersproject/abstract-provider",
-            "@walletconnect/client",
-          ],
-          cache: ["lru-cache", "@stardazed/streams"],
           markdown: [
             "@radicle/gray-matter",
             "dompurify",
@@ -94,7 +82,7 @@ export default defineConfig({
             "@wooorm/starry-night/lang/source.cs.js",
             "@wooorm/starry-night/lang/source.swift.js",
           ],
-          dom: ["svelte", "pure-svg-code", "twemoji"],
+          dom: ["svelte", "twemoji"],
         },
       },
     },

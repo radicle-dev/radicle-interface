@@ -1,6 +1,4 @@
 <script lang="ts" strictEvents>
-  import type { Wallet } from "@app/lib/wallet";
-
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
   import * as router from "@app/lib/router";
@@ -10,8 +8,6 @@
   import SearchResultsModal from "@app/App/Header/SearchResultsModal.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import { unreachable } from "@app/lib/utils";
-
-  export let wallet: Wallet;
 
   const dispatch = createEventDispatcher<{
     finished: never;
@@ -37,46 +33,36 @@
     loading = true;
 
     const query = input;
-    const searchResult = await Search.searchProjectsAndProfiles(input, wallet);
+    const searchResult = await Search.searchProjectsAndProfiles(input);
 
     if (searchResult.type === "nothing") {
       shake();
     } else if (searchResult.type === "error") {
       // TODO: show some kind of notification to the user.
       shake();
-    } else if (searchResult.type === "singleProfile") {
+    } else if (searchResult.type === "projects") {
       input = "";
-      router.push({
-        resource: "profile",
-        params: { addressOrName: searchResult.id },
-      });
-      dispatch("finished");
-    } else if (searchResult.type === "singleProject") {
-      input = "";
-      router.push({
-        resource: "projects",
-        params: {
-          view: { resource: "tree" },
-          id: searchResult.id,
-          peer: undefined,
-          profile: undefined,
-          seed: searchResult.seedHost,
-          hash: undefined,
-          search: undefined,
-        },
-      });
-      dispatch("finished");
-    } else if (searchResult.type === "projectsAndProfiles") {
-      // TODO: show some kind of notification about any errors to the user.
-      input = "";
-      modal.show({
-        component: SearchResultsModal,
-        props: {
-          wallet,
-          results: searchResult.projectsAndProfiles,
-          query,
-        },
-      });
+      if (searchResult.projects.length === 1) {
+        router.push({
+          resource: "projects",
+          params: {
+            view: { resource: "tree" },
+            id: searchResult.projects[0].info.id,
+            peer: undefined,
+            seed: searchResult.projects[0].seed.host,
+            hash: undefined,
+            search: undefined,
+          },
+        });
+      } else {
+        modal.show({
+          component: SearchResultsModal,
+          props: {
+            results: searchResult.projects,
+            query,
+          },
+        });
+      }
       dispatch("finished");
     } else {
       unreachable(searchResult);

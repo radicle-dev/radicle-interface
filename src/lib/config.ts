@@ -1,7 +1,6 @@
 import configJson from "@app/config.json";
 
 export interface Config {
-  walletConnect: { bridge: string };
   reactions: string[];
   seeds: {
     pinned: { host: string; emoji: string }[];
@@ -18,7 +17,6 @@ export interface Config {
 function getConfig(): Config {
   if (window.VITEST) {
     return {
-      walletConnect: { bridge: "" },
       reactions: [],
       seeds: {
         pinned: [],

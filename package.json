@@ -17,7 +17,7 @@
     "node": ">=18.12.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.29.2",
+    "@playwright/test": "^1.30.0",
     "@sinonjs/fake-timers": "^10.0.2",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tsconfig/svelte": "^3.0.0",
@@ -28,40 +28,31 @@
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.18",
     "@types/sinonjs__fake-timers": "^8.1.2",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
     "chalk": "^5.2.0",
-    "eslint": "^8.32.0",
+    "eslint": "^8.33.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "happy-dom": "^8.1.4",
+    "happy-dom": "^8.2.0",
     "prettier": "^2.8.3",
     "prettier-plugin-svelte": "^2.9.0",
-    "svelte-check": "^3.0.2",
-    "tslib": "^2.4.1",
+    "svelte-check": "^3.0.3",
     "typescript": "^4.9.4",
     "vite": "^4.0.4",
-    "vitest": "^0.27.1"
+    "vitest": "^0.28.3"
   },
   "dependencies": {
-    "@ethersproject/abstract-provider": "^5.7.0",
     "@radicle/gray-matter": "4.1.0",
-    "@stardazed/streams": "^3.1.0",
-    "@walletconnect/client": "^1.8.0",
     "@wooorm/starry-night": "^1.5.0",
     "buffer": "^6.0.3",
     "dompurify": "^2.4.3",
-    "ethers": "^5.7.2",
-    "events": "^3.3.0",
     "hast-util-to-dom": "^3.1.1",
     "hast-util-to-html": "^8.0.4",
     "katex": "^0.16.4",
     "lodash": "^4.17.21",
-    "lru-cache": "^7.14.1",
     "marked": "^4.2.12",
     "md5": "^2.3.0",
     "plausible-tracker": "^0.3.8",
-    "pure-svg-code": "^1.0.6",
     "svelte": "^3.55.1",
-    "twemoji": "^14.0.2",
-    "util": "^0.12.5"
+    "twemoji": "^14.0.2"
   }
 }

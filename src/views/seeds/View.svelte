@@ -8,7 +8,6 @@
   import NotFound from "@app/components/NotFound.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import Projects from "@app/views/seeds/View/Projects.svelte";
-  import Async from "@app/components/Async.svelte";
   import { Project } from "@app/lib/project";
   import type { Host } from "@app/lib/api";
 
@@ -117,14 +116,23 @@
       <div class="layout-desktop" />
     </div>
     <!-- Seed Projects -->
-    <Async fetch={getProjectsAndStats(seed)} let:result>
+    {#await getProjectsAndStats(seed)}
+      <Loading center />
+    {:then result}
       <Projects {seed} projects={result.projects} stats={result.stats} />
-    </Async>
+    {:catch err}
+      <div class="error txt-tiny">
+        <div>
+          API request to <span class="txt-monospace">{err.url}</span>
+          failed.
+        </div>
+      </div>
+    {/await}
   </main>
 {:catch}
-  <main class="layout-centered">
+  <div class="layout-centered">
     <NotFound
       title={host}
       subtitle="Not able to query information from this seed." />
-  </main>
+  </div>
 {/await}

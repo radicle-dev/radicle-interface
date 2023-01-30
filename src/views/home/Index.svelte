@@ -34,7 +34,6 @@
         id: project.id,
         peer: undefined,
         seed: seed.host,
-        profile: undefined,
         revision: project.head ?? undefined,
       },
     });

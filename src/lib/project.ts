@@ -1,8 +1,8 @@
 import type { Commit, CommitHeader, CommitsHistory } from "@app/lib/commit";
-import type { Wallet } from "@app/lib/wallet";
-import { type Host, Request } from "@app/lib/api";
+import type { Host } from "@app/lib/api";
+import type { ProjectResult } from "@app/lib/search";
 
-import { Profile, ProfileType } from "@app/lib/profile";
+import { Request } from "@app/lib/api";
 import { Seed, defaultSeedPort } from "@app/lib/seed";
 import { isFulfilled, isOid, isRadicleId } from "@app/lib/utils";
 
@@ -158,7 +158,6 @@ export class Project implements ProjectInfo {
   seed: Seed;
   peers: Peer[];
   branches: Branches;
-  profile: Profile | null;
   // At the moment we still have seed nodes which won't return neither patches or issues
   patches?: number;
   issues?: number;
@@ -169,7 +168,6 @@ export class Project implements ProjectInfo {
     seed: Seed,
     peers: Peer[],
     branches: Branches,
-    profile: Profile | null,
   ) {
     this.id = id;
     this.head = info.head;
@@ -183,7 +181,6 @@ export class Project implements ProjectInfo {
     this.branches = branches;
     this.patches = info.patches;
     this.issues = info.issues;
-    this.profile = profile;
   }
 
   async getRoot(
@@ -403,26 +400,16 @@ export class Project implements ProjectInfo {
 
   static async get(
     id: string,
-    peer: string | null,
-    profileName: string | null,
-    seedHost: string | null,
-    wallet: Wallet,
+    seedHost: string,
+    peer?: string,
   ): Promise<Project> {
-    const profile = profileName
-      ? await Profile.get(profileName, ProfileType.Project, wallet)
-      : null;
-
-    const [host, port] = seedHost?.includes(":")
+    const [host, port] = seedHost.includes(":")
       ? seedHost.split(":")
       : [seedHost, defaultSeedPort];
 
-    const seed = profile
-      ? profile.seed
-      : host
-      ? await Seed.lookup(host, Number(port))
-      : null;
+    const seed = await Seed.lookup(host, Number(port));
 
-    if (!profile && !seed) {
+    if (!seed) {
       throw new Error("Couldn't load project");
     }
     if (!seed?.valid) {
@@ -455,12 +442,12 @@ export class Project implements ProjectInfo {
       }
     }
 
-    return new Project(id, info, seed, peers, remote.heads, profile);
+    return new Project(id, info, seed, peers, remote.heads);
   }
 
   static async getMulti(
     projs: { nameOrId: Id; seed: string }[],
-  ): Promise<{ info: ProjectInfo; seed: Host }[]> {
+  ): Promise<ProjectResult[]> {
     const promises = [];
 
     for (const proj of projs) {

@@ -3,7 +3,6 @@
 </script>
 
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
   import type { Issue } from "@app/lib/issue";
   import type { ToggleButtonOption } from "@app/components/ToggleButton.svelte";
 
@@ -15,7 +14,6 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import ToggleButton from "@app/components/ToggleButton.svelte";
 
-  export let wallet: Wallet;
   export let issues: Issue[];
   export let state: State;
 
@@ -84,7 +82,7 @@
               },
             });
           }}>
-          <IssueTeaser {wallet} {issue} />
+          <IssueTeaser {issue} />
         </div>
       {/each}
     </div>

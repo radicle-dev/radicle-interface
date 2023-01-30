@@ -3,7 +3,6 @@
 </script>
 
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
   import type { Patch } from "@app/lib/patch";
   import type { ToggleButtonOption } from "@app/components/ToggleButton.svelte";
 
@@ -16,7 +15,6 @@
   import * as router from "@app/lib/router";
 
   export let state: State;
-  export let wallet: Wallet;
   export let patches: Patch[];
 
   let options: ToggleButtonOption<State>[];
@@ -81,7 +79,7 @@
               view: { resource: "patch", params: { patch: patch.id } },
             });
           }}>
-          <PatchTeaser {wallet} {patch} />
+          <PatchTeaser {patch} />
         </div>
       {/each}
     </div>

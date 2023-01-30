@@ -148,42 +148,6 @@ function pathToRoute(path: string): Route | null {
 
   const resource = segments.shift();
   switch (resource) {
-    case "registrations": {
-      const nameOrDomain = segments.shift();
-      const view = segments.shift();
-      const retry = url.searchParams.get("retry");
-
-      if (nameOrDomain) {
-        if (!view) {
-          return {
-            resource: "registrations",
-            params: {
-              view: {
-                resource: "view",
-                params: { nameOrDomain, retry: retry === "true" },
-              },
-            },
-          };
-        }
-      }
-      return {
-        resource: "registrations",
-        params: { view: { resource: "form" } },
-      };
-    }
-    case "faucet": {
-      return { resource: "faucet" };
-    }
-    case "vesting": {
-      const contract = segments.shift();
-      if (contract) {
-        return {
-          resource: "vesting",
-          params: { view: { resource: "view", params: { contract } } },
-        };
-      }
-      return { resource: "vesting", params: { view: { resource: "form" } } };
-    }
     case "seeds": {
       const host = segments.shift();
       if (host) {
@@ -196,12 +160,11 @@ function pathToRoute(path: string): Route | null {
                 view: { resource: "tree" },
                 id,
                 peer: undefined,
-                profile: undefined,
                 seed: host,
               },
             };
           }
-          const params = resolveProjectRoute(url, id, segments);
+          const params = resolveProjectRoute(url, host, id, segments);
           if (params) {
             return {
               resource: "projects",
@@ -218,41 +181,11 @@ function pathToRoute(path: string): Route | null {
       }
       return null;
     }
-    case "":
+    case "": {
       return { resource: "home" };
+    }
     default: {
-      if (resource) {
-        const id = segments.shift();
-        if (id) {
-          if (segments.length === 0) {
-            return {
-              resource: "projects",
-              params: {
-                view: { resource: "tree" },
-                id,
-                peer: undefined,
-                profile: resource,
-                seed: undefined,
-              },
-            };
-          } else {
-            const params = resolveProjectRoute(url, id, segments);
-            if (params) {
-              return {
-                resource: "projects",
-                params: {
-                  ...params,
-                  id,
-                  profile: resource,
-                },
-              };
-            }
-          }
-          return null;
-        }
-        return { resource: "profile", params: { addressOrName: resource } };
-      }
-      return { resource: "home" };
+      return null;
     }
   }
 }
@@ -260,24 +193,10 @@ function pathToRoute(path: string): Route | null {
 export function routeToPath(route: Route) {
   if (route.resource === "home") {
     return "/";
-  } else if (route.resource === "faucet") {
-    return "/faucet";
-  } else if (route.resource === "vesting") {
-    if (route.params.view.resource === "form") {
-      return "/vesting";
-    } else if (route.params.view.resource === "view") {
-      return `/vesting/${route.params.view.params.contract}`;
-    }
   } else if (route.resource === "seeds") {
     return `/seeds/${route.params.host}`;
   } else if (route.resource === "projects") {
-    let hostPrefix;
-    if (route.params.profile) {
-      hostPrefix = `/${route.params.profile}`;
-    } else {
-      hostPrefix = `/seeds/${route.params.seed}`;
-    }
-
+    const hostPrefix = `/seeds/${route.params.seed}`;
     const content = `/${route.params.view.resource}`;
 
     let peer = "";
@@ -328,14 +247,6 @@ export function routeToPath(route: Route) {
     } else {
       return `${hostPrefix}/${route.params.id}${peer}${content}`;
     }
-  } else if (route.resource === "registrations") {
-    if (route.params.view.resource === "form") {
-      return `/registrations`;
-    } else if (route.params.view.resource === "view") {
-      return `/registrations/${route.params.view.params.nameOrDomain}?retry=${route.params.view.params.retry}`;
-    }
-  } else if (route.resource === "profile") {
-    return `/${route.params.addressOrName}`;
   } else if (route.resource === "404") {
     return route.params.url;
   } else {
@@ -345,6 +256,7 @@ export function routeToPath(route: Route) {
 
 function resolveProjectRoute(
   url: URL,
+  seed: string,
   id: string,
   segments: string[],
 ): ProjectsParams | null {
@@ -361,6 +273,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "tree" },
       id,
+      seed,
       peer,
       path: undefined,
       revision: undefined,
@@ -373,6 +286,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "history" },
       id,
+      seed,
       peer,
       path: undefined,
       revision: undefined,
@@ -383,6 +297,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "commits" },
       id,
+      seed,
       peer,
       path: undefined,
       revision: undefined,
@@ -395,6 +310,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "patch", params: { patch } },
         id,
+        seed,
         peer,
         path: undefined,
         search: undefined,
@@ -404,6 +320,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "patches" },
         id,
+        seed,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -416,6 +333,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "issue", params: { issue } },
         id,
+        seed,
         peer,
         path: undefined,
         revision: undefined,
@@ -425,6 +343,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "issues" },
         id,
+        seed,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,

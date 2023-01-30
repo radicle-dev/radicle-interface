@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Profile } from "@app/lib/profile";
   import type { ProjectInfo } from "@app/lib/project";
   import type { Seed, Stats } from "@app/lib/seed";
 
@@ -9,7 +8,6 @@
   import Widget from "@app/views/projects/Widget.svelte";
 
   export let seed: Seed;
-  export let profile: Profile | null = null;
   export let projects: proj.ProjectInfo[];
   export let stats: Stats;
 
@@ -44,7 +42,6 @@
         seed: seed.addr.port
           ? `${seed.addr.host}:${seed.addr.port}`
           : seed.addr.host,
-        profile: profile?.name ?? profile?.address,
         revision: project.head ?? undefined,
         hash: undefined,
         search: undefined,

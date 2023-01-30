@@ -1,46 +1,13 @@
-import type { EnsProfile } from "@app/lib/registrar";
-import type { Wallet } from "@app/lib/wallet";
 import type { marked } from "marked";
 
 import katex from "katex";
 import md5 from "md5";
 import twemojiModule from "twemoji";
-import { BigNumber, ethers } from "ethers";
-import { parseUnits } from "@ethersproject/units";
 
-import * as cache from "@app/lib/cache";
 import emojis from "@app/lib/emojis";
-import { ProfileType } from "@app/lib/profile";
 import { assert } from "@app/lib/error";
 import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
-import { getAddress, getResolver } from "@app/lib/registrar";
-import { getAvatar, getSeed, getRegistration } from "@app/lib/registrar";
-import { getInfo } from "@app/lib/vesting";
-
-export enum AddressType {
-  Contract,
-  Org,
-  Vesting,
-  EOA,
-}
-
-export interface Token {
-  name: string;
-  symbol: string;
-  logo: string;
-  decimals: number;
-  balance: BigNumber;
-}
-
-export async function isReverseRecordSet(
-  address: string,
-  domain: string,
-  wallet: Wallet,
-): Promise<boolean> {
-  const name = await lookupAddress(address, wallet);
-  return name === domain;
-}
 
 export async function toClipboard(text: string): Promise<void> {
   return navigator.clipboard.writeText(text);
@@ -56,14 +23,6 @@ export function setOpenGraphMetaTag(
     });
     if (foundElement) element.content = foundElement.content;
   });
-}
-
-export function toWei(amount: string): BigNumber {
-  return parseUnits(amount);
-}
-
-export function isAddressEqual(left: string, right: string): boolean {
-  return left.toLowerCase() === right.toLowerCase();
 }
 
 export function formatSeedAddress(
@@ -101,49 +60,13 @@ export function formatRadicleId(id: string): string {
   }
 }
 
-export function formatBalance(n: BigNumber, decimals?: number): string {
-  return ethers.utils.commify(
-    parseFloat(ethers.utils.formatUnits(n, decimals)).toFixed(2),
-  );
-}
-
-// Returns a checksummed, shortened, without 0x prefix Ethereum address
-export function formatAddress(input: string): string {
-  const addr = ethers.utils.getAddress(input).replace(/^0x/, "");
-
-  return (
-    addr.substring(0, 4) + " – " + addr.substring(addr.length - 4, addr.length)
-  );
-}
-
-// Returns a shortened Ethereum transaction hash
-export function formatTx(input: string): string {
-  return input.substring(0, 20) + "…";
-}
-
 export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
-}
-
-export function formatProfile(input: string, wallet: Wallet): string {
-  if (isAddress(input)) {
-    return ethers.utils.getAddress(input);
-  } else {
-    return parseEnsLabel(input, wallet);
-  }
 }
 
 export function capitalize(s: string): string {
   if (s === "") return s;
   return s[0].toUpperCase() + s.substring(1);
-}
-
-// Takes a domain name, eg. 'cloudhead.radicle.eth' and returns the label, eg. 'cloudhead'.
-export function parseEnsLabel(name: string, wallet: Wallet): string {
-  const domain = wallet.registrar.domain.replace(".", "\\.");
-  const label = name.replace(new RegExp(`\\.${domain}$`), "");
-
-  return label;
 }
 
 // Get the mime type of an image, given a file path.
@@ -265,35 +188,10 @@ export function isUrl(input: string): boolean {
   return /^https?:\/\//.test(input);
 }
 
-export function isENSName(input: string, wallet: Wallet): boolean {
-  const domain = wallet.registrar.domain.replace(".", "\\.");
-  const regEx = new RegExp(`^[a-zA-Z0-9]+.(${domain}|eth)$`);
-  return regEx.test(input);
-}
-
-// Check whether the input is an checksummed or all lowercase Ethereum address.
-export function isAddress(input: string): boolean {
-  return ethers.utils.isAddress(input);
-}
-
 export function isFulfilled<T>(
   input: PromiseSettledResult<T>,
 ): input is PromiseFulfilledResult<T> {
   return input.status === "fulfilled";
-}
-
-// Get the explorer link of an address or tx, eg. Etherscan.
-export function explorerLink(addrOrTx: string, wallet: Wallet): string {
-  const type = isAddress(addrOrTx) ? "address" : "tx";
-  if (wallet.network.name === "goerli") {
-    return `https://goerli.etherscan.io/${type}/${addrOrTx}`;
-  }
-  return `https://etherscan.io/${type}/${addrOrTx}`;
-}
-
-// Format a name.
-export function formatName(input: string, wallet: Wallet): string {
-  return parseEnsLabel(input, wallet);
 }
 
 // Parse a Radicle Id.
@@ -335,116 +233,6 @@ export function getSeedEmoji(seedHost: string): string {
   }
 }
 
-// Identify an address by checking whether it's a contract or an externally-owned address.
-export async function identifyAddress(
-  address: string,
-  wallet: Wallet,
-): Promise<AddressType> {
-  const code = await getCode(address, wallet);
-  const bytes = ethers.utils.arrayify(code);
-
-  if (bytes.length > 0) {
-    const info = await getInfo(address, wallet);
-    if (info) {
-      return AddressType.Vesting;
-    }
-    return AddressType.Contract;
-  }
-  return AddressType.EOA;
-}
-
-// Resolves an ENS profile or return null
-export async function resolveEnsProfile(
-  addressOrName: string,
-  profileType: ProfileType,
-  wallet: Wallet,
-): Promise<EnsProfile | null> {
-  const name = ethers.utils.isAddress(addressOrName)
-    ? await lookupAddress(addressOrName, wallet)
-    : addressOrName;
-
-  if (name) {
-    const resolver = await getResolver(name, wallet);
-    if (!resolver) {
-      return null;
-    }
-
-    if (profileType === ProfileType.Full) {
-      const registration = await getRegistration(name, wallet, resolver);
-      if (registration) {
-        return registration.profile;
-      }
-    } else {
-      const promises: [Promise<any>] = [getAvatar(name, wallet, resolver)];
-
-      if (addressOrName === name) {
-        promises.push(getAddress(resolver));
-      } else {
-        promises.push(Promise.resolve(addressOrName));
-      }
-
-      if (profileType === ProfileType.Project) {
-        promises.push(getSeed(name, wallet, resolver));
-      } else if (profileType === ProfileType.Minimal) {
-        promises.push(Promise.resolve(null));
-      }
-
-      const project = await Promise.allSettled(promises);
-      const [avatar, address, seed] =
-        // Just checking for r.value equal null and casting to undefined,
-        // since resolver functions return null.
-        project.filter(isFulfilled).map(r => (r.value ? r.value : null));
-
-      return {
-        name,
-        avatar,
-        address,
-        seed,
-      };
-    }
-  }
-  return null;
-}
-
-// Get token balances for an address.
-export async function getTokens(
-  address: string,
-  wallet: Wallet,
-): Promise<Array<Token>> {
-  const userBalances = await getRpcMethod(
-    "alchemy_getTokenBalances",
-    [address, "DEFAULT_TOKENS"],
-    wallet,
-  );
-  const balances = userBalances.tokenBalances
-    .filter((token: any) => {
-      // alchemy_getTokenBalances sometimes returns 0x and this does not work well with ethers.BigNumber
-      if (token.tokenBalance !== "0x") {
-        if (!BigNumber.from(token.tokenBalance).isZero()) {
-          return token;
-        }
-      }
-    })
-    .map(async (token: any) => {
-      const tokenMetaData = await getRpcMethod(
-        "alchemy_getTokenMetadata",
-        [token.contractAddress],
-        wallet,
-      );
-      return { ...tokenMetaData, balance: BigNumber.from(token.tokenBalance) };
-    });
-
-  return Promise.all(balances);
-}
-
-export const getRpcMethod = cache.cached(
-  async (method: string, props: string[], wallet: Wallet) => {
-    return await wallet.provider.send(method, props);
-  },
-  (method, props) => JSON.stringify([method, props]),
-  { ttl: 2 * 60 * 1000, max: 1000 },
-);
-
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
@@ -471,22 +259,6 @@ export function gravatarURL(email: string): string {
 
   return `https://www.gravatar.com/avatar/${hash}`;
 }
-
-export const getCode = cache.cached(
-  async (address: string, wallet: Wallet) => {
-    return await wallet.provider.getCode(address);
-  },
-  address => address,
-  { max: 1000 },
-);
-
-export const lookupAddress = cache.cached(
-  async (address: string, wallet: Wallet) => {
-    return await wallet.provider.lookupAddress(address);
-  },
-  address => address,
-  { max: 1000 },
-);
 
 export const unreachable = (value: never): never => {
   throw new Error(`Unreachable code: ${value}`);

@@ -1,15 +1,13 @@
 <script lang="ts">
   import type { PeerId, Project } from "@app/lib/project";
 
-  import Avatar from "@app/components/Avatar.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import DOMPurify from "dompurify";
-  import Link from "@app/components/Link.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import { formatSeedId } from "@app/lib/utils";
 
   export let project: Project;
-  export let peer: PeerId | null = null;
+  export let peer: PeerId | undefined = undefined;
 
   const linkifyDescription = (text: string) => {
     return text.replaceAll(/(https?:\/\/[^\s]+)/g, `<a href="$1">$1</a>`);
@@ -34,11 +32,6 @@
     font-weight: var(--font-weight-normal);
     display: flex;
     align-items: center;
-  }
-  .org-avatar {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
   }
   .project-name:hover {
     color: inherit;
@@ -80,21 +73,6 @@
 
 <header class="content">
   <div class="title txt-bold txt-title">
-    {#if project.profile}
-      <Link
-        route={{
-          resource: "profile",
-          params: { addressOrName: project.profile.addressOrName },
-        }}
-        title={project.profile.addressOrName}>
-        <span class="org-avatar">
-          <Avatar
-            source={project.profile.avatar || project.profile.address}
-            title={project.profile.address} />
-        </span>
-      </Link>
-      <span class="divider">/</span>
-    {/if}
     <span class="truncate">
       <ProjectLink
         projectParams={{

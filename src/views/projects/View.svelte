@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Wallet } from "@app/lib/wallet";
   import type { ProjectRoute } from "@app/lib/router/definitions";
   import type { State as IssueState } from "./Issues.svelte";
   import type { State as PatchState } from "./Patches.svelte";
@@ -24,25 +23,18 @@
   import Message from "@app/components/Message.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
 
-  export let wallet: Wallet;
   export let activeRoute: ProjectRoute;
 
   $: id = activeRoute.params.id;
-  $: peer = activeRoute.params.peer ?? null;
-  $: seed = activeRoute.params.seed ?? null;
-  $: profile = activeRoute.params.profile ?? null;
+  $: peer = activeRoute.params.peer;
+  $: seed = activeRoute.params.seed;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueState) || "open";
   $: patchFilter = (searchParams.get("state") as PatchState) || "proposed";
 
-  const getProject = async (
-    id: string,
-    peer: string | null,
-    profile: string | null,
-    seed: string | null,
-  ) => {
-    const project = await proj.Project.get(id, peer, profile, seed, wallet);
+  const getProject = async (id: string, seed: string, peer?: string) => {
+    const project = await proj.Project.get(id, seed, peer);
     if (activeRoute.params.route) {
       const { revision, path } = proj.parseRoute(
         activeRoute.params.route,
@@ -86,13 +78,6 @@
     padding: 0 2rem 0 8rem;
   }
 
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-
   @media (max-width: 960px) {
     main > header {
       padding-left: 2rem;
@@ -107,7 +92,7 @@
   }
 </style>
 
-{#await getProject(id, peer, profile, seed)}
+{#await getProject(id, seed, peer)}
   <main>
     <header>
       <Loading center />
@@ -147,7 +132,7 @@
         {#await issue.Issue.getIssues(project.id, project.seed.addr)}
           <Loading center />
         {:then issues}
-          <Issues state={issueFilter} {wallet} {issues} />
+          <Issues state={issueFilter} {issues} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -157,7 +142,7 @@
         {#await issue.Issue.getIssue(project.id, activeRoute.params.view.params.issue, project.seed.addr)}
           <Loading center />
         {:then issue}
-          <Issue {project} {wallet} {issue} />
+          <Issue {project} {issue} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -167,7 +152,7 @@
         {#await patch.Patch.getPatches(project.id, project.seed.addr)}
           <Loading center />
         {:then patches}
-          <Patches {wallet} state={patchFilter} {patches} />
+          <Patches state={patchFilter} {patches} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -177,7 +162,7 @@
         {#await patch.Patch.getPatch(project.id, activeRoute.params.view.params.patch, project.seed.addr)}
           <Loading center />
         {:then patch}
-          <Patch {project} {wallet} {patch} />
+          <Patch {project} {patch} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -212,7 +197,7 @@
     {/await}
   </main>
 {:catch}
-  <div class="container">
+  <div class="layout-centered">
     <NotFound subtitle={id} title="This project was not found" />
   </div>
 {/await}

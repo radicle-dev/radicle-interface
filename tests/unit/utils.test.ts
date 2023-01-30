@@ -1,25 +1,7 @@
-import type { Wallet } from "@app/lib/wallet";
-
-import { BigNumber } from "ethers";
 import { describe, expect, test } from "vitest";
 import * as utils from "@app/lib/utils";
 
-describe("Conversions", () => {
-  test("toWei", () => {
-    expect(utils.toWei("10")).toEqual(BigNumber.from("10000000000000000000"));
-  });
-});
-
 describe("Format functions", () => {
-  test.each([
-    { amount: "1000", digits: 2, expected: "10.0" },
-    { amount: "10000000000000000000", expected: "10.0" },
-  ])("formatBalance", ({ amount, digits, expected }) => {
-    expect(utils.formatBalance(BigNumber.from(amount), digits)).toEqual(
-      expected,
-    );
-  });
-
   test.each([
     { hash: "#L42", expected: 42 },
     { hash: "#ETH", expected: null },
@@ -54,16 +36,6 @@ describe("Format functions", () => {
     ).toThrow();
   });
 
-  test("formatAddress", () => {
-    expect(
-      utils.formatAddress("0xb5d85cbf7cb3ee0d56b3bb207d5fc4b82f43f511"),
-    ).toEqual("b5d8 – F511");
-
-    expect(() => utils.formatAddress("0x8f91813")).toThrowError(
-      'invalid address (argument="address", value="0x8f91813", code=INVALID_ARGUMENT, version=address/5.7.0)',
-    );
-  });
-
   test.each([
     {
       input: "seedling",
@@ -90,21 +62,6 @@ describe("Format functions", () => {
 });
 
 describe("String Assertions", () => {
-  test.each([
-    {
-      a: "0x1234567890123456789012345678901234567890",
-      b: "0x1234567890123456789012345678901234567890",
-      expected: true,
-    },
-    {
-      a: "0x1234567890123456789012345678901234567890",
-      b: "0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-      expected: false,
-    },
-  ])("isAddressEqual", ({ a, b, expected }) => {
-    expect(utils.isAddressEqual(a, b)).toEqual(expected);
-  });
-
   test.each([
     { domain: "alt-clients.radicle.xyz", expected: true },
     { domain: "0.0.0.0", expected: true }, // Pass as true since we are not in production
@@ -146,14 +103,6 @@ describe("String Assertions", () => {
   });
 
   test.each([
-    { address: "0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0", expected: true },
-    { address: "0x5E813e48a81977c6fdd565ed5097eb600c73c4f0", expected: false }, // If address is badly checksummed => false
-    { address: "0x5e813e48a81977c6fdd565ed5097eb600c73c4f0", expected: true },
-  ])("isAddress $address => $expected", ({ address, expected }) => {
-    expect(utils.isAddress(address)).toBe(expected);
-  });
-
-  test.each([
     { url: "https://app.radicle.xyz", expected: true },
     { url: "http://app.radicle.xyz", expected: true },
     { url: "http://app", expected: true },
@@ -165,44 +114,7 @@ describe("String Assertions", () => {
   });
 });
 
-describe("Others", () => {
-  test.each([
-    {
-      name: "goerli",
-      expected:
-        "https://goerli.etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-    {
-      name: "",
-      expected:
-        "https://etherscan.io/address/0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0",
-    },
-  ])("explorerLink $name => $expected", ({ name, expected }) => {
-    expect(
-      utils.explorerLink("0x5E813e48a81977c6Fdd565ed5097eb600C73C4f0", {
-        network: {
-          name,
-        },
-      } as Wallet),
-    ).toEqual(expected);
-  });
-});
-
 describe("Parse Strings", () => {
-  test.each([
-    { label: "sebastinez.radicle.eth", expected: "sebastinez" },
-    { label: "sebastinez", expected: "sebastinez" },
-  ])("parseEnsLabel", ({ label, expected }) => {
-    expect(
-      utils.parseEnsLabel(label, {
-        registrar: {
-          address: "0x1234567890123456789012345678901234567890",
-          domain: "radicle.eth",
-        },
-      } as Wallet),
-    ).toEqual(expected);
-  });
-
   test.each([
     { input: "https://twitter.com/cloudhead", expected: "cloudhead" },
     { input: "sebastinez", expected: "sebastinez" },

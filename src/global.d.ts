@@ -22,12 +22,6 @@ declare global {
     e2eTestStubs: {
       FakeTimers: FakeTimers;
     };
-
-    // Used in
-    //   src/session.ts
-    //   src/wallet.ts
-    ethereum: any;
-    registrarState: any;
   }
 }
 

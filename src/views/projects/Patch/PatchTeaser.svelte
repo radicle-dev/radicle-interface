@@ -1,28 +1,12 @@
 <script lang="ts">
   import type { Patch } from "@app/lib/patch";
-  import type { Wallet } from "@app/lib/wallet";
 
-  import { Profile, ProfileType } from "@app/lib/profile";
   import { formatObjectId } from "@app/lib/cobs";
-  import { onMount } from "svelte";
   import { twemoji } from "@app/lib/utils";
 
   import Authorship from "@app/components/Authorship.svelte";
 
   export let patch: Patch;
-  export let wallet: Wallet;
-
-  let profile: Profile | null = null;
-
-  onMount(async () => {
-    if (patch.author.profile?.ens?.name) {
-      profile = await Profile.get(
-        patch.author.profile.ens.name,
-        ProfileType.Minimal,
-        wallet,
-      );
-    }
-  });
 
   const commentCount = patch.countComments(patch.revisions.length - 1);
 </script>
@@ -115,8 +99,6 @@
       <span class="patch-id">{formatObjectId(patch.id)}</span>
     </div>
     <Authorship
-      {profile}
-      {wallet}
       caption="opened"
       author={patch.author}
       timestamp={patch.timestamp} />
