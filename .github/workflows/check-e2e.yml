@@ -9,10 +9,6 @@ on:
 
 jobs:
   check-e2e:
-    permissions:
-      contents: "read"
-      id-token: "write"
-      actions: "write" # necessary for evicting snapshot cache
     continue-on-error: true
     strategy:
       matrix:
@@ -58,20 +54,11 @@ jobs:
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium firefox
 
-      - id: auth
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: "projects/281042598092/locations/global/workloadIdentityPools/github-actions/providers/google-cloud"
-          service_account: "github-actions@radicle-services.iam.gserviceaccount.com"
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
       - name: Start http-api test server
         run: |
           if [ ${{ matrix.browser }} = "heartwood" ]; then
             mkdir -p tests/artifacts
-            ./scripts/run-httpd-with-fixtures --non-interactive --binary 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
+            ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
           else
             ./scripts/run-http-api-with-fixtures --non-interactive --detach
           fi
