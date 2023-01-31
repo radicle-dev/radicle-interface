@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-REV=a5811e43a74043e3bf1e706720bac3ec01b079c4
+REV=1f55d7a32750b3e63c56aad00370411b90420a29
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm-heartwood.tar.bz2
