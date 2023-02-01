@@ -56,6 +56,7 @@
   --color-foreground-6: #c2c3d4;
 
   --color-background: #0b131a;
+  --color-background-1: #121a21;
 }
 
 [data-theme="light"] {
@@ -116,4 +117,5 @@
   --color-foreground-6: #42425a;
 
   --color-background: #f3f6fd;
+  --color-background-1: #ffffff;
 }

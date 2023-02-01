@@ -20,7 +20,7 @@
 
 <style>
   .dropdown {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-1);
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     position: absolute;

@@ -36,6 +36,8 @@
   }
   main {
     border-top: 1px dashed var(--color-foreground-4);
+    background: var(--color-background-1);
+    border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
   }
   .changeset-file main {
     overflow-x: auto;

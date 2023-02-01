@@ -28,6 +28,7 @@
     border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
+    background: var(--color-background-1);
   }
   article .right {
     display: flex;

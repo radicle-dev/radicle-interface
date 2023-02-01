@@ -24,7 +24,7 @@
   }
   header {
     padding: 1rem;
-    background: var(--color-foreground-1);
+    background: var(--color-background-1);
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
   }

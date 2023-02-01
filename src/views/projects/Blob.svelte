@@ -166,6 +166,7 @@
     border-top-style: dashed;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
+    background: var(--color-background-1);
   }
 
   .binary {

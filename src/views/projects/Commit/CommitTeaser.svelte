@@ -23,7 +23,7 @@
     padding: 0 1.5rem;
   }
   .commit-teaser {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-1);
     padding: 0.75rem 0rem;
   }
   .commit-teaser:hover {

@@ -13,7 +13,7 @@
   }
 
   .toggle label {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-1);
     border: 1px solid var(--color-foreground-6);
     border-radius: var(--border-radius-round);
     cursor: pointer;
@@ -39,7 +39,7 @@
   }
 
   .toggle input[type="checkbox"]:checked ~ label {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-1);
     border-color: var(--color-foreground-6);
   }
 

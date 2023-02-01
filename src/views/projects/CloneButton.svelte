@@ -26,7 +26,7 @@
     background-color: var(--color-caution-3);
   }
   .dropdown {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-1);
     border-radius: var(--border-radius-small);
     box-shadow: var(--elevation-low);
     margin-top: 0.5rem;

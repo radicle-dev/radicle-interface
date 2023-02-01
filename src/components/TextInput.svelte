@@ -80,6 +80,10 @@
     font-size: var(--font-size-small);
     padding: 0.5rem 1.25rem;
   }
+  .dashed:hover,
+  .dashed:focus {
+    background: var(--color-background-1);
+  }
   .right-container {
     color: var(--color-secondary);
     position: absolute;

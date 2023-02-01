@@ -40,16 +40,13 @@
   .commit-group-headers {
     margin-bottom: 2rem;
   }
-
-  .commit {
-    background-color: var(--color-foreground-1);
-  }
   .commit:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
   }
   .commit:hover {
     background-color: var(--color-foreground-2);
     cursor: pointer;
+    border-radius: var(--border-radius-small);
   }
   .commit:first-child {
     border-top-left-radius: var(--border-radius-small);
