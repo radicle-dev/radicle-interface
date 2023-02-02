@@ -119,7 +119,7 @@
   {disabled}
   {style}
   {autofocus}
-  on:click|stopPropagation
+  on:click
   on:focus
   on:blur
   on:mouseout

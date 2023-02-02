@@ -3,6 +3,7 @@
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import SettingsDropdown from "./Header/SettingsDropdown.svelte";
+  import Connect from "@app/App/Header/Connect.svelte";
 
   import Logo from "./Header/Logo.svelte";
   import Search from "./Header/Search.svelte";
@@ -70,6 +71,7 @@
   </div>
 
   <div class="right">
+    <Connect />
     <Floating>
       <div slot="toggle">
         <button class="toggle" name="Settings">

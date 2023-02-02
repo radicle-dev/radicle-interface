@@ -29,7 +29,6 @@
     margin: auto 0;
     width: 70px;
     text-align: center;
-    cursor: wait;
     display: flex;
     justify-content: space-evenly;
     align-items: center;

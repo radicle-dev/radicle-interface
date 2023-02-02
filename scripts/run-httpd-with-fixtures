@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REV=a5811e43a74043e3bf1e706720bac3ec01b079c4
+REV=f1de61ad8897a845f2be49e3e2b2951bc678b678
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm-heartwood.tar.bz2
@@ -77,9 +77,9 @@ if [ "$DOWNLOAD" = true ]; then
   if ! [ -x "$(command -v $BINARY_PATH/$CACHED_BINARY_NAME)" ]; then
     echo "Downloading $BINARY_NAME"
     case "$OS" in
-      Darwin)  curl -s "https://storage.googleapis.com/heartwood-artifacts/${REV}/aarch64-apple-darwin/radicle-httpd" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
-      Linux)   curl -s "https://storage.googleapis.com/heartwood-artifacts/${REV}/x86_64-unknown-linux-musl/radicle-httpd" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
-      *)       echo "There are no precompiled binaries for your OS: $OS, compile radicle-httpd manually and make sure it's in PATH." && exit 1 ;;
+      Darwin)  curl -s "https://storage.googleapis.com/heartwood-artifacts/$REV/aarch64-apple-darwin/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
+      Linux)   curl -s "https://storage.googleapis.com/heartwood-artifacts/$REV/x86_64-unknown-linux-musl/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
+      *)       echo "There are no precompiled binaries for your OS: $OS, compile $BINARY_NAME manually and make sure it's in PATH." && exit 1 ;;
     esac
 
     chmod a+x "$BINARY_PATH/$CACHED_BINARY_NAME"

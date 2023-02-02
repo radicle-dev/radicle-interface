@@ -1,28 +1,38 @@
 <script lang="ts">
   import type { Route } from "@app/lib/router/definitions";
 
+  import { onMount } from "svelte";
+
+  import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
+  import * as session from "@app/lib/session";
   import Loading from "@app/components/Loading.svelte";
+
+  import AuthenticatedModal from "@app/views/session/AuthenticatedModal.svelte";
+  import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
 
   export let activeRoute: Extract<Route, { resource: "session" }>;
 
-  async function createSession() {
-    const { id, signature, publicKey } = activeRoute.params;
+  onMount(async () => {
+    const status = await session.authenticate(activeRoute.params);
 
-    const request = await fetch(`http://0.0.0.0:8080/api/v1/sessions/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sig: signature, pk: publicKey }),
-    });
-    if (request.ok) {
-      window.sessionStorage.setItem("session_id", id);
+    if (status === "success") {
+      modal.show({ component: AuthenticatedModal, props: {} });
+    } else {
+      modal.show({
+        component: AuthenticationErrorModal,
+        props: {
+          title: "Authentication failed",
+          subtitle: [
+            "There was an error while authenticating.",
+            "Check your radicle-httpd logs for details.",
+          ],
+        },
+      });
     }
-    // We currently push once logged in users to the landing page,
-    // we should trigger some notification to inform the user what happened
+
     router.push({ resource: "home" });
-  }
+  });
 </script>
 
-{#await createSession()}
-  <Loading center />
-{/await}
+<Loading center />

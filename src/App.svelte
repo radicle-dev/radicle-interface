@@ -1,7 +1,8 @@
 <script lang="ts">
   import Plausible from "plausible-tracker";
 
-  import { initialize, activeRouteStore } from "@app/lib/router";
+  import * as router from "@app/lib/router";
+  import * as session from "@app/lib/session";
   import { unreachable } from "@app/lib/utils";
 
   import Header from "./App/Header.svelte";
@@ -14,7 +15,10 @@
   import Projects from "@app/views/projects/View.svelte";
   import Seeds from "@app/views/seeds/Routes.svelte";
 
-  initialize();
+  const activeRouteStore = router.activeRouteStore;
+
+  router.initialize();
+  session.initialize();
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
     const plausible = Plausible({
