@@ -24,7 +24,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   if (browserName !== "chromium") {
     test.skip();
   }
-  context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await page.goto(projectFixtureUrl);
 

@@ -17,7 +17,7 @@ test("default settings", async ({ page }) => {
 
 test("settings persistance", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
-  page.locator('button[name="Settings"]').click();
+  await page.locator('button[name="Settings"]').click();
 
   await page.locator(".theme .toggle").click();
   await page.getByText("Code font").click();
@@ -26,7 +26,7 @@ test("settings persistance", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("html")).toHaveAttribute("data-codefont", "system");
 
-  page.reload();
+  await page.reload();
 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("html")).toHaveAttribute("data-codefont", "system");
@@ -34,7 +34,7 @@ test("settings persistance", async ({ page }) => {
 
 test("change theme", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
-  page.locator('button[name="Settings"]').click();
+  await page.locator('button[name="Settings"]').click();
 
   await page.locator(".theme .toggle").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
@@ -58,7 +58,7 @@ test("change theme", async ({ page }) => {
 test("change code font", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
 
-  page.locator('button[name="Settings"]').click();
+  await page.locator('button[name="Settings"]').click();
   await page.getByText("Code font").click();
 
   await page.getByText("System").click();
