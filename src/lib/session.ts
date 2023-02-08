@@ -1,6 +1,6 @@
 import { derived, get, writable } from "svelte/store";
 
-interface Session {
+export interface Session {
   id: string;
   publicKey: string;
 }

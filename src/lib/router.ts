@@ -256,6 +256,11 @@ export function routeToPath(route: Route) {
       return `${hostPrefix}/${route.params.id}${peer}/patches${suffix}`;
     } else if (route.params.view.resource === "patch") {
       return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}`;
+    } else if (
+      route.params.view.resource === "issues" &&
+      route.params.view.params?.view.resource === "new"
+    ) {
+      return `${hostPrefix}/${route.params.id}${peer}/issues/new${suffix}`;
     } else if (route.params.view.resource === "issues") {
       return `${hostPrefix}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
@@ -344,10 +349,20 @@ function resolveProjectRoute(
       };
     }
   } else if (content === "issues") {
-    const issue = segments.shift();
-    if (issue) {
+    const issueOrAction = segments.shift();
+    if (issueOrAction === "new") {
       return {
-        view: { resource: "issue", params: { issue } },
+        view: { resource: "issues", params: { view: { resource: "new" } } },
+        id,
+        seed,
+        peer,
+        search: sanitizeQueryString(url.search),
+        path: undefined,
+        revision: undefined,
+      };
+    } else if (issueOrAction) {
+      return {
+        view: { resource: "issue", params: { issue: issueOrAction } },
         id,
         seed,
         peer,

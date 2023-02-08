@@ -15,7 +15,12 @@ export interface ProjectsParams {
     | { resource: "commits" }
     | { resource: "history" }
     | { resource: "issue"; params: { issue: string } }
-    | { resource: "issues" }
+    | {
+        resource: "issues";
+        params?: {
+          view: { resource: "new" };
+        };
+      }
     | { resource: "patch"; params: { patch: string } }
     | { resource: "patches" };
   seed: string;

@@ -1,36 +1,17 @@
 <script lang="ts">
-  import type { Blob } from "@app/lib/project";
+  import type { MaybeBlob } from "@app/lib/project";
   import type { Comment, Thread } from "@app/lib/issue";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Comment/Avatar.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import ReactionSelector from "./Comment/ReactionSelector.svelte";
-  import Reactions from "@app/components/Comment/Reactions.svelte";
 
   export let comment: Comment | Thread;
-  export let caption = "left a comment";
-  export let getImage: (path: string) => Promise<Blob>;
-
-  const templateComment = `<!--
-Please enter a comment message for your patch update. Leaving this
-blank is also okay.
--->`;
+  export let caption = "commented";
+  export let getImage: (path: string) => Promise<MaybeBlob>;
 
   $: source = comment.author.id;
-  $: title = comment.author.profile
-    ? comment.author.profile.name
-    : comment.author.id;
-
-  const selectReaction = (event: { detail: string }) => {
-    // TODO: Once we allow adding reactions through the http-api, we should call it here.
-    console.debug(event.detail);
-  };
-
-  const incrementReaction = (event: { detail: string }) => {
-    // TODO: Once we allow increment reactions through the http-api, we should call it here.
-    console.debug(event.detail);
-  };
+  $: title = comment.author.id;
 </script>
 
 <style>
@@ -57,10 +38,7 @@ blank is also okay.
   .card-body {
     font-size: var(--font-size-small);
     padding: 0rem 1rem 1rem 1rem;
-  }
-  .reactions {
-    display: flex;
-    margin-top: 1rem;
+    word-break: break-all;
   }
 </style>
 
@@ -74,20 +52,12 @@ blank is also okay.
         {caption}
         author={comment.author}
         timestamp={comment.timestamp} />
-      <ReactionSelector on:select={selectReaction} />
     </div>
     <div class="card-body">
-      {#if comment.body.trim() === "" || comment.body.trim() === templateComment}
+      {#if comment.body.trim() === ""}
         <span class="txt-missing">No description.</span>
       {:else}
         <Markdown content={comment.body} {getImage} />
-      {/if}
-      {#if comment.reactions.length > 0}
-        <div class="reactions">
-          <Reactions
-            reactions={comment.reactions}
-            on:click={incrementReaction} />
-        </div>
       {/if}
     </div>
   </div>

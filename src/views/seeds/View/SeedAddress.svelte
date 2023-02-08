@@ -5,7 +5,7 @@
   import Link from "@app/components/Link.svelte";
   import {
     formatSeedAddress,
-    formatSeedId,
+    formatNodeId,
     formatSeedHost,
     twemoji,
   } from "@app/lib/utils";
@@ -51,7 +51,7 @@
             resource: "seeds",
             params: { host: formatSeedHost(seedHost) },
           }}>
-          <span class="txt-link">{formatSeedId(seed.id)}@{seed.host}</span>
+          <span class="txt-link">{formatNodeId(seed.id)}@{seed.host}</span>
         </Link>
       </span>
       <span class="txt-faded">:{port}</span>

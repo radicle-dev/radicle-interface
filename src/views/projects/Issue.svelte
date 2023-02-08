@@ -3,8 +3,10 @@
   import type { Issue } from "@app/lib/issue";
 
   import Authorship from "@app/components/Authorship.svelte";
+  import Avatar from "@app/components/Comment/Avatar.svelte";
+  import Chip from "@app/components/Chip.svelte";
   import Comment from "@app/components/Comment.svelte";
-  import { canonicalize, capitalize } from "@app/lib/utils";
+  import { formatNodeId, canonicalize, capitalize } from "@app/lib/utils";
   import { formatObjectId } from "@app/lib/cobs";
 
   export let issue: Issue;
@@ -51,41 +53,35 @@
     color: var(--color-foreground-5);
   }
   .metadata-section-body {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
   .metadata-section-empty {
     color: var(--color-foreground-6);
   }
-  .label {
-    border-radius: var(--border-radius);
-    color: var(--color-tertiary);
-    background-color: var(--color-tertiary-2);
-    padding: 0.25rem 0.75rem;
-    margin-right: 0.5rem;
-    font-size: var(--font-size-small);
-    line-height: 1.6;
-  }
 
   .summary {
     display: flex;
-    justify-content: space-between;
     flex-direction: row;
     align-items: center;
     margin-bottom: 0.5rem;
   }
-  .summary-left {
-    display: flex;
-    align-items: center;
-  }
   .summary-title {
-    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .id {
+    flex: 1 0 auto;
     font-size: var(--font-size-tiny);
     margin-left: 0.75rem;
     color: var(--color-foreground-5);
   }
   .summary-state {
+    margin-left: 2rem;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
   }
@@ -100,10 +96,24 @@
   .replies {
     margin-left: 2rem;
   }
+  .assignee {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .tag {
+    max-width: 15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   @media (max-width: 960px) {
     .issue {
       padding-left: 2rem;
+    }
+    .summary-state {
+      margin-left: 0.5rem;
     }
   }
 </style>
@@ -111,14 +121,12 @@
 <div class="issue">
   <header>
     <div class="summary">
-      <div class="summary-left">
-        <span class="summary-title txt-medium">
-          {issue.title}
-        </span>
-        <span class="txt-monospace id layout-desktop">{issue.id}</span>
-        <span class="txt-monospace id layout-mobile">
-          {formatObjectId(issue.id)}
-        </span>
+      <div class="summary-title txt-medium">
+        {issue.title}
+      </div>
+      <div class="txt-monospace id layout-desktop">{issue.id}</div>
+      <div class="txt-monospace id layout-mobile">
+        {formatObjectId(issue.id)}
       </div>
       <div
         class="summary-state"
@@ -130,7 +138,7 @@
     <Authorship
       author={issue.author}
       timestamp={issue.timestamp}
-      caption="opened on" />
+      caption="opened" />
   </header>
   <main>
     <div class="comments">
@@ -153,14 +161,29 @@
     </div>
     <div class="metadata layout-desktop">
       <div class="metadata-section">
+        <div class="metadata-section-header">Assignees</div>
+        <div class="metadata-section-body">
+          {#if issue.assignees?.length}
+            {#each issue.assignees as assignee, key}
+              <Chip {key}>
+                <div slot="text" class="assignee">
+                  <Avatar inline source={assignee} title={assignee} />
+                  <span>{formatNodeId(assignee)}</span>
+                </div>
+              </Chip>
+            {/each}
+          {:else}
+            <div class="metadata-section-empty">No assignees</div>
+          {/if}
+        </div>
         <div class="metadata-section-header">Tags</div>
         <div class="metadata-section-body">
           {#if issue.tags?.length}
-            {#each issue.tags as tag}
-              <span class="label">{tag}</span>
+            {#each issue.tags as tag, key}
+              <Chip {key}><span class="tag" slot="text">{tag}</span></Chip>
             {/each}
           {:else}
-            <div class="metadata-section-empty">No tags.</div>
+            <div class="metadata-section-empty">No tags</div>
           {/if}
         </div>
       </div>

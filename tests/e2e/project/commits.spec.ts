@@ -16,7 +16,7 @@ test("peer and branch switching", async ({ page }) => {
     if (process.env.HEARTWOOD) {
       await page.locator(`text=${aliceRemote}`).click();
       await expect(page.getByTitle("Change peer")).toHaveText(
-        `${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
+        `did:key:${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
       );
     } else {
       await page.locator("text=alice hybg18").click();
@@ -69,7 +69,7 @@ test("peer and branch switching", async ({ page }) => {
     if (process.env.HEARTWOOD) {
       await page.locator(`text=${bobRemote}`).click();
       await expect(page.getByTitle("Change peer")).toHaveText(
-        `${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+        `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
       );
     } else {
       await page.locator("text=bob hyyzz9").click();
@@ -112,7 +112,7 @@ test("verified badge", async ({ page }) => {
   if (process.env.HEARTWOOD) {
     await page.locator(`text=${bobRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+      `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
     );
   } else {
     await page.locator("text=bob hyyzz9").click();
@@ -146,7 +146,7 @@ test("relative timestamps", async ({ page }) => {
   if (process.env.HEARTWOOD) {
     await page.locator(`text=${bobRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+      `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
     );
     const latestCommit = page.locator(".commit-teaser").first();
     await expect(latestCommit).toContainText("Bob Belcher committed now");

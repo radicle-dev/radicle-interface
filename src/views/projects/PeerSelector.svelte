@@ -1,11 +1,12 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher, onMount } from "svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import { formatSeedId } from "@app/lib/utils";
   import type { Peer } from "@app/lib/project";
-  import Floating from "@app/components/Floating.svelte";
+
   import Badge from "@app/components/Badge.svelte";
+  import Dropdown from "@app/components/Dropdown.svelte";
+  import Floating from "@app/components/Floating.svelte";
+  import Icon from "@app/components/Icon.svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { formatNodeId } from "@app/lib/utils";
 
   export let peer: string | null = null;
   export let peers: Peer[];
@@ -90,7 +91,7 @@
       <Icon name="fork" />
       {#if meta}
         <span class="peer-id">
-          {meta.person?.name ?? formatSeedId(meta.id)}
+          {meta.person?.name ?? formatNodeId(meta.id)}
         </span>
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>
@@ -98,7 +99,7 @@
         <!-- If the delegate metadata is not found -->
       {:else if peer}
         <span class="peer-id">
-          {formatSeedId(peer)}
+          {formatNodeId(peer)}
         </span>
       {/if}
     </div>

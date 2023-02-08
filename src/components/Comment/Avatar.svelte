@@ -13,6 +13,7 @@
   }
 
   function createContainer(source: string) {
+    source = source.replace("did:key:", "");
     const seed = source.toLowerCase();
     const avatar = createIcon({
       seed,

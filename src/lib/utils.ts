@@ -1,4 +1,5 @@
 import md5 from "md5";
+import bs58 from "bs58";
 import twemojiModule from "twemoji";
 
 import { assert } from "@app/lib/error";
@@ -54,6 +55,41 @@ export function formatRadicleId(id: string): string {
   } else {
     return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
   }
+}
+
+// Parses a NID into an object of prefix and pubkey,
+// since prefix can be undefined
+export function parseNid(
+  nid: string,
+): { prefix: string; pubkey: string } | undefined {
+  const match = /^(did:key:)?(z[a-zA-Z0-9]+)$/.exec(nid);
+  if (match) {
+    const hex = bs58.decode(match[2].substring(1));
+    // This checks also that the first 2 bytes are equal
+    // to the ed25519 public key type used.
+    if (!(hex.byteLength === 34 && hex[0] === 0xed && hex[1] === 1)) {
+      return undefined;
+    }
+
+    return { prefix: match[1] || "did:key:", pubkey: match[2] };
+  }
+
+  return undefined;
+}
+
+// Format a Node Identifier (NID), also represents users or peers
+export function formatNodeId(nid: string): string {
+  const parsedNid = parseNid(nid);
+  if (parsedNid) {
+    const { prefix, pubkey } = parsedNid;
+    const formattedPubKey =
+      pubkey.substring(0, 6) +
+      "…" +
+      pubkey.substring(pubkey.length - 6, pubkey.length);
+    return `${prefix}${formattedPubKey}`;
+  }
+
+  return nid;
 }
 
 export function formatCommit(oid: string): string {
@@ -158,7 +194,7 @@ export const formatTimestamp = (
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {
   if (window.HEARTWOOD) {
-    return /^rad:[a-zA-Z0-9]+$/.test(input);
+    return /^(did:key:)?[a-zA-Z0-9]+$/.test(input);
   } else {
     return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
   }
@@ -226,7 +262,7 @@ export function isMarkdownPath(path: string): boolean {
 export function isDomain(input: string): boolean {
   return (
     (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input)) ||
-    (!import.meta.env.PROD && /^0.0.0.0$/.test(input))
+    (!import.meta.env.PROD && isLocal(input))
   );
 }
 

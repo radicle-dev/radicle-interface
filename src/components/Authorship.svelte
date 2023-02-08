@@ -2,8 +2,8 @@
   import type { Author } from "@app/lib/cobs";
 
   import {
+    formatNodeId,
     formatRadicleId,
-    formatSeedId,
     formatTimestamp,
   } from "@app/lib/utils";
 
@@ -19,6 +19,11 @@
     color: var(--color-foreground);
     padding: 0.125rem 0;
   }
+  .id {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .caption {
     color: var(--color-foreground-5);
   }
@@ -32,11 +37,16 @@
 </style>
 
 <span class="authorship txt-tiny">
-  <span class="highlight">
-    {window.HEARTWOOD ? formatSeedId(author.id) : formatRadicleId(author.id)}
+  <span class="id highlight layout-desktop">
+    {window.HEARTWOOD ? formatNodeId(author.id) : formatRadicleId(author.id)}
+  </span>
+  <span class="id highlight layout-mobile">
+    {window.HEARTWOOD
+      ? formatNodeId(author.id).replace("did:key:", "")
+      : formatRadicleId(author.id)}
   </span>
   <span class="caption">&nbsp;{caption}&nbsp;</span>
-  <span class="txt-tiny date">
+  <span class="date">
     {formatTimestamp(timestamp)}
   </span>
 </span>

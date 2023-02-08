@@ -8,7 +8,7 @@
   export let placeholder: string | undefined = undefined;
   export let value: string | undefined = undefined;
 
-  export let variant: "regular" | "dashed" = "regular";
+  export let variant: "regular" | "form" = "regular";
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
@@ -76,14 +76,17 @@
     font-size: var(--font-size-regular);
     padding: 1rem 1.5rem;
   }
-  .dashed {
-    border: 1px dashed var(--color-secondary);
-    font-size: var(--font-size-small);
-    padding: 0.5rem 1.25rem;
+  .form {
+    background: var(--color-foreground-1);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-foreground-1);
   }
-  .dashed:hover,
-  .dashed:focus {
-    background: var(--color-background-1);
+  .form::placeholder {
+    color: var(--color-foreground-5);
+  }
+  .form:focus,
+  .form:hover {
+    border: 1px solid var(--color-foreground-4);
   }
   .left-container {
     color: var(--color-secondary);
@@ -141,7 +144,7 @@
 
     <input
       class:regular={variant === "regular"}
-      class:dashed={variant === "dashed"}
+      class:form={variant === "form"}
       style:padding-left={leftContainerWidth
         ? `${leftContainerWidth}px`
         : "auto"}

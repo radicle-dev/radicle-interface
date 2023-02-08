@@ -41,15 +41,11 @@
     {#if element.type === TimelineType.Merge && element.inner.peer.person}
       <div class="element">
         <Authorship
-          author={{
-            peer: element.inner.peer.id,
-            id: element.inner.peer.person.id,
-            profile: element.inner.peer.person,
-          }}
+          author={{ id: element.inner.peer.person.id }}
           caption={`merged to ${formatSeedId(element.inner.peer.id)}`}
           timestamp={element.timestamp} />
       </div>
-    {:else if element.type === TimelineType.Review && element.inner.author.profile?.ens?.name}
+    {:else if element.type === TimelineType.Review && element.inner.author.id}
       <div class="margin-left">
         <Review review={element.inner} {getImage} />
       </div>

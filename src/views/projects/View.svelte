@@ -9,19 +9,21 @@
   import * as router from "@app/lib/router";
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
-  import { formatSeedId, unreachable } from "@app/lib/utils";
+  import { formatNodeId, unreachable } from "@app/lib/utils";
+  import { sessionStore } from "@app/lib/session";
 
-  import Header from "./Header.svelte";
   import Browser from "./Browser.svelte";
-  import History from "./History.svelte";
   import Commit from "./Commit.svelte";
-  import Issues from "./Issues.svelte";
+  import Header from "./Header.svelte";
+  import History from "./History.svelte";
   import Issue from "./Issue.svelte";
-  import Patches from "./Patches.svelte";
-  import Patch from "./Patch.svelte";
-  import ProjectMeta from "./ProjectMeta.svelte";
+  import Issues from "./Issues.svelte";
   import Message from "@app/components/Message.svelte";
+  import NewIssue from "./Issue/New.svelte";
+  import Patch from "./Patch.svelte";
+  import Patches from "./Patches.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import ProjectMeta from "./ProjectMeta.svelte";
 
   export let activeRoute: ProjectRoute;
 
@@ -60,6 +62,24 @@
     return project;
   };
 
+  const handleIssueCreation = () => {
+    router.push({
+      resource: "projects",
+      params: {
+        id,
+        seed,
+        view: {
+          resource: "issues",
+        },
+      },
+    });
+    // This assignment allows us to have an up-to-date issue count
+    projectPromise = getProject(id, seed, peer);
+  };
+
+  // React to peer changes
+  $: projectPromise = getProject(id, seed, peer);
+
   // Content can be altered in child components.
   $: revision = activeRoute.params.revision || null;
 </script>
@@ -92,7 +112,7 @@
   }
 </style>
 
-{#await getProject(id, seed, peer)}
+{#await projectPromise}
   <main>
     <header>
       <Loading center />
@@ -128,11 +148,25 @@
             <Message error>{e.message}</Message>
           </div>
         {/await}
+      {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
+        {#if $sessionStore}
+          <NewIssue
+            on:create={handleIssueCreation}
+            session={$sessionStore}
+            {project} />
+        {:else}
+          <div class="message">
+            <Message error>
+              Could not access the issue creation. Make sure you're still logged
+              in.
+            </Message>
+          </div>
+        {/if}
       {:else if activeRoute.params.view.resource === "issues"}
         {#await issue.Issue.getIssues(project.id, project.seed.addr)}
           <Loading center />
         {:then issues}
-          <Issues state={issueFilter} {issues} />
+          <Issues {project} state={issueFilter} {issues} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -152,7 +186,7 @@
         {#await patch.Patch.getPatches(project.id, project.seed.addr)}
           <Loading center />
         {:then patches}
-          <Patches state={patchFilter} {patches} />
+          <Patches {project} state={patchFilter} {patches} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -176,7 +210,7 @@
         {#if peer}
           <Placeholder emoji="🍂">
             <span slot="title">
-              <span class="txt-monospace">{formatSeedId(peer)}</span>
+              <span class="txt-monospace">{formatNodeId(peer)}</span>
             </span>
             <span slot="body">
               <span style="display: block">

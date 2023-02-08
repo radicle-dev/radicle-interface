@@ -123,28 +123,22 @@
     <span class="txt-bold">{tree.stats.commits}</span>
     commit(s)
   </HeaderToggleLabel>
-  {#if project.issues}
-    <HeaderToggleLabel
-      ariaLabel="Issue count"
-      active={activeRoute.params.view.resource === "issues"}
-      disabled={project.issues === 0}
-      clickable={project.issues > 0}
-      on:click={() => toggleContent("issues", false)}>
-      <span class="txt-bold">{project.issues}</span>
-      issue(s)
-    </HeaderToggleLabel>
-  {/if}
-  {#if project.patches}
-    <HeaderToggleLabel
-      ariaLabel="Patch count"
-      clickable={project.patches > 0}
-      active={activeRoute.params.view.resource === "patches"}
-      disabled={project.patches === 0}
-      on:click={() => toggleContent("patches", false)}>
-      <span class="txt-bold">{project.patches}</span>
-      patch(es)
-    </HeaderToggleLabel>
-  {/if}
+  <HeaderToggleLabel
+    ariaLabel="Issue count"
+    active={activeRoute.params.view.resource === "issues"}
+    clickable
+    on:click={() => toggleContent("issues", false)}>
+    <span class="txt-bold">{project.issues.open ?? 0}</span>
+    issue(s)
+  </HeaderToggleLabel>
+  <HeaderToggleLabel
+    ariaLabel="Patch count"
+    clickable
+    active={activeRoute.params.view.resource === "patches"}
+    on:click={() => toggleContent("patches", false)}>
+    <span class="txt-bold">{project.patches.proposed ?? 0}</span>
+    patch(es)
+  </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>
     contributor(s)

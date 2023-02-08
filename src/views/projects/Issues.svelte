@@ -3,19 +3,23 @@
 </script>
 
 <script lang="ts">
+  import type { Project } from "@app/lib/project";
   import type { Issue } from "@app/lib/issue";
   import type { Tab } from "@app/components/TabBar.svelte";
 
+  import * as router from "@app/lib/router";
   import { capitalize } from "@app/lib/utils";
   import { groupIssues } from "@app/lib/issue";
-  import * as router from "@app/lib/router";
+  import { sessionStore } from "@app/lib/session";
 
+  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import TabBar from "@app/components/TabBar.svelte";
 
   export let issues: Issue[];
   export let state: State;
+  export let project: Project;
 
   let options: Tab<State>[];
   const { open, closed } = groupIssues(issues);
@@ -28,11 +32,11 @@
   $: options = [
     {
       value: "open",
-      count: open.length,
+      count: project.issues.open,
     },
     {
       value: "closed",
-      count: closed.length,
+      count: project.issues.closed,
     },
   ];
 </script>
@@ -49,6 +53,12 @@
   .teaser:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
   }
+  .section-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
 
   @media (max-width: 960px) {
     .issues {
@@ -58,14 +68,29 @@
 </style>
 
 <div class="issues">
-  <div style="margin-bottom: 1rem;">
-    <TabBar
-      {options}
-      on:select={e =>
+  <div class="section-header">
+    <div style="margin-bottom: 1rem;">
+      <TabBar
+        {options}
+        on:select={e =>
+          router.updateProjectRoute({
+            search: `state=${e.detail}`,
+          })}
+        active={state} />
+    </div>
+    <HeaderToggleLabel
+      disabled={!$sessionStore}
+      on:click={() => {
         router.updateProjectRoute({
-          search: `state=${e.detail}`,
-        })}
-      active={state} />
+          view: {
+            resource: "issues",
+            params: { view: { resource: "new" } },
+          },
+        });
+      }}
+      clickable>
+      New issue
+    </HeaderToggleLabel>
   </div>
 
   {#if filteredIssues.length}
@@ -87,7 +112,7 @@
       {/each}
     </div>
   {:else}
-    <Placeholder emoji="🍣">
+    <Placeholder emoji="🍂">
       <div slot="title">{capitalize(state)} issues</div>
       <div slot="body">No issues matched the current filter</div>
     </Placeholder>

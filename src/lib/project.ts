@@ -41,10 +41,17 @@ export interface ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[]; // TODO: Remove this after we have migrated to Heartwood.
+  delegates: string[];
   remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
-  patches?: number;
-  issues?: number;
+  patches: {
+    proposed: number;
+    draft: number;
+    archived: number;
+  };
+  issues: {
+    open: number;
+    closed: number;
+  };
 }
 
 export interface Tree {
@@ -153,14 +160,20 @@ export class Project implements ProjectInfo {
   name: string;
   description: string;
   defaultBranch: string;
-  delegates: Delegate[]; // TODO: Remove this after we have migrated to Heartwood.
+  delegates: string[];
   remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
   seed: Seed;
   peers: Peer[];
   branches: Branches;
-  // At the moment we still have seed nodes which won't return neither patches or issues
-  patches?: number;
-  issues?: number;
+  patches: {
+    proposed: number;
+    draft: number;
+    archived: number;
+  };
+  issues: {
+    open: number;
+    closed: number;
+  };
 
   constructor(
     id: string,
@@ -174,7 +187,7 @@ export class Project implements ProjectInfo {
     this.name = info.name;
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
-    this.delegates = info.delegates; // TODO: Remove this after we have migrated to Heartwood.
+    this.delegates = info.delegates;
     this.remotes = info.remotes; // TODO: Remove this after we have migrated to Heartwood.
     this.seed = seed;
     this.peers = peers;
@@ -407,11 +420,10 @@ export class Project implements ProjectInfo {
       ? seedHost.split(":")
       : [seedHost, defaultSeedPort];
 
-    const seed = await Seed.lookup(host, Number(port));
-
-    if (!seed) {
+    const seed = await Seed.lookup(host, Number(port)).catch(() => {
       throw new Error("Couldn't load project");
-    }
+    });
+
     if (!seed?.valid) {
       throw new Error("Couldn't load project: invalid seed");
     }

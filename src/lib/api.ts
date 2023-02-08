@@ -1,4 +1,5 @@
 import { defaultSeedPort } from "@app/lib/seed";
+import { isLocal } from "@app/lib/utils";
 
 export interface Host {
   host: string;
@@ -19,7 +20,7 @@ export class Request {
       this.base = api.host;
     }
     this.path = path.startsWith("/") ? path.slice(1) : path;
-    this.protocol = api.host === "0.0.0.0" ? "http://" : "https://";
+    this.protocol = isLocal(api.host) ? "http://" : "https://";
   }
 
   async get(
@@ -87,7 +88,7 @@ export class Request {
     const query: Record<string, string> = {};
     for (const [key, val] of Object.entries(params)) {
       if (val !== undefined && val !== null) {
-        query[key] = val.toString();
+        query[key] = val;
       }
     }
 

@@ -5,6 +5,7 @@
 <script lang="ts">
   import type { Patch } from "@app/lib/patch";
   import type { Tab } from "@app/components/TabBar.svelte";
+  import type { Project } from "@app/lib/project";
 
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
@@ -16,6 +17,7 @@
 
   export let state: State;
   export let patches: Patch[];
+  export let project: Project;
 
   let options: Tab<State>[];
   const sortedPatches = groupPatches(patches);
@@ -24,15 +26,15 @@
   $: options = [
     {
       value: "proposed",
-      count: sortedPatches.proposed.length,
+      count: project.patches.proposed,
     },
     {
       value: "draft",
-      count: sortedPatches.draft.length,
+      count: project.patches.draft,
     },
     {
       value: "archived",
-      count: sortedPatches.archived.length,
+      count: project.patches.archived,
     },
   ];
 </script>
@@ -84,7 +86,7 @@
       {/each}
     </div>
   {:else}
-    <Placeholder emoji="🍖">
+    <Placeholder emoji="🍂">
       <div slot="title">{capitalize(state)} patches</div>
       <div slot="body">No patches matched the current filter</div>
     </Placeholder>

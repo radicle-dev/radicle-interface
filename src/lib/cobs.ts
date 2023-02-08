@@ -1,26 +1,23 @@
-import type { PeerId } from "@app/lib/project";
+export type Thread = Comment<Comment[]>;
+
+export interface Comment<R = null> {
+  author: Author;
+  body: string;
+  reactions: Record<string, number>;
+  timestamp: number;
+  replies: R; // TODO: Remove for Heartwood migration
+  replyTo: R;
+}
 
 export interface Author {
-  peer: PeerId;
   id: string;
-  profile: {
-    name: string;
-    ens: {
-      name: string;
-    } | null;
-  } | null;
 }
 
 export interface PeerIdentity {
   id: string;
-  name: string;
-  ens: {
-    name: string;
-  } | null;
 }
-
 export interface PeerInfo {
-  id: PeerId;
+  id: string;
   person?: PeerIdentity;
   delegate: boolean;
 }

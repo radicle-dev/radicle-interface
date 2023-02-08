@@ -11,11 +11,15 @@ describe("Format functions", () => {
 
   test.each([
     {
-      id: "hydkkkf5ksbe5fuszdhpqhytu3q36gwagj874wxwpo5a8ti8coygh1",
-      expected: "hydkkk…coygh1",
+      id: "did:key:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      expected: "did:key:z6Mkmz…md6fz6",
     },
-  ])("formatSeedId $id => $expected", ({ id, expected }) => {
-    expect(utils.formatSeedId(id)).toEqual(expected);
+    {
+      id: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      expected: "did:key:z6Mkmz…md6fz6",
+    },
+  ])("formatNodeId $id => $expected", ({ id, expected }) => {
+    expect(utils.formatNodeId(id)).toEqual(expected);
   });
 
   test("formatRadicleId", () => {
@@ -97,12 +101,38 @@ describe("String Assertions", () => {
   });
 });
 
-describe("Parse Strings", () => {
+describe("Parse Functions", () => {
   test.each([
     { input: "https://twitter.com/cloudhead", expected: "cloudhead" },
     { input: "sebastinez", expected: "sebastinez" },
   ])("parseUsername", ({ input, expected }) => {
     expect(utils.parseUsername(input)).toEqual(expected);
+  });
+  test.each([
+    {
+      input: "rad:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      expected: undefined,
+    },
+    {
+      input: "did:key:z6Mkmz…md6fz6",
+      expected: undefined,
+    },
+    {
+      input: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      expected: {
+        prefix: "did:key:",
+        pubkey: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      },
+    },
+    {
+      input: "did:key:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      expected: {
+        prefix: "did:key:",
+        pubkey: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
+      },
+    },
+  ])("parseNid", ({ input, expected }) => {
+    expect(utils.parseNid(input)).toEqual(expected);
   });
 });
 

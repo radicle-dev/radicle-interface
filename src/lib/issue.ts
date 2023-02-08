@@ -1,5 +1,7 @@
-import { type Host, Request } from "@app/lib/api";
 import type { Author } from "@app/lib/cobs";
+import type { Host } from "@app/lib/api";
+
+import { Request } from "@app/lib/api";
 
 export interface TimelineItem {
   person: Author;
@@ -14,7 +16,8 @@ export interface IIssue {
   state: State;
   comment: Comment; // TODO: Remove this after we have migrated to Heartwood.
   discussion: Thread[];
-  tags: Tag[];
+  tags: string[];
+  assignees: string[];
   timestamp: number;
 }
 
@@ -38,8 +41,6 @@ export interface Comment<R = null> {
 
 export type Thread = Comment<Comment[]>;
 
-export type Tag = string;
-
 export function groupIssues(issues: Issue[]): {
   open: Issue[];
   closed: Issue[];
@@ -60,7 +61,8 @@ export class Issue {
   state: State;
   comment: Comment; // TODO: Remove this after we have migrated to Heartwood.
   discussion: Thread[];
-  tags: Tag[];
+  tags: string[];
+  assignees: string[];
   timestamp: number;
 
   constructor(issue: IIssue) {
@@ -71,6 +73,7 @@ export class Issue {
     this.comment = issue.comment; // TODO: Remove this after we have migrated to Heartwood.
     this.discussion = issue.discussion;
     this.tags = issue.tags;
+    this.assignees = issue.assignees;
     if (window.HEARTWOOD) {
       this.timestamp = issue.discussion[0].timestamp;
     } else {
@@ -90,6 +93,26 @@ export class Issue {
         return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
       }, 0);
     }
+  }
+
+  static async createIssue(
+    project: string,
+    title: string,
+    description: string,
+    assignees: string[],
+    tags: string[],
+    host: Host,
+    authToken: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues`, host).post(
+      {
+        title,
+        description,
+        assignees,
+        tags,
+      },
+      { Authorization: `Bearer ${authToken}` },
+    );
   }
 
   static async getIssues(id: string, host: Host): Promise<Issue[]> {

@@ -2,9 +2,8 @@
   import type { Issue } from "@app/lib/issue";
 
   import { formatObjectId } from "@app/lib/cobs";
-  import { twemoji } from "@app/lib/utils";
-
   import Authorship from "@app/components/Authorship.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let issue: Issue;
 
@@ -13,11 +12,10 @@
 
 <style>
   .issue-teaser {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--color-foreground-1);
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) 4rem;
     padding: 0.75rem 0;
+    background-color: var(--color-foreground-1);
   }
   .issue-teaser:hover {
     background-color: var(--color-foreground-2);
@@ -29,27 +27,33 @@
     font-family: var(--font-family-monospace);
     margin-left: 0.5rem;
   }
-
-  .column-left {
-    flex: min-content;
-  }
-  .column-right {
+  .summary {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    margin-right: 1rem;
-    flex-basis: 5rem;
+    padding-right: 2rem;
+  }
+  .issue-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .comment-count {
-    color: var(--color-foreground-4);
-    font-weight: var(--font-weight-bold);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-foreground-5);
   }
-  .comment-count .emoji {
-    margin-right: 0.25rem;
+
+  .column-right {
+    align-self: center;
+    justify-self: center;
   }
 
   .state {
-    padding: 0 1rem;
+    justify-self: center;
+    align-self: center;
   }
   .state-icon {
     width: 0.5rem;
@@ -62,27 +66,6 @@
   .closed {
     background-color: var(--color-negative);
   }
-  .summary {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-right: 1rem;
-  }
-
-  @media (max-width: 720px) {
-    .column-left {
-      overflow: hidden;
-    }
-    .summary {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      padding-right: 1rem;
-    }
-  }
 </style>
 
 <div class="issue-teaser">
@@ -94,8 +77,7 @@
   </div>
   <div class="column-left">
     <div class="summary">
-      <!-- TODO: Truncation not working on overflow -->
-      {issue.title}
+      <span class="issue-title">{issue.title}</span>
       <span class="issue-id">{formatObjectId(issue.id)}</span>
     </div>
     <Authorship
@@ -106,7 +88,7 @@
   {#if commentCount > 0}
     <div class="column-right">
       <div class="comment-count">
-        <span class="txt-tiny emoji" use:twemoji>💬</span>
+        <Icon name="chat" />
         <span>{commentCount}</span>
       </div>
     </div>
