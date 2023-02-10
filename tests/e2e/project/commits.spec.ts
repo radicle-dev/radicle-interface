@@ -47,7 +47,9 @@ test("peer and branch switching", async ({ page }) => {
       "feature/branch d6318f7",
     );
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".commit-group-headers .commit")).toHaveCount(10);
+    await expect(
+      page.locator(".commit-group-headers .commit-teaser"),
+    ).toHaveCount(10);
 
     await page.getByTitle("Change branch").click();
     await page.locator("text=orphaned-branch").click();
@@ -157,7 +159,7 @@ test("relative timestamps", async ({ page }) => {
     await expect(latestCommit).toContainText("2b32f6f");
   }
 
-  const earliestCommit = page.locator(".commit").last();
+  const earliestCommit = page.locator(".commit-teaser").last();
   await expect(earliestCommit).toContainText(
     "Alice Liddell committed last month",
   );

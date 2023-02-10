@@ -28,6 +28,7 @@
   }
   .commit-teaser:hover {
     background-color: var(--color-foreground-2);
+    cursor: pointer;
   }
   .commit-teaser:first-child {
     border-top-left-radius: var(--border-radius-small);
@@ -36,6 +37,9 @@
   .commit-teaser:last-child {
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
+  }
+  .commit-teaser:not(:last-child) {
+    border-bottom: 1px solid var(--color-background);
   }
   .commit-teaser {
     display: flex;
@@ -84,7 +88,8 @@
   }
 </style>
 
-<div class="commit-teaser">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="commit-teaser" on:click>
   <div class="column-left">
     <div class="header">
       <div class="summary" use:twemoji>

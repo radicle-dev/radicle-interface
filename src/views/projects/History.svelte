@@ -40,22 +40,6 @@
   .commit-group-headers {
     margin-bottom: 2rem;
   }
-  .commit:not(:last-child) {
-    border-bottom: 1px dashed var(--color-background);
-  }
-  .commit:hover {
-    background-color: var(--color-foreground-2);
-    cursor: pointer;
-    border-radius: var(--border-radius-small);
-  }
-  .commit:first-child {
-    border-top-left-radius: var(--border-radius-small);
-    border-top-right-radius: var(--border-radius-small);
-  }
-  .commit:last-child {
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
-  }
 
   @media (max-width: 960px) {
     .history {
@@ -75,17 +59,15 @@
           </header>
           <div class="commit-group-headers">
             {#each group.commits as commit (commit.commit.id)}
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                class="commit"
+              <CommitTeaser
+                {commit}
                 on:click={() => {
                   router.updateProjectRoute({
                     view: { resource: "commits" },
                     revision: commit.commit.id,
                   });
-                }}>
-                <CommitTeaser {commit} on:browseCommit={browseCommit} />
-              </div>
+                }}
+                on:browseCommit={browseCommit} />
             {/each}
           </div>
         </div>
