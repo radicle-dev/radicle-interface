@@ -8,7 +8,7 @@ import {
 
 test("navigate to existing project", async ({ page }) => {
   await page.goto("/");
-  const searchInput = page.getByPlaceholder("Search a name or address…");
+  const searchInput = page.getByPlaceholder("Search a name…");
   await searchInput.click();
   await searchInput.fill(`${ridPrefix}${rid}`);
   await searchInput.press("Enter");
@@ -19,7 +19,7 @@ test("navigate to existing project", async ({ page }) => {
 
 test("navigate to a project that does not exist", async ({ page }) => {
   await page.goto("/");
-  const searchInput = page.getByPlaceholder("Search a name or address…");
+  const searchInput = page.getByPlaceholder("Search a name…");
   await searchInput.click();
 
   const nonExistantId = `${ridPrefix}:zt${rid.substring(2)}`;

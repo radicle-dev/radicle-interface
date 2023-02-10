@@ -29,18 +29,11 @@
     display: flex;
     height: var(--button-regular-height);
     align-items: center;
-    margin-right: 0.5rem;
-  }
-  .search {
-    width: 16rem;
   }
 
   @media (max-width: 720px) {
     header .right {
       gap: 1rem;
-    }
-    .search {
-      display: none;
     }
   }
 
@@ -65,9 +58,7 @@
 <header>
   <div class="left">
     <Link route={{ resource: "home" }}><span class="logo"><Logo /></span></Link>
-    <div class="search">
-      <Search />
-    </div>
+    <Search />
   </div>
 
   <div class="right">

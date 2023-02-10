@@ -17,7 +17,7 @@
       case "/": {
         event.preventDefault();
         const searchInput: HTMLElement | null = document.querySelector(
-          '*[placeholder="Search a name or address…"]',
+          '*[placeholder="Search a name…"]',
         );
         searchInput?.focus();
         break;

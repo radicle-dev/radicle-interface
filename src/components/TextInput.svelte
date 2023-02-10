@@ -21,6 +21,7 @@
   }>();
 
   let rightContainerWidth: number;
+  let leftContainerWidth: number;
   let inputElement: HTMLInputElement | undefined = undefined;
 
   onMount(() => {
@@ -84,6 +85,18 @@
   .dashed:focus {
     background: var(--color-background-1);
   }
+  .left-container {
+    color: var(--color-secondary);
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    height: var(--button-regular-height);
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    gap: 0.5rem;
+  }
   .right-container {
     color: var(--color-secondary);
     position: absolute;
@@ -120,9 +133,18 @@
 
 <div class="wrapper">
   <div class="validation-wrapper">
+    <div class="left-container" bind:clientWidth={leftContainerWidth}>
+      {#if $$slots.left}
+        <slot name="left" />
+      {/if}
+    </div>
+
     <input
       class:regular={variant === "regular"}
       class:dashed={variant === "dashed"}
+      style:padding-left={leftContainerWidth
+        ? `${leftContainerWidth}px`
+        : "auto"}
       style:padding-right={rightContainerWidth
         ? `${rightContainerWidth}px`
         : "auto"}
@@ -133,6 +155,8 @@
       {disabled}
       bind:value
       on:input
+      on:focus
+      on:blur
       on:keydown|stopPropagation={handleKeydown}
       on:click
       on:change />

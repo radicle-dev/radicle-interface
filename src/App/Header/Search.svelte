@@ -1,24 +1,29 @@
 <script lang="ts" strictEvents>
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
-  import * as router from "@app/lib/router";
 
   import * as Search from "@app/lib/search";
   import * as modal from "@app/lib/modal";
+  import * as router from "@app/lib/router";
+  import { unreachable } from "@app/lib/utils";
+
+  import Icon from "@app/components/Icon.svelte";
   import SearchResultsModal from "@app/App/Header/SearchResultsModal.svelte";
   import TextInput from "@app/components/TextInput.svelte";
-  import { unreachable } from "@app/lib/utils";
 
   const dispatch = createEventDispatcher<{
     finished: never;
   }>();
 
-  let input = "";
+  export let input = "";
   let loading = false;
   let shaking = false;
 
   // Clears search input on user navigation.
   router.historyStore.subscribe(() => (input = ""));
+
+  const collapsedWidth = 13;
+  const expandedWidth = 20;
 
   function shake() {
     shaking = true;
@@ -64,6 +69,7 @@
         });
       }
       dispatch("finished");
+      searchBarWidth = collapsedWidth;
     } else {
       unreachable(searchResult);
     }
@@ -71,6 +77,7 @@
   }
 
   $: valid = input !== "";
+  $: searchBarWidth = collapsedWidth;
 </script>
 
 <style>
@@ -97,15 +104,31 @@
       transform: translateX(0);
     }
   }
+  .search {
+    transition: all 0.2s;
+  }
+  @media (max-width: 720px) {
+    .search {
+      display: none;
+    }
+  }
 </style>
 
-<div class="search-bar" class:shaking>
-  <TextInput
-    variant="dashed"
-    valid={input !== ""}
-    {loading}
-    disabled={loading}
-    bind:value={input}
-    on:submit={search}
-    placeholder="Search a name or address…" />
+<div class="search" style:width={`${searchBarWidth}rem`}>
+  <div class="search-bar" class:shaking>
+    <TextInput
+      valid={input !== ""}
+      {loading}
+      disabled={loading}
+      bind:value={input}
+      on:focus={() => (searchBarWidth = expandedWidth)}
+      on:blur={() =>
+        input === "" ? (searchBarWidth = collapsedWidth) : undefined}
+      on:submit={search}
+      placeholder="Search a name…">
+      <div slot="left">
+        <Icon name="magnifying-glass" />
+      </div>
+    </TextInput>
+  </div>
 </div>
