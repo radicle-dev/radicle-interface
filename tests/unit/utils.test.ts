@@ -20,8 +20,8 @@ describe("Format functions", () => {
 
   test("formatRadicleId", () => {
     if (process.env.HEARTWOOD) {
-      expect(utils.formatRadicleId("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT")).toEqual(
-        "rad:zKtT7D…19WzjT",
+      expect(utils.formatRadicleId("zKtT7DmF9H34KkvcKj9PHW19WzjT")).toEqual(
+        "zKtT7D…19WzjT",
       );
     } else {
       expect(
@@ -30,10 +30,10 @@ describe("Format functions", () => {
     }
   });
 
-  test("formatRadicleId throw when wrong ID", () => {
-    expect(() =>
+  test("formatRadicleId return original input when wrong ID", () => {
+    expect(
       utils.formatRadicleId("hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
-    ).toThrow();
+    ).toEqual("hnrkemobagsicpf9sr95o3g551otspcd84c9o");
   });
 
   test.each([

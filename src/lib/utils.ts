@@ -1,7 +1,7 @@
+import bs58 from "bs58";
 import md5 from "md5";
 import twemojiModule from "twemoji";
 
-import { assert } from "@app/lib/error";
 import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
 
@@ -47,7 +47,10 @@ export function formatSeedId(id: string): string {
 }
 
 export function formatRadicleId(id: string): string {
-  assert(isRadicleId(id));
+  if (!isRadicleId(id)) {
+    console.warn("Received Radicle id isn't valid");
+    return id;
+  }
 
   if (window.HEARTWOOD) {
     return id.substring(0, 10) + "…" + id.substring(id.length - 6, id.length);
@@ -163,7 +166,13 @@ export const formatTimestamp = (
 // Check whether the input is a Radicle ID.
 export function isRadicleId(input: string): boolean {
   if (window.HEARTWOOD) {
-    return /^rad:[a-zA-Z0-9]+$/.test(input);
+    if (!input.startsWith("z")) {
+      return false;
+    }
+    const hex = bs58.decode(input.substring(1));
+    // This checks also that the first 2 bytes are equal
+    // to the ed25519 public key type used.
+    return hex.byteLength === 34 && hex[0] === 237 && hex[1] === 1;
   } else {
     return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
   }
