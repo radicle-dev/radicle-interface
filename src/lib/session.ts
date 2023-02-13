@@ -7,6 +7,8 @@ interface Session {
 const store = writable<Session | undefined>(undefined);
 export const sessionStore = derived(store, s => s);
 
+const endpoint = "http://localhost:8080/api/v1/sessions";
+
 export async function authenticate(params: {
   id: string;
   signature: string;
@@ -14,14 +16,11 @@ export async function authenticate(params: {
 }): Promise<"success" | "failure"> {
   disconnect();
 
-  const request = await fetch(
-    `http://0.0.0.0:8080/api/v1/sessions/${params.id}`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sig: params.signature, pk: params.publicKey }),
-    },
-  );
+  const request = await fetch(`${endpoint}/${params.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sig: params.signature, pk: params.publicKey }),
+  });
   if (request.ok) {
     save(params.id, params.publicKey);
     return "success";
@@ -36,7 +35,7 @@ export async function disconnect() {
     return "success";
   }
 
-  await fetch(`http://0.0.0.0:8080/api/v1/sessions/${session.id}`, {
+  await fetch(`${endpoint}/${session.id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
