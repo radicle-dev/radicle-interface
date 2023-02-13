@@ -4,6 +4,15 @@ interface Session {
   id: string;
   publicKey: string;
 }
+
+interface SessionResponse {
+  sessionId: string;
+  status: string;
+  publicKey: string;
+  issuedAt: number;
+  expiresAt: number;
+}
+
 const store = writable<Session | undefined>(undefined);
 export const sessionStore = derived(store, s => s);
 
@@ -29,6 +38,38 @@ export async function authenticate(params: {
   }
 }
 
+let pollSessionHandle: number | undefined = undefined;
+
+function pollSession() {
+  if (pollSessionHandle) {
+    return;
+  }
+
+  pollSessionHandle = window.setInterval(async () => {
+    const session = get(sessionStore);
+    if (!session) {
+      return;
+    }
+
+    try {
+      const resp = await fetch(`${endpoint}/${session.id}`, {
+        method: "GET",
+      });
+
+      const sess: SessionResponse = await resp.json();
+      const unixTimeInSeconds = Math.floor(Date.now() / 1000);
+      if (
+        sess.status === "unauthorized" ||
+        sess.expiresAt < unixTimeInSeconds
+      ) {
+        clear();
+      }
+    } catch {
+      clear();
+    }
+  }, 60_000);
+}
+
 export async function disconnect() {
   const session = get(store);
   if (!session) {
@@ -43,13 +84,17 @@ export async function disconnect() {
     },
   });
 
-  window.localStorage.removeItem("session");
-  store.set(undefined);
+  clear();
 }
 
 function save(id: string, publicKey: string) {
   window.localStorage.setItem("session", JSON.stringify({ id, publicKey }));
   store.set({ id, publicKey });
+}
+
+function clear() {
+  window.localStorage.removeItem("session");
+  store.set(undefined);
 }
 
 export function initialize() {
@@ -76,4 +121,17 @@ export function initialize() {
       store.set({ id: parsed.id, publicKey: parsed.publicKey });
     }
   }
+
+  // Properly clean up setInterval and restart session polling when Vite
+  // performs hot module reload on file changes.
+  if (import.meta.hot) {
+    import.meta.hot.accept();
+    import.meta.hot.dispose(() => {
+      clearInterval(pollSessionHandle);
+      pollSessionHandle = undefined;
+      pollSession();
+    });
+  }
+
+  pollSession();
 }

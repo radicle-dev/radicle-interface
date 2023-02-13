@@ -115,11 +115,6 @@ export function parseUsername(input: string): string {
   return parts[parts.length - 1];
 }
 
-// Return the current unix time.
-export function unixTime(): number {
-  return Math.floor(Date.now() / 1000);
-}
-
 export const formatTimestamp = (
   timestamp: number,
   current = new Date().getTime(),
