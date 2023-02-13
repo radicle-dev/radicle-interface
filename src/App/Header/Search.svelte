@@ -16,14 +16,13 @@
   }>();
 
   export let input = "";
+
   let loading = false;
   let shaking = false;
+  let expanded = false;
 
   // Clears search input on user navigation.
   router.historyStore.subscribe(() => (input = ""));
-
-  const collapsedWidth = 13;
-  const expandedWidth = 20;
 
   function shake() {
     shaking = true;
@@ -69,7 +68,7 @@
         });
       }
       dispatch("finished");
-      searchBarWidth = collapsedWidth;
+      expanded = false;
     } else {
       unreachable(searchResult);
     }
@@ -77,7 +76,6 @@
   }
 
   $: valid = input !== "";
-  $: searchBarWidth = collapsedWidth;
 </script>
 
 <style>
@@ -106,24 +104,33 @@
   }
   .search {
     transition: all 0.2s;
+    width: 13rem;
+  }
+  .expanded {
+    width: 20rem;
   }
   @media (max-width: 720px) {
-    .search {
-      display: none;
+    .expanded {
+      width: 13rem;
     }
   }
 </style>
 
-<div class="search" style:width={`${searchBarWidth}rem`}>
+<div class="search" class:expanded>
   <div class="search-bar" class:shaking>
     <TextInput
       valid={input !== ""}
       {loading}
       disabled={loading}
       bind:value={input}
-      on:focus={() => (searchBarWidth = expandedWidth)}
-      on:blur={() =>
-        input === "" ? (searchBarWidth = collapsedWidth) : undefined}
+      on:focus={() => {
+        expanded = true;
+      }}
+      on:blur={() => {
+        if (input === "") {
+          expanded = false;
+        }
+      }}
       on:submit={search}
       placeholder="Search a name…">
       <div slot="left">

@@ -62,7 +62,9 @@
   </div>
 
   <div class="right">
-    <Connect />
+    <div class="layout-desktop">
+      <Connect />
+    </div>
     <Floating>
       <div slot="toggle">
         <button class="toggle" name="Settings">
@@ -71,14 +73,5 @@
       </div>
       <SettingsDropdown slot="modal" />
     </Floating>
-    <div class="layout-mobile">
-      <Floating>
-        <div slot="toggle">
-          <span style="transform: scale(1.2);">
-            <Icon name="ellipsis" />
-          </span>
-        </div>
-      </Floating>
-    </div>
   </div>
 </header>
