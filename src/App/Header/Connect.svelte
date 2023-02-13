@@ -80,6 +80,7 @@
     top: 0;
     visibility: hidden;
     width: 3rem;
+    height: 100%;
   }
   .cmd:hover .cmd-clipboard {
     visibility: visible;
