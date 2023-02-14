@@ -133,9 +133,9 @@
       }}
       on:submit={search}
       placeholder="Search a name…">
-      <div slot="left">
+      <svelte:fragment slot="left">
         <Icon name="magnifying-glass" />
-      </div>
+      </svelte:fragment>
     </TextInput>
   </div>
 </div>
