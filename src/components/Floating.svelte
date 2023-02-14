@@ -9,12 +9,11 @@
 
 <script lang="ts">
   export let disabled = false;
-  export let overlay = false;
 
   let expanded = false;
   let thisComponent: HTMLDivElement;
 
-  function clickOutside(ev: MouseEvent) {
+  function clickOutside(ev: MouseEvent | TouchEvent) {
     if (!$focused?.contains(ev.target as HTMLDivElement)) {
       closeFocused();
     }
@@ -35,21 +34,12 @@
 </script>
 
 <style>
-  .overlay {
-    background-color: #00000075;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
   .toggle {
     user-select: none;
   }
 </style>
 
-<svelte:window on:click={clickOutside} />
+<svelte:window on:click={clickOutside} on:touchstart={clickOutside} />
 
 <div bind:this={thisComponent}>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -61,10 +51,6 @@
   </div>
 
   {#if expanded}
-    {#if overlay}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div class="overlay" on:click={toggle} />
-    {/if}
     <slot name="modal" />
   {/if}
 </div>
