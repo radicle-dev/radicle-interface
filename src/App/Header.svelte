@@ -62,9 +62,11 @@
   </div>
 
   <div class="right">
-    <div class="layout-desktop">
-      <Connect />
-    </div>
+    {#if window.HEARTWOOD}
+      <div class="layout-desktop">
+        <Connect />
+      </div>
+    {/if}
     <Floating>
       <div slot="toggle">
         <button class="toggle" name="Settings">

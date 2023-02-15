@@ -3,6 +3,7 @@
 
   import * as router from "@app/lib/router";
   import * as session from "@app/lib/session";
+  import { twemoji } from "@app/lib/utils";
   import { unreachable } from "@app/lib/utils";
 
   import Header from "./App/Header.svelte";
@@ -45,6 +46,20 @@
     flex-direction: column;
     height: 100%;
   }
+  .deprecation {
+    z-index: 100;
+    top: 0;
+    background: var(--color-foreground-3);
+    padding: 4px 0;
+    text-align: center;
+    font-size: var(--font-size-small);
+  }
+  .deprecation ::selection {
+    background: var(--color-foreground);
+  }
+  .deprecation :global(img::selection) {
+    background: var(--color-foreground);
+  }
 </style>
 
 <svelte:head>
@@ -54,6 +69,12 @@
 <ModalPortal />
 <Hotkeys />
 
+<div class="deprecation" use:twemoji>
+  <div>
+    ℹ️ You're viewing the legacy app. Latest 👉
+    <a href="https://app.radicle.xyz" class="txt-bold">app.radicle.xyz</a>
+  </div>
+</div>
 <div class="app">
   <Header />
   <div class="wrapper">
