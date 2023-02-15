@@ -16,3 +16,13 @@ You will also see any lint errors in the console.
 
 Builds a static copy of your site to the `build/` folder.
 Your app is ready to be deployed!
+
+## Deployments
+
+Latest production deployment 👉 https://app.radicle.xyz
+
+If you want to connect to pre-heartwood seed nodes, you can run the app locally
+via the legacy IPFS deployment. To do so, you'll have to run
+[IPFS](https://ipfs.tech).
+
+Legacy deployment 👉 http://bafybeid2fxbb3zpbttnunrzm74v7l3qxtgxathiv5ucykh2ojm4dbyqdwi.ipfs.localhost:8080/#/
