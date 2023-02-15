@@ -16,7 +16,7 @@ export const activeRouteStore: Readable<Route> = derived(
   },
 );
 
-export const base = window.HASH_ROUTING ? "./" : "/";
+export const base = "./";
 
 // Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
 // Allows the jump to a anchor hash
@@ -97,9 +97,7 @@ export const push = (newRoute: Route): void => {
   // one subsequent pop() anyway.
   historyStore.set([...history, newRoute].slice(-10));
 
-  const path = window.HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
+  const path = "#" + routeToPath(newRoute);
 
   window.history.pushState(newRoute, documentTitle, path);
 };
@@ -116,9 +114,7 @@ export const pop = (): void => {
 export function replace(newRoute: Route): void {
   historyStore.set([newRoute]);
 
-  const path = window.HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
+  const path = "#" + routeToPath(newRoute);
 
   window.history.replaceState(newRoute, documentTitle, path);
 }
@@ -142,9 +138,7 @@ function pathToRoute(path: string): Route | null {
   }
 
   const url = new URL(path, window.origin);
-  const segments = window.HASH_ROUTING
-    ? url.hash.substring(2).split("#")[0].split("/") // Try to remove any additional hashes at the end of the URL.
-    : url.pathname.substring(1).split("/");
+  const segments = url.hash.substring(2).split("#")[0].split("/"); // Try to remove any additional hashes at the end of the URL.
 
   const resource = segments.shift();
   switch (resource) {

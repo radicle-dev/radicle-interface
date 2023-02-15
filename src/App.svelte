@@ -24,7 +24,7 @@
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
     const plausible = Plausible({
       domain: "app.radicle.xyz",
-      hashMode: window.HASH_ROUTING,
+      hashMode: true,
     });
 
     plausible.enableAutoPageviews();
