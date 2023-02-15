@@ -13,21 +13,6 @@
   "projects": {
     "pinned": [
       {
-        "name": "radicle-cli",
-        "id": "rad:git:hnrkmg77m8tfzj4gi4pa4mbhgysfgzwntjpao",
-        "seed": "clients.radicle.xyz"
-      },
-      {
-        "name": "radicle-interface",
-        "id": "rad:git:hnrkjajuucc6zp5eknt3s9xykqsrus44cjimy",
-        "seed": "clients.radicle.xyz"
-      },
-      {
-        "name": "radicle-client-services",
-        "id": "rad:git:hnrkk9c4zt9thuxhwi1ukxqcrs5tmhbtcsony",
-        "seed": "clients.radicle.xyz"
-      },
-      {
         "name": "solmate",
         "id": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
         "seed": "willow.radicle.garden"
@@ -60,11 +45,6 @@
       {
         "name": "tmyxer",
         "id": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
-        "seed": "pine.radicle.garden"
-      },
-      {
-        "name": "pax",
-        "id": "rad:git:hnrkffdfm4et8c4g1ebpbkjj46nagyiepmu5o",
         "seed": "pine.radicle.garden"
       },
       {
