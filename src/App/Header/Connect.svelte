@@ -3,16 +3,12 @@
 
   import { closeFocused } from "@app/components/Floating.svelte";
   import { sessionStore, disconnect } from "@app/lib/session";
-  import { toClipboard } from "@app/lib/utils";
+  import { toClipboard, formatNodeId } from "@app/lib/utils";
 
   import Avatar from "@app/components/Comment/Avatar.svelte";
   import Button from "@app/components/Button.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
-
-  function formatId(id: string) {
-    return id.substring(0, 4) + " – " + id.substring(id.length - 4, id.length);
-  }
 
   let icon: "clipboard-small" | "checkmark-small" = "clipboard-small";
 
@@ -43,7 +39,7 @@
     position: absolute;
     right: 5rem;
     top: 5rem;
-    width: 16.5rem;
+    width: 15rem;
   }
   .info {
     align-items: flex-start;
@@ -118,7 +114,6 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     user-select: none;
-    width: 11rem;
     word-break: break-all;
   }
   .disconnect {
@@ -171,7 +166,7 @@
               title={$sessionStore.publicKey} />
           </div>
           <div class="user-id txt-small">
-            {formatId($sessionStore.publicKey)}
+            {formatNodeId($sessionStore.publicKey)}
           </div>
         </div>
       {:else}
@@ -214,7 +209,7 @@
               }
             }}>
             <div class="id">
-              {$sessionStore.publicKey}
+              {formatNodeId($sessionStore.publicKey)}
             </div>
             <div class="id-clipboard">
               <Icon name={icon} />

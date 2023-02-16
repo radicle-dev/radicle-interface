@@ -5,18 +5,12 @@ import {
   bobRemote,
 } from "@tests/support/fixtures.js";
 
-const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote}/commits/${
-  process.env.HEARTWOOD
-    ? "1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"
-    : "2b32f6fe50090ebdb4cd7441e943330da3e6ff04"
-}`;
+const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote}/commits/${"1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"}`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
-  await page
-    .locator(process.env.HEARTWOOD ? `text=${bobRemote}` : "text=bob hyyzz9")
-    .click();
+  await page.locator(`text=${bobRemote.substring(0, 6)}`).click();
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.locator("text=Update readme").click();
@@ -35,13 +29,7 @@ test("relative timestamps", async ({ page }) => {
   });
   await page.goto(modifiedFileFixture);
   await expect(
-    page.locator(
-      `.commit header >> text=${
-        process.env.HEARTWOOD
-          ? "Bob Belcher committed now"
-          : "bob committed 22 hours ago"
-      }`,
-    ),
+    page.locator(`.commit header >> text=${"Bob Belcher committed now"}`),
   ).toBeVisible();
 });
 
@@ -52,16 +40,9 @@ test("modified file", async ({ page }) => {
   {
     const header = page.locator(".commit header");
     await expect(header.locator("text=Update readme")).toBeVisible();
-    if (!process.env.HEARTWOOD) {
-      await expect(header.locator("text=Verified")).toBeVisible();
-      await expect(
-        header.locator("text=2b32f6fe50090ebdb4cd7441e943330da3e6ff04"),
-      ).toBeVisible();
-    } else {
-      await expect(
-        header.locator("text=1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"),
-      ).toBeVisible();
-    }
+    await expect(
+      header.locator("text=1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"),
+    ).toBeVisible();
   }
 
   // Diff header.

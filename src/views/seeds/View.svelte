@@ -1,25 +1,27 @@
 <script lang="ts">
-  import type { Host } from "@app/lib/api";
   import type { ProjectInfo } from "@app/lib/project";
   import type { Stats } from "@app/lib/seed";
+
+  import { Project } from "@app/lib/project";
+  import { Seed } from "@app/lib/seed";
+  import { config } from "@app/lib/config";
+  import {
+    formatNodeId,
+    formatSeedHost,
+    twemoji,
+    extractHost,
+  } from "@app/lib/utils";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Projects from "@app/views/seeds/View/Projects.svelte";
   import SeedAddress from "@app/views/seeds/View/SeedAddress.svelte";
-  import { Project } from "@app/lib/project";
-  import { Seed, defaultSeedPort } from "@app/lib/seed";
-  import { formatSeedId, formatSeedHost, twemoji } from "@app/lib/utils";
 
   export let hostAndPort: string;
 
-  const [host, port] = hostAndPort.includes(":")
-    ? hostAndPort.split(":")
-    : [hostAndPort, defaultSeedPort];
-
-  const hostName = formatSeedHost(host);
-  const seedHost: Host = { host, port: Number(port) };
+  $: seedHost = extractHost(hostAndPort);
+  $: hostName = formatSeedHost(seedHost.host);
 
   const getProjectsAndStats = async (
     seed: Seed,
@@ -28,7 +30,7 @@
     projects: ProjectInfo[];
   }> => {
     const stats = await seed.getStats();
-    const projects = await Project.getProjects(seedHost, { perPage: 10 });
+    const projects = await Project.getProjects(seed.addr, { perPage: 10 });
     return { stats, projects };
   };
 </script>
@@ -81,7 +83,7 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(host, Number(port))}
+{#await Seed.lookup(seedHost)}
   <main class="layout-centered">
     <Loading center />
   </main>
@@ -99,17 +101,19 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="txt-highlight">Address</div>
-      <SeedAddress {seed} port={seed.node.port} />
+      <SeedAddress
+        {seed}
+        port={seed.node.port ?? config.seeds.defaultHttpdPort} />
       <!-- Seed ID -->
       <div class="txt-highlight">Seed ID</div>
       <div class="seed-label">
-        {formatSeedId(seed.id)}
+        {formatNodeId(seed.id)}
         <Clipboard small text={seed.id} />
       </div>
       <div class="layout-desktop" />
       <!-- API Port -->
       <div class="txt-highlight">API Port</div>
-      <div>{port}</div>
+      <div>{seed.addr.port}</div>
       <div class="layout-desktop" />
       <!-- API Version -->
       <div class="txt-highlight">Version</div>
@@ -133,7 +137,7 @@
 {:catch}
   <div class="layout-centered">
     <NotFound
-      title={host}
+      title={seedHost.host}
       subtitle="Not able to query information from this seed." />
   </div>
 {/await}

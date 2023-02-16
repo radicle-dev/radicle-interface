@@ -18,11 +18,11 @@
 </script>
 
 {#each tree.entries as entry (entry.path)}
-  {#if window.HEARTWOOD ? entry.kind === "tree" : entry.info.objectType === "TREE"}
+  {#if entry.kind === "tree"}
     <Folder
       {fetchTree}
       {loadingPath}
-      name={window.HEARTWOOD ? entry.name : entry.info.name}
+      name={entry.name}
       prefix={`${entry.path}/`}
       currentPath={path}
       on:select={onSelect} />
@@ -30,7 +30,7 @@
     <File
       active={entry.path === path}
       loading={entry.path === loadingPath}
-      name={window.HEARTWOOD ? entry.name : entry.info.name}
+      name={entry.name}
       on:click={() => onSelect({ detail: entry.path })} />
   {/if}
 {/each}

@@ -74,7 +74,7 @@
     </div>
   </header>
   <Changeset
-    stats={window.HEARTWOOD ? commit.diff.stats : commit.stats}
+    stats={commit.diff.stats}
     diff={commit.diff}
     on:browse={onBrowse} />
 </div>

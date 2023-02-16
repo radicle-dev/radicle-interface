@@ -21,11 +21,15 @@ export async function searchProjectsAndProfiles(
   try {
     const projectOnSeeds = config.seeds.pinned.map(seed => ({
       nameOrId: query,
-      seed: seed.host,
+      seed: {
+        host: seed.host,
+        port: config.seeds.defaultHttpdPort,
+        scheme: config.seeds.defaultHttpdScheme,
+      },
     }));
 
     // The query is a radicle project ID.
-    if (utils.isRadicleId(query)) {
+    if (utils.isRepositoryId(query)) {
       const projects = await Project.getMulti(projectOnSeeds);
 
       if (projects.length === 0) {

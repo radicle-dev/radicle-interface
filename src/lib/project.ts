@@ -2,27 +2,14 @@ import type { Commit, CommitHeader, CommitsHistory } from "@app/lib/commit";
 import type { Host } from "@app/lib/api";
 import type { ProjectResult } from "@app/lib/search";
 
+import * as utils from "@app/lib/utils";
 import { Request } from "@app/lib/api";
-import { Seed, defaultSeedPort } from "@app/lib/seed";
-import { isFulfilled, isOid, isRadicleId } from "@app/lib/utils";
+import { Seed } from "@app/lib/seed";
+import { isFulfilled, isOid, isRepositoryId } from "@app/lib/utils";
 
-export type Id = string;
-export type PeerId = string;
 export type Branches = { [key: string]: string };
 export type MaybeBlob = Blob | undefined;
 export type MaybeTree = Tree | undefined;
-
-// TODO: Remove this after we have migrated to Heartwood.
-export type Delegate =
-  | {
-      type: "indirect";
-      id: Id;
-      ids: PeerId[];
-    }
-  | {
-      type: "direct";
-      id: PeerId;
-    };
 
 // Enumerates the space below the Header component in the projects View component
 export enum ProjectContent {
@@ -31,8 +18,6 @@ export enum ProjectContent {
   Commit,
   Issues,
   Issue,
-  Patches,
-  Patch,
 }
 
 export interface ProjectInfo {
@@ -42,7 +27,6 @@ export interface ProjectInfo {
   description: string;
   defaultBranch: string;
   delegates: string[];
-  remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
   patches: {
     proposed: number;
     draft: number;
@@ -56,45 +40,30 @@ export interface ProjectInfo {
 
 export interface Tree {
   path: string;
-  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
   entries: Array<Entry>;
   stats: Stats;
   name: string;
-  kind: Kind;
   lastCommit: CommitHeader;
 }
 
-// TODO: Remove "TREE" and "BLOB" after we have migrated to Heartwood.
-type Kind = "tree" | "blob" | "TREE" | "BLOB";
+type Kind = "tree" | "blob";
 
 export interface Stats {
   commits: number;
   contributors: number;
 }
 
-// TODO: Remove this after we have migrated to Heartwood.
-export interface EntryInfo {
-  name: string;
-  objectType: Kind;
-  lastCommit: CommitHeader;
-}
-
 export interface Entry {
   path: string;
-  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
   name: string;
   kind: Kind;
-  lastCommit: CommitHeader;
 }
 
 export interface Blob {
-  binary?: boolean;
-  html?: boolean;
+  binary: boolean;
   content: string;
   path: string;
-  info: EntryInfo; // TODO: Remove this after we have migrated to Heartwood.
   name: string;
-  kind: Kind;
   lastCommit: CommitHeader;
 }
 
@@ -107,7 +76,7 @@ export interface Person {
 }
 
 export interface Peer {
-  id: PeerId;
+  id: string;
   person?: Person;
   delegate: boolean;
 }
@@ -161,7 +130,6 @@ export class Project implements ProjectInfo {
   description: string;
   defaultBranch: string;
   delegates: string[];
-  remotes: PeerId[]; // TODO: Remove this after we have migrated to Heartwood.
   seed: Seed;
   peers: Peer[];
   branches: Branches;
@@ -188,7 +156,6 @@ export class Project implements ProjectInfo {
     this.description = info.description;
     this.defaultBranch = info.defaultBranch;
     this.delegates = info.delegates;
-    this.remotes = info.remotes; // TODO: Remove this after we have migrated to Heartwood.
     this.seed = seed;
     this.peers = peers;
     this.branches = branches;
@@ -211,14 +178,7 @@ export class Project implements ProjectInfo {
   }
 
   static async getInfo(nameOrId: string, host: Host): Promise<ProjectInfo> {
-    if (window.HEARTWOOD) {
-      return await new Request(`projects/${nameOrId}`, host).get();
-    } else {
-      const result = await new Request(`projects/${nameOrId}`, host).get();
-      result["id"] = result["urn"];
-      delete result["urn"];
-      return result;
-    }
+    return await new Request(`projects/${nameOrId}`, host).get();
   }
 
   static async getProjects(
@@ -232,17 +192,7 @@ export class Project implements ProjectInfo {
       "per-page": opts?.perPage,
       page: opts?.page,
     };
-    if (window.HEARTWOOD) {
-      return await new Request("projects", host).get(params);
-    } else {
-      const results = await new Request("projects", host).get(params);
-      results.forEach((result: { [x: string]: any }) => {
-        result["id"] = result["urn"];
-        delete result["urn"];
-      });
-
-      return results;
-    }
+    return await new Request("projects", host).get(params);
   }
 
   static async getDelegateProjects(
@@ -295,20 +245,6 @@ export class Project implements ProjectInfo {
     const result = await new Request(`projects/${id}/commits`, host).get(
       params,
     );
-    if (!window.HEARTWOOD) {
-      for (const commit of result.headers) {
-        commit.commit = commit.header;
-        delete commit.header;
-
-        commit.commit.committer.time = commit.commit.committerTime;
-        delete commit.commit.committerTime;
-
-        commit.commit.id = commit.commit.sha1;
-        delete commit.commit.sha1;
-      }
-      result.commits = result.headers;
-      delete result.headers;
-    }
     return result;
   }
 
@@ -325,45 +261,6 @@ export class Project implements ProjectInfo {
       this.seed.addr,
     ).get();
 
-    if (!window.HEARTWOOD) {
-      result.commit = result.header;
-      delete result.header;
-
-      result.commit.committer.time = result.commit.committerTime;
-      delete result.commit.committerTime;
-
-      result.commit.id = result.commit.sha1;
-      delete result.commit.sha1;
-
-      result.stats["insertions"] = result.stats["additions"];
-      delete result.stats["additions"];
-      result.diff["added"] = result.diff["created"];
-      delete result.diff["created"];
-
-      for (const kind of ["added", "deleted", "modified"]) {
-        for (const file of result.diff[kind]) {
-          for (const hunk of file.diff.hunks) {
-            for (const line of hunk.lines) {
-              if (line["lineNumOld"]) {
-                line["lineNoOld"] = line["lineNumOld"];
-                delete line["lineNumOld"];
-              }
-
-              if (line["lineNumNew"]) {
-                line["lineNoNew"] = line["lineNumNew"];
-                delete line["lineNumNew"];
-              }
-
-              if (line["lineNum"]) {
-                line["lineNo"] = line["lineNum"];
-                delete line["lineNum"];
-              }
-            }
-          }
-        }
-      }
-    }
-
     return result;
   }
 
@@ -373,17 +270,6 @@ export class Project implements ProjectInfo {
       `projects/${this.id}/tree/${commit}/${path}`,
       this.seed.addr,
     ).get();
-    if (!window.HEARTWOOD) {
-      if (result.info.lastCommit) {
-        result.info.lastCommit.id = result.info.lastCommit.sha1;
-        delete result.info.lastCommit.sha1;
-      }
-      for (const entry of result.entries) {
-        if (entry.info.lastCommit) {
-          entry.info.lastCommit.id = entry.info.lastCommit.sha1;
-        }
-      }
-    }
     return result;
   }
 
@@ -392,10 +278,6 @@ export class Project implements ProjectInfo {
       `projects/${this.id}/blob/${commit}/${path}`,
       this.seed.addr,
     ).get();
-    if (!window.HEARTWOOD) {
-      result.info.lastCommit.id = result.info.lastCommit.sha1;
-      delete result.info.lastCommit.sha1;
-    }
     return result;
   }
 
@@ -404,10 +286,6 @@ export class Project implements ProjectInfo {
       `projects/${this.id}/readme/${commit}`,
       this.seed.addr,
     ).get();
-    if (!window.HEARTWOOD && result.info.lastCommit) {
-      result.info.lastCommit.id = result.info.lastCommit.sha1;
-      delete result.info.lastCommit.sha1;
-    }
     return result;
   }
 
@@ -416,31 +294,20 @@ export class Project implements ProjectInfo {
     seedHost: string,
     peer?: string,
   ): Promise<Project> {
-    const [host, port] = seedHost.includes(":")
-      ? seedHost.split(":")
-      : [seedHost, defaultSeedPort];
+    let seed: Seed | undefined = undefined;
 
-    const seed = await Seed.lookup(host, Number(port)).catch(() => {
-      throw new Error("Couldn't load project");
-    });
-
-    if (!seed?.valid) {
-      throw new Error("Couldn't load project: invalid seed");
+    try {
+      seed = await Seed.lookup(utils.extractHost(seedHost));
+    } catch (error) {
+      throw new Error(`Couldn't load project: ${error}`);
     }
 
     const info = await Project.getInfo(id, seed.addr);
-    id = isRadicleId(id) ? id : info.id;
+    id = isRepositoryId(id) ? id : info.id;
 
     let peers: Peer[] = [];
 
-    if (window.HEARTWOOD) {
-      peers = await Project.getRemotes(id, seed.addr);
-    } else {
-      // Older versions of http-api don't include the ID.
-      if (!info.id) info.id = id;
-
-      peers = info.delegates ? await Project.getRemotes(id, seed.addr) : [];
-    }
+    peers = await Project.getRemotes(id, seed.addr);
 
     let remote: Remote = {
       heads: info.head ? { [info.defaultBranch]: info.head } : {},
@@ -458,15 +325,14 @@ export class Project implements ProjectInfo {
   }
 
   static async getMulti(
-    projs: { nameOrId: Id; seed: string }[],
+    projs: { nameOrId: string; seed: Host }[],
   ): Promise<ProjectResult[]> {
     const promises = [];
 
     for (const proj of projs) {
-      const seed = { host: proj.seed, port: null };
       promises.push(
-        Project.getInfo(proj.nameOrId, seed).then(info => {
-          return { info, seed };
+        Project.getInfo(proj.nameOrId, proj.seed).then(info => {
+          return { info, seed: proj.seed };
         }),
       );
     }

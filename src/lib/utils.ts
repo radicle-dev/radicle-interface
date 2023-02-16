@@ -1,8 +1,9 @@
+import type { Host } from "@app/lib/api";
+
 import md5 from "md5";
 import bs58 from "bs58";
 import twemojiModule from "twemoji";
 
-import { assert } from "@app/lib/error";
 import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
 
@@ -43,23 +44,7 @@ export function formatLocationHash(hash: string | null): number | null {
   return null;
 }
 
-export function formatSeedId(id: string): string {
-  return id.substring(0, 6) + "…" + id.substring(id.length - 6, id.length);
-}
-
-export function formatRadicleId(id: string): string {
-  assert(isRadicleId(id));
-
-  if (window.HEARTWOOD) {
-    return id.substring(0, 10) + "…" + id.substring(id.length - 6, id.length);
-  } else {
-    return id.substring(0, 14) + "…" + id.substring(id.length - 6, id.length);
-  }
-}
-
-// Parses a NID into an object of prefix and pubkey,
-// since prefix can be undefined
-export function parseNid(
+export function parseNodeId(
   nid: string,
 ): { prefix: string; pubkey: string } | undefined {
   const match = /^(did:key:)?(z[a-zA-Z0-9]+)$/.exec(nid);
@@ -77,19 +62,52 @@ export function parseNid(
   return undefined;
 }
 
-// Format a Node Identifier (NID), also represents users or peers
-export function formatNodeId(nid: string): string {
-  const parsedNid = parseNid(nid);
-  if (parsedNid) {
-    const { prefix, pubkey } = parsedNid;
-    const formattedPubKey =
-      pubkey.substring(0, 6) +
-      "…" +
-      pubkey.substring(pubkey.length - 6, pubkey.length);
-    return `${prefix}${formattedPubKey}`;
+export function parseRepositoryId(
+  rid: string,
+): { prefix: string; pubkey: string } | undefined {
+  const match = /^(rad:)?(z[a-zA-Z0-9]+)$/.exec(rid);
+  if (match) {
+    const hex = bs58.decode(match[2].substring(1));
+    if (hex.byteLength !== 20) {
+      return undefined;
+    }
+
+    return { prefix: match[1] || "rad:", pubkey: match[2] };
   }
 
-  return nid;
+  return undefined;
+}
+
+export function isNodeId(input: string): boolean {
+  return Boolean(parseNodeId(input));
+}
+
+export function isRepositoryId(input: string): boolean {
+  return Boolean(parseRepositoryId(input));
+}
+
+export function formatNodeId(id: string): string {
+  const parsedId = parseNodeId(id);
+
+  if (parsedId) {
+    return truncateId(parsedId.prefix, parsedId.pubkey);
+  }
+
+  return id;
+}
+
+export function formatRepositoryId(id: string): string {
+  const parsedId = parseRepositoryId(id);
+
+  if (parsedId) {
+    return truncateId(parsedId.prefix, parsedId.pubkey);
+  }
+
+  return id;
+}
+
+function truncateId(prefix: string, pubkey: string): string {
+  return `${prefix}${pubkey.substring(0, 6) + "…" + pubkey.slice(-6)}`;
 }
 
 export function formatCommit(oid: string): string {
@@ -191,20 +209,6 @@ export const formatTimestamp = (
   return new Date(timestamp).toUTCString();
 };
 
-// Check whether the input is a Radicle ID.
-export function isRadicleId(input: string): boolean {
-  if (window.HEARTWOOD) {
-    return /^(did:key:)?[a-zA-Z0-9]+$/.test(input);
-  } else {
-    return /^rad:[a-z]+:[a-zA-Z0-9]+$/.test(input);
-  }
-}
-
-// Check whether the input is a Radicle Peer ID.
-export function isPeerId(input: string): boolean {
-  return /^h[a-zA-Z0-9]+$/.test(input);
-}
-
 // Check whether the input is a SHA1 commit.
 export function isOid(input: string): boolean {
   return /^[a-fA-F0-9]{40}$/.test(input);
@@ -219,15 +223,6 @@ export function isFulfilled<T>(
   input: PromiseSettledResult<T>,
 ): input is PromiseFulfilledResult<T> {
   return input.status === "fulfilled";
-}
-
-// Parse a Radicle Id.
-export function parseRadicleId(id: string): string {
-  if (window.HEARTWOOD) {
-    return id.replace(/^rad:/, "");
-  } else {
-    return id.replace(/^rad:[a-z]+:/, "");
-  }
 }
 
 // Get amount of days passed between two dates without including the end date
@@ -257,8 +252,8 @@ export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
 }
 
-// Check whether the given input string is a domain, eg. `alt-clients.radicle.xyz.
-// Also accepts in dev env 0.0.0.0 as domain
+// Check whether the given input string is a domain, eg. seed.radicle.xyz.
+// Also accepts in dev env 0.0.0.0 as domain.
 export function isDomain(input: string): boolean {
   return (
     (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input)) ||
@@ -268,7 +263,11 @@ export function isDomain(input: string): boolean {
 
 // Check whether the given address is a local host address.
 export function isLocal(addr: string): boolean {
-  return addr === "127.0.0.1" || addr === "0.0.0.0";
+  return (
+    addr.startsWith("127.0.0.1") ||
+    addr.startsWith("0.0.0.0") ||
+    addr.startsWith("radicle.local")
+  );
 }
 
 // Get the gravatar URL of an email.
@@ -298,4 +297,29 @@ export function twemoji(
     ext: ".svg",
     className: `txt-emoji`,
   });
+}
+
+export function extractHost(origin: string): Host {
+  if (
+    origin === "radicle.local" ||
+    origin === "radicle.local:8080" ||
+    origin === "0.0.0.0" ||
+    origin === "0.0.0.0:8080" ||
+    origin === "127.0.0.1" ||
+    origin === "127.0.0.1:8080"
+  ) {
+    return { host: "0.0.0.0", port: 8080, scheme: "http" };
+  } else if (origin.includes(":")) {
+    return {
+      host: origin.split(":")[0],
+      port: Number(origin.split(":")[1]),
+      scheme: config.seeds.defaultHttpdScheme,
+    };
+  } else {
+    return {
+      host: origin,
+      port: config.seeds.defaultHttpdPort,
+      scheme: config.seeds.defaultHttpdScheme,
+    };
+  }
 }

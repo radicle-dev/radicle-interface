@@ -1,26 +1,18 @@
-import { defaultSeedPort } from "@app/lib/seed";
-import { isLocal } from "@app/lib/utils";
-
 export interface Host {
   host: string;
-  port: number | null;
+  port: number;
+  scheme: string;
 }
 
 export class Request {
   path: string;
   base: string;
-  protocol: string;
   port: number;
 
   constructor(path: string, api: Host) {
-    this.port = api.port || defaultSeedPort;
-    if (window.HEARTWOOD) {
-      this.base = api.host + "/api";
-    } else {
-      this.base = api.host;
-    }
+    this.port = api.port;
+    this.base = `${api.scheme}://${api.host}/api`;
     this.path = path.startsWith("/") ? path.slice(1) : path;
-    this.protocol = isLocal(api.host) ? "http://" : "https://";
   }
 
   async get(
@@ -97,9 +89,7 @@ export class Request {
 
   // Creates a URL with an eventual query string and port.
   private createUrl(search?: string): string {
-    const baseUrl = this.path
-      ? `${this.protocol}${this.base}/v1/${this.path}`
-      : `${this.protocol}${this.base}`;
+    const baseUrl = this.path ? `${this.base}/v1/${this.path}` : this.base;
 
     const url = new URL(search ? `${baseUrl}?${search}` : baseUrl);
     url.port = String(this.port);

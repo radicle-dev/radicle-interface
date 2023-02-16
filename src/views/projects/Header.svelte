@@ -6,9 +6,10 @@
   import * as router from "@app/lib/router";
   import BranchSelector from "@app/views/projects/BranchSelector.svelte";
   import CloneButton from "@app/views/projects/CloneButton.svelte";
+  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
   import PeerSelector from "@app/views/projects/PeerSelector.svelte";
   import { closeFocused } from "@app/components/Floating.svelte";
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
+  import { config } from "@app/lib/config";
 
   export let activeRoute: ProjectRoute;
   export let project: Project;
@@ -21,7 +22,7 @@
 
   // Switches between project views.
   const toggleContent = (
-    input: "patches" | "issues" | "history",
+    input: "issues" | "history",
     keepSourceInPath: boolean,
   ) => {
     router.updateProjectRoute({
@@ -51,7 +52,7 @@
   };
 
   function goToSeed() {
-    if (seed.addr.port) {
+    if (seed.addr.port !== config.seeds.defaultHttpdPort) {
       router.push({
         resource: "seeds",
         params: { host: `${seed.addr.host}:${seed.addr.port}` },
@@ -98,10 +99,8 @@
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />
 
-  {#if window.HEARTWOOD && seed.addr.host}
-    <CloneButton seedHost={seed.addr.host} {id} />
-  {:else if seed.git.host}
-    <CloneButton seedHost={seed.git.host} {id} />
+  {#if seed.addr.host}
+    <CloneButton seedHost={seed.addr.host} {id} name={project.name} />
   {/if}
 
   <span>
@@ -130,14 +129,6 @@
     on:click={() => toggleContent("issues", false)}>
     <span class="txt-bold">{project.issues.open ?? 0}</span>
     issue(s)
-  </HeaderToggleLabel>
-  <HeaderToggleLabel
-    ariaLabel="Patch count"
-    clickable
-    active={activeRoute.params.view.resource === "patches"}
-    on:click={() => toggleContent("patches", false)}>
-    <span class="txt-bold">{project.patches.proposed ?? 0}</span>
-    patch(es)
   </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>

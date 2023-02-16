@@ -8,6 +8,7 @@
   import type { Tab } from "@app/components/TabBar.svelte";
 
   import * as router from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
   import { capitalize } from "@app/lib/utils";
   import { groupIssues } from "@app/lib/issue";
   import { sessionStore } from "@app/lib/session";
@@ -79,7 +80,7 @@
         active={state} />
     </div>
     <HeaderToggleLabel
-      disabled={!$sessionStore}
+      disabled={!$sessionStore || !utils.isLocal(project.seed.host)}
       on:click={() => {
         router.updateProjectRoute({
           view: {

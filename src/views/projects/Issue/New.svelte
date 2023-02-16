@@ -11,7 +11,7 @@
   import TextInput from "@app/components/TextInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import { Issue } from "@app/lib/issue";
-  import { canonicalize, formatNodeId, parseNid } from "@app/lib/utils";
+  import { canonicalize, formatNodeId, parseNodeId } from "@app/lib/utils";
   import { createEventDispatcher } from "svelte";
 
   export let session: Session;
@@ -29,13 +29,13 @@
   let preview: boolean = false;
 
   function handleAddAssignee() {
-    const nid = parseNid(assignee);
-    if (nid) {
-      if (assignees.includes(nid.pubkey)) {
+    const nodeId = parseNodeId(assignee);
+    if (nodeId) {
+      if (assignees.includes(nodeId.pubkey)) {
         assigneeCaption = "This user is already assigned";
         return;
       }
-      assignees.push(nid.pubkey);
+      assignees.push(nodeId.pubkey);
       assignees = assignees;
       assignee = "";
     } else {
@@ -185,7 +185,6 @@
               author: { id: session.publicKey },
               body: issueText,
               reactions: {},
-              replies: null,
               replyTo: null,
               timestamp: Date.now(),
             }}
@@ -245,7 +244,7 @@
             on:input={() => (assigneeCaption = undefined)}
             placeholder="Assign this issue"
             validationMessage={assigneeCaption}
-            valid={Boolean(parseNid(assignee))} />
+            valid={Boolean(parseNodeId(assignee))} />
         </div>
       </div>
       <div class="section txt-small">

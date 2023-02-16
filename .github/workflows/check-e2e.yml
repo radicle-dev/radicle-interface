@@ -14,8 +14,8 @@ jobs:
       matrix:
         # Disable firefox until this is fixed upstream:
         # https://github.com/microsoft/playwright/issues/21145
-        # browser: [chromium, firefox, visual, heartwood]
-        browser: [chromium, visual, heartwood]
+        # browser: [chromium, firefox, visual]
+        browser: [chromium, visual]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -59,19 +59,13 @@ jobs:
 
       - name: Start http-api test server
         run: |
-          if [ ${{ matrix.browser }} = "heartwood" ]; then
-            mkdir -p tests/artifacts
-            ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
-          else
-            ./scripts/run-http-api-with-fixtures --non-interactive --detach
-          fi
+          mkdir -p tests/artifacts;
+          ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
 
       - name: Run Playwright tests
         run: |
           if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
             npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
-          elif [ ${{ matrix.browser }} = "heartwood" ]; then
-            HEARTWOOD=true npm run test:e2e -- --project chromium;
           else
             npm run test:e2e -- --project ${{ matrix.browser }};
           fi

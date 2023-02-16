@@ -3,7 +3,6 @@ import {
   expect,
   projectFixtureUrl,
   rid,
-  ridPrefix,
   seedRemote,
   test,
 } from "@tests/support/fixtures.js";
@@ -37,33 +36,43 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );
-    expect(clipboardContent).toBe(`${ridPrefix}${rid}`);
+    expect(clipboardContent).toBe(`${rid}`);
   }
 
   // `rad clone` URL.
   {
     await page.getByText("Clone").click();
-    await page
-      .locator(`text=rad clone rad://0.0.0.0/${rid.substring(0, 6)}`)
-      .hover();
+    await page.locator(`text=rad clone ${rid.substring(0, 6)}`).hover();
     await page
       .locator(".clone-url-wrapper > span")
       .first()
       .locator(".clipboard")
       .click();
-    await expectClipboard(`rad clone rad://0.0.0.0/${rid}`, page);
+    await expectClipboard(`rad clone ${rid}`, page);
   }
 
   // `git clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator(`text=https://0.0.0.0/${rid.substring(0, 6)}`).hover();
+    await page
+      .locator(
+        `text=git clone https://0.0.0.0/${rid
+          .replace("rad:", "")
+          .substring(0, 10)}`,
+      )
+      .hover();
     await page
       .locator(".clone-url-wrapper > span")
       .last()
       .locator(".clipboard")
       .click();
-    await expectClipboard(`https://0.0.0.0/${rid}.git`, page);
+    await expectClipboard(
+      `git clone https://0.0.0.0/${rid.replace(
+        "rad:",
+        "",
+      )}.git source-browsing`,
+      page,
+    );
   }
 
   await page.goto("/seeds/radicle.local");

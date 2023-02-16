@@ -252,10 +252,6 @@ export function routeToPath(route: Route) {
       return `${hostPrefix}/${route.params.id}${peer}/commits${suffix}`;
     } else if (route.params.view.resource === "history") {
       return `${hostPrefix}/${route.params.id}${peer}/history${suffix}`;
-    } else if (route.params.view.resource === "patches") {
-      return `${hostPrefix}/${route.params.id}${peer}/patches${suffix}`;
-    } else if (route.params.view.resource === "patch") {
-      return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}`;
     } else if (
       route.params.view.resource === "issues" &&
       route.params.view.params?.view.resource === "new"
@@ -325,29 +321,6 @@ function resolveProjectRoute(
       search: undefined,
       route: segments.join("/"),
     };
-  } else if (content === "patches") {
-    const patch = segments.shift();
-    if (patch) {
-      return {
-        view: { resource: "patch", params: { patch } },
-        id,
-        seed,
-        peer,
-        path: undefined,
-        search: undefined,
-        revision: undefined,
-      };
-    } else {
-      return {
-        view: { resource: "patches" },
-        id,
-        seed,
-        peer,
-        search: sanitizeQueryString(url.search),
-        path: undefined,
-        revision: undefined,
-      };
-    }
   } else if (content === "issues") {
     const issueOrAction = segments.shift();
     if (issueOrAction === "new") {

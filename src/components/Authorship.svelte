@@ -1,11 +1,7 @@
 <script lang="ts">
   import type { Author } from "@app/lib/cobs";
 
-  import {
-    formatNodeId,
-    formatRadicleId,
-    formatTimestamp,
-  } from "@app/lib/utils";
+  import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
   export let author: Author;
   export let timestamp: number;
@@ -37,13 +33,9 @@
 </style>
 
 <span class="authorship txt-tiny">
-  <span class="id highlight layout-desktop">
-    {window.HEARTWOOD ? formatNodeId(author.id) : formatRadicleId(author.id)}
-  </span>
+  <span class="id highlight layout-desktop">{formatNodeId(author.id)}</span>
   <span class="id highlight layout-mobile">
-    {window.HEARTWOOD
-      ? formatNodeId(author.id).replace("did:key:", "")
-      : formatRadicleId(author.id)}
+    {formatNodeId(author.id).replace("did:key:", "")}
   </span>
   <span class="caption">&nbsp;{caption}&nbsp;</span>
   <span class="date">

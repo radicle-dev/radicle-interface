@@ -74,10 +74,10 @@
     {:then tree}
       {#if tree}
         {#each tree.entries as entry (entry.path)}
-          {#if window.HEARTWOOD ? entry.kind === "tree" : entry.info.objectType === "TREE"}
+          {#if entry.kind === "tree"}
             <svelte:self
               {fetchTree}
-              name={window.HEARTWOOD ? entry.name : entry.info.name}
+              name={entry.name}
               on:select={onSelectFile}
               prefix={`${entry.path}/`}
               {loadingPath}
@@ -86,7 +86,7 @@
             <File
               active={entry.path === currentPath}
               loading={entry.path === loadingPath}
-              name={window.HEARTWOOD ? entry.name : entry.info.name}
+              name={entry.name}
               on:click={() => {
                 onSelectFile({ detail: entry.path });
               }} />

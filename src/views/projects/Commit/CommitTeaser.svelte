@@ -5,7 +5,6 @@
 
   import Icon from "@app/components/Icon.svelte";
   import CommitAuthorship from "./CommitAuthorship.svelte";
-  import CommitVerifiedBadge from "./CommitVerifiedBadge.svelte";
 
   export let commit: CommitMetadata;
 
@@ -99,11 +98,6 @@
     <CommitAuthorship {commit} noDelegate />
   </div>
   <div class="column-right">
-    {#if !window.HEARTWOOD && commit.context.committer}
-      <div class="layout-desktop">
-        <CommitVerifiedBadge {commit} />
-      </div>
-    {/if}
     <span class="hash txt-highlight">{formatCommit(commit.commit.id)}</span>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div

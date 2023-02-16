@@ -11,6 +11,15 @@ describe("Format functions", () => {
 
   test.each([
     {
+      id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      expected: "rad:zKtT7D…19WzjT",
+    },
+  ])("formatRepositoryId $id => $expected", ({ id, expected }) => {
+    expect(utils.formatRepositoryId(id)).toEqual(expected);
+  });
+
+  test.each([
+    {
       id: "did:key:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
       expected: "did:key:z6Mkmz…md6fz6",
     },
@@ -22,22 +31,17 @@ describe("Format functions", () => {
     expect(utils.formatNodeId(id)).toEqual(expected);
   });
 
-  test("formatRadicleId", () => {
-    if (process.env.HEARTWOOD) {
-      expect(utils.formatRadicleId("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT")).toEqual(
-        "rad:zKtT7D…19WzjT",
-      );
-    } else {
-      expect(
-        utils.formatRadicleId("rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
-      ).toEqual("rad:git:hnrkem…d84c9o");
-    }
-  });
-
-  test("formatRadicleId throw when wrong ID", () => {
-    expect(() =>
-      utils.formatRadicleId("hnrkemobagsicpf9sr95o3g551otspcd84c9o"),
-    ).toThrow();
+  test.each([
+    {
+      id: "rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5",
+      expected: "rad:z4V1sj…p4DtH5",
+    },
+    {
+      id: "z4V1sjrXqjvFdnCUbxPFqd5p4DtH5",
+      expected: "rad:z4V1sj…p4DtH5",
+    },
+  ])("formatRepositoryId $id => $expected", ({ id, expected }) => {
+    expect(utils.formatRepositoryId(id)).toEqual(expected);
   });
 
   test.each([
@@ -67,19 +71,40 @@ describe("String Assertions", () => {
   });
 
   test.each([
-    process.env.HEARTWOOD
-      ? { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: true }
-      : { id: "rad:git:hnrkemobagsicpf9sr95o3g551otspcd84c9o", expected: true },
+    { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: true },
+    { id: "z2H9aHDurxd8Uvx2jsvW4e5mamy5S", expected: true },
+    { id: "rad:BBBBBBBBBBBBBBBBBBBBBBBBBBBB", expected: false },
     { id: "0x1234567890123456789012345678901234567890", expected: false },
-  ])("isRadicleId $id => $expected", ({ id, expected }) => {
-    expect(utils.isRadicleId(id)).toEqual(expected);
+    {
+      id: "did:key:z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
+      expected: false,
+    },
+    {
+      id: "z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
+      expected: false,
+    },
+  ])("isRepositoryId $id => $expected", ({ id, expected }) => {
+    expect(utils.isRepositoryId(id)).toEqual(expected);
   });
 
   test.each([
-    { id: "hnrkj4c35uoyceb3d1dsscx8qq55cikrd1aio", expected: true },
+    {
+      id: "did:key:z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
+      expected: true,
+    },
+    {
+      id: "z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
+      expected: true,
+    },
+    {
+      id: "did:key:CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+      expected: false,
+    },
+    { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: false },
+    { id: "z2H9aHDurxd8Uvx2jsvW4e5mamy5S", expected: false },
     { id: "0x1234567890123456789012345678901234567890", expected: false },
-  ])("isPeerId $id => $expected", ({ id, expected }) => {
-    expect(utils.isPeerId(id)).toEqual(expected);
+  ])("isNodeId $id => $expected", ({ id, expected }) => {
+    expect(utils.isNodeId(id)).toEqual(expected);
   });
 
   test.each([
@@ -131,8 +156,8 @@ describe("Parse Functions", () => {
         pubkey: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
       },
     },
-  ])("parseNid", ({ input, expected }) => {
-    expect(utils.parseNid(input)).toEqual(expected);
+  ])("parseNodeId", ({ input, expected }) => {
+    expect(utils.parseNodeId(input)).toEqual(expected);
   });
 });
 

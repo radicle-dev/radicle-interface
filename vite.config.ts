@@ -12,7 +12,6 @@ function defineConstants() {
   const constants = {
     VITEST: process.env.VITEST !== undefined,
     PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
-    HEARTWOOD: process.env.HEARTWOOD !== undefined,
   };
 
   // Don't overwrite HASH_ROUTING in Playwright tests, so we can control it

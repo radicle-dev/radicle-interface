@@ -2,7 +2,6 @@ import {
   aliceMainHead,
   expect,
   rid,
-  ridPrefix,
   seedPort,
   seedRemote,
   seedVersion,
@@ -44,8 +43,8 @@ test("seed projects", async ({ page }) => {
 
   // Show project ID on hover.
   {
-    await expect(project.locator(`text=${ridPrefix}${rid}`)).not.toBeVisible();
+    await expect(project.locator(`text=${rid}`)).not.toBeVisible();
     await project.hover();
-    await expect(project.locator(`text=${ridPrefix}${rid}`)).toBeVisible();
+    await expect(project.locator(`text=${rid}`)).toBeVisible();
   }
 });

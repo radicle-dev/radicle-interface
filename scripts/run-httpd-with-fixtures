@@ -4,7 +4,7 @@ set -e
 REV=f1de61ad8897a845f2be49e3e2b2951bc678b678
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm-heartwood.tar.bz2
+FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
 WORKSPACE=$REPO_ROOT/tests/tmp/palm
 PASSPHRASE=asdf
 BINARY_PATH="$REPO_ROOT/tests/tmp"

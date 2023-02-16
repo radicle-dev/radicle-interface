@@ -6,6 +6,7 @@
   import * as router from "@app/lib/router";
   import List from "@app/components/List.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
+  import { config } from "@app/lib/config";
 
   export let seed: Seed;
   export let projects: proj.ProjectInfo[];
@@ -39,9 +40,10 @@
       params: {
         view: { resource: "tree" },
         id: project.id,
-        seed: seed.addr.port
-          ? `${seed.addr.host}:${seed.addr.port}`
-          : seed.addr.host,
+        seed:
+          seed.addr.port === config.seeds.defaultHttpdPort
+            ? seed.addr.host
+            : `${seed.addr.host}:${seed.addr.port}`,
         revision: project.head ?? undefined,
         hash: undefined,
         search: undefined,

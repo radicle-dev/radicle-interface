@@ -21,24 +21,17 @@
   }[] = [];
 
   function createTitle(p: Peer): string {
-    const name = p.person?.name ? p.person.name : p.id;
+    const nodeId = formatNodeId(p.id);
     return p.delegate
-      ? `${name} is a delegate of this project`
-      : `${name} is a peer tracked by this seed`;
+      ? `${nodeId} is a delegate of this project`
+      : `${nodeId} is a peer tracked by this node`;
   }
 
   onMount(() => {
     meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
-      if (!p.person?.name) {
-        console.debug("Not able to resolve peer identity for: ", p.id);
-      }
-      const key = p.person?.name
-        ? `<span class="txt-bold">${p.person.name}</span> ${p.id}`
-        : p.id;
-
       return {
-        key,
+        key: formatNodeId(p.id),
         value: p.id,
         title: createTitle(p),
         badge: p.delegate ? "delegate" : null,
@@ -91,7 +84,7 @@
       <Icon name="fork" />
       {#if meta}
         <span class="peer-id">
-          {meta.person?.name ?? formatNodeId(meta.id)}
+          {formatNodeId(meta.id)}
         </span>
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>

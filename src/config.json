@@ -1,56 +1,37 @@
 {
   "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "seeds": {
+    "defaultHttpdPort": 443,
+    "defaultHttpdScheme": "https",
+    "defaultNodePort": 8776,
     "pinned": [
       {
-        "host": "willow.radicle.garden",
-        "emoji": "🪵"
-      },
-      { "host": "pine.radicle.garden", "emoji": "🌲" },
-      { "host": "maple.radicle.garden", "emoji": "🍁" }
+        "host": "seed.radicle.xyz",
+        "emoji": "🌱"
+      }
     ]
   },
   "projects": {
     "pinned": [
       {
-        "name": "solmate",
-        "id": "rad:git:hnrkbgczcfh9ycjtdfynmqyg478bqrso1hnty",
-        "seed": "willow.radicle.garden"
+        "name": "radicle-interface",
+        "id": "rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5",
+        "seed": "seed.radicle.xyz"
       },
       {
-        "name": "openzeppelin-contracts",
-        "id": "rad:git:hnrkbx9xzjg8tf9hj9uh5qdxwuyjddsxyaw6o",
-        "seed": "willow.radicle.garden"
+        "name": "heartwood",
+        "id": "rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5",
+        "seed": "seed.radicle.xyz"
       },
       {
-        "name": "haskell-language-server",
-        "id": "rad:git:hnrkf1jaje1e93rua64zgphg7zb14qo9zexgy",
-        "seed": "pine.radicle.garden"
+        "name": "rips",
+        "id": "rad:z3trNYnLWS11cJWC6BbxDs5niGo82",
+        "seed": "seed.radicle.xyz"
       },
       {
-        "name": "rx",
-        "id": "rad:git:hnrk8aoks6w3tdbcwt9dqnor9aqy8tjha3k5o",
-        "seed": "maple.radicle.garden"
-      },
-      {
-        "name": "astrolabe",
-        "id": "rad:git:hnrkrwewct7pb1biwmf59qa3rzod8mauundzy",
-        "seed": "willow.radicle.garden"
-      },
-      {
-        "name": "svelte-dappkit",
-        "id": "rad:git:hnrkgcm1e588ewy7iiq4abrrgtf5ioq577eno",
-        "seed": "maple.radicle.garden"
-      },
-      {
-        "name": "tmyxer",
-        "id": "rad:git:hnrkp5jgfxwxrffjsp148fyzdc457pa9ja38y",
-        "seed": "pine.radicle.garden"
-      },
-      {
-        "name": "hexade",
-        "id": "rad:git:hnrkxj511yr48oo3usrt4jzfoucj88zphpryo",
-        "seed": "pine.radicle.garden"
+        "name": "radicle-git",
+        "id": "rad:zMKWcgFLjUSVBBVmxbcMzzokRxub",
+        "seed": "seed.radicle.xyz"
       }
     ]
   }

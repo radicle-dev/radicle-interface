@@ -3,6 +3,9 @@ import configJson from "@app/config.json";
 export interface Config {
   reactions: string[];
   seeds: {
+    defaultHttpdPort: number;
+    defaultNodePort: number;
+    defaultHttpdScheme: string;
     pinned: { host: string; emoji: string }[];
   };
   projects: {
@@ -19,6 +22,9 @@ function getConfig(): Config {
     return {
       reactions: [],
       seeds: {
+        defaultHttpdPort: 8080,
+        defaultHttpdScheme: "http",
+        defaultNodePort: 8776,
         pinned: [],
       },
       projects: { pinned: [] },

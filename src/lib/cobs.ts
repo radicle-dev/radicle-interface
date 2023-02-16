@@ -5,7 +5,6 @@ export interface Comment<R = null> {
   body: string;
   reactions: Record<string, number>;
   timestamp: number;
-  replies: R; // TODO: Remove for Heartwood migration
   replyTo: R;
 }
 

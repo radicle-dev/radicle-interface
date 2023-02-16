@@ -93,9 +93,6 @@
     color: var(--color-negative);
     background-color: var(--color-negative-2);
   }
-  .replies {
-    margin-left: 2rem;
-  }
   .assignee {
     display: flex;
     flex-direction: row;
@@ -142,21 +139,8 @@
   </header>
   <main>
     <div class="comments">
-      {#if !window.HEARTWOOD}
-        <Comment comment={issue.comment} {getImage} />
-      {/if}
-
       {#each issue.discussion as comment}
         <Comment {comment} {getImage} />
-        {#if !window.HEARTWOOD}
-          {#if comment.replies}
-            <div class="replies">
-              {#each comment.replies as reply}
-                <Comment comment={reply} {getImage} />
-              {/each}
-            </div>
-          {/if}
-        {/if}
       {/each}
     </div>
     <div class="metadata layout-desktop">

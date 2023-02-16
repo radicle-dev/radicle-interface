@@ -4,7 +4,7 @@
   import * as modal from "@app/lib/modal";
   import Link from "@app/components/Link.svelte";
   import Modal from "@app/components/Modal.svelte";
-  import { formatRadicleId, getSeedEmoji } from "@app/lib/utils";
+  import { formatRepositoryId, getSeedEmoji } from "@app/lib/utils";
 
   export let query: string;
   export let results: ProjectResult[];
@@ -48,7 +48,7 @@
                   {getSeedEmoji(project.seed.host)}&nbsp;{project.info.name}
                 </span>
                 <span class="id">
-                  &nbsp;{formatRadicleId(project.info.id)}
+                  &nbsp;{formatRepositoryId(project.info.id)}
                 </span>
               </span>
             </Link>

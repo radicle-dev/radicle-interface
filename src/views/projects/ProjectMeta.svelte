@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { PeerId, Project } from "@app/lib/project";
+  import type { Project } from "@app/lib/project";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import DOMPurify from "dompurify";
   import ProjectLink from "@app/components/ProjectLink.svelte";
-  import { formatSeedId } from "@app/lib/utils";
+  import { formatNodeId } from "@app/lib/utils";
 
   export let project: Project;
-  export let peer: PeerId | undefined = undefined;
+  export let nodeId: string | undefined = undefined;
 
   const linkifyDescription = (text: string) => {
     return text.replaceAll(/(https?:\/\/[^\s]+)/g, `<a href="$1">$1</a>`);
@@ -27,7 +27,7 @@
     margin: 0 0.5rem;
     font-weight: var(--font-weight-normal);
   }
-  .title .peer-id {
+  .title .node-id {
     color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     display: flex;
@@ -87,11 +87,11 @@
         </span>
       </ProjectLink>
     </span>
-    {#if peer}
-      <span class="peer-id">
+    {#if nodeId}
+      <span class="node-id">
         <span class="divider">/</span>
-        <span title={peer}>{formatSeedId(peer)}</span>
-        <Clipboard text={peer} />
+        <span title={nodeId}>{formatNodeId(nodeId)}</span>
+        <Clipboard text={nodeId} />
       </span>
     {/if}
   </div>

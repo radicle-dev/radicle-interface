@@ -6,7 +6,6 @@ import {
   expect,
   projectFixtureUrl,
   rid,
-  ridPrefix,
   test,
 } from "@tests/support/fixtures.js";
 import { expectUrlPersistsReload } from "@tests/support/router";
@@ -29,7 +28,7 @@ test("navigate to project", async ({ page }) => {
   // Header.
   {
     const name = page.locator("text=source-browsing");
-    const id = page.locator(`text=${ridPrefix}${rid}`);
+    const id = page.locator(`text=${rid}`);
     const description = page.locator(
       "text=Git repository for source browsing tests",
     );
@@ -245,10 +244,10 @@ test("clone modal", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByText("Clone").click();
+  await expect(page.locator(`text=rad clone ${rid}`)).toBeVisible();
   await expect(
-    page.locator(`text=rad clone rad://0.0.0.0/${rid}`),
+    page.locator(`text=https://0.0.0.0/${rid.replace("rad:", "")}.git`),
   ).toBeVisible();
-  await expect(page.locator(`text=https://0.0.0.0/${rid}.git`)).toBeVisible();
 });
 
 test("peer and branch switching", async ({ page }) => {
@@ -257,18 +256,13 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    if (process.env.HEARTWOOD) {
-      await page.locator(`text=${aliceRemote}`).click();
-      await expect(page.getByTitle("Change peer")).toHaveText(
-        `did:key:${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
-      );
-    } else {
-      await page.locator("text=alice").click();
-      await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
-    }
+    await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
+    await expect(page.getByTitle("Change peer")).toHaveText(
+      `did:key:${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
+    );
     await expect(
       page.locator(
-        `text=source-browsing / ${aliceRemote.substring(
+        `text=source-browsing / did:key:${aliceRemote.substring(
           0,
           6,
         )}…${aliceRemote.slice(-6)}`,
@@ -326,32 +320,19 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    if (process.env.HEARTWOOD) {
-      await page.locator(`text=${bobRemote}`).click();
-      await expect(page.getByTitle("Change peer")).toHaveText(
-        `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
-      );
-    } else {
-      await page.locator("text=bob").click();
-      await expect(page.getByTitle("Change peer")).toHaveText("bob");
-    }
+    await page.locator(`text=${bobRemote.substring(0, 6)}`).click();
+    await expect(page.getByTitle("Change peer")).toHaveText(
+      `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+    );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
     // Default `main` branch.
     {
-      if (process.env.HEARTWOOD) {
-        await expect(page.getByTitle("Current branch")).toContainText(
-          "main 1e0bb83",
-        );
-        await expectCounts({ commits: 9, contributors: 2 }, page);
-        await expect(page.locator("text=1e0bb83 Update readme")).toBeVisible();
-      } else {
-        await expect(page.getByTitle("Current branch")).toContainText(
-          "main 2b32f6f",
-        );
-        await expectCounts({ commits: 9, contributors: 2 }, page);
-        await expect(page.locator("text=2b32f6f Update readme")).toBeVisible();
-      }
+      await expect(page.getByTitle("Current branch")).toContainText(
+        "main 1e0bb83",
+      );
+      await expectCounts({ commits: 9, contributors: 2 }, page);
+      await expect(page.locator("text=1e0bb83 Update readme")).toBeVisible();
     }
   }
 });
@@ -360,11 +341,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
-  if (process.env.HEARTWOOD) {
-    await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
-  } else {
-    await page.locator(`text=alice ${aliceRemote.substring(0, 6)}`).click();
-  }
+  await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
 
   await page.getByText("Clone").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
@@ -381,11 +358,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.getByTitle("Change peer").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  if (process.env.HEARTWOOD) {
-    await expect(page.locator(`text=${bobRemote}`)).toBeVisible();
-  } else {
-    await expect(page.locator("text=bob hyyzz9")).toBeVisible();
-  }
+  await expect(page.locator(`text=${bobRemote.substring(0, 6)}`)).toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
   await page.locator('button[name="Settings"]').click();
@@ -398,7 +371,7 @@ test("only one modal can be open at a time", async ({ page }) => {
 test.describe("browser error handling", () => {
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${ridPrefix}${rid}/tree/${aliceMainHead}/markdown/`,
+      `**/v1/projects/${rid}/tree/${aliceMainHead}/markdown/`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -413,7 +386,7 @@ test.describe("browser error handling", () => {
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/.hidden`,
+      `**/v1/projects/${rid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -423,9 +396,8 @@ test.describe("browser error handling", () => {
     await expect(page.locator("text=Not able to load file")).toBeVisible();
   });
   test("error appears when README can't be loaded", async ({ page }) => {
-    await page.route(
-      `**/v1/projects/${ridPrefix}${rid}/readme/${aliceMainHead}`,
-      route => route.fulfill({ status: 500 }),
+    await page.route(`**/v1/projects/${rid}/readme/${aliceMainHead}`, route =>
+      route.fulfill({ status: 500 }),
     );
 
     await page.goto(projectFixtureUrl);
@@ -435,7 +407,7 @@ test.describe("browser error handling", () => {
   });
   test("error appears when navigating to missing file", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/.hidden`,
+      `**/v1/projects/${rid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -447,7 +419,7 @@ test.describe("browser error handling", () => {
     page,
   }) => {
     await page.route(
-      `**/v1/projects/${ridPrefix}${rid}/blob/${aliceMainHead}/src/black-square.png`,
+      `**/v1/projects/${rid}/blob/${aliceMainHead}/src/black-square.png`,
       route => route.fulfill({ status: 404 }),
     );
 

@@ -21,7 +21,11 @@
       ? Project.getMulti(
           config.projects.pinned.map(project => ({
             nameOrId: project.id,
-            seed: project.seed,
+            seed: {
+              host: project.seed,
+              port: config.seeds.defaultHttpdPort,
+              scheme: config.seeds.defaultHttpdScheme,
+            },
           })),
         )
       : Promise.resolve([]);

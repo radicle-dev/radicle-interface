@@ -13,7 +13,7 @@
   import Home from "@app/views/home/Index.svelte";
   import Session from "@app/views/session/Index.svelte";
   import Projects from "@app/views/projects/View.svelte";
-  import Seeds from "@app/views/seeds/Routes.svelte";
+  import Seeds from "@app/views/seeds/View.svelte";
 
   const activeRouteStore = router.activeRouteStore;
 
@@ -60,7 +60,7 @@
     {#if $activeRouteStore.resource === "home"}
       <Home />
     {:else if $activeRouteStore.resource === "seeds"}
-      <Seeds host={$activeRouteStore.params.host} />
+      <Seeds hostAndPort={$activeRouteStore.params.host} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "projects"}
