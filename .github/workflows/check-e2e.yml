@@ -12,7 +12,10 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox, visual, heartwood]
+        # Disable firefox until this is fixed upstream:
+        # https://github.com/microsoft/playwright/issues/21145
+        # browser: [chromium, firefox, visual, heartwood]
+        browser: [chromium, visual, heartwood]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
