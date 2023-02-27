@@ -1,18 +1,19 @@
 <script lang="ts">
-  import type * as proj from "@app/lib/project";
-  import Diagram from "@app/views/projects/Diagram.svelte";
-  import { groupCommitsByWeek } from "@app/lib/commit";
-  import type { Host } from "@app/lib/api";
-  import { Project } from "@app/lib/project";
-  import { formatCommit, twemoji } from "@app/lib/utils";
+  import type { BaseUrl, Project } from "@httpd-client";
 
-  export let project: proj.ProjectInfo;
-  export let seed: { addr: Host };
+  import Diagram from "@app/views/projects/Diagram.svelte";
+  import { HttpdClient } from "@httpd-client";
+  import { formatCommit, twemoji } from "@app/lib/utils";
+  import { groupCommitsByWeek } from "@app/lib/commit";
+
+  export let project: Project;
+  export let baseUrl: BaseUrl;
   export let faded = false;
   export let compact = false;
 
   const loadCommits = async () => {
-    const commits = await Project.getActivity(project.id, seed.addr);
+    const api = new HttpdClient(baseUrl);
+    const commits = await api.project.getActivity(project.id);
 
     return groupCommitsByWeek(commits.activity);
   };

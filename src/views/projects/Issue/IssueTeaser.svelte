@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Issue } from "@app/lib/issue";
+  import type { Issue } from "@httpd-client";
 
   import { formatObjectId } from "@app/lib/cobs";
   import Authorship from "@app/components/Authorship.svelte";
@@ -9,7 +9,18 @@
 
   export let issue: Issue;
 
-  const commentCount = issue.countComments();
+  const commentCount = countComments(issue);
+
+  // Counts the amount of comments in a discussion, excluding the initial
+  // description.
+  function countComments(issue: Issue): number {
+    return issue.discussion.reduce((acc, _curr, index) => {
+      if (index !== 0) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+  }
 </script>
 
 <style>
@@ -120,10 +131,12 @@
       <span class="id">
         <span class="highlight">{formatObjectId(issue.id)}</span>
         opened
-        <span class="highlight">{formatTimestamp(issue.timestamp)}</span>
+        <span class="highlight">
+          {formatTimestamp(issue.discussion[0].timestamp)}
+        </span>
         by
       </span>
-      <Authorship highlight noAvatar author={issue.author} />
+      <Authorship highlight noAvatar authorId={issue.author.id} />
     </div>
   </div>
   {#if commentCount > 0}

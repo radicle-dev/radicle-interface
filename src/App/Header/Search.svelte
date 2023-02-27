@@ -42,18 +42,17 @@
     if (searchResult.type === "nothing") {
       shake();
     } else if (searchResult.type === "error") {
-      // TODO: show some kind of notification to the user.
       shake();
     } else if (searchResult.type === "projects") {
       input = "";
-      if (searchResult.projects.length === 1) {
+      if (searchResult.results.length === 1) {
         router.push({
           resource: "projects",
           params: {
             view: { resource: "tree" },
-            id: searchResult.projects[0].info.id,
+            id: searchResult.results[0].project.id,
             peer: undefined,
-            seed: searchResult.projects[0].seed.host,
+            hostnamePort: searchResult.results[0].baseUrl.hostname,
             hash: undefined,
             search: undefined,
           },
@@ -62,7 +61,7 @@
         modal.show({
           component: SearchResultsModal,
           props: {
-            results: searchResult.projects,
+            results: searchResult.results,
             query,
           },
         });
@@ -104,14 +103,14 @@
   }
   .search {
     transition: all 0.2s;
-    width: 13rem;
+    width: 11rem;
   }
   .expanded {
-    width: 20rem;
+    width: 25.5rem;
   }
   @media (max-width: 720px) {
     .expanded {
-      width: 13rem;
+      width: 11rem;
     }
   }
 </style>
@@ -132,7 +131,7 @@
         }
       }}
       on:submit={search}
-      placeholder="Search a name…">
+      placeholder="Search a RID…">
       <svelte:fragment slot="left">
         <Icon name="magnifying-glass" />
       </svelte:fragment>

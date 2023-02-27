@@ -1,29 +1,29 @@
 <script lang="ts">
-  import type { ProjectInfo } from "@app/lib/project";
-  import type { Stats } from "@app/lib/seed";
+  import type { Project, NodeStats } from "@httpd-client";
 
-  import { Project } from "@app/lib/project";
-  import { Seed } from "@app/lib/seed";
-  import { formatSeedHost, extractHost } from "@app/lib/utils";
+  import { config } from "@app/lib/config";
+  import { HttpdClient } from "@httpd-client";
+  import { extractBaseUrl, isLocal, truncateId } from "@app/lib/utils";
 
+  import Clipboard from "@app/components/Clipboard.svelte";
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Projects from "@app/views/seeds/View/Projects.svelte";
-  import SeedAddress from "@app/views/seeds/View/SeedAddress.svelte";
 
-  export let hostAndPort: string;
+  export let hostnamePort: string;
 
-  $: seedHost = extractHost(hostAndPort);
-  $: hostName = formatSeedHost(seedHost.host);
+  const baseUrl = extractBaseUrl(hostnamePort);
+  const hostName = isLocal(baseUrl.hostname)
+    ? "radicle.local"
+    : baseUrl.hostname;
+  const api = new HttpdClient(baseUrl);
 
-  const getProjectsAndStats = async (
-    seed: Seed,
-  ): Promise<{
-    stats: Stats;
-    projects: ProjectInfo[];
+  const getProjectsAndStats = async (): Promise<{
+    stats: NodeStats;
+    projects: Project[];
   }> => {
-    const stats = await seed.getStats();
-    const projects = await Project.getProjects(seed.addr, { perPage: 10 });
+    const stats = await api.getStats();
+    const projects = await api.project.getAll({ page: 0, perPage: 10 });
     return { stats, projects };
   };
 </script>
@@ -56,6 +56,18 @@
     display: flex;
     align-items: center;
   }
+  .seed-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .seed-address {
+    display: inline-flex;
+    font-size: var(--font-size-regular);
+    line-height: 2rem;
+    color: var(--color-foreground-6);
+    vertical-align: middle;
+  }
 
   @media (max-width: 720px) {
     main {
@@ -72,11 +84,11 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await Seed.lookup(seedHost)}
+{#await api.getRoot()}
   <main class="layout-centered">
     <Loading center />
   </main>
-{:then seed}
+{:then nodeInfo}
   <main>
     <header>
       <span class="title txt-title">
@@ -89,18 +101,25 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="txt-highlight">Address</div>
-      <SeedAddress {seed} port={seed.node.port} />
+      <div class="seed-wrapper">
+        <div class="seed-address">
+          {truncateId(nodeInfo.node.id)}@{baseUrl.hostname}
+        </div>
+        <Clipboard
+          small
+          text={`${nodeInfo.node.id}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
+      </div>
       <div class="layout-desktop" />
       <!-- API Version -->
       <div class="txt-highlight">Version</div>
-      <div>{seed.version}</div>
+      <div>{nodeInfo.version}</div>
       <div class="layout-desktop" />
     </div>
     <!-- Seed Projects -->
-    {#await getProjectsAndStats(seed)}
+    {#await getProjectsAndStats()}
       <Loading center />
     {:then result}
-      <Projects {seed} projects={result.projects} stats={result.stats} />
+      <Projects {baseUrl} projects={result.projects} stats={result.stats} />
     {:catch err}
       <div class="error txt-tiny">
         <div>
@@ -113,7 +132,7 @@
 {:catch}
   <div class="layout-centered">
     <NotFound
-      title={seedHost.host}
+      title={baseUrl.hostname}
       subtitle="Not able to query information from this seed." />
   </div>
 {/await}

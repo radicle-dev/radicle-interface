@@ -1,16 +1,18 @@
 <script lang="ts">
-  import type { Blob } from "@app/lib/project";
+  import type { Blob } from "@httpd-client";
   import type { MaybeHighlighted } from "@app/lib/syntax";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
-  import Readme from "@app/views/projects/Readme.svelte";
   import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { toHtml } from "hast-util-to-html";
+
   import { highlight } from "@app/lib/syntax";
   import { isMarkdownPath, scrollIntoView, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
-  import { toHtml } from "hast-util-to-html";
   import { updateProjectRoute } from "@app/lib/router";
+
+  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
+  import Readme from "@app/views/projects/Readme.svelte";
 
   export let activeRoute: ProjectRoute;
   export let blob: Blob;

@@ -1,12 +1,12 @@
 <script lang="ts" strictEvents>
-  import type { MaybeTree, Tree } from "@app/lib/project";
+  import type { Tree } from "@httpd-client";
 
   import { createEventDispatcher } from "svelte";
 
   import File from "./Tree/File.svelte";
   import Folder from "./Tree/Folder.svelte";
 
-  export let fetchTree: (path: string) => Promise<MaybeTree>;
+  export let fetchTree: (path: string) => Promise<Tree | undefined>;
   export let path: string;
   export let tree: Tree;
   export let loadingPath: string | null = null;

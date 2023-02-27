@@ -1,6 +1,6 @@
 import { test, expect } from "@tests/support/fixtures.js";
 
-const searchPlaceholder = "Search a name…";
+const searchPlaceholder = "Search a RID…";
 
 test("global hotkeys", async ({ page }) => {
   await page.goto("/");

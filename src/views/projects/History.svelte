@@ -1,24 +1,27 @@
 <script lang="ts">
-  import type { CommitMetadata, CommitsHistory } from "@app/lib/commit";
+  import type { BaseUrl, CommitHeader } from "@httpd-client";
+
+  import * as router from "@app/lib/router";
+  import { HttpdClient } from "@httpd-client";
+  import { groupCommits } from "@app/lib/commit";
 
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
-  import { Project } from "@app/lib/project";
-  import { groupCommits } from "@app/lib/commit";
   import List from "@app/components/List.svelte";
-  import * as router from "@app/lib/router";
 
-  export let project: Project;
-  export let history: CommitsHistory;
+  export let id: string;
+  export let baseUrl: BaseUrl;
+  export let history: CommitHeader[];
 
-  const fetchMoreCommits = async (): Promise<CommitMetadata[]> => {
-    const response = await Project.getCommits(project.id, project.seed.addr, {
+  const api = new HttpdClient(baseUrl);
+
+  const fetchMoreCommits = async (): Promise<CommitHeader[]> => {
+    const response = await api.project.getAllCommits(id, {
       // Fetching 31 elements since we remove the first one
-      parent: history.commits[history.commits.length - 1].commit.id,
+      parent: history[history.length - 1].id,
       perPage: 31,
-      verified: true,
     });
     // Removing the first element of the array, since it's the same as the last of the current list
-    return response.commits.slice(1);
+    return response.commits.slice(1).map(c => c.commit);
   };
 
   const browseCommit = (event: { detail: string }) => {
@@ -49,7 +52,7 @@
 </style>
 
 <div class="history">
-  <List bind:items={history.commits} query={fetchMoreCommits}>
+  <List bind:items={history} query={fetchMoreCommits}>
     <svelte:fragment slot="list" let:items>
       {@const commits = groupCommits(items)}
       {#each commits as group (group.time)}
@@ -58,13 +61,13 @@
             <p>{group.date}</p>
           </header>
           <div class="commit-group-headers">
-            {#each group.commits as commit (commit.commit.id)}
+            {#each group.commits as commit (commit.id)}
               <CommitTeaser
                 {commit}
                 on:click={() => {
                   router.updateProjectRoute({
                     view: { resource: "commits" },
-                    revision: commit.commit.id,
+                    revision: commit.id,
                   });
                 }}
                 on:browseCommit={browseCommit} />

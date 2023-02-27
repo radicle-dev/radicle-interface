@@ -1,13 +1,13 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
-  import type { ProjectInfo, Branches } from "@app/lib/project";
-  import { getOid } from "@app/lib/project";
-  import { formatCommit } from "@app/lib/utils";
+
+  import * as utils from "@app/lib/utils";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
 
-  export let branches: Branches;
-  export let project: ProjectInfo;
+  export let branches: Record<string, string>;
+  export let projectDefaultBranch: string;
+  export let projectHead: string | undefined = undefined;
   export let revision: string;
 
   const dispatch = createEventDispatcher<{ branchChanged: string }>();
@@ -21,10 +21,10 @@
     .sort()
     .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: head = project.head ?? branches[project.defaultBranch];
-  $: commit = getOid(revision, branches) || head;
+  $: head = projectHead ?? branches[projectDefaultBranch];
+  $: commit = utils.getOid(revision, branches) || head;
   $: if (commit === head) {
-    branchLabel = project.defaultBranch;
+    branchLabel = projectDefaultBranch;
   } else if (branches[revision]) {
     branchLabel = revision;
   } else {
@@ -92,7 +92,7 @@
         </svelte:fragment>
       </Floating>
       <div class="hash layout-desktop">
-        {formatCommit(commit)}
+        {utils.formatCommit(commit)}
       </div>
     {:else}
       <div class="unlabeled hash layout-desktop">
@@ -100,22 +100,22 @@
       </div>
     {/if}
     <div class="hash layout-mobile">
-      {formatCommit(commit)}
+      {utils.formatCommit(commit)}
     </div>
     <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
   {:else if commit === head}
     <div class="stat branch not-allowed">
-      {project.defaultBranch}
+      {projectDefaultBranch}
     </div>
     <div class="hash">
-      {formatCommit(commit)}
+      {utils.formatCommit(commit)}
     </div>
   {:else}
     <div class="unlabeled hash layout-desktop">
       {commit}
     </div>
     <div class="hash layout-mobile">
-      {formatCommit(commit)}
+      {utils.formatCommit(commit)}
     </div>
   {/if}
 </div>

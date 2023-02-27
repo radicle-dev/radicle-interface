@@ -1,23 +1,25 @@
 <script lang="ts">
-  import type { Project } from "@app/lib/project";
-  import type { Tree } from "@app/lib/project";
+  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
   import * as router from "@app/lib/router";
-  import BranchSelector from "@app/views/projects/BranchSelector.svelte";
-  import CloneButton from "@app/views/projects/CloneButton.svelte";
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
-  import PeerSelector from "@app/views/projects/PeerSelector.svelte";
+
   import { closeFocused } from "@app/components/Floating.svelte";
   import { config } from "@app/lib/config";
   import { pluralize } from "@app/lib/pluralize";
 
-  export let activeRoute: ProjectRoute;
+  import BranchSelector from "@app/views/projects/BranchSelector.svelte";
+  import CloneButton from "@app/views/projects/CloneButton.svelte";
+  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
+  import PeerSelector from "@app/views/projects/PeerSelector.svelte";
+
   export let project: Project;
+  export let activeRoute: ProjectRoute;
   export let tree: Tree;
   export let commit: string;
-
-  const { id, peers, branches, seed } = project;
+  export let peers: Remote[];
+  export let branches: Record<string, string>;
+  export let baseUrl: BaseUrl;
 
   $: revision = activeRoute.params.revision ?? commit;
 
@@ -53,13 +55,16 @@
   };
 
   function goToSeed() {
-    if (seed.addr.port !== config.seeds.defaultHttpdPort) {
+    if (baseUrl.port !== config.seeds.defaultHttpdPort) {
       router.push({
         resource: "seeds",
-        params: { host: `${seed.addr.host}:${seed.addr.port}` },
+        params: { hostnamePort: `${baseUrl.hostname}:${baseUrl.port}` },
       });
     } else {
-      router.push({ resource: "seeds", params: { host: seed.addr.host } });
+      router.push({
+        resource: "seeds",
+        params: { hostnamePort: baseUrl.hostname },
+      });
     }
   }
 </script>
@@ -95,25 +100,22 @@
   {/if}
 
   <BranchSelector
+    projectDefaultBranch={project.defaultBranch}
+    projectHead={project.head}
     {branches}
-    {project}
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />
 
-  {#if seed.addr.host}
-    <CloneButton seedHost={seed.addr} {id} name={project.name} />
-  {/if}
+  <CloneButton {baseUrl} id={project.id} name={project.name} />
 
   <span>
-    {#if seed.addr.host}
-      <HeaderToggleLabel
-        clickable
-        ariaLabel="Seed"
-        title="Project data is fetched from this seed"
-        on:click={goToSeed}>
-        <span>{seed.addr.host}</span>
-      </HeaderToggleLabel>
-    {/if}
+    <HeaderToggleLabel
+      clickable
+      ariaLabel="Seed"
+      title="Project data is fetched from this seed"
+      on:click={goToSeed}>
+      <span>{baseUrl.hostname}</span>
+    </HeaderToggleLabel>
   </span>
   <HeaderToggleLabel
     ariaLabel="Commit count"
@@ -128,7 +130,7 @@
     active={activeRoute.params.view.resource === "issues"}
     clickable
     on:click={() => toggleContent("issues", false)}>
-    <span class="txt-bold">{project.issues.open ?? 0}</span>
+    <span class="txt-bold">{project.issues.open}</span>
     {pluralize("issue", project.issues.open)}
   </HeaderToggleLabel>
   <HeaderToggleLabel
@@ -136,7 +138,7 @@
     active={activeRoute.params.view.resource === "patches"}
     clickable
     on:click={() => toggleContent("patches", false)}>
-    <span class="txt-bold">{project.patches.open ?? 0}</span>
+    <span class="txt-bold">{project.patches.open}</span>
     {pluralize("patch", project.patches.open)}
   </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">

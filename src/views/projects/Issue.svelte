@@ -1,8 +1,14 @@
 <script lang="ts" strictEvents>
-  import type { Project } from "@app/lib/project";
-  import type { IssueState } from "@app/lib/issue";
-  import type { State } from "@app/lib/cobs";
+  import type { BaseUrl, Issue, IssueState } from "@httpd-client";
   import type { Item } from "@app/components/Dropdown.svelte";
+
+  import { createEventDispatcher } from "svelte";
+
+  import * as utils from "@app/lib/utils";
+  import { HttpdClient } from "@httpd-client";
+  import { parseNodeId, formatNodeId } from "@app/lib/utils";
+  import { sessionStore } from "@app/lib/session";
+  import { validateAssignee, validateTag } from "@app/lib/cobs";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Avatar.svelte";
@@ -13,21 +19,18 @@
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import Thread from "@app/components/Thread.svelte";
-  import { createAddRemoveArrays, Issue } from "@app/lib/issue";
-  import { createEventDispatcher } from "svelte";
-  import { isLocal } from "@app/lib/utils";
-  import { parseNodeId, formatNodeId } from "@app/lib/utils";
-  import { sessionStore } from "@app/lib/session";
-  import { validateAssignee, validateTag } from "@app/lib/cobs";
 
   export let issue: Issue;
-  export let project: Project;
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
+  export let projectHead: string;
 
   const dispatch = createEventDispatcher<{ update: never }>();
-  const rawPath = project.getRawPath();
+  const rawPath = utils.getRawBasePath(projectId, baseUrl, projectHead);
+  const api = new HttpdClient(baseUrl);
 
   const action: "create" | "edit" | "view" =
-    $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
+    $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
   const items: Item<IssueState>[] = [
     { title: "Reopen issue", state: { status: "open" } as const },
     {
@@ -49,38 +52,40 @@
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
     if ($sessionStore && reply.body.trim().length > 0) {
-      await issue.replyComment(
-        project.id,
-        reply.body,
-        reply.id,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        {
+          type: "thread",
+          action: { type: "comment", body: reply.body, replyTo: reply.id },
+        },
         $sessionStore.id,
       );
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     }
   }
 
   async function createComment(body: string) {
     if ($sessionStore && body.trim().length > 0) {
-      await issue.createComment(
-        project.id,
-        body,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        { type: "thread", action: { type: "comment", body } },
         $sessionStore.id,
       );
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     }
   }
 
   async function editTitle({ detail: title }: CustomEvent<string>) {
     if ($sessionStore && title.trim().length > 0 && title !== issue.title) {
-      await issue.editTitle(
-        project.id,
-        title,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        { type: "edit", title },
         $sessionStore.id,
       );
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     } else {
       // Reassigning issue.title overwrites the invalid title in IssueHeader
       issue.title = issue.title;
@@ -89,48 +94,49 @@
 
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
     if ($sessionStore) {
-      const { add, remove } = createAddRemoveArrays(issue.tags, tags);
+      const { add, remove } = utils.createAddRemoveArrays(issue.tags, tags);
       if (add.length === 0 && remove.length === 0) {
         return;
       }
-      await issue.editTags(
-        project.id,
-        add,
-        remove,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        { type: "tag", add, remove },
         $sessionStore.id,
       );
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     }
   }
 
   async function saveAssignees({ detail: assignees }: CustomEvent<string[]>) {
     if ($sessionStore) {
-      const { add, remove } = createAddRemoveArrays(issue.assignees, assignees);
+      const { add, remove } = utils.createAddRemoveArrays(
+        issue.assignees,
+        assignees,
+      );
       if (add.length === 0 && remove.length === 0) {
         return;
       }
-      await issue.editAssignees(
-        project.id,
-        add,
-        remove,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        { type: "assign", add, remove },
         $sessionStore.id,
       );
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     }
   }
 
-  async function saveStatus({ detail: state }: CustomEvent<State>) {
+  async function saveStatus({ detail: state }: CustomEvent<IssueState>) {
     if ($sessionStore) {
-      await issue.changeState(
-        project.id,
-        state,
-        project.seed.addr,
+      await api.project.updateIssue(
+        projectId,
+        issue.id,
+        { type: "lifecycle", state },
         $sessionStore.id,
       );
       dispatch("update");
-      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+      issue = await api.project.getIssueById(projectId, issue.id);
     }
   }
 
@@ -207,8 +213,8 @@
         {/if}
         <Authorship
           highlight
-          timestamp={issue.timestamp}
-          author={issue.author}
+          timestamp={issue.discussion[0].timestamp}
+          authorId={issue.author.id}
           caption="opened this issue" />
       </svelte:fragment>
     </CobHeader>

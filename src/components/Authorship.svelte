@@ -1,10 +1,8 @@
 <script lang="ts">
-  import type { Author } from "@app/lib/cobs";
-
   import Avatar from "@app/components/Avatar.svelte";
   import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
-  export let author: Author;
+  export let authorId: string;
   export let caption: string | undefined = undefined;
   export let highlight: boolean = false;
   export let noAvatar: boolean = false;
@@ -42,13 +40,13 @@
 
 <span class="authorship txt-tiny" title={relativeTimestamp(timestamp)}>
   {#if !noAvatar}
-    <Avatar inline nodeId={author.id} />
+    <Avatar inline nodeId={authorId} />
   {/if}
   <span class:highlight class="id highlight layout-desktop">
-    {formatNodeId(author.id)}
+    {formatNodeId(authorId)}
   </span>
   <span class:highlight class="id layout-mobile">
-    {formatNodeId(author.id).replace("did:key:", "")}
+    {formatNodeId(authorId).replace("did:key:", "")}
   </span>
   <span class="body">
     {#if !caption}

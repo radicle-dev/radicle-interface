@@ -8,16 +8,14 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { State } from "@app/lib/cobs";
-
   import { createEventDispatcher } from "svelte";
   import { twemoji } from "@app/lib/utils";
   import Badge from "@app/components/Badge.svelte";
 
-  type T = $$Generic<State | string | number>;
+  type T = $$Generic;
 
   export let items: Item<T>[];
-  export let selected: string | null = null;
+  export let selected: T | null = null;
 
   const dispatch = createEventDispatcher<{ select: Item<T> }>();
   const onSelect = (item: Item<T>) => {

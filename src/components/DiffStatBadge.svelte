@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { DiffStats } from "@app/lib/diff";
-
-  export let stats: DiffStats;
+  export let insertions: number;
+  export let deletions: number;
 </script>
 
 <style>
@@ -29,9 +28,9 @@
 
 <div class="badge">
   <span class="positive">
-    + {stats.insertions}
+    + {insertions}
   </span>
   <span class="negative">
-    - {stats.deletions}
+    - {deletions}
   </span>
 </div>

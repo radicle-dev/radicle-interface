@@ -1,4 +1,4 @@
-import type { Host } from "@app/lib/api";
+import type { BaseUrl } from "@httpd-client";
 
 import md5 from "md5";
 import bs58 from "bs58";
@@ -23,20 +23,30 @@ export function setOpenGraphMetaTag(
   });
 }
 
-export function formatSeedAddress(
+export function getRawBasePath(
   id: string,
-  host: string,
-  port: number,
+  baseUrl: BaseUrl,
+  commit: string,
 ): string {
-  return `${id}@${host}:${port}`;
+  return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}/raw/${id}/${commit}`;
 }
 
-export function formatSeedHost(host: string): string {
-  if (isLocal(host)) {
-    return "radicle.local";
-  } else {
-    return host;
+// We need a SHA1 commit in some places, so we return early if the revision is
+// a SHA and else we look into branches.
+export function getOid(
+  revision: string,
+  branches?: Record<string, string>,
+): string | null {
+  if (isOid(revision)) return revision;
+
+  if (branches) {
+    const oid = branches[revision];
+
+    if (oid) {
+      return oid;
+    }
   }
+  return null;
 }
 
 export function formatLocationHash(hash: string | null): number | null {
@@ -231,7 +241,7 @@ export function isDomain(input: string): boolean {
   );
 }
 
-// Check whether the given address is a local host address.
+// Check whether the given address is a localhost address.
 export function isLocal(addr: string): boolean {
   return (
     addr.startsWith("127.0.0.1") ||
@@ -269,27 +279,37 @@ export function twemoji(
   });
 }
 
-export function extractHost(origin: string): Host {
+export function extractBaseUrl(hostnamePort: string): BaseUrl {
   if (
-    origin === "radicle.local" ||
-    origin === "radicle.local:8080" ||
-    origin === "0.0.0.0" ||
-    origin === "0.0.0.0:8080" ||
-    origin === "127.0.0.1" ||
-    origin === "127.0.0.1:8080"
+    hostnamePort === "radicle.local" ||
+    hostnamePort === "radicle.local:8080" ||
+    hostnamePort === "0.0.0.0" ||
+    hostnamePort === "0.0.0.0:8080" ||
+    hostnamePort === "127.0.0.1" ||
+    hostnamePort === "127.0.0.1:8080"
   ) {
-    return { host: "127.0.0.1", port: 8080, scheme: "http" };
-  } else if (origin.includes(":")) {
+    return { hostname: "127.0.0.1", port: 8080, scheme: "http" };
+  } else if (hostnamePort.includes(":")) {
     return {
-      host: origin.split(":")[0],
-      port: Number(origin.split(":")[1]),
+      hostname: hostnamePort.split(":")[0],
+      port: Number(hostnamePort.split(":")[1]),
       scheme: config.seeds.defaultHttpdScheme,
     };
   } else {
     return {
-      host: origin,
+      hostname: hostnamePort,
       port: config.seeds.defaultHttpdPort,
       scheme: config.seeds.defaultHttpdScheme,
     };
   }
+}
+
+export function createAddRemoveArrays(
+  currentArray: string[],
+  newArray: string[],
+): { add: string[]; remove: string[] } {
+  return {
+    add: newArray.filter(item => !currentArray.includes(item)),
+    remove: currentArray.filter(item => !newArray.includes(item)),
+  };
 }

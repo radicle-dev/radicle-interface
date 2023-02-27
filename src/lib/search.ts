@@ -1,59 +1,40 @@
-import type { Host } from "@app/lib/api";
-import type { ProjectInfo } from "@app/lib/project";
+import type { BaseUrl, Project } from "@httpd-client";
 
 import * as utils from "@app/lib/utils";
-import { Project } from "@app/lib/project";
+import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
+import { isFulfilled } from "@app/lib/utils";
 
-export interface ProjectResult {
-  info: ProjectInfo;
-  seed: Host;
+export interface ProjectAndSeed {
+  project: Project;
+  baseUrl: BaseUrl;
 }
 
 type SearchResult =
   | { type: "nothing" }
   | { type: "error"; message: string }
-  | { type: "projects"; projects: ProjectResult[] };
+  | { type: "projects"; results: ProjectAndSeed[] };
 
 export async function searchProjectsAndProfiles(
   query: string,
 ): Promise<SearchResult> {
   try {
-    const projectOnSeeds = config.seeds.pinned.map(seed => ({
-      nameOrId: query,
-      seed: {
-        host: seed.host,
-        port: config.seeds.defaultHttpdPort,
-        scheme: config.seeds.defaultHttpdScheme,
-      },
+    const pinned = config.seeds.pinned.map(seed => ({
+      id: query,
+      baseUrl: seed.baseUrl,
     }));
 
-    // The query is a radicle project ID.
     if (utils.isRepositoryId(query)) {
-      const projects = await Project.getMulti(projectOnSeeds);
+      const results = await getProjectsFromSeeds(pinned);
 
-      if (projects.length === 0) {
+      if (results.length === 0) {
         return { type: "nothing" };
       } else {
         return {
           type: "projects",
-          projects,
+          results,
         };
       }
-    }
-
-    let projects: ProjectResult[] = [];
-    try {
-      projects = await Project.getMulti(projectOnSeeds);
-    } catch {
-      // TODO: collect errors and forward to user.
-    }
-
-    if (projects.length > 0) {
-      return {
-        type: "projects",
-        projects,
-      };
     }
 
     return { type: "nothing" };
@@ -66,4 +47,20 @@ export async function searchProjectsAndProfiles(
 
     return { type: "error", message };
   }
+}
+
+export async function getProjectsFromSeeds(
+  params: { id: string; baseUrl: BaseUrl }[],
+): Promise<ProjectAndSeed[]> {
+  const projectPromises = params.map(async param => {
+    const api = new HttpdClient(param.baseUrl);
+    const project = await api.project.getById(param.id);
+    return {
+      project,
+      baseUrl: param.baseUrl,
+    };
+  });
+
+  const results = await Promise.allSettled(projectPromises);
+  return results.filter(isFulfilled).map(r => r.value);
 }

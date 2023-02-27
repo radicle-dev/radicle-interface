@@ -1,11 +1,12 @@
 <script lang="ts">
-  import type { Commit } from "@app/lib/commit";
+  import type { Commit } from "@httpd-client";
 
   import { formatCommit, twemoji } from "@app/lib/utils";
 
+  import * as router from "@app/lib/router";
+
   import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
-  import * as router from "@app/lib/router";
 
   export let commit: Commit;
 
@@ -64,8 +65,5 @@
     <pre class="description txt-small">{header.description}</pre>
     <CommitAuthorship {header} />
   </header>
-  <Changeset
-    stats={commit.diff.stats}
-    diff={commit.diff}
-    on:browse={onBrowse} />
+  <Changeset diff={commit.diff} on:browse={onBrowse} />
 </div>

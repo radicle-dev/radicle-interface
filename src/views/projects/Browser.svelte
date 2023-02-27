@@ -7,17 +7,21 @@
 </script>
 
 <script lang="ts">
-  import type * as proj from "@app/lib/project";
+  import type { BaseUrl, Blob, Project, Tree } from "@httpd-client";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
+  import { onMount } from "svelte";
+
   import * as router from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
+  import { HttpdClient } from "@httpd-client";
+
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import { onMount } from "svelte";
 
-  import Tree from "./Tree.svelte";
-  import Blob from "./Blob.svelte";
+  import BlobComponent from "./Blob.svelte";
+  import TreeComponent from "./Tree.svelte";
 
   enum Status {
     Loading,
@@ -26,10 +30,11 @@
 
   type State =
     | { status: Status.Loading; path: string }
-    | { status: Status.Loaded; path: string; blob: proj.Blob };
+    | { status: Status.Loaded; path: string; blob: Blob };
 
-  export let project: proj.Project;
-  export let tree: proj.Tree;
+  export let project: Project;
+  export let baseUrl: BaseUrl;
+  export let tree: Tree;
   export let commit: string;
   export let activeRoute: ProjectRoute;
 
@@ -41,17 +46,24 @@
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
 
+  const api = new HttpdClient(baseUrl);
+
   const loadBlob = async (path: string) => {
     if (state.status === Status.Loaded && state.path === path) {
       return state.blob;
     }
 
-    const promise =
-      path === "/" ? project.getReadme(commit) : project.getBlob(commit, path);
-
     state = { status: Status.Loading, path };
-    state = { status: Status.Loaded, path, blob: await promise };
-    return state.blob;
+
+    let blob;
+    if (path === "/") {
+      blob = await api.project.getReadme(project.id, commit);
+    } else {
+      blob = await api.project.getBlob(project.id, commit, path);
+    }
+
+    state = { status: Status.Loaded, path, blob };
+    return blob;
   };
 
   onMount(() => {
@@ -84,7 +96,7 @@
   };
 
   const fetchTree = async (path: string) => {
-    return project.getTree(commit, path).catch(() => {
+    return api.project.getTree(project.id, commit, path).catch(() => {
       browserErrorStore.set({
         message: "Not able to expand directory",
         path,
@@ -201,7 +213,7 @@
     {#if tree.entries.length > 0}
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree sticky">
-          <Tree
+          <TreeComponent
             {tree}
             {path}
             {fetchTree}
@@ -232,11 +244,11 @@
             <Loading small center />
           {:then blob}
             {#if blob}
-              <Blob
+              <BlobComponent
                 {line}
                 {blob}
                 {activeRoute}
-                rawPath={project.getRawPath(commit)} />
+                rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
             {/if}
           {/await}
         {/if}

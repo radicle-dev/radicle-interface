@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REV=646376828d0520035246ccbbfcb82127160cd184
+REV=414477a31676d5e75efa7f3e8dc6624bcf2b2e52
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2
@@ -75,10 +75,13 @@ if [ "$DOWNLOAD" = true ]; then
   CACHED_BINARY_NAME="$BINARY_NAME-${REV:0:7}"
 
   if ! [ -x "$(command -v $BINARY_PATH/$CACHED_BINARY_NAME)" ]; then
-    echo "Downloading $BINARY_NAME"
     case "$OS" in
-      Darwin)  curl --fail -s "https://files.radicle.xyz/aarch64-apple-darwin/$REV/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
-      Linux)   curl --fail -s "https://files.radicle.xyz/x86_64-unknown-linux-musl/$REV/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
+      Darwin)
+        echo Downloading $BINARY_NAME from https://files.radicle.xyz/$REV/aarch64-apple-darwin/$BINARY_NAME
+        curl --fail -s "https://files.radicle.xyz/$REV/aarch64-apple-darwin/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" || (echo "Download failed" && exit 1);;
+      Linux)
+        echo Downloading $BINARY_NAME from https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$BINARY_NAME
+        curl --fail -s "https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" || (echo "Download failed" && exit 1);;
       *)       echo "There are no precompiled binaries for your OS: $OS, compile $BINARY_NAME manually and make sure it's in PATH." && exit 1 ;;
     esac
 

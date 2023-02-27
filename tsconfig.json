@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "httpd-client"],
   "exclude": ["node_modules/*"],
   "compilerOptions": {
     "target": "es2020",
@@ -17,6 +17,8 @@
     "skipLibCheck": true,
     "paths": {
       "@app/*": ["./src/*"],
+      "@httpd-client": ["./httpd-client/index.ts"],
+      "@httpd-client/*": ["./httpd-client/*"],
       "@public/*": ["./public/*"],
       "@tests/*": ["./tests/*"]
     }

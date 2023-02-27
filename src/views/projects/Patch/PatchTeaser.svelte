@@ -1,23 +1,28 @@
 <script lang="ts">
-  import type { Patch } from "@app/lib/patch";
-  import type { Project } from "@app/lib/project";
+  import type { BaseUrl } from "@httpd-client";
+  import type { Patch } from "@httpd-client";
+
+  import { HttpdClient } from "@httpd-client";
+  import { formatObjectId } from "@app/lib/cobs";
+  import { formatTimestamp } from "@app/lib/utils";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import { formatObjectId } from "@app/lib/cobs";
-  import { formatTimestamp } from "@app/lib/utils";
 
-  export let project: Project;
+  export let projectId: string;
+  export let baseUrl: BaseUrl;
   export let patch: Patch;
+
+  const api = new HttpdClient(baseUrl);
 
   const latestRevisionIndex = patch.revisions.length - 1;
   const latestRevision = patch.revisions[latestRevisionIndex];
-  $: diffPromise = patch.getPatchDiff(
-    project.id,
-    latestRevision,
-    project.seed.addr,
+  $: diffPromise = api.project.getDiff(
+    projectId,
+    latestRevision.base,
+    latestRevision.oid,
   );
 </script>
 
@@ -136,14 +141,16 @@
           {formatTimestamp(latestRevision.timestamp)}
         </span>
         by
-        <Authorship highlight noAvatar author={patch.author} />
+        <Authorship highlight noAvatar authorId={patch.author.id} />
       </span>
     </div>
   </div>
   <div class="column-right">
     <div class="comment-count">
       {#await diffPromise then { diff }}
-        <DiffStatBadge stats={diff.stats} />
+        <DiffStatBadge
+          insertions={diff.stats.insertions}
+          deletions={diff.stats.deletions} />
       {/await}
       {#if latestRevision.discussions.length > 0}
         <Icon name="chat" />

@@ -32,6 +32,7 @@ export default defineConfig({
     alias: {
       "@app": path.resolve("./src"),
       "@public": path.resolve("./public"),
+      "@httpd-client": path.resolve("./httpd-client"),
     },
   },
   build: {

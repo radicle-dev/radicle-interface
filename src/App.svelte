@@ -60,7 +60,7 @@
     {#if $activeRouteStore.resource === "home"}
       <Home />
     {:else if $activeRouteStore.resource === "seeds"}
-      <Seeds hostAndPort={$activeRouteStore.params.host} />
+      <Seeds hostnamePort={$activeRouteStore.params.hostnamePort} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "projects"}

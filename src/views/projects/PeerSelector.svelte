@@ -1,22 +1,24 @@
 <script lang="ts" strictEvents>
-  import type { Peer } from "@app/lib/project";
   import type { Item } from "@app/components/Dropdown.svelte";
+  import type { Remote } from "@httpd-client";
+
+  import { createEventDispatcher, onMount } from "svelte";
+
+  import { formatNodeId, truncateId } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { formatNodeId, truncateId } from "@app/lib/utils";
 
   export let peer: string | null = null;
-  export let peers: Peer[];
+  export let peers: Remote[];
 
-  let meta: Peer | undefined;
+  let meta: Remote | undefined;
 
   let items: Item<string>[] = [];
 
-  function createTitle(p: Peer): string {
+  function createTitle(p: Remote): string {
     const nodeId = formatNodeId(p.id);
     return p.delegate
       ? `${nodeId} is a delegate of this project`

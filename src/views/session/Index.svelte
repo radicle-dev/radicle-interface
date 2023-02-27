@@ -14,11 +14,14 @@
   export let activeRoute: Extract<Route, { resource: "session" }>;
 
   onMount(async () => {
-    const status = await session.authenticate(activeRoute.params);
+    const isAuthenticated = await session.authenticate(activeRoute.params);
 
-    if (status === "success") {
+    if (isAuthenticated) {
       modal.show({ component: AuthenticatedModal, props: {} });
-      router.push({ resource: "seeds", params: { host: "radicle.local" } });
+      router.push({
+        resource: "seeds",
+        params: { hostnamePort: "radicle.local" },
+      });
     } else {
       modal.show({
         component: AuthenticationErrorModal,

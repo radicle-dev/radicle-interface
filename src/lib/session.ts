@@ -1,40 +1,37 @@
 import { derived, get, writable } from "svelte/store";
 
-export interface Session {
+import { HttpdClient } from "@httpd-client";
+
+export interface StoredSession {
   id: string;
   publicKey: string;
 }
 
-interface SessionResponse {
-  sessionId: string;
-  status: string;
-  publicKey: string;
-  issuedAt: number;
-  expiresAt: number;
-}
-
-const store = writable<Session | undefined>(undefined);
+const store = writable<StoredSession | undefined>(undefined);
 export const sessionStore = derived(store, s => s);
 
-const endpoint = "http://localhost:8080/api/v1/sessions";
+const api = new HttpdClient({
+  hostname: "127.0.0.1",
+  port: 8080,
+  scheme: "http",
+});
 
 export async function authenticate(params: {
   id: string;
   signature: string;
   publicKey: string;
-}): Promise<"success" | "failure"> {
-  disconnect();
+}): Promise<boolean> {
+  await disconnect();
 
-  const request = await fetch(`${endpoint}/${params.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sig: params.signature, pk: params.publicKey }),
-  });
-  if (request.ok) {
+  try {
+    await api.session.update(params.id, {
+      sig: params.signature,
+      pk: params.publicKey,
+    });
     save(params.id, params.publicKey);
-    return "success";
-  } else {
-    return "failure";
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -52,11 +49,8 @@ function pollSession() {
     }
 
     try {
-      const resp = await fetch(`${endpoint}/${session.id}`, {
-        method: "GET",
-      });
+      const sess = await api.session.getById(session.id);
 
-      const sess: SessionResponse = await resp.json();
       const unixTimeInSeconds = Math.floor(Date.now() / 1000);
       if (
         sess.status === "unauthorized" ||
@@ -76,13 +70,7 @@ export async function disconnect() {
     return "success";
   }
 
-  await fetch(`${endpoint}/${session.id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.id}`,
-    },
-  });
+  await api.session.delete(session.id);
 
   clear();
 }

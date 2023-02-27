@@ -1,16 +1,19 @@
 <script lang="ts">
-  import type { ProjectRoute } from "@app/lib/router/definitions";
   import type { IssueStatus } from "./Issues.svelte";
   import type { PatchStatus } from "./Patches.svelte";
+  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { Tree } from "@httpd-client";
 
-  import * as issue from "@app/lib/issue";
-  import * as patch from "@app/lib/patch";
-  import * as proj from "@app/lib/project";
   import * as router from "@app/lib/router";
-  import Loading from "@app/components/Loading.svelte";
-  import NotFound from "@app/components/NotFound.svelte";
+  import * as utils from "@app/lib/utils";
+  import { HttpdClient } from "@httpd-client";
   import { formatNodeId, unreachable } from "@app/lib/utils";
   import { sessionStore } from "@app/lib/session";
+
+  import Loading from "@app/components/Loading.svelte";
+  import Message from "@app/components/Message.svelte";
+  import NotFound from "@app/components/NotFound.svelte";
+  import Placeholder from "@app/components/Placeholder.svelte";
 
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
@@ -18,32 +21,69 @@
   import History from "./History.svelte";
   import Issue from "./Issue.svelte";
   import Issues from "./Issues.svelte";
-  import Message from "@app/components/Message.svelte";
   import NewIssue from "./Issue/New.svelte";
   import Patch from "./Patch.svelte";
   import Patches from "./Patches.svelte";
-  import Placeholder from "@app/components/Placeholder.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
   export let activeRoute: ProjectRoute;
 
   $: id = activeRoute.params.id;
   $: peer = activeRoute.params.peer;
-  $: seed = activeRoute.params.seed;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
   $: patchTabFilter =
     (searchParams.get("tab") as "activity" | "commits") || "activity";
   $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
+  $: baseUrl = utils.extractBaseUrl(activeRoute.params.hostnamePort);
+  $: api = new HttpdClient(baseUrl);
 
-  const getProject = async (id: string, seed: string, peer?: string) => {
-    const project = await proj.Project.get(id, seed, peer);
+  // Parses the path consisting of a revision (eg. branch or commit) and file
+  // path into a tuple [revision, file-path]
+  function parseRoute(
+    input: string,
+    branches: Record<string, string>,
+  ): { path?: string; revision?: string } {
+    const branch = Object.entries(branches).find(([branchName]) =>
+      input.startsWith(branchName),
+    );
+    const commitPath = [input.slice(0, 40), input.slice(41)];
+    const parsed: { path?: string; revision?: string } = {};
+
+    if (branch) {
+      const [rev, path] = [
+        input.slice(0, branch[0].length),
+        input.slice(branch[0].length + 1),
+      ];
+
+      parsed.revision = rev;
+      parsed.path = path ? path : "/";
+    } else if (utils.isOid(commitPath[0])) {
+      parsed.revision = commitPath[0];
+      parsed.path = commitPath[1] ? commitPath[1] : "/";
+    } else {
+      parsed.path = input;
+    }
+    return parsed;
+  }
+
+  const getProject = async (id: string, peer?: string) => {
+    const project = await api.project.getById(id);
+    const peers = await api.project.getAllRemotes(id);
+    let branches = project.head
+      ? { [project.defaultBranch]: project.head }
+      : {};
+    if (peer) {
+      try {
+        branches = (await api.project.getRemoteByPeer(id, peer)).heads;
+      } catch {
+        branches = {};
+      }
+    }
+
     if (activeRoute.params.route) {
-      const { revision, path } = proj.parseRoute(
-        activeRoute.params.route,
-        project.branches,
-      );
+      const { revision, path } = parseRoute(activeRoute.params.route, branches);
       router.updateProjectRoute(
         {
           revision,
@@ -61,15 +101,30 @@
       activeRoute.params.revision = project.defaultBranch;
     }
 
-    return project;
+    return { project, branches, peers };
   };
+
+  async function getRoot(
+    revision: string | null,
+    branches: Record<string, string>,
+    head: string,
+  ): Promise<{ tree: Tree; commit: string }> {
+    const commit = revision ? utils.getOid(revision, branches) : head;
+
+    if (!commit) {
+      throw new Error(`Revision ${revision} not found`);
+    }
+    const tree = await api.project.getTree(id, commit);
+
+    return { tree, commit };
+  }
 
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
     router.push({
       resource: "projects",
       params: {
         id,
-        seed,
+        hostnamePort: baseUrl.hostname,
         view: {
           resource: "issue",
           params: { issue: issueId },
@@ -77,15 +132,15 @@
       },
     });
     // This assignment allows us to have an up-to-date issue count
-    projectPromise = getProject(id, seed, peer);
+    projectPromise = getProject(id, peer);
   }
 
   function handleIssueUpdate() {
-    projectPromise = getProject(id, seed, peer);
+    projectPromise = getProject(id, peer);
   }
 
   // React to peer changes
-  $: projectPromise = getProject(id, seed, peer);
+  $: projectPromise = getProject(id, peer);
 
   // Content can be altered in child components.
   $: revision = activeRoute.params.revision || null;
@@ -125,28 +180,38 @@
       <Loading center />
     </header>
   </main>
-{:then project}
+{:then { project, peers, branches }}
   <main>
     <ProjectMeta {project} nodeId={peer} />
-    {#await project.getRoot(revision)}
+    {#await getRoot(revision, branches, project.head)}
       <Loading center />
     {:then { tree, commit }}
-      <Header {tree} {commit} {project} {activeRoute} />
+      <Header
+        {tree}
+        {commit}
+        {project}
+        {branches}
+        {peers}
+        {activeRoute}
+        {baseUrl} />
 
       {#if activeRoute.params.view.resource === "tree"}
-        <Browser {project} {commit} {tree} {activeRoute} />
+        <Browser {baseUrl} {project} {commit} {tree} {activeRoute} />
       {:else if activeRoute.params.view.resource === "history"}
-        {#await proj.Project.getCommits( project.id, project.seed.addr, { parent: commit, verified: true }, )}
+        {#await api.project.getAllCommits(project.id, { parent: commit })}
           <Loading center />
         {:then history}
-          <History {project} {history} />
+          <History
+            id={project.id}
+            {baseUrl}
+            history={history.commits.map(c => c.commit)} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "commits"}
-        {#await project.getCommit(commit)}
+        {#await api.project.getCommitBySha(id, commit)}
           <Loading center />
         {:then commit}
           <Commit {commit} />
@@ -160,7 +225,9 @@
           <NewIssue
             on:create={handleIssueCreation}
             session={$sessionStore}
-            {project} />
+            projectId={project.id}
+            projectHead={project.head}
+            {baseUrl} />
         {:else}
           <div class="message">
             <Message error>
@@ -170,41 +237,57 @@
           </div>
         {/if}
       {:else if activeRoute.params.view.resource === "issues"}
-        {#await issue.Issue.getIssues(project.id, project.seed.addr)}
+        {#await api.project.getAllIssues(project.id)}
           <Loading center />
         {:then issues}
-          <Issues {project} status={issueFilter} {issues} />
+          <Issues
+            {baseUrl}
+            issueCounters={project.issues}
+            status={issueFilter}
+            {issues} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issue"}
-        {#await issue.Issue.getIssue(project.id, activeRoute.params.view.params.issue, project.seed.addr)}
+        {#await api.project.getIssueById(project.id, activeRoute.params.view.params.issue)}
           <Loading center />
         {:then issue}
-          <Issue on:update={handleIssueUpdate} {project} {issue} />
+          <Issue
+            on:update={handleIssueUpdate}
+            projectId={project.id}
+            projectHead={project.head}
+            {baseUrl}
+            {issue} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patches"}
-        {#await patch.Patch.getPatches(project.id, project.seed.addr)}
+        {#await api.project.getAllPatches(project.id)}
           <Loading center />
         {:then patches}
-          <Patches {patches} status={patchFilter} {project} />
+          <Patches
+            {patches}
+            status={patchFilter}
+            projectId={project.id}
+            {baseUrl}
+            projectPatches={project.patches} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patch"}
-        {#await patch.Patch.getPatch(project.id, activeRoute.params.view.params.patch, project.seed.addr)}
+        {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
           <Loading center />
         {:then patch}
           <Patch
-            {project}
+            {baseUrl}
+            projectId={project.id}
+            projectHead={project.head}
             revision={activeRoute.params.view.params.revision}
             currentTab={patchTabFilter}
             {patch} />

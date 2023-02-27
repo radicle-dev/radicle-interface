@@ -1,34 +1,4 @@
-import type { IssueState } from "@app/lib/issue";
-import type { PatchState } from "@app/lib/patch";
-
 import { parseNodeId } from "@app/lib/utils";
-
-export interface Comment {
-  id: string;
-  author: Author;
-  body: string;
-  reactions: Record<string, number>;
-  timestamp: number;
-  replyTo: string | null;
-}
-
-export interface Author {
-  id: string;
-}
-
-export interface Thread {
-  root: Comment;
-  replies: Comment[];
-}
-
-export interface PeerIdentity {
-  id: string;
-}
-export interface PeerInfo {
-  id: string;
-  person?: PeerIdentity;
-  delegate: boolean;
-}
 
 // Formats COBs Object Ids
 export function formatObjectId(id: string): string {
@@ -38,8 +8,6 @@ export function formatObjectId(id: string): string {
 export function stripDidPrefix(array: string[]): string[] {
   return array.map(id => id.replace("did:key:", ""));
 }
-
-export type State = IssueState | PatchState;
 
 export function validateTag(
   value: string,

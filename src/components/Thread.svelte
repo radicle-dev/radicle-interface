@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type * as cobs from "@app/lib/cobs";
+  import type { Comment } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
-  import Comment from "@app/components/Comment.svelte";
+  import CommentComponent from "@app/components/Comment.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher, tick } from "svelte";
   import { scrollIntoView } from "@app/lib/utils";
   import { sessionStore } from "@app/lib/session";
 
-  export let thread: { root: cobs.Comment; replies: cobs.Comment[] };
+  export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
   export let isDescription = false;
   export let showReplyTextarea = false;
@@ -62,20 +62,20 @@
   }
 </style>
 
-<Comment
+<CommentComponent
   {rawPath}
   id={root.id}
-  author={root.author}
+  authorId={root.author.id}
   timestamp={root.timestamp}
   body={root.body}
   showReplyIcon={Boolean($sessionStore) && !isDescription}
   on:toggleReply={toggleReply} />
 {#each replies as reply}
   <div class="reply">
-    <Comment
+    <CommentComponent
       {rawPath}
       id={reply.id}
-      author={reply.author}
+      authorId={reply.author.id}
       timestamp={reply.timestamp}
       body={reply.body} />
   </div>

@@ -1,26 +1,52 @@
 <script lang="ts" context="module">
-  import type { PatchState } from "@app/lib/patch";
+  import type { PatchState } from "@httpd-client";
 
   export type PatchStatus = PatchState["status"];
 </script>
 
 <script lang="ts">
-  import type { Patch } from "@app/lib/patch";
-  import type { Project } from "@app/lib/project";
+  import type { Patch } from "@httpd-client";
   import type { Tab } from "@app/components/TabBar.svelte";
+  import type { BaseUrl } from "@httpd-client";
 
   import * as router from "@app/lib/router";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import capitalize from "lodash/capitalize";
   import TabBar from "@app/components/TabBar.svelte";
-  import { groupPatches } from "@app/lib/patch";
 
   export let patches: Patch[];
   export let status: PatchStatus;
-  export let project: Project;
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
+  export let projectPatches: {
+    draft: number;
+    open: number;
+    archived: number;
+    merged: number;
+  };
 
   let options: Tab<PatchStatus>[];
+
+  function groupPatches(patches: Patch[]): {
+    open: Patch[];
+    draft: Patch[];
+    archived: Patch[];
+    merged: Patch[];
+  } {
+    return patches.reduce(
+      (acc, patch) => {
+        acc[patch.state.status].push(patch);
+        return acc;
+      },
+      {
+        open: [] as Patch[],
+        draft: [] as Patch[],
+        archived: [] as Patch[],
+        merged: [] as Patch[],
+      },
+    );
+  }
 
   const stateOptions: PatchStatus[] = ["draft", "open", "archived", "merged"];
   $: options = stateOptions.map<{
@@ -29,11 +55,8 @@
     disabled: boolean;
   }>((s: PatchStatus) => ({
     value: s,
-    title:
-      project.patches[s] !== undefined
-        ? `${project.patches[s]} ${s}`
-        : `0 ${s}`,
-    disabled: project.patches[s] === 0 || project.patches[s] === undefined,
+    title: `${projectPatches[s]} ${s}`,
+    disabled: projectPatches[s] === 0,
   }));
   $: filteredPatches = groupPatches(patches)[status];
   $: sortedPatches = filteredPatches.sort(
@@ -85,7 +108,7 @@
               },
             });
           }}>
-          <PatchTeaser {project} {patch} />
+          <PatchTeaser {baseUrl} {projectId} {patch} />
         </div>
       {/each}
     </div>

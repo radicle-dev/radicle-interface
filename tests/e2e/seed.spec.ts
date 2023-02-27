@@ -3,7 +3,6 @@ import {
   expect,
   rid,
   seedRemote,
-  seedVersion,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -15,7 +14,7 @@ test("seed metadata", async ({ page }) => {
   await expect(
     page.locator(`text=${seedRemote.substring(0, 6)}…${seedRemote.slice(-6)}`),
   ).toBeVisible();
-  await expect(page.locator(`text=${seedVersion}`)).toBeVisible();
+  await expect(page.locator(`text=0.1.0-`)).toBeVisible();
 });
 
 test("seed projects", async ({ page }) => {

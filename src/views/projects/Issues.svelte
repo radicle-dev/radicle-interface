@@ -1,18 +1,17 @@
 <script lang="ts" context="module">
-  import type { IssueState } from "@app/lib/issue";
+  import type { IssueState } from "@httpd-client";
 
   export type IssueStatus = IssueState["status"];
 </script>
 
 <script lang="ts">
-  import type { Project } from "@app/lib/project";
-  import type { Issue } from "@app/lib/issue";
+  import type { Issue } from "@httpd-client";
   import type { Tab } from "@app/components/TabBar.svelte";
+  import type { BaseUrl } from "@httpd-client";
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
-  import { groupIssues } from "@app/lib/issue";
   import { sessionStore } from "@app/lib/session";
 
   import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
@@ -22,9 +21,23 @@
 
   export let issues: Issue[];
   export let status: IssueStatus;
-  export let project: Project;
+  export let baseUrl: BaseUrl;
+  export let issueCounters: { open: number; closed: number };
 
   let options: Tab<IssueStatus>[];
+
+  function groupIssues(issues: Issue[]): {
+    open: Issue[];
+    closed: Issue[];
+  } {
+    return issues.reduce(
+      (acc, issue) => {
+        acc[issue.state.status].push(issue);
+        return acc;
+      },
+      { open: [] as Issue[], closed: [] as Issue[] },
+    );
+  }
 
   const stateOptions: IssueStatus[] = ["open", "closed"];
   $: options = stateOptions.map<{
@@ -33,12 +46,13 @@
     disabled: boolean;
   }>((s: IssueStatus) => ({
     value: s,
-    title: `${project.issues[s]} ${s}`,
-    disabled: project.issues[s] === 0,
+    title: `${issueCounters[s]} ${s}`,
+    disabled: issueCounters[s] === 0,
   }));
   $: filteredIssues = groupIssues(issues)[status];
   $: sortedIssues = filteredIssues.sort(
-    ({ timestamp: t1 }, { timestamp: t2 }) => t2 - t1,
+    ({ discussion: t1 }, { discussion: t2 }) =>
+      t2[0].timestamp - t1[0].timestamp,
   );
 </script>
 
@@ -80,7 +94,7 @@
         active={status} />
     </div>
     <HeaderToggleLabel
-      disabled={!$sessionStore || !utils.isLocal(project.seed.host)}
+      disabled={!$sessionStore || !utils.isLocal(baseUrl.hostname)}
       on:click={() => {
         router.updateProjectRoute({
           view: {

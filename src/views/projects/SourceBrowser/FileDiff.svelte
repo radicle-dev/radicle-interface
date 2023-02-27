@@ -1,13 +1,17 @@
 <script lang="ts" strictEvents>
+  import type {
+    DiffAddedDeletedModifiedChangeset,
+    HunkLine,
+  } from "@httpd-client";
+
   import { createEventDispatcher } from "svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import { lineNumberL, lineNumberR, lineSign } from "@app/lib/diff";
-  import type { FileDiff } from "@app/lib/diff";
+
   import Badge from "@app/components/Badge.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   const dispatch = createEventDispatcher<{ browse: string }>();
 
-  export let file: FileDiff;
+  export let file: DiffAddedDeletedModifiedChangeset;
   export let mode: string | null = null;
 
   function collapse() {
@@ -15,6 +19,48 @@
   }
 
   let collapsed = false;
+
+  function lineNumberR(line: HunkLine): string | number {
+    switch (line.type) {
+      case "addition": {
+        return line.lineNo;
+      }
+      case "context": {
+        return line.lineNoNew;
+      }
+      case "deletion": {
+        return " ";
+      }
+    }
+  }
+
+  function lineNumberL(line: HunkLine): string | number {
+    switch (line.type) {
+      case "addition": {
+        return " ";
+      }
+      case "context": {
+        return line.lineNoOld;
+      }
+      case "deletion": {
+        return line.lineNo;
+      }
+    }
+  }
+
+  function lineSign(line: HunkLine): string {
+    switch (line.type) {
+      case "addition": {
+        return "+";
+      }
+      case "context": {
+        return " ";
+      }
+      case "deletion": {
+        return "-";
+      }
+    }
+  }
 </script>
 
 <style>

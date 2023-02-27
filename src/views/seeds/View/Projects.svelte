@@ -1,27 +1,28 @@
 <script lang="ts">
-  import type { ProjectInfo } from "@app/lib/project";
-  import type { Seed, Stats } from "@app/lib/seed";
+  import type { BaseUrl, Project, NodeStats } from "@httpd-client";
 
-  import * as proj from "@app/lib/project";
   import * as router from "@app/lib/router";
   import List from "@app/components/List.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
+  import { HttpdClient } from "@httpd-client";
   import { config } from "@app/lib/config";
 
-  export let seed: Seed;
-  export let projects: proj.ProjectInfo[];
-  export let stats: Stats;
+  export let baseUrl: BaseUrl;
+  export let projects: Project[];
+  export let stats: NodeStats;
 
+  const api = new HttpdClient(baseUrl);
   // A pointer to the current page of projects added to the listing
   let page = 0;
 
-  const fetchMoreProjects = async (): Promise<proj.ProjectInfo[]> => {
+  const fetchMoreProjects = async (): Promise<Project[]> => {
     try {
-      stats = await seed.getStats();
-      const projects = await proj.Project.getProjects(seed.addr, {
-        perPage: 10,
+      stats = await api.getStats();
+      const projects = await api.project.getAll({
         page: (page += 1),
+        perPage: 10,
       });
+
       if (projects.length > 0) {
         return projects;
       }
@@ -34,16 +35,16 @@
     return [];
   };
 
-  const onClick = (project: ProjectInfo) => {
+  const onClick = (project: Project) => {
     router.push({
       resource: "projects",
       params: {
         view: { resource: "tree" },
         id: project.id,
-        seed:
-          seed.addr.port === config.seeds.defaultHttpdPort
-            ? seed.addr.host
-            : `${seed.addr.host}:${seed.addr.port}`,
+        hostnamePort:
+          baseUrl.port === config.seeds.defaultHttpdPort
+            ? baseUrl.hostname
+            : `${baseUrl.hostname}:${baseUrl.port}`,
         revision: undefined,
         hash: undefined,
         search: undefined,
@@ -70,7 +71,7 @@
       {#each items as project}
         {#if project.head}
           <div class="project">
-            <Widget {project} {seed} on:click={() => onClick(project)} />
+            <Widget {project} {baseUrl} on:click={() => onClick(project)} />
           </div>
         {/if}
       {/each}

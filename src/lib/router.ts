@@ -149,8 +149,8 @@ function pathToRoute(path: string): Route | null {
   const resource = segments.shift();
   switch (resource) {
     case "seeds": {
-      const host = segments.shift();
-      if (host) {
+      const hostnamePort = segments.shift();
+      if (hostnamePort) {
         const id = segments.shift();
         if (id) {
           // Allows project paths with or without trailing slash
@@ -164,24 +164,24 @@ function pathToRoute(path: string): Route | null {
                 view: { resource: "tree" },
                 id,
                 peer: undefined,
-                seed: host,
+                hostnamePort,
               },
             };
           }
-          const params = resolveProjectRoute(url, host, id, segments);
+          const params = resolveProjectRoute(url, hostnamePort, id, segments);
           if (params) {
             return {
               resource: "projects",
               params: {
                 ...params,
-                seed: host,
+                hostnamePort,
                 id,
               },
             };
           }
           return null;
         }
-        return { resource: "seeds", params: { host } };
+        return { resource: "seeds", params: { hostnamePort } };
       }
       return null;
     }
@@ -214,9 +214,9 @@ export function routeToPath(route: Route) {
   } else if (route.resource === "session") {
     return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "seeds") {
-    return `/seeds/${route.params.host}`;
+    return `/seeds/${route.params.hostnamePort}`;
   } else if (route.resource === "projects") {
-    const hostPrefix = `/seeds/${route.params.seed}`;
+    const hostnamePortPrefix = `/seeds/${route.params.hostnamePort}`;
     const content = `/${route.params.view.resource}`;
 
     let peer = "";
@@ -252,31 +252,31 @@ export function routeToPath(route: Route) {
 
     if (route.params.view.resource === "tree") {
       if (suffix) {
-        return `${hostPrefix}/${route.params.id}${peer}/tree${suffix}`;
+        return `${hostnamePortPrefix}/${route.params.id}${peer}/tree${suffix}`;
       }
-      return `${hostPrefix}/${route.params.id}${peer}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}`;
     } else if (route.params.view.resource === "commits") {
-      return `${hostPrefix}/${route.params.id}${peer}/commits${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/commits${suffix}`;
     } else if (route.params.view.resource === "history") {
-      return `${hostPrefix}/${route.params.id}${peer}/history${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/history${suffix}`;
     } else if (
       route.params.view.resource === "issues" &&
       route.params.view.params?.view.resource === "new"
     ) {
-      return `${hostPrefix}/${route.params.id}${peer}/issues/new${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues/new${suffix}`;
     } else if (route.params.view.resource === "issues") {
-      return `${hostPrefix}/${route.params.id}${peer}/issues${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
-      return `${hostPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
     } else if (route.params.view.resource === "patches") {
-      return `${hostPrefix}/${route.params.id}${peer}/patches${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/patches${suffix}`;
     } else if (route.params.view.resource === "patch") {
       if (route.params.view.params.revision) {
-        return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
+        return `${hostnamePortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
       }
-      return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
     } else {
-      return `${hostPrefix}/${route.params.id}${peer}${content}`;
+      return `${hostnamePortPrefix}/${route.params.id}${peer}${content}`;
     }
   } else if (route.resource === "404") {
     return route.params.url;
@@ -287,7 +287,7 @@ export function routeToPath(route: Route) {
 
 function resolveProjectRoute(
   url: URL,
-  seed: string,
+  hostnamePort: string,
   id: string,
   segments: string[],
 ): ProjectsParams | null {
@@ -304,7 +304,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "tree" },
       id,
-      seed,
+      hostnamePort,
       peer,
       path: undefined,
       revision: undefined,
@@ -317,7 +317,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "history" },
       id,
-      seed,
+      hostnamePort,
       peer,
       path: undefined,
       revision: undefined,
@@ -328,7 +328,7 @@ function resolveProjectRoute(
     return {
       view: { resource: "commits" },
       id,
-      seed,
+      hostnamePort,
       peer,
       path: undefined,
       revision: undefined,
@@ -341,7 +341,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "issues", params: { view: { resource: "new" } } },
         id,
-        seed,
+        hostnamePort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -351,7 +351,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "issue", params: { issue: issueOrAction } },
         id,
-        seed,
+        hostnamePort,
         peer,
         path: undefined,
         revision: undefined,
@@ -361,7 +361,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "issues" },
         id,
-        seed,
+        hostnamePort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -375,7 +375,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "patch", params: { patch, revision } },
         id,
-        seed,
+        hostnamePort,
         peer,
         path: undefined,
         revision: undefined,
@@ -385,7 +385,7 @@ function resolveProjectRoute(
       return {
         view: { resource: "patches" },
         id,
-        seed,
+        hostnamePort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,

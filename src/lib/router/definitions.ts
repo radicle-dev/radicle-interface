@@ -6,7 +6,7 @@ export type Route =
       params: { id: string; signature: string; publicKey: string };
     }
   | { resource: "404"; params: { url: string } }
-  | { resource: "seeds"; params: { host: string } };
+  | { resource: "seeds"; params: { hostnamePort: string } };
 
 export interface ProjectsParams {
   id: string;
@@ -28,7 +28,7 @@ export interface ProjectsParams {
         };
       }
     | { resource: "patch"; params: { patch: string; revision?: string } };
-  seed: string;
+  hostnamePort: string;
   hash?: string;
   line?: string;
   path?: string;

@@ -1,8 +1,15 @@
 <script lang="ts" strictEvents>
-  import type { Project } from "@app/lib/project";
-  import type { Session } from "@app/lib/session";
+  import type { BaseUrl } from "@httpd-client";
+  import type { StoredSession } from "@app/lib/session";
+
+  import { createEventDispatcher } from "svelte";
 
   import * as modal from "@app/lib/modal";
+  import * as utils from "@app/lib/utils";
+  import { HttpdClient } from "@httpd-client";
+  import { sessionStore } from "@app/lib/session";
+  import { stripDidPrefix, validateTag } from "@app/lib/cobs";
+
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Avatar.svelte";
@@ -11,18 +18,15 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobSideInput from "@app/views/projects/Cob/CobSideInput.svelte";
   import Comment from "@app/components/Comment.svelte";
-  import { Issue } from "@app/lib/issue";
-  import { createEventDispatcher } from "svelte";
-  import { formatNodeId, isLocal, parseNodeId } from "@app/lib/utils";
-  import { sessionStore } from "@app/lib/session";
-  import { stripDidPrefix, validateTag } from "@app/lib/cobs";
 
-  export let session: Session;
-  export let project: Project;
+  export let session: StoredSession;
+  export let projectId: string;
+  export let projectHead: string;
+  export let baseUrl: BaseUrl;
 
   const dispatch = createEventDispatcher<{ create: string }>();
   const action: "edit" | "view" =
-    $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
+    $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
 
   let preview: boolean = false;
 
@@ -31,15 +35,18 @@
   let assignees: string[] = [];
   let tags: string[] = [];
 
+  const api = new HttpdClient(baseUrl);
+
   async function createIssue() {
     try {
-      const result = await Issue.createIssue(
-        project.id,
-        issueTitle,
-        issueText,
-        stripDidPrefix(assignees),
-        tags,
-        project.seed.addr,
+      const result = await api.project.createIssue(
+        projectId,
+        {
+          title: issueTitle,
+          description: issueText,
+          assignees: stripDidPrefix(assignees),
+          tags: tags,
+        },
         session.id,
       );
       dispatch("create", result.id);
@@ -103,7 +110,7 @@
           <Badge variant="positive">open</Badge>
           <Authorship
             timestamp={Date.now()}
-            author={{ id: session.publicKey }}
+            authorId={session.publicKey}
             caption="opened this issue" />
         </svelte:fragment>
       </CobHeader>
@@ -111,10 +118,10 @@
         <Comment
           bind:body={issueText}
           on:submit={createIssue}
-          author={{ id: session.publicKey }}
+          authorId={session.publicKey}
           timestamp={Date.now()}
           action={preview ? "view" : "create"}
-          rawPath={project.getRawPath()} />
+          rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
       </div>
       <div class="actions">
         <Button
@@ -142,11 +149,11 @@
         title="Assignees"
         placeholder="Add assignee"
         on:save={({ detail: assignees }) => (assignees = assignees)}
-        validate={item => Boolean(parseNodeId(item))}
+        validate={item => Boolean(utils.parseNodeId(item))}
         validateAdd={(item, items) => validateTag(item, items)}>
         <svelte:fragment let:item>
           <Avatar inline nodeId={item} />
-          <span>{formatNodeId(item)}</span>
+          <span>{utils.formatNodeId(item)}</span>
         </svelte:fragment>
       </CobSideInput>
       <CobSideInput

@@ -6,7 +6,11 @@
     "defaultNodePort": 8776,
     "pinned": [
       {
-        "host": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       }
     ]
   },
@@ -15,27 +19,47 @@
       {
         "name": "radicle-interface",
         "id": "rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5",
-        "seed": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       },
       {
         "name": "heartwood",
         "id": "rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5",
-        "seed": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       },
       {
         "name": "rips",
         "id": "rad:z3trNYnLWS11cJWC6BbxDs5niGo82",
-        "seed": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       },
       {
         "name": "radicle-git",
         "id": "rad:zMKWcgFLjUSVBBVmxbcMzzokRxub",
-        "seed": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       },
       {
         "name": "radicle-team",
         "id": "rad:z2Jk1mNqyX7AjT4K83jJW9vQoHn4f",
-        "seed": "seed.radicle.xyz"
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       }
     ]
   }

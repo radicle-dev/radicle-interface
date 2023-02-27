@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Project } from "@app/lib/project";
+  import type { Project } from "@httpd-client";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import DOMPurify from "dompurify";

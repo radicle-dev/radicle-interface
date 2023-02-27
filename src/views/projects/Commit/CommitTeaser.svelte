@@ -1,12 +1,14 @@
 <script lang="ts" strictEvents>
-  import type { CommitMetadata } from "@app/lib/commit";
-  import { formatCommit, twemoji } from "@app/lib/utils";
+  import type { CommitHeader } from "@httpd-client";
+
   import { createEventDispatcher } from "svelte";
 
-  import Icon from "@app/components/Icon.svelte";
-  import CommitAuthorship from "./CommitAuthorship.svelte";
+  import { formatCommit, twemoji } from "@app/lib/utils";
 
-  export let commit: CommitMetadata;
+  import CommitAuthorship from "./CommitAuthorship.svelte";
+  import Icon from "@app/components/Icon.svelte";
+
+  export let commit: CommitHeader;
 
   const dispatch = createEventDispatcher<{ browseCommit: string }>();
 
@@ -92,18 +94,18 @@
   <div class="column-left">
     <div class="header">
       <div class="summary" use:twemoji>
-        {commit.commit.summary}
+        {commit.summary}
       </div>
     </div>
-    <CommitAuthorship header={commit.commit} />
+    <CommitAuthorship header={commit} />
   </div>
   <div class="column-right">
-    <span class="hash txt-highlight">{formatCommit(commit.commit.id)}</span>
+    <span class="hash txt-highlight">{formatCommit(commit.id)}</span>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"
       title="Browse the repository at this point in the history"
-      on:click|stopPropagation={() => browseCommit(commit.commit.id)}>
+      on:click|stopPropagation={() => browseCommit(commit.id)}>
       <Icon name="browse" />
     </div>
   </div>

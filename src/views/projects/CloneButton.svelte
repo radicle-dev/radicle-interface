@@ -1,18 +1,18 @@
 <script lang="ts">
-  import type { Host } from "@app/lib/api";
+  import type { BaseUrl } from "@httpd-client";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import Floating from "@app/components/Floating.svelte";
   import { closeFocused } from "@app/components/Floating.svelte";
   import { parseRepositoryId } from "@app/lib/utils";
 
-  export let seedHost: Host;
+  export let baseUrl: BaseUrl;
   export let id: string;
   export let name: string;
 
   $: radCloneUrl = `rad clone ${id}`;
-  $: gitCloneUrl = `git clone ${seedHost.scheme}://${seedHost.host}:${
-    seedHost.port
+  $: gitCloneUrl = `git clone ${baseUrl.scheme}://${baseUrl.hostname}:${
+    baseUrl.port
   }/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`;
 </script>
 

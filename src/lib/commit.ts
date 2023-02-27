@@ -1,47 +1,12 @@
-import type { Stats } from "@app/lib/project";
-import type { Diff, DiffStats } from "@app/lib/diff";
-import { ApiError } from "@app/lib/api";
+import type { CommitHeader } from "@httpd-client";
+
 import { getDaysPassed } from "@app/lib/utils";
 
-export interface CommitsHistory {
-  commits: CommitMetadata[];
-  stats: Stats;
-}
-
-export interface CommitMetadata {
-  commit: CommitHeader;
-}
-
-export interface Author {
-  email: string;
-  name: string;
-  time: number;
-}
-
-export interface CommitStats {
-  branches: number;
-  commits: number;
-  contributors: number;
-}
-
-export interface GroupedCommitsHistory {
-  commits: CommitGroup[];
-  stats: Stats;
-}
-
-export interface CommitHeader {
-  author: Author;
-  committer: Author;
-  description: string;
-  id: string;
-  summary: string;
-}
-
 // A set of commits grouped by time.
-export interface CommitGroup {
+interface CommitGroup {
   date: string;
   time: number;
-  commits: CommitMetadata[];
+  commits: CommitHeader[];
   week: number;
 }
 
@@ -52,14 +17,7 @@ export interface WeeklyActivity {
   week: number;
 }
 
-export interface Commit {
-  commit: CommitHeader;
-  stats: DiffStats;
-  diff: Diff;
-  branches: string[];
-}
-
-export function formatGroupTime(timestamp: number): string {
+function formatGroupTime(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("en-US", {
     day: "numeric",
     weekday: "long",
@@ -68,24 +26,22 @@ export function formatGroupTime(timestamp: number): string {
   });
 }
 
-export function groupCommits(
-  commits: { commit: CommitHeader }[],
-): CommitGroup[] {
+export function groupCommits(commits: CommitHeader[]): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
   try {
     commits = commits.sort((a, b) => {
-      if (a.commit.committer.time > b.commit.committer.time) {
+      if (a.committer.time > b.committer.time) {
         return -1;
-      } else if (a.commit.committer.time < b.commit.committer.time) {
+      } else if (a.committer.time < b.committer.time) {
         return 1;
       }
 
       return 0;
     });
 
-    for (const { commit } of commits) {
+    for (const commit of commits) {
       const time = commit.committer.time * 1000;
       const date = new Date(time);
       const isNewDay =
@@ -104,11 +60,11 @@ export function groupCommits(
         });
         groupDate = date;
       }
-      groupedCommits[groupedCommits.length - 1].commits.push({ commit });
+      groupedCommits[groupedCommits.length - 1].commits.push(commit);
     }
     return groupedCommits;
   } catch (err) {
-    throw new ApiError(
+    throw new Error(
       "Not able to create commit history, please consider updating seed HTTP API.",
     );
   }

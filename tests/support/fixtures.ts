@@ -52,7 +52,15 @@ export const test = base.extend<{
               defaultHttpdPort: 8080,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
-              pinned: [{ host: "127.0.0.1" }],
+              pinned: [
+                {
+                  baseUrl: {
+                    hostname: "127.0.0.1",
+                    port: 8080,
+                    scheme: "http",
+                  },
+                },
+              ],
             },
             projects: { pinned: [] },
           };
@@ -134,14 +142,26 @@ export function configFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "127.0.0.1" }],
+      pinned: [
+        {
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8080,
+            scheme: "http",
+          },
+        },
+      ],
     },
     projects: {
       pinned: [
         {
           name: "source-browsing",
           id: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-          seed: "127.0.0.1",
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8080,
+            scheme: "http",
+          },
         },
       ],
     },
@@ -155,14 +175,26 @@ export function appConfigWithFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "127.0.0.1" }],
+      pinned: [
+        {
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8080,
+            scheme: "http",
+          },
+        },
+      ],
     },
     projects: {
       pinned: [
         {
           name: "source-browsing",
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-          seed: "127.0.0.1",
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8080,
+            scheme: "http",
+          },
         },
       ],
     },
@@ -177,5 +209,4 @@ export const bobRemote =
 export const rid = "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT";
 export const projectFixtureUrl = `/seeds/127.0.0.1/${rid}`;
 export const seedPort = 8080;
-export const seedVersion = "0.1.0-6463768";
 export const seedRemote = "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8";

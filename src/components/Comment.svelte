@@ -1,6 +1,4 @@
 <script lang="ts" strictEvents>
-  import type { Author } from "@app/lib/cobs";
-
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -9,7 +7,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let id: string | undefined = undefined;
-  export let author: Author;
+  export let authorId: string;
   export let timestamp: number;
   export let body: string;
   export let showReplyIcon: boolean = false;
@@ -56,10 +54,10 @@
   <div class="card">
     <div class="card-header">
       <div class="layout-desktop">
-        <Authorship {caption} {author} {timestamp} />
+        <Authorship {caption} {authorId} {timestamp} />
       </div>
       <div class="layout-mobile">
-        <Authorship {author} {timestamp} />
+        <Authorship {authorId} {timestamp} />
       </div>
       <div class="actions">
         {#if showReplyIcon}

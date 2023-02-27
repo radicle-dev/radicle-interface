@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CommitHeader } from "@app/lib/commit";
+  import type { CommitHeader } from "@httpd-client";
 
   import { formatTimestamp, gravatarURL } from "@app/lib/utils";
 

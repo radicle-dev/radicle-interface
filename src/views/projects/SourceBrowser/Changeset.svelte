@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Diff, DiffStats } from "@app/lib/diff";
+  import type { Diff } from "@httpd-client";
 
-  import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
   import { pluralize } from "@app/lib/pluralize";
 
+  import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
+
   export let diff: Diff;
-  export let stats: DiffStats;
 
   const diffDescription = ({ modified, added, deleted }: Diff): string => {
     const s = [];
@@ -42,13 +42,13 @@
   <span>{diffDescription(diff)}</span>
   with
   <span class="additions">
-    {stats.insertions}
-    {pluralize("insertion", stats.insertions)}
+    {diff.stats.insertions}
+    {pluralize("insertion", diff.stats.insertions)}
   </span>
   and
   <span class="deletions">
-    {stats.deletions}
-    {pluralize("deletion", stats.deletions)}
+    {diff.stats.deletions}
+    {pluralize("deletion", diff.stats.deletions)}
   </span>
 </div>
 <div class="diff-listing">

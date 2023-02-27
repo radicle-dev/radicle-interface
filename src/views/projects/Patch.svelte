@@ -1,53 +1,58 @@
-<script lang="ts" context="module">
-  import type * as cobs from "@app/lib/cobs";
-  import type { Merge, Review } from "@app/lib/patch";
+<script lang="ts">
+  import type { BaseUrl, Comment, Merge, Patch, Review } from "@httpd-client";
 
-  export interface TimelineReview {
+  interface Thread {
+    root: Comment;
+    replies: Comment[];
+  }
+
+  interface TimelineReview {
     inner: [string, Review];
     type: "review";
     timestamp: number;
   }
 
-  export interface TimelineMerge {
+  interface TimelineMerge {
     inner: Merge;
     type: "merge";
     timestamp: number;
   }
 
-  export interface TimelineThread {
-    inner: cobs.Thread;
+  interface TimelineThread {
+    inner: Thread;
     type: "thread";
     timestamp: number;
   }
-</script>
 
-<script lang="ts">
-  import type { Project } from "@app/lib/project";
+  import capitalize from "lodash/capitalize";
 
   import * as router from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
+  import { HttpdClient } from "@httpd-client";
+  import { formatObjectId, validateTag } from "@app/lib/cobs";
+  import { sessionStore } from "@app/lib/session";
+
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobSideInput from "./Cob/CobSideInput.svelte";
-  import Comment from "@app/components/Comment.svelte";
+  import CommentComponent from "@app/components/Comment.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
   import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
   import TabBar from "@app/components/TabBar.svelte";
-  import Thread from "@app/components/Thread.svelte";
-  import capitalize from "lodash/capitalize";
-  import { Patch } from "@app/lib/patch";
-  import { createAddRemoveArrays } from "@app/lib/issue";
-  import { formatCommit, isLocal } from "@app/lib/utils";
-  import { formatObjectId, validateTag } from "@app/lib/cobs";
-  import { sessionStore } from "@app/lib/session";
+  import ThreadComponent from "@app/components/Thread.svelte";
 
+  export let projectId: string;
+  export let baseUrl: BaseUrl;
   export let patch: Patch;
+  export let projectHead: string;
   export let revision: string | undefined = undefined;
   export let currentTab: "activity" | "commits";
-  export let project: Project;
+
+  const api = new HttpdClient(baseUrl);
 
   const browseCommit = (event: { detail: string }) => {
     router.updateProjectRoute({
@@ -61,32 +66,37 @@
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
     if ($sessionStore && reply.body.trim().length > 0) {
-      await patch.replyComment(
-        project.id,
-        currentRevision.id,
-        reply.body,
-        reply.id,
-        project.seed.addr,
+      await api.project.updatePatch(
+        projectId,
+        patch.id,
+        {
+          type: "thread",
+          revision: currentRevision.id,
+          action: {
+            type: "comment",
+            body: reply.body,
+            replyTo: reply.id,
+          },
+        },
         $sessionStore.id,
       );
-      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+      patch = await api.project.getPatchById(projectId, patch.id);
     }
   }
 
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
     if ($sessionStore) {
-      const { add, remove } = createAddRemoveArrays(patch.tags, tags);
+      const { add, remove } = utils.createAddRemoveArrays(patch.tags, tags);
       if (add.length === 0 && remove.length === 0) {
         return;
       }
-      await patch.editTags(
-        project.id,
-        add,
-        remove,
-        project.seed.addr,
+      await api.project.updatePatch(
+        projectId,
+        currentRevision.id,
+        { type: "tag", add, remove },
         $sessionStore.id,
       );
-      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+      patch = await api.project.getPatchById(projectId, patch.id);
     }
   }
 
@@ -102,7 +112,7 @@
   }
 
   const action: "create" | "edit" | "view" =
-    $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
+    $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
 
   // Reactive due to eventual changes in patch.revisions
   $: enumeratedRevisions = patch.revisions.map((r, i) => [r, i] as const);
@@ -145,10 +155,10 @@
   $: timeline = [...reviews, ...merges, ...threads].sort(
     (a, b) => a.timestamp - b.timestamp,
   );
-  $: diffPromise = patch.getPatchDiff(
-    project.id,
-    currentRevision,
-    project.seed.addr,
+  $: diffPromise = api.project.getDiff(
+    projectId,
+    currentRevision.base,
+    currentRevision.oid,
   );
 </script>
 
@@ -246,11 +256,11 @@
           <Authorship
             highlight
             timestamp={patch.revisions[0].timestamp}
-            author={patch.author}
+            authorId={patch.author.id}
             caption="opened this patch" />
         </div>
         <div class="layout-mobile">
-          <Authorship highlight author={patch.author} />
+          <Authorship highlight authorId={patch.author.id} />
         </div>
       </svelte:fragment>
     </CobHeader>
@@ -264,11 +274,11 @@
     {#if currentTab === "activity"}
       <div style:margin-top="1rem">
         <div class="txt-tiny">
-          <Comment
+          <CommentComponent
             caption="created this revision"
-            author={patch.author}
+            authorId={patch.author.id}
             timestamp={currentRevision.timestamp}
-            rawPath={project.getRawPath()}
+            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             body={currentRevisionIndex === 0
               ? patch.description
               : currentRevision.description} />
@@ -276,8 +286,8 @@
         {#each timeline as element}
           {#if element.type === "thread"}
             <!-- TODO: Implement reply creation and comment editing -->
-            <Thread
-              rawPath={project.getRawPath()}
+            <ThreadComponent
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               isDescription={false}
               thread={element.inner}
               on:reply={createReply}
@@ -285,19 +295,19 @@
           {:else if element.type === "merge"}
             <div class="action layout-desktop txt-tiny">
               <Authorship
-                author={{ id: element.inner.node }}
+                authorId={element.inner.node}
                 timestamp={element.timestamp}>
                 merged
                 <span class="highlight">
-                  {formatCommit(element.inner.commit)}
+                  {utils.formatCommit(element.inner.commit)}
                 </span>
               </Authorship>
             </div>
             <div class="action layout-mobile txt-tiny">
-              <Authorship author={{ id: element.inner.node }}>
+              <Authorship authorId={element.inner.node}>
                 merged
                 <span class="highlight">
-                  {formatCommit(element.inner.commit)}
+                  {utils.formatCommit(element.inner.commit)}
                 </span>
               </Authorship>
             </div>
@@ -305,21 +315,21 @@
             <!-- TODO: Implement inline code comments -->
             {@const [author, review] = element.inner}
             <div class="action layout-desktop txt-tiny">
-              <Authorship author={{ id: author }} timestamp={element.timestamp}>
+              <Authorship authorId={author} timestamp={element.timestamp}>
                 {formatVerdict(review.verdict)}
               </Authorship>
             </div>
             <div class="action layout-mobile txt-tiny">
-              <Authorship author={{ id: author }}>
+              <Authorship authorId={author}>
                 {formatVerdict(review.verdict)}
               </Authorship>
             </div>
             {#if review.comment}
-              <Comment
+              <CommentComponent
                 caption="left a comment"
-                author={{ id: author }}
+                authorId={author}
                 timestamp={review.timestamp}
-                rawPath={project.getRawPath()}
+                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={review.comment} />
             {/if}
           {/if}
@@ -330,7 +340,7 @@
         <div style:margin-top="1rem">
           {#each diff.commits as commit}
             <CommitTeaser
-              commit={{ commit: commit }}
+              {commit}
               on:click={() => {
                 router.updateProjectRoute({
                   view: { resource: "commits" },
@@ -347,7 +357,6 @@
         <div style:margin-top="1rem">
           <Changeset
             diff={diff.diff}
-            stats={diff.diff.stats}
             on:browse={({ detail: path }) => {
               router.updateProjectRoute({
                 view: { resource: "tree" },

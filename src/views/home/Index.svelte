@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { Host } from "@app/lib/api";
-  import type { ProjectInfo } from "@app/lib/project";
+  import type { BaseUrl, Project } from "@httpd-client";
 
   import * as router from "@app/lib/router";
+  import { config } from "@app/lib/config";
+  import { getProjectsFromSeeds } from "@app/lib/search";
+  import { setOpenGraphMetaTag, twemoji } from "@app/lib/utils";
+
   import Loading from "@app/components/Loading.svelte";
   import Message from "@app/components/Message.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
-  import { config } from "@app/lib/config";
-  import { Project } from "@app/lib/project";
-  import { setOpenGraphMetaTag, twemoji } from "@app/lib/utils";
 
   setOpenGraphMetaTag([
     { prop: "og:title", content: "Radicle Interface" },
@@ -16,27 +16,13 @@
     { prop: "og:url", content: window.location.href },
   ]);
 
-  const getProjects =
-    config.projects.pinned.length > 0
-      ? Project.getMulti(
-          config.projects.pinned.map(project => ({
-            nameOrId: project.id,
-            seed: {
-              host: project.seed,
-              port: config.seeds.defaultHttpdPort,
-              scheme: config.seeds.defaultHttpdScheme,
-            },
-          })),
-        )
-      : Promise.resolve([]);
-
-  function onClick(project: ProjectInfo, seed: Host) {
+  function goToProject(project: Project, baseUrl: BaseUrl) {
     router.push({
       resource: "projects",
       params: {
         view: { resource: "tree" },
         id: project.id,
-        seed: seed.host,
+        hostnamePort: baseUrl.hostname,
         peer: undefined,
         revision: undefined,
       },
@@ -101,7 +87,7 @@
     </p>
   </div>
 
-  {#await getProjects}
+  {#await getProjectsFromSeeds(config.projects.pinned)}
     <div class="loading">
       <Loading center />
     </div>
@@ -117,9 +103,9 @@
           <div class="project">
             <Widget
               compact
-              project={result.info}
-              seed={{ addr: result.seed }}
-              on:click={() => onClick(result.info, result.seed)} />
+              project={result.project}
+              baseUrl={result.baseUrl}
+              on:click={() => goToProject(result.project, result.baseUrl)} />
           </div>
         {/each}
       </div>

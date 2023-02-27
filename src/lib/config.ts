@@ -1,3 +1,5 @@
+import type { BaseUrl } from "@httpd-client";
+
 import configJson from "@app/config.json";
 
 export interface Config {
@@ -6,13 +8,13 @@ export interface Config {
     defaultHttpdPort: number;
     defaultNodePort: number;
     defaultHttpdScheme: string;
-    pinned: { host: string }[];
+    pinned: { baseUrl: BaseUrl }[];
   };
   projects: {
     pinned: {
       name: string;
       id: string;
-      seed: string;
+      baseUrl: BaseUrl;
     }[];
   };
 }

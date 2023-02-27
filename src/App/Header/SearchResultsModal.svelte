@@ -1,13 +1,14 @@
 <script lang="ts" strictEvents>
-  import type { ProjectResult } from "@app/lib/search";
+  import type { ProjectAndSeed } from "@app/lib/search";
 
   import * as modal from "@app/lib/modal";
-  import Link from "@app/components/Link.svelte";
-  import Modal from "@app/components/Modal.svelte";
   import { formatRepositoryId } from "@app/lib/utils";
 
+  import Link from "@app/components/Link.svelte";
+  import Modal from "@app/components/Modal.svelte";
+
   export let query: string;
-  export let results: ProjectResult[];
+  export let results: ProjectAndSeed[];
 </script>
 
 <style>
@@ -31,7 +32,7 @@
     {#if results.length > 0}
       <div class="txt-highlight txt-medium">Projects</div>
       <ul>
-        {#each results as project}
+        {#each results as result}
           <li>
             <Link
               on:click={modal.hide}
@@ -39,14 +40,14 @@
                 resource: "projects",
                 params: {
                   view: { resource: "tree" },
-                  seed: project.seed.host,
-                  id: project.info.id,
+                  hostnamePort: result.baseUrl.hostname,
+                  id: result.project.id,
                 },
               }}>
-              <span title={project.seed.host}>
-                <span>{project.info.name}</span>
+              <span title={result.baseUrl.hostname}>
+                <span>{result.project.name}</span>
                 <span class="id">
-                  &nbsp;{formatRepositoryId(project.info.id)}
+                  &nbsp;{formatRepositoryId(result.project.id)}
                 </span>
               </span>
             </Link>
