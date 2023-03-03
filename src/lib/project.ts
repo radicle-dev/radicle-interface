@@ -61,7 +61,7 @@ export interface Entry {
 
 export interface Blob {
   binary: boolean;
-  content: string;
+  content?: string;
   path: string;
   name: string;
   lastCommit: CommitHeader;

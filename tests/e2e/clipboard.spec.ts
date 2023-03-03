@@ -3,7 +3,6 @@ import {
   expect,
   projectFixtureUrl,
   rid,
-  seedRemote,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -79,10 +78,10 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // Seed address.
   {
     await page.locator(".clipboard").first().click();
-    await expectClipboard("0.0.0.0", page);
-
-    await page.locator(".clipboard").last().click();
-    await expectClipboard(seedRemote, page);
+    await expectClipboard(
+      "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@0.0.0.0:8776",
+      page,
+    );
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

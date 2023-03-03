@@ -90,7 +90,7 @@ export function formatNodeId(id: string): string {
   const parsedId = parseNodeId(id);
 
   if (parsedId) {
-    return truncateId(parsedId.prefix, parsedId.pubkey);
+    return `${parsedId.prefix}${truncateId(parsedId.pubkey)}`;
   }
 
   return id;
@@ -100,14 +100,14 @@ export function formatRepositoryId(id: string): string {
   const parsedId = parseRepositoryId(id);
 
   if (parsedId) {
-    return truncateId(parsedId.prefix, parsedId.pubkey);
+    return `${parsedId.prefix}${truncateId(parsedId.pubkey)}`;
   }
 
   return id;
 }
 
-function truncateId(prefix: string, pubkey: string): string {
-  return `${prefix}${pubkey.substring(0, 6) + "…" + pubkey.slice(-6)}`;
+export function truncateId(pubkey: string): string {
+  return `${pubkey.substring(0, 6) + "…" + pubkey.slice(-6)}`;
 }
 
 export function formatCommit(oid: string): string {
@@ -233,18 +233,6 @@ export function getDaysPassed(from: Date, to: Date): number {
 export function scrollIntoView(id: string) {
   const lineElement = document.getElementById(id);
   if (lineElement) lineElement.scrollIntoView();
-}
-
-export function getSeedEmoji(seedHost: string): string {
-  const seed = config.seeds.pinned.find(s => s.host === seedHost);
-
-  if (seed) {
-    return seed.emoji;
-  } else if (isLocal(seedHost)) {
-    return "🏠";
-  } else {
-    return "🌱";
-  }
 }
 
 // Check whether the given path has a markdown file extension.

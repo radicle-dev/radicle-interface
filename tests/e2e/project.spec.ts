@@ -258,7 +258,7 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)}`,
+      ` did:key: ${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)} `,
     );
     await expect(
       page.locator(
@@ -322,7 +322,7 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${bobRemote.substring(0, 6)}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)}`,
+      ` did:key: ${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)} `,
     );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 

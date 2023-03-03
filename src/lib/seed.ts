@@ -3,7 +3,6 @@ import type { Host } from "@app/lib/api";
 import * as proj from "@app/lib/project";
 import { Request } from "@app/lib/api";
 import { assert } from "@app/lib/error";
-import { getSeedEmoji } from "@app/lib/utils";
 import { config } from "@app/lib/config";
 
 export interface Stats {
@@ -16,12 +15,9 @@ export class Seed {
   node: Host & { id: string };
 
   version?: string;
-  emoji: string;
 
   constructor(seed: { host: Host; id: string; version?: string }) {
     assert(/^[a-zA-Z0-9]+$/.test(seed.id), `invalid seed id ${seed.id}`);
-
-    this.emoji = getSeedEmoji(seed.host.host);
 
     this.addr = seed.host;
     this.node = {

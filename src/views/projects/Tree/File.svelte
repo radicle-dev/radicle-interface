@@ -51,7 +51,7 @@
   <span class="name">{name}</span>
   <div class="spinner">
     {#if loading}
-      <Loading small condensed />
+      <Loading noDelay small condensed />
     {/if}
   </div>
 </div>

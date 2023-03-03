@@ -2,7 +2,6 @@ import {
   aliceMainHead,
   expect,
   rid,
-  seedPort,
   seedRemote,
   seedVersion,
   test,
@@ -12,19 +11,10 @@ test("seed metadata", async ({ page }) => {
   await page.goto("/seeds/radicle.local");
 
   await expect(page.locator("header").getByText("radicle.local")).toBeVisible();
-  await expect(
-    page.locator(".title >> text=radicle.local").getByRole("img"),
-  ).toHaveAttribute("alt", "🚀");
-
-  await expect(page.getByRole("link", { name: "radicle.local" })).toBeVisible();
-  await expect(page.locator(".seed-address").getByRole("img")).toHaveAttribute(
-    "alt",
-    "🚀",
-  );
+  await expect(page.locator("text=radicle.local")).toBeVisible();
   await expect(
     page.locator(`text=${seedRemote.substring(0, 6)}…${seedRemote.slice(-6)}`),
   ).toBeVisible();
-  await expect(page.locator(`text=${seedPort}`)).toBeVisible();
   await expect(page.locator(`text=${seedVersion}`)).toBeVisible();
 });
 

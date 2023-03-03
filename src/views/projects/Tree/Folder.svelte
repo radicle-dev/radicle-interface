@@ -70,7 +70,7 @@
 <div class="container">
   {#if expanded}
     {#await tree}
-      <span class="loading"><Loading small margins /></span>
+      <span class="loading"><Loading noDelay small margins /></span>
     {:then tree}
       {#if tree}
         {#each tree.entries as entry (entry.path)}

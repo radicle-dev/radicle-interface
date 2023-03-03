@@ -4,15 +4,8 @@
 
   import { Project } from "@app/lib/project";
   import { Seed } from "@app/lib/seed";
-  import { config } from "@app/lib/config";
-  import {
-    formatNodeId,
-    formatSeedHost,
-    twemoji,
-    extractHost,
-  } from "@app/lib/utils";
+  import { formatSeedHost, extractHost } from "@app/lib/utils";
 
-  import Clipboard from "@app/components/Clipboard.svelte";
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Projects from "@app/views/seeds/View/Projects.svelte";
@@ -50,7 +43,7 @@
   }
   .fields {
     display: grid;
-    grid-template-columns: 5rem 4fr 2fr;
+    grid-template-columns: 5rem 4fr 0fr;
     gap: 1rem 2rem;
     margin-bottom: 2rem;
   }
@@ -60,10 +53,6 @@
     line-height: 2rem;
   }
   .title {
-    display: flex;
-    align-items: center;
-  }
-  .seed-label {
     display: flex;
     align-items: center;
   }
@@ -93,7 +82,6 @@
       <span class="title txt-title">
         <span class="txt-bold">
           {hostName}
-          <span class="layout-desktop-inline" use:twemoji>{seed.emoji}</span>
         </span>
       </span>
     </header>
@@ -101,19 +89,7 @@
     <div class="fields">
       <!-- Seed Address -->
       <div class="txt-highlight">Address</div>
-      <SeedAddress
-        {seed}
-        port={seed.node.port ?? config.seeds.defaultHttpdPort} />
-      <!-- Seed ID -->
-      <div class="txt-highlight">Seed ID</div>
-      <div class="seed-label">
-        {formatNodeId(seed.id)}
-        <Clipboard small text={seed.id} />
-      </div>
-      <div class="layout-desktop" />
-      <!-- API Port -->
-      <div class="txt-highlight">API Port</div>
-      <div>{seed.addr.port}</div>
+      <SeedAddress {seed} port={seed.node.port} />
       <div class="layout-desktop" />
       <!-- API Version -->
       <div class="txt-highlight">Version</div>

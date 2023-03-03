@@ -2,21 +2,11 @@
   import type { Seed } from "@app/lib/seed";
 
   import Clipboard from "@app/components/Clipboard.svelte";
-  import Link from "@app/components/Link.svelte";
-  import {
-    formatSeedAddress,
-    formatNodeId,
-    formatSeedHost,
-    twemoji,
-  } from "@app/lib/utils";
+  import { formatSeedAddress, truncateId } from "@app/lib/utils";
+  import { config } from "@app/lib/config";
 
   export let seed: Seed;
   export let port: number;
-  export let full = false;
-
-  const seedHost = seed.addr.port
-    ? `${seed.addr.host}:${seed.addr.port}`
-    : `${formatSeedHost(seed.addr.host)}`;
 </script>
 
 <style>
@@ -32,10 +22,6 @@
     color: var(--color-foreground-6);
     vertical-align: middle;
   }
-  .seed-icon {
-    width: 1rem;
-    margin-right: 0.5rem;
-  }
   .seed-address > * {
     vertical-align: middle;
   }
@@ -43,32 +29,10 @@
 
 <div class="wrapper">
   <div class="seed-address">
-    <span class="seed-icon" use:twemoji>{seed.emoji}</span>
-    {#if full}
-      <span>
-        <Link
-          route={{
-            resource: "seeds",
-            params: { host: formatSeedHost(seedHost) },
-          }}>
-          <span class="txt-link">{formatNodeId(seed.id)}@{seed.host}</span>
-        </Link>
-      </span>
+    {truncateId(seed.id)}@{seed.host}
+    {#if port !== config.seeds.defaultNodePort}
       <span class="txt-faded">:{port}</span>
-    {:else}
-      <span>
-        <Link
-          route={{
-            resource: "seeds",
-            params: { host: seedHost },
-          }}>
-          <span class="txt-link">{formatSeedHost(seedHost)}</span>
-        </Link>
-      </span>
     {/if}
   </div>
-  <Clipboard
-    small
-    text={full ? formatSeedAddress(seed.id, seed.host, port) : seed.host} />
+  <Clipboard small text={formatSeedAddress(seed.id, seed.host, port)} />
 </div>
-<div class="layout-desktop" />

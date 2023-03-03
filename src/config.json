@@ -6,8 +6,7 @@
     "defaultNodePort": 8776,
     "pinned": [
       {
-        "host": "seed.radicle.xyz",
-        "emoji": "🌱"
+        "host": "seed.radicle.xyz"
       }
     ]
   },

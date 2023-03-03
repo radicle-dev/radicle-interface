@@ -37,6 +37,9 @@
   });
 
   onMount(async () => {
+    if (!blob.content) {
+      return;
+    }
     const output = await highlight(blob.content, fileExtension);
     if (output) {
       content = lineNumbersGutter(output);
@@ -243,7 +246,7 @@
         <div use:twemoji>👀</div>
         <span class="txt-tiny">Binary content</span>
       </div>
-    {:else if showMarkdown}
+    {:else if showMarkdown && blob.content}
       <Readme content={blob.content} {getImage} {activeRoute} />
     {:else if content}
       <table class="code no-scrollbar">

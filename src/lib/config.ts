@@ -6,7 +6,7 @@ export interface Config {
     defaultHttpdPort: number;
     defaultNodePort: number;
     defaultHttpdScheme: string;
-    pinned: { host: string; emoji: string }[];
+    pinned: { host: string }[];
   };
   projects: {
     pinned: {

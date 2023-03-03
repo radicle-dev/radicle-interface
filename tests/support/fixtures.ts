@@ -52,7 +52,7 @@ export const test = base.extend<{
               defaultHttpdPort: 8080,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
-              pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
+              pinned: [{ host: "0.0.0.0" }],
             },
             projects: { pinned: [] },
           };
@@ -134,7 +134,7 @@ export function configFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
+      pinned: [{ host: "0.0.0.0" }],
     },
     projects: {
       pinned: [
@@ -155,7 +155,7 @@ export function appConfigWithFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "0.0.0.0", emoji: "🚀" }],
+      pinned: [{ host: "0.0.0.0" }],
     },
     projects: {
       pinned: [
