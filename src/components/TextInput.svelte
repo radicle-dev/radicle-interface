@@ -14,6 +14,8 @@
   export let disabled: boolean = false;
   export let loading: boolean = false;
   export let valid: boolean = false;
+  // Changes the background color to the background of the page
+  export let transparent: boolean = false;
   export let validationMessage: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
@@ -55,6 +57,7 @@
     background: transparent;
     border-radius: var(--border-radius-round);
     color: var(--color-foreground);
+    font-size: inherit;
     font-family: var(--font-family-sans-serif);
     height: var(--button-regular-height);
     line-height: 1.6;
@@ -71,9 +74,11 @@
     color: var(--color-secondary);
     cursor: not-allowed;
   }
+  .transparent {
+    background: var(--color-background) !important;
+  }
   .regular {
     border: 1px solid var(--color-secondary);
-    font-size: var(--font-size-regular);
     padding: 1rem 1.5rem;
   }
   .form {
@@ -143,6 +148,7 @@
     </div>
 
     <input
+      class:transparent
       class:regular={variant === "regular"}
       class:form={variant === "form"}
       style:padding-left={leftContainerWidth

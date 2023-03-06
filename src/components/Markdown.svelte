@@ -17,12 +17,13 @@
   export let doc = matter(content);
   export let hash: string | null = null;
   export let path: string = "/";
+  export let breaks = false;
   export let rawPath: string;
 
   const frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
   );
-  marked.use({ extensions, renderer });
+  marked.use({ extensions, renderer, breaks });
 
   let container: HTMLElement;
 
@@ -32,9 +33,7 @@
 
   onMount(async () => {
     // Don't underline <a> tags that contain images.
-    const elems = container.querySelectorAll("a");
-
-    for (const e of elems) {
+    for (const e of container.querySelectorAll("a")) {
       if (e.firstElementChild instanceof HTMLImageElement) {
         e.classList.add("no-underline");
       }

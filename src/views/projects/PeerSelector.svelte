@@ -104,6 +104,9 @@
   </div>
 
   <svelte:fragment slot="modal">
-    <Dropdown {items} selected={peer} on:select={e => switchPeer(e.detail)} />
+    <Dropdown
+      {items}
+      selected={peer}
+      on:select={e => switchPeer(e.detail.value)} />
   </svelte:fragment>
 </Floating>

@@ -1,19 +1,25 @@
 <script lang="ts" strictEvents>
+  import type { State } from "@app/lib/issue";
+
   import { createEventDispatcher } from "svelte";
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
 
-  export let items: {
+  type T = $$Generic<State | string>;
+
+  interface Item {
     key: string;
     title: string;
-    value: string;
+    value: T;
     badge: string | null;
-  }[];
+  }
+
+  export let items: Item[];
   export let selected: string | null = null;
 
-  const dispatch = createEventDispatcher<{ select: string }>();
-  const onSelect = (item: string) => {
+  const dispatch = createEventDispatcher<{ select: Item }>();
+  const onSelect = (item: Item) => {
     dispatch("select", item);
   };
 </script>
@@ -50,18 +56,18 @@
 </style>
 
 <div class="dropdown">
-  {#each items as { key, value, badge, title }}
-    {#if key && value}
+  {#each items as item}
+    {#if item.key && item.value}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
         class="dropdown-item"
-        class:selected={value === selected}
+        class:selected={item.value === selected}
         use:twemoji
-        on:click={() => onSelect(value)}
-        {title}>
-        {@html key}
-        {#if badge}
-          <Badge variant="primary">{badge}</Badge>
+        on:click={() => onSelect(item)}
+        title={item.title}>
+        {@html item.key}
+        {#if item.badge}
+          <Badge variant="primary">{item.badge}</Badge>
         {/if}
       </div>
     {/if}

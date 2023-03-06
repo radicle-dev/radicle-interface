@@ -43,6 +43,20 @@ export class Request {
     });
   }
 
+  async patch(
+    params: Record<string, any> = {},
+    headers: Record<string, string> = {},
+  ): Promise<any> {
+    const body = this.formatParams(params);
+    const urlString = this.createUrl();
+
+    return await Request.exec(urlString, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: { ...headers, "Content-Type": "application/json" },
+    });
+  }
+
   async put(
     params: Record<string, any> = {},
     headers: Record<string, string> = {},

@@ -1,20 +1,15 @@
-import type { Author } from "@app/lib/cobs";
+import type { Author, Comment } from "@app/lib/cobs";
 import type { Host } from "@app/lib/api";
 
+import { stripDidPrefix } from "@app/lib/cobs";
 import { Request } from "@app/lib/api";
-
-export interface TimelineItem {
-  person: Author;
-  message: string;
-  timestamp: number;
-}
 
 export interface IIssue {
   id: string;
   author: Author;
   title: string;
   state: State;
-  discussion: Thread[];
+  discussion: Comment[];
   tags: string[];
   assignees: string[];
   timestamp: number;
@@ -26,18 +21,8 @@ export type State =
     }
   | {
       status: "closed";
-      reason: string;
+      reason: "other" | "solved";
     };
-
-export interface Comment<R = null> {
-  author: Author;
-  body: string;
-  reactions: Record<string, number>;
-  timestamp: number;
-  replyTo: R;
-}
-
-export type Thread = Comment<Comment[]>;
 
 export function groupIssues(issues: Issue[]): {
   open: Issue[];
@@ -52,12 +37,22 @@ export function groupIssues(issues: Issue[]): {
   );
 }
 
+export function createAddRemoveArrays(
+  currentArray: string[],
+  newArray: string[],
+): { add: string[]; remove: string[] } {
+  return {
+    add: newArray.filter(item => !currentArray.includes(item)),
+    remove: currentArray.filter(item => !newArray.includes(item)),
+  };
+}
+
 export class Issue {
   id: string;
   author: Author;
   title: string;
   state: State;
-  discussion: Thread[];
+  discussion: Comment[];
   tags: string[];
   assignees: string[];
   timestamp: number;
@@ -73,10 +68,13 @@ export class Issue {
     this.timestamp = issue.discussion[0].timestamp;
   }
 
-  // Counts the amount of comments and replies in a discussion
+  // Counts the amount of comments in a discussion, excluding the initial description
   countComments(): number {
-    return this.discussion.reduce(acc => {
-      return acc + 1; // If there are no replies, we simply add 1 for the comment in this loop.
+    return this.discussion.reduce((acc, curr, index) => {
+      if (index !== 0) {
+        return acc + 1;
+      }
+      return acc;
     }, 0);
   }
 
@@ -88,8 +86,8 @@ export class Issue {
     tags: string[],
     host: Host,
     authToken: string,
-  ): Promise<void> {
-    await new Request(`projects/${project}/issues`, host).post(
+  ): Promise<{ success: true; id: string }> {
+    return await new Request(`projects/${project}/issues`, host).post(
       {
         title,
         description,
@@ -97,6 +95,108 @@ export class Issue {
         tags,
       },
       { Authorization: `Bearer ${authToken}` },
+    );
+  }
+
+  async editTitle(
+    project: string,
+    title: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "edit",
+        title,
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async editTags(
+    project: string,
+    add: string[],
+    remove: string[],
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "tag",
+        add,
+        remove,
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async editAssignees(
+    project: string,
+    add: string[],
+    remove: string[],
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "assign",
+        add: stripDidPrefix(add),
+        remove: stripDidPrefix(remove),
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async createComment(
+    project: string,
+    body: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "thread",
+        action: {
+          type: "comment",
+          body,
+        },
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async replyComment(
+    project: string,
+    body: string,
+    replyTo: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "thread",
+        action: {
+          type: "comment",
+          body,
+          replyTo,
+        },
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async changeState(
+    project: string,
+    state: State,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/issues/${this.id}`, host).patch(
+      {
+        type: "lifecycle",
+        state,
+      },
+      { Authorization: `Bearer ${session}` },
     );
   }
 

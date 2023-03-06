@@ -1,9 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { isMac } from "@app/lib/utils";
 
   export let resizable: boolean = false;
   export let value: string | number | undefined = undefined;
   export let placeholder: string | undefined = undefined;
+  export let focus: boolean = false;
 
   let textareaElement: HTMLTextAreaElement | undefined = undefined;
 
@@ -20,12 +22,18 @@
     textareaElement.style.height = `${textareaElement.scrollHeight}px`;
   }
 
+  $: if (textareaElement && focus) {
+    textareaElement.focus();
+    focus = false;
+  }
+
   const dispatch = createEventDispatcher<{
     submit: never;
   }>();
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Enter") {
+    const auxiliarKey = isMac() ? event.metaKey : event.ctrlKey;
+    if (auxiliarKey && event.key === "Enter") {
       dispatch("submit");
     }
     if (event.key === "Escape") {
@@ -77,11 +85,17 @@
   textarea:hover {
     border: 1px solid var(--color-foreground-4);
   }
+  .caption {
+    color: var(--color-foreground-4);
+    margin-left: 0.75rem;
+    text-align: left;
+  }
 </style>
 
 <textarea
   bind:this={textareaElement}
   bind:value
+  class="txt-small"
   class:resizable
   {placeholder}
   on:change
@@ -89,3 +103,7 @@
   on:input
   on:keydown|stopPropagation={handleKeydown}
   on:keypress />
+
+<div class="caption txt-small">
+  Markdown supported. Press {isMac() ? "⌘" : "ctrl"}↵ to comment.
+</div>

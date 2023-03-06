@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Author } from "@app/lib/cobs";
 
+  import Avatar from "@app/components/Comment/Avatar.svelte";
   import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
   export let author: Author;
+  export let noAvatar: boolean = false;
   export let timestamp: number;
   export let caption: string;
 </script>
@@ -33,6 +35,9 @@
 </style>
 
 <span class="authorship txt-tiny">
+  {#if !noAvatar}
+    <Avatar inline source={author.id} title={author.id} />
+  {/if}
   <span class="id highlight layout-desktop">{formatNodeId(author.id)}</span>
   <span class="id highlight layout-mobile">
     {formatNodeId(author.id).replace("did:key:", "")}

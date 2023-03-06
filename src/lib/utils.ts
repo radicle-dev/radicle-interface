@@ -208,9 +208,18 @@ export function getDaysPassed(from: Date, to: Date): number {
   return Math.floor((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
 }
 
-export function scrollIntoView(id: string) {
+export function scrollIntoView(id: string, options?: ScrollIntoViewOptions) {
   const lineElement = document.getElementById(id);
-  if (lineElement) lineElement.scrollIntoView();
+  if (lineElement) lineElement.scrollIntoView(options);
+}
+
+export function isMac() {
+  // Precaution in case navigator.platform is not available.
+  if (navigator.platform) {
+    return navigator.platform.includes("Mac");
+  } else {
+    return false;
+  }
 }
 
 // Check whether the given path has a markdown file extension.

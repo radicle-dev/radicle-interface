@@ -88,7 +88,7 @@
           <Dropdown
             items={branchList}
             selected={branchLabel}
-            on:select={e => switchBranch(e.detail)} />
+            on:select={e => switchBranch(e.detail.value)} />
         </svelte:fragment>
       </Floating>
       <div class="hash layout-desktop">

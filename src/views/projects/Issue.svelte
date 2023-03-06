@@ -1,169 +1,207 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Project } from "@app/lib/project";
-  import type { Issue } from "@app/lib/issue";
+  import type { State } from "@app/lib/issue";
 
-  import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Comment/Avatar.svelte";
-  import Chip from "@app/components/Chip.svelte";
-  import Comment from "@app/components/Comment.svelte";
-  import { formatNodeId, capitalize } from "@app/lib/utils";
-  import { formatObjectId } from "@app/lib/cobs";
+  import Button from "@app/components/Button.svelte";
+  import IssueHeader from "@app/views/projects/Issue/IssueHeader.svelte";
+  import IssueSidebar from "@app/views/projects/Issue/IssueSidebar.svelte";
+  import IssueStateButton from "@app/views/projects/Issue/IssueStateButton.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
+  import Thread from "@app/components/Thread.svelte";
+  import { createAddRemoveArrays, Issue } from "@app/lib/issue";
+  import { createEventDispatcher } from "svelte";
+  import { isLocal } from "@app/lib/utils";
+  import { sessionStore } from "@app/lib/session";
 
   export let issue: Issue;
   export let project: Project;
+
+  const dispatch = createEventDispatcher<{ update: never }>();
+  const rawPath = project.getRawPath();
+
+  async function createReply({
+    detail: reply,
+  }: CustomEvent<{ id: string; body: string }>) {
+    if ($sessionStore && reply.body.trim().length > 0) {
+      await issue.replyComment(
+        project.id,
+        reply.body,
+        reply.id,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    }
+  }
+
+  async function createComment(body: string) {
+    if ($sessionStore && body.trim().length > 0) {
+      await issue.createComment(
+        project.id,
+        body,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    }
+  }
+
+  async function editTitle({ detail: title }: CustomEvent<string>) {
+    if ($sessionStore && title.trim().length > 0 && title !== issue.title) {
+      await issue.editTitle(
+        project.id,
+        title,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    } else {
+      // Reassigning issue.title overwrites the invalid title in IssueHeader
+      issue.title = issue.title;
+    }
+  }
+
+  async function saveTags({ detail: tags }: CustomEvent<string[]>) {
+    if ($sessionStore) {
+      const { add, remove } = createAddRemoveArrays(issue.tags, tags);
+      if (add.length === 0 && remove.length === 0) {
+        return;
+      }
+      await issue.editTags(
+        project.id,
+        add,
+        remove,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    }
+  }
+
+  async function saveAssignees({ detail: assignees }: CustomEvent<string[]>) {
+    if ($sessionStore) {
+      const { add, remove } = createAddRemoveArrays(issue.assignees, assignees);
+      if (add.length === 0 && remove.length === 0) {
+        return;
+      }
+      await issue.editAssignees(
+        project.id,
+        add,
+        remove,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    }
+  }
+
+  async function saveStatus({ detail: state }: CustomEvent<State>) {
+    if ($sessionStore) {
+      await issue.changeState(
+        project.id,
+        state,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      dispatch("update");
+      issue = await Issue.getIssue(project.id, issue.id, project.seed.addr);
+    }
+  }
+
+  $: threads = issue.discussion
+    .filter(comment => !comment.replyTo)
+    .map(thread => {
+      return {
+        root: thread,
+        replies: issue.discussion
+          .filter(comment => comment.replyTo === thread.id)
+          .sort((a, b) => a.timestamp - b.timestamp),
+      };
+    }, []);
+
+  let commentBody: string = "";
 </script>
 
 <style>
-  header {
-    padding: 1rem;
-    background: var(--color-foreground-1);
-    border-radius: var(--border-radius);
-    margin-bottom: 2rem;
-  }
-  main {
-    display: flex;
-  }
   .issue {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) 1fr;
     padding: 0 2rem 0 8rem;
-  }
-  .comments {
-    flex: 1;
-  }
-  .metadata {
-    flex-basis: 18rem;
-    margin-left: 1rem;
-    border-radius: var(--border-radius);
-    font-size: var(--font-size-small);
-    padding-left: 1rem;
-  }
-  .metadata-section {
-    margin-bottom: 1rem;
-    border-bottom: 1px dashed var(--color-foreground-4);
-  }
-  .metadata-section-header {
-    font-size: var(--font-size-small);
-    margin-bottom: 0.75rem;
-    color: var(--color-foreground-5);
-  }
-  .metadata-section-body {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-  }
-  .metadata-section-empty {
-    color: var(--color-foreground-6);
+    margin-bottom: 4.5rem;
   }
 
-  .summary {
+  .actions {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    margin-bottom: 0.5rem;
+    justify-content: flex-end;
+    margin: 0 0 2.5rem 0;
+    gap: 1rem;
   }
-  .summary-title {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .id {
-    flex: 1 0 auto;
-    font-size: var(--font-size-tiny);
-    margin-left: 0.75rem;
-    color: var(--color-foreground-5);
-  }
-  .summary-state {
-    margin-left: 2rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-  }
-  .open {
-    color: var(--color-positive);
-    background-color: var(--color-positive-2);
-  }
-  .closed {
-    color: var(--color-negative);
-    background-color: var(--color-negative-2);
-  }
-  .assignee {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .tag {
-    max-width: 15rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+  @media (max-width: 720px) {
+    .issue {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      padding-left: 2rem;
+    }
   }
 
   @media (max-width: 960px) {
     .issue {
       padding-left: 2rem;
     }
-    .summary-state {
-      margin-left: 0.5rem;
-    }
   }
 </style>
 
 <div class="issue">
-  <header>
-    <div class="summary">
-      <div class="summary-title txt-medium">
-        {issue.title}
-      </div>
-      <div class="txt-monospace id layout-desktop">{issue.id}</div>
-      <div class="txt-monospace id layout-mobile">
-        {formatObjectId(issue.id)}
-      </div>
-      <div
-        class="summary-state"
-        class:closed={issue.state.status === "closed"}
-        class:open={issue.state.status === "open"}>
-        {capitalize(issue.state.status)}
-      </div>
-    </div>
-    <Authorship
+  <div>
+    <IssueHeader
+      action="edit"
+      id={issue.id}
       author={issue.author}
       timestamp={issue.timestamp}
-      caption="opened" />
-  </header>
-  <main>
+      state={issue.state}
+      title={issue.title}
+      on:editTitle={editTitle} />
     <div class="comments">
-      {#each issue.discussion as comment}
-        <Comment {comment} rawPath={project.getRawPath()} />
+      {#each threads as thread, index (thread.root.id)}
+        <Thread
+          {thread}
+          {rawPath}
+          isDescription={index === 0}
+          on:reply={createReply} />
       {/each}
-    </div>
-    <div class="metadata layout-desktop">
-      <div class="metadata-section">
-        <div class="metadata-section-header">Assignees</div>
-        <div class="metadata-section-body">
-          {#if issue.assignees?.length}
-            {#each issue.assignees as assignee, key}
-              <Chip {key}>
-                <div slot="text" class="assignee">
-                  <Avatar inline source={assignee} title={assignee} />
-                  <span>{formatNodeId(assignee)}</span>
-                </div>
-              </Chip>
-            {/each}
-          {:else}
-            <div class="metadata-section-empty">No assignees</div>
-          {/if}
+      {#if $sessionStore}
+        <Textarea
+          resizable
+          on:submit={() => {
+            createComment(commentBody);
+            commentBody = "";
+          }}
+          bind:value={commentBody}
+          placeholder="Leave your comment" />
+        <div class="actions txt-small">
+          <IssueStateButton {issue} on:saveStatus={saveStatus} />
+          <Button
+            variant="secondary"
+            size="small"
+            disabled={!commentBody}
+            on:click={() => {
+              createComment(commentBody);
+              commentBody = "";
+            }}>
+            Comment
+          </Button>
         </div>
-        <div class="metadata-section-header">Tags</div>
-        <div class="metadata-section-body">
-          {#if issue.tags?.length}
-            {#each issue.tags as tag, key}
-              <Chip {key}><span class="tag" slot="text">{tag}</span></Chip>
-            {/each}
-          {:else}
-            <div class="metadata-section-empty">No tags</div>
-          {/if}
-        </div>
-      </div>
+      {/if}
     </div>
-  </main>
+  </div>
+  <!-- We need to spread issue.tags and issue.assignees to clone the object property
+         else we pass a reference to the issue object. -->
+  <IssueSidebar
+    on:saveAssignees={saveAssignees}
+    on:saveTags={saveTags}
+    action={$sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view"}
+    tags={[...issue.tags]}
+    assignees={[...issue.assignees]} />
 </div>

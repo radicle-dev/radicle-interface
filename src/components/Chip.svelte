@@ -1,7 +1,7 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ remove: number }>();
 
   export let removeable: boolean = false;
   export let key: number;
@@ -24,6 +24,7 @@
     border-radius: var(--border-radius);
   }
   .close {
+    align-self: stretch;
     color: var(--color-secondary);
     border: none;
     border-bottom-right-radius: var(--border-radius);

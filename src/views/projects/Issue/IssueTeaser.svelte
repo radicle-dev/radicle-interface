@@ -13,7 +13,7 @@
 <style>
   .issue-teaser {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr) 4rem;
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
     padding: 0.75rem 0;
     background-color: var(--color-foreground-1);
   }
@@ -42,6 +42,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding-right: 1rem;
     gap: 0.5rem;
     color: var(--color-foreground-5);
   }

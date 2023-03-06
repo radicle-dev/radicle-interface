@@ -57,20 +57,25 @@
     return project;
   };
 
-  const handleIssueCreation = () => {
+  function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
     router.push({
       resource: "projects",
       params: {
         id,
         seed,
         view: {
-          resource: "issues",
+          resource: "issue",
+          params: { issue: issueId },
         },
       },
     });
     // This assignment allows us to have an up-to-date issue count
     projectPromise = getProject(id, seed, peer);
-  };
+  }
+
+  function handleIssueUpdate() {
+    projectPromise = getProject(id, seed, peer);
+  }
 
   // React to peer changes
   $: projectPromise = getProject(id, seed, peer);
@@ -171,7 +176,7 @@
         {#await issue.Issue.getIssue(project.id, activeRoute.params.view.params.issue, project.seed.addr)}
           <Loading center />
         {:then issue}
-          <Issue {project} {issue} />
+          <Issue on:update={handleIssueUpdate} {project} {issue} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
