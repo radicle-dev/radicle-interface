@@ -4,7 +4,7 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import DOMPurify from "dompurify";
   import ProjectLink from "@app/components/ProjectLink.svelte";
-  import { formatNodeId } from "@app/lib/utils";
+  import { formatNodeId, twemoji } from "@app/lib/utils";
 
   export let project: Project;
   export let nodeId: string | undefined = undefined;
@@ -99,7 +99,7 @@
     <span class="truncate">{project.id}</span>
     <Clipboard small text={project.id} />
   </div>
-  <div class="description">
+  <div class="description" use:twemoji>
     {@html DOMPurify.sanitize(linkifyDescription(project.description))}
   </div>
 </header>

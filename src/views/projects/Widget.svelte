@@ -4,7 +4,7 @@
   import { groupCommitsByWeek } from "@app/lib/commit";
   import type { Host } from "@app/lib/api";
   import { Project } from "@app/lib/project";
-  import { formatCommit } from "@app/lib/utils";
+  import { formatCommit, twemoji } from "@app/lib/utils";
 
   export let project: proj.ProjectInfo;
   export let seed: { addr: Host };
@@ -117,7 +117,7 @@
       <span class="name">{project.name}</span>
     </div>
     {#if project.description}
-      <div class="description">{project.description}</div>
+      <div class="description" use:twemoji>{project.description}</div>
     {:else}
       <div class="description txt-missing">No description</div>
     {/if}
