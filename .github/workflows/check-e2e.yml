@@ -12,22 +12,11 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox, visual]
+        browser: [chromium, firefox]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Evict playwright snapshot cache when pushing to master
-        run: |
-          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
-            echo "Deleting ${{ runner.os }}-snapshots cache"
-            gh extension install actions/gh-actions-cache
-            gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
-            echo "Done"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v3
         with:
@@ -43,13 +32,6 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
 
-      - name: Cache Playwright visual snapshots
-        uses: actions/cache@v3
-        id: playwright-snapshot-cache
-        with:
-          path: tests/visual/snapshots/**/*
-          key: ${{ runner.os }}-snapshots
-
       - name: Install Playwright browsers
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium firefox
@@ -60,28 +42,7 @@ jobs:
           ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
 
       - name: Run Playwright tests
-        run: |
-          if [ ${{ matrix.browser }} = "visual" ] && [ ${{ github.ref }} = "refs/heads/master" ]; then
-            npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
-          else
-            npm run test:e2e -- --project ${{ matrix.browser }};
-          fi
-
-      # If a build succeeds, clear any artifacts from failed retries, so they
-      # don't end up in the visual diff archive.
-      - name: Cleanup artifacts
-        if: success()
-        run: |
-          rm -rf tests/artifacts/*
-
-      # We don't care about logs in visual snapshot tests, only the images.
-      - name: Cleanup artifacts
-        if: always()
-        run: |
-          if [ ${{ matrix.browser }} = "visual" ]; then
-            shopt -s globstar;
-            rm -rf tests/artifacts/**/*.log;
-          fi
+        run: npm run test:e2e -- --project ${{ matrix.browser }};
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

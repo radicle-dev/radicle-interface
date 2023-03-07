@@ -1,0 +1,130 @@
+name: check-visual
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  generate-visual-diffs:
+    concurrency:
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
+
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Evict playwright snapshot cache when pushing to master
+        run: |
+          if [ ${{ github.ref }} = "refs/heads/master" ]; then
+            echo "Deleting ${{ runner.os }}-snapshots cache"
+            gh extension install actions/gh-actions-cache
+            gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
+            echo "Done"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.12.1"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        id: playwright-dep-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache Playwright visual snapshots
+        uses: actions/cache@v3
+        id: playwright-snapshot-cache
+        with:
+          path: tests/visual/snapshots/**/*
+          key: ${{ runner.os }}-snapshots
+
+      - name: Install Playwright browsers
+        if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium firefox
+
+      - name: Start http-api test server
+        run: |
+          mkdir -p tests/artifacts;
+          ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-visual.log &
+
+      - name: Run Playwright tests
+        run: |
+          if [ ${{ github.ref }} = "refs/heads/master" ]; then
+            npm run test:e2e -- --project visual --update-snapshots || true;
+          else
+            npm run test:e2e -- --project visual || true;
+          fi
+
+      # We don't care about logs in visual snapshot tests, only the images.
+      - name: Cleanup artifacts
+        if: always()
+        run: |
+          shopt -s globstar;
+          rm -rf tests/artifacts/**/*.log;
+
+      - name: Upload artifacts
+        id: artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-artifacts-${{ runner.os }}
+          retention-days: 30
+          if-no-files-found: "ignore"
+          path: |
+            tests/artifacts/**/*
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "**Visual diff results for latest changes**"
+
+      - name: Check for artifacts
+        id: check_artifacts
+        run: |
+          if find ./tests/artifacts/**/*.png; then
+            echo "present=true" >> $GITHUB_OUTPUT
+          else
+            echo "present=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or update comment
+        if: github.ref != 'refs/heads/master' && steps.check_artifacts.outputs.present == 'false'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **Visual diff results for latest changes**
+
+              ✅ There are no visual differences between `master` and this branch.
+          edit-mode: replace
+
+      - name: Create or update comment
+        if: github.ref != 'refs/heads/master' && steps.check_artifacts.outputs.present == 'true'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **Visual diff results for latest changes**
+
+            ⚠️ There are visual differences between `master` and this branch.
+            👉 [Latest diff snapshots](https://github.com/radicle-dev/radicle-interface/actions/runs/4363103344).
+            - [ ] The visual changes were intentional.
+
+          edit-mode: replace
