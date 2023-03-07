@@ -1,0 +1,86 @@
+name: check-e2e
+on: workflow_dispatch
+
+jobs:
+  check-e2e:
+    continue-on-error: true
+    strategy:
+      matrix:
+        browser: [visual]
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Evict playwright snapshot cache when pushing to master
+        run: |
+          if [ ${{ github.ref }} = "refs/heads/master" ]; then
+            echo "Deleting ${{ runner.os }}-snapshots cache"
+            gh extension install actions/gh-actions-cache
+            gh actions-cache delete ${{ runner.os }}-snapshots --confirm || true
+            echo "Done"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.12.1"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        id: playwright-dep-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache Playwright visual snapshots
+        uses: actions/cache@v3
+        id: playwright-snapshot-cache
+        with:
+          path: tests/visual/snapshots/**/*
+          key: ${{ runner.os }}-snapshots
+
+      - name: Install Playwright browsers
+        if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium firefox
+
+      - name: Start http-api test server
+        run: |
+          mkdir -p tests/artifacts;
+          ./scripts/run-httpd-with-fixtures --non-interactive --download
+
+      - name: Run Playwright tests
+        run: |
+          if [ ${{ github.ref }} = "refs/heads/master" ]; then
+            npm run test:e2e -- --project ${{ matrix.browser }} --update-snapshots;
+          else
+            npm run test:e2e -- --project ${{ matrix.browser }};
+          fi
+
+      # If a build succeeds, clear any artifacts from failed retries, so they
+      # don't end up in the visual diff archive.
+      - name: Cleanup artifacts
+        if: success()
+        run: |
+          rm -rf tests/artifacts/*
+
+      # We don't care about logs in visual snapshot tests, only the images.
+      - name: Cleanup artifacts
+        if: always()
+        run: |
+          shopt -s globstar;
+          rm -rf tests/artifacts/**/*.log;
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-artifacts-${{ runner.os }}
+          retention-days: 30
+          if-no-files-found: "ignore"
+          path: |
+            tests/artifacts/**/*
