@@ -1,4 +1,4 @@
-name: check-e2e
+name: check-visual
 on: workflow_dispatch
 
 jobs:
