@@ -153,7 +153,11 @@ function pathToRoute(path: string): Route | null {
       if (host) {
         const id = segments.shift();
         if (id) {
-          if (segments.length === 0) {
+          // Allows project paths with or without trailing slash
+          if (
+            segments.length === 0 ||
+            (segments.length === 1 && segments[0] === "")
+          ) {
             return {
               resource: "projects",
               params: {
@@ -247,7 +251,10 @@ export function routeToPath(route: Route) {
     }
 
     if (route.params.view.resource === "tree") {
-      return `${hostPrefix}/${route.params.id}${peer}/tree${suffix}`;
+      if (suffix) {
+        return `${hostPrefix}/${route.params.id}${peer}/tree${suffix}`;
+      }
+      return `${hostPrefix}/${route.params.id}${peer}`;
     } else if (route.params.view.resource === "commits") {
       return `${hostPrefix}/${route.params.id}${peer}/commits${suffix}`;
     } else if (route.params.view.resource === "history") {
@@ -284,7 +291,7 @@ function resolveProjectRoute(
     content = segments.shift();
   }
 
-  if (content === "tree") {
+  if (!content || content === "tree") {
     const line = url.href.match(/#L\d+$/)?.pop();
     const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {

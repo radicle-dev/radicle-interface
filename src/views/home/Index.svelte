@@ -36,9 +36,9 @@
       params: {
         view: { resource: "tree" },
         id: project.id,
-        peer: undefined,
         seed: seed.host,
-        revision: project.head ?? undefined,
+        peer: undefined,
+        revision: undefined,
       },
     });
   }

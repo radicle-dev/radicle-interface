@@ -18,7 +18,7 @@ test("navigate between landing and project page", async ({ page }) => {
   await expect(page).toHaveURL("/");
 
   await page.locator("text=source-browsing").click();
-  await expect(page).toHaveURL(`${projectFixtureUrl}/tree/${aliceMainHead}`);
+  await expect(page).toHaveURL(projectFixtureUrl);
 
   await expectBackAndForwardNavigationWorks("/", page);
   await expectUrlPersistsReload(page);
@@ -29,7 +29,7 @@ test("navigation between seed and project pages", async ({ page }) => {
 
   const project = page.locator(".project");
   await project.click();
-  await expect(page).toHaveURL(`${projectFixtureUrl}/tree/${aliceMainHead}`);
+  await expect(page).toHaveURL(projectFixtureUrl);
 
   await expectBackAndForwardNavigationWorks("/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
@@ -90,20 +90,20 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths with a selected peer", async ({ page }) => {
-    const projectTreeURL = `${projectFixtureUrl}/remotes/${aliceRemote}/tree`;
+    const projectTreeURL = `${projectFixtureUrl}/remotes/${aliceRemote}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.locator("text=.hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/main/.hidden`);
+    await expect(page).toHaveURL(`${projectTreeURL}/tree/main/.hidden`);
 
     await page.locator("text=bin/").click();
     await page.locator("text=true").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/main/bin/true`);
+    await expect(page).toHaveURL(`${projectTreeURL}/tree/main/bin/true`);
 
     await expectBackAndForwardNavigationWorks(
-      `${projectTreeURL}/main/.hidden`,
+      `${projectTreeURL}/tree/main/.hidden`,
       page,
     );
     await expectUrlPersistsReload(page);

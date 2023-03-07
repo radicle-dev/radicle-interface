@@ -44,7 +44,7 @@
           seed.addr.port === config.seeds.defaultHttpdPort
             ? seed.addr.host
             : `${seed.addr.host}:${seed.addr.port}`,
-        revision: project.head ?? undefined,
+        revision: undefined,
         hash: undefined,
         search: undefined,
       },

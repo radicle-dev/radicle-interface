@@ -22,8 +22,7 @@ describe("routeToPath", () => {
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         },
       },
-      output:
-        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/tree",
+      output: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       description: "Seed Project Route",
     },
   ])("$description", (route: any) => {
@@ -46,6 +45,26 @@ describe("pathToRoute", () => {
       description: "Seed View Route",
     },
     {
+      input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+      output: {
+        resource: "projects",
+        params: {
+          view: { resource: "tree" },
+          seed: "willow.radicle.garden",
+          profile: undefined,
+          peer: undefined,
+          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        },
+      },
+      description: "Seed Project Route w trailing slash",
+    },
+    {
+      input:
+        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
+      output: null,
+      description: "Seed Project Route w undefined suffix",
+    },
+    {
       input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       output: {
         resource: "projects",
@@ -57,7 +76,7 @@ describe("pathToRoute", () => {
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         },
       },
-      description: "Seed Project Route",
+      description: "Seed Project Route w/o trailing slash",
     },
   ])("$description", (route: any) => {
     expect(testExports.pathToRoute(route.input)).toEqual(route.output);

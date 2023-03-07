@@ -12,7 +12,7 @@ test("navigate to existing project", async ({ page }) => {
   await searchInput.fill(`${rid}`);
   await searchInput.press("Enter");
 
-  await expect(page).toHaveURL(`${projectFixtureUrl}/tree`);
+  await expect(page).toHaveURL(projectFixtureUrl);
   await expect(searchInput).not.toHaveValue(`${rid}`);
 });
 
