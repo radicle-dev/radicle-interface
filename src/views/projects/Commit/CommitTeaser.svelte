@@ -95,7 +95,7 @@
         {commit.commit.summary}
       </div>
     </div>
-    <CommitAuthorship {commit} noDelegate />
+    <CommitAuthorship header={commit.commit} />
   </div>
   <div class="column-right">
     <span class="hash txt-highlight">{formatCommit(commit.commit.id)}</span>

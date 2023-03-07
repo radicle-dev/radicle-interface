@@ -1,13 +1,11 @@
 <script lang="ts">
-  import type { CommitMetadata } from "@app/lib/commit";
+  import type { CommitHeader } from "@app/lib/commit";
 
-  import Badge from "@app/components/Badge.svelte";
   import { formatTimestamp, gravatarURL } from "@app/lib/utils";
 
-  export let commit: CommitMetadata;
+  export let header: CommitHeader;
   export let noTime = false;
   export let noAuthor = false;
-  export let noDelegate = false;
 </script>
 
 <style>
@@ -37,64 +35,35 @@
 </style>
 
 <span class="authorship txt-tiny">
-  {#if commit.commit.author.email === commit.commit.committer.email}
+  {#if header.author.email === header.committer.email}
     <img
       class="avatar"
       alt="avatar"
-      src={gravatarURL(commit.commit.committer.email)} />
-    {#if commit.context?.committer}
-      <span
-        class="committer"
-        class:txt-bold={Boolean(commit.context.committer.peer.person?.name)}>
-        {commit.context.committer.peer.person?.name ||
-          commit.commit.committer.name}
-      </span>
-      {#if !noDelegate && commit.context?.committer.peer.delegate}
-        <Badge variant="tertiary">delegate</Badge>
-      {/if}
-      <span>committed</span>
-    {:else}
-      <span class="layout-desktop-inline committer">
-        {commit.commit.committer.name}
-      </span>
-      <span>committed</span>
-    {/if}
+      src={gravatarURL(header.committer.email)} />
+    <span class="layout-desktop-inline committer">
+      {header.committer.name}
+    </span>
+    <span>committed</span>
   {:else}
     {#if !noAuthor}
-      <img
-        class="avatar"
-        alt="avatar"
-        src={gravatarURL(commit.commit.author.email)} />
+      <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
       <span class="layout-desktop-inline author">
-        {commit.commit.author.name}
+        {header.author.name}
       </span>
       <span>authored</span>
     {/if}
     <img
       class="avatar"
       alt="avatar"
-      src={gravatarURL(commit.commit.committer.email)} />
-    {#if commit.context?.committer}
-      <span
-        class="committer"
-        class:txt-bold={Boolean(commit.context.committer.peer.person?.name)}>
-        {commit.context.committer.peer.person?.name ||
-          commit.commit.committer.name}
-      </span>
-      {#if !noDelegate && commit.context?.committer.peer.delegate}
-        <Badge variant="tertiary">delegate</Badge>
-      {/if}
-      <span>committed</span>
-    {:else}
-      <span class="layout-desktop-inline committer">
-        {commit.commit.committer.name}
-      </span>
-      <span>committed</span>
-    {/if}
+      src={gravatarURL(header.committer.email)} />
+    <span class="layout-desktop-inline committer">
+      {header.committer.name}
+    </span>
+    <span>committed</span>
   {/if}
   {#if !noTime}
     <span class="layout-desktop-inline">
-      {formatTimestamp(commit.commit.committer.time)}
+      {formatTimestamp(header.committer.time)}
     </span>
   {/if}
 </span>

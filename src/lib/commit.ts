@@ -1,4 +1,4 @@
-import type { Stats, Person } from "@app/lib/project";
+import type { Stats } from "@app/lib/project";
 import type { Diff, DiffStats } from "@app/lib/diff";
 import { ApiError } from "@app/lib/api";
 import { getDaysPassed } from "@app/lib/utils";
@@ -10,7 +10,6 @@ export interface CommitsHistory {
 
 export interface CommitMetadata {
   commit: CommitHeader;
-  context: CommitContext;
 }
 
 export interface Author {
@@ -28,16 +27,6 @@ export interface CommitStats {
 export interface GroupedCommitsHistory {
   commits: CommitGroup[];
   stats: Stats;
-}
-
-export interface CommitContext {
-  committer?: {
-    peer: {
-      id: string;
-      person: Person | null;
-      delegate: boolean;
-    };
-  };
 }
 
 export interface CommitHeader {
@@ -68,7 +57,6 @@ export interface Commit {
   stats: DiffStats;
   diff: Diff;
   branches: string[];
-  context: CommitContext;
 }
 
 export function formatGroupTime(timestamp: number): string {
@@ -81,7 +69,7 @@ export function formatGroupTime(timestamp: number): string {
 }
 
 export function groupCommits(
-  commits: { commit: CommitHeader; context: CommitContext }[],
+  commits: { commit: CommitHeader }[],
 ): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
@@ -97,8 +85,8 @@ export function groupCommits(
       return 0;
     });
 
-    for (const commit of commits) {
-      const time = commit.commit.committer.time * 1000;
+    for (const { commit } of commits) {
+      const time = commit.committer.time * 1000;
       const date = new Date(time);
       const isNewDay =
         !groupedCommits.length ||
@@ -116,7 +104,7 @@ export function groupCommits(
         });
         groupDate = date;
       }
-      groupedCommits[groupedCommits.length - 1].commits.push(commit);
+      groupedCommits[groupedCommits.length - 1].commits.push({ commit });
     }
     return groupedCommits;
   } catch (err) {
