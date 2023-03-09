@@ -124,7 +124,7 @@ jobs:
             **Visual diff results for latest changes**
 
             ⚠️ There are visual differences between `master` and this branch.
-            👉 [Latest diff snapshots](https://github.com/radicle-dev/radicle-interface/actions/runs/4363103344).
+            👉 [Latest diff snapshots](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
             - [ ] The visual changes were intentional.
 
           edit-mode: replace
