@@ -77,7 +77,7 @@ export interface Person {
 
 export interface Peer {
   id: string;
-  person?: Person;
+  heads: Branches;
   delegate: boolean;
 }
 

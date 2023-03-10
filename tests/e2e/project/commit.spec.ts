@@ -5,12 +5,14 @@ import {
   bobRemote,
 } from "@tests/support/fixtures.js";
 
-const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote}/commits/${"1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"}`;
+const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote.substring(
+  8,
+)}/commits/1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=${bobRemote.substring(0, 6)}`).click();
+  await page.locator(`text=${bobRemote}`).click();
   await page.locator('role=button[name="Commit count"]').click();
 
   await page.locator("text=Update readme").click();

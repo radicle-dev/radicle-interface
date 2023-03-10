@@ -90,7 +90,9 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths with a selected peer", async ({ page }) => {
-    const projectTreeURL = `${projectFixtureUrl}/remotes/${aliceRemote}`;
+    const projectTreeURL = `${projectFixtureUrl}/remotes/${aliceRemote.substring(
+      8,
+    )}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);

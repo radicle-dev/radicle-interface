@@ -40,7 +40,7 @@ export RAD_HOME=$PALM_RAD_HOME
 export RAD_SEED=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffee
 
 rad auth
-radicle-node --listen 0.0.0.0:3446 --git-daemon 0.0.0.0:4446 &
+radicle-node --listen 0.0.0.0:3446 --git-daemon 0.0.0.0:4446 --tracking-policy track --tracking-scope all &
 
 ### ALICE ###
 

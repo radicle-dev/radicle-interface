@@ -11,7 +11,7 @@ export class Request {
 
   constructor(path: string, api: Host) {
     this.port = api.port;
-    this.base = `${api.scheme}://${api.host}/api`;
+    this.base = `${api.scheme}://${api.host}/api/v1`;
     this.path = path.startsWith("/") ? path.slice(1) : path;
   }
 
@@ -89,7 +89,7 @@ export class Request {
 
   // Creates a URL with an eventual query string and port.
   private createUrl(search?: string): string {
-    const baseUrl = this.path ? `${this.base}/v1/${this.path}` : this.base;
+    const baseUrl = this.path ? `${this.base}/${this.path}` : this.base;
 
     const url = new URL(search ? `${baseUrl}?${search}` : baseUrl);
     url.port = String(this.port);

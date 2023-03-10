@@ -16,7 +16,7 @@ async function assertHttpApiRunning(): Promise<void> {
   let nodeId: string | undefined = undefined;
 
   try {
-    const response = await fetch(`http://0.0.0.0:${seedPort}/api`);
+    const response = await fetch(`http://0.0.0.0:${seedPort}/api/v1`);
     const data = await response.json();
     nodeId = data.node.id;
   } catch (err) {

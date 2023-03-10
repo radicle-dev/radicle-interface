@@ -256,16 +256,17 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
+    await page.locator(`text=${aliceRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      ` did:key: ${aliceRemote.substring(0, 6)}…${aliceRemote.slice(-6)} `,
+      ` did:key: ${aliceRemote
+        .substring(8)
+        .substring(0, 6)}…${aliceRemote.slice(-6)} `,
     );
     await expect(
       page.locator(
-        `text=source-browsing / did:key:${aliceRemote.substring(
-          0,
-          6,
-        )}…${aliceRemote.slice(-6)}`,
+        `text=source-browsing / did:key:${aliceRemote
+          .substring(8)
+          .substring(0, 6)}…${aliceRemote.slice(-6)}`,
       ),
     ).toBeVisible();
 
@@ -320,9 +321,11 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${bobRemote.substring(0, 6)}`).click();
+    await page.locator(`text=${bobRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      ` did:key: ${bobRemote.substring(0, 6)}…${bobRemote.slice(-6)} `,
+      ` did:key: ${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
+        -6,
+      )} `,
     );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
@@ -341,7 +344,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(projectFixtureUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=${aliceRemote.substring(0, 6)}`).click();
+  await page.locator(`text=${aliceRemote}`).click();
 
   await page.getByText("Clone").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
@@ -358,7 +361,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.getByTitle("Change peer").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator(`text=${bobRemote.substring(0, 6)}`)).toBeVisible();
+  await expect(page.locator(`text=${bobRemote}`)).toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
   await page.locator('button[name="Settings"]').click();

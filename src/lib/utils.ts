@@ -107,7 +107,7 @@ export function formatRepositoryId(id: string): string {
 }
 
 export function truncateId(pubkey: string): string {
-  return `${pubkey.substring(0, 6) + "…" + pubkey.slice(-6)}`;
+  return `${pubkey.substring(0, 6)}…${pubkey.slice(-6)}`;
 }
 
 export function formatCommit(oid: string): string {

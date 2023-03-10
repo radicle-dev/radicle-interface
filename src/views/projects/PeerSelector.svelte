@@ -94,7 +94,10 @@
         {/if}
       {:else if peer}
         <span class="peer-id">
-          {formatNodeId(peer)}
+          <span style="display: flex;">
+            <span style="color: var(--color-secondary-5);">did:key:</span>
+            {truncateId(peer)}
+          </span>
         </span>
       {/if}
     </div>

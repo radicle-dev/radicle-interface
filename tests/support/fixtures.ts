@@ -170,10 +170,12 @@ export function appConfigWithFixture() {
 }
 
 export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
-export const aliceRemote = "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
-export const bobRemote = "z6MksMTThc1aDU2Ztc43jJUivuyBLNWiLsDf4X65rABe7HbA";
+export const aliceRemote =
+  "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
+export const bobRemote =
+  "did:key:z6MksMTThc1aDU2Ztc43jJUivuyBLNWiLsDf4X65rABe7HbA";
 export const rid = "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT";
 export const projectFixtureUrl = `/seeds/0.0.0.0/${rid}`;
 export const seedPort = 8080;
-export const seedVersion = "0.1.0";
+export const seedVersion = "0.1.0-6463768";
 export const seedRemote = "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8";
