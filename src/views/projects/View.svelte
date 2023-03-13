@@ -35,7 +35,7 @@
     if (activeRoute.params.route) {
       const { revision, path } = proj.parseRoute(
         activeRoute.params.route,
-        project.branches,
+        project.peer?.heads || {},
       );
       router.updateProjectRoute(
         {

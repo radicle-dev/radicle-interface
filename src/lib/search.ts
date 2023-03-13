@@ -20,7 +20,7 @@ export async function searchProjectsAndProfiles(
 ): Promise<SearchResult> {
   try {
     const projectOnSeeds = config.seeds.pinned.map(seed => ({
-      nameOrId: query,
+      nid: query,
       seed: {
         host: seed.host,
         port: config.seeds.defaultHttpdPort,

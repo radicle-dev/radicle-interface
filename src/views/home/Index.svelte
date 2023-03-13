@@ -20,7 +20,7 @@
     config.projects.pinned.length > 0
       ? Project.getMulti(
           config.projects.pinned.map(project => ({
-            nameOrId: project.id,
+            nid: project.id,
             seed: {
               host: project.seed,
               port: config.seeds.defaultHttpdPort,

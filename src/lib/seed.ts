@@ -10,6 +10,21 @@ export interface Stats {
   users: { count: number };
 }
 
+export interface SeedInfo {
+  message: "Welcome!";
+  service: "radicle-httpd",
+  version: string,
+  node: {
+    id: string;
+  };
+  path: string;
+  links: {
+    href: string;
+    rel: string;
+    type: string;
+  }[]
+}
+
 export class Seed {
   addr: Host;
   node: Host & { id: string };
@@ -40,10 +55,6 @@ export class Seed {
     return this.addr.host;
   }
 
-  async getNode(): Promise<{ id: string }> {
-    return Seed.getNode(this.addr);
-  }
-
   async getProject(id: string): Promise<proj.ProjectInfo> {
     return proj.Project.getInfo(id, this.addr);
   }
@@ -63,22 +74,15 @@ export class Seed {
     return new Request("/stats", this.addr).get();
   }
 
-  static async getNode(host: Host): Promise<{ id: string }> {
-    return new Request("/node", host).get();
-  }
-
-  static async getInfo(host: Host): Promise<{ version: string }> {
+  static async getInfo(host: Host): Promise<SeedInfo> {
     return new Request("/", host).get();
   }
 
   static async lookup(host: Host): Promise<Seed> {
-    const [info, node] = await Promise.all([
-      Seed.getInfo(host),
-      Seed.getNode(host),
-    ]);
+    const info = await Seed.getInfo(host);
 
     return new Seed({
-      id: node.id,
+      id: info.node.id,
       version: info.version,
       host,
     });

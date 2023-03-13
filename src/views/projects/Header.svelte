@@ -16,7 +16,7 @@
   export let tree: Tree;
   export let commit: string;
 
-  const { id, peers, branches, seed } = project;
+  const { id, peers, peer, seed } = project;
 
   $: revision = activeRoute.params.revision ?? commit;
 
@@ -94,7 +94,7 @@
   {/if}
 
   <BranchSelector
-    {branches}
+    branches={peer?.heads}
     {project}
     {revision}
     on:branchChanged={event => updateRevision(event.detail)} />

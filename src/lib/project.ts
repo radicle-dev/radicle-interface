@@ -21,12 +21,14 @@ export enum ProjectContent {
 }
 
 export interface ProjectInfo {
-  head: string | null;
+  head: string;
   id: string;
   name: string;
   description: string;
   defaultBranch: string;
   delegates: string[];
+  peers: Peer[];
+  peer?: Peer;
   patches: {
     proposed: number;
     draft: number;
@@ -67,17 +69,13 @@ export interface Blob {
   lastCommit: CommitHeader;
 }
 
-export interface Remote {
-  heads: Branches;
-}
-
 export interface Person {
   name: string;
 }
 
 export interface Peer {
   id: string;
-  person?: Person;
+  heads: Branches;
   delegate: boolean;
 }
 
@@ -125,14 +123,14 @@ export function parseRoute(
 
 export class Project implements ProjectInfo {
   id: string;
-  head: string | null;
+  head: string;
   name: string;
   description: string;
   defaultBranch: string;
   delegates: string[];
   seed: Seed;
   peers: Peer[];
-  branches: Branches;
+  peer?: Peer;
   patches: {
     proposed: number;
     draft: number;
@@ -148,7 +146,7 @@ export class Project implements ProjectInfo {
     info: ProjectInfo,
     seed: Seed,
     peers: Peer[],
-    branches: Branches,
+    peer?: Peer,
   ) {
     this.id = id;
     this.head = info.head;
@@ -158,7 +156,7 @@ export class Project implements ProjectInfo {
     this.delegates = info.delegates;
     this.seed = seed;
     this.peers = peers;
-    this.branches = branches;
+    this.peer = peer;
     this.patches = info.patches;
     this.issues = info.issues;
   }
@@ -166,8 +164,7 @@ export class Project implements ProjectInfo {
   async getRoot(
     revision: string | null,
   ): Promise<{ tree: Tree; commit: string }> {
-    const head = this.branches[this.defaultBranch];
-    const commit = revision ? getOid(revision, this.branches) : head;
+    const commit = revision ? getOid(revision, this.peer?.heads) : this.head;
 
     if (!commit) {
       throw new Error(`Revision ${revision} not found`);
@@ -214,7 +211,7 @@ export class Project implements ProjectInfo {
     id: string,
     peer: string,
     host: Host,
-  ): Promise<Remote> {
+  ): Promise<Peer> {
     return new Request(`projects/${id}/remotes/${peer}`, host).get();
   }
 
@@ -290,7 +287,7 @@ export class Project implements ProjectInfo {
   }
 
   static async get(
-    id: string,
+    nid: string,
     seedHost: string,
     peer?: string,
   ): Promise<Project> {
@@ -302,36 +299,20 @@ export class Project implements ProjectInfo {
       throw new Error(`Couldn't load project: ${error}`);
     }
 
-    const info = await Project.getInfo(id, seed.addr);
-    id = isRepositoryId(id) ? id : info.id;
+    const info = await Project.getInfo(nid, seed.addr);
+    const peers = await Project.getRemotes(nid, seed.addr);
 
-    let peers: Peer[] = [];
-
-    peers = await Project.getRemotes(id, seed.addr);
-
-    let remote: Remote = {
-      heads: info.head ? { [info.defaultBranch]: info.head } : {},
-    };
-
-    if (peer) {
-      try {
-        remote = await Project.getRemote(id, peer, seed.addr);
-      } catch {
-        remote.heads = {};
-      }
-    }
-
-    return new Project(id, info, seed, peers, remote.heads);
+    return new Project(nid, info, seed, peers, peers.find(p => p.id === peer));
   }
 
   static async getMulti(
-    projs: { nameOrId: string; seed: Host }[],
+    projs: { nid: string; seed: Host }[],
   ): Promise<ProjectResult[]> {
     const promises = [];
 
     for (const proj of projs) {
       promises.push(
-        Project.getInfo(proj.nameOrId, proj.seed).then(info => {
+        Project.getInfo(proj.nid, proj.seed).then(info => {
           return { info, seed: proj.seed };
         }),
       );
