@@ -36,6 +36,7 @@
   }
   .description {
     margin: 0.5rem 0 1rem 0;
+    white-space: pre-wrap;
   }
   .sha1 {
     color: var(--color-foreground-5);

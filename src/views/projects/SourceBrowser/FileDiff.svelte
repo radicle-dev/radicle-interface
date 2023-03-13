@@ -21,7 +21,6 @@
   .changeset-file {
     border: 1px solid var(--color-foreground-4);
     border-radius: var(--border-radius-small);
-    min-width: var(--content-min-width);
     margin-bottom: 2rem;
     line-height: 1.5rem;
   }
@@ -65,6 +64,9 @@
     border-collapse: collapse;
     margin: 0.5rem 0;
   }
+  tr.diff-line {
+    vertical-align: top;
+  }
   tr.diff-line[data-type="+"] > * {
     color: var(--color-positive);
   }
@@ -94,7 +96,8 @@
     padding: 0 0.75rem 0 0.5rem;
   }
   td.diff-line-content {
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
     width: 100%;
     padding-right: 0.5rem;
   }
