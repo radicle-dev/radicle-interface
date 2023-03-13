@@ -14,7 +14,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=18.12.1"
+    "node": ">=18.15.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.31.2",
