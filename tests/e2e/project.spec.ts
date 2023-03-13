@@ -418,23 +418,4 @@ test.describe("browser error handling", () => {
 
     await expect(page.locator("text=Not able to load file")).toBeVisible();
   });
-  test("error appears when a image with a relative path can't be loaded", async ({
-    page,
-  }) => {
-    await page.route(
-      `**/v1/projects/${rid}/blob/${aliceMainHead}/src/black-square.png`,
-      route => route.fulfill({ status: 404 }),
-    );
-
-    await page.goto(projectFixtureUrl);
-    const sourceTree = page.locator(".source-tree");
-    await sourceTree.locator("text=markdown/").click();
-    await sourceTree.locator("text=loading-image.md").click();
-
-    // By having a relative path, this gives away that the image has not loaded
-    // else it would have been converted into a data base64 string
-    await expect(
-      page.locator("img[src='../src/black-square.png']"),
-    ).toBeVisible();
-  });
 });

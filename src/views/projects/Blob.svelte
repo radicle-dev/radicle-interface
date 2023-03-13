@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { MaybeBlob, Blob } from "@app/lib/project";
+  import type { Blob } from "@app/lib/project";
   import type { MaybeHighlighted } from "@app/lib/syntax";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
@@ -14,7 +14,7 @@
 
   export let activeRoute: ProjectRoute;
   export let blob: Blob;
-  export let getImage: (path: string) => Promise<MaybeBlob>;
+  export let rawPath: string;
   export let line: string | undefined = undefined;
 
   const fileExtension = blob.path.split(".").pop() ?? "";
@@ -247,7 +247,7 @@
         <span class="txt-tiny">Binary content</span>
       </div>
     {:else if showMarkdown && blob.content}
-      <Readme content={blob.content} {getImage} {activeRoute} />
+      <Readme content={blob.content} {rawPath} {activeRoute} />
     {:else if content}
       <table class="code no-scrollbar">
         {@html toHtml(content)}

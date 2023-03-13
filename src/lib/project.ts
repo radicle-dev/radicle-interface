@@ -21,7 +21,7 @@ export enum ProjectContent {
 }
 
 export interface ProjectInfo {
-  head: string | null;
+  head: string;
   id: string;
   name: string;
   description: string;
@@ -125,7 +125,7 @@ export function parseRoute(
 
 export class Project implements ProjectInfo {
   id: string;
-  head: string | null;
+  head: string;
   name: string;
   description: string;
   defaultBranch: string;
@@ -287,6 +287,12 @@ export class Project implements ProjectInfo {
       this.seed.addr,
     ).get();
     return result;
+  }
+
+  getRawPath(commit?: string): string {
+    return `${this.seed.addr.scheme}://${this.seed.addr.host}:${
+      this.seed.addr.port
+    }/raw/${this.id}/${commit ?? this.head}`;
   }
 
   static async get(

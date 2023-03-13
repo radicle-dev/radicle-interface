@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type * as proj from "@app/lib/project";
-
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { marked } from "marked";
@@ -8,7 +6,7 @@
   import { toDom } from "hast-util-to-dom";
 
   import { base } from "@app/lib/router";
-  import { getImageMime, isUrl, twemoji, scrollIntoView } from "@app/lib/utils";
+  import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
   import { highlight } from "@app/lib/syntax";
   import {
     markdownExtensions as extensions,
@@ -17,8 +15,9 @@
 
   export let content: string;
   export let doc = matter(content);
-  export let getImage: (path: string) => Promise<proj.MaybeBlob>;
   export let hash: string | null = null;
+  export let path: string = "/";
+  export let rawPath: string;
 
   const frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
@@ -43,22 +42,18 @@
 
     if (hash) scrollIntoView(hash);
 
-    // Iterate over all images, and fetch their data from the API, then
-    // replace the source with a Data-URL. We do this due to the absence
-    // of a static file server.
+    // Iterate over all images, and replace the source with a canonicalized URL
+    // pointing at the projects /raw endpoint.
     for (const i of container.querySelectorAll("img")) {
-      const path = i.getAttribute("src");
+      const imagePath = i.getAttribute("src");
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (path && !isUrl(path) && !path.startsWith(`${base}twemoji`)) {
-        getImage(path).then(blob => {
-          if (blob?.content) {
-            const mime = getImageMime(path);
-            if (mime) {
-              i.setAttribute("src", `data:${mime};base64,${blob.content}`);
-            }
-          }
-        });
+      if (
+        imagePath &&
+        !isUrl(imagePath) &&
+        !imagePath.startsWith(`${base}twemoji`)
+      ) {
+        i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
       }
     }
 

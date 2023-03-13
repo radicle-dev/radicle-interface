@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { MaybeBlob } from "@app/lib/project";
   import type { Comment, Thread } from "@app/lib/issue";
 
   import Authorship from "@app/components/Authorship.svelte";
@@ -8,7 +7,7 @@
 
   export let comment: Comment | Thread;
   export let caption = "commented";
-  export let getImage: (path: string) => Promise<MaybeBlob>;
+  export let rawPath: string;
 
   $: source = comment.author.id;
   $: title = comment.author.id;
@@ -57,7 +56,7 @@
       {#if comment.body.trim() === ""}
         <span class="txt-missing">No description.</span>
       {:else}
-        <Markdown content={comment.body} {getImage} />
+        <Markdown {rawPath} content={comment.body} />
       {/if}
     </div>
   </div>

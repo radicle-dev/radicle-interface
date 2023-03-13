@@ -11,7 +11,6 @@
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
   import * as router from "@app/lib/router";
-  import * as utils from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
@@ -58,15 +57,6 @@
   onMount(() => {
     browserErrorStore.set(undefined);
   });
-
-  // Get an image blob based on a relative path.
-  const getImage = async (imagePath: string) => {
-    const finalPath = utils.canonicalize(imagePath, path);
-    return project.getBlob(commit, finalPath).catch(() => {
-      console.warn("Not able to load image blob:", finalPath);
-      return undefined;
-    });
-  };
 
   const onSelect = async (newPath: string) => {
     browserErrorStore.set(undefined);
@@ -242,7 +232,11 @@
             <Loading small center />
           {:then blob}
             {#if blob}
-              <Blob {line} {blob} {getImage} {activeRoute} />
+              <Blob
+                {line}
+                {blob}
+                {activeRoute}
+                rawPath={project.getRawPath(commit)} />
             {/if}
           {/await}
         {/if}

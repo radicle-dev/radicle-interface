@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { MaybeBlob, Project } from "@app/lib/project";
+  import type { Project } from "@app/lib/project";
   import type { Session } from "@app/lib/session";
 
   import * as modal from "@app/lib/modal";
@@ -11,20 +11,13 @@
   import TextInput from "@app/components/TextInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import { Issue } from "@app/lib/issue";
-  import { canonicalize, formatNodeId, parseNodeId } from "@app/lib/utils";
+  import { formatNodeId, parseNodeId } from "@app/lib/utils";
   import { createEventDispatcher } from "svelte";
 
   export let session: Session;
   export let project: Project;
 
   const dispatch = createEventDispatcher<{ create: never }>();
-
-  // Get an image blob based on a relative path.
-  const getImage = async (imagePath: string): Promise<MaybeBlob> => {
-    const finalPath = canonicalize(imagePath, "/"); // We only use the root path in issues.
-    const commit = project.branches[project.defaultBranch]; // We suppose that all issues are only looked at on HEAD of the default branch.
-    return project.getBlob(commit, finalPath);
-  };
 
   let preview: boolean = false;
 
@@ -181,14 +174,14 @@
         </div>
         <div class="comments">
           <Comment
+            rawPath={project.getRawPath()}
             comment={{
               author: { id: session.publicKey },
               body: issueText,
               reactions: {},
               replyTo: null,
               timestamp: Date.now(),
-            }}
-            {getImage} />
+            }} />
         </div>
       {:else}
         <Textarea bind:value={issueTitle} placeholder="Title" />

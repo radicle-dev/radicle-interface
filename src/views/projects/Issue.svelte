@@ -1,23 +1,16 @@
 <script lang="ts">
-  import type { Blob, Project } from "@app/lib/project";
+  import type { Project } from "@app/lib/project";
   import type { Issue } from "@app/lib/issue";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Comment/Avatar.svelte";
   import Chip from "@app/components/Chip.svelte";
   import Comment from "@app/components/Comment.svelte";
-  import { formatNodeId, canonicalize, capitalize } from "@app/lib/utils";
+  import { formatNodeId, capitalize } from "@app/lib/utils";
   import { formatObjectId } from "@app/lib/cobs";
 
   export let issue: Issue;
   export let project: Project;
-
-  // Get an image blob based on a relative path.
-  const getImage = async (imagePath: string): Promise<Blob> => {
-    const finalPath = canonicalize(imagePath, "/"); // We only use the root path in issues.
-    const commit = project.branches[project.defaultBranch]; // We suppose that all issues are only looked at on HEAD of the default branch.
-    return project.getBlob(commit, finalPath);
-  };
 </script>
 
 <style>
@@ -140,7 +133,7 @@
   <main>
     <div class="comments">
       {#each issue.discussion as comment}
-        <Comment {comment} {getImage} />
+        <Comment {comment} rawPath={project.getRawPath()} />
       {/each}
     </div>
     <div class="metadata layout-desktop">

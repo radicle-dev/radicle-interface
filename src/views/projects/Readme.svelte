@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type * as proj from "@app/lib/project";
   import type { ProjectRoute } from "@app/lib/router/definitions";
 
   import Markdown from "@app/components/Markdown.svelte";
 
   export let content: string;
-  export let getImage: (path: string) => Promise<proj.MaybeBlob>;
+  export let rawPath: string;
   export let activeRoute: ProjectRoute;
 
+  $: path = activeRoute.params.path || "/";
   $: hash = activeRoute.params.hash || null;
 </script>
 
@@ -22,5 +22,5 @@
 </style>
 
 <article>
-  <Markdown {content} {getImage} {hash} />
+  <Markdown {content} {hash} {rawPath} {path} />
 </article>

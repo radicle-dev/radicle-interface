@@ -119,28 +119,6 @@ export function capitalize(s: string): string {
   return s[0].toUpperCase() + s.substring(1);
 }
 
-// Get the mime type of an image, given a file path.
-// Returns `null` if unknown.
-export function getImageMime(path: string): string | null {
-  const mimes: Record<string, string> = {
-    apng: "image/apng",
-    png: "image/png",
-    svg: "image/svg+xml",
-    gif: "image/gif",
-    jpeg: "image/jpeg",
-    jpg: "image/jpeg",
-    webp: "image/webp",
-  };
-  const ext = path.split(".").pop();
-
-  if (ext) {
-    if (mimes[ext]) {
-      return mimes[ext];
-    }
-  }
-  return null;
-}
-
 // Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
 // Returns the resolved path.
 export function canonicalize(
