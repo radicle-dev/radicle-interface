@@ -18,6 +18,7 @@
 
     if (status === "success") {
       modal.show({ component: AuthenticatedModal, props: {} });
+      router.push({ resource: "seeds", params: { host: "radicle.local" } });
     } else {
       modal.show({
         component: AuthenticationErrorModal,
@@ -29,9 +30,8 @@
           ],
         },
       });
+      router.push({ resource: "home" });
     }
-
-    router.push({ resource: "home" });
   });
 </script>
 
