@@ -85,14 +85,6 @@ jobs:
           path: |
             tests/artifacts/**/*
 
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: "**Visual diff results for latest changes**"
-
       - name: Check for artifacts
         id: check_artifacts
         run: |
@@ -101,6 +93,15 @@ jobs:
           else
             echo "present=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Find Comment
+        if: github.ref != 'refs/heads/master'
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "**Visual diff results for latest changes**"
 
       - name: Create or update comment
         if: github.ref != 'refs/heads/master' && steps.check_artifacts.outputs.present == 'false'
