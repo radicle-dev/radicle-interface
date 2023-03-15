@@ -31,6 +31,11 @@
         "name": "radicle-git",
         "id": "rad:zMKWcgFLjUSVBBVmxbcMzzokRxub",
         "seed": "seed.radicle.xyz"
+      },
+      {
+        "name": "radicle-team",
+        "id": "rad:z2Jk1mNqyX7AjT4K83jJW9vQoHn4f",
+        "seed": "seed.radicle.xyz"
       }
     ]
   }
