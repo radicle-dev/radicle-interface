@@ -1,5 +1,7 @@
 <script lang="ts" context="module">
-  export type State = "open" | "closed";
+  import type { IssueState } from "@app/lib/issue";
+
+  export type IssueStatus = IssueState["status"];
 </script>
 
 <script lang="ts">
@@ -19,27 +21,25 @@
   import TabBar from "@app/components/TabBar.svelte";
 
   export let issues: Issue[];
-  export let state: State;
+  export let status: IssueStatus;
   export let project: Project;
 
-  let options: Tab<State>[];
-  const { open, closed } = groupIssues(issues);
+  let options: Tab<IssueStatus>[];
 
-  $: filteredIssues = state === "open" ? open : closed;
+  const stateOptions: IssueStatus[] = ["open", "closed"];
+  $: options = stateOptions.map<{
+    value: IssueStatus;
+    title: string;
+    disabled: boolean;
+  }>((s: IssueStatus) => ({
+    value: s,
+    title: `${project.issues[s]} ${s}`,
+    disabled: project.issues[s] === 0,
+  }));
+  $: filteredIssues = groupIssues(issues)[status];
   $: sortedIssues = filteredIssues.sort(
     ({ timestamp: t1 }, { timestamp: t2 }) => t2 - t1,
   );
-
-  $: options = [
-    {
-      value: "open",
-      count: project.issues.open,
-    },
-    {
-      value: "closed",
-      count: project.issues.closed,
-    },
-  ];
 </script>
 
 <style>
@@ -77,7 +77,7 @@
           router.updateProjectRoute({
             search: `state=${e.detail}`,
           })}
-        active={state} />
+        active={status} />
     </div>
     <HeaderToggleLabel
       disabled={!$sessionStore || !utils.isLocal(project.seed.host)}
@@ -114,7 +114,7 @@
     </div>
   {:else}
     <Placeholder emoji="🍂">
-      <div slot="title">{capitalize(state)} issues</div>
+      <div slot="title">{capitalize(status)} issues</div>
       <div slot="body">No issues matched the current filter</div>
     </Placeholder>
   {/if}

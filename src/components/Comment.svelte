@@ -55,7 +55,12 @@
 <div class="comment" {id}>
   <div class="card">
     <div class="card-header">
-      <Authorship {caption} {author} {timestamp} />
+      <div class="layout-desktop">
+        <Authorship {caption} {author} {timestamp} />
+      </div>
+      <div class="layout-mobile">
+        <Authorship {author} {timestamp} />
+      </div>
       <div class="actions">
         {#if showReplyIcon}
           <Button

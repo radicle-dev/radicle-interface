@@ -4,18 +4,25 @@
 
   import * as modal from "@app/lib/modal";
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
+  import Authorship from "@app/components/Authorship.svelte";
+  import Avatar from "@app/components/Comment/Avatar.svelte";
+  import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
+  import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
+  import CobSideInput from "@app/views/projects/Cob/CobSideInput.svelte";
   import Comment from "@app/components/Comment.svelte";
-  import IssueSidebar from "@app/views/projects/Issue/IssueSidebar.svelte";
-  import IssueHeader from "@app/views/projects/Issue/IssueHeader.svelte";
   import { Issue } from "@app/lib/issue";
   import { createEventDispatcher } from "svelte";
-  import { stripDidPrefix } from "@app/lib/cobs";
+  import { formatNodeId, isLocal, parseNodeId } from "@app/lib/utils";
+  import { sessionStore } from "@app/lib/session";
+  import { stripDidPrefix, validateTag } from "@app/lib/cobs";
 
   export let session: Session;
   export let project: Project;
 
   const dispatch = createEventDispatcher<{ create: string }>();
+  const action: "edit" | "view" =
+    $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
 
   let preview: boolean = false;
 
@@ -66,6 +73,12 @@
     gap: 1rem;
     margin-top: 1rem;
   }
+  .metadata {
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-small);
+    padding-left: 1rem;
+    margin-left: 1rem;
+  }
   .editor {
     flex: 2;
     padding-right: 1rem;
@@ -85,12 +98,15 @@
 <main>
   <div class="form">
     <div class="editor">
-      <IssueHeader
-        author={{ id: session.publicKey }}
-        state={{ status: "open" }}
-        timestamp={Date.now()}
-        action={preview ? "view" : "create"}
-        bind:title={issueTitle} />
+      <CobHeader action={preview ? "view" : "create"} bind:title={issueTitle}>
+        <svelte:fragment slot="state">
+          <Badge variant="positive">open</Badge>
+          <Authorship
+            timestamp={Date.now()}
+            author={{ id: session.publicKey }}
+            caption="opened this issue" />
+        </svelte:fragment>
+      </CobHeader>
       <div class="comments">
         <Comment
           bind:body={issueText}
@@ -120,9 +136,29 @@
         </Button>
       </div>
     </div>
-    <IssueSidebar
-      on:saveAssignees={({ detail }) => (assignees = detail)}
-      on:saveTags={({ detail }) => (tags = detail)}
-      action="create" />
+    <div class="metadata">
+      <CobSideInput
+        {action}
+        title="Assignees"
+        placeholder="Add assignee"
+        on:save={({ detail: assignees }) => (assignees = assignees)}
+        validate={item => Boolean(parseNodeId(item))}
+        validateAdd={(item, items) => validateTag(item, items)}>
+        <svelte:fragment let:item>
+          <Avatar inline source={item} title={item} />
+          <span>{formatNodeId(item)}</span>
+        </svelte:fragment>
+      </CobSideInput>
+      <CobSideInput
+        title="Tags"
+        placeholder="Add tag"
+        on:save={({ detail: tags }) => (tags = tags)}
+        validate={item => item.trim().length > 0}
+        validateAdd={(item, items) => validateTag(item, items)}>
+        <svelte:fragment let:item>
+          <div class="tag">{item}</div>
+        </svelte:fragment>
+      </CobSideInput>
+    </div>
   </div>
 </main>

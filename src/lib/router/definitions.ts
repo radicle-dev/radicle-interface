@@ -20,7 +20,14 @@ export interface ProjectsParams {
         params?: {
           view: { resource: "new" };
         };
-      };
+      }
+    | {
+        resource: "patches";
+        params?: {
+          view: { resource: "new" };
+        };
+      }
+    | { resource: "patch"; params: { patch: string; revision?: string } };
   seed: string;
   hash?: string;
   line?: string;

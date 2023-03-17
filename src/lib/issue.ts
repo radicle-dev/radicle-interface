@@ -1,4 +1,4 @@
-import type { Author, Comment } from "@app/lib/cobs";
+import type { Author, Comment, State } from "@app/lib/cobs";
 import type { Host } from "@app/lib/api";
 
 import { stripDidPrefix } from "@app/lib/cobs";
@@ -8,21 +8,16 @@ export interface IIssue {
   id: string;
   author: Author;
   title: string;
-  state: State;
+  state: IssueState;
   discussion: Comment[];
   tags: string[];
   assignees: string[];
   timestamp: number;
 }
 
-export type State =
-  | {
-      status: "open";
-    }
-  | {
-      status: "closed";
-      reason: "other" | "solved";
-    };
+export type IssueState =
+  | { status: "open" }
+  | { status: "closed"; reason: "other" | "solved" };
 
 export function groupIssues(issues: Issue[]): {
   open: Issue[];
@@ -51,7 +46,7 @@ export class Issue {
   id: string;
   author: Author;
   title: string;
-  state: State;
+  state: IssueState;
   discussion: Comment[];
   tags: string[];
   assignees: string[];

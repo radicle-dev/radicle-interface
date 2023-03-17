@@ -268,6 +268,13 @@ export function routeToPath(route: Route) {
       return `${hostPrefix}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
       return `${hostPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
+    } else if (route.params.view.resource === "patches") {
+      return `${hostPrefix}/${route.params.id}${peer}/patches${suffix}`;
+    } else if (route.params.view.resource === "patch") {
+      if (route.params.view.params.revision) {
+        return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
+      }
+      return `${hostPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
     } else {
       return `${hostPrefix}/${route.params.id}${peer}${content}`;
     }
@@ -353,6 +360,30 @@ function resolveProjectRoute(
     } else {
       return {
         view: { resource: "issues" },
+        id,
+        seed,
+        peer,
+        search: sanitizeQueryString(url.search),
+        path: undefined,
+        revision: undefined,
+      };
+    }
+  } else if (content === "patches") {
+    const patch = segments.shift();
+    const revision = segments.shift();
+    if (patch) {
+      return {
+        view: { resource: "patch", params: { patch, revision } },
+        id,
+        seed,
+        peer,
+        path: undefined,
+        revision: undefined,
+        search: sanitizeQueryString(url.search),
+      };
+    } else {
+      return {
+        view: { resource: "patches" },
         id,
         seed,
         peer,

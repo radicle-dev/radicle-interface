@@ -22,7 +22,7 @@
 
   // Switches between project views.
   const toggleContent = (
-    input: "issues" | "history",
+    input: "issues" | "patches" | "history",
     keepSourceInPath: boolean,
   ) => {
     router.updateProjectRoute({
@@ -129,6 +129,14 @@
     on:click={() => toggleContent("issues", false)}>
     <span class="txt-bold">{project.issues.open ?? 0}</span>
     issue(s)
+  </HeaderToggleLabel>
+  <HeaderToggleLabel
+    ariaLabel="Patch count"
+    active={activeRoute.params.view.resource === "patches"}
+    clickable
+    on:click={() => toggleContent("patches", false)}>
+    <span class="txt-bold">{project.patches.proposed ?? 0}</span>
+    patch(es)
   </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>

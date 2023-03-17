@@ -5,16 +5,20 @@
   import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
   export let author: Author;
+  export let caption: string | undefined = undefined;
+  export let highlight: boolean = false;
   export let noAvatar: boolean = false;
-  export let timestamp: number;
-  export let caption: string;
+  export let timestamp: number | undefined = undefined;
+
+  const relativeTimestamp = (time: number | undefined) =>
+    time ? new Date(time).toISOString() : undefined;
 </script>
 
 <style>
   .authorship {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    color: var(--color-foreground);
+    color: var(--color-foreground-5);
     padding: 0.125rem 0;
   }
   .id {
@@ -22,8 +26,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .caption {
+  .body {
+    margin: 0 0.4rem;
     color: var(--color-foreground-5);
+    white-space: nowrap;
   }
   .highlight {
     color: var(--color-foreground-6);
@@ -34,16 +40,26 @@
   }
 </style>
 
-<span class="authorship txt-tiny">
+<span class="authorship txt-tiny" title={relativeTimestamp(timestamp)}>
   {#if !noAvatar}
     <Avatar inline source={author.id} title={author.id} />
   {/if}
-  <span class="id highlight layout-desktop">{formatNodeId(author.id)}</span>
-  <span class="id highlight layout-mobile">
+  <span class:highlight class="id highlight layout-desktop">
+    {formatNodeId(author.id)}
+  </span>
+  <span class:highlight class="id layout-mobile">
     {formatNodeId(author.id).replace("did:key:", "")}
   </span>
-  <span class="caption">&nbsp;{caption}&nbsp;</span>
-  <span class="date">
-    {formatTimestamp(timestamp)}
+  <span class="body">
+    {#if !caption}
+      <slot />
+    {:else}
+      {caption}
+    {/if}
   </span>
+  {#if timestamp}
+    <span class:date={highlight}>
+      {formatTimestamp(timestamp)}
+    </span>
+  {/if}
 </span>

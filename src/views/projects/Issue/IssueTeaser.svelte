@@ -4,6 +4,8 @@
   import { formatObjectId } from "@app/lib/cobs";
   import Authorship from "@app/components/Authorship.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import { formatTimestamp } from "@app/lib/utils";
+  import Badge from "@app/components/Badge.svelte";
 
   export let issue: Issue;
 
@@ -21,17 +23,21 @@
     background-color: var(--color-foreground-2);
     cursor: pointer;
   }
-  .issue-id {
+  .subtitle {
     color: var(--color-foreground-5);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
-    margin-left: 0.5rem;
+    margin-right: 0.4rem;
+  }
+  .id {
+    margin-right: 0.5rem;
   }
   .summary {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-right: 2rem;
+    gap: 0.5rem;
+    padding-right: 1rem;
   }
   .issue-title {
     overflow: hidden;
@@ -46,6 +52,15 @@
     gap: 0.5rem;
     color: var(--color-foreground-5);
   }
+  .tags {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .tag {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   .column-right {
     align-self: center;
@@ -55,6 +70,9 @@
   .state {
     justify-self: center;
     align-self: center;
+  }
+  .highlight {
+    color: var(--color-foreground-6);
   }
   .state-icon {
     width: 0.5rem;
@@ -66,6 +84,12 @@
   }
   .closed {
     background-color: var(--color-negative);
+  }
+
+  @media (max-width: 960px) {
+    .tags {
+      display: none;
+    }
   }
 </style>
 
@@ -79,12 +103,28 @@
   <div class="column-left">
     <div class="summary">
       <span class="issue-title">{issue.title}</span>
-      <span class="issue-id">{formatObjectId(issue.id)}</span>
+      <span class="tags">
+        {#each issue.tags.slice(0, 4) as tag}
+          <Badge style="max-width:7rem" variant="secondary">
+            <span class="tag">{tag}</span>
+          </Badge>
+        {/each}
+        {#if issue.tags.length > 4}
+          <Badge variant="foreground">
+            <span class="tag">+{issue.tags.length - 4} more tags</span>
+          </Badge>
+        {/if}
+      </span>
     </div>
-    <Authorship
-      caption="opened"
-      author={issue.author}
-      timestamp={issue.timestamp} />
+    <div class="summary subtitle">
+      <span class="id">
+        <span class="highlight">{formatObjectId(issue.id)}</span>
+        opened
+        <span class="highlight">{formatTimestamp(issue.timestamp)}</span>
+        by
+      </span>
+      <Authorship highlight noAvatar author={issue.author} />
+    </div>
   </div>
   {#if commentCount > 0}
     <div class="column-right">

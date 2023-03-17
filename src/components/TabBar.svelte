@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   export interface Tab<T> {
     title?: string;
-    count?: number;
+    disabled: boolean;
     value: T;
   }
 </script>
@@ -18,7 +18,7 @@
   const dispatch = createEventDispatcher<{ select: T }>();
 
   function onSelect(option: Tab<T>) {
-    if (option.count !== 0) {
+    if (!option.disabled) {
       dispatch("select", option.value);
     }
   }
@@ -60,11 +60,8 @@
     <button
       class="state-toggle"
       on:click={() => onSelect(option)}
-      disabled={option.count === 0}
+      disabled={option.disabled}
       class:active={active === option.value}>
-      {#if option.count !== undefined}
-        {option.count}
-      {/if}
       {option.title ?? capitalize(`${option.value}`)}
     </button>
   {/each}

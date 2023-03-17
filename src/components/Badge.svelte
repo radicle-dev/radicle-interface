@@ -5,7 +5,9 @@
     | "negative"
     | "positive"
     | "primary"
+    | "secondary"
     | "tertiary";
+  export let style: string | undefined = undefined;
 </script>
 
 <style>
@@ -25,6 +27,10 @@
   .positive {
     color: var(--color-positive-6);
     background-color: var(--color-positive-3);
+  }
+  .secondary {
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-3);
   }
   .negative {
     color: var(--color-negative);
@@ -49,11 +55,13 @@
   on:mouseenter
   on:mouseleave
   class="badge"
+  {style}
   class:caution={variant === "caution"}
   class:foreground={variant === "foreground"}
   class:negative={variant === "negative"}
   class:positive={variant === "positive"}
   class:primary={variant === "primary"}
+  class:secondary={variant === "secondary"}
   class:tertiary={variant === "tertiary"}>
   <slot />
 </span>

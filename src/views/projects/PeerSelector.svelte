@@ -1,5 +1,6 @@
 <script lang="ts" strictEvents>
   import type { Peer } from "@app/lib/project";
+  import type { Item } from "@app/components/Dropdown.svelte";
 
   import Badge from "@app/components/Badge.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
@@ -13,12 +14,7 @@
 
   let meta: Peer | undefined;
 
-  let items: {
-    key: string;
-    value: string;
-    title: string;
-    badge: string | null;
-  }[] = [];
+  let items: Item<string>[] = [];
 
   function createTitle(p: Peer): string {
     const nodeId = formatNodeId(p.id);

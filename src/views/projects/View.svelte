@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { ProjectRoute } from "@app/lib/router/definitions";
-  import type { State as IssueState } from "./Issues.svelte";
+  import type { IssueStatus } from "./Issues.svelte";
+  import type { PatchStatus } from "./Patches.svelte";
 
   import * as issue from "@app/lib/issue";
+  import * as patch from "@app/lib/patch";
   import * as proj from "@app/lib/project";
   import * as router from "@app/lib/router";
   import Loading from "@app/components/Loading.svelte";
@@ -18,6 +20,8 @@
   import Issues from "./Issues.svelte";
   import Message from "@app/components/Message.svelte";
   import NewIssue from "./Issue/New.svelte";
+  import Patch from "./Patch.svelte";
+  import Patches from "./Patches.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
@@ -28,7 +32,10 @@
   $: seed = activeRoute.params.seed;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
-  $: issueFilter = (searchParams.get("state") as IssueState) || "open";
+  $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
+  $: patchTabFilter =
+    (searchParams.get("tab") as "activity" | "commits") || "activity";
+  $: patchFilter = (searchParams.get("state") as PatchStatus) || "proposed";
 
   const getProject = async (id: string, seed: string, peer?: string) => {
     const project = await proj.Project.get(id, seed, peer);
@@ -166,7 +173,7 @@
         {#await issue.Issue.getIssues(project.id, project.seed.addr)}
           <Loading center />
         {:then issues}
-          <Issues {project} state={issueFilter} {issues} />
+          <Issues {project} status={issueFilter} {issues} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>
@@ -177,6 +184,30 @@
           <Loading center />
         {:then issue}
           <Issue on:update={handleIssueUpdate} {project} {issue} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if activeRoute.params.view.resource === "patches"}
+        {#await patch.Patch.getPatches(project.id, project.seed.addr)}
+          <Loading center />
+        {:then patches}
+          <Patches {patches} status={patchFilter} {project} />
+        {:catch e}
+          <div class="message">
+            <Message error>{e.message}</Message>
+          </div>
+        {/await}
+      {:else if activeRoute.params.view.resource === "patch"}
+        {#await patch.Patch.getPatch(project.id, activeRoute.params.view.params.patch, project.seed.addr)}
+          <Loading center />
+        {:then patch}
+          <Patch
+            {project}
+            revision={activeRoute.params.view.params.revision}
+            currentTab={patchTabFilter}
+            {patch} />
         {:catch e}
           <div class="message">
             <Message error>{e.message}</Message>

@@ -17,6 +17,7 @@
   .section {
     display: flex;
     align-items: center;
+    max-width: 13rem;
     padding: 0.2rem 0.5rem;
   }
   .text {
@@ -44,7 +45,9 @@
 </style>
 
 <div class="chip">
-  <span class="section text" class:removeable><slot name="text" /></span>
+  <span class="section text" class:removeable>
+    <slot />
+  </span>
   {#if removeable}
     <button class="section close" on:click={() => dispatch("remove", key)}>
       ✕

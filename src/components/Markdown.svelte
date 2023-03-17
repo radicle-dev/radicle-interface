@@ -14,13 +14,13 @@
   } from "@app/lib/markdown";
 
   export let content: string;
-  export let doc = matter(content);
   export let hash: string | null = null;
   export let path: string = "/";
   export let breaks = false;
   export let rawPath: string;
 
-  const frontMatter = Object.entries(doc.data).filter(
+  $: doc = matter(content);
+  $: frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
   );
   marked.use({ extensions, renderer, breaks });
