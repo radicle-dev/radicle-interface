@@ -27,6 +27,7 @@
   import * as router from "@app/lib/router";
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
+  import Button from "@app/components/Button.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobSideInput from "./Cob/CobSideInput.svelte";
@@ -36,6 +37,7 @@
   import Floating from "@app/components/Floating.svelte";
   import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
   import TabBar from "@app/components/TabBar.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
   import Thread from "@app/components/Thread.svelte";
   import capitalize from "lodash/capitalize";
   import { Patch } from "@app/lib/patch";
@@ -89,6 +91,20 @@
       patch.title = patch.title;
     }
   }
+
+  async function createComment(body: string) {
+    if ($sessionStore && body.trim().length > 0) {
+      await patch.createComment(
+        project.id,
+        currentRevision.id,
+        body,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+    }
+  }
+
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
     if ($sessionStore) {
       const { add, remove } = createAddRemoveArrays(patch.tags, tags);
@@ -184,6 +200,13 @@
   .action {
     margin: 1rem;
     color: var(--color-foreground-5);
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 0 0 2.5rem 0;
+    gap: 1rem;
   }
   .highlight {
     color: var(--color-foreground-6);
@@ -345,6 +368,28 @@
           {/if}
         {/each}
       </div>
+      {#if $sessionStore}
+        <Textarea
+          resizable
+          on:submit={() => {
+            createComment(commentBody);
+            commentBody = "";
+          }}
+          bind:value={commentBody}
+          placeholder="Leave your comment" />
+        <div class="actions txt-small">
+          <Button
+            variant="secondary"
+            size="small"
+            disabled={!commentBody}
+            on:click={() => {
+              createComment(commentBody);
+              commentBody = "";
+            }}>
+            Comment
+          </Button>
+        </div>
+      {/if}
     {:else if currentTab === "commits"}
       {#await diffPromise then diff}
         <div style:margin-top="1rem">
