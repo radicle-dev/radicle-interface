@@ -20,6 +20,7 @@
     "@playwright/test": "^1.32.1",
     "@sinonjs/fake-timers": "^10.0.2",
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "@tsconfig/svelte": "^4.0.1",
     "@types/dompurify": "^3.0.0",
     "@types/katex": "^0.16.0",
     "@types/lodash": "^4.14.192",
