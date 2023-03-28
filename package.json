@@ -22,12 +22,12 @@
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "@types/dompurify": "^3.0.0",
     "@types/katex": "^0.16.0",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "^4.14.192",
     "@types/marked": "^4.0.8",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.15.10",
     "@types/sinonjs__fake-timers": "^8.1.2",
-    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
     "chalk": "^5.2.0",
     "eslint": "^8.36.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -37,7 +37,7 @@
     "svelte-check": "^3.1.4",
     "typescript": "^5.0.2",
     "vite": "^4.2.1",
-    "vitest": "^0.29.7"
+    "vitest": "^0.29.8"
   },
   "dependencies": {
     "@radicle/gray-matter": "4.1.0",
