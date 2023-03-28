@@ -9,8 +9,8 @@
 <script lang="ts" strictEvents>
   type T = $$Generic;
 
+  import capitalize from "lodash/capitalize";
   import { createEventDispatcher } from "svelte";
-  import { capitalize } from "@app/lib/utils";
 
   export let options: Tab<T>[];
   export let active: T;

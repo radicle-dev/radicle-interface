@@ -33,13 +33,14 @@
   import Comment from "@app/components/Comment.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
-  import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
   import TabBar from "@app/components/TabBar.svelte";
   import Thread from "@app/components/Thread.svelte";
+  import capitalize from "lodash/capitalize";
   import { Patch } from "@app/lib/patch";
-  import { capitalize, formatCommit, isLocal } from "@app/lib/utils";
   import { createAddRemoveArrays } from "@app/lib/issue";
+  import { formatCommit, isLocal } from "@app/lib/utils";
   import { formatObjectId, validateTag } from "@app/lib/cobs";
   import { sessionStore } from "@app/lib/session";
 

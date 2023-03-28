@@ -11,7 +11,7 @@
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { capitalize } from "@app/lib/utils";
+  import capitalize from "lodash/capitalize";
   import { groupIssues } from "@app/lib/issue";
   import { sessionStore } from "@app/lib/session";
 

@@ -114,11 +114,6 @@ export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
 }
 
-export function capitalize(s: string): string {
-  if (s === "") return s;
-  return s[0].toUpperCase() + s.substring(1);
-}
-
 // Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
 // Returns the resolved path.
 export function canonicalize(

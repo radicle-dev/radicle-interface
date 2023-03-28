@@ -9,9 +9,9 @@
   import type { Project } from "@app/lib/project";
 
   import * as router from "@app/lib/router";
-  import * as utils from "@app/lib/utils";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import capitalize from "lodash/capitalize";
 
   export let patches: Patch[];
   export let status: PatchStatus;
@@ -59,7 +59,7 @@
     </div>
   {:else}
     <Placeholder emoji="🍂">
-      <div slot="title">{utils.capitalize(status)} patches</div>
+      <div slot="title">{capitalize(status)} patches</div>
       <div slot="body">No issues matched the current filter</div>
     </Placeholder>
   {/if}
