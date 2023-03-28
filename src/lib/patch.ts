@@ -107,6 +107,24 @@ export class Patch {
     return response.map(patch => new Patch(patch));
   }
 
+  async editTitle(
+    project: string,
+    title: string,
+    description: string,
+    target: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/patches/${this.id}`, host).patch(
+      {
+        type: "edit",
+        title,
+        description,
+        target,
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
   async replyComment(
     project: string,
     revision: string,

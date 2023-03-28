@@ -73,6 +73,22 @@
     }
   }
 
+  async function editTitle({ detail: title }: CustomEvent<string>) {
+    if ($sessionStore && title.trim().length > 0 && title !== patch.title) {
+      await patch.editTitle(
+        project.id,
+        title,
+        patch.description,
+        patch.target,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+    } else {
+      // Reassigning issue.title overwrites the invalid title in IssueHeader
+      patch.title = patch.title;
+    }
+  }
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
     if ($sessionStore) {
       const { add, remove } = createAddRemoveArrays(patch.tags, tags);
@@ -103,7 +119,7 @@
 
   const action: "create" | "edit" | "view" =
     $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
-
+  let commentBody: string = "";
   // Reactive due to eventual changes in patch.revisions
   $: enumeratedRevisions = patch.revisions.map((r, i) => [r, i] as const);
   $: currentRevisionTuple =
@@ -195,7 +211,11 @@
 
 <div class="patch">
   <div>
-    <CobHeader id={patch.id} title={patch.title}>
+    <CobHeader
+      {action}
+      id={patch.id}
+      title={patch.title}
+      on:editTitle={editTitle}>
       <span slot="revision" class="revision txt-monospace txt-tiny">
         <Floating>
           <svelte:fragment slot="toggle">
