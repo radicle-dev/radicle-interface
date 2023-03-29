@@ -122,9 +122,7 @@
     }
   }
 
-  async function saveReview({
-    detail: state,
-  }: CustomEvent<string | undefined>) {
+  async function saveReview(state: string | undefined) {
     if ($sessionStore) {
       await patch.editReview(
         project.id,
@@ -182,10 +180,10 @@
   const action: "create" | "edit" | "view" =
     $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
 
-  const items: Item<"accept" | "reject" | "comment">[] = [
+  const items: Item<"accept" | "reject" | undefined>[] = [
     { title: "Accept revision", value: "accept" } as const,
     { title: "Reject revision", value: "reject" } as const,
-    { title: "Leave comment", value: "comment" } as const,
+    { title: "Leave comment", value: undefined } as const,
   ].map(item => ({
     key: item.title,
     title: item.title,
@@ -205,23 +203,6 @@
     currentRevisionIndex === 0
       ? patch.description
       : currentRevision.description;
-  $: existingReview = currentRevision.reviews.find(
-    ([author]) => author === $sessionStore?.id,
-  );
-  $: selectedItem = items[0];
-
-  $: switch (existingReview?.[1].verdict) {
-    case "accept":
-      selectedItem = items[1];
-      break;
-    case "reject":
-      selectedItem = items[0];
-      break;
-    default:
-      selectedItem = items[2];
-      break;
-  }
-  // END REEEFACTOR
 
   $: options = ["activity", "commits", "files"].map(o => ({
     value: o,
@@ -467,9 +448,18 @@
         <div class="actions txt-small">
           <CobStateButton
             {items}
-            {selectedItem}
-            state={existingReview?.[1].verdict}
-            on:save={saveReview} />
+            selectedItem={{
+              title: "Review",
+              key: "Review",
+              value: "review",
+              badge: null,
+            }}
+            state="review"
+            on:save={({ detail: item }) => {
+              if (item !== "review") {
+                saveReview(item);
+              }
+            }} />
           <Button
             variant="secondary"
             size="small"
