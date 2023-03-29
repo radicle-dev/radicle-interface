@@ -12,12 +12,13 @@
   export let author: Author;
   export let timestamp: number;
   export let body: string;
-  export let showReplyIcon: boolean = false;
   export let action: "create" | "view" = "view";
   export let caption = "commented";
   export let rawPath: string;
+  export let actionText: string | undefined = undefined;
+  export let icon: "chat" | undefined = undefined;
 
-  const dispatch = createEventDispatcher<{ toggleReply: never }>();
+  const dispatch = createEventDispatcher<{ edit: string; toggle: never }>();
 </script>
 
 <style>
@@ -62,14 +63,22 @@
         <Authorship {author} {timestamp} />
       </div>
       <div class="actions">
-        {#if showReplyIcon}
+        {#if actionText}
           <Button
             variant="text"
             size="tiny"
-            on:click={() => dispatch("toggleReply")}>
+            on:click={() => {
+              if (actionText === "edit") {
+                dispatch("edit", body);
+              } else {
+                dispatch("toggle");
+              }
+            }}>
             <div class="action">
-              <Icon name="chat" />
-              <span>reply</span>
+              {#if icon}
+                <Icon name={icon} />
+              {/if}
+              <span>{actionText}</span>
             </div>
           </Button>
         {/if}

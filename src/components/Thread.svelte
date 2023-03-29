@@ -14,6 +14,7 @@
   export let showReplyTextarea = false;
 
   let replyText = "";
+  let allowReply = Boolean($sessionStore) && !isDescription;
 
   function cancel() {
     showReplyTextarea = false;
@@ -68,8 +69,9 @@
   author={root.author}
   timestamp={root.timestamp}
   body={root.body}
-  showReplyIcon={Boolean($sessionStore) && !isDescription}
-  on:toggleReply={toggleReply} />
+  icon={allowReply ? "chat" : undefined}
+  actionText={allowReply ? "reply" : undefined}
+  on:toggle={toggleReply} />
 {#each replies as reply}
   <div class="reply">
     <Comment

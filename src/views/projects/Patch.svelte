@@ -94,6 +94,34 @@
     }
   }
 
+  async function editDescription(description: string) {
+    if ($sessionStore && description.trim().length > 0) {
+      if (currentRevisionIndex === 0 && description !== patch.description) {
+        await patch.editTitle(
+          project.id,
+          patch.title,
+          description,
+          patch.target,
+          project.seed.addr,
+          $sessionStore.id,
+        );
+      } else if (description !== currentRevision.description) {
+        await patch.editRevision(
+          project.id,
+          currentRevision.id,
+          description,
+          project.seed.addr,
+          $sessionStore.id,
+        );
+      }
+      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+    } else {
+      // Reassigning descriptions overwrites the invalid ones
+      patch.description = patch.description;
+      currentRevision.description = currentRevision.description;
+    }
+  }
+
   async function saveReview({
     detail: state,
   }: CustomEvent<string | undefined>) {
@@ -154,7 +182,6 @@
   const action: "create" | "edit" | "view" =
     $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
 
-  // REEEFACTOR
   const items: Item<"accept" | "reject" | "comment">[] = [
     { title: "Accept revision", value: "accept" } as const,
     { title: "Reject revision", value: "reject" } as const,
@@ -166,19 +193,23 @@
     badge: null,
   }));
   let commentBody: string = "";
+  let editRevisionDescription: boolean = false;
+
   // Reactive due to eventual changes in patch.revisions
   $: enumeratedRevisions = patch.revisions.map((r, i) => [r, i] as const);
   $: currentRevisionTuple =
     enumeratedRevisions.find(([rev]) => rev.id === revision) ||
     enumeratedRevisions[enumeratedRevisions.length - 1];
   $: [currentRevision, currentRevisionIndex] = currentRevisionTuple;
-
+  $: currentRevisionDescription =
+    currentRevisionIndex === 0
+      ? patch.description
+      : currentRevision.description;
   $: existingReview = currentRevision.reviews.find(
     ([author]) => author === $sessionStore?.id,
   );
   $: selectedItem = items[0];
 
-  $: console.log(existingReview?.[1].verdict);
   $: switch (existingReview?.[1].verdict) {
     case "accept":
       selectedItem = items[1];
@@ -358,13 +389,19 @@
       <div style:margin-top="1rem">
         <div class="txt-tiny">
           <Comment
+            action={editRevisionDescription ? "create" : "view"}
             caption="created this revision"
             author={patch.author}
             timestamp={currentRevision.timestamp}
+            actionText="edit"
             rawPath={project.getRawPath()}
-            body={currentRevisionIndex === 0
-              ? patch.description
-              : currentRevision.description} />
+            body={currentRevisionDescription}
+            on:edit={({ detail: description }) => {
+              if (editRevisionDescription) {
+                editDescription(description);
+              }
+              editRevisionDescription = !editRevisionDescription;
+            }} />
         </div>
         {#each timeline as element}
           {#if element.type === "thread"}

@@ -126,6 +126,23 @@ export class Patch {
     );
   }
 
+  async editRevision(
+    project: string,
+    revision: string,
+    description: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/patches/${this.id}`, host).patch(
+      {
+        type: "editRevision",
+        revision,
+        description,
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
   async editReview(
     project: string,
     revision: string,
