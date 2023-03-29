@@ -125,6 +125,17 @@ export const renderer = {
 
     return `<h${level} id="${escapedText}">${text}</h${level}>`;
   },
+  listitem(text: string) {
+    const hasLineBreaks = text.trim().indexOf("\n");
+    if (hasLineBreaks === -1) {
+      return `<li>${text}</li>`;
+    }
+    const [first, ...remaining] = text.trim().split("\n");
+    const liContent = `${first}<div class="list-content">${remaining.join(
+      "\n",
+    )}</div>`;
+    return `<li>${liContent}</li>`;
+  },
 };
 
 export const markdownExtensions = [
