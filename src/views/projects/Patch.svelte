@@ -23,6 +23,7 @@
 
 <script lang="ts">
   import type { Project } from "@app/lib/project";
+  import type { Item } from "@app/components/Dropdown.svelte";
 
   import * as router from "@app/lib/router";
   import Authorship from "@app/components/Authorship.svelte";
@@ -30,7 +31,8 @@
   import Button from "@app/components/Button.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CobSideInput from "./Cob/CobSideInput.svelte";
+  import CobSideInput from "@app/views/projects/Cob/CobSideInput.svelte";
+  import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import Comment from "@app/components/Comment.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
@@ -92,6 +94,22 @@
     }
   }
 
+  async function saveReview({
+    detail: state,
+  }: CustomEvent<string | undefined>) {
+    if ($sessionStore) {
+      await patch.editReview(
+        project.id,
+        currentRevision.id,
+        commentBody,
+        state,
+        project.seed.addr,
+        $sessionStore.id,
+      );
+      patch = await Patch.getPatch(project.id, patch.id, project.seed.addr);
+    }
+  }
+
   async function createComment(body: string) {
     if ($sessionStore && body.trim().length > 0) {
       await patch.createComment(
@@ -135,6 +153,18 @@
 
   const action: "create" | "edit" | "view" =
     $sessionStore && isLocal(project.seed.addr.host) ? "edit" : "view";
+
+  // REEEFACTOR
+  const items: Item<"accept" | "reject" | "comment">[] = [
+    { title: "Accept revision", value: "accept" } as const,
+    { title: "Reject revision", value: "reject" } as const,
+    { title: "Leave comment", value: "comment" } as const,
+  ].map(item => ({
+    key: item.title,
+    title: item.title,
+    value: item.value,
+    badge: null,
+  }));
   let commentBody: string = "";
   // Reactive due to eventual changes in patch.revisions
   $: enumeratedRevisions = patch.revisions.map((r, i) => [r, i] as const);
@@ -142,6 +172,26 @@
     enumeratedRevisions.find(([rev]) => rev.id === revision) ||
     enumeratedRevisions[enumeratedRevisions.length - 1];
   $: [currentRevision, currentRevisionIndex] = currentRevisionTuple;
+
+  $: existingReview = currentRevision.reviews.find(
+    ([author]) => author === $sessionStore?.id,
+  );
+  $: selectedItem = items[0];
+
+  $: console.log(existingReview?.[1].verdict);
+  $: switch (existingReview?.[1].verdict) {
+    case "accept":
+      selectedItem = items[1];
+      break;
+    case "reject":
+      selectedItem = items[0];
+      break;
+    default:
+      selectedItem = items[2];
+      break;
+  }
+  // END REEEFACTOR
+
   $: options = ["activity", "commits", "files"].map(o => ({
     value: o,
     title: capitalize(o),
@@ -378,6 +428,11 @@
           bind:value={commentBody}
           placeholder="Leave your comment" />
         <div class="actions txt-small">
+          <CobStateButton
+            {items}
+            {selectedItem}
+            state={existingReview?.[1].verdict}
+            on:save={saveReview} />
           <Button
             variant="secondary"
             size="small"

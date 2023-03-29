@@ -14,7 +14,7 @@
   import { twemoji } from "@app/lib/utils";
   import Badge from "@app/components/Badge.svelte";
 
-  type T = $$Generic<State | string | number>;
+  type T = $$Generic;
 
   export let items: Item<T>[];
   export let selected: string | null = null;

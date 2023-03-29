@@ -30,6 +30,8 @@ export interface PeerInfo {
   delegate: boolean;
 }
 
+export type ReviewState = { status: "accept" } | { status: "reject" };
+
 // Formats COBs Object Ids
 export function formatObjectId(id: string): string {
   return id.substring(0, 11);

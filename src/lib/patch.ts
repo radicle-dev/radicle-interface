@@ -1,4 +1,4 @@
-import type { Author, Comment } from "@app/lib/cobs";
+import type { Author, Comment, State } from "@app/lib/cobs";
 import type { CommitHeader } from "@app/lib/commit";
 import type { Diff } from "@app/lib/diff";
 import type { Host } from "@app/lib/api";
@@ -125,6 +125,47 @@ export class Patch {
       { Authorization: `Bearer ${session}` },
     );
   }
+
+  async editReview(
+    project: string,
+    revision: string,
+    comment: string | undefined,
+    verdict: string | undefined,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/patches/${this.id}`, host).patch(
+      {
+        type: "review",
+        revision,
+        comment,
+        verdict,
+        inline: [],
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async createComment(
+    project: string,
+    revision: string,
+    body: string,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/patches/${this.id}`, host).patch(
+      {
+        type: "thread",
+        revision,
+        action: {
+          type: "comment",
+          body,
+        },
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
   async replyComment(
     project: string,
     revision: string,
@@ -142,6 +183,21 @@ export class Patch {
           body,
           replyTo,
         },
+      },
+      { Authorization: `Bearer ${session}` },
+    );
+  }
+
+  async changeState(
+    project: string,
+    state: State,
+    host: Host,
+    session: string,
+  ): Promise<void> {
+    await new Request(`projects/${project}/patches/${this.id}`, host).patch(
+      {
+        type: "lifecycle",
+        state,
       },
       { Authorization: `Bearer ${session}` },
     );
