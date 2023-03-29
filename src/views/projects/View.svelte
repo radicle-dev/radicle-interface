@@ -35,7 +35,7 @@
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
   $: patchTabFilter =
     (searchParams.get("tab") as "activity" | "commits") || "activity";
-  $: patchFilter = (searchParams.get("state") as PatchStatus) || "proposed";
+  $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
 
   const getProject = async (id: string, seed: string, peer?: string) => {
     const project = await proj.Project.get(id, seed, peer);

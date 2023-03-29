@@ -91,7 +91,7 @@
   .draft {
     background-color: var(--color-foreground-3);
   }
-  .proposed {
+  .open {
     background-color: var(--color-positive);
   }
   .archived {
@@ -109,7 +109,7 @@
     <div
       class="state-icon"
       class:draft={patch.state.status === "draft"}
-      class:proposed={patch.state.status === "proposed"}
+      class:open={patch.state.status === "open"}
       class:archived={patch.state.status === "archived"} />
   </div>
   <div class="column-left">

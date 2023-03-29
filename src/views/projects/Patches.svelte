@@ -7,15 +7,36 @@
 <script lang="ts">
   import type { Patch } from "@app/lib/patch";
   import type { Project } from "@app/lib/project";
+  import type { Tab } from "@app/components/TabBar.svelte";
 
   import * as router from "@app/lib/router";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import capitalize from "lodash/capitalize";
+  import TabBar from "@app/components/TabBar.svelte";
+  import { groupPatches } from "@app/lib/patch";
 
   export let patches: Patch[];
   export let status: PatchStatus;
   export let project: Project;
+
+  let options: Tab<PatchStatus>[];
+
+  const stateOptions: PatchStatus[] = ["draft", "open", "archived"];
+  $: options = stateOptions.map<{
+    value: PatchStatus;
+    title: string;
+    disabled: boolean;
+  }>((s: PatchStatus) => ({
+    value: s,
+    title: `${project.patches[s]} ${s}`,
+    disabled: project.patches[s] === 0,
+  }));
+  $: console.log(patches);
+  $: filteredPatches = groupPatches(patches)[status];
+  $: sortedPatches = filteredPatches.sort(
+    ({ revisions: [r1] }, { revisions: [r2] }) => r2.timestamp - r1.timestamp,
+  );
 </script>
 
 <style>
@@ -39,9 +60,18 @@
 </style>
 
 <div class="patches">
-  {#if patches.length}
+  <div style="margin-bottom: 1rem;">
+    <TabBar
+      {options}
+      on:select={e =>
+        router.updateProjectRoute({
+          search: `state=${e.detail}`,
+        })}
+      active={status} />
+  </div>
+  {#if filteredPatches.length}
     <div class="patches-list">
-      {#each patches as patch}
+      {#each sortedPatches as patch}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="teaser"

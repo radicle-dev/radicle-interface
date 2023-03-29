@@ -233,7 +233,7 @@
           <Badge variant="foreground">
             {patch.state.status}
           </Badge>
-        {:else if patch.state.status === "proposed"}
+        {:else if patch.state.status === "open"}
           <Badge variant="positive">
             {patch.state.status}
           </Badge>

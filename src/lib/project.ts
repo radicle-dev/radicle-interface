@@ -28,7 +28,7 @@ export interface ProjectInfo {
   defaultBranch: string;
   delegates: string[];
   patches: {
-    proposed: number;
+    open: number;
     draft: number;
     archived: number;
   };
@@ -134,7 +134,7 @@ export class Project implements ProjectInfo {
   peers: Peer[];
   branches: Branches;
   patches: {
-    proposed: number;
+    open: number;
     draft: number;
     archived: number;
   };

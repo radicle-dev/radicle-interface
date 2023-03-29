@@ -58,8 +58,22 @@ export interface Merge {
 
 export type PatchState =
   | { status: "draft" }
-  | { status: "proposed" }
+  | { status: "open" }
   | { status: "archived" };
+
+export function groupPatches(patches: Patch[]): {
+  open: Patch[];
+  draft: Patch[];
+  archived: Patch[];
+} {
+  return patches.reduce(
+    (acc, patch) => {
+      acc[patch.state.status].push(patch);
+      return acc;
+    },
+    { open: [] as Patch[], draft: [] as Patch[], archived: [] as Patch[] },
+  );
+}
 
 export class Patch {
   id: string;

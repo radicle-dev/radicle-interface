@@ -135,7 +135,7 @@
     active={activeRoute.params.view.resource === "patches"}
     clickable
     on:click={() => toggleContent("patches", false)}>
-    <span class="txt-bold">{project.patches.proposed ?? 0}</span>
+    <span class="txt-bold">{project.patches.open ?? 0}</span>
     patch(es)
   </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">
