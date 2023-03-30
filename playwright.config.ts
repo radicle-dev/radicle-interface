@@ -4,6 +4,7 @@ import { devices } from "@playwright/test";
 const config: PlaywrightTestConfig = {
   testDir: "./tests/e2e",
   outputDir: "./tests/artifacts",
+  testIgnore: "hashRouter.spec.ts",
   timeout: 30_000,
   expect: {
     timeout: 8000,

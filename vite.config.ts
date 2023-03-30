@@ -8,22 +8,6 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
-function defineConstants() {
-  const constants = {
-    VITEST: process.env.VITEST !== undefined,
-    PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
-  };
-
-  // Don't overwrite HASH_ROUTING in Playwright tests, so we can control it
-  // from within the tests.
-  if (process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined) {
-    return constants;
-  } else {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    return { ...constants, HASH_ROUTING: Boolean(process.env.HASH_ROUTING) };
-  }
-}
-
 export default defineConfig({
   test: {
     setupFiles: "./tests/support/setupVitest",
@@ -85,7 +69,10 @@ export default defineConfig({
     },
   },
 
-  define: defineConstants(),
+  define: {
+    VITEST: process.env.VITEST !== undefined,
+    PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
+  },
 });
 
 function configureDevServer() {

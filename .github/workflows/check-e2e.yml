@@ -42,7 +42,9 @@ jobs:
           ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
 
       - name: Run Playwright tests
-        run: npm run test:e2e -- --project ${{ matrix.browser }};
+        run: |
+          npm run test:e2e -- --project ${{ matrix.browser }};
+          npm run test:e2e:ipfs -- --project ${{ matrix.browser }};
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

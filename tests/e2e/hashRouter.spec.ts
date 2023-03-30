@@ -11,12 +11,6 @@ import {
   expectUrlPersistsReload,
 } from "@tests/support/router.js";
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    window.HASH_ROUTING = true;
-  });
-});
-
 test("navigate between landing and project page", async ({ page }) => {
   await page.addInitScript(appConfigWithFixture);
 
