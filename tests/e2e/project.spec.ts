@@ -15,11 +15,15 @@ async function expectCounts(
   page: Page,
 ) {
   await expect(page.locator('role=button[name="Commit count"]')).toContainText(
-    `${params.commits} commit(s)`,
+    `${params.commits} ${params.commits === 1 ? "commit" : "commits"}`,
   );
   await expect(
     page.locator('role=button[name="Contributor count"]'),
-  ).toContainText(`${params.contributors} contributor(s)`);
+  ).toContainText(
+    `${params.contributors} ${
+      params.contributors === 1 ? "contributor" : "contributors"
+    }`,
+  );
 }
 
 test("navigate to project", async ({ page }) => {

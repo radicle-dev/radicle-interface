@@ -10,6 +10,7 @@
   import PeerSelector from "@app/views/projects/PeerSelector.svelte";
   import { closeFocused } from "@app/components/Floating.svelte";
   import { config } from "@app/lib/config";
+  import { pluralize } from "@app/lib/pluralize";
 
   export let activeRoute: ProjectRoute;
   export let project: Project;
@@ -120,7 +121,7 @@
     active={activeRoute.params.view.resource === "history"}
     on:click={() => toggleContent("history", true)}>
     <span class="txt-bold">{tree.stats.commits}</span>
-    commit(s)
+    {pluralize("commit", tree.stats.commits)}
   </HeaderToggleLabel>
   <HeaderToggleLabel
     ariaLabel="Issue count"
@@ -128,7 +129,7 @@
     clickable
     on:click={() => toggleContent("issues", false)}>
     <span class="txt-bold">{project.issues.open ?? 0}</span>
-    issue(s)
+    {pluralize("issue", project.issues.open)}
   </HeaderToggleLabel>
   <HeaderToggleLabel
     ariaLabel="Patch count"
@@ -136,10 +137,10 @@
     clickable
     on:click={() => toggleContent("patches", false)}>
     <span class="txt-bold">{project.patches.open ?? 0}</span>
-    patch(es)
+    {pluralize("patch", project.patches.open)}
   </HeaderToggleLabel>
   <HeaderToggleLabel ariaLabel="Contributor count">
     <span class="txt-bold">{tree.stats.contributors}</span>
-    contributor(s)
+    {pluralize("contributor", tree.stats.contributors)}
   </HeaderToggleLabel>
 </header>

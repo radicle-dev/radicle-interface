@@ -49,9 +49,7 @@ test("modified file", async ({ page }) => {
 
   // Diff header.
   await expect(
-    page.locator(
-      "text=1 file(s) changed with 1 insertion(s) and 4 deletion(s)",
-    ),
+    page.locator("text=1 file changed with 1 insertion and 4 deletions"),
   ).toBeVisible();
 
   // Diff.
@@ -64,7 +62,7 @@ test("created file", async ({ page }) => {
     `${projectFixtureUrl}/remotes/${bobRemote}/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(
-    page.locator("text=1 file(s) added with 9 insertion(s) and 0 deletion(s)"),
+    page.locator("text=1 file added with 9 insertions and 0 deletions"),
   ).toBeVisible();
   await expect(page.locator("text=subconscious.txt added")).toBeVisible();
 });
@@ -74,9 +72,7 @@ test("deleted file", async ({ page }) => {
     `${projectFixtureUrl}/remotes/${bobRemote}/commits/cd13c2d9a8a930d64a82b6134b44d1b872e33662`,
   );
   await expect(
-    page.locator(
-      "text=1 file(s) deleted with 0 insertion(s) and 1 deletion(s)",
-    ),
+    page.locator("text=1 file deleted with 0 insertions and 1 deletion"),
   ).toBeVisible();
   await expect(page.locator("text=.hidden deleted")).toBeVisible();
 });

@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { Diff, DiffStats } from "@app/lib/diff";
+
   import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
+  import { pluralize } from "@app/lib/pluralize";
 
   export let diff: Diff;
   export let stats: DiffStats;
@@ -9,13 +11,15 @@
     const s = [];
 
     if (modified.length) {
-      s.push(`${modified.length} file(s) changed`);
+      s.push(
+        `${modified.length} ${pluralize("file", modified.length)} changed`,
+      );
     }
     if (added.length) {
-      s.push(`${added.length} file(s) added`);
+      s.push(`${added.length} ${pluralize("file", added.length)} added`);
     }
     if (deleted.length) {
-      s.push(`${deleted.length} file(s) deleted`);
+      s.push(`${deleted.length} ${pluralize("file", deleted.length)} deleted`);
     }
     return s.join(", ");
   };
@@ -37,9 +41,15 @@
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions">{stats.insertions} insertion(s)</span>
+  <span class="additions">
+    {stats.insertions}
+    {pluralize("insertion", stats.insertions)}
+  </span>
   and
-  <span class="deletions">{stats.deletions} deletion(s)</span>
+  <span class="deletions">
+    {stats.deletions}
+    {pluralize("deletion", stats.deletions)}
+  </span>
 </div>
 <div class="diff-listing">
   {#each diff.added as file}
