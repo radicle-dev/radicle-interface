@@ -22,7 +22,7 @@
 
   let options: Tab<PatchStatus>[];
 
-  const stateOptions: PatchStatus[] = ["draft", "open", "archived"];
+  const stateOptions: PatchStatus[] = ["draft", "open", "archived", "merged"];
   $: options = stateOptions.map<{
     value: PatchStatus;
     title: string;
@@ -32,7 +32,6 @@
     title: `${project.patches[s]} ${s}`,
     disabled: project.patches[s] === 0,
   }));
-  $: console.log(patches);
   $: filteredPatches = groupPatches(patches)[status];
   $: sortedPatches = filteredPatches.sort(
     ({ revisions: [r1] }, { revisions: [r2] }) => r2.timestamp - r1.timestamp,
