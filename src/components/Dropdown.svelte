@@ -8,8 +8,6 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { State } from "@app/lib/cobs";
-
   import { createEventDispatcher } from "svelte";
   import { twemoji } from "@app/lib/utils";
   import Badge from "@app/components/Badge.svelte";

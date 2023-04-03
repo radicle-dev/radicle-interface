@@ -13,8 +13,8 @@
   export let isDescription = false;
   export let showReplyTextarea = false;
 
+  const allowReply = Boolean($sessionStore) && !isDescription;
   let replyText = "";
-  let allowReply = Boolean($sessionStore) && !isDescription;
 
   function cancel() {
     showReplyTextarea = false;
