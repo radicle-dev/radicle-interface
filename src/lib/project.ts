@@ -31,7 +31,7 @@ export interface ProjectInfo {
     open: number;
     draft: number;
     archived: number;
-    merged: number;
+    merged?: number;
   };
   issues: {
     open: number;
@@ -138,7 +138,7 @@ export class Project implements ProjectInfo {
     open: number;
     draft: number;
     archived: number;
-    merged: number;
+    merged?: number;
   };
   issues: {
     open: number;

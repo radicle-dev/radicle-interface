@@ -29,8 +29,11 @@
     disabled: boolean;
   }>((s: PatchStatus) => ({
     value: s,
-    title: `${project.patches[s]} ${s}`,
-    disabled: project.patches[s] === 0,
+    title:
+      project.patches[s] !== undefined
+        ? `${project.patches[s]} ${s}`
+        : `0 ${s}`,
+    disabled: project.patches[s] === 0 || project.patches[s] === undefined,
   }));
   $: filteredPatches = groupPatches(patches)[status];
   $: sortedPatches = filteredPatches.sort(
