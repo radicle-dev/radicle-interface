@@ -77,8 +77,8 @@ if [ "$DOWNLOAD" = true ]; then
   if ! [ -x "$(command -v $BINARY_PATH/$CACHED_BINARY_NAME)" ]; then
     echo "Downloading $BINARY_NAME"
     case "$OS" in
-      Darwin)  curl -s "https://storage.googleapis.com/heartwood-artifacts/$REV/aarch64-apple-darwin/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
-      Linux)   curl -s "https://storage.googleapis.com/heartwood-artifacts/$REV/x86_64-unknown-linux-musl/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
+      Darwin)  curl --fail -s "https://files.radicle.xyz/aarch64-apple-darwin/$REV/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
+      Linux)   curl --fail -s "https://files.radicle.xyz/x86_64-unknown-linux-musl/$REV/$BINARY_NAME" --output "$BINARY_PATH/$CACHED_BINARY_NAME" ;;
       *)       echo "There are no precompiled binaries for your OS: $OS, compile $BINARY_NAME manually and make sure it's in PATH." && exit 1 ;;
     esac
 
