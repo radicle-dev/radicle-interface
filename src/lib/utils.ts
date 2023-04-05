@@ -278,7 +278,7 @@ export function extractHost(origin: string): Host {
     origin === "127.0.0.1" ||
     origin === "127.0.0.1:8080"
   ) {
-    return { host: "0.0.0.0", port: 8080, scheme: "http" };
+    return { host: "127.0.0.1", port: 8080, scheme: "http" };
   } else if (origin.includes(":")) {
     return {
       host: origin.split(":")[0],

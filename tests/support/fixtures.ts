@@ -52,7 +52,7 @@ export const test = base.extend<{
               defaultHttpdPort: 8080,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
-              pinned: [{ host: "0.0.0.0" }],
+              pinned: [{ host: "127.0.0.1" }],
             },
             projects: { pinned: [] },
           };
@@ -134,14 +134,14 @@ export function configFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "0.0.0.0" }],
+      pinned: [{ host: "127.0.0.1" }],
     },
     projects: {
       pinned: [
         {
           name: "source-browsing",
           id: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-          seed: "0.0.0.0",
+          seed: "127.0.0.1",
         },
       ],
     },
@@ -155,14 +155,14 @@ export function appConfigWithFixture() {
       defaultHttpdPort: 8080,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
-      pinned: [{ host: "0.0.0.0" }],
+      pinned: [{ host: "127.0.0.1" }],
     },
     projects: {
       pinned: [
         {
           name: "source-browsing",
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-          seed: "0.0.0.0",
+          seed: "127.0.0.1",
         },
       ],
     },
@@ -175,7 +175,7 @@ export const aliceRemote =
 export const bobRemote =
   "did:key:z6MksMTThc1aDU2Ztc43jJUivuyBLNWiLsDf4X65rABe7HbA";
 export const rid = "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT";
-export const projectFixtureUrl = `/seeds/0.0.0.0/${rid}`;
+export const projectFixtureUrl = `/seeds/127.0.0.1/${rid}`;
 export const seedPort = 8080;
 export const seedVersion = "0.1.0-6463768";
 export const seedRemote = "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8";

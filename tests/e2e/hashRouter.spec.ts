@@ -35,7 +35,7 @@ test("navigation between seed and project pages", async ({ page }) => {
   await expectUrlPersistsReload(page);
 
   await page.locator('role=button[name="Seed"]').click();
-  await expect(page).toHaveURL("/#/seeds/0.0.0.0");
+  await expect(page).toHaveURL("/#/seeds/127.0.0.1");
 });
 
 test.describe("project page navigation", () => {

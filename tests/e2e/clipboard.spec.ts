@@ -55,7 +55,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     await page.getByText("Clone").click();
     await page
       .locator(
-        `text=git clone https://0.0.0.0/${rid
+        `text=git clone http://127.0.0.1:8080/${rid
           .replace("rad:", "")
           .substring(0, 10)}`,
       )
@@ -66,7 +66,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
       .locator(".clipboard")
       .click();
     await expectClipboard(
-      `git clone https://0.0.0.0/${rid.replace(
+      `git clone http://127.0.0.1:8080/${rid.replace(
         "rad:",
         "",
       )}.git source-browsing`,
@@ -79,7 +79,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   {
     await page.locator(".clipboard").first().click();
     await expectClipboard(
-      "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@0.0.0.0:8776",
+      "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@127.0.0.1:8776",
       page,
     );
   }
