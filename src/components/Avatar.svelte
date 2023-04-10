@@ -1,15 +1,8 @@
 <script lang="ts">
   import { createIcon } from "@app/lib/blockies";
-  import { isNodeId } from "@app/lib/utils";
 
-  export let title: string;
-  export let source: string;
+  export let nodeId: string;
   export let inline = false;
-
-  function handleMissingFile() {
-    console.warn("Not able to locate", source);
-    source = createContainer(title);
-  }
 
   function createContainer(source: string) {
     source = source.replace("did:key:", "");
@@ -20,10 +13,6 @@
       scale: 16,
     });
     return avatar.toDataURL();
-  }
-
-  if (isNodeId(source)) {
-    source = createContainer(source);
   }
 </script>
 
@@ -48,9 +37,8 @@
 </style>
 
 <img
-  {title}
-  src={source}
+  title={nodeId}
+  src={createContainer(nodeId)}
   class="avatar"
   alt="avatar"
-  on:error={handleMissingFile}
   class:inline />

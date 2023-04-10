@@ -5,7 +5,7 @@
   import { sessionStore, disconnect } from "@app/lib/session";
   import { toClipboard, formatNodeId } from "@app/lib/utils";
 
-  import Avatar from "@app/components/Comment/Avatar.svelte";
+  import Avatar from "@app/components/Avatar.svelte";
   import Button from "@app/components/Button.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -161,9 +161,7 @@
       {#if $sessionStore}
         <div class="toggle-avatar">
           <div style:height="1.5rem">
-            <Avatar
-              source={$sessionStore.publicKey}
-              title={$sessionStore.publicKey} />
+            <Avatar nodeId={$sessionStore.publicKey} />
           </div>
           <div class="user-id txt-small">
             {formatNodeId($sessionStore.publicKey)}
@@ -196,9 +194,7 @@
       <div class="dropdown">
         <div class="avatar-id-container">
           <div class="dropdown-avatar">
-            <Avatar
-              source={$sessionStore.publicKey}
-              title={$sessionStore.publicKey} />
+            <Avatar nodeId={$sessionStore.publicKey} />
           </div>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div

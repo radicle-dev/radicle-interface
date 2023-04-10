@@ -5,7 +5,7 @@
   import * as modal from "@app/lib/modal";
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
   import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Comment/Avatar.svelte";
+  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
@@ -145,7 +145,7 @@
         validate={item => Boolean(parseNodeId(item))}
         validateAdd={(item, items) => validateTag(item, items)}>
         <svelte:fragment let:item>
-          <Avatar inline source={item} title={item} />
+          <Avatar inline nodeId={item} />
           <span>{formatNodeId(item)}</span>
         </svelte:fragment>
       </CobSideInput>
