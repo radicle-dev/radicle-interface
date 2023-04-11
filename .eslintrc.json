@@ -8,7 +8,8 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": ["./tsconfig.json"]
   },
   "plugins": ["svelte3", "@typescript-eslint"],
   "overrides": [
@@ -49,6 +50,7 @@
     ],
     "eol-last": ["error"],
     "key-spacing": ["error"],
+    "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/object-curly-spacing": ["error", "always"],
     "@typescript-eslint/type-annotation-spacing": ["error"],
     "@typescript-eslint/naming-convention": [

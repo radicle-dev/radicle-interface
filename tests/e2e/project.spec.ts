@@ -72,7 +72,7 @@ test("show source tree at specific revision", async ({ page }) => {
   await expect(page.getByTitle("Current branch")).toContainText(
     "335dd6dc89b535a4a31e9422c803199bb6b0a09a",
   );
-  expect(page.locator(".source-tree")).toHaveText("bin/ src/");
+  await expect(page.locator(".source-tree")).toHaveText("bin/ src/");
   await expectCounts({ commits: 2, contributors: 1 }, page);
 });
 

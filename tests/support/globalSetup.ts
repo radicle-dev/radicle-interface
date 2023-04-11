@@ -3,7 +3,7 @@ import type { FullConfig } from "@playwright/test";
 import { seedPort, seedRemote } from "@tests/support/fixtures.js";
 
 export default async function globalSetup(_config: FullConfig): Promise<void> {
-  assertHttpApiRunning();
+  await assertHttpApiRunning();
 }
 
 // Assert that the test http-api is running. If it is not running, throw an
