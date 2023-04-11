@@ -8,16 +8,15 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
-  import { stripDidPrefix, validateTag } from "@app/lib/cobs";
 
+  import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
   import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CobSideInput from "@app/views/projects/Cob/CobSideInput.svelte";
   import Comment from "@app/components/Comment.svelte";
+  import TagInput from "@app/views/projects/Cob/TagInput.svelte";
 
   export let session: StoredSession;
   export let projectId: string;
@@ -25,10 +24,12 @@
   export let baseUrl: BaseUrl;
 
   const dispatch = createEventDispatcher<{ create: string }>();
-  const action: "edit" | "view" =
-    $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
-
   let preview: boolean = false;
+  let action: "create" | "view";
+  $: action =
+    $sessionStore && utils.isLocal(baseUrl.hostname) && !preview
+      ? "create"
+      : "view";
 
   let issueTitle = "";
   let issueText = "";
@@ -44,7 +45,7 @@
         {
           title: issueTitle,
           description: issueText,
-          assignees: stripDidPrefix(assignees),
+          assignees: utils.stripDidPrefix(assignees),
           tags: tags,
         },
         session.id,
@@ -105,7 +106,7 @@
 <main>
   <div class="form">
     <div class="editor">
-      <CobHeader action={preview ? "view" : "create"} bind:title={issueTitle}>
+      <CobHeader {action} bind:title={issueTitle}>
         <svelte:fragment slot="state">
           <Badge variant="positive">open</Badge>
           <Authorship
@@ -120,7 +121,7 @@
           on:submit={createIssue}
           authorId={session.publicKey}
           timestamp={Date.now()}
-          action={preview ? "view" : "create"}
+          {action}
           rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
       </div>
       <div class="actions">
@@ -144,28 +145,13 @@
       </div>
     </div>
     <div class="metadata">
-      <CobSideInput
+      <AssigneeInput
         {action}
-        title="Assignees"
-        placeholder="Add assignee"
-        on:save={({ detail: assignees }) => (assignees = assignees)}
-        validate={item => Boolean(utils.parseNodeId(item))}
-        validateAdd={(item, items) => validateTag(item, items)}>
-        <svelte:fragment let:item>
-          <Avatar inline nodeId={item} />
-          <span>{utils.formatNodeId(item)}</span>
-        </svelte:fragment>
-      </CobSideInput>
-      <CobSideInput
-        title="Tags"
-        placeholder="Add tag"
-        on:save={({ detail: tags }) => (tags = tags)}
-        validate={item => item.trim().length > 0}
-        validateAdd={(item, items) => validateTag(item, items)}>
-        <svelte:fragment let:item>
-          <div class="tag">{item}</div>
-        </svelte:fragment>
-      </CobSideInput>
+        on:save={({ detail: updatedAssignees }) =>
+          (assignees = updatedAssignees)} />
+      <TagInput
+        {action}
+        on:save={({ detail: updatedTags }) => (tags = updatedTags)} />
     </div>
   </div>
 </main>

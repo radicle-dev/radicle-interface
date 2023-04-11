@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { Issue } from "@httpd-client";
 
-  import { formatObjectId } from "@app/lib/cobs";
+  import { formatObjectId, formatTimestamp } from "@app/lib/utils";
+
   import Authorship from "@app/components/Authorship.svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import { formatTimestamp } from "@app/lib/utils";
   import Badge from "@app/components/Badge.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let issue: Issue;
 

@@ -3,8 +3,7 @@
   import type { Patch } from "@httpd-client";
 
   import { HttpdClient } from "@httpd-client";
-  import { formatObjectId } from "@app/lib/cobs";
-  import { formatTimestamp } from "@app/lib/utils";
+  import { formatObjectId, formatTimestamp } from "@app/lib/utils";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";

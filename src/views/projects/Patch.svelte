@@ -29,20 +29,19 @@
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { formatObjectId, validateTag } from "@app/lib/cobs";
   import { sessionStore } from "@app/lib/session";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CobSideInput from "./Cob/CobSideInput.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
   import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
   import TabBar from "@app/components/TabBar.svelte";
+  import TagInput from "./Cob/TagInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
   export let projectId: string;
@@ -182,10 +181,6 @@
   .highlight {
     color: var(--color-foreground-6);
   }
-  .tag {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
   @media (max-width: 1092px) {
     .patch {
@@ -220,8 +215,8 @@
             <Dropdown
               items={enumeratedRevisions.map(([r, i]) => {
                 return {
-                  key: `Revision ${i} (${formatObjectId(r.id)})`,
-                  title: `Revision ${i} (${formatObjectId(r.id)})`,
+                  key: `Revision ${i} (${utils.formatObjectId(r.id)})`,
+                  title: `Revision ${i} (${utils.formatObjectId(r.id)})`,
                   value: r.id,
                   badge: null,
                 };
@@ -370,17 +365,6 @@
     {/if}
   </div>
   <div class="metadata">
-    <CobSideInput
-      {action}
-      title="Tags"
-      placeholder="Add tag"
-      items={patch.tags}
-      on:save={saveTags}
-      validate={item => item.trim().length > 0}
-      validateAdd={(item, items) => validateTag(item, items)}>
-      <svelte:fragment let:item>
-        <div class="tag">{item}</div>
-      </svelte:fragment>
-    </CobSideInput>
+    <TagInput {action} tags={patch.tags} on:save={saveTags} />
   </div>
 </div>

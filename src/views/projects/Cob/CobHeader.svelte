@@ -1,8 +1,10 @@
 <script lang="ts" strictEvents>
+  import { createEventDispatcher } from "svelte";
+
+  import { formatObjectId } from "@app/lib/utils";
+
   import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
-  import { createEventDispatcher } from "svelte";
-  import { formatObjectId } from "@app/lib/cobs";
 
   export let action: "create" | "edit" | "view" = "view";
   export let id: string | undefined = undefined;

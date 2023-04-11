@@ -6,17 +6,15 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { parseNodeId, formatNodeId } from "@app/lib/utils";
   import { sessionStore } from "@app/lib/session";
-  import { validateAssignee, validateTag } from "@app/lib/cobs";
 
+  import AssigneeInput from "./Cob/AssigneeInput.svelte";
   import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CobSideInput from "./Cob/CobSideInput.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import TagInput from "./Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import Thread from "@app/components/Thread.svelte";
 
@@ -101,7 +99,11 @@
       await api.project.updateIssue(
         projectId,
         issue.id,
-        { type: "tag", add, remove },
+        {
+          type: "tag",
+          add,
+          remove,
+        },
         $sessionStore.id,
       );
       issue = await api.project.getIssueById(projectId, issue.id);
@@ -120,7 +122,11 @@
       await api.project.updateIssue(
         projectId,
         issue.id,
-        { type: "assign", add, remove },
+        {
+          type: "assign",
+          add: utils.stripDidPrefix(add),
+          remove: utils.stripDidPrefix(remove),
+        },
         $sessionStore.id,
       );
       issue = await api.project.getIssueById(projectId, issue.id);
@@ -175,10 +181,6 @@
     justify-content: flex-end;
     margin: 0 0 2.5rem 0;
     gap: 1rem;
-  }
-  .tag {
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   @media (max-width: 960px) {
@@ -256,30 +258,10 @@
     </div>
   </div>
   <div class="metadata">
-    <CobSideInput
+    <AssigneeInput
       {action}
-      title="Assignees"
-      placeholder="Add assignee"
-      items={[...issue.assignees]}
-      on:save={saveAssignees}
-      validate={item => Boolean(parseNodeId(item))}
-      validateAdd={(item, items) => validateAssignee(item, items)}>
-      <svelte:fragment let:item>
-        <Avatar inline nodeId={item} />
-        <span>{formatNodeId(item)}</span>
-      </svelte:fragment>
-    </CobSideInput>
-    <CobSideInput
-      {action}
-      title="Tags"
-      placeholder="Add tag"
-      items={[...issue.tags]}
-      on:save={saveTags}
-      validate={item => item.trim().length > 0}
-      validateAdd={(item, items) => validateTag(item, items)}>
-      <svelte:fragment let:item>
-        <div class="tag">{item}</div>
-      </svelte:fragment>
-    </CobSideInput>
+      assignees={issue.assignees}
+      on:save={saveAssignees} />
+    <TagInput {action} tags={issue.tags} on:save={saveTags} />
   </div>
 </div>
