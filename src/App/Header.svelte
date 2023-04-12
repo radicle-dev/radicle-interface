@@ -2,11 +2,10 @@
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
-  import SettingsDropdown from "./Header/SettingsDropdown.svelte";
-  import Connect from "@app/App/Header/Connect.svelte";
 
-  import Logo from "./Header/Logo.svelte";
-  import Search from "./Header/Search.svelte";
+  import Connect from "@app/App/Header/Connect.svelte";
+  import Search from "@app/App/Header/Search.svelte";
+  import SettingsDropdown from "@app/App/Header/SettingsDropdown.svelte";
 </script>
 
 <style>
@@ -24,11 +23,6 @@
     align-items: center;
     height: var(--button-regular-height);
     gap: 1rem;
-  }
-  .logo {
-    display: flex;
-    height: var(--button-regular-height);
-    align-items: center;
   }
 
   @media (max-width: 720px) {
@@ -53,11 +47,17 @@
     background-color: var(--color-foreground);
     color: var(--color-background);
   }
+  .logo {
+    height: var(--button-regular-height);
+    margin-right: 0.5rem;
+  }
 </style>
 
 <header>
   <div class="left">
-    <Link route={{ resource: "home" }}><span class="logo"><Logo /></span></Link>
+    <Link route={{ resource: "home" }}>
+      <img class="logo" alt="Radicle logo" src="/radicle.svg" />
+    </Link>
     <Search />
   </div>
 

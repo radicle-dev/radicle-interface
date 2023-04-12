@@ -4,17 +4,11 @@
   import * as router from "@app/lib/router";
   import { config } from "@app/lib/config";
   import { getProjectsFromSeeds } from "@app/lib/search";
-  import { setOpenGraphMetaTag, twemoji } from "@app/lib/utils";
+  import { twemoji } from "@app/lib/utils";
 
   import Loading from "@app/components/Loading.svelte";
   import Message from "@app/components/Message.svelte";
   import Widget from "@app/views/projects/Widget.svelte";
-
-  setOpenGraphMetaTag([
-    { prop: "og:title", content: "Radicle Interface" },
-    { prop: "og:description", content: "Interact with Radicle" },
-    { prop: "og:url", content: window.location.href },
-  ]);
 
   function goToProject(project: Project, baseUrl: BaseUrl) {
     router.push({

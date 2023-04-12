@@ -82,9 +82,9 @@ export const test = base.extend<{
             .startsWith("https://www.gravatar.com/avatar/") ||
           route.request().url().endsWith(".png")
         ) {
-          route.fulfill({
+          return route.fulfill({
             status: 200,
-            path: "./public/favicon.ico",
+            path: "./public/radicle.svg",
           });
         } else {
           log(

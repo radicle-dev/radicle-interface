@@ -11,18 +11,6 @@ export async function toClipboard(text: string): Promise<void> {
   return navigator.clipboard.writeText(text);
 }
 
-export function setOpenGraphMetaTag(
-  data: { prop: string; content: string; attr?: string }[],
-): void {
-  const elements = Array.from<HTMLElement>(document.querySelectorAll(`meta`));
-  elements.forEach((element: any) => {
-    const foundElement = data.find(data => {
-      return data.prop === element.getAttribute(data.attr || "property");
-    });
-    if (foundElement) element.content = foundElement.content;
-  });
-}
-
 export function getRawBasePath(
   id: string,
   baseUrl: BaseUrl,
