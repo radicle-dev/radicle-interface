@@ -1,19 +1,26 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
 
-  import Clipboard from "@app/components/Clipboard.svelte";
-  import Floating from "@app/components/Floating.svelte";
   import { closeFocused } from "@app/components/Floating.svelte";
   import { parseRepositoryId } from "@app/lib/utils";
+  import { config } from "@app/lib/config";
+
+  import Clipboard from "@app/components/Clipboard.svelte";
+  import Floating from "@app/components/Floating.svelte";
 
   export let baseUrl: BaseUrl;
   export let id: string;
   export let name: string;
 
   $: radCloneUrl = `rad clone ${id}`;
-  $: gitCloneUrl = `git clone ${baseUrl.scheme}://${baseUrl.hostname}:${
-    baseUrl.port
-  }/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`;
+  $: portFragment =
+    baseUrl.scheme === config.seeds.defaultHttpdScheme &&
+    baseUrl.port === config.seeds.defaultHttpdPort
+      ? ""
+      : `:${baseUrl.port}`;
+  $: gitCloneUrl = `git clone ${baseUrl.scheme}://${
+    baseUrl.hostname
+  }${portFragment}/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`;
 </script>
 
 <style>

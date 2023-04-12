@@ -250,7 +250,7 @@ test("clone modal", async ({ page }) => {
   await page.getByText("Clone").click();
   await expect(page.locator(`text=rad clone ${rid}`)).toBeVisible();
   await expect(
-    page.locator(`text=http://127.0.0.1:8080/${rid.replace("rad:", "")}.git`),
+    page.locator(`text=http://127.0.0.1/${rid.replace("rad:", "")}.git`),
   ).toBeVisible();
 });
 
