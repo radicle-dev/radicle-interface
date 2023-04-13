@@ -304,7 +304,7 @@ export function createAddRemoveArrays(
 
 // Formats COBs Object Ids
 export function formatObjectId(id: string): string {
-  return id.substring(0, 11);
+  return id.substring(0, 7);
 }
 
 export function stripDidPrefix(array: string[]): string[] {

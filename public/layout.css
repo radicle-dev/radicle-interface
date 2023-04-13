@@ -9,7 +9,8 @@
 }
 
 .layout-mobile,
-.layout-mobile-inline {
+.layout-mobile-inline,
+.layout-mobile-flex {
   display: none !important;
 }
 .layout-desktop {
@@ -17,6 +18,9 @@
 }
 .layout-desktop-inline {
   display: inline !important;
+}
+.layout-desktop-flex {
+  display: flex !important;
 }
 
 @media (max-width: 720px) {
@@ -26,7 +30,11 @@
   .layout-mobile-inline {
     display: inline !important;
   }
+  .layout-mobile-flex {
+    display: flex !important;
+  }
   .layout-desktop,
+  .layout-desktop-flex,
   .layout-desktop-inline {
     display: none !important;
   }

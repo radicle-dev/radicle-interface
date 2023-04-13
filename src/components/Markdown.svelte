@@ -16,14 +16,13 @@
   export let content: string;
   export let hash: string | null = null;
   export let path: string = "/";
-  export let breaks = false;
   export let rawPath: string;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
   );
-  marked.use({ extensions, renderer, breaks });
+  marked.use({ extensions, renderer });
 
   let container: HTMLElement;
 
@@ -187,7 +186,7 @@
 
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-regular);
+    font-size: var(--font-size-small);
     color: var(--color-foreground-6);
     background-color: var(--color-foreground-2);
     border-radius: 0.5rem;

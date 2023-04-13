@@ -193,9 +193,6 @@
     margin: 1rem;
     color: var(--color-foreground-5);
   }
-  .highlight {
-    color: var(--color-foreground-6);
-  }
 
   @media (max-width: 1092px) {
     .patch {
@@ -216,7 +213,7 @@
 <div class="patch">
   <div>
     <CobHeader id={patch.id} title={patch.title}>
-      <span slot="revision" class="revision txt-monospace txt-tiny">
+      <span slot="revision" class="txt-monospace txt-tiny">
         <Floating>
           <svelte:fragment slot="toggle">
             <HeaderToggleLabel
@@ -230,7 +227,6 @@
             <Dropdown
               items={enumeratedRevisions.map(([r, i]) => {
                 return {
-                  key: `Revision ${i} (${utils.formatObjectId(r.id)})`,
                   title: `Revision ${i} (${utils.formatObjectId(r.id)})`,
                   value: r.id,
                   badge: null,
@@ -244,7 +240,11 @@
                     params: { patch: patch.id, revision: item.value },
                   },
                 });
-              }} />
+              }}>
+              <span slot="item" let:item>
+                {item.title}
+              </span>
+            </Dropdown>
           </svelte:fragment>
         </Floating>
       </span>
@@ -254,13 +254,12 @@
         </Badge>
         <div class="layout-desktop">
           <Authorship
-            highlight
             timestamp={patch.revisions[0].timestamp}
             authorId={patch.author.id}
             caption="opened this patch" />
         </div>
         <div class="layout-mobile">
-          <Authorship highlight authorId={patch.author.id} />
+          <Authorship authorId={patch.author.id} />
         </div>
       </svelte:fragment>
     </CobHeader>
@@ -298,17 +297,13 @@
                 authorId={element.inner.node}
                 timestamp={element.timestamp}>
                 merged
-                <span class="highlight">
-                  {utils.formatCommit(element.inner.commit)}
-                </span>
+                {utils.formatCommit(element.inner.commit)}
               </Authorship>
             </div>
             <div class="action layout-mobile txt-tiny">
               <Authorship authorId={element.inner.node}>
                 merged
-                <span class="highlight">
-                  {utils.formatCommit(element.inner.commit)}
-                </span>
+                {utils.formatCommit(element.inner.commit)}
               </Authorship>
             </div>
           {:else if element.type === "review"}

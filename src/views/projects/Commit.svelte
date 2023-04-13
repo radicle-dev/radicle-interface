@@ -7,6 +7,7 @@
 
   import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
+  import Clipboard from "@app/components/Clipboard.svelte";
 
   export let commit: Commit;
 
@@ -36,10 +37,11 @@
     align-items: center;
   }
   .description {
-    margin: 0.5rem 0 1rem 0;
+    margin: 1rem 0;
     white-space: pre-wrap;
   }
   .sha1 {
+    align-items: center;
     color: var(--color-foreground-5);
     font-size: var(--font-size-small);
   }
@@ -54,12 +56,14 @@
 <div class="commit">
   <header>
     <div class="summary">
-      <div class="txt-medium" use:twemoji>{header.summary}</div>
-      <div class="layout-desktop txt-monospace sha1">
+      <div class="txt-medium txt-bold" use:twemoji>{header.summary}</div>
+      <div class="layout-desktop-flex txt-monospace sha1">
         <span>{header.id}</span>
+        <Clipboard small text={header.id} />
       </div>
-      <div class="layout-mobile txt-monospace sha1 txt-small">
+      <div class="layout-mobile-flex txt-monospace sha1 txt-small">
         {formatCommit(header.id)}
+        <Clipboard small text={header.id} />
       </div>
     </div>
     <pre class="description txt-small">{header.description}</pre>

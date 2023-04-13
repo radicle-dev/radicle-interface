@@ -4,6 +4,7 @@
   import { formatObjectId } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
+  import Clipboard from "@app/components/Clipboard.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   export let action: "create" | "edit" | "view" = "view";
@@ -39,8 +40,12 @@
     width: 90%;
   }
   .id {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     font-size: var(--font-size-tiny);
-    color: var(--color-foreground-5);
+    font-family: var(--font-family-monospace);
+    color: var(--color-foreground-6);
   }
   .title {
     overflow: hidden;
@@ -68,9 +73,12 @@
         {/if}
         <slot name="revision" />
         {#if id}
-          <div class="txt-monospace id layout-desktop">{id}</div>
-          <div class="txt-monospace id layout-mobile">
-            {formatObjectId(id)}
+          <div class="id">
+            <div class="layout-desktop">{id}</div>
+            <div class="layout-mobile">
+              {formatObjectId(id)}
+            </div>
+            <Clipboard small text={id} />
           </div>
         {/if}
       {/if}

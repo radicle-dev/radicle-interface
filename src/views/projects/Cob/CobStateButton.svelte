@@ -60,7 +60,7 @@
     size="small"
     on:click={() => dispatch("saveStatus", selectedItem.value)}
     style={attachableStyle}>
-    {selectedItem.key}
+    {selectedItem.title}
   </Button>
   <Floating>
     <svelte:fragment slot="toggle">

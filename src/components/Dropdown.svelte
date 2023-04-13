@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
   export interface Item<T> {
-    key: string;
     title: string;
     value: T;
     badge: string | null;
@@ -50,19 +49,19 @@
 
 <div class="dropdown">
   {#each items as item}
-    {#if item.key}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        class="dropdown-item"
-        class:selected={item.value === selected}
-        use:twemoji
-        on:click={() => onSelect(item)}
-        title={item.title}>
-        {@html item.key}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+      class="dropdown-item"
+      class:selected={item.value === selected}
+      use:twemoji
+      on:click={() => onSelect(item)}
+      title={item.title}>
+      <slot name="item" {item}>
+        {item.value}
         {#if item.badge}
           <Badge variant="primary">{item.badge}</Badge>
         {/if}
-      </div>
-    {/if}
+      </slot>
+    </div>
   {/each}
 </div>

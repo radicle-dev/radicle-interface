@@ -51,7 +51,7 @@
     align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-6);
   }
   .metadata-section-body {
     display: flex;
@@ -61,7 +61,7 @@
     margin-bottom: 1.25rem;
   }
   .metadata-section-empty {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground-5);
   }
   .tag {
     overflow: hidden;

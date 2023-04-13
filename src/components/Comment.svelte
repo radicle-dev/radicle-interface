@@ -83,7 +83,7 @@
       {:else if body.trim() === ""}
         <span class="txt-missing">No description.</span>
       {:else}
-        <Markdown {rawPath} breaks content={body} />
+        <Markdown {rawPath} content={body} />
       {/if}
     </div>
   </div>

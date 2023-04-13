@@ -4,7 +4,6 @@
 
   export let authorId: string;
   export let caption: string | undefined = undefined;
-  export let highlight: boolean = false;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
 
@@ -16,7 +15,7 @@
   .authorship {
     display: inline-flex;
     align-items: center;
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-6);
     padding: 0.125rem 0;
   }
   .id {
@@ -26,15 +25,7 @@
   }
   .body {
     margin: 0 0.4rem;
-    color: var(--color-foreground-5);
     white-space: nowrap;
-  }
-  .highlight {
-    color: var(--color-foreground-6);
-    font-weight: var(--font-weight-bold);
-  }
-  .date {
-    color: var(--color-foreground-6);
   }
 </style>
 
@@ -42,10 +33,10 @@
   {#if !noAvatar}
     <Avatar inline nodeId={authorId} />
   {/if}
-  <span class:highlight class="id highlight layout-desktop">
+  <span class="id layout-desktop">
     {formatNodeId(authorId)}
   </span>
-  <span class:highlight class="id layout-mobile">
+  <span class="id layout-mobile">
     {formatNodeId(authorId).replace("did:key:", "")}
   </span>
   <span class="body">
@@ -56,8 +47,6 @@
     {/if}
   </span>
   {#if timestamp}
-    <span class:date={highlight}>
-      {formatTimestamp(timestamp)}
-    </span>
+    {formatTimestamp(timestamp)}
   {/if}
 </span>

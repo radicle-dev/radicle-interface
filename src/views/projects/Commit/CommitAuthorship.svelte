@@ -13,12 +13,11 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-6);
     padding: 0.125rem 0;
   }
   .authorship .author,
   .authorship .committer {
-    color: var(--color-foreground);
     white-space: nowrap;
   }
   .authorship .avatar {

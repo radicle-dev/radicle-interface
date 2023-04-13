@@ -127,6 +127,7 @@
     text-align: right;
     padding-right: 1rem;
     padding-left: 1rem;
+    user-select: none;
   }
   .code :global(.line-number:hover) {
     cursor: pointer;
@@ -158,7 +159,7 @@
     width: 100%;
     border-spacing: 0;
     overflow-x: auto;
-    font-size: var(--font-size-regular);
+    font-size: var(--font-size-small);
     padding-top: 1rem;
     margin-bottom: 1.5rem;
   }
@@ -254,6 +255,11 @@
       <table class="code no-scrollbar">
         {@html toHtml(content)}
       </table>
+    {:else}
+      <div class="binary">
+        <div use:twemoji>🍂</div>
+        <span class="txt-tiny">Empty file</span>
+      </div>
     {/if}
   </div>
 </div>

@@ -40,7 +40,6 @@
       state: { status: "closed", reason: "other" } as const,
     },
   ].map(item => ({
-    key: item.title,
     title: item.title,
     value: item.state,
     badge: null,
@@ -198,7 +197,7 @@
 <div class="issue">
   <div>
     <CobHeader
-      action="edit"
+      {action}
       id={issue.id}
       title={issue.title}
       on:editTitle={editTitle}>
@@ -214,7 +213,6 @@
           </Badge>
         {/if}
         <Authorship
-          highlight
           timestamp={issue.discussion[0].timestamp}
           authorId={issue.author.id}
           caption="opened this issue" />

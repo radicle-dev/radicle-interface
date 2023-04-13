@@ -37,7 +37,11 @@
     cursor: pointer;
   }
   .meta {
-    color: var(--color-foreground-5);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-foreground-6);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     margin: 0 0.5rem;
@@ -46,10 +50,6 @@
     margin: 0;
   }
   .summary {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
     padding-right: 2rem;
   }
   .patch-title {
@@ -88,9 +88,6 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: var(--border-radius-small);
-  }
-  .highlight {
-    color: var(--color-foreground-6);
   }
   .draft {
     background-color: var(--color-foreground-4);
@@ -138,13 +135,10 @@
     </div>
     <div class="summary">
       <span class="meta id">
-        <span class="highlight">{formatObjectId(patch.id)}</span>
-        opened
-        <span class="highlight">
-          {formatTimestamp(latestRevision.timestamp)}
-        </span>
-        by
-        <Authorship highlight noAvatar authorId={patch.author.id} />
+        {formatObjectId(patch.id)} opened {formatTimestamp(
+          latestRevision.timestamp,
+        )} by
+        <Authorship authorId={patch.author.id} />
       </span>
     </div>
   </div>

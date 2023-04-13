@@ -35,13 +35,10 @@
     cursor: pointer;
   }
   .subtitle {
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-6);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     margin-right: 0.4rem;
-  }
-  .id {
-    margin-right: 0.5rem;
   }
   .summary {
     display: flex;
@@ -81,9 +78,6 @@
   .state {
     justify-self: center;
     align-self: center;
-  }
-  .highlight {
-    color: var(--color-foreground-6);
   }
   .state-icon {
     width: 0.5rem;
@@ -128,15 +122,10 @@
       </span>
     </div>
     <div class="summary subtitle">
-      <span class="id">
-        <span class="highlight">{formatObjectId(issue.id)}</span>
-        opened
-        <span class="highlight">
-          {formatTimestamp(issue.discussion[0].timestamp)}
-        </span>
-        by
-      </span>
-      <Authorship highlight noAvatar authorId={issue.author.id} />
+      {formatObjectId(issue.id)} opened {formatTimestamp(
+        issue.discussion[0].timestamp,
+      )} by
+      <Authorship authorId={issue.author.id} />
     </div>
   </div>
   {#if commentCount > 0}

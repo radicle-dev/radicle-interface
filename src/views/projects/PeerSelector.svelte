@@ -6,6 +6,7 @@
 
   import { formatNodeId, truncateId } from "@app/lib/utils";
 
+  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
@@ -29,7 +30,6 @@
     meta = peers.find(p => p.id === peer);
     items = peers.map(p => {
       return {
-        key: `<span style="gap: 0;"><span style="color: var(--color-foreground-6);display: inline;">did:key:</span>${p.id}</span>`,
         value: p.id,
         title: createTitle(p),
         badge: p.delegate ? "delegate" : null,
@@ -56,14 +56,24 @@
     background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small);
   }
+  .selected {
+    padding: 0.5rem 0.75rem !important;
+  }
   .selector .peer.not-allowed {
     cursor: not-allowed;
   }
-  .peer-id {
-    margin: 0 0.5rem;
-  }
   .peer:hover {
     background-color: var(--color-foreground-2);
+  }
+  .peer-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
+  .prefix {
+    display: inline-block;
+    color: var(--color-secondary-6);
   }
   .stat {
     display: flex;
@@ -78,24 +88,24 @@
 
 <Floating>
   <div slot="toggle" class="selector" title="Change peer">
-    <div class="stat peer" class:not-allowed={!peers}>
-      <Icon name="fork" />
+    <div class="stat peer" class:selected={peer} class:not-allowed={!peers}>
+      {#if !peer}
+        <Icon name="fork" />
+      {/if}
       {#if meta}
-        <span class="peer-id">
-          <span style="display: flex;">
-            <span style="color: var(--color-secondary-5);">did:key:</span>
-            {truncateId(meta.id)}
-          </span>
+        <span style:display="flex">
+          <Avatar nodeId={meta.id} inline />
+          <span style:color="var(--color-secondary-5)">did:key:</span>
+          {truncateId(meta.id)}
         </span>
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>
         {/if}
       {:else if peer}
-        <span class="peer-id">
-          <span style="display: flex;">
-            <span style="color: var(--color-secondary-5);">did:key:</span>
-            {truncateId(peer)}
-          </span>
+        <span style:display="flex">
+          <Avatar nodeId={peer} inline />
+          <span style:color="var(--color-secondary-5)">did:key:</span>
+          {truncateId(peer)}
         </span>
       {/if}
     </div>
@@ -105,6 +115,17 @@
     <Dropdown
       {items}
       selected={peer}
-      on:select={e => switchPeer(e.detail.value)} />
+      on:select={e => switchPeer(e.detail.value)}>
+      <div class="peer-item" slot="item" let:item>
+        <Avatar nodeId={item.value} inline />
+        <!-- We ignore prettier here for the following line
+             to avoid getting a whitespace between did:key: and the nid due to a newline -->
+        <!-- prettier-ignore -->
+        <span><span class="prefix">did:key:</span>{item.value}</span>
+        {#if item.badge}
+          <Badge variant="primary">{item.badge}</Badge>
+        {/if}
+      </div>
+    </Dropdown>
   </svelte:fragment>
 </Floating>
