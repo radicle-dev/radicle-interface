@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, Comment, Merge, Patch, Review } from "@httpd-client";
+  import type { Variant } from "@app/components/Badge.svelte";
 
   interface Thread {
     root: Comment;
@@ -159,6 +160,20 @@
     currentRevision.base,
     currentRevision.oid,
   );
+
+  function badgeColor(status: string): Variant {
+    if (status === "draft") {
+      return "foreground";
+    } else if (status === "open") {
+      return "positive";
+    } else if (status === "archived") {
+      return "caution";
+    } else if (status === "merged") {
+      return "primary";
+    } else {
+      return "foreground";
+    }
+  }
 </script>
 
 <style>
@@ -234,19 +249,9 @@
         </Floating>
       </span>
       <svelte:fragment slot="state">
-        {#if patch.state.status === "draft"}
-          <Badge variant="foreground">
-            {patch.state.status}
-          </Badge>
-        {:else if patch.state.status === "open"}
-          <Badge variant="positive">
-            {patch.state.status}
-          </Badge>
-        {:else}
-          <Badge variant="positive">
-            {patch.state.status}
-          </Badge>
-        {/if}
+        <Badge variant={badgeColor(patch.state.status)}>
+          {patch.state.status}
+        </Badge>
         <div class="layout-desktop">
           <Authorship
             highlight

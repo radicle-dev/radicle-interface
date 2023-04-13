@@ -93,13 +93,16 @@
     color: var(--color-foreground-6);
   }
   .draft {
-    background-color: var(--color-foreground-3);
+    background-color: var(--color-foreground-4);
   }
   .open {
     background-color: var(--color-positive);
   }
   .archived {
-    background-color: var(--color-negative);
+    background-color: var(--color-caution);
+  }
+  .merged {
+    background-color: var(--color-primary);
   }
   @media (max-width: 960px) {
     .tags {
@@ -114,6 +117,7 @@
       class="state-icon"
       class:draft={patch.state.status === "draft"}
       class:open={patch.state.status === "open"}
+      class:merged={patch.state.status === "merged"}
       class:archived={patch.state.status === "archived"} />
   </div>
   <div class="column-left">

@@ -1,5 +1,5 @@
-<script lang="ts">
-  export let variant:
+<script lang="ts" context="module">
+  export type Variant =
     | "caution"
     | "foreground"
     | "negative"
@@ -7,6 +7,10 @@
     | "primary"
     | "secondary"
     | "tertiary";
+</script>
+
+<script lang="ts">
+  export let variant: Variant;
   export let style: string | undefined = undefined;
 </script>
 
