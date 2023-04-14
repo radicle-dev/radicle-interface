@@ -1,6 +1,7 @@
 import emojis from "@app/lib/emojis";
 import katex from "katex";
 import { marked } from "marked";
+import { isUrl } from "./utils";
 
 const emojisMarkedExtension = {
   name: "emoji",
@@ -135,6 +136,14 @@ export const renderer = {
       "\n",
     )}</div>`;
     return `<li>${liContent}</li>`;
+  },
+  link(href: string, _title: string, text: string) {
+    // If the link is not a URL nor starts with a #, we add the file-link class to it,
+    // so we're able to query it in the Markdown component.
+    if (!isUrl(href) && !href.startsWith("#")) {
+      return `<a href="${href}" class="file-link">${text}</a>`;
+    }
+    return `<a href="${href}">${text}</a>`;
   },
 };
 

@@ -5,7 +5,8 @@
   import { onMount } from "svelte";
   import { toDom } from "hast-util-to-dom";
 
-  import { base } from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
+  import { base, updateProjectRoute, activeRouteStore } from "@app/lib/router";
   import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
   import { highlight } from "@app/lib/syntax";
   import {
@@ -29,6 +30,20 @@
   const render = (content: string): string =>
     // eslint-disable-next-line @typescript-eslint/naming-convention
     dompurify.sanitize(marked.parse(content), { SANITIZE_DOM: false });
+
+  function navigateToMarkdownLink(event: any) {
+    if (event.target.matches(".file-link")) {
+      event.preventDefault();
+      if ($activeRouteStore.resource === "projects") {
+        updateProjectRoute({
+          path: utils.canonicalize(
+            event.target.getAttribute("href"),
+            $activeRouteStore.params.path ?? "",
+          ),
+        });
+      }
+    }
+  }
 
   onMount(async () => {
     // Don't underline <a> tags that contain images.
@@ -54,6 +69,11 @@
         i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
       }
     }
+
+    const fileAnchorTags = document.querySelectorAll(".file-link");
+    fileAnchorTags.forEach(anchorTag => {
+      anchorTag.addEventListener("click", navigateToMarkdownLink);
+    });
 
     // Replaces code blocks in the background with highlighted code.
     const prefix = "language-";
