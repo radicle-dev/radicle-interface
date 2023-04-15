@@ -38,7 +38,6 @@
   .card-body {
     font-size: var(--font-size-small);
     padding: 0rem 1rem 1rem 1rem;
-    word-break: break-all;
   }
   .actions {
     display: flex;
