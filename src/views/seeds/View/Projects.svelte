@@ -2,10 +2,12 @@
   import type { BaseUrl, Project, NodeStats } from "@httpd-client";
 
   import * as router from "@app/lib/router";
-  import List from "@app/components/List.svelte";
-  import Widget from "@app/views/projects/Widget.svelte";
   import { HttpdClient } from "@httpd-client";
   import { config } from "@app/lib/config";
+  import { loadProjectActivity } from "@app/lib/commit";
+
+  import List from "@app/components/List.svelte";
+  import ProjectCard from "@app/components/ProjectCard.svelte";
 
   export let baseUrl: BaseUrl;
   export let projects: Project[];
@@ -69,11 +71,17 @@
     query={fetchMoreProjects}>
     <svelte:fragment slot="list" let:items>
       {#each items as project}
-        {#if project.head}
+        {#await loadProjectActivity(project.id, baseUrl) then activity}
           <div class="project">
-            <Widget {project} {baseUrl} on:click={() => onClick(project)} />
+            <ProjectCard
+              {activity}
+              id={project.id}
+              name={project.name}
+              description={project.description}
+              head={project.head}
+              on:click={() => onClick(project)} />
           </div>
-        {/if}
+        {/await}
       {/each}
     </svelte:fragment>
   </List>

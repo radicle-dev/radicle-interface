@@ -1,6 +1,7 @@
-import type { CommitHeader } from "@httpd-client";
+import type { BaseUrl, CommitHeader } from "@httpd-client";
 
 import { getDaysPassed } from "@app/lib/utils";
+import { HttpdClient } from "@httpd-client";
 
 // A set of commits grouped by time.
 interface CommitGroup {
@@ -70,7 +71,7 @@ export function groupCommits(commits: CommitHeader[]): CommitGroup[] {
   }
 }
 
-export function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
+function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
   const groupedCommits: WeeklyActivity[] = [];
   let groupDate: Date | undefined = undefined;
 
@@ -113,4 +114,11 @@ export function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
   }
 
   return groupedCommits;
+}
+
+export async function loadProjectActivity(id: string, baseUrl: BaseUrl) {
+  const api = new HttpdClient(baseUrl);
+  const commits = await api.project.getActivity(id);
+
+  return groupCommitsByWeek(commits.activity);
 }

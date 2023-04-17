@@ -1,33 +1,36 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { WeeklyActivity } from "@app/lib/commit";
 
-  export let strokeWidth: number;
-  export let points: WeeklyActivity[];
-  export let viewBoxWidth: number;
+  import { onMount } from "svelte";
+
+  export let activity: WeeklyActivity[];
   export let viewBoxHeight: number;
 
-  // The path strings to be inserted into the svg <path>
+  const strokeWidth = 3;
+  const viewBoxWidth = 600;
+
+  // The path strings to be inserted into the svg <path>.
   let path = "";
   let areaPath = "";
 
   const heightWithPadding = viewBoxHeight + 16;
 
-  // The latest point on the x axis, starting at 0 until `viewBoxWidth`
+  // The latest point on the x axis, starting at 0 until `viewBoxWidth`.
   let lastWidthPoint = viewBoxWidth;
 
-  // The amount of points on the x axis
+  // The amount of points on the x axis.
   const widthIteration = viewBoxWidth / 52;
 
-  // The highest value on the y axis
+  // The highest value on the y axis.
   const commitCountArray: number[] = [];
 
-  // The minimal amplitude shown e.g. commitCount = 1 => `minimalHeight` points of height in the SVG.
+  // The minimal amplitude shown e.g. commitCount = 1 => `minimalHeight`
+  // points of height in the SVG.
   const minimalHeight = 5;
 
   let week = 0;
 
-  for (const point of points) {
+  for (const point of activity) {
     if (point.week - week > 1) {
       commitCountArray.push(...new Array(point.week - week).fill(0));
     }
@@ -35,7 +38,8 @@
     week = point.week;
   }
 
-  // Formats the points passed in, into a svg path string, without closing the area
+  // Formats the points passed in, into a svg path string, without closing
+  // the area.
   function createPath() {
     let i = 1;
 
@@ -46,18 +50,21 @@
     const maxValue = Math.max(...commitCountArray);
     const minValue = Math.min(...commitCountArray);
 
-    // Normalizes the values to the viewBox dimensions
+    // Normalizes the values to the viewBox dimensions.
     const normalizedArray = commitCountArray.map(c => {
-      // If we are not crossing the `viewBoxHeight` we want to return the actual value,
-      // and don't want to normalize <`minimalHeight` commit counts as huge spikes.
+      // If we are not crossing the `viewBoxHeight` we want to return the
+      // actual value, and don't want to normalize <`minimalHeight` commit
+      // counts as huge spikes.
       if (maxValue < viewBoxHeight && c >= minimalHeight) {
         return c;
       }
-      // If the value is 0..minimalHeight though we don't want to set it to the minimalHeight.
+      // If the value is 0..minimalHeight though we don't want to set it to
+      // the minimalHeight.
       else if (c > 0 && c < minimalHeight) {
         return minimalHeight;
       }
-      // If the count is 0 we have to make sure the normalization is not being run since it would return NaN
+      // If the count is 0 we have to make sure the normalization is not being
+      // run since it would return NaN.
       else {
         return c === 0
           ? 0
@@ -80,9 +87,9 @@
   }
 
   onMount(() => {
-    // Creates the stroke path with the array of points
+    // Creates the stroke path with the array of points.
     path = createPath();
-    // Concats a path closing for it to be the area under the stroke
+    // Concats a path closing for it to be the area under the stroke.
     areaPath = path.concat(
       `L${lastWidthPoint},${viewBoxHeight}L${viewBoxWidth},${viewBoxHeight}Z`,
     );
@@ -109,7 +116,7 @@
       </linearGradient>
     </defs>
   </svg>
-  {#if points.length > 0}
+  {#if activity.length > 0}
     <g>
       <path
         fill="transparent"

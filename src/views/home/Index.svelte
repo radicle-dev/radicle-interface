@@ -4,11 +4,12 @@
   import * as router from "@app/lib/router";
   import { config } from "@app/lib/config";
   import { getProjectsFromSeeds } from "@app/lib/search";
+  import { loadProjectActivity } from "@app/lib/commit";
   import { twemoji } from "@app/lib/utils";
 
   import Loading from "@app/components/Loading.svelte";
   import Message from "@app/components/Message.svelte";
-  import Widget from "@app/views/projects/Widget.svelte";
+  import ProjectCard from "@app/components/ProjectCard.svelte";
 
   function goToProject(project: Project, baseUrl: BaseUrl) {
     router.push({
@@ -94,13 +95,18 @@
 
       <div class="projects">
         {#each results as result}
-          <div class="project">
-            <Widget
-              compact
-              project={result.project}
-              baseUrl={result.baseUrl}
-              on:click={() => goToProject(result.project, result.baseUrl)} />
-          </div>
+          {#await loadProjectActivity(result.project.id, result.baseUrl) then activity}
+            <div class="project">
+              <ProjectCard
+                compact
+                description={result.project.description}
+                head={result.project.head}
+                id={result.project.id}
+                name={result.project.name}
+                {activity}
+                on:click={() => goToProject(result.project, result.baseUrl)} />
+            </div>
+          {/await}
         {/each}
       </div>
     {/if}
