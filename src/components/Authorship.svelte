@@ -8,7 +8,7 @@
   export let timestamp: number | undefined = undefined;
 
   const relativeTimestamp = (time: number | undefined) =>
-    time ? new Date(time).toISOString() : undefined;
+    time ? new Date(time * 1000).toString() : undefined;
 </script>
 
 <style>
