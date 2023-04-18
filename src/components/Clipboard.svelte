@@ -13,6 +13,7 @@
 
   export let text: string;
   export let small = false;
+  export let tooltip: string | undefined = undefined;
 </script>
 
 <style>
@@ -40,7 +41,11 @@
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<span class="clipboard" class:small on:click|stopPropagation={copy}>
+<span
+  title={tooltip}
+  class="clipboard"
+  class:small
+  on:click|stopPropagation={copy}>
   {#if small}
     <Icon name="clipboard-small" />
   {:else}

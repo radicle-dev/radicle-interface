@@ -1,14 +1,18 @@
 <script lang="ts">
   import type { Project, NodeStats } from "@httpd-client";
+  import type { WeeklyActivity } from "@app/lib/commit";
 
-  import { config } from "@app/lib/config";
+  import * as router from "@app/lib/router";
   import { HttpdClient } from "@httpd-client";
+  import { config } from "@app/lib/config";
   import { extractBaseUrl, isLocal, truncateId } from "@app/lib/utils";
+  import { loadProjectActivity } from "@app/lib/commit";
 
+  import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import NotFound from "@app/components/NotFound.svelte";
-  import Projects from "@app/views/seeds/View/Projects.svelte";
+  import ProjectCard from "@app/components/ProjectCard.svelte";
 
   export let hostnamePort: string;
 
@@ -18,22 +22,74 @@
     : baseUrl.hostname;
   const api = new HttpdClient(baseUrl);
 
-  const getProjectsAndStats = async (): Promise<{
-    stats: NodeStats;
-    projects: Project[];
-  }> => {
-    const stats = await api.getStats();
-    const projects = await api.project.getAll({ page: 0, perPage: 10 });
-    return { stats, projects };
-  };
+  const perPage = 10;
+  let page = 0;
+  let error: any;
+  let loadingProjects = false;
+
+  let projects: Project[] = [];
+  let nodeStats: NodeStats | undefined = undefined;
+  let projectsWithActivity: { project: Project; activity: WeeklyActivity[] }[] =
+    [];
+
+  async function loadProjects(): Promise<void> {
+    loadingProjects = true;
+    try {
+      [nodeStats, projects] = await Promise.all([
+        api.getStats(),
+        api.project.getAll({ page, perPage }),
+      ]);
+
+      const results = await Promise.all(
+        projects.map(async project => {
+          const activity = await loadProjectActivity(project.id, baseUrl);
+          return {
+            project,
+            activity,
+          };
+        }),
+      );
+      projectsWithActivity = [...projectsWithActivity, ...results];
+      page += 1;
+    } catch (e) {
+      error = e;
+    } finally {
+      loadingProjects = false;
+    }
+  }
+
+  function goToProject(project: Project) {
+    router.push({
+      resource: "projects",
+      params: {
+        view: { resource: "tree" },
+        id: project.id,
+        hostnamePort:
+          baseUrl.port === config.seeds.defaultHttpdPort
+            ? baseUrl.hostname
+            : `${baseUrl.hostname}:${baseUrl.port}`,
+        revision: undefined,
+        hash: undefined,
+        search: undefined,
+      },
+    });
+  }
+
+  $: showMoreButton =
+    !loadingProjects &&
+    !error &&
+    nodeStats &&
+    projectsWithActivity.length < nodeStats.projects.count;
+
+  loadProjects();
 </script>
 
 <style>
-  main {
-    padding: 5rem 0;
+  .wrapper {
     width: 720px;
+    margin: 5rem 0;
   }
-  main > header {
+  .header {
     display: flex;
     width: 100%;
     flex-direction: row;
@@ -41,41 +97,27 @@
     justify-content: space-between;
     margin-bottom: 2rem;
   }
-  .fields {
-    display: grid;
-    grid-template-columns: 5rem 4fr 0fr;
-    gap: 1rem 2rem;
-    margin-bottom: 2rem;
+  table {
+    border-collapse: collapse;
   }
-  .fields > div {
-    place-self: center start;
-    height: 2rem;
-    line-height: 2rem;
-  }
-  .title {
-    display: flex;
-    align-items: center;
-  }
-  .seed-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
+  td {
+    padding-bottom: 1.5rem;
+    padding-right: 3rem;
   }
   .seed-address {
-    display: inline-flex;
-    font-size: var(--font-size-regular);
-    line-height: 2rem;
+    display: flex;
+    align-items: center;
     color: var(--color-foreground-6);
-    vertical-align: middle;
+    white-space: nowrap;
   }
-
+  .more {
+    margin-top: 2rem;
+    text-align: center;
+  }
   @media (max-width: 720px) {
-    main {
+    .wrapper {
       width: 100%;
       padding: 1.5rem;
-    }
-    .fields {
-      grid-template-columns: 5rem auto;
     }
   }
 </style>
@@ -84,55 +126,73 @@
   <title>{hostName}</title>
 </svelte:head>
 
-{#await api.getRoot()}
-  <main class="layout-centered">
-    <Loading center />
-  </main>
-{:then nodeInfo}
-  <main>
-    <header>
-      <span class="title txt-title">
-        <span class="txt-bold">
-          {hostName}
-        </span>
-      </span>
-    </header>
-
-    <div class="fields">
-      <!-- Seed Address -->
-      <div class="txt-highlight">Address</div>
-      <div class="seed-wrapper">
-        <div class="seed-address">
-          {truncateId(nodeInfo.node.id)}@{baseUrl.hostname}
-        </div>
-        <Clipboard
-          small
-          text={`${nodeInfo.node.id}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
-      </div>
-      <div class="layout-desktop" />
-      <!-- API Version -->
-      <div class="txt-highlight">Version</div>
-      <div>{nodeInfo.version}</div>
-      <div class="layout-desktop" />
-    </div>
-    <!-- Seed Projects -->
-    {#await getProjectsAndStats()}
-      <Loading center />
-    {:then result}
-      <Projects {baseUrl} projects={result.projects} stats={result.stats} />
-    {:catch err}
-      <div class="error txt-tiny">
-        <div>
-          API request to <span class="txt-monospace">{err.url}</span>
-          failed.
-        </div>
-      </div>
-    {/await}
-  </main>
-{:catch}
-  <div class="layout-centered">
-    <NotFound
-      title={baseUrl.hostname}
-      subtitle="Not able to query information from this seed." />
+<div class="wrapper">
+  <div class="header">
+    <span class="txt-title txt-bold">
+      {hostName}
+    </span>
   </div>
-{/await}
+
+  {#await api.getRoot()}
+    <Loading center />
+  {:then nodeInfo}
+    <table>
+      <tr>
+        <td class="txt-highlight">Address</td>
+        <td>
+          <div class="seed-address">
+            {truncateId(nodeInfo.node.id)}@{baseUrl.hostname}
+            <Clipboard
+              small
+              text={`${nodeInfo.node.id}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="txt-highlight">Version</td>
+        <td>
+          {nodeInfo.version}
+        </td>
+      </tr>
+    </table>
+  {:catch error}
+    <div style:margin-bottom="2rem">
+      <ErrorMessage
+        message="Not able to query information from this seed."
+        stackTrace={error.stack} />
+    </div>
+  {/await}
+
+  <div style:margin-bottom="5rem">
+    {#if projects}
+      <div style:margin-top="1rem">
+        {#each projectsWithActivity as { project, activity }}
+          <div style:margin-bottom="0.5rem">
+            <ProjectCard
+              {activity}
+              id={project.id}
+              name={project.name}
+              description={project.description}
+              head={project.head}
+              on:click={() => goToProject(project)} />
+          </div>
+        {/each}
+      </div>
+      {#if loadingProjects}
+        <div class="more">
+          <Loading small />
+        </div>
+      {/if}
+      {#if showMoreButton}
+        <div class="more">
+          <Button variant="foreground" on:click={loadProjects}>More</Button>
+        </div>
+      {/if}
+    {/if}
+    {#if error}
+      <ErrorMessage
+        message="Not able to load projects from this seed."
+        stackTrace={error.stack} />
+    {/if}
+  </div>
+</div>

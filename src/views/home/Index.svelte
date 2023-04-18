@@ -8,7 +8,7 @@
   import { twemoji } from "@app/lib/utils";
 
   import Loading from "@app/components/Loading.svelte";
-  import Message from "@app/components/Message.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
   function goToProject(project: Project, baseUrl: BaseUrl) {
@@ -110,12 +110,9 @@
         {/each}
       </div>
     {/if}
-  {:catch}
+  {:catch error}
     <div class="padding">
-      <Message error>
-        <span class="txt-bold">Error:</span>
-        failed to load projects.
-      </Message>
+      <ErrorMessage message="Couldn't load projects." stackTrace={error} />
     </div>
   {/await}
 </main>

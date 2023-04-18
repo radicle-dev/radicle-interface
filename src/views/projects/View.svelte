@@ -11,7 +11,7 @@
   import { sessionStore } from "@app/lib/session";
 
   import Loading from "@app/components/Loading.svelte";
-  import Message from "@app/components/Message.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
 
@@ -207,7 +207,7 @@
             history={history.commits.map(c => c.commit)} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couldn't load commits." stackTrace={e} />
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "commits"}
@@ -217,7 +217,7 @@
           <Commit {commit} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couln't load commit." stackTrace={e} />
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
@@ -230,10 +230,8 @@
             {baseUrl} />
         {:else}
           <div class="message">
-            <Message error>
-              Could not access the issue creation. Make sure you're still logged
-              in.
-            </Message>
+            <ErrorMessage
+              message="Couldn't access issue creation. Make sure you're still logged in." />
           </div>
         {/if}
       {:else if activeRoute.params.view.resource === "issues"}
@@ -247,7 +245,7 @@
             {issues} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couldn't load issues." stackTrace={e} />
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issue"}
@@ -262,7 +260,7 @@
             {issue} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couldn't load issue." stackTrace={e} />
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patches"}
@@ -277,7 +275,7 @@
             projectPatches={project.patches} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couldn't load patches." stackTrace={e} />
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patch"}
@@ -293,7 +291,7 @@
             {patch} />
         {:catch e}
           <div class="message">
-            <Message error>{e.message}</Message>
+            <ErrorMessage message="Couldn't load patch." stackTrace={e} />
           </div>
         {/await}
       {:else}
