@@ -235,19 +235,11 @@
           </div>
         {/if}
       {:else if activeRoute.params.view.resource === "issues"}
-        {#await api.project.getAllIssues(project.id)}
-          <Loading center />
-        {:then issues}
-          <Issues
-            {baseUrl}
-            issueCounters={project.issues}
-            status={issueFilter}
-            {issues} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couldn't load issues." stackTrace={e} />
-          </div>
-        {/await}
+        <Issues
+          {baseUrl}
+          projectId={project.id}
+          issueCounters={project.issues}
+          state={issueFilter} />
       {:else if activeRoute.params.view.resource === "issue"}
         {#await api.project.getIssueById(project.id, activeRoute.params.view.params.issue)}
           <Loading center />
@@ -264,20 +256,11 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "patches"}
-        {#await api.project.getAllPatches(project.id)}
-          <Loading center />
-        {:then patches}
-          <Patches
-            {patches}
-            status={patchFilter}
-            projectId={project.id}
-            {baseUrl}
-            projectPatches={project.patches} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couldn't load patches." stackTrace={e} />
-          </div>
-        {/await}
+        <Patches
+          {baseUrl}
+          projectId={project.id}
+          state={patchFilter}
+          patchCounters={project.patches} />
       {:else if activeRoute.params.view.resource === "patch"}
         {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
           <Loading center />

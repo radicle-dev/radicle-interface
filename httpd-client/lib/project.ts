@@ -370,12 +370,18 @@ export class Client {
 
   public async getAllIssues(
     id: string,
+    query?: {
+      page?: number;
+      perPage?: number;
+      state?: string;
+    },
     options?: RequestOptions,
   ): Promise<Issue[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `projects/${id}/issues`,
+        query,
         options,
       },
       issuesSchema,
@@ -441,12 +447,18 @@ export class Client {
 
   public async getAllPatches(
     id: string,
+    query?: {
+      page?: number;
+      perPage?: number;
+      state?: string;
+    },
     options?: RequestOptions,
   ): Promise<Patch[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `projects/${id}/patches`,
+        query,
         options,
       },
       patchesSchema,
