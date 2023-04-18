@@ -125,9 +125,12 @@
   .code :global(.line-number) {
     color: var(--color-foreground-4);
     text-align: right;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding: 0;
     user-select: none;
+  }
+  .code :global(.line-number a) {
+    display: block;
+    padding: 0 1rem;
   }
   .code :global(.line-number:hover) {
     cursor: pointer;
