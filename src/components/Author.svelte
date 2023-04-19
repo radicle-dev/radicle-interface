@@ -3,11 +3,10 @@
   import { formatNodeId } from "@app/lib/utils";
 
   export let nodeId: string;
-  export let noAvatar: boolean = false;
 </script>
 
 <style>
-  .authorship {
+  .author {
     display: inline-flex;
     align-items: center;
     color: var(--color-foreground-6);
@@ -20,10 +19,8 @@
   }
 </style>
 
-<span class="authorship txt-tiny">
-  {#if !noAvatar}
-    <Avatar inline {nodeId} />
-  {/if}
+<span class="author txt-tiny">
+  <Avatar inline {nodeId} />
   <span class="id layout-desktop">
     {formatNodeId(nodeId)}
   </span>
