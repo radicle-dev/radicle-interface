@@ -9,7 +9,7 @@
   import { sessionStore } from "@app/lib/session";
 
   import AssigneeInput from "./Cob/AssigneeInput.svelte";
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
@@ -173,6 +173,15 @@
     padding-left: 1rem;
     margin-left: 1rem;
   }
+  .authorship {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-tiny);
+    color: var(--color-foreground-6);
+  }
+  .authorship span {
+    margin: 0 0.2rem;
+  }
 
   .actions {
     display: flex;
@@ -212,10 +221,11 @@
             {issue.state.reason}
           </Badge>
         {/if}
-        <Authorship
-          timestamp={issue.discussion[0].timestamp}
-          authorId={issue.author.id}
-          caption="opened this issue" />
+        <div class="authorship">
+          <Author nodeId={issue.author.id} />
+          <span class="layout-desktop">opened this issue</span>
+          {utils.formatTimestamp(issue.discussion[0].timestamp)}
+        </div>
       </svelte:fragment>
     </CobHeader>
     <div>

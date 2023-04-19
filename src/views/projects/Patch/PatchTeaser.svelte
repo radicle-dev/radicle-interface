@@ -5,7 +5,7 @@
   import { HttpdClient } from "@httpd-client";
   import { formatObjectId, formatTimestamp } from "@app/lib/utils";
 
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -44,10 +44,6 @@
     color: var(--color-foreground-6);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
-    margin: 0 0.5rem;
-  }
-  .id {
-    margin: 0;
   }
   .summary {
     padding-right: 2rem;
@@ -133,16 +129,16 @@
         {/if}
       </span>
     </div>
-    <div class="summary">
-      <span class="meta id">
-        {formatObjectId(patch.id)} opened {formatTimestamp(
-          latestRevision.timestamp,
-        )} by
-        <Authorship authorId={patch.author.id} />
+    <div class="meta">
+      {formatObjectId(patch.id)}
+      <span class="layout-desktop">
+        opened
+        {formatTimestamp(latestRevision.timestamp)} by
       </span>
+      <Author nodeId={patch.author.id} />
     </div>
   </div>
-  <div class="column-right">
+  <div class="column-right layout-desktop">
     <div class="comment-count">
       {#await diffPromise then { diff }}
         <DiffStatBadge

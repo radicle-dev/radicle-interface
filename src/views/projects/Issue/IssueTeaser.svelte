@@ -3,7 +3,7 @@
 
   import { formatObjectId, formatTimestamp } from "@app/lib/utils";
 
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
 
@@ -122,10 +122,10 @@
       </span>
     </div>
     <div class="summary subtitle">
-      {formatObjectId(issue.id)} opened {formatTimestamp(
-        issue.discussion[0].timestamp,
-      )} by
-      <Authorship authorId={issue.author.id} />
+      {formatObjectId(issue.id)}
+      <span class="layout-desktop">opened</span>
+      {formatTimestamp(issue.discussion[0].timestamp)} by
+      <Author nodeId={issue.author.id} />
     </div>
   </div>
   {#if commentCount > 0}

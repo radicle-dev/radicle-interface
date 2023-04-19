@@ -65,7 +65,7 @@
 <CommentComponent
   {rawPath}
   id={root.id}
-  authorId={root.author.id}
+  nodeId={root.author.id}
   timestamp={root.timestamp}
   body={root.body}
   showReplyIcon={Boolean($sessionStore) && !isDescription}
@@ -75,7 +75,7 @@
     <CommentComponent
       {rawPath}
       id={reply.id}
-      authorId={reply.author.id}
+      nodeId={reply.author.id}
       timestamp={reply.timestamp}
       body={reply.body} />
   </div>

@@ -32,7 +32,7 @@
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
 
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Changeset from "./SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
@@ -189,6 +189,15 @@
     padding-left: 1rem;
     margin-left: 1rem;
   }
+  .authorship {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-tiny);
+    color: var(--color-foreground-6);
+  }
+  .authorship span {
+    margin: 0 0.2rem;
+  }
   .action {
     margin: 1rem;
     color: var(--color-foreground-5);
@@ -252,14 +261,12 @@
         <Badge variant={badgeColor(patch.state.status)}>
           {patch.state.status}
         </Badge>
-        <div class="layout-desktop">
-          <Authorship
-            timestamp={patch.revisions[0].timestamp}
-            authorId={patch.author.id}
-            caption="opened this patch" />
-        </div>
-        <div class="layout-mobile">
-          <Authorship authorId={patch.author.id} />
+        <div class="authorship">
+          <Author nodeId={patch.author.id} />
+          <span class="layout-desktop" style:margin="0 0.2rem">
+            opened this patch
+          </span>
+          {utils.formatTimestamp(patch.revisions[0].timestamp)}
         </div>
       </svelte:fragment>
     </CobHeader>
@@ -275,7 +282,7 @@
         <div class="txt-tiny">
           <CommentComponent
             caption="created this revision"
-            authorId={patch.author.id}
+            nodeId={patch.author.id}
             timestamp={currentRevision.timestamp}
             rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             body={currentRevisionIndex === 0
@@ -292,37 +299,27 @@
               on:reply={createReply}
               on:select={({ detail: index }) => (currentRevision = index)} />
           {:else if element.type === "merge"}
-            <div class="action layout-desktop txt-tiny">
-              <Authorship
-                authorId={element.inner.node}
-                timestamp={element.timestamp}>
-                merged
-                {utils.formatCommit(element.inner.commit)}
-              </Authorship>
-            </div>
-            <div class="action layout-mobile txt-tiny">
-              <Authorship authorId={element.inner.node}>
-                merged
-                {utils.formatCommit(element.inner.commit)}
-              </Authorship>
+            <div class="action authorship">
+              <Author nodeId={element.inner.node} />
+              <span class="layout-desktop">
+                merged {utils.formatCommit(element.inner.commit)}
+              </span>
+              {utils.formatTimestamp(element.timestamp)}
             </div>
           {:else if element.type === "review"}
             <!-- TODO: Implement inline code comments -->
             {@const [author, review] = element.inner}
-            <div class="action layout-desktop txt-tiny">
-              <Authorship authorId={author} timestamp={element.timestamp}>
+            <div class="action authorship">
+              <Author nodeId={author} />
+              <span class="layout-desktop">
                 {formatVerdict(review.verdict)}
-              </Authorship>
-            </div>
-            <div class="action layout-mobile txt-tiny">
-              <Authorship authorId={author}>
-                {formatVerdict(review.verdict)}
-              </Authorship>
+              </span>
+              {utils.formatTimestamp(review.timestamp)}
             </div>
             {#if review.comment}
               <CommentComponent
                 caption="left a comment"
-                authorId={author}
+                nodeId={author}
                 timestamp={review.timestamp}
                 rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={review.comment} />

@@ -1,13 +1,14 @@
 <script lang="ts" strictEvents>
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Button from "@app/components/Button.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Textarea from "@app/components/Textarea.svelte";
+  import { formatTimestamp } from "@app/lib/utils";
   import { createEventDispatcher } from "svelte";
 
   export let id: string | undefined = undefined;
-  export let authorId: string;
+  export let nodeId: string;
   export let timestamp: number;
   export let body: string;
   export let showReplyIcon: boolean = false;
@@ -39,6 +40,15 @@
     font-size: var(--font-size-small);
     padding: 0rem 1rem 1rem 1rem;
   }
+  .authorship {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-tiny);
+    color: var(--color-foreground-6);
+  }
+  .authorship .caption {
+    margin-left: 0.2rem;
+  }
   .actions {
     display: flex;
     justify-content: flex-end;
@@ -52,11 +62,9 @@
 <div class="comment" {id}>
   <div class="card">
     <div class="card-header">
-      <div class="layout-desktop">
-        <Authorship {caption} {authorId} {timestamp} />
-      </div>
-      <div class="layout-mobile">
-        <Authorship {authorId} {timestamp} />
+      <div class="authorship">
+        <Author {nodeId} />
+        <span class="caption">{caption} {formatTimestamp(timestamp)}</span>
       </div>
       <div class="actions">
         {#if showReplyIcon}

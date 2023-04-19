@@ -11,7 +11,7 @@
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
-  import Authorship from "@app/components/Authorship.svelte";
+  import Author from "@app/components/Author.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
@@ -109,17 +109,15 @@
       <CobHeader {action} bind:title={issueTitle}>
         <svelte:fragment slot="state">
           <Badge variant="positive">open</Badge>
-          <Authorship
-            timestamp={Date.now()}
-            authorId={session.publicKey}
-            caption="opened this issue" />
+          <Author nodeId={session.publicKey} />
+          <span>opened this issue {utils.formatTimestamp(Date.now())}</span>
         </svelte:fragment>
       </CobHeader>
       <div class="comments">
         <Comment
           bind:body={issueText}
           on:submit={createIssue}
-          authorId={session.publicKey}
+          nodeId={session.publicKey}
           timestamp={Date.now()}
           {action}
           rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
