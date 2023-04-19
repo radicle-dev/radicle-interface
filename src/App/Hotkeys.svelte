@@ -3,6 +3,7 @@
 
   import ColorPaletteModal from "@app/App/ColorPaletteModal.svelte";
   import HotkeysModal from "@app/App/HotkeysModal.svelte";
+  import { searchPlaceholder } from "@app/lib/shared";
 
   const onKeydown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
@@ -17,7 +18,7 @@
       case "/": {
         event.preventDefault();
         const searchInput: HTMLElement | null = document.querySelector(
-          '*[placeholder="Search a RID…"]',
+          `*[placeholder="${searchPlaceholder}"]`,
         );
         searchInput?.focus();
         break;

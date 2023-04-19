@@ -5,6 +5,7 @@
   import * as Search from "@app/lib/search";
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
+  import { searchPlaceholder } from "@app/lib/shared";
   import { unreachable } from "@app/lib/utils";
 
   import Icon from "@app/components/Icon.svelte";
@@ -131,7 +132,7 @@
         }
       }}
       on:submit={search}
-      placeholder="Search a RID…">
+      placeholder={searchPlaceholder}>
       <svelte:fragment slot="left">
         <Icon name="magnifying-glass" />
       </svelte:fragment>
