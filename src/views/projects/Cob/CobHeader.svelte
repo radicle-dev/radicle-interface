@@ -5,6 +5,7 @@
 
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   export let action: "create" | "edit" | "view" = "view";
@@ -67,7 +68,9 @@
         <TextInput transparent variant="form" bind:value={title} />
       {:else}
         {#if title}
-          <span class="txt-medium title">{title}</span>
+          <div class="title">
+            <InlineMarkdown fontSize="medium" content={title} />
+          </div>
         {:else}
           <span class="txt-missing">No title</span>
         {/if}

@@ -5,6 +5,7 @@
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let commit: CommitHeader;
@@ -78,7 +79,7 @@
         search: undefined,
       }}>
       <div class="summary" use:twemoji>
-        {commit.summary}
+        <InlineMarkdown content={commit.summary} />
       </div>
     </ProjectLink>
     <CommitAuthorship header={commit} />

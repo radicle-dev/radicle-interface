@@ -1,23 +1,16 @@
 <script lang="ts">
   import type { Commit } from "@httpd-client";
 
-  import { formatCommit, twemoji } from "@app/lib/utils";
-
-  import * as router from "@app/lib/router";
+  import { formatCommit } from "@app/lib/utils";
 
   import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
 
   export let commit: Commit;
 
   const { commit: header } = commit;
-  const onBrowse = (event: { detail: string }) => {
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      path: event.detail,
-    });
-  };
 </script>
 
 <style>
@@ -56,7 +49,9 @@
 <div class="commit">
   <div class="header">
     <div class="summary">
-      <div class="txt-medium txt-bold" use:twemoji>{header.summary}</div>
+      <div class="txt-medium txt-bold">
+        <InlineMarkdown fontSize="medium" content={header.summary} />
+      </div>
       <div class="layout-desktop-flex txt-monospace sha1">
         <span>{header.id}</span>
         <Clipboard small text={header.id} />

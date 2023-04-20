@@ -9,6 +9,7 @@
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let projectId: string;
@@ -127,7 +128,9 @@
             params: { patch: patch.id },
           },
         }}>
-        <span class="patch-title">{patch.title}</span>
+        <span class="patch-title">
+          <InlineMarkdown content={patch.title} />
+        </span>
       </ProjectLink>
       <span class="tags">
         {#each patch.tags.slice(0, 4) as tag}

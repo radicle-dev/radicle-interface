@@ -17,7 +17,7 @@
   export let content: string;
   export let hash: string | null = null;
   export let path: string = "/";
-  export let rawPath: string;
+  export let rawPath: string | undefined = undefined;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(
@@ -57,16 +57,18 @@
 
     // Iterate over all images, and replace the source with a canonicalized URL
     // pointing at the projects /raw endpoint.
-    for (const i of container.querySelectorAll("img")) {
-      const imagePath = i.getAttribute("src");
+    if (rawPath) {
+      for (const i of container.querySelectorAll("img")) {
+        const imagePath = i.getAttribute("src");
 
-      // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (
-        imagePath &&
-        !isUrl(imagePath) &&
-        !imagePath.startsWith(`${base}twemoji`)
-      ) {
-        i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
+        // Make sure the source isn't a URL before trying to fetch it from the repo
+        if (
+          imagePath &&
+          !isUrl(imagePath) &&
+          !imagePath.startsWith(`${base}twemoji`)
+        ) {
+          i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
+        }
       }
     }
 

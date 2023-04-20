@@ -6,6 +6,7 @@
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let issue: Issue;
@@ -118,7 +119,9 @@
             params: { issue: issue.id },
           },
         }}>
-        <span class="issue-title">{issue.title}</span>
+        <span class="issue-title">
+          <InlineMarkdown content={issue.title} />
+        </span>
       </ProjectLink>
       <span class="tags">
         {#each issue.tags.slice(0, 4) as tag}
