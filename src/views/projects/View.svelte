@@ -198,18 +198,7 @@
       {#if activeRoute.params.view.resource === "tree"}
         <Browser {baseUrl} {project} {commit} {tree} {activeRoute} />
       {:else if activeRoute.params.view.resource === "history"}
-        {#await api.project.getAllCommits(project.id, { parent: commit })}
-          <Loading center />
-        {:then history}
-          <History
-            id={project.id}
-            {baseUrl}
-            history={history.commits.map(c => c.commit)} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couldn't load commits." stackTrace={e} />
-          </div>
-        {/await}
+        <History projectId={project.id} {baseUrl} parentCommit={commit} />
       {:else if activeRoute.params.view.resource === "commits"}
         {#await api.project.getCommitBySha(id, commit)}
           <Loading center />
