@@ -6,10 +6,8 @@
 
 <script lang="ts">
   import type { Issue } from "@httpd-client";
-  import type { Tab } from "@app/components/TabBar.svelte";
   import type { BaseUrl } from "@httpd-client";
 
-  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
@@ -17,11 +15,11 @@
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import TabBar from "@app/components/TabBar.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import SquareButton from "@app/components/SquareButton.svelte";
 
   export let projectId: string;
   export let state: IssueStatus;
@@ -30,9 +28,6 @@
 
   const perPage = 10;
 
-  // Keeping it true, to avoid an initial flash
-  // of EmptyState Placeholder
-  let refresh = true;
   let loading = false;
   let page = 0;
   let error: any;
@@ -40,7 +35,7 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadIssues(): Promise<void> {
+  async function loadIssues(state: IssueStatus): Promise<void> {
     loading = true;
     try {
       const response = await api.project.getAllIssues(projectId, {
@@ -54,26 +49,17 @@
       error = e;
     } finally {
       loading = false;
-      refresh = false;
     }
   }
 
-  function switchState(e: CustomEvent<IssueStatus>): void {
-    refresh = true;
-    // Update state to be used in the query
-    state = e.detail;
-    // Reset page to 0 to load the first page for a new state
-    page = 0;
-    // Remove all existing patches with old state
-    issues = [];
-    loadIssues();
-    router.updateProjectRoute({
-      search: `state=${state}`,
-    });
+  interface Tab {
+    value: IssueStatus;
+    title: string;
+    disabled: boolean;
   }
 
   const stateOptions: IssueStatus[] = ["open", "closed"];
-  const options = stateOptions.map<Tab<IssueStatus>>(s => ({
+  const options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${issueCounters[s]} ${s}`,
     disabled: issueCounters[s] === 0,
@@ -85,7 +71,11 @@
     issueCounters[state] &&
     issues.length < issueCounters[state];
 
-  loadIssues();
+  $: {
+    page = 0;
+    issues = [];
+    loadIssues(state);
+  }
 </script>
 
 <style>
@@ -98,16 +88,13 @@
     overflow: hidden;
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px dashed var(--color-background);
+    border-bottom: 1px solid var(--color-background);
   }
   .section-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-  }
-  .loader {
-    margin-top: 8rem;
   }
   .more {
     margin-top: 2rem;
@@ -125,61 +112,72 @@
 <div class="issues">
   <div class="section-header">
     <div style="margin-bottom: 1rem;">
-      <TabBar {options} on:select={switchState} active={state} />
+      <div style="display: flex; gap: 0.5rem;">
+        {#each options as option}
+          {#if !option.disabled}
+            <ProjectLink
+              projectParams={{
+                search: `state=${option.value}`,
+              }}>
+              <SquareButton
+                size="small"
+                clickable={option.disabled}
+                active={option.value === state}
+                disabled={option.disabled}>
+                {option.title}
+              </SquareButton>
+            </ProjectLink>
+          {:else}
+            <SquareButton
+              size="small"
+              clickable={option.disabled}
+              active={option.value === state}
+              disabled={option.disabled}>
+              {option.title}
+            </SquareButton>
+          {/if}
+        {/each}
+      </div>
     </div>
-    <HeaderToggleLabel
-      disabled={!$sessionStore || !utils.isLocal(baseUrl.hostname)}
-      on:click={() => {
-        router.updateProjectRoute({
+    {#if $sessionStore && utils.isLocal(baseUrl.hostname)}
+      <ProjectLink
+        projectParams={{
           view: {
             resource: "issues",
             params: { view: { resource: "new" } },
           },
-        });
-      }}
-      clickable>
-      New issue
-    </HeaderToggleLabel>
+        }}>
+        <SquareButton size="small">New issue</SquareButton>
+      </ProjectLink>
+    {/if}
   </div>
   <div class="issues-list">
-    {#if refresh}
-      <div class="loader">
-        <Loading center />
+    {#each issues as issue}
+      <div class="teaser">
+        <IssueTeaser {issue} />
       </div>
     {:else}
-      {#each issues as issue}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div
-          class="teaser"
-          on:click={() => {
-            router.updateProjectRoute({
-              view: {
-                resource: "issue",
-                params: { issue: issue.id },
-              },
-            });
-          }}>
-          <IssueTeaser {issue} />
-        </div>
+      {#if error}
+        <ErrorMessage message="Couldn't load issues." stackTrace={error} />
+      {:else if loading}
+        <!-- We already show a loader below. -->
       {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load issues." stackTrace={error} />
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} issues</div>
-            <div slot="body">No issues matched the current filter</div>
-          </Placeholder>
-        {/if}
-      {/each}
-      <div class="more">
-        {#if loading}
-          <Loading small={page !== 0} center />
-        {/if}
+        <Placeholder emoji="🍂">
+          <div slot="title">{capitalize(state)} issues</div>
+          <div slot="body">No issues matched the current filter</div>
+        </Placeholder>
+      {/if}
+    {/each}
+  </div>
+  <div class="more">
+    {#if loading}
+      <Loading small={page !== 0} center />
+    {/if}
 
-        {#if showMoreButton}
-          <Button variant="foreground" on:click={loadIssues}>More</Button>
-        {/if}
-      </div>
+    {#if showMoreButton}
+      <Button variant="foreground" on:click={() => loadIssues(state)}>
+        More
+      </Button>
     {/if}
   </div>
 </div>

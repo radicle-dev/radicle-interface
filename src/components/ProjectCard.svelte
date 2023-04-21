@@ -97,8 +97,7 @@
   }
 </style>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="project" on:click class:compact>
+<div class="project" class:compact>
   <div class="left">
     <div class="id">
       <span class="name">{name}</span>

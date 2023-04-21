@@ -35,7 +35,7 @@
         {#each results as result}
           <li>
             <Link
-              on:click={modal.hide}
+              on:afterNavigate={modal.hide}
               route={{
                 resource: "projects",
                 params: {

@@ -1,67 +1,48 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type { CommitHeader } from "@httpd-client";
-
-  import { createEventDispatcher } from "svelte";
 
   import { formatCommit, twemoji } from "@app/lib/utils";
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let commit: CommitHeader;
-
-  const dispatch = createEventDispatcher<{ browseCommit: string }>();
-
-  function browseCommit(commit: string) {
-    dispatch("browseCommit", commit);
-  }
 </script>
 
 <style>
+  .teaser {
+    background-color: var(--color-background-1);
+    padding: 0.75rem 0rem;
+    display: flex;
+    align-items: center;
+  }
+  .teaser:hover {
+    background-color: var(--color-foreground-2);
+  }
   .hash {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     padding: 0 1.5rem;
   }
-  .commit-teaser {
-    background-color: var(--color-background-1);
-    padding: 0.75rem 0rem;
-  }
-  .commit-teaser:hover {
-    background-color: var(--color-foreground-2);
-    cursor: pointer;
-  }
-  .commit-teaser:first-child {
-    border-top-left-radius: var(--border-radius-small);
-    border-top-right-radius: var(--border-radius-small);
-  }
-  .commit-teaser:last-child {
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
-  }
-  .commit-teaser:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
-  }
-  .commit-teaser {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .column-left {
+  .left {
     padding-left: 1rem;
-    flex: min-content;
   }
-  .commit-teaser .column-right {
+  .right {
     display: flex;
     align-items: center;
     padding-right: 1.5rem;
+    margin-left: auto;
   }
   .summary {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-right: 1rem;
+    margin-bottom: 0.25rem;
+    font-size: var(--font-size-small);
+  }
+  .summary:hover {
+    color: var(--color-secondary);
   }
   .browse {
     display: flex;
@@ -74,7 +55,7 @@
     .hash {
       padding-right: 0;
     }
-    .column-left {
+    .left {
       overflow: hidden;
     }
     .browse {
@@ -84,29 +65,36 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      padding-right: 1rem;
     }
   }
 </style>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="commit-teaser" on:click>
-  <div class="column-left">
-    <div class="header">
+<div class="teaser">
+  <div class="left">
+    <ProjectLink
+      projectParams={{
+        view: { resource: "commits" },
+        revision: commit.id,
+        search: undefined,
+      }}>
       <div class="summary" use:twemoji>
         {commit.summary}
       </div>
-    </div>
+    </ProjectLink>
     <CommitAuthorship header={commit} />
   </div>
-  <div class="column-right">
+  <div class="right">
     <span class="hash txt-highlight">{formatCommit(commit.id)}</span>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="browse"
-      title="Browse the repository at this point in the history"
-      on:click|stopPropagation={() => browseCommit(commit.id)}>
-      <Icon name="browse" />
+      title="Browse the repository at this point in the history">
+      <ProjectLink
+        projectParams={{
+          view: { resource: "tree" },
+          revision: commit.id,
+        }}>
+        <Icon name="browse" />
+      </ProjectLink>
     </div>
   </div>
 </div>

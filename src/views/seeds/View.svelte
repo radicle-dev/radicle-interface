@@ -2,7 +2,6 @@
   import type { Project, NodeStats } from "@httpd-client";
   import type { WeeklyActivity } from "@app/lib/commit";
 
-  import * as router from "@app/lib/router";
   import { HttpdClient } from "@httpd-client";
   import { config } from "@app/lib/config";
   import { extractBaseUrl, isLocal, truncateId } from "@app/lib/utils";
@@ -11,6 +10,7 @@
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
@@ -58,23 +58,6 @@
     }
   }
 
-  function goToProject(project: Project) {
-    router.push({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        id: project.id,
-        hostnamePort:
-          baseUrl.port === config.seeds.defaultHttpdPort
-            ? baseUrl.hostname
-            : `${baseUrl.hostname}:${baseUrl.port}`,
-        revision: undefined,
-        hash: undefined,
-        search: undefined,
-      },
-    });
-  }
-
   $: showMoreButton =
     !loadingProjects &&
     !error &&
@@ -90,12 +73,18 @@
     margin: 5rem 0;
   }
   .header {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
     align-items: center;
+    color: var(--color-secondary);
+    display: flex;
+    flex-direction: row;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
     justify-content: space-between;
     margin-bottom: 2rem;
+    overflow-x: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    width: 100%;
   }
   table {
     border-collapse: collapse;
@@ -128,9 +117,7 @@
 
 <div class="wrapper">
   <div class="header">
-    <span class="txt-title txt-bold">
-      {hostName}
-    </span>
+    {hostName}
   </div>
 
   {#await api.getRoot()}
@@ -168,13 +155,28 @@
       <div style:margin-top="1rem">
         {#each projectsWithActivity as { project, activity }}
           <div style:margin-bottom="0.5rem">
-            <ProjectCard
-              {activity}
-              id={project.id}
-              name={project.name}
-              description={project.description}
-              head={project.head}
-              on:click={() => goToProject(project)} />
+            <Link
+              route={{
+                resource: "projects",
+                params: {
+                  view: { resource: "tree" },
+                  id: project.id,
+                  hostnamePort:
+                    baseUrl.port === config.seeds.defaultHttpdPort
+                      ? baseUrl.hostname
+                      : `${baseUrl.hostname}:${baseUrl.port}`,
+                  revision: undefined,
+                  hash: undefined,
+                  search: undefined,
+                },
+              }}>
+              <ProjectCard
+                {activity}
+                id={project.id}
+                name={project.name}
+                description={project.description}
+                head={project.head} />
+            </Link>
           </div>
         {/each}
       </div>

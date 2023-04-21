@@ -2,7 +2,7 @@
   import type { Item } from "@app/components/Dropdown.svelte";
   import type { Remote } from "@httpd-client";
 
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
 
   import { formatNodeId, truncateId } from "@app/lib/utils";
 
@@ -11,8 +11,9 @@
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
-  export let peer: string | null = null;
+  export let peer: string | undefined = undefined;
   export let peers: Remote[];
 
   let meta: Remote | undefined;
@@ -36,11 +37,6 @@
       };
     });
   });
-
-  const dispatch = createEventDispatcher<{ peerChanged: string }>();
-  const switchPeer = (peer: string) => {
-    dispatch("peerChanged", peer);
-  };
 </script>
 
 <style>
@@ -69,7 +65,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0;
+    gap: 0.5rem;
   }
   .prefix {
     display: inline-block;
@@ -83,6 +79,12 @@
     height: 2rem;
     line-height: initial;
     background: var(--color-foreground-1);
+    gap: 0.5rem;
+  }
+
+  .avatar-id {
+    display: flex;
+    gap: 0.25rem;
   }
 </style>
 
@@ -93,39 +95,53 @@
         <Icon name="fork" />
       {/if}
       {#if meta}
-        <span style:display="flex">
+        <span class="avatar-id">
           <Avatar nodeId={meta.id} inline />
-          <span style:color="var(--color-secondary-5)">did:key:</span>
-          {truncateId(meta.id)}
+          <!-- Ignore prettier to avoid getting a whitespace between
+             did:key: and the nid due to a newline. -->
+          <!-- prettier-ignore -->
+          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(meta.id)}</span>
         </span>
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>
         {/if}
       {:else if peer}
-        <span style:display="flex">
+        <span class="avatar-id">
           <Avatar nodeId={peer} inline />
-          <span style:color="var(--color-secondary-5)">did:key:</span>
-          {truncateId(peer)}
+          <!-- prettier-ignore -->
+          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(peer)}</span>
         </span>
       {/if}
     </div>
   </div>
 
   <svelte:fragment slot="modal">
-    <Dropdown
-      {items}
-      selected={peer}
-      on:select={e => switchPeer(e.detail.value)}>
-      <div class="peer-item" slot="item" let:item>
-        <Avatar nodeId={item.value} inline />
-        <!-- We ignore prettier here for the following line
-             to avoid getting a whitespace between did:key: and the nid due to a newline -->
-        <!-- prettier-ignore -->
-        <span><span class="prefix">did:key:</span>{item.value}</span>
-        {#if item.badge}
-          <Badge variant="primary">{item.badge}</Badge>
-        {/if}
-      </div>
+    <Dropdown {items} selected={peer}>
+      <svelte:fragment slot="item" let:item>
+        <ProjectLink
+          on:click
+          projectParams={{
+            peer: item.value,
+            revision: undefined,
+          }}>
+          <div class="peer-item">
+            <span class="avatar-id">
+              <Avatar nodeId={item.value} inline />
+              <div class="layout-desktop">
+                <!-- prettier-ignore -->
+                <span><span class="prefix">did:key:</span>{item.value}</span>
+              </div>
+              <div class="layout-mobile">
+                <!-- prettier-ignore -->
+                <span><span class="prefix">did:key:</span>{truncateId(item.value)}</span>
+              </div>
+            </span>
+            {#if item.badge}
+              <Badge variant="primary">{item.badge}</Badge>
+            {/if}
+          </div>
+        </ProjectLink>
+      </svelte:fragment>
     </Dropdown>
   </svelte:fragment>
 </Floating>

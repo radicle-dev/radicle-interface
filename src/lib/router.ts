@@ -16,6 +16,16 @@ export const activeRouteStore: Readable<Route> = derived(
   },
 );
 
+export function useDefaultNavigation(event: MouseEvent) {
+  return (
+    event.button !== 0 ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey
+  );
+}
+
 export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
 // Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>

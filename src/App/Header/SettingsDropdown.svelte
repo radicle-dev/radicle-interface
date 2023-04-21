@@ -96,7 +96,7 @@
     class="item selector"
     on:click|stopPropagation={() => (showFonts = !showFonts)}>
     <div>Code font</div>
-    <Icon name={`chevron-${showFonts ? "up" : "down"}`} />
+    <Icon name={`chevron-${showFonts ? "down" : "right"}`} />
   </div>
   {#if showFonts}
     <div
@@ -112,7 +112,7 @@
           style:font-family={font.fontFamily}>
           {font.displayName}
           {#if isSelectedFont}
-            <Icon name="checkmark" />
+            <Icon name="checkmark-small" />
           {/if}
         </div>
       {/each}

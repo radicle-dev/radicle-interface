@@ -14,16 +14,21 @@ async function expectCounts(
   params: { commits: number; contributors: number },
   page: Page,
 ) {
-  await expect(page.locator('role=button[name="Commit count"]')).toContainText(
-    `${params.commits} ${params.commits === 1 ? "commit" : "commits"}`,
-  );
   await expect(
-    page.locator('role=button[name="Contributor count"]'),
-  ).toContainText(
-    `${params.contributors} ${
-      params.contributors === 1 ? "contributor" : "contributors"
-    }`,
-  );
+    page.locator(
+      `role=link[name="${params.commits} ${
+        params.commits === 1 ? "commit" : "commits"
+      }"]`,
+    ),
+  ).toBeVisible();
+
+  await expect(
+    page.locator(
+      `text=${params.contributors} ${
+        params.contributors === 1 ? "contributor" : "contributors"
+      }`,
+    ),
+  ).toBeVisible();
 }
 
 test("navigate to project", async ({ page }) => {
@@ -62,10 +67,10 @@ test("navigate to project", async ({ page }) => {
 
 test("show source tree at specific revision", async ({ page }) => {
   await page.goto(projectFixtureUrl);
-  await page.locator('role=button[name="Commit count"]').click();
+  await page.locator('role=link[name="8 commits"]').click();
 
   await page
-    .locator(".commit-teaser", { hasText: "335dd6d" })
+    .locator(".teaser", { hasText: "335dd6d" })
     .getByTitle("Browse the repository at this point in the history")
     .click();
 
@@ -90,7 +95,7 @@ test("source file highlighting", async ({ page }) => {
 
 test("navigate line numbers", async ({ page }) => {
   await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
-  await page.locator('role=button[name="Raw"]').click();
+  await page.locator(".markdown-toggle").click();
 
   await page.locator('[href="#L5"]').click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -225,7 +230,7 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    const rawButton = page.locator('role=button[name="Raw"]');
+    const rawButton = page.locator(".markdown-toggle .square-button");
 
     await rawButton.click();
     await expect(rawButton).toHaveClass(/active/);
@@ -262,9 +267,9 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${aliceRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      ` did:key: ${aliceRemote
-        .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} `,
+      ` did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
+        -6,
+      )} `,
     );
     await expect(
       page.locator(
@@ -327,7 +332,7 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${bobRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      ` did:key: ${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
+      ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
         -6,
       )} `,
     );

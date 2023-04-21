@@ -5,6 +5,7 @@
 
   import File from "./Tree/File.svelte";
   import Folder from "./Tree/Folder.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let fetchTree: (path: string) => Promise<Tree | undefined>;
   export let path: string;
@@ -27,10 +28,16 @@
       currentPath={path}
       on:select={onSelect} />
   {:else}
-    <File
-      active={entry.path === path}
-      loading={entry.path === loadingPath}
-      name={entry.name}
-      on:click={() => onSelect({ detail: entry.path })} />
+    <ProjectLink
+      projectParams={{
+        view: { resource: "tree" },
+        path: entry.path,
+      }}
+      on:click={() => onSelect({ detail: entry.path })}>
+      <File
+        active={entry.path === path}
+        loading={entry.path === loadingPath}
+        name={entry.name} />
+    </ProjectLink>
   {/if}
 {/each}

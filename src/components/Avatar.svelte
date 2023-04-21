@@ -32,7 +32,6 @@
     display: inline-block !important;
     width: 1rem;
     height: 1rem;
-    margin-right: 0.5rem;
   }
 </style>
 

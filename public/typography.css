@@ -144,14 +144,6 @@ p {
 .txt-faded {
   color: var(--color-foreground-5);
 }
-.txt-title {
-  font-size: var(--font-size-large);
-  font-weight: var(--font-weight-normal);
-  color: var(--color-secondary);
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
 .txt-link {
   color: var(--color-foreground-6);
   text-decoration: none;

@@ -16,22 +16,28 @@
 
 <style>
   .title {
-    display: flex;
     align-items: center;
-    justify-content: left;
+    color: var(--color-secondary);
+    display: flex;
     font-size: var(--font-size-x-large);
+    font-weight: var(--font-weight-bold);
+    justify-content: left;
     margin-bottom: 0.5rem;
+    overflow-x: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
   }
-  .title .divider {
+  .divider {
     color: var(--color-foreground-4);
     margin: 0 0.5rem;
     font-weight: var(--font-weight-normal);
   }
-  .title .node-id {
+  .node-id {
     color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
   .project-name:hover {
     color: inherit;
@@ -68,11 +74,15 @@
     .content {
       padding-left: 2rem;
     }
+    .title {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
   }
 </style>
 
 <header class="content">
-  <div class="title txt-bold txt-title">
+  <div class="title">
     <span class="truncate">
       <ProjectLink
         projectParams={{

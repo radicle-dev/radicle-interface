@@ -14,7 +14,6 @@
     align-items: center;
     gap: 0.25rem;
     color: var(--color-foreground-6);
-    padding: 0.125rem 0;
   }
   .authorship .author,
   .authorship .committer {

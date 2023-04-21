@@ -9,6 +9,7 @@
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
@@ -27,14 +28,12 @@
 
 <style>
   .patch-teaser {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    display: flex;
     padding: 0.75rem 0;
     background-color: var(--color-foreground-1);
   }
   .patch-teaser:hover {
     background-color: var(--color-foreground-2);
-    cursor: pointer;
   }
   .meta {
     display: flex;
@@ -57,23 +56,25 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .patch-title:hover {
+    color: var(--color-secondary);
+  }
   .comment-count {
-    display: flex;
-    flex-direction: row;
     align-items: center;
     padding-right: 1rem;
     gap: 0.5rem;
     color: var(--color-foreground-5);
   }
-
-  .column-right {
+  .right {
     align-self: center;
     justify-self: center;
     padding-right: 1rem;
+    margin-left: auto;
   }
   .state {
     justify-self: center;
     align-self: center;
+    margin: 0 1.25rem;
   }
   .tags {
     display: flex;
@@ -117,9 +118,17 @@
       class:merged={patch.state.status === "merged"}
       class:archived={patch.state.status === "archived"} />
   </div>
-  <div class="column-left">
+  <div>
     <div class="summary">
-      <span class="patch-title">{patch.title}</span>
+      <ProjectLink
+        projectParams={{
+          view: {
+            resource: "patch",
+            params: { patch: patch.id },
+          },
+        }}>
+        <span class="patch-title">{patch.title}</span>
+      </ProjectLink>
       <span class="tags">
         {#each patch.tags.slice(0, 4) as tag}
           <Badge style="max-width:7rem" variant="secondary">
@@ -142,7 +151,7 @@
       </span>
     </div>
   </div>
-  <div class="column-right">
+  <div class="right">
     <div class="comment-count">
       {#await diffPromise then { diff }}
         <DiffStatBadge

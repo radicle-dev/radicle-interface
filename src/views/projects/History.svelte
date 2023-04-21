@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, CommitHeader } from "@httpd-client";
 
-  import * as router from "@app/lib/router";
   import { HttpdClient } from "@httpd-client";
   import { groupCommits } from "@app/lib/commit";
 
@@ -42,20 +41,6 @@
     }
   }
 
-  function goToSourceTreeAtCommit(event: { detail: string }) {
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      revision: event.detail,
-    });
-  }
-
-  function goToCommit(revision: string) {
-    router.updateProjectRoute({
-      view: { resource: "commits" },
-      revision,
-    });
-  }
-
   $: showMoreButton =
     !loading && !error && totalCommitCount && history.length < totalCommitCount;
 
@@ -67,11 +52,13 @@
     padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
-  .commit-group header {
-    color: var(--color-foreground-6);
-  }
-  .commit-group-headers {
+  .group {
     margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+  .teaser-wrapper:not(:last-child) {
+    border-bottom: 1px solid var(--color-background);
   }
   .more {
     margin-top: 2rem;
@@ -88,18 +75,13 @@
 {#if history}
   <div class="history">
     {#each groupCommits(history) as group (group.time)}
-      <div class="commit-group">
-        <header class="commit-date">
-          <p>{group.date}</p>
-        </header>
-        <div class="commit-group-headers">
-          {#each group.commits as commit (commit.id)}
-            <CommitTeaser
-              {commit}
-              on:click={() => goToCommit(commit.id)}
-              on:browseCommit={goToSourceTreeAtCommit} />
-          {/each}
-        </div>
+      <p style:color="var(--color-foreground-6)">{group.date}</p>
+      <div class="group">
+        {#each group.commits as commit (commit.id)}
+          <div class="teaser-wrapper">
+            <CommitTeaser {commit} />
+          </div>
+        {/each}
       </div>
     {/each}
     <div class="more">

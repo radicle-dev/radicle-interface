@@ -34,7 +34,7 @@ test("navigation between seed and project pages", async ({ page }) => {
   await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
 
-  await page.locator('role=button[name="Seed"]').click();
+  await page.locator('role=link[name="127.0.0.1"]').click();
   await expect(page).toHaveURL("/#/seeds/127.0.0.1");
 });
 
@@ -60,7 +60,7 @@ test.describe("project page navigation", () => {
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.locator('role=button[name="Commit count"]').click();
+    await page.locator('role=link[name="8 commits"]').click();
     await expect(page).toHaveURL(`/#${projectFixtureUrl}/history/main`);
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);

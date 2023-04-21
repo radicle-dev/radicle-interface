@@ -17,7 +17,7 @@
   .section {
     display: flex;
     align-items: center;
-    max-width: 13rem;
+    max-width: 13.5rem;
     padding: 0.2rem 0.5rem;
   }
   .text {

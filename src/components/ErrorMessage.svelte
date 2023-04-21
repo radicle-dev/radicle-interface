@@ -25,6 +25,7 @@
   {#if stackTrace}
     <div class="stack-trace">
       <Clipboard
+        small
         tooltip="Copy error to clipboard"
         text={JSON.stringify({ errorMessage: message, stackTrace }, null, 2)} />
     </div>

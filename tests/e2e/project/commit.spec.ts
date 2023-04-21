@@ -13,7 +13,7 @@ test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
   await page.getByTitle("Change peer").click();
   await page.locator(`text=${bobRemote}`).click();
-  await page.locator('role=button[name="Commit count"]').click();
+  await page.locator('role=link[name="9 commits"]').click();
 
   await page.locator("text=Update readme").click();
   await expect(page).toHaveURL(modifiedFileFixture);
@@ -31,7 +31,7 @@ test("relative timestamps", async ({ page }) => {
   });
   await page.goto(modifiedFileFixture);
   await expect(
-    page.locator(`.commit header >> text=${"Bob Belcher committed now"}`),
+    page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
   ).toBeVisible();
 });
 
@@ -40,7 +40,7 @@ test("modified file", async ({ page }) => {
 
   // Commit header.
   {
-    const header = page.locator(".commit header");
+    const header = page.locator(".commit .header");
     await expect(header.locator("text=Update readme")).toBeVisible();
     await expect(
       header.locator("text=1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"),

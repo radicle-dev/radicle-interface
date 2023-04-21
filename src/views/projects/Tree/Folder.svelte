@@ -4,6 +4,7 @@
   import { createEventDispatcher } from "svelte";
 
   import Loading from "@app/components/Loading.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   import File from "./File.svelte";
 
@@ -84,13 +85,17 @@
               {loadingPath}
               {currentPath} />
           {:else}
-            <File
-              active={entry.path === currentPath}
-              loading={entry.path === loadingPath}
-              name={entry.name}
-              on:click={() => {
-                onSelectFile({ detail: entry.path });
-              }} />
+            <ProjectLink
+              projectParams={{
+                view: { resource: "tree" },
+                path: entry.path,
+              }}
+              on:click={() => onSelectFile({ detail: entry.path })}>
+              <File
+                active={entry.path === currentPath}
+                loading={entry.path === loadingPath}
+                name={entry.name} />
+            </ProjectLink>
           {/if}
         {/each}
       {/if}

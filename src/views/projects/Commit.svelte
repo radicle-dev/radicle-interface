@@ -6,8 +6,8 @@
   import * as router from "@app/lib/router";
 
   import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
-  import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
+  import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
 
   export let commit: Commit;
 
@@ -24,7 +24,7 @@
   .commit {
     padding: 0 2rem 0 8rem;
   }
-  header {
+  .header {
     padding: 1rem;
     background: var(--color-background-1);
     border-radius: var(--border-radius);
@@ -54,7 +54,7 @@
 </style>
 
 <div class="commit">
-  <header>
+  <div class="header">
     <div class="summary">
       <div class="txt-medium txt-bold" use:twemoji>{header.summary}</div>
       <div class="layout-desktop-flex txt-monospace sha1">
@@ -68,6 +68,6 @@
     </div>
     <pre class="description txt-small">{header.description}</pre>
     <CommitAuthorship {header} />
-  </header>
-  <Changeset diff={commit.diff} on:browse={onBrowse} />
+  </div>
+  <Changeset diff={commit.diff} revision={commit.commit.id} />
 </div>

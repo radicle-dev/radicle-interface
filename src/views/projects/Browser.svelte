@@ -12,7 +12,6 @@
 
   import { onMount } from "svelte";
 
-  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
 
@@ -48,6 +47,11 @@
 
   const api = new HttpdClient(baseUrl);
 
+  // When a user clicks between multiple files, we want to retain the previous
+  // file contents and show them while the new file is loading to prevent the
+  // UI from flickering or showing a loading indicator.
+  let previousBlob: Blob;
+
   const loadBlob = async (path: string) => {
     if (state.status === Status.Loaded && state.path === path) {
       return state.blob;
@@ -63,37 +67,13 @@
     }
 
     state = { status: Status.Loaded, path, blob };
+    previousBlob = blob;
     return blob;
   };
 
   onMount(() => {
     browserErrorStore.set(undefined);
   });
-
-  const onSelect = async (newPath: string) => {
-    browserErrorStore.set(undefined);
-    // Ensure we don't spend any time in a "loading" state. This means
-    // the loading spinner won't be shown, and instead the blob will be
-    // displayed once loaded.
-    const blob = await loadBlob(newPath).catch(() => {
-      browserErrorStore.set({
-        message: "Not able to load selected file",
-        path: newPath,
-      });
-      return undefined;
-    });
-    if (blob) {
-      getBlob = new Promise(resolve => resolve(blob));
-    }
-
-    // Close mobile tree if user navigates to other file
-    mobileFileTree = false;
-
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      path: newPath,
-    });
-  };
 
   const fetchTree = async (path: string) => {
     return api.project.getTree(project.id, commit, path).catch(() => {
@@ -103,10 +83,6 @@
       });
       return undefined;
     });
-  };
-
-  const toggleMobileFileTree = () => {
-    mobileFileTree = !mobileFileTree;
   };
 
   $: getBlob = loadBlob(path).catch(() => {
@@ -203,7 +179,9 @@
       <Button
         style="width: 100%;"
         variant="secondary"
-        on:click={toggleMobileFileTree}>
+        on:click={() => {
+          mobileFileTree = !mobileFileTree;
+        }}>
         Browse
       </Button>
     </nav>
@@ -218,8 +196,9 @@
             {path}
             {fetchTree}
             {loadingPath}
-            on:select={e => {
-              onSelect(e.detail);
+            on:select={() => {
+              // Close mobile tree if user navigates to other file
+              mobileFileTree = false;
             }} />
         </div>
       </div>
@@ -241,7 +220,20 @@
           </Placeholder>
         {:else}
           {#await getBlob}
-            <Loading small center />
+            {#if previousBlob}
+              <div class="layout-desktop">
+                <BlobComponent
+                  {line}
+                  blob={previousBlob}
+                  {activeRoute}
+                  rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
+              </div>
+              <div class="layout-mobile">
+                <Loading small center />
+              </div>
+            {:else}
+              <Loading small center />
+            {/if}
           {:then blob}
             {#if blob}
               <BlobComponent

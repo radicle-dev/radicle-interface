@@ -40,8 +40,8 @@
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
-  import HeaderToggleLabel from "./HeaderToggleLabel.svelte";
-  import TabBar from "@app/components/TabBar.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import SquareButton from "@app/components/SquareButton.svelte";
   import TagInput from "./Cob/TagInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
@@ -53,14 +53,6 @@
   export let currentTab: "activity" | "commits";
 
   const api = new HttpdClient(baseUrl);
-
-  const browseCommit = (event: { detail: string }) => {
-    router.updateProjectRoute({
-      view: { resource: "tree" },
-      search: undefined,
-      revision: event.detail,
-    });
-  };
 
   async function createReply({
     detail: reply,
@@ -193,6 +185,11 @@
     margin: 1rem;
     color: var(--color-foreground-5);
   }
+  .commit-list {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-top: 1rem;
+  }
 
   @media (max-width: 1092px) {
     .patch {
@@ -214,14 +211,13 @@
   <div>
     <CobHeader id={patch.id} title={patch.title}>
       <span slot="revision" class="txt-monospace txt-tiny">
-        <Floating>
+        <Floating disabled={patch.revisions.length === 1}>
           <svelte:fragment slot="toggle">
-            <HeaderToggleLabel
+            <SquareButton
               clickable={patch.revisions.length > 1}
-              disabled={patch.revisions.length === 1}
-              title="Toggle revision">
+              disabled={patch.revisions.length === 1}>
               Revision {currentRevisionIndex}
-            </HeaderToggleLabel>
+            </SquareButton>
           </svelte:fragment>
           <svelte:fragment slot="modal">
             <Dropdown
@@ -263,13 +259,32 @@
         </div>
       </svelte:fragment>
     </CobHeader>
-    <TabBar
-      {options}
-      active={currentTab}
-      on:select={({ detail: tab }) =>
-        router.updateProjectRoute({
-          search: `tab=${tab}`,
-        })} />
+    <div style="display: flex; gap: 0.5rem;">
+      {#each options as option}
+        {#if !option.disabled}
+          <ProjectLink
+            projectParams={{
+              search: `tab=${option.value}`,
+            }}>
+            <SquareButton
+              size="small"
+              clickable={option.disabled}
+              active={option.value === currentTab}
+              disabled={option.disabled}>
+              {option.title}
+            </SquareButton>
+          </ProjectLink>
+        {:else}
+          <SquareButton
+            size="small"
+            clickable={option.disabled}
+            active={option.value === currentTab}
+            disabled={option.disabled}>
+            {option.title}
+          </SquareButton>
+        {/if}
+      {/each}
+    </div>
     {#if currentTab === "activity"}
       <div style:margin-top="1rem">
         <div class="txt-tiny">
@@ -332,34 +347,16 @@
       </div>
     {:else if currentTab === "commits"}
       {#await diffPromise then diff}
-        <div style:margin-top="1rem">
+        <div class="commit-list">
           {#each diff.commits as commit}
-            <CommitTeaser
-              {commit}
-              on:click={() => {
-                router.updateProjectRoute({
-                  view: { resource: "commits" },
-                  revision: commit.id,
-                  search: undefined,
-                });
-              }}
-              on:browseCommit={browseCommit} />
+            <CommitTeaser {commit} />
           {/each}
         </div>
       {/await}
     {:else if currentTab === "files"}
       {#await diffPromise then diff}
         <div style:margin-top="1rem">
-          <Changeset
-            diff={diff.diff}
-            on:browse={({ detail: path }) => {
-              router.updateProjectRoute({
-                view: { resource: "tree" },
-                search: undefined,
-                revision: currentRevision.oid,
-                path,
-              });
-            }} />
+          <Changeset revision={currentRevision.oid} diff={diff.diff} />
         </div>
       {/await}
     {/if}

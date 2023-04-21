@@ -6,6 +6,7 @@
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let issue: Issue;
 
@@ -25,14 +26,12 @@
 
 <style>
   .issue-teaser {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    display: flex;
     padding: 0.75rem 0;
     background-color: var(--color-foreground-1);
   }
   .issue-teaser:hover {
     background-color: var(--color-foreground-2);
-    cursor: pointer;
   }
   .subtitle {
     color: var(--color-foreground-6);
@@ -51,6 +50,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    cursor: pointer;
+  }
+  .issue-title:hover {
+    color: var(--color-secondary);
   }
   .comment-count {
     display: flex;
@@ -70,14 +73,15 @@
     text-overflow: ellipsis;
   }
 
-  .column-right {
+  .right {
     align-self: center;
     justify-self: center;
+    margin-left: auto;
   }
-
   .state {
     justify-self: center;
     align-self: center;
+    margin: 0 1.25rem;
   }
   .state-icon {
     width: 0.5rem;
@@ -105,9 +109,17 @@
       class:closed={issue.state.status === "closed"}
       class:open={issue.state.status === "open"} />
   </div>
-  <div class="column-left">
+  <div>
     <div class="summary">
-      <span class="issue-title">{issue.title}</span>
+      <ProjectLink
+        projectParams={{
+          view: {
+            resource: "issue",
+            params: { issue: issue.id },
+          },
+        }}>
+        <span class="issue-title">{issue.title}</span>
+      </ProjectLink>
       <span class="tags">
         {#each issue.tags.slice(0, 4) as tag}
           <Badge style="max-width:7rem" variant="secondary">
@@ -129,7 +141,7 @@
     </div>
   </div>
   {#if commentCount > 0}
-    <div class="column-right">
+    <div class="right">
       <div class="comment-count">
         <Icon name="chat" />
         <span>{commentCount}</span>

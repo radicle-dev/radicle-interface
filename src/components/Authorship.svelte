@@ -17,6 +17,7 @@
     align-items: center;
     color: var(--color-foreground-6);
     padding: 0.125rem 0;
+    gap: 0.25rem;
   }
   .id {
     overflow: hidden;
@@ -24,7 +25,6 @@
     white-space: nowrap;
   }
   .body {
-    margin: 0 0.4rem;
     white-space: nowrap;
   }
 </style>

@@ -5,10 +5,8 @@
 </script>
 
 <script lang="ts">
-  import type { Tab } from "@app/components/TabBar.svelte";
   import type { BaseUrl } from "@httpd-client";
 
-  import * as router from "@app/lib/router";
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
 
@@ -17,7 +15,8 @@
   import Loading from "@app/components/Loading.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import TabBar from "@app/components/TabBar.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import SquareButton from "@app/components/SquareButton.svelte";
 
   export let projectId: string;
   export let state: PatchStatus;
@@ -31,9 +30,6 @@
 
   const perPage = 10;
 
-  // Keeping it true, to avoid an initial flash
-  // of EmptyState Placeholder
-  let refresh = true;
   let loading = false;
   let page = 0;
   let error: any;
@@ -41,7 +37,7 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadPatches(): Promise<void> {
+  async function loadPatches(state: PatchStatus): Promise<void> {
     loading = true;
     try {
       const response = await api.project.getAllPatches(projectId, {
@@ -55,37 +51,33 @@
       error = e;
     } finally {
       loading = false;
-      refresh = false;
     }
   }
 
-  function switchState(e: CustomEvent<PatchStatus>): void {
-    refresh = true;
-    // Update state to be used in the query
-    state = e.detail;
-    // Reset page to 0 to load the first page for a new state
-    page = 0;
-    // Remove all existing patches with old state
-    patches = [];
-    loadPatches();
-    router.updateProjectRoute({
-      search: `state=${state}`,
-    });
+  interface Tab {
+    value: PatchStatus;
+    title: string;
+    disabled: boolean;
   }
 
   const stateOptions: PatchStatus[] = ["draft", "open", "archived", "merged"];
-  const options = stateOptions.map<Tab<PatchStatus>>(s => ({
+  const options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${patchCounters[s]} ${s}`,
     disabled: patchCounters[s] === 0,
   }));
+
   $: showMoreButton =
     !loading &&
     !error &&
     patchCounters[state] &&
     patches.length < patchCounters[state];
 
-  loadPatches();
+  $: {
+    page = 0;
+    patches = [];
+    loadPatches(state);
+  }
 </script>
 
 <style>
@@ -96,9 +88,6 @@
   .patches-list {
     border-radius: var(--border-radius);
     overflow: hidden;
-  }
-  .loader {
-    margin-top: 8rem;
   }
   .more {
     margin-top: 2rem;
@@ -118,47 +107,62 @@
 
 <div class="patches">
   <div style="margin-bottom: 1rem;">
-    <TabBar {options} on:select={switchState} active={state} />
-  </div>
-  <div class="patches-list">
-    {#if refresh}
-      <div class="loader">
-        <Loading center />
-      </div>
-    {:else}
-      {#each patches as patch}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div
-          class="teaser"
-          on:click={() => {
-            router.updateProjectRoute({
-              view: {
-                resource: "patch",
-                params: { patch: patch.id },
-              },
-            });
-          }}>
-          <PatchTeaser {baseUrl} {projectId} {patch} />
-        </div>
-      {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+    <div style="display: flex; gap: 0.5rem;">
+      {#each options as option}
+        {#if option.disabled}
+          <SquareButton
+            size="small"
+            clickable={option.disabled}
+            active={option.value === state}
+            disabled={option.disabled}>
+            {option.title}
+          </SquareButton>
         {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} patches</div>
-            <div slot="body">No patches matched the current filter</div>
-          </Placeholder>
+          <ProjectLink
+            projectParams={{
+              search: `state=${option.value}`,
+            }}>
+            <SquareButton
+              size="small"
+              clickable={option.disabled}
+              active={option.value === state}
+              disabled={option.disabled}>
+              {option.title}
+            </SquareButton>
+          </ProjectLink>
         {/if}
       {/each}
-      <div class="more">
-        {#if loading}
-          <Loading small={page !== 0} center />
-        {/if}
-
-        {#if showMoreButton}
-          <Button variant="foreground" on:click={loadPatches}>More</Button>
-        {/if}
+    </div>
+  </div>
+  <div class="patches-list">
+    {#each patches as patch}
+      <div class="teaser">
+        <PatchTeaser {baseUrl} {projectId} {patch} />
       </div>
+    {:else}
+      {#if error}
+        <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+      {:else if loading}
+        <!-- We already show a loader below. -->
+      {:else}
+        <Placeholder emoji="🍂">
+          <div slot="title">{capitalize(state)} patches</div>
+          <div slot="body">No patches matched the current filter</div>
+        </Placeholder>
+      {/if}
+    {/each}
+  </div>
+  <div class="more">
+    {#if loading}
+      <div style:margin-top={page === 0 ? "8rem" : ""}>
+        <Loading small={page !== 0} center />
+      </div>
+    {/if}
+
+    {#if showMoreButton}
+      <Button variant="foreground" on:click={() => loadPatches(state)}>
+        More
+      </Button>
     {/if}
   </div>
 </div>

@@ -6,6 +6,7 @@
   import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
 
   export let diff: Diff;
+  export let revision: string;
 
   const diffDescription = ({ modified, added, deleted }: Diff): string => {
     const s = [];
@@ -53,12 +54,12 @@
 </div>
 <div class="diff-listing">
   {#each diff.added as file}
-    <FileDiff on:browse {file} mode="added" />
+    <FileDiff on:browse {file} {revision} mode="added" />
   {/each}
   {#each diff.deleted as file}
-    <FileDiff on:browse {file} mode="deleted" />
+    <FileDiff on:browse {file} {revision} mode="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff on:browse {file} />
+    <FileDiff on:browse {file} {revision} />
   {/each}
 </div>

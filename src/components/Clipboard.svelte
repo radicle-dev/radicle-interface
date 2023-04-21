@@ -1,19 +1,30 @@
 <script lang="ts" strictEvents>
+  import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
 
-  import Icon from "@app/components/Icon.svelte";
   import { toClipboard } from "@app/lib/utils";
 
-  const dispatch = createEventDispatcher<{ copied: never }>();
-
-  const copy = () => {
-    toClipboard(text);
-    dispatch("copied");
-  };
+  import Icon from "@app/components/Icon.svelte";
 
   export let text: string;
   export let small = false;
   export let tooltip: string | undefined = undefined;
+
+  const dispatch = createEventDispatcher<{ copied: never }>();
+
+  let icon: "clipboard-small" | "checkmark-small" | "clipboard" | "checkmark" =
+    small ? "clipboard-small" : "clipboard";
+
+  const restoreIcon = debounce(() => {
+    icon = small ? "clipboard-small" : "clipboard";
+  }, 800);
+
+  const copy = () => {
+    toClipboard(text);
+    dispatch("copied");
+    icon = small ? "checkmark-small" : "checkmark";
+    restoreIcon();
+  };
 </script>
 
 <style>
@@ -24,6 +35,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
   }
   .clipboard.small {
     width: 1.5rem;
@@ -46,9 +58,5 @@
   class="clipboard"
   class:small
   on:click|stopPropagation={copy}>
-  {#if small}
-    <Icon name="clipboard-small" />
-  {:else}
-    <Icon name="clipboard" />
-  {/if}
+  <Icon name={icon} />
 </span>

@@ -48,7 +48,7 @@
   .metadata-section {
     margin-bottom: 4rem;
   }
-  .metadata-section-header {
+  .header {
     display: flex;
     gap: 1rem;
     align-items: center;
@@ -56,20 +56,27 @@
     margin-bottom: 0.75rem;
     color: var(--color-foreground-6);
   }
-  .metadata-section-body {
+  .body {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
-  .metadata-section-empty {
+  .empty {
     color: var(--color-foreground-5);
+  }
+
+  .chip-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
   }
 </style>
 
 <div class="metadata-section">
-  <div class="metadata-section-header">
+  <div class="header">
     <span>Assignees</span>
     {#if action === "edit"}
       {#if !edit}
@@ -94,17 +101,19 @@
       {/if}
     {/if}
   </div>
-  <div class="metadata-section-body">
+  <div class="body">
     {#each updatedAssignees as assignee, key (assignee)}
       <Chip
         on:remove={removeAssignee}
         removeable={edit || action === "create"}
         {key}>
-        <Avatar inline nodeId={assignee} />
-        <span>{formatNodeId(assignee)}</span>
+        <div class="chip-content">
+          <Avatar inline nodeId={assignee} />
+          <span>{formatNodeId(assignee)}</span>
+        </div>
       </Chip>
     {:else}
-      <div class="metadata-section-empty">No assignees</div>
+      <div class="empty">No assignees</div>
     {/each}
   </div>
   {#if edit || action === "create"}

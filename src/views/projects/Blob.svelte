@@ -11,8 +11,8 @@
   import { lineNumbersGutter } from "@app/lib/syntax";
   import { updateProjectRoute } from "@app/lib/router";
 
-  import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
   import Readme from "@app/views/projects/Readme.svelte";
+  import SquareButton from "@app/components/SquareButton.svelte";
 
   export let activeRoute: ProjectRoute;
   export let blob: Blob;
@@ -103,7 +103,7 @@
   }
 
   .last-commit {
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-2);
     font-size: var(--font-size-tiny);
@@ -229,12 +229,12 @@
       <div class="right">
         {#if isMarkdown}
           <div class="markdown-toggle">
-            <HeaderToggleLabel
+            <SquareButton
               active={!showMarkdown}
               clickable
               on:click={toggleMarkdown}>
               Raw
-            </HeaderToggleLabel>
+            </SquareButton>
           </div>
         {/if}
         <div class="last-commit" title={lastCommit.author.name} use:twemoji>

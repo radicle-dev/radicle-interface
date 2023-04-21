@@ -1,19 +1,14 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
-
   import * as utils from "@app/lib/utils";
+
   import Dropdown from "@app/components/Dropdown.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let branches: Record<string, string>;
   export let projectDefaultBranch: string;
   export let projectHead: string | undefined = undefined;
   export let revision: string;
-
-  const dispatch = createEventDispatcher<{ branchChanged: string }>();
-  const switchBranch = (name: string) => {
-    dispatch("branchChanged", name);
-  };
 
   let branchLabel: string | null = null;
 
@@ -85,10 +80,13 @@
           {branchLabel}
         </div>
         <svelte:fragment slot="modal">
-          <Dropdown
-            items={branchList}
-            selected={branchLabel}
-            on:select={e => switchBranch(e.detail.value)} />
+          <Dropdown items={branchList} selected={branchLabel}>
+            <div class="branch-item" slot="item" let:item>
+              <ProjectLink projectParams={{ revision: item.value }} on:click>
+                {item.value}
+              </ProjectLink>
+            </div>
+          </Dropdown>
         </svelte:fragment>
       </Floating>
       <div class="hash layout-desktop">

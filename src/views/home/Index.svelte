@@ -1,28 +1,13 @@
 <script lang="ts">
-  import type { BaseUrl, Project } from "@httpd-client";
-
-  import * as router from "@app/lib/router";
   import { config } from "@app/lib/config";
   import { getProjectsFromSeeds } from "@app/lib/search";
   import { loadProjectActivity } from "@app/lib/commit";
   import { twemoji } from "@app/lib/utils";
 
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-
-  function goToProject(project: Project, baseUrl: BaseUrl) {
-    router.push({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        id: project.id,
-        hostnamePort: baseUrl.hostname,
-        peer: undefined,
-        revision: undefined,
-      },
-    });
-  }
 </script>
 
 <style>
@@ -97,14 +82,25 @@
         {#each results as result}
           {#await loadProjectActivity(result.project.id, result.baseUrl) then activity}
             <div class="project">
-              <ProjectCard
-                compact
-                description={result.project.description}
-                head={result.project.head}
-                id={result.project.id}
-                name={result.project.name}
-                {activity}
-                on:click={() => goToProject(result.project, result.baseUrl)} />
+              <Link
+                route={{
+                  resource: "projects",
+                  params: {
+                    view: { resource: "tree" },
+                    id: result.project.id,
+                    hostnamePort: result.baseUrl.hostname,
+                    peer: undefined,
+                    revision: undefined,
+                  },
+                }}>
+                <ProjectCard
+                  compact
+                  description={result.project.description}
+                  head={result.project.head}
+                  id={result.project.id}
+                  name={result.project.name}
+                  {activity} />
+              </Link>
             </div>
           {/await}
         {/each}

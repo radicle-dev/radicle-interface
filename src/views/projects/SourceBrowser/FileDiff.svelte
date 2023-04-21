@@ -1,22 +1,16 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type {
     DiffAddedDeletedModifiedChangeset,
     HunkLine,
   } from "@httpd-client";
 
-  import { createEventDispatcher } from "svelte";
-
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
-
-  const dispatch = createEventDispatcher<{ browse: string }>();
+  import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let file: DiffAddedDeletedModifiedChangeset;
+  export let revision: string;
   export let mode: string | null = null;
-
-  function collapse() {
-    collapsed = !collapsed;
-  }
 
   let collapsed = false;
 
@@ -64,19 +58,19 @@
 </script>
 
 <style>
-  .changeset-file {
+  .wrapper {
     border: 1px solid var(--color-foreground-4);
     border-radius: var(--border-radius-small);
     margin-bottom: 2rem;
     line-height: 1.5rem;
   }
-  .changeset-file header {
-    cursor: pointer;
-    height: 3rem;
-    display: flex;
+  .header {
     align-items: center;
     background: none;
     border-radius: 0;
+    display: flex;
+    flex-direction: row;
+    height: 3rem;
     padding: 1rem;
   }
   main {
@@ -84,14 +78,7 @@
     border-top: 1px dashed var(--color-foreground-4);
     background: var(--color-background-1);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
-  }
-  .changeset-file main {
     overflow-x: auto;
-  }
-  header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
   }
   .actions {
     display: flex;
@@ -105,69 +92,82 @@
     text-align: center;
     background-color: var(--color-foreground-2);
   }
-  table.diff {
+  .browse {
+    margin-left: auto;
+    cursor: pointer;
+  }
+  .expand-button {
+    cursor: pointer;
+    user-select: none;
+    margin-right: 0.5rem;
+  }
+  .diff {
     font-family: var(--font-family-monospace);
     table-layout: fixed;
     border-collapse: collapse;
     margin: 0.5rem 0;
   }
-  tr.diff-line {
+  .diff-line {
     vertical-align: top;
   }
-  tr.diff-line[data-type="+"] > * {
+  .diff-line[data-type="+"] > * {
     color: var(--color-positive);
   }
-  tr.diff-line[data-type="-"] > * {
+  .diff-line[data-type="-"] > * {
     color: var(--color-negative);
   }
-  td.diff-line-number {
+  .diff-line-number {
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
   }
-  td.diff-line-number[data-type="+"],
-  td.diff-line-type[data-type="+"] {
+  .diff-line-number[data-type="+"],
+  .diff-line-type[data-type="+"] {
     background-color: var(--color-positive-2);
     color: var(--color-positive-6);
   }
-  td.diff-line-number[data-type="-"],
-  td.diff-line-type[data-type="-"] {
+  .diff-line-number[data-type="-"],
+  .diff-line-type[data-type="-"] {
     background-color: var(--color-negative-2);
     color: var(--color-negative-6);
   }
-  td.diff-line-number.left {
+  .diff-line-number.left {
     padding: 0 0.5rem 0 0.75rem;
   }
-  td.diff-line-number.right {
+  .diff-line-number.right {
     padding: 0 0.75rem 0 0.5rem;
   }
-  td.diff-line-content {
+  .diff-line-content {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     width: 100%;
     padding-right: 0.5rem;
   }
-  td.diff-line-type {
+  .diff-line-type {
     text-align: center;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
-  td.diff-expand-header {
+  .diff-expand-header {
     padding-left: 0.5rem;
     color: var(--color-foreground-5);
   }
-  td.diff-line-number {
+  .diff-line-number {
     color: var(--color-foreground-5);
-  }
-  .browse {
-    display: flex;
   }
 </style>
 
-<article id={file.path} class="changeset-file">
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <header class="file-header" on:click={collapse}>
+<div id={file.path} class="wrapper">
+  <header class="header">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="expand-button" on:click={() => (collapsed = !collapsed)}>
+      {#if collapsed}
+        <Icon name="chevron-right" />
+      {:else}
+        <Icon name="chevron-down" />
+      {/if}
+    </div>
     <div class="actions">
       <p class="txt-regular">{file.path}</p>
       {#if mode === "added"}
@@ -176,12 +176,16 @@
         <Badge variant="negative">deleted</Badge>
       {/if}
     </div>
-    <div
-      class="browse clickable"
-      on:click|stopPropagation={() => dispatch("browse", file.path)}>
-      <span title="View file" style="transform: scale(1.25);">
+    <div class="browse" title="View file">
+      <ProjectLink
+        projectParams={{
+          view: { resource: "tree" },
+          path: file.path,
+          revision,
+          search: undefined,
+        }}>
         <Icon name="browse" />
-      </span>
+      </ProjectLink>
     </div>
   </header>
   {#if !collapsed}
@@ -216,4 +220,4 @@
       {/if}
     </main>
   {/if}
-</article>
+</div>

@@ -1,16 +1,29 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { ProjectsParams } from "@app/lib/router/definitions";
-  import { updateProjectRoute, projectLinkHref } from "@app/lib/router";
+  import { createEventDispatcher } from "svelte";
+
+  import {
+    projectLinkHref,
+    updateProjectRoute,
+    useDefaultNavigation,
+  } from "@app/lib/router";
 
   export let projectParams: Partial<ProjectsParams>;
-  export let id: string | undefined = undefined;
+  export let title: string | undefined = undefined;
+
+  const dispatch = createEventDispatcher<{ click: never }>();
+
+  function navigateToRoute(event: MouseEvent): void {
+    if (useDefaultNavigation(event)) {
+      return;
+    }
+
+    event.preventDefault();
+    updateProjectRoute(projectParams);
+    dispatch("click");
+  }
 </script>
 
-<a
-  {id}
-  on:click|preventDefault={() => {
-    updateProjectRoute(projectParams);
-  }}
-  href={projectLinkHref(projectParams)}>
+<a {title} on:click={navigateToRoute} href={projectLinkHref(projectParams)}>
   <slot />
 </a>
