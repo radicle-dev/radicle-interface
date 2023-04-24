@@ -1,0 +1,17 @@
+{
+  "id": "radicle-interface",
+  "name": "Radicle Interface",
+  "short_name": "Radicle",
+  "description": "Interact with Radicle.",
+  "start_url": "/",
+  "theme_color": "#0e171f",
+  "icons": [
+    {
+      "src": "/images/radicle-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    { "src": "/radicle.svg", "type": "image/svg", "sizes": "44x44" }
+  ],
+  "display": "standalone"
+}

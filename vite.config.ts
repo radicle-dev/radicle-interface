@@ -17,9 +17,7 @@ export default defineConfig({
   },
   plugins: [
     svelte({
-      compilerOptions: {
-        dev: process.env.NODE_ENV !== "production",
-      },
+      compilerOptions: { dev: process.env.NODE_ENV !== "production" },
     }),
     configureDevServer(),
     configurePreviewServer(),
