@@ -72,14 +72,14 @@ const codeCommentSchema = strictObject({
 type Verdict = "accept" | "reject";
 
 export interface Review {
-  verdict?: Verdict;
+  verdict?: Verdict | null;
   comment?: string;
   inline: CodeComment[];
   timestamp: number;
 }
 
 const reviewSchema = strictObject({
-  verdict: optional(union([literal("accept"), literal("reject")])),
+  verdict: optional(union([literal("accept"), literal("reject")])).nullable(),
   comment: optional(string()),
   inline: array(codeCommentSchema),
   timestamp: number(),

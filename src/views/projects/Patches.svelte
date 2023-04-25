@@ -9,14 +9,15 @@
   import type { BaseUrl } from "@httpd-client";
 
   import * as router from "@app/lib/router";
+  import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
 
+  import Button from "@app/components/Button.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Loading from "@app/components/Loading.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import capitalize from "lodash/capitalize";
   import TabBar from "@app/components/TabBar.svelte";
-  import Loading from "@app/components/Loading.svelte";
-  import Button from "@app/components/Button.svelte";
 
   export let projectId: string;
   export let state: PatchStatus;
@@ -140,10 +141,14 @@
           <PatchTeaser {baseUrl} {projectId} {patch} />
         </div>
       {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">{capitalize(state)} patches</div>
-          <div slot="body">No patches matched the current filter</div>
-        </Placeholder>
+        {#if error}
+          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+        {:else}
+          <Placeholder emoji="🍂">
+            <div slot="title">{capitalize(state)} patches</div>
+            <div slot="body">No patches matched the current filter</div>
+          </Placeholder>
+        {/if}
       {/each}
       <div class="more">
         {#if loading}

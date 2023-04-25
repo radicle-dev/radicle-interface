@@ -100,7 +100,7 @@
     }
   }
 
-  function formatVerdict(verdict?: string) {
+  function formatVerdict(verdict?: string | null) {
     switch (verdict) {
       case "accept":
         return "accepted this revision";

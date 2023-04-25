@@ -15,12 +15,13 @@
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
 
+  import Button from "@app/components/Button.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import HeaderToggleLabel from "@app/views/projects/HeaderToggleLabel.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
+  import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import TabBar from "@app/components/TabBar.svelte";
-  import Loading from "@app/components/Loading.svelte";
-  import Button from "@app/components/Button.svelte";
 
   export let projectId: string;
   export let state: IssueStatus;
@@ -161,10 +162,14 @@
           <IssueTeaser {issue} />
         </div>
       {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">{capitalize(state)} issues</div>
-          <div slot="body">No issues matched the current filter</div>
-        </Placeholder>
+        {#if error}
+          <ErrorMessage message="Couldn't load issues." stackTrace={error} />
+        {:else}
+          <Placeholder emoji="🍂">
+            <div slot="title">{capitalize(state)} issues</div>
+            <div slot="body">No issues matched the current filter</div>
+          </Placeholder>
+        {/if}
       {/each}
       <div class="more">
         {#if loading}
