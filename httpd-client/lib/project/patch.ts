@@ -73,14 +73,14 @@ type Verdict = "accept" | "reject";
 
 export interface Review {
   verdict?: Verdict | null;
-  comment?: string;
+  comment?: string | null;
   inline: CodeComment[];
   timestamp: number;
 }
 
 const reviewSchema = strictObject({
-  verdict: optional(union([literal("accept"), literal("reject")])).nullable(),
-  comment: optional(string()),
+  verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
+  comment: optional(string().nullable()),
   inline: array(codeCommentSchema),
   timestamp: number(),
 }) satisfies ZodSchema<Review>;
