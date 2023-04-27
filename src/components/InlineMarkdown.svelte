@@ -6,7 +6,7 @@
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
-  export let fontSize: "small" | "medium" = "small";
+  export let fontSize: "tiny" | "small" | "medium" = "small";
 
   marked.use({
     renderer,
@@ -34,6 +34,7 @@
   class="markdown"
   use:twemoji
   class:txt-medium={fontSize === "medium"}
-  class:txt-small={fontSize === "small"}>
+  class:txt-small={fontSize === "small"}
+  class:txt-tiny={fontSize === "tiny"}>
   {@html render(content)}
 </span>

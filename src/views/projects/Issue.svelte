@@ -14,6 +14,7 @@
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "./Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import Thread from "@app/components/Thread.svelte";
@@ -147,6 +148,7 @@
 
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
+    .slice(1) // Skip the first comment, which is the issue description
     .filter(comment => !comment.replyTo)
     .map(thread => {
       return {
@@ -168,6 +170,9 @@
     margin-bottom: 4.5rem;
   }
   .metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
@@ -180,6 +185,15 @@
     justify-content: flex-end;
     margin: 0 0 2.5rem 0;
     gap: 1rem;
+  }
+  .author {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+  .comments {
+    margin: 1rem 0;
   }
 
   @media (max-width: 960px) {
@@ -212,47 +226,50 @@
             {issue.state.reason}
           </Badge>
         {/if}
-        <Authorship
-          timestamp={issue.discussion[0].timestamp}
-          authorId={issue.author.id}
-          caption="opened this issue" />
       </svelte:fragment>
+      <div slot="description">
+        <Markdown
+          content={issue.discussion[0].body}
+          rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+      </div>
+      <div class="author" slot="author">
+        opened by <Authorship authorId={issue.author.id} />
+        {utils.formatTimestamp(issue.discussion[0].timestamp)}
+      </div>
     </CobHeader>
-    <div>
-      {#each threads as thread, index (thread.root.id)}
-        <Thread
-          {thread}
-          {rawPath}
-          isDescription={index === 0}
-          on:reply={createReply} />
+    <div class="comments">
+      {#each threads as thread (thread.root.id)}
+        <Thread {thread} {rawPath} on:reply={createReply} />
       {/each}
-      {#if $sessionStore}
-        <Textarea
-          resizable
-          on:submit={() => {
-            createComment(commentBody);
-            commentBody = "";
-          }}
-          bind:value={commentBody}
-          placeholder="Leave your comment" />
-        <div class="actions txt-small">
-          <CobStateButton
-            {items}
-            {selectedItem}
-            state={issue.state}
-            on:saveStatus={saveStatus} />
-          <Button
-            variant="secondary"
-            size="small"
-            disabled={!commentBody}
-            on:click={() => {
+      <div style:margin-top="1rem">
+        {#if $sessionStore}
+          <Textarea
+            resizable
+            on:submit={() => {
               createComment(commentBody);
               commentBody = "";
-            }}>
-            Comment
-          </Button>
-        </div>
-      {/if}
+            }}
+            bind:value={commentBody}
+            placeholder="Leave your comment" />
+          <div class="actions txt-small">
+            <CobStateButton
+              {items}
+              {selectedItem}
+              state={issue.state}
+              on:saveStatus={saveStatus} />
+            <Button
+              variant="secondary"
+              size="small"
+              disabled={!commentBody}
+              on:click={() => {
+                createComment(commentBody);
+                commentBody = "";
+              }}>
+              Comment
+            </Button>
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
   <div class="metadata">

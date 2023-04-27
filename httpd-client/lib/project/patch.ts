@@ -85,7 +85,7 @@ const reviewSchema = strictObject({
   timestamp: number(),
 }) satisfies ZodSchema<Review>;
 
-interface Revision {
+export interface Revision {
   id: string;
   description: string;
   base: string;

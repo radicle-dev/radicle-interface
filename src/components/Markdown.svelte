@@ -280,6 +280,10 @@
   .markdown :global(.list-content) {
     margin: 1rem 0;
   }
+  /* Allows the parent to specify its own bottom margin */
+  .markdown :global(:last-child) {
+    margin-bottom: 0;
+  }
   .markdown :global(li > ul) {
     margin-bottom: 0rem;
   }

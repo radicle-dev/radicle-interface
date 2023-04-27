@@ -20,13 +20,12 @@
 
 <style>
   .comment {
-    margin-bottom: 1rem;
     display: flex;
   }
   .card {
     flex: 1;
-    border: 1px solid var(--color-foreground-4);
     border-radius: var(--border-radius);
+    background-color: var(--color-foreground-1);
   }
   .card-header {
     display: flex;
@@ -37,7 +36,7 @@
   }
   .card-body {
     font-size: var(--font-size-small);
-    padding: 0rem 1rem 1rem 1rem;
+    padding: 0 1rem 1rem 1rem;
   }
   .actions {
     display: flex;
@@ -52,12 +51,7 @@
 <div class="comment" {id}>
   <div class="card">
     <div class="card-header">
-      <div class="layout-desktop">
-        <Authorship {caption} {authorId} {timestamp} />
-      </div>
-      <div class="layout-mobile">
-        <Authorship {authorId} {timestamp} />
-      </div>
+      <Authorship {caption} {authorId} {timestamp} />
       <div class="actions">
         {#if showReplyIcon}
           <Button

@@ -8,7 +8,7 @@
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
   export let action: "create" | "edit" | "view" = "view";
-  export let edit: boolean = false;
+  export let editInProgress: boolean = false;
   export let tags: string[] = [];
 
   let updatedTags: string[] = tags;
@@ -42,9 +42,6 @@
 </script>
 
 <style>
-  .metadata-section {
-    margin-bottom: 4rem;
-  }
   .metadata-section-header {
     display: flex;
     gap: 1rem;
@@ -70,28 +67,28 @@
   }
 </style>
 
-<div class="metadata-section">
+<div>
   <div class="metadata-section-header">
     <span>Tags</span>
     {#if action === "edit"}
-      {#if !edit}
+      {#if editInProgress}
         <Button
           size="tiny"
           variant="text"
           on:click={() => {
-            edit = !edit;
+            dispatch("save", updatedTags);
+            editInProgress = !editInProgress;
           }}>
-          edit
+          save
         </Button>
       {:else}
         <Button
           size="tiny"
           variant="text"
           on:click={() => {
-            dispatch("save", updatedTags);
-            edit = !edit;
+            editInProgress = !editInProgress;
           }}>
-          save
+          edit
         </Button>
       {/if}
     {/if}
@@ -100,7 +97,7 @@
     {#each updatedTags as tag, key (tag)}
       <Chip
         on:remove={removeTag}
-        removeable={edit || action === "create"}
+        removeable={editInProgress || action === "create"}
         {key}>
         <div class="tag">{tag}</div>
       </Chip>
@@ -108,7 +105,7 @@
       <div class="metadata-section-empty">No tags</div>
     {/each}
   </div>
-  {#if edit || action === "create"}
+  {#if editInProgress || action === "create"}
     <div style:margin-bottom="1rem">
       <TextInput
         bind:value={inputValue}

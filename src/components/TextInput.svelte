@@ -14,8 +14,6 @@
   export let disabled: boolean = false;
   export let loading: boolean = false;
   export let valid: boolean = false;
-  // Changes the background color to the background of the page
-  export let transparent: boolean = false;
   export let validationMessage: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
@@ -73,9 +71,6 @@
   input[disabled] {
     color: var(--color-secondary);
     cursor: not-allowed;
-  }
-  .transparent {
-    background: var(--color-background) !important;
   }
   .regular {
     border: 1px solid var(--color-secondary);
@@ -148,7 +143,6 @@
     </div>
 
     <input
-      class:transparent
       class:regular={variant === "regular"}
       class:form={variant === "form"}
       style:padding-left={leftContainerWidth

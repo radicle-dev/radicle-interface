@@ -153,7 +153,7 @@ const remoteSchema = strictObject({
 
 const remotesSchema = array(remoteSchema) satisfies ZodSchema<Remote[]>;
 
-interface DiffResponse {
+export interface DiffResponse {
   commits: CommitHeader[];
   diff: Diff;
 }

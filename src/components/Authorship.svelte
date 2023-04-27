@@ -15,7 +15,7 @@
   .authorship {
     display: inline-flex;
     align-items: center;
-    color: var(--color-foreground-6);
+    color: inherit;
     padding: 0.125rem 0;
     gap: 0.25rem;
   }
@@ -29,7 +29,7 @@
   }
 </style>
 
-<span class="authorship txt-tiny" title={relativeTimestamp(timestamp)}>
+<span class="authorship txt-tiny">
   {#if !noAvatar}
     <Avatar inline nodeId={authorId} />
   {/if}
@@ -39,14 +39,16 @@
   <span class="id layout-mobile">
     {formatNodeId(authorId).replace("did:key:", "")}
   </span>
-  <span class="body">
-    {#if !caption}
-      <slot />
-    {:else}
+  {#if !caption}
+    <slot />
+  {:else}
+    <span class="body">
       {caption}
-    {/if}
-  </span>
+    </span>
+  {/if}
   {#if timestamp}
-    {formatTimestamp(timestamp)}
+    <span title={relativeTimestamp(timestamp)}>
+      {formatTimestamp(timestamp)}
+    </span>
   {/if}
 </span>

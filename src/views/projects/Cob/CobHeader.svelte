@@ -1,8 +1,7 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  import { formatObjectId } from "@app/lib/utils";
-
+  import * as utils from "@app/lib/utils";
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
@@ -19,76 +18,58 @@
 
 <style>
   header {
-    background: var(--color-foreground-1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
     border-radius: var(--border-radius);
-    margin-bottom: 1rem;
+    border: 1px solid var(--color-foreground-3);
     padding: 1rem;
-  }
-  .summary {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding-right: 0.5rem;
-  }
-  .summary-title {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0.5rem;
-    width: 90%;
-  }
-  .id {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: var(--font-size-tiny);
-    font-family: var(--font-family-monospace);
-    color: var(--color-foreground-6);
   }
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .summary-state {
+  .subtitle {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
-    border-radius: var(--border-radius);
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: var(--font-size-tiny);
+    font-family: var(--font-family-monospace);
+    color: var(--color-foreground-6);
+  }
+  .summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .id {
+    display: flex;
+    align-items: center;
+  }
+  .description {
+    font-size: var(--font-size-small);
+    margin-top: 1rem;
   }
 </style>
 
 <header>
-  <div class="summary">
-    <div class="summary-title txt-medium">
-      {#if editable}
-        <TextInput transparent variant="form" bind:value={title} />
-      {:else}
-        {#if title}
-          <div class="title">
-            <InlineMarkdown fontSize="medium" content={title} />
-          </div>
-        {:else}
-          <span class="txt-missing">No title</span>
-        {/if}
-        <slot name="revision" />
-        {#if id}
-          <div class="id">
-            <div class="layout-desktop">{id}</div>
-            <div class="layout-mobile">
-              {formatObjectId(id)}
-            </div>
-            <Clipboard small text={id} />
-          </div>
-        {/if}
-      {/if}
-    </div>
+  <div class="summary txt-medium">
+    {#if editable}
+      <TextInput variant="form" placeholder="Title" bind:value={title} />
+    {:else if title}
+      <div class="title">
+        <InlineMarkdown fontSize="medium" content={title} />
+      </div>
+    {:else}
+      <span class="txt-missing">No title</span>
+    {/if}
     {#if action === "edit"}
       <Button
-        variant="text"
+        variant="foreground"
         size="small"
         on:click={() => {
           editable = !editable;
@@ -102,7 +83,17 @@
       </Button>
     {/if}
   </div>
-  <div class="summary-state">
+  <div class="subtitle">
     <slot name="state" />
+    {#if id}
+      <div class="id">
+        {utils.formatObjectId(id)}
+        <Clipboard text={id} small />
+      </div>
+    {/if}
+    <slot name="author" />
+  </div>
+  <div class="description">
+    <slot name="description" />
   </div>
 </header>

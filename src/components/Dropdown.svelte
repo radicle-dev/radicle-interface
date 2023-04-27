@@ -57,7 +57,7 @@
       on:click={() => onSelect(item)}
       title={item.title}>
       <slot name="item" {item}>
-        {item.value}
+        {item.title}
         {#if item.badge}
           <Badge variant="primary">{item.badge}</Badge>
         {/if}

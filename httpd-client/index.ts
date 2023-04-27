@@ -1,5 +1,11 @@
 import type { BaseUrl } from "./lib/fetcher.js";
-import type { Blob, Project, Remote, Tree } from "./lib/project.js";
+import type {
+  Blob,
+  Project,
+  Remote,
+  Tree,
+  DiffResponse,
+} from "./lib/project.js";
 import type { Comment } from "./lib/project/comment.js";
 import type {
   Commit,
@@ -9,7 +15,13 @@ import type {
   HunkLine,
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
-import type { Merge, Patch, PatchState, Review } from "./lib/project/patch.js";
+import type {
+  Merge,
+  Patch,
+  PatchState,
+  Review,
+  Revision,
+} from "./lib/project/patch.js";
 import type { RequestOptions, Method } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
@@ -27,6 +39,7 @@ export type {
   CommitHeader,
   Diff,
   DiffAddedDeletedModifiedChangeset,
+  DiffResponse,
   HunkLine,
   Issue,
   IssueState,
@@ -36,6 +49,7 @@ export type {
   Project,
   Remote,
   Review,
+  Revision,
   Tree,
 };
 

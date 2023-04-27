@@ -1,6 +1,5 @@
-<script lang="ts">
-  import type { BaseUrl, Comment, Merge, Patch, Review } from "@httpd-client";
-  import type { Variant } from "@app/components/Badge.svelte";
+<script lang="ts" context="module">
+  import type { Comment, Review, Revision, Merge } from "@httpd-client";
 
   interface Thread {
     root: Comment;
@@ -8,8 +7,14 @@
   }
 
   interface TimelineReview {
-    inner: [string, Review];
+    inner: [string, string, Review];
     type: "review";
+    timestamp: number;
+  }
+
+  interface TimelineRevision {
+    inner: Revision;
+    type: "revision";
     timestamp: number;
   }
 
@@ -25,32 +30,44 @@
     timestamp: number;
   }
 
-  import capitalize from "lodash/capitalize";
+  export type Timeline =
+    | TimelineMerge
+    | TimelineReview
+    | TimelineRevision
+    | TimelineThread;
+</script>
 
-  import * as router from "@app/lib/router";
+<script lang="ts">
+  import type { BaseUrl, Patch } from "@httpd-client";
+  import type { Variant } from "@app/components/Badge.svelte";
+
   import * as utils from "@app/lib/utils";
+  import * as router from "@app/lib/router";
+  import { capitalize } from "lodash";
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Changeset from "./SourceBrowser/Changeset.svelte";
+  import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CommentComponent from "@app/components/Comment.svelte";
-  import CommitTeaser from "./Commit/CommitTeaser.svelte";
+  import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
+  import Placeholder from "@app/components/Placeholder.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
+  import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
-  import TagInput from "./Cob/TagInput.svelte";
-  import ThreadComponent from "@app/components/Thread.svelte";
+  import TagInput from "@app/views/projects/Cob/TagInput.svelte";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let projectHead: string;
-  export let revision: string | undefined = undefined;
-  export let currentTab: "activity" | "commits";
+  export let revision: string;
+  export let currentTab: "activity" | "commits" | "files";
 
   const api = new HttpdClient(baseUrl);
 
@@ -75,6 +92,19 @@
       patch = await api.project.getPatchById(projectId, patch.id);
     }
   }
+  function badgeColor(status: string): Variant {
+    if (status === "draft") {
+      return "foreground";
+    } else if (status === "open") {
+      return "positive";
+    } else if (status === "archived") {
+      return "caution";
+    } else if (status === "merged") {
+      return "primary";
+    } else {
+      return "foreground";
+    }
+  }
 
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
     if ($sessionStore) {
@@ -92,80 +122,63 @@
     }
   }
 
-  function formatVerdict(verdict?: string | null) {
-    switch (verdict) {
-      case "accept":
-        return "accepted this revision";
-      case "reject":
-        return "rejected this revision";
-      default:
-        return "left a comment";
-    }
-  }
-
   const action: "create" | "edit" | "view" =
     $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
-
-  // Reactive due to eventual changes in patch.revisions
-  $: enumeratedRevisions = patch.revisions.map((r, i) => [r, i] as const);
-  $: currentRevisionTuple =
-    enumeratedRevisions.find(([rev]) => rev.id === revision) ||
-    enumeratedRevisions[enumeratedRevisions.length - 1];
-  $: [currentRevision, currentRevisionIndex] = currentRevisionTuple;
-  $: options = ["activity", "commits", "files"].map(o => ({
+  const options = ["activity", "commits", "files"].map(o => ({
     value: o,
     title: capitalize(o),
     disabled: false,
   }));
-  $: reviews = currentRevision.reviews.map<TimelineReview>(
-    ([author, review]) => ({
-      timestamp: review.timestamp,
-      type: "review",
-      inner: [author, review],
-    }),
-  );
-  $: merges = currentRevision.merges.map<TimelineMerge>(inner => ({
-    timestamp: inner.timestamp,
-    type: "merge",
-    inner,
-  }));
-  $: threads = currentRevision.discussions
-    .filter(comment => !comment.replyTo)
-    .map<TimelineThread>(
-      thread => ({
-        timestamp: thread.timestamp,
-        type: "thread",
-        inner: {
-          root: thread,
-          replies: currentRevision.discussions
-            .filter(comment => comment.replyTo === thread.id)
-            .sort((a, b) => a.timestamp - b.timestamp),
-        },
-      }),
-      [],
-    );
-  $: timeline = [...reviews, ...merges, ...threads].sort(
-    (a, b) => a.timestamp - b.timestamp,
-  );
-  $: diffPromise = api.project.getDiff(
-    projectId,
-    currentRevision.base,
-    currentRevision.oid,
-  );
 
-  function badgeColor(status: string): Variant {
-    if (status === "draft") {
-      return "foreground";
-    } else if (status === "open") {
-      return "positive";
-    } else if (status === "archived") {
-      return "caution";
-    } else if (status === "merged") {
-      return "primary";
-    } else {
-      return "foreground";
-    }
-  }
+  const currentRevision =
+    patch.revisions.find(r => r.id === revision) || patch.revisions[0];
+  $: timelineTuple = patch.revisions.map<
+    [
+      {
+        revisionId: string;
+        revisionTimestamp: number;
+        revisionBase: string;
+        revisionOid: string;
+      },
+      Timeline[],
+    ]
+  >(rev => [
+    {
+      revisionId: rev.id,
+      revisionTimestamp: rev.timestamp,
+      revisionBase: rev.base,
+      revisionOid: rev.oid,
+    },
+    [
+      ...rev.reviews.map<TimelineReview>(([author, review]) => ({
+        timestamp: review.timestamp,
+        type: "review",
+        inner: [rev.id, author, review],
+      })),
+      ...rev.merges.map<TimelineMerge>(inner => ({
+        timestamp: inner.timestamp,
+        type: "merge",
+        inner,
+      })),
+      ...rev.discussions
+        .filter(comment => !comment.replyTo)
+        .map<TimelineThread>(thread => ({
+          timestamp: thread.timestamp,
+          type: "thread",
+          inner: {
+            root: thread,
+            replies: rev.discussions
+              .filter(comment => comment.replyTo === thread.id)
+              .sort((a, b) => a.timestamp - b.timestamp),
+          },
+        })),
+      {
+        type: "revision",
+        timestamp: rev.timestamp,
+        inner: rev,
+      } as TimelineRevision,
+    ].sort((a, b) => a.timestamp - b.timestamp),
+  ]);
 </script>
 
 <style>
@@ -176,19 +189,31 @@
     margin-bottom: 4.5rem;
   }
   .metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;
   }
-  .action {
-    margin: 1rem;
-    color: var(--color-foreground-5);
-  }
   .commit-list {
     border-radius: var(--border-radius);
     overflow: hidden;
     margin-top: 1rem;
+  }
+  .tab-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+  }
+  .author {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
   }
 
   @media (max-width: 1092px) {
@@ -210,25 +235,78 @@
 <div class="patch">
   <div>
     <CobHeader id={patch.id} title={patch.title}>
-      <span slot="revision" class="txt-monospace txt-tiny">
+      <svelte:fragment slot="state">
+        <Badge variant={badgeColor(patch.state.status)}>
+          {patch.state.status}
+        </Badge>
+      </svelte:fragment>
+      <svelte:fragment slot="description">
+        {#if patch.description}
+          <Markdown
+            content={patch.description}
+            rawPath={utils.getRawBasePath(
+              projectId,
+              baseUrl,
+              currentRevision.oid,
+            )} />
+        {:else}
+          <span class="txt-missing">No description available</span>
+        {/if}
+      </svelte:fragment>
+      <div class="author" slot="author">
+        opened by <Authorship authorId={patch.author.id} />
+        {utils.formatTimestamp(patch.revisions[0].timestamp)}
+      </div>
+    </CobHeader>
+
+    <div class="tab-line">
+      <div style="display: flex; gap: 0.5rem;">
+        {#each options as option}
+          {#if !option.disabled}
+            <ProjectLink
+              projectParams={{
+                search: `tab=${option.value}`,
+              }}>
+              <SquareButton
+                size="small"
+                clickable={option.disabled}
+                active={option.value === currentTab}
+                disabled={option.disabled}>
+                {option.title}
+              </SquareButton>
+            </ProjectLink>
+          {:else}
+            <SquareButton
+              size="small"
+              clickable={option.disabled}
+              active={option.value === currentTab}
+              disabled={option.disabled}>
+              {option.title}
+            </SquareButton>
+          {/if}
+        {/each}
+      </div>
+
+      {#if currentTab !== "activity"}
         <Floating disabled={patch.revisions.length === 1}>
           <svelte:fragment slot="toggle">
             <SquareButton
+              size="small"
               clickable={patch.revisions.length > 1}
               disabled={patch.revisions.length === 1}>
-              Revision {currentRevisionIndex}
+              Revision {utils.formatObjectId(currentRevision.id)}
             </SquareButton>
           </svelte:fragment>
           <svelte:fragment slot="modal">
             <Dropdown
-              items={enumeratedRevisions.map(([r, i]) => {
+              items={patch.revisions.map(r => {
                 return {
-                  title: `Revision ${i} (${utils.formatObjectId(r.id)})`,
+                  title: `Revision ${utils.formatObjectId(r.id)}`,
                   value: r.id,
                   badge: null,
                 };
               })}
-              selected={currentRevision.toString()}
+              selected={currentRevision.id}
               on:select={({ detail: item }) => {
                 router.updateProjectRoute({
                   view: {
@@ -243,121 +321,43 @@
             </Dropdown>
           </svelte:fragment>
         </Floating>
-      </span>
-      <svelte:fragment slot="state">
-        <Badge variant={badgeColor(patch.state.status)}>
-          {patch.state.status}
-        </Badge>
-        <div class="layout-desktop">
-          <Authorship
-            timestamp={patch.revisions[0].timestamp}
-            authorId={patch.author.id}
-            caption="opened this patch" />
-        </div>
-        <div class="layout-mobile">
-          <Authorship authorId={patch.author.id} />
-        </div>
-      </svelte:fragment>
-    </CobHeader>
-    <div style="display: flex; gap: 0.5rem;">
-      {#each options as option}
-        {#if !option.disabled}
-          <ProjectLink
-            projectParams={{
-              search: `tab=${option.value}`,
-            }}>
-            <SquareButton
-              size="small"
-              clickable={option.disabled}
-              active={option.value === currentTab}
-              disabled={option.disabled}>
-              {option.title}
-            </SquareButton>
-          </ProjectLink>
-        {:else}
-          <SquareButton
-            size="small"
-            clickable={option.disabled}
-            active={option.value === currentTab}
-            disabled={option.disabled}>
-            {option.title}
-          </SquareButton>
-        {/if}
-      {/each}
+      {/if}
     </div>
     {#if currentTab === "activity"}
-      <div style:margin-top="1rem">
-        <div class="txt-tiny">
-          <CommentComponent
-            caption="created this revision"
-            authorId={patch.author.id}
-            timestamp={currentRevision.timestamp}
-            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-            body={currentRevisionIndex === 0
-              ? patch.description
-              : currentRevision.description} />
-        </div>
-        {#each timeline as element}
-          {#if element.type === "thread"}
-            <!-- TODO: Implement reply creation and comment editing -->
-            <ThreadComponent
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              isDescription={false}
-              thread={element.inner}
-              on:reply={createReply}
-              on:select={({ detail: index }) => (currentRevision = index)} />
-          {:else if element.type === "merge"}
-            <div class="action layout-desktop txt-tiny">
-              <Authorship
-                authorId={element.inner.node}
-                timestamp={element.timestamp}>
-                merged
-                {utils.formatCommit(element.inner.commit)}
-              </Authorship>
-            </div>
-            <div class="action layout-mobile txt-tiny">
-              <Authorship authorId={element.inner.node}>
-                merged
-                {utils.formatCommit(element.inner.commit)}
-              </Authorship>
-            </div>
-          {:else if element.type === "review"}
-            <!-- TODO: Implement inline code comments -->
-            {@const [author, review] = element.inner}
-            <div class="action layout-desktop txt-tiny">
-              <Authorship authorId={author} timestamp={element.timestamp}>
-                {formatVerdict(review.verdict)}
-              </Authorship>
-            </div>
-            <div class="action layout-mobile txt-tiny">
-              <Authorship authorId={author}>
-                {formatVerdict(review.verdict)}
-              </Authorship>
-            </div>
-            {#if review.comment}
-              <CommentComponent
-                caption="left a comment"
-                authorId={author}
-                timestamp={review.timestamp}
-                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-                body={review.comment} />
-            {/if}
-          {/if}
-        {/each}
-      </div>
+      {#each timelineTuple as [revision, timelines], index}
+        <RevisionComponent
+          {baseUrl}
+          {projectId}
+          {timelines}
+          {projectHead}
+          {...revision}
+          on:reply={createReply}
+          patchId={patch.id}
+          authorId={patch.author.id}
+          expanded={index === patch.revisions.length - 1} />
+      {:else}
+        <Placeholder emoji="🍂">
+          <div slot="title">No activity</div>
+          <div slot="body">No activity on this patch yet</div>
+        </Placeholder>
+      {/each}
     {:else if currentTab === "commits"}
-      {#await diffPromise then diff}
+      {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
         <div class="commit-list">
           {#each diff.commits as commit}
             <CommitTeaser {commit} />
           {/each}
         </div>
+      {:catch e}
+        <ErrorMessage message="Not able to load commits." stackTrace={e} />
       {/await}
     {:else if currentTab === "files"}
-      {#await diffPromise then diff}
+      {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
         <div style:margin-top="1rem">
           <Changeset revision={currentRevision.oid} diff={diff.diff} />
         </div>
+      {:catch e}
+        <ErrorMessage message="Not able to load files diff." stackTrace={e} />
       {/await}
     {/if}
   </div>

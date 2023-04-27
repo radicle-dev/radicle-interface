@@ -15,8 +15,9 @@
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import Comment from "@app/components/Comment.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
 
   export let session: StoredSession;
   export let projectId: string;
@@ -32,7 +33,7 @@
       : "view";
 
   let issueTitle = "";
-  let issueText = "";
+  let issueText: string | undefined = undefined;
   let assignees: string[] = [];
   let tags: string[] = [];
 
@@ -44,7 +45,7 @@
         projectId,
         {
           title: issueTitle,
-          description: issueText,
+          description: issueText ?? "",
           assignees: utils.stripDidPrefix(assignees),
           tags: tags,
         },
@@ -82,6 +83,9 @@
     margin-top: 1rem;
   }
   .metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
     border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
@@ -90,6 +94,11 @@
   .editor {
     flex: 2;
     padding-right: 1rem;
+  }
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   @media (max-width: 960px) {
     main {
@@ -100,6 +109,14 @@
     .form {
       grid-template-columns: minmax(0, 1fr);
     }
+    .editor {
+      padding-right: 0;
+    }
+    .metadata {
+      margin-left: 0;
+      padding-left: 0;
+      gap: 2rem;
+    }
   }
 </style>
 
@@ -108,22 +125,31 @@
     <div class="editor">
       <CobHeader {action} bind:title={issueTitle}>
         <svelte:fragment slot="state">
-          <Badge variant="positive">open</Badge>
-          <Authorship
-            timestamp={Date.now()}
-            authorId={session.publicKey}
-            caption="opened this issue" />
+          {#if action === "view"}
+            <Badge variant="positive">open</Badge>
+          {/if}
         </svelte:fragment>
+        <svelte:fragment slot="description">
+          {#if action === "create"}
+            <Textarea
+              resizable
+              bind:value={issueText}
+              on:submit={createIssue}
+              placeholder="Write a description" />
+          {:else if !issueText}
+            <p class="txt-missing">No description</p>
+          {:else}
+            <Markdown
+              content={issueText}
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+          {/if}
+        </svelte:fragment>
+        <div class="author" slot="author">
+          {#if action === "view"}
+            opened by <Authorship authorId={session.publicKey} /> now
+          {/if}
+        </div>
       </CobHeader>
-      <div class="comments">
-        <Comment
-          bind:body={issueText}
-          on:submit={createIssue}
-          authorId={session.publicKey}
-          timestamp={Date.now()}
-          {action}
-          rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
-      </div>
       <div class="actions">
         <Button
           size="small"

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-REV=414477a31676d5e75efa7f3e8dc6624bcf2b2e52
+REV=b29321dbf7999ec7ec9b7ac9192071e512ada407
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 FIXTURE=$REPO_ROOT/tests/fixtures/seeds/palm.tar.bz2

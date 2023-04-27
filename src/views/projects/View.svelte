@@ -34,7 +34,7 @@
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
   $: patchTabFilter =
-    (searchParams.get("tab") as "activity" | "commits") || "activity";
+    (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
   $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
   $: baseUrl = utils.extractBaseUrl(activeRoute.params.hostnamePort);
   $: api = new HttpdClient(baseUrl);
@@ -254,13 +254,15 @@
         {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
           <Loading center />
         {:then patch}
+          {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
           <Patch
+            {patch}
             {baseUrl}
             projectId={project.id}
             projectHead={project.head}
-            revision={activeRoute.params.view.params.revision}
-            currentTab={patchTabFilter}
-            {patch} />
+            revision={activeRoute.params.view.params.revision ??
+              latestRevision.id}
+            currentTab={patchTabFilter} />
         {:catch e}
           <div class="message">
             <ErrorMessage message="Couldn't load patch." stackTrace={e} />

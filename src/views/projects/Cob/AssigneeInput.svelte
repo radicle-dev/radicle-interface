@@ -11,7 +11,7 @@
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
   export let action: "create" | "edit" | "view";
-  export let edit: boolean = false;
+  export let editInProgress: boolean = false;
   export let assignees: string[] = [];
 
   let updatedAssignees: string[] = assignees;
@@ -45,9 +45,6 @@
 </script>
 
 <style>
-  .metadata-section {
-    margin-bottom: 4rem;
-  }
   .header {
     display: flex;
     gap: 1rem;
@@ -75,28 +72,28 @@
   }
 </style>
 
-<div class="metadata-section">
+<div>
   <div class="header">
     <span>Assignees</span>
     {#if action === "edit"}
-      {#if !edit}
+      {#if editInProgress}
         <Button
           size="tiny"
           variant="text"
           on:click={() => {
-            edit = !edit;
+            dispatch("save", updatedAssignees);
+            editInProgress = !editInProgress;
           }}>
-          edit
+          save
         </Button>
       {:else}
         <Button
           size="tiny"
           variant="text"
           on:click={() => {
-            dispatch("save", updatedAssignees);
-            edit = !edit;
+            editInProgress = !editInProgress;
           }}>
-          save
+          edit
         </Button>
       {/if}
     {/if}
@@ -105,7 +102,7 @@
     {#each updatedAssignees as assignee, key (assignee)}
       <Chip
         on:remove={removeAssignee}
-        removeable={edit || action === "create"}
+        removeable={editInProgress || action === "create"}
         {key}>
         <div class="chip-content">
           <Avatar inline nodeId={assignee} />
@@ -116,7 +113,7 @@
       <div class="empty">No assignees</div>
     {/each}
   </div>
-  {#if edit || action === "create"}
+  {#if editInProgress || action === "create"}
     <div style:margin-bottom="1rem">
       <TextInput
         bind:value={inputValue}

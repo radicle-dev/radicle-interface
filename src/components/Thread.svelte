@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
   import type { Comment } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
@@ -10,7 +10,6 @@
 
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
-  export let isDescription = false;
   export let showReplyTextarea = false;
 
   let replyText = "";
@@ -53,6 +52,7 @@
 <style>
   .reply {
     margin-left: 3rem;
+    margin-top: 1rem;
   }
   .actions {
     display: flex;
@@ -62,14 +62,16 @@
   }
 </style>
 
-<CommentComponent
-  {rawPath}
-  id={root.id}
-  authorId={root.author.id}
-  timestamp={root.timestamp}
-  body={root.body}
-  showReplyIcon={Boolean($sessionStore) && !isDescription}
-  on:toggleReply={toggleReply} />
+<div style:margin-top="1rem">
+  <CommentComponent
+    {rawPath}
+    id={root.id}
+    authorId={root.author.id}
+    timestamp={root.timestamp}
+    body={root.body}
+    showReplyIcon={Boolean($sessionStore)}
+    on:toggleReply={toggleReply} />
+</div>
 {#each replies as reply}
   <div class="reply">
     <CommentComponent
