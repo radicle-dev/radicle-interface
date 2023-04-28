@@ -54,7 +54,7 @@
     cursor: pointer;
   }
   .issue-title:hover {
-    color: var(--color-secondary);
+    text-decoration: underline;
   }
   .comment-count {
     display: flex;

@@ -58,7 +58,7 @@
     white-space: nowrap;
   }
   .patch-title:hover {
-    color: var(--color-secondary);
+    text-decoration: underline;
   }
   .comment-count {
     align-items: center;

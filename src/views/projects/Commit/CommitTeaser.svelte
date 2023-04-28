@@ -43,7 +43,7 @@
     font-size: var(--font-size-small);
   }
   .summary:hover {
-    color: var(--color-secondary);
+    text-decoration: underline;
   }
   .browse {
     display: flex;
