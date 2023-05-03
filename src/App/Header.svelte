@@ -56,7 +56,12 @@
 <header>
   <div class="left">
     <Link route={{ resource: "home" }}>
-      <img class="logo" alt="Radicle logo" src="/radicle.svg" />
+      <img
+        width="40"
+        height="40"
+        class="logo"
+        alt="Radicle logo"
+        src="/radicle.svg" />
     </Link>
     <Search />
   </div>
