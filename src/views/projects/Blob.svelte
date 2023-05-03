@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Blob } from "@httpd-client";
   import type { MaybeHighlighted } from "@app/lib/syntax";
-  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { ProjectRoute } from "@app/views/projects/router";
 
   import { afterUpdate, beforeUpdate, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
@@ -9,7 +9,7 @@
   import { highlight } from "@app/lib/syntax";
   import { isMarkdownPath, scrollIntoView, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
-  import { updateProjectRoute } from "@app/lib/router";
+  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";

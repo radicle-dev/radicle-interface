@@ -1,20 +1,22 @@
-import type { ProjectsParams, Route, ProjectRoute } from "./router/definitions";
-import type { Readable } from "svelte/store";
+import type { LoadedRoute, Route } from "@app/lib/router/definitions";
 
-import { get, writable, derived } from "svelte/store";
+import { writable } from "svelte/store";
+
+import * as mutexExecutor from "@app/lib/mutexExecutor";
+import { loadRoute } from "@app/lib/router/definitions";
 import { unreachable } from "@app/lib/utils";
+import {
+  resolveProjectRoute,
+  updateProjectRoute,
+} from "@app/views/projects/router";
 
-// This is only respected by Safari.
-const documentTitle = "Radicle Interface";
+// Only used by Safari.
+const DOCUMENT_TITLE = "Radicle Interface";
 
-export const historyStore = writable<Route[]>([{ resource: "home" }]);
-
-export const activeRouteStore: Readable<Route> = derived(
-  historyStore,
-  store => {
-    return store.slice(-1)[0];
-  },
-);
+export const isLoading = writable<boolean>(true);
+export const activeRouteStore = writable<LoadedRoute>({
+  resource: "booting",
+});
 
 export function useDefaultNavigation(event: MouseEvent) {
   return (
@@ -28,122 +30,70 @@ export function useDefaultNavigation(event: MouseEvent) {
 
 export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
-// Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
-// Allows the jump to a anchor hash
-window.addEventListener("hashchange", e => {
-  const route = pathToRoute(e.newURL);
-  if (route?.resource === "projects" && route.params.hash) {
-    if (route.params.hash.match(/^L\d+$/)) {
-      updateProjectRoute({ line: route.params.hash });
-    } else {
-      updateProjectRoute({ hash: route.params.hash });
-    }
-  }
-});
-
-// Replaces history on any user interaction with forward and backwards buttons
-// with the current window.history.state
-window.addEventListener("popstate", e => {
-  if (e.state) replace(e.state);
-});
-
-export function createProjectRoute(
-  activeRoute: ProjectRoute,
-  projectRouteParams: Partial<ProjectsParams>,
-): ProjectRoute {
-  return {
-    resource: "projects",
-    params: {
-      ...activeRoute.params,
-      line: undefined,
-      hash: undefined,
-      ...projectRouteParams,
-    },
-  };
-}
-
-export function projectLinkHref(
-  projectRouteParams: Partial<ProjectsParams>,
-): string | undefined {
-  const activeRoute = get(activeRouteStore);
-
-  if (activeRoute.resource === "projects") {
-    return routeToPath(createProjectRoute(activeRoute, projectRouteParams));
-  } else {
-    throw new Error(
-      "Don't use project specific navigation outside of project views",
-    );
-  }
-}
-
-function sanitizeQueryString(queryString: string): string {
-  return queryString.startsWith("?") ? queryString.substring(1) : queryString;
-}
-
-export function updateProjectRoute(
-  projectRouteParams: Partial<ProjectsParams>,
-  opts: { replace: boolean } = { replace: false },
-) {
-  const activeRoute = get(activeRouteStore);
-
-  if (activeRoute.resource === "projects") {
-    const updatedRoute = createProjectRoute(activeRoute, projectRouteParams);
-    if (opts.replace) {
-      replace(updatedRoute);
-    } else {
-      push(updatedRoute);
-    }
-  } else {
-    throw new Error(
-      "Don't use project specific navigation outside of project views",
-    );
-  }
-}
-
-export const push = (newRoute: Route): void => {
-  const history = get(historyStore);
-
-  // Limit history to a maximum of 10 steps. We shouldn't be doing more than
-  // one subsequent pop() anyway.
-  historyStore.set([...history, newRoute].slice(-10));
-
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
-
-  window.history.pushState(newRoute, documentTitle, path);
-};
-
-export const pop = (): void => {
-  const history = get(historyStore);
-  const newRoute = history.pop();
-  if (newRoute) {
-    historyStore.set(history);
-    window.history.back();
-  }
-};
-
-export function replace(newRoute: Route): void {
-  historyStore.set([newRoute]);
-
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
-
-  window.history.replaceState(newRoute, documentTitle, path);
-}
-
-export const initialize = () => {
+export async function loadFromLocation(): Promise<void> {
   const { pathname, search, hash } = window.location;
   const url = pathname + search + hash;
   const route = pathToRoute(url);
 
   if (route) {
-    replace(route);
+    await replace(route);
   } else {
-    replace({ resource: "404", params: { url } });
+    await replace({ resource: "notFound", params: { url } });
   }
-};
+}
+
+window.addEventListener("popstate", () => loadFromLocation());
+
+// Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
+// Allows the jump to a anchor hash.
+window.addEventListener("hashchange", async (event: HashChangeEvent) => {
+  const route = pathToRoute(event.newURL);
+  if (route?.resource === "projects" && route.params.hash) {
+    if (route.params.hash.match(/^L\d+$/)) {
+      await updateProjectRoute({ line: route.params.hash });
+    } else {
+      await updateProjectRoute({ hash: route.params.hash });
+    }
+  }
+});
+
+const loadExecutor = mutexExecutor.create();
+
+async function mutexLoad(newRoute: Route): Promise<void> {
+  isLoading.set(true);
+
+  const loadedRoute = await loadExecutor.run(async () => {
+    return loadRoute(newRoute);
+  });
+
+  // Only let the last request through.
+  if (loadedRoute === undefined) {
+    return;
+  }
+
+  activeRouteStore.set(loadedRoute);
+  isLoading.set(false);
+}
+
+export async function push(newRoute: Route): Promise<void> {
+  await mutexLoad(newRoute);
+
+  const path = import.meta.env.VITE_HASH_ROUTING
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  window.history.pushState(newRoute, DOCUMENT_TITLE, path);
+}
+
+export async function replace(newRoute: Route): Promise<void> {
+  await mutexLoad(newRoute);
+
+  const path = import.meta.env.VITE_HASH_ROUTING
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
+}
 
 function pathToRoute(path: string): Route | null {
   // This matches e.g. an empty string
@@ -191,7 +141,10 @@ function pathToRoute(path: string): Route | null {
           }
           return null;
         }
-        return { resource: "seeds", params: { hostnamePort } };
+        return {
+          resource: "seeds",
+          params: { hostnamePort, projectPageIndex: 0 },
+        };
       }
       return null;
     }
@@ -225,6 +178,8 @@ export function routeToPath(route: Route) {
     return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "seeds") {
     return `/seeds/${route.params.hostnamePort}`;
+  } else if (route.resource === "loadError") {
+    return "";
   } else if (route.resource === "projects") {
     const hostnamePortPrefix = `/seeds/${route.params.hostnamePort}`;
     const content = `/${route.params.view.resource}`;
@@ -288,123 +243,13 @@ export function routeToPath(route: Route) {
     } else {
       return `${hostnamePortPrefix}/${route.params.id}${peer}${content}`;
     }
-  } else if (route.resource === "404") {
+  } else if (route.resource === "booting") {
+    return "";
+  } else if (route.resource === "notFound") {
     return route.params.url;
   } else {
     unreachable(route);
   }
-}
-
-function resolveProjectRoute(
-  url: URL,
-  hostnamePort: string,
-  id: string,
-  segments: string[],
-): ProjectsParams | null {
-  let content = segments.shift();
-  let peer;
-  if (content === "remotes") {
-    peer = segments.shift();
-    content = segments.shift();
-  }
-
-  if (!content || content === "tree") {
-    const line = url.href.match(/#L\d+$/)?.pop();
-    const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
-    return {
-      view: { resource: "tree" },
-      id,
-      hostnamePort,
-      peer,
-      path: undefined,
-      revision: undefined,
-      search: undefined,
-      line: line?.substring(1),
-      hash: hash?.substring(1),
-      route: segments.join("/"),
-    };
-  } else if (content === "history") {
-    return {
-      view: { resource: "history" },
-      id,
-      hostnamePort,
-      peer,
-      path: undefined,
-      revision: undefined,
-      search: undefined,
-      route: segments.join("/"),
-    };
-  } else if (content === "commits") {
-    return {
-      view: { resource: "commits" },
-      id,
-      hostnamePort,
-      peer,
-      path: undefined,
-      revision: undefined,
-      search: undefined,
-      route: segments.join("/"),
-    };
-  } else if (content === "issues") {
-    const issueOrAction = segments.shift();
-    if (issueOrAction === "new") {
-      return {
-        view: { resource: "issues", params: { view: { resource: "new" } } },
-        id,
-        hostnamePort,
-        peer,
-        search: sanitizeQueryString(url.search),
-        path: undefined,
-        revision: undefined,
-      };
-    } else if (issueOrAction) {
-      return {
-        view: { resource: "issue", params: { issue: issueOrAction } },
-        id,
-        hostnamePort,
-        peer,
-        path: undefined,
-        revision: undefined,
-        search: undefined,
-      };
-    } else {
-      return {
-        view: { resource: "issues" },
-        id,
-        hostnamePort,
-        peer,
-        search: sanitizeQueryString(url.search),
-        path: undefined,
-        revision: undefined,
-      };
-    }
-  } else if (content === "patches") {
-    const patch = segments.shift();
-    const revision = segments.shift();
-    if (patch) {
-      return {
-        view: { resource: "patch", params: { patch, revision } },
-        id,
-        hostnamePort,
-        peer,
-        path: undefined,
-        revision: undefined,
-        search: sanitizeQueryString(url.search),
-      };
-    } else {
-      return {
-        view: { resource: "patches" },
-        id,
-        hostnamePort,
-        peer,
-        search: sanitizeQueryString(url.search),
-        path: undefined,
-        revision: undefined,
-      };
-    }
-  }
-
-  return null;
 }
 
 export const testExports = { pathToRoute };

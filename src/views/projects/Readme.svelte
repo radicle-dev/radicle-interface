@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { ProjectRoute } from "@app/views/projects/router";
 
   import Markdown from "@app/components/Markdown.svelte";
 

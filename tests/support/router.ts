@@ -14,8 +14,16 @@ export const expectBackAndForwardNavigationWorks = async (
   page: Page,
 ) => {
   const currentURL = page.url();
+
   await page.goBack();
+  await page
+    .locator("role=progressbar[name='Page loading']")
+    .waitFor({ state: "hidden" });
   await expect(page).toHaveURL(beforeURL);
   await page.goForward();
+
+  await page
+    .locator("role=progressbar[name='Page loading']")
+    .waitFor({ state: "hidden" });
   await expect(page).toHaveURL(currentURL);
 };

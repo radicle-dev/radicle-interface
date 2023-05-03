@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { IssueStatus } from "./Issues.svelte";
   import type { PatchStatus } from "./Patches.svelte";
-  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { ProjectRoute } from "@app/views/projects/router";
   import type { Tree } from "@httpd-client";
 
   import * as router from "@app/lib/router";
@@ -9,6 +9,7 @@
   import { HttpdClient } from "@httpd-client";
   import { formatNodeId, unreachable } from "@app/lib/utils";
   import { sessionStore } from "@app/lib/session";
+  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Loading from "@app/components/Loading.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
@@ -84,7 +85,7 @@
 
     if (activeRoute.params.route) {
       const { revision, path } = parseRoute(activeRoute.params.route, branches);
-      router.updateProjectRoute(
+      updateProjectRoute(
         {
           revision,
           path,
@@ -296,6 +297,6 @@
   </main>
 {:catch}
   <div class="layout-centered">
-    <NotFound subtitle={id} title="This project was not found" />
+    <NotFound subtitle={id} title="Project not found" />
   </div>
 {/await}

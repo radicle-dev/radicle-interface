@@ -1,5 +1,4 @@
 <script lang="ts">
-  import * as router from "@app/lib/router";
   import { twemoji } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
@@ -36,6 +35,8 @@
   <div>{subtitle}</div>
 
   <div class="actions">
-    <Button variant="foreground" on:click={router.pop}>Back</Button>
+    <Button variant="foreground" on:click={() => window.history.back()}>
+      Back
+    </Button>
   </div>
 </div>

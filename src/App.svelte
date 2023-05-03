@@ -6,18 +6,22 @@
   import { unreachable } from "@app/lib/utils";
 
   import Header from "./App/Header.svelte";
-  import ModalPortal from "./App/ModalPortal.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
+  import LoadingBar from "./App/LoadingBar.svelte";
+  import ModalPortal from "./App/ModalPortal.svelte";
 
-  import NotFound from "@app/components/NotFound.svelte";
   import Home from "@app/views/home/Index.svelte";
-  import Session from "@app/views/session/Index.svelte";
   import Projects from "@app/views/projects/View.svelte";
   import Seeds from "@app/views/seeds/View.svelte";
+  import Session from "@app/views/session/Index.svelte";
+
+  import LoadError from "@app/components/LoadError.svelte";
+  import Loading from "@app/components/Loading.svelte";
+  import NotFound from "@app/components/NotFound.svelte";
 
   const activeRouteStore = router.activeRouteStore;
 
-  router.initialize();
+  router.loadFromLocation();
   session.initialize();
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
@@ -51,6 +55,10 @@
   <title>Radicle</title>
 </svelte:head>
 
+{#if $activeRouteStore.resource !== "booting"}
+  <LoadingBar />
+{/if}
+
 <ModalPortal />
 <Hotkeys />
 
@@ -58,16 +66,22 @@
   <Header />
   <div class="wrapper">
     {#if $activeRouteStore.resource === "home"}
-      <Home />
+      <Home {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "seeds"}
-      <Seeds hostnamePort={$activeRouteStore.params.hostnamePort} />
+      <Seeds {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "projects"}
       <Projects activeRoute={$activeRouteStore} />
-    {:else if $activeRouteStore.resource === "404"}
+    {:else if $activeRouteStore.resource === "booting"}
+      <Loading />
+    {:else if $activeRouteStore.resource === "loadError"}
+      <LoadError {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "notFound"}
       <div class="layout-centered">
-        <NotFound title="404" subtitle="Nothing here" />
+        <NotFound
+          title="Page not found"
+          subtitle={`${$activeRouteStore.params.url.replace("/", "")}`} />
       </div>
     {:else}
       {unreachable($activeRouteStore)}

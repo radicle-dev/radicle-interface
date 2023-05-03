@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
-  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { ProjectRoute } from "@app/views/projects/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
   import { config } from "@app/lib/config";
@@ -71,6 +71,7 @@
           baseUrl.port === config.seeds.defaultHttpdPort
             ? baseUrl.hostname
             : `${baseUrl.hostname}:${baseUrl.port}`,
+        projectPageIndex: 0,
       },
     }}>
     <SquareButton>

@@ -47,7 +47,7 @@ const nodeSchema = strictObject({
   id: string(),
 }) satisfies ZodSchema<Node>;
 
-export interface Root {
+export interface NodeInfo {
   message: string;
   service: string;
   version: string;
@@ -56,7 +56,7 @@ export interface Root {
   links: { href: string; rel: string; type: Method }[];
 }
 
-const rootSchema = strictObject({
+const nodeInfoSchema = strictObject({
   message: string(),
   service: string(),
   version: string(),
@@ -74,7 +74,7 @@ const rootSchema = strictObject({
       ]),
     }),
   ),
-}) satisfies ZodSchema<Root>;
+}) satisfies ZodSchema<NodeInfo>;
 
 export interface NodeStats {
   projects: { count: number };
@@ -101,14 +101,14 @@ export class HttpdClient {
     this.session = new session.Client(this.#fetcher);
   }
 
-  public async getRoot(options?: RequestOptions): Promise<Root> {
+  public async getNodeInfo(options?: RequestOptions): Promise<NodeInfo> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: "",
         options,
       },
-      rootSchema,
+      nodeInfoSchema,
     );
   }
 

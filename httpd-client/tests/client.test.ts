@@ -8,8 +8,8 @@ const api = new HttpdClient({
 });
 
 describe("client", () => {
-  test("#getRoot()", async () => {
-    await api.getRoot();
+  test("#getNodeInfo()", async () => {
+    await api.getNodeInfo();
   });
 
   test("#getStats()", async () => {

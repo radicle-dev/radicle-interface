@@ -20,7 +20,7 @@
       modal.show({ component: AuthenticatedModal, props: {} });
       router.push({
         resource: "seeds",
-        params: { hostnamePort: "radicle.local" },
+        params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
       });
     } else {
       modal.show({

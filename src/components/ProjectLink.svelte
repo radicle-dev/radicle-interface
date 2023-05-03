@@ -1,12 +1,12 @@
 <script lang="ts" strictEvents>
-  import type { ProjectsParams } from "@app/lib/router/definitions";
+  import type { ProjectsParams } from "@app/views/projects/router";
   import { createEventDispatcher } from "svelte";
 
+  import { useDefaultNavigation } from "@app/lib/router";
   import {
     projectLinkHref,
     updateProjectRoute,
-    useDefaultNavigation,
-  } from "@app/lib/router";
+  } from "@app/views/projects/router";
 
   export let projectParams: Partial<ProjectsParams>;
   export let title: string | undefined = undefined;
