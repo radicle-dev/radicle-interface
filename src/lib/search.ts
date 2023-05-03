@@ -5,7 +5,7 @@ import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
 import { isFulfilled } from "@app/lib/utils";
 
-export interface ProjectAndSeed {
+export interface ProjectBaseUrl {
   project: Project;
   baseUrl: BaseUrl;
 }
@@ -13,7 +13,7 @@ export interface ProjectAndSeed {
 type SearchResult =
   | { type: "nothing" }
   | { type: "error"; message: string }
-  | { type: "projects"; results: ProjectAndSeed[] };
+  | { type: "projects"; results: ProjectBaseUrl[] };
 
 export async function searchProjectsAndProfiles(
   query: string,
@@ -51,7 +51,7 @@ export async function searchProjectsAndProfiles(
 
 export async function getProjectsFromSeeds(
   params: { id: string; baseUrl: BaseUrl }[],
-): Promise<ProjectAndSeed[]> {
+): Promise<ProjectBaseUrl[]> {
   const projectPromises = params.map(async param => {
     const api = new HttpdClient(param.baseUrl);
     const project = await api.project.getById(param.id);

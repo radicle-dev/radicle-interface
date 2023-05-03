@@ -35,18 +35,18 @@ describe("routeToPath", () => {
 
 describe("pathToRoute", () => {
   test.each([
-    { input: "", output: null, description: "Empty 404 Route" },
+    { input: "", output: null, description: "Empty not found Route" },
     {
       input: "/foo/baz/bar",
       output: null,
-      description: "Non existant 404 Route",
+      description: "Non existant not found route",
     },
     { input: "/", output: { resource: "home" }, description: "Home Route" },
     {
       input: "/seeds/willow.radicle.garden",
       output: {
         resource: "seeds",
-        params: { hostnamePort: "willow.radicle.garden" },
+        params: { hostnamePort: "willow.radicle.garden", projectPageIndex: 0 },
       },
       description: "Seed View Route",
     },

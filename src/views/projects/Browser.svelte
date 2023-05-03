@@ -8,7 +8,7 @@
 
 <script lang="ts">
   import type { BaseUrl, Blob, Project, Tree } from "@httpd-client";
-  import type { ProjectRoute } from "@app/lib/router/definitions";
+  import type { ProjectRoute } from "@app/views/projects/router";
 
   import { onMount } from "svelte";
 

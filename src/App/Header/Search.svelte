@@ -23,7 +23,7 @@
   let expanded = false;
 
   // Clears search input on user navigation.
-  router.historyStore.subscribe(() => (input = ""));
+  router.activeRouteStore.subscribe(() => (input = ""));
 
   function shake() {
     shaking = true;

@@ -6,13 +6,14 @@
   import { toDom } from "hast-util-to-dom";
 
   import * as utils from "@app/lib/utils";
-  import { base, updateProjectRoute, activeRouteStore } from "@app/lib/router";
-  import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
+  import { base, activeRouteStore } from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
+  import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
   import {
     markdownExtensions as extensions,
     renderer,
   } from "@app/lib/markdown";
+  import { updateProjectRoute } from "@app/views/projects/router";
 
   export let content: string;
   export let hash: string | null = null;

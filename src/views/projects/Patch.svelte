@@ -42,10 +42,10 @@
   import type { Variant } from "@app/components/Badge.svelte";
 
   import * as utils from "@app/lib/utils";
-  import * as router from "@app/lib/router";
   import { capitalize } from "lodash";
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
+  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -308,7 +308,7 @@
               })}
               selected={currentRevision.id}
               on:select={({ detail: item }) => {
-                router.updateProjectRoute({
+                updateProjectRoute({
                   view: {
                     resource: "patch",
                     params: { patch: patch.id, revision: item.value },

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { Project, NodeStats } from "@httpd-client";
-  import type { WeeklyActivity } from "@app/lib/commit";
+  import type { BaseUrl } from "@httpd-client";
+  import type { ProjectActivity } from "@app/views/seeds/router";
 
-  import { HttpdClient } from "@httpd-client";
   import { config } from "@app/lib/config";
-  import { extractBaseUrl, isLocal, truncateId } from "@app/lib/utils";
-  import { loadProjectActivity } from "@app/lib/commit";
+  import { isLocal, truncateId } from "@app/lib/utils";
+  import { loadProjects } from "@app/views/seeds/router";
 
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
@@ -14,45 +13,29 @@
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
-  export let hostnamePort: string;
+  export let baseUrl: BaseUrl;
+  export let nid: string;
+  export let projectCount: number;
+  export let projectPageIndex: number;
+  export let projects: ProjectActivity[] = [];
+  export let version: string;
 
-  const baseUrl = extractBaseUrl(hostnamePort);
-  const hostName = isLocal(baseUrl.hostname)
+  const hostname = isLocal(baseUrl.hostname)
     ? "radicle.local"
     : baseUrl.hostname;
-  const api = new HttpdClient(baseUrl);
 
-  const perPage = 10;
-  let page = 0;
   let error: any;
   let loadingProjects = false;
 
-  let projects: Project[] = [];
-  let nodeStats: NodeStats | undefined = undefined;
-  let projectsWithActivity: { project: Project; activity: WeeklyActivity[] }[] =
-    [];
-
-  async function loadProjects(): Promise<void> {
+  async function loadMore(): Promise<void> {
     loadingProjects = true;
     try {
-      [nodeStats, projects] = await Promise.all([
-        api.getStats(),
-        api.project.getAll({ page, perPage }),
-      ]);
-
-      const results = await Promise.all(
-        projects.map(async project => {
-          const activity = await loadProjectActivity(project.id, baseUrl);
-          return {
-            project,
-            activity,
-          };
-        }),
-      );
-      projectsWithActivity = [...projectsWithActivity, ...results];
-      page += 1;
-    } catch (e) {
-      error = e;
+      const result = await loadProjects(projectPageIndex, baseUrl);
+      projectCount = result.total;
+      projects = [...projects, ...result.projects];
+      projectPageIndex += 1;
+    } catch (err) {
+      error = err;
     } finally {
       loadingProjects = false;
     }
@@ -61,10 +44,8 @@
   $: showMoreButton =
     !loadingProjects &&
     !error &&
-    nodeStats &&
-    projectsWithActivity.length < nodeStats.projects.count;
-
-  loadProjects();
+    projectCount &&
+    projects.length < projectCount;
 </script>
 
 <style>
@@ -112,88 +93,76 @@
 </style>
 
 <svelte:head>
-  <title>{hostName}</title>
+  <title>{hostname}</title>
 </svelte:head>
 
 <div class="wrapper">
   <div class="header">
-    {hostName}
+    {hostname}
   </div>
 
-  {#await api.getRoot()}
-    <Loading center />
-  {:then nodeInfo}
-    <table>
-      <tr>
-        <td class="txt-highlight">Address</td>
-        <td>
-          <div class="seed-address">
-            {truncateId(nodeInfo.node.id)}@{baseUrl.hostname}
-            <Clipboard
-              small
-              text={`${nodeInfo.node.id}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="txt-highlight">Version</td>
-        <td>
-          {nodeInfo.version}
-        </td>
-      </tr>
-    </table>
-  {:catch error}
-    <div style:margin-bottom="2rem">
-      <ErrorMessage
-        message="Not able to query information from this seed."
-        stackTrace={error.stack} />
-    </div>
-  {/await}
+  <table>
+    <tr>
+      <td class="txt-highlight">Address</td>
+      <td>
+        <div class="seed-address">
+          {truncateId(nid)}@{baseUrl.hostname}
+          <Clipboard
+            small
+            text={`${nid}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="txt-highlight">Version</td>
+      <td>
+        {version}
+      </td>
+    </tr>
+  </table>
 
   <div style:margin-bottom="5rem">
-    {#if projects}
-      <div style:margin-top="1rem">
-        {#each projectsWithActivity as { project, activity }}
-          <div style:margin-bottom="0.5rem">
-            <Link
-              route={{
-                resource: "projects",
-                params: {
-                  view: { resource: "tree" },
-                  id: project.id,
-                  hostnamePort:
-                    baseUrl.port === config.seeds.defaultHttpdPort
-                      ? baseUrl.hostname
-                      : `${baseUrl.hostname}:${baseUrl.port}`,
-                  revision: undefined,
-                  hash: undefined,
-                  search: undefined,
-                },
-              }}>
-              <ProjectCard
-                {activity}
-                id={project.id}
-                name={project.name}
-                description={project.description}
-                head={project.head} />
-            </Link>
-          </div>
-        {/each}
+    <div style:margin-top="1rem">
+      {#each projects as { project, activity }}
+        <div style:margin-bottom="0.5rem">
+          <Link
+            route={{
+              resource: "projects",
+              params: {
+                view: { resource: "tree" },
+                id: project.id,
+                hostnamePort:
+                  baseUrl.port === config.seeds.defaultHttpdPort
+                    ? baseUrl.hostname
+                    : `${baseUrl.hostname}:${baseUrl.port}`,
+                revision: undefined,
+                hash: undefined,
+                search: undefined,
+              },
+            }}>
+            <ProjectCard
+              {activity}
+              id={project.id}
+              name={project.name}
+              description={project.description}
+              head={project.head} />
+          </Link>
+        </div>
+      {/each}
+    </div>
+    {#if loadingProjects}
+      <div class="more">
+        <Loading small />
       </div>
-      {#if loadingProjects}
-        <div class="more">
-          <Loading small />
-        </div>
-      {/if}
-      {#if showMoreButton}
-        <div class="more">
-          <Button variant="foreground" on:click={loadProjects}>More</Button>
-        </div>
-      {/if}
+    {/if}
+    {#if showMoreButton}
+      <div class="more">
+        <Button variant="foreground" on:click={loadMore}>More</Button>
+      </div>
     {/if}
     {#if error}
       <ErrorMessage
-        message="Not able to load projects from this seed."
+        message="Not able to load more projects from this seed."
         stackTrace={error.stack} />
     {/if}
   </div>

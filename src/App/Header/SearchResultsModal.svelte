@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { ProjectAndSeed } from "@app/lib/search";
+  import type { ProjectBaseUrl } from "@app/lib/search";
 
   import * as modal from "@app/lib/modal";
   import { formatRepositoryId } from "@app/lib/utils";
@@ -8,7 +8,7 @@
   import Modal from "@app/components/Modal.svelte";
 
   export let query: string;
-  export let results: ProjectAndSeed[];
+  export let results: ProjectBaseUrl[];
 </script>
 
 <style>
