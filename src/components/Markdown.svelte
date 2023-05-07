@@ -23,7 +23,13 @@
   $: frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
   );
-  marked.use({ extensions, renderer });
+  marked.use({
+    extensions,
+    renderer,
+    // TODO: Disables deprecated options, remove once removed from marked
+    mangle: false,
+    headerIds: false,
+  });
 
   let container: HTMLElement;
 

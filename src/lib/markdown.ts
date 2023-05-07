@@ -3,6 +3,9 @@ import katex from "katex";
 import { marked } from "marked";
 import { isUrl } from "./utils";
 
+// TODO: Disables deprecated options, remove once removed from marked
+marked.use({ mangle: false, headerIds: false });
+
 const emojisMarkedExtension = {
   name: "emoji",
   level: "inline",

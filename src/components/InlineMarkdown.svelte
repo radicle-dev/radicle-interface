@@ -8,7 +8,12 @@
   export let content: string;
   export let fontSize: "small" | "medium" = "small";
 
-  marked.use({ renderer });
+  marked.use({
+    renderer,
+    // TODO: Disables deprecated options, remove once removed from marked
+    mangle: false,
+    headerIds: false,
+  });
 
   const render = (content: string): string =>
     // eslint-disable-next-line @typescript-eslint/naming-convention

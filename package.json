@@ -52,7 +52,7 @@
     "hast-util-to-html": "^8.0.4",
     "katex": "^0.16.7",
     "lodash": "^4.17.21",
-    "marked": "^4.3.0",
+    "marked": "^5.0.1",
     "md5": "^2.3.0",
     "plausible-tracker": "^0.3.8",
     "svelte": "^3.58.0",
