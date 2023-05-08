@@ -85,7 +85,9 @@ const footnoteMarkedExtension = {
     }
   },
   renderer: (token: marked.Tokens.Generic) => {
-    return `<p class="txt-small" id="${footnotePrefix}:${token.reference}">${
+    return `${
+      token.reference === "0" ? "<hr />" : ""
+    }<p class="txt-small" id="${footnotePrefix}:${token.reference}">${
       token.reference
     }. ${marked.parseInline(
       token.text,
@@ -116,11 +118,11 @@ const anchorMarkedExtension = {
   },
 };
 
-// Overwrites the rendering of heading tokens.
-// Since there are possible non ASCII characters in headings,
-// we escape them by replacing them with dashes and,
-// trim eventual dashes on each side of the string.
 export const renderer = {
+  // Overwrites the rendering of heading tokens.
+  // Since there are possible non ASCII characters in headings,
+  // we escape them by replacing them with dashes and,
+  // trim eventual dashes on each side of the string.
   heading(text: string, level: 1 | 2 | 3 | 4 | 5 | 6) {
     const escapedText = text
       .toLowerCase()
