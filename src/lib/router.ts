@@ -59,7 +59,10 @@ window.addEventListener("hashchange", async (event: HashChangeEvent) => {
 
 const loadExecutor = mutexExecutor.create();
 
-async function mutexLoad(newRoute: Route): Promise<void> {
+async function navigate(
+  action: "push" | "replace",
+  newRoute: Route,
+): Promise<void> {
   isLoading.set(true);
 
   const loadedRoute = await loadExecutor.run(async () => {
@@ -73,26 +76,24 @@ async function mutexLoad(newRoute: Route): Promise<void> {
 
   activeRouteStore.set(loadedRoute);
   isLoading.set(false);
+
+  const path = import.meta.env.VITE_HASH_ROUTING
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  if (action === "push") {
+    window.history.pushState(newRoute, DOCUMENT_TITLE, path);
+  } else if (action === "replace") {
+    window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
+  }
 }
 
 export async function push(newRoute: Route): Promise<void> {
-  await mutexLoad(newRoute);
-
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
-
-  window.history.pushState(newRoute, DOCUMENT_TITLE, path);
+  await navigate("push", newRoute);
 }
 
 export async function replace(newRoute: Route): Promise<void> {
-  await mutexLoad(newRoute);
-
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
-
-  window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
+  await navigate("replace", newRoute);
 }
 
 function pathToRoute(path: string): Route | null {
