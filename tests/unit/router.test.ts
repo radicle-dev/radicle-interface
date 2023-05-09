@@ -39,7 +39,7 @@ describe("pathToRoute", () => {
     {
       input: "/foo/baz/bar",
       output: null,
-      description: "Non existant not found oute",
+      description: "Non existant not found route",
     },
     { input: "/", output: { resource: "home" }, description: "Home Route" },
     {
