@@ -187,7 +187,7 @@
     margin-bottom: 0.625rem;
   }
 
-  .markdown :global(p:last-child) {
+  .markdown :global(p:only-child) {
     margin-bottom: 0;
   }
 
@@ -282,7 +282,7 @@
     margin: 1rem 0;
   }
   /* Allows the parent to specify its own bottom margin */
-  .markdown :global(:last-child) {
+  .markdown :global(> :last-child) {
     margin-bottom: 0;
   }
   .markdown :global(li > ul) {

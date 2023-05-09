@@ -132,17 +132,6 @@ export const renderer = {
 
     return `<h${level} id="${escapedText}">${text}</h${level}>`;
   },
-  listitem(text: string) {
-    const hasLineBreaks = text.trim().indexOf("\n");
-    if (hasLineBreaks === -1) {
-      return `<li>${text}</li>`;
-    }
-    const [first, ...remaining] = text.trim().split("\n");
-    const liContent = `${first}<div class="list-content">${remaining.join(
-      "\n",
-    )}</div>`;
-    return `<li>${liContent}</li>`;
-  },
   link(href: string, _title: string, text: string) {
     // Adding the file-link class to relative file names,
     // so we're able to navigate to the file in the editor.
