@@ -1,13 +1,13 @@
 import type { LoadedRoute, Route } from "@app/lib/router/definitions";
 
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 
 import * as mutexExecutor from "@app/lib/mutexExecutor";
 import { loadRoute } from "@app/lib/router/definitions";
 import { unreachable } from "@app/lib/utils";
 import {
+  createProjectRoute,
   resolveProjectRoute,
-  updateProjectRoute,
 } from "@app/views/projects/router";
 
 // Only used by Safari.
@@ -32,10 +32,36 @@ export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
 export async function loadFromLocation(): Promise<void> {
   const { pathname, search, hash } = window.location;
+
+  if (
+    import.meta.env.VITE_HASH_ROUTING &&
+    pathname === "/" &&
+    hash &&
+    !hash.startsWith("#/")
+  ) {
+    // We land here if the user clicked an link with only a hash reference.
+    // Instead of going to the root page we stop routing here and have the
+    // browser take care of things.
+    return;
+  }
+
   const url = pathname + search + hash;
-  const route = pathToRoute(url);
+  let route = pathToRoute(url);
 
   if (route) {
+    const activeRoute = get(activeRouteStore);
+    if (
+      activeRoute.resource === "projects" &&
+      route.resource === "projects" &&
+      route.params.hash
+    ) {
+      if (route.params.hash.match(/^L\d+$/)) {
+        route = createProjectRoute(activeRoute, { line: route.params.hash });
+      } else {
+        route = createProjectRoute(activeRoute, { hash: route.params.hash });
+      }
+    }
+
     await replace(route);
   } else {
     await replace({ resource: "notFound", params: { url } });
@@ -43,19 +69,6 @@ export async function loadFromLocation(): Promise<void> {
 }
 
 window.addEventListener("popstate", () => loadFromLocation());
-
-// Gets triggered when clicking on an anchor hash tag e.g. <a href="#header"/>
-// Allows the jump to a anchor hash.
-window.addEventListener("hashchange", async (event: HashChangeEvent) => {
-  const route = pathToRoute(event.newURL);
-  if (route?.resource === "projects" && route.params.hash) {
-    if (route.params.hash.match(/^L\d+$/)) {
-      await updateProjectRoute({ line: route.params.hash });
-    } else {
-      await updateProjectRoute({ hash: route.params.hash });
-    }
-  }
-});
 
 const loadExecutor = mutexExecutor.create();
 
