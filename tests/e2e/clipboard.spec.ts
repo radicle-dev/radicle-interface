@@ -1,8 +1,10 @@
 import type { Page } from "@playwright/test";
+
 import {
   expect,
   projectFixtureUrl,
   rid,
+  seedRemote,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -35,7 +37,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );
-    expect(clipboardContent).toBe(`${rid}`);
+    expect(clipboardContent).toBe(rid);
   }
 
   // `rad clone` URL.
@@ -78,10 +80,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // Seed address.
   {
     await page.locator(".clipboard").first().click();
-    await expectClipboard(
-      "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8@127.0.0.1:8776",
-      page,
-    );
+    await expectClipboard(`${seedRemote}@127.0.0.1:8776`, page);
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

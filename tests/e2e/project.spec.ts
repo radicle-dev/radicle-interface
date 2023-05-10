@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+
 import {
   aliceMainHead,
   aliceRemote,
@@ -341,10 +342,10 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByTitle("Current branch")).toContainText(
-        "main 1e0bb83",
+        "main ec5eb0b",
       );
       await expectCounts({ commits: 9, contributors: 2 }, page);
-      await expect(page.locator("text=1e0bb83 Update readme")).toBeVisible();
+      await expect(page.locator("text=ec5eb0b Update readme")).toBeVisible();
     }
   }
 });

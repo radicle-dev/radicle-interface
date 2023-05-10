@@ -1,12 +1,24 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type * as Stream from "node:stream";
 
 import * as Fs from "node:fs/promises";
+import * as FsSync from "node:fs";
 import * as Path from "node:path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import { test as base, expect } from "@playwright/test";
 
+import * as Process from "./process.js";
 import * as logLabel from "@tests/support/logLabel.js";
+import { createPeerManager } from "./peerManager.js";
+import { sleep } from "@app/lib/sleep";
 
 export { expect };
+
+const filename = fileURLToPath(import.meta.url);
+export const supportDir = dirname(filename);
+export const tmpDir = Path.resolve(supportDir, "..", "./tmp");
+const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
@@ -135,39 +147,6 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
   }
 }
 
-export function configFixture() {
-  window.APP_CONFIG = {
-    reactions: [],
-    seeds: {
-      defaultHttpdPort: 8080,
-      defaultHttpdScheme: "http",
-      defaultNodePort: 8776,
-      pinned: [
-        {
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8080,
-            scheme: "http",
-          },
-        },
-      ],
-    },
-    projects: {
-      pinned: [
-        {
-          name: "source-browsing",
-          id: "rad:git:hnrkdi8be7n4hhqoz9rpzrgd68u9dr3zsxgmy",
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8080,
-            scheme: "http",
-          },
-        },
-      ],
-    },
-  };
-}
-
 export function appConfigWithFixture() {
   window.APP_CONFIG = {
     reactions: [],
@@ -189,7 +168,7 @@ export function appConfigWithFixture() {
       pinned: [
         {
           name: "source-browsing",
-          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+          id: "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
           baseUrl: {
             hostname: "127.0.0.1",
             port: 8080,
@@ -201,12 +180,101 @@ export function appConfigWithFixture() {
   };
 }
 
+export async function startPalmHttpd() {
+  const peerManager = await createPeerManager({
+    dataDir: Path.resolve(Path.join(tmpDir, "peers")),
+    outputLog: FsSync.createWriteStream(Path.resolve(Path.join(tmpDir, "log"))),
+  });
+  const palm = await peerManager.startPeer({ name: "palm" });
+  await palm.startHttpd();
+}
+
+export async function createSeedFixture() {
+  const projectName = "source-browsing";
+  const sourceBrowsingDir = Path.join(tmpDir, "repos", projectName);
+  await Fs.mkdir(sourceBrowsingDir, { recursive: true });
+  await Process.spawn("tar", [
+    "-xf",
+    Path.join(fixturesDir, `repos/${projectName}.tar.bz2`),
+    "-C",
+    sourceBrowsingDir,
+  ]);
+  const peerManager = await createPeerManager({
+    dataDir: Path.resolve(Path.join(tmpDir, "peers")),
+    outputLog: FsSync.createWriteStream(Path.join(tmpDir, "log")),
+  });
+  const palm = await peerManager.startPeer({ name: "palm" });
+  await palm.startHttpd();
+  const alice = await peerManager.startPeer({
+    name: "alice",
+    gitOptions: gitOptions["alice"],
+  });
+  const bob = await peerManager.startPeer({
+    name: "bob",
+    gitOptions: gitOptions["bob"],
+  });
+  await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
+  await alice.startNode({ connect: palm });
+  await bob.startNode({ connect: palm });
+  await sleep(1000);
+  await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
+  await alice.git(["checkout", "main"]);
+  await alice.rad([
+    "init",
+    "--name",
+    projectName,
+    "--default-branch",
+    "main",
+    "--description",
+    "Git repository for source browsing tests",
+    "--announce",
+  ]);
+  await alice.git(["checkout", "feature/branch"]);
+  await alice.git(["push", "rad"]);
+  await alice.git(["checkout", "orphaned-branch"]);
+  await alice.git(["push", "rad"]);
+  const { stdout: rid } = await alice.rad(["inspect"]);
+  await alice.rad(["track", bob.nodeId]);
+  await sleep(2000);
+  await bob.rad(["clone", rid], { cwd: bob.checkoutPath });
+  await sleep(2000);
+  await Fs.writeFile(
+    Path.join(bob.checkoutPath, "source-browsing", "README.md"),
+    "Updated readme",
+  );
+  await bob.git(["add", "README.md"]);
+  await bob.git([
+    "commit",
+    "--message",
+    "Update readme",
+    "--date",
+    "Mon Dec 21 14:00 2022 +0100",
+  ]);
+  await bob.git(["push", "rad"]);
+}
+
 export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
 export const aliceRemote =
-  "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
+  "did:key:z6MkqGC3nWZhYieEVTVDKW5v588CiGfsDSmRVG9ZwwWTvLSK";
 export const bobRemote =
-  "did:key:z6MksMTThc1aDU2Ztc43jJUivuyBLNWiLsDf4X65rABe7HbA";
-export const rid = "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT";
+  "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
+export const bobHead = "ec5eb0b5efb73da17a2d25454cc47eea3967f328";
+export const rid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
 export const projectFixtureUrl = `/seeds/127.0.0.1/${rid}`;
 export const seedPort = 8080;
-export const seedRemote = "z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8";
+export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
+export const gitOptions = {
+  alice: {
+    GIT_AUTHOR_NAME: "Alice Liddell",
+    GIT_AUTHOR_EMAIL: "alice@radicle.xyz",
+    GIT_COMMITTER_NAME: "Alice Liddell",
+    GIT_COMMITTER_EMAIL: "alice@radicle.xyz",
+  },
+  bob: {
+    GIT_AUTHOR_NAME: "Bob Belcher",
+    GIT_AUTHOR_EMAIL: "bob@radicle.xyz",
+    GIT_COMMITTER_NAME: "Bob Belcher",
+    GIT_COMMITTER_EMAIL: "bob@radicle.xyz",
+    GIT_COMMITTER_DATE: "Mon Dec 21 14:00 2022 +0100",
+  },
+};

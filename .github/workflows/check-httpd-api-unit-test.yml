@@ -18,8 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - run: npm ci
-      - name: Start http-api test server
+      - name: Install Radicle binaries
         run: |
           mkdir -p tests/artifacts;
-          ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-api.log &
-      - run: npm run test:httpd-api:unit
+          ./scripts/install-binaries;
+          ./scripts/install-binaries --show-path >> $GITHUB_PATH;
+      - run: |
+          npm run test:httpd-api:unit

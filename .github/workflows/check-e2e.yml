@@ -36,10 +36,11 @@ jobs:
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium firefox
 
-      - name: Start http-api test server
+      - name: Install Radicle binaries
         run: |
           mkdir -p tests/artifacts;
-          ./scripts/run-httpd-with-fixtures --non-interactive --download 2>&1 | tee tests/artifacts/httpd-${{ matrix.browser }}.log &
+          ./scripts/install-binaries;
+          ./scripts/install-binaries --show-path >> $GITHUB_PATH;
 
       - name: Run Playwright tests
         run: |

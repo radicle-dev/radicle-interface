@@ -3,11 +3,12 @@ import {
   expect,
   projectFixtureUrl,
   bobRemote,
+  bobHead,
 } from "@tests/support/fixtures.js";
 
 const modifiedFileFixture = `${projectFixtureUrl}/remotes/${bobRemote.substring(
   8,
-)}/commits/1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb`;
+)}/commits/${bobHead}`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(projectFixtureUrl);
@@ -43,7 +44,7 @@ test("modified file", async ({ page }) => {
     const header = page.locator(".commit .header");
     await expect(header.locator("text=Update readme")).toBeVisible();
     await expect(
-      header.locator("text=1e0bb83a89b63da815f2fc24e7ae3c5ceb30e0eb"),
+      header.locator("text=ec5eb0b5efb73da17a2d25454cc47eea3967f328"),
     ).toBeVisible();
   }
 

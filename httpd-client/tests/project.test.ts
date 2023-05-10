@@ -1,5 +1,7 @@
 import { describe, test } from "vitest";
+
 import { HttpdClient } from "../index";
+import { aliceMainHead, aliceRemote, rid } from "@tests/support/fixtures";
 
 const api = new HttpdClient({
   hostname: "127.0.0.1",
@@ -9,9 +11,7 @@ const api = new HttpdClient({
 
 describe("project", () => {
   test("#getByDelegate(delegateId)", async () => {
-    await api.project.getByDelegate(
-      "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi",
-    );
+    await api.project.getByDelegate(aliceRemote);
   });
 
   test("#getAll()", async () => {
@@ -19,62 +19,45 @@ describe("project", () => {
   });
 
   test("#getById(id)", async () => {
-    await api.project.getById("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT");
+    await api.project.getById(rid);
   });
 
   test("#getActivity(id)", async () => {
-    await api.project.getActivity("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT");
+    await api.project.getActivity(rid);
   });
 
   test("#getReadme(id, sha)", async () => {
-    await api.project.getReadme(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "fcc929424b82984b7cbff9c01d2e20d9b1249842",
-    );
+    await api.project.getReadme(rid, aliceMainHead);
   });
 
   test("#getBlob(id, sha, path)", async () => {
-    await api.project.getBlob(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "dd068e9aff9a569e597f6abaf84f120dd0cbbd70",
-      "src/true.c",
-    );
+    await api.project.getBlob(rid, aliceMainHead, "src/true.c");
   });
 
   test("#getTree(id, sha)", async () => {
-    await api.project.getTree(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "dd068e9aff9a569e597f6abaf84f120dd0cbbd70",
-    );
+    await api.project.getTree(rid, aliceMainHead);
   });
 
   test("#getTree(id, sha, path)", async () => {
-    await api.project.getTree(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "dd068e9aff9a569e597f6abaf84f120dd0cbbd70",
-      "src",
-    );
+    await api.project.getTree(rid, aliceMainHead, "src");
   });
 
   test("#getAllRemotes(id)", async () => {
-    await api.project.getAllRemotes("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT");
+    await api.project.getAllRemotes(rid);
   });
 
   test("#getRemoteByPeer(id, peer)", async () => {
-    await api.project.getRemoteByPeer(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi",
-    );
+    await api.project.getRemoteByPeer(rid, aliceRemote.substring(8));
   });
 
   test("#getAllCommits(id)", async () => {
-    await api.project.getAllCommits("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT");
+    await api.project.getAllCommits(rid);
   });
 
   // TODO: test since/until properly.
   test("#getAllCommits(id, {parent, since, until, page, perPage})", async () => {
-    await api.project.getAllCommits("rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", {
-      parent: "f0b8db68847b01f0964380507a9db6800e5b5342",
+    await api.project.getAllCommits(rid, {
+      parent: aliceMainHead,
       since: 1679065819581,
       until: 1679065819590,
       page: 1,
@@ -83,10 +66,7 @@ describe("project", () => {
   });
 
   test("#getCommitBySha(id, sha)", async () => {
-    await api.project.getCommitBySha(
-      "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      "fcc929424b82984b7cbff9c01d2e20d9b1249842",
-    );
+    await api.project.getCommitBySha(rid, aliceMainHead);
   });
 
   test.todo("#getDiff(id, revisionBase, revisionOid)");

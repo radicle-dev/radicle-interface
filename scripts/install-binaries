@@ -1,0 +1,90 @@
+#!/bin/bash
+set -e
+
+BINARIES=(rad radicle-node radicle-httpd git-remote-rad)
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REV=$(cat "$REPO_ROOT/tests/support/heartwood-version")
+BINARY_PATH=$REPO_ROOT/tests/tmp/bin/${REV:0:7}
+OS=$(uname)
+
+show_usage() {
+  echo
+  echo "Installs binaries required for running e2e test suite."
+  echo
+  echo "USAGE:"
+  echo "  install-binaries [-s|h]"
+  echo
+  echo "OPTIONS:"
+  echo "  -s --show-path         Print the binary path, and skip installation."
+  echo "  -h --help              Print this Help."
+  echo
+}
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --show-path | -s)
+      echo "$BINARY_PATH"
+      exit
+      ;;
+    --help | -h)
+      show_usage
+      exit
+      ;;
+  esac
+
+done
+
+
+echo
+echo "Using revision $REV"
+echo
+
+mkdir -p "$BINARY_PATH"
+
+for BINARY_NAME in "${BINARIES[@]}"
+do
+  if [ -x "$(command -v "$BINARY_PATH/$BINARY_NAME")" ]; then
+    echo ✅ "$BINARY_NAME"
+  else
+    # To provide deterministic Node and Repo IDs, we need a rad CLI compiled with the --debug flag.
+    if [ "$BINARY_NAME" = "rad" ]; then
+      DOWNLOAD_NAME=rad-debug
+      else
+      DOWNLOAD_NAME=$BINARY_NAME
+    fi
+
+    case "$OS" in
+      Darwin)
+        echo Downloading "$BINARY_NAME" from "https://files.radicle.xyz/$REV/aarch64-apple-darwin/$DOWNLOAD_NAME"
+        curl --fail -s "https://files.radicle.xyz/$REV/aarch64-apple-darwin/$DOWNLOAD_NAME" --output "$BINARY_PATH/$BINARY_NAME" || (echo "Download failed" && exit 1);;
+      Linux)
+        echo Downloading "$BINARY_NAME" from "https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$DOWNLOAD_NAME"
+        curl --fail -s "https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$DOWNLOAD_NAME" --output "$BINARY_PATH/$BINARY_NAME" || (echo "Download failed" && exit 1);;
+      *)       echo "There are no precompiled binaries for your OS: $OS, compile $BINARY_NAME manually and make sure it's in PATH." && exit 1 ;;
+    esac
+
+    chmod a+x "$BINARY_PATH/$BINARY_NAME"
+  fi
+done
+
+RADICLE_HOME=${RAD_HOME:-"${HOME}/.radicle/bin"}
+
+# Add a separator between binaries download and PATH instructions.
+echo
+
+if [[ ":$PATH:" != *":$BINARY_PATH:"* ]]; then
+  if [[ ":$PATH:" == *":$RADICLE_HOME:"* ]]; then
+    echo "⚠️  You already have a radicle bin folder in your PATH variable."
+    echo
+    echo "To ensure you are using the correct test binaries, run the following command:"
+  else
+    echo "Before running the tests, make sure your PATH variable is set up correctly by running:"
+  fi
+
+  echo " 👉 export PATH=$BINARY_PATH:\$PATH"
+
+else
+  echo "✅ $BINARY_PATH is already in your PATH variable."
+fi
+
+

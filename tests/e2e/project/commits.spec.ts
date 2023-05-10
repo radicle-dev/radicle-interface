@@ -76,7 +76,7 @@ test("peer and branch switching", async ({ page }) => {
 
     const latestCommit = page.locator(".teaser").first();
     await expect(latestCommit).toContainText("Update readme");
-    await expect(latestCommit).toContainText("1e0bb83");
+    await expect(latestCommit).toContainText("ec5eb0b");
 
     const earliestCommit = page.locator(".teaser").last();
     await expect(earliestCommit).toContainText(
@@ -109,7 +109,7 @@ test("relative timestamps", async ({ page }) => {
   );
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");
-  await expect(latestCommit).toContainText("1e0bb83");
+  await expect(latestCommit).toContainText("ec5eb0b");
   const earliestCommit = page.locator(".teaser").last();
   await expect(earliestCommit).toContainText(
     "Alice Liddell committed last month",
