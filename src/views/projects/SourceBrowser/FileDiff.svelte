@@ -111,26 +111,18 @@
     vertical-align: top;
   }
   .diff-line[data-type="+"] > * {
-    color: var(--color-positive);
+    color: var(--color-positive-6);
+    background-color: var(--color-positive-2);
   }
   .diff-line[data-type="-"] > * {
-    color: var(--color-negative);
+    color: var(--color-negative-6);
+    background-color: var(--color-negative-2);
   }
   .diff-line-number {
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
-  }
-  .diff-line-number[data-type="+"],
-  .diff-line-type[data-type="+"] {
-    background-color: var(--color-positive-2);
-    color: var(--color-positive-6);
-  }
-  .diff-line-number[data-type="-"],
-  .diff-line-type[data-type="-"] {
-    background-color: var(--color-negative-2);
-    color: var(--color-negative-6);
   }
   .diff-line-number.left {
     padding: 0 0.5rem 0 0.75rem;
