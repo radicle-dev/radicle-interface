@@ -119,7 +119,6 @@ export class HttpdClient {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: "",
         options,
       },
       nodeInfoSchema,

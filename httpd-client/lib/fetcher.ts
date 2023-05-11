@@ -40,15 +40,15 @@ export class ResponseError extends Error {
 // body fails.
 export class ResponseParseError extends Error {
   public method: string;
-  public path: string;
   public body: unknown;
   public zodIssues: ZodIssue[];
+  public path?: string;
 
   public constructor(
     method: string,
-    path: string,
     body: unknown,
     zodIssues: ZodIssue[],
+    path?: string,
   ) {
     super("Failed to parse response body");
     this.method = method;
@@ -65,7 +65,7 @@ export interface RequestOptions {
 export interface FetchParams {
   method: Method;
   // Path to append to the `Fetcher`s base URL to get the final URL.
-  path: string;
+  path?: string;
   // Object that is serialized into JSON and sent as the data.
   body?: unknown;
   // Query parameters to be serialized with URLSearchParams.
@@ -106,9 +106,9 @@ export class Fetcher {
     } else {
       throw new ResponseParseError(
         params.method,
-        params.path,
         responseBody,
         result.error.errors,
+        params.path,
       );
     }
   }
@@ -142,9 +142,12 @@ export class Fetcher {
       headers["content-type"] = "application/json";
     }
 
+    const pathSegment = path === undefined ? "" : `/${path}`;
+
     let url = `${this.#baseUrl.scheme}://${this.#baseUrl.hostname}:${
       this.#baseUrl.port
-    }/api/v1/${path}`;
+    }/api/v1${pathSegment}`;
+
     if (query) {
       const searchparams = new URLSearchParams(query as Record<string, string>);
       url = `${url}?${searchparams.toString()}`;
