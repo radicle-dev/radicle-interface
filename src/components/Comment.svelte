@@ -8,6 +8,7 @@
 
   export let id: string | undefined = undefined;
   export let authorId: string;
+  export let authorAlias: string | undefined = undefined;
   export let timestamp: number;
   export let body: string;
   export let showReplyIcon: boolean = false;
@@ -51,7 +52,7 @@
 <div class="comment" {id}>
   <div class="card">
     <div class="card-header">
-      <Authorship {caption} {authorId} {timestamp} />
+      <Authorship {caption} {authorId} {authorAlias} {timestamp} />
       <div class="actions">
         {#if showReplyIcon}
           <Button

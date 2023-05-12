@@ -67,6 +67,7 @@
     {rawPath}
     id={root.id}
     authorId={root.author.id}
+    authorAlias={root.author.alias}
     timestamp={root.timestamp}
     body={root.body}
     showReplyIcon={Boolean($sessionStore)}
@@ -78,6 +79,7 @@
       {rawPath}
       id={reply.id}
       authorId={reply.author.id}
+      authorAlias={reply.author.alias}
       timestamp={reply.timestamp}
       body={reply.body} />
   </div>

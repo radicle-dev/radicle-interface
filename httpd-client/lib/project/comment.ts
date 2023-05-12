@@ -14,7 +14,7 @@ export type ThreadUpdateAction =
 
 export interface Comment {
   id: string;
-  author: { id: string };
+  author: { id: string; alias?: string };
   body: string;
   reactions: Record<string, number>[];
   timestamp: number;
@@ -23,7 +23,7 @@ export interface Comment {
 
 export const commentSchema = strictObject({
   id: string(),
-  author: strictObject({ id: string() }),
+  author: strictObject({ id: string(), alias: string().optional() }),
   body: string(),
   reactions: array(record(string(), number())),
   timestamp: number(),
