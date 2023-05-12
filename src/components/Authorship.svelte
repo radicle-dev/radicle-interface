@@ -3,6 +3,7 @@
   import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
   export let authorId: string;
+  export let authorAlias: string | undefined = undefined;
   export let caption: string | undefined = undefined;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
@@ -27,6 +28,9 @@
   .body {
     white-space: nowrap;
   }
+  .alias {
+    color: var(--color-foreground-5);
+  }
 </style>
 
 <span class="authorship txt-tiny">
@@ -35,9 +39,15 @@
   {/if}
   <span class="id layout-desktop">
     {formatNodeId(authorId)}
+    {#if authorAlias}
+      <span class="alias">({authorAlias})</span>
+    {/if}
   </span>
   <span class="id layout-mobile">
     {formatNodeId(authorId).replace("did:key:", "")}
+    {#if authorAlias}
+      <span class="alias">({authorAlias})</span>
+    {/if}
   </span>
   {#if !caption}
     <slot />

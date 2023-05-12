@@ -150,7 +150,9 @@
         {formatObjectId(patch.id)}
         {patch.revisions.length > 1 ? "updated" : "opened"}
         {formatTimestamp(latestRevision.timestamp)} by
-        <Authorship authorId={patch.author.id} />
+        <Authorship
+          authorId={patch.author.id}
+          authorAlias={patch.author.alias} />
       </span>
     </div>
   </div>

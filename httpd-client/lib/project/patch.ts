@@ -111,7 +111,7 @@ const revisionSchema = strictObject({
 
 export interface Patch {
   id: string;
-  author: { id: string };
+  author: { id: string; alias?: string };
   title: string;
   description: string;
   state: PatchState;
@@ -122,7 +122,7 @@ export interface Patch {
 
 export const patchSchema = strictObject({
   id: string(),
-  author: strictObject({ id: string() }),
+  author: strictObject({ id: string(), alias: string().optional() }),
   title: string(),
   description: string(),
   state: patchStateSchema,
