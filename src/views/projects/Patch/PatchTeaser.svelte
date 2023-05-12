@@ -147,9 +147,9 @@
     </div>
     <div class="summary">
       <span class="meta id">
-        {formatObjectId(patch.id)} opened {formatTimestamp(
-          latestRevision.timestamp,
-        )} by
+        {formatObjectId(patch.id)}
+        {patch.revisions.length > 1 ? "updated" : "opened"}
+        {formatTimestamp(latestRevision.timestamp)} by
         <Authorship authorId={patch.author.id} />
       </span>
     </div>
