@@ -19,9 +19,9 @@
   }
   .header {
     padding: 1rem;
-    background: var(--color-background-1);
-    border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-foreground-3);
   }
   .summary {
     display: flex;

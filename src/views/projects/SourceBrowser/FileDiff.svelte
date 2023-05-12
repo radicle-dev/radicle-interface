@@ -76,7 +76,7 @@
   main {
     font-size: var(--font-size-small);
     border-top: 1px dashed var(--color-foreground-4);
-    background: var(--color-background-1);
+    background-color: var(--color-foreground-1);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
     overflow-x: auto;
   }
@@ -90,7 +90,6 @@
     padding: 1rem;
     color: var(--color-foreground-5);
     text-align: center;
-    background-color: var(--color-foreground-2);
   }
   .browse {
     margin-left: auto;

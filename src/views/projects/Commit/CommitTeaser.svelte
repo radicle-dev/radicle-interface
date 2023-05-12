@@ -13,7 +13,7 @@
 
 <style>
   .teaser {
-    background-color: var(--color-background-1);
+    background-color: var(--color-foreground-1);
     padding: 0.75rem 0rem;
     display: flex;
     align-items: center;
