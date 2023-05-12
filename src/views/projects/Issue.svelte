@@ -238,7 +238,9 @@
           rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
       </div>
       <div class="author" slot="author">
-        opened by <Authorship authorId={issue.author.id} />
+        opened by <Authorship
+          authorId={issue.author.id}
+          authorAlias={issue.author.alias} />
         {utils.formatTimestamp(issue.discussion[0].timestamp)}
       </div>
     </CobHeader>

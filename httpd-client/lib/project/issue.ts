@@ -18,7 +18,7 @@ const issueStateSchema = union([
 
 export interface Issue {
   id: string;
-  author: { id: string };
+  author: { id: string; alias?: string };
   title: string;
   state: IssueState;
   discussion: Comment[];
@@ -28,7 +28,7 @@ export interface Issue {
 
 export const issueSchema = strictObject({
   id: string(),
-  author: strictObject({ id: string() }),
+  author: strictObject({ id: string(), alias: string().optional() }),
   title: string(),
   state: issueStateSchema,
   discussion: array(commentSchema),

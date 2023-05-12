@@ -140,7 +140,7 @@
       {formatObjectId(issue.id)} opened {formatTimestamp(
         issue.discussion[0].timestamp,
       )} by
-      <Authorship authorId={issue.author.id} />
+      <Authorship authorId={issue.author.id} authorAlias={issue.author.alias} />
     </div>
   </div>
   {#if commentCount > 0}
