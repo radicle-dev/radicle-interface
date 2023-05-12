@@ -146,10 +146,15 @@
     }
   }
 
+  const issueDescription = issue.discussion[0];
+
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
-    .slice(1) // Skip the first comment, which is the issue description
-    .filter(comment => !comment.replyTo)
+    .filter(
+      comment =>
+        (comment.id !== issueDescription.id && !comment.replyTo) ||
+        comment.replyTo === issueDescription.id,
+    )
     .map(thread => {
       return {
         root: thread,
