@@ -107,7 +107,7 @@
 
 <div class="patches">
   <div style="margin-bottom: 1rem;">
-    <div style="display: flex; gap: 0.5rem;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       {#each options as option}
         {#if option.disabled}
           <SquareButton

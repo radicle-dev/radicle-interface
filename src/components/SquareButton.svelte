@@ -18,6 +18,7 @@
     color: var(--color-foreground);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
+    white-space: nowrap;
   }
 
   .small {
