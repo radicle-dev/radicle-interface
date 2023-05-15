@@ -111,7 +111,7 @@
 
 <div class="issues">
   <div class="section-header">
-    <div style="margin-bottom: 1rem;">
+    <div style="margin-bottom: 2rem;">
       <div style="display: flex; gap: 0.5rem;">
         {#each options as option}
           {#if !option.disabled}
@@ -120,7 +120,6 @@
                 search: `state=${option.value}`,
               }}>
               <SquareButton
-                size="small"
                 clickable={option.disabled}
                 active={option.value === state}
                 disabled={option.disabled}>
@@ -129,7 +128,6 @@
             </ProjectLink>
           {:else}
             <SquareButton
-              size="small"
               clickable={option.disabled}
               active={option.value === state}
               disabled={option.disabled}>
@@ -147,7 +145,7 @@
             params: { view: { resource: "new" } },
           },
         }}>
-        <SquareButton size="small">New issue</SquareButton>
+        <SquareButton>New issue</SquareButton>
       </ProjectLink>
     {/if}
   </div>

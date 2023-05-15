@@ -362,6 +362,12 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 
+  await page.locator('button[name="Settings"]').click();
+  await expect(page.locator("text=Code font")).toBeVisible();
+  await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
+  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
+  await expect(page.locator("text=feature/branch")).not.toBeVisible();
+
   await page.getByTitle("Change branch").click();
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
@@ -372,12 +378,6 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.locator("text=Code font")).not.toBeVisible();
   await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
   await expect(page.locator(`text=${bobRemote}`)).toBeVisible();
-  await expect(page.locator("text=feature/branch")).not.toBeVisible();
-
-  await page.locator('button[name="Settings"]').click();
-  await expect(page.locator("text=Code font")).toBeVisible();
-  await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
   await expect(page.locator("text=feature/branch")).not.toBeVisible();
 });
 

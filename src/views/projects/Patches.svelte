@@ -106,12 +106,11 @@
 </style>
 
 <div class="patches">
-  <div style="margin-bottom: 1rem;">
+  <div style="margin-bottom: 2rem;">
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       {#each options as option}
         {#if option.disabled}
           <SquareButton
-            size="small"
             clickable={option.disabled}
             active={option.value === state}
             disabled={option.disabled}>
@@ -123,7 +122,6 @@
               search: `state=${option.value}`,
             }}>
             <SquareButton
-              size="small"
               clickable={option.disabled}
               active={option.value === state}
               disabled={option.disabled}>

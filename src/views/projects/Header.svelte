@@ -1,39 +1,39 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type { BaseUrl } from "@httpd-client";
   import type { ProjectRoute } from "@app/views/projects/router";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
   import { config } from "@app/lib/config";
   import { pluralize } from "@app/lib/pluralize";
 
-  import BranchSelector from "@app/views/projects/BranchSelector.svelte";
   import CloneButton from "@app/views/projects/CloneButton.svelte";
   import Link from "@app/components/Link.svelte";
-  import PeerSelector from "@app/views/projects/PeerSelector.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let project: Project;
   export let activeRoute: ProjectRoute;
-  export let tree: Tree;
-  export let commit: string;
-  export let peers: Remote[];
-  export let branches: Record<string, string>;
   export let baseUrl: BaseUrl;
 
-  $: revision = activeRoute.params.revision ?? commit;
+  export let projectId: string;
+  export let projectName: string;
+
+  export let openPatchCount: number;
+  export let openIssueCount: number;
 </script>
 
 <style>
   .header {
     font-size: var(--font-size-tiny);
     padding: 0 2rem 0 8rem;
-    margin-bottom: 2rem;
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .header:last-of-type {
+    margin-bottom: 2rem;
   }
 
   @media (max-width: 960px) {
@@ -47,21 +47,55 @@
 </style>
 
 <div class="header">
-  {#if peers.length > 0}
-    <PeerSelector
-      {peers}
-      peer={activeRoute.params.peer}
-      on:click={() => closeFocused()} />
-  {/if}
+  <ProjectLink
+    projectParams={{
+      view: { resource: "tree" },
+      path: "/",
+      peer: undefined,
+      route: undefined,
+      revision: undefined,
+    }}>
+    <SquareButton
+      active={activeRoute.params.view.resource === "tree" ||
+        activeRoute.params.view.resource === "history" ||
+        activeRoute.params.view.resource === "commits"}>
+      Source
+    </SquareButton>
+  </ProjectLink>
+  <ProjectLink
+    projectParams={{
+      id: projectId,
+      view: {
+        resource: "issues",
+      },
+      peer: undefined,
+      search: undefined,
+      revision: undefined,
+      path: undefined,
+    }}>
+    <SquareButton active={activeRoute.params.view.resource === "issues"}>
+      <span class="txt-bold">{openIssueCount}</span>
+      {pluralize("issue", openIssueCount)}
+    </SquareButton>
+  </ProjectLink>
 
-  <BranchSelector
-    projectDefaultBranch={project.defaultBranch}
-    projectHead={project.head}
-    {branches}
-    {revision}
-    on:click={() => closeFocused()} />
-
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
+  <ProjectLink
+    projectParams={{
+      id: projectId,
+      view: {
+        resource: "patches",
+      },
+      peer: undefined,
+      search: undefined,
+      revision: undefined,
+      path: undefined,
+    }}>
+    <SquareButton active={activeRoute.params.view.resource === "patches"}>
+      <span class="txt-bold">{openPatchCount}</span>
+      {pluralize("patch", openPatchCount)}
+    </SquareButton>
+  </ProjectLink>
+  <CloneButton {baseUrl} id={projectId} name={projectName} />
 
   <Link
     route={{
@@ -78,59 +112,4 @@
       {baseUrl.hostname}
     </SquareButton>
   </Link>
-
-  <ProjectLink
-    projectParams={{
-      id: project.id,
-      view: {
-        resource:
-          activeRoute.params.view.resource === "history" ? "tree" : "history",
-      },
-      revision: revision,
-      search: undefined,
-    }}>
-    <SquareButton active={activeRoute.params.view.resource === "history"}>
-      <span class="txt-bold">{tree.stats.commits}</span>
-      {pluralize("commit", tree.stats.commits)}
-    </SquareButton>
-  </ProjectLink>
-
-  <ProjectLink
-    projectParams={{
-      id: project.id,
-      view: {
-        resource:
-          activeRoute.params.view.resource === "issues" ? "tree" : "issues",
-      },
-      search: undefined,
-      revision: undefined,
-      path: undefined,
-    }}>
-    <SquareButton active={activeRoute.params.view.resource === "issues"}>
-      <span class="txt-bold">{project.issues.open}</span>
-      {pluralize("issue", project.issues.open)}
-    </SquareButton>
-  </ProjectLink>
-
-  <ProjectLink
-    projectParams={{
-      id: project.id,
-      view: {
-        resource:
-          activeRoute.params.view.resource === "patches" ? "tree" : "patches",
-      },
-      search: undefined,
-      revision: undefined,
-      path: undefined,
-    }}>
-    <SquareButton active={activeRoute.params.view.resource === "patches"}>
-      <span class="txt-bold">{project.patches.open}</span>
-      {pluralize("patch", project.patches.open)}
-    </SquareButton>
-  </ProjectLink>
-
-  <SquareButton hoverable={false}>
-    <span class="txt-bold">{tree.stats.contributors}</span>
-    {pluralize("contributor", tree.stats.contributors)}
-  </SquareButton>
 </div>

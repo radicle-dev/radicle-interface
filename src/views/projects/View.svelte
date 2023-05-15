@@ -15,6 +15,7 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import NotFound from "@app/components/NotFound.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
@@ -188,13 +189,23 @@
       <Loading center />
     {:then { tree, commit }}
       <Header
-        {tree}
-        {commit}
-        {project}
-        {branches}
-        {peers}
+        projectId={project.id}
+        projectName={project.name}
+        openPatchCount={project.patches.open}
+        openIssueCount={project.issues.open}
         {activeRoute}
         {baseUrl} />
+
+      {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
+        <SourceBrowsingHeader
+          {project}
+          {activeRoute}
+          revision={activeRoute.params.revision ?? commit}
+          {peers}
+          {branches}
+          commitCount={tree.stats.commits}
+          contributorCount={tree.stats.contributors} />
+      {/if}
 
       {#if activeRoute.params.view.resource === "tree"}
         <Browser {baseUrl} {project} {commit} {tree} {activeRoute} />
@@ -203,8 +214,8 @@
       {:else if activeRoute.params.view.resource === "commits"}
         {#await api.project.getCommitBySha(id, commit)}
           <Loading center />
-        {:then commit}
-          <Commit {commit} />
+        {:then fetchedCommit}
+          <Commit commit={fetchedCommit} />
         {:catch e}
           <div class="message">
             <ErrorMessage message="Couln't load commit." stackTrace={e} />
