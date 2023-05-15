@@ -231,8 +231,10 @@ export async function createSeedFixture() {
   ]);
   await alice.git(["checkout", "feature/branch"]);
   await alice.git(["push", "rad"]);
+  await sleep(2000);
   await alice.git(["checkout", "orphaned-branch"]);
   await alice.git(["push", "rad"]);
+  await sleep(2000);
   const { stdout: rid } = await alice.rad(["inspect"]);
   await alice.rad(["track", bob.nodeId]);
   await sleep(2000);
