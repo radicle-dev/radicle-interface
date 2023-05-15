@@ -73,7 +73,9 @@
       revision: undefined,
       path: undefined,
     }}>
-    <SquareButton active={activeRoute.params.view.resource === "issues"}>
+    <SquareButton
+      active={activeRoute.params.view.resource === "issues" ||
+        activeRoute.params.view.resource === "issue"}>
       <span class="txt-bold">{openIssueCount}</span>
       {pluralize("issue", openIssueCount)}
     </SquareButton>
@@ -90,7 +92,9 @@
       revision: undefined,
       path: undefined,
     }}>
-    <SquareButton active={activeRoute.params.view.resource === "patches"}>
+    <SquareButton
+      active={activeRoute.params.view.resource === "patches" ||
+        activeRoute.params.view.resource === "patch"}>
       <span class="txt-bold">{openPatchCount}</span>
       {pluralize("patch", openPatchCount)}
     </SquareButton>

@@ -66,7 +66,9 @@
       revision: revision,
       search: undefined,
     }}>
-    <SquareButton active={activeRoute.params.view.resource === "history"}>
+    <SquareButton
+      active={activeRoute.params.view.resource === "history" ||
+        activeRoute.params.view.resource === "commits"}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>
