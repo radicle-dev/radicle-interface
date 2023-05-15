@@ -51,6 +51,7 @@ export function createProjectRoute(
       ...activeRoute.params,
       line: undefined,
       hash: undefined,
+      search: undefined,
       ...projectRouteParams,
     },
   };
