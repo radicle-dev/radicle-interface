@@ -32,6 +32,7 @@
     items = peers.map(p => {
       return {
         value: p.id,
+        alias: p.alias,
         title: createTitle(p),
         badge: p.delegate ? "delegate" : null,
       };
@@ -81,10 +82,12 @@
     background: var(--color-foreground-1);
     gap: 0.5rem;
   }
-
   .avatar-id {
     display: flex;
     gap: 0.25rem;
+  }
+  .alias {
+    color: var(--color-secondary-6);
   }
 </style>
 
@@ -101,6 +104,9 @@
              did:key: and the nid due to a newline. -->
           <!-- prettier-ignore -->
           <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(meta.id)}</span>
+          {#if meta.alias}
+            <span class="alias">({meta.alias})</span>
+          {/if}
         </span>
         {#if meta.delegate}
           <Badge variant="primary">delegate</Badge>
@@ -130,10 +136,16 @@
               <div class="layout-desktop">
                 <!-- prettier-ignore -->
                 <span><span class="prefix">did:key:</span>{item.value}</span>
+                {#if item.alias}
+                  <span class="alias">({item.alias})</span>
+                {/if}
               </div>
               <div class="layout-mobile">
                 <!-- prettier-ignore -->
                 <span><span class="prefix">did:key:</span>{truncateId(item.value)}</span>
+                {#if item.alias}
+                  <span class="alias">({item.alias})</span>
+                {/if}
               </div>
             </span>
             {#if item.badge}

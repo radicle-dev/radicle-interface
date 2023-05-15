@@ -141,12 +141,14 @@ const treeSchema = strictObject({
 
 export interface Remote {
   id: string;
+  alias?: string;
   heads: Record<string, string>;
   delegate: boolean;
 }
 
 const remoteSchema = strictObject({
   id: string(),
+  alias: string().optional(),
   heads: record(string(), string()),
   delegate: boolean(),
 }) satisfies ZodSchema<Remote>;

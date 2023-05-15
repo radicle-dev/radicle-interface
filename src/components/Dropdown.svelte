@@ -2,6 +2,7 @@
   export interface Item<T> {
     title: string;
     value: T;
+    alias?: T;
     badge: string | null;
   }
 </script>
