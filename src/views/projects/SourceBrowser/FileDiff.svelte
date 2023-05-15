@@ -139,6 +139,7 @@
     text-align: center;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
+    user-select: none;
   }
   .diff-expand-header {
     padding-left: 0.5rem;
