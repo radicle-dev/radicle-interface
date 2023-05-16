@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { Project } from "@httpd-client";
-
   import Clipboard from "@app/components/Clipboard.svelte";
   import DOMPurify from "dompurify";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import { formatNodeId, twemoji } from "@app/lib/utils";
 
-  export let project: Project;
   export let nodeId: string | undefined = undefined;
+  export let projectDescription: string;
+  export let projectId: string;
+  export let projectName: string;
 
   const linkifyDescription = (text: string) => {
     return text.replaceAll(/(https?:\/\/[^\s]+)/g, `<a href="$1">$1</a>`);
@@ -93,7 +93,7 @@
           revision: undefined,
         }}>
         <span class="project-name">
-          {project.name}
+          {projectName}
         </span>
       </ProjectLink>
     </span>
@@ -106,10 +106,10 @@
     {/if}
   </div>
   <div class="id">
-    <span class="truncate">{project.id}</span>
-    <Clipboard small text={project.id} />
+    <span class="truncate">{projectId}</span>
+    <Clipboard small text={projectId} />
   </div>
   <div class="description" use:twemoji>
-    {@html DOMPurify.sanitize(linkifyDescription(project.description))}
+    {@html DOMPurify.sanitize(linkifyDescription(projectDescription))}
   </div>
 </header>

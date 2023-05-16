@@ -178,7 +178,11 @@
     branches,
   )}
   <main>
-    <ProjectMeta {project} nodeId={peer} />
+    <ProjectMeta
+      projectId={project.id}
+      projectName={project.name}
+      projectDescription={project.description}
+      nodeId={peer} />
     {#await getRoot(branches, project.defaultBranch, revision)}
       <Loading center />
     {:then { tree }}
