@@ -75,7 +75,7 @@
   .state {
     justify-self: center;
     align-self: center;
-    margin: 0 1.25rem;
+    margin: 0 1rem 0 1.25rem;
   }
   .tags {
     display: flex;
@@ -86,22 +86,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .state-icon {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: var(--border-radius-small);
-  }
   .draft {
-    background-color: var(--color-foreground-4);
+    color: var(--color-foreground-4);
   }
   .open {
-    background-color: var(--color-positive);
+    color: var(--color-positive);
   }
   .archived {
-    background-color: var(--color-caution);
+    color: var(--color-caution);
   }
   .merged {
-    background-color: var(--color-primary);
+    color: var(--color-primary);
   }
   @media (max-width: 960px) {
     .tags {
@@ -111,13 +106,13 @@
 </style>
 
 <div class="patch-teaser">
-  <div class="state">
-    <div
-      class="state-icon"
-      class:draft={patch.state.status === "draft"}
-      class:open={patch.state.status === "open"}
-      class:merged={patch.state.status === "merged"}
-      class:archived={patch.state.status === "archived"} />
+  <div
+    class="state"
+    class:draft={patch.state.status === "draft"}
+    class:open={patch.state.status === "open"}
+    class:merged={patch.state.status === "merged"}
+    class:archived={patch.state.status === "archived"}>
+    <Icon name="patch" />
   </div>
   <div>
     <div class="summary">

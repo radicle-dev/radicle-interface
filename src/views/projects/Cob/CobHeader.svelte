@@ -29,6 +29,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .subtitle {
     display: flex;
@@ -62,6 +65,7 @@
       <TextInput variant="form" placeholder="Title" bind:value={title} />
     {:else if title}
       <div class="title">
+        <div><slot name="icon" /></div>
         <InlineMarkdown fontSize="medium" content={title} />
       </div>
     {:else}

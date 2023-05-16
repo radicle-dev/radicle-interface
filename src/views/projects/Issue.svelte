@@ -14,6 +14,7 @@
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "./Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
@@ -200,6 +201,12 @@
   .comments {
     margin: 1rem 0;
   }
+  .open {
+    color: var(--color-positive-6);
+  }
+  .closed {
+    color: var(--color-negative);
+  }
 
   @media (max-width: 960px) {
     .issue {
@@ -220,6 +227,14 @@
       id={issue.id}
       title={issue.title}
       on:editTitle={editTitle}>
+      <svelte:fragment slot="icon">
+        <div
+          class="state"
+          class:closed={issue.state.status === "closed"}
+          class:open={issue.state.status === "open"}>
+          <Icon name="exclamation-circle" />
+        </div>
+      </svelte:fragment>
       <svelte:fragment slot="state">
         {#if issue.state.status === "open"}
           <Badge variant="positive">

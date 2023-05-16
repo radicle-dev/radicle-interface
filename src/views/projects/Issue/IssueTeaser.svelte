@@ -82,18 +82,13 @@
   .state {
     justify-self: center;
     align-self: center;
-    margin: 0 1.25rem;
-  }
-  .state-icon {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: var(--border-radius-small);
+    margin: 0 1rem 0 1.25rem;
   }
   .open {
-    background-color: var(--color-positive);
+    color: var(--color-positive);
   }
   .closed {
-    background-color: var(--color-negative);
+    color: var(--color-negative);
   }
 
   @media (max-width: 960px) {
@@ -104,11 +99,11 @@
 </style>
 
 <div class="issue-teaser">
-  <div class="state">
-    <div
-      class="state-icon"
-      class:closed={issue.state.status === "closed"}
-      class:open={issue.state.status === "open"} />
+  <div
+    class="state"
+    class:closed={issue.state.status === "closed"}
+    class:open={issue.state.status === "open"}>
+    <Icon name="exclamation-circle" />
   </div>
   <div>
     <div class="summary">

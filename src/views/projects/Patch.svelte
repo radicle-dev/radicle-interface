@@ -55,6 +55,7 @@
   import Dropdown from "@app/components/Dropdown.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
@@ -215,6 +216,18 @@
     flex-wrap: nowrap;
     gap: 0.5rem;
   }
+  .draft {
+    color: var(--color-foreground-4);
+  }
+  .open {
+    color: var(--color-positive-6);
+  }
+  .archived {
+    color: var(--color-caution);
+  }
+  .merged {
+    color: var(--color-primary);
+  }
 
   @media (max-width: 1092px) {
     .patch {
@@ -235,6 +248,16 @@
 <div class="patch">
   <div>
     <CobHeader id={patch.id} title={patch.title}>
+      <svelte:fragment slot="icon">
+        <div
+          class="state"
+          class:draft={patch.state.status === "draft"}
+          class:open={patch.state.status === "open"}
+          class:merged={patch.state.status === "merged"}
+          class:archived={patch.state.status === "archived"}>
+          <Icon name="patch" />
+        </div>
+      </svelte:fragment>
       <svelte:fragment slot="state">
         <Badge variant={badgeColor(patch.state.status)}>
           {patch.state.status}
