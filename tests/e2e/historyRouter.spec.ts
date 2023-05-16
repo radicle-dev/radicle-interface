@@ -58,6 +58,9 @@ test.describe("project page navigation", () => {
     const projectTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
 
     await page.goto(projectTreeURL);
+    await page
+      .getByRole("progressbar", { name: "Page loading" })
+      .waitFor({ state: "hidden" });
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.locator('role=link[name="6 commits"]').click();

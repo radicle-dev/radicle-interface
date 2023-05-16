@@ -18,6 +18,8 @@ export const activeRouteStore = writable<LoadedRoute>({
   resource: "booting",
 });
 
+let currentUrl: URL | undefined;
+
 export function useDefaultNavigation(event: MouseEvent) {
   return (
     event.button !== 0 ||
@@ -31,21 +33,28 @@ export function useDefaultNavigation(event: MouseEvent) {
 export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
 export async function loadFromLocation(): Promise<void> {
-  const { pathname, search, hash } = window.location;
+  let { pathname, hash } = window.location;
 
-  if (
-    import.meta.env.VITE_HASH_ROUTING &&
-    pathname === "/" &&
-    hash &&
-    !hash.startsWith("#/")
-  ) {
-    // We land here if the user clicked an link with only a hash reference.
-    // Instead of going to the root page we stop routing here and have the
-    // browser take care of things.
-    return;
+  if (import.meta.env.VITE_HASH_ROUTING) {
+    if (pathname === "/" && hash && !hash.startsWith("#/")) {
+      // We land here if the user clicked an link with only a hash reference.
+      // Instead of going to the root page we stop routing here and have the
+      // browser take care of things.
+      return;
+    }
+    [pathname, hash] = hash.substring(1).split("#");
+  } else {
+    if (
+      currentUrl &&
+      currentUrl.pathname === pathname &&
+      currentUrl.search === window.location.search
+    ) {
+      return;
+    }
   }
 
-  const url = pathname + search + hash;
+  const relativeUrl = pathname + window.location.search + (hash || "");
+  const url = new URL(relativeUrl, window.origin);
   let route = pathToRoute(url);
 
   if (route) {
@@ -56,7 +65,7 @@ export async function loadFromLocation(): Promise<void> {
       route.params.hash
     ) {
       if (route.params.hash.match(/^L\d+$/)) {
-        route = createProjectRoute(activeRoute, { line: route.params.hash });
+        route = createProjectRoute(activeRoute, {});
       } else {
         route = createProjectRoute(activeRoute, { hash: route.params.hash });
       }
@@ -64,7 +73,7 @@ export async function loadFromLocation(): Promise<void> {
 
     await replace(route);
   } else {
-    await replace({ resource: "notFound", params: { url } });
+    await replace({ resource: "notFound", params: { url: relativeUrl } });
   }
 }
 
@@ -77,6 +86,16 @@ async function navigate(
   newRoute: Route,
 ): Promise<void> {
   isLoading.set(true);
+  const path = import.meta.env.VITE_HASH_ROUTING
+    ? "#" + routeToPath(newRoute)
+    : routeToPath(newRoute);
+
+  if (action === "push") {
+    window.history.pushState(newRoute, DOCUMENT_TITLE, path);
+  } else if (action === "replace") {
+    window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
+  }
+  currentUrl = new URL(window.location.href);
 
   const loadedRoute = await loadExecutor.run(async () => {
     return loadRoute(newRoute);
@@ -89,16 +108,6 @@ async function navigate(
 
   activeRouteStore.set(loadedRoute);
   isLoading.set(false);
-
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
-
-  if (action === "push") {
-    window.history.pushState(newRoute, DOCUMENT_TITLE, path);
-  } else if (action === "replace") {
-    window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
-  }
 }
 
 export async function push(newRoute: Route): Promise<void> {
@@ -109,51 +118,8 @@ export async function replace(newRoute: Route): Promise<void> {
   await navigate("replace", newRoute);
 }
 
-// We need a SHA1 commit in some places, so we return early if the revision is
-// a SHA and else we look into branches.
-export function getOid(
-  revision: string,
-  branches?: Record<string, string>,
-): string | undefined {
-  if (isOid(revision)) return revision;
-
-  if (branches) {
-    const oid = branches[revision];
-    if (oid) return oid;
-  }
-  return undefined;
-}
-
-// Check whether the input is a SHA1 commit.
-export function isOid(input: string): boolean {
-  return /^[a-fA-F0-9]{40}$/.test(input);
-}
-
-export function parseRevisionToOid(
-  revision: string | undefined,
-  defaultBranch: string,
-  branches: Record<string, string>,
-): string {
-  if (revision) {
-    const oid = getOid(revision, branches);
-    if (!oid) {
-      throw new Error(`Revision ${revision} not found`);
-    }
-    return oid;
-  }
-  return branches[defaultBranch];
-}
-
-function pathToRoute(path: string): Route | null {
-  // This matches e.g. an empty string
-  if (!path) {
-    return null;
-  }
-
-  const url = new URL(path, window.origin);
-  const segments = import.meta.env.VITE_HASH_ROUTING
-    ? url.hash.substring(2).split("#")[0].split("/") // Try to remove any additional hashes at the end of the URL.
-    : url.pathname.substring(1).split("/");
+function pathToRoute(url: URL): Route | null {
+  const segments = url.pathname.substring(1).split("/");
 
   const resource = segments.shift();
   switch (resource) {
@@ -258,9 +224,7 @@ export function routeToPath(route: Route) {
     if (route.params.search) {
       suffix += `?${route.params.search}`;
     }
-    if (route.params.line) {
-      suffix += `#${route.params.line}`;
-    } else if (route.params.hash) {
+    if (route.params.hash) {
       suffix += `#${route.params.hash}`;
     }
 
@@ -301,4 +265,4 @@ export function routeToPath(route: Route) {
   }
 }
 
-export const testExports = { pathToRoute, isOid, routeToPath };
+export const testExports = { pathToRoute, routeToPath };

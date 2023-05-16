@@ -4,15 +4,6 @@ import { testExports } from "@app/lib/router";
 // Defining the window.origin value, since vitest doesn't provide one.
 window.origin = "http://localhost:3000";
 
-describe("isOid", () => {
-  test.each([
-    { oid: "a64ae9c6d572e0ad906faa9a4a7a8d43f113278c", expected: true },
-    { oid: "a64ae9c", expected: false },
-  ])("isOid $oid => $expected", ({ oid, expected }) => {
-    expect(testExports.isOid(oid)).toEqual(expected);
-  });
-});
-
 describe("routeToPath", () => {
   test.each([
     { input: { resource: "home" }, output: "/", description: "Home Route" },
@@ -42,16 +33,25 @@ describe("routeToPath", () => {
 });
 
 describe("pathToRoute", () => {
+  const dummyUrl = "https://localhost";
   test.each([
-    { input: "", output: null, description: "Empty not found Route" },
     {
-      input: "/foo/baz/bar",
+      input: new URL("/foo/baz/bar", dummyUrl),
       output: null,
       description: "Non existant not found route",
     },
-    { input: "/", output: { resource: "home" }, description: "Home Route" },
     {
-      input: "/seeds/willow.radicle.garden",
+      input: new URL("", dummyUrl),
+      output: { resource: "home" },
+      description: "Home Route",
+    },
+    {
+      input: new URL("/", dummyUrl),
+      output: { resource: "home" },
+      description: "Home Route",
+    },
+    {
+      input: new URL("/seeds/willow.radicle.garden", dummyUrl),
       output: {
         resource: "seeds",
         params: { hostnamePort: "willow.radicle.garden", projectPageIndex: 0 },
@@ -59,7 +59,10 @@ describe("pathToRoute", () => {
       description: "Seed View Route",
     },
     {
-      input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+      input: new URL(
+        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+        dummyUrl,
+      ),
       output: {
         resource: "projects",
         params: {
@@ -73,13 +76,18 @@ describe("pathToRoute", () => {
       description: "Seed Project Route w trailing slash",
     },
     {
-      input:
+      input: new URL(
         "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
+        dummyUrl,
+      ),
       output: null,
       description: "Seed Project Route w undefined suffix",
     },
     {
-      input: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      input: new URL(
+        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        dummyUrl,
+      ),
       output: {
         resource: "projects",
         params: {

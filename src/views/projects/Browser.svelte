@@ -8,13 +8,9 @@
 
 <script lang="ts">
   import type { BaseUrl, Blob, Project, Tree } from "@httpd-client";
-  import type { ProjectRoute } from "@app/views/projects/router";
-
-  import { onMount } from "svelte";
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { parseRevisionToOid } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -30,18 +26,15 @@
 
   type State =
     | { status: Status.Loading; path: string }
-    | { status: Status.Loaded; path: string; blob: Blob };
+    | { status: Status.Loaded; path: string; blob: Blob; commit: string };
 
+  export let path: string;
+  export let hash: string | undefined = undefined;
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let tree: Tree;
   export let revision: string | undefined;
-  export let branches: Record<string, string>;
-  export let activeRoute: ProjectRoute;
-
-  $: path = activeRoute.params.path || "/";
-  $: line = activeRoute.params.line;
-  $: commit = parseRevisionToOid(revision, project.defaultBranch, branches);
+  export let commit: string;
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -55,8 +48,13 @@
   // UI from flickering or showing a loading indicator.
   let previousBlob: Blob;
 
-  const loadBlob = async (path: string) => {
-    if (state.status === Status.Loaded && state.path === path) {
+  const loadBlob = async (projectId: string, commit: string, path: string) => {
+    browserErrorStore.set(undefined);
+    if (
+      state.status === Status.Loaded &&
+      state.path === path &&
+      state.commit === commit
+    ) {
       return state.blob;
     }
 
@@ -64,19 +62,15 @@
 
     let blob;
     if (path === "/") {
-      blob = await api.project.getReadme(project.id, commit);
+      blob = await api.project.getReadme(projectId, commit);
     } else {
-      blob = await api.project.getBlob(project.id, commit, path);
+      blob = await api.project.getBlob(projectId, commit, path);
     }
 
-    state = { status: Status.Loaded, path, blob };
+    state = { status: Status.Loaded, path, blob, commit };
     previousBlob = blob;
     return blob;
   };
-
-  onMount(() => {
-    browserErrorStore.set(undefined);
-  });
 
   const fetchTree = async (path: string) => {
     return api.project.getTree(project.id, commit, path).catch(() => {
@@ -88,7 +82,7 @@
     });
   };
 
-  $: getBlob = loadBlob(path).catch(() => {
+  $: getBlob = loadBlob(project.id, commit, path).catch(() => {
     browserErrorStore.set({ message: "Not able to load file", path });
     return undefined;
   });
@@ -227,9 +221,9 @@
             {#if previousBlob}
               <div class="layout-desktop">
                 <BlobComponent
-                  {line}
+                  {path}
+                  {hash}
                   blob={previousBlob}
-                  {activeRoute}
                   rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
               </div>
               <div class="layout-mobile">
@@ -241,9 +235,9 @@
           {:then blob}
             {#if blob}
               <BlobComponent
-                {line}
+                {path}
+                {hash}
                 {blob}
-                {activeRoute}
                 rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
             {/if}
           {/await}

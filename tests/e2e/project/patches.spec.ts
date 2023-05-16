@@ -80,6 +80,9 @@ test("navigate through revision diffs", async ({ page }) => {
     await secondRevision
       .locator("role=link[name='Compare 0dc373d..5b35def']")
       .click();
+    await expect(
+      page.getByRole("link", { name: "Diff 0dc373..5b35de" }),
+    ).toBeVisible();
     await page.goBack();
   }
   // First revision

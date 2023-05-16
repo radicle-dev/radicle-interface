@@ -1,26 +1,24 @@
 <script lang="ts">
   import type { Blob } from "@httpd-client";
   import type { MaybeHighlighted } from "@app/lib/syntax";
-  import type { ProjectRoute } from "@app/views/projects/router";
 
-  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
 
   import { highlight } from "@app/lib/syntax";
-  import { isMarkdownPath, scrollIntoView, twemoji } from "@app/lib/utils";
+  import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
-  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let activeRoute: ProjectRoute;
+  export let path: string;
+  export let hash: string | undefined = undefined;
   export let blob: Blob;
   export let rawPath: string;
-  export let line: string | undefined = undefined;
 
-  const fileExtension = blob.path.split(".").pop() ?? "";
-  const lastCommit = blob.lastCommit;
+  $: fileExtension = blob.path.split(".").pop() ?? "";
+  $: lastCommit = blob.lastCommit;
 
   const parentDir = blob.path
     .match(/^.*\/|/)
@@ -28,17 +26,8 @@
     .next().value;
   let content: MaybeHighlighted = undefined;
 
-  // Any time a user clicks on a line number, the `line` prop gets updated,
-  // and the line is highlighted, but the previous line is not unhighlighted.
-  // So we have to make sure here that any previous highlighting gets removed,
-  // before updating the component.
-  beforeUpdate(() => {
-    for (const item of document.getElementsByClassName("highlight")) {
-      item.classList.remove("highlight");
-    }
-  });
-
   onMount(async () => {
+    window.addEventListener("hashchange", setTarget);
     if (!blob.content) {
       return;
     }
@@ -48,24 +37,35 @@
     }
   });
 
-  afterUpdate(() => {
-    if (line) {
-      scrollIntoView(line);
+  onDestroy(() => {
+    window.removeEventListener("hashchange", setTarget);
+  });
 
-      const element = document.getElementById(line);
-      if (element) {
-        element.classList.add("highlight");
-      }
-    }
+  afterUpdate(() => {
+    setTarget();
   });
 
   const isMarkdown = isMarkdownPath(blob.path);
-  // If we have a line number we should show the raw output.
-  let showMarkdown = line ? false : isMarkdown;
+  let showMarkdown = isMarkdown;
   const toggleMarkdown = () => {
-    void updateProjectRoute({ line: undefined });
+    window.location.hash = "";
     showMarkdown = !showMarkdown;
   };
+
+  function setTarget() {
+    for (const item of document.getElementsByClassName("highlight")) {
+      item.classList.remove("highlight");
+    }
+    const fragmentId = window.location.hash.substr(1);
+    if (fragmentId && fragmentId.match(/L\d+/)) {
+      showMarkdown = false;
+      const target = document.getElementById(fragmentId);
+      if (target) {
+        target.classList.add("highlight");
+        target.scrollIntoView();
+      }
+    }
+  }
 </script>
 
 <style>
@@ -253,7 +253,7 @@
         <span class="txt-tiny">Binary content</span>
       </div>
     {:else if showMarkdown && blob.content}
-      <Readme content={blob.content} {rawPath} {activeRoute} />
+      <Readme content={blob.content} {rawPath} {path} {hash} />
     {:else if content}
       <table class="code no-scrollbar">
         {@html toHtml(content)}

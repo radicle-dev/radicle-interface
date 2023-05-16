@@ -33,10 +33,7 @@
     <ProjectLink
       projectParams={{ view: { resource: "tree" }, path: entry.path, revision }}
       on:click={() => onSelect({ detail: entry.path })}>
-      <File
-        active={entry.path === path}
-        loading={entry.path === loadingPath}
-        name={entry.name} />
+      <File active={entry.path === path} name={entry.name} />
     </ProjectLink>
   {/if}
 {/each}

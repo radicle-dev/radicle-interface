@@ -14,7 +14,7 @@
   export let peer: string | undefined = undefined;
   export let peers: Remote[];
 
-  const meta = peers.find(p => p.id === peer);
+  $: meta = peers.find(p => p.id === peer);
 
   function createTitle(p: Remote): string {
     const nodeId = formatNodeId(p.id);

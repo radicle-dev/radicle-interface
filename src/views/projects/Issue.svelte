@@ -1,9 +1,9 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type { BaseUrl, Issue, IssueState } from "@httpd-client";
 
-  import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
 
+  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore } from "@app/lib/httpd";
@@ -25,7 +25,6 @@
   export let projectId: string;
   export let projectHead: string;
 
-  const dispatch = createEventDispatcher<{ update: never }>();
   const rawPath = utils.getRawBasePath(projectId, baseUrl, projectHead);
   const api = new HttpdClient(baseUrl);
 
@@ -138,8 +137,17 @@
         { type: "lifecycle", state },
         $httpdStore.session.id,
       );
-      dispatch("update");
-      issue = await api.project.getIssueById(projectId, issue.id);
+      void router.push({
+        resource: "projects",
+        params: {
+          id: projectId,
+          hostnamePort: baseUrl.hostname,
+          view: {
+            resource: "issue",
+            params: { issue: issue.id },
+          },
+        },
+      });
     }
   }
 

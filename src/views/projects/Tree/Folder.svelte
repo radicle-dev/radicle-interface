@@ -96,10 +96,7 @@
                 revision,
               }}
               on:click={() => onSelectFile({ detail: entry.path })}>
-              <File
-                active={entry.path === currentPath}
-                loading={entry.path === loadingPath}
-                name={entry.name} />
+              <File active={entry.path === currentPath} name={entry.name} />
             </ProjectLink>
           {/if}
         {/each}

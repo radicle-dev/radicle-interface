@@ -1,8 +1,5 @@
 <script lang="ts">
-  import Loading from "@app/components/Loading.svelte";
-
   export let active: boolean;
-  export let loading: boolean;
   export let name: string;
 </script>
 
@@ -28,14 +25,6 @@
     background-color: var(--color-foreground-1);
   }
 
-  .spinner {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    height: 24px;
-    width: 24px;
-  }
-
   .name {
     margin-left: 0.25rem;
     user-select: none;
@@ -48,9 +37,4 @@
 
 <div class="file" class:active>
   <span class="name">{name}</span>
-  <div class="spinner">
-    {#if loading}
-      <Loading noDelay small condensed />
-    {/if}
-  </div>
 </div>

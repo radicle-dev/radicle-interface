@@ -23,28 +23,42 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadHistory(): Promise<void> {
-    loading = true;
-    try {
-      const response = await api.project.getAllCommits(projectId, {
-        parent: parentCommit,
-        page,
-        perPage,
-      });
-      history = [...history, ...response.commits.map(c => c.commit)];
-      totalCommitCount = response.stats.commits;
-      page += 1;
-    } catch (e) {
-      error = e;
-    } finally {
-      loading = false;
-    }
-  }
+  let previousCommit = parentCommit;
 
   $: showMoreButton =
     !loading && !error && totalCommitCount && history.length < totalCommitCount;
 
-  void loadHistory();
+  // To avoid a recursive loop when loading the histrory below,
+  // we do it in a function outside of the reactive statement.
+  function appendHistory(commits: CommitHeader[]) {
+    history = [...history, ...commits];
+  }
+
+  $: {
+    if (previousCommit !== parentCommit) {
+      page = 0;
+      history = [];
+      previousCommit = parentCommit;
+      error = undefined;
+    }
+    loading = true;
+    api.project
+      .getAllCommits(projectId, {
+        parent: parentCommit,
+        page,
+        perPage,
+      })
+      .then(response => {
+        appendHistory(response.commits.map(c => c.commit));
+        totalCommitCount = response.stats.commits;
+      })
+      .catch(e => {
+        error = e;
+      })
+      .finally(() => {
+        loading = false;
+      });
+  }
 </script>
 
 <style>
@@ -90,7 +104,13 @@
       {/if}
 
       {#if showMoreButton}
-        <Button variant="foreground" on:click={loadHistory}>More</Button>
+        <Button
+          variant="foreground"
+          on:click={() => {
+            page = page + 1;
+          }}>
+          More
+        </Button>
       {/if}
     </div>
   </div>
