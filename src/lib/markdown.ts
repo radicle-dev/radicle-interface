@@ -125,6 +125,7 @@ export const renderer = {
   // trim eventual dashes on each side of the string.
   heading(text: string, level: 1 | 2 | 3 | 4 | 5 | 6) {
     const escapedText = text
+      // By lowercasing we avoid casing mismatches, between headings and links.
       .toLowerCase()
       .replace(/[^\w]+/g, "-")
       .replace(/^-|-$/g, "");
@@ -143,10 +144,13 @@ export const renderer = {
     return `<li>${liContent}</li>`;
   },
   link(href: string, _title: string, text: string) {
-    // If the link is not a URL nor starts with a #, we add the file-link class to it,
-    // so we're able to query it in the Markdown component.
+    // Adding the file-link class to relative file names,
+    // so we're able to navigate to the file in the editor.
     if (!isUrl(href) && !href.startsWith("#")) {
       return `<a href="${href}" class="file-link">${text}</a>`;
+    } else if (href.startsWith("#")) {
+      // By lowercasing we avoid casing mismatches, between headings and links.
+      return `<a href="${href.toLowerCase()}">${text}</a>`;
     }
     return `<a href="${href}">${text}</a>`;
   },
