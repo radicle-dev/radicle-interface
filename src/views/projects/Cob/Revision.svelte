@@ -70,11 +70,11 @@
     justify-content: space-between;
   }
   .merge {
-    color: var(--color-primary);
+    color: var(--color-primary-6);
     background-color: var(--color-primary-3);
   }
   .positive-review {
-    color: var(--color-positive);
+    color: var(--color-positive-6);
     background-color: var(--color-positive-3);
   }
   .revision {

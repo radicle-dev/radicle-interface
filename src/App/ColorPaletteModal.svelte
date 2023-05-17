@@ -42,6 +42,7 @@
   // rg "\--color-\w*(-\d)*" -o --no-line-number --no-filename -g "\!public/colors.css" -g "\!src/ColorPalette.svelte" | sort | uniq | jq -sRM 'split("\n")[:-1]'
   const usedColors = [
     "--color-background",
+    "--color-background-1",
     "--color-caution",
     "--color-caution-2",
     "--color-caution-3",
@@ -68,6 +69,7 @@
     "--color-primary",
     "--color-primary-3",
     "--color-primary-5",
+    "--color-primary-6",
     "--color-secondary",
     "--color-secondary-1",
     "--color-secondary-2",

@@ -25,7 +25,7 @@
 
 <style>
   .clone-button {
-    background-color: var(--color-caution-2);
+    background-color: var(--color-caution-3);
     border-radius: var(--border-radius-small);
     color: var(--color-caution-6);
     font-family: var(--font-family-monospace);
@@ -35,7 +35,7 @@
     padding: 0.5rem 0.75rem;
   }
   .clone-button:hover {
-    background-color: var(--color-caution-3);
+    background-color: var(--color-caution-4);
   }
   .dropdown {
     background-color: var(--color-background-1);
@@ -77,14 +77,14 @@
     white-space: nowrap;
     line-height: 1.4;
     color: var(--color-caution-6);
-    background: linear-gradient(var(--color-caution-2), var(--color-caution-2)),
+    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
       linear-gradient(var(--color-background), var(--color-background));
   }
   .clipboard {
     position: absolute;
     right: 0;
     color: var(--color-caution-6);
-    background: linear-gradient(var(--color-caution-2), var(--color-caution-2)),
+    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
       linear-gradient(var(--color-background), var(--color-background));
     visibility: hidden;
     width: 4rem;

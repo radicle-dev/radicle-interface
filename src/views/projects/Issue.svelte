@@ -205,7 +205,7 @@
     color: var(--color-positive-6);
   }
   .closed {
-    color: var(--color-negative);
+    color: var(--color-negative-6);
   }
 
   @media (max-width: 960px) {

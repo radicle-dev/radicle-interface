@@ -5,8 +5,7 @@
     | "negative"
     | "positive"
     | "primary"
-    | "secondary"
-    | "tertiary";
+    | "secondary";
 </script>
 
 <script lang="ts">
@@ -26,32 +25,27 @@
   }
   .foreground {
     color: var(--color-foreground-6);
-    background: var(--color-foreground-2);
+    background: var(--color-foreground-3);
   }
   .positive {
     color: var(--color-positive-6);
     background-color: var(--color-positive-3);
   }
   .secondary {
-    color: var(--color-secondary);
+    color: var(--color-secondary-6);
     background-color: var(--color-secondary-3);
   }
   .negative {
-    color: var(--color-negative);
-    background-color: var(--color-negative-4);
+    color: var(--color-negative-6);
+    background-color: var(--color-negative-3);
   }
   .primary {
-    color: var(--color-primary);
-    background: linear-gradient(var(--color-primary-3), var(--color-primary-3)),
-      linear-gradient(var(--color-background), var(--color-background));
-  }
-  .tertiary {
-    color: var(--color-tertiary-6);
-    background: var(--color-tertiary-1);
+    color: var(--color-primary-6);
+    background: var(--color-primary-3);
   }
   .caution {
-    color: var(--color-caution);
-    background: var(--color-caution-2);
+    color: var(--color-caution-6);
+    background: var(--color-caution-3);
   }
 </style>
 
@@ -65,7 +59,6 @@
   class:negative={variant === "negative"}
   class:positive={variant === "positive"}
   class:primary={variant === "primary"}
-  class:secondary={variant === "secondary"}
-  class:tertiary={variant === "tertiary"}>
+  class:secondary={variant === "secondary"}>
   <slot />
 </span>

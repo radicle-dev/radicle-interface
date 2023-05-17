@@ -223,10 +223,10 @@
     color: var(--color-positive-6);
   }
   .archived {
-    color: var(--color-caution);
+    color: var(--color-caution-6);
   }
   .merged {
-    color: var(--color-primary);
+    color: var(--color-primary-6);
   }
 
   @media (max-width: 1092px) {

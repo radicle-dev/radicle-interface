@@ -32,10 +32,10 @@
     margin-left: 1rem;
   }
   .changeset-summary .additions {
-    color: var(--color-positive);
+    color: var(--color-positive-6);
   }
   .changeset-summary .deletions {
-    color: var(--color-negative);
+    color: var(--color-negative-6);
   }
 </style>
 
