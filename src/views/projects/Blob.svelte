@@ -118,7 +118,7 @@
     margin-right: 0.25rem;
   }
 
-  .markdown-toggle {
+  .toggle {
     margin-right: 0.5rem;
   }
 
@@ -228,15 +228,15 @@
       </span>
       <div class="right">
         {#if isMarkdown}
-          <div class="markdown-toggle">
-            <SquareButton
-              active={!showMarkdown}
-              clickable
-              on:click={toggleMarkdown}>
-              Raw
+          <div class="toggle">
+            <SquareButton clickable on:click={toggleMarkdown}>
+              {showMarkdown ? "Plain" : "Markdown"}
             </SquareButton>
           </div>
         {/if}
+        <a href="{rawPath}/{blob.path}" class="toggle">
+          <SquareButton clickable>Raw</SquareButton>
+        </a>
         <div class="last-commit" title={lastCommit.author.name} use:twemoji>
           <span class="hash">
             {lastCommit.id.slice(0, 7)}

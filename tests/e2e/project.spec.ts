@@ -96,7 +96,7 @@ test("source file highlighting", async ({ page }) => {
 
 test("navigate line numbers", async ({ page }) => {
   await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
-  await page.locator(".markdown-toggle").click();
+  await page.locator('text="Plain"').click();
 
   await page.locator('[href="#L5"]').click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -231,14 +231,12 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    const rawButton = page.locator(".markdown-toggle .square-button");
-
-    await rawButton.click();
-    await expect(rawButton).toHaveClass(/active/);
+    const plainButton = page.locator('text="Plain"');
+    await plainButton.click();
     await expect(page.locator("text=##### Table of Contents")).toBeVisible();
 
-    await rawButton.click();
-    await expect(rawButton).not.toHaveClass("active");
+    const markdownButton = page.locator('text="Markdown"');
+    await markdownButton.click();
   }
 
   // Internal links go to anchor.
