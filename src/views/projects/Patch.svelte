@@ -44,7 +44,7 @@
   import * as utils from "@app/lib/utils";
   import { capitalize } from "lodash";
   import { HttpdClient } from "@httpd-client";
-  import { sessionStore } from "@app/lib/session";
+  import { httpdStore } from "@app/lib/httpd";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -77,7 +77,7 @@
   async function createReply({
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
-    if ($sessionStore && reply.body.trim().length > 0) {
+    if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
       await api.project.updatePatch(
         projectId,
         patch.id,
@@ -90,7 +90,7 @@
             replyTo: reply.id,
           },
         },
-        $sessionStore.id,
+        $httpdStore.session.id,
       );
       patch = await api.project.getPatchById(projectId, patch.id);
     }
@@ -110,7 +110,7 @@
   }
 
   async function saveTags({ detail: tags }: CustomEvent<string[]>) {
-    if ($sessionStore) {
+    if ($httpdStore.state === "authenticated") {
       const { add, remove } = utils.createAddRemoveArrays(patch.tags, tags);
       if (add.length === 0 && remove.length === 0) {
         return;
@@ -119,14 +119,16 @@
         projectId,
         currentRevision.id,
         { type: "tag", add, remove },
-        $sessionStore.id,
+        $httpdStore.session.id,
       );
       patch = await api.project.getPatchById(projectId, patch.id);
     }
   }
 
   const action: "create" | "edit" | "view" =
-    $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
+    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
+      ? "edit"
+      : "view";
   const options = ["activity", "commits", "files"].map(o => ({
     value: o,
     title: capitalize(o),

@@ -3,6 +3,7 @@
   export let variant:
     | "foreground"
     | "negative"
+    | "outline"
     | "primary"
     | "secondary"
     | "text";
@@ -92,6 +93,19 @@
     background-color: var(--color-foreground);
   }
 
+  .outline {
+    color: var(--color-foreground);
+    border: none;
+    border: 1px solid transparent;
+  }
+  .outline[disabled] {
+    color: var(--color-foreground-5);
+  }
+  .outline:not([disabled]):hover {
+    border: 1px solid var(--color-foreground);
+    color: var(--color-foreground);
+  }
+
   .tiny {
     font-size: var(--font-size-tiny);
     height: var(--button-small-tiny);
@@ -126,6 +140,7 @@
   on:mouseover
   class:foreground={variant === "foreground"}
   class:negative={variant === "negative"}
+  class:outline={variant === "outline"}
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
   class:text={variant === "text"}

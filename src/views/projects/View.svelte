@@ -8,7 +8,7 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { formatNodeId, unreachable } from "@app/lib/utils";
-  import { sessionStore } from "@app/lib/session";
+  import { httpdStore } from "@app/lib/httpd";
   import { updateProjectRoute } from "@app/views/projects/router";
 
   import Loading from "@app/components/Loading.svelte";
@@ -222,10 +222,10 @@
           </div>
         {/await}
       {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
-        {#if $sessionStore}
+        {#if $httpdStore.state === "authenticated"}
           <NewIssue
             on:create={handleIssueCreation}
-            session={$sessionStore}
+            session={$httpdStore.session}
             projectId={project.id}
             projectHead={project.head}
             {baseUrl} />

@@ -51,6 +51,7 @@
   "dependencies": {
     "@radicle/gray-matter": "4.1.0",
     "@wooorm/starry-night": "^2.0.0",
+    "async-mutex": "^0.4.0",
     "baconjs": "^3.0.17",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",

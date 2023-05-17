@@ -1,30 +1,26 @@
 <script lang="ts">
-  import debounce from "lodash/debounce";
+  import type { HttpdState } from "@app/lib/httpd";
 
   import { closeFocused } from "@app/components/Floating.svelte";
-  import { sessionStore, disconnect } from "@app/lib/session";
-  import { toClipboard, formatNodeId } from "@app/lib/utils";
+  import { httpdStore, disconnect } from "@app/lib/httpd";
 
-  import Avatar from "@app/components/Avatar.svelte";
+  import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
+  import Clipboard from "@app/components/Clipboard.svelte";
+  import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
-
-  let icon: "clipboard-small" | "checkmark-small" = "clipboard-small";
-
-  const restoreIcon = debounce(() => {
-    icon = "clipboard-small";
-  }, 800);
-
-  async function copyToClipboard(clipboard: string): Promise<void> {
-    await toClipboard(clipboard);
-    icon = "checkmark-small";
-    restoreIcon();
-  }
+  import Link from "@app/components/Link.svelte";
 
   $: command = import.meta.env.PROD
     ? "rad web"
     : `rad web --frontend ${new URL(import.meta.url).origin}`;
+
+  const buttonTitle: Record<HttpdState["state"], string> = {
+    stopped: "radicle-httpd is stopped",
+    running: "radicle-httpd is running",
+    authenticated: "radicle-httpd is running - signed in",
+  };
 </script>
 
 <style>
@@ -34,89 +30,23 @@
     border-radius: var(--border-radius);
     box-shadow: var(--elevation-low);
     color: var(--color-foreground-6);
-    display: flex;
-    flex-direction: column;
     position: absolute;
     right: 5rem;
     top: 5rem;
     width: 15rem;
   }
   .info {
-    align-items: flex-start;
-    padding: 1rem;
-    width: 20.5rem;
-  }
-  .cmd {
-    background-color: var(--color-foreground-3);
-    border-radius: var(--border-radius-small);
-    cursor: pointer;
-    display: inline-block;
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-small);
-    margin-top: 0.5rem;
-    max-width: 18.5rem;
-    overflow: hidden;
-    padding: 2px 0.5rem;
-    position: relative;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .cmd-clipboard {
-    align-items: center;
-    background-image: linear-gradient(
-      -90deg,
-      var(--color-foreground-2),
-      var(--color-foreground-2),
-      transparent
-    );
     display: flex;
-    justify-content: flex-end;
-    position: absolute;
-    right: 0;
-    top: 0;
-    visibility: hidden;
-    width: 3rem;
-    height: 100%;
-  }
-  .cmd:hover .cmd-clipboard {
-    visibility: visible;
+    padding: 1rem 1rem 0.5rem 1rem;
   }
   .avatar-id-container {
-    align-items: center;
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 2rem 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.8rem;
     width: 100%;
-  }
-  .id-container {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
     gap: 0.5rem;
-    justify-content: center;
   }
-  .id-container:hover {
-    color: var(--color-foreground);
-  }
-  .id-container:hover .id-clipboard {
-    visibility: visible;
-  }
-  .id-clipboard {
-    position: absolute;
-    right: 1rem;
-    visibility: hidden;
-  }
-  .id {
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
-    user-select: none;
-    word-break: break-all;
-  }
-  .disconnect {
+  .dropdown-button {
     align-items: center;
     border-top: 1px solid var(--color-foreground-3);
     cursor: pointer;
@@ -130,97 +60,100 @@
     user-select: none;
     width: 100%;
   }
-  .disconnect:hover {
+  .dropdown-button:hover {
     background-color: var(--color-foreground-3);
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
     color: var(--color-foreground-6);
   }
-  .toggle-avatar {
-    align-items: center;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
+  .rounded {
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
   }
-  .dropdown-avatar {
-    align-items: center;
-    display: flex;
-    height: 80px;
-    justify-content: center;
-    margin-bottom: 1rem;
+  .stopped {
+    color: var(--color-foreground-5);
+  }
+  .running {
+    color: var(--color-foreground);
+  }
+  .authenticated {
+    color: var(--color-positive);
+  }
+  .toggle:hover .authenticated {
+    color: var(--color-positive);
   }
 </style>
 
 <Floating>
-  <div slot="toggle">
+  <div slot="toggle" class="toggle">
     <Button
-      style={$sessionStore
-        ? "padding-left: 10px; padding-right: 1rem;"
-        : undefined}
-      variant="foreground">
-      {#if $sessionStore}
-        <div class="toggle-avatar">
-          <div style:height="1.5rem">
-            <Avatar nodeId={$sessionStore.publicKey} />
-          </div>
-          <div class="user-id txt-small">
-            {formatNodeId($sessionStore.publicKey)}
-          </div>
+      title={buttonTitle[$httpdStore.state]}
+      style="padding-left: 10px; padding-right: 1rem;"
+      variant="outline">
+      <div style="display: flex; gap: 0.5rem">
+        <div
+          class:authenticated={$httpdStore.state === "authenticated"}
+          class:stopped={$httpdStore.state === "stopped"}
+          class:running={$httpdStore.state === "running"}>
+          <Icon name="network" />
         </div>
-      {:else}
-        Connect
-      {/if}
+        radicle.local
+      </div>
     </Button>
   </div>
 
   <div slot="modal">
-    {#if !$sessionStore}
-      <div class="dropdown info">
-        To connect to your local Radicle node, run this command in your
-        terminal:
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span
-          class="cmd"
-          on:click={async () => {
-            await copyToClipboard(command);
-          }}>
-          {command}
-          <div class="cmd-clipboard">
-            <Icon name={icon} />
-          </div>
-        </span>
-      </div>
-    {:else}
+    {#if $httpdStore.state === "authenticated"}
       <div class="dropdown">
         <div class="avatar-id-container">
-          <div class="dropdown-avatar">
-            <Avatar nodeId={$sessionStore.publicKey} />
-          </div>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
-            class="id-container"
-            on:click={async () => {
-              if ($sessionStore) {
-                await copyToClipboard($sessionStore.publicKey);
-              }
-            }}>
-            <div class="id">
-              {formatNodeId($sessionStore.publicKey)}
-            </div>
-            <div class="id-clipboard">
-              <Icon name={icon} />
-            </div>
+          <div style="align-items: center; display: flex; gap: 0.25rem;">
+            <Authorship authorId={$httpdStore.session.publicKey} />
+            <Clipboard text={$httpdStore.session.publicKey} small />
           </div>
         </div>
 
+        <Link
+          on:afterNavigate={closeFocused}
+          route={{
+            resource: "seeds",
+            params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
+          }}>
+          <div class="dropdown-button">Browse</div>
+        </Link>
+
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
-          class="disconnect"
+          class="dropdown-button rounded"
           on:click={() => {
             void disconnect();
             closeFocused();
           }}>
           Disconnect
+        </div>
+      </div>
+    {:else if $httpdStore.state === "running"}
+      <div class="dropdown" style:width="20.5rem">
+        <div class="info">
+          To connect to your local Radicle node, run this command in your
+          terminal:
+        </div>
+        <div style:margin="0 1rem 1rem 1rem">
+          <Command {command} />
+        </div>
+        <Link
+          on:afterNavigate={closeFocused}
+          route={{
+            resource: "seeds",
+            params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
+          }}>
+          <div class="dropdown-button rounded">Browse</div>
+        </Link>
+      </div>
+    {:else}
+      <div class="dropdown" style:width="20.5rem">
+        <div class="info">
+          To access your local Radicle node on this site, run:
+        </div>
+        <div style:margin="0 1rem 1rem 1rem">
+          <Command command="radicle-httpd" />
         </div>
       </div>
     {/if}

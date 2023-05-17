@@ -5,7 +5,7 @@
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
-  import * as session from "@app/lib/session";
+  import * as httpd from "@app/lib/httpd";
   import Loading from "@app/components/Loading.svelte";
 
   import AuthenticatedModal from "@app/views/session/AuthenticatedModal.svelte";
@@ -14,7 +14,7 @@
   export let activeRoute: Extract<Route, { resource: "session" }>;
 
   onMount(async () => {
-    const isAuthenticated = await session.authenticate(activeRoute.params);
+    const isAuthenticated = await httpd.authenticate(activeRoute.params);
 
     if (isAuthenticated) {
       modal.show({ component: AuthenticatedModal, props: {} });

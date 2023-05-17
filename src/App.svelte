@@ -2,7 +2,7 @@
   import Plausible from "plausible-tracker";
 
   import * as router from "@app/lib/router";
-  import * as session from "@app/lib/session";
+  import * as httpd from "@app/lib/httpd";
   import { unreachable } from "@app/lib/utils";
 
   import Header from "./App/Header.svelte";
@@ -22,7 +22,7 @@
   const activeRouteStore = router.activeRouteStore;
 
   void router.loadFromLocation();
-  session.initialize();
+  httpd.initialize();
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
     const plausible = Plausible({

@@ -11,7 +11,7 @@
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
-  import { sessionStore } from "@app/lib/session";
+  import { httpdStore } from "@app/lib/httpd";
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
@@ -137,7 +137,7 @@
         {/each}
       </div>
     </div>
-    {#if $sessionStore && utils.isLocal(baseUrl.hostname)}
+    {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
       <ProjectLink
         projectParams={{
           view: {

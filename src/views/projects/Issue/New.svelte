@@ -1,13 +1,13 @@
 <script lang="ts" strictEvents>
   import type { BaseUrl } from "@httpd-client";
-  import type { StoredSession } from "@app/lib/session";
+  import type { Session } from "@app/lib/httpd";
 
   import { createEventDispatcher } from "svelte";
 
   import * as modal from "@app/lib/modal";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { sessionStore } from "@app/lib/session";
+  import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
@@ -19,7 +19,7 @@
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
 
-  export let session: StoredSession;
+  export let session: Session;
   export let projectId: string;
   export let projectHead: string;
   export let baseUrl: BaseUrl;
@@ -28,7 +28,9 @@
   let preview: boolean = false;
   let action: "create" | "view";
   $: action =
-    $sessionStore && utils.isLocal(baseUrl.hostname) && !preview
+    $httpdStore.state === "authenticated" &&
+    utils.isLocal(baseUrl.hostname) &&
+    !preview
       ? "create"
       : "view";
 

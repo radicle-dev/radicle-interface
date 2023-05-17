@@ -6,7 +6,7 @@
   import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher, tick } from "svelte";
   import { scrollIntoView } from "@app/lib/utils";
-  import { sessionStore } from "@app/lib/session";
+  import { httpdStore } from "@app/lib/httpd";
 
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
@@ -74,7 +74,7 @@
     authorAlias={root.author.alias}
     timestamp={root.timestamp}
     body={root.body}
-    showReplyIcon={Boolean($sessionStore)}
+    showReplyIcon={Boolean($httpdStore.state === "authenticated")}
     on:toggleReply={toggleReply} />
 </div>
 {#each replies as reply}
