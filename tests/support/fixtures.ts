@@ -11,7 +11,6 @@ import { test as base, expect } from "@playwright/test";
 import * as Process from "./process.js";
 import * as logLabel from "@tests/support/logLabel.js";
 import { createPeerManager } from "./peerManager.js";
-import { sleep } from "@app/lib/sleep";
 
 export { expect };
 
@@ -199,9 +198,14 @@ export async function createSeedFixture() {
     "-C",
     sourceBrowsingDir,
   ]);
+  // Workaround for fixing MaxListenersExceededWarning.
+  // Since every prefixOutput stream adds stream listeners that don't autoClose.
+  // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
   const peerManager = await createPeerManager({
     dataDir: Path.resolve(Path.join(tmpDir, "peers")),
-    outputLog: FsSync.createWriteStream(Path.join(tmpDir, "log")),
+    outputLog: FsSync.createWriteStream(
+      Path.join(tmpDir, "log"),
+    ).setMaxListeners(20),
   });
   const palm = await peerManager.startPeer({ name: "palm" });
   await palm.startHttpd();
@@ -214,10 +218,14 @@ export async function createSeedFixture() {
     gitOptions: gitOptions["bob"],
   });
   await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
-  await alice.startNode({ connect: palm });
-  await bob.startNode({ connect: palm });
-  await sleep(1000);
+  await alice.startNode();
+  await bob.startNode();
+  await alice.connect(palm);
+  await bob.connect(palm);
+
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
+  await alice.git(["checkout", "feature/branch"]);
+  await alice.git(["checkout", "orphaned-branch"]);
   await alice.git(["checkout", "main"]);
   await alice.rad([
     "init",
@@ -229,17 +237,20 @@ export async function createSeedFixture() {
     "Git repository for source browsing tests",
     "--announce",
   ]);
-  await alice.git(["checkout", "feature/branch"]);
-  await alice.git(["push", "rad"]);
-  await sleep(2000);
-  await alice.git(["checkout", "orphaned-branch"]);
-  await alice.git(["push", "rad"]);
-  await sleep(2000);
-  const { stdout: rid } = await alice.rad(["inspect"]);
+  // Needed due to rad init not pushing all branches.
+  await alice.git(["push", "rad", "--all"]);
   await alice.rad(["track", bob.nodeId]);
-  await sleep(2000);
+
+  await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId);
+  await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId);
+  await palm.waitForRoutes(rid, alice.nodeId, palm.nodeId);
+
   await bob.rad(["clone", rid], { cwd: bob.checkoutPath });
-  await sleep(2000);
+
+  await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
+  await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
+  await palm.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
+
   await Fs.writeFile(
     Path.join(bob.checkoutPath, "source-browsing", "README.md"),
     "Updated readme",
@@ -269,12 +280,15 @@ export const gitOptions = {
   alice: {
     GIT_AUTHOR_NAME: "Alice Liddell",
     GIT_AUTHOR_EMAIL: "alice@radicle.xyz",
+    GIT_AUTHOR_DATE: "1671125284",
     GIT_COMMITTER_NAME: "Alice Liddell",
     GIT_COMMITTER_EMAIL: "alice@radicle.xyz",
+    GIT_COMMITTER_DATE: "1671125284",
   },
   bob: {
     GIT_AUTHOR_NAME: "Bob Belcher",
     GIT_AUTHOR_EMAIL: "bob@radicle.xyz",
+    GIT_AUTHOR_DATE: "1671125284",
     GIT_COMMITTER_NAME: "Bob Belcher",
     GIT_COMMITTER_EMAIL: "bob@radicle.xyz",
     GIT_COMMITTER_DATE: "Mon Dec 21 14:00 2022 +0100",

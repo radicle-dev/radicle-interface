@@ -48,8 +48,10 @@ do
   else
     # To provide deterministic Node and Repo IDs, we need a rad CLI compiled with the --debug flag.
     if [ "$BINARY_NAME" = "rad" ]; then
-      DOWNLOAD_NAME=rad-debug
-      else
+      DOWNLOAD_NAME=debug/rad
+    elif [ "$BINARY_NAME" = "git-remote-rad" ]; then
+      DOWNLOAD_NAME=debug/git-remote-rad
+    else
       DOWNLOAD_NAME=$BINARY_NAME
     fi
 

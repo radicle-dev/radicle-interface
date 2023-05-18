@@ -19,6 +19,10 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
     await assertRadInstalled();
   } catch (error) {
     console.error(error);
+    console.log("");
+    console.log("To download the required test binaries, run:");
+    console.log(" 👉 ./scripts/install-binaries");
+    console.log("");
     process.exit(1);
   }
 

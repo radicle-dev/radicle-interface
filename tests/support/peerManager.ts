@@ -5,10 +5,50 @@ import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
 import * as Stream from "node:stream";
 import getPort from "get-port";
+import lodash from "lodash";
 import waitOn from "wait-on";
 import { execa } from "execa";
 
 import * as Process from "./process.js";
+import { sleep } from "@app/lib/sleep.js";
+
+export type RefsUpdate =
+  | { updated: { name: string; old: string; new: string } }
+  | { created: { name: string; oid: string } }
+  | { deleted: { name: string; oid: string } }
+  | { skipped: { name: string; oid: string } };
+
+export type NodeEvent =
+  | {
+      type: "refs-fetched";
+      remote: string;
+      rid: string;
+      updated: RefsUpdate[];
+    }
+  | {
+      type: "refs-synced";
+      remote: string;
+      rid: string;
+    }
+  | {
+      type: "seed-discovered";
+      rid: string;
+      nid: string;
+    }
+  | {
+      type: "seed-dropped";
+      nid: string;
+      rid: string;
+    }
+  | {
+      type: "peer-connected";
+      nid: string;
+    };
+
+export interface RoutingEntry {
+  nid: string;
+  rid: string;
+}
 
 interface PeerManagerParams {
   dataPath: string;
@@ -69,6 +109,7 @@ export class RadiclePeer {
 
   #seed: string;
   #radHome: string;
+  #eventRecords: NodeEvent[] = [];
   #outputLog: Stream.Writable;
   #gitOptions?: Record<string, string>;
   #listenSocketAddr?: string;
@@ -87,6 +128,15 @@ export class RadiclePeer {
     this.#seed = props.seed;
     this.#radHome = props.radHome;
     this.#outputLog = props.logFile;
+  }
+
+  public async waitForEvent(searchEvent: NodeEvent, timeoutInMs: number) {
+    const start = new Date().getTime();
+
+    while (new Date().getTime() - start > timeoutInMs) {
+      this.#eventRecords.find(event => lodash.isEqual(searchEvent, event));
+      await sleep(100);
+    }
   }
 
   public static async create({
@@ -132,7 +182,6 @@ export class RadiclePeer {
   }
 
   public async startNode(params?: {
-    connect?: RadiclePeer;
     trackingScope?: "trusted" | "all";
     trackingPolicy?: "track" | "block";
   }) {
@@ -147,12 +196,6 @@ export class RadiclePeer {
       "--listen",
       this.#listenSocketAddr,
     ];
-    if (params?.connect) {
-      args.push(
-        "--connect",
-        `${params.connect.nodeId}@${params.connect.#listenSocketAddr}`,
-      );
-    }
     if (params?.trackingScope) {
       args.push("--tracking-scope", params.trackingScope);
     }
@@ -164,9 +207,75 @@ export class RadiclePeer {
     this.spawn("radicle-node", args);
 
     await waitOn({
-      resources: [`tcp:${this.#listenSocketAddr}`],
-      timeout: 7000,
+      resources: [`socket:${Path.join(this.#radHome, "node", "control.sock")}`],
     });
+
+    this.rad(["node", "events"], { cwd: this.#radHome }).stdout?.on(
+      "data",
+      (data: any) => {
+        data
+          .toString()
+          .split("\n")
+          .forEach((data: unknown) => {
+            if (data && typeof data === "string" && data.trim() !== "") {
+              try {
+                const result: NodeEvent = JSON.parse(data);
+                this.#eventRecords.push(result);
+              } catch (e) {
+                console.log("Error parsing event", data);
+              }
+            }
+          });
+      },
+    );
+  }
+
+  public async waitForRoutes(rid: string, ...nodes: string[]) {
+    let remaining = nodes;
+
+    while (remaining.length > 0) {
+      const { stdout: entries } = await this.rad(
+        ["node", "routing", "--rid", rid, "--json"],
+        {
+          cwd: this.#radHome,
+        },
+      );
+
+      entries.split("\n").forEach(entry => {
+        if (entry && entry.trim() !== "") {
+          try {
+            const result: RoutingEntry = JSON.parse(entry);
+            remaining = remaining.filter(nid => result.nid !== nid);
+          } catch (e) {
+            console.log("Error parsing entry", entry);
+          }
+        }
+      });
+
+      await this.waitForEvent(
+        { type: "seed-discovered", rid, nid: this.nodeId },
+        6000,
+      );
+    }
+  }
+
+  public async connect(remote: RadiclePeer) {
+    if (!remote.#listenSocketAddr) {
+      throw new Error("Remote node has no listen addr yet");
+    }
+    await this.rad(
+      ["node", "connect", remote.nodeId, remote.#listenSocketAddr],
+      { cwd: this.#radHome },
+    );
+
+    await this.waitForEvent(
+      { type: "peer-connected", nid: remote.nodeId },
+      1000,
+    );
+    await remote.waitForEvent(
+      { type: "peer-connected", nid: this.nodeId },
+      1000,
+    );
   }
 
   public uiUrl(): string {
@@ -204,6 +313,7 @@ export class RadiclePeer {
         GIT_CONFIG_NOSYSTEM: "1",
         RAD_HOME: this.#radHome,
         RAD_PASSPHRASE: "asdf",
+        RAD_COMMIT_TIME: "1671125284",
         RAD_SEED: this.#seed,
       },
     };
