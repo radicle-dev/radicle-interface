@@ -3,14 +3,15 @@
 Contributions are very welcome. When contributing code, please follow these
 simple guidelines.
 
-* Make sure you run `npx eslint .` to check for code formatting problems.
-  You can use the `--fix` flag to automatically fix any issues the linter catches.
+* Make sure you run `npm run check` for code formatting problems.
+* Run our test suite `npm run test:*` to avoid regressions or bugs.
 * Before adding any code dependencies, check with the maintainers if this is okay.
 * Write properly formatted comments: they should be english sentences, eg:
 
       // Return the current UNIX time.
 
 * Make sure all commits are signed off, using `git commit -s`.
+* Sign all your comments with your public key, using `git commit -S`.
 * Follow the guidelines when proposing code changes (see below).
 * Write properly formatted git commits (see below).
 * Read the DCO.
