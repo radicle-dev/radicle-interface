@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 import type { Connect, ViteDevServer } from "vite";
 import type http from "node:http";
 
