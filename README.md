@@ -22,7 +22,4 @@ Your app is ready to be deployed!
 Latest production deployment 👉 https://app.radicle.xyz
 
 If you want to connect to pre-heartwood seed nodes, you can run the app locally
-via the legacy IPFS deployment. To do so, you'll have to run
-[IPFS](https://ipfs.tech).
-
-Legacy deployment 👉 http://bafybeid2fxbb3zpbttnunrzm74v7l3qxtgxathiv5ucykh2ojm4dbyqdwi.ipfs.localhost:8080/#/
+using the `legacy` tag, available by running `git checkout legacy`.
