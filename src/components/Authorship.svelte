@@ -4,6 +4,12 @@
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
+  export let authorAliasColor:
+    | "--color-primary-5"
+    | "--color-foreground-5"
+    | "--color-positive-5"
+    | "--color-negative-5"
+    | undefined = "--color-foreground-5";
   export let caption: string | undefined = undefined;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
@@ -28,9 +34,6 @@
   .body {
     white-space: nowrap;
   }
-  .alias {
-    color: var(--color-foreground-5);
-  }
 </style>
 
 <span class="authorship txt-tiny">
@@ -40,13 +43,13 @@
   <span class="id layout-desktop">
     {formatNodeId(authorId)}
     {#if authorAlias}
-      <span class="alias">({authorAlias})</span>
+      <span style:color="var({authorAliasColor})">({authorAlias})</span>
     {/if}
   </span>
   <span class="id layout-mobile">
     {formatNodeId(authorId).replace("did:key:", "")}
     {#if authorAlias}
-      <span class="alias">({authorAlias})</span>
+      <span style:color="var({authorAliasColor})">({authorAlias})</span>
     {/if}
   </span>
   {#if !caption}

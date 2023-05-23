@@ -21,6 +21,7 @@
   import ThreadComponent from "@app/components/Thread.svelte";
 
   export let authorId: string;
+  export let authorAlias: string | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let expanded: boolean = true;
   export let patchId: string;
@@ -45,6 +46,17 @@
         return `rejected revision ${utils.formatObjectId(revision)}`;
       default:
         return `left a comment on revision ${utils.formatObjectId(revision)}`;
+    }
+  }
+
+  function aliasColorForVerdict(verdict?: string | null) {
+    switch (verdict) {
+      case "accept":
+        return "--color-positive-5";
+      case "reject":
+        return "--color-negative-5";
+      default:
+        return "--color-foreground-5";
     }
   }
 
@@ -228,13 +240,17 @@
               <CommentComponent
                 {caption}
                 {authorId}
+                {authorAlias}
                 timestamp={element.timestamp}
                 rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={element.inner.description} />
             </div>
           {:else}
             <div class="action-padding action-background txt-tiny">
-              <Authorship {authorId} timestamp={element.timestamp}>
+              <Authorship
+                {authorId}
+                {authorAlias}
+                timestamp={element.timestamp}>
                 {caption}
               </Authorship>
             </div>
@@ -275,8 +291,10 @@
             class="action-padding action-background merge layout-desktop txt-tiny">
             <div class="action-content">
               <Authorship
-                authorId={element.inner.node}
-                timestamp={element.timestamp}>
+                authorId={element.inner.author.id}
+                authorAlias={element.inner.author.alias}
+                timestamp={element.timestamp}
+                authorAliasColor="--color-primary-5">
                 merged
                 {utils.formatCommit(element.inner.commit)}
               </Authorship>
@@ -285,7 +303,10 @@
           <div
             class="action-padding action-background merge layout-mobile txt-tiny">
             <div class="action-content">
-              <Authorship authorId={element.inner.node}>
+              <Authorship
+                authorId={element.inner.author.id}
+                authorAlias={element.inner.author.alias}
+                authorAliasColor="--color-primary-5">
                 merged
                 {utils.formatCommit(element.inner.commit)}
               </Authorship>
@@ -301,6 +322,7 @@
               <CommentComponent
                 caption={formatVerdict(revisionId, review.verdict)}
                 authorId={author}
+                authorAlias={review.author.alias}
                 timestamp={review.timestamp}
                 rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={review.comment} />
@@ -311,7 +333,11 @@
               class:positive-review={element.inner[2].verdict === "accept"}
               class:negative-review={element.inner[2].verdict === "reject"}>
               <div class="action-content">
-                <Authorship authorId={author} timestamp={element.timestamp}>
+                <Authorship
+                  authorId={author}
+                  authorAlias={review.author.alias}
+                  authorAliasColor={aliasColorForVerdict(review.verdict)}
+                  timestamp={element.timestamp}>
                   {formatVerdict(revisionId, review.verdict)}
                 </Authorship>
               </div>
@@ -321,7 +347,10 @@
               class:positive-review={element.inner[2].verdict === "accept"}
               class:negative-review={element.inner[2].verdict === "reject"}>
               <div class="action-content">
-                <Authorship authorId={author}>
+                <Authorship
+                  authorId={author}
+                  authorAlias={review.author.alias}
+                  authorAliasColor={aliasColorForVerdict(review.verdict)}>
                   {formatVerdict(revisionId, review.verdict)}
                 </Authorship>
               </div>

@@ -10,7 +10,6 @@ import {
   optional,
   strictObject,
   string,
-  tuple,
   union,
 } from "zod";
 
@@ -28,13 +27,13 @@ const patchStateSchema = union([
 ]) satisfies ZodSchema<PatchState>;
 
 export interface Merge {
-  node: string;
+  author: { id: string; alias?: string };
   commit: string;
   timestamp: number;
 }
 
 const mergeSchema = strictObject({
-  node: string(),
+  author: strictObject({ id: string(), alias: string().optional() }),
   commit: string(),
   timestamp: number(),
 }) satisfies ZodSchema<Merge>;
@@ -72,6 +71,7 @@ const codeCommentSchema = strictObject({
 type Verdict = "accept" | "reject";
 
 export interface Review {
+  author: { id: string; alias?: string };
   verdict?: Verdict | null;
   comment?: string | null;
   inline: CodeComment[];
@@ -79,6 +79,7 @@ export interface Review {
 }
 
 const reviewSchema = strictObject({
+  author: strictObject({ id: string(), alias: string().optional() }),
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
   comment: optional(string().nullable()),
   inline: array(codeCommentSchema),
@@ -92,7 +93,7 @@ export interface Revision {
   oid: string;
   refs: string[];
   discussions: Comment[];
-  reviews: [string, Review][];
+  reviews: Review[];
   merges: Merge[];
   timestamp: number;
 }
@@ -104,7 +105,7 @@ const revisionSchema = strictObject({
   oid: string(),
   refs: array(string()),
   discussions: array(commentSchema),
-  reviews: array(tuple([string(), reviewSchema])),
+  reviews: array(reviewSchema),
   merges: array(mergeSchema),
   timestamp: number(),
 }) satisfies ZodSchema<Revision>;
@@ -142,6 +143,7 @@ export type PatchUpdateAction =
   | { type: "redact"; revision: string }
   | {
       type: "review";
+      author: { id: string; alias?: string };
       revision: string;
       verdict?: Verdict;
       comment?: string;

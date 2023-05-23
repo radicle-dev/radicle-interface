@@ -153,10 +153,10 @@
       revisionOid: rev.oid,
     },
     [
-      ...rev.reviews.map<TimelineReview>(([author, review]) => ({
+      ...rev.reviews.map<TimelineReview>(review => ({
         timestamp: review.timestamp,
         type: "review",
-        inner: [rev.id, author, review],
+        inner: [rev.id, review.author.id, review],
       })),
       ...rev.merges.map<TimelineMerge>(inner => ({
         timestamp: inner.timestamp,
@@ -279,7 +279,9 @@
         {/if}
       </svelte:fragment>
       <div class="author" slot="author">
-        opened by <Authorship authorId={patch.author.id} />
+        opened by <Authorship
+          authorId={patch.author.id}
+          authorAlias={patch.author.alias} />
         {utils.formatTimestamp(patch.revisions[0].timestamp)}
       </div>
     </CobHeader>
@@ -379,6 +381,7 @@
             on:reply={createReply}
             patchId={patch.id}
             authorId={patch.author.id}
+            authorAlias={patch.author.alias}
             expanded={index === patch.revisions.length - 1}
             previousRevId={previousRevision?.id}
             previousRevOid={previousRevision?.oid} />
