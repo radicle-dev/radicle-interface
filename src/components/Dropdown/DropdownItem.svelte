@@ -1,0 +1,35 @@
+<script lang="ts">
+  export let selected: boolean;
+  export let title: string | undefined = undefined;
+  export let size: "small" | "tiny";
+</script>
+
+<style>
+  .item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    /* makes sure peer selector items with badges are same height
+       as ones without */
+    height: 34px;
+  }
+  .item:hover,
+  .selected {
+    background-color: var(--color-foreground-2);
+  }
+</style>
+
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+  class="item"
+  class:selected
+  {title}
+  on:click
+  class:txt-small={size === "small"}
+  class:txt-tiny={size === "tiny"}>
+  <slot />
+</div>

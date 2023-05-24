@@ -12,6 +12,7 @@
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
+  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -181,39 +182,26 @@
         <svelte:fragment slot="modal">
           <Dropdown
             items={previousRevOid && previousRevId
-              ? [
-                  {
-                    title: projectHead,
-                    value: projectHead,
-                    badge: null,
-                  },
-                  {
-                    title: previousRevOid,
-                    value: previousRevOid,
-                    badge: null,
-                  },
-                ]
-              : [
-                  {
-                    title: projectHead,
-                    value: projectHead,
-                    badge: null,
-                  },
-                ]}>
+              ? [projectHead, previousRevOid]
+              : [projectHead]}>
             <svelte:fragment slot="item" let:item>
               <ProjectLink
-                title="{item.value}..{revisionOid}"
+                title="{item}..{revisionOid}"
                 projectParams={{
-                  search: `diff=${item.value}..${revisionOid}`,
+                  search: `diff=${item}..${revisionOid}`,
                 }}>
-                {#if item.value === projectHead}
-                  Compare to {projectDefaultBranch} ({utils.formatObjectId(
-                    projectHead,
-                  )})
+                {#if item === projectHead}
+                  <DropdownItem selected={false} size="small">
+                    Compare to {projectDefaultBranch} ({utils.formatObjectId(
+                      projectHead,
+                    )})
+                  </DropdownItem>
                 {:else if previousRevId}
-                  Compare to previous revision ({utils.formatObjectId(
-                    previousRevId,
-                  )})
+                  <DropdownItem selected={false} size="small">
+                    Compare to previous revision ({utils.formatObjectId(
+                      previousRevId,
+                    )})
+                  </DropdownItem>
                 {/if}
               </ProjectLink>
             </svelte:fragment>

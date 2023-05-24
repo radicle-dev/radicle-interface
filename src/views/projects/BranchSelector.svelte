@@ -2,6 +2,7 @@
   import * as utils from "@app/lib/utils";
 
   import Dropdown from "@app/components/Dropdown.svelte";
+  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
@@ -80,12 +81,14 @@
           {branchLabel}
         </div>
         <svelte:fragment slot="modal">
-          <Dropdown items={branchList} selected={branchLabel}>
-            <div class="branch-item" slot="item" let:item>
+          <Dropdown items={branchList}>
+            <svelte:fragment slot="item" let:item>
               <ProjectLink projectParams={{ revision: item.value }} on:click>
-                {item.value}
+                <DropdownItem selected={item.value === branchLabel} size="tiny">
+                  {item.value}
+                </DropdownItem>
               </ProjectLink>
-            </div>
+            </svelte:fragment>
           </Dropdown>
         </svelte:fragment>
       </Floating>

@@ -1,25 +1,25 @@
 <script lang="ts" strictEvents>
-  import type { Item } from "@app/components/Dropdown.svelte";
-
   type T = $$Generic;
 
   import Button from "@app/components/Button.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
+  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+
   import { closeFocused } from "@app/components/Floating.svelte";
   import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
 
   export let state: T;
-  export let selectedItem: Item<T>;
-  export let items: Item<T>[];
+  export let selectedItem: [string, T];
+  export let items: [string, T][];
 
   const dispatch = createEventDispatcher<{
     saveStatus: T;
   }>();
 
-  function switchCaption({ detail: item }: CustomEvent<Item<T>>) {
+  function switchCaption(item: [string, T]) {
     selectedItem = item;
     closeFocused();
   }
@@ -58,9 +58,9 @@
   <Button
     variant="foreground"
     size="small"
-    on:click={() => dispatch("saveStatus", selectedItem.value)}
+    on:click={() => dispatch("saveStatus", selectedItem[1])}
     style={attachableStyle}>
-    {selectedItem.title}
+    {selectedItem[0]}
   </Button>
   <Floating>
     <svelte:fragment slot="toggle">
@@ -69,9 +69,16 @@
       </button>
     </svelte:fragment>
     <svelte:fragment slot="modal">
-      <Dropdown
-        on:select={switchCaption}
-        items={items.filter(i => !isEqual(i.value, state))} />
+      <Dropdown items={items.filter(i => !isEqual(i, state))}>
+        <svelte:fragment slot="item" let:item>
+          <DropdownItem
+            selected={false}
+            on:click={() => switchCaption(item)}
+            size="small">
+            {item[0]}
+          </DropdownItem>
+        </svelte:fragment>
+      </Dropdown>
     </svelte:fragment>
   </Floating>
 </div>

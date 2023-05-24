@@ -1,6 +1,5 @@
 <script lang="ts" strictEvents>
   import type { BaseUrl, Issue, IssueState } from "@httpd-client";
-  import type { Item } from "@app/components/Dropdown.svelte";
 
   import { createEventDispatcher } from "svelte";
 
@@ -19,6 +18,7 @@
   import TagInput from "./Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import Thread from "@app/components/Thread.svelte";
+  import { isEqual } from "lodash";
 
   export let issue: Issue;
   export let baseUrl: BaseUrl;
@@ -31,21 +31,11 @@
 
   const action: "create" | "edit" | "view" =
     $sessionStore && utils.isLocal(baseUrl.hostname) ? "edit" : "view";
-  const items: Item<IssueState>[] = [
-    { title: "Reopen issue", state: { status: "open" } as const },
-    {
-      title: "Close issue as solved",
-      state: { status: "closed", reason: "solved" } as const,
-    },
-    {
-      title: "Close issue as other",
-      state: { status: "closed", reason: "other" } as const,
-    },
-  ].map(item => ({
-    title: item.title,
-    value: item.state,
-    badge: null,
-  }));
+  const items: [string, IssueState][] = [
+    ["Reopen issue", { status: "open" }],
+    ["Close issue as solved", { status: "closed", reason: "solved" }],
+    ["Close issue as other", { status: "closed", reason: "other" }],
+  ];
 
   async function createReply({
     detail: reply,
@@ -275,7 +265,7 @@
             placeholder="Leave your comment" />
           <div class="actions txt-small">
             <CobStateButton
-              {items}
+              items={items.filter(([, state]) => !isEqual(state, issue.state))}
               {selectedItem}
               state={issue.state}
               on:saveStatus={saveStatus} />

@@ -1,14 +1,12 @@
 <script lang="ts" strictEvents>
-  import type { Item } from "@app/components/Dropdown.svelte";
   import type { Remote } from "@httpd-client";
-
-  import { onMount } from "svelte";
 
   import { formatNodeId, truncateId } from "@app/lib/utils";
 
   import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
+  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
@@ -16,9 +14,7 @@
   export let peer: string | undefined = undefined;
   export let peers: Remote[];
 
-  let meta: Remote | undefined;
-
-  let items: Item<string>[] = [];
+  const meta = peers.find(p => p.id === peer);
 
   function createTitle(p: Remote): string {
     const nodeId = formatNodeId(p.id);
@@ -26,18 +22,6 @@
       ? `${nodeId} is a delegate of this project`
       : `${nodeId} is a peer tracked by this node`;
   }
-
-  onMount(() => {
-    meta = peers.find(p => p.id === peer);
-    items = peers.map(p => {
-      return {
-        value: p.id,
-        alias: p.alias,
-        title: createTitle(p),
-        badge: p.delegate ? "delegate" : null,
-      };
-    });
-  });
 </script>
 
 <style>
@@ -61,12 +45,6 @@
   }
   .peer:hover {
     background-color: var(--color-foreground-2);
-  }
-  .peer-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
   }
   .prefix {
     display: inline-block;
@@ -122,37 +100,42 @@
   </div>
 
   <svelte:fragment slot="modal">
-    <Dropdown {items} selected={peer}>
+    <Dropdown items={peers}>
       <svelte:fragment slot="item" let:item>
-        <ProjectLink
-          on:click
-          projectParams={{
-            peer: item.value,
-            revision: undefined,
-          }}>
-          <div class="peer-item">
-            <span class="avatar-id">
-              <Avatar nodeId={item.value} inline />
-              <div class="layout-desktop">
-                <!-- prettier-ignore -->
-                <span><span class="prefix">did:key:</span>{item.value}</span>
-                {#if item.alias}
-                  <span class="alias">({item.alias})</span>
-                {/if}
-              </div>
-              <div class="layout-mobile">
-                <!-- prettier-ignore -->
-                <span><span class="prefix">did:key:</span>{truncateId(item.value)}</span>
-                {#if item.alias}
-                  <span class="alias">({item.alias})</span>
-                {/if}
-              </div>
-            </span>
-            {#if item.badge}
-              <Badge variant="primary">{item.badge}</Badge>
-            {/if}
-          </div>
-        </ProjectLink>
+        <div class="dropdown-item">
+          <ProjectLink
+            on:click
+            projectParams={{
+              peer: item.id,
+              revision: undefined,
+            }}>
+            <DropdownItem
+              selected={item.id === peer}
+              title={createTitle(item)}
+              size="tiny">
+              <span class="avatar-id">
+                <Avatar nodeId={item.id} inline />
+                <div class="layout-desktop">
+                  <!-- prettier-ignore -->
+                  <span><span class="prefix">did:key:</span>{item.id}</span>
+                  {#if item.alias}
+                    <span class="alias">({item.alias})</span>
+                  {/if}
+                </div>
+                <div class="layout-mobile">
+                  <!-- prettier-ignore -->
+                  <span><span class="prefix">did:key:</span>{truncateId(item.id)}</span>
+                  {#if item.alias}
+                    <span class="alias">({item.alias})</span>
+                  {/if}
+                </div>
+              </span>
+              {#if item.delegate}
+                <Badge variant="primary">delegate</Badge>
+              {/if}
+            </DropdownItem>
+          </ProjectLink>
+        </div>
       </svelte:fragment>
     </Dropdown>
   </svelte:fragment>

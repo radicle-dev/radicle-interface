@@ -45,7 +45,6 @@
   import { capitalize } from "lodash";
   import { HttpdClient } from "@httpd-client";
   import { sessionStore } from "@app/lib/session";
-  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -53,6 +52,7 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
+  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -333,26 +333,22 @@
             </SquareButton>
           </svelte:fragment>
           <svelte:fragment slot="modal">
-            <Dropdown
-              items={patch.revisions.map(r => {
-                return {
-                  title: `Revision ${utils.formatObjectId(r.id)}`,
-                  value: r.id,
-                  badge: null,
-                };
-              })}
-              selected={currentRevision.id}
-              on:select={({ detail: item }) => {
-                updateProjectRoute({
-                  view: {
-                    resource: "patch",
-                    params: { patch: patch.id, revision: item.value },
-                  },
-                });
-              }}>
-              <span slot="item" let:item>
-                {item.title}
-              </span>
+            <Dropdown items={patch.revisions}>
+              <svelte:fragment slot="item" let:item>
+                <ProjectLink
+                  projectParams={{
+                    view: {
+                      resource: "patch",
+                      params: { patch: patch.id, revision: item.id },
+                    },
+                  }}>
+                  <DropdownItem
+                    selected={item.id === currentRevision.id}
+                    size="tiny">
+                    Revision {utils.formatObjectId(item.id)}
+                  </DropdownItem>
+                </ProjectLink>
+              </svelte:fragment>
             </Dropdown>
           </svelte:fragment>
         </Floating>
