@@ -167,7 +167,8 @@
           {#if element.inner.description}
             <CommentComponent
               {caption}
-              {authorId}
+              authorId={element.inner.author.id}
+              authorAlias={element.inner.author.alias}
               timestamp={element.timestamp}
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               body={element.inner.description} />

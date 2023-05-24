@@ -87,6 +87,7 @@ const reviewSchema = strictObject({
 
 export interface Revision {
   id: string;
+  author: { id: string; alias?: string };
   description: string;
   base: string;
   oid: string;
@@ -99,6 +100,7 @@ export interface Revision {
 
 const revisionSchema = strictObject({
   id: string(),
+  author: strictObject({ id: string(), alias: string().optional() }),
   description: string(),
   base: string(),
   oid: string(),
