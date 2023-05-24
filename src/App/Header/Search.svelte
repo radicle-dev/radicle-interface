@@ -47,7 +47,7 @@
     } else if (searchResult.type === "projects") {
       input = "";
       if (searchResult.results.length === 1) {
-        router.push({
+        void router.push({
           resource: "projects",
           params: {
             view: { resource: "tree" },

@@ -331,7 +331,7 @@
               })}
               selected={currentRevision.id}
               on:select={({ detail: item }) => {
-                updateProjectRoute({
+                void updateProjectRoute({
                   view: {
                     resource: "patch",
                     params: { patch: patch.id, revision: item.value },

@@ -17,7 +17,7 @@
   }, 800);
 
   function copyToClipboard(clipboard: string) {
-    toClipboard(clipboard);
+    void toClipboard(clipboard);
     icon = "checkmark-small";
     restoreIcon();
   }
@@ -217,7 +217,7 @@
         <div
           class="disconnect"
           on:click={() => {
-            disconnect();
+            void disconnect();
             closeFocused();
           }}>
           Disconnect

@@ -42,7 +42,7 @@
     if (event.target.matches(".file-link")) {
       event.preventDefault();
       if ($activeRouteStore.resource === "projects") {
-        updateProjectRoute({
+        void updateProjectRoute({
           path: utils.canonicalize(
             event.target.getAttribute("href"),
             $activeRouteStore.params.path ?? "",

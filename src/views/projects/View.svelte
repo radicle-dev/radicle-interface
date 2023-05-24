@@ -86,7 +86,7 @@
 
     if (activeRoute.params.route) {
       const { revision, path } = parseRoute(activeRoute.params.route, branches);
-      updateProjectRoute(
+      void updateProjectRoute(
         {
           revision,
           path,
@@ -122,7 +122,7 @@
   }
 
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
-    router.push({
+    void router.push({
       resource: "projects",
       params: {
         id,

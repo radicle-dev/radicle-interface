@@ -63,7 +63,7 @@
   // If we have a line number we should show the raw output.
   let showMarkdown = line ? false : isMarkdown;
   const toggleMarkdown = () => {
-    updateProjectRoute({ line: undefined });
+    void updateProjectRoute({ line: undefined });
     showMarkdown = !showMarkdown;
   };
 </script>
