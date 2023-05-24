@@ -64,10 +64,12 @@
 </script>
 
 <style>
-  .action {
+  .action-padding {
+    padding: 0.5rem 1rem;
+  }
+  .action-background {
     background-color: var(--color-foreground-1);
     border-radius: var(--border-radius);
-    padding: 0.5rem 1rem;
   }
   .action-content {
     display: flex;
@@ -78,9 +80,19 @@
     color: var(--color-primary-6);
     background-color: var(--color-primary-3);
   }
+  .review {
+    background-color: var(--color-foreground-1);
+    border-radius: var(--border-radius);
+  }
   .positive-review {
     color: var(--color-positive-6);
     background-color: var(--color-positive-3);
+    border-radius: var(--border-radius);
+  }
+  .negative-review {
+    color: var(--color-negative-6);
+    background-color: var(--color-negative-3);
+    border-radius: var(--border-radius);
   }
   .revision {
     border: 1px solid var(--color-foreground-3);
@@ -224,21 +236,23 @@
               ? "opened this patch"
               : `updated to ${utils.formatObjectId(element.inner.id)}`}
           {#if element.inner.description}
-            <CommentComponent
-              {caption}
-              {authorId}
-              timestamp={element.timestamp}
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              body={element.inner.description} />
+            <div class="action-background">
+              <CommentComponent
+                {caption}
+                {authorId}
+                timestamp={element.timestamp}
+                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+                body={element.inner.description} />
+            </div>
           {:else}
-            <div class="action txt-tiny">
+            <div class="action-padding action-background txt-tiny">
               <Authorship {authorId} timestamp={element.timestamp}>
                 {caption}
               </Authorship>
             </div>
           {/if}
           {#if response?.commits}
-            <div class="action txt-tiny">
+            <div class="action-padding action-background txt-tiny">
               {#each response.commits as commit}
                 <div class="commit-event">
                   <span>
@@ -269,7 +283,8 @@
             </div>
           {/if}
         {:else if element.type === "merge"}
-          <div class="action merge layout-desktop txt-tiny">
+          <div
+            class="action-padding action-background merge layout-desktop txt-tiny">
             <div class="action-content">
               <Authorship
                 authorId={element.inner.node}
@@ -279,7 +294,8 @@
               </Authorship>
             </div>
           </div>
-          <div class="action merge layout-mobile txt-tiny">
+          <div
+            class="action-padding action-background merge layout-mobile txt-tiny">
             <div class="action-content">
               <Authorship authorId={element.inner.node}>
                 merged
@@ -289,31 +305,39 @@
           </div>
         {:else if element.type === "review"}
           {@const [revisionId, author, review] = element.inner}
-          <div
-            class="action layout-desktop txt-tiny"
-            class:positive-review={element.inner[2].verdict === "accept"}>
-            <div class="action-content">
-              <Authorship authorId={author} timestamp={element.timestamp}>
-                {formatVerdict(revisionId, review.verdict)}
-              </Authorship>
-            </div>
-          </div>
-          <div
-            class="layout-mobile txt-tiny"
-            class:positive-review={element.inner[2].verdict === "accept"}>
-            <div class="action-content">
-              <Authorship authorId={author}>
-                {formatVerdict(revisionId, review.verdict)}
-              </Authorship>
-            </div>
-          </div>
           {#if review.comment}
-            <CommentComponent
-              caption="left a comment"
-              authorId={author}
-              timestamp={review.timestamp}
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              body={review.comment} />
+            <div
+              class="review"
+              class:positive-review={element.inner[2].verdict === "accept"}
+              class:negative-review={element.inner[2].verdict === "reject"}>
+              <CommentComponent
+                caption={formatVerdict(revisionId, review.verdict)}
+                authorId={author}
+                timestamp={review.timestamp}
+                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+                body={review.comment} />
+            </div>
+          {:else}
+            <div
+              class="action-padding action-background layout-desktop txt-tiny"
+              class:positive-review={element.inner[2].verdict === "accept"}
+              class:negative-review={element.inner[2].verdict === "reject"}>
+              <div class="action-content">
+                <Authorship authorId={author} timestamp={element.timestamp}>
+                  {formatVerdict(revisionId, review.verdict)}
+                </Authorship>
+              </div>
+            </div>
+            <div
+              class="layout-mobile txt-tiny"
+              class:positive-review={element.inner[2].verdict === "accept"}
+              class:negative-review={element.inner[2].verdict === "reject"}>
+              <div class="action-content">
+                <Authorship authorId={author}>
+                  {formatVerdict(revisionId, review.verdict)}
+                </Authorship>
+              </div>
+            </div>
           {/if}
         {/if}
       {/each}

@@ -50,6 +50,10 @@
 </script>
 
 <style>
+  .comment {
+    background-color: var(--color-foreground-1);
+    border-radius: var(--border-radius);
+  }
   .reply {
     margin-left: 3rem;
     margin-top: 1rem;
@@ -62,7 +66,7 @@
   }
 </style>
 
-<div style:margin-top="1rem">
+<div class="comment" style:margin-top="1rem">
   <CommentComponent
     {rawPath}
     id={root.id}
@@ -74,7 +78,7 @@
     on:toggleReply={toggleReply} />
 </div>
 {#each replies as reply}
-  <div class="reply">
+  <div class="comment reply">
     <CommentComponent
       {rawPath}
       id={reply.id}

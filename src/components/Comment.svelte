@@ -20,13 +20,11 @@
 </script>
 
 <style>
-  .comment {
-    display: flex;
-  }
   .card {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
     border-radius: var(--border-radius);
-    background-color: var(--color-foreground-1);
+    background-color: inherit;
   }
   .card-header {
     display: flex;
@@ -49,36 +47,34 @@
   }
 </style>
 
-<div class="comment" {id}>
-  <div class="card">
-    <div class="card-header">
-      <Authorship {caption} {authorId} {authorAlias} {timestamp} />
-      <div class="actions">
-        {#if showReplyIcon}
-          <Button
-            variant="text"
-            size="tiny"
-            on:click={() => dispatch("toggleReply")}>
-            <div class="action">
-              <Icon name="chat" />
-              <span>reply</span>
-            </div>
-          </Button>
-        {/if}
-      </div>
-    </div>
-    <div class="card-body">
-      {#if action === "create"}
-        <Textarea
-          resizable
-          bind:value={body}
-          on:submit
-          placeholder="Leave a comment" />
-      {:else if body.trim() === ""}
-        <span class="txt-missing">No description.</span>
-      {:else}
-        <Markdown {rawPath} content={body} />
+<div class="card" {id}>
+  <div class="card-header">
+    <Authorship {caption} {authorId} {authorAlias} {timestamp} />
+    <div class="actions">
+      {#if showReplyIcon}
+        <Button
+          variant="text"
+          size="tiny"
+          on:click={() => dispatch("toggleReply")}>
+          <div class="action">
+            <Icon name="chat" />
+            <span>reply</span>
+          </div>
+        </Button>
       {/if}
     </div>
+  </div>
+  <div class="card-body">
+    {#if action === "create"}
+      <Textarea
+        resizable
+        bind:value={body}
+        on:submit
+        placeholder="Leave a comment" />
+    {:else if body.trim() === ""}
+      <span class="txt-missing">No description.</span>
+    {:else}
+      <Markdown {rawPath} content={body} />
+    {/if}
   </div>
 </div>
