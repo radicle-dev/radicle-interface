@@ -239,8 +239,8 @@
             <div class="action-background">
               <CommentComponent
                 {caption}
-                {authorId}
-                {authorAlias}
+                authorId={element.inner.author.id}
+                authorAlias={element.inner.author.alias}
                 timestamp={element.timestamp}
                 rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={element.inner.description} />
