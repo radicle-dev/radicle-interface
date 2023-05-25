@@ -158,11 +158,13 @@
         type: "review",
         inner: [rev.id, review.author.id, review],
       })),
-      ...rev.merges.map<TimelineMerge>(inner => ({
-        timestamp: inner.timestamp,
-        type: "merge",
-        inner,
-      })),
+      ...patch.merges
+        .filter(merge => merge.revision === rev.id)
+        .map<TimelineMerge>(inner => ({
+          timestamp: inner.timestamp,
+          type: "merge",
+          inner,
+        })),
       ...rev.discussions
         .filter(comment => !comment.replyTo)
         .map<TimelineThread>(thread => ({

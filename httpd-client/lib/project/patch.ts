@@ -10,30 +10,44 @@ import {
   optional,
   strictObject,
   string,
+  tuple,
   union,
 } from "zod";
 
 export type PatchState =
   | { status: "draft" }
-  | { status: "open" }
+  | { status: "open"; conflicts?: [string, string][] }
   | { status: "archived" }
-  | { status: "merged" };
+  | { status: "merged"; revision: string; commit: string };
 
 const patchStateSchema = union([
-  strictObject({ status: literal("draft") }),
-  strictObject({ status: literal("open") }),
-  strictObject({ status: literal("archived") }),
-  strictObject({ status: literal("merged") }),
+  strictObject({
+    status: literal("draft"),
+  }),
+  strictObject({
+    status: literal("open"),
+    conflicts: array(tuple([string(), string()])).optional(),
+  }),
+  strictObject({
+    status: literal("archived"),
+  }),
+  strictObject({
+    status: literal("merged"),
+    revision: string(),
+    commit: string(),
+  }),
 ]) satisfies ZodSchema<PatchState>;
 
 export interface Merge {
   author: { id: string; alias?: string };
+  revision: string;
   commit: string;
   timestamp: number;
 }
 
 const mergeSchema = strictObject({
   author: strictObject({ id: string(), alias: string().optional() }),
+  revision: string(),
   commit: string(),
   timestamp: number(),
 }) satisfies ZodSchema<Merge>;
@@ -94,7 +108,6 @@ export interface Revision {
   refs: string[];
   discussions: Comment[];
   reviews: Review[];
-  merges: Merge[];
   timestamp: number;
 }
 
@@ -106,7 +119,6 @@ const revisionSchema = strictObject({
   refs: array(string()),
   discussions: array(commentSchema),
   reviews: array(reviewSchema),
-  merges: array(mergeSchema),
   timestamp: number(),
 }) satisfies ZodSchema<Revision>;
 
@@ -118,6 +130,7 @@ export interface Patch {
   state: PatchState;
   target: string;
   tags: string[];
+  merges: Merge[];
   revisions: Revision[];
 }
 
@@ -129,6 +142,7 @@ export const patchSchema = strictObject({
   state: patchStateSchema,
   target: string(),
   tags: array(string()),
+  merges: array(mergeSchema),
   revisions: array(revisionSchema),
 }) satisfies ZodSchema<Patch>;
 
