@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type * as Stream from "node:stream";
+import type { PeerManager } from "./peerManager.js";
 
 import * as Fs from "node:fs/promises";
 import * as FsSync from "node:fs";
@@ -24,6 +25,7 @@ export const test = base.extend<{
   forAllTests: void;
   customAppConfig: boolean;
   stateDir: string;
+  peerManager: PeerManager;
   outputLog: Stream.Writable;
 }>({
   customAppConfig: [false, { option: true }],
@@ -129,11 +131,26 @@ export const test = base.extend<{
     await logFile.close();
   },
 
+  peerManager: async ({ stateDir, outputLog }, use) => {
+    const peerManager = await createPeerManager({
+      dataDir: Path.resolve(Path.join(stateDir, "peers")),
+      outputLog,
+    });
+    await use(peerManager);
+  },
+
   // eslint-disable-next-line no-empty-pattern
   stateDir: async ({}, use, testInfo) => {
-    const stateDir = testInfo.outputDir;
+    // Ok, we're moving the state dir to /tmp to avoid hitting the SUN_LEN limit, due to socket files.
+    // We still create a symlink in the testInfo.outputDir, so that we can easily find the state dir.
+    const stateDir = Path.join(
+      "/tmp",
+      Path.basename(testInfo.testId.substring(0, 8)),
+    );
     await Fs.rm(stateDir, { recursive: true, force: true });
+    await Fs.rm(testInfo.outputDir, { recursive: true, force: true });
     await Fs.mkdir(stateDir, { recursive: true });
+    await Fs.symlink(stateDir, testInfo.outputDir);
 
     await use(stateDir);
     if (
@@ -141,6 +158,7 @@ export const test = base.extend<{
       (testInfo.status === "passed" || testInfo.status === "skipped")
     ) {
       await Fs.rm(stateDir, { recursive: true });
+      await Fs.rm(testInfo.outputDir, { recursive: true });
     }
   },
 });
@@ -235,6 +253,7 @@ export async function createSeedFixture() {
   await bob.connect(palm);
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
+  alice.setCwd(Path.join(alice.checkoutPath, "source-browsing"));
   await alice.git(["checkout", "feature/branch"]);
   await alice.git(["checkout", "orphaned-branch"]);
   await alice.git(["checkout", "main"]);
@@ -266,6 +285,7 @@ export async function createSeedFixture() {
     Path.join(bob.checkoutPath, "source-browsing", "README.md"),
     "Updated readme",
   );
+  bob.setCwd(Path.join(bob.checkoutPath, "source-browsing"));
   await bob.git(["add", "README.md"]);
   await bob.git([
     "commit",

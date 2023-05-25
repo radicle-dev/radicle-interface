@@ -4,6 +4,7 @@ import {
   projectFixtureUrl,
   bobRemote,
   aliceRemote,
+  gitOptions,
 } from "@tests/support/fixtures.js";
 
 test("peer and branch switching", async ({ page }) => {
@@ -114,4 +115,24 @@ test("relative timestamps", async ({ page }) => {
   await expect(earliestCommit).toContainText(
     "Alice Liddell committed last month",
   );
+});
+
+test("pushing changes while viewing history", async ({ page, peerManager }) => {
+  const alice = await peerManager.startPeer({
+    name: "alice",
+    gitOptions: gitOptions["alice"],
+  });
+  await alice.startHttpd(8090);
+  await alice.startNode();
+  const { rid, projectFolder } = await alice.createProject("alice-project");
+  await page.goto(`/seeds/127.0.0.1:8090/${rid}`);
+  await page.locator('role=link[name="1 commit"]').click();
+
+  alice.setCwd(projectFolder);
+  await alice.git(["commit", "--allow-empty", "--message", "first change"]);
+  await alice.git(["push", "rad", "main"]);
+  await page.reload();
+  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history/main`);
+  await page.locator('role=link[name="2 commits"]').click();
+  await expect(page.getByTitle("Current branch")).toContainText("main 516fa74");
 });

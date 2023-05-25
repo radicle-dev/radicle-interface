@@ -109,6 +109,7 @@ export class RadiclePeer {
 
   #seed: string;
   #radHome: string;
+  #cwd?: string;
   #eventRecords: NodeEvent[] = [];
   #outputLog: Stream.Writable;
   #gitOptions?: Record<string, string>;
@@ -171,12 +172,12 @@ export class RadiclePeer {
     });
   }
 
-  public async startHttpd() {
+  public async startHttpd(port = 8080) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.spawn("radicle-httpd");
+    this.spawn("radicle-httpd", ["--listen", `0.0.0.0:${port}`]);
 
     await waitOn({
-      resources: ["tcp:127.0.0.1:8080"],
+      resources: [`tcp:0.0.0.0:${port}`],
       timeout: 7000,
     });
   }
@@ -228,6 +229,43 @@ export class RadiclePeer {
           });
       },
     );
+  }
+
+  // Create a project using the rad CLI.
+  public async createProject(
+    name: string,
+    description = "",
+    defaultBranch = "main",
+  ): Promise<{ rid: string; projectFolder: string }> {
+    const projectFolder = Path.join(this.checkoutPath, name);
+
+    await this.git(["init", name, "--initial-branch", defaultBranch], {
+      cwd: this.checkoutPath,
+    });
+    await this.git(["commit", "--allow-empty", "--message", "initial commit"], {
+      cwd: projectFolder,
+    });
+    await this.rad(
+      [
+        "init",
+        "--name",
+        name,
+        "--default-branch",
+        defaultBranch,
+        "--description",
+        description,
+        "--announce",
+      ],
+      {
+        cwd: projectFolder,
+      },
+    );
+
+    const { stdout: rid } = await this.rad(["inspect"], {
+      cwd: projectFolder,
+    });
+
+    return { rid, projectFolder };
   }
 
   public async waitForRoutes(rid: string, ...nodes: string[]) {
@@ -285,18 +323,16 @@ export class RadiclePeer {
     return `/seeds/127.0.0.1:8080/${rid}`;
   }
 
+  public setCwd(cwd: string) {
+    this.#cwd = cwd;
+  }
+
   public git(args: string[] = [], opts?: Options): ExecaChildProcess {
-    return this.spawn("git", args, {
-      cwd: Path.join(this.checkoutPath, "source-browsing"),
-      ...opts,
-    });
+    return this.spawn("git", args, { ...opts });
   }
 
   public rad(args: string[] = [], opts?: Options): ExecaChildProcess {
-    return this.spawn("rad", args, {
-      cwd: Path.join(this.checkoutPath, "source-browsing"),
-      ...opts,
-    });
+    return this.spawn("rad", args, { ...opts });
   }
 
   public spawn(
@@ -305,6 +341,7 @@ export class RadiclePeer {
     opts?: Options,
   ): ExecaChildProcess {
     opts = {
+      cwd: this.#cwd,
       ...opts,
       env: {
         ...opts?.env,
