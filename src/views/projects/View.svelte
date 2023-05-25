@@ -32,6 +32,7 @@
 
   $: id = activeRoute.params.id;
   $: peer = activeRoute.params.peer;
+  $: revision = activeRoute.params.revision;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
@@ -48,23 +49,22 @@
     input: string,
     branches: Record<string, string>,
   ): { path?: string; revision?: string } {
+    const parsed: { path?: string; revision?: string } = {};
+    const commitPath = [input.slice(0, 40), input.slice(41)];
     const branch = Object.entries(branches).find(([branchName]) =>
       input.startsWith(branchName),
     );
-    const commitPath = [input.slice(0, 40), input.slice(41)];
-    const parsed: { path?: string; revision?: string } = {};
 
     if (branch) {
       const [rev, path] = [
         input.slice(0, branch[0].length),
         input.slice(branch[0].length + 1),
       ];
-
       parsed.revision = rev;
-      parsed.path = path ? path : "/";
-    } else if (utils.isOid(commitPath[0])) {
+      parsed.path = path || "/";
+    } else if (router.isOid(commitPath[0])) {
       parsed.revision = commitPath[0];
-      parsed.path = commitPath[1] ? commitPath[1] : "/";
+      parsed.path = commitPath[1] || "/";
     } else {
       parsed.path = input;
     }
@@ -98,28 +98,19 @@
         { replace: true },
       );
     }
-    if (!activeRoute.params.revision) {
-      // We need a revision to fetch `getRoot`.
-      // Don't use router.updateProjectRoute, to avoid changing the URL.
-      activeRoute.params.revision = project.defaultBranch;
-    }
 
     return { project, branches, peers };
   };
 
   async function getRoot(
-    revision: string | null,
     branches: Record<string, string>,
-    head: string,
-  ): Promise<{ tree: Tree; commit: string }> {
-    const commit = revision ? utils.getOid(revision, branches) : head;
-
-    if (!commit) {
-      throw new Error(`Revision ${revision} not found`);
-    }
+    defaultBranch: string,
+    revision?: string,
+  ): Promise<{ tree: Tree }> {
+    const commit = router.parseRevisionToOid(revision, defaultBranch, branches);
     const tree = await api.project.getTree(id, commit);
 
-    return { tree, commit };
+    return { tree };
   }
 
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
@@ -144,9 +135,6 @@
 
   // React to peer changes
   $: projectPromise = getProject(id, peer);
-
-  // Content can be altered in child components.
-  $: revision = activeRoute.params.revision || null;
 </script>
 
 <style>
@@ -184,11 +172,16 @@
     </header>
   </main>
 {:then { project, peers, branches }}
+  {@const commit = router.parseRevisionToOid(
+    revision,
+    project.defaultBranch,
+    branches,
+  )}
   <main>
     <ProjectMeta {project} nodeId={peer} />
-    {#await getRoot(revision, branches, project.head)}
+    {#await getRoot(branches, project.defaultBranch, revision)}
       <Loading center />
-    {:then { tree, commit }}
+    {:then { tree }}
       <Header
         projectId={project.id}
         projectName={project.name}
@@ -201,15 +194,21 @@
         <SourceBrowsingHeader
           {project}
           {activeRoute}
-          revision={activeRoute.params.revision ?? commit}
           {peers}
           {branches}
           commitCount={tree.stats.commits}
-          contributorCount={tree.stats.contributors} />
+          contributorCount={tree.stats.contributors}
+          revision={activeRoute.params.revision} />
       {/if}
 
       {#if activeRoute.params.view.resource === "tree"}
-        <Browser {baseUrl} {project} {commit} {tree} {activeRoute} />
+        <Browser
+          {baseUrl}
+          {project}
+          {revision}
+          {branches}
+          {tree}
+          {activeRoute} />
       {:else if activeRoute.params.view.resource === "history"}
         <History projectId={project.id} {baseUrl} parentCommit={commit} />
       {:else if activeRoute.params.view.resource === "commits"}

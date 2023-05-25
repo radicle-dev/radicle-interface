@@ -10,6 +10,7 @@
   export let fetchTree: (path: string) => Promise<Tree | undefined>;
   export let path: string;
   export let tree: Tree;
+  export let revision: string;
   export let loadingPath: string | null = null;
 
   const dispatch = createEventDispatcher<{ select: string }>();
@@ -23,16 +24,14 @@
     <Folder
       {fetchTree}
       {loadingPath}
+      {revision}
       name={entry.name}
       prefix={`${entry.path}/`}
       currentPath={path}
       on:select={onSelect} />
   {:else}
     <ProjectLink
-      projectParams={{
-        view: { resource: "tree" },
-        path: entry.path,
-      }}
+      projectParams={{ view: { resource: "tree" }, path: entry.path, revision }}
       on:click={() => onSelect({ detail: entry.path })}>
       <File
         active={entry.path === path}

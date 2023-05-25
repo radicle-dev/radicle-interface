@@ -109,6 +109,41 @@ export async function replace(newRoute: Route): Promise<void> {
   await navigate("replace", newRoute);
 }
 
+// We need a SHA1 commit in some places, so we return early if the revision is
+// a SHA and else we look into branches.
+export function getOid(
+  revision: string,
+  branches?: Record<string, string>,
+): string | undefined {
+  if (isOid(revision)) return revision;
+
+  if (branches) {
+    const oid = branches[revision];
+    if (oid) return oid;
+  }
+  return undefined;
+}
+
+// Check whether the input is a SHA1 commit.
+export function isOid(input: string): boolean {
+  return /^[a-fA-F0-9]{40}$/.test(input);
+}
+
+export function parseRevisionToOid(
+  revision: string | undefined,
+  defaultBranch: string,
+  branches: Record<string, string>,
+): string {
+  if (revision) {
+    const oid = getOid(revision, branches);
+    if (!oid) {
+      throw new Error(`Revision ${revision} not found`);
+    }
+    return oid;
+  }
+  return branches[defaultBranch];
+}
+
 function pathToRoute(path: string): Route | null {
   // This matches e.g. an empty string
   if (!path) {
@@ -266,4 +301,4 @@ export function routeToPath(route: Route) {
   }
 }
 
-export const testExports = { pathToRoute };
+export const testExports = { pathToRoute, isOid, routeToPath };

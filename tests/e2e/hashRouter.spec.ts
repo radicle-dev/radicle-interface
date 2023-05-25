@@ -61,7 +61,7 @@ test.describe("project page navigation", () => {
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.locator('role=link[name="8 commits"]').click();
-    await expect(page).toHaveURL(`/#${projectFixtureUrl}/history/main`);
+    await expect(page).toHaveURL(`/#${projectFixtureUrl}/history`);
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
     await expectUrlPersistsReload(page);

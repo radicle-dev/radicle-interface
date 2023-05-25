@@ -127,12 +127,41 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   const { rid, projectFolder } = await alice.createProject("alice-project");
   await page.goto(`/seeds/127.0.0.1:8090/${rid}`);
   await page.locator('role=link[name="1 commit"]').click();
+  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
 
-  alice.setCwd(projectFolder);
-  await alice.git(["commit", "--allow-empty", "--message", "first change"]);
-  await alice.git(["push", "rad", "main"]);
+  await alice.git(["commit", "--allow-empty", "--message", "first change"], {
+    cwd: projectFolder,
+  });
+  await alice.git(["push", "rad", "main"], {
+    cwd: projectFolder,
+  });
   await page.reload();
-  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history/main`);
-  await page.locator('role=link[name="2 commits"]').click();
+  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
+  await expect(page.locator('role=link[name="2 commits"]')).toBeVisible();
   await expect(page.getByTitle("Current branch")).toContainText("main 516fa74");
+
+  await page.locator("text=alice-project").click();
+  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}`);
+  await page.locator('role=link[name="2 commits"]').click();
+
+  await alice.git(
+    [
+      "commit",
+      "--allow-empty",
+      "--message",
+      "after clicking the project title",
+    ],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await alice.git(["push", "rad", "main"], {
+    cwd: projectFolder,
+  });
+  await page.reload();
+  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
+  await expect(page.locator('role=link[name="3 commits"]')).toHaveText(
+    "3 commits",
+  );
+  await expect(page.getByTitle("Current branch")).toContainText("main bb9089a");
 });

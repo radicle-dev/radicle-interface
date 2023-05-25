@@ -19,24 +19,6 @@ export function getRawBasePath(
   return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}/raw/${id}/${commit}`;
 }
 
-// We need a SHA1 commit in some places, so we return early if the revision is
-// a SHA and else we look into branches.
-export function getOid(
-  revision: string,
-  branches?: Record<string, string>,
-): string | null {
-  if (isOid(revision)) return revision;
-
-  if (branches) {
-    const oid = branches[revision];
-
-    if (oid) {
-      return oid;
-    }
-  }
-  return null;
-}
-
 export function formatLocationHash(hash: string | null): number | null {
   if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
   return null;
@@ -179,11 +161,6 @@ export const formatTimestamp = (
 
   return new Date(timestamp).toUTCString();
 };
-
-// Check whether the input is a SHA1 commit.
-export function isOid(input: string): boolean {
-  return /^[a-fA-F0-9]{40}$/.test(input);
-}
 
 // Check whether the input is a URL.
 export function isUrl(input: string): boolean {

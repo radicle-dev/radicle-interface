@@ -13,6 +13,7 @@
   export let prefix: string;
   export let currentPath: string;
   export let loadingPath: string | null = null;
+  export let revision: string;
 
   let expanded = currentPath.indexOf(prefix) === 0;
   let tree: Promise<Tree | undefined> = fetchTree(prefix).then(tree => {
@@ -83,12 +84,14 @@
               on:select={onSelectFile}
               prefix={`${entry.path}/`}
               {loadingPath}
+              {revision}
               {currentPath} />
           {:else}
             <ProjectLink
               projectParams={{
                 view: { resource: "tree" },
                 path: entry.path,
+                revision,
               }}
               on:click={() => onSelectFile({ detail: entry.path })}>
               <File

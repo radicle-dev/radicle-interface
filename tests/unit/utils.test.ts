@@ -108,13 +108,6 @@ describe("String Assertions", () => {
   });
 
   test.each([
-    { oid: "a64ae9c6d572e0ad906faa9a4a7a8d43f113278c", expected: true },
-    { oid: "a64ae9c", expected: false },
-  ])("isOid $oid => $expected", ({ oid, expected }) => {
-    expect(utils.isOid(oid)).toEqual(expected);
-  });
-
-  test.each([
     { url: "https://app.radicle.xyz", expected: true },
     { url: "http://app.radicle.xyz", expected: true },
     { url: "http://app", expected: true },

@@ -2,6 +2,7 @@
 import type { ExecaChildProcess, Options } from "execa";
 
 import * as Fs from "node:fs/promises";
+import * as Os from "node:os";
 import * as Path from "node:path";
 import * as Stream from "node:stream";
 import getPort from "get-port";
@@ -10,6 +11,7 @@ import waitOn from "wait-on";
 import { execa } from "execa";
 
 import * as Process from "./process.js";
+import { randomTag } from "@tests/support/support.js";
 import { sleep } from "@app/lib/sleep.js";
 
 export type RefsUpdate =
@@ -108,8 +110,8 @@ export class RadiclePeer {
   public nodeId: string;
 
   #seed: string;
+  #socket: string;
   #radHome: string;
-  #cwd?: string;
   #eventRecords: NodeEvent[] = [];
   #outputLog: Stream.Writable;
   #gitOptions?: Record<string, string>;
@@ -119,6 +121,7 @@ export class RadiclePeer {
     checkoutPath: string;
     nodeId: string;
     seed: string;
+    socket: string;
     gitOptions?: Record<string, string>;
     radHome: string;
     logFile: Stream.Writable;
@@ -127,6 +130,7 @@ export class RadiclePeer {
     this.nodeId = props.nodeId;
     this.#gitOptions = props.gitOptions;
     this.#seed = props.seed;
+    this.#socket = props.socket;
     this.#radHome = props.radHome;
     this.#outputLog = props.logFile;
   }
@@ -152,11 +156,17 @@ export class RadiclePeer {
     const radHome = Path.join(dataPath, name, "home");
     await Fs.mkdir(radHome, { recursive: true });
 
+    const socketDir = await Fs.mkdtemp(
+      Path.join(Os.tmpdir(), `radicle-${randomTag()}`),
+    );
+    const socket = Path.join(socketDir, "control.sock");
+
     const env = {
       ...gitOptions,
       RAD_HOME: radHome,
       RAD_PASSPHRASE: "asdf",
       RAD_SEED: seed,
+      RAD_SOCKET: socket,
     };
 
     await execa("rad", ["auth"], { env });
@@ -166,6 +176,7 @@ export class RadiclePeer {
       checkoutPath,
       gitOptions,
       seed,
+      socket,
       nodeId,
       radHome,
       logFile,
@@ -177,7 +188,7 @@ export class RadiclePeer {
     this.spawn("radicle-httpd", ["--listen", `0.0.0.0:${port}`]);
 
     await waitOn({
-      resources: [`tcp:0.0.0.0:${port}`],
+      resources: [`tcp:127.0.0.1:${port}`],
       timeout: 7000,
     });
   }
@@ -205,10 +216,10 @@ export class RadiclePeer {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.spawn("radicle-node", args);
+    void this.spawn("radicle-node", args);
 
     await waitOn({
-      resources: [`socket:${Path.join(this.#radHome, "node", "control.sock")}`],
+      resources: [`socket:${this.#socket}`],
     });
 
     this.rad(["node", "events"], { cwd: this.#radHome }).stdout?.on(
@@ -272,12 +283,13 @@ export class RadiclePeer {
     let remaining = nodes;
 
     while (remaining.length > 0) {
-      const { stdout: entries } = await this.rad(
-        ["node", "routing", "--rid", rid, "--json"],
-        {
-          cwd: this.#radHome,
-        },
-      );
+      const { stdout: entries } = await this.rad([
+        "node",
+        "routing",
+        "--rid",
+        rid,
+        "--json",
+      ]);
 
       entries.split("\n").forEach(entry => {
         if (entry && entry.trim() !== "") {
@@ -323,10 +335,6 @@ export class RadiclePeer {
     return `/seeds/127.0.0.1:8080/${rid}`;
   }
 
-  public setCwd(cwd: string) {
-    this.#cwd = cwd;
-  }
-
   public git(args: string[] = [], opts?: Options): ExecaChildProcess {
     return this.spawn("git", args, { ...opts });
   }
@@ -341,7 +349,6 @@ export class RadiclePeer {
     opts?: Options,
   ): ExecaChildProcess {
     opts = {
-      cwd: this.#cwd,
       ...opts,
       env: {
         ...opts?.env,
@@ -352,6 +359,7 @@ export class RadiclePeer {
         RAD_PASSPHRASE: "asdf",
         RAD_COMMIT_TIME: "1671125284",
         RAD_SEED: this.#seed,
+        RAD_SOCKET: this.#socket,
       },
     };
     const childProcess = Process.spawn(cmd, args, opts);

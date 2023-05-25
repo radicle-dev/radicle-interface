@@ -14,6 +14,7 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
+  import { parseRevisionToOid } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -34,11 +35,13 @@
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let tree: Tree;
-  export let commit: string;
+  export let revision: string | undefined;
+  export let branches: Record<string, string>;
   export let activeRoute: ProjectRoute;
 
   $: path = activeRoute.params.path || "/";
   $: line = activeRoute.params.line;
+  $: commit = parseRevisionToOid(revision, project.defaultBranch, branches);
 
   // When the component is loaded the first time, the blob is yet to be loaded.
   let state: State = { status: Status.Loading, path };
@@ -196,6 +199,7 @@
             {path}
             {fetchTree}
             {loadingPath}
+            revision={revision ?? project.defaultBranch}
             on:select={() => {
               // Close mobile tree if user navigates to other file
               mobileFileTree = false;

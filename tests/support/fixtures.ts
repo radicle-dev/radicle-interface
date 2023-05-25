@@ -141,16 +141,9 @@ export const test = base.extend<{
 
   // eslint-disable-next-line no-empty-pattern
   stateDir: async ({}, use, testInfo) => {
-    // Ok, we're moving the state dir to /tmp to avoid hitting the SUN_LEN limit, due to socket files.
-    // We still create a symlink in the testInfo.outputDir, so that we can easily find the state dir.
-    const stateDir = Path.join(
-      "/tmp",
-      Path.basename(testInfo.testId.substring(0, 8)),
-    );
+    const stateDir = testInfo.outputDir;
     await Fs.rm(stateDir, { recursive: true, force: true });
-    await Fs.rm(testInfo.outputDir, { recursive: true, force: true });
     await Fs.mkdir(stateDir, { recursive: true });
-    await Fs.symlink(stateDir, testInfo.outputDir);
 
     await use(stateDir);
     if (
@@ -158,7 +151,6 @@ export const test = base.extend<{
       (testInfo.status === "passed" || testInfo.status === "skipped")
     ) {
       await Fs.rm(stateDir, { recursive: true });
-      await Fs.rm(testInfo.outputDir, { recursive: true });
     }
   },
 });
@@ -242,10 +234,12 @@ export async function createSeedFixture() {
     name: "alice",
     gitOptions: gitOptions["alice"],
   });
+  const aliceProjectPath = Path.join(alice.checkoutPath, "source-browsing");
   const bob = await peerManager.startPeer({
     name: "bob",
     gitOptions: gitOptions["bob"],
   });
+  const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
   await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
   await alice.startNode();
   await bob.startNode();
@@ -253,23 +247,25 @@ export async function createSeedFixture() {
   await bob.connect(palm);
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
-  alice.setCwd(Path.join(alice.checkoutPath, "source-browsing"));
-  await alice.git(["checkout", "feature/branch"]);
-  await alice.git(["checkout", "orphaned-branch"]);
-  await alice.git(["checkout", "main"]);
-  await alice.rad([
-    "init",
-    "--name",
-    projectName,
-    "--default-branch",
-    "main",
-    "--description",
-    "Git repository for source browsing tests",
-    "--announce",
-  ]);
+  await alice.git(["checkout", "feature/branch"], { cwd: aliceProjectPath });
+  await alice.git(["checkout", "orphaned-branch"], { cwd: aliceProjectPath });
+  await alice.git(["checkout", "main"], { cwd: aliceProjectPath });
+  await alice.rad(
+    [
+      "init",
+      "--name",
+      projectName,
+      "--default-branch",
+      "main",
+      "--description",
+      "Git repository for source browsing tests",
+      "--announce",
+    ],
+    { cwd: aliceProjectPath },
+  );
   // Needed due to rad init not pushing all branches.
-  await alice.git(["push", "rad", "--all"]);
-  await alice.rad(["track", bob.nodeId]);
+  await alice.git(["push", "rad", "--all"], { cwd: aliceProjectPath });
+  await alice.rad(["track", bob.nodeId], { cwd: aliceProjectPath });
 
   await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId);
   await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId);
@@ -285,16 +281,27 @@ export async function createSeedFixture() {
     Path.join(bob.checkoutPath, "source-browsing", "README.md"),
     "Updated readme",
   );
-  bob.setCwd(Path.join(bob.checkoutPath, "source-browsing"));
-  await bob.git(["add", "README.md"]);
-  await bob.git([
-    "commit",
-    "--message",
-    "Update readme",
-    "--date",
-    "Mon Dec 21 14:00 2022 +0100",
-  ]);
-  await bob.git(["push", "rad"]);
+  await bob.git(["add", "README.md"], { cwd: bobProjectPath });
+  await bob.git(
+    [
+      "commit",
+      "--message",
+      "Update readme",
+      "--date",
+      "Mon Dec 21 14:00 2022 +0100",
+    ],
+    { cwd: bobProjectPath },
+  );
+  await bob.git(["push", "rad"], { cwd: bobProjectPath });
+
+  await bob.waitForEvent(
+    { type: "refs-synced", remote: palm.nodeId, rid },
+    2000,
+  );
+  await bob.waitForEvent(
+    { type: "refs-synced", remote: alice.nodeId, rid },
+    2000,
+  );
 }
 
 export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";

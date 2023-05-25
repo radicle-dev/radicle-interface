@@ -12,7 +12,7 @@
 
   export let project: Project;
   export let activeRoute: ProjectRoute;
-  export let revision: string;
+  export let revision: string | undefined;
   export let peers: Remote[];
   export let branches: Record<string, string>;
 
@@ -51,11 +51,10 @@
   {/if}
 
   <BranchSelector
-    projectDefaultBranch={project.defaultBranch}
-    projectHead={project.head}
     {branches}
     {revision}
-    on:click={() => closeFocused()} />
+    on:click={() => closeFocused()}
+    projectDefaultBranch={project.defaultBranch} />
 
   <ProjectLink
     projectParams={{
@@ -63,7 +62,7 @@
       view: {
         resource: "history",
       },
-      revision: revision,
+      revision,
       search: undefined,
     }}>
     <SquareButton

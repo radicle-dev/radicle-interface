@@ -1,5 +1,6 @@
 <script lang="ts" strictEvents>
   import * as utils from "@app/lib/utils";
+  import { parseRevisionToOid } from "@app/lib/router";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
@@ -8,8 +9,7 @@
 
   export let branches: Record<string, string>;
   export let projectDefaultBranch: string;
-  export let projectHead: string | undefined = undefined;
-  export let revision: string;
+  export let revision: string | undefined;
 
   let branchLabel: string | null = null;
 
@@ -17,12 +17,11 @@
     .sort()
     .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: head = projectHead ?? branches[projectDefaultBranch];
-  $: commit = utils.getOid(revision, branches) || head;
-  $: if (commit === head) {
-    branchLabel = projectDefaultBranch;
-  } else if (branches[revision]) {
+  $: commit = parseRevisionToOid(revision, projectDefaultBranch, branches);
+  $: if (revision && branches[revision]) {
     branchLabel = revision;
+  } else if (commit === branches[projectDefaultBranch]) {
+    branchLabel = projectDefaultBranch;
   } else {
     branchLabel = null;
   }
@@ -104,7 +103,7 @@
       {utils.formatCommit(commit)}
     </div>
     <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
-  {:else if commit === head}
+  {:else if commit === branches[projectDefaultBranch]}
     <div class="stat branch not-allowed">
       {projectDefaultBranch}
     </div>
