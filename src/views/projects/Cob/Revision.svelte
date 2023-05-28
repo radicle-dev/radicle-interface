@@ -19,6 +19,7 @@
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
@@ -144,16 +145,30 @@
   }
   .commit-event {
     color: var(--color-foreground-6);
-    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.25rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    font-family: var(--font-family-monospace);
   }
   .commit-event span {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     align-items: center;
+  }
+  .commit-pointer {
+    color: var(--color-foreground-5);
+    user-select: none;
+  }
+  .commit-separator {
+    width: 0;
+    height: 1rem;
+    color: var(--color-foreground-5);
+    position: relative;
+    top: -1.15rem;
+    left: -1.155rem;
+    user-select: none;
   }
 </style>
 
@@ -236,49 +251,43 @@
               ? "opened this patch"
               : `updated to ${utils.formatObjectId(element.inner.id)}`}
           {#if element.inner.description}
-            <div class="action-background">
-              <CommentComponent
-                {caption}
-                authorId={element.inner.author.id}
-                authorAlias={element.inner.author.alias}
-                timestamp={element.timestamp}
-                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-                body={element.inner.description} />
-            </div>
-          {:else}
-            <div class="action-padding action-background txt-tiny">
-              <Authorship
-                {authorId}
-                {authorAlias}
-                timestamp={element.timestamp}>
-                {caption}
-              </Authorship>
-            </div>
+            <Markdown
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+              content={element.inner.description} />
           {/if}
-          {#if response?.commits}
-            <div class="action-padding action-background txt-tiny">
-              {#each response.commits as commit}
-                <div class="commit-event">
-                  <span>
-                    <Avatar inline nodeId={authorId} />
-                    <ProjectLink
-                      projectParams={{
-                        view: { resource: "commits" },
-                        revision: commit.id,
-                        search: undefined,
-                      }}>
-                      <InlineMarkdown
-                        content={commit.summary}
-                        fontSize="tiny" />
-                    </ProjectLink>
-                  </span>
-                  <span>
-                    {utils.formatCommit(commit.id)}
-                  </span>
-                </div>
-              {/each}
-            </div>
-          {/if}
+          <div class="action-padding action-background txt-tiny">
+            <Authorship {authorId} {authorAlias} timestamp={element.timestamp}>
+              {caption}
+            </Authorship>
+            {#if response?.commits}
+              <div style="margin-top: 0.5rem;" class="action txt-tiny">
+                {#each response.commits as commit, i}
+                  <div class="commit-event">
+                    <span>
+                      <span class="commit-pointer">╰─</span>
+                      <span class="commit-separator">
+                        {i === 0 ? "╎" : "│"}
+                      </span>
+                      <Avatar inline nodeId={authorId} />
+                      <ProjectLink
+                        projectParams={{
+                          view: { resource: "commits" },
+                          revision: commit.id,
+                          search: undefined,
+                        }}>
+                        <InlineMarkdown
+                          content={commit.summary}
+                          fontSize="tiny" />
+                      </ProjectLink>
+                    </span>
+                    <span>
+                      {utils.formatCommit(commit.id)}
+                    </span>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
           {#if error}
             <div class="txt-monospace">
               <ErrorMessage
