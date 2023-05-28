@@ -67,8 +67,10 @@
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let projectHead: string;
+  export let projectDefaultBranch: string;
   export let revision: string;
   export let currentTab: "activity" | "commits" | "files";
+  export let diff: string | undefined = undefined;
 
   const api = new HttpdClient(baseUrl);
 
@@ -293,7 +295,7 @@
               <SquareButton
                 size="small"
                 clickable={option.disabled}
-                active={option.value === currentTab}
+                active={option.value === currentTab && !diff}
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>
@@ -308,6 +310,16 @@
             </SquareButton>
           {/if}
         {/each}
+        {#if diff}
+          <ProjectLink
+            projectParams={{
+              search: `diff=${diff}`,
+            }}>
+            <SquareButton size="small" active={true}>
+              Diff {diff.substr(0, 6)}..{diff.split("..")[1].substr(0, 6)}
+            </SquareButton>
+          </ProjectLink>
+        {/if}
       </div>
 
       {#if currentTab !== "activity"}
@@ -347,23 +359,40 @@
       {/if}
     </div>
     {#if currentTab === "activity"}
-      {#each timelineTuple as [revision, timelines], index}
-        <RevisionComponent
-          {baseUrl}
-          {projectId}
-          {timelines}
-          {projectHead}
-          {...revision}
-          on:reply={createReply}
-          patchId={patch.id}
-          authorId={patch.author.id}
-          expanded={index === patch.revisions.length - 1} />
+      {#if diff}
+        {#await api.project.getDiff(projectId, diff.split("..")[0], diff.split("..")[1]) then diff}
+          <div style:margin-top="1rem">
+            <Changeset revision={currentRevision.oid} diff={diff.diff} />
+          </div>
+        {:catch e}
+          <ErrorMessage
+            message="Not able to load revision diff."
+            stackTrace={e} />
+        {/await}
       {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">No activity</div>
-          <div slot="body">No activity on this patch yet</div>
-        </Placeholder>
-      {/each}
+        {#each timelineTuple as [revision, timelines], index}
+          {@const previousRevision =
+            index > 0 ? patch.revisions[index - 1] : undefined}
+          <RevisionComponent
+            {baseUrl}
+            {projectId}
+            {timelines}
+            {projectDefaultBranch}
+            {projectHead}
+            {...revision}
+            on:reply={createReply}
+            patchId={patch.id}
+            authorId={patch.author.id}
+            expanded={index === patch.revisions.length - 1}
+            previousRevId={previousRevision?.id}
+            previousRevOid={previousRevision?.oid} />
+        {:else}
+          <Placeholder emoji="🍂">
+            <div slot="title">No activity</div>
+            <div slot="body">No activity on this patch yet</div>
+          </Placeholder>
+        {/each}
+      {/if}
     {:else if currentTab === "commits"}
       {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
         <div class="commit-list">

@@ -11,7 +11,9 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
+  import Dropdown from "@app/components/Dropdown.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
@@ -22,12 +24,15 @@
   export let expanded: boolean = true;
   export let patchId: string;
   export let projectHead: string;
+  export let projectDefaultBranch: string;
   export let projectId: string;
   export let revisionBase: string;
   export let revisionId: string;
   export let revisionOid: string;
   export let revisionTimestamp: number;
   export let timelines: Timeline[];
+  export let previousRevId: string | undefined = undefined;
+  export let previousRevOid: string | undefined = undefined;
 
   const api = new HttpdClient(baseUrl);
 
@@ -142,13 +147,67 @@
     </div>
     <div class="txt-small" />
     <div class="revision-data">
+      <span class="layout-desktop txt-small">
+        {utils.formatTimestamp(revisionTimestamp)}
+      </span>
       {#if response?.diff.stats}
         {@const { insertions, deletions } = response.diff.stats}
         <DiffStatBadge {insertions} {deletions} />
       {/if}
-      <span class="layout-desktop txt-small">
-        {utils.formatTimestamp(revisionTimestamp)}
-      </span>
+      {#if previousRevOid}
+        <ProjectLink
+          projectParams={{
+            search: `diff=${previousRevOid}..${revisionOid}`,
+          }}>
+          <Icon name="diff" />
+        </ProjectLink>
+      {/if}
+      <Floating>
+        <svelte:fragment slot="toggle">
+          <Icon name="ellipsis" />
+        </svelte:fragment>
+        <svelte:fragment slot="modal">
+          <Dropdown
+            items={previousRevOid && previousRevId
+              ? [
+                  {
+                    title: projectHead,
+                    value: projectHead,
+                    badge: null,
+                  },
+                  {
+                    title: previousRevOid,
+                    value: previousRevOid,
+                    badge: null,
+                  },
+                ]
+              : [
+                  {
+                    title: projectHead,
+                    value: projectHead,
+                    badge: null,
+                  },
+                ]}>
+            <svelte:fragment slot="item" let:item>
+              <ProjectLink
+                title="{item.value}..{revisionOid}"
+                projectParams={{
+                  search: `diff=${item.value}..${revisionOid}`,
+                }}>
+                {#if item.value === projectHead}
+                  Compare to {projectDefaultBranch} ({utils.formatObjectId(
+                    projectHead,
+                  )})
+                {:else if previousRevId}
+                  Compare to previous revision ({utils.formatObjectId(
+                    previousRevId,
+                  )})
+                {/if}
+              </ProjectLink>
+            </svelte:fragment>
+          </Dropdown>
+        </svelte:fragment>
+      </Floating>
     </div>
   </div>
   {#if expanded}

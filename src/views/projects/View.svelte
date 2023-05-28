@@ -38,6 +38,7 @@
   $: patchTabFilter =
     (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
   $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
+  $: patchDiffFilter = searchParams.get("diff") || undefined;
   $: baseUrl = utils.extractBaseUrl(activeRoute.params.hostnamePort);
   $: api = new HttpdClient(baseUrl);
 
@@ -271,10 +272,12 @@
             {patch}
             {baseUrl}
             projectId={project.id}
+            projectDefaultBranch={project.defaultBranch}
             projectHead={project.head}
             revision={activeRoute.params.view.params.revision ??
               latestRevision.id}
-            currentTab={patchTabFilter} />
+            currentTab={patchTabFilter}
+            diff={patchDiffFilter} />
         {:catch e}
           <div class="message">
             <ErrorMessage message="Couldn't load patch." stackTrace={e} />
