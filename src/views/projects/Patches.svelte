@@ -76,7 +76,7 @@
   $: {
     page = 0;
     patches = [];
-    loadPatches(state);
+    void loadPatches(state);
   }
 </script>
 

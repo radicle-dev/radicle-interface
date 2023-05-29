@@ -20,7 +20,7 @@
   }, 800);
 
   const copy = () => {
-    toClipboard(text);
+    void toClipboard(text);
     dispatch("copied");
     icon = small ? "checkmark-small" : "checkmark";
     restoreIcon();

@@ -258,7 +258,7 @@
           <Textarea
             resizable
             on:submit={() => {
-              createComment(commentBody);
+              void createComment(commentBody);
               commentBody = "";
             }}
             bind:value={commentBody}
@@ -274,7 +274,7 @@
               size="small"
               disabled={!commentBody}
               on:click={() => {
-                createComment(commentBody);
+                void createComment(commentBody);
                 commentBody = "";
               }}>
               Comment

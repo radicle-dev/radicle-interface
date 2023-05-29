@@ -74,7 +74,7 @@
   $: {
     page = 0;
     issues = [];
-    loadIssues(state);
+    void loadIssues(state);
   }
 </script>
 

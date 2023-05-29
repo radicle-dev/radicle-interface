@@ -18,7 +18,7 @@
 
     if (isAuthenticated) {
       modal.show({ component: AuthenticatedModal, props: {} });
-      router.push({
+      void router.push({
         resource: "seeds",
         params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
       });
@@ -33,7 +33,7 @@
           ],
         },
       });
-      router.push({ resource: "home" });
+      void router.push({ resource: "home" });
     }
   });
 </script>

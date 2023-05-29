@@ -44,7 +44,7 @@
   $: showMoreButton =
     !loading && !error && totalCommitCount && history.length < totalCommitCount;
 
-  loadHistory();
+  void loadHistory();
 </script>
 
 <style>

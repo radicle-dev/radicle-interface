@@ -19,7 +19,7 @@
     }
 
     event.preventDefault();
-    updateProjectRoute(projectParams);
+    void updateProjectRoute(projectParams);
     dispatch("click");
   }
 </script>

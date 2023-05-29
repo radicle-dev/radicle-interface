@@ -21,7 +21,7 @@
 
   const activeRouteStore = router.activeRouteStore;
 
-  router.loadFromLocation();
+  void router.loadFromLocation();
   session.initialize();
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {

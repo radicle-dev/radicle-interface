@@ -16,7 +16,7 @@
     }
 
     event.preventDefault();
-    push(route);
+    void push(route);
     dispatch("afterNavigate");
   }
 </script>
