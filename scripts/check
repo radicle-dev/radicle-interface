@@ -3,5 +3,5 @@ set -e
 
 npx tsc --noEmit
 npx svelte-check --tsconfig tsconfig.json
-npx eslint .
-npx prettier "**/*.@(ts|js|svelte|json|css|html|yml)" --ignore-path .gitignore --check
+npx eslint --cache --cache-location node_modules/.cache/eslint .
+npx prettier "**/*.@(ts|js|svelte|json|css|html|yml)" --ignore-path .gitignore --check --cache
