@@ -4,20 +4,38 @@
     "browser": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:svelte/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module",
-    "project": ["./tsconfig.json"]
+    "project": ["./tsconfig.json"],
+    "extraFileExtensions": [".svelte"]
   },
-  "plugins": ["svelte3", "@typescript-eslint"],
   "overrides": [
     {
       "files": ["*.svelte"],
-      "processor": "svelte3/svelte3"
+      "parser": "svelte-eslint-parser",
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser"
+      }
     }
   ],
+  "settings": {
+    "svelte": {
+      "ignoreWarnings": ["svelte/no-at-html-tags"]
+    }
+  },
+  // Workaround until $$Generic is supported:
+  // https://github.com/sveltejs/svelte-eslint-parser/issues/306#issuecomment-1480844814
+  "globals": {
+    "$$Generic": "readonly"
+  },
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "semi": "off",
     "curly": ["error", "multi-line", "consistent"],
@@ -130,8 +148,5 @@
     "eqeqeq": "error",
     // Allow explict type annotations for additional clarity.
     "@typescript-eslint/no-inferrable-types": "off"
-  },
-  "settings": {
-    "svelte3/typescript": true
   }
 }

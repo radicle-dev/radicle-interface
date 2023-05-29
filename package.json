@@ -35,7 +35,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "chalk": "^5.2.0",
     "eslint": "^8.40.0",
-    "eslint-plugin-svelte3": "^4.0.0",
+    "eslint-plugin-svelte": "^2.29.0",
     "execa": "^7.1.1",
     "exit-hook": "^3.2.0",
     "get-port": "^6.1.2",
