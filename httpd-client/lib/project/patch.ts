@@ -131,6 +131,7 @@ export interface Patch {
   target: string;
   tags: string[];
   merges: Merge[];
+  reviewers: string[];
   revisions: Revision[];
 }
 
@@ -143,6 +144,7 @@ export const patchSchema = strictObject({
   target: string(),
   tags: array(string()),
   merges: array(mergeSchema),
+  reviewers: array(string()),
   revisions: array(revisionSchema),
 }) satisfies ZodSchema<Patch>;
 
