@@ -128,7 +128,6 @@ export interface Patch {
   id: string;
   author: { id: string; alias?: string };
   title: string;
-  description: string;
   state: PatchState;
   target: string;
   tags: string[];
@@ -141,7 +140,6 @@ export const patchSchema = strictObject({
   id: string(),
   author: strictObject({ id: string(), alias: string().optional() }),
   title: string(),
-  description: string(),
   state: patchStateSchema,
   target: string(),
   tags: array(string()),

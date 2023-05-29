@@ -268,9 +268,9 @@
         </Badge>
       </svelte:fragment>
       <svelte:fragment slot="description">
-        {#if patch.description}
+        {#if patch.revisions[0].description}
           <Markdown
-            content={patch.description}
+            content={patch.revisions[0].description}
             rawPath={utils.getRawBasePath(
               projectId,
               baseUrl,
