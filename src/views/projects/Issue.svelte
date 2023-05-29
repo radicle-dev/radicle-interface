@@ -257,8 +257,8 @@
         {#if $sessionStore}
           <Textarea
             resizable
-            on:submit={() => {
-              void createComment(commentBody);
+            on:submit={async () => {
+              await createComment(commentBody);
               commentBody = "";
             }}
             bind:value={commentBody}
@@ -273,8 +273,8 @@
               variant="secondary"
               size="small"
               disabled={!commentBody}
-              on:click={() => {
-                void createComment(commentBody);
+              on:click={async () => {
+                await createComment(commentBody);
                 commentBody = "";
               }}>
               Comment

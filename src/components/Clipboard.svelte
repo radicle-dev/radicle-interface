@@ -19,12 +19,12 @@
     icon = small ? "clipboard-small" : "clipboard";
   }, 800);
 
-  const copy = () => {
-    void toClipboard(text);
+  async function copy() {
+    await toClipboard(text);
     dispatch("copied");
     icon = small ? "checkmark-small" : "checkmark";
     restoreIcon();
-  };
+  }
 </script>
 
 <style>

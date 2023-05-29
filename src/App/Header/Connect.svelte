@@ -16,8 +16,8 @@
     icon = "clipboard-small";
   }, 800);
 
-  function copyToClipboard(clipboard: string) {
-    void toClipboard(clipboard);
+  async function copyToClipboard(clipboard: string): Promise<void> {
+    await toClipboard(clipboard);
     icon = "checkmark-small";
     restoreIcon();
   }
@@ -181,8 +181,8 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span
           class="cmd"
-          on:click={() => {
-            copyToClipboard(command);
+          on:click={async () => {
+            await copyToClipboard(command);
           }}>
           {command}
           <div class="cmd-clipboard">
@@ -199,9 +199,9 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
             class="id-container"
-            on:click={() => {
+            on:click={async () => {
               if ($sessionStore) {
-                copyToClipboard($sessionStore.publicKey);
+                await copyToClipboard($sessionStore.publicKey);
               }
             }}>
             <div class="id">

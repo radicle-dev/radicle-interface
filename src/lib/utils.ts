@@ -8,7 +8,7 @@ import { base } from "@app/lib/router";
 import { config } from "@app/lib/config";
 
 export async function toClipboard(text: string): Promise<void> {
-  return navigator.clipboard.writeText(text);
+  await navigator.clipboard.writeText(text);
 }
 
 export function getRawBasePath(
