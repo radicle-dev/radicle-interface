@@ -38,7 +38,18 @@ export const test = base.extend<{
           msg.text().startsWith("[vite] connecting...") ||
           msg
             .text()
-            .includes("Please make sure it wasn't preloaded for nothing.")
+            .includes("Please make sure it wasn't preloaded for nothing.") ||
+          // @sinonjs/fake-timers uses a global variable called `timers` which
+          // is also used by node, so vite erronously detects this and shows a
+          // warning whenever we install fake timers in tests. We suppress the
+          // warning here to avoid clogging the logs. For more info see:
+          //
+          //   https://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility
+          msg
+            .text()
+            .startsWith(
+              'Module "timers" has been externalized for browser compatibility.',
+            )
         ) {
           return;
         }
