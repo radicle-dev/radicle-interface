@@ -238,9 +238,13 @@
         {/if}
       </svelte:fragment>
       <div slot="description">
-        <Markdown
-          content={issue.discussion[0].body}
-          rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+        {#if Boolean(issue.discussion[0].body)}
+          <Markdown
+            content={issue.discussion[0].body}
+            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+        {:else}
+          <span class="txt-missing">No description available</span>
+        {/if}
       </div>
       <div class="author" slot="author">
         opened by <Authorship

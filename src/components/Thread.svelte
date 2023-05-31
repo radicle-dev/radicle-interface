@@ -56,7 +56,6 @@
   }
   .reply {
     margin-left: 3rem;
-    margin-top: 1rem;
   }
   .actions {
     display: flex;

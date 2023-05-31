@@ -60,6 +60,7 @@
   .patch-title:hover {
     text-decoration: underline;
   }
+
   .right {
     display: flex;
     align-items: center;
