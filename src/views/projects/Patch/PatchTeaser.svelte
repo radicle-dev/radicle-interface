@@ -60,17 +60,13 @@
   .patch-title:hover {
     text-decoration: underline;
   }
-  .comment-count {
-    align-items: center;
-    padding-right: 1rem;
-    gap: 0.5rem;
-    color: var(--color-foreground-5);
-  }
   .right {
-    align-self: center;
-    justify-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     padding-right: 1rem;
     margin-left: auto;
+    color: var(--color-foreground-5);
   }
   .state {
     justify-self: center;
@@ -152,16 +148,14 @@
     </div>
   </div>
   <div class="right">
-    <div class="comment-count">
-      {#await diffPromise then { diff }}
-        <DiffStatBadge
-          insertions={diff.stats.insertions}
-          deletions={diff.stats.deletions} />
-      {/await}
-      {#if latestRevision.discussions.length > 0}
-        <Icon name="chat" />
-        <span>{latestRevision.discussions.length}</span>
-      {/if}
-    </div>
+    {#await diffPromise then { diff }}
+      <DiffStatBadge
+        insertions={diff.stats.insertions}
+        deletions={diff.stats.deletions} />
+    {/await}
+    {#if latestRevision.discussions.length > 0}
+      <Icon name="chat" />
+      <span>{latestRevision.discussions.length}</span>
+    {/if}
   </div>
 </div>
