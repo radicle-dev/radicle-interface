@@ -63,7 +63,7 @@
   .right {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     padding-right: 1rem;
     margin-left: auto;
     color: var(--color-foreground-5);
@@ -76,6 +76,11 @@
   .tags {
     display: flex;
     flex-direction: row;
+    gap: 0.5rem;
+  }
+  .comments {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
   }
   .tag {
@@ -148,14 +153,18 @@
     </div>
   </div>
   <div class="right">
+    {#if latestRevision.discussions.length > 0}
+      <div class="comments">
+        <Icon name="chat" />
+        <span>
+          {latestRevision.discussions.length}
+        </span>
+      </div>
+    {/if}
     {#await diffPromise then { diff }}
       <DiffStatBadge
         insertions={diff.stats.insertions}
         deletions={diff.stats.deletions} />
     {/await}
-    {#if latestRevision.discussions.length > 0}
-      <Icon name="chat" />
-      <span>{latestRevision.discussions.length}</span>
-    {/if}
   </div>
 </div>
