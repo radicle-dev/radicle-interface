@@ -1,8 +1,8 @@
 import type { Page } from "@playwright/test";
-import { test, expect, projectFixtureUrl } from "@tests/support/fixtures.js";
+import { test, expect, markdownUrl } from "@tests/support/fixtures.js";
 
 async function goToSection(section: string, page: Page) {
-  await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`, {
+  await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`, {
     waitUntil: "networkidle",
   });
   await page.locator(`[href="${section}"]`).click();
@@ -13,7 +13,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: 1280, height: 450 } });
     test("table of contents", async ({ page }) => {
       await page.goto(
-        `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#table-of-contents`,
+        `${markdownUrl}/tree/main/cheatsheet.md#table-of-contents`,
         {
           waitUntil: "networkidle",
         },
@@ -80,11 +80,31 @@ test.describe("markdown rendering", async () => {
   });
 
   test.describe(async () => {
-    test.use({ viewport: { width: 1280, height: 590 } });
     test("footnotes", async ({ page }) => {
-      await goToSection("#footnotes", page);
-      await expect(page.locator("text=Footnotes aren't part")).toBeVisible();
-      await expect(page).toHaveScreenshot();
+      await page.goto(`${markdownUrl}/tree/main/footnotes.md#footnotes`, {
+        waitUntil: "networkidle",
+      });
+      await expect(
+        page.locator(
+          "text=This is an example footnote[0]. And some radicle[1] examples.",
+        ),
+      ).toBeVisible();
+      await expect(page.locator("text=0. https://example.com ↩")).toBeVisible();
+      await expect(page.locator("text=1. https://radicle.xyz ↩")).toBeVisible();
+      await expect(page).toHaveScreenshot({ fullPage: true });
+
+      await page.locator("text=Plain").click();
+      await expect(
+        page.locator(
+          "text=This is an example footnote[^0]. And some radicle[^1] examples.",
+        ),
+      ).toBeVisible();
+      await expect(
+        page.locator("text=[^0]: https://example.com"),
+      ).toBeVisible();
+      await expect(
+        page.locator("text=[^1]: https://radicle.xyz"),
+      ).toBeVisible();
     });
   });
 
@@ -145,4 +165,11 @@ test.describe("markdown rendering", async () => {
       await expect(page).toHaveScreenshot();
     });
   });
+});
+
+test("relative image not able to being loaded", async ({ page }) => {
+  await page.goto(`${markdownUrl}/tree/main/loading-image.md`, {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot({ fullPage: true });
 });

@@ -1,16 +1,20 @@
 import type { FullConfig } from "@playwright/test";
 
 import * as Fs from "node:fs/promises";
+import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import * as readline from "node:readline/promises";
 import { execa } from "execa";
 
 import {
-  createSeedFixture,
-  supportDir,
+  createMarkdownFixture,
+  createSourceBrowsingFixture,
+  gitOptions,
   startPalmHttpd,
+  supportDir,
   tmpDir,
-} from "./fixtures.js";
+} from "@tests/support/fixtures.js";
+import { createPeerManager } from "@tests/support/peerManager.js";
 
 const workspacePaths = [Path.join(tmpDir, "peers"), Path.join(tmpDir, "repos")];
 
@@ -33,8 +37,27 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
     }
     await removeWorkspace();
 
-    console.log("Creating seed fixture");
-    await createSeedFixture();
+    // Workaround for fixing MaxListenersExceededWarning.
+    // Since every prefixOutput stream adds stream listeners that don't autoClose.
+    // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
+    const peerManager = await createPeerManager({
+      dataDir: Path.resolve(Path.join(tmpDir, "peers")),
+      outputLog: FsSync.createWriteStream(
+        Path.join(tmpDir, "peerManager.log"),
+      ).setMaxListeners(20),
+    });
+
+    const palm = await peerManager.startPeer({
+      name: "palm",
+      gitOptions: gitOptions["alice"],
+    });
+    await palm.startHttpd(8080);
+    await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
+
+    console.log("Creating source-browsing fixture");
+    await createSourceBrowsingFixture(peerManager, palm);
+    console.log("Creating markdown fixture");
+    await createMarkdownFixture(palm);
     console.log("Running tests");
   } else {
     await startPalmHttpd();

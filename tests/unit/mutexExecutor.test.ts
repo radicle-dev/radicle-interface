@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import * as sinon from "sinon";
 import { describe, expect, test } from "vitest";
 
@@ -61,14 +60,14 @@ describe("executor", () => {
     const e = mutexExecutor.create();
     const abortListener = sinon.spy();
 
-    e.run(async abort => {
+    void e.run(async abort => {
       abort.addEventListener("abort", abortListener);
       await sleep(10);
       return "first";
     });
     expect(abortListener.called).toBe(false);
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    e.run(async () => {});
+    void e.run(async () => {});
     expect(abortListener.called).toBe(true);
   });
 
@@ -113,9 +112,9 @@ describe("worker", () => {
 
     const nextOutput = w.output.firstToPromise();
 
-    w.submit(1);
-    w.submit(2);
-    w.submit(3);
+    void w.submit(1);
+    void w.submit(2);
+    void w.submit(3);
 
     expect(await nextOutput).toEqual(3);
   });

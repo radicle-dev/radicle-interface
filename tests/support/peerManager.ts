@@ -81,7 +81,7 @@ export async function createPeerManager(createParams: {
     outputLog = createParams.outputLog;
   } else {
     outputLogFile = await Fs.open(
-      Path.join(createParams.dataDir, "peer-manager.log"),
+      Path.join(createParams.dataDir, "peerManager.log"),
       "a",
     );
     outputLog = outputLogFile.createWriteStream();
@@ -89,7 +89,6 @@ export async function createPeerManager(createParams: {
 
   const nodes: RadiclePeer[] = [];
   return {
-    // Starts a new node and registers it.
     async startPeer(params) {
       const peer = await RadiclePeer.create({
         dataPath: createParams.dataDir,
@@ -183,9 +182,8 @@ export class RadiclePeer {
     });
   }
 
-  public async startHttpd(port = 8080) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.spawn("radicle-httpd", ["--listen", `0.0.0.0:${port}`]);
+  public async startHttpd(port: number) {
+    void this.spawn("radicle-httpd", ["--listen", `0.0.0.0:${port}`]);
 
     await waitOn({
       resources: [`tcp:127.0.0.1:${port}`],
@@ -215,7 +213,6 @@ export class RadiclePeer {
       args.push("--tracking-policy", params.trackingPolicy);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     void this.spawn("radicle-node", args);
 
     await waitOn({
@@ -240,43 +237,6 @@ export class RadiclePeer {
           });
       },
     );
-  }
-
-  // Create a project using the rad CLI.
-  public async createProject(
-    name: string,
-    description = "",
-    defaultBranch = "main",
-  ): Promise<{ rid: string; projectFolder: string }> {
-    const projectFolder = Path.join(this.checkoutPath, name);
-
-    await this.git(["init", name, "--initial-branch", defaultBranch], {
-      cwd: this.checkoutPath,
-    });
-    await this.git(["commit", "--allow-empty", "--message", "initial commit"], {
-      cwd: projectFolder,
-    });
-    await this.rad(
-      [
-        "init",
-        "--name",
-        name,
-        "--default-branch",
-        defaultBranch,
-        "--description",
-        description,
-        "--announce",
-      ],
-      {
-        cwd: projectFolder,
-      },
-    );
-
-    const { stdout: rid } = await this.rad(["inspect"], {
-      cwd: projectFolder,
-    });
-
-    return { rid, projectFolder };
   }
 
   public async waitForRoutes(rid: string, ...nodes: string[]) {
@@ -364,8 +324,7 @@ export class RadiclePeer {
     };
     const childProcess = Process.spawn(cmd, args, opts);
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    Process.prefixOutput(childProcess, this.nodeId, this.#outputLog);
+    void Process.prefixOutput(childProcess, this.nodeId, this.#outputLog);
 
     return childProcess;
   }

@@ -3,10 +3,12 @@ import type { Page } from "@playwright/test";
 import {
   aliceMainHead,
   aliceRemote,
+  bobHead,
   bobRemote,
   expect,
-  projectFixtureUrl,
-  rid,
+  markdownUrl,
+  sourceBrowsingRid,
+  sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
 import { expectUrlPersistsReload } from "@tests/support/router";
@@ -33,12 +35,12 @@ async function expectCounts(
 }
 
 test("navigate to project", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   // Header.
   {
     const name = page.locator("text=source-browsing");
-    const id = page.locator(`text=${rid}`);
+    const id = page.locator(`text=${sourceBrowsingRid}`);
     const description = page.locator(
       "text=Git repository for source browsing tests",
     );
@@ -53,7 +55,7 @@ test("navigate to project", async ({ page }) => {
     await expect(page.getByTitle("Current branch")).toContainText(
       `main ${aliceMainHead.substring(0, 7)}`,
     );
-    await expectCounts({ commits: 8, contributors: 1 }, page);
+    await expectCounts({ commits: 6, contributors: 1 }, page);
   }
 
   // Navigate to the project README.md by default.
@@ -70,8 +72,8 @@ test("navigate to project", async ({ page }) => {
 });
 
 test("show source tree at specific revision", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
-  await page.locator('role=link[name="8 commits"]').click();
+  await page.goto(sourceBrowsingUrl);
+  await page.locator('role=link[name="6 commits"]').click();
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
@@ -86,7 +88,7 @@ test("show source tree at specific revision", async ({ page }) => {
 });
 
 test("source file highlighting", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   await page.getByText("src/").click();
   await page.getByText("true.c").click();
@@ -98,14 +100,12 @@ test("source file highlighting", async ({ page }) => {
 });
 
 test("navigate line numbers", async ({ page }) => {
-  await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
+  await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
   await page.locator('text="Plain"').click();
 
   await page.locator('[href="#L5"]').click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
-  await expect(page).toHaveURL(
-    `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#L5`,
-  );
+  await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md#L5`);
 
   await expectUrlPersistsReload(page);
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -113,16 +113,11 @@ test("navigate line numbers", async ({ page }) => {
   await page.locator('[href="#L30"]').click();
   await expect(page.locator("#L5")).not.toHaveClass("line highlight");
   await expect(page.locator("#L30")).toHaveClass("line highlight");
-  await expect(page).toHaveURL(
-    `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#L30`,
-  );
-
-  await page.getByText(".hidden").click();
-  await expect(page).toHaveURL(`${projectFixtureUrl}/tree/main/.hidden`);
+  await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md#L30`);
 });
 
 test("navigate deep file hierarchies", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   const sourceTree = page.locator(".source-tree");
 
@@ -165,7 +160,7 @@ test("navigate deep file hierarchies", async ({ page }) => {
 });
 
 test("files with special characters in the filename", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   const sourceTree = page.locator(".source-tree");
   await sourceTree.getByText("special/").click();
@@ -209,7 +204,7 @@ test("files with special characters in the filename", async ({ page }) => {
 });
 
 test("binary files", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   await page.getByText("bin/").click();
   await page.getByText("true").click();
@@ -218,7 +213,7 @@ test("binary files", async ({ page }) => {
 });
 
 test("hidden files", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   await page.getByText(".hidden").click();
 
@@ -226,7 +221,7 @@ test("hidden files", async ({ page }) => {
 });
 
 test("markdown files", async ({ page }) => {
-  await page.goto(`${projectFixtureUrl}/tree/main/markdown/cheatsheet.md`);
+  await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
 
   await expect(
     page.locator("text=This is intended as a quick reference and showcase."),
@@ -246,23 +241,27 @@ test("markdown files", async ({ page }) => {
   {
     await page.getByRole("link", { name: "YouTube Videos" }).click();
     await expect(page).toHaveURL(
-      `${projectFixtureUrl}/tree/main/markdown/cheatsheet.md#videos`,
+      `${markdownUrl}/tree/main/cheatsheet.md#videos`,
     );
   }
 });
 
 test("clone modal", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   await page.getByText("Clone").click();
-  await expect(page.locator(`text=rad clone ${rid}`)).toBeVisible();
   await expect(
-    page.locator(`text=http://127.0.0.1/${rid.replace("rad:", "")}.git`),
+    page.locator(`text=rad clone ${sourceBrowsingRid}`),
+  ).toBeVisible();
+  await expect(
+    page.locator(
+      `text=http://127.0.0.1/${sourceBrowsingRid.replace("rad:", "")}.git`,
+    ),
   ).toBeVisible();
 });
 
 test("peer and branch switching", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   // Alice's peer.
   {
@@ -284,9 +283,9 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByTitle("Current branch")).toContainText(
-        "main fcc9294",
+        `main ${aliceMainHead.substring(0, 7)}`,
       );
-      await expectCounts({ commits: 8, contributors: 1 }, page);
+      await expectCounts({ commits: 6, contributors: 1 }, page);
     }
 
     // Feature branch with a slash in the name.
@@ -295,9 +294,9 @@ test("peer and branch switching", async ({ page }) => {
       await page.locator("text=feature/branch").click();
 
       await expect(page.getByTitle("Current branch")).toContainText(
-        "feature/branch d6318f7",
+        "feature/branch 1aded56",
       );
-      await expectCounts({ commits: 10, contributors: 1 }, page);
+      await expectCounts({ commits: 9, contributors: 1 }, page);
     }
 
     // Branch without a history or files in it.
@@ -324,7 +323,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
 
     await expect(page.getByTitle("Current branch")).toContainText(
-      "main fcc9294",
+      `main ${aliceMainHead.substring(0, 7)}`,
     );
     await expect(page.locator("text=Git test repository")).toBeVisible();
   }
@@ -343,16 +342,18 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByTitle("Current branch")).toContainText(
-        "main ec5eb0b",
+        `main ${bobHead.substring(0, 7)}`,
       );
-      await expectCounts({ commits: 9, contributors: 2 }, page);
-      await expect(page.locator("text=ec5eb0b Update readme")).toBeVisible();
+      await expectCounts({ commits: 7, contributors: 2 }, page);
+      await expect(
+        page.locator(`text=${bobHead.substring(0, 7)} Update readme`),
+      ).toBeVisible();
     }
   }
 });
 
 test("only one modal can be open at a time", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   await page.getByTitle("Change peer").click();
   await page.locator(`text=${aliceRemote}`).click();
@@ -385,14 +386,14 @@ test("only one modal can be open at a time", async ({ page }) => {
 test.describe("browser error handling", () => {
   test("error appears when folder can't be loaded", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${rid}/tree/${aliceMainHead}/markdown/`,
+      `**/v1/projects/${sourceBrowsingRid}/tree/${aliceMainHead}/src/`,
       route => route.fulfill({ status: 500 }),
     );
 
-    await page.goto(projectFixtureUrl);
+    await page.goto(sourceBrowsingUrl);
 
     const sourceTree = page.locator(".source-tree");
-    await sourceTree.locator("text=markdown/").click();
+    await sourceTree.locator("text=src/").click();
 
     await expect(
       page.locator("text=Not able to expand directory"),
@@ -400,32 +401,33 @@ test.describe("browser error handling", () => {
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${rid}/blob/${aliceMainHead}/.hidden`,
+      `**/v1/projects/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
-    await page.goto(projectFixtureUrl);
+    await page.goto(sourceBrowsingUrl);
     await page.locator("text=.hidden").click();
 
     await expect(page.locator("text=Not able to load file")).toBeVisible();
   });
   test("error appears when README can't be loaded", async ({ page }) => {
-    await page.route(`**/v1/projects/${rid}/readme/${aliceMainHead}`, route =>
-      route.fulfill({ status: 500 }),
+    await page.route(
+      `**/v1/projects/${sourceBrowsingRid}/readme/${aliceMainHead}`,
+      route => route.fulfill({ status: 500 }),
     );
 
-    await page.goto(projectFixtureUrl);
+    await page.goto(sourceBrowsingUrl);
     await expect(
       page.locator("text=The README could not be loaded."),
     ).toBeVisible();
   });
   test("error appears when navigating to missing file", async ({ page }) => {
     await page.route(
-      `**/v1/projects/${rid}/blob/${aliceMainHead}/.hidden`,
+      `**/v1/projects/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
-    await page.goto(`${projectFixtureUrl}/tree/master/.hidden`);
+    await page.goto(`${sourceBrowsingUrl}/tree/master/.hidden`);
 
     await expect(page.locator("text=Not able to load file")).toBeVisible();
   });

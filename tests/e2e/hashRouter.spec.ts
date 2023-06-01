@@ -3,7 +3,7 @@ import {
   aliceRemote,
   appConfigWithFixture,
   expect,
-  projectFixtureUrl,
+  sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
 import {
@@ -18,7 +18,7 @@ test("navigate between landing and project page", async ({ page }) => {
   await expect(page).toHaveURL("/#/");
 
   await page.locator("text=source-browsing").click();
-  await expect(page).toHaveURL(`/#${projectFixtureUrl}`);
+  await expect(page).toHaveURL(`/#${sourceBrowsingUrl}`);
 
   await expectBackAndForwardNavigationWorks("/#/", page);
   await expectUrlPersistsReload(page);
@@ -27,9 +27,9 @@ test("navigate between landing and project page", async ({ page }) => {
 test("navigation between seed and project pages", async ({ page }) => {
   await page.goto("/#/seeds/radicle.local");
 
-  const project = page.locator(".project");
+  const project = page.locator(".project", { hasText: "source-browsing" });
   await project.click();
-  await expect(page).toHaveURL(`/#${projectFixtureUrl}`);
+  await expect(page).toHaveURL(`/#${sourceBrowsingUrl}`);
 
   await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
@@ -42,12 +42,12 @@ test.describe("project page navigation", () => {
   test("navigation between commit history and single commit", async ({
     page,
   }) => {
-    const projectHistoryURL = `/#${projectFixtureUrl}/history/${aliceMainHead}`;
+    const projectHistoryURL = `/#${sourceBrowsingUrl}/history/${aliceMainHead}`;
     await page.goto(projectHistoryURL);
 
-    await page.locator("text=Add Markdown cheat sheet").click();
+    await page.locator("text=Add README.md").click();
     await expect(page).toHaveURL(
-      `/#${projectFixtureUrl}/commits/f0b8db68847b01f0964380507a9db6800e5b5342`,
+      `/#${sourceBrowsingUrl}/commits/${aliceMainHead}`,
     );
 
     await expectBackAndForwardNavigationWorks(projectHistoryURL, page);
@@ -55,20 +55,20 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate between tree and commit history", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}`;
+    const projectTreeURL = `/#${sourceBrowsingUrl}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.locator('role=link[name="8 commits"]').click();
-    await expect(page).toHaveURL(`/#${projectFixtureUrl}/history`);
+    await page.locator('role=link[name="6 commits"]').click();
+    await expect(page).toHaveURL(`/#${sourceBrowsingUrl}/history`);
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
     await expectUrlPersistsReload(page);
   });
 
   test("navigate project paths", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}`;
+    const projectTreeURL = `/#${sourceBrowsingUrl}`;
 
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
@@ -88,7 +88,7 @@ test.describe("project page navigation", () => {
   });
 
   test("navigate project paths with a selected peer", async ({ page }) => {
-    const projectTreeURL = `/#${projectFixtureUrl}/remotes/${aliceRemote.substring(
+    const projectTreeURL = `/#${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
     )}`;
 

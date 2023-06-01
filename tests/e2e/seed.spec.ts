@@ -1,7 +1,7 @@
 import {
   aliceMainHead,
   expect,
-  rid,
+  sourceBrowsingRid,
   seedRemote,
   test,
 } from "@tests/support/fixtures.js";
@@ -20,7 +20,7 @@ test("seed metadata", async ({ page }) => {
 
 test("seed projects", async ({ page }) => {
   await page.goto("/seeds/radicle.local");
-  const project = page.locator(".project");
+  const project = page.locator(".project", { hasText: "source-browsing" });
 
   // Project metadata.
   {
@@ -33,8 +33,10 @@ test("seed projects", async ({ page }) => {
 
   // Show project ID on hover.
   {
-    await expect(project.locator(`text=${rid}`)).not.toBeVisible();
+    await expect(
+      project.locator(`text=${sourceBrowsingRid}`),
+    ).not.toBeVisible();
     await project.hover();
-    await expect(project.locator(`text=${rid}`)).toBeVisible();
+    await expect(project.locator(`text=${sourceBrowsingRid}`)).toBeVisible();
   }
 });

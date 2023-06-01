@@ -1,24 +1,25 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type * as Stream from "node:stream";
-import type { PeerManager } from "./peerManager.js";
+import type { PeerManager, RadiclePeer } from "./peerManager.js";
 
 import * as Fs from "node:fs/promises";
 import * as FsSync from "node:fs";
 import * as Path from "node:path";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
 
 import * as Process from "./process.js";
 import * as logLabel from "@tests/support/logLabel.js";
-import { createPeerManager } from "./peerManager.js";
+import { createPeerManager } from "@tests/support/peerManager.js";
+import { createProject } from "@tests/support/project.js";
 
 export { expect };
 
 const filename = fileURLToPath(import.meta.url);
 export const supportDir = dirname(filename);
 export const tmpDir = Path.resolve(supportDir, "..", "./tmp");
-const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
+export const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
@@ -206,10 +207,13 @@ export async function startPalmHttpd() {
     outputLog: FsSync.createWriteStream(Path.resolve(Path.join(tmpDir, "log"))),
   });
   const palm = await peerManager.startPeer({ name: "palm" });
-  await palm.startHttpd();
+  await palm.startHttpd(8080);
 }
 
-export async function createSeedFixture() {
+export async function createSourceBrowsingFixture(
+  peerManager: PeerManager,
+  palm: RadiclePeer,
+) {
   const projectName = "source-browsing";
   const sourceBrowsingDir = Path.join(tmpDir, "repos", projectName);
   await Fs.mkdir(sourceBrowsingDir, { recursive: true });
@@ -219,17 +223,7 @@ export async function createSeedFixture() {
     "-C",
     sourceBrowsingDir,
   ]);
-  // Workaround for fixing MaxListenersExceededWarning.
-  // Since every prefixOutput stream adds stream listeners that don't autoClose.
-  // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
-  const peerManager = await createPeerManager({
-    dataDir: Path.resolve(Path.join(tmpDir, "peers")),
-    outputLog: FsSync.createWriteStream(
-      Path.join(tmpDir, "log"),
-    ).setMaxListeners(20),
-  });
-  const palm = await peerManager.startPeer({ name: "palm" });
-  await palm.startHttpd();
+  const rid = sourceBrowsingRid;
   const alice = await peerManager.startPeer({
     name: "alice",
     gitOptions: gitOptions["alice"],
@@ -240,7 +234,6 @@ export async function createSeedFixture() {
     gitOptions: gitOptions["bob"],
   });
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
-  await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
   await alice.startNode();
   await bob.startNode();
   await alice.connect(palm);
@@ -304,14 +297,42 @@ export async function createSeedFixture() {
   );
 }
 
-export const aliceMainHead = "fcc929424b82984b7cbff9c01d2e20d9b1249842";
+export async function createMarkdownFixture(peer: RadiclePeer) {
+  await Fs.mkdir(Path.join(tmpDir, "repos", "markdown"));
+  await Process.spawn("tar", [
+    "-xf",
+    Path.join(fixturesDir, "repos", "markdown.tar.bz2"),
+    "-C",
+    Path.join(tmpDir, "repos", "markdown"),
+  ]);
+  const { projectFolder } = await createProject(peer, "markdown");
+  await Fs.cp(Path.join(tmpDir, "repos", "markdown"), projectFolder, {
+    recursive: true,
+  });
+
+  await peer.git(["add", "."], { cwd: projectFolder });
+  const commitMessage = `Add Markdown cheat sheet
+
+  Borrowed from [Adam Pritchard][ap].
+  No modifications were made.
+
+  [ap]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet`;
+  await peer.git(["commit", "-m", commitMessage], {
+    cwd: projectFolder,
+  });
+  await peer.git(["push", "rad"], { cwd: projectFolder });
+}
+
+export const aliceMainHead = "dd068e9aff9a569e597f6abaf84f120dd0cbbd70";
 export const aliceRemote =
   "did:key:z6MkqGC3nWZhYieEVTVDKW5v588CiGfsDSmRVG9ZwwWTvLSK";
 export const bobRemote =
   "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
-export const bobHead = "ec5eb0b5efb73da17a2d25454cc47eea3967f328";
-export const rid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
-export const projectFixtureUrl = `/seeds/127.0.0.1/${rid}`;
+export const bobHead = "28f37105bb78db48111e36281291ff253dd050e8";
+export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
+export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";
+export const sourceBrowsingUrl = `/seeds/127.0.0.1/${sourceBrowsingRid}`;
+export const markdownUrl = `/seeds/127.0.0.1/${markdownRid}`;
 export const seedPort = 8080;
 export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
 export const gitOptions = {

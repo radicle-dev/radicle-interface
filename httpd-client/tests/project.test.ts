@@ -1,7 +1,11 @@
 import { describe, test } from "vitest";
 
 import { HttpdClient } from "../index";
-import { aliceMainHead, aliceRemote, rid } from "@tests/support/fixtures";
+import {
+  aliceMainHead,
+  aliceRemote,
+  sourceBrowsingRid,
+} from "@tests/support/fixtures";
 
 const api = new HttpdClient({
   hostname: "127.0.0.1",
@@ -19,44 +23,47 @@ describe("project", () => {
   });
 
   test("#getById(id)", async () => {
-    await api.project.getById(rid);
+    await api.project.getById(sourceBrowsingRid);
   });
 
   test("#getActivity(id)", async () => {
-    await api.project.getActivity(rid);
+    await api.project.getActivity(sourceBrowsingRid);
   });
 
   test("#getReadme(id, sha)", async () => {
-    await api.project.getReadme(rid, aliceMainHead);
+    await api.project.getReadme(sourceBrowsingRid, aliceMainHead);
   });
 
   test("#getBlob(id, sha, path)", async () => {
-    await api.project.getBlob(rid, aliceMainHead, "src/true.c");
+    await api.project.getBlob(sourceBrowsingRid, aliceMainHead, "src/true.c");
   });
 
   test("#getTree(id, sha)", async () => {
-    await api.project.getTree(rid, aliceMainHead);
+    await api.project.getTree(sourceBrowsingRid, aliceMainHead);
   });
 
   test("#getTree(id, sha, path)", async () => {
-    await api.project.getTree(rid, aliceMainHead, "src");
+    await api.project.getTree(sourceBrowsingRid, aliceMainHead, "src");
   });
 
   test("#getAllRemotes(id)", async () => {
-    await api.project.getAllRemotes(rid);
+    await api.project.getAllRemotes(sourceBrowsingRid);
   });
 
   test("#getRemoteByPeer(id, peer)", async () => {
-    await api.project.getRemoteByPeer(rid, aliceRemote.substring(8));
+    await api.project.getRemoteByPeer(
+      sourceBrowsingRid,
+      aliceRemote.substring(8),
+    );
   });
 
   test("#getAllCommits(id)", async () => {
-    await api.project.getAllCommits(rid);
+    await api.project.getAllCommits(sourceBrowsingRid);
   });
 
   // TODO: test since/until properly.
   test("#getAllCommits(id, {parent, since, until, page, perPage})", async () => {
-    await api.project.getAllCommits(rid, {
+    await api.project.getAllCommits(sourceBrowsingRid, {
       parent: aliceMainHead,
       since: 1679065819581,
       until: 1679065819590,
@@ -66,7 +73,7 @@ describe("project", () => {
   });
 
   test("#getCommitBySha(id, sha)", async () => {
-    await api.project.getCommitBySha(rid, aliceMainHead);
+    await api.project.getCommitBySha(sourceBrowsingRid, aliceMainHead);
   });
 
   test.todo("#getDiff(id, revisionBase, revisionOid)");

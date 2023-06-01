@@ -2,8 +2,8 @@ import type { Page } from "@playwright/test";
 
 import {
   expect,
-  projectFixtureUrl,
-  rid,
+  sourceBrowsingUrl,
+  sourceBrowsingRid,
   seedRemote,
   test,
 } from "@tests/support/fixtures.js";
@@ -26,7 +26,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   }
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
-  await page.goto(projectFixtureUrl);
+  await page.goto(sourceBrowsingUrl);
 
   // Reset system clipboard to a known state.
   await page.evaluate<string>("navigator.clipboard.writeText('')");
@@ -37,19 +37,21 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );
-    expect(clipboardContent).toBe(rid);
+    expect(clipboardContent).toBe(sourceBrowsingRid);
   }
 
   // `rad clone` URL.
   {
     await page.getByText("Clone").click();
-    await page.locator(`text=rad clone ${rid.substring(0, 6)}`).hover();
+    await page
+      .locator(`text=rad clone ${sourceBrowsingRid.substring(0, 6)}`)
+      .hover();
     await page
       .locator(".clone-url-wrapper > span")
       .first()
       .locator(".clipboard")
       .click();
-    await expectClipboard(`rad clone ${rid}`, page);
+    await expectClipboard(`rad clone ${sourceBrowsingRid}`, page);
   }
 
   // `git clone` URL.
@@ -57,7 +59,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     await page.getByText("Clone").click();
     await page
       .locator(
-        `text=git clone http://127.0.0.1/${rid
+        `text=git clone http://127.0.0.1/${sourceBrowsingRid
           .replace("rad:", "")
           .substring(0, 10)}`,
       )
@@ -68,7 +70,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
       .locator(".clipboard")
       .click();
     await expectClipboard(
-      `git clone http://127.0.0.1/${rid.replace(
+      `git clone http://127.0.0.1/${sourceBrowsingRid.replace(
         "rad:",
         "",
       )}.git source-browsing`,

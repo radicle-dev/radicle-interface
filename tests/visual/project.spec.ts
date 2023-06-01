@@ -1,12 +1,12 @@
 import {
   test,
   expect,
-  projectFixtureUrl,
+  sourceBrowsingUrl,
   aliceRemote,
 } from "@tests/support/fixtures.js";
 
 test("source tree page", async ({ page }) => {
-  await page.goto(projectFixtureUrl, { waitUntil: "networkidle" });
+  await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
 
@@ -22,7 +22,7 @@ test("commits page", async ({ page }) => {
   });
 
   await page.goto(
-    `${projectFixtureUrl}/remotes/${aliceRemote.substring(8)}/history`,
+    `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(8)}/history`,
     {
       waitUntil: "networkidle",
     },
@@ -43,17 +43,10 @@ test("commit page", async ({ page }) => {
   });
 
   await page.goto(
-    `${projectFixtureUrl}/remotes/${aliceRemote.substring(
+    `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
     )}/commits/d6318f7f3d9c15b8ac6dd52267c53220d00f0982`,
   );
   await expect(page.locator("text=subconscious.txt added")).toBeVisible();
-  await expect(page).toHaveScreenshot({ fullPage: true });
-});
-
-test("relative image not able to being loaded", async ({ page }) => {
-  await page.goto(`${projectFixtureUrl}/tree/main/markdown/loading-image.md`, {
-    waitUntil: "networkidle",
-  });
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

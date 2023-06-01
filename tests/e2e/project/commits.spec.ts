@@ -1,15 +1,17 @@
 import {
   test,
   expect,
-  projectFixtureUrl,
+  sourceBrowsingUrl,
   bobRemote,
   aliceRemote,
   gitOptions,
+  aliceMainHead,
 } from "@tests/support/fixtures.js";
+import { createProject } from "@tests/support/project";
 
 test("peer and branch switching", async ({ page }) => {
-  await page.goto(projectFixtureUrl);
-  await page.locator('role=link[name="8 commits"]').click();
+  await page.goto(sourceBrowsingUrl);
+  await page.locator('role=link[name="6 commits"]').click();
 
   // Alice's peer.
   {
@@ -22,13 +24,11 @@ test("peer and branch switching", async ({ page }) => {
     );
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".history .teaser")).toHaveCount(8);
+    await expect(page.locator(".history .teaser")).toHaveCount(6);
 
     const latestCommit = page.locator(".teaser").first();
-    await expect(latestCommit).toContainText(
-      "Adds a new markdown file with an image with a relative path",
-    );
-    await expect(latestCommit).toContainText("fcc9294");
+    await expect(latestCommit).toContainText("Add README.md");
+    await expect(latestCommit).toContainText(aliceMainHead.substring(0, 7));
 
     const earliestCommit = page.locator(".teaser").last();
     await expect(earliestCommit).toContainText(
@@ -40,10 +40,10 @@ test("peer and branch switching", async ({ page }) => {
     await page.locator("text=feature/branch").click();
 
     await expect(page.getByTitle("Current branch")).toContainText(
-      "feature/branch d6318f7",
+      "feature/branch 1aded56",
     );
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".history .teaser")).toHaveCount(10);
+    await expect(page.locator(".history .teaser")).toHaveCount(9);
 
     await page.getByTitle("Change branch").click();
     await page.locator("text=orphaned-branch").click();
@@ -65,7 +65,7 @@ test("peer and branch switching", async ({ page }) => {
       )} `,
     );
 
-    await expect(page.getByText("Tuesday, December 20, 2022")).toBeVisible();
+    await expect(page.getByText("Wednesday, December 21, 2022")).toBeVisible();
     await expect(page.locator(".group").first().locator(".teaser")).toHaveCount(
       1,
     );
@@ -77,7 +77,7 @@ test("peer and branch switching", async ({ page }) => {
 
     const latestCommit = page.locator(".teaser").first();
     await expect(latestCommit).toContainText("Update readme");
-    await expect(latestCommit).toContainText("ec5eb0b");
+    await expect(latestCommit).toContainText("28f3710");
 
     const earliestCommit = page.locator(".teaser").last();
     await expect(earliestCommit).toContainText(
@@ -98,8 +98,8 @@ test("relative timestamps", async ({ page }) => {
     };
   });
 
-  await page.goto(projectFixtureUrl);
-  await page.locator('role=link[name="8 commits"]').click();
+  await page.goto(sourceBrowsingUrl);
+  await page.locator('role=link[name="6 commits"]').click();
 
   await page.getByTitle("Change peer").click();
   await page.locator(`text=${bobRemote}`).click();
@@ -110,7 +110,7 @@ test("relative timestamps", async ({ page }) => {
   );
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");
-  await expect(latestCommit).toContainText("ec5eb0b");
+  await expect(latestCommit).toContainText("28f3710");
   const earliestCommit = page.locator(".teaser").last();
   await expect(earliestCommit).toContainText(
     "Alice Liddell committed last month",
@@ -124,7 +124,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   });
   await alice.startHttpd(8090);
   await alice.startNode();
-  const { rid, projectFolder } = await alice.createProject("alice-project");
+  const { rid, projectFolder } = await createProject(alice, "alice-project");
   await page.goto(`/seeds/127.0.0.1:8090/${rid}`);
   await page.locator('role=link[name="1 commit"]').click();
   await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);

@@ -2,19 +2,19 @@ import { searchPlaceholder } from "@app/lib/shared";
 import {
   test,
   expect,
-  rid,
-  projectFixtureUrl,
+  sourceBrowsingRid,
+  sourceBrowsingUrl,
 } from "@tests/support/fixtures.js";
 
 test("navigate to existing project", async ({ page }) => {
   await page.goto("/");
   const searchInput = page.getByPlaceholder(searchPlaceholder);
   await searchInput.click();
-  await searchInput.fill(`${rid}`);
+  await searchInput.fill(sourceBrowsingRid);
   await searchInput.press("Enter");
 
-  await expect(page).toHaveURL(projectFixtureUrl);
-  await expect(searchInput).not.toHaveValue(`${rid}`);
+  await expect(page).toHaveURL(sourceBrowsingUrl);
+  await expect(searchInput).not.toHaveValue(sourceBrowsingRid);
 });
 
 test("navigate to a project that does not exist", async ({ page }) => {
