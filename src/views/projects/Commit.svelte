@@ -30,6 +30,7 @@
     align-items: center;
   }
   .description {
+    font-family: var(--font-family-monospace);
     margin: 1rem 0;
     white-space: pre-wrap;
   }
