@@ -34,7 +34,7 @@ test("navigation between seed and project pages", async ({ page }) => {
   await expectBackAndForwardNavigationWorks("/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
 
-  await page.locator('role=link[name="127.0.0.1"]').click();
+  await page.locator('role=link[name="radicle.local"]').click();
   await expect(page).toHaveURL("/seeds/127.0.0.1");
 });
 

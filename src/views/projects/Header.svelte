@@ -9,6 +9,7 @@
   import Link from "@app/components/Link.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
+  import { isLocal } from "@app/lib/utils";
 
   export let activeRoute: ProjectRoute;
   export let baseUrl: BaseUrl;
@@ -113,7 +114,7 @@
       },
     }}>
     <SquareButton>
-      {baseUrl.hostname}
+      {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
 </div>
