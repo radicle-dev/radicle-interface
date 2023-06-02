@@ -187,6 +187,7 @@
         projectName={project.name}
         openPatchCount={project.patches.open}
         openIssueCount={project.issues.open}
+        trackings={project.trackings}
         {activeRoute}
         {baseUrl} />
 

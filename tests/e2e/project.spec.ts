@@ -64,6 +64,9 @@ test("navigate to project", async ({ page }) => {
 
   // Show rendered README.md contents.
   await expect(page.locator("text=Git test repository")).toBeVisible();
+
+  // Number of nodes tracking this project.
+  await expect(page.locator("text=3 nodes")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {

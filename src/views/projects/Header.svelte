@@ -3,13 +3,14 @@
   import type { ProjectRoute } from "@app/views/projects/router";
 
   import { config } from "@app/lib/config";
+  import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
   import CloneButton from "@app/views/projects/CloneButton.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
-  import { isLocal } from "@app/lib/utils";
 
   export let activeRoute: ProjectRoute;
   export let baseUrl: BaseUrl;
@@ -19,6 +20,7 @@
 
   export let openPatchCount: number;
   export let openIssueCount: number;
+  export let trackings: number = 0;
 </script>
 
 <style>
@@ -44,6 +46,11 @@
     .header {
       margin-bottom: 1.5rem;
     }
+  }
+  .trackings {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
   }
 </style>
 
@@ -117,4 +124,9 @@
       {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
+  <SquareButton hoverable={false}>
+    <span class="trackings" title="Tracked by {trackings} nodes">
+      <Icon name="network" />{trackings} nodes
+    </span>
+  </SquareButton>
 </div>

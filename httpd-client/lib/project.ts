@@ -54,6 +54,7 @@ export interface Project {
     open: number;
     closed: number;
   };
+  trackings: number;
 }
 
 const projectSchema = strictObject({
@@ -73,6 +74,7 @@ const projectSchema = strictObject({
     open: number(),
     closed: number(),
   }),
+  trackings: number(),
 }) satisfies ZodSchema<Project>;
 
 const projectsSchema = array(projectSchema) satisfies ZodSchema<Project[]>;
