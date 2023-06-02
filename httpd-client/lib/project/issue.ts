@@ -1,6 +1,6 @@
 import type { Comment, ThreadUpdateAction } from "./comment.js";
 import type { ZodSchema } from "zod";
-import { array, boolean, literal, strictObject, string, union } from "zod";
+import { array, boolean, literal, object, string, union } from "zod";
 
 import { commentSchema } from "./comment.js";
 
@@ -9,8 +9,8 @@ export type IssueState =
   | { status: "closed"; reason: "other" | "solved" };
 
 const issueStateSchema = union([
-  strictObject({ status: literal("open") }),
-  strictObject({
+  object({ status: literal("open") }),
+  object({
     status: literal("closed"),
     reason: union([literal("other"), literal("solved")]),
   }),
@@ -26,9 +26,9 @@ export interface Issue {
   assignees: string[];
 }
 
-export const issueSchema = strictObject({
+export const issueSchema = object({
   id: string(),
-  author: strictObject({ id: string(), alias: string().optional() }),
+  author: object({ id: string(), alias: string().optional() }),
   title: string(),
   state: issueStateSchema,
   discussion: array(commentSchema),
@@ -41,7 +41,7 @@ export interface IssueCreated {
   id: string;
 }
 
-export const issueCreatedSchema = strictObject({
+export const issueCreatedSchema = object({
   success: boolean(),
   id: string(),
 }) satisfies ZodSchema<IssueCreated>;

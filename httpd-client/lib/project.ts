@@ -17,7 +17,7 @@ import {
   number,
   optional,
   record,
-  strictObject,
+  object,
   string,
   union,
 } from "zod";
@@ -57,20 +57,20 @@ export interface Project {
   trackings: number;
 }
 
-const projectSchema = strictObject({
+const projectSchema = object({
   id: string(),
   name: string(),
   description: string(),
   defaultBranch: string(),
   delegates: array(string()),
   head: string(),
-  patches: strictObject({
+  patches: object({
     open: number(),
     draft: number(),
     archived: number(),
     merged: number(),
   }),
-  issues: strictObject({
+  issues: object({
     open: number(),
     closed: number(),
   }),
@@ -83,7 +83,7 @@ export interface Activity {
   activity: number[];
 }
 
-const activitySchema = strictObject({
+const activitySchema = object({
   activity: array(number()),
 }) satisfies ZodSchema<Activity>;
 
@@ -95,7 +95,7 @@ export interface Blob {
   lastCommit: CommitHeader;
 }
 
-const blobSchema = strictObject({
+const blobSchema = object({
   binary: boolean(),
   content: optional(string()),
   name: string(),
@@ -109,7 +109,7 @@ interface TreeEntry {
   kind: "tree" | "blob";
 }
 
-const treeEntrySchema = strictObject({
+const treeEntrySchema = object({
   path: string(),
   name: string(),
   kind: union([literal("blob"), literal("tree")]),
@@ -129,12 +129,12 @@ export interface Tree {
   stats: TreeStats;
 }
 
-const treeSchema = strictObject({
+const treeSchema = object({
   entries: array(treeEntrySchema),
   lastCommit: commitHeaderSchema,
   name: string(),
   path: string(),
-  stats: strictObject({
+  stats: object({
     commits: number(),
     branches: number(),
     contributors: number(),
@@ -148,7 +148,7 @@ export interface Remote {
   delegate: boolean;
 }
 
-const remoteSchema = strictObject({
+const remoteSchema = object({
   id: string(),
   alias: string().optional(),
   heads: record(string(), string()),
@@ -162,7 +162,7 @@ export interface DiffResponse {
   diff: Diff;
 }
 
-const diffResponseSchema = strictObject({
+const diffResponseSchema = object({
   commits: array(commitHeaderSchema),
   diff: diffSchema,
 }) satisfies ZodSchema<DiffResponse>;

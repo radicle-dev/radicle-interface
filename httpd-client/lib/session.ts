@@ -2,7 +2,7 @@ import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type { SuccessResponse } from "./shared.js";
 import type { ZodSchema } from "zod";
 
-import { number, strictObject, string } from "zod";
+import { number, object, string } from "zod";
 
 import { successResponseSchema } from "./shared.js";
 
@@ -14,7 +14,7 @@ interface Session {
   expiresAt: number;
 }
 
-const sessionSchema = strictObject({
+const sessionSchema = object({
   sessionId: string(),
   status: string(),
   publicKey: string(),

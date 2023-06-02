@@ -1,5 +1,5 @@
 import type { ZodSchema } from "zod";
-import { array, number, record, strictObject, string } from "zod";
+import { array, number, record, object, string } from "zod";
 
 export type ThreadUpdateAction =
   | { type: "comment"; body: string; replyTo?: string }
@@ -21,9 +21,9 @@ export interface Comment {
   replyTo: string | null;
 }
 
-export const commentSchema = strictObject({
+export const commentSchema = object({
   id: string(),
-  author: strictObject({ id: string(), alias: string().optional() }),
+  author: object({ id: string(), alias: string().optional() }),
   body: string(),
   reactions: array(record(string(), number())),
   timestamp: number(),

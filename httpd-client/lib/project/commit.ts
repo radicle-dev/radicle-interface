@@ -1,12 +1,12 @@
 import type { ZodSchema } from "zod";
-import { array, literal, number, strictObject, string, union } from "zod";
+import { array, literal, number, object, string, union } from "zod";
 
 interface GitPerson {
   name: string;
   email: string;
 }
 
-const gitPersonSchema = strictObject({
+const gitPersonSchema = object({
   name: string(),
   email: string(),
 }) satisfies ZodSchema<GitPerson>;
@@ -19,12 +19,12 @@ export interface CommitHeader {
   committer: GitPerson & { time: number };
 }
 
-export const commitHeaderSchema = strictObject({
+export const commitHeaderSchema = object({
   id: string(),
   author: gitPersonSchema,
   summary: string(),
   description: string(),
-  committer: gitPersonSchema.merge(strictObject({ time: number() })),
+  committer: gitPersonSchema.merge(object({ time: number() })),
 }) satisfies ZodSchema<CommitHeader>;
 
 interface AdditionHunkLine {
@@ -33,7 +33,7 @@ interface AdditionHunkLine {
   type: "addition";
 }
 
-const additionHunkLineSchema = strictObject({
+const additionHunkLineSchema = object({
   line: string(),
   lineNo: number(),
   type: literal("addition"),
@@ -45,7 +45,7 @@ interface DeletionHunkLine {
   type: "deletion";
 }
 
-const deletionHunkLineSchema = strictObject({
+const deletionHunkLineSchema = object({
   line: string(),
   lineNo: number(),
   type: literal("deletion"),
@@ -58,7 +58,7 @@ interface ContextHunkLine {
   type: "context";
 }
 
-const contextHunkLineSchema = strictObject({
+const contextHunkLineSchema = object({
   line: string(),
   lineNoNew: number(),
   lineNoOld: number(),
@@ -78,7 +78,7 @@ interface ChangesetHunk {
   lines: HunkLine[];
 }
 
-const changesetHunkSchema = strictObject({
+const changesetHunkSchema = object({
   header: string(),
   lines: array(hunkLineSchema),
 }) satisfies ZodSchema<ChangesetHunk>;
@@ -92,9 +92,9 @@ export interface DiffAddedDeletedModifiedChangeset {
   };
 }
 
-const diffAddedDeletedModifiedChangesetSchema = strictObject({
+const diffAddedDeletedModifiedChangesetSchema = object({
   path: string(),
-  diff: strictObject({
+  diff: object({
     type: union([literal("plain"), literal("binary"), literal("empty")]),
     hunks: array(changesetHunkSchema),
     eof: union([
@@ -111,7 +111,7 @@ interface DiffCopiedMovedChangeset {
   oldPath: string;
 }
 
-const diffCopiedMovedChangesetSchema = strictObject({
+const diffCopiedMovedChangesetSchema = object({
   newPath: string(),
   oldPath: string(),
 }) satisfies ZodSchema<DiffCopiedMovedChangeset>;
@@ -129,13 +129,13 @@ export interface Diff {
   };
 }
 
-export const diffSchema = strictObject({
+export const diffSchema = object({
   added: array(diffAddedDeletedModifiedChangesetSchema),
   deleted: array(diffAddedDeletedModifiedChangesetSchema),
   moved: array(diffCopiedMovedChangesetSchema),
   copied: array(diffCopiedMovedChangesetSchema),
   modified: array(diffAddedDeletedModifiedChangesetSchema),
-  stats: strictObject({
+  stats: object({
     filesChanged: number(),
     insertions: number(),
     deletions: number(),
@@ -148,7 +148,7 @@ export interface Commit {
   branches: string[];
 }
 
-export const commitSchema = strictObject({
+export const commitSchema = object({
   commit: commitHeaderSchema,
   diff: diffSchema,
   branches: array(string()),
@@ -159,9 +159,9 @@ export interface Commits {
   stats: { commits: number; branches: number; contributors: number };
 }
 
-export const commitsSchema = strictObject({
+export const commitsSchema = object({
   commits: array(commitSchema),
-  stats: strictObject({
+  stats: object({
     commits: number(),
     branches: number(),
     contributors: number(),

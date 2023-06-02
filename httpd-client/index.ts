@@ -25,7 +25,7 @@ import type {
 import type { RequestOptions, Method } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
-import { array, literal, number, strictObject, string, union } from "zod";
+import { array, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
 import * as session from "./lib/session.js";
@@ -57,7 +57,7 @@ export interface Node {
   id: string;
 }
 
-const nodeSchema = strictObject({
+const nodeSchema = object({
   id: string(),
 }) satisfies ZodSchema<Node>;
 
@@ -70,14 +70,14 @@ export interface NodeInfo {
   links: { href: string; rel: string; type: Method }[];
 }
 
-const nodeInfoSchema = strictObject({
+const nodeInfoSchema = object({
   message: string(),
   service: string(),
   version: string(),
   node: nodeSchema,
   path: string(),
   links: array(
-    strictObject({
+    object({
       href: string(),
       rel: string(),
       type: union([
@@ -95,9 +95,9 @@ export interface NodeStats {
   users: { count: number };
 }
 
-const nodeStatsSchema = strictObject({
-  projects: strictObject({ count: number() }),
-  users: strictObject({ count: number() }),
+const nodeStatsSchema = object({
+  projects: object({ count: number() }),
+  users: object({ count: number() }),
 }) satisfies ZodSchema<NodeStats>;
 
 export class HttpdClient {

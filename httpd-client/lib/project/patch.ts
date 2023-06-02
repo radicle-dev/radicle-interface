@@ -8,7 +8,7 @@ import {
   literal,
   number,
   optional,
-  strictObject,
+  object,
   string,
   tuple,
   union,
@@ -21,17 +21,17 @@ export type PatchState =
   | { status: "merged"; revision: string; commit: string };
 
 const patchStateSchema = union([
-  strictObject({
+  object({
     status: literal("draft"),
   }),
-  strictObject({
+  object({
     status: literal("open"),
     conflicts: array(tuple([string(), string()])).optional(),
   }),
-  strictObject({
+  object({
     status: literal("archived"),
   }),
-  strictObject({
+  object({
     status: literal("merged"),
     revision: string(),
     commit: string(),
@@ -45,8 +45,8 @@ export interface Merge {
   timestamp: number;
 }
 
-const mergeSchema = strictObject({
-  author: strictObject({ id: string(), alias: string().optional() }),
+const mergeSchema = object({
+  author: object({ id: string(), alias: string().optional() }),
   revision: string(),
   commit: string(),
   timestamp: number(),
@@ -61,10 +61,10 @@ interface CodeLocation {
   };
 }
 
-const codeLocationSchema = strictObject({
+const codeLocationSchema = object({
   path: string(),
   commit: string(),
-  lines: strictObject({
+  lines: object({
     start: number(),
     end: number(),
   }),
@@ -76,7 +76,7 @@ interface CodeComment {
   timestamp: number;
 }
 
-const codeCommentSchema = strictObject({
+const codeCommentSchema = object({
   location: codeLocationSchema,
   comment: string(),
   timestamp: number(),
@@ -92,8 +92,8 @@ export interface Review {
   timestamp: number;
 }
 
-const reviewSchema = strictObject({
-  author: strictObject({ id: string(), alias: string().optional() }),
+const reviewSchema = object({
+  author: object({ id: string(), alias: string().optional() }),
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
   comment: optional(string().nullable()),
   inline: array(codeCommentSchema),
@@ -112,9 +112,9 @@ export interface Revision {
   timestamp: number;
 }
 
-const revisionSchema = strictObject({
+const revisionSchema = object({
   id: string(),
-  author: strictObject({ id: string(), alias: string().optional() }),
+  author: object({ id: string(), alias: string().optional() }),
   description: string(),
   base: string(),
   oid: string(),
@@ -136,9 +136,9 @@ export interface Patch {
   revisions: Revision[];
 }
 
-export const patchSchema = strictObject({
+export const patchSchema = object({
   id: string(),
-  author: strictObject({ id: string(), alias: string().optional() }),
+  author: object({ id: string(), alias: string().optional() }),
   title: string(),
   state: patchStateSchema,
   target: string(),
