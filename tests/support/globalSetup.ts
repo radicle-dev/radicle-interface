@@ -7,6 +7,7 @@ import * as readline from "node:readline/promises";
 import { execa } from "execa";
 
 import {
+  createCobsFixture,
   createMarkdownFixture,
   createSourceBrowsingFixture,
   gitOptions,
@@ -58,6 +59,8 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
     await createSourceBrowsingFixture(peerManager, palm);
     console.log("Creating markdown fixture");
     await createMarkdownFixture(palm);
+    console.log("Creating cobs fixture");
+    await createCobsFixture(palm);
     console.log("Running tests");
   } else {
     await startPalmHttpd();

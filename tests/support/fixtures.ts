@@ -10,7 +10,10 @@ import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
 
 import * as Process from "./process.js";
+import * as issue from "@tests/support/cobs/issue.js";
 import * as logLabel from "@tests/support/logLabel.js";
+import * as patch from "@tests/support/cobs/patch.js";
+import { createOptions } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
 
@@ -297,6 +300,170 @@ export async function createSourceBrowsingFixture(
   );
 }
 
+export async function createCobsFixture(peer: RadiclePeer) {
+  await peer.rad(["track", peer.nodeId, "--alias", "palm"]);
+  await Fs.mkdir(Path.join(tmpDir, "repos", "cobs"));
+  const { projectFolder, defaultBranch } = await createProject(peer, "cobs");
+  const issueOne = await issue.create(
+    peer,
+    "This `title` has **markdown**",
+    "This is a description\nWith some multiline text.",
+    ["bug", "feature-request"],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["assign", issueOne, "--to", `did:key:${peer.nodeId}`],
+    createOptions(projectFolder, 1),
+  );
+  await peer.rad(
+    [
+      "comment",
+      issueOne,
+      "--message",
+      "This is a multiline comment\n\nWith some more text.",
+    ],
+    createOptions(projectFolder, 2),
+  );
+  await peer.rad(
+    [
+      "comment",
+      issueOne,
+      "--message",
+      "This is a reply, to a first comment.",
+      "--reply-to",
+      "a299a997301eae6528cb9f6fbdb8fac2cb4c3df0",
+    ],
+    createOptions(projectFolder, 3),
+  );
+
+  const issueTwo = await issue.create(
+    peer,
+    "A closed issue",
+    "This issue has been closed\n\nsource: [link](https://radicle.xyz)",
+    [],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["issue", "state", issueTwo, "--closed"],
+    createOptions(projectFolder, 1),
+  );
+
+  const issueThree = await issue.create(
+    peer,
+    "A solved issue",
+    "This issue has been solved\n\n```js\nconsole.log('hello world')\nconsole.log(\"\")\n```",
+    [],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["issue", "state", issueThree, "--solved"],
+    createOptions(projectFolder, 1),
+  );
+
+  const patchOne = await patch.create(
+    peer,
+    "Add README\n\nThis commit adds more information to the README",
+    "feature/add-readme",
+    () => Fs.writeFile(Path.join(projectFolder, "README.md"), "# Cobs Repo"),
+    ["Let's add a README", "This repo needed a README"],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["comment", patchOne, "--message", "I'll review the patch"],
+    createOptions(projectFolder, 1),
+  );
+  await peer.rad(
+    [
+      "comment",
+      patchOne,
+      "--message",
+      "Thanks for that!",
+      "--reply-to",
+      "fa9e1d3d0d064449a2415072fe2d4eef28a2f603",
+    ],
+    createOptions(projectFolder, 2),
+  );
+  await peer.rad(
+    ["review", patchOne, "-m", "LGTM", "--accept"],
+    createOptions(projectFolder, 3),
+  );
+  await patch.merge(
+    peer,
+    defaultBranch,
+    "feature/add-readme",
+    createOptions(projectFolder, 4),
+  );
+
+  const patchTwo = await patch.create(
+    peer,
+    "Add subtitle to README",
+    "feature/add-more-text",
+    () =>
+      Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Subtitle"),
+    [],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["review", patchTwo, "-m", "Not the README we are looking for", "--reject"],
+    createOptions(projectFolder, 1),
+  );
+
+  const patchThree = await patch.create(
+    peer,
+    "Rewrite subtitle to README",
+    "feature/better-subtitle",
+    () =>
+      Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Better?"),
+    [
+      "Taking another stab at the README",
+      "This is a big improvement over the last one",
+      "Hopefully **this** is the last time",
+    ],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["tag", patchThree, "documentation"],
+    createOptions(projectFolder, 1),
+  );
+  await peer.rad(
+    ["review", patchThree, "-m", "This looks better"],
+    createOptions(projectFolder, 2),
+  );
+  await patch.update(
+    peer,
+    "feature/better-subtitle",
+    "Some minor rebase",
+    createOptions(projectFolder, 3),
+  );
+
+  const patchFour = await patch.create(
+    peer,
+    "This patch is going to be archived",
+    "feature/archived",
+    () =>
+      Fs.writeFile(Path.join(projectFolder, "CONTRIBUTING.md"), "# Archived"),
+    [],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["patch", "archive", patchFour],
+    createOptions(projectFolder, 1),
+  );
+
+  const patchFive = await patch.create(
+    peer,
+    "This patch is going to be reverted to draft",
+    "feature/draft",
+    () => Fs.writeFile(Path.join(projectFolder, "LICENSE"), "Draft"),
+    [],
+    { cwd: projectFolder },
+  );
+  await peer.rad(
+    ["patch", "ready", patchFive, "--undo"],
+    createOptions(projectFolder, 1),
+  );
+}
+
 export async function createMarkdownFixture(peer: RadiclePeer) {
   await Fs.mkdir(Path.join(tmpDir, "repos", "markdown"));
   await Process.spawn("tar", [
@@ -330,8 +497,10 @@ export const bobRemote =
   "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
 export const bobHead = "28f37105bb78db48111e36281291ff253dd050e8";
 export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
+export const cobRid = "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe";
 export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";
 export const sourceBrowsingUrl = `/seeds/127.0.0.1/${sourceBrowsingRid}`;
+export const cobUrl = `/seeds/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/seeds/127.0.0.1/${markdownRid}`;
 export const seedPort = 8080;
 export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";

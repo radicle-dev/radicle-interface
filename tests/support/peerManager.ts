@@ -311,8 +311,6 @@ export class RadiclePeer {
     opts = {
       ...opts,
       env: {
-        ...opts?.env,
-        ...this.#gitOptions,
         GIT_CONFIG_GLOBAL: "/dev/null",
         GIT_CONFIG_NOSYSTEM: "1",
         RAD_HOME: this.#radHome,
@@ -320,6 +318,8 @@ export class RadiclePeer {
         RAD_COMMIT_TIME: "1671125284",
         RAD_SEED: this.#seed,
         RAD_SOCKET: this.#socket,
+        ...opts?.env,
+        ...this.#gitOptions,
       },
     };
     const childProcess = Process.spawn(cmd, args, opts);

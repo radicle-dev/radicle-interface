@@ -104,9 +104,7 @@ test("relative timestamps", async ({ page }) => {
   await page.getByTitle("Change peer").click();
   await page.locator(`text=${bobRemote}`).click();
   await expect(page.getByTitle("Change peer")).toHaveText(
-    ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-      -6,
-    )} `,
+    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(-6)}`,
   );
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");

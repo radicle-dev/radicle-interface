@@ -8,7 +8,7 @@ export async function createProject(
   name: string,
   description = "",
   defaultBranch = "main",
-): Promise<{ rid: string; projectFolder: string }> {
+): Promise<{ rid: string; projectFolder: string; defaultBranch: string }> {
   const projectFolder = Path.join(peer.checkoutPath, name);
 
   await peer.git(["init", name, "--initial-branch", defaultBranch], {
@@ -37,5 +37,5 @@ export async function createProject(
     cwd: projectFolder,
   });
 
-  return { rid, projectFolder };
+  return { rid, projectFolder, defaultBranch };
 }

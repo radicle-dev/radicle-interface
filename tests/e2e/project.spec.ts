@@ -183,8 +183,7 @@ test("files with special characters in the filename", async ({ page }) => {
   await sourceTree.getByText("_underscore_").click();
   await expect(page.locator(".file-name")).toContainText("_underscore_");
 
-  // TODO: fix these errors in `racdicle-client-services/http-api` for the
-  // following edge cases.
+  // TODO: fix these errors in `radicle-httpd` for the following edge cases.
   //
   // await sourceTree.getByText("back\\slash").click();
   // await expect(page.locator(".file-name")).toContainText("back\\slash");
@@ -268,9 +267,9 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${aliceRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `  did:key:${aliceRemote
-        .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} delegate`,
+      `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
+        -6,
+      )} delegate`,
     );
     await expect(
       page.locator(
@@ -333,9 +332,9 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change peer").click();
     await page.locator(`text=${bobRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
+      `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
         -6,
-      )} `,
+      )}`,
     );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 

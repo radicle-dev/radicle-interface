@@ -18,9 +18,9 @@
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
-  import ThreadComponent from "@app/components/Thread.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Thread from "@app/components/Thread.svelte";
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
@@ -208,6 +208,9 @@
       {/if}
       {#if previousRevOid}
         <ProjectLink
+          title="Compare {utils.formatObjectId(
+            previousRevOid,
+          )}..{utils.formatObjectId(revisionOid)}"
           projectParams={{
             search: `diff=${previousRevOid}..${revisionOid}`,
           }}>
@@ -254,7 +257,7 @@
       {#each timelines as element}
         {#if element.type === "thread"}
           <div class="review">
-            <ThreadComponent
+            <Thread
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               thread={element.inner}
               on:reply />
