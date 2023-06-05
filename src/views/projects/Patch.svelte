@@ -223,7 +223,7 @@
     gap: 0.5rem;
   }
   .draft {
-    color: var(--color-foreground-4);
+    color: var(--color-foreground-6);
   }
   .open {
     color: var(--color-positive-6);
@@ -382,6 +382,7 @@
             {projectDefaultBranch}
             {projectHead}
             {...revision}
+            first={index === 0}
             on:reply={createReply}
             patchId={patch.id}
             authorId={patch.author.id}

@@ -257,7 +257,9 @@
     </CobHeader>
     <div class="comments">
       {#each threads as thread (thread.root.id)}
-        <Thread {thread} {rawPath} on:reply={createReply} />
+        <div style:margin-top="1rem">
+          <Thread {thread} {rawPath} on:reply={createReply} />
+        </div>
       {/each}
       <div style:margin-top="1rem">
         {#if $httpdStore.state === "authenticated"}

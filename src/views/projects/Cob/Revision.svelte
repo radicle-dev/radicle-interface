@@ -3,8 +3,9 @@
   import type { Timeline } from "@app/views/projects/Patch.svelte";
 
   import * as utils from "@app/lib/utils";
-  import { onMount } from "svelte";
   import { HttpdClient } from "@httpd-client";
+  import { onMount } from "svelte";
+  import { twemoji } from "@app/lib/utils";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Avatar from "@app/components/Avatar.svelte";
@@ -36,6 +37,7 @@
   export let timelines: Timeline[];
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
+  export let first: boolean;
 
   const api = new HttpdClient(baseUrl);
 
@@ -78,10 +80,8 @@
 </script>
 
 <style>
-  .action-padding {
-    padding: 0.5rem 1rem;
-  }
-  .action-background {
+  .action {
+    padding: 1rem;
     background-color: var(--color-foreground-1);
     border-radius: var(--border-radius);
   }
@@ -97,6 +97,7 @@
   .review {
     background-color: var(--color-foreground-1);
     border-radius: var(--border-radius);
+    margin-left: 1rem;
   }
   .positive-review {
     color: var(--color-positive-6);
@@ -129,6 +130,7 @@
   .revision-data {
     gap: 0.5rem;
     display: flex;
+    align-items: center;
   }
   .revision-body {
     display: flex;
@@ -143,6 +145,9 @@
     user-select: none;
     cursor: pointer;
   }
+  .commits {
+    margin-top: 0.5rem;
+  }
   .commit-event {
     color: var(--color-foreground-6);
     padding: 0.5rem 0.5rem 0.5rem 0.25rem;
@@ -151,6 +156,9 @@
     align-items: center;
     justify-content: space-between;
     font-family: var(--font-family-monospace);
+  }
+  .commit-event:last-child {
+    padding: 0.5rem 0.5rem 0 0.25rem;
   }
   .commit-event span {
     display: flex;
@@ -170,6 +178,9 @@
     left: -1.155rem;
     user-select: none;
   }
+  .commit-summary:hover {
+    text-decoration: underline;
+  }
 </style>
 
 <div class="revision">
@@ -181,7 +192,8 @@
           on:click={() => (expanded = !expanded)} />
       </div>
       <span>
-        Revision {utils.formatObjectId(revisionId)}
+        <span style:color="var(--color-foreground-6)">Revision</span>
+        {utils.formatObjectId(revisionId)}
       </span>
       <Clipboard text={revisionId} small />
     </div>
@@ -241,26 +253,30 @@
     <div class="revision-body">
       {#each timelines as element}
         {#if element.type === "thread"}
-          <ThreadComponent
-            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-            thread={element.inner}
-            on:reply />
+          <div class="review">
+            <ThreadComponent
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+              thread={element.inner}
+              on:reply />
+          </div>
         {:else if element.type === "revision"}
           {@const caption =
             patchId === element.inner.id
               ? "opened this patch"
               : `updated to ${utils.formatObjectId(element.inner.id)}`}
-          {#if element.inner.description}
-            <Markdown
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              content={element.inner.description} />
+          {#if element.inner.description && !first}
+            <div class="txt-small">
+              <Markdown
+                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+                content={element.inner.description} />
+            </div>
           {/if}
-          <div class="action-padding action-background txt-tiny">
+          <div class="action txt-tiny">
             <Authorship {authorId} {authorAlias} timestamp={element.timestamp}>
               {caption}
             </Authorship>
             {#if response?.commits}
-              <div style="margin-top: 0.5rem;" class="action txt-tiny">
+              <div class="commits txt-tiny">
                 {#each response.commits as commit, i}
                   <div class="commit-event">
                     <span>
@@ -275,9 +291,11 @@
                           revision: commit.id,
                           search: undefined,
                         }}>
-                        <InlineMarkdown
-                          content={commit.summary}
-                          fontSize="tiny" />
+                        <div class="commit-summary" use:twemoji>
+                          <InlineMarkdown
+                            content={commit.summary}
+                            fontSize="tiny" />
+                        </div>
                       </ProjectLink>
                     </span>
                     <span>
@@ -296,8 +314,7 @@
             </div>
           {/if}
         {:else if element.type === "merge"}
-          <div
-            class="action-padding action-background merge layout-desktop txt-tiny">
+          <div class="action merge layout-desktop txt-tiny">
             <div class="action-content">
               <Authorship
                 authorId={element.inner.author.id}
@@ -309,8 +326,7 @@
               </Authorship>
             </div>
           </div>
-          <div
-            class="action-padding action-background merge layout-mobile txt-tiny">
+          <div class="action merge layout-mobile txt-tiny">
             <div class="action-content">
               <Authorship
                 authorId={element.inner.author.id}
@@ -338,7 +354,7 @@
             </div>
           {:else}
             <div
-              class="action-padding action-background layout-desktop txt-tiny"
+              class="action layout-desktop txt-tiny"
               class:positive-review={element.inner[2].verdict === "accept"}
               class:negative-review={element.inner[2].verdict === "reject"}>
               <div class="action-content">

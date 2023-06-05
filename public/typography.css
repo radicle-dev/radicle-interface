@@ -141,9 +141,6 @@ p {
   color: var(--color-foreground-5);
   font-style: italic;
 }
-.txt-faded {
-  color: var(--color-foreground-5);
-}
 .txt-link {
   color: var(--color-foreground-6);
   text-decoration: none;

@@ -222,7 +222,7 @@
   <header>
     <div class="file-header">
       <span class="file-name">
-        <span class="txt-faded">{parentDir}</span>
+        <span style:color="var(--color-foreground-5)">{parentDir}</span>
         &#8203;
         <span>{blob.name}</span>
       </span>

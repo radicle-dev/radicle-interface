@@ -88,7 +88,7 @@
     text-overflow: ellipsis;
   }
   .draft {
-    color: var(--color-foreground-4);
+    color: var(--color-foreground-6);
   }
   .open {
     color: var(--color-positive-6);

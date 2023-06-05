@@ -66,7 +66,7 @@
   }
 </style>
 
-<div class="comment" style:margin-top="1rem">
+<div class="comment">
   <CommentComponent
     {rawPath}
     id={root.id}
