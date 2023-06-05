@@ -44,9 +44,6 @@
   .clipboard:hover :global(svg) {
     fill: var(--color-foreground);
   }
-  .clipboard:active :global(svg) {
-    fill: var(--color-foreground-6);
-  }
   .clipboard:hover {
     border-radius: var(--border-radius);
   }

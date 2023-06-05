@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
   import { parseRepositoryId } from "@app/lib/utils";
   import { config } from "@app/lib/config";
 
-  import Clipboard from "@app/components/Clipboard.svelte";
+  import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
 
   export let baseUrl: BaseUrl;
@@ -61,54 +60,13 @@
     font-size: var(--font-size-tiny);
     padding: 0.5rem 0.5rem 0 0.25rem;
   }
-  .clone-url-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  .clone-url {
-    border-radius: var(--border-radius-small);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
-    height: 2rem;
-    overflow: hidden;
-    padding: 0.5rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    line-height: 1.4;
-    color: var(--color-caution-6);
-    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
-      linear-gradient(var(--color-background), var(--color-background));
-  }
-  .clipboard {
-    position: absolute;
-    right: 0;
-    color: var(--color-caution-6);
-    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
-      linear-gradient(var(--color-background), var(--color-background));
-    visibility: hidden;
-    width: 4rem;
-    height: 2rem;
-    text-align: right;
-    -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
-    mask: linear-gradient(90deg, transparent 0%, #fff 50%);
-    border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
-  }
-  .clone-url-wrapper:hover .clipboard {
-    visibility: visible;
-  }
 </style>
 
 <Floating>
   <div slot="toggle" class="clone-button">Clone</div>
   <svelte:fragment slot="modal">
     <div class="dropdown">
-      <div class="clone-url-wrapper">
-        <div class="clone-url" id="rad-clone-url">{radCloneUrl}</div>
-        <span class="clipboard">
-          <Clipboard text={radCloneUrl} on:copied={closeFocused} />
-        </span>
-      </div>
+      <Command color="caution" command={radCloneUrl} />
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
@@ -120,12 +78,7 @@
         to clone this project.
       </label>
       <br />
-      <div class="clone-url-wrapper">
-        <div class="clone-url" id="git-clone-url">{gitCloneUrl}</div>
-        <span class="clipboard">
-          <Clipboard text={gitCloneUrl} on:copied={closeFocused} />
-        </span>
-      </div>
+      <Command color="caution" command={gitCloneUrl} />
       <label for="git-clone-url">
         Use Git to clone this repository from the URL above.
       </label>
