@@ -2,7 +2,7 @@
   import type { IssueStatus } from "./Issues.svelte";
   import type { PatchStatus } from "./Patches.svelte";
   import type { ProjectRoute } from "@app/views/projects/router";
-  import type { Tree } from "@httpd-client";
+  import type { Tree, Project } from "@httpd-client";
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
@@ -29,6 +29,7 @@
   import ProjectMeta from "./ProjectMeta.svelte";
 
   export let activeRoute: ProjectRoute;
+  export let project: Project;
 
   $: id = activeRoute.params.id;
   $: peer = activeRoute.params.peer;
@@ -72,7 +73,6 @@
   }
 
   const getProject = async (id: string, peer?: string) => {
-    const project = await api.project.getById(id);
     const peers = await api.project.getAllRemotes(id);
     let branches = project.head
       ? { [project.defaultBranch]: project.head }
@@ -99,7 +99,7 @@
       );
     }
 
-    return { project, branches, peers };
+    return { branches, peers };
   };
 
   async function getRoot(
@@ -138,23 +138,23 @@
 </script>
 
 <style>
+  .header {
+    width: 100%;
+    max-width: var(--content-max-width);
+    min-width: var(--content-min-width);
+    padding-top: 4rem;
+  }
   main {
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding: 4rem 0;
-  }
-  main > header {
-    padding: 0 2rem 0 8rem;
+    padding-bottom: 4rem;
   }
   main > .message {
     padding: 0 2rem 0 8rem;
   }
 
   @media (max-width: 960px) {
-    main > header {
-      padding-left: 2rem;
-    }
     main > .message {
       padding-left: 2rem;
     }
@@ -165,36 +165,31 @@
   }
 </style>
 
-{#await projectPromise}
-  <main>
-    <header>
-      <Loading center />
-    </header>
-  </main>
-{:then { project, peers, branches }}
+<div class="header">
+  <ProjectMeta
+    projectId={project.id}
+    projectName={project.name}
+    projectDescription={project.description}
+    nodeId={peer} />
+  <Header
+    projectId={project.id}
+    projectName={project.name}
+    openPatchCount={project.patches.open}
+    openIssueCount={project.issues.open}
+    {activeRoute}
+    {baseUrl} />
+</div>
+
+{#await projectPromise then { peers, branches }}
   {@const commit = router.parseRevisionToOid(
     revision,
     project.defaultBranch,
     branches,
   )}
   <main>
-    <ProjectMeta
-      projectId={project.id}
-      projectName={project.name}
-      projectDescription={project.description}
-      nodeId={peer} />
     {#await getRoot(branches, project.defaultBranch, revision)}
       <Loading center />
     {:then { tree }}
-      <Header
-        projectId={project.id}
-        projectName={project.name}
-        openPatchCount={project.patches.open}
-        openIssueCount={project.issues.open}
-        trackings={project.trackings}
-        {activeRoute}
-        {baseUrl} />
-
       {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
         <SourceBrowsingHeader
           {project}

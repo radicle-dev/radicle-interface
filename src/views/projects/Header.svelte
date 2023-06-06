@@ -35,10 +35,6 @@
     margin-bottom: 1rem;
   }
 
-  .header:last-of-type {
-    margin-bottom: 2rem;
-  }
-
   @media (max-width: 960px) {
     .header {
       padding-left: 2rem;

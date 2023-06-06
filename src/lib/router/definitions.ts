@@ -1,8 +1,12 @@
 import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
-import type { ProjectRoute } from "@app/views/projects/router";
+import type {
+  ProjectLoadedRoute,
+  ProjectRoute,
+} from "@app/views/projects/router";
 import type { SeedsLoadedRoute, SeedsRoute } from "@app/views/seeds/router";
 
 import { loadHomeRoute } from "@app/views/home/router";
+import { loadProjectRoute } from "@app/views/projects/router";
 import { loadSeedRoute } from "@app/views/seeds/router";
 
 interface BootingRoute {
@@ -42,7 +46,7 @@ export type LoadedRoute =
   | HomeLoadedRoute
   | LoadError
   | NotFoundRoute
-  | ProjectRoute
+  | ProjectLoadedRoute
   | SeedsLoadedRoute
   | SessionRoute;
 
@@ -51,6 +55,8 @@ export async function loadRoute(route: Route): Promise<LoadedRoute> {
     return await loadSeedRoute(route.params);
   } else if (route.resource === "home") {
     return await loadHomeRoute();
+  } else if (route.resource === "projects") {
+    return await loadProjectRoute(route.params);
   } else {
     return route;
   }

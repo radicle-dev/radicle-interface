@@ -1,10 +1,20 @@
+import type { LoadError } from "@app/lib/router/definitions";
+import type { Project } from "@httpd-client";
+
 import { get } from "svelte/store";
 
+import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
+import { extractBaseUrl } from "@app/lib/utils";
 
 export interface ProjectRoute {
   resource: "projects";
   params: ProjectsParams;
+}
+
+export interface ProjectLoadedRoute {
+  resource: "projects";
+  params: ProjectLoadedParams;
 }
 
 export interface ProjectsParams {
@@ -35,6 +45,57 @@ export interface ProjectsParams {
         };
       }
     | { resource: "patch"; params: { patch: string; revision?: string } };
+}
+
+export interface ProjectLoadedParams {
+  id: string;
+  project: Project;
+  hash?: string;
+  hostnamePort: string;
+  line?: string;
+  path?: string;
+  peer?: string;
+  revision?: string;
+  route?: string;
+  search?: string;
+  view:
+    | { resource: "tree" }
+    | { resource: "commits" }
+    | { resource: "history" }
+    | { resource: "issue"; params: { issue: string } }
+    | {
+        resource: "issues";
+        params?: {
+          view: { resource: "new" };
+        };
+      }
+    | {
+        resource: "patches";
+        params?: {
+          view: { resource: "new" };
+        };
+      }
+    | { resource: "patch"; params: { patch: string; revision?: string } };
+}
+
+export async function loadProjectRoute(
+  params: ProjectsParams,
+): Promise<ProjectLoadedRoute | LoadError> {
+  const baseUrl = extractBaseUrl(params.hostnamePort);
+  const api = new HttpdClient(baseUrl);
+  try {
+    const project = await api.project.getById(params.id);
+    return { resource: "projects", params: { ...params, project } };
+  } catch (error: any) {
+    return {
+      resource: "loadError",
+      params: {
+        title: params.hostnamePort,
+        errorMessage: "Not able to load this project.",
+        stackTrace: error.stack,
+      },
+    };
+  }
 }
 
 function sanitizeQueryString(queryString: string): string {
