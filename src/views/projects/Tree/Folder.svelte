@@ -16,9 +16,11 @@
   export let revision: string;
 
   let expanded = currentPath.indexOf(prefix) === 0;
-  let tree: Promise<Tree | undefined> = fetchTree(prefix).then(tree => {
-    if (expanded) return tree;
-  });
+  let tree: Promise<Tree | undefined> = expanded
+    ? fetchTree(prefix).then(tree => {
+        return tree;
+      })
+    : Promise.resolve(undefined);
 
   const dispatch = createEventDispatcher<{ select: string }>();
   const onSelectFile = ({ detail: path }: { detail: string }) =>
