@@ -72,7 +72,7 @@
     return parsed;
   }
 
-  const getProject = async (id: string, peer?: string) => {
+  const getPeersBranches = async (id: string, peer?: string) => {
     const peers = await api.project.getAllRemotes(id);
     let branches = project.head
       ? { [project.defaultBranch]: project.head }
@@ -102,7 +102,7 @@
     return { branches, peers };
   };
 
-  async function getRoot(
+  async function getTree(
     branches: Record<string, string>,
     defaultBranch: string,
     revision?: string,
@@ -126,15 +126,15 @@
       },
     });
     // This assignment allows us to have an up-to-date issue count
-    projectPromise = getProject(id, peer);
+    peerBranchPromise = getPeersBranches(id, peer);
   }
 
   function handleIssueUpdate() {
-    projectPromise = getProject(id, peer);
+    peerBranchPromise = getPeersBranches(id, peer);
   }
 
   // React to peer changes
-  $: projectPromise = getProject(id, peer);
+  $: peerBranchPromise = getPeersBranches(id, peer);
 </script>
 
 <style>
@@ -180,17 +180,17 @@
     {baseUrl} />
 </div>
 
-{#await projectPromise then { peers, branches }}
-  {@const commit = router.parseRevisionToOid(
-    revision,
-    project.defaultBranch,
-    branches,
-  )}
-  <main>
-    {#await getRoot(branches, project.defaultBranch, revision)}
-      <Loading center />
-    {:then { tree }}
-      {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
+<main>
+  {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
+    {#await peerBranchPromise then { peers, branches }}
+      {@const commit = router.parseRevisionToOid(
+        revision,
+        project.defaultBranch,
+        branches,
+      )}
+      {#await getTree(branches, project.defaultBranch, revision)}
+        <Loading center />
+      {:then { tree }}
         <SourceBrowsingHeader
           {project}
           {activeRoute}
@@ -199,119 +199,118 @@
           commitCount={tree.stats.commits}
           contributorCount={tree.stats.contributors}
           revision={activeRoute.params.revision} />
-      {/if}
 
-      {#if activeRoute.params.view.resource === "tree"}
-        <Browser
-          {baseUrl}
-          {project}
-          {revision}
-          {branches}
-          {tree}
-          {activeRoute} />
-      {:else if activeRoute.params.view.resource === "history"}
-        <History projectId={project.id} {baseUrl} parentCommit={commit} />
-      {:else if activeRoute.params.view.resource === "commits"}
-        {#await api.project.getCommitBySha(id, commit)}
-          <Loading center />
-        {:then fetchedCommit}
-          <Commit commit={fetchedCommit} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couln't load commit." stackTrace={e} />
-          </div>
-        {/await}
-      {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
-        {#if $httpdStore.state === "authenticated"}
-          <NewIssue
-            on:create={handleIssueCreation}
-            session={$httpdStore.session}
-            projectId={project.id}
-            projectHead={project.head}
-            {baseUrl} />
-        {:else}
-          <div class="message">
-            <ErrorMessage
-              message="Couldn't access issue creation. Make sure you're still logged in." />
-          </div>
+        {#if activeRoute.params.view.resource === "tree"}
+          <Browser
+            {baseUrl}
+            {project}
+            {revision}
+            {branches}
+            {tree}
+            {activeRoute} />
+        {:else if activeRoute.params.view.resource === "history"}
+          <History projectId={project.id} {baseUrl} parentCommit={commit} />
+        {:else if activeRoute.params.view.resource === "commits"}
+          {#await api.project.getCommitBySha(id, commit)}
+            <Loading center />
+          {:then fetchedCommit}
+            <Commit commit={fetchedCommit} />
+          {:catch e}
+            <div class="message">
+              <ErrorMessage message="Couln't load commit." stackTrace={e} />
+            </div>
+          {/await}
         {/if}
-      {:else if activeRoute.params.view.resource === "issues"}
-        <Issues
-          {baseUrl}
-          projectId={project.id}
-          issueCounters={project.issues}
-          state={issueFilter} />
-      {:else if activeRoute.params.view.resource === "issue"}
-        {#await api.project.getIssueById(project.id, activeRoute.params.view.params.issue)}
-          <Loading center />
-        {:then issue}
-          <Issue
-            on:update={handleIssueUpdate}
-            projectId={project.id}
-            projectHead={project.head}
-            {baseUrl}
-            {issue} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couldn't load issue." stackTrace={e} />
-          </div>
-        {/await}
-      {:else if activeRoute.params.view.resource === "patches"}
-        <Patches
-          {baseUrl}
-          projectId={project.id}
-          state={patchFilter}
-          patchCounters={project.patches} />
-      {:else if activeRoute.params.view.resource === "patch"}
-        {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
-          <Loading center />
-        {:then patch}
-          {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
-          <Patch
-            {patch}
-            {baseUrl}
-            projectId={project.id}
-            projectDefaultBranch={project.defaultBranch}
-            projectHead={project.head}
-            revision={activeRoute.params.view.params.revision ??
-              latestRevision.id}
-            currentTab={patchTabFilter}
-            diff={patchDiffFilter} />
-        {:catch e}
-          <div class="message">
-            <ErrorMessage message="Couldn't load patch." stackTrace={e} />
-          </div>
-        {/await}
-      {:else}
-        {unreachable(activeRoute.params.view)}
-      {/if}
-    {:catch e}
-      <div class="message">
-        {#if peer}
-          <Placeholder emoji="🍂">
-            <span slot="title">
-              <span class="txt-monospace">{formatNodeId(peer)}</span>
-            </span>
-            <span slot="body">
-              <span style="display: block">
-                Couldn't load remote source tree.
+      {:catch e}
+        <div class="message">
+          {#if peer}
+            <Placeholder emoji="🍂">
+              <span slot="title">
+                <span class="txt-monospace">{formatNodeId(peer)}</span>
               </span>
-              <span>{e.message}</span>
-            </span>
-          </Placeholder>
-        {:else}
-          <Placeholder emoji="🍂">
-            <span slot="body">
-              <span style="display: block">Couldn't load source tree.</span>
-              <span>{e.message}</span>
-            </span>
-          </Placeholder>
-        {/if}
+              <span slot="body">
+                <span style="display: block">
+                  Couldn't load remote source tree.
+                </span>
+                <span>{e.message}</span>
+              </span>
+            </Placeholder>
+          {:else}
+            <Placeholder emoji="🍂">
+              <span slot="body">
+                <span style="display: block">Couldn't load source tree.</span>
+                <span>{e.message}</span>
+              </span>
+            </Placeholder>
+          {/if}
+        </div>
+      {/await}
+    {:catch}
+      <div class="layout-centered">
+        <NotFound subtitle={id} title="Project not found" />
       </div>
     {/await}
-  </main>
-{:catch}
-  <div class="layout-centered">
-    <NotFound subtitle={id} title="Project not found" />
-  </div>
-{/await}
+  {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
+    {#if $httpdStore.state === "authenticated"}
+      <NewIssue
+        on:create={handleIssueCreation}
+        session={$httpdStore.session}
+        projectId={project.id}
+        projectHead={project.head}
+        {baseUrl} />
+    {:else}
+      <div class="message">
+        <ErrorMessage
+          message="Couldn't access issue creation. Make sure you're still logged in." />
+      </div>
+    {/if}
+  {:else if activeRoute.params.view.resource === "issues"}
+    <Issues
+      {baseUrl}
+      projectId={project.id}
+      issueCounters={project.issues}
+      state={issueFilter} />
+  {:else if activeRoute.params.view.resource === "issue"}
+    {#await api.project.getIssueById(project.id, activeRoute.params.view.params.issue)}
+      <Loading center />
+    {:then issue}
+      <Issue
+        on:update={handleIssueUpdate}
+        projectId={project.id}
+        projectHead={project.head}
+        {baseUrl}
+        {issue} />
+    {:catch e}
+      <div class="message">
+        <ErrorMessage message="Couldn't load issue." stackTrace={e} />
+      </div>
+    {/await}
+  {:else if activeRoute.params.view.resource === "patches"}
+    <Patches
+      {baseUrl}
+      projectId={project.id}
+      state={patchFilter}
+      patchCounters={project.patches} />
+  {:else if activeRoute.params.view.resource === "patch"}
+    {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
+      <Loading center />
+    {:then patch}
+      {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
+      <Patch
+        {patch}
+        {baseUrl}
+        projectId={project.id}
+        projectDefaultBranch={project.defaultBranch}
+        projectHead={project.head}
+        revision={activeRoute.params.view.params.revision ?? latestRevision.id}
+        currentTab={patchTabFilter}
+        diff={patchDiffFilter} />
+    {:catch e}
+      <div class="message">
+        <ErrorMessage message="Couldn't load patch." stackTrace={e} />
+      </div>
+    {/await}
+  {:else}
+    {unreachable(activeRoute.params.view)}
+  {/if}
+</main>
