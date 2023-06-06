@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { IssueStatus } from "./Issues.svelte";
   import type { PatchStatus } from "./Patches.svelte";
-  import type { ProjectLoadedRoute } from "@app/views/projects/router";
+  import type { Project } from "@httpd-client";
+  import type { ProjectLoadedView } from "@app/views/projects/router";
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
@@ -24,22 +25,32 @@
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
-  export let activeRoute: ProjectLoadedRoute;
+  export let hostnamePort: string;
+  export let id: string;
+  export let project: Project;
+  export let view: ProjectLoadedView;
 
-  $: searchParams = new URLSearchParams(activeRoute.params.search || "");
+  export let hash: string | undefined = undefined;
+  export let line: string | undefined = undefined;
+  export let path: string | undefined = undefined;
+  export let peer: string | undefined = undefined;
+  export let revision: string | undefined = undefined;
+  export let search: string | undefined = undefined;
+
+  $: searchParams = new URLSearchParams(search || "");
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
   $: patchTabFilter =
     (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
   $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
   $: patchDiffFilter = searchParams.get("diff") || undefined;
-  $: baseUrl = utils.extractBaseUrl(activeRoute.params.hostnamePort);
+  $: baseUrl = utils.extractBaseUrl(hostnamePort);
   $: api = new HttpdClient(baseUrl);
 
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
     void router.push({
       resource: "projects",
       params: {
-        id: activeRoute.params.project.id,
+        id: id,
         hostnamePort: baseUrl.hostname,
         view: {
           resource: "issue",
@@ -84,46 +95,48 @@
 
 <div class="header">
   <ProjectMeta
-    projectId={activeRoute.params.project.id}
-    projectName={activeRoute.params.project.name}
-    projectDescription={activeRoute.params.project.description}
-    nodeId={activeRoute.params.peer} />
+    projectId={id}
+    projectName={project.name}
+    projectDescription={project.description}
+    nodeId={peer} />
   <Header
-    projectId={activeRoute.params.project.id}
-    projectName={activeRoute.params.project.name}
-    openPatchCount={activeRoute.params.project.patches.open}
-    openIssueCount={activeRoute.params.project.issues.open}
-    {activeRoute}
+    projectId={id}
+    projectName={project.name}
+    openPatchCount={project.patches.open}
+    openIssueCount={project.issues.open}
+    {view}
     {baseUrl} />
 </div>
 
 <main>
-  {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
+  {#if view.resource === "tree" || view.resource === "history" || view.resource === "commits"}
     <SourceBrowsingHeader
-      project={activeRoute.params.project}
-      {activeRoute}
-      peers={activeRoute.params.view.params.loadedPeers}
-      branches={activeRoute.params.view.params.loadedBranches}
-      commitCount={activeRoute.params.view.params.loadedTree.stats.commits}
-      contributorCount={activeRoute.params.view.params.loadedTree.stats
-        .contributors}
-      revision={activeRoute.params.revision} />
+      {project}
+      {peer}
+      {view}
+      peers={view.params.loadedPeers}
+      branches={view.params.loadedBranches}
+      commitCount={view.params.loadedTree.stats.commits}
+      contributorCount={view.params.loadedTree.stats.contributors}
+      {revision} />
 
-    {#if activeRoute.params.view.resource === "tree"}
+    {#if view.resource === "tree"}
       <Browser
         {baseUrl}
-        project={activeRoute.params.project}
-        revision={activeRoute.params.revision}
-        branches={activeRoute.params.view.params.loadedBranches}
-        tree={activeRoute.params.view.params.loadedTree}
-        {activeRoute} />
-    {:else if activeRoute.params.view.resource === "history"}
+        {project}
+        {revision}
+        branches={view.params.loadedBranches}
+        tree={view.params.loadedTree}
+        path={path || "/"}
+        {hash}
+        {line} />
+    {:else if view.resource === "history"}
       <History
-        projectId={activeRoute.params.project.id}
+        projectId={id}
         {baseUrl}
-        parentCommit={activeRoute.params.view.params.selectedCommit} />
-    {:else if activeRoute.params.view.resource === "commits"}
-      {#await api.project.getCommitBySha(activeRoute.params.project.id, activeRoute.params.view.params.selectedCommit)}
+        parentCommit={view.params.selectedCommit} />
+    {:else if view.resource === "commits"}
+      {#await api.project.getCommitBySha(id, view.params.selectedCommit)}
         <Loading center />
       {:then fetchedCommit}
         <Commit commit={fetchedCommit} />
@@ -133,13 +146,13 @@
         </div>
       {/await}
     {/if}
-  {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
+  {:else if view.resource === "issues" && view.params?.view.resource === "new"}
     {#if $httpdStore.state === "authenticated"}
       <NewIssue
         on:create={handleIssueCreation}
         session={$httpdStore.session}
-        projectId={activeRoute.params.project.id}
-        projectHead={activeRoute.params.project.head}
+        projectId={id}
+        projectHead={project.head}
         {baseUrl} />
     {:else}
       <div class="message">
@@ -147,20 +160,20 @@
           message="Couldn't access issue creation. Make sure you're still logged in." />
       </div>
     {/if}
-  {:else if activeRoute.params.view.resource === "issues"}
+  {:else if view.resource === "issues"}
     <Issues
       {baseUrl}
-      projectId={activeRoute.params.project.id}
-      issueCounters={activeRoute.params.project.issues}
+      projectId={id}
+      issueCounters={project.issues}
       state={issueFilter} />
-  {:else if activeRoute.params.view.resource === "issue"}
-    {#await api.project.getIssueById(activeRoute.params.project.id, activeRoute.params.view.params.issue)}
+  {:else if view.resource === "issue"}
+    {#await api.project.getIssueById(id, view.params.issue)}
       <Loading center />
     {:then issue}
       <Issue
         on:update={handleIssueUpdate}
-        projectId={activeRoute.params.project.id}
-        projectHead={activeRoute.params.project.head}
+        projectId={id}
+        projectHead={project.head}
         {baseUrl}
         {issue} />
     {:catch e}
@@ -168,24 +181,24 @@
         <ErrorMessage message="Couldn't load issue." stackTrace={e} />
       </div>
     {/await}
-  {:else if activeRoute.params.view.resource === "patches"}
+  {:else if view.resource === "patches"}
     <Patches
       {baseUrl}
-      projectId={activeRoute.params.project.id}
+      projectId={id}
       state={patchFilter}
-      patchCounters={activeRoute.params.project.patches} />
-  {:else if activeRoute.params.view.resource === "patch"}
-    {#await api.project.getPatchById(activeRoute.params.project.id, activeRoute.params.view.params.patch)}
+      patchCounters={project.patches} />
+  {:else if view.resource === "patch"}
+    {#await api.project.getPatchById(id, view.params.patch)}
       <Loading center />
     {:then patch}
       {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
       <Patch
         {patch}
         {baseUrl}
-        projectId={activeRoute.params.project.id}
-        projectDefaultBranch={activeRoute.params.project.defaultBranch}
-        projectHead={activeRoute.params.project.head}
-        revision={activeRoute.params.view.params.revision ?? latestRevision.id}
+        projectId={id}
+        projectDefaultBranch={project.defaultBranch}
+        projectHead={project.head}
+        revision={view.params.revision ?? latestRevision.id}
         currentTab={patchTabFilter}
         diff={patchDiffFilter} />
     {:catch e}
@@ -194,6 +207,6 @@
       </div>
     {/await}
   {:else}
-    {unreachable(activeRoute.params.view)}
+    {unreachable(view)}
   {/if}
 </main>

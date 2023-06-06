@@ -8,7 +8,6 @@
 
 <script lang="ts">
   import type { BaseUrl, Blob, Project, Tree } from "@httpd-client";
-  import type { ProjectRoute } from "@app/views/projects/router";
 
   import { onMount } from "svelte";
 
@@ -32,15 +31,15 @@
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: Blob };
 
+  export let line: string | undefined = undefined;
+  export let path: string;
+  export let hash: string | undefined = undefined;
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let tree: Tree;
   export let revision: string | undefined;
   export let branches: Record<string, string>;
-  export let activeRoute: ProjectRoute;
 
-  $: path = activeRoute.params.path || "/";
-  $: line = activeRoute.params.line;
   $: commit = parseRevisionToOid(revision, project.defaultBranch, branches);
 
   // When the component is loaded the first time, the blob is yet to be loaded.
@@ -227,9 +226,10 @@
             {#if previousBlob}
               <div class="layout-desktop">
                 <BlobComponent
+                  {path}
+                  {hash}
                   {line}
                   blob={previousBlob}
-                  {activeRoute}
                   rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
               </div>
               <div class="layout-mobile">
@@ -241,9 +241,10 @@
           {:then blob}
             {#if blob}
               <BlobComponent
+                {path}
+                {hash}
                 {line}
                 {blob}
-                {activeRoute}
                 rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
             {/if}
           {/await}

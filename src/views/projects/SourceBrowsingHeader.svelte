@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Project, Remote } from "@httpd-client";
-  import type { ProjectRoute } from "@app/views/projects/router";
+  import type { ProjectLoadedView } from "@app/views/projects/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
   import { pluralize } from "@app/lib/pluralize";
@@ -11,10 +11,11 @@
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let project: Project;
-  export let activeRoute: ProjectRoute;
+  export let peer: string | undefined = undefined;
   export let revision: string | undefined;
   export let peers: Remote[];
   export let branches: Record<string, string>;
+  export let view: ProjectLoadedView;
 
   export let commitCount: number;
   export let contributorCount: number;
@@ -44,10 +45,7 @@
 
 <div class="header">
   {#if peers.length > 0}
-    <PeerSelector
-      {peers}
-      peer={activeRoute.params.peer}
-      on:click={() => closeFocused()} />
+    <PeerSelector {peers} {peer} on:click={() => closeFocused()} />
   {/if}
 
   <BranchSelector
@@ -66,8 +64,7 @@
       search: undefined,
     }}>
     <SquareButton
-      active={activeRoute.params.view.resource === "history" ||
-        activeRoute.params.view.resource === "commits"}>
+      active={view.resource === "history" || view.resource === "commits"}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>

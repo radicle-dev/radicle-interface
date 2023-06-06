@@ -48,59 +48,62 @@ export interface ProjectsParams {
 }
 
 export interface ProjectLoadedParams {
+  hostnamePort: string;
   id: string;
   project: Project;
+  view: ProjectLoadedView;
+
   hash?: string;
-  hostnamePort: string;
   line?: string;
   path?: string;
   peer?: string;
   revision?: string;
   route?: string;
   search?: string;
-  view:
-    | {
-        resource: "tree";
-        params: {
-          loadedBranches: Record<string, string>;
-          loadedPeers: Remote[];
-          loadedTree: Tree;
-          selectedCommit: string;
-        };
-      }
-    | {
-        resource: "commits";
-        params: {
-          loadedBranches: Record<string, string>;
-          loadedPeers: Remote[];
-          loadedTree: Tree;
-          selectedCommit: string;
-        };
-      }
-    | {
-        resource: "history";
-        params: {
-          loadedBranches: Record<string, string>;
-          loadedPeers: Remote[];
-          loadedTree: Tree;
-          selectedCommit: string;
-        };
-      }
-    | { resource: "issue"; params: { issue: string } }
-    | {
-        resource: "issues";
-        params?: {
-          view: { resource: "new" };
-        };
-      }
-    | {
-        resource: "patches";
-        params?: {
-          view: { resource: "new" };
-        };
-      }
-    | { resource: "patch"; params: { patch: string; revision?: string } };
 }
+
+export type ProjectLoadedView =
+  | {
+      resource: "tree";
+      params: {
+        loadedBranches: Record<string, string>;
+        loadedPeers: Remote[];
+        loadedTree: Tree;
+        selectedCommit: string;
+      };
+    }
+  | {
+      resource: "commits";
+      params: {
+        loadedBranches: Record<string, string>;
+        loadedPeers: Remote[];
+        loadedTree: Tree;
+        selectedCommit: string;
+      };
+    }
+  | {
+      resource: "history";
+      params: {
+        loadedBranches: Record<string, string>;
+        loadedPeers: Remote[];
+        loadedTree: Tree;
+        selectedCommit: string;
+      };
+    }
+  | { resource: "issue"; params: { issue: string } }
+  | {
+      resource: "issues";
+      params?: {
+        view: { resource: "new" };
+      };
+    }
+  | {
+      resource: "patches";
+      params?: {
+        view: { resource: "new" };
+      };
+    }
+  | { resource: "patch"; params: { patch: string; revision?: string } };
 
 // We need a SHA1 commit in some places, so we return early if the revision is
 // a SHA and else we look into branches.

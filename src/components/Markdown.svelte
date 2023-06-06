@@ -16,7 +16,7 @@
   import { updateProjectRoute } from "@app/views/projects/router";
 
   export let content: string;
-  export let hash: string | null = null;
+  export let hash: string | undefined = undefined;
   export let path: string = "/";
   export let rawPath: string | undefined = undefined;
 

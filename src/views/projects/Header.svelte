@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { ProjectRoute } from "@app/views/projects/router";
+  import type { ProjectLoadedView } from "@app/views/projects/router";
 
   import { config } from "@app/lib/config";
   import { isLocal } from "@app/lib/utils";
@@ -12,7 +12,7 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let activeRoute: ProjectRoute;
+  export let view: ProjectLoadedView;
   export let baseUrl: BaseUrl;
 
   export let projectId: string;
@@ -55,9 +55,9 @@
       revision: undefined,
     }}>
     <SquareButton
-      active={activeRoute.params.view.resource === "tree" ||
-        activeRoute.params.view.resource === "history" ||
-        activeRoute.params.view.resource === "commits"}>
+      active={view.resource === "tree" ||
+        view.resource === "history" ||
+        view.resource === "commits"}>
       Source
     </SquareButton>
   </ProjectLink>
@@ -73,8 +73,7 @@
       path: undefined,
     }}>
     <SquareButton
-      active={activeRoute.params.view.resource === "issues" ||
-        activeRoute.params.view.resource === "issue"}>
+      active={view.resource === "issues" || view.resource === "issue"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="exclamation-circle" />
       </svelte:fragment>
@@ -95,8 +94,7 @@
       path: undefined,
     }}>
     <SquareButton
-      active={activeRoute.params.view.resource === "patches" ||
-        activeRoute.params.view.resource === "patch"}>
+      active={view.resource === "patches" || view.resource === "patch"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>

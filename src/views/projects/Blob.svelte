@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Blob } from "@httpd-client";
   import type { MaybeHighlighted } from "@app/lib/syntax";
-  import type { ProjectRoute } from "@app/views/projects/router";
 
   import { afterUpdate, beforeUpdate, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
@@ -14,7 +13,8 @@
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let activeRoute: ProjectRoute;
+  export let path: string;
+  export let hash: string | undefined = undefined;
   export let blob: Blob;
   export let rawPath: string;
   export let line: string | undefined = undefined;
@@ -253,7 +253,7 @@
         <span class="txt-tiny">Binary content</span>
       </div>
     {:else if showMarkdown && blob.content}
-      <Readme content={blob.content} {rawPath} {activeRoute} />
+      <Readme content={blob.content} {rawPath} {path} {hash} />
     {:else if content}
       <table class="code no-scrollbar">
         {@html toHtml(content)}
