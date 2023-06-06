@@ -73,7 +73,7 @@
   <div slot="toggle" class="selector" title="Change peer">
     <div class="stat peer" class:selected={peer} class:not-allowed={!peers}>
       {#if !peer}
-        <Icon name="fork" />
+        <Icon size="small" name="fork" />
       {/if}
       {#if meta}
         <span class="avatar-id">

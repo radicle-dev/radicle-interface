@@ -1,9 +1,10 @@
 <script lang="ts" strictEvents>
   export let active: boolean = false;
-  export let hoverable: boolean = true;
   export let clickable: boolean = false;
   export let disabled: boolean = false;
+  export let hoverable: boolean = true;
   export let size: "small" | "regular" = "regular";
+  export let title: string | undefined = undefined;
 </script>
 
 <style>
@@ -19,6 +20,7 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
     white-space: nowrap;
+    gap: 0.5rem;
   }
 
   .small {
@@ -62,6 +64,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
+  {title}
   on:click
   class="square-button"
   class:active
@@ -69,7 +72,8 @@
   class:disabled
   class:small={size === "small"}
   class:clickable>
-  <span>
+  <slot name="icon" />
+  <div style:display="block">
     <slot />
-  </span>
+  </div>
 </div>

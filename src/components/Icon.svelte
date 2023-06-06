@@ -1,6 +1,7 @@
 <script lang="ts">
   import { unreachable } from "@app/lib/utils";
 
+  export let size: "small" | "regular" = "regular";
   export let name:
     | "browse"
     | "chat"
@@ -37,8 +38,8 @@
 <svg
   role="img"
   on:click
-  height="24"
-  width="24"
+  height={size === "regular" ? "24" : "16"}
+  width={size === "regular" ? "24" : "16"}
   fill="currentColor"
   viewBox="0 0 24 24">
   {#if name === "browse"}

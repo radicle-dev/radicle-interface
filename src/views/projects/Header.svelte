@@ -47,11 +47,6 @@
       margin-bottom: 1.5rem;
     }
   }
-  .trackings {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-  }
 </style>
 
 <div class="header">
@@ -84,6 +79,9 @@
     <SquareButton
       active={activeRoute.params.view.resource === "issues" ||
         activeRoute.params.view.resource === "issue"}>
+      <svelte:fragment slot="icon">
+        <Icon size="small" name="exclamation-circle" />
+      </svelte:fragment>
       <span class="txt-bold">{openIssueCount}</span>
       {pluralize("issue", openIssueCount)}
     </SquareButton>
@@ -103,6 +101,9 @@
     <SquareButton
       active={activeRoute.params.view.resource === "patches" ||
         activeRoute.params.view.resource === "patch"}>
+      <svelte:fragment slot="icon">
+        <Icon size="small" name="patch" />
+      </svelte:fragment>
       <span class="txt-bold">{openPatchCount}</span>
       {pluralize("patch", openPatchCount)}
     </SquareButton>
@@ -124,9 +125,11 @@
       {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
-  <SquareButton hoverable={false}>
-    <span class="trackings" title="Tracked by {trackings} nodes">
-      <Icon name="network" />{trackings} nodes
-    </span>
+  <SquareButton hoverable={false} title="Tracked by {trackings} nodes">
+    <svelte:fragment slot="icon">
+      <Icon size="small" name="network" />
+    </svelte:fragment>
+    <span class="txt-bold">{trackings}</span>
+    nodes
   </SquareButton>
 </div>
