@@ -14,7 +14,7 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { parseRevisionToOid } from "@app/lib/router";
+  import { parseRevisionToOid } from "@app/views/projects/router";
 
   import Button from "@app/components/Button.svelte";
   import Loading from "@app/components/Loading.svelte";

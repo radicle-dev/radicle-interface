@@ -1,6 +1,6 @@
 <script lang="ts" strictEvents>
   import * as utils from "@app/lib/utils";
-  import { parseRevisionToOid } from "@app/lib/router";
+  import { parseRevisionToOid } from "@app/views/projects/router";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";

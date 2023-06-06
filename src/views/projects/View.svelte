@@ -1,20 +1,16 @@
 <script lang="ts">
   import type { IssueStatus } from "./Issues.svelte";
   import type { PatchStatus } from "./Patches.svelte";
-  import type { ProjectRoute } from "@app/views/projects/router";
-  import type { Tree, Project } from "@httpd-client";
+  import type { ProjectLoadedRoute } from "@app/views/projects/router";
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { formatNodeId, unreachable } from "@app/lib/utils";
+  import { unreachable } from "@app/lib/utils";
   import { httpdStore } from "@app/lib/httpd";
-  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Loading from "@app/components/Loading.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import NotFound from "@app/components/NotFound.svelte";
-  import Placeholder from "@app/components/Placeholder.svelte";
   import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   import Browser from "./Browser.svelte";
@@ -28,12 +24,7 @@
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
-  export let activeRoute: ProjectRoute;
-  export let project: Project;
-
-  $: id = activeRoute.params.id;
-  $: peer = activeRoute.params.peer;
-  $: revision = activeRoute.params.revision;
+  export let activeRoute: ProjectLoadedRoute;
 
   $: searchParams = new URLSearchParams(activeRoute.params.search || "");
   $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
@@ -44,80 +35,11 @@
   $: baseUrl = utils.extractBaseUrl(activeRoute.params.hostnamePort);
   $: api = new HttpdClient(baseUrl);
 
-  // Parses the path consisting of a revision (eg. branch or commit) and file
-  // path into a tuple [revision, file-path]
-  function parseRoute(
-    input: string,
-    branches: Record<string, string>,
-  ): { path?: string; revision?: string } {
-    const parsed: { path?: string; revision?: string } = {};
-    const commitPath = [input.slice(0, 40), input.slice(41)];
-    const branch = Object.entries(branches).find(([branchName]) =>
-      input.startsWith(branchName),
-    );
-
-    if (branch) {
-      const [rev, path] = [
-        input.slice(0, branch[0].length),
-        input.slice(branch[0].length + 1),
-      ];
-      parsed.revision = rev;
-      parsed.path = path || "/";
-    } else if (router.isOid(commitPath[0])) {
-      parsed.revision = commitPath[0];
-      parsed.path = commitPath[1] || "/";
-    } else {
-      parsed.path = input;
-    }
-    return parsed;
-  }
-
-  const getPeersBranches = async (id: string, peer?: string) => {
-    const peers = await api.project.getAllRemotes(id);
-    let branches = project.head
-      ? { [project.defaultBranch]: project.head }
-      : {};
-    if (peer) {
-      try {
-        branches = (await api.project.getRemoteByPeer(id, peer)).heads;
-      } catch {
-        branches = {};
-      }
-    }
-
-    if (activeRoute.params.route) {
-      const { revision, path } = parseRoute(activeRoute.params.route, branches);
-      void updateProjectRoute(
-        {
-          revision,
-          path,
-          line: activeRoute.params.line,
-          hash: activeRoute.params.hash,
-          route: undefined,
-        },
-        { replace: true },
-      );
-    }
-
-    return { branches, peers };
-  };
-
-  async function getTree(
-    branches: Record<string, string>,
-    defaultBranch: string,
-    revision?: string,
-  ): Promise<{ tree: Tree }> {
-    const commit = router.parseRevisionToOid(revision, defaultBranch, branches);
-    const tree = await api.project.getTree(id, commit);
-
-    return { tree };
-  }
-
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
     void router.push({
       resource: "projects",
       params: {
-        id,
+        id: activeRoute.params.project.id,
         hostnamePort: baseUrl.hostname,
         view: {
           resource: "issue",
@@ -125,16 +47,11 @@
         },
       },
     });
-    // This assignment allows us to have an up-to-date issue count
-    peerBranchPromise = getPeersBranches(id, peer);
   }
 
   function handleIssueUpdate() {
-    peerBranchPromise = getPeersBranches(id, peer);
+    // FIXME
   }
-
-  // React to peer changes
-  $: peerBranchPromise = getPeersBranches(id, peer);
 </script>
 
 <style>
@@ -167,96 +84,62 @@
 
 <div class="header">
   <ProjectMeta
-    projectId={project.id}
-    projectName={project.name}
-    projectDescription={project.description}
-    nodeId={peer} />
+    projectId={activeRoute.params.project.id}
+    projectName={activeRoute.params.project.name}
+    projectDescription={activeRoute.params.project.description}
+    nodeId={activeRoute.params.peer} />
   <Header
-    projectId={project.id}
-    projectName={project.name}
-    openPatchCount={project.patches.open}
-    openIssueCount={project.issues.open}
+    projectId={activeRoute.params.project.id}
+    projectName={activeRoute.params.project.name}
+    openPatchCount={activeRoute.params.project.patches.open}
+    openIssueCount={activeRoute.params.project.issues.open}
     {activeRoute}
     {baseUrl} />
 </div>
 
 <main>
   {#if activeRoute.params.view.resource === "tree" || activeRoute.params.view.resource === "history" || activeRoute.params.view.resource === "commits"}
-    {#await peerBranchPromise then { peers, branches }}
-      {@const commit = router.parseRevisionToOid(
-        revision,
-        project.defaultBranch,
-        branches,
-      )}
-      {#await getTree(branches, project.defaultBranch, revision)}
-        <Loading center />
-      {:then { tree }}
-        <SourceBrowsingHeader
-          {project}
-          {activeRoute}
-          {peers}
-          {branches}
-          commitCount={tree.stats.commits}
-          contributorCount={tree.stats.contributors}
-          revision={activeRoute.params.revision} />
+    <SourceBrowsingHeader
+      project={activeRoute.params.project}
+      {activeRoute}
+      peers={activeRoute.params.view.params.loadedPeers}
+      branches={activeRoute.params.view.params.loadedBranches}
+      commitCount={activeRoute.params.view.params.loadedTree.stats.commits}
+      contributorCount={activeRoute.params.view.params.loadedTree.stats
+        .contributors}
+      revision={activeRoute.params.revision} />
 
-        {#if activeRoute.params.view.resource === "tree"}
-          <Browser
-            {baseUrl}
-            {project}
-            {revision}
-            {branches}
-            {tree}
-            {activeRoute} />
-        {:else if activeRoute.params.view.resource === "history"}
-          <History projectId={project.id} {baseUrl} parentCommit={commit} />
-        {:else if activeRoute.params.view.resource === "commits"}
-          {#await api.project.getCommitBySha(id, commit)}
-            <Loading center />
-          {:then fetchedCommit}
-            <Commit commit={fetchedCommit} />
-          {:catch e}
-            <div class="message">
-              <ErrorMessage message="Couln't load commit." stackTrace={e} />
-            </div>
-          {/await}
-        {/if}
+    {#if activeRoute.params.view.resource === "tree"}
+      <Browser
+        {baseUrl}
+        project={activeRoute.params.project}
+        revision={activeRoute.params.revision}
+        branches={activeRoute.params.view.params.loadedBranches}
+        tree={activeRoute.params.view.params.loadedTree}
+        {activeRoute} />
+    {:else if activeRoute.params.view.resource === "history"}
+      <History
+        projectId={activeRoute.params.project.id}
+        {baseUrl}
+        parentCommit={activeRoute.params.view.params.selectedCommit} />
+    {:else if activeRoute.params.view.resource === "commits"}
+      {#await api.project.getCommitBySha(activeRoute.params.project.id, activeRoute.params.view.params.selectedCommit)}
+        <Loading center />
+      {:then fetchedCommit}
+        <Commit commit={fetchedCommit} />
       {:catch e}
         <div class="message">
-          {#if peer}
-            <Placeholder emoji="🍂">
-              <span slot="title">
-                <span class="txt-monospace">{formatNodeId(peer)}</span>
-              </span>
-              <span slot="body">
-                <span style="display: block">
-                  Couldn't load remote source tree.
-                </span>
-                <span>{e.message}</span>
-              </span>
-            </Placeholder>
-          {:else}
-            <Placeholder emoji="🍂">
-              <span slot="body">
-                <span style="display: block">Couldn't load source tree.</span>
-                <span>{e.message}</span>
-              </span>
-            </Placeholder>
-          {/if}
+          <ErrorMessage message="Couln't load commit." stackTrace={e} />
         </div>
       {/await}
-    {:catch}
-      <div class="layout-centered">
-        <NotFound subtitle={id} title="Project not found" />
-      </div>
-    {/await}
+    {/if}
   {:else if activeRoute.params.view.resource === "issues" && activeRoute.params.view.params?.view.resource === "new"}
     {#if $httpdStore.state === "authenticated"}
       <NewIssue
         on:create={handleIssueCreation}
         session={$httpdStore.session}
-        projectId={project.id}
-        projectHead={project.head}
+        projectId={activeRoute.params.project.id}
+        projectHead={activeRoute.params.project.head}
         {baseUrl} />
     {:else}
       <div class="message">
@@ -267,17 +150,17 @@
   {:else if activeRoute.params.view.resource === "issues"}
     <Issues
       {baseUrl}
-      projectId={project.id}
-      issueCounters={project.issues}
+      projectId={activeRoute.params.project.id}
+      issueCounters={activeRoute.params.project.issues}
       state={issueFilter} />
   {:else if activeRoute.params.view.resource === "issue"}
-    {#await api.project.getIssueById(project.id, activeRoute.params.view.params.issue)}
+    {#await api.project.getIssueById(activeRoute.params.project.id, activeRoute.params.view.params.issue)}
       <Loading center />
     {:then issue}
       <Issue
         on:update={handleIssueUpdate}
-        projectId={project.id}
-        projectHead={project.head}
+        projectId={activeRoute.params.project.id}
+        projectHead={activeRoute.params.project.head}
         {baseUrl}
         {issue} />
     {:catch e}
@@ -288,20 +171,20 @@
   {:else if activeRoute.params.view.resource === "patches"}
     <Patches
       {baseUrl}
-      projectId={project.id}
+      projectId={activeRoute.params.project.id}
       state={patchFilter}
-      patchCounters={project.patches} />
+      patchCounters={activeRoute.params.project.patches} />
   {:else if activeRoute.params.view.resource === "patch"}
-    {#await api.project.getPatchById(project.id, activeRoute.params.view.params.patch)}
+    {#await api.project.getPatchById(activeRoute.params.project.id, activeRoute.params.view.params.patch)}
       <Loading center />
     {:then patch}
       {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
       <Patch
         {patch}
         {baseUrl}
-        projectId={project.id}
-        projectDefaultBranch={project.defaultBranch}
-        projectHead={project.head}
+        projectId={activeRoute.params.project.id}
+        projectDefaultBranch={activeRoute.params.project.defaultBranch}
+        projectHead={activeRoute.params.project.head}
         revision={activeRoute.params.view.params.revision ?? latestRevision.id}
         currentTab={patchTabFilter}
         diff={patchDiffFilter} />

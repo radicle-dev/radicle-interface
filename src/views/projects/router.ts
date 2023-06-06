@@ -1,5 +1,5 @@
 import type { LoadError } from "@app/lib/router/definitions";
-import type { Project } from "@httpd-client";
+import type { Project, Remote, Tree } from "@httpd-client";
 
 import { get } from "svelte/store";
 
@@ -59,9 +59,33 @@ export interface ProjectLoadedParams {
   route?: string;
   search?: string;
   view:
-    | { resource: "tree" }
-    | { resource: "commits" }
-    | { resource: "history" }
+    | {
+        resource: "tree";
+        params: {
+          loadedBranches: Record<string, string>;
+          loadedPeers: Remote[];
+          loadedTree: Tree;
+          selectedCommit: string;
+        };
+      }
+    | {
+        resource: "commits";
+        params: {
+          loadedBranches: Record<string, string>;
+          loadedPeers: Remote[];
+          loadedTree: Tree;
+          selectedCommit: string;
+        };
+      }
+    | {
+        resource: "history";
+        params: {
+          loadedBranches: Record<string, string>;
+          loadedPeers: Remote[];
+          loadedTree: Tree;
+          selectedCommit: string;
+        };
+      }
     | { resource: "issue"; params: { issue: string } }
     | {
         resource: "issues";
@@ -78,6 +102,41 @@ export interface ProjectLoadedParams {
     | { resource: "patch"; params: { patch: string; revision?: string } };
 }
 
+// We need a SHA1 commit in some places, so we return early if the revision is
+// a SHA and else we look into branches.
+function getOid(
+  revision: string,
+  branches?: Record<string, string>,
+): string | undefined {
+  if (isOid(revision)) return revision;
+
+  if (branches) {
+    const oid = branches[revision];
+    if (oid) return oid;
+  }
+  return undefined;
+}
+
+// Check whether the input is a SHA1 commit.
+export function isOid(input: string): boolean {
+  return /^[a-fA-F0-9]{40}$/.test(input);
+}
+
+export function parseRevisionToOid(
+  revision: string | undefined,
+  defaultBranch: string,
+  branches: Record<string, string>,
+): string {
+  if (revision) {
+    const oid = getOid(revision, branches);
+    if (!oid) {
+      throw new Error(`Revision ${revision} not found`);
+    }
+    return oid;
+  }
+  return branches[defaultBranch];
+}
+
 export async function loadProjectRoute(
   params: ProjectsParams,
 ): Promise<ProjectLoadedRoute | LoadError> {
@@ -85,17 +144,109 @@ export async function loadProjectRoute(
   const api = new HttpdClient(baseUrl);
   try {
     const project = await api.project.getById(params.id);
-    return { resource: "projects", params: { ...params, project } };
+
+    if (
+      params.view.resource === "tree" ||
+      params.view.resource === "history" ||
+      params.view.resource === "commits"
+    ) {
+      const peers = await api.project.getAllRemotes(params.id);
+      let branches = project.head
+        ? { [project.defaultBranch]: project.head }
+        : {};
+      if (params.peer) {
+        try {
+          branches = (await api.project.getRemoteByPeer(params.id, params.peer))
+            .heads;
+        } catch {
+          branches = {};
+        }
+      }
+
+      if (params.route) {
+        const { revision, path } = parseRoute(params.route, branches);
+        void updateProjectRoute(
+          {
+            revision,
+            path,
+            line: params.line,
+            hash: params.hash,
+            route: undefined,
+          },
+          { replace: true },
+        );
+      }
+
+      const commit = parseRevisionToOid(
+        params.revision,
+        project.defaultBranch,
+        branches,
+      );
+      const tree = await api.project.getTree(params.id, commit);
+      return {
+        resource: "projects",
+        params: {
+          ...params,
+          project,
+          view: {
+            resource: params.view.resource,
+            params: {
+              loadedBranches: branches,
+              loadedPeers: peers,
+              loadedTree: tree,
+              selectedCommit: commit,
+            },
+          },
+        },
+      };
+    } else {
+      return {
+        resource: "projects",
+        params: {
+          ...params,
+          view: params.view,
+          project,
+        },
+      };
+    }
   } catch (error: any) {
     return {
       resource: "loadError",
       params: {
-        title: params.hostnamePort,
+        title: params.id,
         errorMessage: "Not able to load this project.",
         stackTrace: error.stack,
       },
     };
   }
+}
+
+// Parses the path consisting of a revision (eg. branch or commit) and file
+// path into a tuple [revision, file-path]
+function parseRoute(
+  input: string,
+  branches: Record<string, string>,
+): { path?: string; revision?: string } {
+  const parsed: { path?: string; revision?: string } = {};
+  const commitPath = [input.slice(0, 40), input.slice(41)];
+  const branch = Object.entries(branches).find(([branchName]) =>
+    input.startsWith(branchName),
+  );
+
+  if (branch) {
+    const [rev, path] = [
+      input.slice(0, branch[0].length),
+      input.slice(branch[0].length + 1),
+    ];
+    parsed.revision = rev;
+    parsed.path = path || "/";
+  } else if (isOid(commitPath[0])) {
+    parsed.revision = commitPath[0];
+    parsed.path = commitPath[1] || "/";
+  } else {
+    parsed.path = input;
+  }
+  return parsed;
 }
 
 function sanitizeQueryString(queryString: string): string {
@@ -263,3 +414,5 @@ export function resolveProjectRoute(
 
   return null;
 }
+
+export const testExports = { isOid };

@@ -72,9 +72,7 @@
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "projects"}
-      <Projects
-        activeRoute={$activeRouteStore}
-        project={$activeRouteStore.params.project} />
+      <Projects activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "booting"}
       <Loading />
     {:else if $activeRouteStore.resource === "loadError"}
