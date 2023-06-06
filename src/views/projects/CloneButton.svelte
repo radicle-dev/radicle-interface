@@ -63,7 +63,7 @@
 </style>
 
 <Floating>
-  <div slot="toggle" class="clone-button">Clone</div>
+  <div slot="toggle" class="clone-button" role="button">Clone</div>
   <svelte:fragment slot="modal">
     <div class="dropdown">
       <Command color="caution" command={radCloneUrl} />
