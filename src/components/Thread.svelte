@@ -50,13 +50,17 @@
 </script>
 
 <style>
+  .comments {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
   .comment {
     background-color: var(--color-foreground-1);
     border-radius: var(--border-radius);
   }
   .reply {
     margin-left: 3rem;
-    margin-top: 1rem;
   }
   .actions {
     display: flex;
@@ -66,45 +70,47 @@
   }
 </style>
 
-<div class="comment">
-  <CommentComponent
-    {rawPath}
-    id={root.id}
-    authorId={root.author.id}
-    authorAlias={root.author.alias}
-    timestamp={root.timestamp}
-    body={root.body}
-    showReplyIcon={Boolean($httpdStore.state === "authenticated")}
-    on:toggleReply={toggleReply} />
-</div>
-{#each replies as reply}
-  <div class="comment reply">
+<div class="comments">
+  <div class="comment">
     <CommentComponent
       {rawPath}
-      id={reply.id}
-      authorId={reply.author.id}
-      authorAlias={reply.author.alias}
-      timestamp={reply.timestamp}
-      body={reply.body} />
+      id={root.id}
+      authorId={root.author.id}
+      authorAlias={root.author.alias}
+      timestamp={root.timestamp}
+      body={root.body}
+      showReplyIcon={Boolean($httpdStore.state === "authenticated")}
+      on:toggleReply={toggleReply} />
   </div>
-{/each}
-{#if showReplyTextarea}
-  <div id={`reply-${root.id}`} class="reply">
-    <Textarea
-      resizable
-      focus={showReplyTextarea}
-      bind:value={replyText}
-      on:submit={reply}
-      placeholder="Leave your reply" />
-    <div class="actions">
-      <Button variant="text" size="small" on:click={cancel}>Dismiss</Button>
-      <Button
-        variant="secondary"
-        size="small"
-        disabled={!replyText}
-        on:click={reply}>
-        Reply
-      </Button>
+  {#each replies as reply}
+    <div class="comment reply">
+      <CommentComponent
+        {rawPath}
+        id={reply.id}
+        authorId={reply.author.id}
+        authorAlias={reply.author.alias}
+        timestamp={reply.timestamp}
+        body={reply.body} />
     </div>
-  </div>
-{/if}
+  {/each}
+  {#if showReplyTextarea}
+    <div id={`reply-${root.id}`} class="reply">
+      <Textarea
+        resizable
+        focus={showReplyTextarea}
+        bind:value={replyText}
+        on:submit={reply}
+        placeholder="Leave your reply" />
+      <div class="actions">
+        <Button variant="text" size="small" on:click={cancel}>Dismiss</Button>
+        <Button
+          variant="secondary"
+          size="small"
+          disabled={!replyText}
+          on:click={reply}>
+          Reply
+        </Button>
+      </div>
+    </div>
+  {/if}
+</div>

@@ -18,7 +18,7 @@
   import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "./Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
-  import Thread from "@app/components/Thread.svelte";
+  import ThreadComponent from "@app/components/Thread.svelte";
 
   export let issue: Issue;
   export let baseUrl: BaseUrl;
@@ -257,9 +257,7 @@
     </CobHeader>
     <div class="comments">
       {#each threads as thread (thread.root.id)}
-        <div style:margin-top="1rem">
-          <Thread {thread} {rawPath} on:reply={createReply} />
-        </div>
+        <ThreadComponent {thread} {rawPath} on:reply={createReply} />
       {/each}
       <div style:margin-top="1rem">
         {#if $httpdStore.state === "authenticated"}
