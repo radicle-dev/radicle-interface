@@ -10,14 +10,15 @@
     display: flex;
   }
   .cmd {
+    height: 2rem;
+    line-height: 2rem;
     background-color: var(--color-foreground-3);
     border-radius: var(--border-radius-small);
     display: inline-block;
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-small);
-    margin-top: 0.5rem;
+    font-size: var(--font-size-tiny);
     overflow: hidden;
-    padding: 2px 0.5rem;
+    padding: 0 0.5rem;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;

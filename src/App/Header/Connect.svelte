@@ -152,7 +152,7 @@
         <div class="info">
           To access your local Radicle node on this site, run:
         </div>
-        <div style:margin="0 1rem 1rem 1rem">
+        <div style:margin="0.5rem 1rem 1rem 1rem">
           <Command command="radicle-httpd" />
         </div>
       </div>
