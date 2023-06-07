@@ -50,6 +50,9 @@
     margin: 0;
   }
   .summary {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
     padding-right: 2rem;
   }
   .patch-title {
