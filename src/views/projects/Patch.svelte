@@ -347,6 +347,7 @@
                       resource: "patch",
                       params: { patch: patch.id, revision: item.id },
                     },
+                    search: `tab=${currentTab}`,
                   }}>
                   <DropdownItem
                     selected={item.id === currentRevision.id}
