@@ -62,33 +62,25 @@ export interface ProjectLoadedParams {
   search?: string;
 }
 
+interface LoadedSourceBrowsingParams {
+  loadedBranches: Record<string, string>;
+  loadedPeers: Remote[];
+  loadedTree: Tree;
+  selectedCommit: string;
+}
+
 export type ProjectLoadedView =
   | {
       resource: "tree";
-      params: {
-        loadedBranches: Record<string, string>;
-        loadedPeers: Remote[];
-        loadedTree: Tree;
-        selectedCommit: string;
-      };
+      params: LoadedSourceBrowsingParams;
     }
   | {
       resource: "commits";
-      params: {
-        loadedBranches: Record<string, string>;
-        loadedPeers: Remote[];
-        loadedTree: Tree;
-        selectedCommit: string;
-      };
+      params: LoadedSourceBrowsingParams;
     }
   | {
       resource: "history";
-      params: {
-        loadedBranches: Record<string, string>;
-        loadedPeers: Remote[];
-        loadedTree: Tree;
-        selectedCommit: string;
-      };
+      params: LoadedSourceBrowsingParams;
     }
   | { resource: "issue"; params: { issue: string } }
   | {
