@@ -35,9 +35,10 @@
   "globals": {
     "$$Generic": "readonly"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "no-only-tests"],
   "rules": {
     "semi": "off",
+    "no-only-tests/no-only-tests": "error",
     "curly": ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
     "no-implicit-globals": ["error"],
