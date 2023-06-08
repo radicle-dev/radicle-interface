@@ -1,15 +1,19 @@
+<script lang="ts" context="module">
+  export type AuthorAliasColor =
+    | "--color-primary-5"
+    | "--color-foreground-5"
+    | "--color-positive-5"
+    | "--color-negative-5"
+    | undefined;
+</script>
+
 <script lang="ts">
   import Avatar from "@app/components/Avatar.svelte";
   import { formatNodeId, formatTimestamp } from "@app/lib/utils";
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
-  export let authorAliasColor:
-    | "--color-primary-5"
-    | "--color-foreground-5"
-    | "--color-positive-5"
-    | "--color-negative-5"
-    | undefined = "--color-foreground-5";
+  export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
   export let caption: string | undefined = undefined;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;

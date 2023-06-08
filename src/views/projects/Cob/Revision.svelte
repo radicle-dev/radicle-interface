@@ -351,6 +351,7 @@
                 caption={formatVerdict(revisionId, review.verdict)}
                 authorId={author}
                 authorAlias={review.author.alias}
+                authorAliasColor={aliasColorForVerdict(review.verdict)}
                 timestamp={review.timestamp}
                 rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
                 body={review.comment} />

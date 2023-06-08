@@ -1,4 +1,6 @@
 <script lang="ts" strictEvents>
+  import type { AuthorAliasColor } from "@app/components/Authorship.svelte";
+
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -9,6 +11,7 @@
   export let id: string | undefined = undefined;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
+  export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
   export let timestamp: number;
   export let body: string;
   export let showReplyIcon: boolean = false;
@@ -49,7 +52,12 @@
 
 <div class="card" {id}>
   <div class="card-header">
-    <Authorship {caption} {authorId} {authorAlias} {timestamp} />
+    <Authorship
+      {caption}
+      {authorId}
+      {authorAlias}
+      {authorAliasColor}
+      {timestamp} />
     <div class="actions">
       {#if showReplyIcon}
         <Button
