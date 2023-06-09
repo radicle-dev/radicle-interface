@@ -29,7 +29,7 @@ test("global hotkeys", async ({ page }) => {
     await expect(page.getByPlaceholder(searchPlaceholder)).toHaveValue(
       "searchquery?",
     );
-    await expect(page.getByText("⏎")).toBeVisible();
+    await expect(page.getByText("⏎")).toBeHidden();
     await expect(page.getByPlaceholder(searchPlaceholder)).not.toBeFocused();
   }
 });

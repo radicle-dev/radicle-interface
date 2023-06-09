@@ -115,6 +115,28 @@ export class HttpdClient {
     this.session = new session.Client(this.#fetcher);
   }
 
+  public changePort(port: number): void {
+    this.#baseUrl.port = port;
+  }
+
+  public get url(): string {
+    return `${this.#baseUrl.scheme}://${this.#baseUrl.hostname}:${
+      this.#baseUrl.port
+    }`;
+  }
+
+  public get hostnamePort(): string {
+    return `${this.#baseUrl.hostname}:${this.#baseUrl.port}`;
+  }
+
+  public get hostname(): string {
+    return this.#baseUrl.hostname;
+  }
+
+  public get port(): string {
+    return this.#baseUrl.port.toString();
+  }
+
   public async getNodeInfo(options?: RequestOptions): Promise<NodeInfo> {
     return this.#fetcher.fetchOk(
       {

@@ -123,13 +123,9 @@
       {loading}
       disabled={loading}
       bind:value={input}
-      on:focus={() => {
-        expanded = true;
-      }}
+      on:focus={() => (expanded = true)}
       on:blur={() => {
-        if (input === "") {
-          expanded = false;
-        }
+        if (input === "") expanded = false;
       }}
       on:submit={search}
       placeholder={searchPlaceholder}>

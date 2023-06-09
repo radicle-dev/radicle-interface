@@ -4,6 +4,7 @@
   import type { Project } from "@httpd-client";
   import type { ProjectLoadedView } from "@app/views/projects/router";
 
+  import * as httpd from "@app/lib/httpd";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
@@ -49,8 +50,8 @@
     void router.push({
       resource: "projects",
       params: {
-        id: id,
-        hostnamePort: baseUrl.hostname,
+        id,
+        hostnamePort: httpd.api.hostnamePort,
         view: {
           resource: "issue",
           params: { issue: issueId },

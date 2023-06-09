@@ -17,17 +17,23 @@ export type HttpdState =
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
+const HTTPD_CUSTOM_PORT_KEY = "httpdCustomPort";
 
 const store = writable<HttpdState>({ state: "stopped" });
 export const httpdStore = derived(store, s => s);
 
-const api = new HttpdClient({
+export const api = new HttpdClient({
   hostname: "127.0.0.1",
   port: 8080,
   scheme: "http",
 });
 
 let pollHttpdStateHandle: number | undefined = undefined;
+
+export function changeHttpdPort(port: number) {
+  window.localStorage.setItem(HTTPD_CUSTOM_PORT_KEY, String(port));
+  void checkState();
+}
 
 function update(state: HttpdState) {
   window.localStorage.setItem(HTTPD_STATE_STORAGE_KEY, JSON.stringify(state));
@@ -89,6 +95,10 @@ export async function disconnect() {
 async function checkState() {
   let httpdState: HttpdState | null = null;
   const rawHttpdState = window.localStorage.getItem(HTTPD_STATE_STORAGE_KEY);
+  const customHttpdPort = window.localStorage.getItem(HTTPD_CUSTOM_PORT_KEY);
+  if (customHttpdPort) {
+    api.changePort(Number(customHttpdPort));
+  }
   if (rawHttpdState) {
     try {
       httpdState = JSON.parse(rawHttpdState);
@@ -140,8 +150,9 @@ export function initialize() {
   // Sync session state changes with other open tabs and windows.
   addEventListener("storage", event => {
     if (
-      event.key === HTTPD_STATE_STORAGE_KEY &&
-      event.oldValue !== event.newValue
+      (event.key === HTTPD_STATE_STORAGE_KEY &&
+        event.oldValue !== event.newValue) ||
+      (event.key === HTTPD_CUSTOM_PORT_KEY && event.oldValue !== event.newValue)
     ) {
       void checkState();
     }

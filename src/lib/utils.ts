@@ -255,10 +255,11 @@ export function extractBaseUrl(hostnamePort: string): BaseUrl {
   ) {
     return { hostname: "127.0.0.1", port: 8080, scheme: "http" };
   } else if (hostnamePort.includes(":")) {
+    const [hostname, port] = hostnamePort.split(":");
     return {
-      hostname: hostnamePort.split(":")[0],
-      port: Number(hostnamePort.split(":")[1]),
-      scheme: config.seeds.defaultHttpdScheme,
+      hostname,
+      port: Number(port),
+      scheme: isLocal(hostname) ? "http" : config.seeds.defaultHttpdScheme,
     };
   } else {
     return {

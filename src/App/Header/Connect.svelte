@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { HttpdState } from "@app/lib/httpd";
 
+  import * as httpd from "@app/lib/httpd";
   import { closeFocused } from "@app/components/Floating.svelte";
-  import { httpdStore, disconnect } from "@app/lib/httpd";
+  import { httpdStore } from "@app/lib/httpd";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
@@ -11,11 +12,15 @@
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
+  import PortInput from "@app/App/Header/Connect/PortInput.svelte";
 
   $: command = import.meta.env.PROD
-    ? "rad web"
-    : `rad web --frontend ${new URL(import.meta.url).origin}`;
+    ? `rad web --backend ${httpd.api.url}`
+    : `rad web --frontend ${new URL(import.meta.url).origin} --backend ${
+        httpd.api.url
+      }`;
 
+  let customPort = httpd.api.port;
   const buttonTitle: Record<HttpdState["state"], string> = {
     stopped: "radicle-httpd is stopped",
     running: "radicle-httpd is running",
@@ -56,7 +61,7 @@
     height: 2.5rem;
     justify-content: space-between;
     line-height: 2.5rem;
-    padding: 0 0.8rem;
+    padding: 0 1rem;
     user-select: none;
     width: 100%;
   }
@@ -64,7 +69,7 @@
     background-color: var(--color-foreground-3);
     color: var(--color-foreground-6);
   }
-  .rounded {
+  .rounded:last-of-type:hover {
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
   }
@@ -114,7 +119,10 @@
           on:afterNavigate={closeFocused}
           route={{
             resource: "seeds",
-            params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
+            params: {
+              hostnamePort: httpd.api.hostnamePort,
+              projectPageIndex: 0,
+            },
           }}>
           <div class="dropdown-button">Browse</div>
         </Link>
@@ -123,7 +131,7 @@
         <div
           class="dropdown-button rounded"
           on:click={() => {
-            void disconnect();
+            void httpd.disconnect();
             closeFocused();
           }}>
           Disconnect
@@ -135,14 +143,18 @@
           To connect to your local Radicle node, run this command in your
           terminal:
         </div>
-        <div style:margin="0 1rem 1rem 1rem">
+        <div style:margin="0 1rem 0.5rem 1rem">
           <Command {command} />
         </div>
+        <PortInput bind:port={customPort} />
         <Link
           on:afterNavigate={closeFocused}
           route={{
             resource: "seeds",
-            params: { hostnamePort: "radicle.local", projectPageIndex: 0 },
+            params: {
+              hostnamePort: httpd.api.hostnamePort,
+              projectPageIndex: 0,
+            },
           }}>
           <div class="dropdown-button rounded">Browse</div>
         </Link>
@@ -155,6 +167,7 @@
         <div style:margin="0.5rem 1rem 1rem 1rem">
           <Command command="radicle-httpd" />
         </div>
+        <PortInput bind:port={customPort} />
       </div>
     {/if}
   </div>

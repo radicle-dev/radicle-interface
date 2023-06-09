@@ -1,14 +1,17 @@
 <script lang="ts" strictEvents>
+  import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
 
+  import Icon from "@app/components/Icon.svelte";
   import Loading from "@app/components/Loading.svelte";
 
   export let name: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let value: string | undefined = undefined;
 
-  export let variant: "regular" | "form" = "regular";
+  export let variant: "regular" | "form" | "modal" = "regular";
+  export let size: "regular" | "small" = "regular";
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
@@ -17,12 +20,16 @@
   export let validationMessage: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
+    blur: FocusEvent;
+    focus: FocusEvent;
     submit: never;
   }>();
 
   let rightContainerWidth: number;
   let leftContainerWidth: number;
   let inputElement: HTMLInputElement | undefined = undefined;
+  let isFocused = false;
+  let success = false;
 
   onMount(() => {
     if (autofocus && inputElement) {
@@ -31,14 +38,29 @@
     }
   });
 
+  const restoreIcon = debounce(() => {
+    success = false;
+  }, 800);
+
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "Enter" && valid) {
+      success = true;
       dispatch("submit");
+      restoreIcon();
     }
 
     if (event.key === "Escape") {
       inputElement?.blur();
     }
+  }
+
+  function handleFocusEvent(e: FocusEvent) {
+    if (isFocused) {
+      dispatch("blur", e);
+    } else {
+      dispatch("focus", e);
+    }
+    isFocused = !isFocused;
   }
 </script>
 
@@ -49,7 +71,7 @@
     margin: 0;
     position: relative;
     flex: 1;
-    height: 2.5rem;
+    height: var(--button-regular-height);
   }
   input {
     background: transparent;
@@ -76,17 +98,24 @@
     border: 1px solid var(--color-secondary);
     padding: 1rem 1.5rem;
   }
-  .form {
+  .form,
+  .modal {
     background: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
     border: 1px solid var(--color-foreground-1);
   }
-  .form::placeholder {
+  .form::placeholder,
+  .modal::placeholder {
     color: var(--color-foreground-5);
   }
   .form:focus,
-  .form:hover {
+  .form:hover,
+  .modal:focus,
+  .modal:hover {
     border: 1px solid var(--color-foreground-4);
+  }
+  .modal {
+    background: var(--color-background);
   }
   .left-container {
     color: var(--color-secondary);
@@ -112,6 +141,10 @@
     padding-left: 0.5rem;
     gap: 0.5rem;
   }
+  .small {
+    height: var(--button-small-height);
+    font-size: var(--font-size-small);
+  }
   .validation-message {
     color: var(--color-negative);
     font-size: var(--font-size-small);
@@ -134,7 +167,7 @@
   }
 </style>
 
-<div class="wrapper">
+<div class="wrapper" class:small={size === "small"}>
   <div class="validation-wrapper">
     <div class="left-container" bind:clientWidth={leftContainerWidth}>
       {#if $$slots.left}
@@ -145,6 +178,8 @@
     <input
       class:regular={variant === "regular"}
       class:form={variant === "form"}
+      class:modal={variant === "modal"}
+      class:small={size === "small"}
       style:padding-left={leftContainerWidth
         ? `${leftContainerWidth}px`
         : "auto"}
@@ -158,13 +193,17 @@
       {disabled}
       bind:value
       on:input
-      on:focus
-      on:blur
+      on:focus={handleFocusEvent}
+      on:blur={handleFocusEvent}
       on:keydown|stopPropagation={handleKeydown}
       on:click
       on:change />
 
-    <div class="right-container" bind:clientWidth={rightContainerWidth}>
+    <div
+      class="right-container"
+      class:small={size === "small"}
+      style:padding-right={variant === "modal" ? "0.5rem" : "1rem"}
+      bind:clientWidth={rightContainerWidth}>
       {#if $$slots.right}
         <slot name="right" />
       {/if}
@@ -173,8 +212,12 @@
         <Loading small noDelay />
       {/if}
 
-      {#if valid && !loading}
-        <div class="key-hint">⏎</div>
+      {#if valid && !loading && isFocused}
+        {#if success}
+          <Icon name="checkmark" size="small" />
+        {:else}
+          <div class="key-hint">⏎</div>
+        {/if}
       {/if}
     </div>
 
