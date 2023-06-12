@@ -64,7 +64,7 @@
   </Button>
   <Floating>
     <svelte:fragment slot="toggle">
-      <button class="toggle">
+      <button aria-label="stateToggle" class="toggle">
         <Icon name="chevron-down" />
       </button>
     </svelte:fragment>

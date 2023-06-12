@@ -101,7 +101,7 @@
         on:remove={removeAssignee}
         removeable={editInProgress || action === "create"}
         {key}>
-        <div class="chip-content">
+        <div aria-label="chip" class="chip-content">
           <Avatar inline nodeId={assignee} />
           <span>{formatNodeId(assignee)}</span>
         </div>

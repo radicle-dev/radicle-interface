@@ -14,12 +14,25 @@ import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
+import { object, string, ZodSchema } from "zod";
 
 export { expect };
 
 const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 
 type ViewportTypes = "iPhoneXR" | "Desktop";
+
+interface Auth {
+  sessionId: string;
+  publicKey: string;
+  signature: string;
+}
+
+const authSchema = object({
+  sessionId: string(),
+  publicKey: string(),
+  signature: string(),
+}) satisfies ZodSchema<Auth>;
 
 export const viewportSizes: Record<ViewportTypes, ViewportSize> = {
   iPhoneXR: { width: 414, height: 896 },
@@ -164,15 +177,24 @@ export const test = base.extend<{
       "http://localhost:3000",
       "--backend",
       "http://127.0.0.1:8070",
+      "--json",
     ]);
-    const match = stdout.trim().match(/(http:\/\/localhost:3000\/.*)$/);
-    if (!match) {
-      throw Error("Not able to parse auth url");
+    const result = authSchema.safeParse(JSON.parse(stdout));
+    if (result.success) {
+      const { sessionId, publicKey, signature } = result.data;
+      await page.goto(
+        `http://localhost:3000/session/${sessionId}?pk=${publicKey}&sig=${signature}`,
+      );
+      await expect(page.getByText("Authenticated")).toBeVisible();
+      await page.getByRole("button", { name: "Close" }).click();
+    } else {
+      throw new Error("Not able to parse rad web output");
     }
-    await page.goto(match[0]);
-    await page.getByRole("button", { name: "Close" }).click();
 
     await use(peer);
+
+    await peer.stopHttpd(8070);
+    await peer.stopNode();
   },
 
   // eslint-disable-next-line no-empty-pattern

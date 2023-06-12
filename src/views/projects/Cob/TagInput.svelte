@@ -96,7 +96,7 @@
         on:remove={removeTag}
         removeable={editInProgress || action === "create"}
         {key}>
-        <div class="tag">{tag}</div>
+        <div aria-label="chip" class="tag">{tag}</div>
       </Chip>
     {:else}
       <div class="txt-missing">No tags</div>
