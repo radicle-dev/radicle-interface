@@ -31,7 +31,6 @@
   export let view: ProjectLoadedView;
 
   export let hash: string | undefined = undefined;
-  export let line: string | undefined = undefined;
   export let path: string | undefined = undefined;
   export let peer: string | undefined = undefined;
   export let revision: string | undefined = undefined;
@@ -128,8 +127,7 @@
         branches={view.params.loadedBranches}
         tree={view.params.loadedTree}
         path={path || "/"}
-        {hash}
-        {line} />
+        {hash} />
     {:else if view.resource === "history"}
       <History
         projectId={id}

@@ -21,7 +21,6 @@ export interface ProjectsParams {
   id: string;
   hash?: string;
   hostnamePort: string;
-  line?: string;
   path?: string;
   peer?: string;
   revision?: string;
@@ -54,7 +53,6 @@ export interface ProjectLoadedParams {
   view: ProjectLoadedView;
 
   hash?: string;
-  line?: string;
   path?: string;
   peer?: string;
   revision?: string;
@@ -251,7 +249,6 @@ export function createProjectRoute(
     resource: "projects",
     params: {
       ...activeRoute.params,
-      line: undefined,
       hash: undefined,
       search: undefined,
       ...projectRouteParams,
@@ -307,7 +304,6 @@ export function resolveProjectRoute(
   }
 
   if (!content || content === "tree") {
-    const line = url.href.match(/#L\d+$/)?.pop();
     const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {
       view: { resource: "tree" },
@@ -317,7 +313,6 @@ export function resolveProjectRoute(
       path: undefined,
       revision: undefined,
       search: undefined,
-      line: line?.substring(1),
       hash: hash?.substring(1),
       route: segments.join("/"),
     };

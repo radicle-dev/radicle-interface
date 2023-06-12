@@ -31,7 +31,6 @@
     | { status: Status.Loading; path: string }
     | { status: Status.Loaded; path: string; blob: Blob };
 
-  export let line: string | undefined = undefined;
   export let path: string;
   export let hash: string | undefined = undefined;
   export let project: Project;
@@ -228,7 +227,6 @@
                 <BlobComponent
                   {path}
                   {hash}
-                  {line}
                   blob={previousBlob}
                   rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
               </div>
@@ -243,7 +241,6 @@
               <BlobComponent
                 {path}
                 {hash}
-                {line}
                 {blob}
                 rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
             {/if}

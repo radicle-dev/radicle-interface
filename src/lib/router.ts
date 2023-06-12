@@ -18,6 +18,8 @@ export const activeRouteStore = writable<LoadedRoute>({
   resource: "booting",
 });
 
+let currentUrl: URL | undefined;
+
 export function useDefaultNavigation(event: MouseEvent) {
   return (
     event.button !== 0 ||
@@ -41,6 +43,14 @@ export async function loadFromLocation(): Promise<void> {
       return;
     }
     [pathname, hash] = hash.substring(1).split("#");
+  } else {
+    if (
+      currentUrl &&
+      currentUrl.pathname === pathname &&
+      currentUrl.search === window.location.search
+    ) {
+      return;
+    }
   }
 
   const relativeUrl = pathname + window.location.search + (hash || "");
@@ -55,7 +65,7 @@ export async function loadFromLocation(): Promise<void> {
       route.params.hash
     ) {
       if (route.params.hash.match(/^L\d+$/)) {
-        route = createProjectRoute(activeRoute, { line: route.params.hash });
+        route = createProjectRoute(activeRoute, {});
       } else {
         route = createProjectRoute(activeRoute, { hash: route.params.hash });
       }
@@ -98,6 +108,7 @@ async function navigate(
   } else if (action === "replace") {
     window.history.replaceState(newRoute, DOCUMENT_TITLE, path);
   }
+  currentUrl = new URL(window.location.href);
 }
 
 export async function push(newRoute: Route): Promise<void> {
@@ -214,9 +225,7 @@ export function routeToPath(route: Route) {
     if (route.params.search) {
       suffix += `?${route.params.search}`;
     }
-    if (route.params.line) {
-      suffix += `#${route.params.line}`;
-    } else if (route.params.hash) {
+    if (route.params.hash) {
       suffix += `#${route.params.hash}`;
     }
 

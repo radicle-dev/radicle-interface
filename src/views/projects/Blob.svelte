@@ -2,11 +2,11 @@
   import type { Blob } from "@httpd-client";
   import type { MaybeHighlighted } from "@app/lib/syntax";
 
-  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
 
   import { highlight } from "@app/lib/syntax";
-  import { isMarkdownPath, scrollIntoView, twemoji } from "@app/lib/utils";
+  import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
   import Readme from "@app/views/projects/Readme.svelte";
@@ -16,7 +16,6 @@
   export let hash: string | undefined = undefined;
   export let blob: Blob;
   export let rawPath: string;
-  export let line: string | undefined = undefined;
 
   const fileExtension = blob.path.split(".").pop() ?? "";
   const lastCommit = blob.lastCommit;
@@ -27,17 +26,8 @@
     .next().value;
   let content: MaybeHighlighted = undefined;
 
-  // Any time a user clicks on a line number, the `line` prop gets updated,
-  // and the line is highlighted, but the previous line is not unhighlighted.
-  // So we have to make sure here that any previous highlighting gets removed,
-  // before updating the component.
-  beforeUpdate(() => {
-    for (const item of document.getElementsByClassName("highlight")) {
-      item.classList.remove("highlight");
-    }
-  });
-
   onMount(async () => {
+    window.addEventListener("hashchange", setTarget);
     if (!blob.content) {
       return;
     }
@@ -47,23 +37,34 @@
     }
   });
 
-  afterUpdate(() => {
-    if (line) {
-      scrollIntoView(line);
+  onDestroy(() => {
+    window.removeEventListener("hashchange", setTarget);
+  });
 
-      const element = document.getElementById(line);
-      if (element) {
-        element.classList.add("highlight");
-      }
-    }
+  afterUpdate(() => {
+    setTarget();
   });
 
   const isMarkdown = isMarkdownPath(blob.path);
-  // If we have a line number we should show the raw output.
-  let showMarkdown = line ? false : isMarkdown;
+  let showMarkdown = isMarkdown;
   const toggleMarkdown = () => {
     showMarkdown = !showMarkdown;
   };
+
+  function setTarget() {
+    for (const item of document.getElementsByClassName("highlight")) {
+      item.classList.remove("highlight");
+    }
+    let fragmentId = window.location.hash.substr(1);
+    if (fragmentId) {
+      showMarkdown = false;
+    }
+    const target = document.getElementById(fragmentId);
+    if (target) {
+      target.classList.add("highlight");
+      target.scrollIntoView();
+    }
+  }
 </script>
 
 <style>
