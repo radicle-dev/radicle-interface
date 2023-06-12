@@ -159,7 +159,7 @@ export async function loadProjectRoute(
       }
 
       if (params.route) {
-        const { revision, path } = parseRoute(params.route, branches);
+        const { revision, path } = detectRevision(params.route, branches);
         void updateProjectRoute(
           {
             revision,
@@ -216,32 +216,33 @@ export async function loadProjectRoute(
   }
 }
 
-// Parses the path consisting of a revision (eg. branch or commit) and file
-// path into a tuple [revision, file-path]
-function parseRoute(
+// Detects branch names and commit IDs at the start of `input` and extract it.
+function detectRevision(
   input: string,
   branches: Record<string, string>,
-): { path?: string; revision?: string } {
-  const parsed: { path?: string; revision?: string } = {};
+): { path: string; revision?: string } {
   const commitPath = [input.slice(0, 40), input.slice(41)];
   const branch = Object.entries(branches).find(([branchName]) =>
     input.startsWith(branchName),
   );
 
   if (branch) {
-    const [rev, path] = [
+    const [revision, path] = [
       input.slice(0, branch[0].length),
       input.slice(branch[0].length + 1),
     ];
-    parsed.revision = rev;
-    parsed.path = path || "/";
+    return {
+      revision,
+      path: path || "/",
+    };
   } else if (isOid(commitPath[0])) {
-    parsed.revision = commitPath[0];
-    parsed.path = commitPath[1] || "/";
+    return {
+      revision: commitPath[0],
+      path: commitPath[1] || "/",
+    };
   } else {
-    parsed.path = input;
+    return { path: input };
   }
-  return parsed;
 }
 
 function sanitizeQueryString(queryString: string): string {
