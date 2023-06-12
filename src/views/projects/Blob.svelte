@@ -8,7 +8,6 @@
   import { highlight } from "@app/lib/syntax";
   import { isMarkdownPath, scrollIntoView, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
-  import { updateProjectRoute } from "@app/views/projects/router";
 
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
@@ -63,7 +62,6 @@
   // If we have a line number we should show the raw output.
   let showMarkdown = line ? false : isMarkdown;
   const toggleMarkdown = () => {
-    void updateProjectRoute({ line: undefined });
     showMarkdown = !showMarkdown;
   };
 </script>
