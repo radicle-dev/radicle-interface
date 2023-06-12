@@ -31,21 +31,20 @@ export function useDefaultNavigation(event: MouseEvent) {
 export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
 export async function loadFromLocation(): Promise<void> {
-  const { pathname, search, hash } = window.location;
+  let { pathname, hash } = window.location;
 
-  if (
-    import.meta.env.VITE_HASH_ROUTING &&
-    pathname === "/" &&
-    hash &&
-    !hash.startsWith("#/")
-  ) {
-    // We land here if the user clicked an link with only a hash reference.
-    // Instead of going to the root page we stop routing here and have the
-    // browser take care of things.
-    return;
+  if (import.meta.env.VITE_HASH_ROUTING) {
+    if (pathname === "/" && hash && !hash.startsWith("#/")) {
+      // We land here if the user clicked an link with only a hash reference.
+      // Instead of going to the root page we stop routing here and have the
+      // browser take care of things.
+      return;
+    }
+    [pathname, hash] = hash.substring(1).split("#");
   }
 
-  const url = pathname + search + hash;
+  const relativeUrl = pathname + window.location.search + (hash || "");
+  const url = new URL(relativeUrl, window.origin);
   let route = pathToRoute(url);
 
   if (route) {
@@ -64,7 +63,7 @@ export async function loadFromLocation(): Promise<void> {
 
     await replace(route);
   } else {
-    await replace({ resource: "notFound", params: { url } });
+    await replace({ resource: "notFound", params: { url: relativeUrl } });
   }
 }
 
@@ -109,16 +108,8 @@ export async function replace(newRoute: Route): Promise<void> {
   await navigate("replace", newRoute);
 }
 
-function pathToRoute(path: string): Route | null {
-  // This matches e.g. an empty string
-  if (!path) {
-    return null;
-  }
-
-  const url = new URL(path, window.origin);
-  const segments = import.meta.env.VITE_HASH_ROUTING
-    ? url.hash.substring(2).split("#")[0].split("/") // Try to remove any additional hashes at the end of the URL.
-    : url.pathname.substring(1).split("/");
+function pathToRoute(url: URL): Route | null {
+  const segments = url.pathname.substring(1).split("/");
 
   const resource = segments.shift();
   switch (resource) {
