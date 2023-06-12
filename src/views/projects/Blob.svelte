@@ -56,13 +56,13 @@
       item.classList.remove("highlight");
     }
     let fragmentId = window.location.hash.substr(1);
-    if (fragmentId) {
+    if (fragmentId && fragmentId.match(/L\d+/)) {
       showMarkdown = false;
-    }
-    const target = document.getElementById(fragmentId);
-    if (target) {
-      target.classList.add("highlight");
-      target.scrollIntoView();
+      const target = document.getElementById(fragmentId);
+      if (target) {
+        target.classList.add("highlight");
+        target.scrollIntoView();
+      }
     }
   }
 </script>
