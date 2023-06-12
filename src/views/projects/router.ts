@@ -58,7 +58,6 @@ export interface ProjectLoadedParams {
   path?: string;
   peer?: string;
   revision?: string;
-  route?: string;
   search?: string;
 }
 
@@ -160,16 +159,11 @@ export async function loadProjectRoute(
 
       if (params.route) {
         const { revision, path } = detectRevision(params.route, branches);
-        void updateProjectRoute(
-          {
-            revision,
-            path,
-            line: params.line,
-            hash: params.hash,
-            route: undefined,
-          },
-          { replace: true },
-        );
+        params.revision = revision;
+        params.path = path;
+        // TODO Do not mutate `params`. Contruct a new `loadedParams` object
+        // instead.
+        delete params.route;
       }
 
       const commit = parseRevisionToOid(
