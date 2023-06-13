@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
   globalSetup: "./tests/support/globalSetup",
   use: {
     actionTimeout: 0,
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3001",
     trace: "retain-on-failure",
   },
 
@@ -58,15 +58,14 @@ const config: PlaywrightTestConfig = {
         ...devices["Desktop Chrome"],
         actionTimeout: 0,
         deviceScaleFactor: 2,
-        baseURL: "http://localhost:3000",
         trace: "off",
       },
     },
   ],
 
   webServer: {
-    command: "npm run start",
-    port: 3000,
+    command: "npm run start -- --strictPort --port 3001",
+    port: 3001,
   },
 };
 

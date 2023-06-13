@@ -174,7 +174,7 @@ export const test = base.extend<{
     const { stdout } = await peer.rad([
       "web",
       "--frontend",
-      "http://localhost:3000",
+      "http://localhost:3001",
       "--backend",
       "http://127.0.0.1:8070",
       "--json",
@@ -182,9 +182,7 @@ export const test = base.extend<{
     const result = authSchema.safeParse(JSON.parse(stdout));
     if (result.success) {
       const { sessionId, publicKey, signature } = result.data;
-      await page.goto(
-        `http://localhost:3000/session/${sessionId}?pk=${publicKey}&sig=${signature}`,
-      );
+      await page.goto(`/session/${sessionId}?pk=${publicKey}&sig=${signature}`);
       await expect(page.getByText("Authenticated")).toBeVisible();
       await page.getByRole("button", { name: "Close" }).click();
     } else {
