@@ -1,5 +1,5 @@
 import type { LoadError } from "@app/lib/router/definitions";
-import type { Project, Remote, Tree } from "@httpd-client";
+import type { Project, Remote, Tree, Issue } from "@httpd-client";
 
 import { get } from "svelte/store";
 
@@ -79,7 +79,7 @@ export type ProjectLoadedView =
       resource: "history";
       params: LoadedSourceBrowsingParams;
     }
-  | { resource: "issue"; params: { issue: string } }
+  | { resource: "issue"; params: { issue: string; loadedIssue: Issue } }
   | {
       resource: "issues";
       params?: {
@@ -199,6 +199,38 @@ export async function loadProjectRoute(
           },
         },
       };
+    } else if (params.view.resource === "issue") {
+      try {
+        const projectPromise = api.project.getById(params.id);
+        const issuePromise = api.project.getIssueById(
+          params.id,
+          params.view.params.issue,
+        );
+        const [project, issue] = await Promise.all([
+          projectPromise,
+          issuePromise,
+        ]);
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: "issue",
+              params: { ...params.view.params, loadedIssue: issue },
+            },
+          },
+        };
+      } catch (error: any) {
+        return {
+          resource: "loadError",
+          params: {
+            title: params.view.params.issue,
+            errorMessage: "Not able to load this issue.",
+            stackTrace: error.stack,
+          },
+        };
+      }
     } else {
       const project = await api.project.getById(params.id);
       return {

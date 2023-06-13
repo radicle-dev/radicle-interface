@@ -162,15 +162,11 @@
       issueCounters={project.issues}
       state={issueFilter} />
   {:else if view.resource === "issue"}
-    {#await api.project.getIssueById(id, view.params.issue)}
-      <Loading center />
-    {:then issue}
-      <Issue projectId={id} projectHead={project.head} {baseUrl} {issue} />
-    {:catch e}
-      <div class="message">
-        <ErrorMessage message="Couldn't load issue." stackTrace={e} />
-      </div>
-    {/await}
+    <Issue
+      projectId={id}
+      projectHead={project.head}
+      {baseUrl}
+      issue={view.params.loadedIssue} />
   {:else if view.resource === "patches"}
     <Patches
       {baseUrl}
