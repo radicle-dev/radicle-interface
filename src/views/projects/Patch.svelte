@@ -54,7 +54,7 @@
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
@@ -135,7 +135,7 @@
     disabled: false,
   }));
 
-  const currentRevision =
+  $: currentRevision =
     patch.revisions.find(r => r.id === revision) || patch.revisions[0];
   $: timelineTuple = patch.revisions.map<
     [
@@ -342,6 +342,7 @@
             <Dropdown items={patch.revisions}>
               <svelte:fragment slot="item" let:item>
                 <ProjectLink
+                  on:click={closeFocused}
                   projectParams={{
                     view: {
                       resource: "patch",
