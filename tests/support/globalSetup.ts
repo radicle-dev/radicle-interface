@@ -12,10 +12,9 @@ import {
   createSourceBrowsingFixture,
   gitOptions,
   startPalmHttpd,
-  supportDir,
-  tmpDir,
 } from "@tests/support/fixtures.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
+import { heartwoodShortSha, tmpDir } from "./support";
 
 const workspacePaths = [Path.join(tmpDir, "peers"), Path.join(tmpDir, "repos")];
 
@@ -69,13 +68,10 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 
 // Assert that the `rad` CLI is installed and has the correct version.
 async function assertRadInstalled(): Promise<void> {
-  const versionConstraint = (
-    await Fs.readFile(`${supportDir}/heartwood-version`, "utf8")
-  ).substring(0, 7);
   const { stdout: version } = await execa("rad", ["--version"]);
-  if (!version.includes(versionConstraint)) {
+  if (!version.includes(heartwoodShortSha)) {
     throw new Error(
-      `rad version ${version} does not satisfy ${versionConstraint}`,
+      `rad version ${version} does not satisfy ${heartwoodShortSha}`,
     );
   }
 }

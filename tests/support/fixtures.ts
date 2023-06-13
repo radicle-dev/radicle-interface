@@ -5,24 +5,19 @@ import type { PeerManager, RadiclePeer } from "./peerManager.js";
 import * as Fs from "node:fs/promises";
 import * as FsSync from "node:fs";
 import * as Path from "node:path";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { test as base, expect, type ViewportSize } from "@playwright/test";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
 import * as logLabel from "@tests/support/logLabel.js";
 import * as patch from "@tests/support/cobs/patch.js";
-import { createOptions } from "@tests/support/support.js";
+import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
 
 export { expect };
 
-const filename = fileURLToPath(import.meta.url);
-export const supportDir = dirname(filename);
-export const tmpDir = Path.resolve(supportDir, "..", "./tmp");
-export const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
+const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 
 type ViewportTypes = "iPhoneXR" | "Desktop";
 

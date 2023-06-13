@@ -69,24 +69,4 @@ do
   fi
 done
 
-RADICLE_HOME=${RAD_HOME:-"${HOME}/.radicle/bin"}
-
-# Add a separator between binaries download and PATH instructions.
 echo
-
-if [[ ":$PATH:" != *":$BINARY_PATH:"* ]]; then
-  if [[ ":$PATH:" == *":$RADICLE_HOME:"* ]]; then
-    echo "⚠️  You already have a radicle bin folder in your PATH variable."
-    echo
-    echo "To ensure you are using the correct test binaries, run the following command:"
-  else
-    echo "Before running the tests, make sure your PATH variable is set up correctly by running:"
-  fi
-
-  echo " 👉 export PATH=$BINARY_PATH:\$PATH"
-
-else
-  echo "✅ $BINARY_PATH is already in your PATH variable."
-fi
-
-

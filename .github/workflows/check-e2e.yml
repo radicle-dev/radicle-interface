@@ -40,7 +40,6 @@ jobs:
         run: |
           mkdir -p tests/artifacts;
           ./scripts/install-binaries;
-          ./scripts/install-binaries --show-path >> $GITHUB_PATH;
 
       - name: Run Playwright tests
         run: |
