@@ -8,56 +8,43 @@
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import { COMMITS_PER_PAGE } from "./router";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
-  export let parentCommit: string;
-
-  const perPage = 30;
-
-  let page = 0;
-  let error: any;
-  let loading = false;
-  let totalCommitCount: number | undefined = undefined;
-  let history: CommitHeader[] = [];
+  export let commitHeaders: CommitHeader[];
+  export let totalCommitCount: number;
 
   const api = new HttpdClient(baseUrl);
 
-  let previousCommit = parentCommit;
-
-  $: showMoreButton =
-    !loading && !error && totalCommitCount && history.length < totalCommitCount;
-
-  // To avoid a recursive loop when loading the histrory below,
-  // we do it in a function outside of the reactive statement.
-  function appendHistory(commits: CommitHeader[]) {
-    history = [...history, ...commits];
-  }
+  let error: any;
+  let page = 0;
+  let loading = false;
+  let allCommitHeaders: CommitHeader[];
 
   $: {
-    if (previousCommit !== parentCommit) {
-      page = 0;
-      history = [];
-      previousCommit = parentCommit;
-      error = undefined;
-    }
+    allCommitHeaders = commitHeaders;
+    page = 0;
+  }
+
+  async function loadMore() {
     loading = true;
-    api.project
-      .getAllCommits(projectId, {
-        parent: parentCommit,
+    page += 1;
+    try {
+      const response = await api.project.getAllCommits(projectId, {
+        parent: allCommitHeaders[0].id,
         page,
-        perPage,
-      })
-      .then(response => {
-        appendHistory(response.commits.map(c => c.commit));
-        totalCommitCount = response.stats.commits;
-      })
-      .catch(e => {
-        error = e;
-      })
-      .finally(() => {
-        loading = false;
+        perPage: COMMITS_PER_PAGE,
       });
+      allCommitHeaders = [
+        ...allCommitHeaders,
+        ...response.commits.map(c => c.commit),
+      ];
+      totalCommitCount = response.stats.commits;
+    } catch (e) {
+      error = e;
+    }
+    loading = false;
   }
 </script>
 
@@ -86,35 +73,25 @@
   }
 </style>
 
-{#if history}
-  <div class="history">
-    {#each groupCommits(history) as group (group.time)}
-      <p style:color="var(--color-foreground-6)">{group.date}</p>
-      <div class="group">
-        {#each group.commits as commit (commit.id)}
-          <div class="teaser-wrapper">
-            <CommitTeaser {commit} />
-          </div>
-        {/each}
-      </div>
-    {/each}
-    <div class="more">
-      {#if loading}
-        <Loading small={page !== 0} center />
-      {/if}
-
-      {#if showMoreButton}
-        <Button
-          variant="foreground"
-          on:click={() => {
-            page = page + 1;
-          }}>
-          More
-        </Button>
-      {/if}
+<div class="history">
+  {#each groupCommits(allCommitHeaders) as group (group.time)}
+    <p style:color="var(--color-foreground-6)">{group.date}</p>
+    <div class="group">
+      {#each group.commits as commit (commit.id)}
+        <div class="teaser-wrapper">
+          <CommitTeaser {commit} />
+        </div>
+      {/each}
     </div>
+  {/each}
+  <div class="more">
+    {#if loading}
+      <Loading small={page !== 0} center />
+    {:else if allCommitHeaders.length < totalCommitCount}
+      <Button variant="foreground" on:click={loadMore}>More</Button>
+    {/if}
   </div>
-{/if}
+</div>
 
 {#if error}
   <div class="message">

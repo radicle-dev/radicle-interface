@@ -1,11 +1,20 @@
 import type { LoadError } from "@app/lib/router/definitions";
-import type { Issue, Patch, Project, Remote, Tree } from "@httpd-client";
+import type {
+  CommitHeader,
+  Issue,
+  Patch,
+  Project,
+  Remote,
+  Tree,
+} from "@httpd-client";
 
 import { get } from "svelte/store";
 
 import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
 import { extractBaseUrl } from "@app/lib/utils";
+
+export const COMMITS_PER_PAGE = 30;
 
 export interface ProjectRoute {
   resource: "projects";
@@ -78,6 +87,8 @@ export type ProjectLoadedView =
   | {
       resource: "history";
       params: LoadedSourceBrowsingParams;
+      commitHeaders: CommitHeader[];
+      totalCommitCount: number;
     }
   | { resource: "issue"; params: { issue: string; loadedIssue: Issue } }
   | {
@@ -186,22 +197,46 @@ export async function loadProjectRoute(
         branches,
       );
       const tree = await api.project.getTree(params.id, commit);
-      return {
-        resource: "projects",
-        params: {
-          ...params,
-          project,
-          view: {
-            resource: params.view.resource,
-            params: {
-              loadedBranches: branches,
-              loadedPeers: peers,
-              loadedTree: tree,
-              selectedCommit: commit,
+      const viewParams = {
+        loadedBranches: branches,
+        loadedPeers: peers,
+        loadedTree: tree,
+        selectedCommit: commit,
+      };
+
+      if (params.view.resource === "history") {
+        const commitsResponse = await api.project.getAllCommits(project.id, {
+          parent: commit,
+          page: 0,
+          perPage: COMMITS_PER_PAGE,
+        });
+
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: params.view.resource,
+              params: viewParams,
+              commitHeaders: commitsResponse.commits.map(c => c.commit),
+              totalCommitCount: commitsResponse.stats.commits,
             },
           },
-        },
-      };
+        };
+      } else {
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: params.view.resource,
+              params: viewParams,
+            },
+          },
+        };
+      }
     } else if (params.view.resource === "issue") {
       try {
         const projectPromise = api.project.getById(params.id);

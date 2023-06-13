@@ -129,7 +129,8 @@
       <History
         projectId={id}
         {baseUrl}
-        parentCommit={view.params.selectedCommit} />
+        totalCommitCount={view.totalCommitCount}
+        commitHeaders={view.commitHeaders} />
     {:else if view.resource === "commits"}
       {#await api.project.getCommitBySha(id, view.params.selectedCommit)}
         <Loading center />
