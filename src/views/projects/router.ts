@@ -1,5 +1,5 @@
 import type { LoadError } from "@app/lib/router/definitions";
-import type { Project, Remote, Tree, Issue } from "@httpd-client";
+import type { Issue, Patch, Project, Remote, Tree } from "@httpd-client";
 
 import { get } from "svelte/store";
 
@@ -92,7 +92,10 @@ export type ProjectLoadedView =
         view: { resource: "new" };
       };
     }
-  | { resource: "patch"; params: { patch: string; revision?: string } };
+  | {
+      resource: "patch";
+      params: { patch: string; revision?: string; loadedPatch: Patch };
+    };
 
 // We need a SHA1 commit in some places, so we return early if the revision is
 // a SHA and else we look into branches.
@@ -227,6 +230,38 @@ export async function loadProjectRoute(
           params: {
             title: params.view.params.issue,
             errorMessage: "Not able to load this issue.",
+            stackTrace: error.stack,
+          },
+        };
+      }
+    } else if (params.view.resource === "patch") {
+      try {
+        const projectPromise = api.project.getById(params.id);
+        const patchPromise = api.project.getPatchById(
+          params.id,
+          params.view.params.patch,
+        );
+        const [project, patch] = await Promise.all([
+          projectPromise,
+          patchPromise,
+        ]);
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: "patch",
+              params: { ...params.view.params, loadedPatch: patch },
+            },
+          },
+        };
+      } catch (error: any) {
+        return {
+          resource: "loadError",
+          params: {
+            title: params.view.params.patch,
+            errorMessage: "Not able to load this patch.",
             stackTrace: error.stack,
           },
         };

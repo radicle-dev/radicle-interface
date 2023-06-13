@@ -174,24 +174,17 @@
       state={patchFilter}
       patchCounters={project.patches} />
   {:else if view.resource === "patch"}
-    {#await api.project.getPatchById(id, view.params.patch)}
-      <Loading center />
-    {:then patch}
-      {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
-      <Patch
-        {patch}
-        {baseUrl}
-        projectId={id}
-        projectDefaultBranch={project.defaultBranch}
-        projectHead={project.head}
-        revision={view.params.revision ?? latestRevision.id}
-        currentTab={patchTabFilter}
-        diff={patchDiffFilter} />
-    {:catch e}
-      <div class="message">
-        <ErrorMessage message="Couldn't load patch." stackTrace={e} />
-      </div>
-    {/await}
+    {@const patch = view.params.loadedPatch}
+    {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
+    <Patch
+      {patch}
+      {baseUrl}
+      projectId={id}
+      projectDefaultBranch={project.defaultBranch}
+      projectHead={project.head}
+      revision={view.params.revision ?? latestRevision.id}
+      currentTab={patchTabFilter}
+      diff={patchDiffFilter} />
   {:else}
     {unreachable(view)}
   {/if}
