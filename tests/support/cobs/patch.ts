@@ -41,13 +41,3 @@ export async function merge(
   await peer.git(["merge", featureBranch], options);
   await peer.git(["push", "rad", targetBranch], options);
 }
-
-export async function update(
-  peer: RadiclePeer,
-  featureBranch: string,
-  message: string,
-  options: Options,
-): Promise<void> {
-  await peer.git(["commit", "--allow-empty", "-m", message], options);
-  await peer.git(["push", "rad", featureBranch], options);
-}

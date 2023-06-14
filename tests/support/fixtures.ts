@@ -429,10 +429,14 @@ export async function createCobsFixture(peer: RadiclePeer) {
     ["review", patchThree, "-m", "This looks better"],
     createOptions(projectFolder, 2),
   );
-  await patch.update(
-    peer,
-    "feature/better-subtitle",
-    "Some minor rebase",
+  await Fs.appendFile(
+    Path.join(projectFolder, "README.md"),
+    "\n\nHad to push a new revision",
+  );
+  await peer.git(["add", "."], { cwd: projectFolder });
+  await peer.git(["commit", "-m", "Add more text"], { cwd: projectFolder });
+  await peer.git(
+    ["push", "rad", "feature/better-subtitle"],
     createOptions(projectFolder, 3),
   );
 

@@ -36,12 +36,36 @@ test("navigate patch details", async ({ page }) => {
 
 test("use revision selector", async ({ page }) => {
   await page.goto(`${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`);
-  await page.locator("role=link[name='Files']").click();
-  await page.locator("text='Revision febcbbd'").click();
-  await page.locator("role=link[name='Revision febcbbd']").click();
+  await page.getByRole("link", { name: "Files" }).click();
+
+  // Validating the latest revision state
+  await expect(
+    page.getByRole("cell", { name: "Had to push a new revision" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Commits" }).click();
+  await expect(page.locator(".commit-list .teaser")).toHaveCount(2);
+  await expect(
+    page.locator(".commit-list .teaser .markdown").first(),
+  ).toHaveText("Add more text");
+
+  // Switching to the initial revision
+  await page.getByText("Revision 5140fb2").click();
+  await expect(page.locator(".dropdown")).toBeVisible();
+  await page.getByRole("link", { name: "Revision 0f3697f" }).click();
+  await expect(page.locator(".dropdown")).toBeHidden();
+
+  // Validating the initial revision
+  await expect(page.locator(".commit-list .teaser")).toHaveCount(1);
+  await expect(
+    page.locator(".commit-list .teaser .markdown").first(),
+  ).toHaveText("Rewrite subtitle to README");
+  await page.getByRole("link", { name: "Files" }).click();
+  await expect(
+    page.getByRole("cell", { name: "Had to push a new revision" }),
+  ).toBeHidden();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466/febcbbd60c4977ac6a985f7589ec65bbae7f2d60?tab=files`,
+    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466/0f3697fed2743549e3bf531e9fa81284a6de1466?tab=files`,
   );
 });
 
@@ -55,33 +79,33 @@ test("navigate through revision diffs", async ({ page }) => {
   {
     await secondRevision.locator(".toggle").click();
     await secondRevision
-      .locator("role=link[name='Compare to main (38c225e)']")
+      .getByRole("link", { name: "Compare to main (38c225e)" })
       .click();
     await expect(
-      page.locator("role=link[name='Diff 38c225..5b35de']"),
+      page.getByRole("link", { name: "Diff 38c225..9898da" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..5b35def19c2c7f0c0f1b3fd12d0a7c5930ef6b09`,
+      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9898da6155467adad511f63bf0fb5aa4156b92ef`,
     );
     await page.goBack();
     await secondRevision.locator(".toggle").click();
     await secondRevision
-      .locator("role=link[name='Compare to previous revision (0f3697f)']")
+      .getByRole("link", { name: "Compare to previous revision (0f3697f)" })
       .click();
     await expect(
-      page.locator("role=link[name='Diff 0dc373..5b35de']"),
+      page.getByRole("link", { name: "Diff 0dc373..9898da" }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=0dc373db601ccbcffa80dec932e4006516709ca6..5b35def19c2c7f0c0f1b3fd12d0a7c5930ef6b09`,
+      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=0dc373db601ccbcffa80dec932e4006516709ca6..9898da6155467adad511f63bf0fb5aa4156b92ef`,
     );
     await page.goBack();
 
     await secondRevision
-      .locator("role=link[name='Compare 0dc373d..5b35def']")
+      .getByRole("link", { name: "Compare 0dc373d..9898da6" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Diff 0dc373..5b35de" }),
+      page.getByRole("link", { name: "Diff 0dc373..9898da" }),
     ).toBeVisible();
     await page.goBack();
   }
@@ -89,10 +113,10 @@ test("navigate through revision diffs", async ({ page }) => {
   {
     await firstRevision.locator(".toggle").click();
     await firstRevision
-      .locator("role=link[name='Compare to main (38c225e)']")
+      .getByRole("link", { name: "Compare to main (38c225e)" })
       .click();
     await expect(
-      page.locator("role=link[name='Diff 38c225..0dc373']"),
+      page.getByRole("link", { name: "Diff 38c225..0dc373" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
       `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..0dc373db601ccbcffa80dec932e4006516709ca6`,
