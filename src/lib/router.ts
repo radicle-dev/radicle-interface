@@ -124,8 +124,8 @@ function pathToRoute(url: URL): Route | null {
   const resource = segments.shift();
   switch (resource) {
     case "seeds": {
-      const hostnamePort = segments.shift();
-      if (hostnamePort) {
+      const hostAndPort = segments.shift();
+      if (hostAndPort) {
         const id = segments.shift();
         if (id) {
           // Allows project paths with or without trailing slash
@@ -139,17 +139,17 @@ function pathToRoute(url: URL): Route | null {
                 view: { resource: "tree" },
                 id,
                 peer: undefined,
-                hostnamePort,
+                hostAndPort,
               },
             };
           }
-          const params = resolveProjectRoute(url, hostnamePort, id, segments);
+          const params = resolveProjectRoute(url, hostAndPort, id, segments);
           if (params) {
             return {
               resource: "projects",
               params: {
                 ...params,
-                hostnamePort,
+                hostAndPort,
                 id,
               },
             };
@@ -158,7 +158,7 @@ function pathToRoute(url: URL): Route | null {
         }
         return {
           resource: "seeds",
-          params: { hostnamePort, projectPageIndex: 0 },
+          params: { hostAndPort, projectPageIndex: 0 },
         };
       }
       return null;
@@ -192,11 +192,11 @@ export function routeToPath(route: Route) {
   } else if (route.resource === "session") {
     return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "seeds") {
-    return `/seeds/${route.params.hostnamePort}`;
+    return `/seeds/${route.params.hostAndPort}`;
   } else if (route.resource === "loadError") {
     return "";
   } else if (route.resource === "projects") {
-    const hostnamePortPrefix = `/seeds/${route.params.hostnamePort}`;
+    const hostAndPortPrefix = `/seeds/${route.params.hostAndPort}`;
     const content = `/${route.params.view.resource}`;
 
     let peer = "";
@@ -230,31 +230,31 @@ export function routeToPath(route: Route) {
 
     if (route.params.view.resource === "tree") {
       if (suffix) {
-        return `${hostnamePortPrefix}/${route.params.id}${peer}/tree${suffix}`;
+        return `${hostAndPortPrefix}/${route.params.id}${peer}/tree${suffix}`;
       }
-      return `${hostnamePortPrefix}/${route.params.id}${peer}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}`;
     } else if (route.params.view.resource === "commits") {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/commits${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/commits${suffix}`;
     } else if (route.params.view.resource === "history") {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/history${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/history${suffix}`;
     } else if (
       route.params.view.resource === "issues" &&
       route.params.view.params?.view.resource === "new"
     ) {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues/new${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/issues/new${suffix}`;
     } else if (route.params.view.resource === "issues") {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
     } else if (route.params.view.resource === "patches") {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/patches${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/patches${suffix}`;
     } else if (route.params.view.resource === "patch") {
       if (route.params.view.params.revision) {
-        return `${hostnamePortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
+        return `${hostAndPortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
       }
-      return `${hostnamePortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
     } else {
-      return `${hostnamePortPrefix}/${route.params.id}${peer}${content}`;
+      return `${hostAndPortPrefix}/${route.params.id}${peer}${content}`;
     }
   } else if (route.resource === "booting") {
     return "";

@@ -244,18 +244,18 @@ export function twemoji(
   });
 }
 
-export function extractBaseUrl(hostnamePort: string): BaseUrl {
+export function extractBaseUrl(hostAndPort: string): BaseUrl {
   if (
-    hostnamePort === "radicle.local" ||
-    hostnamePort === "radicle.local:8080" ||
-    hostnamePort === "0.0.0.0" ||
-    hostnamePort === "0.0.0.0:8080" ||
-    hostnamePort === "127.0.0.1" ||
-    hostnamePort === "127.0.0.1:8080"
+    hostAndPort === "radicle.local" ||
+    hostAndPort === "radicle.local:8080" ||
+    hostAndPort === "0.0.0.0" ||
+    hostAndPort === "0.0.0.0:8080" ||
+    hostAndPort === "127.0.0.1" ||
+    hostAndPort === "127.0.0.1:8080"
   ) {
     return { hostname: "127.0.0.1", port: 8080, scheme: "http" };
-  } else if (hostnamePort.includes(":")) {
-    const [hostname, port] = hostnamePort.split(":");
+  } else if (hostAndPort.includes(":")) {
+    const [hostname, port] = hostAndPort.split(":");
     return {
       hostname,
       port: Number(port),
@@ -263,11 +263,17 @@ export function extractBaseUrl(hostnamePort: string): BaseUrl {
     };
   } else {
     return {
-      hostname: hostnamePort,
+      hostname: hostAndPort,
       port: config.seeds.defaultHttpdPort,
       scheme: config.seeds.defaultHttpdScheme,
     };
   }
+}
+
+export function getHostAndPort(baseUrl: BaseUrl): string {
+  return baseUrl.port === config.seeds.defaultHttpdPort
+    ? baseUrl.hostname
+    : `${baseUrl.hostname}:${baseUrl.port}`;
 }
 
 export function createAddRemoveArrays(

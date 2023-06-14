@@ -26,7 +26,7 @@
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
-  export let hostnamePort: string;
+  export let hostAndPort: string;
   export let id: string;
   export let project: Project;
   export let view: ProjectLoadedView;
@@ -43,7 +43,7 @@
     (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
   $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
   $: patchDiffFilter = searchParams.get("diff") || undefined;
-  $: baseUrl = utils.extractBaseUrl(hostnamePort);
+  $: baseUrl = utils.extractBaseUrl(hostAndPort);
   $: api = new HttpdClient(baseUrl);
 
   function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
@@ -51,7 +51,7 @@
       resource: "projects",
       params: {
         id,
-        hostnamePort: httpd.api.hostnamePort,
+        hostAndPort: httpd.api.hostAndPort,
         view: {
           resource: "issue",
           params: { issue: issueId },

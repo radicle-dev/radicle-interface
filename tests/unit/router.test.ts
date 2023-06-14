@@ -10,7 +10,7 @@ describe("routeToPath", () => {
     {
       input: {
         resource: "seeds",
-        params: { hostnamePort: "willow.radicle.garden" },
+        params: { hostAndPort: "willow.radicle.garden" },
       },
       output: "/seeds/willow.radicle.garden",
       description: "Seed View Route",
@@ -20,7 +20,7 @@ describe("routeToPath", () => {
         resource: "projects",
         params: {
           view: { resource: "tree" },
-          hostnamePort: "willow.radicle.garden",
+          hostAndPort: "willow.radicle.garden",
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         },
       },
@@ -54,7 +54,7 @@ describe("pathToRoute", () => {
       input: new URL("/seeds/willow.radicle.garden", dummyUrl),
       output: {
         resource: "seeds",
-        params: { hostnamePort: "willow.radicle.garden", projectPageIndex: 0 },
+        params: { hostAndPort: "willow.radicle.garden", projectPageIndex: 0 },
       },
       description: "Seed View Route",
     },
@@ -67,7 +67,7 @@ describe("pathToRoute", () => {
         resource: "projects",
         params: {
           view: { resource: "tree" },
-          hostnamePort: "willow.radicle.garden",
+          hostAndPort: "willow.radicle.garden",
           profile: undefined,
           peer: undefined,
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
@@ -92,7 +92,7 @@ describe("pathToRoute", () => {
         resource: "projects",
         params: {
           view: { resource: "tree" },
-          hostnamePort: "willow.radicle.garden",
+          hostAndPort: "willow.radicle.garden",
           profile: undefined,
           peer: undefined,
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",

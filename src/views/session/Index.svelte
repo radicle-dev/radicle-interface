@@ -20,7 +20,10 @@
       modal.show({ component: AuthenticatedModal, props: {} });
       void router.push({
         resource: "seeds",
-        params: { hostnamePort: httpd.api.hostnamePort, projectPageIndex: 0 },
+        params: {
+          hostAndPort: httpd.api.hostAndPort,
+          projectPageIndex: 0,
+        },
       });
     } else {
       modal.show({

@@ -125,7 +125,7 @@ export class HttpdClient {
     }`;
   }
 
-  public get hostnamePort(): string {
+  public get hostAndPort(): string {
     return `${this.#baseUrl.hostname}:${this.#baseUrl.port}`;
   }
 

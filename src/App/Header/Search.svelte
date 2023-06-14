@@ -6,7 +6,7 @@
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import { searchPlaceholder } from "@app/lib/shared";
-  import { unreachable } from "@app/lib/utils";
+  import { getHostAndPort, unreachable } from "@app/lib/utils";
 
   import Icon from "@app/components/Icon.svelte";
   import SearchResultsModal from "@app/App/Header/SearchResultsModal.svelte";
@@ -47,13 +47,14 @@
     } else if (searchResult.type === "projects") {
       input = "";
       if (searchResult.results.length === 1) {
+        const { project, baseUrl } = searchResult.results[0];
         void router.push({
           resource: "projects",
           params: {
             view: { resource: "tree" },
-            id: searchResult.results[0].project.id,
+            id: project.id,
             peer: undefined,
-            hostnamePort: searchResult.results[0].baseUrl.hostname,
+            hostAndPort: getHostAndPort(baseUrl),
             hash: undefined,
             search: undefined,
           },

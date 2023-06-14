@@ -3,7 +3,7 @@
   import type { ProjectActivity } from "@app/views/seeds/router";
 
   import { config } from "@app/lib/config";
-  import { isLocal, truncateId } from "@app/lib/utils";
+  import { getHostAndPort, isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/seeds/router";
 
   import Button from "@app/components/Button.svelte";
@@ -131,10 +131,7 @@
               params: {
                 view: { resource: "tree" },
                 id: project.id,
-                hostnamePort:
-                  baseUrl.port === config.seeds.defaultHttpdPort
-                    ? baseUrl.hostname
-                    : `${baseUrl.hostname}:${baseUrl.port}`,
+                hostAndPort: getHostAndPort(baseUrl),
                 revision: undefined,
                 hash: undefined,
                 search: undefined,

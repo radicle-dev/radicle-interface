@@ -29,7 +29,7 @@ export interface ProjectLoadedRoute {
 export interface ProjectsParams {
   id: string;
   hash?: string;
-  hostnamePort: string;
+  hostAndPort: string;
   path?: string;
   peer?: string;
   revision?: string;
@@ -56,7 +56,7 @@ export interface ProjectsParams {
 }
 
 export interface ProjectLoadedParams {
-  hostnamePort: string;
+  hostAndPort: string;
   id: string;
   project: Project;
   view: ProjectLoadedView;
@@ -146,7 +146,7 @@ export function parseRevisionToOid(
 export async function loadProjectRoute(
   params: ProjectsParams,
 ): Promise<ProjectLoadedRoute | LoadError> {
-  const baseUrl = extractBaseUrl(params.hostnamePort);
+  const baseUrl = extractBaseUrl(params.hostAndPort);
   const api = new HttpdClient(baseUrl);
   try {
     if (
@@ -408,7 +408,7 @@ export async function updateProjectRoute(
 
 export function resolveProjectRoute(
   url: URL,
-  hostnamePort: string,
+  hostAndPort: string,
   id: string,
   segments: string[],
 ): ProjectsParams | null {
@@ -424,7 +424,7 @@ export function resolveProjectRoute(
     return {
       view: { resource: "tree" },
       id,
-      hostnamePort,
+      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -436,7 +436,7 @@ export function resolveProjectRoute(
     return {
       view: { resource: "history" },
       id,
-      hostnamePort,
+      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -447,7 +447,7 @@ export function resolveProjectRoute(
     return {
       view: { resource: "commits" },
       id,
-      hostnamePort,
+      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -460,7 +460,7 @@ export function resolveProjectRoute(
       return {
         view: { resource: "issues", params: { view: { resource: "new" } } },
         id,
-        hostnamePort,
+        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -470,7 +470,7 @@ export function resolveProjectRoute(
       return {
         view: { resource: "issue", params: { issue: issueOrAction } },
         id,
-        hostnamePort,
+        hostAndPort,
         peer,
         path: undefined,
         revision: undefined,
@@ -480,7 +480,7 @@ export function resolveProjectRoute(
       return {
         view: { resource: "issues" },
         id,
-        hostnamePort,
+        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -494,7 +494,7 @@ export function resolveProjectRoute(
       return {
         view: { resource: "patch", params: { patch, revision } },
         id,
-        hostnamePort,
+        hostAndPort,
         peer,
         path: undefined,
         revision: undefined,
@@ -504,7 +504,7 @@ export function resolveProjectRoute(
       return {
         view: { resource: "patches" },
         id,
-        hostnamePort,
+        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,

@@ -7,7 +7,7 @@ import { extractBaseUrl } from "@app/lib/utils";
 import { loadProjectActivity } from "@app/lib/commit";
 
 interface SeedsRouteParams {
-  hostnamePort: string;
+  hostAndPort: string;
   projectPageIndex: number;
 }
 
@@ -68,7 +68,7 @@ export async function loadProjects(
 export async function loadSeedRoute(
   params: SeedsRouteParams,
 ): Promise<SeedsLoadedRoute | LoadError> {
-  const baseUrl = extractBaseUrl(params.hostnamePort);
+  const baseUrl = extractBaseUrl(params.hostAndPort);
   const api = new HttpdClient(baseUrl);
   try {
     const projectPageIndex = 0;
@@ -91,7 +91,7 @@ export async function loadSeedRoute(
     return {
       resource: "loadError",
       params: {
-        title: params.hostnamePort,
+        title: params.hostAndPort,
         errorMessage: "Not able to query this seed.",
         stackTrace: error.stack,
       },

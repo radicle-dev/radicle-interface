@@ -2,8 +2,7 @@
   import type { BaseUrl } from "@httpd-client";
   import type { ProjectLoadedView } from "@app/views/projects/router";
 
-  import { config } from "@app/lib/config";
-  import { isLocal } from "@app/lib/utils";
+  import { getHostAndPort, isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
   import CloneButton from "@app/views/projects/CloneButton.svelte";
@@ -108,10 +107,7 @@
     route={{
       resource: "seeds",
       params: {
-        hostnamePort:
-          baseUrl.port === config.seeds.defaultHttpdPort
-            ? baseUrl.hostname
-            : `${baseUrl.hostname}:${baseUrl.port}`,
+        hostAndPort: getHostAndPort(baseUrl),
         projectPageIndex: 0,
       },
     }}>
