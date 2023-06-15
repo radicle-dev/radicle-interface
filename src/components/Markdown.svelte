@@ -36,6 +36,7 @@
 
   const render = (content: string): string =>
     dompurify.sanitize(marked.parse(utils.escapeHtml(content)), {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       SANITIZE_DOM: false,
     });
 
