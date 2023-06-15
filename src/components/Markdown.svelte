@@ -12,6 +12,7 @@
   import {
     markdownExtensions as extensions,
     renderer,
+    walkTokens,
   } from "@app/lib/markdown";
   import { updateProjectRoute } from "@app/views/projects/router";
 
@@ -26,6 +27,7 @@
   );
   marked.use({
     extensions,
+    walkTokens,
     renderer,
     // TODO: Disables deprecated options, remove once removed from marked
     mangle: false,

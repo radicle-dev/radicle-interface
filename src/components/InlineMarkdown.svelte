@@ -2,13 +2,14 @@
   import dompurify from "dompurify";
   import { marked } from "marked";
 
-  import { renderer } from "@app/lib/markdown";
+  import { renderer, walkTokens } from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
   export let fontSize: "tiny" | "small" | "medium" = "small";
 
   marked.use({
+    walkTokens,
     renderer,
     // TODO: Disables deprecated options, remove once removed from marked
     mangle: false,

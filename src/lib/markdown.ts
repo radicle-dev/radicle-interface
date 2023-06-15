@@ -1,7 +1,9 @@
 import emojis from "@app/lib/emojis";
 import katex from "katex";
 import { marked } from "marked";
-import { isUrl } from "./utils";
+import { isUrl } from "@app/lib/utils";
+
+const trustedHtmlTags = ["small", "dl", "dt", "dd", "code"];
 
 // TODO: Disables deprecated options, remove once removed from marked
 marked.use({ mangle: false, headerIds: false });
@@ -116,6 +118,18 @@ const anchorMarkedExtension = {
   renderer: (token: marked.Tokens.Generic) => {
     return `<a name="${token.text}"></a>`;
   },
+};
+
+export const walkTokens = (token: marked.Tokens.Generic) => {
+  if (token.type !== "code" && token.type !== "codespan" && "text" in token) {
+    if (trustedHtmlTags.some(tag => token.text.includes(tag))) {
+      return;
+    }
+    token.text = token.text.replace(
+      /<([^>]+)>/g,
+      (_match: RegExpMatchArray, tagContent: string) => `&lt;${tagContent}&gt;`,
+    );
+  }
 };
 
 export const renderer = {
