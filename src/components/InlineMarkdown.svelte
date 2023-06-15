@@ -3,7 +3,7 @@
   import { marked } from "marked";
 
   import { renderer } from "@app/lib/markdown";
-  import { twemoji } from "@app/lib/utils";
+  import { escapeHtml, twemoji } from "@app/lib/utils";
 
   export let content: string;
   export let fontSize: "tiny" | "small" | "medium" = "small";
@@ -16,8 +16,9 @@
   });
 
   const render = (content: string): string =>
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    dompurify.sanitize(marked.parseInline(content), { SANITIZE_DOM: false });
+    dompurify.sanitize(marked.parseInline(escapeHtml(content)), {
+      SANITIZE_DOM: false,
+    });
 </script>
 
 <style>

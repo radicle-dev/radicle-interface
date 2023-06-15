@@ -294,3 +294,7 @@ export function formatObjectId(id: string): string {
 export function stripDidPrefix(array: string[]): string[] {
   return array.map(id => id.replace("did:key:", ""));
 }
+
+export function escapeHtml(input: string): string {
+  return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

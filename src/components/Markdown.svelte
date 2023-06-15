@@ -35,8 +35,9 @@
   let container: HTMLElement;
 
   const render = (content: string): string =>
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    dompurify.sanitize(marked.parse(content), { SANITIZE_DOM: false });
+    dompurify.sanitize(marked.parse(utils.escapeHtml(content)), {
+      SANITIZE_DOM: false,
+    });
 
   function navigateToMarkdownLink(event: any) {
     if (event.target.matches(".file-link")) {
