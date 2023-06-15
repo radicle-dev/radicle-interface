@@ -365,7 +365,10 @@ export async function createCobsFixture(peer: RadiclePeer) {
     "Add README\n\nThis commit adds more information to the README",
     "feature/add-readme",
     () => Fs.writeFile(Path.join(projectFolder, "README.md"), "# Cobs Repo"),
-    ["Let's add a README", "This repo needed a README"],
+    [
+      "Let's add a README",
+      "This repo needed a README, let's check that <RID> and <OID> get rendered",
+    ],
     { cwd: projectFolder },
   );
   await peer.rad(
