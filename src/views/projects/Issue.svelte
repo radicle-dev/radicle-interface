@@ -1,19 +1,23 @@
 <script lang="ts">
   import type { BaseUrl, Issue, IssueState } from "@httpd-client";
+  import type { IssueUpdateAction } from "@httpd-client/lib/project/issue";
+  import type { Session } from "@app/lib/httpd";
 
   import { isEqual } from "lodash";
 
   import * as router from "@app/lib/router";
+  import * as modal from "@app/lib/modal";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore } from "@app/lib/httpd";
 
-  import AssigneeInput from "./Cob/AssigneeInput.svelte";
+  import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "./Cob/TagInput.svelte";
@@ -42,28 +46,34 @@
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
     if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         {
           type: "thread",
           action: { type: "comment", body: reply.body, replyTo: reply.id },
         },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      issue = await api.project.getIssueById(projectId, issue.id);
+      if (status === "success") {
+        issue = await refreshIssue(projectId, issue, api);
+      }
     }
   }
 
   async function createComment(body: string) {
     if ($httpdStore.state === "authenticated" && body.trim().length > 0) {
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         { type: "thread", action: { type: "comment", body } },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      issue = await api.project.getIssueById(projectId, issue.id);
+      if (status === "success") {
+        issue = await refreshIssue(projectId, issue, api);
+      }
     }
   }
 
@@ -73,13 +83,17 @@
       title.trim().length > 0 &&
       title !== issue.title
     ) {
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         { type: "edit", title },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      issue = await api.project.getIssueById(projectId, issue.id);
+      if (status === "success") {
+        issue = await refreshIssue(projectId, issue, api);
+      }
+      issue.title = issue.title;
     } else {
       // Reassigning issue.title overwrites the invalid title in IssueHeader
       issue.title = issue.title;
@@ -92,7 +106,7 @@
       if (add.length === 0 && remove.length === 0) {
         return;
       }
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         {
@@ -100,9 +114,12 @@
           add,
           remove,
         },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      issue = await api.project.getIssueById(projectId, issue.id);
+      if (status === "success") {
+        issue = await refreshIssue(projectId, issue, api);
+      }
     }
   }
 
@@ -115,7 +132,7 @@
       if (add.length === 0 && remove.length === 0) {
         return;
       }
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         {
@@ -123,31 +140,92 @@
           add: utils.stripDidPrefix(add),
           remove: utils.stripDidPrefix(remove),
         },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      issue = await api.project.getIssueById(projectId, issue.id);
+      if (status === "success") {
+        issue = await refreshIssue(projectId, issue, api);
+      }
     }
   }
 
   async function saveStatus({ detail: state }: CustomEvent<IssueState>) {
     if ($httpdStore.state === "authenticated") {
-      await api.project.updateIssue(
+      const status = await updateIssue(
         projectId,
         issue.id,
         { type: "lifecycle", state },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      void router.push({
-        resource: "projects",
-        params: {
-          id: projectId,
-          baseUrl,
-          view: {
-            resource: "issue",
-            params: { issue: issue.id },
+      if (status === "success") {
+        void router.push({
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: {
+              resource: "issue",
+              params: { issue: issue.id },
+            },
           },
-        },
-      });
+        });
+      }
+    }
+  }
+
+  // Refreshes the given issue by fetching it from the server.
+  // If the fetch fails, the given issue is returned.
+  export async function refreshIssue(
+    projectId: string,
+    issue: Issue,
+    api: HttpdClient,
+  ) {
+    try {
+      return await api.project.getIssueById(projectId, issue.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Unable to fetch issue",
+            subtitle: [
+              "There was an error while refreshing this issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error,
+          },
+        });
+      }
+      return issue;
+    }
+  }
+
+  export async function updateIssue(
+    projectId: string,
+    issueId: string,
+    action: IssueUpdateAction,
+    session: Session,
+    api: HttpdClient,
+  ): Promise<"success" | "error"> {
+    try {
+      await api.project.updateIssue(projectId, issueId, action, session.id);
+      return "success";
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error,
+          },
+        });
+      }
+      return "error";
     }
   }
 
