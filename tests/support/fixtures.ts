@@ -335,6 +335,15 @@ export async function createCobsFixture(peer: RadiclePeer) {
     ],
     createOptions(projectFolder, 3),
   );
+  await peer.rad(
+    [
+      "comment",
+      issueOne,
+      "--message",
+      "A root level comment after a reply, for margins sake.",
+    ],
+    createOptions(projectFolder, 4),
+  );
 
   const issueTwo = await issue.create(
     peer,

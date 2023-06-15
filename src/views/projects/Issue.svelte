@@ -202,7 +202,7 @@
     flex-wrap: nowrap;
     gap: 0.5rem;
   }
-  .comments {
+  .thread {
     margin: 1rem 0;
   }
   .open {
@@ -263,40 +263,40 @@
         {utils.formatTimestamp(issue.discussion[0].timestamp)}
       </div>
     </CobHeader>
-    <div class="comments">
-      {#each threads as thread (thread.root.id)}
+    {#each threads as thread (thread.root.id)}
+      <div class="thread">
         <ThreadComponent {thread} {rawPath} on:reply={createReply} />
-      {/each}
+      </div>
+    {/each}
+    {#if $httpdStore.state === "authenticated"}
       <div style:margin-top="1rem">
-        {#if $httpdStore.state === "authenticated"}
-          <Textarea
-            resizable
-            on:submit={async () => {
+        <Textarea
+          resizable
+          on:submit={async () => {
+            await createComment(commentBody);
+            commentBody = "";
+          }}
+          bind:value={commentBody}
+          placeholder="Leave your comment" />
+        <div class="actions txt-small">
+          <CobStateButton
+            items={items.filter(([, state]) => !isEqual(state, issue.state))}
+            {selectedItem}
+            state={issue.state}
+            on:saveStatus={saveStatus} />
+          <Button
+            variant="secondary"
+            size="small"
+            disabled={!commentBody}
+            on:click={async () => {
               await createComment(commentBody);
               commentBody = "";
-            }}
-            bind:value={commentBody}
-            placeholder="Leave your comment" />
-          <div class="actions txt-small">
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, issue.state))}
-              {selectedItem}
-              state={issue.state}
-              on:saveStatus={saveStatus} />
-            <Button
-              variant="secondary"
-              size="small"
-              disabled={!commentBody}
-              on:click={async () => {
-                await createComment(commentBody);
-                commentBody = "";
-              }}>
-              Comment
-            </Button>
-          </div>
-        {/if}
+            }}>
+            Comment
+          </Button>
+        </div>
       </div>
-    </div>
+    {/if}
   </div>
   <div class="metadata">
     <AssigneeInput
