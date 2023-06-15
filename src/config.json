@@ -51,6 +51,15 @@
           "port": 443,
           "scheme": "https"
         }
+      },
+      {
+        "name": "awesome-radicle",
+        "id": "rad:z3yQUb9HDAC7TQrUDGkQsXDsYFj9G",
+        "baseUrl": {
+          "hostname": "seed.rhizoma.dev",
+          "port": 443,
+          "scheme": "https"
+        }
       }
     ]
   }
