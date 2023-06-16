@@ -45,12 +45,6 @@
     min-width: var(--content-min-width);
     padding-bottom: 4rem;
   }
-  @media (max-width: 960px) {
-    main {
-      padding-top: 2rem;
-      min-width: 0;
-    }
-  }
 </style>
 
 <div class="header">

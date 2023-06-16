@@ -1,9 +1,12 @@
 import {
-  test,
+  aliceRemote,
   expect,
   sourceBrowsingUrl,
-  aliceRemote,
+  test,
+  viewportSizes,
 } from "@tests/support/fixtures.js";
+
+test.use({ viewport: viewportSizes["iPhoneXR"] });
 
 test("source tree page", async ({ page }) => {
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });

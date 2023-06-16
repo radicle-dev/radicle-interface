@@ -7,7 +7,7 @@ import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { test as base, expect } from "@playwright/test";
+import { test as base, expect, type ViewportSize } from "@playwright/test";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
@@ -23,6 +23,13 @@ const filename = fileURLToPath(import.meta.url);
 export const supportDir = dirname(filename);
 export const tmpDir = Path.resolve(supportDir, "..", "./tmp");
 export const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
+
+type ViewportTypes = "iPhoneXR" | "Desktop";
+
+export const viewportSizes: Record<ViewportTypes, ViewportSize> = {
+  iPhoneXR: { width: 414, height: 896 },
+  Desktop: { width: 1280, height: 720 },
+};
 
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type

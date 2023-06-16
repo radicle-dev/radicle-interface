@@ -38,9 +38,6 @@
     .header {
       padding-left: 2rem;
     }
-    .header {
-      margin-bottom: 1.5rem;
-    }
   }
 </style>
 
