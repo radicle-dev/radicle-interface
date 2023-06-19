@@ -63,14 +63,18 @@
   import SquareButton from "@app/components/SquareButton.svelte";
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
 
+  export let search: string | undefined = undefined;
   export let projectId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let projectHead: string;
   export let projectDefaultBranch: string;
-  export let revision: string;
-  export let currentTab: "activity" | "commits" | "files";
-  export let diff: string | undefined = undefined;
+  export let revision: string | undefined = undefined;
+
+  $: searchParams = new URLSearchParams(search || "");
+  $: currentTab =
+    (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
+  $: diff = searchParams.get("diff") || undefined;
 
   const api = new HttpdClient(baseUrl);
 
@@ -136,7 +140,8 @@
   }));
 
   $: currentRevision =
-    patch.revisions.find(r => r.id === revision) || patch.revisions[0];
+    (revision && patch.revisions.find(r => r.id === revision)) ||
+    patch.revisions[patch.revisions.length - 1];
   $: timelineTuple = patch.revisions.map<
     [
       {

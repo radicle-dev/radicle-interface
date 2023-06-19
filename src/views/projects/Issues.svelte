@@ -21,10 +21,13 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
+  export let search: string | undefined = undefined;
   export let projectId: string;
-  export let state: IssueStatus;
   export let baseUrl: BaseUrl;
   export let issueCounters: { open: number; closed: number };
+
+  $: searchParams = new URLSearchParams(search || "");
+  $: state = (searchParams.get("state") as IssueStatus) || "open";
 
   const perPage = 10;
 

@@ -1,5 +1,6 @@
 import type { LoadError } from "@app/lib/router/definitions";
 import type {
+  Commit,
   CommitHeader,
   Issue,
   Patch,
@@ -83,6 +84,7 @@ export type ProjectLoadedView =
   | {
       resource: "commits";
       params: LoadedSourceBrowsingParams;
+      commit: Commit;
     }
   | {
       resource: "history";
@@ -221,6 +223,25 @@ export async function loadProjectRoute(
               params: viewParams,
               commitHeaders: commitsResponse.commits.map(c => c.commit),
               totalCommitCount: commitsResponse.stats.commits,
+            },
+          },
+        };
+      }
+      if (params.view.resource === "commits") {
+        const loadedCommit = await api.project.getCommitBySha(
+          params.id,
+          commit,
+        );
+
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: params.view.resource,
+              params: viewParams,
+              commit: loadedCommit,
             },
           },
         };

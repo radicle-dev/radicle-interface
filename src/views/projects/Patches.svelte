@@ -18,8 +18,8 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
+  export let search: string | undefined = undefined;
   export let projectId: string;
-  export let state: PatchStatus;
   export let baseUrl: BaseUrl;
   export let patchCounters: {
     draft: number;
@@ -27,6 +27,9 @@
     archived: number;
     merged: number;
   };
+
+  $: searchParams = new URLSearchParams(search || "");
+  $: state = (searchParams.get("state") as PatchStatus) || "open";
 
   const perPage = 10;
 

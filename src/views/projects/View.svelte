@@ -1,18 +1,10 @@
 <script lang="ts">
-  import type { IssueStatus } from "./Issues.svelte";
-  import type { PatchStatus } from "./Patches.svelte";
   import type { Project } from "@httpd-client";
   import type { ProjectLoadedView } from "@app/views/projects/router";
 
-  import * as httpd from "@app/lib/httpd";
-  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { HttpdClient } from "@httpd-client";
   import { unreachable } from "@app/lib/utils";
-  import { httpdStore } from "@app/lib/httpd";
 
-  import Loading from "@app/components/Loading.svelte";
-  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   import Browser from "./Browser.svelte";
@@ -37,28 +29,7 @@
   export let revision: string | undefined = undefined;
   export let search: string | undefined = undefined;
 
-  $: searchParams = new URLSearchParams(search || "");
-  $: issueFilter = (searchParams.get("state") as IssueStatus) || "open";
-  $: patchTabFilter =
-    (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
-  $: patchFilter = (searchParams.get("state") as PatchStatus) || "open";
-  $: patchDiffFilter = searchParams.get("diff") || undefined;
   $: baseUrl = utils.extractBaseUrl(hostAndPort);
-  $: api = new HttpdClient(baseUrl);
-
-  function handleIssueCreation({ detail: issueId }: CustomEvent<string>) {
-    void router.push({
-      resource: "projects",
-      params: {
-        id,
-        hostAndPort: httpd.api.hostAndPort,
-        view: {
-          resource: "issue",
-          params: { issue: issueId },
-        },
-      },
-    });
-  }
 </script>
 
 <style>
@@ -74,14 +45,7 @@
     min-width: var(--content-min-width);
     padding-bottom: 4rem;
   }
-  main > .message {
-    padding: 0 2rem 0 8rem;
-  }
-
   @media (max-width: 960px) {
-    main > .message {
-      padding-left: 2rem;
-    }
     main {
       padding-top: 2rem;
       min-width: 0;
@@ -133,36 +97,12 @@
         totalCommitCount={view.totalCommitCount}
         commitHeaders={view.commitHeaders} />
     {:else if view.resource === "commits"}
-      {#await api.project.getCommitBySha(id, view.params.selectedCommit)}
-        <Loading center />
-      {:then fetchedCommit}
-        <Commit commit={fetchedCommit} />
-      {:catch e}
-        <div class="message">
-          <ErrorMessage message="Couln't load commit." stackTrace={e} />
-        </div>
-      {/await}
+      <Commit commit={view.commit} />
     {/if}
   {:else if view.resource === "issues" && view.params?.view.resource === "new"}
-    {#if $httpdStore.state === "authenticated"}
-      <NewIssue
-        on:create={handleIssueCreation}
-        session={$httpdStore.session}
-        projectId={id}
-        projectHead={project.head}
-        {baseUrl} />
-    {:else}
-      <div class="message">
-        <ErrorMessage
-          message="Couldn't access issue creation. Make sure you're still logged in." />
-      </div>
-    {/if}
+    <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
   {:else if view.resource === "issues"}
-    <Issues
-      {baseUrl}
-      projectId={id}
-      issueCounters={project.issues}
-      state={issueFilter} />
+    <Issues {baseUrl} projectId={id} issueCounters={project.issues} {search} />
   {:else if view.resource === "issue"}
     <Issue
       projectId={id}
@@ -173,20 +113,17 @@
     <Patches
       {baseUrl}
       projectId={id}
-      state={patchFilter}
-      patchCounters={project.patches} />
+      patchCounters={project.patches}
+      {search} />
   {:else if view.resource === "patch"}
-    {@const patch = view.params.loadedPatch}
-    {@const latestRevision = patch.revisions[patch.revisions.length - 1]}
     <Patch
-      {patch}
+      patch={view.params.loadedPatch}
       {baseUrl}
       projectId={id}
       projectDefaultBranch={project.defaultBranch}
       projectHead={project.head}
-      revision={view.params.revision ?? latestRevision.id}
-      currentTab={patchTabFilter}
-      diff={patchDiffFilter} />
+      revision={view.params.revision}
+      {search} />
   {:else}
     {unreachable(view)}
   {/if}

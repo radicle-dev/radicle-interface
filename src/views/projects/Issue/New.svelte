@@ -1,10 +1,9 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { Session } from "@app/lib/httpd";
 
-  import { createEventDispatcher } from "svelte";
-
+  import * as httpd from "@app/lib/httpd";
   import * as modal from "@app/lib/modal";
+  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore } from "@app/lib/httpd";
@@ -18,13 +17,12 @@
   import Markdown from "@app/components/Markdown.svelte";
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
-  export let session: Session;
   export let projectId: string;
   export let projectHead: string;
   export let baseUrl: BaseUrl;
 
-  const dispatch = createEventDispatcher<{ create: string }>();
   let preview: boolean = false;
   let action: "create" | "view";
   $: action =
@@ -41,7 +39,7 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function createIssue() {
+  async function createIssue(sessionId: string) {
     try {
       const result = await api.project.createIssue(
         projectId,
@@ -51,9 +49,20 @@
           assignees: utils.stripDidPrefix(assignees),
           tags: tags,
         },
-        session.id,
+        sessionId,
       );
-      dispatch("create", result.id);
+
+      void router.push({
+        resource: "projects",
+        params: {
+          id: projectId,
+          hostAndPort: httpd.api.hostAndPort,
+          view: {
+            resource: "issue",
+            params: { issue: result.id },
+          },
+        },
+      });
     } catch {
       modal.show({
         component: AuthenticationErrorModal,
@@ -123,63 +132,75 @@
 </style>
 
 <main>
-  <div class="form">
-    <div class="editor">
-      <CobHeader {action} bind:title={issueTitle}>
-        <svelte:fragment slot="state">
-          {#if action === "view"}
-            <Badge variant="positive">open</Badge>
-          {/if}
-        </svelte:fragment>
-        <svelte:fragment slot="description">
-          {#if action === "create"}
-            <Textarea
-              resizable
-              bind:value={issueText}
-              on:submit={createIssue}
-              placeholder="Write a description" />
-          {:else if !issueText}
-            <p class="txt-missing">No description</p>
-          {:else}
-            <Markdown
-              content={issueText}
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
-          {/if}
-        </svelte:fragment>
-        <div class="author" slot="author">
-          {#if action === "view"}
-            opened by <Authorship authorId={session.publicKey} /> now
-          {/if}
+  {#if $httpdStore.state === "authenticated"}
+    {@const session = $httpdStore.session}
+    <div class="form">
+      <div class="editor">
+        <CobHeader {action} bind:title={issueTitle}>
+          <svelte:fragment slot="state">
+            {#if action === "view"}
+              <Badge variant="positive">open</Badge>
+            {/if}
+          </svelte:fragment>
+          <svelte:fragment slot="description">
+            {#if action === "create"}
+              <Textarea
+                resizable
+                bind:value={issueText}
+                on:submit={() => {
+                  void createIssue(session.id);
+                }}
+                placeholder="Write a description" />
+            {:else if !issueText}
+              <p class="txt-missing">No description</p>
+            {:else}
+              <Markdown
+                content={issueText}
+                rawPath={utils.getRawBasePath(
+                  projectId,
+                  baseUrl,
+                  projectHead,
+                )} />
+            {/if}
+          </svelte:fragment>
+          <div class="author" slot="author">
+            {#if action === "view"}
+              opened by <Authorship authorId={$httpdStore.session.publicKey} /> now
+            {/if}
+          </div>
+        </CobHeader>
+        <div class="actions">
+          <Button
+            size="small"
+            variant="text"
+            on:click={() => (preview = !preview)}>
+            {#if preview}
+              Resume editing
+            {:else}
+              Preview
+            {/if}
+          </Button>
+          <Button
+            disabled={!issueTitle}
+            size="small"
+            variant="secondary"
+            on:click={() => void createIssue(session.id)}>
+            Submit
+          </Button>
         </div>
-      </CobHeader>
-      <div class="actions">
-        <Button
-          size="small"
-          variant="text"
-          on:click={() => (preview = !preview)}>
-          {#if preview}
-            Resume editing
-          {:else}
-            Preview
-          {/if}
-        </Button>
-        <Button
-          disabled={!issueTitle}
-          size="small"
-          variant="secondary"
-          on:click={createIssue}>
-          Submit
-        </Button>
+      </div>
+      <div class="metadata">
+        <AssigneeInput
+          {action}
+          on:save={({ detail: updatedAssignees }) =>
+            (assignees = updatedAssignees)} />
+        <TagInput
+          {action}
+          on:save={({ detail: updatedTags }) => (tags = updatedTags)} />
       </div>
     </div>
-    <div class="metadata">
-      <AssigneeInput
-        {action}
-        on:save={({ detail: updatedAssignees }) =>
-          (assignees = updatedAssignees)} />
-      <TagInput
-        {action}
-        on:save={({ detail: updatedTags }) => (tags = updatedTags)} />
-    </div>
-  </div>
+  {:else}
+    <ErrorMessage
+      message="Couldn't access issue creation. Make sure you're still logged in." />
+  {/if}
 </main>
