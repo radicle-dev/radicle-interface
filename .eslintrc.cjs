@@ -1,45 +1,46 @@
-{
-  "env": {
-    "es6": true,
-    "browser": true,
-    "node": true
+module.exports = {
+  env: {
+    es6: true,
+    browser: true,
+    node: true,
   },
-  "extends": [
+  extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:svelte/recommended"
+    "plugin:svelte/recommended",
   ],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module",
-    "project": ["./tsconfig.json"],
-    "extraFileExtensions": [".svelte"]
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    project: ["./tsconfig.json"],
+    tsconfigRootDir: __dirname,
+    extraFileExtensions: [".svelte"],
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["*.svelte"],
-      "parser": "svelte-eslint-parser",
-      "parserOptions": {
-        "parser": "@typescript-eslint/parser"
-      }
-    }
+      files: ["*.svelte"],
+      parser: "svelte-eslint-parser",
+      parserOptions: {
+        parser: "@typescript-eslint/parser",
+      },
+    },
   ],
-  "settings": {
-    "svelte": {
-      "ignoreWarnings": ["svelte/no-at-html-tags"]
-    }
+  settings: {
+    svelte: {
+      ignoreWarnings: ["svelte/no-at-html-tags"],
+    },
   },
   // Workaround until $$Generic is supported:
   // https://github.com/sveltejs/svelte-eslint-parser/issues/306#issuecomment-1480844814
-  "globals": {
-    "$$Generic": "readonly"
+  globals: {
+    $$Generic: "readonly",
   },
-  "plugins": ["@typescript-eslint", "no-only-tests"],
-  "rules": {
-    "semi": "off",
+  plugins: ["@typescript-eslint", "no-only-tests"],
+  rules: {
+    semi: "off",
     "no-only-tests/no-only-tests": "error",
-    "curly": ["error", "multi-line", "consistent"],
+    curly: ["error", "multi-line", "consistent"],
     "keyword-spacing": ["error"],
     "no-implicit-globals": ["error"],
     "no-restricted-globals": [
@@ -51,7 +52,7 @@
       "length",
       "content",
       "origin",
-      "status"
+      "status",
     ],
     "no-trailing-spaces": ["error"],
     "no-multi-spaces": ["error"],
@@ -62,10 +63,10 @@
     "space-before-function-paren": [
       "error",
       {
-        "anonymous": "always",
-        "named": "never",
-        "asyncArrow": "always"
-      }
+        anonymous: "always",
+        named: "never",
+        asyncArrow: "always",
+      },
     ],
     "eol-last": ["error"],
     "key-spacing": ["error"],
@@ -75,64 +76,61 @@
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        "selector": "enumMember",
-        "format": ["PascalCase"]
+        selector: "enumMember",
+        format: ["PascalCase"],
       },
       {
-        "selector": "objectLiteralProperty",
-        "format": ["PascalCase", "camelCase"]
+        selector: "objectLiteralProperty",
+        format: ["PascalCase", "camelCase"],
       },
       {
-        "selector": "default",
-        "format": ["camelCase"],
-        "leadingUnderscore": "allow",
-        "trailingUnderscore": "allow"
+        selector: "default",
+        format: ["camelCase"],
+        leadingUnderscore: "allow",
+        trailingUnderscore: "allow",
       },
       {
-        "selector": "variable",
-        "modifiers": ["const"],
-        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
-        "leadingUnderscore": "allow",
-        "trailingUnderscore": "allow"
+        selector: "variable",
+        modifiers: ["const"],
+        format: ["camelCase", "PascalCase", "UPPER_CASE"],
+        leadingUnderscore: "allow",
+        trailingUnderscore: "allow",
       },
       {
-        "selector": "typeLike",
-        "format": ["PascalCase"]
+        selector: "typeLike",
+        format: ["PascalCase"],
       },
       {
-        "selector": ["objectLiteralProperty"],
-        "modifiers": ["requiresQuotes"],
-        "format": null
-      }
+        selector: ["objectLiteralProperty"],
+        modifiers: ["requiresQuotes"],
+        format: null,
+      },
     ],
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-namespace": ["error", { "allowDeclarations": true }],
+    "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
-        "multiline": {
-          "delimiter": "semi",
-          "requireLast": true
+        multiline: {
+          delimiter: "semi",
+          requireLast: true,
         },
-        "singleline": {
-          "delimiter": "semi",
-          "requireLast": false
-        }
-      }
+        singleline: {
+          delimiter: "semi",
+          requireLast: false,
+        },
+      },
     ],
     "@typescript-eslint/member-ordering": [
       "error",
-      { "default": ["field", "signature", "constructor", "method"] }
+      { default: ["field", "signature", "constructor", "method"] },
     ],
 
     "@typescript-eslint/no-invalid-void-type": ["error"],
     // Disallow Unused Variables.
     // https://eslint.org/docs/rules/no-unused-vars
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_" }
-    ],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     // Require using arrow functions as callbacks.
     // https://eslint.org/docs/rules/prefer-arrow-callback
     "prefer-arrow-callback": "error",
@@ -146,8 +144,8 @@
     // https://eslint.org/docs/rules/no-var
     "no-var": "error",
     // Require `===` and `!==` comparisons.
-    "eqeqeq": "error",
+    eqeqeq: "error",
     // Allow explict type annotations for additional clarity.
-    "@typescript-eslint/no-inferrable-types": "off"
-  }
-}
+    "@typescript-eslint/no-inferrable-types": "off",
+  },
+};
