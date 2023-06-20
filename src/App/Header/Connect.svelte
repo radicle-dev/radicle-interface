@@ -120,7 +120,7 @@
           route={{
             resource: "seeds",
             params: {
-              hostAndPort: httpd.api.hostAndPort,
+              baseUrl: httpd.api.baseUrl,
               projectPageIndex: 0,
             },
           }}>
@@ -153,7 +153,7 @@
           route={{
             resource: "seeds",
             params: {
-              hostAndPort: httpd.api.hostAndPort,
+              baseUrl: httpd.api.baseUrl,
               projectPageIndex: 0,
             },
           }}>

@@ -141,7 +141,7 @@
         resource: "projects",
         params: {
           id: projectId,
-          hostAndPort: utils.getHostAndPort(baseUrl),
+          baseUrl,
           view: {
             resource: "issue",
             params: { issue: issue.id },

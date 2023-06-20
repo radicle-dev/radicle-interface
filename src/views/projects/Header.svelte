@@ -2,7 +2,7 @@
   import type { BaseUrl } from "@httpd-client";
   import type { ProjectLoadedView } from "@app/views/projects/router";
 
-  import { getHostAndPort, isLocal } from "@app/lib/utils";
+  import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
   import CloneButton from "@app/views/projects/CloneButton.svelte";
@@ -107,7 +107,7 @@
     route={{
       resource: "seeds",
       params: {
-        hostAndPort: getHostAndPort(baseUrl),
+        baseUrl,
         projectPageIndex: 0,
       },
     }}>

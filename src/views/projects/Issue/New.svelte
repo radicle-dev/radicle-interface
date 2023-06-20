@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
 
-  import * as httpd from "@app/lib/httpd";
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
@@ -56,7 +55,7 @@
         resource: "projects",
         params: {
           id: projectId,
-          hostAndPort: httpd.api.hostAndPort,
+          baseUrl,
           view: {
             resource: "issue",
             params: { issue: result.id },

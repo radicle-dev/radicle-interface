@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ProjectBaseUrlActivity } from "./router";
 
-  import { getHostAndPort, twemoji } from "@app/lib/utils";
+  import { twemoji } from "@app/lib/utils";
 
   import Link from "@app/components/Link.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
@@ -78,7 +78,7 @@
               params: {
                 view: { resource: "tree" },
                 id: project.id,
-                hostAndPort: getHostAndPort(baseUrl),
+                baseUrl,
                 peer: undefined,
                 revision: undefined,
               },

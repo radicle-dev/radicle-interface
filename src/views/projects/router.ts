@@ -1,5 +1,6 @@
 import type { LoadError } from "@app/lib/router/definitions";
 import type {
+  BaseUrl,
   Commit,
   CommitHeader,
   Issue,
@@ -13,7 +14,6 @@ import { get } from "svelte/store";
 
 import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
-import { extractBaseUrl } from "@app/lib/utils";
 
 export const COMMITS_PER_PAGE = 30;
 
@@ -28,14 +28,8 @@ export interface ProjectLoadedRoute {
 }
 
 export interface ProjectsParams {
+  baseUrl: BaseUrl;
   id: string;
-  hash?: string;
-  hostAndPort: string;
-  path?: string;
-  peer?: string;
-  revision?: string;
-  route?: string;
-  search?: string;
   view:
     | { resource: "tree" }
     | { resource: "commits" }
@@ -54,10 +48,17 @@ export interface ProjectsParams {
         };
       }
     | { resource: "patch"; params: { patch: string; revision?: string } };
+
+  hash?: string;
+  path?: string;
+  peer?: string;
+  revision?: string;
+  route?: string;
+  search?: string;
 }
 
 export interface ProjectLoadedParams {
-  hostAndPort: string;
+  baseUrl: BaseUrl;
   id: string;
   project: Project;
   view: ProjectLoadedView;
@@ -148,8 +149,7 @@ export function parseRevisionToOid(
 export async function loadProjectRoute(
   params: ProjectsParams,
 ): Promise<ProjectLoadedRoute | LoadError> {
-  const baseUrl = extractBaseUrl(params.hostAndPort);
-  const api = new HttpdClient(baseUrl);
+  const api = new HttpdClient(params.baseUrl);
   try {
     if (
       params.view.resource === "tree" ||
@@ -429,7 +429,7 @@ export async function updateProjectRoute(
 
 export function resolveProjectRoute(
   url: URL,
-  hostAndPort: string,
+  baseUrl: BaseUrl,
   id: string,
   segments: string[],
 ): ProjectsParams | null {
@@ -444,8 +444,8 @@ export function resolveProjectRoute(
     const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {
       view: { resource: "tree" },
+      baseUrl,
       id,
-      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -456,8 +456,8 @@ export function resolveProjectRoute(
   } else if (content === "history") {
     return {
       view: { resource: "history" },
+      baseUrl,
       id,
-      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -467,8 +467,8 @@ export function resolveProjectRoute(
   } else if (content === "commits") {
     return {
       view: { resource: "commits" },
+      baseUrl,
       id,
-      hostAndPort,
       peer,
       path: undefined,
       revision: undefined,
@@ -480,8 +480,8 @@ export function resolveProjectRoute(
     if (issueOrAction === "new") {
       return {
         view: { resource: "issues", params: { view: { resource: "new" } } },
+        baseUrl,
         id,
-        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -490,8 +490,8 @@ export function resolveProjectRoute(
     } else if (issueOrAction) {
       return {
         view: { resource: "issue", params: { issue: issueOrAction } },
+        baseUrl,
         id,
-        hostAndPort,
         peer,
         path: undefined,
         revision: undefined,
@@ -500,8 +500,8 @@ export function resolveProjectRoute(
     } else {
       return {
         view: { resource: "issues" },
+        baseUrl,
         id,
-        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,
@@ -514,8 +514,8 @@ export function resolveProjectRoute(
     if (patch) {
       return {
         view: { resource: "patch", params: { patch, revision } },
+        baseUrl,
         id,
-        hostAndPort,
         peer,
         path: undefined,
         revision: undefined,
@@ -524,8 +524,8 @@ export function resolveProjectRoute(
     } else {
       return {
         view: { resource: "patches" },
+        baseUrl,
         id,
-        hostAndPort,
         peer,
         search: sanitizeQueryString(url.search),
         path: undefined,

@@ -21,7 +21,7 @@
       void router.push({
         resource: "seeds",
         params: {
-          hostAndPort: httpd.api.hostAndPort,
+          baseUrl: httpd.api.baseUrl,
           projectPageIndex: 0,
         },
       });

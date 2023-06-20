@@ -6,7 +6,7 @@
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import { searchPlaceholder } from "@app/lib/shared";
-  import { getHostAndPort, unreachable } from "@app/lib/utils";
+  import { unreachable } from "@app/lib/utils";
 
   import Icon from "@app/components/Icon.svelte";
   import SearchResultsModal from "@app/App/Header/SearchResultsModal.svelte";
@@ -54,7 +54,7 @@
             view: { resource: "tree" },
             id: project.id,
             peer: undefined,
-            hostAndPort: getHostAndPort(baseUrl),
+            baseUrl,
             hash: undefined,
             search: undefined,
           },

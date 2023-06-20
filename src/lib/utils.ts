@@ -5,7 +5,6 @@ import bs58 from "bs58";
 import twemojiModule from "twemoji";
 
 import { base } from "@app/lib/router";
-import { config } from "@app/lib/config";
 
 export async function toClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
@@ -242,38 +241,6 @@ export function twemoji(
     ext: ".svg",
     className: `txt-emoji`,
   });
-}
-
-export function extractBaseUrl(hostAndPort: string): BaseUrl {
-  if (
-    hostAndPort === "radicle.local" ||
-    hostAndPort === "radicle.local:8080" ||
-    hostAndPort === "0.0.0.0" ||
-    hostAndPort === "0.0.0.0:8080" ||
-    hostAndPort === "127.0.0.1" ||
-    hostAndPort === "127.0.0.1:8080"
-  ) {
-    return { hostname: "127.0.0.1", port: 8080, scheme: "http" };
-  } else if (hostAndPort.includes(":")) {
-    const [hostname, port] = hostAndPort.split(":");
-    return {
-      hostname,
-      port: Number(port),
-      scheme: isLocal(hostname) ? "http" : config.seeds.defaultHttpdScheme,
-    };
-  } else {
-    return {
-      hostname: hostAndPort,
-      port: config.seeds.defaultHttpdPort,
-      scheme: config.seeds.defaultHttpdScheme,
-    };
-  }
-}
-
-export function getHostAndPort(baseUrl: BaseUrl): string {
-  return baseUrl.port === config.seeds.defaultHttpdPort
-    ? baseUrl.hostname
-    : `${baseUrl.hostname}:${baseUrl.port}`;
 }
 
 export function createAddRemoveArrays(

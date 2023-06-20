@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { Project } from "@httpd-client";
+  import type { BaseUrl, Project } from "@httpd-client";
   import type { ProjectLoadedView } from "@app/views/projects/router";
 
-  import * as utils from "@app/lib/utils";
   import { unreachable } from "@app/lib/utils";
 
   import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
@@ -18,18 +17,16 @@
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
-  export let hostAndPort: string;
   export let id: string;
   export let project: Project;
   export let view: ProjectLoadedView;
+  export let baseUrl: BaseUrl;
 
   export let hash: string | undefined = undefined;
   export let path: string | undefined = undefined;
   export let peer: string | undefined = undefined;
   export let revision: string | undefined = undefined;
   export let search: string | undefined = undefined;
-
-  $: baseUrl = utils.extractBaseUrl(hostAndPort);
 </script>
 
 <style>

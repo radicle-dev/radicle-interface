@@ -102,39 +102,33 @@ const nodeStatsSchema = object({
 
 export class HttpdClient {
   #fetcher: Fetcher;
-  #baseUrl: BaseUrl;
 
+  public baseUrl: BaseUrl;
   public project: project.Client;
   public session: session.Client;
 
   public constructor(baseUrl: BaseUrl) {
-    this.#baseUrl = baseUrl;
-    this.#fetcher = new Fetcher(this.#baseUrl);
+    this.baseUrl = baseUrl;
+    this.#fetcher = new Fetcher(this.baseUrl);
 
     this.project = new project.Client(this.#fetcher);
     this.session = new session.Client(this.#fetcher);
   }
 
   public changePort(port: number): void {
-    this.#baseUrl.port = port;
+    this.baseUrl.port = port;
   }
 
   public get url(): string {
-    return `${this.#baseUrl.scheme}://${this.#baseUrl.hostname}:${
-      this.#baseUrl.port
-    }`;
-  }
-
-  public get hostAndPort(): string {
-    return `${this.#baseUrl.hostname}:${this.#baseUrl.port}`;
+    return `${this.baseUrl.scheme}://${this.baseUrl.hostname}:${this.baseUrl.port}`;
   }
 
   public get hostname(): string {
-    return this.#baseUrl.hostname;
+    return this.baseUrl.hostname;
   }
 
   public get port(): string {
-    return this.#baseUrl.port.toString();
+    return this.baseUrl.port.toString();
   }
 
   public async getNodeInfo(options?: RequestOptions): Promise<NodeInfo> {

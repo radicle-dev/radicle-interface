@@ -2,7 +2,7 @@
   import type { ProjectBaseUrl } from "@app/lib/search";
 
   import * as modal from "@app/lib/modal";
-  import { formatRepositoryId, getHostAndPort } from "@app/lib/utils";
+  import { formatRepositoryId } from "@app/lib/utils";
 
   import Link from "@app/components/Link.svelte";
   import Modal from "@app/components/Modal.svelte";
@@ -40,7 +40,7 @@
                 resource: "projects",
                 params: {
                   view: { resource: "tree" },
-                  hostAndPort: getHostAndPort(result.baseUrl),
+                  baseUrl: result.baseUrl,
                   id: result.project.id,
                 },
               }}>
