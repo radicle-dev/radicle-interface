@@ -9,6 +9,8 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let commit: CommitHeader;
+
+  let expandCommitMessage = false;
 </script>
 
 <style>
@@ -29,6 +31,27 @@
   .left {
     padding-left: 1rem;
   }
+  .message {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .expand-toggle {
+    background-color: var(--color-foreground-2);
+    border: 1px solid var(--color-foreground-5);
+    border-radius: var(--border-radius-tiny);
+    color: var(--color-foreground);
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+    height: 12px;
+    line-height: 6px;
+    padding: 0 5px 5px;
+  }
+  .expand-toggle:hover {
+    background-color: var(--color-foreground-5);
+  }
   .right {
     display: flex;
     align-items: center;
@@ -39,7 +62,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin-bottom: 0.25rem;
     font-size: var(--font-size-small);
   }
   .summary:hover {
@@ -71,16 +93,33 @@
 
 <div class="teaser">
   <div class="left">
-    <ProjectLink
-      projectParams={{
-        view: { resource: "commits" },
-        revision: commit.id,
-        search: undefined,
-      }}>
-      <div class="summary" use:twemoji>
-        <InlineMarkdown content={commit.summary} />
+    <div class="message">
+      <ProjectLink
+        projectParams={{
+          view: { resource: "commits" },
+          revision: commit.id,
+          search: undefined,
+        }}>
+        <div class="summary" use:twemoji>
+          <InlineMarkdown content={commit.summary} />
+        </div>
+      </ProjectLink>
+      {#if commit.description}
+        <button
+          class:expand-open={expandCommitMessage}
+          class="expand-toggle txt-tiny"
+          on:click={() => (expandCommitMessage = !expandCommitMessage)}>
+          …
+        </button>
+      {/if}
+    </div>
+    {#if expandCommitMessage}
+      <div style:margin="0.5rem 0">
+        <pre
+          class="txt-monospace txt-tiny"
+          style:margin="0">{commit.description.trim()}</pre>
       </div>
-    </ProjectLink>
+    {/if}
     <CommitAuthorship header={commit} />
   </div>
   <div class="right">
