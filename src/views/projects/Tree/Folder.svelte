@@ -15,8 +15,8 @@
   export let loadingPath: string | null = null;
   export let revision: string;
 
-  let expanded = currentPath.indexOf(prefix) === 0;
-  let tree: Promise<Tree | undefined> = expanded
+  $: expanded = currentPath.indexOf(prefix) === 0;
+  $: tree = expanded
     ? fetchTree(prefix).then(tree => {
         return tree;
       })
