@@ -106,7 +106,7 @@ const diffAddedDeletedModifiedChangesetSchema = object({
   }),
 }) satisfies ZodSchema<DiffAddedDeletedModifiedChangeset>;
 
-interface DiffCopiedMovedChangeset {
+export interface DiffCopiedMovedChangeset {
   newPath: string;
   oldPath: string;
 }

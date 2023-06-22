@@ -4,11 +4,18 @@
   import { pluralize } from "@app/lib/pluralize";
 
   import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
+  import FileLocationChange from "@app/views/projects/SourceBrowser/FileLocationChange.svelte";
 
   export let diff: Diff;
   export let revision: string;
 
-  const diffDescription = ({ modified, added, deleted }: Diff): string => {
+  const diffDescription = ({
+    modified,
+    added,
+    deleted,
+    moved,
+    copied,
+  }: Diff): string => {
     const s = [];
 
     if (modified.length) {
@@ -21,6 +28,12 @@
     }
     if (deleted.length) {
       s.push(`${deleted.length} ${pluralize("file", deleted.length)} deleted`);
+    }
+    if (copied.length) {
+      s.push(`${copied.length} ${pluralize("file", copied.length)} copied`);
+    }
+    if (moved.length) {
+      s.push(`${moved.length} ${pluralize("file", moved.length)} moved`);
     }
     return s.join(", ");
   };
@@ -54,12 +67,18 @@
 </div>
 <div class="diff-listing">
   {#each diff.added as file}
-    <FileDiff on:browse {file} {revision} mode="added" />
+    <FileDiff {file} {revision} headerBadgeCaption="added" />
   {/each}
   {#each diff.deleted as file}
-    <FileDiff on:browse {file} {revision} mode="deleted" />
+    <FileDiff {file} {revision} headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff on:browse {file} {revision} />
+    <FileDiff {file} {revision} />
+  {/each}
+  {#each diff.moved as file}
+    <FileLocationChange {file} {revision} mode="moved" />
+  {/each}
+  {#each diff.copied as file}
+    <FileLocationChange {file} {revision} mode="copied" />
   {/each}
 </div>

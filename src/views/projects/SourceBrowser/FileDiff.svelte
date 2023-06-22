@@ -10,7 +10,7 @@
 
   export let file: DiffAddedDeletedModifiedChangeset;
   export let revision: string;
-  export let mode: string | null = null;
+  export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
 
   let collapsed = false;
 
@@ -163,9 +163,9 @@
     </div>
     <div class="actions">
       <p class="txt-regular">{file.path}</p>
-      {#if mode === "added"}
+      {#if headerBadgeCaption === "added"}
         <Badge variant="positive">added</Badge>
-      {:else if mode === "deleted"}
+      {:else if headerBadgeCaption === "deleted"}
         <Badge variant="negative">deleted</Badge>
       {/if}
     </div>

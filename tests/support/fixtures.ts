@@ -251,6 +251,9 @@ export async function createSourceBrowsingFixture(
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
   await alice.git(["checkout", "feature/branch"], { cwd: aliceProjectPath });
+  await alice.git(["checkout", "feature/move-copy-files"], {
+    cwd: aliceProjectPath,
+  });
   await alice.git(["checkout", "orphaned-branch"], { cwd: aliceProjectPath });
   await alice.git(["checkout", "main"], { cwd: aliceProjectPath });
   await alice.rad(
