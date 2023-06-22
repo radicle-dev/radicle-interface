@@ -8,7 +8,7 @@ test("landing page", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
+        now: new Date("January 21 2023 12:00:00").valueOf(),
         shouldClearNativeTimers: true,
         shouldAdvanceTime: false,
       });

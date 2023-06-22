@@ -25,7 +25,7 @@ test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
-        now: new Date("December 21 2022 12:00:00").valueOf(),
+        now: new Date("January 21 2023 12:00:00").valueOf(),
         shouldClearNativeTimers: true,
         shouldAdvanceTime: false,
       });
@@ -33,7 +33,9 @@ test("relative timestamps", async ({ page }) => {
   });
   await page.goto(modifiedFileFixture);
   await expect(
-    page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
+    page.locator(
+      `.commit .header >> text=${"Bob Belcher committed last month"}`,
+    ),
   ).toBeVisible();
 });
 

@@ -91,7 +91,7 @@ test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
-        now: new Date("December 21 2022 12:00:00").valueOf(),
+        now: new Date("January 21 2023 12:00:00").valueOf(),
         shouldClearNativeTimers: true,
         shouldAdvanceTime: false,
       });
@@ -107,11 +107,11 @@ test("relative timestamps", async ({ page }) => {
     `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(-6)}`,
   );
   const latestCommit = page.locator(".teaser").first();
-  await expect(latestCommit).toContainText("Bob Belcher committed now");
+  await expect(latestCommit).toContainText("Bob Belcher committed last month");
   await expect(latestCommit).toContainText("28f3710");
   const earliestCommit = page.locator(".teaser").last();
   await expect(earliestCommit).toContainText(
-    "Alice Liddell committed last month",
+    "Alice Liddell committed 2 months ago",
   );
 });
 
