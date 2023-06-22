@@ -228,12 +228,12 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    const plainButton = page.locator('text="Plain"');
-    await plainButton.click();
+    const toggleButton = page.getByTitle("Toggle render method");
+    await expect(toggleButton).toHaveText("Plain");
+    await toggleButton.click();
     await expect(page.locator("text=##### Table of Contents")).toBeVisible();
-
-    const markdownButton = page.locator('text="Markdown"');
-    await markdownButton.click();
+    await expect(toggleButton).toHaveText("Markdown");
+    await toggleButton.click();
   }
 
   // Internal links go to anchor.

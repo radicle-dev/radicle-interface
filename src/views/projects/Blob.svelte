@@ -228,7 +228,7 @@
       </span>
       <div class="right">
         {#if isMarkdown}
-          <div class="toggle">
+          <div title="Toggle render method" class="toggle">
             <SquareButton clickable on:click={toggleMarkdown}>
               {showMarkdown ? "Plain" : "Markdown"}
             </SquareButton>

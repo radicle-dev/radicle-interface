@@ -49,6 +49,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <span
   on:mouseenter
   on:mouseleave

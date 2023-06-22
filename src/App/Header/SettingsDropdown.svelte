@@ -92,6 +92,7 @@
     <ThemeToggle />
   </div>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div
     class="item selector"
     on:click|stopPropagation={() => (showFonts = !showFonts)}>
@@ -99,12 +100,11 @@
     <Icon name={`chevron-${showFonts ? "down" : "right"}`} />
   </div>
   {#if showFonts}
-    <div
-      class="fonts"
-      transition:slide|local={{ duration: 150, easing: quadIn }}>
+    <div class="fonts" transition:slide={{ duration: 150, easing: quadIn }}>
       {#each codeFonts as font}
         {@const isSelectedFont = $codeFont === font.storedName}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
           on:click={() => switchFont(font.storedName)}
           class="item font"

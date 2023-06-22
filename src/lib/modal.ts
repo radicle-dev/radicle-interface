@@ -1,9 +1,6 @@
+import type { ComponentProps, ComponentType, SvelteComponent } from "svelte";
+
 import { derived, get, writable } from "svelte/store";
-import type {
-  ComponentProps,
-  ComponentType,
-  SvelteComponentTyped,
-} from "svelte";
 
 type HideCallback = () => void;
 
@@ -45,13 +42,13 @@ export function hide(): void {
   store.set(undefined);
 }
 
-interface ShowArgs<T extends SvelteComponentTyped> {
+interface ShowArgs<T extends SvelteComponent> {
   component: ComponentType<T>;
   props: ComponentProps<T>;
   hideCallback?: HideCallback;
 }
 
-export function show<Component extends SvelteComponentTyped>(
+export function show<Component extends SvelteComponent>(
   args: ShowArgs<Component>,
 ): void {
   // Defocus any active input elements, so that we can always close an open
@@ -62,7 +59,7 @@ export function show<Component extends SvelteComponentTyped>(
   store.set(args);
 }
 
-export function toggle<Component extends SvelteComponentTyped>(
+export function toggle<Component extends SvelteComponent>(
   args: ShowArgs<Component>,
 ): void {
   const stored = get(modalStore);
