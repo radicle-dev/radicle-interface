@@ -11,18 +11,12 @@
 
   export let issue: Issue;
 
-  const commentCount = countComments(issue);
-
-  // Counts the amount of comments in a discussion, excluding the initial
-  // description.
-  function countComments(issue: Issue): number {
-    return issue.discussion.reduce((acc, _curr, index) => {
-      if (index !== 0) {
-        return acc + 1;
-      }
-      return acc;
-    }, 0);
-  }
+  $: commentCount = issue.discussion.reduce((acc, _curr, index) => {
+    if (index !== 0) {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
 </script>
 
 <style>

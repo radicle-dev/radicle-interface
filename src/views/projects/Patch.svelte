@@ -7,7 +7,7 @@
   }
 
   interface TimelineReview {
-    inner: [string, string, Review];
+    inner: [string, Review];
     type: "review";
     timestamp: number;
   }
@@ -139,6 +139,21 @@
     disabled: false,
   }));
 
+  function computeReviews(patch: Patch) {
+    const patchReviews: Record<string, { latest: boolean; review: Review }> =
+      {};
+
+    patch.revisions.forEach((rev, i) => {
+      const latest = i === patch.revisions.length - 1;
+      for (const review of rev.reviews) {
+        patchReviews[review.author.id] = { latest, review };
+      }
+    });
+
+    return patchReviews;
+  }
+
+  $: patchReviews = computeReviews(patch);
   $: currentRevision =
     (revision && patch.revisions.find(r => r.id === revision)) ||
     patch.revisions[patch.revisions.length - 1];
@@ -163,7 +178,7 @@
       ...rev.reviews.map<TimelineReview>(review => ({
         timestamp: review.timestamp,
         type: "review",
-        inner: [rev.id, review.author.id, review],
+        inner: [review.author.id, review],
       })),
       ...patch.merges
         .filter(merge => merge.revision === rev.id)
@@ -238,6 +253,28 @@
   }
   .merged {
     color: var(--color-primary-6);
+  }
+  .metadata-section-header {
+    font-size: var(--font-size-small);
+    margin-bottom: 0.75rem;
+    color: var(--color-foreground-6);
+  }
+  .metadata-section-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .review {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .review-accept {
+    color: var(--color-positive);
+  }
+  .review-reject {
+    color: var(--color-negative);
   }
 
   @media (max-width: 1092px) {
@@ -425,6 +462,31 @@
     {/if}
   </div>
   <div class="metadata">
+    <div>
+      <div class="metadata-section-header">Reviews</div>
+      <div class="metadata-section-body">
+        {#each Object.values(patchReviews) as { latest, review }}
+          <div class="review" class:txt-missing={!latest}>
+            <span
+              class:review-accept={review.verdict === "accept"}
+              class:review-reject={review.verdict === "reject"}>
+              {#if review.verdict === "accept"}
+                <Icon size="small" name="checkmark" />
+              {:else if review.verdict === "reject"}
+                <Icon size="small" name="cross" />
+              {:else}
+                <Icon size="small" name="chat" />
+              {/if}
+            </span>
+            <Authorship
+              authorId={review.author.id}
+              authorAlias={review.author.alias} />
+          </div>
+        {:else}
+          <div class="txt-missing">No reviews</div>
+        {/each}
+      </div>
+    </div>
     <TagInput {action} tags={patch.tags} on:save={saveTags} />
   </div>
 </div>

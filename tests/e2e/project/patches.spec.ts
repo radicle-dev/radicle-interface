@@ -7,6 +7,9 @@ test("navigate listing", async ({ page }) => {
 
   await page.locator('role=link[name="1 merged"]').click();
   await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
+  await expect(
+    page.locator(".comments").filter({ hasText: "2" }),
+  ).toBeVisible();
 });
 
 test("navigate patch details", async ({ page }) => {

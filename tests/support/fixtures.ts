@@ -322,7 +322,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     ["assign", issueOne, "--to", `did:key:${peer.nodeId}`],
     createOptions(projectFolder, 1),
   );
-  await peer.rad(
+  const { stdout: commentIssueOne } = await peer.rad(
     [
       "comment",
       issueOne,
@@ -338,7 +338,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "This is a reply, to a first comment.",
       "--reply-to",
-      "a299a997301eae6528cb9f6fbdb8fac2cb4c3df0",
+      commentIssueOne,
     ],
     createOptions(projectFolder, 3),
   );
@@ -384,7 +384,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     ["Let's add a README", "This repo needed a README"],
     { cwd: projectFolder },
   );
-  await peer.rad(
+  const { stdout: commentPatchOne } = await peer.rad(
     ["comment", patchOne, "--message", "I'll review the patch"],
     createOptions(projectFolder, 1),
   );
@@ -395,7 +395,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "Thanks for that!",
       "--reply-to",
-      "fa9e1d3d0d064449a2415072fe2d4eef28a2f603",
+      commentPatchOne,
     ],
     createOptions(projectFolder, 2),
   );

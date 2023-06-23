@@ -41,14 +41,14 @@
 
   const api = new HttpdClient(baseUrl);
 
-  function formatVerdict(revision: string, verdict?: string | null) {
+  function formatVerdict(verdict?: string | null) {
     switch (verdict) {
       case "accept":
-        return `accepted revision ${utils.formatObjectId(revision)}`;
+        return "accepted revision";
       case "reject":
-        return `rejected revision ${utils.formatObjectId(revision)}`;
+        return "rejected revision";
       default:
-        return `left a comment on revision ${utils.formatObjectId(revision)}`;
+        return "left a review";
     }
   }
 
@@ -341,14 +341,14 @@
             </div>
           </div>
         {:else if element.type === "review"}
-          {@const [revisionId, author, review] = element.inner}
+          {@const [author, review] = element.inner}
           {#if review.comment}
             <div
               class="review"
-              class:positive-review={element.inner[2].verdict === "accept"}
-              class:negative-review={element.inner[2].verdict === "reject"}>
+              class:positive-review={review.verdict === "accept"}
+              class:negative-review={review.verdict === "reject"}>
               <CommentComponent
-                caption={formatVerdict(revisionId, review.verdict)}
+                caption={formatVerdict(review.verdict)}
                 authorId={author}
                 authorAlias={review.author.alias}
                 authorAliasColor={aliasColorForVerdict(review.verdict)}
@@ -359,28 +359,28 @@
           {:else}
             <div
               class="action layout-desktop txt-tiny"
-              class:positive-review={element.inner[2].verdict === "accept"}
-              class:negative-review={element.inner[2].verdict === "reject"}>
+              class:positive-review={review.verdict === "accept"}
+              class:negative-review={review.verdict === "reject"}>
               <div class="action-content">
                 <Authorship
                   authorId={author}
                   authorAlias={review.author.alias}
                   authorAliasColor={aliasColorForVerdict(review.verdict)}
                   timestamp={element.timestamp}>
-                  {formatVerdict(revisionId, review.verdict)}
+                  {formatVerdict(review.verdict)}
                 </Authorship>
               </div>
             </div>
             <div
               class="layout-mobile txt-tiny"
-              class:positive-review={element.inner[2].verdict === "accept"}
-              class:negative-review={element.inner[2].verdict === "reject"}>
+              class:positive-review={review.verdict === "accept"}
+              class:negative-review={review.verdict === "reject"}>
               <div class="action-content">
                 <Authorship
                   authorId={author}
                   authorAlias={review.author.alias}
                   authorAliasColor={aliasColorForVerdict(review.verdict)}>
-                  {formatVerdict(revisionId, review.verdict)}
+                  {formatVerdict(review.verdict)}
                 </Authorship>
               </div>
             </div>

@@ -75,6 +75,11 @@ test("patch page", async ({ page }) => {
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
+  await page.goto(
+    `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a`,
+    { waitUntil: "networkidle" },
+  );
+  await expect(page).toHaveScreenshot({ fullPage: true });
   // Open patch
   await page.goto(
     `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`,

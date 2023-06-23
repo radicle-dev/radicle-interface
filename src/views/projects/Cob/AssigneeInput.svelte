@@ -60,9 +60,6 @@
     gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
-  .empty {
-    color: var(--color-foreground-5);
-  }
 
   .chip-content {
     display: flex;
@@ -110,7 +107,7 @@
         </div>
       </Chip>
     {:else}
-      <div class="empty">No assignees</div>
+      <div class="txt-missing">No assignees</div>
     {/each}
   </div>
   {#if editInProgress || action === "create"}

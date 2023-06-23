@@ -57,9 +57,6 @@
     gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
-  .metadata-section-empty {
-    color: var(--color-foreground-5);
-  }
   .tag {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -102,7 +99,7 @@
         <div class="tag">{tag}</div>
       </Chip>
     {:else}
-      <div class="metadata-section-empty">No tags</div>
+      <div class="txt-missing">No tags</div>
     {/each}
   </div>
   {#if editInProgress || action === "create"}

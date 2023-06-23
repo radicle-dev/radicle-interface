@@ -25,6 +25,12 @@
     latestRevision.base,
     latestRevision.oid,
   );
+
+  // Counts the amount of comments in all the discussions over all revisions.
+  $: commentCount = patch.revisions.reduce(
+    (acc, curr) => acc + curr.discussions.reduce(acc => acc + 1, 0),
+    0,
+  );
 </script>
 
 <style>
@@ -156,12 +162,10 @@
     </div>
   </div>
   <div class="right">
-    {#if latestRevision.discussions.length > 0}
+    {#if commentCount > 0}
       <div class="comments">
         <Icon name="chat" />
-        <span>
-          {latestRevision.discussions.length}
-        </span>
+        <span>{commentCount}</span>
       </div>
     {/if}
     {#await diffPromise then { diff }}
