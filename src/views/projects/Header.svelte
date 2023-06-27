@@ -54,6 +54,9 @@
       active={view.resource === "tree" ||
         view.resource === "history" ||
         view.resource === "commits"}>
+      <svelte:fragment slot="icon">
+        <Icon size="small" name="chevron-left-right" />
+      </svelte:fragment>
       Source
     </SquareButton>
   </ProjectLink>
