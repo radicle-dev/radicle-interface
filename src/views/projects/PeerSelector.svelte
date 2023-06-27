@@ -2,6 +2,7 @@
   import type { Remote } from "@httpd-client";
 
   import { formatNodeId, truncateId } from "@app/lib/utils";
+  import { pluralize } from "@app/lib/pluralize";
 
   import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -32,13 +33,10 @@
     font-family: var(--font-family-monospace);
   }
   .selector .peer {
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-secondary-2);
     border-radius: var(--border-radius-small);
-  }
-  .selected {
-    padding: 0.5rem 0.75rem !important;
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;
@@ -71,9 +69,10 @@
 
 <Floating>
   <div slot="toggle" class="selector" title="Change peer">
-    <div class="stat peer" class:selected={peer} class:not-allowed={!peers}>
+    <div class="stat peer" class:not-allowed={!peers}>
       {#if !peer}
-        <Icon size="small" name="fork" />
+        <Icon size="small" name="fork" />{peers.length}
+        {pluralize("remote", peers.length)}
       {/if}
       {#if meta}
         <span class="avatar-id">

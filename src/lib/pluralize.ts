@@ -1,11 +1,12 @@
 export const pluralRules = {
+  commit: "commits",
+  contributor: "contributors",
+  deletion: "deletions",
   file: "files",
   insertion: "insertions",
-  deletion: "deletions",
-  commit: "commits",
   issue: "issues",
-  contributor: "contributors",
   patch: "patches",
+  remote: "remotes",
 } as const;
 
 export function pluralize(
