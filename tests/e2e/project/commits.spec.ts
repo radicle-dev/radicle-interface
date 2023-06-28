@@ -87,6 +87,24 @@ test("peer and branch switching", async ({ page }) => {
   }
 });
 
+test("expand commit message", async ({ page }) => {
+  await page.goto(sourceBrowsingUrl);
+  await page.locator('role=link[name="6 commits"]').click();
+  const commitToggle = page
+    .locator("div")
+    .filter({ hasText: /^Add a C source file and its binary …$/ })
+    .getByRole("button", { name: "…" });
+  await commitToggle.click();
+  const expandedCommit = page.getByText(
+    "The binary was compiled with: `gcc -Oz -O3 true.c`. Signed-off-by: Alice Liddell",
+  );
+
+  await expect(expandedCommit).toBeVisible();
+  await commitToggle.click();
+
+  await expect(expandedCommit).toBeHidden();
+});
+
 test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
