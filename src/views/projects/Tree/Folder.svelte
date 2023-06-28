@@ -12,7 +12,6 @@
   export let name: string;
   export let prefix: string;
   export let currentPath: string;
-  export let loadingPath: string | null = null;
   export let revision: string;
 
   $: expanded = currentPath.indexOf(prefix) === 0;
@@ -86,7 +85,6 @@
               name={entry.name}
               on:select={onSelectFile}
               prefix={`${entry.path}/`}
-              {loadingPath}
               {revision}
               {currentPath} />
           {:else}

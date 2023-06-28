@@ -417,7 +417,7 @@ test.describe("browser error handling", () => {
 
     await page.goto(sourceBrowsingUrl);
     await expect(
-      page.locator("text=The README could not be loaded."),
+      page.locator("text=The README could not be loaded"),
     ).toBeVisible();
   });
   test("error appears when navigating to missing file", async ({ page }) => {

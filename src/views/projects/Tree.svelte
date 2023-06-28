@@ -11,7 +11,6 @@
   export let path: string;
   export let tree: Tree;
   export let revision: string;
-  export let loadingPath: string | null = null;
 
   const dispatch = createEventDispatcher<{ select: string }>();
   const onSelect = ({ detail: path }: { detail: string }): void => {
@@ -23,7 +22,6 @@
   {#if entry.kind === "tree"}
     <Folder
       {fetchTree}
-      {loadingPath}
       {revision}
       name={entry.name}
       prefix={`${entry.path}/`}

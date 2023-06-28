@@ -23,7 +23,6 @@
   export let baseUrl: BaseUrl;
 
   export let hash: string | undefined = undefined;
-  export let path: string | undefined = undefined;
   export let peer: string | undefined = undefined;
   export let revision: string | undefined = undefined;
   export let search: string | undefined = undefined;
@@ -79,7 +78,8 @@
         {revision}
         commit={view.params.selectedCommit}
         tree={view.params.loadedTree}
-        path={path || "/"}
+        blobResult={view.blobResult}
+        path={view.path}
         {hash} />
     {:else if view.resource === "history"}
       <History

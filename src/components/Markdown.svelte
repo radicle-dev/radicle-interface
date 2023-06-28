@@ -2,7 +2,7 @@
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { marked } from "marked";
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   import { toDom } from "hast-util-to-dom";
 
   import * as utils from "@app/lib/utils";
@@ -45,16 +45,13 @@
       event.preventDefault();
       if ($activeRouteStore.resource === "projects") {
         void updateProjectRoute({
-          path: utils.canonicalize(
-            event.target.getAttribute("href"),
-            $activeRouteStore.params.path ?? "",
-          ),
+          path: utils.canonicalize(event.target.getAttribute("href"), path),
         });
       }
     }
   }
 
-  onMount(async () => {
+  afterUpdate(async () => {
     // Don't underline <a> tags that contain images.
     for (const e of container.querySelectorAll("a")) {
       if (e.firstElementChild instanceof HTMLImageElement) {

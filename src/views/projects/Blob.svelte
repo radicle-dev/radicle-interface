@@ -20,7 +20,7 @@
   $: fileExtension = blob.path.split(".").pop() ?? "";
   $: lastCommit = blob.lastCommit;
 
-  const parentDir = blob.path
+  $: parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
     .next().value;
@@ -28,14 +28,22 @@
 
   onMount(async () => {
     window.addEventListener("hashchange", setTarget);
-    if (!blob.content) {
-      return;
-    }
-    const output = await highlight(blob.content, fileExtension);
-    if (output) {
-      content = lineNumbersGutter(output);
-    }
   });
+
+  $: {
+    if (blob.content) {
+      highlight(blob.content, fileExtension)
+        .then(output => {
+          if (output) {
+            content = lineNumbersGutter(output);
+          }
+        })
+        /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+        .catch(() => {
+          // TODO: handle error.
+        });
+    }
+  }
 
   onDestroy(() => {
     window.removeEventListener("hashchange", setTarget);
@@ -45,12 +53,13 @@
     setTarget();
   });
 
-  const isMarkdown = isMarkdownPath(blob.path);
-  let showMarkdown = isMarkdown;
-  const toggleMarkdown = () => {
+  $: isMarkdown = isMarkdownPath(blob.path);
+  $: showMarkdown = isMarkdown;
+
+  function toggleMarkdown() {
     window.location.hash = "";
     showMarkdown = !showMarkdown;
-  };
+  }
 
   function setTarget() {
     for (const item of document.getElementsByClassName("highlight")) {

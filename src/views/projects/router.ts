@@ -1,6 +1,7 @@
 import type { LoadError } from "@app/lib/router/definitions";
 import type {
   BaseUrl,
+  Blob,
   Commit,
   CommitHeader,
   Issue,
@@ -64,7 +65,6 @@ export interface ProjectLoadedParams {
   view: ProjectLoadedView;
 
   hash?: string;
-  path?: string;
   peer?: string;
   revision?: string;
   search?: string;
@@ -77,10 +77,16 @@ interface LoadedSourceBrowsingParams {
   selectedCommit: string;
 }
 
+export type BlobResult =
+  | { ok: true; blob: Blob }
+  | { ok: false; error: { message: string; path: string } };
+
 export type ProjectLoadedView =
   | {
       resource: "tree";
       params: LoadedSourceBrowsingParams;
+      path: string;
+      blobResult: BlobResult;
     }
   | {
       resource: "commits";
@@ -205,8 +211,56 @@ export async function loadProjectRoute(
         loadedTree: tree,
         selectedCommit: commit,
       };
+      if (params.view.resource === "tree") {
+        let blobResult: BlobResult;
 
-      if (params.view.resource === "history") {
+        const path = params.path || "/";
+        try {
+          if (path === "/") {
+            blobResult = {
+              ok: true,
+              blob: await api.project.getReadme(project.id, commit),
+            };
+          } else {
+            blobResult = {
+              ok: true,
+              blob: await api.project.getBlob(project.id, commit, path),
+            };
+          }
+        } catch {
+          if (path === "/") {
+            blobResult = {
+              ok: false,
+              error: {
+                message: "The README could not be loaded",
+                path,
+              },
+            };
+          } else {
+            blobResult = {
+              ok: false,
+              error: {
+                message: "Not able to load file",
+                path,
+              },
+            };
+          }
+        }
+
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            project,
+            view: {
+              resource: params.view.resource,
+              params: viewParams,
+              path,
+              blobResult,
+            },
+          },
+        };
+      } else if (params.view.resource === "history") {
         const commitsResponse = await api.project.getAllCommits(project.id, {
           parent: commit,
           page: 0,
@@ -226,8 +280,7 @@ export async function loadProjectRoute(
             },
           },
         };
-      }
-      if (params.view.resource === "commits") {
+      } else if (params.view.resource === "commits") {
         const loadedCommit = await api.project.getCommitBySha(
           params.id,
           commit,
@@ -246,17 +299,7 @@ export async function loadProjectRoute(
           },
         };
       } else {
-        return {
-          resource: "projects",
-          params: {
-            ...params,
-            project,
-            view: {
-              resource: params.view.resource,
-              params: viewParams,
-            },
-          },
-        };
+        return params.view;
       }
     } else if (params.view.resource === "issue") {
       try {
