@@ -190,6 +190,10 @@
     margin-bottom: 0;
   }
 
+  .markdown :global(details) {
+    margin-bottom: 0.625rem;
+  }
+
   .markdown :global(blockquote) {
     color: var(--color-foreground-6);
     border-left: 0.3rem solid var(--color-foreground-4);

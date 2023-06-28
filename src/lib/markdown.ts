@@ -3,7 +3,16 @@ import katex from "katex";
 import { marked } from "marked";
 import { isUrl } from "@app/lib/utils";
 
-const trustedHtmlTags = ["small", "dl", "dt", "dd", "code"];
+const trustedHtmlTags = [
+  "small",
+  "dl",
+  "dt",
+  "dd",
+  "code",
+  "detail",
+  "summary",
+  "<!--",
+];
 
 // TODO: Disables deprecated options, remove once removed from marked
 marked.use({ mangle: false, headerIds: false });
@@ -123,6 +132,20 @@ const anchorMarkedExtension = {
 export const walkTokens = (token: marked.Tokens.Generic) => {
   if (token.type !== "code" && token.type !== "codespan" && "text" in token) {
     if (trustedHtmlTags.some(tag => token.text.includes(tag))) {
+      // TODO: All this seems like a slippery slope,
+      // for which we should find a better way to handle it.
+      // Handles eventual codespans inside a trusted html tag.
+      token.text = token.text.replace(
+        /`{1}([^`]+)`{1}/g,
+        (_match: RegExpMatchArray, tagContent: string) =>
+          `<code>${tagContent}</code>`,
+      );
+      // Handles eventual codeblocks inside a trusted html tag.
+      token.text = token.text.replace(
+        /`{3}([^`]+)`{3}/g,
+        (_match: RegExpMatchArray, tagContent: string) =>
+          `<pre><code>${tagContent}</code></pre>`,
+      );
       return;
     }
     token.text = token.text.replace(
