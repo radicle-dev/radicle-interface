@@ -2,14 +2,13 @@
   import dompurify from "dompurify";
   import { marked } from "marked";
 
-  import { renderer, walkTokens } from "@app/lib/markdown";
+  import { renderer } from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
   export let fontSize: "tiny" | "small" | "medium" = "small";
 
   marked.use({
-    walkTokens,
     renderer,
     // TODO: Disables deprecated options, remove once removed from marked
     mangle: false,
@@ -17,8 +16,7 @@
   });
 
   const render = (content: string): string =>
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    dompurify.sanitize(marked.parseInline(content), { SANITIZE_DOM: false });
+    dompurify.sanitize(marked.parseInline(content));
 </script>
 
 <style>

@@ -182,13 +182,3 @@ test("relative image not able to being loaded", async ({ page }) => {
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
-
-test("rendering of html tags", async ({ page }) => {
-  await page.goto(`${markdownUrl}/tree/main/tag-rendering.md#html-tags`, {
-    waitUntil: "networkidle",
-  });
-  await expect(
-    page.locator("text=Rendering of html tags").first(),
-  ).toBeVisible();
-  await expect(page).toHaveScreenshot({ fullPage: true });
-});

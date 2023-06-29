@@ -1,6 +1,6 @@
 <script lang="ts">
   import Clipboard from "@app/components/Clipboard.svelte";
-  import DOMPurify from "dompurify";
+  import dompurify from "dompurify";
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import { formatNodeId, twemoji } from "@app/lib/utils";
 
@@ -110,6 +110,6 @@
     <Clipboard small text={projectId} />
   </div>
   <div class="description" use:twemoji>
-    {@html DOMPurify.sanitize(linkifyDescription(projectDescription))}
+    {@html dompurify.sanitize(linkifyDescription(projectDescription))}
   </div>
 </header>
