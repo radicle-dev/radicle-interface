@@ -16,6 +16,7 @@ import { get } from "svelte/store";
 import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
 import * as Syntax from "@app/lib/syntax";
+import { unreachable } from "@app/lib/utils";
 
 export const COMMITS_PER_PAGE = 30;
 
@@ -39,17 +40,22 @@ export interface ProjectsParams {
     | { resource: "issue"; params: { issue: string } }
     | {
         resource: "issues";
-        params?: {
-          view: { resource: "new" };
+        params: {
+          view: { resource: "new" | "list" };
+          search?: string;
         };
       }
     | {
         resource: "patches";
-        params?: {
-          view: { resource: "new" };
+        params: {
+          view: { resource: "list" };
+          search?: string;
         };
       }
-    | { resource: "patch"; params: { patch: string; revision?: string } };
+    | {
+        resource: "patch";
+        params: { patch: string; revision?: string; search?: string };
+      };
 
   hash?: string;
   path?: string;
@@ -68,7 +74,6 @@ export interface ProjectLoadedParams {
   hash?: string;
   peer?: string;
   revision?: string;
-  search?: string;
 }
 
 interface LoadedSourceBrowsingParams {
@@ -103,19 +108,27 @@ export type ProjectLoadedView =
   | { resource: "issue"; params: { issue: string; loadedIssue: Issue } }
   | {
       resource: "issues";
-      params?: {
-        view: { resource: "new" };
+      params: {
+        view: { resource: "new" | "list" };
+        search: string;
       };
     }
   | {
       resource: "patches";
-      params?: {
-        view: { resource: "new" };
+      params: {
+        view: { resource: "list" };
+        search: string;
       };
     }
   | {
       resource: "patch";
-      params: { patch: string; revision?: string; loadedPatch: Patch };
+      params: {
+        patch: string;
+        revision?: string;
+        loadedPatch: Patch;
+
+        search: string;
+      };
     };
 
 // We need a SHA1 commit in some places, so we return early if the revision is
@@ -357,7 +370,11 @@ export async function loadProjectRoute(
             project,
             view: {
               resource: "patch",
-              params: { ...params.view.params, loadedPatch: patch },
+              params: {
+                search: "",
+                ...params.view.params,
+                loadedPatch: patch,
+              },
             },
           },
         };
@@ -371,16 +388,34 @@ export async function loadProjectRoute(
           },
         };
       }
-    } else {
+    } else if (params.view.resource === "issues") {
       const project = await api.project.getById(params.id);
       return {
         resource: "projects",
         params: {
           ...params,
-          view: params.view,
+          view: {
+            resource: "issues",
+            params: { search: "", ...params.view.params },
+          },
           project,
         },
       };
+    } else if (params.view.resource === "patches") {
+      const project = await api.project.getById(params.id);
+      return {
+        resource: "projects",
+        params: {
+          ...params,
+          view: {
+            resource: "patches",
+            params: { search: "", ...params.view.params },
+          },
+          project,
+        },
+      };
+    } else {
+      return unreachable(params.view);
     }
   } catch (error: any) {
     return {
@@ -528,7 +563,13 @@ export function resolveProjectRoute(
     const issueOrAction = segments.shift();
     if (issueOrAction === "new") {
       return {
-        view: { resource: "issues", params: { view: { resource: "new" } } },
+        view: {
+          resource: "issues",
+          params: {
+            view: { resource: "new" },
+            search: sanitizeQueryString(url.search),
+          },
+        },
         baseUrl,
         id,
         peer,
@@ -548,7 +589,13 @@ export function resolveProjectRoute(
       };
     } else {
       return {
-        view: { resource: "issues" },
+        view: {
+          resource: "issues",
+          params: {
+            view: { resource: "list" },
+            search: sanitizeQueryString(url.search),
+          },
+        },
         baseUrl,
         id,
         peer,
@@ -562,7 +609,10 @@ export function resolveProjectRoute(
     const revision = segments.shift();
     if (patch) {
       return {
-        view: { resource: "patch", params: { patch, revision } },
+        view: {
+          resource: "patch",
+          params: { patch, revision, search: sanitizeQueryString(url.search) },
+        },
         baseUrl,
         id,
         peer,
@@ -572,7 +622,13 @@ export function resolveProjectRoute(
       };
     } else {
       return {
-        view: { resource: "patches" },
+        view: {
+          resource: "patches",
+          params: {
+            view: { resource: "list" },
+            search: sanitizeQueryString(url.search),
+          },
+        },
         baseUrl,
         id,
         peer,

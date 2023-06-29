@@ -65,6 +65,7 @@
       id: projectId,
       view: {
         resource: "issues",
+        params: { view: { resource: "list" } },
       },
       peer: undefined,
       search: undefined,
@@ -86,6 +87,7 @@
       id: projectId,
       view: {
         resource: "patches",
+        params: { view: { resource: "list" } },
       },
       peer: undefined,
       search: undefined,

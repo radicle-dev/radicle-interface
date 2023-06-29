@@ -90,10 +90,18 @@
     {:else if view.resource === "commits"}
       <Commit commit={view.commit} />
     {/if}
-  {:else if view.resource === "issues" && view.params?.view.resource === "new"}
-    <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
   {:else if view.resource === "issues"}
-    <Issues {baseUrl} projectId={id} issueCounters={project.issues} {search} />
+    {#if view.params.view.resource === "new"}
+      <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
+    {:else if view.params.view.resource === "list"}
+      <Issues
+        {baseUrl}
+        projectId={id}
+        issueCounters={project.issues}
+        {search} />
+    {:else}
+      {unreachable(view.params.view.resource)}
+    {/if}
   {:else if view.resource === "issue"}
     <Issue
       projectId={id}
