@@ -11,7 +11,7 @@ import sourceToml from "@wooorm/starry-night/lang/source.toml";
 import sourceTsx from "@wooorm/starry-night/lang/source.tsx";
 import { createStarryNight, common } from "@wooorm/starry-night";
 
-export type MaybeHighlighted = Root | undefined;
+export { type Root };
 
 export const grammars = [
   ...common,
@@ -36,7 +36,7 @@ let starryNight: Awaited<ReturnType<typeof createStarryNight>>;
 export async function highlight(
   content: string,
   grammar: string,
-): Promise<MaybeHighlighted> {
+): Promise<Root> {
   if (starryNight === undefined) {
     starryNight = await createStarryNight(grammars, {
       getOnigurumaUrlFetch: () => new URL(onigurumaWASMUrl, import.meta.url),

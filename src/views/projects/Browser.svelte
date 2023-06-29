@@ -155,6 +155,7 @@
             {path}
             {hash}
             blob={blobResult.blob}
+            highlighted={blobResult.highlighted}
             rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
         {:else}
           <Placeholder emoji="🍂">

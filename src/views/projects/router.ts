@@ -15,6 +15,7 @@ import { get } from "svelte/store";
 
 import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
+import * as Syntax from "@app/lib/syntax";
 
 export const COMMITS_PER_PAGE = 30;
 
@@ -78,7 +79,7 @@ interface LoadedSourceBrowsingParams {
 }
 
 export type BlobResult =
-  | { ok: true; blob: Blob }
+  | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
   | { ok: false; error: { message: string; path: string } };
 
 export type ProjectLoadedView =
@@ -216,17 +217,22 @@ export async function loadProjectRoute(
 
         const path = params.path || "/";
         try {
+          let blob: Blob;
           if (path === "/") {
-            blobResult = {
-              ok: true,
-              blob: await api.project.getReadme(project.id, commit),
-            };
+            blob = await api.project.getReadme(project.id, commit);
           } else {
-            blobResult = {
-              ok: true,
-              blob: await api.project.getBlob(project.id, commit, path),
-            };
+            blob = await api.project.getBlob(project.id, commit, path);
           }
+          blobResult = {
+            ok: true,
+            blob,
+            highlighted: blob.content
+              ? await Syntax.highlight(
+                  blob.content,
+                  blob.path.split(".").pop() ?? "",
+                )
+              : undefined,
+          };
         } catch {
           if (path === "/") {
             blobResult = {

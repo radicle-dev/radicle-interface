@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { Blob } from "@httpd-client";
-  import type { MaybeHighlighted } from "@app/lib/syntax";
 
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
 
-  import { highlight } from "@app/lib/syntax";
+  import * as Syntax from "@app/lib/syntax";
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
@@ -15,66 +14,58 @@
   export let path: string;
   export let hash: string | undefined = undefined;
   export let blob: Blob;
+  export let highlighted: Syntax.Root | undefined;
   export let rawPath: string;
 
-  $: fileExtension = blob.path.split(".").pop() ?? "";
   $: lastCommit = blob.lastCommit;
 
   $: parentDir = blob.path
     .match(/^.*\/|/)
     ?.values()
     .next().value;
-  let content: MaybeHighlighted = undefined;
 
-  onMount(async () => {
-    window.addEventListener("hashchange", setTarget);
-  });
+  $: content = highlighted ? lineNumbersGutter(highlighted) : undefined;
 
-  $: {
-    if (blob.content) {
-      highlight(blob.content, fileExtension)
-        .then(output => {
-          if (output) {
-            content = lineNumbersGutter(output);
-          }
-        })
-        /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-        .catch(() => {
-          // TODO: handle error.
-        });
+  let selectedLineId: string | undefined = undefined;
+  updateSelectedLineId();
+
+  function updateSelectedLineId() {
+    const fragmentId = window.location.hash.substr(1);
+    if (fragmentId && fragmentId.match(/^L\d+$/)) {
+      selectedLineId = fragmentId;
+    } else {
+      selectedLineId = undefined;
     }
   }
 
-  onDestroy(() => {
-    window.removeEventListener("hashchange", setTarget);
-  });
-
-  afterUpdate(() => {
-    setTarget();
-  });
-
   $: isMarkdown = isMarkdownPath(blob.path);
-  $: showMarkdown = isMarkdown;
+  $: showMarkdown = isMarkdown && selectedLineId === undefined;
 
   function toggleMarkdown() {
     window.location.hash = "";
     showMarkdown = !showMarkdown;
   }
 
-  function setTarget() {
+  afterUpdate(() => {
     for (const item of document.getElementsByClassName("highlight")) {
       item.classList.remove("highlight");
     }
-    const fragmentId = window.location.hash.substr(1);
-    if (fragmentId && fragmentId.match(/L\d+/)) {
-      showMarkdown = false;
-      const target = document.getElementById(fragmentId);
+    if (selectedLineId) {
+      const target = document.getElementById(selectedLineId);
       if (target) {
         target.classList.add("highlight");
         target.scrollIntoView();
       }
     }
-  }
+  });
+
+  onMount(async () => {
+    window.addEventListener("hashchange", updateSelectedLineId);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("hashchange", updateSelectedLineId);
+  });
 </script>
 
 <style>
