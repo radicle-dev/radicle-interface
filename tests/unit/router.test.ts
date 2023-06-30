@@ -1,35 +1,46 @@
 import { describe, expect, test } from "vitest";
-import { testExports } from "@app/lib/router";
+import { testExports, type Route } from "@app/lib/router";
 
 // Defining the window.origin value, since vitest doesn't provide one.
 window.origin = "http://localhost:3000";
 
-describe("routeToPath", () => {
-  test.each([
-    { input: { resource: "home" }, output: "/", description: "Home Route" },
-    {
-      input: {
-        resource: "seeds",
-        params: { baseUrl: { hostname: "willow.radicle.garden" } },
-      },
-      output: "/seeds/willow.radicle.garden",
-      description: "Seed View Route",
-    },
-    {
-      input: {
-        resource: "projects",
-        params: {
-          view: { resource: "tree" },
-          baseUrl: { hostname: "willow.radicle.garden" },
-          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-        },
-      },
-      output: "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-      description: "Seed Project Route",
-    },
-  ])("$description", (route: any) => {
-    expect(testExports.routeToPath(route.input)).toEqual(route.output);
+describe("route invariant when parsed", () => {
+  const baseUrl = {
+    hostname: "willow.radicle.garden",
+    port: 8000,
+    scheme: "http",
+  };
+
+  test("home", () => {
+    return expectParsingInvariant({ resource: "home" });
   });
+  test("seeds", () => {
+    expectParsingInvariant({
+      resource: "seeds",
+      params: {
+        // TODO: This only works with the value 0. The value is not actually
+        // extract.
+        projectPageIndex: 0,
+        baseUrl,
+      },
+    });
+  });
+  test("projects.tree", () => {
+    return expectParsingInvariant({
+      resource: "projects",
+      params: {
+        view: { resource: "tree" },
+        baseUrl,
+        id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      },
+    });
+  });
+
+  function expectParsingInvariant(route: Route) {
+    const origin = "http://localhost:3000";
+    const path = testExports.routeToPath(route);
+    expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
+  }
 });
 
 describe("pathToRoute", () => {

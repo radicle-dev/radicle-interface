@@ -12,6 +12,8 @@ import {
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
 
+export { type Route };
+
 // Only used by Safari.
 const DOCUMENT_TITLE = "Radicle Interface";
 
@@ -227,7 +229,7 @@ function seedPath(baseUrl: BaseUrl) {
   }
 }
 
-export function routeToPath(route: Route) {
+export function routeToPath(route: Route): string {
   if (route.resource === "home") {
     return "/";
   } else if (route.resource === "session") {
@@ -302,7 +304,7 @@ export function routeToPath(route: Route) {
   } else if (route.resource === "notFound") {
     return route.params.url;
   } else {
-    utils.unreachable(route);
+    return utils.unreachable(route);
   }
 }
 
