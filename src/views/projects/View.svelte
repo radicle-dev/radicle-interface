@@ -47,6 +47,7 @@
     projectId={id}
     projectName={project.name}
     projectDescription={project.description}
+    {baseUrl}
     nodeId={peer} />
   <Header
     projectId={id}
@@ -64,6 +65,7 @@
       {project}
       {peer}
       {view}
+      {baseUrl}
       peers={view.params.loadedPeers}
       branches={view.params.loadedBranches}
       commitCount={view.params.loadedTree.stats.commits}

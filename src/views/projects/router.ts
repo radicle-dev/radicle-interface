@@ -511,7 +511,7 @@ export function createProjectRoute(
 }
 
 export function projectLinkHref(
-  projectRouteParams: Partial<ProjectsParams>,
+  projectRouteParams: Partial<Omit<ProjectsParams, "id" | "route" | "hash">>,
 ): string | undefined {
   const activeRoute = get(activeRouteStore);
 
@@ -525,7 +525,7 @@ export function projectLinkHref(
 }
 
 export async function updateProjectRoute(
-  projectRouteParams: Partial<ProjectsParams>,
+  projectRouteParams: Partial<Omit<ProjectsParams, "id" | "route" | "hash">>,
   opts: { replace: boolean } = { replace: false },
 ): Promise<void> {
   const activeRoute = get(activeRouteStore);

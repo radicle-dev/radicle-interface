@@ -8,7 +8,6 @@
   import CloneButton from "@app/views/projects/CloneButton.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let view: ProjectLoadedView;
@@ -42,13 +41,15 @@
 </style>
 
 <div class="header">
-  <ProjectLink
-    projectParams={{
-      view: { resource: "tree" },
-      path: "/",
-      peer: undefined,
-      route: undefined,
-      revision: undefined,
+  <Link
+    route={{
+      resource: "projects",
+      params: {
+        id: projectId,
+        baseUrl,
+        view: { resource: "tree" },
+        path: "/",
+      },
     }}>
     <SquareButton
       active={view.resource === "tree" ||
@@ -59,17 +60,18 @@
       </svelte:fragment>
       Source
     </SquareButton>
-  </ProjectLink>
-  <ProjectLink
-    projectParams={{
-      id: projectId,
-      view: {
-        resource: "issues",
-        params: { view: { resource: "list" } },
+  </Link>
+  <Link
+    route={{
+      resource: "projects",
+      params: {
+        id: projectId,
+        baseUrl,
+        view: {
+          resource: "issues",
+          params: { view: { resource: "list" } },
+        },
       },
-      peer: undefined,
-      revision: undefined,
-      path: undefined,
     }}>
     <SquareButton
       active={view.resource === "issues" || view.resource === "issue"}>
@@ -79,18 +81,19 @@
       <span class="txt-bold">{openIssueCount}</span>
       {pluralize("issue", openIssueCount)}
     </SquareButton>
-  </ProjectLink>
+  </Link>
 
-  <ProjectLink
-    projectParams={{
-      id: projectId,
-      view: {
-        resource: "patches",
-        params: { view: { resource: "list" } },
+  <Link
+    route={{
+      resource: "projects",
+      params: {
+        id: projectId,
+        baseUrl,
+        view: {
+          resource: "patches",
+          params: { view: { resource: "list" } },
+        },
       },
-      peer: undefined,
-      revision: undefined,
-      path: undefined,
     }}>
     <SquareButton
       active={view.resource === "patches" || view.resource === "patch"}>
@@ -100,7 +103,7 @@
       <span class="txt-bold">{openPatchCount}</span>
       {pluralize("patch", openPatchCount)}
     </SquareButton>
-  </ProjectLink>
+  </Link>
   <CloneButton {baseUrl} id={projectId} name={projectName} />
 
   <Link

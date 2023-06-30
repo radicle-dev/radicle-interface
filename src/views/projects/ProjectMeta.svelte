@@ -1,9 +1,12 @@
 <script lang="ts">
+  import type { BaseUrl } from "@httpd-client";
+
   import Clipboard from "@app/components/Clipboard.svelte";
   import dompurify from "dompurify";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
   import { formatNodeId, twemoji } from "@app/lib/utils";
 
+  export let baseUrl: BaseUrl;
   export let nodeId: string | undefined = undefined;
   export let projectDescription: string;
   export let projectId: string;
@@ -84,18 +87,20 @@
 <header class="content">
   <div class="title">
     <span class="truncate">
-      <ProjectLink
-        projectParams={{
-          view: { resource: "tree" },
-          path: "/",
-          peer: undefined,
-          route: undefined,
-          revision: undefined,
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: { resource: "tree" },
+            path: "/",
+          },
         }}>
         <span class="project-name">
           {projectName}
         </span>
-      </ProjectLink>
+      </Link>
     </span>
     {#if nodeId}
       <span class="node-id">

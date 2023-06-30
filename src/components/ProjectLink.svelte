@@ -8,7 +8,9 @@
     updateProjectRoute,
   } from "@app/views/projects/router";
 
-  export let projectParams: Partial<ProjectsParams>;
+  export let projectParams: Partial<
+    Omit<ProjectsParams, "id" | "route" | "hash">
+  >;
   export let title: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{ click: never }>();
