@@ -302,8 +302,7 @@
                       <Avatar inline nodeId={authorId} />
                       <ProjectLink
                         projectParams={{
-                          view: { resource: "commits" },
-                          revision: commit.id,
+                          view: { resource: "commits", commitId: commit.id },
                         }}>
                         <div class="commit-summary" use:twemoji>
                           <InlineMarkdown

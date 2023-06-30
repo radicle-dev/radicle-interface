@@ -35,7 +35,7 @@ export interface ProjectsParams {
   id: string;
   view:
     | { resource: "tree" }
-    | { resource: "commits" }
+    | { resource: "commits"; commitId: string }
     | { resource: "history" }
     | { resource: "issue"; params: { issue: string } }
     | {
@@ -96,6 +96,8 @@ export type ProjectLoadedView =
   | {
       resource: "commits";
       params: LoadedSourceBrowsingParams;
+      // FIXME: We need the ID so that `updateProjectRoute()` type checks.
+      commitId: string;
       commit: Commit;
     }
   | {
@@ -170,11 +172,7 @@ export async function loadProjectRoute(
 ): Promise<ProjectLoadedRoute | LoadError> {
   const api = new HttpdClient(params.baseUrl);
   try {
-    if (
-      params.view.resource === "tree" ||
-      params.view.resource === "history" ||
-      params.view.resource === "commits"
-    ) {
+    if (params.view.resource === "tree" || params.view.resource === "history") {
       const projectPromise = api.project.getById(params.id);
       const peersPromise = api.project.getAllRemotes(params.id);
       const branchesPromise = (async () => {
@@ -298,27 +296,64 @@ export async function loadProjectRoute(
             },
           },
         };
-      } else if (params.view.resource === "commits") {
-        const loadedCommit = await api.project.getCommitBySha(
-          params.id,
-          commit,
-        );
-
-        return {
-          resource: "projects",
-          params: {
-            ...params,
-            project,
-            view: {
-              resource: params.view.resource,
-              params: viewParams,
-              commit: loadedCommit,
-            },
-          },
-        };
       } else {
         return params.view;
       }
+    } else if (params.view.resource === "commits") {
+      const projectPromise = api.project.getById(params.id);
+      const peersPromise = api.project.getAllRemotes(params.id);
+      const branchesPromise = (async () => {
+        if (params.peer) {
+          try {
+            return (await api.project.getRemoteByPeer(params.id, params.peer))
+              .heads;
+          } catch {
+            return {};
+          }
+        }
+      })();
+
+      const [project, peers, maybeBranches] = await Promise.all([
+        projectPromise,
+        peersPromise,
+        branchesPromise,
+      ]);
+
+      let branches: Record<string, string>;
+      if (maybeBranches) {
+        branches = maybeBranches;
+      } else {
+        branches = project.head
+          ? { [project.defaultBranch]: project.head }
+          : {};
+      }
+
+      const tree = await api.project.getTree(params.id, params.view.commitId);
+      const viewParams = {
+        loadedBranches: branches,
+        loadedPeers: peers,
+        loadedTree: tree,
+        selectedCommit: params.view.commitId,
+      };
+      const loadedCommit = await api.project.getCommitBySha(
+        params.id,
+        params.view.commitId,
+      );
+
+      return {
+        resource: "projects",
+        params: {
+          ...params,
+          revision: params.view.commitId,
+          project,
+          view: {
+            resource: params.view.resource,
+            params: viewParams,
+            commitId: params.view.commitId,
+            commit: loadedCommit,
+          },
+        },
+      };
     } else if (params.view.resource === "issue") {
       try {
         const projectPromise = api.project.getById(params.id);
@@ -546,13 +581,13 @@ export function resolveProjectRoute(
     };
   } else if (content === "commits") {
     return {
-      view: { resource: "commits" },
+      view: { resource: "commits", commitId: segments[0] },
       baseUrl,
       id,
       peer,
       path: undefined,
       revision: undefined,
-      route: segments.join("/"),
+      route: undefined,
     };
   } else if (content === "issues") {
     const issueOrAction = segments.shift();

@@ -96,8 +96,7 @@
     <div class="message">
       <ProjectLink
         projectParams={{
-          view: { resource: "commits" },
-          revision: commit.id,
+          view: { resource: "commits", commitId: commit.id },
         }}>
         <div class="summary" use:twemoji>
           <InlineMarkdown content={commit.summary} />

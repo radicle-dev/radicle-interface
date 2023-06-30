@@ -253,7 +253,6 @@ export function routeToPath(route: Route): string {
     } else {
       if (
         (route.params.view.resource === "tree" ||
-          route.params.view.resource === "commits" ||
           route.params.view.resource === "history") &&
         route.params.revision
       ) {
@@ -274,7 +273,7 @@ export function routeToPath(route: Route): string {
       }
       return `${seed}/${route.params.id}${peer}`;
     } else if (route.params.view.resource === "commits") {
-      return `${seed}/${route.params.id}${peer}/commits${suffix}`;
+      return `${seed}/${route.params.id}${peer}/commits/${route.params.view.commitId}`;
     } else if (route.params.view.resource === "history") {
       return `${seed}/${route.params.id}${peer}/history${suffix}`;
     } else if (
