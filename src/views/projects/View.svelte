@@ -25,7 +25,6 @@
   export let hash: string | undefined = undefined;
   export let peer: string | undefined = undefined;
   export let revision: string | undefined = undefined;
-  export let search: string | undefined = undefined;
 </script>
 
 <style>
@@ -98,7 +97,7 @@
         {baseUrl}
         projectId={id}
         issueCounters={project.issues}
-        {search} />
+        search={view.params.search} />
     {:else}
       {unreachable(view.params.view.resource)}
     {/if}
@@ -113,7 +112,7 @@
       {baseUrl}
       projectId={id}
       patchCounters={project.patches}
-      {search} />
+      search={view.params.search} />
   {:else if view.resource === "patch"}
     <Patch
       patch={view.params.loadedPatch}
@@ -122,7 +121,7 @@
       projectDefaultBranch={project.defaultBranch}
       projectHead={project.head}
       revision={view.params.revision}
-      {search} />
+      search={view.params.search} />
   {:else}
     {unreachable(view)}
   {/if}

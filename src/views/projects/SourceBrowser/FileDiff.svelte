@@ -175,7 +175,6 @@
           view: { resource: "tree" },
           path: file.path,
           revision,
-          search: undefined,
         }}>
         <Icon name="browse" />
       </ProjectLink>

@@ -264,9 +264,6 @@ export function routeToPath(route: Route): string {
       }
     }
 
-    if (route.params.search) {
-      suffix += `?${route.params.search}`;
-    }
     if (route.params.hash) {
       suffix += `#${route.params.hash}`;
     }
@@ -286,12 +283,21 @@ export function routeToPath(route: Route): string {
     ) {
       return `${seed}/${route.params.id}${peer}/issues/new${suffix}`;
     } else if (route.params.view.resource === "issues") {
+      if (route.params.view.params.search) {
+        suffix += `?${route.params.view.params.search}`;
+      }
       return `${seed}/${route.params.id}${peer}/issues${suffix}`;
     } else if (route.params.view.resource === "issue") {
       return `${seed}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
     } else if (route.params.view.resource === "patches") {
+      if (route.params.view.params.search) {
+        suffix += `?${route.params.view.params.search}`;
+      }
       return `${seed}/${route.params.id}${peer}/patches${suffix}`;
     } else if (route.params.view.resource === "patch") {
+      if (route.params.view.params.search) {
+        suffix += `?${route.params.view.params.search}`;
+      }
       if (route.params.view.params.revision) {
         return `${seed}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
       }

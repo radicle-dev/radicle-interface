@@ -62,7 +62,6 @@ export interface ProjectsParams {
   peer?: string;
   revision?: string;
   route?: string;
-  search?: string;
 }
 
 export interface ProjectLoadedParams {
@@ -471,7 +470,6 @@ export function createProjectRoute(
     params: {
       ...activeRoute.params,
       hash: undefined,
-      search: undefined,
       ...projectRouteParams,
     },
   };
@@ -533,7 +531,6 @@ export function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
-      search: undefined,
       hash: hash?.substring(1),
       route: segments.join("/"),
     };
@@ -545,7 +542,6 @@ export function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
-      search: undefined,
       route: segments.join("/"),
     };
   } else if (content === "commits") {
@@ -556,7 +552,6 @@ export function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
-      search: undefined,
       route: segments.join("/"),
     };
   } else if (content === "issues") {
@@ -573,7 +568,6 @@ export function resolveProjectRoute(
         baseUrl,
         id,
         peer,
-        search: sanitizeQueryString(url.search),
         path: undefined,
         revision: undefined,
       };
@@ -585,7 +579,6 @@ export function resolveProjectRoute(
         peer,
         path: undefined,
         revision: undefined,
-        search: undefined,
       };
     } else {
       return {
@@ -599,7 +592,6 @@ export function resolveProjectRoute(
         baseUrl,
         id,
         peer,
-        search: sanitizeQueryString(url.search),
         path: undefined,
         revision: undefined,
       };
@@ -618,7 +610,6 @@ export function resolveProjectRoute(
         peer,
         path: undefined,
         revision: undefined,
-        search: sanitizeQueryString(url.search),
       };
     } else {
       return {
@@ -632,7 +623,6 @@ export function resolveProjectRoute(
         baseUrl,
         id,
         peer,
-        search: sanitizeQueryString(url.search),
         path: undefined,
         revision: undefined,
       };

@@ -98,7 +98,6 @@
         projectParams={{
           view: { resource: "commits" },
           revision: commit.id,
-          search: undefined,
         }}>
         <div class="summary" use:twemoji>
           <InlineMarkdown content={commit.summary} />

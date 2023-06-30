@@ -56,7 +56,6 @@
             peer: undefined,
             baseUrl,
             hash: undefined,
-            search: undefined,
           },
         });
       } else {

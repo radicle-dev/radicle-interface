@@ -338,7 +338,14 @@
           {#if !option.disabled}
             <ProjectLink
               projectParams={{
-                search: `tab=${option.value}`,
+                view: {
+                  resource: "patch",
+                  params: {
+                    patch: patch.id,
+                    revision,
+                    search: `tab=${option.value}`,
+                  },
+                },
               }}>
               <SquareButton
                 size="small"
@@ -361,7 +368,13 @@
         {#if diff}
           <ProjectLink
             projectParams={{
-              search: `diff=${diff}`,
+              view: {
+                resource: "patch",
+                params: {
+                  patch: patch.id,
+                  search: `diff=${diff}`,
+                },
+              },
             }}>
             <SquareButton size="small" active={true}>
               Diff {diff.substr(0, 6)}..{diff.split("..")[1].substr(0, 6)}
@@ -388,9 +401,12 @@
                   projectParams={{
                     view: {
                       resource: "patch",
-                      params: { patch: patch.id, revision: item.id },
+                      params: {
+                        patch: patch.id,
+                        revision: item.id,
+                        search: `tab=${currentTab}`,
+                      },
                     },
-                    search: `tab=${currentTab}`,
                   }}>
                   <DropdownItem
                     selected={item.id === currentRevision.id}

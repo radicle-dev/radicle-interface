@@ -54,7 +54,6 @@
           view: { resource: "tree" },
           path: file.newPath,
           revision,
-          search: undefined,
         }}>
         <Icon name="browse" />
       </ProjectLink>

@@ -61,7 +61,6 @@
         resource: "history",
       },
       revision,
-      search: undefined,
     }}>
     <SquareButton
       active={view.resource === "history" || view.resource === "commits"}>

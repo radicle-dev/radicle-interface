@@ -132,9 +132,6 @@
                 view: { resource: "tree" },
                 id: project.id,
                 baseUrl,
-                revision: undefined,
-                hash: undefined,
-                search: undefined,
               },
             }}>
             <ProjectCard

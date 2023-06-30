@@ -68,7 +68,6 @@
         params: { view: { resource: "list" } },
       },
       peer: undefined,
-      search: undefined,
       revision: undefined,
       path: undefined,
     }}>
@@ -90,7 +89,6 @@
         params: { view: { resource: "list" } },
       },
       peer: undefined,
-      search: undefined,
       revision: undefined,
       path: undefined,
     }}>

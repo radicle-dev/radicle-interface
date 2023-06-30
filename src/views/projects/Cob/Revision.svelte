@@ -212,7 +212,13 @@
             previousRevOid,
           )}..{utils.formatObjectId(revisionOid)}"
           projectParams={{
-            search: `diff=${previousRevOid}..${revisionOid}`,
+            view: {
+              resource: "patch",
+              params: {
+                patch: patchId,
+                search: `diff=${previousRevOid}..${revisionOid}`,
+              },
+            },
           }}>
           <Icon name="diff" />
         </ProjectLink>
@@ -230,7 +236,13 @@
               <ProjectLink
                 title="{item}..{revisionOid}"
                 projectParams={{
-                  search: `diff=${item}..${revisionOid}`,
+                  view: {
+                    resource: "patch",
+                    params: {
+                      patch: patchId,
+                      search: `diff=${item}..${revisionOid}`,
+                    },
+                  },
                 }}>
                 {#if item === projectHead}
                   <DropdownItem selected={false} size="small">
@@ -292,7 +304,6 @@
                         projectParams={{
                           view: { resource: "commits" },
                           revision: commit.id,
-                          search: undefined,
                         }}>
                         <div class="commit-summary" use:twemoji>
                           <InlineMarkdown

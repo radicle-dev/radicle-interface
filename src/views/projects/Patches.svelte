@@ -122,7 +122,13 @@
         {:else}
           <ProjectLink
             projectParams={{
-              search: `state=${option.value}`,
+              view: {
+                resource: "patches",
+                params: {
+                  view: { resource: "list" },
+                  search: `state=${option.value}`,
+                },
+              },
             }}>
             <SquareButton
               clickable={option.disabled}
