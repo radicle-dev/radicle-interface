@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  import type { Comment, Review, Revision, Merge } from "@httpd-client";
+  import type { Comment, Review, Merge } from "@httpd-client";
 
   interface Thread {
     root: Comment;
@@ -9,12 +9,6 @@
   interface TimelineReview {
     inner: [string, Review];
     type: "review";
-    timestamp: number;
-  }
-
-  interface TimelineRevision {
-    inner: Revision;
-    type: "revision";
     timestamp: number;
   }
 
@@ -30,11 +24,7 @@
     timestamp: number;
   }
 
-  export type Timeline =
-    | TimelineMerge
-    | TimelineReview
-    | TimelineRevision
-    | TimelineThread;
+  export type Timeline = TimelineMerge | TimelineReview | TimelineThread;
 </script>
 
 <script lang="ts">
@@ -165,6 +155,7 @@
         revisionBase: string;
         revisionOid: string;
         revisionAuthor: { id: string; alias?: string | undefined };
+        revisionDescription: string;
       },
       Timeline[],
     ]
@@ -175,6 +166,7 @@
       revisionBase: rev.base,
       revisionOid: rev.oid,
       revisionAuthor: rev.author,
+      revisionDescription: rev.description,
     },
     [
       ...rev.reviews.map<TimelineReview>(review => ({
@@ -201,11 +193,6 @@
               .sort((a, b) => a.timestamp - b.timestamp),
           },
         })),
-      {
-        type: "revision",
-        timestamp: rev.timestamp,
-        inner: rev,
-      } as TimelineRevision,
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
 </script>

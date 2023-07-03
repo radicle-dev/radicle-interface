@@ -26,7 +26,7 @@
   .card {
     display: flex;
     flex-direction: column;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
     background-color: inherit;
   }
   .card-header {
@@ -38,7 +38,7 @@
   }
   .card-body {
     font-size: var(--font-size-small);
-    padding: 0 1rem 0.5rem 1rem;
+    padding: 0 1rem 0.7rem 1rem;
   }
   .actions {
     display: flex;

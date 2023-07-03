@@ -33,6 +33,7 @@
   export let revisionOid: string;
   export let revisionTimestamp: number;
   export let revisionAuthor: { id: string; alias?: string | undefined };
+  export let revisionDescription: string;
   export let timelines: Timeline[];
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
@@ -80,38 +81,29 @@
 
 <style>
   .action {
-    padding: 1rem;
-    background-color: var(--color-foreground-1);
-    border-radius: var(--border-radius);
-  }
-  .action-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    border-radius: var(--border-radius-small);
   }
   .merge {
-    color: var(--color-primary-6);
     background-color: var(--color-primary-3);
-  }
-  .review {
-    background-color: var(--color-foreground-1);
-    border-radius: var(--border-radius);
-    margin-left: 1rem;
+    color: var(--color-primary-6);
   }
   .positive-review {
     color: var(--color-positive-6);
     background-color: var(--color-positive-3);
-    border-radius: var(--border-radius);
   }
   .negative-review {
     color: var(--color-negative-6);
     background-color: var(--color-negative-3);
-    border-radius: var(--border-radius);
   }
   .revision {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .revision-box {
     border: 1px solid var(--color-foreground-3);
     border-radius: var(--border-radius-small);
-    margin-bottom: 1rem;
   }
   .revision-header {
     height: 3rem;
@@ -131,18 +123,13 @@
     display: flex;
     align-items: center;
   }
-  .revision-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0 1.5rem;
-    margin-bottom: 1rem;
-    border-radius: var(--border-radius-small);
-  }
   .expand-button {
     margin-right: 0.5rem;
     user-select: none;
     cursor: pointer;
+  }
+  .revision-description {
+    margin-bottom: 1rem;
   }
   .commits {
     margin-top: 0.5rem;
@@ -183,154 +170,146 @@
 </style>
 
 <div class="revision">
-  <div class="revision-header">
-    <div class="revision-name">
-      <div class="expand-button">
-        <Icon
-          name={expanded ? "chevron-down" : "chevron-right"}
-          on:click={() => (expanded = !expanded)} />
+  <div class="revision-box">
+    <div class="revision-header">
+      <div class="revision-name">
+        <div class="expand-button">
+          <Icon
+            name={expanded ? "chevron-down" : "chevron-right"}
+            on:click={() => (expanded = !expanded)} />
+        </div>
+        <span>
+          <span style:color="var(--color-foreground-6)">Revision</span>
+          {utils.formatObjectId(revisionId)}
+        </span>
+        <Clipboard text={revisionId} small />
       </div>
-      <span>
-        <span style:color="var(--color-foreground-6)">Revision</span>
-        {utils.formatObjectId(revisionId)}
-      </span>
-      <Clipboard text={revisionId} small />
+      <div class="txt-small" />
+      <div class="revision-data">
+        <span class="layout-desktop txt-small">
+          {utils.formatTimestamp(revisionTimestamp)}
+        </span>
+        {#if response?.diff.stats}
+          {@const { insertions, deletions } = response.diff.stats}
+          <DiffStatBadge {insertions} {deletions} />
+        {/if}
+        {#if previousRevOid}
+          <ProjectLink
+            title="Compare {utils.formatObjectId(
+              previousRevOid,
+            )}..{utils.formatObjectId(revisionOid)}"
+            projectParams={{
+              search: `diff=${previousRevOid}..${revisionOid}`,
+            }}>
+            <Icon name="diff" />
+          </ProjectLink>
+        {/if}
+        <Floating>
+          <svelte:fragment slot="toggle">
+            <Icon name="ellipsis" />
+          </svelte:fragment>
+          <svelte:fragment slot="modal">
+            <Dropdown
+              items={previousRevOid && previousRevId
+                ? [projectHead, previousRevOid]
+                : [projectHead]}>
+              <svelte:fragment slot="item" let:item>
+                <ProjectLink
+                  title="{item}..{revisionOid}"
+                  projectParams={{
+                    search: `diff=${item}..${revisionOid}`,
+                  }}>
+                  {#if item === projectHead}
+                    <DropdownItem selected={false} size="small">
+                      Compare to {projectDefaultBranch} ({utils.formatObjectId(
+                        projectHead,
+                      )})
+                    </DropdownItem>
+                  {:else if previousRevId}
+                    <DropdownItem selected={false} size="small">
+                      Compare to previous revision ({utils.formatObjectId(
+                        previousRevId,
+                      )})
+                    </DropdownItem>
+                  {/if}
+                </ProjectLink>
+              </svelte:fragment>
+            </Dropdown>
+          </svelte:fragment>
+        </Floating>
+      </div>
     </div>
-    <div class="txt-small" />
-    <div class="revision-data">
-      <span class="layout-desktop txt-small">
-        {utils.formatTimestamp(revisionTimestamp)}
-      </span>
-      {#if response?.diff.stats}
-        {@const { insertions, deletions } = response.diff.stats}
-        <DiffStatBadge {insertions} {deletions} />
-      {/if}
-      {#if previousRevOid}
-        <ProjectLink
-          title="Compare {utils.formatObjectId(
-            previousRevOid,
-          )}..{utils.formatObjectId(revisionOid)}"
-          projectParams={{
-            view: {
-              resource: "patch",
-              params: {
-                patch: patchId,
-                search: `diff=${previousRevOid}..${revisionOid}`,
-              },
-            },
-          }}>
-          <Icon name="diff" />
-        </ProjectLink>
-      {/if}
-      <Floating>
-        <svelte:fragment slot="toggle">
-          <Icon name="ellipsis" />
-        </svelte:fragment>
-        <svelte:fragment slot="modal">
-          <Dropdown
-            items={previousRevOid && previousRevId
-              ? [projectHead, previousRevOid]
-              : [projectHead]}>
-            <svelte:fragment slot="item" let:item>
-              <ProjectLink
-                title="{item}..{revisionOid}"
-                projectParams={{
-                  view: {
-                    resource: "patch",
-                    params: {
-                      patch: patchId,
-                      search: `diff=${item}..${revisionOid}`,
-                    },
-                  },
-                }}>
-                {#if item === projectHead}
-                  <DropdownItem selected={false} size="small">
-                    Compare to {projectDefaultBranch} ({utils.formatObjectId(
-                      projectHead,
-                    )})
-                  </DropdownItem>
-                {:else if previousRevId}
-                  <DropdownItem selected={false} size="small">
-                    Compare to previous revision ({utils.formatObjectId(
-                      previousRevId,
-                    )})
-                  </DropdownItem>
-                {/if}
-              </ProjectLink>
-            </svelte:fragment>
-          </Dropdown>
-        </svelte:fragment>
-      </Floating>
-    </div>
+    {#if expanded}
+      {@const caption =
+        patchId === revisionId
+          ? "opened this patch"
+          : `updated to ${utils.formatObjectId(revisionId)}`}
+      <div style:margin="0 1rem 1rem 2.5rem">
+        {#if revisionDescription && !first}
+          <div class="revision-description txt-small">
+            <Markdown
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+              content={revisionDescription} />
+          </div>
+        {/if}
+        <div class="txt-tiny">
+          <Authorship {authorId} {authorAlias} timestamp={revisionTimestamp}>
+            {caption}
+          </Authorship>
+          {#if response?.commits}
+            <div class="commits txt-tiny">
+              {#each response.commits as commit, i}
+                <div class="commit-event">
+                  <span>
+                    <span class="commit-pointer">╰─</span>
+                    <span class="commit-separator">
+                      {i === 0 ? "╎" : "│"}
+                    </span>
+                    <Avatar inline nodeId={authorId} />
+                    <ProjectLink
+                      projectParams={{
+                        view: { resource: "commits" },
+                        revision: commit.id,
+                        search: undefined,
+                      }}>
+                      <div class="commit-summary" use:twemoji>
+                        <InlineMarkdown
+                          content={commit.summary}
+                          fontSize="tiny" />
+                      </div>
+                    </ProjectLink>
+                  </span>
+                  <span>
+                    {utils.formatCommit(commit.id)}
+                  </span>
+                </div>
+              {/each}
+            </div>
+          {/if}
+        </div>
+        {#if error}
+          <div class="txt-monospace">
+            <ErrorMessage
+              message="Failed to load diff for this revision."
+              stackTrace={error.stack.toString()} />
+          </div>
+        {/if}
+      </div>
+    {/if}
   </div>
   {#if expanded}
-    <div class="revision-body">
+    {#if timelines.length > 0}
       {#each timelines as element}
-        {#if element.type === "thread"}
-          <div class="review">
+        <div style:margin-left="1.5rem">
+          {#if element.type === "thread"}
             <Thread
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               thread={element.inner}
               on:reply />
-          </div>
-        {:else if element.type === "revision"}
-          {@const caption =
-            patchId === element.inner.id
-              ? "opened this patch"
-              : `updated to ${utils.formatObjectId(element.inner.id)}`}
-          {#if element.inner.description && !first}
-            <div class="txt-small">
-              <Markdown
-                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-                content={element.inner.description} />
-            </div>
-          {/if}
-          <div class="action txt-tiny">
-            <Authorship
-              authorId={revisionAuthor.id}
-              authorAlias={revisionAuthor.alias}
-              timestamp={element.timestamp}>
-              {caption}
-            </Authorship>
-            {#if response?.commits}
-              <div class="commits txt-tiny">
-                {#each response.commits.reverse() as commit, i}
-                  <div class="commit-event">
-                    <span>
-                      <span class="commit-pointer">╰─</span>
-                      <span class="commit-separator">
-                        {i === 0 ? "╎" : "│"}
-                      </span>
-                      <Avatar inline nodeId={revisionAuthor.id} />
-                      <ProjectLink
-                        projectParams={{
-                          view: { resource: "commits", commitId: commit.id },
-                        }}>
-                        <div class="commit-summary" use:twemoji>
-                          <InlineMarkdown
-                            content={commit.summary}
-                            fontSize="tiny" />
-                        </div>
-                      </ProjectLink>
-                    </span>
-                    <span>
-                      {utils.formatCommit(commit.id)}
-                    </span>
-                  </div>
-                {/each}
-              </div>
-            {/if}
-          </div>
-          {#if error}
-            <div class="txt-monospace">
-              <ErrorMessage
-                message="Failed to load diff for this revision."
-                stackTrace={error.stack.toString()} />
-            </div>
-          {/if}
-        {:else if element.type === "merge"}
-          <div class="action merge layout-desktop txt-tiny">
-            <div class="action-content">
+          {:else if element.type === "merge"}
+            <div
+              class="action merge layout-desktop txt-tiny"
+              style:padding="1rem">
               <Authorship
                 authorId={element.inner.author.id}
                 authorAlias={element.inner.author.alias}
@@ -340,9 +319,7 @@
                 {utils.formatCommit(element.inner.commit)}
               </Authorship>
             </div>
-          </div>
-          <div class="action merge layout-mobile txt-tiny">
-            <div class="action-content">
+            <div class="action merge layout-mobile txt-tiny">
               <Authorship
                 authorId={element.inner.author.id}
                 authorAlias={element.inner.author.alias}
@@ -351,29 +328,31 @@
                 {utils.formatCommit(element.inner.commit)}
               </Authorship>
             </div>
-          </div>
-        {:else if element.type === "review"}
-          {@const [author, review] = element.inner}
-          {#if review.comment}
-            <div
-              class="review"
-              class:positive-review={review.verdict === "accept"}
-              class:negative-review={review.verdict === "reject"}>
-              <CommentComponent
-                caption={formatVerdict(review.verdict)}
-                authorId={author}
-                authorAlias={review.author.alias}
-                authorAliasColor={aliasColorForVerdict(review.verdict)}
-                timestamp={review.timestamp}
-                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-                body={review.comment} />
-            </div>
-          {:else}
-            <div
-              class="action layout-desktop txt-tiny"
-              class:positive-review={review.verdict === "accept"}
-              class:negative-review={review.verdict === "reject"}>
-              <div class="action-content">
+          {:else if element.type === "review"}
+            {@const [author, review] = element.inner}
+            {#if review.comment}
+              <div
+                class="action"
+                class:positive-review={review.verdict === "accept"}
+                class:negative-review={review.verdict === "reject"}>
+                <CommentComponent
+                  caption={formatVerdict(review.verdict)}
+                  authorId={author}
+                  authorAlias={review.author.alias}
+                  authorAliasColor={aliasColorForVerdict(review.verdict)}
+                  timestamp={review.timestamp}
+                  rawPath={utils.getRawBasePath(
+                    projectId,
+                    baseUrl,
+                    projectHead,
+                  )}
+                  body={review.comment} />
+              </div>
+            {:else}
+              <div
+                class="action layout-desktop txt-tiny"
+                class:positive-review={review.verdict === "accept"}
+                class:negative-review={review.verdict === "reject"}>
                 <Authorship
                   authorId={author}
                   authorAlias={review.author.alias}
@@ -382,12 +361,10 @@
                   {formatVerdict(review.verdict)}
                 </Authorship>
               </div>
-            </div>
-            <div
-              class="layout-mobile txt-tiny"
-              class:positive-review={review.verdict === "accept"}
-              class:negative-review={review.verdict === "reject"}>
-              <div class="action-content">
+              <div
+                class="action layout-mobile txt-tiny"
+                class:positive-review={review.verdict === "accept"}
+                class:negative-review={review.verdict === "reject"}>
                 <Authorship
                   authorId={author}
                   authorAlias={review.author.alias}
@@ -395,10 +372,10 @@
                   {formatVerdict(review.verdict)}
                 </Authorship>
               </div>
-            </div>
+            {/if}
           {/if}
-        {/if}
+        </div>
       {/each}
-    </div>
+    {/if}
   {/if}
 </div>

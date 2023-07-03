@@ -57,10 +57,10 @@
   }
   .comment {
     background-color: var(--color-foreground-1);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
   }
   .reply {
-    margin-left: 3rem;
+    margin-left: 1.5rem;
   }
   .actions {
     display: flex;
@@ -89,6 +89,7 @@
         id={reply.id}
         authorId={reply.author.id}
         authorAlias={reply.author.alias}
+        caption="replied"
         timestamp={reply.timestamp}
         body={reply.body} />
     </div>
