@@ -8,7 +8,7 @@ test("navigate listing", async ({ page }) => {
   await page.locator('role=link[name="1 merged"]').click();
   await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
   await expect(
-    page.locator(".comments").filter({ hasText: "2" }),
+    page.locator(".comments").filter({ hasText: "5" }),
   ).toBeVisible();
 });
 
@@ -52,7 +52,7 @@ test("use revision selector", async ({ page }) => {
   ).toHaveText("Add more text");
 
   // Switching to the initial revision
-  await page.getByText("Revision 5140fb2").click();
+  await page.getByText("Revision 2592b1e").click();
   await expect(page.locator(".dropdown")).toBeVisible();
   await page.getByRole("link", { name: "Revision 0f3697f" }).click();
   await expect(page.locator(".dropdown")).toBeHidden();

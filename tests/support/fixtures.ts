@@ -430,14 +430,40 @@ export async function createCobsFixture(peer: RadiclePeer) {
     createOptions(projectFolder, 2),
   );
   await peer.rad(
-    ["review", patchOne, "-m", "LGTM", "--accept"],
+    [
+      "comment",
+      patchOne,
+      "--message",
+      "Yeah no problem!",
+      "--reply-to",
+      commentPatchOne,
+    ],
     createOptions(projectFolder, 3),
+  );
+  const { stdout: commentTwo } = await peer.rad(
+    ["comment", patchOne, "--message", "Looking good so far"],
+    createOptions(projectFolder, 4),
+  );
+  await peer.rad(
+    [
+      "comment",
+      patchOne,
+      "--message",
+      "Thanks again!",
+      "--reply-to",
+      commentTwo,
+    ],
+    createOptions(projectFolder, 5),
+  );
+  await peer.rad(
+    ["review", patchOne, "-m", "LGTM", "--accept"],
+    createOptions(projectFolder, 6),
   );
   await patch.merge(
     peer,
     defaultBranch,
     "feature/add-readme",
-    createOptions(projectFolder, 4),
+    createOptions(projectFolder, 7),
   );
 
   const patchTwo = await patch.create(
@@ -482,8 +508,20 @@ export async function createCobsFixture(peer: RadiclePeer) {
   await peer.git(["add", "."], { cwd: projectFolder });
   await peer.git(["commit", "-m", "Add more text"], { cwd: projectFolder });
   await peer.git(
-    ["push", "rad", "feature/better-subtitle"],
+    [
+      "push",
+      "-o",
+      "patch.message=Most of the missing README text was caused by the git-daemon not having a writers block. It seems like using an RNG was not a good enough solution.",
+      "-o",
+      "patch.message=After this change, the README seem to be written correctly",
+      "rad",
+      "feature/better-subtitle",
+    ],
     createOptions(projectFolder, 3),
+  );
+  await peer.rad(
+    ["review", patchThree, "-m", "No this doesn't look better", "--reject"],
+    createOptions(projectFolder, 2),
   );
 
   const patchFour = await patch.create(
