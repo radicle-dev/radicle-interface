@@ -14,7 +14,8 @@ import {
   startPalmHttpd,
 } from "@tests/support/fixtures.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
-import { heartwoodShortSha, tmpDir } from "./support";
+import { heartwoodShortSha, tmpDir } from "@tests/support/support.js";
+import { killAllProcesses } from "@tests/support/process.js";
 
 const workspacePaths = [Path.join(tmpDir, "peers"), Path.join(tmpDir, "repos")];
 
@@ -64,6 +65,8 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
   } else {
     await startPalmHttpd();
   }
+
+  return () => killAllProcesses();
 }
 
 // Assert that the `rad` CLI is installed and has the correct version.
