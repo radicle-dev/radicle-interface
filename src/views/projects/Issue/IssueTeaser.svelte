@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Issue } from "@httpd-client";
+  import type { BaseUrl, Issue } from "@httpd-client";
 
   import { formatObjectId, formatTimestamp } from "@app/lib/utils";
 
@@ -7,9 +7,11 @@
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
+  export let baseUrl: BaseUrl;
   export let issue: Issue;
+  export let projectId: string;
 
   $: commentCount = issue.discussion.reduce((acc, _curr, index) => {
     if (index !== 0) {
@@ -101,17 +103,22 @@
   </div>
   <div>
     <div class="summary">
-      <ProjectLink
-        projectParams={{
-          view: {
-            resource: "issue",
-            params: { issue: issue.id },
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: {
+              resource: "issue",
+              params: { issue: issue.id },
+            },
           },
         }}>
         <span class="issue-title">
           <InlineMarkdown content={issue.title} />
         </span>
-      </ProjectLink>
+      </Link>
       <span class="tags">
         {#each issue.tags.slice(0, 4) as tag}
           <Badge style="max-width:7rem" variant="secondary">

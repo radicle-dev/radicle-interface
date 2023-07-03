@@ -16,9 +16,9 @@
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let search: string | undefined = undefined;
@@ -118,13 +118,18 @@
       <div style="display: flex; gap: 0.5rem;">
         {#each options as option}
           {#if !option.disabled}
-            <ProjectLink
-              projectParams={{
-                view: {
-                  resource: "issues",
-                  params: {
-                    view: { resource: "list" },
-                    search: `state=${option.value}`,
+            <Link
+              route={{
+                resource: "projects",
+                params: {
+                  id: projectId,
+                  baseUrl,
+                  view: {
+                    resource: "issues",
+                    params: {
+                      view: { resource: "list" },
+                      search: `state=${option.value}`,
+                    },
                   },
                 },
               }}>
@@ -134,7 +139,7 @@
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>
-            </ProjectLink>
+            </Link>
           {:else}
             <SquareButton
               clickable={option.disabled}
@@ -147,21 +152,26 @@
       </div>
     </div>
     {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
-      <ProjectLink
-        projectParams={{
-          view: {
-            resource: "issues",
-            params: { view: { resource: "new" } },
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: {
+              resource: "issues",
+              params: { view: { resource: "new" } },
+            },
           },
         }}>
         <SquareButton>New issue</SquareButton>
-      </ProjectLink>
+      </Link>
     {/if}
   </div>
   <div class="issues-list">
     {#each issues as issue}
       <div class="teaser">
-        <IssueTeaser {issue} />
+        <IssueTeaser {projectId} {baseUrl} {issue} />
       </div>
     {:else}
       {#if error}

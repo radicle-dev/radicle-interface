@@ -85,6 +85,7 @@
     {:else if view.resource === "history"}
       <History
         projectId={id}
+        {peer}
         {baseUrl}
         totalCommitCount={view.totalCommitCount}
         commitHeaders={view.commitHeaders} />

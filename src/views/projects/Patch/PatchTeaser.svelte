@@ -10,7 +10,7 @@
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
@@ -126,17 +126,22 @@
   </div>
   <div>
     <div class="summary">
-      <ProjectLink
-        projectParams={{
-          view: {
-            resource: "patch",
-            params: { patch: patch.id },
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: {
+              resource: "patch",
+              params: { patch: patch.id },
+            },
           },
         }}>
         <span class="patch-title">
           <InlineMarkdown content={patch.title} />
         </span>
-      </ProjectLink>
+      </Link>
       <span class="tags">
         {#each patch.tags.slice(0, 4) as tag}
           <Badge style="max-width:7rem" variant="secondary">

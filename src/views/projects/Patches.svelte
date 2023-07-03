@@ -12,10 +12,10 @@
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let search: string | undefined = undefined;
@@ -120,13 +120,18 @@
             {option.title}
           </SquareButton>
         {:else}
-          <ProjectLink
-            projectParams={{
-              view: {
-                resource: "patches",
-                params: {
-                  view: { resource: "list" },
-                  search: `state=${option.value}`,
+          <Link
+            route={{
+              resource: "projects",
+              params: {
+                id: projectId,
+                baseUrl,
+                view: {
+                  resource: "patches",
+                  params: {
+                    view: { resource: "list" },
+                    search: `state=${option.value}`,
+                  },
                 },
               },
             }}>
@@ -136,7 +141,7 @@
               disabled={option.disabled}>
               {option.title}
             </SquareButton>
-          </ProjectLink>
+          </Link>
         {/if}
       {/each}
     </div>

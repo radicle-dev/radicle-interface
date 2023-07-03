@@ -10,9 +10,10 @@
   import Loading from "@app/components/Loading.svelte";
   import { COMMITS_PER_PAGE } from "./router";
 
-  export let projectId: string;
   export let baseUrl: BaseUrl;
   export let commitHeaders: CommitHeader[];
+  export let peer: string | undefined = undefined;
+  export let projectId: string;
   export let totalCommitCount: number;
 
   const api = new HttpdClient(baseUrl);
@@ -79,7 +80,7 @@
     <div class="group">
       {#each group.commits as commit (commit.id)}
         <div class="teaser-wrapper">
-          <CommitTeaser {commit} />
+          <CommitTeaser {peer} {projectId} {baseUrl} {commit} />
         </div>
       {/each}
     </div>

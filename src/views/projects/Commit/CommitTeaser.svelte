@@ -1,14 +1,17 @@
 <script lang="ts">
-  import type { CommitHeader } from "@httpd-client";
+  import type { BaseUrl, CommitHeader } from "@httpd-client";
 
   import { formatCommit, twemoji } from "@app/lib/utils";
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
+  export let baseUrl: BaseUrl;
   export let commit: CommitHeader;
+  export let peer: string | undefined = undefined;
+  export let projectId: string;
 
   let expandCommitMessage = false;
 </script>
@@ -94,14 +97,20 @@
 <div class="teaser">
   <div class="left">
     <div class="message">
-      <ProjectLink
-        projectParams={{
-          view: { resource: "commits", commitId: commit.id },
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            peer,
+            id: projectId,
+            baseUrl,
+            view: { resource: "commits", commitId: commit.id },
+          },
         }}>
         <div class="summary" use:twemoji>
           <InlineMarkdown content={commit.summary} />
         </div>
-      </ProjectLink>
+      </Link>
       {#if commit.description}
         <button
           class:expand-open={expandCommitMessage}
@@ -125,13 +134,18 @@
     <div
       class="browse"
       title="Browse the repository at this point in the history">
-      <ProjectLink
-        projectParams={{
-          view: { resource: "tree" },
-          revision: commit.id,
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            revision: commit.id,
+            view: { resource: "tree" },
+          },
         }}>
         <Icon name="browse" />
-      </ProjectLink>
+      </Link>
     </div>
   </div>
 </div>

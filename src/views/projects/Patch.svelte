@@ -46,9 +46,9 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
@@ -325,14 +325,19 @@
       <div style="display: flex; gap: 0.5rem;">
         {#each options as option}
           {#if !option.disabled}
-            <ProjectLink
-              projectParams={{
-                view: {
-                  resource: "patch",
-                  params: {
-                    patch: patch.id,
-                    revision,
-                    search: `tab=${option.value}`,
+            <Link
+              route={{
+                resource: "projects",
+                params: {
+                  id: projectId,
+                  baseUrl,
+                  view: {
+                    resource: "patch",
+                    params: {
+                      patch: patch.id,
+                      revision,
+                      search: `tab=${option.value}`,
+                    },
                   },
                 },
               }}>
@@ -343,7 +348,7 @@
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>
-            </ProjectLink>
+            </Link>
           {:else}
             <SquareButton
               size="small"
@@ -355,20 +360,25 @@
           {/if}
         {/each}
         {#if diff}
-          <ProjectLink
-            projectParams={{
-              view: {
-                resource: "patch",
-                params: {
-                  patch: patch.id,
-                  search: `diff=${diff}`,
+          <Link
+            route={{
+              resource: "projects",
+              params: {
+                id: projectId,
+                baseUrl,
+                view: {
+                  resource: "patch",
+                  params: {
+                    patch: patch.id,
+                    search: `diff=${diff}`,
+                  },
                 },
               },
             }}>
             <SquareButton size="small" active={true}>
               Diff {diff.substr(0, 6)}..{diff.split("..")[1].substr(0, 6)}
             </SquareButton>
-          </ProjectLink>
+          </Link>
         {/if}
       </div>
 
@@ -385,15 +395,21 @@
           <svelte:fragment slot="modal">
             <Dropdown items={patch.revisions}>
               <svelte:fragment slot="item" let:item>
-                <ProjectLink
-                  on:click={closeFocused}
-                  projectParams={{
-                    view: {
-                      resource: "patch",
-                      params: {
-                        patch: patch.id,
-                        revision: item.id,
-                        search: `tab=${currentTab}`,
+                <Link
+                  on:afterNavigate={closeFocused}
+                  route={{
+                    resource: "projects",
+                    params: {
+                      id: projectId,
+
+                      baseUrl,
+                      view: {
+                        resource: "patch",
+                        params: {
+                          patch: patch.id,
+                          revision: item.id,
+                          search: `tab=${currentTab}`,
+                        },
                       },
                     },
                   }}>
@@ -402,7 +418,7 @@
                     size="tiny">
                     Revision {utils.formatObjectId(item.id)}
                   </DropdownItem>
-                </ProjectLink>
+                </Link>
               </svelte:fragment>
             </Dropdown>
           </svelte:fragment>
@@ -448,7 +464,7 @@
       {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
         <div class="commit-list">
           {#each diff.commits as commit}
-            <CommitTeaser {commit} />
+            <CommitTeaser {projectId} {baseUrl} {commit} />
           {/each}
         </div>
       {:catch e}
