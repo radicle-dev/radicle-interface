@@ -164,6 +164,7 @@
         revisionTimestamp: number;
         revisionBase: string;
         revisionOid: string;
+        revisionAuthor: { id: string; alias?: string | undefined };
       },
       Timeline[],
     ]
@@ -173,6 +174,7 @@
       revisionTimestamp: rev.timestamp,
       revisionBase: rev.base,
       revisionOid: rev.oid,
+      revisionAuthor: rev.author,
     },
     [
       ...rev.reviews.map<TimelineReview>(review => ({
@@ -445,8 +447,6 @@
             first={index === 0}
             on:reply={createReply}
             patchId={patch.id}
-            authorId={patch.author.id}
-            authorAlias={patch.author.alias}
             expanded={index === patch.revisions.length - 1}
             previousRevId={previousRevision?.id}
             previousRevOid={previousRevision?.oid} />

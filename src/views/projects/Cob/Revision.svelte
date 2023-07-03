@@ -22,8 +22,6 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
   import Thread from "@app/components/Thread.svelte";
 
-  export let authorId: string;
-  export let authorAlias: string | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let expanded: boolean = true;
   export let patchId: string;
@@ -34,6 +32,7 @@
   export let revisionId: string;
   export let revisionOid: string;
   export let revisionTimestamp: number;
+  export let revisionAuthor: { id: string; alias?: string | undefined };
   export let timelines: Timeline[];
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
@@ -287,7 +286,10 @@
             </div>
           {/if}
           <div class="action txt-tiny">
-            <Authorship {authorId} {authorAlias} timestamp={element.timestamp}>
+            <Authorship
+              authorId={revisionAuthor.id}
+              authorAlias={revisionAuthor.alias}
+              timestamp={element.timestamp}>
               {caption}
             </Authorship>
             {#if response?.commits}
@@ -299,7 +301,7 @@
                       <span class="commit-separator">
                         {i === 0 ? "╎" : "│"}
                       </span>
-                      <Avatar inline nodeId={authorId} />
+                      <Avatar inline nodeId={revisionAuthor.id} />
                       <ProjectLink
                         projectParams={{
                           view: { resource: "commits", commitId: commit.id },
