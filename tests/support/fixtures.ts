@@ -303,6 +303,8 @@ export async function createSourceBrowsingFixture(
     { type: "refs-synced", remote: alice.nodeId, rid },
     2000,
   );
+  await alice.stopNode();
+  await bob.stopNode();
 }
 
 export async function createCobsFixture(peer: RadiclePeer) {

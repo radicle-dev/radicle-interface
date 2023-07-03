@@ -19,7 +19,9 @@ import { killAllProcesses } from "@tests/support/process.js";
 
 const workspacePaths = [Path.join(tmpDir, "peers"), Path.join(tmpDir, "repos")];
 
-export default async function globalSetup(_config: FullConfig): Promise<void> {
+export default async function globalSetup(
+  _config: FullConfig,
+): Promise<() => void> {
   try {
     await assertRadInstalled();
   } catch (error) {
@@ -45,7 +47,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
       dataDir: Path.resolve(Path.join(tmpDir, "peers")),
       outputLog: FsSync.createWriteStream(
         Path.join(tmpDir, "peerManager.log"),
-      ).setMaxListeners(20),
+      ).setMaxListeners(16),
     });
 
     const palm = await peerManager.startPeer({
@@ -62,6 +64,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
     console.log("Creating cobs fixture");
     await createCobsFixture(palm);
     console.log("Running tests");
+    await palm.stopNode();
   } else {
     await startPalmHttpd();
   }

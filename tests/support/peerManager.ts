@@ -115,6 +115,8 @@ export class RadiclePeer {
   #outputLog: Stream.Writable;
   #gitOptions?: Record<string, string>;
   #listenSocketAddr?: string;
+  #nodeProcess?: ExecaChildProcess;
+  #httpdProcess?: ExecaChildProcess;
 
   private constructor(props: {
     checkoutPath: string;
@@ -183,11 +185,23 @@ export class RadiclePeer {
   }
 
   public async startHttpd(port: number) {
-    void this.spawn("radicle-httpd", ["--listen", `0.0.0.0:${port}`]);
+    this.#httpdProcess = this.spawn("radicle-httpd", [
+      "--listen",
+      `0.0.0.0:${port}`,
+    ]);
 
     await waitOn({
       resources: [`tcp:127.0.0.1:${port}`],
       timeout: 7000,
+    });
+  }
+
+  public async stopHttpd(port: number) {
+    this.#httpdProcess?.kill("SIGTERM");
+
+    await waitOn({
+      resources: [`tcp:127.0.0.1:${port}`],
+      reverse: true,
     });
   }
 
@@ -213,7 +227,7 @@ export class RadiclePeer {
       args.push("--tracking-policy", params.trackingPolicy);
     }
 
-    void this.spawn("radicle-node", args);
+    this.#nodeProcess = this.spawn("radicle-node", args);
 
     await waitOn({
       resources: [`socket:${this.#socket}`],
@@ -237,6 +251,15 @@ export class RadiclePeer {
           });
       },
     );
+  }
+
+  public async stopNode() {
+    this.#nodeProcess?.kill("SIGTERM");
+
+    await waitOn({
+      resources: [`socket:${this.#socket}`],
+      reverse: true,
+    });
   }
 
   public async waitForRoutes(rid: string, ...nodes: string[]) {
