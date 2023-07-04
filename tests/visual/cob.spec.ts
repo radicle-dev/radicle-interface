@@ -97,3 +97,13 @@ test("patch page", async ({ page }) => {
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
+
+test("failed diff loading for a specific revision", async ({ page }) => {
+  await page.route(
+    "**/api/v1/projects/rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe/diff/38c225e2a0b47ba59def211f4e4825c31d9463ec/9898da6155467adad511f63bf0fb5aa4156b92ef",
+    route => route.fulfill({ status: 500 }),
+  );
+
+  await page.goto(`${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`);
+  await expect(page).toHaveScreenshot({ fullPage: true });
+});

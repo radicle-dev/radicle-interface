@@ -82,6 +82,7 @@
 <style>
   .action {
     border-radius: var(--border-radius-small);
+    min-height: 3rem;
   }
   .merge {
     background-color: var(--color-primary-3);
@@ -91,9 +92,15 @@
     color: var(--color-positive-6);
     background-color: var(--color-positive-3);
   }
+  .comment-review {
+    background-color: var(--color-foreground-1);
+  }
   .negative-review {
     color: var(--color-negative-6);
     background-color: var(--color-negative-3);
+  }
+  .diff-error {
+    margin: 1rem 1.5rem;
   }
   .revision {
     display: flex;
@@ -315,14 +322,16 @@
             </div>
           {/if}
         </div>
-        {#if error}
-          <div class="txt-monospace">
-            <ErrorMessage
-              message="Failed to load diff for this revision."
-              stackTrace={error.stack.toString()} />
-          </div>
-        {/if}
       </div>
+      {#if error}
+        <div
+          class="diff-error txt-monospace txt-small"
+          style:border-radius="var(--border-radius-small">
+          <ErrorMessage
+            message="Failed to load diff for this revision."
+            stackTrace={error.stack.toString()} />
+        </div>
+      {/if}
     {/if}
   </div>
   {#if expanded}
@@ -361,6 +370,7 @@
             {#if review.comment}
               <div
                 class="action"
+                class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
                 <CommentComponent
@@ -378,7 +388,8 @@
               </div>
             {:else}
               <div
-                class="action layout-desktop txt-tiny"
+                class="action layout-desktop-flex txt-tiny"
+                class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
                 <Authorship
@@ -390,7 +401,8 @@
                 </Authorship>
               </div>
               <div
-                class="action layout-mobile txt-tiny"
+                class="action layout-mobile-flex txt-tiny"
+                class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
                 <Authorship

@@ -7,14 +7,14 @@
 
 <style>
   .error {
-    padding: 1rem;
-    font-size: var(--font-size-regular);
-    font-family: var(--font-family-sans-serif);
-    color: var(--color-negative);
-    border-radius: var(--border-radius);
-    background-color: var(--color-negative-3);
-    display: flex;
     align-items: center;
+    background-color: var(--color-negative-3);
+    border-radius: inherit;
+    color: var(--color-negative);
+    display: flex;
+    font-family: var(--font-family-sans-serif);
+    font-size: inherit;
+    padding: 1rem;
     width: 100%;
   }
   .stack-trace {
