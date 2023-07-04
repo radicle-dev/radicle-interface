@@ -5,6 +5,7 @@
   import { push, routeToPath, useDefaultNavigation } from "@app/lib/router";
 
   export let route: Route;
+  export let title: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
     afterNavigate: never;
@@ -21,6 +22,6 @@
   }
 </script>
 
-<a on:click={navigateToRoute} href={routeToPath(route)}>
+<a on:click={navigateToRoute} href={routeToPath(route)} {title}>
   <slot />
 </a>

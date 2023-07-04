@@ -19,7 +19,7 @@
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -194,15 +194,26 @@
           <DiffStatBadge {insertions} {deletions} />
         {/if}
         {#if previousRevOid}
-          <ProjectLink
+          <Link
             title="Compare {utils.formatObjectId(
               previousRevOid,
             )}..{utils.formatObjectId(revisionOid)}"
-            projectParams={{
-              search: `diff=${previousRevOid}..${revisionOid}`,
+            route={{
+              resource: "projects",
+              params: {
+                id: projectId,
+                baseUrl,
+                view: {
+                  resource: "patch",
+                  params: {
+                    patch: patchId,
+                    search: `diff=${previousRevOid}..${revisionOid}`,
+                  },
+                },
+              },
             }}>
             <Icon name="diff" />
-          </ProjectLink>
+          </Link>
         {/if}
         <Floating>
           <svelte:fragment slot="toggle">
@@ -214,10 +225,21 @@
                 ? [projectHead, previousRevOid]
                 : [projectHead]}>
               <svelte:fragment slot="item" let:item>
-                <ProjectLink
+                <Link
                   title="{item}..{revisionOid}"
-                  projectParams={{
-                    search: `diff=${item}..${revisionOid}`,
+                  route={{
+                    resource: "projects",
+                    params: {
+                      id: projectId,
+                      baseUrl,
+                      view: {
+                        resource: "patch",
+                        params: {
+                          patch: patchId,
+                          search: `diff=${item}..${revisionOid}`,
+                        },
+                      },
+                    },
                   }}>
                   {#if item === projectHead}
                     <DropdownItem selected={false} size="small">
@@ -232,7 +254,7 @@
                       )})
                     </DropdownItem>
                   {/if}
-                </ProjectLink>
+                </Link>
               </svelte:fragment>
             </Dropdown>
           </svelte:fragment>
@@ -253,7 +275,10 @@
           </div>
         {/if}
         <div class="txt-tiny">
-          <Authorship {authorId} {authorAlias} timestamp={revisionTimestamp}>
+          <Authorship
+            authorId={revisionAuthor.id}
+            authorAlias={revisionAuthor.alias}
+            timestamp={revisionTimestamp}>
             {caption}
           </Authorship>
           {#if response?.commits}
@@ -265,19 +290,22 @@
                     <span class="commit-separator">
                       {i === 0 ? "╎" : "│"}
                     </span>
-                    <Avatar inline nodeId={authorId} />
-                    <ProjectLink
-                      projectParams={{
-                        view: { resource: "commits" },
-                        revision: commit.id,
-                        search: undefined,
+                    <Avatar inline nodeId={revisionAuthor.id} />
+                    <Link
+                      route={{
+                        resource: "projects",
+                        params: {
+                          id: projectId,
+                          baseUrl,
+                          view: { resource: "commits", commitId: commit.id },
+                        },
                       }}>
                       <div class="commit-summary" use:twemoji>
                         <InlineMarkdown
                           content={commit.summary}
                           fontSize="tiny" />
                       </div>
-                    </ProjectLink>
+                    </Link>
                   </span>
                   <span>
                     {utils.formatCommit(commit.id)}
