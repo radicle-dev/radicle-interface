@@ -83,6 +83,7 @@
   .action {
     border-radius: var(--border-radius-small);
     min-height: 3rem;
+    align-items: center;
   }
   .merge {
     background-color: var(--color-primary-3);
@@ -99,6 +100,10 @@
     color: var(--color-negative-6);
     background-color: var(--color-negative-3);
   }
+  .authorship-box {
+    padding: 0.5rem 1rem;
+  }
+
   .diff-error {
     margin: 1rem 1.5rem;
   }
@@ -392,25 +397,29 @@
                 class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
-                <Authorship
-                  authorId={author}
-                  authorAlias={review.author.alias}
-                  authorAliasColor={aliasColorForVerdict(review.verdict)}
-                  timestamp={element.timestamp}>
-                  {formatVerdict(review.verdict)}
-                </Authorship>
+                <div class="authorship-box">
+                  <Authorship
+                    authorId={author}
+                    authorAlias={review.author.alias}
+                    authorAliasColor={aliasColorForVerdict(review.verdict)}
+                    timestamp={element.timestamp}>
+                    {formatVerdict(review.verdict)}
+                  </Authorship>
+                </div>
               </div>
               <div
                 class="action layout-mobile-flex txt-tiny"
                 class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
-                <Authorship
-                  authorId={author}
-                  authorAlias={review.author.alias}
-                  authorAliasColor={aliasColorForVerdict(review.verdict)}>
-                  {formatVerdict(review.verdict)}
-                </Authorship>
+                <div class="authorship-box">
+                  <Authorship
+                    authorId={author}
+                    authorAlias={review.author.alias}
+                    authorAliasColor={aliasColorForVerdict(review.verdict)}>
+                    {formatVerdict(review.verdict)}
+                  </Authorship>
+                </div>
               </div>
             {/if}
           {/if}
