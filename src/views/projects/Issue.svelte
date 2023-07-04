@@ -32,7 +32,8 @@
   const rawPath = utils.getRawBasePath(projectId, baseUrl, projectHead);
   const api = new HttpdClient(baseUrl);
 
-  const action: "create" | "edit" | "view" =
+  let action: "edit" | "view";
+  $: action =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? "edit"
       : "view";
