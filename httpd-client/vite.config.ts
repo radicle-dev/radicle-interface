@@ -6,7 +6,7 @@ export default defineConfig({
     environment: "node",
     include: ["httpd-client/tests/*.test.ts"],
     reporters: "verbose",
-    globalSetup: "./tests/support/globalSetup",
+    globalSetup: "./httpd-client/tests/support/globalSetup",
   },
   resolve: {
     alias: {

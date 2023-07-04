@@ -6,15 +6,13 @@ import {
   removeWorkspace,
   tmpDir,
 } from "@tests/support/support.js";
+import { createPeerManager } from "@tests/support/peerManager";
 import {
-  createCobsFixture,
-  createMarkdownFixture,
   createSourceBrowsingFixture,
   gitOptions,
   startPalmHttpd,
-} from "@tests/support/fixtures.js";
-import { createPeerManager } from "@tests/support/peerManager.js";
-import { killAllProcesses } from "@tests/support/process.js";
+} from "@tests/support/fixtures";
+import { killAllProcesses } from "@tests/support/process";
 
 export default async function globalSetup(): Promise<() => void> {
   try {
@@ -35,9 +33,6 @@ export default async function globalSetup(): Promise<() => void> {
     }
     await removeWorkspace();
 
-    // Workaround for fixing MaxListenersExceededWarning.
-    // Since every prefixOutput stream adds stream listeners that don't autoClose.
-    // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
     const peerManager = await createPeerManager({
       dataDir: Path.resolve(Path.join(tmpDir, "peers")),
       outputLog: FsSync.createWriteStream(
@@ -54,10 +49,6 @@ export default async function globalSetup(): Promise<() => void> {
 
     console.log("Creating source-browsing fixture");
     await createSourceBrowsingFixture(peerManager, palm);
-    console.log("Creating markdown fixture");
-    await createMarkdownFixture(palm);
-    console.log("Creating cobs fixture");
-    await createCobsFixture(palm);
     console.log("Running tests");
     await palm.stopNode();
   } else {
