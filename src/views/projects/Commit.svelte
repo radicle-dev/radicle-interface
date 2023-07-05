@@ -18,8 +18,8 @@
   export let peer: string | undefined = undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let resource: LoadedSourceBrowsingView["resource"];
   export let revision: string | undefined;
+  export let view: LoadedSourceBrowsingView;
 
   const { commit: header } = commit;
 </script>
@@ -68,8 +68,8 @@
   {contributorCount}
   {peers}
   {peer}
-  {resource}
-  {revision} />
+  {revision}
+  {view} />
 
 <div class="commit">
   <div class="header">

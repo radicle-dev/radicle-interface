@@ -67,13 +67,13 @@
       contributorCount={view.params.loadedTree.stats.contributors}
       path={view.path}
       peers={view.params.loadedPeers}
-      resource={view.resource}
       tree={view.params.loadedTree}
       {baseUrl}
       {hash}
       {peer}
       {project}
-      {revision} />
+      {revision}
+      {view} />
   {:else if view.resource === "history"}
     <History
       branches={view.params.loadedBranches}
@@ -81,12 +81,12 @@
       commitHeaders={view.commitHeaders}
       contributorCount={view.params.loadedTree.stats.contributors}
       peers={view.params.loadedPeers}
-      resource={view.resource}
       totalCommitCount={view.totalCommitCount}
       {baseUrl}
       {peer}
       {project}
-      {revision} />
+      {revision}
+      {view} />
   {:else if view.resource === "commits"}
     <Commit
       branches={view.params.loadedBranches}
@@ -94,11 +94,11 @@
       commitCount={view.params.loadedTree.stats.commits}
       contributorCount={view.params.loadedTree.stats.contributors}
       peers={view.params.loadedPeers}
-      resource={view.resource}
       {baseUrl}
       {peer}
       {project}
-      {revision} />
+      {revision}
+      {view} />
   {:else if view.resource === "issues"}
     {#if view.params.view.resource === "new"}
       <NewIssue projectId={id} projectHead={project.head} {baseUrl} />

@@ -2,7 +2,6 @@
   import type { BaseUrl, Remote } from "@httpd-client";
   import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
   import { pluralize } from "@app/lib/pluralize";
 
   import BranchSelector from "@app/views/projects/BranchSelector.svelte";
@@ -18,7 +17,7 @@
   export let peer: string | undefined;
   export let peers: Remote[];
   export let projectId: string;
-  export let resource: LoadedSourceBrowsingView["resource"];
+  export let view: LoadedSourceBrowsingView;
   export let revision: string | undefined;
   export let commitId: string;
 
@@ -59,14 +58,17 @@
 
 <div class="header">
   {#if peers.length > 0}
-    <PeerSelector {peers} {peer} on:click={() => closeFocused()} />
+    <PeerSelector {baseUrl} {peers} {peer} {projectId} {view} />
   {/if}
 
   <BranchSelector
-    {branches}
     selectedCommitId={commitId}
+    {baseUrl}
+    {branches}
+    {peer}
+    {projectId}
     {selectedBranch}
-    on:click={() => closeFocused()} />
+    {view} />
 
   <Link
     route={{
@@ -74,14 +76,13 @@
       params: {
         id: projectId,
         baseUrl,
-        view: {
-          resource: "history",
-        },
         peer,
         revision,
+        view: { resource: "history" },
       },
     }}>
-    <SquareButton active={resource === "history" || resource === "commits"}>
+    <SquareButton
+      active={view.resource === "history" || view.resource === "commits"}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>

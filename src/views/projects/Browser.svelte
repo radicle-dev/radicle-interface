@@ -23,9 +23,9 @@
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let resource: LoadedSourceBrowsingView["resource"];
   export let revision: string | undefined;
   export let tree: Tree;
+  export let view: LoadedSourceBrowsingView;
 
   export let blobResult: BlobResult;
 
@@ -137,8 +137,8 @@
   {contributorCount}
   {peers}
   {peer}
-  {resource}
-  {revision} />
+  {revision}
+  {view} />
 
 <main>
   <!-- Mobile navigation -->

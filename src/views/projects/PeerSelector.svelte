@@ -1,6 +1,8 @@
-<script lang="ts" strictEvents>
-  import type { Remote } from "@httpd-client";
+<script lang="ts">
+  import type { BaseUrl, Remote } from "@httpd-client";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
+  import { closeFocused } from "@app/components/Floating.svelte";
   import { formatNodeId, truncateId } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
@@ -10,10 +12,13 @@
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
+  export let baseUrl: BaseUrl;
   export let peer: string | undefined = undefined;
   export let peers: Remote[];
+  export let projectId: string;
+  export let view: LoadedSourceBrowsingView;
 
   $: meta = peers.find(p => p.id === peer);
 
@@ -102,11 +107,17 @@
     <Dropdown items={peers}>
       <svelte:fragment slot="item" let:item>
         <div class="dropdown-item">
-          <ProjectLink
-            on:click
-            projectParams={{
-              peer: item.id,
-              revision: undefined,
+          <Link
+            on:afterNavigate={() => closeFocused()}
+            route={{
+              resource: "projects",
+              params: {
+                id: projectId,
+                baseUrl,
+                peer: item.id,
+                revision: undefined,
+                view,
+              },
             }}>
             <DropdownItem
               selected={item.id === peer}
@@ -133,7 +144,7 @@
                 <Badge variant="primary">delegate</Badge>
               {/if}
             </DropdownItem>
-          </ProjectLink>
+          </Link>
         </div>
       </svelte:fragment>
     </Dropdown>
