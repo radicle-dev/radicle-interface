@@ -429,7 +429,11 @@
       {#if diff}
         {#await api.project.getDiff(projectId, diff.split("..")[0], diff.split("..")[1]) then diff}
           <div style:margin-top="1rem">
-            <Changeset revision={currentRevision.oid} diff={diff.diff} />
+            <Changeset
+              {projectId}
+              {baseUrl}
+              revision={currentRevision.oid}
+              diff={diff.diff} />
           </div>
         {:catch e}
           <ErrorMessage
@@ -473,7 +477,11 @@
     {:else if currentTab === "files"}
       {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
         <div style:margin-top="1rem">
-          <Changeset revision={currentRevision.oid} diff={diff.diff} />
+          <Changeset
+            {projectId}
+            {baseUrl}
+            revision={currentRevision.oid}
+            diff={diff.diff} />
         </div>
       {:catch e}
         <ErrorMessage message="Not able to load files diff." stackTrace={e} />

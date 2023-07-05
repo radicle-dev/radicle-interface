@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Diff } from "@httpd-client";
+  import type { BaseUrl, Diff } from "@httpd-client";
 
   import { pluralize } from "@app/lib/pluralize";
 
@@ -8,6 +8,8 @@
 
   export let diff: Diff;
   export let revision: string;
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
 
   const diffDescription = ({
     modified,
@@ -67,18 +69,28 @@
 </div>
 <div class="diff-listing">
   {#each diff.added as file}
-    <FileDiff {file} {revision} headerBadgeCaption="added" />
+    <FileDiff
+      {projectId}
+      {baseUrl}
+      {file}
+      {revision}
+      headerBadgeCaption="added" />
   {/each}
   {#each diff.deleted as file}
-    <FileDiff {file} {revision} headerBadgeCaption="deleted" />
+    <FileDiff
+      {projectId}
+      {baseUrl}
+      {file}
+      {revision}
+      headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff {file} {revision} />
+    <FileDiff {projectId} {baseUrl} {file} {revision} />
   {/each}
   {#each diff.moved as file}
-    <FileLocationChange {file} {revision} mode="moved" />
+    <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="moved" />
   {/each}
   {#each diff.copied as file}
-    <FileLocationChange {file} {revision} mode="copied" />
+    <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="copied" />
   {/each}
 </div>

@@ -89,5 +89,9 @@
     <pre class="description txt-small">{header.description}</pre>
     <CommitAuthorship {header} />
   </div>
-  <Changeset diff={commit.diff} revision={commit.commit.id} />
+  <Changeset
+    projectId={project.id}
+    {baseUrl}
+    diff={commit.diff}
+    revision={commit.commit.id} />
 </div>

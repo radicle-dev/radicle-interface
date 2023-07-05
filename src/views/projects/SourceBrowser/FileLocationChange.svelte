@@ -1,13 +1,15 @@
 <script lang="ts">
-  import type { DiffCopiedMovedChangeset } from "@httpd-client/lib/project/commit";
+  import type { BaseUrl, DiffCopiedMovedChangeset } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
   export let file: DiffCopiedMovedChangeset;
   export let revision: string;
   export let mode: "moved" | "copied";
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
 </script>
 
 <style>
@@ -49,14 +51,19 @@
       {/if}
     </div>
     <div class="browse" title="View file">
-      <ProjectLink
-        projectParams={{
-          view: { resource: "tree" },
-          path: file.newPath,
-          revision,
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: { resource: "tree" },
+            path: file.newPath,
+            revision,
+          },
         }}>
         <Icon name="browse" />
-      </ProjectLink>
+      </Link>
     </div>
   </header>
 </div>

@@ -1,16 +1,19 @@
 <script lang="ts">
   import type {
+    BaseUrl,
     DiffAddedDeletedModifiedChangeset,
     HunkLine,
   } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
   export let file: DiffAddedDeletedModifiedChangeset;
   export let revision: string;
   export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
 
   let collapsed = false;
 
@@ -170,14 +173,19 @@
       {/if}
     </div>
     <div class="browse" title="View file">
-      <ProjectLink
-        projectParams={{
-          view: { resource: "tree" },
-          path: file.path,
-          revision,
+      <Link
+        route={{
+          resource: "projects",
+          params: {
+            id: projectId,
+            baseUrl,
+            view: { resource: "tree" },
+            path: file.path,
+            revision,
+          },
         }}>
         <Icon name="browse" />
-      </ProjectLink>
+      </Link>
     </div>
   </header>
   {#if !collapsed}
