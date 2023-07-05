@@ -160,12 +160,15 @@
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree sticky">
           <TreeComponent
-            {tree}
-            {path}
-            {fetchTree}
+            projectId={project.id}
             revision={revision ?? project.defaultBranch}
+            {baseUrl}
+            {fetchTree}
+            {path}
+            {peer}
+            {tree}
             on:select={() => {
-              // Close mobile tree if user navigates to other file
+              // Close mobile tree if user navigates to other file.
               mobileFileTree = false;
             }} />
         </div>
