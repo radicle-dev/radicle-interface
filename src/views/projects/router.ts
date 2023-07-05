@@ -11,10 +11,7 @@ import type {
   Tree,
 } from "@httpd-client";
 
-import { get } from "svelte/store";
-
 import { HttpdClient } from "@httpd-client";
-import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
 import * as Syntax from "@app/lib/syntax";
 import { unreachable } from "@app/lib/utils";
 
@@ -474,40 +471,6 @@ export function createProjectRoute(
       ...projectRouteParams,
     },
   };
-}
-
-export function projectLinkHref(
-  projectRouteParams: Partial<Omit<ProjectsParams, "id" | "route" | "hash">>,
-): string | undefined {
-  const activeRoute = get(activeRouteStore);
-
-  if (activeRoute.resource === "projects") {
-    return routeToPath(createProjectRoute(activeRoute, projectRouteParams));
-  } else {
-    throw new Error(
-      "Don't use project specific navigation outside of project views",
-    );
-  }
-}
-
-export async function updateProjectRoute(
-  projectRouteParams: Partial<Omit<ProjectsParams, "id" | "route" | "hash">>,
-  opts: { replace: boolean } = { replace: false },
-): Promise<void> {
-  const activeRoute = get(activeRouteStore);
-
-  if (activeRoute.resource === "projects") {
-    const updatedRoute = createProjectRoute(activeRoute, projectRouteParams);
-    if (opts.replace) {
-      await replace(updatedRoute);
-    } else {
-      await push(updatedRoute);
-    }
-  } else {
-    throw new Error(
-      "Don't use project specific navigation outside of project views",
-    );
-  }
 }
 
 export function resolveProjectRoute(

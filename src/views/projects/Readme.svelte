@@ -1,10 +1,14 @@
 <script lang="ts">
+  import type { BaseUrl } from "@httpd-client";
+
   import Markdown from "@app/components/Markdown.svelte";
 
+  export let baseUrl: BaseUrl;
   export let content: string;
-  export let rawPath: string;
-  export let path: string;
   export let hash: string | undefined = undefined;
+  export let path: string;
+  export let projectId: string;
+  export let rawPath: string;
 </script>
 
 <style>
@@ -18,5 +22,5 @@
 </style>
 
 <article>
-  <Markdown {content} {hash} {rawPath} {path} />
+  <Markdown {baseUrl} {projectId} {content} {hash} {rawPath} {path} />
 </article>

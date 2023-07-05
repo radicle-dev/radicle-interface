@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Blob } from "@httpd-client";
+  import type { BaseUrl, Blob } from "@httpd-client";
 
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
@@ -11,6 +11,8 @@
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
+  export let baseUrl: BaseUrl;
+  export let projectId: string;
   export let path: string;
   export let hash: string | undefined = undefined;
   export let blob: Blob;
@@ -253,7 +255,13 @@
         <span class="txt-tiny">Binary content</span>
       </div>
     {:else if showMarkdown && blob.content}
-      <Readme content={blob.content} {rawPath} {path} {hash} />
+      <Readme
+        {baseUrl}
+        {projectId}
+        content={blob.content}
+        {rawPath}
+        {path}
+        {hash} />
     {:else if content}
       <table class="code no-scrollbar">
         {@html toHtml(content)}

@@ -1,23 +1,26 @@
 <script lang="ts">
+  import type { BaseUrl } from "@httpd-client";
+
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
-  import { marked } from "marked";
   import { afterUpdate } from "svelte";
+  import { marked } from "marked";
   import { toDom } from "hast-util-to-dom";
 
   import * as utils from "@app/lib/utils";
-  import { base, activeRouteStore } from "@app/lib/router";
+  import * as router from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
   import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
   import {
     markdownExtensions as extensions,
     renderer,
   } from "@app/lib/markdown";
-  import { updateProjectRoute } from "@app/views/projects/router";
 
+  export let baseUrl: BaseUrl;
   export let content: string;
   export let hash: string | undefined = undefined;
   export let path: string = "/";
+  export let projectId: string;
   export let rawPath: string | undefined = undefined;
 
   $: doc = matter(content);
@@ -40,11 +43,15 @@
   function navigateToMarkdownLink(event: any) {
     if (event.target.matches(".file-link")) {
       event.preventDefault();
-      if ($activeRouteStore.resource === "projects") {
-        void updateProjectRoute({
+      void router.push({
+        resource: "projects",
+        params: {
+          id: projectId,
+          baseUrl,
+          view: { resource: "tree" },
           path: utils.canonicalize(event.target.getAttribute("href"), path),
-        });
-      }
+        },
+      });
     }
   }
 
@@ -68,7 +75,7 @@
         if (
           imagePath &&
           !isUrl(imagePath) &&
-          !imagePath.startsWith(`${base}twemoji`)
+          !imagePath.startsWith(`${router.base}twemoji`)
         ) {
           i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
         }

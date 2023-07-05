@@ -176,6 +176,8 @@
       <div class="column-right">
         {#if blobResult.ok}
           <BlobComponent
+            projectId={project.id}
+            {baseUrl}
             {path}
             {hash}
             blob={blobResult.blob}
