@@ -154,6 +154,8 @@
               <p class="txt-missing">No description</p>
             {:else}
               <Markdown
+                {baseUrl}
+                {projectId}
                 content={issueText}
                 rawPath={utils.getRawBasePath(
                   projectId,

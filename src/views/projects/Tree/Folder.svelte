@@ -1,17 +1,20 @@
 <script lang="ts" strictEvents>
-  import type { Tree } from "@httpd-client";
+  import type { BaseUrl, Tree } from "@httpd-client";
 
   import { createEventDispatcher } from "svelte";
 
   import Loading from "@app/components/Loading.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
   import File from "./File.svelte";
 
+  export let baseUrl: BaseUrl;
+  export let currentPath: string;
   export let fetchTree: (path: string) => Promise<Tree | undefined>;
   export let name: string;
+  export let peer: string | undefined;
   export let prefix: string;
-  export let currentPath: string;
+  export let projectId: string;
   export let revision: string;
 
   $: expanded = currentPath.indexOf(prefix) === 0;
@@ -80,23 +83,34 @@
       {#if tree}
         {#each tree.entries as entry (entry.path)}
           {#if entry.kind === "tree"}
+            <!-- svelte:self doesn't check types, make sure to pass in all
+            required props! -->
             <svelte:self
-              {fetchTree}
               name={entry.name}
               on:select={onSelectFile}
               prefix={`${entry.path}/`}
-              {revision}
-              {currentPath} />
+              {baseUrl}
+              {currentPath}
+              {fetchTree}
+              {peer}
+              {projectId}
+              {revision} />
           {:else}
-            <ProjectLink
-              projectParams={{
-                view: { resource: "tree" },
-                path: entry.path,
-                revision,
+            <Link
+              route={{
+                resource: "projects",
+                params: {
+                  id: projectId,
+                  baseUrl,
+                  path: entry.path,
+                  peer,
+                  revision,
+                  view: { resource: "tree" },
+                },
               }}
-              on:click={() => onSelectFile({ detail: entry.path })}>
+              on:afterNavigate={() => onSelectFile({ detail: entry.path })}>
               <File active={entry.path === currentPath} name={entry.name} />
-            </ProjectLink>
+            </Link>
           {/if}
         {/each}
       {/if}

@@ -23,9 +23,9 @@
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let resource: LoadedSourceBrowsingView["resource"];
   export let revision: string | undefined;
   export let tree: Tree;
+  export let view: LoadedSourceBrowsingView;
 
   export let blobResult: BlobResult;
 
@@ -137,8 +137,8 @@
   {contributorCount}
   {peers}
   {peer}
-  {resource}
-  {revision} />
+  {revision}
+  {view} />
 
 <main>
   <!-- Mobile navigation -->
@@ -160,12 +160,15 @@
       <div class="column-left" class:column-left-visible={mobileFileTree}>
         <div class="source-tree sticky">
           <TreeComponent
-            {tree}
-            {path}
-            {fetchTree}
+            projectId={project.id}
             revision={revision ?? project.defaultBranch}
+            {baseUrl}
+            {fetchTree}
+            {path}
+            {peer}
+            {tree}
             on:select={() => {
-              // Close mobile tree if user navigates to other file
+              // Close mobile tree if user navigates to other file.
               mobileFileTree = false;
             }} />
         </div>
@@ -173,6 +176,8 @@
       <div class="column-right">
         {#if blobResult.ok}
           <BlobComponent
+            projectId={project.id}
+            {baseUrl}
             {path}
             {hash}
             blob={blobResult.blob}

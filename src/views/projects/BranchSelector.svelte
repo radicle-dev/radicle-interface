@@ -1,12 +1,20 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
+  import type { BaseUrl } from "@httpd-client";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+
   import * as utils from "@app/lib/utils";
+  import { closeFocused } from "@app/components/Floating.svelte";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
-  import ProjectLink from "@app/components/ProjectLink.svelte";
+  import Link from "@app/components/Link.svelte";
 
+  export let baseUrl: BaseUrl;
   export let branches: Record<string, string> | undefined;
+  export let peer: string | undefined;
+  export let projectId: string;
+  export let view: LoadedSourceBrowsingView;
   export let selectedBranch: string | undefined;
   export let selectedCommitId: string;
 
@@ -72,13 +80,24 @@
         <svelte:fragment slot="modal">
           <Dropdown items={branchList}>
             <svelte:fragment slot="item" let:item>
-              <ProjectLink projectParams={{ revision: item.value }} on:click>
+              <Link
+                route={{
+                  resource: "projects",
+                  params: {
+                    id: projectId,
+                    baseUrl,
+                    peer,
+                    revision: item.value,
+                    view,
+                  },
+                }}
+                on:afterNavigate={() => closeFocused()}>
                 <DropdownItem
                   selected={item.value === selectedBranch}
                   size="tiny">
                   {item.value}
                 </DropdownItem>
-              </ProjectLink>
+              </Link>
             </svelte:fragment>
           </Dropdown>
         </svelte:fragment>

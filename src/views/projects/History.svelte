@@ -20,9 +20,9 @@
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let resource: LoadedSourceBrowsingView["resource"];
   export let revision: string | undefined;
   export let totalCommitCount: number;
+  export let view: LoadedSourceBrowsingView;
 
   const api = new HttpdClient(baseUrl);
 
@@ -92,8 +92,8 @@
   {contributorCount}
   {peers}
   {peer}
-  {resource}
-  {revision} />
+  {revision}
+  {view} />
 
 <div class="history">
   {#each groupCommits(allCommitHeaders) as group (group.time)}
