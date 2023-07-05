@@ -10,7 +10,7 @@
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let view: ProjectLoadedView;
+  export let resource: ProjectLoadedView["resource"];
   export let baseUrl: BaseUrl;
 
   export let projectId: string;
@@ -52,9 +52,9 @@
       },
     }}>
     <SquareButton
-      active={view.resource === "tree" ||
-        view.resource === "history" ||
-        view.resource === "commits"}>
+      active={resource === "tree" ||
+        resource === "history" ||
+        resource === "commits"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="chevron-left-right" />
       </svelte:fragment>
@@ -73,8 +73,7 @@
         },
       },
     }}>
-    <SquareButton
-      active={view.resource === "issues" || view.resource === "issue"}>
+    <SquareButton active={resource === "issues" || resource === "issue"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="exclamation-circle" />
       </svelte:fragment>
@@ -95,8 +94,7 @@
         },
       },
     }}>
-    <SquareButton
-      active={view.resource === "patches" || view.resource === "patch"}>
+    <SquareButton active={resource === "patches" || resource === "patch"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>

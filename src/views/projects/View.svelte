@@ -42,18 +42,18 @@
 
 <div class="header">
   <ProjectMeta
-    projectId={id}
-    projectName={project.name}
+    nodeId={peer}
     projectDescription={project.description}
-    {baseUrl}
-    nodeId={peer} />
-  <Header
     projectId={id}
     projectName={project.name}
-    openPatchCount={project.patches.open}
+    {baseUrl} />
+  <Header
     openIssueCount={project.issues.open}
+    openPatchCount={project.patches.open}
+    projectId={id}
+    projectName={project.name}
+    resource={view.resource}
     trackings={project.trackings}
-    {view}
     {baseUrl} />
 </div>
 
