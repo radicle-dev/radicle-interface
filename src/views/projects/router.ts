@@ -76,7 +76,7 @@ export interface ProjectLoadedParams {
 }
 
 interface LoadedSourceBrowsingParams {
-  loadedBranches: Record<string, string>;
+  loadedBranches: Record<string, string> | undefined;
   loadedPeers: Remote[];
   loadedTree: Tree;
   selectedCommit: string;
@@ -135,23 +135,8 @@ export type ProjectLoadedView =
       };
     };
 
-// We need a SHA1 commit in some places, so we return early if the revision is
-// a SHA and else we look into branches.
-function getOid(
-  revision: string,
-  branches?: Record<string, string>,
-): string | undefined {
-  if (isOid(revision)) return revision;
-
-  if (branches) {
-    const oid = branches[revision];
-    if (oid) return oid;
-  }
-  return undefined;
-}
-
 // Check whether the input is a SHA1 commit.
-export function isOid(input: string): boolean {
+function isOid(input: string): boolean {
   return /^[a-fA-F0-9]{40}$/.test(input);
 }
 
@@ -161,13 +146,19 @@ export function parseRevisionToOid(
   branches: Record<string, string>,
 ): string {
   if (revision) {
-    const oid = getOid(revision, branches);
-    if (!oid) {
-      throw new Error(`Revision ${revision} not found`);
+    if (isOid(revision)) {
+      return revision;
+    } else {
+      const oid = branches[revision];
+      if (oid) {
+        return oid;
+      } else {
+        throw new Error(`Revision ${revision} not found`);
+      }
     }
-    return oid;
+  } else {
+    return branches[defaultBranch];
   }
-  return branches[defaultBranch];
 }
 
 export async function loadProjectRoute(
@@ -180,32 +171,24 @@ export async function loadProjectRoute(
       const peersPromise = api.project.getAllRemotes(params.id);
       const branchesPromise = (async () => {
         if (params.peer) {
-          try {
-            return (await api.project.getRemoteByPeer(params.id, params.peer))
-              .heads;
-          } catch {
-            return {};
-          }
+          return (await api.project.getRemoteByPeer(params.id, params.peer))
+            .heads;
+        } else {
+          return undefined;
         }
       })();
 
-      const [project, peers, maybeBranches] = await Promise.all([
+      const [project, peers, branches] = await Promise.all([
         projectPromise,
         peersPromise,
         branchesPromise,
       ]);
 
-      let branches: Record<string, string>;
-      if (maybeBranches) {
-        branches = maybeBranches;
-      } else {
-        branches = project.head
-          ? { [project.defaultBranch]: project.head }
-          : {};
-      }
-
       if (params.route) {
-        const { revision, path } = detectRevision(params.route, branches);
+        const { revision, path } = detectRevision(
+          params.route,
+          branches || { [project.defaultBranch]: project.head },
+        );
         params.revision = revision;
         params.path = path;
         // TODO Do not mutate `params`. Contruct a new `loadedParams` object
@@ -216,7 +199,7 @@ export async function loadProjectRoute(
       const commit = parseRevisionToOid(
         params.revision,
         project.defaultBranch,
-        branches,
+        branches || { [project.defaultBranch]: project.head },
       );
       const tree = await api.project.getTree(params.id, commit);
       const viewParams = {
@@ -305,35 +288,15 @@ export async function loadProjectRoute(
     } else if (params.view.resource === "commits") {
       const projectPromise = api.project.getById(params.id);
       const peersPromise = api.project.getAllRemotes(params.id);
-      const branchesPromise = (async () => {
-        if (params.peer) {
-          try {
-            return (await api.project.getRemoteByPeer(params.id, params.peer))
-              .heads;
-          } catch {
-            return {};
-          }
-        }
-      })();
 
-      const [project, peers, maybeBranches] = await Promise.all([
+      const [project, peers] = await Promise.all([
         projectPromise,
         peersPromise,
-        branchesPromise,
       ]);
-
-      let branches: Record<string, string>;
-      if (maybeBranches) {
-        branches = maybeBranches;
-      } else {
-        branches = project.head
-          ? { [project.defaultBranch]: project.head }
-          : {};
-      }
 
       const tree = await api.project.getTree(params.id, params.view.commitId);
       const viewParams = {
-        loadedBranches: branches,
+        loadedBranches: undefined,
         loadedPeers: peers,
         loadedTree: tree,
         selectedCommit: params.view.commitId,
