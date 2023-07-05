@@ -14,7 +14,7 @@
   import TreeComponent from "./Tree.svelte";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string>;
+  export let branches: Record<string, string> | undefined;
   export let commit: string;
   export let commitCount: number;
   export let contributorCount: number;
@@ -128,6 +128,7 @@
 </style>
 
 <SourceBrowsingHeader
+  commitId={tree.lastCommit.id}
   defaultBranch={project.defaultBranch}
   projectId={project.id}
   {baseUrl}

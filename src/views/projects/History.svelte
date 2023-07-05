@@ -13,7 +13,7 @@
   import { COMMITS_PER_PAGE } from "./router";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string>;
+  export let branches: Record<string, string> | undefined;
   export let commitCount: number;
   export let commitHeaders: CommitHeader[];
   export let contributorCount: number;
@@ -85,6 +85,7 @@
 <SourceBrowsingHeader
   defaultBranch={project.defaultBranch}
   projectId={project.id}
+  commitId={commitHeaders[0].id}
   {baseUrl}
   {branches}
   {commitCount}

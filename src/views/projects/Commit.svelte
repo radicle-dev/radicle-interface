@@ -11,7 +11,7 @@
   import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string>;
+  export let branches: Record<string, string> | undefined;
   export let commit: Commit;
   export let commitCount: number;
   export let contributorCount: number;
@@ -61,6 +61,7 @@
 <SourceBrowsingHeader
   defaultBranch={project.defaultBranch}
   projectId={project.id}
+  commitId={commit.commit.id}
   {baseUrl}
   {branches}
   {commitCount}

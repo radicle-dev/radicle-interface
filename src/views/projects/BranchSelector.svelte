@@ -1,30 +1,20 @@
 <script lang="ts" strictEvents>
   import * as utils from "@app/lib/utils";
-  import { parseRevisionToOid } from "@app/views/projects/router";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
-  export let branches: Record<string, string>;
-  export let defaultBranch: string;
-  export let revision: string | undefined;
+  export let branches: Record<string, string> | undefined;
+  export let selectedBranch: string | undefined;
+  export let selectedCommitId: string;
 
-  let branchLabel: string | null = null;
-
-  $: branchList = Object.keys(branches)
+  $: branchList = Object.keys(branches || {})
     .sort()
     .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: commit = parseRevisionToOid(revision, defaultBranch, branches);
-  $: if (revision && branches[revision]) {
-    branchLabel = revision;
-  } else if (commit === branches[defaultBranch]) {
-    branchLabel = defaultBranch;
-  } else {
-    branchLabel = null;
-  }
+  $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
 </script>
 
 <style>
@@ -70,20 +60,22 @@
 <div class="commit" title="Current branch">
   <!-- Check for branches listing feature -->
   {#if branchList.length > 0}
-    {#if branchLabel}
+    {#if selectedBranch}
       <Floating disabled={!showSelector}>
         <div
           slot="toggle"
           title="Change branch"
           class="stat branch"
           class:not-allowed={!showSelector}>
-          {branchLabel}
+          {selectedBranch}
         </div>
         <svelte:fragment slot="modal">
           <Dropdown items={branchList}>
             <svelte:fragment slot="item" let:item>
               <ProjectLink projectParams={{ revision: item.value }} on:click>
-                <DropdownItem selected={item.value === branchLabel} size="tiny">
+                <DropdownItem
+                  selected={item.value === selectedBranch}
+                  size="tiny">
                   {item.value}
                 </DropdownItem>
               </ProjectLink>
@@ -92,30 +84,30 @@
         </svelte:fragment>
       </Floating>
       <div class="hash layout-desktop">
-        {utils.formatCommit(commit)}
+        {selectedCommitShortId}
       </div>
     {:else}
       <div class="unlabeled hash layout-desktop">
-        {commit}
+        {selectedCommitId}
       </div>
     {/if}
     <div class="hash layout-mobile">
-      {utils.formatCommit(commit)}
+      {selectedCommitShortId}
     </div>
     <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
-  {:else if commit === branches[defaultBranch]}
+  {:else if selectedBranch}
     <div class="stat branch not-allowed">
-      {defaultBranch}
+      {selectedBranch}
     </div>
     <div class="hash">
-      {utils.formatCommit(commit)}
+      {selectedCommitShortId}
     </div>
   {:else}
     <div class="unlabeled hash layout-desktop">
-      {commit}
+      {selectedCommitId}
     </div>
     <div class="hash layout-mobile">
-      {utils.formatCommit(commit)}
+      {selectedCommitShortId}
     </div>
   {/if}
 </div>

@@ -11,16 +11,28 @@
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string>;
+  export let branches: Record<string, string> | undefined;
+  export let commitCount: number;
+  export let contributorCount: number;
   export let defaultBranch: string;
   export let peer: string | undefined;
   export let peers: Remote[];
   export let projectId: string;
   export let resource: LoadedSourceBrowsingView["resource"];
   export let revision: string | undefined;
+  export let commitId: string;
 
-  export let commitCount: number;
-  export let contributorCount: number;
+  let selectedBranch: string | undefined;
+
+  // Revision may be a commit ID, a branch name or `undefined` which means the
+  // default branch. We assign `selectedBranch` accordingly.
+  // TODO: Move this logic out of here and have `selectedBranch` be passed as a
+  // prop.
+  $: if (revision === commitId) {
+    selectedBranch = undefined;
+  } else {
+    selectedBranch = revision ?? defaultBranch;
+  }
 </script>
 
 <style>
@@ -52,9 +64,9 @@
 
   <BranchSelector
     {branches}
-    {revision}
-    on:click={() => closeFocused()}
-    {defaultBranch} />
+    selectedCommitId={commitId}
+    {selectedBranch}
+    on:click={() => closeFocused()} />
 
   <Link
     route={{
