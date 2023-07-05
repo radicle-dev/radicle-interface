@@ -8,7 +8,7 @@
   import ProjectLink from "@app/components/ProjectLink.svelte";
 
   export let branches: Record<string, string>;
-  export let projectDefaultBranch: string;
+  export let defaultBranch: string;
   export let revision: string | undefined;
 
   let branchLabel: string | null = null;
@@ -17,11 +17,11 @@
     .sort()
     .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
-  $: commit = parseRevisionToOid(revision, projectDefaultBranch, branches);
+  $: commit = parseRevisionToOid(revision, defaultBranch, branches);
   $: if (revision && branches[revision]) {
     branchLabel = revision;
-  } else if (commit === branches[projectDefaultBranch]) {
-    branchLabel = projectDefaultBranch;
+  } else if (commit === branches[defaultBranch]) {
+    branchLabel = defaultBranch;
   } else {
     branchLabel = null;
   }
@@ -103,9 +103,9 @@
       {utils.formatCommit(commit)}
     </div>
     <!-- If there is no branch listing available, show default branch name if commit is head and else show entire commit -->
-  {:else if commit === branches[projectDefaultBranch]}
+  {:else if commit === branches[defaultBranch]}
     <div class="stat branch not-allowed">
-      {projectDefaultBranch}
+      {defaultBranch}
     </div>
     <div class="hash">
       {utils.formatCommit(commit)}

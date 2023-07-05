@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote } from "@httpd-client";
-  import type { ProjectLoadedView } from "@app/views/projects/router";
+  import type { BaseUrl, Remote } from "@httpd-client";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
   import { pluralize } from "@app/lib/pluralize";
@@ -10,13 +10,14 @@
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let project: Project;
-  export let peer: string | undefined = undefined;
   export let baseUrl: BaseUrl;
-  export let revision: string | undefined;
-  export let peers: Remote[];
   export let branches: Record<string, string>;
-  export let view: ProjectLoadedView;
+  export let defaultBranch: string;
+  export let peer: string | undefined;
+  export let peers: Remote[];
+  export let projectId: string;
+  export let resource: LoadedSourceBrowsingView["resource"];
+  export let revision: string | undefined;
 
   export let commitCount: number;
   export let contributorCount: number;
@@ -53,13 +54,13 @@
     {branches}
     {revision}
     on:click={() => closeFocused()}
-    projectDefaultBranch={project.defaultBranch} />
+    {defaultBranch} />
 
   <Link
     route={{
       resource: "projects",
       params: {
-        id: project.id,
+        id: projectId,
         baseUrl,
         view: {
           resource: "history",
@@ -68,8 +69,7 @@
         revision,
       },
     }}>
-    <SquareButton
-      active={view.resource === "history" || view.resource === "commits"}>
+    <SquareButton active={resource === "history" || resource === "commits"}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>

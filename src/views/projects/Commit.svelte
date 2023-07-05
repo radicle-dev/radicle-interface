@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { Commit } from "@httpd-client";
+  import type { Commit, BaseUrl, Remote, Project } from "@httpd-client";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
   import { formatCommit } from "@app/lib/utils";
 
@@ -7,8 +8,18 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
+  export let baseUrl: BaseUrl;
+  export let branches: Record<string, string>;
   export let commit: Commit;
+  export let commitCount: number;
+  export let contributorCount: number;
+  export let peer: string | undefined = undefined;
+  export let peers: Remote[];
+  export let project: Project;
+  export let resource: LoadedSourceBrowsingView["resource"];
+  export let revision: string | undefined;
 
   const { commit: header } = commit;
 </script>
@@ -46,6 +57,18 @@
     }
   }
 </style>
+
+<SourceBrowsingHeader
+  defaultBranch={project.defaultBranch}
+  projectId={project.id}
+  {baseUrl}
+  {branches}
+  {commitCount}
+  {contributorCount}
+  {peers}
+  {peer}
+  {resource}
+  {revision} />
 
 <div class="commit">
   <div class="header">

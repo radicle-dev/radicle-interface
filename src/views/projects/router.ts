@@ -86,7 +86,7 @@ export type BlobResult =
   | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
   | { ok: false; error: { message: string; path: string } };
 
-export type ProjectLoadedView =
+export type LoadedSourceBrowsingView =
   | {
       resource: "tree";
       params: LoadedSourceBrowsingParams;
@@ -105,7 +105,10 @@ export type ProjectLoadedView =
       params: LoadedSourceBrowsingParams;
       commitHeaders: CommitHeader[];
       totalCommitCount: number;
-    }
+    };
+
+export type ProjectLoadedView =
+  | LoadedSourceBrowsingView
   | { resource: "issue"; params: { issue: string; loadedIssue: Issue } }
   | {
       resource: "issues";

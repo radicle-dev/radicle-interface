@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { BaseUrl, CommitHeader } from "@httpd-client";
+  import type { BaseUrl, CommitHeader, Project, Remote } from "@httpd-client";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
   import { HttpdClient } from "@httpd-client";
   import { groupCommits } from "@app/lib/commit";
@@ -8,12 +9,19 @@
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
   import { COMMITS_PER_PAGE } from "./router";
 
   export let baseUrl: BaseUrl;
+  export let branches: Record<string, string>;
+  export let commitCount: number;
   export let commitHeaders: CommitHeader[];
-  export let peer: string | undefined = undefined;
-  export let projectId: string;
+  export let contributorCount: number;
+  export let peer: string | undefined;
+  export let peers: Remote[];
+  export let project: Project;
+  export let resource: LoadedSourceBrowsingView["resource"];
+  export let revision: string | undefined;
   export let totalCommitCount: number;
 
   const api = new HttpdClient(baseUrl);
@@ -32,7 +40,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllCommits(projectId, {
+      const response = await api.project.getAllCommits(project.id, {
         parent: allCommitHeaders[0].id,
         page,
         perPage: COMMITS_PER_PAGE,
@@ -74,13 +82,25 @@
   }
 </style>
 
+<SourceBrowsingHeader
+  defaultBranch={project.defaultBranch}
+  projectId={project.id}
+  {baseUrl}
+  {branches}
+  {commitCount}
+  {contributorCount}
+  {peers}
+  {peer}
+  {resource}
+  {revision} />
+
 <div class="history">
   {#each groupCommits(allCommitHeaders) as group (group.time)}
     <p style:color="var(--color-foreground-6)">{group.date}</p>
     <div class="group">
       {#each group.commits as commit (commit.id)}
         <div class="teaser-wrapper">
-          <CommitTeaser {peer} {projectId} {baseUrl} {commit} />
+          <CommitTeaser {peer} projectId={project.id} {baseUrl} {commit} />
         </div>
       {/each}
     </div>

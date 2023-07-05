@@ -4,8 +4,6 @@
 
   import { unreachable } from "@app/lib/utils";
 
-  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
-
   import Browser from "./Browser.svelte";
   import Commit from "./Commit.svelte";
   import Header from "./Header.svelte";
@@ -17,10 +15,10 @@
   import Patches from "./Patches.svelte";
   import ProjectMeta from "./ProjectMeta.svelte";
 
+  export let baseUrl: BaseUrl;
   export let id: string;
   export let project: Project;
   export let view: ProjectLoadedView;
-  export let baseUrl: BaseUrl;
 
   export let hash: string | undefined = undefined;
   export let peer: string | undefined = undefined;
@@ -60,38 +58,47 @@
 </div>
 
 <main>
-  {#if view.resource === "tree" || view.resource === "history" || view.resource === "commits"}
-    <SourceBrowsingHeader
-      {project}
-      {peer}
-      {view}
-      {baseUrl}
-      peers={view.params.loadedPeers}
+  {#if view.resource === "tree"}
+    <Browser
+      blobResult={view.blobResult}
       branches={view.params.loadedBranches}
+      commit={view.params.selectedCommit}
       commitCount={view.params.loadedTree.stats.commits}
       contributorCount={view.params.loadedTree.stats.contributors}
+      path={view.path}
+      peers={view.params.loadedPeers}
+      resource={view.resource}
+      tree={view.params.loadedTree}
+      {baseUrl}
+      {hash}
+      {peer}
+      {project}
       {revision} />
-
-    {#if view.resource === "tree"}
-      <Browser
-        {baseUrl}
-        {project}
-        {revision}
-        commit={view.params.selectedCommit}
-        tree={view.params.loadedTree}
-        blobResult={view.blobResult}
-        path={view.path}
-        {hash} />
-    {:else if view.resource === "history"}
-      <History
-        projectId={id}
-        {peer}
-        {baseUrl}
-        totalCommitCount={view.totalCommitCount}
-        commitHeaders={view.commitHeaders} />
-    {:else if view.resource === "commits"}
-      <Commit commit={view.commit} />
-    {/if}
+  {:else if view.resource === "history"}
+    <History
+      branches={view.params.loadedBranches}
+      commitCount={view.params.loadedTree.stats.commits}
+      commitHeaders={view.commitHeaders}
+      contributorCount={view.params.loadedTree.stats.contributors}
+      peers={view.params.loadedPeers}
+      resource={view.resource}
+      totalCommitCount={view.totalCommitCount}
+      {baseUrl}
+      {peer}
+      {project}
+      {revision} />
+  {:else if view.resource === "commits"}
+    <Commit
+      branches={view.params.loadedBranches}
+      commit={view.commit}
+      commitCount={view.params.loadedTree.stats.commits}
+      contributorCount={view.params.loadedTree.stats.contributors}
+      peers={view.params.loadedPeers}
+      resource={view.resource}
+      {baseUrl}
+      {peer}
+      {project}
+      {revision} />
   {:else if view.resource === "issues"}
     {#if view.params.view.resource === "new"}
       <NewIssue projectId={id} projectHead={project.head} {baseUrl} />

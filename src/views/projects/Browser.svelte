@@ -1,23 +1,31 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Tree } from "@httpd-client";
+  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
   import type { BlobResult } from "./router";
+  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   import BlobComponent from "./Blob.svelte";
   import TreeComponent from "./Tree.svelte";
 
-  export let path: string;
-  export let hash: string | undefined = undefined;
-  export let project: Project;
   export let baseUrl: BaseUrl;
-  export let tree: Tree;
-  export let revision: string | undefined;
+  export let branches: Record<string, string>;
   export let commit: string;
+  export let commitCount: number;
+  export let contributorCount: number;
+  export let hash: string | undefined;
+  export let path: string;
+  export let peer: string | undefined;
+  export let peers: Remote[];
+  export let project: Project;
+  export let resource: LoadedSourceBrowsingView["resource"];
+  export let revision: string | undefined;
+  export let tree: Tree;
 
   export let blobResult: BlobResult;
 
@@ -118,6 +126,18 @@
     }
   }
 </style>
+
+<SourceBrowsingHeader
+  defaultBranch={project.defaultBranch}
+  projectId={project.id}
+  {baseUrl}
+  {branches}
+  {commitCount}
+  {contributorCount}
+  {peers}
+  {peer}
+  {resource}
+  {revision} />
 
 <main>
   <!-- Mobile navigation -->
