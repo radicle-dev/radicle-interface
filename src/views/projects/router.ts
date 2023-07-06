@@ -17,6 +17,7 @@ import { HttpdClient } from "@httpd-client";
 import { activeRouteStore, push, replace, routeToPath } from "@app/lib/router";
 import * as Syntax from "@app/lib/syntax";
 import { unreachable } from "@app/lib/utils";
+import { seedPath } from "@app/views/seeds/router";
 
 export const COMMITS_PER_PAGE = 30;
 
@@ -631,6 +632,73 @@ export function resolveProjectRoute(
   }
 
   return null;
+}
+
+export function projectRouteToPath(params: ProjectsParams): string {
+  const seed = seedPath(params.baseUrl);
+  const content = `/${params.view.resource}`;
+
+  let peer = "";
+  if (params.peer) {
+    peer = `/remotes/${params.peer}`;
+  }
+
+  let suffix = "";
+  if (params.route) {
+    suffix = `/${params.route}`;
+  } else {
+    if (
+      (params.view.resource === "tree" || params.view.resource === "history") &&
+      params.revision
+    ) {
+      suffix = `/${params.revision}`;
+    }
+    if (params.path && params.path !== "/") {
+      suffix += `/${params.path}`;
+    }
+  }
+
+  if (params.hash) {
+    suffix += `#${params.hash}`;
+  }
+
+  if (params.view.resource === "tree") {
+    if (suffix) {
+      return `${seed}/${params.id}${peer}/tree${suffix}`;
+    }
+    return `${seed}/${params.id}${peer}`;
+  } else if (params.view.resource === "commits") {
+    return `${seed}/${params.id}${peer}/commits/${params.view.commitId}`;
+  } else if (params.view.resource === "history") {
+    return `${seed}/${params.id}${peer}/history${suffix}`;
+  } else if (
+    params.view.resource === "issues" &&
+    params.view.params?.view.resource === "new"
+  ) {
+    return `${seed}/${params.id}${peer}/issues/new${suffix}`;
+  } else if (params.view.resource === "issues") {
+    if (params.view.params.search) {
+      suffix += `?${params.view.params.search}`;
+    }
+    return `${seed}/${params.id}${peer}/issues${suffix}`;
+  } else if (params.view.resource === "issue") {
+    return `${seed}/${params.id}${peer}/issues/${params.view.params.issue}`;
+  } else if (params.view.resource === "patches") {
+    if (params.view.params.search) {
+      suffix += `?${params.view.params.search}`;
+    }
+    return `${seed}/${params.id}${peer}/patches${suffix}`;
+  } else if (params.view.resource === "patch") {
+    if (params.view.params.search) {
+      suffix += `?${params.view.params.search}`;
+    }
+    if (params.view.params.revision) {
+      return `${seed}/${params.id}${peer}/patches/${params.view.params.patch}/${params.view.params.revision}${suffix}`;
+    }
+    return `${seed}/${params.id}${peer}/patches/${params.view.params.patch}${suffix}`;
+  } else {
+    return `${seed}/${params.id}${peer}${content}`;
+  }
 }
 
 export const testExports = { isOid };

@@ -4,6 +4,7 @@ import type { WeeklyActivity } from "@app/lib/commit";
 
 import { HttpdClient } from "@httpd-client";
 import { loadProjectActivity } from "@app/lib/commit";
+import { config } from "@app/lib/config";
 
 interface SeedsRouteParams {
   baseUrl: BaseUrl;
@@ -62,6 +63,16 @@ export async function loadProjects(
     total: nodeStats.projects.count,
     projects: results,
   };
+}
+
+export function seedPath(baseUrl: BaseUrl) {
+  const port = baseUrl.port ?? config.seeds.defaultHttpdPort;
+
+  if (port === config.seeds.defaultHttpdPort) {
+    return `/seeds/${baseUrl.hostname}`;
+  } else {
+    return `/seeds/${baseUrl.hostname}:${port}`;
+  }
 }
 
 export async function loadSeedRoute(

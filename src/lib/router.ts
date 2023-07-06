@@ -8,9 +8,11 @@ import * as utils from "@app/lib/utils";
 import { config } from "@app/lib/config";
 import {
   createProjectRoute,
+  projectRouteToPath,
   resolveProjectRoute,
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
+import { seedPath } from "@app/views/seeds/router";
 
 export { type Route };
 
@@ -219,16 +221,6 @@ function pathToRoute(url: URL): Route | null {
   }
 }
 
-function seedPath(baseUrl: BaseUrl) {
-  const port = baseUrl.port ?? config.seeds.defaultHttpdPort;
-
-  if (port === config.seeds.defaultHttpdPort) {
-    return `/seeds/${baseUrl.hostname}`;
-  } else {
-    return `/seeds/${baseUrl.hostname}:${port}`;
-  }
-}
-
 export function routeToPath(route: Route): string {
   if (route.resource === "home") {
     return "/";
@@ -239,71 +231,7 @@ export function routeToPath(route: Route): string {
   } else if (route.resource === "loadError") {
     return "";
   } else if (route.resource === "projects") {
-    const seed = seedPath(route.params.baseUrl);
-    const content = `/${route.params.view.resource}`;
-
-    let peer = "";
-    if (route.params.peer) {
-      peer = `/remotes/${route.params.peer}`;
-    }
-
-    let suffix = "";
-    if (route.params.route) {
-      suffix = `/${route.params.route}`;
-    } else {
-      if (
-        (route.params.view.resource === "tree" ||
-          route.params.view.resource === "history") &&
-        route.params.revision
-      ) {
-        suffix = `/${route.params.revision}`;
-      }
-      if (route.params.path && route.params.path !== "/") {
-        suffix += `/${route.params.path}`;
-      }
-    }
-
-    if (route.params.hash) {
-      suffix += `#${route.params.hash}`;
-    }
-
-    if (route.params.view.resource === "tree") {
-      if (suffix) {
-        return `${seed}/${route.params.id}${peer}/tree${suffix}`;
-      }
-      return `${seed}/${route.params.id}${peer}`;
-    } else if (route.params.view.resource === "commits") {
-      return `${seed}/${route.params.id}${peer}/commits/${route.params.view.commitId}`;
-    } else if (route.params.view.resource === "history") {
-      return `${seed}/${route.params.id}${peer}/history${suffix}`;
-    } else if (
-      route.params.view.resource === "issues" &&
-      route.params.view.params?.view.resource === "new"
-    ) {
-      return `${seed}/${route.params.id}${peer}/issues/new${suffix}`;
-    } else if (route.params.view.resource === "issues") {
-      if (route.params.view.params.search) {
-        suffix += `?${route.params.view.params.search}`;
-      }
-      return `${seed}/${route.params.id}${peer}/issues${suffix}`;
-    } else if (route.params.view.resource === "issue") {
-      return `${seed}/${route.params.id}${peer}/issues/${route.params.view.params.issue}`;
-    } else if (route.params.view.resource === "patches") {
-      if (route.params.view.params.search) {
-        suffix += `?${route.params.view.params.search}`;
-      }
-      return `${seed}/${route.params.id}${peer}/patches${suffix}`;
-    } else if (route.params.view.resource === "patch") {
-      if (route.params.view.params.search) {
-        suffix += `?${route.params.view.params.search}`;
-      }
-      if (route.params.view.params.revision) {
-        return `${seed}/${route.params.id}${peer}/patches/${route.params.view.params.patch}/${route.params.view.params.revision}${suffix}`;
-      }
-      return `${seed}/${route.params.id}${peer}/patches/${route.params.view.params.patch}${suffix}`;
-    } else {
-      return `${seed}/${route.params.id}${peer}${content}`;
-    }
+    return projectRouteToPath(route.params);
   } else if (route.resource === "booting") {
     return "";
   } else if (route.resource === "notFound") {
