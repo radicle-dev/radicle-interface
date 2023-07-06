@@ -463,7 +463,7 @@ function sanitizeQueryString(queryString: string): string {
   return queryString.startsWith("?") ? queryString.substring(1) : queryString;
 }
 
-export function createProjectRoute(
+function createProjectRoute(
   activeRoute: ProjectRoute,
   projectRouteParams: Partial<ProjectsParams>,
 ): ProjectRoute {
