@@ -85,7 +85,6 @@ export async function disconnect() {
       }
     })
     .catch(error => {
-      console.error(error);
       if (error !== E_CANCELED) {
         throw error;
       }
@@ -126,12 +125,13 @@ async function checkState() {
           update({ state: "running" });
         }
       } catch (error) {
-        console.error(error);
+        if (error instanceof TypeError && error.message !== "Failed to fetch") {
+          console.error(error);
+        }
         update({ state: "stopped" });
       }
     })
     .catch(error => {
-      console.error(error);
       if (error !== E_CANCELED && error !== E_TIMEOUT) {
         throw error;
       }
