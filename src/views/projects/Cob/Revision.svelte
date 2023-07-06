@@ -282,8 +282,6 @@
         {#if revisionDescription && !first}
           <div class="revision-description txt-small">
             <Markdown
-              {baseUrl}
-              {projectId}
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               content={revisionDescription} />
           </div>
@@ -347,8 +345,6 @@
         <div style:margin-left="1.5rem">
           {#if element.type === "thread"}
             <Thread
-              {baseUrl}
-              {projectId}
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               thread={element.inner}
               on:reply />
@@ -383,8 +379,6 @@
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
                 <CommentComponent
-                  {baseUrl}
-                  {projectId}
                   caption={formatVerdict(review.verdict)}
                   authorId={author}
                   authorAlias={review.author.alias}

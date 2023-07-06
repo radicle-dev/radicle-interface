@@ -1,8 +1,7 @@
 import dompurify from "dompurify";
 import emojis from "@app/lib/emojis";
 import katex from "katex";
-import { marked } from "marked";
-import { isUrl } from "@app/lib/utils";
+import { marked, Renderer as BaseRenderer } from "marked";
 
 dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -10,9 +9,6 @@ dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
   FORBID_TAGS: ["textarea", "style"],
 });
-
-// TODO: Disables deprecated options, remove once removed from marked
-marked.use({ mangle: false, headerIds: false });
 
 const emojisMarkedExtension = {
   name: "emoji",
@@ -126,7 +122,30 @@ const anchorMarkedExtension = {
   },
 };
 
-export const renderer = {
+// TODO: Disables deprecated options, remove once removed from marked
+marked.use({
+  extensions: [
+    anchorMarkedExtension,
+    emojisMarkedExtension,
+    footnoteMarkedExtension,
+    footnoteReferenceMarkedExtension,
+    katexMarkedExtension,
+  ],
+  mangle: false,
+  headerIds: false,
+});
+
+export class Renderer extends BaseRenderer {
+  #baseUrl: string | undefined;
+
+  /**
+   * If `baseUrl` is provided, all hrefs attributes in anchor tags, except those
+   * starting with `#`, are resolved with respect to `baseUrl`
+   */
+  constructor(baseUrl: string | undefined) {
+    super();
+    this.#baseUrl = baseUrl;
+  }
   // Overwrites the rendering of heading tokens.
   // Since there are possible non ASCII characters in headings,
   // we escape them by replacing them with dashes and,
@@ -139,24 +158,19 @@ export const renderer = {
       .replace(/^-|-$/g, "");
 
     return `<h${level} id="${escapedText}">${text}</h${level}>`;
-  },
-  link(href: string, _title: string, text: string) {
-    // Adding the file-link class to relative file names,
-    // so we're able to navigate to the file in the editor.
-    if (!isUrl(href) && !href.startsWith("#")) {
-      return `<a href="${href}" class="file-link">${text}</a>`;
-    } else if (href.startsWith("#")) {
+  }
+
+  link(href: string, _title: string, text: string): string {
+    if (href.startsWith("#")) {
       // By lowercasing we avoid casing mismatches, between headings and links.
       return `<a href="${href.toLowerCase()}">${text}</a>`;
+    } else {
+      try {
+        href = new URL(href, this.#baseUrl).href;
+      } catch {
+        // Use original href value
+      }
+      return `<a href="${href}">${text}</a>`;
     }
-    return `<a href="${href}">${text}</a>`;
-  },
-};
-
-export const markdownExtensions = [
-  anchorMarkedExtension,
-  emojisMarkedExtension,
-  footnoteMarkedExtension,
-  footnoteReferenceMarkedExtension,
-  katexMarkedExtension,
-];
+  }
+}

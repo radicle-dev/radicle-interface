@@ -303,8 +303,6 @@
       <svelte:fragment slot="description">
         {#if patch.revisions[0].description}
           <Markdown
-            {projectId}
-            {baseUrl}
             content={patch.revisions[0].description}
             rawPath={utils.getRawBasePath(
               projectId,

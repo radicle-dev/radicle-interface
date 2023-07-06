@@ -1,5 +1,4 @@
 <script lang="ts" strictEvents>
-  import type { BaseUrl } from "@httpd-client";
   import type { Comment } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
@@ -9,8 +8,6 @@
   import { scrollIntoView } from "@app/lib/utils";
   import { httpdStore } from "@app/lib/httpd";
 
-  export let baseUrl: BaseUrl;
-  export let projectId: string;
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
   export let showReplyTextarea = false;
@@ -76,8 +73,6 @@
 <div class="comments">
   <div class="comment">
     <CommentComponent
-      {projectId}
-      {baseUrl}
       {rawPath}
       id={root.id}
       authorId={root.author.id}
@@ -90,8 +85,6 @@
   {#each replies as reply}
     <div class="comment reply">
       <CommentComponent
-        {projectId}
-        {baseUrl}
         {rawPath}
         id={reply.id}
         authorId={reply.author.id}

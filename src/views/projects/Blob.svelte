@@ -13,6 +13,8 @@
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
+  export let peer: string | undefined;
+  export let revision: string | undefined;
   export let path: string;
   export let hash: string | undefined = undefined;
   export let blob: Blob;
@@ -258,6 +260,8 @@
       <Readme
         {baseUrl}
         {projectId}
+        {peer}
+        {revision}
         content={blob.content}
         {rawPath}
         {path}
