@@ -27,7 +27,10 @@
   $: content = highlighted ? lineNumbersGutter(highlighted) : undefined;
 
   let selectedLineId: string | undefined = undefined;
-  updateSelectedLineId();
+  $: {
+    content;
+    updateSelectedLineId();
+  }
 
   function updateSelectedLineId() {
     const fragmentId = window.location.hash.substr(1);
