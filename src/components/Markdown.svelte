@@ -11,7 +11,6 @@
   import { Renderer } from "@app/lib/markdown";
 
   export let content: string;
-  export let hash: string | undefined = undefined;
   // If present, resolve all relative links with respect to this URL
   export let linkBaseUrl: string | undefined = undefined;
   export let path: string = "/";
@@ -69,8 +68,6 @@
       }
     }
 
-    if (hash) scrollIntoView(hash);
-
     // Iterate over all images, and replace the source with a canonicalized URL
     // pointing at the projects /raw endpoint.
     if (rawPath) {
@@ -112,6 +109,10 @@
     }
 
     await Promise.allSettled(treeChanges);
+
+    if (window.location.hash) {
+      scrollIntoView(window.location.hash.substring(1));
+    }
   });
 </script>
 

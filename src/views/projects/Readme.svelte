@@ -9,7 +9,6 @@
   export let baseUrl: BaseUrl;
   export let revision: string | undefined;
   export let content: string;
-  export let hash: string | undefined = undefined;
   export let path: string;
   export let rawPath: string;
 
@@ -53,5 +52,5 @@
 </style>
 
 <article>
-  <Markdown {linkBaseUrl} {content} {hash} {rawPath} {path} />
+  <Markdown {linkBaseUrl} {content} {rawPath} {path} />
 </article>

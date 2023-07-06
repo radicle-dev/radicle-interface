@@ -20,7 +20,6 @@
   export let project: Project;
   export let view: ProjectLoadedView;
 
-  export let hash: string | undefined = undefined;
   export let peer: string | undefined = undefined;
   export let revision: string | undefined = undefined;
 </script>
@@ -69,7 +68,6 @@
       peers={view.params.loadedPeers}
       tree={view.params.loadedTree}
       {baseUrl}
-      {hash}
       {peer}
       {project}
       {revision}

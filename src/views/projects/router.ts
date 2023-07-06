@@ -55,7 +55,6 @@ export interface ProjectsParams {
         params: { patch: string; revision?: string; search?: string };
       };
 
-  hash?: string;
   path?: string;
   peer?: string;
   revision?: string;
@@ -68,7 +67,6 @@ export interface ProjectLoadedParams {
   project: Project;
   view: ProjectLoadedView;
 
-  hash?: string;
   peer?: string;
   revision?: string;
 }
@@ -474,7 +472,6 @@ export function resolveProjectRoute(
   }
 
   if (!content || content === "tree") {
-    const hash = url.href.match(/#{1}[^#.]+$/)?.pop();
     return {
       view: { resource: "tree" },
       baseUrl,
@@ -482,7 +479,6 @@ export function resolveProjectRoute(
       peer,
       path: undefined,
       revision: undefined,
-      hash: hash?.substring(1),
       route: segments.join("/"),
     };
   } else if (content === "history") {
@@ -605,10 +601,6 @@ export function projectRouteToPath(params: ProjectsParams): string {
     if (params.path && params.path !== "/") {
       suffix += `/${params.path}`;
     }
-  }
-
-  if (params.hash) {
-    suffix += `#${params.hash}`;
   }
 
   if (params.view.resource === "tree") {

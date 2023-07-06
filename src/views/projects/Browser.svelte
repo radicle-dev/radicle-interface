@@ -18,7 +18,6 @@
   export let commit: string;
   export let commitCount: number;
   export let contributorCount: number;
-  export let hash: string | undefined;
   export let path: string;
   export let peer: string | undefined;
   export let peers: Remote[];
@@ -181,7 +180,6 @@
             {peer}
             {revision}
             {path}
-            {hash}
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
             rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />

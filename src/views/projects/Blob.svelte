@@ -16,7 +16,6 @@
   export let peer: string | undefined;
   export let revision: string | undefined;
   export let path: string;
-  export let hash: string | undefined = undefined;
   export let blob: Blob;
   export let highlighted: Syntax.Root | undefined;
   export let rawPath: string;
@@ -267,8 +266,7 @@
         {revision}
         content={blob.content}
         {rawPath}
-        {path}
-        {hash} />
+        {path} />
     {:else if content}
       <table class="code no-scrollbar">
         {@html toHtml(content)}

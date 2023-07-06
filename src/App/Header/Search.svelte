@@ -55,7 +55,6 @@
             id: project.id,
             peer: undefined,
             baseUrl,
-            hash: undefined,
           },
         });
       } else {
