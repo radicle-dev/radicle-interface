@@ -13,7 +13,7 @@
   >;
   export let title: string | undefined = undefined;
 
-  const dispatch = createEventDispatcher<{ click: never }>();
+  const dispatch = createEventDispatcher<{ click: null }>();
 
   function navigateToRoute(event: MouseEvent): void {
     if (useDefaultNavigation(event)) {

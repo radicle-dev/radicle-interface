@@ -10,7 +10,7 @@
   export let small = false;
   export let tooltip: string | undefined = undefined;
 
-  const dispatch = createEventDispatcher<{ copied: never }>();
+  const dispatch = createEventDispatcher<{ copied: null }>();
 
   let icon: "clipboard-small" | "checkmark-small" | "clipboard" | "checkmark" =
     small ? "clipboard-small" : "clipboard";

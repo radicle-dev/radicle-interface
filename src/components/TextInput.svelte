@@ -22,7 +22,7 @@
   const dispatch = createEventDispatcher<{
     blur: FocusEvent;
     focus: FocusEvent;
-    submit: never;
+    submit: null;
   }>();
 
   let rightContainerWidth: number;

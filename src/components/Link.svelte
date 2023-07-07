@@ -8,7 +8,7 @@
   export let title: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
-    afterNavigate: never;
+    afterNavigate: null;
   }>();
 
   function navigateToRoute(event: MouseEvent): void {

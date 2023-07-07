@@ -28,7 +28,7 @@
   }
 
   const dispatch = createEventDispatcher<{
-    submit: never;
+    submit: null;
   }>();
 
   function handleKeydown(event: KeyboardEvent) {

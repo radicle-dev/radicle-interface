@@ -19,7 +19,7 @@
   export let caption = "commented";
   export let rawPath: string;
 
-  const dispatch = createEventDispatcher<{ toggleReply: never }>();
+  const dispatch = createEventDispatcher<{ toggleReply: null }>();
 </script>
 
 <style>

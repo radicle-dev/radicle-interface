@@ -13,7 +13,7 @@
   import TextInput from "@app/components/TextInput.svelte";
 
   const dispatch = createEventDispatcher<{
-    finished: never;
+    finished: null;
   }>();
 
   export let input = "";
