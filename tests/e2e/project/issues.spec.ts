@@ -48,7 +48,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   );
 
   await page.goto(
-    `/seeds/127.0.0.1:8070/${rid}/issues/d316f7a90a40dacbfb8728044bad50c9f71d44ba`,
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/d316f7a90a40dacbfb8728044bad50c9f71d44ba`,
   );
 
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
@@ -62,7 +62,9 @@ test("go through the entire ui issue flow", async ({
 }) => {
   const { rid } = await createProject(authenticatedPeer, "commenting");
 
-  await page.goto(`/seeds/127.0.0.1:8070/${rid}`);
+  await page.goto(
+    `/seeds/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}`,
+  );
   await page.getByRole("link", { name: "0 issues" }).click();
   await page.getByRole("link", { name: "New issue" }).click();
   await page.getByPlaceholder("Title").fill("This is a title");

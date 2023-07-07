@@ -52,7 +52,7 @@ export default async function globalSetup(): Promise<() => void> {
     console.log("Running tests");
     await palm.stopNode();
   } else {
-    await startPalmHttpd();
+    await startPalmHttpd(8080);
   }
 
   return () => killAllProcesses();

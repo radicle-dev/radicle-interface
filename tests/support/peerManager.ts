@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import type { BaseUrl } from "@httpd-client";
 import type { ExecaChildProcess, Options } from "execa";
 
 import * as Fs from "node:fs/promises";
@@ -115,6 +116,7 @@ export class RadiclePeer {
   #outputLog: Stream.Writable;
   #gitOptions?: Record<string, string>;
   #listenSocketAddr?: string;
+  #httpdBaseUrl?: BaseUrl;
   #nodeProcess?: ExecaChildProcess;
   #httpdProcess?: ExecaChildProcess;
 
@@ -184,25 +186,42 @@ export class RadiclePeer {
     });
   }
 
-  public async startHttpd(port: number) {
+  public async startHttpd(port?: number): Promise<void> {
+    if (!port) {
+      port = await getPort();
+    }
+    this.#httpdBaseUrl = {
+      hostname: "127.0.0.1",
+      port,
+      scheme: "http",
+    };
     this.#httpdProcess = this.spawn("radicle-httpd", [
       "--listen",
-      `0.0.0.0:${port}`,
+      `${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
     ]);
 
     await waitOn({
-      resources: [`tcp:127.0.0.1:${port}`],
+      resources: [
+        `tcp:${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
+      ],
       timeout: 7000,
     });
   }
 
-  public async stopHttpd(port: number) {
+  public async stopHttpd() {
+    if (!this.#httpdBaseUrl || !this.#httpdProcess) {
+      throw new Error("No httpd service running");
+    }
     this.#httpdProcess?.kill("SIGTERM");
 
     await waitOn({
-      resources: [`tcp:127.0.0.1:${port}`],
+      resources: [
+        `tcp:${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
+      ],
       reverse: true,
     });
+
+    this.#httpdBaseUrl = undefined;
   }
 
   public async startNode(params?: {
@@ -312,10 +331,23 @@ export class RadiclePeer {
   }
 
   public uiUrl(): string {
-    return `/seeds/127.0.0.1:8080`;
+    if (!this.#httpdBaseUrl) {
+      throw new Error("No httpd service running");
+    }
+
+    return `/seeds/${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`;
   }
+
   public ridUrl(rid: string): string {
-    return `/seeds/127.0.0.1:8080/${rid}`;
+    return `/seeds/${this.httpdBaseUrl.hostname}:${this.httpdBaseUrl.port}/${rid}`;
+  }
+
+  public get httpdBaseUrl(): BaseUrl {
+    if (!this.#httpdBaseUrl) {
+      throw new Error("No httpd service running");
+    }
+
+    return this.#httpdBaseUrl;
   }
 
   public git(args: string[] = [], opts?: Options): ExecaChildProcess {

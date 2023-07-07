@@ -11,12 +11,12 @@ import { createProject } from "@tests/support/project";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.locator('role=link[name="6 commits"]').click();
+  await page.getByRole("link", { name: "6 commits" }).click();
 
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${aliceRemote}`).click();
+    await page.getByText(aliceRemote).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
       `  did:key:${aliceRemote
         .substring(8)
@@ -37,7 +37,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(earliestCommit).toContainText("36d5bbe");
 
     await page.getByTitle("Change branch").click();
-    await page.locator("text=feature/branch").click();
+    await page.getByText("feature/branch").click();
 
     await expect(page.getByTitle("Current branch")).toContainText(
       "feature/branch 1aded56",
@@ -46,7 +46,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.locator(".history .teaser")).toHaveCount(9);
 
     await page.getByTitle("Change branch").click();
-    await page.locator("text=orphaned-branch").click();
+    await page.getByText("orphaned-branch").click();
 
     await expect(page.getByTitle("Current branch")).toContainText(
       "orphaned-branch af3641c",
@@ -58,7 +58,7 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${bobRemote}`).click();
+    await page.getByText(bobRemote).click();
     await expect(page.getByTitle("Change peer")).toContainText(
       ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
         -6,
@@ -89,7 +89,7 @@ test("peer and branch switching", async ({ page }) => {
 
 test("expand commit message", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.locator('role=link[name="6 commits"]').click();
+  await page.getByRole("link", { name: "6 commits" }).click();
   const commitToggle = page
     .locator("div")
     .filter({ hasText: /^Add a C source file and its binary …$/ })
@@ -117,10 +117,10 @@ test("relative timestamps", async ({ page }) => {
   });
 
   await page.goto(sourceBrowsingUrl);
-  await page.locator('role=link[name="6 commits"]').click();
+  await page.getByRole("link", { name: "6 commits" }).click();
 
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=${bobRemote}`).click();
+  await page.getByText(bobRemote).click();
   await expect(page.getByTitle("Change peer")).toHaveText(
     `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(-6)}`,
   );
@@ -138,12 +138,12 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     name: "alice",
     gitOptions: gitOptions["alice"],
   });
-  await alice.startHttpd(8090);
+  await alice.startHttpd();
   await alice.startNode();
   const { rid, projectFolder } = await createProject(alice, "alice-project");
-  await page.goto(`/seeds/127.0.0.1:8090/${rid}`);
-  await page.locator('role=link[name="1 commit"]').click();
-  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
+  await page.goto(`${alice.uiUrl()}/${rid}`);
+  await page.getByRole("link", { name: "1 commit" }).click();
+  await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
 
   await alice.git(["commit", "--allow-empty", "--message", "first change"], {
     cwd: projectFolder,
@@ -152,13 +152,13 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     cwd: projectFolder,
   });
   await page.reload();
-  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
-  await expect(page.locator('role=link[name="2 commits"]')).toBeVisible();
+  await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
+  await expect(page.getByRole("link", { name: "2 commits" })).toBeVisible();
   await expect(page.getByTitle("Current branch")).toContainText("main 516fa74");
 
-  await page.locator("text=alice-project").click();
-  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}`);
-  await page.locator('role=link[name="2 commits"]').click();
+  await page.getByText("alice-project").click();
+  await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}`);
+  await page.getByRole("link", { name: "2 commits" }).click();
 
   await alice.git(
     [
@@ -175,8 +175,8 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     cwd: projectFolder,
   });
   await page.reload();
-  await expect(page).toHaveURL(`/seeds/127.0.0.1:8090/${rid}/history`);
-  await expect(page.locator('role=link[name="3 commits"]')).toHaveText(
+  await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
+  await expect(page.getByRole("link", { name: "3 commits" })).toHaveText(
     "3 commits",
   );
   await expect(page.getByTitle("Current branch")).toContainText("main bb9089a");

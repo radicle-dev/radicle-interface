@@ -165,18 +165,20 @@ export const test = base.extend<{
       gitOptions: gitOptions["bob"],
     });
 
-    await peer.startHttpd(8070);
+    await peer.startHttpd();
     await peer.startNode();
     await page.goto("/");
     await page.getByRole("button", { name: "radicle.local" }).click();
-    await page.locator('input[name="port"]').fill("8070");
+    await page
+      .locator('input[name="port"]')
+      .fill(peer.httpdBaseUrl.port.toString());
     await page.locator('input[name="port"]').press("Enter");
     const { stdout } = await peer.rad([
       "web",
       "--frontend",
       "http://localhost:3001",
       "--backend",
-      "http://127.0.0.1:8070",
+      `${peer.httpdBaseUrl.scheme}://${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
       "--json",
     ]);
     const result = authSchema.safeParse(JSON.parse(stdout));
@@ -191,7 +193,7 @@ export const test = base.extend<{
 
     await use(peer);
 
-    await peer.stopHttpd(8070);
+    await peer.stopHttpd();
     await peer.stopNode();
   },
 
@@ -256,13 +258,13 @@ export function appConfigWithFixture() {
   };
 }
 
-export async function startPalmHttpd() {
+export async function startPalmHttpd(httpdPort: number) {
   const peerManager = await createPeerManager({
     dataDir: Path.resolve(Path.join(tmpDir, "peers")),
     outputLog: FsSync.createWriteStream(Path.resolve(Path.join(tmpDir, "log"))),
   });
   const palm = await peerManager.startPeer({ name: "palm" });
-  await palm.startHttpd(8080);
+  await palm.startHttpd(httpdPort);
 }
 
 export async function createSourceBrowsingFixture(
@@ -611,7 +613,6 @@ export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";
 export const sourceBrowsingUrl = `/seeds/127.0.0.1/${sourceBrowsingRid}`;
 export const cobUrl = `/seeds/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/seeds/127.0.0.1/${markdownRid}`;
-export const seedPort = 8080;
 export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
 export const gitOptions = {
   alice: {
