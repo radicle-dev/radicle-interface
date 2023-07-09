@@ -1,6 +1,5 @@
 <script lang="ts" strictEvents>
   import type { AuthorAliasColor } from "@app/components/Authorship.svelte";
-  import type { BaseUrl } from "@httpd-client";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
@@ -9,8 +8,6 @@
   import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher } from "svelte";
 
-  export let baseUrl: BaseUrl;
-  export let projectId: string;
   export let id: string | undefined = undefined;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
@@ -85,7 +82,7 @@
     {:else if body.trim() === ""}
       <span class="txt-missing">No description.</span>
     {:else}
-      <Markdown {projectId} {baseUrl} {rawPath} content={body} />
+      <Markdown {rawPath} content={body} />
     {/if}
   </div>
 </div>

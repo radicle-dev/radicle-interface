@@ -332,8 +332,6 @@
       </svelte:fragment>
       <div slot="description">
         <Markdown
-          {baseUrl}
-          {projectId}
           content={issue.discussion[0].body}
           rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
       </div>
@@ -346,12 +344,7 @@
     </CobHeader>
     {#each threads as thread (thread.root.id)}
       <div class="thread">
-        <ThreadComponent
-          {baseUrl}
-          {projectId}
-          {thread}
-          {rawPath}
-          on:reply={createReply} />
+        <ThreadComponent {thread} {rawPath} on:reply={createReply} />
       </div>
     {/each}
     {#if $httpdStore.state === "authenticated"}

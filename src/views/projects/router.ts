@@ -460,20 +460,6 @@ function sanitizeQueryString(queryString: string): string {
   return queryString.startsWith("?") ? queryString.substring(1) : queryString;
 }
 
-function createProjectRoute(
-  activeRoute: ProjectRoute,
-  projectRouteParams: Partial<ProjectsParams>,
-): ProjectRoute {
-  return {
-    resource: "projects",
-    params: {
-      ...activeRoute.params,
-      hash: undefined,
-      ...projectRouteParams,
-    },
-  };
-}
-
 export function resolveProjectRoute(
   url: URL,
   baseUrl: BaseUrl,

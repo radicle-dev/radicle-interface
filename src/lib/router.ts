@@ -38,7 +38,18 @@ export function useDefaultNavigation(event: MouseEvent) {
 export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
 
 export async function loadFromLocation(): Promise<void> {
-  let { pathname, hash } = window.location;
+  await navigateToUrl("replace", new URL(window.location.href));
+}
+
+export async function navigateToUrl(
+  action: "push" | "replace",
+  url: URL,
+): Promise<void> {
+  let { pathname, hash } = url;
+
+  if (url.origin !== window.origin) {
+    throw new Error("Cannot navigate to other origin");
+  }
 
   if (import.meta.env.VITE_HASH_ROUTING) {
     if (pathname === "/" && hash && !hash.startsWith("#/")) {
@@ -52,20 +63,23 @@ export async function loadFromLocation(): Promise<void> {
     if (
       currentUrl &&
       currentUrl.pathname === pathname &&
-      currentUrl.search === window.location.search
+      currentUrl.search === url.search
     ) {
       return;
     }
   }
 
-  const relativeUrl = pathname + window.location.search + (hash || "");
-  const url = new URL(relativeUrl, window.origin);
+  const relativeUrl = pathname + url.search + (hash || "");
+  url = new URL(relativeUrl, window.origin);
   const route = pathToRoute(url);
 
   if (route) {
     await replace(route);
   } else {
-    await replace({ resource: "notFound", params: { url: relativeUrl } });
+    await navigate(action, {
+      resource: "notFound",
+      params: { url: relativeUrl },
+    });
   }
 }
 

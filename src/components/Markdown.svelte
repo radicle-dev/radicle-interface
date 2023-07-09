@@ -1,58 +1,64 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { afterUpdate } from "svelte";
   import { marked } from "marked";
   import { toDom } from "hast-util-to-dom";
 
-  import * as utils from "@app/lib/utils";
   import * as router from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
   import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
-  import {
-    markdownExtensions as extensions,
-    renderer,
-  } from "@app/lib/markdown";
+  import { Renderer } from "@app/lib/markdown";
 
-  export let baseUrl: BaseUrl;
   export let content: string;
   export let hash: string | undefined = undefined;
+  // If present, resolve all relative links with respect to this URL
+  export let linkBaseUrl: string | undefined = undefined;
   export let path: string = "/";
-  export let projectId: string;
   export let rawPath: string | undefined = undefined;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(
     ([, val]) => typeof val === "string" || typeof val === "number",
   );
-  marked.use({
-    extensions,
-    renderer,
-    // TODO: Disables deprecated options, remove once removed from marked
-    mangle: false,
-    headerIds: false,
-  });
-
   let container: HTMLElement;
 
-  const render = (content: string): string =>
-    dompurify.sanitize(marked.parse(content));
-
-  function navigateToMarkdownLink(event: any) {
-    if (event.target.matches(".file-link")) {
-      event.preventDefault();
-      void router.push({
-        resource: "projects",
-        params: {
-          id: projectId,
-          baseUrl,
-          view: { resource: "tree" },
-          path: utils.canonicalize(event.target.getAttribute("href"), path),
-        },
-      });
+  /**
+   * Do internal navigation on for clicks on anchor elements if possible
+   */
+  function navigateInternalOnAnchor(event: MouseEvent) {
+    if (router.useDefaultNavigation(event)) {
+      return;
     }
+
+    let url: URL;
+    if (!(event.target instanceof HTMLAnchorElement)) {
+      return;
+    }
+    const href = event.target?.getAttribute("href");
+    if (href === null || href.startsWith("#")) {
+      return;
+    }
+
+    try {
+      url = new URL(href, window.location.href);
+    } catch {
+      return;
+    }
+
+    event.preventDefault();
+    void router.navigateToUrl("push", url);
+  }
+
+  function render(content: string): string {
+    return dompurify.sanitize(
+      marked.parse(content, {
+        renderer: new Renderer(linkBaseUrl),
+        // TODO: Disables deprecated options, remove once removed from marked
+        mangle: false,
+        headerIds: false,
+      }),
+    );
   }
 
   afterUpdate(async () => {
@@ -81,11 +87,6 @@
         }
       }
     }
-
-    const fileAnchorTags = document.querySelectorAll(".file-link");
-    fileAnchorTags.forEach(anchorTag => {
-      anchorTag.addEventListener("click", navigateToMarkdownLink);
-    });
 
     // Replaces code blocks in the background with highlighted code.
     const prefix = "language-";
@@ -344,6 +345,13 @@
   </div>
 {/if}
 
-<div class="markdown" bind:this={container} use:twemoji={{ exclude: ["21a9"] }}>
+<!-- The click handler only handles bubbling events from anchor tags -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="markdown"
+  bind:this={container}
+  use:twemoji={{ exclude: ["21a9"] }}
+  on:click={navigateInternalOnAnchor}>
   {@html render(doc.content)}
 </div>
