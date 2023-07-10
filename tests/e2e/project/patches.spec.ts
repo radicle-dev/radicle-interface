@@ -52,7 +52,7 @@ test("use revision selector", async ({ page }) => {
   ).toHaveText("Add more text");
 
   // Switching to the initial revision
-  await page.getByText("Revision 2592b1e").click();
+  await page.getByText("Revision 779ce78").click();
   await expect(page.locator(".dropdown")).toBeVisible();
   await page.getByRole("link", { name: "Revision 0f3697f" }).click();
   await expect(page.locator(".dropdown")).toBeHidden();

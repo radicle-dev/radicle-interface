@@ -372,7 +372,7 @@
             </div>
           {:else if element.type === "review"}
             {@const [author, review] = element.inner}
-            {#if review.comment}
+            {#if review.summary}
               <div
                 class="action"
                 class:comment-review={review.verdict === null}
@@ -389,7 +389,7 @@
                     baseUrl,
                     projectHead,
                   )}
-                  body={review.comment} />
+                  body={review.summary} />
               </div>
             {:else}
               <div

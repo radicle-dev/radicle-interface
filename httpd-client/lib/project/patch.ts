@@ -52,51 +52,21 @@ const mergeSchema = object({
   timestamp: number(),
 }) satisfies ZodSchema<Merge>;
 
-interface CodeLocation {
-  path: string;
-  commit: string;
-  lines: {
-    start: number;
-    end: number;
-  };
-}
-
-const codeLocationSchema = object({
-  path: string(),
-  commit: string(),
-  lines: object({
-    start: number(),
-    end: number(),
-  }),
-}) satisfies ZodSchema<CodeLocation>;
-
-interface CodeComment {
-  location: CodeLocation;
-  comment: string;
-  timestamp: number;
-}
-
-const codeCommentSchema = object({
-  location: codeLocationSchema,
-  comment: string(),
-  timestamp: number(),
-}) satisfies ZodSchema<CodeComment>;
-
 type Verdict = "accept" | "reject";
 
 export interface Review {
   author: { id: string; alias?: string };
   verdict?: Verdict | null;
-  comment?: string | null;
-  inline: CodeComment[];
+  summary: string | null;
+  comments: string[];
   timestamp: number;
 }
 
 const reviewSchema = object({
   author: object({ id: string(), alias: string().optional() }),
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
-  comment: optional(string().nullable()),
-  inline: array(codeCommentSchema),
+  comments: array(string()),
+  summary: string().nullable(),
   timestamp: number(),
 }) satisfies ZodSchema<Review>;
 
@@ -151,19 +121,18 @@ export const patchSchema = object({
 export const patchesSchema = array(patchSchema) satisfies ZodSchema<Patch[]>;
 
 export type PatchUpdateAction =
-  | { type: "edit"; title: string; description: string; target: string }
+  | { type: "edit"; title: string; target: string }
   | { type: "editRevision"; revision: string; description: string }
+  | { type: "editReview"; review: string; summary?: string }
   | { type: "tag"; add: string[]; remove: string[] }
   | { type: "revision"; description: string; base: string; oid: string }
   | { type: "lifecycle"; state: PatchState }
   | { type: "redact"; revision: string }
   | {
       type: "review";
-      author: { id: string; alias?: string };
       revision: string;
-      verdict?: Verdict;
-      comment?: string;
-      inline: CodeComment;
+      summary?: string;
+      verdict?: Verdict | null;
     }
   | { type: "merge"; revision: string; commit: string }
   | { type: "thread"; revision: string; action: ThreadUpdateAction };
