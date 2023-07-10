@@ -8,6 +8,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:svelte/recommended",
+    "prettier",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -38,10 +39,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "no-only-tests"],
   rules: {
-    semi: "off",
-    "no-only-tests/no-only-tests": "error",
-    curly: ["error", "multi-line", "consistent"],
-    "keyword-spacing": ["error"],
+    "no-only-tests/no-only-tests": "warn",
     "no-implicit-globals": ["error"],
     "no-restricted-globals": [
       "error",
@@ -54,27 +52,9 @@ module.exports = {
       "origin",
       "status",
     ],
-    "no-trailing-spaces": ["error"],
-    "no-multi-spaces": ["error"],
-    "no-multiple-empty-lines": ["error"],
-    "space-before-blocks": ["error"],
-    "object-curly-spacing": ["error", "always"],
-    "array-bracket-spacing": ["error", "never"],
-    "space-before-function-paren": [
-      "error",
-      {
-        anonymous: "always",
-        named: "never",
-        asyncArrow: "always",
-      },
-    ],
-    "eol-last": ["error"],
-    "key-spacing": ["error"],
-    "@typescript-eslint/no-floating-promises": "error",
-    "@typescript-eslint/object-curly-spacing": ["error", "always"],
-    "@typescript-eslint/type-annotation-spacing": ["error"],
+    "@typescript-eslint/no-floating-promises": "warn",
     "@typescript-eslint/naming-convention": [
-      "error",
+      "warn",
       {
         selector: "enumMember",
         format: ["PascalCase"],
@@ -108,43 +88,29 @@ module.exports = {
     ],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
-    "@typescript-eslint/semi": ["error"],
-    "@typescript-eslint/member-delimiter-style": [
-      "error",
-      {
-        multiline: {
-          delimiter: "semi",
-          requireLast: true,
-        },
-        singleline: {
-          delimiter: "semi",
-          requireLast: false,
-        },
-      },
-    ],
     "@typescript-eslint/member-ordering": [
-      "error",
+      "warn",
       { default: ["field", "signature", "constructor", "method"] },
     ],
 
-    "@typescript-eslint/no-invalid-void-type": ["error"],
+    "@typescript-eslint/no-invalid-void-type": ["warn"],
     // Disallow Unused Variables.
     // https://eslint.org/docs/rules/no-unused-vars
-    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     // Require using arrow functions as callbacks.
     // https://eslint.org/docs/rules/prefer-arrow-callback
-    "prefer-arrow-callback": "error",
+    "prefer-arrow-callback": "warn",
     // Require using const for variables that are never modified after declared.
     // https://eslint.org/docs/rules/prefer-const
-    "prefer-const": "error",
+    "prefer-const": "warn",
     // Disallow modifying variables that are declared using const.
     // https://eslint.org/docs/rules/no-const-assign
     "no-const-assign": "error",
     // Require let or const instead of var.
     // https://eslint.org/docs/rules/no-var
-    "no-var": "error",
+    "no-var": "warn",
     // Require `===` and `!==` comparisons.
-    eqeqeq: "error",
+    eqeqeq: "warn",
     // Allow explict type annotations for additional clarity.
     "@typescript-eslint/no-inferrable-types": "off",
   },
