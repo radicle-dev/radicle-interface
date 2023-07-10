@@ -66,9 +66,6 @@ export interface ProjectLoadedParams {
   id: string;
   project: Project;
   view: ProjectLoadedView;
-
-  peer?: string;
-  revision?: string;
 }
 
 interface LoadedSourceBrowsingParams {
@@ -84,6 +81,8 @@ export type BlobResult =
 export type LoadedSourceBrowsingView =
   | {
       resource: "tree";
+      peer: string | undefined;
+      revision: string | undefined;
       params: LoadedSourceBrowsingParams;
       path: string;
       blobResult: BlobResult;
@@ -95,6 +94,8 @@ export type LoadedSourceBrowsingView =
     }
   | {
       resource: "history";
+      peer: string | undefined;
+      revision: string | undefined;
       params: LoadedSourceBrowsingParams;
       commitHeaders: CommitHeader[];
       totalCommitCount: number;
@@ -244,10 +245,13 @@ export async function loadProjectRoute(
         return {
           resource: "projects",
           params: {
-            ...params,
+            id: params.id,
+            baseUrl: params.baseUrl,
             project,
             view: {
-              resource: params.view.resource,
+              resource: "tree",
+              peer: params.peer,
+              revision: params.revision,
               params: viewParams,
               path,
               blobResult,
@@ -264,10 +268,13 @@ export async function loadProjectRoute(
         return {
           resource: "projects",
           params: {
-            ...params,
+            id: params.id,
+            baseUrl: params.baseUrl,
             project,
             view: {
-              resource: params.view.resource,
+              resource: "history",
+              peer: params.peer,
+              revision: params.revision,
               params: viewParams,
               commitHeaders: commitsResponse.commits.map(c => c.commit),
               totalCommitCount: commitsResponse.stats.commits,
@@ -300,11 +307,11 @@ export async function loadProjectRoute(
       return {
         resource: "projects",
         params: {
-          ...params,
-          revision: params.view.commitId,
+          id: params.id,
+          baseUrl: params.baseUrl,
           project,
           view: {
-            resource: params.view.resource,
+            resource: "commits",
             params: viewParams,
             commit: loadedCommit,
           },
@@ -324,7 +331,8 @@ export async function loadProjectRoute(
         return {
           resource: "projects",
           params: {
-            ...params,
+            id: params.id,
+            baseUrl: params.baseUrl,
             project,
             view: {
               resource: "issue",
@@ -356,7 +364,8 @@ export async function loadProjectRoute(
         return {
           resource: "projects",
           params: {
-            ...params,
+            id: params.id,
+            baseUrl: params.baseUrl,
             project,
             view: {
               resource: "patch",
@@ -383,7 +392,8 @@ export async function loadProjectRoute(
       return {
         resource: "projects",
         params: {
-          ...params,
+          id: params.id,
+          baseUrl: params.baseUrl,
           view: {
             resource: "issues",
             params: { search: "", ...params.view.params },
@@ -396,7 +406,8 @@ export async function loadProjectRoute(
       return {
         resource: "projects",
         params: {
-          ...params,
+          id: params.id,
+          baseUrl: params.baseUrl,
           view: {
             resource: "patches",
             params: { search: "", ...params.view.params },

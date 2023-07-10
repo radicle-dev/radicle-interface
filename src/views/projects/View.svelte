@@ -20,8 +20,12 @@
   export let project: Project;
   export let view: ProjectLoadedView;
 
-  export let peer: string | undefined = undefined;
-  export let revision: string | undefined = undefined;
+  let peer: string | undefined;
+  $: if (view.resource === "tree" || view.resource === "history") {
+    peer = view.peer;
+  } else {
+    peer = undefined;
+  }
 </script>
 
 <style>
@@ -69,7 +73,7 @@
       {baseUrl}
       {peer}
       {project}
-      {revision}
+      revision={view.revision}
       {view} />
   {:else if view.resource === "history"}
     <History
@@ -82,7 +86,7 @@
       {baseUrl}
       {peer}
       {project}
-      {revision}
+      revision={view.revision}
       {view} />
   {:else if view.resource === "commits"}
     <Commit
@@ -94,7 +98,6 @@
       {baseUrl}
       {peer}
       {project}
-      {revision}
       {view} />
   {:else if view.resource === "issues"}
     {#if view.params.view.resource === "new"}

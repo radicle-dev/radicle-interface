@@ -18,7 +18,6 @@
   export let peer: string | undefined = undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let revision: string | undefined;
   export let view: LoadedSourceBrowsingView;
 
   const { commit: header } = commit;
@@ -68,7 +67,7 @@
   {contributorCount}
   {peers}
   {peer}
-  {revision}
+  revision={commit.commit.id}
   {view} />
 
 <div class="commit">
