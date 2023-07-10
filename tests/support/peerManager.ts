@@ -316,7 +316,7 @@ export class RadiclePeer {
       throw new Error("Remote node has no listen addr yet");
     }
     await this.rad(
-      ["node", "connect", remote.nodeId, remote.#listenSocketAddr],
+      ["node", "connect", `${remote.nodeId}@${remote.#listenSocketAddr}`],
       { cwd: this.#radHome },
     );
 
