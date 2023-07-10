@@ -118,6 +118,18 @@ test.describe("markdown rendering", async () => {
   });
 
   test.describe(async () => {
+    test("math", async ({ page }) => {
+      await page.goto(`${markdownUrl}/tree/main/math.md`, {
+        waitUntil: "networkidle",
+      });
+      await expect(
+        page.getByText("The Cauchy-Schwarz Inequality"),
+      ).toBeVisible();
+      await expect(page).toHaveScreenshot({ fullPage: true });
+    });
+  });
+
+  test.describe(async () => {
     test.use({ viewport: { width: viewportWidth, height: 1100 } });
     test("tables", async ({ page }) => {
       await goToSection("#tables", page);

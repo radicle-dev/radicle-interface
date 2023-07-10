@@ -1,9 +1,10 @@
 import type { marked } from "marked";
 
 import dompurify from "dompurify";
-import emojis from "@app/lib/emojis";
-import katex from "katex";
+import katexMarkedExtension from "marked-katex-extension";
 import { Marked, Renderer as BaseRenderer } from "marked";
+
+import emojis from "@app/lib/emojis";
 
 dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -30,25 +31,6 @@ const emojisMarkedExtension = {
     `<span>${token.text in emojis ? emojis[token.text] : token.text}</span>`,
 };
 
-const katexMarkedExtension = {
-  name: "katex",
-  level: "inline",
-  start: (src: string) => src.indexOf("$"),
-  tokenizer(src: string) {
-    const match = src.match(/^\$+([^$\n]+?)\$+/);
-    if (match) {
-      return {
-        type: "katex",
-        raw: match[0],
-        text: match[1].trim(),
-      };
-    }
-  },
-  renderer: (token: marked.Tokens.Generic): string =>
-    katex.renderToString(token.text, {
-      throwOnError: false,
-    }),
-};
 const footnotePrefix = "marked-fn";
 const referencePrefix = "marked-fnref";
 const referenceMatch = /^\[\^([^\]]+)\](?!\()/;
@@ -158,17 +140,19 @@ export class Renderer extends BaseRenderer {
   }
 }
 
-const markedInstance = new Marked({
-  extensions: [
-    emojisMarkedExtension,
-    katexMarkedExtension,
-    footnoteMarkedExtension,
-    footnoteReferenceMarkedExtension,
-    anchorMarkedExtension,
-  ],
-  // TODO: Disables deprecated options, remove once removed from marked
-  mangle: false,
-  headerIds: false,
-});
+const markedInstance = new Marked(
+  katexMarkedExtension({ throwOnError: false }),
+  {
+    extensions: [
+      emojisMarkedExtension,
+      footnoteMarkedExtension,
+      footnoteReferenceMarkedExtension,
+      anchorMarkedExtension,
+    ],
+    // TODO: Disables deprecated options, remove once removed from marked
+    mangle: false,
+    headerIds: false,
+  },
+);
 
 export default markedInstance;
