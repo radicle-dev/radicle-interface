@@ -581,64 +581,70 @@ export function resolveProjectRoute(
 
 export function projectRouteToPath(params: ProjectsParams): string {
   const seed = seedPath(params.baseUrl);
-  const content = `/${params.view.resource}`;
 
-  let peer = "";
+  const pathSegments = [seed, params.id];
+
   if (params.peer) {
-    peer = `/remotes/${params.peer}`;
+    pathSegments.push("remotes", params.peer);
   }
 
-  let suffix = "";
-  if (params.route) {
-    suffix = `/${params.route}`;
-  } else {
-    if (
-      (params.view.resource === "tree" || params.view.resource === "history") &&
-      params.revision
-    ) {
-      suffix = `/${params.revision}`;
-    }
-    if (params.path && params.path !== "/") {
-      suffix += `/${params.path}`;
-    }
-  }
+  if (params.view.resource === "tree" || params.view.resource === "history") {
+    pathSegments.push(params.view.resource);
+    let omitTree = true;
 
-  if (params.view.resource === "tree") {
-    if (suffix) {
-      return `${seed}/${params.id}${peer}/tree${suffix}`;
+    if (params.route && params.route !== "/") {
+      pathSegments.push(params.route);
+      omitTree = false;
+    } else {
+      if (params.revision) {
+        pathSegments.push(params.revision);
+        omitTree = false;
+      }
+
+      if (params.path && params.path !== "/") {
+        pathSegments.push(params.path);
+        omitTree = false;
+      }
     }
-    return `${seed}/${params.id}${peer}`;
+    if (params.view.resource === "tree" && omitTree) {
+      pathSegments.pop();
+    }
+
+    return pathSegments.join("/");
   } else if (params.view.resource === "commits") {
-    return `${seed}/${params.id}${peer}/commits/${params.view.commitId}`;
-  } else if (params.view.resource === "history") {
-    return `${seed}/${params.id}${peer}/history${suffix}`;
+    return [...pathSegments, "commits", params.view.commitId].join("/");
   } else if (
     params.view.resource === "issues" &&
     params.view.params?.view.resource === "new"
   ) {
-    return `${seed}/${params.id}${peer}/issues/new${suffix}`;
+    return [...pathSegments, "issues", "new"].join("/");
   } else if (params.view.resource === "issues") {
+    let url = [...pathSegments, "issues"].join("/");
     if (params.view.params.search) {
-      suffix += `?${params.view.params.search}`;
+      url += `?${params.view.params.search}`;
     }
-    return `${seed}/${params.id}${peer}/issues${suffix}`;
+    return url;
   } else if (params.view.resource === "issue") {
-    return `${seed}/${params.id}${peer}/issues/${params.view.params.issue}`;
+    return [...pathSegments, "issues", params.view.params.issue].join("/");
   } else if (params.view.resource === "patches") {
+    let url = [...pathSegments, "patches"].join("/");
     if (params.view.params.search) {
-      suffix += `?${params.view.params.search}`;
+      url += `?${params.view.params.search}`;
     }
-    return `${seed}/${params.id}${peer}/patches${suffix}`;
+    return url;
   } else if (params.view.resource === "patch") {
-    if (params.view.params.search) {
-      suffix += `?${params.view.params.search}`;
-    }
+    pathSegments.push("patches", params.view.params.patch);
     if (params.view.params.revision) {
-      return `${seed}/${params.id}${peer}/patches/${params.view.params.patch}/${params.view.params.revision}${suffix}`;
+      pathSegments.push(params.view.params.revision);
     }
-    return `${seed}/${params.id}${peer}/patches/${params.view.params.patch}${suffix}`;
+
+    let url = pathSegments.join("/");
+    if (params.view.params.search) {
+      url += `?${params.view.params.search}`;
+    }
+    return url;
   } else {
-    return `${seed}/${params.id}${peer}${content}`;
+    return unreachable(params.view);
   }
 }
 
