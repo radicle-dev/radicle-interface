@@ -1,9 +1,12 @@
 <script lang="ts">
   import type { BaseUrl, Remote } from "@httpd-client";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+  import type {
+    LoadedSourceBrowsingView,
+    ProjectsParams,
+  } from "@app/views/projects/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
-  import { formatNodeId, truncateId } from "@app/lib/utils";
+  import { formatNodeId, truncateId, unreachable } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
   import Avatar from "@app/components/Avatar.svelte";
@@ -27,6 +30,27 @@
     return p.delegate
       ? `${nodeId} is a delegate of this project`
       : `${nodeId} is a peer tracked by this node`;
+  }
+
+  function routeParamsView(
+    view: LoadedSourceBrowsingView,
+  ): ProjectsParams["view"] {
+    if (view.resource === "tree") {
+      return {
+        resource: "tree",
+      };
+    } else if (view.resource === "history") {
+      return {
+        resource: "history",
+      };
+    } else if (view.resource === "commits") {
+      return {
+        resource: "commits",
+        commitId: view.commit.commit.id,
+      };
+    } else {
+      return unreachable(view);
+    }
   }
 </script>
 
@@ -116,7 +140,7 @@
                 baseUrl,
                 peer: item.id,
                 revision: undefined,
-                view,
+                view: routeParamsView(view),
               },
             }}>
             <DropdownItem

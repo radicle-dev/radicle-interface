@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+  import type {
+    LoadedSourceBrowsingView,
+    ProjectsParams,
+  } from "@app/views/projects/router";
 
   import * as utils from "@app/lib/utils";
   import { closeFocused } from "@app/components/Floating.svelte";
@@ -23,6 +26,27 @@
     .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
   $: showSelector = branchList.length > 1;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
+
+  function routeParamsView(
+    view: LoadedSourceBrowsingView,
+  ): ProjectsParams["view"] {
+    if (view.resource === "tree") {
+      return {
+        resource: "tree",
+      };
+    } else if (view.resource === "history") {
+      return {
+        resource: "history",
+      };
+    } else if (view.resource === "commits") {
+      return {
+        resource: "commits",
+        commitId: view.commit.commit.id,
+      };
+    } else {
+      return utils.unreachable(view);
+    }
+  }
 </script>
 
 <style>
@@ -88,7 +112,7 @@
                     baseUrl,
                     peer,
                     revision: item.value,
-                    view,
+                    view: routeParamsView(view),
                   },
                 }}
                 on:afterNavigate={() => closeFocused()}>

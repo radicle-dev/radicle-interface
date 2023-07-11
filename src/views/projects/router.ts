@@ -91,8 +91,6 @@ export type LoadedSourceBrowsingView =
   | {
       resource: "commits";
       params: LoadedSourceBrowsingParams;
-      // FIXME: We need the ID so that `updateProjectRoute()` type checks.
-      commitId: string;
       commit: Commit;
     }
   | {
@@ -308,7 +306,6 @@ export async function loadProjectRoute(
           view: {
             resource: params.view.resource,
             params: viewParams,
-            commitId: params.view.commitId,
             commit: loadedCommit,
           },
         },
