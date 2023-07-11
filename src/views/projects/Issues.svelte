@@ -21,13 +21,10 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let search: string | undefined = undefined;
   export let projectId: string;
   export let baseUrl: BaseUrl;
   export let issueCounters: { open: number; closed: number };
-
-  $: searchParams = new URLSearchParams(search || "");
-  $: state = (searchParams.get("state") as IssueStatus) || "open";
+  export let state: "open" | "closed";
 
   const perPage = 10;
 
@@ -123,7 +120,7 @@
                 resource: "project.issues",
                 project: projectId,
                 seed: baseUrl,
-                search: `state=${option.value}`,
+                state: option.value,
               }}>
               <SquareButton
                 clickable={option.disabled}

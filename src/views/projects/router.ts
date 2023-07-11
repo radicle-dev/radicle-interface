@@ -32,7 +32,7 @@ export type ProjectRoute =
       resource: "project.issues";
       seed: BaseUrl;
       project: string;
-      search?: string;
+      state?: "open" | "closed";
     }
   | { resource: "project.newIssue"; seed: BaseUrl; project: string }
   | {
@@ -131,7 +131,7 @@ export type ProjectLoadedView =
       commit: Commit;
     }
   | { resource: "issue"; issue: Issue }
-  | { resource: "issues"; search: string }
+  | { resource: "issues"; state: "open" | "closed" }
   | { resource: "newIssue" }
   | { resource: "patches"; search: string }
   | PatchView;
@@ -254,7 +254,7 @@ export async function loadProjectRoute(
           baseUrl: route.seed,
           view: {
             resource: "issues",
-            search: route.search || "",
+            state: route.state || "open",
           },
           project,
         },
@@ -618,11 +618,18 @@ export function resolveProjectRoute(
         issue: issueOrAction,
       };
     } else {
+      const rawState = new URLSearchParams(sanitizeQueryString(urlSearch)).get(
+        "state",
+      );
+      let state: "open" | "closed" | undefined;
+      if (rawState === "open" || rawState === "closed") {
+        state = rawState;
+      }
       return {
         resource: "project.issues",
         seed,
         project,
-        search: sanitizeQueryString(urlSearch),
+        state,
       };
     }
   } else if (content === "patches") {
@@ -732,8 +739,12 @@ export function projectRouteToPath(route: ProjectRoute): string {
     return [...pathSegments, "issues", "new"].join("/");
   } else if (route.resource === "project.issues") {
     let url = [...pathSegments, "issues"].join("/");
-    if (route.search) {
-      url += `?${route.search}`;
+    const searchParams = new URLSearchParams();
+    if (route.state) {
+      searchParams.set("state", route.state);
+    }
+    if (searchParams.size > 0) {
+      url += `?${searchParams}`;
     }
     return url;
   } else if (route.resource === "project.issue") {

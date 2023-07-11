@@ -110,16 +110,15 @@ describe("route invariant when parsed", () => {
       resource: "project.issues",
       seed,
       project: "PROJECT",
-      search: "",
     });
   });
 
-  test("projects.issues with search", () => {
+  test("projects.issues with state", () => {
     expectParsingInvariant({
       resource: "project.issues",
       seed,
       project: "PROJECT",
-      search: "SEARCH",
+      state: "closed",
     });
   });
 

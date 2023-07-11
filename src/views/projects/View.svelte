@@ -95,7 +95,7 @@
       {baseUrl}
       projectId={id}
       issueCounters={project.issues}
-      search={view.search} />
+      state={view.state} />
   {:else if view.resource === "newIssue"}
     <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
   {:else if view.resource === "issue"}
