@@ -436,3 +436,16 @@ test.describe("browser error handling", () => {
     await expect(page.locator("text=Not able to load file")).toBeVisible();
   });
 });
+
+test("external markdown link", async ({ page }) => {
+  await page.route("http://github.github.com/**", route => {
+    return route.fulfill({ body: "hello", contentType: "text/plain" });
+  });
+  await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
+  await page
+    .getByRole("link", { name: "Github-flavored Markdown info page" })
+    .click();
+  await expect(page).toHaveURL(
+    "http://github.github.com/github-flavored-markdown/",
+  );
+});

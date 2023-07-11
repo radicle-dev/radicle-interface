@@ -45,8 +45,10 @@
       return;
     }
 
-    event.preventDefault();
-    void router.navigateToUrl("push", url);
+    if (url.origin === window.origin) {
+      event.preventDefault();
+      void router.navigateToUrl("push", url);
+    }
   }
 
   function render(content: string): string {
