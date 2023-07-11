@@ -217,14 +217,9 @@ export async function loadProjectRoute(
       };
     } else if (route.resource === "project.issue") {
       try {
-        const projectPromise = api.project.getById(route.project);
-        const issuePromise = api.project.getIssueById(
-          route.project,
-          route.issue,
-        );
         const [project, issue] = await Promise.all([
-          projectPromise,
-          issuePromise,
+          api.project.getById(route.project),
+          api.project.getIssueById(route.project, route.issue),
         ]);
         return {
           resource: "projects",
