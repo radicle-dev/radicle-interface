@@ -8,15 +8,13 @@ import * as utils from "@app/lib/utils";
 import { config } from "@app/lib/config";
 import {
   projectRouteToPath,
+  projectTitle,
   resolveProjectRoute,
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
 import { seedPath } from "@app/views/seeds/router";
 
 export { type Route };
-
-// Only used by Safari.
-const DOCUMENT_TITLE = "Radicle Interface";
 
 export const isLoading = writable<boolean>(true);
 export const activeRouteStore = writable<LoadedRoute>({
@@ -97,9 +95,9 @@ async function navigate(
     : routeToPath(newRoute);
 
   if (action === "push") {
-    window.history.pushState(newRoute, DOCUMENT_TITLE, path);
+    window.history.pushState(newRoute, "", path);
   } else if (action === "replace") {
-    window.history.replaceState(newRoute, DOCUMENT_TITLE);
+    window.history.replaceState(newRoute, "");
   }
   currentUrl = new URL(window.location.href);
 
@@ -112,8 +110,34 @@ async function navigate(
     return;
   }
 
+  setTitle(loadedRoute);
   activeRouteStore.set(loadedRoute);
   isLoading.set(false);
+}
+
+function setTitle(loadedRoute: LoadedRoute) {
+  const title: string[] = [];
+
+  if (loadedRoute.resource === "booting" || loadedRoute.resource === "home") {
+    title.push("Radicle");
+  } else if (loadedRoute.resource === "loadError") {
+    title.push("Load error");
+    title.push("Radicle");
+  } else if (loadedRoute.resource === "notFound") {
+    title.push("Page not found");
+    title.push("Radicle");
+  } else if (loadedRoute.resource === "projects") {
+    title.push(...projectTitle(loadedRoute));
+  } else if (loadedRoute.resource === "seeds") {
+    title.push(loadedRoute.params.baseUrl.hostname);
+  } else if (loadedRoute.resource === "session") {
+    title.push("Authenticating");
+    title.push("Radicle");
+  } else {
+    utils.unreachable(loadedRoute);
+  }
+
+  document.title = title.join(" · ");
 }
 
 export async function push(newRoute: Route): Promise<void> {

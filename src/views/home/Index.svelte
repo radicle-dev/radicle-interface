@@ -51,10 +51,6 @@
   }
 </style>
 
-<svelte:head>
-  <title>Radicle &ndash; Home</title>
-</svelte:head>
-
 <div class="wrapper">
   <div class="blurb">
     <p use:twemoji>

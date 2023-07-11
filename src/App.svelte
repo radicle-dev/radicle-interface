@@ -51,10 +51,6 @@
   }
 </style>
 
-<svelte:head>
-  <title>Radicle</title>
-</svelte:head>
-
 {#if $activeRouteStore.resource !== "booting"}
   <LoadingBar />
 {/if}

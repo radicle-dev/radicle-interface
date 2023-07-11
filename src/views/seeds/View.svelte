@@ -92,10 +92,6 @@
   }
 </style>
 
-<svelte:head>
-  <title>{hostname}</title>
-</svelte:head>
-
 <div class="wrapper">
   <div class="header">
     {hostname}

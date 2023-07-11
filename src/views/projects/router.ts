@@ -651,4 +651,37 @@ export function projectRouteToPath(params: ProjectsParams): string {
   }
 }
 
+export function projectTitle(loadedRoute: ProjectLoadedRoute) {
+  const title: string[] = [];
+
+  if (loadedRoute.params.view.resource === "tree") {
+    title.push(loadedRoute.params.project.name);
+    title.push(loadedRoute.params.project.description);
+  } else if (loadedRoute.params.view.resource === "commits") {
+    title.push(loadedRoute.params.view.commit.commit.summary);
+    title.push("commit");
+  } else if (loadedRoute.params.view.resource === "history") {
+    title.push(loadedRoute.params.project.name);
+    title.push("history");
+  } else if (loadedRoute.params.view.resource === "newIssue") {
+    title.push("new issue");
+  } else if (loadedRoute.params.view.resource === "issue") {
+    title.push(loadedRoute.params.view.issue.title);
+    title.push("issue");
+  } else if (loadedRoute.params.view.resource === "issues") {
+    title.push(loadedRoute.params.project.name);
+    title.push("issues");
+  } else if (loadedRoute.params.view.resource === "patch") {
+    title.push(loadedRoute.params.view.patch.title);
+    title.push("patch");
+  } else if (loadedRoute.params.view.resource === "patches") {
+    title.push(loadedRoute.params.project.name);
+    title.push("patches");
+  } else {
+    return unreachable(loadedRoute.params.view);
+  }
+
+  return title;
+}
+
 export const testExports = { isOid };
