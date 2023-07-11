@@ -464,10 +464,10 @@ function sanitizeQueryString(queryString: string): string {
 }
 
 export function resolveProjectRoute(
-  url: URL,
   baseUrl: BaseUrl,
   id: string,
   segments: string[],
+  urlSearch: string,
 ): ProjectsParams | null {
   let content = segments.shift();
   let peer;
@@ -514,7 +514,7 @@ export function resolveProjectRoute(
           resource: "issues",
           params: {
             view: { resource: "new" },
-            search: sanitizeQueryString(url.search),
+            search: sanitizeQueryString(urlSearch),
           },
         },
         baseUrl,
@@ -538,7 +538,7 @@ export function resolveProjectRoute(
           resource: "issues",
           params: {
             view: { resource: "list" },
-            search: sanitizeQueryString(url.search),
+            search: sanitizeQueryString(urlSearch),
           },
         },
         baseUrl,
@@ -555,7 +555,7 @@ export function resolveProjectRoute(
       return {
         view: {
           resource: "patch",
-          params: { patch, revision, search: sanitizeQueryString(url.search) },
+          params: { patch, revision, search: sanitizeQueryString(urlSearch) },
         },
         baseUrl,
         id,
@@ -569,7 +569,7 @@ export function resolveProjectRoute(
           resource: "patches",
           params: {
             view: { resource: "list" },
-            search: sanitizeQueryString(url.search),
+            search: sanitizeQueryString(urlSearch),
           },
         },
         baseUrl,

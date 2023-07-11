@@ -33,6 +33,7 @@ describe("route invariant when parsed", () => {
         view: { resource: "tree" },
         baseUrl,
         id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        route: "",
       },
     });
   });
@@ -325,6 +326,7 @@ describe("pathToRoute", () => {
           },
           peer: undefined,
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+          route: "",
         },
       },
       description: "Seed Project Route w trailing slash",
@@ -353,6 +355,7 @@ describe("pathToRoute", () => {
           },
           peer: undefined,
           id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+          route: "",
         },
       },
       description: "Seed Project Route w/o trailing slash",

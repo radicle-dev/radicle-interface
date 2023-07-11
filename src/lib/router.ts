@@ -163,30 +163,11 @@ function pathToRoute(url: URL): Route | null {
         const baseUrl = extractBaseUrl(hostAndPort);
         const id = segments.shift();
         if (id) {
-          // Allows project paths with or without trailing slash
-          if (
-            segments.length === 0 ||
-            (segments.length === 1 && segments[0] === "")
-          ) {
-            return {
-              resource: "projects",
-              params: {
-                view: { resource: "tree" },
-                id,
-                peer: undefined,
-                baseUrl,
-              },
-            };
-          }
-          const params = resolveProjectRoute(url, baseUrl, id, segments);
+          const params = resolveProjectRoute(baseUrl, id, segments, url.search);
           if (params) {
             return {
               resource: "projects",
-              params: {
-                ...params,
-                baseUrl,
-                id,
-              },
+              params: params,
             };
           }
           return null;
