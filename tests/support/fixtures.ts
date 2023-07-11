@@ -112,33 +112,34 @@ export const test = base.extend<{
       }
 
       const playwrightLabel = logLabel.make("playwright");
-      await page.route("**/*", route => {
-        if (
-          route.request().url().startsWith("http://127.0.0.1") ||
-          route.request().url().startsWith("http://localhost") ||
-          route.request().url().startsWith("http://0.0.0.0")
-        ) {
-          return route.continue();
-        } else if (
-          route
-            .request()
-            .url()
-            .startsWith("https://www.gravatar.com/avatar/") ||
-          route.request().url().endsWith(".png")
-        ) {
-          return route.fulfill({
-            status: 200,
-            path: "./public/radicle.svg",
-          });
-        } else {
+
+      function isLocalhost(url: URL) {
+        return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+      }
+
+      await page.route(
+        url => !isLocalhost(url),
+        route => {
           log(
             `Aborted remote request: ${route.request().url()}`,
             playwrightLabel,
             outputLog,
           );
           return route.abort();
-        }
-      });
+        },
+      );
+
+      await page.route(
+        url =>
+          url.href.startsWith("https://www.gravatar.com/avatar/") ||
+          (url.href.endsWith(".png") && !isLocalhost(url)),
+        route => {
+          return route.fulfill({
+            status: 200,
+            path: "./public/radicle.svg",
+          });
+        },
+      );
 
       await use();
     },

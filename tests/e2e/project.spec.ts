@@ -438,14 +438,11 @@ test.describe("browser error handling", () => {
 });
 
 test("external markdown link", async ({ page }) => {
-  await page.route("http://github.github.com/**", route => {
+  await page.route("https://example.com/**", route => {
     return route.fulfill({ body: "hello", contentType: "text/plain" });
   });
-  await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
-  await page
-    .getByRole("link", { name: "Github-flavored Markdown info page" })
-    .click();
-  await expect(page).toHaveURL(
-    "http://github.github.com/github-flavored-markdown/",
-  );
+  await page.goto(`${markdownUrl}/tree/main/footnotes.md`);
+  await page.getByRole("link", { name: "https://example.com" }).click();
+  await page.pause();
+  await expect(page).toHaveURL("https://example.com");
 });
