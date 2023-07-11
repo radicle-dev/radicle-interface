@@ -100,38 +100,34 @@
       {project}
       {view} />
   {:else if view.resource === "issues"}
-    {#if view.params.view.resource === "new"}
-      <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
-    {:else if view.params.view.resource === "list"}
-      <Issues
-        {baseUrl}
-        projectId={id}
-        issueCounters={project.issues}
-        search={view.params.search} />
-    {:else}
-      {unreachable(view.params.view.resource)}
-    {/if}
+    <Issues
+      {baseUrl}
+      projectId={id}
+      issueCounters={project.issues}
+      search={view.search} />
+  {:else if view.resource === "newIssue"}
+    <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
   {:else if view.resource === "issue"}
     <Issue
       projectId={id}
       projectHead={project.head}
       {baseUrl}
-      issue={view.params.loadedIssue} />
+      issue={view.issue} />
   {:else if view.resource === "patches"}
     <Patches
       {baseUrl}
       projectId={id}
       patchCounters={project.patches}
-      search={view.params.search} />
+      search={view.search} />
   {:else if view.resource === "patch"}
     <Patch
-      patch={view.params.loadedPatch}
+      patch={view.patch}
       {baseUrl}
       projectId={id}
       projectDefaultBranch={project.defaultBranch}
       projectHead={project.head}
-      revision={view.params.revision}
-      search={view.params.search} />
+      revision={view.revision}
+      search={view.search} />
   {:else}
     {unreachable(view)}
   {/if}

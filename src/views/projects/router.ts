@@ -103,30 +103,15 @@ export type LoadedSourceBrowsingView =
 
 export type ProjectLoadedView =
   | LoadedSourceBrowsingView
-  | { resource: "issue"; params: { issue: string; loadedIssue: Issue } }
-  | {
-      resource: "issues";
-      params: {
-        view: { resource: "new" | "list" };
-        search: string;
-      };
-    }
-  | {
-      resource: "patches";
-      params: {
-        view: { resource: "list" };
-        search: string;
-      };
-    }
+  | { resource: "issue"; issue: Issue }
+  | { resource: "issues"; search: string }
+  | { resource: "newIssue" }
+  | { resource: "patches"; search: string }
   | {
       resource: "patch";
-      params: {
-        patch: string;
-        revision?: string;
-        loadedPatch: Patch;
-
-        search: string;
-      };
+      patch: Patch;
+      revision?: string;
+      search: string;
     };
 
 // Check whether the input is a SHA1 commit.
@@ -336,7 +321,7 @@ export async function loadProjectRoute(
             project,
             view: {
               resource: "issue",
-              params: { ...params.view.params, loadedIssue: issue },
+              issue,
             },
           },
         };
@@ -369,11 +354,9 @@ export async function loadProjectRoute(
             project,
             view: {
               resource: "patch",
-              params: {
-                search: "",
-                ...params.view.params,
-                loadedPatch: patch,
-              },
+              search: params.view.params.search || "",
+              patch: patch,
+              revision: params.view.params.revision,
             },
           },
         };
@@ -389,18 +372,33 @@ export async function loadProjectRoute(
       }
     } else if (params.view.resource === "issues") {
       const project = await api.project.getById(params.id);
-      return {
-        resource: "projects",
-        params: {
-          id: params.id,
-          baseUrl: params.baseUrl,
-          view: {
-            resource: "issues",
-            params: { search: "", ...params.view.params },
+      if (params.view.params.view.resource === "list") {
+        return {
+          resource: "projects",
+          params: {
+            id: params.id,
+            baseUrl: params.baseUrl,
+            view: {
+              resource: "issues",
+              search: params.view.params.search || "",
+            },
+            project,
           },
-          project,
-        },
-      };
+        };
+      } else if (params.view.params.view.resource === "new") {
+        return {
+          resource: "projects",
+          params: {
+            ...params,
+            view: {
+              resource: "newIssue",
+            },
+            project,
+          },
+        };
+      } else {
+        return unreachable(params.view.params.view.resource);
+      }
     } else if (params.view.resource === "patches") {
       const project = await api.project.getById(params.id);
       return {
@@ -410,7 +408,7 @@ export async function loadProjectRoute(
           baseUrl: params.baseUrl,
           view: {
             resource: "patches",
-            params: { search: "", ...params.view.params },
+            search: params.view.params.search || "",
           },
           project,
         },
