@@ -327,19 +327,12 @@
           {#if !option.disabled}
             <Link
               route={{
-                resource: "projects",
-                params: {
-                  id: projectId,
-                  baseUrl,
-                  view: {
-                    resource: "patch",
-                    params: {
-                      patch: patch.id,
-                      revision,
-                      search: `tab=${option.value}`,
-                    },
-                  },
-                },
+                resource: "project.patch",
+                project: projectId,
+                seed: baseUrl,
+                patch: patch.id,
+                revision,
+                search: `tab=${option.value}`,
               }}>
               <SquareButton
                 size="small"
@@ -362,18 +355,11 @@
         {#if diff}
           <Link
             route={{
-              resource: "projects",
-              params: {
-                id: projectId,
-                baseUrl,
-                view: {
-                  resource: "patch",
-                  params: {
-                    patch: patch.id,
-                    search: `diff=${diff}`,
-                  },
-                },
-              },
+              resource: "project.patch",
+              project: projectId,
+              seed: baseUrl,
+              patch: patch.id,
+              search: `diff=${diff}`,
             }}>
             <SquareButton size="small" active={true}>
               Diff {diff.substr(0, 6)}..{diff.split("..")[1].substr(0, 6)}
@@ -398,20 +384,12 @@
                 <Link
                   on:afterNavigate={closeFocused}
                   route={{
-                    resource: "projects",
-                    params: {
-                      id: projectId,
-
-                      baseUrl,
-                      view: {
-                        resource: "patch",
-                        params: {
-                          patch: patch.id,
-                          revision: item.id,
-                          search: `tab=${currentTab}`,
-                        },
-                      },
-                    },
+                    resource: "project.patch",
+                    project: projectId,
+                    seed: baseUrl,
+                    patch: patch.id,
+                    revision: item.id,
+                    search: `tab=${currentTab}`,
                   }}>
                   <DropdownItem
                     selected={item.id === currentRevision.id}

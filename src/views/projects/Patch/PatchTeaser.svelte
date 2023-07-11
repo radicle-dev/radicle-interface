@@ -128,15 +128,10 @@
     <div class="summary">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: {
-              resource: "patch",
-              params: { patch: patch.id },
-            },
-          },
+          resource: "project.patch",
+          project: projectId,
+          seed: baseUrl,
+          patch: patch.id,
         }}>
         <span class="patch-title">
           <InlineMarkdown content={patch.title} />

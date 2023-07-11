@@ -30,7 +30,7 @@
   $: if (revision === commitId) {
     selectedBranch = undefined;
   } else {
-    selectedBranch = revision ?? defaultBranch;
+    selectedBranch = revision || defaultBranch;
   }
 </script>
 
@@ -72,14 +72,11 @@
 
   <Link
     route={{
-      resource: "projects",
-      params: {
-        id: projectId,
-        baseUrl,
-        peer,
-        revision,
-        view: { resource: "history" },
-      },
+      resource: "project.history",
+      project: projectId,
+      seed: baseUrl,
+      peer,
+      revision,
     }}>
     <SquareButton
       active={view.resource === "history" || view.resource === "commits"}>

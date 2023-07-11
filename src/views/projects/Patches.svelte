@@ -122,18 +122,10 @@
         {:else}
           <Link
             route={{
-              resource: "projects",
-              params: {
-                id: projectId,
-                baseUrl,
-                view: {
-                  resource: "patches",
-                  params: {
-                    view: { resource: "list" },
-                    search: `state=${option.value}`,
-                  },
-                },
-              },
+              resource: "project.patches",
+              project: projectId,
+              seed: baseUrl,
+              search: `state=${option.value}`,
             }}>
             <SquareButton
               clickable={option.disabled}

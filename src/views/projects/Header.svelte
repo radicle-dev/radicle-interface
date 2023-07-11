@@ -43,13 +43,10 @@
 <div class="header">
   <Link
     route={{
-      resource: "projects",
-      params: {
-        id: projectId,
-        baseUrl,
-        view: { resource: "tree" },
-        path: "/",
-      },
+      resource: "project.tree",
+      project: projectId,
+      seed: baseUrl,
+      path: "/",
     }}>
     <SquareButton
       active={resource === "tree" ||
@@ -63,15 +60,9 @@
   </Link>
   <Link
     route={{
-      resource: "projects",
-      params: {
-        id: projectId,
-        baseUrl,
-        view: {
-          resource: "issues",
-          params: { view: { resource: "list" } },
-        },
-      },
+      resource: "project.issues",
+      project: projectId,
+      seed: baseUrl,
     }}>
     <SquareButton active={resource === "issues" || resource === "issue"}>
       <svelte:fragment slot="icon">
@@ -84,15 +75,9 @@
 
   <Link
     route={{
-      resource: "projects",
-      params: {
-        id: projectId,
-        baseUrl,
-        view: {
-          resource: "patches",
-          params: { view: { resource: "list" } },
-        },
-      },
+      resource: "project.patches",
+      project: projectId,
+      seed: baseUrl,
     }}>
     <SquareButton active={resource === "patches" || resource === "patch"}>
       <svelte:fragment slot="icon">

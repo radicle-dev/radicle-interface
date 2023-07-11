@@ -2,7 +2,7 @@
   import type { BaseUrl } from "@httpd-client";
   import type {
     LoadedSourceBrowsingView,
-    ProjectsParams,
+    ProjectRoute,
   } from "@app/views/projects/router";
 
   import * as utils from "@app/lib/utils";
@@ -27,21 +27,32 @@
   $: showSelector = branchList.length > 1;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
 
-  function routeParamsView(
+  function routeFromView(
+    revision: string,
     view: LoadedSourceBrowsingView,
-  ): ProjectsParams["view"] {
+  ): ProjectRoute {
     if (view.resource === "tree") {
       return {
-        resource: "tree",
+        resource: "project.tree",
+        seed: baseUrl,
+        project: projectId,
+        peer,
+        revision,
       };
     } else if (view.resource === "history") {
       return {
-        resource: "history",
+        resource: "project.history",
+        seed: baseUrl,
+        project: projectId,
+        peer,
+        revision,
       };
     } else if (view.resource === "commits") {
       return {
-        resource: "commits",
-        commitId: view.commit.commit.id,
+        resource: "project.commit",
+        seed: baseUrl,
+        project: projectId,
+        commit: view.commit.commit.id,
       };
     } else {
       return utils.unreachable(view);
@@ -105,16 +116,7 @@
           <Dropdown items={branchList}>
             <svelte:fragment slot="item" let:item>
               <Link
-                route={{
-                  resource: "projects",
-                  params: {
-                    id: projectId,
-                    baseUrl,
-                    peer,
-                    revision: item.value,
-                    view: routeParamsView(view),
-                  },
-                }}
+                route={routeFromView(item.value, view)}
                 on:afterNavigate={() => closeFocused()}>
                 <DropdownItem
                   selected={item.value === selectedBranch}

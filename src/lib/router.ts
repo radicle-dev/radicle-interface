@@ -187,19 +187,13 @@ function pathToRoute(url: URL): Route | null {
         const baseUrl = extractBaseUrl(hostAndPort);
         const id = segments.shift();
         if (id) {
-          const params = resolveProjectRoute(baseUrl, id, segments, url.search);
-          if (params) {
-            return {
-              resource: "projects",
-              params: params,
-            };
-          }
-          return null;
+          return resolveProjectRoute(baseUrl, id, segments, url.search);
+        } else {
+          return {
+            resource: "seeds",
+            params: { baseUrl, projectPageIndex: 0 },
+          };
         }
-        return {
-          resource: "seeds",
-          params: { baseUrl, projectPageIndex: 0 },
-        };
       }
       return null;
     }
@@ -235,8 +229,17 @@ export function routeToPath(route: Route): string {
     return seedPath(route.params.baseUrl);
   } else if (route.resource === "loadError") {
     return "";
-  } else if (route.resource === "projects") {
-    return projectRouteToPath(route.params);
+  } else if (
+    route.resource === "project.tree" ||
+    route.resource === "project.history" ||
+    route.resource === "project.commit" ||
+    route.resource === "project.issues" ||
+    route.resource === "project.newIssue" ||
+    route.resource === "project.issue" ||
+    route.resource === "project.patches" ||
+    route.resource === "project.patch"
+  ) {
+    return projectRouteToPath(route);
   } else if (route.resource === "booting") {
     return "";
   } else if (route.resource === "notFound") {

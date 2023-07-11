@@ -89,13 +89,9 @@
     <span class="truncate">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: { resource: "tree" },
-            path: "/",
-          },
+          resource: "project.tree",
+          project: projectId,
+          seed: baseUrl,
         }}>
         <span class="project-name">
           {projectName}

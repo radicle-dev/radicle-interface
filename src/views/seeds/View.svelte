@@ -123,12 +123,9 @@
         <div style:margin-bottom="0.5rem">
           <Link
             route={{
-              resource: "projects",
-              params: {
-                view: { resource: "tree" },
-                id: project.id,
-                baseUrl,
-              },
+              resource: "project.tree",
+              project: project.id,
+              seed: baseUrl,
             }}>
             <ProjectCard
               {activity}

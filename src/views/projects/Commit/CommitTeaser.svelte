@@ -10,7 +10,6 @@
 
   export let baseUrl: BaseUrl;
   export let commit: CommitHeader;
-  export let peer: string | undefined = undefined;
   export let projectId: string;
 
   let expandCommitMessage = false;
@@ -99,13 +98,10 @@
     <div class="message">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            peer,
-            id: projectId,
-            baseUrl,
-            view: { resource: "commits", commitId: commit.id },
-          },
+          resource: "project.commit",
+          project: projectId,
+          seed: baseUrl,
+          commit: commit.id,
         }}>
         <div class="summary" use:twemoji>
           <InlineMarkdown content={commit.summary} />
@@ -136,13 +132,10 @@
       title="Browse the repository at this point in the history">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            revision: commit.id,
-            view: { resource: "tree" },
-          },
+          resource: "project.tree",
+          project: projectId,
+          seed: baseUrl,
+          revision: commit.id,
         }}>
         <Icon name="browse" />
       </Link>

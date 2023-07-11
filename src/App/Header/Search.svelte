@@ -49,13 +49,9 @@
       if (searchResult.results.length === 1) {
         const { project, baseUrl } = searchResult.results[0];
         void router.push({
-          resource: "projects",
-          params: {
-            view: { resource: "tree" },
-            id: project.id,
-            peer: undefined,
-            baseUrl,
-          },
+          resource: "project.tree",
+          project: project.id,
+          seed: baseUrl,
         });
       } else {
         modal.show({

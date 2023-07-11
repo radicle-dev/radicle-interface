@@ -53,14 +53,11 @@
     <div class="browse" title="View file">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: { resource: "tree" },
-            path: file.newPath,
-            revision,
-          },
+          resource: "project.tree",
+          project: projectId,
+          seed: baseUrl,
+          path: file.newPath,
+          revision,
         }}>
         <Icon name="browse" />
       </Link>

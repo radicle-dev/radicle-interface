@@ -37,12 +37,9 @@
             <Link
               on:afterNavigate={modal.hide}
               route={{
-                resource: "projects",
-                params: {
-                  view: { resource: "tree" },
-                  baseUrl: result.baseUrl,
-                  id: result.project.id,
-                },
+                resource: "project.tree",
+                seed: result.baseUrl,
+                project: result.project.id,
               }}>
               <span title={result.baseUrl.hostname}>
                 <span>{result.project.name}</span>

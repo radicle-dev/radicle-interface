@@ -55,8 +55,17 @@ export async function loadRoute(route: Route): Promise<LoadedRoute> {
     return await loadSeedRoute(route.params);
   } else if (route.resource === "home") {
     return await loadHomeRoute();
-  } else if (route.resource === "projects") {
-    return await loadProjectRoute(route.params);
+  } else if (
+    route.resource === "project.tree" ||
+    route.resource === "project.history" ||
+    route.resource === "project.commit" ||
+    route.resource === "project.issues" ||
+    route.resource === "project.newIssue" ||
+    route.resource === "project.issue" ||
+    route.resource === "project.patches" ||
+    route.resource === "project.patch"
+  ) {
+    return await loadProjectRoute(route);
   } else {
     return route;
   }

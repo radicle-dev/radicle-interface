@@ -211,18 +211,11 @@
               previousRevOid,
             )}..{utils.formatObjectId(revisionOid)}"
             route={{
-              resource: "projects",
-              params: {
-                id: projectId,
-                baseUrl,
-                view: {
-                  resource: "patch",
-                  params: {
-                    patch: patchId,
-                    search: `diff=${previousRevOid}..${revisionOid}`,
-                  },
-                },
-              },
+              resource: "project.patch",
+              project: projectId,
+              seed: baseUrl,
+              patch: patchId,
+              search: `diff=${previousRevOid}..${revisionOid}`,
             }}>
             <Icon name="diff" />
           </Link>
@@ -240,18 +233,11 @@
                 <Link
                   title="{item}..{revisionOid}"
                   route={{
-                    resource: "projects",
-                    params: {
-                      id: projectId,
-                      baseUrl,
-                      view: {
-                        resource: "patch",
-                        params: {
-                          patch: patchId,
-                          search: `diff=${item}..${revisionOid}`,
-                        },
-                      },
-                    },
+                    resource: "project.patch",
+                    project: projectId,
+                    seed: baseUrl,
+                    patch: patchId,
+                    search: `diff=${item}..${revisionOid}`,
                   }}>
                   {#if item === projectHead}
                     <DropdownItem selected={false} size="small">
@@ -305,12 +291,10 @@
                     <Avatar inline nodeId={revisionAuthor.id} />
                     <Link
                       route={{
-                        resource: "projects",
-                        params: {
-                          id: projectId,
-                          baseUrl,
-                          view: { resource: "commits", commitId: commit.id },
-                        },
+                        resource: "project.commit",
+                        project: projectId,
+                        seed: baseUrl,
+                        commit: commit.id,
                       }}>
                       <div class="commit-summary" use:twemoji>
                         <InlineMarkdown

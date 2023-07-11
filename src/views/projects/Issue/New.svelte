@@ -52,15 +52,10 @@
       );
 
       void router.push({
-        resource: "projects",
-        params: {
-          id: projectId,
-          baseUrl,
-          view: {
-            resource: "issue",
-            params: { issue: result.id },
-          },
-        },
+        resource: "project.issue",
+        project: projectId,
+        seed: baseUrl,
+        issue: result.id,
       });
     } catch {
       modal.show({

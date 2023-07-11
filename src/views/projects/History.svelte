@@ -101,7 +101,7 @@
     <div class="group">
       {#each group.commits as commit (commit.id)}
         <div class="teaser-wrapper">
-          <CommitTeaser {peer} projectId={project.id} {baseUrl} {commit} />
+          <CommitTeaser projectId={project.id} {baseUrl} {commit} />
         </div>
       {/each}
     </div>

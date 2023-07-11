@@ -120,18 +120,10 @@
           {#if !option.disabled}
             <Link
               route={{
-                resource: "projects",
-                params: {
-                  id: projectId,
-                  baseUrl,
-                  view: {
-                    resource: "issues",
-                    params: {
-                      view: { resource: "list" },
-                      search: `state=${option.value}`,
-                    },
-                  },
-                },
+                resource: "project.issues",
+                project: projectId,
+                seed: baseUrl,
+                search: `state=${option.value}`,
               }}>
               <SquareButton
                 clickable={option.disabled}
@@ -154,15 +146,9 @@
     {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: {
-              resource: "issues",
-              params: { view: { resource: "new" } },
-            },
-          },
+          resource: "project.newIssue",
+          project: projectId,
+          seed: baseUrl,
         }}>
         <SquareButton>New issue</SquareButton>
       </Link>

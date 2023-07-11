@@ -7,9 +7,7 @@ import {
   aliceRemote,
 } from "@tests/support/fixtures.js";
 
-const modifiedFileFixture = `${sourceBrowsingUrl}/remotes/${bobRemote.substring(
-  8,
-)}/commits/${bobHead}`;
+const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
@@ -18,7 +16,7 @@ test("navigation from commit list", async ({ page }) => {
   await page.locator('role=link[name="7 commits"]').click();
 
   await page.locator("text=Update readme").click();
-  await expect(page).toHaveURL(modifiedFileFixture);
+  await expect(page).toHaveURL(commitUrl);
 });
 
 test("relative timestamps", async ({ page }) => {
@@ -31,14 +29,14 @@ test("relative timestamps", async ({ page }) => {
       });
     };
   });
-  await page.goto(modifiedFileFixture);
+  await page.goto(commitUrl);
   await expect(
     page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
   ).toBeVisible();
 });
 
 test("modified file", async ({ page }) => {
-  await page.goto(modifiedFileFixture);
+  await page.goto(commitUrl);
 
   // Commit header.
   {

@@ -6,7 +6,7 @@ window.origin = "http://localhost:3000";
 
 describe("route invariant when parsed", () => {
   const origin = "http://localhost:3000";
-  const baseUrl = {
+  const seed = {
     hostname: "willow.radicle.garden",
     port: 8000,
     scheme: "http",
@@ -22,252 +22,180 @@ describe("route invariant when parsed", () => {
         // TODO: This only works with the value 0. The value is not actually
         // extract.
         projectPageIndex: 0,
-        baseUrl,
+        baseUrl: seed,
       },
     });
   });
   test("projects.tree", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        baseUrl,
-        id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-        route: "",
-      },
+      resource: "project.tree",
+      seed,
+      project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      route: "",
     });
   });
 
   test("projects.tree with peer", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        baseUrl,
-        id: "PROJECT",
-        peer: "PEER",
-        route: "",
-      },
+      resource: "project.tree",
+      seed,
+      project: "PROJECT",
+      peer: "PEER",
+      route: "",
     });
   });
 
   test("projects.tree with peer and revision", () => {
     const route: Route = {
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        baseUrl,
-        id: "PROJECT",
-        peer: "PEER",
-        revision: "REVISION",
-        route: "",
-      },
+      resource: "project.tree",
+      seed,
+      project: "PROJECT",
+      peer: "PEER",
+      revision: "REVISION",
+      route: "",
     };
     const path = testExports.routeToPath(route);
-    route.params.revision = undefined;
-    route.params.route = "REVISION";
+    route.revision = undefined;
+    route.route = "REVISION";
     expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
   });
 
   test("projects.tree with peer and revision and path", () => {
     const route: Route = {
-      resource: "projects",
-      params: {
-        view: { resource: "tree" },
-        baseUrl,
-        id: "PROJECT",
-        peer: "PEER",
-        path: "PATH",
-        revision: "REVISION",
-        route: "",
-      },
+      resource: "project.tree",
+      seed,
+      project: "PROJECT",
+      peer: "PEER",
+      path: "PATH",
+      revision: "REVISION",
+      route: "",
     };
     const path = testExports.routeToPath(route);
-    route.params.revision = undefined;
-    route.params.path = undefined;
-    route.params.route = "REVISION/PATH";
+    route.revision = undefined;
+    route.path = undefined;
+    route.route = "REVISION/PATH";
     expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
   });
 
   test("projects.history", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: { resource: "history" },
-        baseUrl,
-        id: "PROJECT",
-        route: "",
-      },
+      resource: "project.history",
+      seed,
+      project: "PROJECT",
+      revision: "",
     });
   });
 
   test("projects.history with revision", () => {
-    const route: Route = {
-      resource: "projects",
-      params: {
-        view: { resource: "history" },
-        baseUrl,
-        id: "PROJECT",
-        peer: "PEER",
-        revision: "REVISION",
-      },
-    };
-    const path = testExports.routeToPath(route);
-    route.params.revision = undefined;
-    route.params.route = "REVISION";
-    expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
+    expectParsingInvariant({
+      resource: "project.history",
+      seed,
+      project: "PROJECT",
+      revision: "REVISION",
+    });
   });
 
   test("projects.commits", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: { resource: "commits", commitId: "COMMIT" },
-        baseUrl,
-        id: "PROJECT",
-        peer: "PEER",
-      },
+      resource: "project.commit",
+      seed,
+      project: "PROJECT",
+      commit: "COMMIT",
     });
   });
 
   test("projects.issues", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "issues",
-          params: { view: { resource: "list" }, search: "" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.issues",
+      seed,
+      project: "PROJECT",
+      search: "",
     });
   });
 
   test("projects.issues with search", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "issues",
-          params: { view: { resource: "list" }, search: "SEARCH" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.issues",
+      seed,
+      project: "PROJECT",
+      search: "SEARCH",
     });
   });
 
-  test("projects.issues.new", () => {
+  test("projects.newIssue", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "issues",
-          params: { view: { resource: "new" }, search: "" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.newIssue",
+      seed,
+      project: "PROJECT",
     });
   });
 
   test("projects.issue", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "issue",
-          params: { issue: "ISSUE" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.issue",
+      seed,
+      project: "PROJECT",
+      issue: "ISSUE",
     });
   });
 
   test("projects.patches"),
     () => {
       expectParsingInvariant({
-        resource: "projects",
-        params: {
-          view: {
-            resource: "patches",
-            params: { view: { resource: "list" }, search: "" },
-          },
-          baseUrl,
-          id: "PROJECT",
-        },
+        resource: "project.patches",
+        seed,
+        project: "PROJECT",
       });
     };
 
   test("projects.patches with search", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "patches",
-          params: { view: { resource: "list" }, search: "SEARCH" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.patches",
+      seed,
+      project: "PROJECT",
+      search: "SEARCH",
     });
   });
 
   test("projects.patch", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "patch",
-          params: { patch: "PATCH", search: "" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      search: "",
     });
   });
 
   test("projects.patch with revision", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "patch",
-          params: { patch: "PATCH", search: "", revision: "REVISION" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      search: "",
+      revision: "REVISION",
     });
   });
 
   test("projects.patch with search", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "patch",
-          params: { patch: "PATCH", search: "SEARCH" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      search: "SEARCH",
     });
   });
 
   test("projects.patch with revision and search", () => {
     expectParsingInvariant({
-      resource: "projects",
-      params: {
-        view: {
-          resource: "patch",
-          params: { patch: "PATCH", search: "SEARCH", revision: "REVISION" },
-        },
-        baseUrl,
-        id: "PROJECT",
-      },
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      revision: "REVISION",
+      search: "SEARCH",
     });
   });
 
@@ -316,18 +244,14 @@ describe("pathToRoute", () => {
         dummyUrl,
       ),
       output: {
-        resource: "projects",
-        params: {
-          view: { resource: "tree" },
-          baseUrl: {
-            hostname: "willow.radicle.garden",
-            scheme: "http",
-            port: 8080,
-          },
-          peer: undefined,
-          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-          route: "",
+        resource: "project.tree",
+        seed: {
+          hostname: "willow.radicle.garden",
+          scheme: "http",
+          port: 8080,
         },
+        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        route: "",
       },
       description: "Seed Project Route w trailing slash",
     },
@@ -345,18 +269,14 @@ describe("pathToRoute", () => {
         dummyUrl,
       ),
       output: {
-        resource: "projects",
-        params: {
-          view: { resource: "tree" },
-          baseUrl: {
-            hostname: "willow.radicle.garden",
-            scheme: "http",
-            port: 8080,
-          },
-          peer: undefined,
-          id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-          route: "",
+        resource: "project.tree",
+        seed: {
+          hostname: "willow.radicle.garden",
+          scheme: "http",
+          port: 8080,
         },
+        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        route: "",
       },
       description: "Seed Project Route w/o trailing slash",
     },

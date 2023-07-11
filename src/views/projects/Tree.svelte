@@ -36,15 +36,12 @@
   {:else}
     <Link
       route={{
-        resource: "projects",
-        params: {
-          id: projectId,
-          baseUrl,
-          path: entry.path,
-          peer,
-          revision,
-          view: { resource: "tree" },
-        },
+        resource: "project.tree",
+        project: projectId,
+        seed: baseUrl,
+        path: entry.path,
+        peer,
+        revision,
       }}
       on:afterNavigate={() => onSelect({ detail: entry.path })}>
       <File active={entry.path === path} name={entry.name} />

@@ -23,15 +23,12 @@
       // Markdown.
       linkBaseUrl = new URL(
         routeToPath({
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: { resource: "tree" },
-            peer,
-            revision,
-            path: "README.md",
-          },
+          resource: "project.tree",
+          project: projectId,
+          seed: baseUrl,
+          peer,
+          revision,
+          path: "README.md",
         }),
         window.origin,
       ).href;

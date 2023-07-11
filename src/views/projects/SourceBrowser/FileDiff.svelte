@@ -175,14 +175,11 @@
     <div class="browse" title="View file">
       <Link
         route={{
-          resource: "projects",
-          params: {
-            id: projectId,
-            baseUrl,
-            view: { resource: "tree" },
-            path: file.path,
-            revision,
-          },
+          resource: "project.tree",
+          project: projectId,
+          seed: baseUrl,
+          path: file.path,
+          revision,
         }}>
         <Icon name="browse" />
       </Link>

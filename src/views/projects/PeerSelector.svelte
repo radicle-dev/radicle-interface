@@ -2,7 +2,7 @@
   import type { BaseUrl, Remote } from "@httpd-client";
   import type {
     LoadedSourceBrowsingView,
-    ProjectsParams,
+    ProjectRoute,
   } from "@app/views/projects/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
@@ -32,21 +32,30 @@
       : `${nodeId} is a peer tracked by this node`;
   }
 
-  function routeParamsView(
+  function routeFromView(
+    peer: string,
     view: LoadedSourceBrowsingView,
-  ): ProjectsParams["view"] {
+  ): ProjectRoute {
     if (view.resource === "tree") {
       return {
-        resource: "tree",
+        resource: "project.tree",
+        seed: baseUrl,
+        project: projectId,
+        peer,
       };
     } else if (view.resource === "history") {
       return {
-        resource: "history",
+        resource: "project.history",
+        seed: baseUrl,
+        project: projectId,
+        peer,
       };
     } else if (view.resource === "commits") {
       return {
-        resource: "commits",
-        commitId: view.commit.commit.id,
+        resource: "project.commit",
+        seed: baseUrl,
+        project: projectId,
+        commit: view.commit.commit.id,
       };
     } else {
       return unreachable(view);
@@ -133,16 +142,7 @@
         <div class="dropdown-item">
           <Link
             on:afterNavigate={() => closeFocused()}
-            route={{
-              resource: "projects",
-              params: {
-                id: projectId,
-                baseUrl,
-                peer: item.id,
-                revision: undefined,
-                view: routeParamsView(view),
-              },
-            }}>
+            route={routeFromView(item.id, view)}>
             <DropdownItem
               selected={item.id === peer}
               title={createTitle(item)}

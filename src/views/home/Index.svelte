@@ -70,14 +70,9 @@
         <div class="project">
           <Link
             route={{
-              resource: "projects",
-              params: {
-                view: { resource: "tree" },
-                id: project.id,
-                baseUrl,
-                peer: undefined,
-                revision: undefined,
-              },
+              resource: "project.tree",
+              project: project.id,
+              seed: baseUrl,
             }}>
             <ProjectCard
               compact
