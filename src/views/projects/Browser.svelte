@@ -15,7 +15,6 @@
 
   export let baseUrl: BaseUrl;
   export let branches: Record<string, string> | undefined;
-  export let commit: string;
   export let commitCount: number;
   export let contributorCount: number;
   export let path: string;
@@ -34,16 +33,18 @@
   const api = new HttpdClient(baseUrl);
 
   const fetchTree = async (path: string) => {
-    return api.project.getTree(project.id, commit, path).catch(() => {
-      blobResult = {
-        ok: false,
-        error: {
-          message: "Not able to expand directory",
-          path,
-        },
-      };
-      return undefined;
-    });
+    return api.project
+      .getTree(project.id, tree.lastCommit.id, path)
+      .catch(() => {
+        blobResult = {
+          ok: false,
+          error: {
+            message: "Not able to expand directory",
+            path,
+          },
+        };
+        return undefined;
+      });
   };
 </script>
 
@@ -182,7 +183,11 @@
             {path}
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
-            rawPath={utils.getRawBasePath(project.id, baseUrl, commit)} />
+            rawPath={utils.getRawBasePath(
+              project.id,
+              baseUrl,
+              tree.lastCommit.id,
+            )} />
         {:else}
           <Placeholder emoji="🍂">
             <span slot="title">

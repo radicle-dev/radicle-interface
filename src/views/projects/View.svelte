@@ -61,7 +61,6 @@
     <Browser
       blobResult={view.blobResult}
       branches={view.params.loadedBranches}
-      commit={view.params.selectedCommit}
       commitCount={view.params.loadedTree.stats.commits}
       contributorCount={view.params.loadedTree.stats.contributors}
       path={view.path}

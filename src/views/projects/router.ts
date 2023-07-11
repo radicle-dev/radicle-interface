@@ -75,7 +75,6 @@ interface LoadedSourceBrowsingParams {
   loadedBranches: Record<string, string> | undefined;
   loadedPeers: Remote[];
   loadedTree: Tree;
-  selectedCommit: string;
 }
 
 export type BlobResult =
@@ -202,7 +201,6 @@ export async function loadProjectRoute(
         loadedBranches: branches,
         loadedPeers: peers,
         loadedTree: tree,
-        selectedCommit: commit,
       };
       if (params.view.resource === "tree") {
         let blobResult: BlobResult;
@@ -295,7 +293,6 @@ export async function loadProjectRoute(
         loadedBranches: undefined,
         loadedPeers: peers,
         loadedTree: tree,
-        selectedCommit: params.view.commitId,
       };
       const loadedCommit = await api.project.getCommitBySha(
         params.id,
