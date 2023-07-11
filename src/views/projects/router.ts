@@ -19,22 +19,8 @@ import { seedPath } from "@app/views/seeds/router";
 export const COMMITS_PER_PAGE = 30;
 
 export type ProjectRoute =
-  | {
-      resource: "project.tree";
-      seed: BaseUrl;
-      project: string;
-      path?: string;
-      peer?: string;
-      revision?: string;
-      route?: string;
-    }
-  | {
-      resource: "project.history";
-      seed: BaseUrl;
-      project: string;
-      peer?: string;
-      revision?: string;
-    }
+  | ProjectTreeRoute
+  | ProjectHistoryRoute
   | {
       resource: "project.commit";
       seed: BaseUrl;
@@ -69,6 +55,24 @@ export type ProjectRoute =
       search?: string;
     };
 
+interface ProjectTreeRoute {
+  resource: "project.tree";
+  seed: BaseUrl;
+  project: string;
+  path?: string;
+  peer?: string;
+  revision?: string;
+  route?: string;
+}
+
+interface ProjectHistoryRoute {
+  resource: "project.history";
+  seed: BaseUrl;
+  project: string;
+  peer?: string;
+  revision?: string;
+}
+
 export interface ProjectLoadedRoute {
   resource: "projects";
   params: ProjectLoadedParams;
@@ -80,7 +84,6 @@ export interface ProjectLoadedParams {
   project: Project;
   view: ProjectLoadedView;
 }
-
 export type LoadedSourceBrowsingView =
   | {
       resource: "tree";
@@ -132,7 +135,7 @@ function isOid(input: string): boolean {
   return /^[a-fA-F0-9]{40}$/.test(input);
 }
 
-export function parseRevisionToOid(
+function parseRevisionToOid(
   revision: string | undefined,
   defaultBranch: string,
   branches: Record<string, string>,
@@ -158,130 +161,10 @@ export async function loadProjectRoute(
 ): Promise<ProjectLoadedRoute | LoadError> {
   const api = new HttpdClient(route.seed);
   try {
-    if (
-      route.resource === "project.tree" ||
-      route.resource === "project.history"
-    ) {
-      const projectPromise = api.project.getById(route.project);
-      const peersPromise = api.project.getAllRemotes(route.project);
-      const branchesPromise = (async () => {
-        if (route.peer) {
-          return (await api.project.getRemoteByPeer(route.project, route.peer))
-            .heads;
-        } else {
-          return undefined;
-        }
-      })();
-
-      const [project, peers, branches] = await Promise.all([
-        projectPromise,
-        peersPromise,
-        branchesPromise,
-      ]);
-
-      if (route.resource === "project.tree" && route.route) {
-        const { revision, path } = detectRevision(
-          route.route,
-          branches || { [project.defaultBranch]: project.head },
-        );
-        route.revision = revision;
-        route.path = path;
-      }
-
-      const commit = parseRevisionToOid(
-        route.revision,
-        project.defaultBranch,
-        branches || { [project.defaultBranch]: project.head },
-      );
-      const tree = await api.project.getTree(route.project, commit);
-      const viewParams = {
-        loadedBranches: branches,
-        loadedPeers: peers,
-        loadedTree: tree,
-      };
-      if (route.resource === "project.tree") {
-        let blobResult: BlobResult;
-
-        const path = route.path || "/";
-        try {
-          let blob: Blob;
-          if (path === "/") {
-            blob = await api.project.getReadme(project.id, commit);
-          } else {
-            blob = await api.project.getBlob(project.id, commit, path);
-          }
-          blobResult = {
-            ok: true,
-            blob,
-            highlighted: blob.content
-              ? await Syntax.highlight(
-                  blob.content,
-                  blob.path.split(".").pop() ?? "",
-                )
-              : undefined,
-          };
-        } catch {
-          if (path === "/") {
-            blobResult = {
-              ok: false,
-              error: {
-                message: "The README could not be loaded",
-                path,
-              },
-            };
-          } else {
-            blobResult = {
-              ok: false,
-              error: {
-                message: "Not able to load file",
-                path,
-              },
-            };
-          }
-        }
-
-        return {
-          resource: "projects",
-          params: {
-            id: route.project,
-            baseUrl: route.seed,
-            project,
-            view: {
-              resource: "tree",
-              peer: route.peer,
-              revision: route.revision,
-              params: viewParams,
-              path,
-              blobResult,
-            },
-          },
-        };
-      } else if (route.resource === "project.history") {
-        const commitsResponse = await api.project.getAllCommits(project.id, {
-          parent: commit,
-          page: 0,
-          perPage: COMMITS_PER_PAGE,
-        });
-
-        return {
-          resource: "projects",
-          params: {
-            id: route.project,
-            baseUrl: route.seed,
-            project,
-            view: {
-              resource: "history",
-              peer: route.peer,
-              revision: route.revision,
-              params: viewParams,
-              commitHeaders: commitsResponse.commits.map(c => c.commit),
-              totalCommitCount: commitsResponse.stats.commits,
-            },
-          },
-        };
-      } else {
-        return unreachable(route);
-      }
+    if (route.resource === "project.tree") {
+      return loadTreeView(route);
+    } else if (route.resource === "project.history") {
+      return loadHistoryView(route);
     } else if (route.resource === "project.commit") {
       const projectPromise = api.project.getById(route.project);
       const peersPromise = api.project.getAllRemotes(route.project);
@@ -436,6 +319,169 @@ export async function loadProjectRoute(
         stackTrace: error.stack,
       },
     };
+  }
+}
+
+async function loadTreeView(
+  route: ProjectTreeRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.seed);
+
+  const [project, peers, branches] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getAllRemotes(route.project),
+    getPeerBranches(api, route.project, route.peer),
+  ]);
+
+  if (route.route) {
+    const { revision, path } = detectRevision(
+      route.route,
+      branches || { [project.defaultBranch]: project.head },
+    );
+    route.revision = revision;
+    route.path = path;
+  }
+
+  const commit = parseRevisionToOid(
+    route.revision,
+    project.defaultBranch,
+    branches || { [project.defaultBranch]: project.head },
+  );
+
+  const path = route.path || "/";
+
+  const [tree, blobResult] = await Promise.all([
+    api.project.getTree(route.project, commit),
+    loadBlob(api, project.id, commit, path),
+  ]);
+  return {
+    resource: "projects",
+    params: {
+      id: route.project,
+      baseUrl: route.seed,
+      project,
+      view: {
+        resource: "tree",
+        peer: route.peer,
+        revision: route.revision,
+        params: {
+          loadedBranches: branches,
+          loadedPeers: peers,
+          loadedTree: tree,
+        },
+        path,
+        blobResult,
+      },
+    },
+  };
+}
+
+async function loadBlob(
+  api: HttpdClient,
+  project: string,
+  commit: string,
+  path: string,
+): Promise<BlobResult> {
+  try {
+    let blob: Blob;
+    if (path === "" || path === "/") {
+      blob = await api.project.getReadme(project, commit);
+    } else {
+      blob = await api.project.getBlob(project, commit, path);
+    }
+    return {
+      ok: true,
+      blob,
+      highlighted: blob.content
+        ? await Syntax.highlight(blob.content, blob.path.split(".").pop() ?? "")
+        : undefined,
+    };
+  } catch {
+    if (path === "/") {
+      return {
+        ok: false,
+        error: {
+          message: "The README could not be loaded",
+          path,
+        },
+      };
+    } else {
+      return {
+        ok: false,
+        error: {
+          message: "Not able to load file",
+          path,
+        },
+      };
+    }
+  }
+}
+async function loadHistoryView(
+  route: ProjectHistoryRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.seed);
+
+  const [project, peers, branches] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getAllRemotes(route.project),
+    getPeerBranches(api, route.project, route.peer),
+  ]);
+
+  let commitId;
+  if (route.revision && isOid(route.revision)) {
+    commitId = route.revision;
+  } else if (branches) {
+    commitId = branches[route.revision || project.defaultBranch];
+  } else if (!route.revision) {
+    commitId = project.head;
+  }
+
+  if (!commitId) {
+    throw new Error(
+      `Revision ${route.revision} not found for project ${project.id}`,
+    );
+  }
+
+  const [tree, commitsResponse] = await Promise.all([
+    api.project.getTree(route.project, commitId),
+    await api.project.getAllCommits(project.id, {
+      parent: commitId,
+      page: 0,
+      perPage: COMMITS_PER_PAGE,
+    }),
+  ]);
+
+  return {
+    resource: "projects",
+    params: {
+      id: route.project,
+      baseUrl: route.seed,
+      project,
+      view: {
+        resource: "history",
+        peer: route.peer,
+        revision: route.revision,
+        params: {
+          loadedBranches: branches,
+          loadedPeers: peers,
+          loadedTree: tree,
+        },
+        commitHeaders: commitsResponse.commits.map(c => c.commit),
+        totalCommitCount: commitsResponse.stats.commits,
+      },
+    },
+  };
+}
+
+async function getPeerBranches(
+  api: HttpdClient,
+  project: string,
+  peer?: string,
+) {
+  if (peer) {
+    return (await api.project.getRemoteByPeer(project, peer)).heads;
+  } else {
+    return undefined;
   }
 }
 
