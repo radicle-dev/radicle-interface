@@ -371,6 +371,18 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
+    ["issue", "react", issueOne, "--emoji", "👍", "--to", issueOne],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await peer.rad(
+    ["issue", "react", issueOne, "--emoji", "🎉", "--to", issueOne],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await peer.rad(
     ["assign", issueOne, "--to", `did:key:${peer.nodeId}`],
     createOptions(projectFolder, 1),
   );
@@ -384,6 +396,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
     createOptions(projectFolder, 2),
   );
   await peer.rad(
+    ["issue", "react", issueOne, "--emoji", "🙏", "--to", commentIssueOne],
+    {
+      cwd: projectFolder,
+    },
+  );
+  const { stdout: replyIssueOne } = await peer.rad(
     [
       "comment",
       issueOne,
@@ -393,6 +411,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
       commentIssueOne,
     ],
     createOptions(projectFolder, 3),
+  );
+  await peer.rad(
+    ["issue", "react", issueOne, "--emoji", "🚀", "--to", replyIssueOne],
+    {
+      cwd: projectFolder,
+    },
   );
   await peer.rad(
     [

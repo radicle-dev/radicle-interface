@@ -77,6 +77,7 @@
       id={root.id}
       authorId={root.author.id}
       authorAlias={root.author.alias}
+      reactions={root.reactions}
       timestamp={root.timestamp}
       body={root.body}
       showReplyIcon={Boolean($httpdStore.state === "authenticated")}
@@ -90,6 +91,7 @@
         authorId={reply.author.id}
         authorAlias={reply.author.alias}
         caption="replied"
+        reactions={reply.reactions}
         timestamp={reply.timestamp}
         body={reply.body} />
     </div>

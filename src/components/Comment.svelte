@@ -3,6 +3,7 @@
 
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
+  import Chip from "@app/components/Chip.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Textarea from "@app/components/Textarea.svelte";
@@ -14,12 +15,18 @@
   export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
   export let timestamp: number;
   export let body: string;
+  export let reactions: [string, string][];
   export let showReplyIcon: boolean = false;
   export let action: "create" | "view" = "view";
   export let caption = "commented";
   export let rawPath: string;
 
   const dispatch = createEventDispatcher<{ toggleReply: null }>();
+
+  $: groupedReactions = reactions?.reduce(
+    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
+    new Map<string, string[]>(),
+  );
 </script>
 
 <style>
@@ -46,6 +53,14 @@
   }
   .action {
     display: flex;
+    gap: 0.5rem;
+  }
+  .reactions {
+    margin-top: 1rem;
+  }
+  .reaction {
+    display: inline-flex;
+    flex-direction: row;
     gap: 0.5rem;
   }
 </style>
@@ -83,6 +98,18 @@
       <span class="txt-missing">No description.</span>
     {:else}
       <Markdown {rawPath} content={body} />
+    {/if}
+    {#if groupedReactions.size > 0}
+      <div class="reactions">
+        {#each groupedReactions as [reaction, nids], key}
+          <Chip {key}>
+            <div class="reaction">
+              <span>{reaction}</span>
+              <span title={nids.join("\n")}>{nids.length}</span>
+            </div>
+          </Chip>
+        {/each}
+      </div>
     {/if}
   </div>
 </div>

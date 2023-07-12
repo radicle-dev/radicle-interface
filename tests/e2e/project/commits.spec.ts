@@ -20,7 +20,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).toHaveText(
       `  did:key:${aliceRemote
         .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} (radicle) delegate`,
+        .substring(0, 6)}…${aliceRemote.slice(-6)} (alice) delegate`,
     );
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
@@ -122,7 +122,9 @@ test("relative timestamps", async ({ page }) => {
   await page.getByTitle("Change peer").click();
   await page.getByText(bobRemote).click();
   await expect(page.getByTitle("Change peer")).toHaveText(
-    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(-6)}`,
+    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
+      -6,
+    )} (bob)`,
   );
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");

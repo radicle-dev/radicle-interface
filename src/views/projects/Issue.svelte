@@ -15,6 +15,7 @@
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
+  import Chip from "@app/components/Chip.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
@@ -31,6 +32,11 @@
 
   const rawPath = utils.getRawBasePath(projectId, baseUrl, projectHead);
   const api = new HttpdClient(baseUrl);
+
+  $: groupedReactions = issue.discussion[0].reactions.reduce(
+    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
+    new Map<string, string[]>(),
+  );
 
   let action: "edit" | "view";
   $: action =
@@ -267,6 +273,17 @@
     padding-left: 1rem;
     margin-left: 1rem;
   }
+  .reactions {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    user-select: none;
+  }
+  .reaction {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
 
   .actions {
     display: flex;
@@ -334,6 +351,18 @@
         <Markdown
           content={issue.discussion[0].body}
           rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+        {#if issue.discussion[0].reactions}
+          <div class="reactions txt-tiny">
+            {#each groupedReactions as [reaction, nids], key}
+              <Chip {key}>
+                <div class="reaction">
+                  <span>{reaction}</span>
+                  <span title={nids.join("\n")}>{nids.length}</span>
+                </div>
+              </Chip>
+            {/each}
+          </div>
+        {/if}
       </div>
       <div class="author" slot="author">
         opened by <Authorship

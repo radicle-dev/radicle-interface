@@ -378,11 +378,14 @@
                 class:comment-review={review.verdict === null}
                 class:positive-review={review.verdict === "accept"}
                 class:negative-review={review.verdict === "reject"}>
+                <!-- TODO: Empty array for reactions prop is a workaround
+                  until review comments have reactions -->
                 <CommentComponent
                   caption={formatVerdict(review.verdict)}
                   authorId={author}
                   authorAlias={review.author.alias}
                   authorAliasColor={aliasColorForVerdict(review.verdict)}
+                  reactions={[]}
                   timestamp={review.timestamp}
                   rawPath={utils.getRawBasePath(
                     projectId,
