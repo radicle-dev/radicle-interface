@@ -1,10 +1,18 @@
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type { SuccessResponse } from "./shared.js";
-import type { ZodSchema } from "zod";
+import type { ZodSchema, z } from "zod";
 
 import { number, object, string } from "zod";
 
 import { successResponseSchema } from "./shared.js";
+
+export const sessionPayloadSchema = object({
+  sessionId: string(),
+  signature: string(),
+  publicKey: string(),
+});
+
+export type SessionPayload = z.infer<typeof sessionPayloadSchema>;
 
 interface Session {
   sessionId: string;
@@ -34,6 +42,17 @@ export class Client {
       {
         method: "GET",
         path: `sessions/${id}`,
+        options,
+      },
+      sessionSchema,
+    );
+  }
+
+  public async create(options?: RequestOptions): Promise<Session> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "POST",
+        path: "sessions",
         options,
       },
       sessionSchema,
