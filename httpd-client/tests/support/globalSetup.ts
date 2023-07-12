@@ -8,6 +8,7 @@ import {
 } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager";
 import {
+  createCobsFixture,
   createSourceBrowsingFixture,
   gitOptions,
   startPalmHttpd,
@@ -49,6 +50,8 @@ export default async function globalSetup(): Promise<() => void> {
 
     console.log("Creating source-browsing fixture");
     await createSourceBrowsingFixture(peerManager, palm);
+    console.log("Creating cobs fixture");
+    await createCobsFixture(palm);
     console.log("Running tests");
     await palm.stopNode();
   } else {
