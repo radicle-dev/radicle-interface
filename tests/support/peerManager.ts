@@ -172,7 +172,7 @@ export class RadiclePeer {
       RAD_SOCKET: socket,
     };
 
-    await execa("rad", ["auth"], { env });
+    await execa("rad", ["auth", "--alias", name], { env });
     const { stdout: nodeId } = await execa("rad", ["self", "--nid"], { env });
 
     return new RadiclePeer({

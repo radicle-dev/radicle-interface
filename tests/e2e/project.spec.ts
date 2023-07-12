@@ -274,7 +274,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).toHaveText(
       `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
         -6,
-      )} delegate`,
+      )} (radicle) delegate`,
     );
     await expect(
       page.locator(
