@@ -5,7 +5,12 @@ import type {
   IssueCreated,
   IssueUpdateAction,
 } from "./project/issue.js";
-import type { Patch, PatchUpdateAction } from "./project/patch.js";
+import type {
+  Patch,
+  PatchCreate,
+  PatchCreated,
+  PatchUpdateAction,
+} from "./project/patch.js";
 import type { SuccessResponse } from "./shared.js";
 import type { ZodSchema } from "zod";
 
@@ -35,7 +40,11 @@ import {
   issuesSchema,
 } from "./project/issue.js";
 
-import { patchSchema, patchesSchema } from "./project/patch.js";
+import {
+  patchSchema,
+  patchesSchema,
+  patchCreatedSchema,
+} from "./project/patch.js";
 
 export interface Project {
   id: string;
@@ -466,6 +475,24 @@ export class Client {
         options,
       },
       patchesSchema,
+    );
+  }
+
+  public async createPatch(
+    id: string,
+    body: PatchCreate,
+    authToken: string,
+    options?: RequestOptions,
+  ): Promise<PatchCreated> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "POST",
+        path: `projects/${id}/patches`,
+        headers: { Authorization: `Bearer ${authToken}` },
+        body,
+        options,
+      },
+      patchCreatedSchema,
     );
   }
 
