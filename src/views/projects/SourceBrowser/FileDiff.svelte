@@ -89,7 +89,7 @@
     align-items: center;
     gap: 1rem;
   }
-  .binary {
+  .placeholder {
     padding: 1rem;
     color: var(--color-foreground-5);
     text-align: center;
@@ -190,33 +190,37 @@
   </header>
   {#if !collapsed}
     <main>
-      {#if file.diff.type === "plain" && file.diff.hunks.length > 0}
-        <table class="diff">
-          {#each file.diff.hunks as hunk}
-            <tr class="diff-line">
-              <td colspan={2} />
-              <td colspan={6} class="diff-expand-header">
-                {hunk.header}
-              </td>
-            </tr>
-            {#each hunk.lines as line}
-              <tr class="diff-line" data-expanded data-type={lineSign(line)}>
-                <td class="diff-line-number left" data-type={lineSign(line)}>
-                  {lineNumberL(line)}
+      {#if file.diff.type === "plain"}
+        {#if file.diff.hunks.length > 0}
+          <table class="diff">
+            {#each file.diff.hunks as hunk}
+              <tr class="diff-line">
+                <td colspan={2} />
+                <td colspan={6} class="diff-expand-header">
+                  {hunk.header}
                 </td>
-                <td class="diff-line-number right" data-type={lineSign(line)}>
-                  {lineNumberR(line)}
-                </td>
-                <td class="diff-line-type" data-type={line.type}>
-                  {lineSign(line)}
-                </td>
-                <td class="diff-line-content">{line.line}</td>
               </tr>
+              {#each hunk.lines as line}
+                <tr class="diff-line" data-expanded data-type={lineSign(line)}>
+                  <td class="diff-line-number left" data-type={lineSign(line)}>
+                    {lineNumberL(line)}
+                  </td>
+                  <td class="diff-line-number right" data-type={lineSign(line)}>
+                    {lineNumberR(line)}
+                  </td>
+                  <td class="diff-line-type" data-type={line.type}>
+                    {lineSign(line)}
+                  </td>
+                  <td class="diff-line-content">{line.line}</td>
+                </tr>
+              {/each}
             {/each}
-          {/each}
-        </table>
+          </table>
+        {:else}
+          <div class="placeholder">Empty file</div>
+        {/if}
       {:else}
-        <div class="binary">Binary file</div>
+        <div class="placeholder">Binary file</div>
       {/if}
     </main>
   {/if}
