@@ -427,13 +427,10 @@
     </div>
     {#if currentTab === "activity"}
       {#if diff}
-        {#await api.project.getDiff(projectId, diff.split("..")[0], diff.split("..")[1]) then diff}
+        {@const [base, revision] = diff.split("..")}
+        {#await api.project.getDiff(projectId, base, revision) then { diff }}
           <div style:margin-top="1rem">
-            <Changeset
-              {projectId}
-              {baseUrl}
-              revision={currentRevision.oid}
-              diff={diff.diff} />
+            <Changeset {projectId} {baseUrl} {revision} {diff} />
           </div>
         {:catch e}
           <ErrorMessage
