@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       "@tests": path.resolve("./tests"),
       "@app": path.resolve("./src"),
+      "@httpd-client": path.resolve("./httpd-client"),
     },
   },
 });

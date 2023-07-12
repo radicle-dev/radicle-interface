@@ -1,5 +1,5 @@
 import { describe, test } from "vitest";
-import { HttpdClient } from "../index";
+import { HttpdClient } from "@httpd-client";
 
 const api = new HttpdClient({
   hostname: "127.0.0.1",

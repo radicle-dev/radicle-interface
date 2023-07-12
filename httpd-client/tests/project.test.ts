@@ -1,6 +1,6 @@
 import { describe, test } from "vitest";
 
-import { HttpdClient } from "../index";
+import { HttpdClient } from "@httpd-client";
 import {
   aliceMainHead,
   aliceRemote,
