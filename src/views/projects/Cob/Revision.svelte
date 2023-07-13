@@ -295,7 +295,7 @@
           </Authorship>
           {#if response?.commits}
             <div class="commits txt-tiny">
-              {#each response.commits as commit, i}
+              {#each response.commits.reverse() as commit, i}
                 <div class="commit-event">
                   <span>
                     <span class="commit-pointer">╰─</span>
