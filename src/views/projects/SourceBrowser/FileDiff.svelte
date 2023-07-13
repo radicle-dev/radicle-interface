@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy, onMount } from "svelte";
   import type {
     BaseUrl,
     DiffAddedDeletedModifiedChangeset,
@@ -16,6 +17,58 @@
   export let projectId: string;
 
   let collapsed = false;
+  let selection: Selection | undefined = undefined;
+
+  onMount(() => {
+    window.addEventListener("click", deselectHandler);
+    window.addEventListener("hashchange", updateSelection);
+
+    updateSelection();
+
+    if (selection) {
+      document
+        .getElementById(
+          [
+            file.path,
+            "H" + selection.startHunk,
+            "L" + selection.startLine,
+          ].join("-"),
+        )
+        ?.scrollIntoView();
+    }
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("click", deselectHandler);
+    window.removeEventListener("hashchange", updateSelection);
+  });
+
+  function deselectHandler(e: MouseEvent) {
+    if (
+      !(
+        e.target instanceof HTMLElement &&
+        (e.target.hasAttribute("data-line-type") ||
+          e.target.classList.contains("diff-line-content"))
+      )
+    ) {
+      updateHash("");
+    }
+  }
+
+  function updateSelection() {
+    const fragment = window.location.hash.substr(1);
+    const match = fragment.match(/(.+):H(\d+)L(\d+)(H(\d+)L(\d+))?/);
+    if (match && match[1] === file.path) {
+      selection = {
+        startHunk: parseInt(match[2]),
+        startLine: parseInt(match[3]),
+        endHunk: match[4] ? parseInt(match[5]) : undefined,
+        endLine: match[4] ? parseInt(match[6]) : undefined,
+      };
+    } else {
+      selection = undefined;
+    }
+  }
 
   function lineNumberR(line: HunkLine): string | number {
     switch (line.type) {
@@ -45,7 +98,18 @@
     }
   }
 
-  function lineSign(line: HunkLine): string {
+  function lineSign(line: HunkLine, hashSelected = false): string {
+    if (hashSelected) {
+      switch (line.type) {
+        case "addition": {
+          return "@+";
+        }
+        case "deletion": {
+          return "@-";
+        }
+      }
+      return "@";
+    }
     switch (line.type) {
       case "addition": {
         return "+";
@@ -57,6 +121,101 @@
         return "-";
       }
     }
+  }
+
+  function isLineSelected(
+    selection: Selection | undefined,
+    hunkIdx: number,
+    lineIdx: number,
+  ): boolean {
+    if (!selection) {
+      return false;
+    }
+
+    if (selection.endHunk !== undefined && selection.endLine !== undefined) {
+      return (
+        hunkIdx >= selection.startHunk &&
+        hunkIdx <= selection.endHunk &&
+        (hunkIdx === selection.startHunk
+          ? lineIdx >= selection.startLine
+          : true) &&
+        (hunkIdx === selection.endHunk ? lineIdx <= selection.endLine : true)
+      );
+    } else {
+      return hunkIdx === selection.startHunk && lineIdx === selection.startLine;
+    }
+  }
+
+  function hashFromSelection(
+    hunkIdx: number,
+    lineIdx: number,
+    event: MouseEvent,
+  ): string {
+    const path = file.path;
+    // single line selection
+    if (!event.shiftKey) {
+      return path + ":H" + hunkIdx + "L" + lineIdx;
+    }
+
+    if (!selection) {
+      return "";
+    }
+
+    // range selection
+    if (hunkIdx === selection.startHunk) {
+      if (lineIdx >= selection.startLine) {
+        return `${path}:H${hunkIdx}L${selection.startLine}H${hunkIdx}L${lineIdx}`;
+      } else {
+        return `${path}:H${hunkIdx}L${lineIdx}H${hunkIdx}L${selection.startLine}`;
+      }
+    } else if (hunkIdx < selection.startHunk) {
+      return `${path}:H${hunkIdx}L${lineIdx}H${selection.startHunk}L${selection.startLine}`;
+    } else {
+      return `${path}:H${selection.startHunk}L${selection.startLine}H${hunkIdx}L${lineIdx}`;
+    }
+  }
+
+  function selectLine(hunkIdx: number, lineIdx: number, event: MouseEvent) {
+    updateHash(hashFromSelection(hunkIdx, lineIdx, event));
+  }
+
+  function updateHash(newHash: string) {
+    if (newHash !== "") {
+      window.location.hash = newHash;
+    } else {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        window.location.pathname + window.location.search,
+      );
+      selection = undefined;
+    }
+  }
+
+  function headerSign(
+    selection: Selection | undefined,
+    hunkIdx: number,
+  ): string {
+    if (!selection) {
+      return "";
+    }
+
+    if (
+      selection.endHunk !== undefined &&
+      hunkIdx > selection.startHunk &&
+      hunkIdx <= selection.endHunk
+    ) {
+      return "@@@";
+    }
+
+    return "";
+  }
+
+  interface Selection {
+    startHunk: number;
+    startLine: number;
+    endHunk: number | undefined;
+    endLine: number | undefined;
   }
 </script>
 
@@ -112,19 +271,45 @@
   .diff-line {
     vertical-align: top;
   }
-  .diff-line[data-type="+"] > * {
+  .diff-line[data-line-type="+"] > * {
     color: var(--color-positive-6);
     background-color: var(--color-positive-2);
   }
-  .diff-line[data-type="-"] > * {
+  .diff-line[data-line-type="-"] > * {
     color: var(--color-negative-6);
     background-color: var(--color-negative-2);
+  }
+  .diff-line[data-line-type="@"] > * {
+    color: var(--color-foreground-6);
+    background-color: var(--color-foreground-4);
+  }
+  .diff-line[data-line-type="@+"] > * {
+    color: var(--color-positive-6);
+    background-color: var(--color-positive-4);
+  }
+  .diff-line[data-line-type="@-"] > * {
+    color: var(--color-negative-6);
+    background-color: var(--color-negative-4);
+  }
+  .diff-line[data-line-type="@"] {
+    border-left: 4px solid var(--color-primary);
+  }
+  .diff-line[data-line-type="@+"] {
+    border-left: 4px solid var(--color-primary);
+  }
+  .diff-line[data-line-type="@-"] {
+    border-left: 4px solid var(--color-primary);
+  }
+  .diff-line[data-line-type="@@@"] {
+    border-left: 4px solid var(--color-primary);
+    background-color: var(--color-foreground-4);
   }
   .diff-line-number {
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
+    cursor: pointer;
   }
   .diff-line-number.left {
     padding: 0 0.5rem 0 0.75rem;
@@ -190,22 +375,37 @@
       {#if file.diff.type === "plain"}
         {#if file.diff.hunks.length > 0}
           <table class="diff">
-            {#each file.diff.hunks as hunk}
-              <tr class="diff-line">
+            {#each file.diff.hunks as hunk, hunkIdx}
+              <tr
+                class="diff-line"
+                data-line-type={headerSign(selection, hunkIdx)}>
                 <td colspan={2} />
                 <td colspan={6} class="diff-expand-header">
                   {hunk.header}
                 </td>
               </tr>
-              {#each hunk.lines as line}
-                <tr class="diff-line" data-expanded data-type={lineSign(line)}>
-                  <td class="diff-line-number left" data-type={lineSign(line)}>
+              {#each hunk.lines as line, lineIdx}
+                <tr
+                  class="diff-line"
+                  data-expanded
+                  data-line-type={lineSign(
+                    line,
+                    isLineSelected(selection, hunkIdx, lineIdx),
+                  )}>
+                  <td
+                    id={[file.path, "H" + hunkIdx, "L" + lineIdx].join("-")}
+                    class="diff-line-number left"
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}
+                    data-line-type={lineSign(line)}>
                     {lineNumberL(line)}
                   </td>
-                  <td class="diff-line-number right" data-type={lineSign(line)}>
+                  <td
+                    class="diff-line-number right"
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}
+                    data-line-type={lineSign(line)}>
                     {lineNumberR(line)}
                   </td>
-                  <td class="diff-line-type" data-type={line.type}>
+                  <td class="diff-line-type" data-line-type={line.type}>
                     {lineSign(line)}
                   </td>
                   <td class="diff-line-content">{line.line}</td>

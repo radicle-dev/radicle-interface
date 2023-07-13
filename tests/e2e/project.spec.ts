@@ -6,6 +6,7 @@ import {
   bobHead,
   bobRemote,
   expect,
+  cobUrl,
   markdownUrl,
   sourceBrowsingRid,
   sourceBrowsingUrl,
@@ -448,4 +449,14 @@ test("external markdown link", async ({ page }) => {
   await page.getByRole("link", { name: "https://example.com" }).click();
   await page.pause();
   await expect(page).toHaveURL("https://example.com");
+});
+
+test("diff selection de-select", async ({ page }) => {
+  await page.goto(
+    `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files#README.md:H0L0H0L3`,
+  );
+  await page.getByText("Add subtitle to README").click();
+  await expect(page).toHaveURL(
+    `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files`,
+  );
 });
