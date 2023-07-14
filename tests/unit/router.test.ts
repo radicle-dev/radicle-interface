@@ -158,45 +158,76 @@ describe("route invariant when parsed", () => {
     });
   });
 
-  test("projects.patch", () => {
+  test("projects.patch default view", () => {
     expectParsingInvariant({
       resource: "project.patch",
       seed,
       project: "PROJECT",
       patch: "PATCH",
-      search: "",
     });
   });
 
-  test("projects.patch with revision", () => {
+  test("projects.patch activity", () => {
     expectParsingInvariant({
       resource: "project.patch",
       seed,
       project: "PROJECT",
       patch: "PATCH",
-      search: "",
-      revision: "REVISION",
+      view: { name: "activity" },
     });
   });
 
-  test("projects.patch with search", () => {
+  test("projects.patch commits", () => {
     expectParsingInvariant({
       resource: "project.patch",
       seed,
       project: "PROJECT",
       patch: "PATCH",
-      search: "SEARCH",
+      view: { name: "commits" },
     });
   });
 
-  test("projects.patch with revision and search", () => {
+  test("projects.patch commits with revision", () => {
     expectParsingInvariant({
       resource: "project.patch",
       seed,
       project: "PROJECT",
       patch: "PATCH",
-      revision: "REVISION",
-      search: "SEARCH",
+      view: { name: "commits", revision: "REVISION" },
+    });
+  });
+
+  test("projects.patch files", () => {
+    expectParsingInvariant({
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      view: { name: "files" },
+    });
+  });
+
+  test("projects.patch files with revision", () => {
+    expectParsingInvariant({
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      view: { name: "files", revision: "REVISION" },
+    });
+  });
+
+  test("projects.patch diff", () => {
+    expectParsingInvariant({
+      resource: "project.patch",
+      seed,
+      project: "PROJECT",
+      patch: "PATCH",
+      view: {
+        name: "diff",
+        fromCommit: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        toCommit: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      },
     });
   });
 

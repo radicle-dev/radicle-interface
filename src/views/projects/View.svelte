@@ -126,8 +126,7 @@
       projectId={id}
       projectDefaultBranch={project.defaultBranch}
       projectHead={project.head}
-      revision={view.revision}
-      search={view.search} />
+      {view} />
   {:else}
     {unreachable(view)}
   {/if}

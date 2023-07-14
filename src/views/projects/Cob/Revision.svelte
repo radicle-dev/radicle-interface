@@ -215,7 +215,11 @@
               project: projectId,
               seed: baseUrl,
               patch: patchId,
-              search: `diff=${previousRevOid}..${revisionOid}`,
+              view: {
+                name: "diff",
+                fromCommit: previousRevOid,
+                toCommit: revisionOid,
+              },
             }}>
             <Icon name="diff" />
           </Link>
@@ -237,7 +241,11 @@
                     project: projectId,
                     seed: baseUrl,
                     patch: patchId,
-                    search: `diff=${item}..${revisionOid}`,
+                    view: {
+                      name: "diff",
+                      fromCommit: item,
+                      toCommit: revisionOid,
+                    },
                   }}>
                   {#if item === projectHead}
                     <DropdownItem selected={false} size="small">

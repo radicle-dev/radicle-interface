@@ -30,6 +30,8 @@
 <script lang="ts">
   import type { BaseUrl, Patch } from "@httpd-client";
   import type { Variant } from "@app/components/Badge.svelte";
+  import { type Route } from "@app/lib/router";
+  import type { PatchView } from "./router";
 
   import * as utils from "@app/lib/utils";
   import { capitalize } from "lodash";
@@ -43,7 +45,6 @@
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
-  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
@@ -53,18 +54,12 @@
   import SquareButton from "@app/components/SquareButton.svelte";
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
 
-  export let search: string | undefined = undefined;
-  export let projectId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
+  export let projectId: string;
   export let projectHead: string;
   export let projectDefaultBranch: string;
-  export let revision: string | undefined = undefined;
-
-  $: searchParams = new URLSearchParams(search || "");
-  $: currentTab =
-    (searchParams.get("tab") as "activity" | "commits" | "files") || "activity";
-  $: diff = searchParams.get("diff") || undefined;
+  export let view: PatchView;
 
   const api = new HttpdClient(baseUrl);
 
@@ -77,7 +72,7 @@
         patch.id,
         {
           type: "thread",
-          revision: currentRevision.id,
+          revision: revisionId,
           action: {
             type: "comment",
             body: reply.body,
@@ -109,9 +104,16 @@
       if (add.length === 0 && remove.length === 0) {
         return;
       }
+
+      let revision;
+      if (view.view.name === "diff") {
+        revision = patch.revisions[patch.revisions.length - 1].id;
+      } else {
+        revision = view.view.revision;
+      }
       await api.project.updatePatch(
         projectId,
-        currentRevision.id,
+        revision,
         { type: "tag", add, remove },
         $httpdStore.session.id,
       );
@@ -123,11 +125,34 @@
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? "edit"
       : "view";
-  const options = ["activity", "commits", "files"].map(o => ({
-    value: o,
-    title: capitalize(o),
-    disabled: false,
-  }));
+
+  let tabs: Record<string, Route>;
+  $: {
+    const baseRoute = {
+      resource: "project.patch",
+      project: projectId,
+      seed: baseUrl,
+      patch: patch.id,
+    } as const;
+    // For cleaner URLs, we omit the the revision part when we link to the
+    // latest revision.
+    const latestRevisionId = patch.revisions[patch.revisions.length - 1].id;
+    const revision = latestRevisionId === revisionId ? undefined : revisionId;
+    tabs = {
+      activity: {
+        ...baseRoute,
+        view: { name: "activity" },
+      },
+      commits: {
+        ...baseRoute,
+        view: { name: "commits", revision },
+      },
+      files: {
+        ...baseRoute,
+        view: { name: "files", revision },
+      },
+    };
+  }
 
   function computeReviews(patch: Patch) {
     const patchReviews: Record<string, { latest: boolean; review: Review }> =
@@ -143,10 +168,14 @@
     return patchReviews;
   }
 
+  let revisionId: string;
+  $: if (view.view.name === "diff") {
+    revisionId = patch.revisions[patch.revisions.length - 1].id;
+  } else {
+    revisionId = view.view.revision;
+  }
+
   $: patchReviews = computeReviews(patch);
-  $: currentRevision =
-    (revision && patch.revisions.find(r => r.id === revision)) ||
-    patch.revisions[patch.revisions.length - 1];
   $: timelineTuple = patch.revisions.map<
     [
       {
@@ -307,7 +336,7 @@
             rawPath={utils.getRawBasePath(
               projectId,
               baseUrl,
-              currentRevision.oid,
+              patch.revisions[0].id,
             )} />
         {:else}
           <span class="txt-missing">No description available</span>
@@ -323,59 +352,44 @@
 
     <div class="tab-line">
       <div style="display: flex; gap: 0.5rem;">
-        {#each options as option}
-          {#if !option.disabled}
-            <Link
-              route={{
-                resource: "project.patch",
-                project: projectId,
-                seed: baseUrl,
-                patch: patch.id,
-                revision,
-                search: `tab=${option.value}`,
-              }}>
-              <SquareButton
-                size="small"
-                clickable={option.disabled}
-                active={option.value === currentTab && !diff}
-                disabled={option.disabled}>
-                {option.title}
-              </SquareButton>
-            </Link>
-          {:else}
-            <SquareButton
-              size="small"
-              clickable={option.disabled}
-              active={option.value === currentTab}
-              disabled={option.disabled}>
-              {option.title}
+        {#each Object.entries(tabs) as [name, route]}
+          <Link {route}>
+            <SquareButton size="small" active={name === view.view.name}>
+              {capitalize(name)}
             </SquareButton>
-          {/if}
+          </Link>
         {/each}
-        {#if diff}
+        {#if view.view.name === "diff"}
           <Link
             route={{
               resource: "project.patch",
               project: projectId,
               seed: baseUrl,
               patch: patch.id,
-              search: `diff=${diff}`,
+              view: {
+                name: "diff",
+                fromCommit: view.view.fromCommit,
+                toCommit: view.view.toCommit,
+              },
             }}>
             <SquareButton size="small" active={true}>
-              Diff {diff.substr(0, 6)}..{diff.split("..")[1].substr(0, 6)}
+              Diff {view.view.fromCommit.substring(
+                0,
+                6,
+              )}..{view.view.toCommit.substring(0, 6)}
             </SquareButton>
           </Link>
         {/if}
       </div>
 
-      {#if currentTab !== "activity"}
+      {#if view.view.name === "commits" || view.view.name === "files"}
         <Floating disabled={patch.revisions.length === 1}>
           <svelte:fragment slot="toggle">
             <SquareButton
               size="small"
               clickable={patch.revisions.length > 1}
               disabled={patch.revisions.length === 1}>
-              Revision {utils.formatObjectId(currentRevision.id)}
+              Revision {utils.formatObjectId(view.view.revision)}
             </SquareButton>
           </svelte:fragment>
           <svelte:fragment slot="modal">
@@ -388,11 +402,13 @@
                     project: projectId,
                     seed: baseUrl,
                     patch: patch.id,
-                    revision: item.id,
-                    search: `tab=${currentTab}`,
+                    view: {
+                      name: view.view.name,
+                      revision: item.id,
+                    },
                   }}>
                   <DropdownItem
-                    selected={item.id === currentRevision.id}
+                    selected={item.id === view.view.revision}
                     size="tiny">
                     Revision {utils.formatObjectId(item.id)}
                   </DropdownItem>
@@ -403,66 +419,56 @@
         </Floating>
       {/if}
     </div>
-    {#if currentTab === "activity"}
-      {#if diff}
-        {@const [base, revision] = diff.split("..")}
-        {#await api.project.getDiff(projectId, base, revision) then { diff }}
-          <div style:margin-top="1rem">
-            <Changeset {projectId} {baseUrl} {revision} {diff} />
-          </div>
-        {:catch e}
-          <ErrorMessage
-            message="Not able to load revision diff."
-            stackTrace={e} />
-        {/await}
+    {#if view.view.name === "diff"}
+      <div style:margin-top="1rem">
+        <Changeset
+          {projectId}
+          {baseUrl}
+          revision={view.view.toCommit}
+          diff={view.view.diff} />
+      </div>
+    {:else if view.view.name === "activity"}
+      {#each timelineTuple as [revision, timelines], index}
+        {@const previousRevision =
+          index > 0 ? patch.revisions[index - 1] : undefined}
+        <RevisionComponent
+          {baseUrl}
+          {projectId}
+          {timelines}
+          {projectDefaultBranch}
+          {projectHead}
+          {...revision}
+          first={index === 0}
+          on:reply={createReply}
+          patchId={patch.id}
+          expanded={index === patch.revisions.length - 1}
+          previousRevId={previousRevision?.id}
+          previousRevOid={previousRevision?.oid} />
       {:else}
-        {#each timelineTuple as [revision, timelines], index}
-          {@const previousRevision =
-            index > 0 ? patch.revisions[index - 1] : undefined}
-          <RevisionComponent
-            {baseUrl}
-            {projectId}
-            {timelines}
-            {projectDefaultBranch}
-            {projectHead}
-            {...revision}
-            first={index === 0}
-            on:reply={createReply}
-            patchId={patch.id}
-            expanded={index === patch.revisions.length - 1}
-            previousRevId={previousRevision?.id}
-            previousRevOid={previousRevision?.oid} />
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">No activity</div>
-            <div slot="body">No activity on this patch yet</div>
-          </Placeholder>
+        <Placeholder emoji="🍂">
+          <div slot="title">No activity</div>
+          <div slot="body">No activity on this patch yet</div>
+        </Placeholder>
+      {/each}
+    {:else if view.view.name === "commits"}
+      <div class="commit-list">
+        {#each view.view.commits as commit}
+          <CommitTeaser {projectId} {baseUrl} {commit} />
         {/each}
-      {/if}
-    {:else if currentTab === "commits"}
-      {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
-        <div class="commit-list">
-          {#each diff.commits as commit}
-            <CommitTeaser {projectId} {baseUrl} {commit} />
-          {/each}
-        </div>
-      {:catch e}
-        <ErrorMessage message="Not able to load commits." stackTrace={e} />
-      {/await}
-    {:else if currentTab === "files"}
-      {#await api.project.getDiff(projectId, currentRevision.base, currentRevision.oid) then diff}
-        <div style:margin-top="1rem">
-          <Changeset
-            {projectId}
-            {baseUrl}
-            revision={currentRevision.oid}
-            diff={diff.diff} />
-        </div>
-      {:catch e}
-        <ErrorMessage message="Not able to load files diff." stackTrace={e} />
-      {/await}
+      </div>
+    {:else if view.view.name === "files"}
+      <div style:margin-top="1rem">
+        <Changeset
+          {projectId}
+          {baseUrl}
+          revision={view.view.revision}
+          diff={view.view.diff} />
+      </div>
+    {:else}
+      {utils.unreachable(view.view.name)}
     {/if}
   </div>
+
   <div class="metadata">
     <div>
       <div class="metadata-section-header">Reviews</div>

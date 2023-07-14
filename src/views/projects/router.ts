@@ -4,6 +4,7 @@ import type {
   Blob,
   Commit,
   CommitHeader,
+  Diff,
   Issue,
   Patch,
   Project,
@@ -40,20 +41,8 @@ export type ProjectRoute =
       project: string;
       issue: string;
     }
-  | {
-      resource: "project.patches";
-      seed: BaseUrl;
-      project: string;
-      search?: string;
-    }
-  | {
-      resource: "project.patch";
-      seed: BaseUrl;
-      project: string;
-      patch: string;
-      revision?: string;
-      search?: string;
-    };
+  | ProjectPatchesRoute
+  | ProjectPatchRoute;
 
 interface ProjectTreeRoute {
   resource: "project.tree";
@@ -71,6 +60,33 @@ interface ProjectHistoryRoute {
   project: string;
   peer?: string;
   revision?: string;
+}
+
+interface ProjectPatchRoute {
+  resource: "project.patch";
+  seed: BaseUrl;
+  project: string;
+  patch: string;
+  view?:
+    | {
+        name: "activity";
+      }
+    | {
+        name: "commits" | "files";
+        revision?: string;
+      }
+    | {
+        name: "diff";
+        fromCommit: string;
+        toCommit: string;
+      };
+}
+
+interface ProjectPatchesRoute {
+  resource: "project.patches";
+  seed: BaseUrl;
+  project: string;
+  search?: string;
 }
 
 export interface ProjectLoadedRoute {
@@ -119,16 +135,33 @@ export type ProjectLoadedView =
   | { resource: "issues"; search: string }
   | { resource: "newIssue" }
   | { resource: "patches"; search: string }
-  | {
-      resource: "patch";
-      patch: Patch;
-      revision?: string;
-      search: string;
-    };
+  | PatchView;
 
 export type BlobResult =
   | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
   | { ok: false; error: { message: string; path: string } };
+
+export interface PatchView {
+  resource: "patch";
+  patch: Patch;
+  view:
+    | {
+        name: "activity";
+        revision: string;
+      }
+    | {
+        name: "commits" | "files";
+        revision: string;
+        diff: Diff;
+        commits: CommitHeader[];
+      }
+    | {
+        name: "diff";
+        diff: Diff;
+        fromCommit: string;
+        toCommit: string;
+      };
+}
 
 // Check whether the input is a SHA1 commit.
 function isOid(input: string): boolean {
@@ -232,40 +265,7 @@ export async function loadProjectRoute(
         };
       }
     } else if (route.resource === "project.patch") {
-      try {
-        const projectPromise = api.project.getById(route.project);
-        const patchPromise = api.project.getPatchById(
-          route.project,
-          route.patch,
-        );
-        const [project, patch] = await Promise.all([
-          projectPromise,
-          patchPromise,
-        ]);
-        return {
-          resource: "projects",
-          params: {
-            id: route.project,
-            baseUrl: route.seed,
-            project,
-            view: {
-              resource: "patch",
-              patch,
-              revision: route.revision,
-              search: route.search || "",
-            },
-          },
-        };
-      } catch (error: any) {
-        return {
-          resource: "loadError",
-          params: {
-            title: route.patch,
-            errorMessage: "Not able to load this patch.",
-            stackTrace: error.stack,
-          },
-        };
-      }
+      return loadPatchView(route);
     } else if (route.resource === "project.issues") {
       const project = await api.project.getById(route.project);
       return {
@@ -473,6 +473,73 @@ async function loadHistoryView(
   };
 }
 
+async function loadPatchView(
+  route: ProjectPatchRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.seed);
+  const [project, patch] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getPatchById(route.project, route.patch),
+  ]);
+  const latestRevision = patch.revisions[patch.revisions.length - 1];
+
+  let view: PatchView["view"];
+  switch (route.view?.name) {
+    case "activity":
+    case undefined: {
+      view = { name: "activity", revision: latestRevision.id };
+      break;
+    }
+    case "commits":
+    case "files": {
+      const revisionId = route.view.revision;
+      const revision =
+        patch.revisions.find(r => r.id === revisionId) || latestRevision;
+      if (!revision) {
+        throw new Error(
+          `revision ${revisionId} of patch ${route.patch} not found`,
+        );
+      }
+      const { diff, commits } = await api.project.getDiff(
+        route.project,
+        revision.base,
+        revision.oid,
+      );
+      view = {
+        name: route.view?.name,
+        revision: revision.id,
+        diff,
+        commits,
+      };
+      break;
+    }
+    case "diff": {
+      const { fromCommit, toCommit } = route.view;
+      const { diff } = await api.project.getDiff(
+        route.project,
+        fromCommit,
+        toCommit,
+      );
+
+      view = { name: "diff", fromCommit, toCommit, diff };
+      break;
+    }
+  }
+  return {
+    resource: "projects",
+    params: {
+      id: route.project,
+      baseUrl: route.seed,
+      project,
+      view: {
+        resource: "patch",
+        patch,
+        view,
+      },
+    },
+  };
+}
+
 async function getPeerBranches(
   api: HttpdClient,
   project: string,
@@ -580,27 +647,60 @@ export function resolveProjectRoute(
       };
     }
   } else if (content === "patches") {
-    const patch = segments.shift();
-    const revision = segments.shift();
-    if (patch) {
-      return {
-        resource: "project.patch",
-        seed,
-        project,
-        patch,
-        revision,
-        search: sanitizeQueryString(urlSearch),
-      };
-    } else {
-      return {
-        resource: "project.patches",
-        seed,
-        project,
-        search: sanitizeQueryString(urlSearch),
-      };
-    }
+    return resolvePatchesRoute(seed, project, segments, urlSearch);
   } else {
     return null;
+  }
+}
+
+function resolvePatchesRoute(
+  seed: BaseUrl,
+  project: string,
+  segments: string[],
+  urlSearch: string,
+): ProjectPatchRoute | ProjectPatchesRoute {
+  const patch = segments.shift();
+  const revision = segments.shift();
+  if (patch) {
+    const searchParams = new URLSearchParams(sanitizeQueryString(urlSearch));
+    const tab = searchParams.get("tab");
+    const base = {
+      resource: "project.patch",
+      seed,
+      project,
+      patch,
+    } as const;
+    const diff = searchParams.get("diff");
+    if (diff) {
+      const [fromCommit, toCommit] = diff.split("..");
+      if (isOid(fromCommit) && isOid(toCommit)) {
+        return {
+          ...base,
+          view: { name: "diff", fromCommit, toCommit },
+        };
+      }
+    }
+
+    if (tab === "commits" || tab === "files") {
+      return {
+        ...base,
+        view: { name: tab, revision },
+      };
+    } else if (tab === "activity") {
+      return {
+        ...base,
+        view: { name: tab },
+      };
+    } else {
+      return base;
+    }
+  } else {
+    return {
+      resource: "project.patches",
+      seed,
+      project,
+      search: sanitizeQueryString(urlSearch),
+    };
   }
 }
 
@@ -666,18 +766,40 @@ export function projectRouteToPath(route: ProjectRoute): string {
     }
     return url;
   } else if (route.resource === "project.patch") {
-    pathSegments.push("patches", route.patch);
-    if (route.revision) {
-      pathSegments.push(route.revision);
-    }
-
-    let url = pathSegments.join("/");
-    if (route.search) {
-      url += `?${route.search}`;
-    }
-    return url;
+    return patchRouteToPath(route);
   } else {
     return unreachable(route);
+  }
+}
+
+function patchRouteToPath(route: ProjectPatchRoute): string {
+  const seed = seedPath(route.seed);
+
+  const pathSegments = [seed, route.project];
+
+  pathSegments.push("patches", route.patch);
+  if (route.view?.name === "commits" || route.view?.name === "files") {
+    if (route.view.revision) {
+      pathSegments.push(route.view.revision);
+    }
+  }
+
+  let url = pathSegments.join("/");
+  if (!route.view) {
+    return url;
+  } else {
+    const searchParams = new URLSearchParams();
+
+    if (route.view.name === "diff") {
+      searchParams.set(
+        "diff",
+        `${route.view.fromCommit}..${route.view.toCommit}`,
+      );
+    } else {
+      searchParams.set("tab", route.view.name);
+    }
+    url += `?${searchParams.toString()}`;
+    return url;
   }
 }
 
