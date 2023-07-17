@@ -69,7 +69,7 @@ export async function navigateToUrl(
 
   const relativeUrl = pathname + url.search + (hash || "");
   url = new URL(relativeUrl, window.origin);
-  const route = pathToRoute(url);
+  const route = urlToRoute(url);
 
   if (route) {
     await replace(route);
@@ -176,7 +176,7 @@ function extractBaseUrl(hostAndPort: string): BaseUrl {
   }
 }
 
-function pathToRoute(url: URL): Route | null {
+function urlToRoute(url: URL): Route | null {
   const segments = url.pathname.substring(1).split("/");
 
   const resource = segments.shift();
@@ -249,4 +249,4 @@ export function routeToPath(route: Route): string {
   }
 }
 
-export const testExports = { pathToRoute, routeToPath };
+export const testExports = { urlToRoute, routeToPath };

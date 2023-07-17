@@ -57,7 +57,7 @@ describe("route invariant when parsed", () => {
     const path = testExports.routeToPath(route);
     route.revision = undefined;
     route.route = "REVISION";
-    expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
+    expect(testExports.urlToRoute(new URL(path, origin))).toEqual(route);
   });
 
   test("projects.tree with peer and revision and path", () => {
@@ -74,7 +74,7 @@ describe("route invariant when parsed", () => {
     route.revision = undefined;
     route.path = undefined;
     route.route = "REVISION/PATH";
-    expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
+    expect(testExports.urlToRoute(new URL(path, origin))).toEqual(route);
   });
 
   test("projects.history", () => {
@@ -201,86 +201,76 @@ describe("route invariant when parsed", () => {
 
   function expectParsingInvariant(route: Route) {
     const path = testExports.routeToPath(route);
-    expect(testExports.pathToRoute(new URL(path, origin))).toEqual(route);
+    expect(testExports.urlToRoute(new URL(path, origin))).toEqual(route);
   }
 });
 
 describe("pathToRoute", () => {
-  const dummyUrl = "https://localhost";
-  test.each([
-    {
-      input: new URL("/foo/baz/bar", dummyUrl),
-      output: null,
-      description: "Non existant not found route",
-    },
-    {
-      input: new URL("", dummyUrl),
-      output: { resource: "home" },
-      description: "Home Route",
-    },
-    {
-      input: new URL("/", dummyUrl),
-      output: { resource: "home" },
-      description: "Home Route",
-    },
-    {
-      input: new URL("/seeds/willow.radicle.garden", dummyUrl),
-      output: {
-        resource: "seeds",
-        params: {
-          baseUrl: {
-            hostname: "willow.radicle.garden",
-            scheme: "http",
-            port: 8080,
-          },
-          projectPageIndex: 0,
-        },
-      },
-      description: "Seed View Route",
-    },
-    {
-      input: new URL(
-        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
-        dummyUrl,
-      ),
-      output: {
-        resource: "project.tree",
-        seed: {
-          hostname: "willow.radicle.garden",
-          scheme: "http",
-          port: 8080,
-        },
-        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-        route: "",
-      },
-      description: "Seed Project Route w trailing slash",
-    },
-    {
-      input: new URL(
-        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
-        dummyUrl,
-      ),
-      output: null,
-      description: "Seed Project Route w undefined suffix",
-    },
-    {
-      input: new URL(
-        "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-        dummyUrl,
-      ),
-      output: {
-        resource: "project.tree",
-        seed: {
-          hostname: "willow.radicle.garden",
-          scheme: "http",
-          port: 8080,
-        },
-        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
-        route: "",
-      },
-      description: "Seed Project Route w/o trailing slash",
-    },
-  ])("$description", (route: any) => {
-    expect(testExports.pathToRoute(route.input)).toEqual(route.output);
+  test("non-existent", () => {
+    expectPathToRoute("/foo/baz/bar", null);
   });
+
+  test("home", () => {
+    expectPathToRoute("", { resource: "home" });
+    expectPathToRoute("/", { resource: "home" });
+  });
+
+  test("seeds", () => {
+    expectPathToRoute("/seeds/willow.radicle.garden", {
+      resource: "seeds",
+      params: {
+        baseUrl: {
+          hostname: "willow.radicle.garden",
+          scheme: "http",
+          port: 8080,
+        },
+        projectPageIndex: 0,
+      },
+    });
+  });
+
+  test("project with trailing slash", () => {
+    expectPathToRoute(
+      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+      {
+        resource: "project.tree",
+        seed: {
+          hostname: "willow.radicle.garden",
+          scheme: "http",
+          port: 8080,
+        },
+        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        route: "",
+      },
+    );
+  });
+
+  test("project without trailing slash", () => {
+    expectPathToRoute(
+      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      {
+        resource: "project.tree",
+        seed: {
+          hostname: "willow.radicle.garden",
+          scheme: "http",
+          port: 8080,
+        },
+        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        route: "",
+      },
+    );
+  });
+
+  test("non-existent project route", () => {
+    expectPathToRoute(
+      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
+      null,
+    );
+  });
+
+  function expectPathToRoute(relativeUrl: string, route: Route | null) {
+    expect(
+      testExports.urlToRoute(new URL(relativeUrl, "http://localhost/")),
+    ).toEqual(route);
+  }
 });
