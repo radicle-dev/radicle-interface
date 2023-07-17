@@ -216,6 +216,15 @@ test("binary files", async ({ page }) => {
   await expect(page.locator("text=Binary content")).toBeVisible();
 });
 
+test("empty files", async ({ page }) => {
+  await page.goto(sourceBrowsingUrl);
+
+  await page.getByText("special/").click();
+  await page.getByText("_underscore_").click();
+
+  await expect(page.getByText("Empty file")).toBeVisible();
+});
+
 test("hidden files", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
