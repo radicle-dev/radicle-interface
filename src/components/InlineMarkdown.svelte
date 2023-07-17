@@ -1,14 +1,14 @@
 <script lang="ts">
   import dompurify from "dompurify";
-  import { marked } from "marked";
 
+  import markdown from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
   export let fontSize: "tiny" | "small" | "medium" = "small";
 
   const render = (content: string): string =>
-    dompurify.sanitize(marked.parseInline(content));
+    dompurify.sanitize(markdown.parseInline(content));
 </script>
 
 <style>

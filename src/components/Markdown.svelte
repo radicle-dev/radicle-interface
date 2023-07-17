@@ -2,13 +2,13 @@
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { afterUpdate } from "svelte";
-  import { marked } from "marked";
   import { toDom } from "hast-util-to-dom";
 
   import * as router from "@app/lib/router";
+  import markdown from "@app/lib/markdown";
+  import { Renderer } from "@app/lib/markdown";
   import { highlight } from "@app/lib/syntax";
   import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
-  import { Renderer } from "@app/lib/markdown";
 
   export let content: string;
   // If present, resolve all relative links with respect to this URL
@@ -53,12 +53,7 @@
 
   function render(content: string): string {
     return dompurify.sanitize(
-      marked.parse(content, {
-        renderer: new Renderer(linkBaseUrl),
-        // TODO: Disables deprecated options, remove once removed from marked
-        mangle: false,
-        headerIds: false,
-      }),
+      markdown.parse(content, { renderer: new Renderer(linkBaseUrl) }),
     );
   }
 

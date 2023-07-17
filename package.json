@@ -26,7 +26,7 @@
     "@types/dompurify": "^3.0.2",
     "@types/katex": "^0.16.0",
     "@types/lodash": "^4.14.195",
-    "@types/marked": "^5.0.0",
+    "@types/marked": "^5.0.1",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.16.12",
     "@types/sinon": "^10.0.15",

@@ -1,7 +1,9 @@
+import type { marked } from "marked";
+
 import dompurify from "dompurify";
 import emojis from "@app/lib/emojis";
 import katex from "katex";
-import { marked, Renderer as BaseRenderer } from "marked";
+import { Marked, Renderer as BaseRenderer } from "marked";
 
 dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -24,11 +26,8 @@ const emojisMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic) => {
-    return `<span>${
-      token.text in emojis ? emojis[token.text] : token.text
-    }</span>`;
-  },
+  renderer: (token: marked.Tokens.Generic): string =>
+    `<span>${token.text in emojis ? emojis[token.text] : token.text}</span>`,
 };
 
 const katexMarkedExtension = {
@@ -45,7 +44,7 @@ const katexMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic) =>
+  renderer: (token: marked.Tokens.Generic): string =>
     katex.renderToString(token.text, {
       throwOnError: false,
     }),
@@ -68,9 +67,8 @@ const footnoteReferenceMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic) => {
-    return `<sup class="footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`;
-  },
+  renderer: (token: marked.Tokens.Generic): string =>
+    `<sup class="footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`,
 };
 const footnoteMatch = /^\[\^([^\]]+)\]:\s([\S]*)/;
 const footnoteMarkedExtension = {
@@ -88,17 +86,16 @@ const footnoteMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic) => {
-    return `${
+  renderer: (token: marked.Tokens.Generic): string =>
+    `${
       token.reference === "0" ? "<hr />" : ""
     }<p class="txt-small" id="${footnotePrefix}:${token.reference}">${
       token.reference
-    }. ${marked.parseInline(
+    }. ${markedInstance.parseInline(
       token.text,
     )} <a class="txt-tiny ref-arrow" href="#${referencePrefix}:${
       token.reference
-    }">↩</a></p>`;
-  },
+    }">↩</a></p>`,
 };
 
 // Converts self closing anchor tags into empty anchor tags, to avoid erratic wrapping behaviour
@@ -117,23 +114,9 @@ const anchorMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic) => {
-    return `<a name="${token.text}"></a>`;
-  },
+  renderer: (token: marked.Tokens.Generic): string =>
+    `<a name="${token.text}"></a>`,
 };
-
-// TODO: Disables deprecated options, remove once removed from marked
-marked.use({
-  extensions: [
-    anchorMarkedExtension,
-    emojisMarkedExtension,
-    footnoteMarkedExtension,
-    footnoteReferenceMarkedExtension,
-    katexMarkedExtension,
-  ],
-  mangle: false,
-  headerIds: false,
-});
 
 export class Renderer extends BaseRenderer {
   #baseUrl: string | undefined;
@@ -174,3 +157,18 @@ export class Renderer extends BaseRenderer {
     }
   }
 }
+
+const markedInstance = new Marked({
+  extensions: [
+    emojisMarkedExtension,
+    katexMarkedExtension,
+    footnoteMarkedExtension,
+    footnoteReferenceMarkedExtension,
+    anchorMarkedExtension,
+  ],
+  // TODO: Disables deprecated options, remove once removed from marked
+  mangle: false,
+  headerIds: false,
+});
+
+export default markedInstance;
