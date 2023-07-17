@@ -47,6 +47,6 @@ test("commit page", async ({ page }) => {
       8,
     )}/commits/1aded56c3ad55299df9f06c326af50b802a05949`,
   );
-  await expect(page.locator("text=subconscious.txt added")).toBeVisible();
+  await expect(page.getByText("subconscious.txt added")).toBeVisible();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

@@ -17,7 +17,7 @@ test("navigate between landing and project page", async ({ page }) => {
   await page.goto("/#/");
   await expect(page).toHaveURL("/#/");
 
-  await page.locator("text=source-browsing").click();
+  await page.getByText("source-browsing").click();
   await expect(page).toHaveURL(`/#${sourceBrowsingUrl}`);
 
   await expectBackAndForwardNavigationWorks("/#/", page);
@@ -34,7 +34,7 @@ test("navigation between seed and project pages", async ({ page }) => {
   await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
   await expectUrlPersistsReload(page);
 
-  await page.locator('role=link[name="radicle.local"]').click();
+  await page.getByRole("link", { name: "radicle.local" }).click();
   await expect(page).toHaveURL("/#/seeds/127.0.0.1");
 });
 
@@ -45,7 +45,7 @@ test.describe("project page navigation", () => {
     const projectHistoryURL = `/#${sourceBrowsingUrl}/history/${aliceMainHead}`;
     await page.goto(projectHistoryURL);
 
-    await page.locator("text=Add README.md").click();
+    await page.getByText("Add README.md").click();
     await expect(page).toHaveURL(
       `/#${sourceBrowsingUrl}/commits/${aliceMainHead}`,
     );
@@ -60,7 +60,7 @@ test.describe("project page navigation", () => {
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.locator('role=link[name="6 commits"]').click();
+    await page.getByRole("link", { name: "6 commits" }).click();
     await expect(page).toHaveURL(`/#${sourceBrowsingUrl}/history`);
 
     await expectBackAndForwardNavigationWorks(projectTreeURL, page);
@@ -73,11 +73,11 @@ test.describe("project page navigation", () => {
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.locator("text=.hidden").click();
+    await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/main/.hidden`);
 
-    await page.locator("text=bin/").click();
-    await page.locator("text=true").click();
+    await page.getByText("bin/").click();
+    await page.getByText("true").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/main/bin/true`);
 
     await expectBackAndForwardNavigationWorks(
@@ -95,11 +95,11 @@ test.describe("project page navigation", () => {
     await page.goto(projectTreeURL);
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.locator("text=.hidden").click();
+    await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/main/.hidden`);
 
-    await page.locator("text=bin/").click();
-    await page.locator("text=true").click();
+    await page.getByText("bin/").click();
+    await page.getByText("true").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/main/bin/true`);
 
     await expectBackAndForwardNavigationWorks(

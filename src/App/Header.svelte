@@ -72,7 +72,7 @@
     </div>
     <Floating>
       <div slot="toggle">
-        <button class="toggle" name="Settings">
+        <button class="toggle" aria-label="Settings" name="Settings">
           <Icon name="gear" />
         </button>
       </div>

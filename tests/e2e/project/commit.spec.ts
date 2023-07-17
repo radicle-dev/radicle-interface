@@ -12,10 +12,10 @@ const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=${bobRemote}`).click();
-  await page.locator('role=link[name="7 commits"]').click();
+  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: "7 commits" }).click();
 
-  await page.locator("text=Update readme").click();
+  await page.getByText("Update readme").click();
   await expect(page).toHaveURL(commitUrl);
 });
 
@@ -41,18 +41,18 @@ test("modified file", async ({ page }) => {
   // Commit header.
   {
     const header = page.locator(".commit .header");
-    await expect(header.locator("text=Update readme")).toBeVisible();
-    await expect(header.locator(`text=${bobHead}`)).toBeVisible();
+    await expect(header.getByText("Update readme")).toBeVisible();
+    await expect(header.getByText(bobHead)).toBeVisible();
   }
 
   // Diff header.
   await expect(
-    page.locator("text=1 file changed with 1 insertion and 4 deletions"),
+    page.getByText("1 file changed with 1 insertion and 4 deletions"),
   ).toBeVisible();
 
   // Diff.
-  await expect(page.locator("text=-	# Git test repository")).toBeVisible();
-  await expect(page.locator("text=+	Updated readme")).toBeVisible();
+  await expect(page.getByText("-	# Git test repository")).toBeVisible();
+  await expect(page.getByText("+	Updated readme")).toBeVisible();
 });
 
 test("created file", async ({ page }) => {
@@ -62,9 +62,9 @@ test("created file", async ({ page }) => {
     )}/commits/d87e27e38e244fb3346cb9e4df064c080d97647a`,
   );
   await expect(
-    page.locator("text=1 file added with 1 insertion and 0 deletions"),
+    page.getByText("1 file added with 1 insertion and 0 deletions"),
   ).toBeVisible();
-  await expect(page.locator("text=.hidden added")).toBeVisible();
+  await expect(page.getByText(".hidden added")).toBeVisible();
 });
 
 test("deleted file", async ({ page }) => {
@@ -74,9 +74,9 @@ test("deleted file", async ({ page }) => {
     )}/commits/0e2db54dfd47d87202809917e2342655d9e76296`,
   );
   await expect(
-    page.locator("text=1 file deleted with 0 insertions and 1 deletion"),
+    page.getByText("1 file deleted with 0 insertions and 1 deletion"),
   ).toBeVisible();
-  await expect(page.locator("text=.hidden deleted")).toBeVisible();
+  await expect(page.getByText(".hidden deleted")).toBeVisible();
 });
 
 test("moved file", async ({ page }) => {
@@ -98,7 +98,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   // Go to source tree at this revision.
   await page.getByTitle("View file").click();
   await expect(
-    page.locator("text=Add a deeply nested directory tree"),
+    page.getByText("Add a deeply nested directory tree"),
   ).toBeVisible();
   await expect(page).toHaveURL(
     `${sourceBrowsingUrl}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,

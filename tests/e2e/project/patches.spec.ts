@@ -2,10 +2,10 @@ import { test, cobUrl, expect } from "@tests/support/fixtures.js";
 
 test("navigate listing", async ({ page }) => {
   await page.goto(cobUrl);
-  await page.locator('role=link[name="2 patches"]').click();
+  await page.getByRole("link", { name: "2 patches" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches`);
 
-  await page.locator('role=link[name="1 merged"]').click();
+  await page.getByRole("link", { name: "1 merged" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
   await expect(
     page.locator(".comments").filter({ hasText: "5" }),
@@ -14,23 +14,23 @@ test("navigate listing", async ({ page }) => {
 
 test("navigate patch details", async ({ page }) => {
   await page.goto(`${cobUrl}/patches`);
-  await page.locator("text=Add subtitle to README").click();
+  await page.getByText("Add subtitle to README").click();
   await expect(page).toHaveURL(
     `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a`,
   );
-  await page.locator("role=link[name='Add subtitle to README']").click();
+  await page.getByRole("link", { name: "Add subtitle to README" }).click();
   await expect(page).toHaveURL(
     `${cobUrl}/commits/8c900d6cb38811e099efb3cbbdbfaba817bcf970`,
   );
   await page.goBack();
   {
-    await page.locator("role=link[name='Commits']").click();
+    await page.getByRole("link", { name: "Commits" }).click();
     await expect(page).toHaveURL(
       `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=commits`,
     );
   }
   {
-    await page.locator("role=link[name='Files']").click();
+    await page.getByRole("link", { name: "Files" }).click();
     await expect(page).toHaveURL(
       `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files`,
     );

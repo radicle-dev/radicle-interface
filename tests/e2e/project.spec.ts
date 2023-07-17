@@ -18,16 +18,14 @@ async function expectCounts(
   page: Page,
 ) {
   await expect(
-    page.locator(
-      `role=link[name="${params.commits} ${
-        params.commits === 1 ? "commit" : "commits"
-      }"]`,
-    ),
+    page.getByRole("link", {
+      name: `${params.commits} ${params.commits === 1 ? "commit" : "commits"}`,
+    }),
   ).toBeVisible();
 
   await expect(
-    page.locator(
-      `text=${params.contributors} ${
+    page.getByText(
+      `${params.contributors} ${
         params.contributors === 1 ? "contributor" : "contributors"
       }`,
     ),
@@ -39,10 +37,10 @@ test("navigate to project", async ({ page }) => {
 
   // Header.
   {
-    const name = page.locator("text=source-browsing");
-    const id = page.locator(`text=${sourceBrowsingRid}`);
-    const description = page.locator(
-      "text=Git repository for source browsing tests",
+    const name = page.getByText("source-browsing");
+    const id = page.getByText(sourceBrowsingRid);
+    const description = page.getByText(
+      "Git repository for source browsing tests",
     );
 
     await expect(name).toBeVisible();
@@ -62,18 +60,18 @@ test("navigate to project", async ({ page }) => {
   await expect(page.locator(".file-name")).toContainText("README.md");
 
   // Show a commit teaser.
-  await expect(page.locator("text=dd068e9 Add README.md")).toBeVisible();
+  await expect(page.getByText("dd068e9 Add README.md")).toBeVisible();
 
   // Show rendered README.md contents.
-  await expect(page.locator("text=Git test repository")).toBeVisible();
+  await expect(page.getByText("Git test repository")).toBeVisible();
 
   // Number of nodes tracking this project.
-  await expect(page.locator("text=3 nodes")).toBeVisible();
+  await expect(page.getByText("3 nodes")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.locator('role=link[name="6 commits"]').click();
+  await page.getByRole("link", { name: "6 commits" }).click();
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
@@ -137,7 +135,7 @@ test("navigate deep file hierarchies", async ({ page }) => {
   await sourceTree.getByText("repositories/").click();
   await sourceTree.getByText(".gitkeep").click();
   await expect(
-    page.locator("text=0801ace Add a deeply nested directory tree"),
+    page.getByText("0801ace Add a deeply nested directory tree"),
   ).toBeVisible();
 
   // After a page reload the tree browser is still expanded and we're still
@@ -159,7 +157,7 @@ test("navigate deep file hierarchies", async ({ page }) => {
     await expect(sourceTree.getByText(".gitkeep")).toBeVisible();
 
     await expect(
-      page.locator("text=0801ace Add a deeply nested directory tree"),
+      page.getByText("0801ace Add a deeply nested directory tree"),
     ).toBeVisible();
   }
 });
@@ -213,7 +211,7 @@ test("binary files", async ({ page }) => {
   await page.getByText("bin/").click();
   await page.getByText("true").click();
 
-  await expect(page.locator("text=Binary content")).toBeVisible();
+  await expect(page.getByText("Binary content")).toBeVisible();
 });
 
 test("empty files", async ({ page }) => {
@@ -230,14 +228,14 @@ test("hidden files", async ({ page }) => {
 
   await page.getByText(".hidden").click();
 
-  await expect(page.locator("text=I'm a hidden file.")).toBeVisible();
+  await expect(page.getByText("I'm a hidden file.")).toBeVisible();
 });
 
 test("markdown files", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
 
   await expect(
-    page.locator("text=This is intended as a quick reference and showcase."),
+    page.getByText("This is intended as a quick reference and showcase."),
   ).toBeVisible();
 
   // Switch between raw and rendered modes.
@@ -245,7 +243,7 @@ test("markdown files", async ({ page }) => {
     const toggleButton = page.getByTitle("Toggle render method");
     await expect(toggleButton).toHaveText("Plain");
     await toggleButton.click();
-    await expect(page.locator("text=##### Table of Contents")).toBeVisible();
+    await expect(page.getByText("##### Table of Contents")).toBeVisible();
     await expect(toggleButton).toHaveText("Markdown");
     await toggleButton.click();
   }
@@ -263,12 +261,10 @@ test("clone modal", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   await page.getByText("Clone").click();
+  await expect(page.getByText(`rad clone ${sourceBrowsingRid}`)).toBeVisible();
   await expect(
-    page.locator(`text=rad clone ${sourceBrowsingRid}`),
-  ).toBeVisible();
-  await expect(
-    page.locator(
-      `text=http://127.0.0.1/${sourceBrowsingRid.replace("rad:", "")}.git`,
+    page.getByText(
+      `http://127.0.0.1/${sourceBrowsingRid.replace("rad:", "")}.git`,
     ),
   ).toBeVisible();
 });
@@ -279,15 +275,15 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${aliceRemote}`).click();
+    await page.getByText(`${aliceRemote}`).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
       `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
         -6,
       )} (alice) delegate`,
     );
     await expect(
-      page.locator(
-        `text=source-browsing / did:key:${aliceRemote
+      page.getByText(
+        `source-browsing / did:key:${aliceRemote
           .substring(8)
           .substring(0, 6)}…${aliceRemote.slice(-6)}`,
       ),
@@ -304,7 +300,7 @@ test("peer and branch switching", async ({ page }) => {
     // Feature branch with a slash in the name.
     {
       await page.getByTitle("Change branch").click();
-      await page.locator("text=feature/branch").click();
+      await page.getByText("feature/branch").click();
 
       await expect(page.getByTitle("Current branch")).toContainText(
         "feature/branch 1aded56",
@@ -315,7 +311,7 @@ test("peer and branch switching", async ({ page }) => {
     // Branch without a history or files in it.
     {
       await page.getByTitle("Change branch").click();
-      await page.locator("text=orphaned-branch").click();
+      await page.getByText("orphaned-branch").click();
 
       await expect(page.getByTitle("Current branch")).toContainText(
         "orphaned-branch af3641c",
@@ -323,14 +319,14 @@ test("peer and branch switching", async ({ page }) => {
       await expectCounts({ commits: 1, contributors: 1 }, page);
 
       await expect(
-        page.locator("text=We couldn't find any files at this revision."),
+        page.getByText("We couldn't find any files at this revision."),
       ).toBeVisible();
     }
   }
 
   // Reset the source browser by clicking the project title.
   {
-    await page.locator("text=source-browsing").click();
+    await page.getByText("source-browsing").click();
 
     await expect(page.getByTitle("Change peer")).not.toContainText("alice");
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
@@ -338,13 +334,13 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Current branch")).toContainText(
       `main ${aliceMainHead.substring(0, 7)}`,
     );
-    await expect(page.locator("text=Git test repository")).toBeVisible();
+    await expect(page.getByText("Git test repository")).toBeVisible();
   }
 
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.locator(`text=${bobRemote}`).click();
+    await page.getByText(bobRemote).click();
     await expect(page.getByTitle("Change peer")).toHaveText(
       `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
         -6,
@@ -359,7 +355,7 @@ test("peer and branch switching", async ({ page }) => {
       );
       await expectCounts({ commits: 7, contributors: 2 }, page);
       await expect(
-        page.locator(`text=${bobHead.substring(0, 7)} Update readme`),
+        page.getByText(`${bobHead.substring(0, 7)} Update readme`),
       ).toBeVisible();
     }
   }
@@ -369,31 +365,31 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.locator(`text=${aliceRemote}`).click();
+  await page.getByText(aliceRemote).click();
 
   await page.getByText("Clone").click();
-  await expect(page.locator("text=Code font")).not.toBeVisible();
-  await expect(page.locator("text=Use the Radicle CLI")).toBeVisible();
-  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
-  await expect(page.locator("text=feature/branch")).not.toBeVisible();
+  await expect(page.getByText("Code font")).not.toBeVisible();
+  await expect(page.getByText("Use the Radicle CLI")).toBeVisible();
+  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("feature/branch")).not.toBeVisible();
 
-  await page.locator('button[name="Settings"]').click();
-  await expect(page.locator("text=Code font")).toBeVisible();
-  await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
-  await expect(page.locator("text=feature/branch")).not.toBeVisible();
+  await page.getByRole("button", { name: "Settings" }).click();
+  await expect(page.getByText("Code font")).toBeVisible();
+  await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
+  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
-  await expect(page.locator("text=Code font")).not.toBeVisible();
-  await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator("text=bob hyyzz9")).not.toBeVisible();
-  await expect(page.locator("text=feature/branch")).toBeVisible();
+  await expect(page.getByText("Code font")).not.toBeVisible();
+  await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
+  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("feature/branch")).toBeVisible();
 
   await page.getByTitle("Change peer").click();
-  await expect(page.locator("text=Code font")).not.toBeVisible();
-  await expect(page.locator("text=Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.locator(`text=${bobRemote}`)).toBeVisible();
-  await expect(page.locator("text=feature/branch")).not.toBeVisible();
+  await expect(page.getByText("Code font")).not.toBeVisible();
+  await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
+  await expect(page.getByText(bobRemote)).toBeVisible();
+  await expect(page.getByText("feature/branch")).not.toBeVisible();
 });
 
 test.describe("browser error handling", () => {
@@ -406,11 +402,9 @@ test.describe("browser error handling", () => {
     await page.goto(sourceBrowsingUrl);
 
     const sourceTree = page.locator(".source-tree");
-    await sourceTree.locator("text=src/").click();
+    await sourceTree.getByText("src/").click();
 
-    await expect(
-      page.locator("text=Not able to expand directory"),
-    ).toBeVisible();
+    await expect(page.getByText("Not able to expand directory")).toBeVisible();
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
@@ -419,9 +413,9 @@ test.describe("browser error handling", () => {
     );
 
     await page.goto(sourceBrowsingUrl);
-    await page.locator("text=.hidden").click();
+    await page.getByText(".hidden").click();
 
-    await expect(page.locator("text=Not able to load file")).toBeVisible();
+    await expect(page.getByText("Not able to load file")).toBeVisible();
   });
   test("error appears when README can't be loaded", async ({ page }) => {
     await page.route(
@@ -431,7 +425,7 @@ test.describe("browser error handling", () => {
 
     await page.goto(sourceBrowsingUrl);
     await expect(
-      page.locator("text=The README could not be loaded"),
+      page.getByText("The README could not be loaded"),
     ).toBeVisible();
   });
   test("error appears when navigating to missing file", async ({ page }) => {
@@ -442,7 +436,7 @@ test.describe("browser error handling", () => {
 
     await page.goto(`${sourceBrowsingUrl}/tree/master/.hidden`);
 
-    await expect(page.locator("text=Not able to load file")).toBeVisible();
+    await expect(page.getByText("Not able to load file")).toBeVisible();
   });
 });
 

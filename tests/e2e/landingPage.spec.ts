@@ -13,19 +13,17 @@ test("show pinned projects", async ({ page }) => {
   await page.addInitScript(appConfigWithFixture);
   await page.goto("/");
   await expect(
-    page.locator("text=Explore projects on the Radicle network."),
+    page.getByText("Explore projects on the Radicle network."),
   ).toBeVisible();
 
   // Shows pinned project name.
-  await expect(page.locator("text=source-browsing")).toBeVisible();
+  await expect(page.getByText("source-browsing")).toBeVisible();
   //
   // Shows pinned project description.
   await expect(
-    page.locator("text=Git repository for source browsing tests"),
+    page.getByText("Git repository for source browsing tests"),
   ).toBeVisible();
 
   // Shows latest commit.
-  await expect(
-    page.locator(`text=${aliceMainHead.substring(0, 7)}`),
-  ).toBeVisible();
+  await expect(page.getByText(aliceMainHead.substring(0, 7))).toBeVisible();
 });

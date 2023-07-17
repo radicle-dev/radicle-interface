@@ -25,7 +25,7 @@ test.describe("markdown rendering", async () => {
           waitUntil: "networkidle",
         },
       );
-      await expect(page.locator("text=Table of Contents")).toBeVisible();
+      await expect(page.getByText("Table of Contents")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -36,7 +36,7 @@ test.describe("markdown rendering", async () => {
     });
     test("headers", async ({ page }) => {
       await goToSection("#headers", page);
-      await expect(page.locator("text=###### H6")).toBeVisible();
+      await expect(page.getByText("###### H6")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -45,7 +45,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 470 } });
     test("emphasis", async ({ page }) => {
       await goToSection("#emphasis", page);
-      await expect(page.locator("text=Emphasis, aka").first()).toBeVisible();
+      await expect(page.getByText("Emphasis, aka").first()).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -54,9 +54,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 1100 } });
     test("lists", async ({ page }) => {
       await goToSection("#lists", page);
-      await expect(
-        page.locator("text=First ordered list").first(),
-      ).toBeVisible();
+      await expect(page.getByText("First ordered list").first()).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -65,7 +63,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 1024 } });
     test("links", async ({ page }) => {
       await goToSection("#links", page);
-      await expect(page.locator("text=There are two ways")).toBeVisible();
+      await expect(page.getByText("There are two ways")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -74,7 +72,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 520 } });
     test("images", async ({ page }) => {
       await goToSection("#images", page);
-      await expect(page.locator("text=Here's our logo").first()).toBeVisible();
+      await expect(page.getByText("Here's our logo").first()).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -83,7 +81,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 1130 } });
     test("code and syntax highlighting", async ({ page }) => {
       await goToSection("#code", page);
-      await expect(page.locator("text=Code blocks are part")).toBeVisible();
+      await expect(page.getByText("Code blocks are part")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -98,22 +96,18 @@ test.describe("markdown rendering", async () => {
           "text=This is an example footnote[0]. And some radicle[1] examples.",
         ),
       ).toBeVisible();
-      await expect(page.locator("text=0. https://example.com ↩")).toBeVisible();
-      await expect(page.locator("text=1. https://radicle.xyz ↩")).toBeVisible();
+      await expect(page.getByText("0. https://example.com ↩")).toBeVisible();
+      await expect(page.getByText("1. https://radicle.xyz ↩")).toBeVisible();
       await expect(page).toHaveScreenshot({ fullPage: true });
 
-      await page.locator("text=Plain").click();
+      await page.getByText("Plain").click();
       await expect(
         page.locator(
           "text=This is an example footnote[^0]. And some radicle[^1] examples.",
         ),
       ).toBeVisible();
-      await expect(
-        page.locator("text=[^0]: https://example.com"),
-      ).toBeVisible();
-      await expect(
-        page.locator("text=[^1]: https://radicle.xyz"),
-      ).toBeVisible();
+      await expect(page.getByText("[^0]: https://example.com")).toBeVisible();
+      await expect(page.getByText("[^1]: https://radicle.xyz")).toBeVisible();
     });
   });
 
@@ -133,9 +127,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 1100 } });
     test("tables", async ({ page }) => {
       await goToSection("#tables", page);
-      await expect(
-        page.locator("text=Tables aren't part of the"),
-      ).toBeVisible();
+      await expect(page.getByText("Tables aren't part of the")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -144,7 +136,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 450 } });
     test("blockquotes", async ({ page }) => {
       await goToSection("#blockquotes", page);
-      await expect(page.locator("text=Blockquotes are").first()).toBeVisible();
+      await expect(page.getByText("Blockquotes are").first()).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -153,9 +145,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 510 } });
     test("inline HTML", async ({ page }) => {
       await goToSection("#html", page);
-      await expect(
-        page.locator("text=You can also use raw HTML"),
-      ).toBeVisible();
+      await expect(page.getByText("You can also use raw HTML")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -164,7 +154,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 710 } });
     test("horizontal rule", async ({ page }) => {
       await goToSection("#hr", page);
-      await expect(page.locator("text=Three or more...").first()).toBeVisible();
+      await expect(page.getByText("Three or more...").first()).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -173,7 +163,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 625 } });
     test("line breaks", async ({ page }) => {
       await goToSection("#lines", page);
-      await expect(page.locator("text=My basic recommendation")).toBeVisible();
+      await expect(page.getByText("My basic recommendation")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
@@ -182,7 +172,7 @@ test.describe("markdown rendering", async () => {
     test.use({ viewport: { width: viewportWidth, height: 500 } });
     test("videos", async ({ page }) => {
       await goToSection("#videos", page);
-      await expect(page.locator("text=They can't be added")).toBeVisible();
+      await expect(page.getByText("They can't be added")).toBeVisible();
       await expect(page).toHaveScreenshot();
     });
   });
