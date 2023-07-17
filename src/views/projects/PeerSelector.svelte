@@ -1,12 +1,9 @@
 <script lang="ts">
-  import type { BaseUrl, Remote } from "@httpd-client";
-  import type {
-    LoadedSourceBrowsingView,
-    ProjectRoute,
-  } from "@app/views/projects/router";
+  import type { Remote } from "@httpd-client";
+  import { type Route } from "@app/lib/router";
 
   import { closeFocused } from "@app/components/Floating.svelte";
-  import { formatNodeId, truncateId, unreachable } from "@app/lib/utils";
+  import { formatNodeId, truncateId } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
   import Avatar from "@app/components/Avatar.svelte";
@@ -17,49 +14,15 @@
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
-  export let baseUrl: BaseUrl;
-  export let peer: string | undefined = undefined;
-  export let peers: Remote[];
-  export let projectId: string;
-  export let view: LoadedSourceBrowsingView;
+  export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
 
-  $: meta = peers.find(p => p.id === peer);
+  $: selectedPeer = peers.find(p => p.selected)?.remote;
 
   function createTitle(p: Remote): string {
     const nodeId = formatNodeId(p.id);
     return p.delegate
       ? `${nodeId} is a delegate of this project`
       : `${nodeId} is a peer tracked by this node`;
-  }
-
-  function routeFromView(
-    peer: string,
-    view: LoadedSourceBrowsingView,
-  ): ProjectRoute {
-    if (view.resource === "tree") {
-      return {
-        resource: "project.tree",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-      };
-    } else if (view.resource === "history") {
-      return {
-        resource: "project.history",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-      };
-    } else if (view.resource === "commits") {
-      return {
-        resource: "project.commit",
-        seed: baseUrl,
-        project: projectId,
-        commit: view.commit.commit.id,
-      };
-    } else {
-      return unreachable(view);
-    }
   }
 </script>
 
@@ -108,30 +71,23 @@
 <Floating>
   <div slot="toggle" class="selector" title="Change peer">
     <div class="stat peer" class:not-allowed={!peers}>
-      {#if !peer}
-        <Icon size="small" name="fork" />{peers.length}
-        {pluralize("remote", peers.length)}
-      {/if}
-      {#if meta}
+      {#if selectedPeer}
         <span class="avatar-id">
-          <Avatar nodeId={meta.id} inline />
+          <Avatar nodeId={selectedPeer.id} inline />
           <!-- Ignore prettier to avoid getting a whitespace between
              did:key: and the nid due to a newline. -->
           <!-- prettier-ignore -->
-          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(meta.id)}</span>
-          {#if meta.alias}
-            <span class="alias">({meta.alias})</span>
+          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(selectedPeer.id)}</span>
+          {#if selectedPeer.alias}
+            <span class="alias">({selectedPeer.alias})</span>
           {/if}
         </span>
-        {#if meta.delegate}
+        {#if selectedPeer.delegate}
           <Badge variant="primary">delegate</Badge>
         {/if}
-      {:else if peer}
-        <span class="avatar-id">
-          <Avatar nodeId={peer} inline />
-          <!-- prettier-ignore -->
-          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(peer)}</span>
-        </span>
+      {:else}
+        <Icon size="small" name="fork" />{peers.length}
+        {pluralize("remote", peers.length)}
       {/if}
     </div>
   </div>
@@ -140,31 +96,29 @@
     <Dropdown items={peers}>
       <svelte:fragment slot="item" let:item>
         <div class="dropdown-item">
-          <Link
-            on:afterNavigate={() => closeFocused()}
-            route={routeFromView(item.id, view)}>
+          <Link on:afterNavigate={() => closeFocused()} route={item.route}>
             <DropdownItem
-              selected={item.id === peer}
-              title={createTitle(item)}
+              selected={item.selected}
+              title={createTitle(item.remote)}
               size="tiny">
               <span class="avatar-id">
-                <Avatar nodeId={item.id} inline />
+                <Avatar nodeId={item.remote.id} inline />
                 <div class="layout-desktop">
                   <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{item.id}</span>
-                  {#if item.alias}
-                    <span class="alias">({item.alias})</span>
+                  <span><span class="prefix">did:key:</span>{item.remote.id}</span>
+                  {#if item.remote.alias}
+                    <span class="alias">({item.remote.alias})</span>
                   {/if}
                 </div>
                 <div class="layout-mobile">
                   <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{truncateId(item.id)}</span>
-                  {#if item.alias}
-                    <span class="alias">({item.alias})</span>
+                  <span><span class="prefix">did:key:</span>{truncateId(item.remote.id)}</span>
+                  {#if item.remote.alias}
+                    <span class="alias">({item.remote.alias})</span>
                   {/if}
                 </div>
               </span>
-              {#if item.delegate}
+              {#if item.remote.delegate}
                 <Badge variant="primary">delegate</Badge>
               {/if}
             </DropdownItem>

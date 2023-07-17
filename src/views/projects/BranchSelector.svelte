@@ -1,10 +1,4 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-  import type {
-    LoadedSourceBrowsingView,
-    ProjectRoute,
-  } from "@app/views/projects/router";
-
   import * as utils from "@app/lib/utils";
   import { closeFocused } from "@app/components/Floating.svelte";
 
@@ -12,52 +6,14 @@
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Link from "@app/components/Link.svelte";
+  import type { Route } from "@app/lib/router";
 
-  export let baseUrl: BaseUrl;
-  export let branches: Record<string, string> | undefined;
-  export let peer: string | undefined;
-  export let projectId: string;
-  export let view: LoadedSourceBrowsingView;
   export let selectedBranch: string | undefined;
   export let selectedCommitId: string;
+  export let branches: Array<{ name: string; route: Route }>;
 
-  $: branchList = Object.keys(branches || {})
-    .sort()
-    .map(b => ({ key: b, value: b, title: `Switch to ${b}`, badge: null }));
-  $: showSelector = branchList.length > 1;
+  $: showSelector = branches.length > 1;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
-
-  function routeFromView(
-    revision: string,
-    view: LoadedSourceBrowsingView,
-  ): ProjectRoute {
-    if (view.resource === "tree") {
-      return {
-        resource: "project.tree",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-        revision,
-      };
-    } else if (view.resource === "history") {
-      return {
-        resource: "project.history",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-        revision,
-      };
-    } else if (view.resource === "commits") {
-      return {
-        resource: "project.commit",
-        seed: baseUrl,
-        project: projectId,
-        commit: view.commit.commit.id,
-      };
-    } else {
-      return utils.unreachable(view);
-    }
-  }
 </script>
 
 <style>
@@ -102,7 +58,7 @@
 
 <div class="commit" title="Current branch">
   <!-- Check for branches listing feature -->
-  {#if branchList.length > 0}
+  {#if branches.length > 0}
     {#if selectedBranch}
       <Floating disabled={!showSelector}>
         <div
@@ -113,15 +69,13 @@
           {selectedBranch}
         </div>
         <svelte:fragment slot="modal">
-          <Dropdown items={branchList}>
+          <Dropdown items={branches}>
             <svelte:fragment slot="item" let:item>
-              <Link
-                route={routeFromView(item.value, view)}
-                on:afterNavigate={() => closeFocused()}>
+              <Link route={item.route} on:afterNavigate={() => closeFocused()}>
                 <DropdownItem
-                  selected={item.value === selectedBranch}
+                  selected={item.name === selectedBranch}
                   size="tiny">
-                  {item.value}
+                  {item.name}
                 </DropdownItem>
               </Link>
             </svelte:fragment>
