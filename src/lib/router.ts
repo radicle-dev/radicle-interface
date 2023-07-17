@@ -151,13 +151,17 @@ export async function replace(newRoute: Route): Promise<void> {
 function extractBaseUrl(hostAndPort: string): BaseUrl {
   if (
     hostAndPort === "radicle.local" ||
-    hostAndPort === "radicle.local:8080" ||
+    hostAndPort === `radicle.local:${config.seeds.defaultHttpdPort}` ||
     hostAndPort === "0.0.0.0" ||
-    hostAndPort === "0.0.0.0:8080" ||
+    hostAndPort === `0.0.0.0:${config.seeds.defaultHttpdPort}` ||
     hostAndPort === "127.0.0.1" ||
-    hostAndPort === "127.0.0.1:8080"
+    hostAndPort === `127.0.0.1:${config.seeds.defaultHttpdPort}`
   ) {
-    return { hostname: "127.0.0.1", port: 8080, scheme: "http" };
+    return {
+      hostname: "127.0.0.1",
+      port: config.seeds.defaultHttpdPort,
+      scheme: "http",
+    };
   } else if (hostAndPort.includes(":")) {
     const [hostname, port] = hostAndPort.split(":");
     return {

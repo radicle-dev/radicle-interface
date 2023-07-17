@@ -1,7 +1,8 @@
 import { derived, get, writable } from "svelte/store";
+import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
 import { HttpdClient } from "@httpd-client";
-import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
+import { config } from "@app/lib/config";
 
 export interface Session {
   id: string;
@@ -24,7 +25,7 @@ export const httpdStore = derived(store, s => s);
 
 export const api = new HttpdClient({
   hostname: "127.0.0.1",
-  port: 8080,
+  port: config.seeds.defaultHttpdPort,
   scheme: "http",
 });
 

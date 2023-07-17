@@ -93,14 +93,14 @@ export const test = base.extend<{
           window.APP_CONFIG = {
             reactions: [],
             seeds: {
-              defaultHttpdPort: 8080,
+              defaultHttpdPort: 8081,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
               pinned: [
                 {
                   baseUrl: {
                     hostname: "127.0.0.1",
-                    port: 8080,
+                    port: 8081,
                     scheme: "http",
                   },
                 },
@@ -230,14 +230,14 @@ export function appConfigWithFixture() {
   window.APP_CONFIG = {
     reactions: [],
     seeds: {
-      defaultHttpdPort: 8080,
+      defaultHttpdPort: 8081,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
       pinned: [
         {
           baseUrl: {
             hostname: "127.0.0.1",
-            port: 8080,
+            port: 8081,
             scheme: "http",
           },
         },
@@ -250,7 +250,7 @@ export function appConfigWithFixture() {
           id: "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
           baseUrl: {
             hostname: "127.0.0.1",
-            port: 8080,
+            port: 8081,
             scheme: "http",
           },
         },
@@ -639,6 +639,7 @@ export const sourceBrowsingUrl = `/seeds/127.0.0.1/${sourceBrowsingRid}`;
 export const cobUrl = `/seeds/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/seeds/127.0.0.1/${markdownRid}`;
 export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
+export const defaultHttpdPort = 8081;
 export const gitOptions = {
   alice: {
     GIT_AUTHOR_NAME: "Alice Liddell",

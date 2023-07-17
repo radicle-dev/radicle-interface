@@ -6,6 +6,7 @@ import {
   aliceRemote,
   bobRemote,
   cobRid,
+  defaultHttpdPort,
   sourceBrowsingRid,
 } from "@tests/support/fixtures.js";
 import {
@@ -20,7 +21,7 @@ import { testFixture as testWithAPI } from "@httpd-client/tests/support/fixtures
 describe("project", () => {
   const api = new HttpdClient({
     hostname: "127.0.0.1",
-    port: 8080,
+    port: defaultHttpdPort,
     scheme: "http",
   });
 

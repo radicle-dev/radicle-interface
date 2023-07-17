@@ -10,6 +10,7 @@ import { createPeerManager } from "@tests/support/peerManager";
 import {
   createCobsFixture,
   createSourceBrowsingFixture,
+  defaultHttpdPort,
   gitOptions,
   startPalmHttpd,
 } from "@tests/support/fixtures";
@@ -45,7 +46,7 @@ export default async function globalSetup(): Promise<() => void> {
       name: "palm",
       gitOptions: gitOptions["alice"],
     });
-    await palm.startHttpd(8080);
+    await palm.startHttpd(defaultHttpdPort);
     await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
 
     console.log("Creating source-browsing fixture");
@@ -55,7 +56,7 @@ export default async function globalSetup(): Promise<() => void> {
     console.log("Running tests");
     await palm.stopNode();
   } else {
-    await startPalmHttpd(8080);
+    await startPalmHttpd(defaultHttpdPort);
   }
 
   return () => killAllProcesses();

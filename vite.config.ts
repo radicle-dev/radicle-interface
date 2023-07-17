@@ -28,6 +28,7 @@ export default defineConfig({
       "@app": path.resolve("./src"),
       "@public": path.resolve("./public"),
       "@httpd-client": path.resolve("./httpd-client"),
+      "@tests": path.resolve("./tests"),
     },
   },
   build: {

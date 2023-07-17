@@ -1,3 +1,4 @@
+import { defaultHttpdPort } from "@tests/support/fixtures.js";
 import { describe, expect, test } from "vitest";
 import { testExports, type Route } from "@app/lib/router";
 
@@ -222,7 +223,7 @@ describe("pathToRoute", () => {
         baseUrl: {
           hostname: "willow.radicle.garden",
           scheme: "http",
-          port: 8080,
+          port: defaultHttpdPort,
         },
         projectPageIndex: 0,
       },
@@ -237,7 +238,7 @@ describe("pathToRoute", () => {
         seed: {
           hostname: "willow.radicle.garden",
           scheme: "http",
-          port: 8080,
+          port: defaultHttpdPort,
         },
         project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         route: "",
@@ -253,7 +254,7 @@ describe("pathToRoute", () => {
         seed: {
           hostname: "willow.radicle.garden",
           scheme: "http",
-          port: 8080,
+          port: defaultHttpdPort,
         },
         project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         route: "",

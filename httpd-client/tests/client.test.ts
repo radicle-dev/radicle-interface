@@ -1,9 +1,11 @@
 import { describe, test } from "vitest";
+
 import { HttpdClient } from "@httpd-client";
+import { defaultHttpdPort } from "@tests/support/fixtures";
 
 const api = new HttpdClient({
   hostname: "127.0.0.1",
-  port: 8080,
+  port: defaultHttpdPort,
   scheme: "http",
 });
 

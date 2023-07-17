@@ -24,7 +24,7 @@ function getConfig(): Config {
     return {
       reactions: [],
       seeds: {
-        defaultHttpdPort: 8080,
+        defaultHttpdPort: 8081,
         defaultHttpdScheme: "http",
         defaultNodePort: 8776,
         pinned: [],
