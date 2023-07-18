@@ -2,6 +2,7 @@ import type { marked } from "marked";
 
 import dompurify from "dompurify";
 import katexMarkedExtension from "marked-katex-extension";
+import markedLinkifyIt from "marked-linkify-it";
 import { Marked, Renderer as BaseRenderer } from "marked";
 
 import emojis from "@app/lib/emojis";
@@ -142,6 +143,7 @@ export class Renderer extends BaseRenderer {
 
 const markedInstance = new Marked(
   katexMarkedExtension({ throwOnError: false }),
+  markedLinkifyIt(),
   {
     extensions: [
       emojisMarkedExtension,

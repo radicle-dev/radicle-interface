@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
 
-  import Clipboard from "@app/components/Clipboard.svelte";
   import dompurify from "dompurify";
+
+  import Clipboard from "@app/components/Clipboard.svelte";
   import Link from "@app/components/Link.svelte";
+  import markdown from "@app/lib/markdown";
   import { formatNodeId, twemoji } from "@app/lib/utils";
 
   export let baseUrl: BaseUrl;
@@ -11,10 +13,6 @@
   export let projectDescription: string;
   export let projectId: string;
   export let projectName: string;
-
-  const linkifyDescription = (text: string) => {
-    return text.replaceAll(/(https?:\/\/[^\s]+)/g, `<a href="$1">$1</a>`);
-  };
 </script>
 
 <style>
@@ -111,6 +109,6 @@
     <Clipboard small text={projectId} />
   </div>
   <div class="description" use:twemoji>
-    {@html dompurify.sanitize(linkifyDescription(projectDescription))}
+    {@html dompurify.sanitize(markdown.parse(projectDescription))}
   </div>
 </header>
