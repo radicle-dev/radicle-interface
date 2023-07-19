@@ -47,8 +47,7 @@
     if (
       !(
         e.target instanceof HTMLElement &&
-        (e.target.hasAttribute("data-line-type") ||
-          e.target.classList.contains("diff-line-content"))
+        e.target.closest("[data-file-diff-select]")
       )
     ) {
       updateHash("");
@@ -98,18 +97,7 @@
     }
   }
 
-  function lineSign(line: HunkLine, hashSelected = false): string {
-    if (hashSelected) {
-      switch (line.type) {
-        case "addition": {
-          return "@+";
-        }
-        case "deletion": {
-          return "@-";
-        }
-      }
-      return "@";
-    }
+  function lineSign(line: HunkLine): string {
     switch (line.type) {
       case "addition": {
         return "+";
@@ -192,23 +180,13 @@
     }
   }
 
-  function headerSign(
-    selection: Selection | undefined,
-    hunkIdx: number,
-  ): string {
-    if (!selection) {
-      return "";
-    }
-
-    if (
+  function hunkHeaderSelected(selection: Selection | undefined, hunk: number) {
+    return (
+      selection &&
       selection.endHunk !== undefined &&
-      hunkIdx > selection.startHunk &&
-      hunkIdx <= selection.endHunk
-    ) {
-      return "@@@";
-    }
-
-    return "";
+      hunk > selection.startHunk &&
+      hunk <= selection.endHunk
+    );
   }
 
   interface Selection {
@@ -271,37 +249,27 @@
   .diff-line {
     vertical-align: top;
   }
-  .diff-line[data-line-type="+"] > * {
+  .diff-line.type-addition > * {
     color: var(--color-positive-6);
     background-color: var(--color-positive-2);
   }
-  .diff-line[data-line-type="-"] > * {
+  .diff-line.type-deletion > * {
     color: var(--color-negative-6);
     background-color: var(--color-negative-2);
   }
-  .diff-line[data-line-type="@"] > * {
+  .diff-line.selected > * {
     color: var(--color-foreground-6);
     background-color: var(--color-foreground-4);
   }
-  .diff-line[data-line-type="@+"] > * {
+  .diff-line.selected.type-addition > * {
     color: var(--color-positive-6);
     background-color: var(--color-positive-4);
   }
-  .diff-line[data-line-type="@-"] > * {
+  .diff-line.selected.type-deletion > * {
     color: var(--color-negative-6);
     background-color: var(--color-negative-4);
   }
-  .diff-line[data-line-type="@"] {
-    border-left: 4px solid var(--color-primary);
-  }
-  .diff-line[data-line-type="@+"] {
-    border-left: 4px solid var(--color-primary);
-  }
-  .diff-line[data-line-type="@-"] {
-    border-left: 4px solid var(--color-primary);
-  }
-  .diff-line[data-line-type="@@@"] {
-    border-left: 4px solid var(--color-primary);
+  .diff-line.hunk-header.selected {
     background-color: var(--color-foreground-4);
   }
   .diff-line-number {
@@ -312,7 +280,18 @@
     cursor: pointer;
   }
   .diff-line-number.left {
+    position: relative;
     padding: 0 0.5rem 0 0.75rem;
+  }
+  .selection-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+  .diff-line.selected .selection-indicator {
+    background: var(--color-primary);
   }
   .diff-line-number.right {
     padding: 0 0.75rem 0 0.5rem;
@@ -374,35 +353,32 @@
     <main>
       {#if file.diff.type === "plain"}
         {#if file.diff.hunks.length > 0}
-          <table class="diff">
+          <table class="diff" data-file-diff-select>
             {#each file.diff.hunks as hunk, hunkIdx}
               <tr
-                class="diff-line"
-                data-line-type={headerSign(selection, hunkIdx)}>
-                <td colspan={2} />
+                class="diff-line hunk-header"
+                class:selected={hunkHeaderSelected(selection, hunkIdx)}>
+                <td colspan={2} style:position="relative">
+                  <div class="selection-indicator" />
+                </td>
                 <td colspan={6} class="diff-expand-header">
                   {hunk.header}
                 </td>
               </tr>
               {#each hunk.lines as line, lineIdx}
                 <tr
-                  class="diff-line"
-                  data-expanded
-                  data-line-type={lineSign(
-                    line,
-                    isLineSelected(selection, hunkIdx, lineIdx),
-                  )}>
+                  class={`diff-line type-${line.type}`}
+                  class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
                   <td
                     id={[file.path, "H" + hunkIdx, "L" + lineIdx].join("-")}
                     class="diff-line-number left"
-                    on:click={e => selectLine(hunkIdx, lineIdx, e)}
-                    data-line-type={lineSign(line)}>
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
+                    <div class="selection-indicator" />
                     {lineNumberL(line)}
                   </td>
                   <td
                     class="diff-line-number right"
-                    on:click={e => selectLine(hunkIdx, lineIdx, e)}
-                    data-line-type={lineSign(line)}>
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
                     {lineNumberR(line)}
                   </td>
                   <td class="diff-line-type" data-line-type={line.type}>
