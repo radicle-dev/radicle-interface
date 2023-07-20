@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, Remote } from "@httpd-client";
   import { type Route } from "@app/lib/router";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
 
   import { pluralize } from "@app/lib/pluralize";
 
@@ -9,17 +8,15 @@
   import PeerSelector from "@app/views/projects/PeerSelector.svelte";
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
-  import { unreachable } from "@app/lib/utils";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string> | undefined;
+  export let branches: Array<{ name: string; route: Route }>;
   export let commitCount: number;
   export let contributorCount: number;
   export let defaultBranch: string;
-  export let peer: string | undefined;
-  export let peers: Remote[];
+  export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
   export let projectId: string;
-  export let view: LoadedSourceBrowsingView;
+  export let historyLinkActive: boolean;
   export let revision: string | undefined;
   export let commitId: string;
 
@@ -35,61 +32,7 @@
     selectedBranch = revision || defaultBranch;
   }
 
-  $: peersWithRoute = peers.map(remote => ({
-    remote,
-    selected: remote.id === peer,
-    route: makePeerRoute(view, remote.id),
-  }));
-
-  function makePeerRoute(view: LoadedSourceBrowsingView, peer: string): Route {
-    if (view.resource === "tree") {
-      return {
-        resource: "project.tree",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-      };
-    } else if (view.resource === "history") {
-      return {
-        resource: "project.history",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-      };
-    } else {
-      return unreachable(view);
-    }
-  }
-
-  $: branchesWithRoute = Object.keys(branches || {}).map(name => ({
-    name,
-    route: makeBranchRoute(name, view),
-  }));
-
-  function makeBranchRoute(
-    revision: string,
-    view: LoadedSourceBrowsingView,
-  ): Route {
-    if (view.resource === "tree") {
-      return {
-        resource: "project.tree",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-        revision,
-      };
-    } else if (view.resource === "history") {
-      return {
-        resource: "project.history",
-        seed: baseUrl,
-        project: projectId,
-        peer,
-        revision,
-      };
-    } else {
-      return unreachable(view);
-    }
-  }
+  $: peer = peers.find(p => p.selected)?.remote.id;
 </script>
 
 <style>
@@ -115,14 +58,11 @@
 </style>
 
 <div class="header">
-  {#if peersWithRoute.length > 0}
-    <PeerSelector peers={peersWithRoute} />
+  {#if peers.length > 0}
+    <PeerSelector {peers} />
   {/if}
 
-  <BranchSelector
-    branches={branchesWithRoute}
-    selectedCommitId={commitId}
-    {selectedBranch} />
+  <BranchSelector {branches} selectedCommitId={commitId} {selectedBranch} />
 
   <Link
     route={{
@@ -132,7 +72,7 @@
       peer,
       revision,
     }}>
-    <SquareButton active={view.resource === "history"}>
+    <SquareButton active={historyLinkActive}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>

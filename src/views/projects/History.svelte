@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, CommitHeader, Project, Remote } from "@httpd-client";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+  import type { Route } from "@app/lib/router";
 
   import { HttpdClient } from "@httpd-client";
   import { groupCommits } from "@app/lib/commit";
@@ -22,7 +22,6 @@
   export let project: Project;
   export let revision: string | undefined;
   export let totalCommitCount: number;
-  export let view: LoadedSourceBrowsingView;
 
   const api = new HttpdClient(baseUrl);
 
@@ -55,6 +54,28 @@
     }
     loading = false;
   }
+
+  $: peersWithRoute = peers.map(remote => ({
+    remote,
+    selected: remote.id === peer,
+    route: {
+      resource: "project.history",
+      seed: baseUrl,
+      project: project.id,
+      peer: remote.id,
+    } as Route,
+  }));
+
+  $: branchesWithRoute = Object.keys(branches || {}).map(name => ({
+    name,
+    route: {
+      resource: "project.history",
+      seed: baseUrl,
+      project: project.id,
+      peer,
+      revision: name,
+    } as Route,
+  }));
 </script>
 
 <style>
@@ -87,13 +108,12 @@
   projectId={project.id}
   commitId={commitHeaders[0].id}
   {baseUrl}
-  {branches}
+  branches={branchesWithRoute}
   {commitCount}
   {contributorCount}
-  {peers}
-  {peer}
+  peers={peersWithRoute}
   {revision}
-  {view} />
+  historyLinkActive={true} />
 
 <div class="history">
   {#each groupCommits(allCommitHeaders) as group (group.time)}

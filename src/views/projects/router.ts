@@ -100,7 +100,8 @@ export interface ProjectLoadedParams {
   project: Project;
   view: ProjectLoadedView;
 }
-export type LoadedSourceBrowsingView =
+
+export type ProjectLoadedView =
   | {
       resource: "tree";
       peer: string | undefined;
@@ -116,16 +117,7 @@ export type LoadedSourceBrowsingView =
       params: LoadedSourceBrowsingParams;
       commitHeaders: CommitHeader[];
       totalCommitCount: number;
-    };
-
-interface LoadedSourceBrowsingParams {
-  loadedBranches: Record<string, string> | undefined;
-  loadedPeers: Remote[];
-  loadedTree: Tree;
-}
-
-export type ProjectLoadedView =
-  | LoadedSourceBrowsingView
+    }
   | {
       resource: "commit";
       commit: Commit;
@@ -135,6 +127,12 @@ export type ProjectLoadedView =
   | { resource: "newIssue" }
   | { resource: "patches"; search: string }
   | PatchView;
+
+interface LoadedSourceBrowsingParams {
+  loadedBranches: Record<string, string> | undefined;
+  loadedPeers: Remote[];
+  loadedTree: Tree;
+}
 
 export type BlobResult =
   | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }

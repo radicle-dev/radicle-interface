@@ -73,8 +73,7 @@
       {baseUrl}
       {peer}
       {project}
-      revision={view.revision}
-      {view} />
+      revision={view.revision} />
   {:else if view.resource === "history"}
     <History
       branches={view.params.loadedBranches}
@@ -86,8 +85,7 @@
       {baseUrl}
       {peer}
       {project}
-      revision={view.revision}
-      {view} />
+      revision={view.revision} />
   {:else if view.resource === "commit"}
     <Commit commit={view.commit} {baseUrl} {project} />
   {:else if view.resource === "issues"}

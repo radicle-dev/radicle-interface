@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
   import type { BlobResult } from "./router";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+  import type { Route } from "@app/lib/router";
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
@@ -23,7 +23,6 @@
   export let project: Project;
   export let revision: string | undefined;
   export let tree: Tree;
-  export let view: LoadedSourceBrowsingView;
 
   export let blobResult: BlobResult;
 
@@ -46,6 +45,28 @@
         return undefined;
       });
   };
+
+  $: peersWithRoute = peers.map(remote => ({
+    remote,
+    selected: remote.id === peer,
+    route: {
+      resource: "project.tree",
+      seed: baseUrl,
+      project: project.id,
+      peer: remote.id,
+    } as Route,
+  }));
+
+  $: branchesWithRoute = Object.keys(branches || {}).map(name => ({
+    name,
+    route: {
+      resource: "project.tree",
+      seed: baseUrl,
+      project: project.id,
+      peer,
+      revision: name,
+    } as Route,
+  }));
 </script>
 
 <style>
@@ -132,13 +153,12 @@
   defaultBranch={project.defaultBranch}
   projectId={project.id}
   {baseUrl}
-  {branches}
+  branches={branchesWithRoute}
   {commitCount}
   {contributorCount}
-  {peers}
-  {peer}
+  peers={peersWithRoute}
   {revision}
-  {view} />
+  historyLinkActive={false} />
 
 <main>
   <!-- Mobile navigation -->
