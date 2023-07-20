@@ -62,30 +62,9 @@
 
 <main>
   {#if view.resource === "tree"}
-    <Browser
-      blobResult={view.blobResult}
-      branches={view.params.loadedBranches}
-      commitCount={view.params.loadedTree.stats.commits}
-      contributorCount={view.params.loadedTree.stats.contributors}
-      path={view.path}
-      peers={view.params.loadedPeers}
-      tree={view.params.loadedTree}
-      {baseUrl}
-      {peer}
-      {project}
-      revision={view.revision} />
+    <Browser {...view} {baseUrl} {project} />
   {:else if view.resource === "history"}
-    <History
-      branches={view.params.loadedBranches}
-      commitCount={view.params.loadedTree.stats.commits}
-      commitHeaders={view.commitHeaders}
-      contributorCount={view.params.loadedTree.stats.contributors}
-      peers={view.params.loadedPeers}
-      totalCommitCount={view.totalCommitCount}
-      {baseUrl}
-      {peer}
-      {project}
-      revision={view.revision} />
+    <History {...view} {baseUrl} {project} />
   {:else if view.resource === "commit"}
     <Commit commit={view.commit} {baseUrl} {project} />
   {:else if view.resource === "issues"}

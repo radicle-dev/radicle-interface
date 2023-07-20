@@ -14,16 +14,13 @@
   import TreeComponent from "./Tree.svelte";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string> | undefined;
-  export let commitCount: number;
-  export let contributorCount: number;
+  export let branches: string[];
   export let path: string;
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
   export let revision: string | undefined;
   export let tree: Tree;
-
   export let blobResult: BlobResult;
 
   // Whether the mobile file tree is visible.
@@ -57,7 +54,7 @@
     } as Route,
   }));
 
-  $: branchesWithRoute = Object.keys(branches || {}).map(name => ({
+  $: branchesWithRoute = branches.map(name => ({
     name,
     route: {
       resource: "project.tree",
@@ -154,8 +151,8 @@
   projectId={project.id}
   {baseUrl}
   branches={branchesWithRoute}
-  {commitCount}
-  {contributorCount}
+  commitCount={tree.stats.commits}
+  contributorCount={tree.stats.contributors}
   peers={peersWithRoute}
   {revision}
   historyLinkActive={false} />

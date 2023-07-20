@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, CommitHeader, Project, Remote } from "@httpd-client";
+  import type {
+    BaseUrl,
+    CommitHeader,
+    Project,
+    Remote,
+    Tree,
+  } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
   import { HttpdClient } from "@httpd-client";
@@ -13,15 +19,14 @@
   import { COMMITS_PER_PAGE } from "./router";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string> | undefined;
-  export let commitCount: number;
+  export let branches: string[];
   export let commitHeaders: CommitHeader[];
-  export let contributorCount: number;
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
   export let revision: string | undefined;
   export let totalCommitCount: number;
+  export let tree: Tree;
 
   const api = new HttpdClient(baseUrl);
 
@@ -66,7 +71,7 @@
     } as Route,
   }));
 
-  $: branchesWithRoute = Object.keys(branches || {}).map(name => ({
+  $: branchesWithRoute = branches.map(name => ({
     name,
     route: {
       resource: "project.history",
@@ -109,8 +114,8 @@
   commitId={commitHeaders[0].id}
   {baseUrl}
   branches={branchesWithRoute}
-  {commitCount}
-  {contributorCount}
+  commitCount={tree.stats.commits}
+  contributorCount={tree.stats.contributors}
   peers={peersWithRoute}
   {revision}
   historyLinkActive={true} />

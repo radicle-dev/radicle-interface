@@ -108,22 +108,8 @@ export interface ProjectLoadedParams {
 }
 
 export type ProjectLoadedView =
-  | {
-      resource: "tree";
-      peer: string | undefined;
-      revision: string | undefined;
-      params: LoadedSourceBrowsingParams;
-      path: string;
-      blobResult: BlobResult;
-    }
-  | {
-      resource: "history";
-      peer: string | undefined;
-      revision: string | undefined;
-      params: LoadedSourceBrowsingParams;
-      commitHeaders: CommitHeader[];
-      totalCommitCount: number;
-    }
+  | TreeView
+  | HistoryView
   | {
       resource: "commit";
       commit: Commit;
@@ -134,15 +120,31 @@ export type ProjectLoadedView =
   | { resource: "patches"; patches: Patch[]; state: PatchState["status"] }
   | PatchView;
 
-interface LoadedSourceBrowsingParams {
-  loadedBranches: Record<string, string> | undefined;
-  loadedPeers: Remote[];
-  loadedTree: Tree;
+export interface TreeView {
+  resource: "tree";
+  peers: Remote[];
+  peer: string | undefined;
+  branches: string[];
+  revision: string | undefined;
+  tree: Tree;
+  path: string;
+  blobResult: BlobResult;
 }
 
 export type BlobResult =
   | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
   | { ok: false; error: { message: string; path: string } };
+
+export interface HistoryView {
+  resource: "history";
+  peers: Remote[];
+  peer: string | undefined;
+  branches: string[];
+  revision: string | undefined;
+  tree: Tree;
+  commitHeaders: CommitHeader[];
+  totalCommitCount: number;
+}
 
 export interface PatchView {
   resource: "patch";
@@ -347,7 +349,7 @@ async function loadTreeView(
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.seed);
 
-  const [project, peers, branches] = await Promise.all([
+  const [project, peers, branchMap] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     getPeerBranches(api, route.project, route.peer),
@@ -356,7 +358,7 @@ async function loadTreeView(
   if (route.route) {
     const { revision, path } = detectRevision(
       route.route,
-      branches || { [project.defaultBranch]: project.head },
+      branchMap || { [project.defaultBranch]: project.head },
     );
     route.revision = revision;
     route.path = path;
@@ -365,7 +367,7 @@ async function loadTreeView(
   const commit = parseRevisionToOid(
     route.revision,
     project.defaultBranch,
-    branches || { [project.defaultBranch]: project.head },
+    branchMap || { [project.defaultBranch]: project.head },
   );
 
   const path = route.path || "/";
@@ -382,13 +384,11 @@ async function loadTreeView(
       project,
       view: {
         resource: "tree",
+        peers,
         peer: route.peer,
+        branches: Object.keys(branchMap || {}),
         revision: route.revision,
-        params: {
-          loadedBranches: branches,
-          loadedPeers: peers,
-          loadedTree: tree,
-        },
+        tree,
         path,
         blobResult,
       },
@@ -441,7 +441,7 @@ async function loadHistoryView(
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.seed);
 
-  const [project, peers, branches] = await Promise.all([
+  const [project, peers, branchMap] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     getPeerBranches(api, route.project, route.peer),
@@ -450,8 +450,8 @@ async function loadHistoryView(
   let commitId;
   if (route.revision && isOid(route.revision)) {
     commitId = route.revision;
-  } else if (branches) {
-    commitId = branches[route.revision || project.defaultBranch];
+  } else if (branchMap) {
+    commitId = branchMap[route.revision || project.defaultBranch];
   } else if (!route.revision) {
     commitId = project.head;
   }
@@ -479,13 +479,11 @@ async function loadHistoryView(
       project,
       view: {
         resource: "history",
+        peers,
         peer: route.peer,
+        branches: Object.keys(branchMap || {}),
         revision: route.revision,
-        params: {
-          loadedBranches: branches,
-          loadedPeers: peers,
-          loadedTree: tree,
-        },
+        tree,
         commitHeaders: commitsResponse.commits.map(c => c.commit),
         totalCommitCount: commitsResponse.stats.commits,
       },
