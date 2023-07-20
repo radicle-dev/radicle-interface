@@ -109,15 +109,12 @@
 </style>
 
 <SourceBrowsingHeader
-  defaultBranch={project.defaultBranch}
-  projectId={project.id}
-  commitId={commitHeaders[0].id}
-  {baseUrl}
-  branches={branchesWithRoute}
-  commitCount={tree.stats.commits}
-  contributorCount={tree.stats.contributors}
+  seed={baseUrl}
+  {project}
   peers={peersWithRoute}
+  branches={branchesWithRoute}
   {revision}
+  {tree}
   historyLinkActive={true} />
 
 <div class="history">
