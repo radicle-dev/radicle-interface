@@ -88,17 +88,8 @@
       {project}
       revision={view.revision}
       {view} />
-  {:else if view.resource === "commits"}
-    <Commit
-      branches={view.params.loadedBranches}
-      commit={view.commit}
-      commitCount={view.params.loadedTree.stats.commits}
-      contributorCount={view.params.loadedTree.stats.contributors}
-      peers={view.params.loadedPeers}
-      {baseUrl}
-      {peer}
-      {project}
-      {view} />
+  {:else if view.resource === "commit"}
+    <Commit commit={view.commit} {baseUrl} {project} />
   {:else if view.resource === "issues"}
     <Issues
       {baseUrl}

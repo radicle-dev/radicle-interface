@@ -230,7 +230,7 @@
   .patch {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 0 2rem 0 8rem;
+    padding: 1rem 2rem 0 8rem;
     margin-bottom: 4.5rem;
   }
   .metadata {

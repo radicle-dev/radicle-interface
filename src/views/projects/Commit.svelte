@@ -1,6 +1,5 @@
 <script lang="ts">
-  import type { Commit, BaseUrl, Remote, Project } from "@httpd-client";
-  import type { LoadedSourceBrowsingView } from "@app/views/projects/router";
+  import type { Commit, BaseUrl, Project } from "@httpd-client";
 
   import { formatCommit } from "@app/lib/utils";
 
@@ -8,24 +7,17 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
 
   export let baseUrl: BaseUrl;
-  export let branches: Record<string, string> | undefined;
   export let commit: Commit;
-  export let commitCount: number;
-  export let contributorCount: number;
-  export let peer: string | undefined = undefined;
-  export let peers: Remote[];
   export let project: Project;
-  export let view: LoadedSourceBrowsingView;
 
-  const { commit: header } = commit;
+  $: header = commit.commit;
 </script>
 
 <style>
   .commit {
-    padding: 0 2rem 0 8rem;
+    padding: 1rem 2rem 0 8rem;
   }
   .header {
     padding: 1rem;
@@ -56,19 +48,6 @@
     }
   }
 </style>
-
-<SourceBrowsingHeader
-  defaultBranch={project.defaultBranch}
-  projectId={project.id}
-  commitId={commit.commit.id}
-  {baseUrl}
-  {branches}
-  {commitCount}
-  {contributorCount}
-  {peers}
-  {peer}
-  revision={commit.commit.id}
-  {view} />
 
 <div class="commit">
   <div class="header">

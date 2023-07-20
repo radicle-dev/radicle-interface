@@ -48,10 +48,7 @@
       seed: baseUrl,
       path: "/",
     }}>
-    <SquareButton
-      active={resource === "tree" ||
-        resource === "history" ||
-        resource === "commits"}>
+    <SquareButton active={resource === "tree" || resource === "history"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="chevron-left-right" />
       </svelte:fragment>

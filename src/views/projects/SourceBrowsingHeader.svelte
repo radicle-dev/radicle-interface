@@ -56,13 +56,6 @@
         project: projectId,
         peer,
       };
-    } else if (view.resource === "commits") {
-      return {
-        resource: "project.commit",
-        seed: baseUrl,
-        project: projectId,
-        commit: view.commit.commit.id,
-      };
     } else {
       return unreachable(view);
     }
@@ -92,13 +85,6 @@
         project: projectId,
         peer,
         revision,
-      };
-    } else if (view.resource === "commits") {
-      return {
-        resource: "project.commit",
-        seed: baseUrl,
-        project: projectId,
-        commit: view.commit.commit.id,
       };
     } else {
       return unreachable(view);
@@ -146,8 +132,7 @@
       peer,
       revision,
     }}>
-    <SquareButton
-      active={view.resource === "history" || view.resource === "commits"}>
+    <SquareButton active={view.resource === "history"}>
       <span class="txt-bold">{commitCount}</span>
       {pluralize("commit", commitCount)}
     </SquareButton>

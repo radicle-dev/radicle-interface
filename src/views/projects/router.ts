@@ -110,11 +110,6 @@ export type LoadedSourceBrowsingView =
       blobResult: BlobResult;
     }
   | {
-      resource: "commits";
-      params: LoadedSourceBrowsingParams;
-      commit: Commit;
-    }
-  | {
       resource: "history";
       peer: string | undefined;
       revision: string | undefined;
@@ -131,6 +126,10 @@ interface LoadedSourceBrowsingParams {
 
 export type ProjectLoadedView =
   | LoadedSourceBrowsingView
+  | {
+      resource: "commit";
+      commit: Commit;
+    }
   | { resource: "issue"; issue: Issue }
   | { resource: "issues"; search: string }
   | { resource: "newIssue" }
@@ -199,24 +198,10 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.history") {
       return loadHistoryView(route);
     } else if (route.resource === "project.commit") {
-      const projectPromise = api.project.getById(route.project);
-      const peersPromise = api.project.getAllRemotes(route.project);
-
-      const [project, peers] = await Promise.all([
-        projectPromise,
-        peersPromise,
+      const [project, commit] = await Promise.all([
+        api.project.getById(route.project),
+        api.project.getCommitBySha(route.project, route.commit),
       ]);
-
-      const tree = await api.project.getTree(route.project, route.commit);
-      const viewParams = {
-        loadedBranches: undefined,
-        loadedPeers: peers,
-        loadedTree: tree,
-      };
-      const loadedCommit = await api.project.getCommitBySha(
-        route.project,
-        route.commit,
-      );
 
       return {
         resource: "projects",
@@ -225,9 +210,8 @@ export async function loadProjectRoute(
           baseUrl: route.seed,
           project,
           view: {
-            resource: "commits",
-            params: viewParams,
-            commit: loadedCommit,
+            resource: "commit",
+            commit,
           },
         },
       };
@@ -809,7 +793,7 @@ export function projectTitle(loadedRoute: ProjectLoadedRoute) {
   if (loadedRoute.params.view.resource === "tree") {
     title.push(loadedRoute.params.project.name);
     title.push(loadedRoute.params.project.description);
-  } else if (loadedRoute.params.view.resource === "commits") {
+  } else if (loadedRoute.params.view.resource === "commit") {
     title.push(loadedRoute.params.view.commit.commit.summary);
     title.push("commit");
   } else if (loadedRoute.params.view.resource === "history") {
