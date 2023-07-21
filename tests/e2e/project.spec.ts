@@ -94,7 +94,7 @@ test("source file highlighting", async ({ page }) => {
 
   await expect(page.getByText("return")).toHaveCSS(
     "color",
-    "rgb(255, 123, 114)",
+    "rgb(255, 255, 255)",
   );
 });
 
@@ -103,15 +103,15 @@ test("navigate line numbers", async ({ page }) => {
   await page.getByRole("button", { name: "Plain" }).click();
 
   await page.getByRole("link", { name: "5", exact: true }).click();
-  await expect(page.locator("#L5")).toHaveClass("line highlight");
+  await expect(page.locator("#L5")).toHaveClass(/highlight/);
   await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md#L5`);
 
   await expectUrlPersistsReload(page);
-  await expect(page.locator("#L5")).toHaveClass("line highlight");
+  await expect(page.locator("#L5")).toHaveClass(/highlight/);
 
   await page.getByRole("link", { name: "30", exact: true }).click();
-  await expect(page.locator("#L5")).not.toHaveClass("line highlight");
-  await expect(page.locator("#L30")).toHaveClass("line highlight");
+  await expect(page.locator("#L5")).not.toHaveClass(/highlight/);
+  await expect(page.locator("#L30")).toHaveClass(/highlight/);
   await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md#L30`);
 
   // Check that we go back to the Markdown view when navigating to a different

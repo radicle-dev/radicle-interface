@@ -11,6 +11,7 @@
   import Link from "@app/components/Link.svelte";
 
   export let file: DiffAddedDeletedModifiedChangeset;
+  export let highlighted: string[] | undefined = undefined;
   export let revision: string;
   export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
   export let baseUrl: BaseUrl;
@@ -384,7 +385,13 @@
                   <td class="diff-line-type" data-line-type={line.type}>
                     {lineSign(line)}
                   </td>
-                  <td class="diff-line-content">{line.line}</td>
+                  {#if highlighted}
+                    <td class="diff-line-content">
+                      {@html highlighted[lineIdx]}
+                    </td>
+                  {:else}
+                    <td class="diff-line-content">{line.line}</td>
+                  {/if}
                 </tr>
               {/each}
             {/each}

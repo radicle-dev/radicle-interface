@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "@radicle/gray-matter": "4.1.0",
-    "@wooorm/starry-night": "^2.1.1",
     "async-mutex": "^0.4.0",
     "baconjs": "^3.0.17",
     "bs58": "^5.0.0",
@@ -69,6 +68,7 @@
     "sinon": "^15.2.0",
     "svelte": "^4.1.0",
     "twemoji": "^14.0.2",
+    "web-tree-sitter": "^0.20.8",
     "zod": "^3.21.4"
   }
 }

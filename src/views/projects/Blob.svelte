@@ -2,11 +2,8 @@
   import type { BaseUrl, Blob } from "@httpd-client";
 
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { toHtml } from "hast-util-to-html";
 
-  import * as Syntax from "@app/lib/syntax";
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
-  import { lineNumbersGutter } from "@app/lib/syntax";
 
   import Readme from "@app/views/projects/Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
@@ -17,7 +14,7 @@
   export let revision: string | undefined;
   export let path: string;
   export let blob: Blob;
-  export let highlighted: Syntax.Root | undefined;
+  export let highlighted: string[] | undefined;
   export let rawPath: string;
 
   $: lastCommit = blob.lastCommit;
@@ -27,7 +24,7 @@
     ?.values()
     .next().value;
 
-  $: content = highlighted ? lineNumbersGutter(highlighted) : undefined;
+  $: content = highlighted ?? blob.content?.split("\n");
 
   let selectedLineId: string | undefined = undefined;
   $: {
@@ -269,7 +266,19 @@
         {path} />
     {:else if content}
       <table class="code no-scrollbar">
-        {@html toHtml(content)}
+        <tbody>
+          {#each content as line, i}
+            {@const lineNumber = i + 1}
+            <tr class="line" id="L{lineNumber}">
+              <td class="line-number">
+                <a href="#L{lineNumber}">{lineNumber}</a>
+              </td>
+              <td class="line-content">
+                <pre class="content">{@html line}</pre>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
       </table>
     {:else}
       <div class="binary">

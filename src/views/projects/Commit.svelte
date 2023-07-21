@@ -10,6 +10,7 @@
 
   export let baseUrl: BaseUrl;
   export let commit: Commit;
+  export let highlightedFiles: Map<string, string[]>;
   export let project: Project;
 
   $: header = commit.commit;
@@ -71,5 +72,6 @@
     projectId={project.id}
     {baseUrl}
     diff={commit.diff}
+    {highlightedFiles}
     revision={commit.commit.id} />
 </div>

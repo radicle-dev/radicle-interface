@@ -1,0 +1,69 @@
+:root {
+  --color-syntax-comment: #8b949e;
+  --color-syntax-constant: #79c0ff;
+  --color-syntax-storage-modifier-import: #c9d1d9;
+  --color-syntax-entity: #d2a8ff;
+  --color-syntax-entity-tag: #7ee787;
+  --color-syntax-keyword: #ff7b72;
+  --color-syntax-string: #a5d6ff;
+  --color-syntax-variable: #ffa657;
+}
+
+[data-theme="light"] {
+  --color-syntax-comment: #6e7781;
+  --color-syntax-constant: #0550ae;
+  --color-syntax-entity: #8250df;
+  --color-syntax-entity-tag: #116329;
+  --color-syntax-keyword: #cf222e;
+  --color-syntax-string: #0a3069;
+  --color-syntax-variable: #953800;
+}
+
+.syntax.keyword {
+  color: var(--color-syntax-keyword);
+}
+
+.syntax.function,
+.syntax.property,
+.syntax.function.method {
+  color: var(--color-syntax-entity);
+}
+
+.syntax.string,
+.syntax.operator {
+  color: var(--color-syntax-string);
+}
+
+.syntax.comment {
+  color: var(--color-syntax-comment);
+}
+
+.syntax.constructor {
+  color: var(--color-syntax-variable);
+}
+.syntax.tag,
+.syntax.label {
+  color: var(--color-syntax-entity-tag);
+}
+.syntax.variable.parameter {
+  color: var(--color-syntax-variable);
+}
+
+.syntax.type,
+.syntax.type.builtin {
+  color: var(--color-syntax-storage-modifier-import);
+}
+
+.syntax.constant,
+.syntax.attribute,
+.syntax.number {
+  color: var(--color-syntax-constant);
+}
+
+.syntax.string.special.key {
+  color: var(--color-syntax-entity-tag);
+}
+
+.syntax.function.macro {
+  color: var(--color-syntax-entity);
+}

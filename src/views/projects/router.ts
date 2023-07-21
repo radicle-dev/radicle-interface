@@ -13,9 +13,14 @@ import type {
 } from "@httpd-client";
 
 import { HttpdClient } from "@httpd-client";
-import * as Syntax from "@app/lib/syntax";
-import { unreachable } from "@app/lib/utils";
+import { getFileExtension, unreachable } from "@app/lib/utils";
 import { seedPath } from "@app/views/seeds/router";
+import {
+  HighlightConfiguration,
+  Highlighter,
+  handleInjections,
+  renderHTML,
+} from "@app/lib/syntax";
 
 export const COMMITS_PER_PAGE = 30;
 
@@ -129,6 +134,7 @@ export type ProjectLoadedView =
   | {
       resource: "commit";
       commit: Commit;
+      highlightedFiles: Map<string, string[]>;
     }
   | { resource: "issue"; issue: Issue }
   | { resource: "issues"; search: string }
@@ -137,7 +143,7 @@ export type ProjectLoadedView =
   | PatchView;
 
 export type BlobResult =
-  | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
+  | { ok: true; blob: Blob; highlighted: string[] | undefined }
   | { ok: false; error: { message: string; path: string } };
 
 export interface PatchView {
@@ -203,6 +209,41 @@ export async function loadProjectRoute(
         api.project.getCommitBySha(route.project, route.commit),
       ]);
 
+      const files = new Map<string, string[]>();
+      for (const diff of Object.values(commit.diff).flat()) {
+        if ("path" in diff) {
+          const blob = await api.project.getBlob(
+            route.project,
+            route.commit,
+            diff.path,
+          );
+
+          const fileExtension = getFileExtension(blob.path);
+          if (!fileExtension) {
+            throw Error("File extension not found");
+          }
+
+          if (blob.content) {
+            const parser = await Highlighter.init();
+            const config = await HighlightConfiguration.create(fileExtension);
+            if (!config) {
+              throw Error("Highlight configuration not found");
+            }
+            parser.setLanguage(config.language);
+
+            const tree = await parser.parse(blob.content);
+            const captures = config.query.captures(tree.rootNode);
+            const capturesWithInjections = captures.map(capture =>
+              handleInjections(capture, parser),
+            );
+            const resolvedCaptures = (
+              await Promise.all(capturesWithInjections)
+            ).flat();
+            files.set(diff.path, renderHTML(resolvedCaptures, blob.content));
+          }
+        }
+      }
+
       return {
         resource: "projects",
         params: {
@@ -212,6 +253,7 @@ export async function loadProjectRoute(
           view: {
             resource: "commit",
             commit,
+            highlightedFiles: files,
           },
         },
       };
@@ -373,13 +415,38 @@ async function loadBlob(
     } else {
       blob = await api.project.getBlob(project, commit, path);
     }
-    return {
-      ok: true,
-      blob,
-      highlighted: blob.content
-        ? await Syntax.highlight(blob.content, blob.path.split(".").pop() ?? "")
-        : undefined,
-    };
+
+    const fileExtension = getFileExtension(blob.path);
+    if (!fileExtension) {
+      return { ok: true, blob, highlighted: undefined };
+    }
+
+    try {
+      let highlighted: string[] | undefined = undefined;
+
+      if (blob.content) {
+        const parser = await Highlighter.init();
+        const config = await HighlightConfiguration.create(fileExtension);
+        if (!config) {
+          return { ok: true, blob, highlighted: undefined };
+        }
+        parser.setLanguage(config.language);
+
+        const tree = await parser.parse(blob.content);
+        const captures = config.query.captures(tree.rootNode);
+        const capturesWithInjections = captures.map(capture =>
+          handleInjections(capture, parser),
+        );
+        const resolvedCaptures = (
+          await Promise.all(capturesWithInjections)
+        ).flat();
+        highlighted = renderHTML(resolvedCaptures, blob.content);
+      }
+
+      return { ok: true, blob, highlighted };
+    } catch {
+      return { ok: true, blob, highlighted: undefined };
+    }
   } catch {
     if (path === "/") {
       return {

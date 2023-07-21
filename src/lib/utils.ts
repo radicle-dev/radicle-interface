@@ -18,6 +18,14 @@ export function getRawBasePath(
   return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}/raw/${id}/${commit}`;
 }
 
+export function getFileExtension(path: string): string | undefined {
+  const file = path.split("/").pop()?.split(".");
+  if (!file || file.length === 1 || (file.length === 2 && file[0] === "")) {
+    return;
+  }
+  return file.pop();
+}
+
 export function formatLocationHash(hash: string | null): number | null {
   if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
   return null;

@@ -198,6 +198,18 @@ describe("Path Manipulation", () => {
       expect(utils.canonicalize(imagePath, base, origin)).toEqual(expected);
     },
   );
+  test.each([
+    { path: "README.md", expected: "md" },
+    { path: ".eslintrc.cjs", expected: "cjs" },
+    { path: ".gitignore", expected: undefined },
+    { path: ".seed.env", expected: "env" },
+    { path: "./relative/path/doc.rs", expected: "rs" },
+    { path: "./relative/../path/doc.rs", expected: "rs" },
+    { path: "/absolute/path/doc.rs", expected: "rs" },
+    { path: "/absolute/path/playwright.config.ts", expected: "ts" },
+  ])("getFileExtension $path => $expected", ({ path, expected }) => {
+    expect(utils.getFileExtension(path)).toEqual(expected);
+  });
 });
 
 describe("Date Manipulation", () => {

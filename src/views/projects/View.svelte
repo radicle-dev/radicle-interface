@@ -89,7 +89,11 @@
       revision={view.revision}
       {view} />
   {:else if view.resource === "commit"}
-    <Commit commit={view.commit} {baseUrl} {project} />
+    <Commit
+      commit={view.commit}
+      highlightedFiles={view.highlightedFiles}
+      {baseUrl}
+      {project} />
   {:else if view.resource === "issues"}
     <Issues
       {baseUrl}

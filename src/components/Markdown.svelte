@@ -2,12 +2,16 @@
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { afterUpdate } from "svelte";
-  import { toDom } from "hast-util-to-dom";
 
   import * as router from "@app/lib/router";
+  import {
+    HighlightConfiguration,
+    Highlighter,
+    handleInjections,
+    renderHTML,
+  } from "@app/lib/syntax";
   import markdown from "@app/lib/markdown";
   import { Renderer } from "@app/lib/markdown";
-  import { highlight } from "@app/lib/syntax";
   import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
 
   export let content: string;
@@ -86,26 +90,35 @@
     const prefix = "language-";
     const nodes = Array.from(document.body.querySelectorAll("pre code"));
 
-    const treeChanges: Promise<void>[] = [];
-
     for (const node of nodes) {
       const className = Array.from(node.classList).find(name =>
         name.startsWith(prefix),
       );
       if (!className) continue;
 
-      treeChanges.push(
-        highlight(node.textContent ?? "", className.slice(prefix.length))
-          .then(tree => {
-            if (tree) {
-              node.replaceChildren(toDom(tree, { fragment: true }));
-            }
-          })
-          .catch(e => console.warn("Not able to highlight code block", e)),
+      const highlighter = await Highlighter.init();
+      const config = await HighlightConfiguration.create(
+        className.slice(prefix.length),
       );
+      if (!config) continue;
+      highlighter.setLanguage(config.language);
+      if (node.textContent) {
+        const result = await highlighter.parse(node.textContent);
+        const captures = config.query.captures(result.rootNode);
+        const capturesWithInjections = captures.map(capture =>
+          handleInjections(capture, highlighter),
+        );
+        const resolvedCaptures = (
+          await Promise.all(capturesWithInjections)
+        ).flat();
+        const content = renderHTML(resolvedCaptures, node.textContent);
+        const parser = new DOMParser().parseFromString(
+          content.join("\n"),
+          "text/html",
+        );
+        node.replaceChildren(...Array.from(parser.body.childNodes));
+      }
     }
-
-    await Promise.allSettled(treeChanges);
 
     if (window.location.hash) {
       scrollIntoView(window.location.hash.substring(1));
