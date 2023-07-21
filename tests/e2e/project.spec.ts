@@ -451,6 +451,29 @@ test("external markdown link", async ({ page }) => {
   await expect(page).toHaveURL("https://example.com");
 });
 
+test("internal file markdown link", async ({ page }) => {
+  await page.goto(`${markdownUrl}/tree/main/link-files.md`);
+  await page.getByRole("link", { name: "Markdown Cheatsheet" }).click();
+  await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md`);
+  await expect(
+    page.locator(".file-header", { hasText: "cheatsheet.md" }),
+  ).toBeVisible();
+
+  await page.goto(`${markdownUrl}/tree/main/link-files.md`);
+  await page.getByRole("link", { name: "black square" }).click();
+  await expect(page).toHaveURL(
+    `${markdownUrl}/tree/main/assets/black-square.png`,
+  );
+  await expect(
+    page.locator(".file-header", {
+      hasText: "assets/".concat(String.fromCharCode(160), "​black-square.png"),
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "black-square.png" }),
+  ).toBeVisible();
+});
+
 test("diff selection de-select", async ({ page }) => {
   await page.goto(
     `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files#README.md:H0L0H0L3`,

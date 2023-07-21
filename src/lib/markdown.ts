@@ -143,7 +143,7 @@ export class Renderer extends BaseRenderer {
 
 const markedInstance = new Marked(
   katexMarkedExtension({ throwOnError: false }),
-  markedLinkifyIt(),
+  markedLinkifyIt({}, { fuzzyLink: false }),
   {
     extensions: [
       emojisMarkedExtension,
