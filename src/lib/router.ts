@@ -72,7 +72,7 @@ export async function navigateToUrl(
   const route = urlToRoute(url);
 
   if (route) {
-    await replace(route);
+    await navigate(action, route);
   } else {
     await navigate(action, {
       resource: "notFound",
