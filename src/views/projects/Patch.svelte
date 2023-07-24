@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  import type { Comment, Review, Merge } from "@httpd-client";
+  import type { Comment, Review, Merge, Project } from "@httpd-client";
 
   interface Thread {
     root: Comment;
@@ -55,20 +55,18 @@
   import TagInput from "@app/views/projects/Cob/TagInput.svelte";
 
   export let baseUrl: BaseUrl;
-  export let patch: Patch;
-  export let projectId: string;
-  export let projectHead: string;
-  export let projectDefaultBranch: string;
+  export let project: Project;
   export let view: PatchView;
 
-  const api = new HttpdClient(baseUrl);
+  $: api = new HttpdClient(baseUrl);
+  $: patch = view.patch;
 
   async function createReply({
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
     if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
       await api.project.updatePatch(
-        projectId,
+        project.id,
         patch.id,
         {
           type: "thread",
@@ -81,7 +79,7 @@
         },
         $httpdStore.session.id,
       );
-      patch = await api.project.getPatchById(projectId, patch.id);
+      patch = await api.project.getPatchById(project.id, patch.id);
     }
   }
   function badgeColor(status: string): Variant {
@@ -112,12 +110,12 @@
         revision = view.view.revision;
       }
       await api.project.updatePatch(
-        projectId,
+        project.id,
         revision,
         { type: "tag", add, remove },
         $httpdStore.session.id,
       );
-      patch = await api.project.getPatchById(projectId, patch.id);
+      patch = await api.project.getPatchById(project.id, patch.id);
     }
   }
 
@@ -130,7 +128,7 @@
   $: {
     const baseRoute = {
       resource: "project.patch",
-      project: projectId,
+      project: project.id,
       node: baseUrl,
       patch: patch.id,
     } as const;
@@ -334,7 +332,7 @@
           <Markdown
             content={patch.revisions[0].description}
             rawPath={utils.getRawBasePath(
-              projectId,
+              project.id,
               baseUrl,
               patch.revisions[0].id,
             )} />
@@ -363,7 +361,7 @@
           <Link
             route={{
               resource: "project.patch",
-              project: projectId,
+              project: project.id,
               node: baseUrl,
               patch: patch.id,
               view: {
@@ -399,7 +397,7 @@
                   on:afterNavigate={closeFocused}
                   route={{
                     resource: "project.patch",
-                    project: projectId,
+                    project: project.id,
                     node: baseUrl,
                     patch: patch.id,
                     view: {
@@ -422,7 +420,7 @@
     {#if view.view.name === "diff"}
       <div style:margin-top="1rem">
         <Changeset
-          {projectId}
+          projectId={project.id}
           {baseUrl}
           revision={view.view.toCommit}
           diff={view.view.diff} />
@@ -433,10 +431,10 @@
           index > 0 ? patch.revisions[index - 1] : undefined}
         <RevisionComponent
           {baseUrl}
-          {projectId}
+          projectId={project.id}
           {timelines}
-          {projectDefaultBranch}
-          {projectHead}
+          projectDefaultBranch={project.defaultBranch}
+          projectHead={project.head}
           {...revision}
           first={index === 0}
           on:reply={createReply}
@@ -453,13 +451,13 @@
     {:else if view.view.name === "commits"}
       <div class="commit-list">
         {#each view.view.commits as commit}
-          <CommitTeaser {projectId} {baseUrl} {commit} />
+          <CommitTeaser projectId={project.id} {baseUrl} {commit} />
         {/each}
       </div>
     {:else if view.view.name === "files"}
       <div style:margin-top="1rem">
         <Changeset
-          {projectId}
+          projectId={project.id}
           {baseUrl}
           revision={view.view.revision}
           diff={view.view.diff} />

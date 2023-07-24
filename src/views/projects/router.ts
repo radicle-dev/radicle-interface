@@ -102,7 +102,6 @@ export interface ProjectLoadedRoute {
 
 export interface ProjectLoadedParams {
   baseUrl: BaseUrl;
-  id: string;
   project: Project;
   view: ProjectLoadedView;
 }
@@ -212,7 +211,6 @@ export async function loadProjectRoute(
       return {
         resource: "projects",
         params: {
-          id: route.project,
           baseUrl: route.node,
           project,
           view: {
@@ -230,7 +228,6 @@ export async function loadProjectRoute(
         return {
           resource: "projects",
           params: {
-            id: route.project,
             baseUrl: route.node,
             project,
             view: {
@@ -258,7 +255,6 @@ export async function loadProjectRoute(
       return {
         resource: "projects",
         params: {
-          id: route.project,
           baseUrl: route.node,
           view: {
             resource: "newIssue",
@@ -302,7 +298,6 @@ async function loadPatchesView(
   return {
     resource: "projects",
     params: {
-      id: route.project,
       baseUrl: route.node,
       view: {
         resource: "patches",
@@ -332,7 +327,6 @@ async function loadIssuesView(
   return {
     resource: "projects",
     params: {
-      id: route.project,
       baseUrl: route.node,
       view: {
         resource: "issues",
@@ -379,7 +373,6 @@ async function loadTreeView(
   return {
     resource: "projects",
     params: {
-      id: route.project,
       baseUrl: route.node,
       project,
       view: {
@@ -474,7 +467,6 @@ async function loadHistoryView(
   return {
     resource: "projects",
     params: {
-      id: route.project,
       baseUrl: route.node,
       project,
       view: {
@@ -546,7 +538,6 @@ async function loadPatchView(
   return {
     resource: "projects",
     params: {
-      id: route.project,
       baseUrl: route.node,
       project,
       view: {

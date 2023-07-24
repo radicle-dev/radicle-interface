@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Patch, PatchState } from "@httpd-client";
+  import type { BaseUrl, Patch, PatchState, Project } from "@httpd-client";
 
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
@@ -13,16 +13,10 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let projectId: string;
+  export let project: Project;
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
   export let state: PatchState["status"];
-  export let patchCounters: {
-    draft: number;
-    open: number;
-    archived: number;
-    merged: number;
-  };
 
   let loading = false;
   let page = 0;
@@ -40,7 +34,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllPatches(projectId, {
+      const response = await api.project.getAllPatches(project.id, {
         state,
         page,
         perPage: PATCHES_PER_PAGE,
@@ -68,12 +62,12 @@
 
   $: options = stateOptions.map<Tab>(s => ({
     value: s,
-    title: `${patchCounters[s]} ${s}`,
-    disabled: patchCounters[s] === 0,
+    title: `${project.patches[s]} ${s}`,
+    disabled: project.patches[s] === 0,
   }));
 
   $: showMoreButton =
-    !loading && !error && allPatches.length < patchCounters[state];
+    !loading && !error && allPatches.length < project.patches[state];
 </script>
 
 <style>
@@ -116,7 +110,7 @@
           <Link
             route={{
               resource: "project.patches",
-              project: projectId,
+              project: project.id,
               node: baseUrl,
               search: `state=${option.value}`,
             }}>
@@ -134,7 +128,7 @@
   <div class="patches-list">
     {#each allPatches as patch (patch.id)}
       <div class="teaser">
-        <PatchTeaser {baseUrl} {projectId} {patch} />
+        <PatchTeaser {baseUrl} projectId={project.id} {patch} />
       </div>
     {:else}
       {#if error}

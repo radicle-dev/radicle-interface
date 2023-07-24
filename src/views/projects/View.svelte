@@ -16,7 +16,6 @@
   import ProjectMeta from "./ProjectMeta.svelte";
 
   export let baseUrl: BaseUrl;
-  export let id: string;
   export let project: Project;
   export let view: ProjectLoadedView;
 
@@ -47,13 +46,13 @@
   <ProjectMeta
     nodeId={peer}
     projectDescription={project.description}
-    projectId={id}
+    projectId={project.id}
     projectName={project.name}
     {baseUrl} />
   <Header
     openIssueCount={project.issues.open}
     openPatchCount={project.patches.open}
-    projectId={id}
+    projectId={project.id}
     projectName={project.name}
     resource={view.resource}
     trackings={project.trackings}
@@ -70,33 +69,22 @@
   {:else if view.resource === "issues"}
     <Issues
       {baseUrl}
-      projectId={id}
+      projectId={project.id}
       issueCounters={project.issues}
       state={view.state}
       issues={view.issues} />
   {:else if view.resource === "newIssue"}
-    <NewIssue projectId={id} projectHead={project.head} {baseUrl} />
+    <NewIssue projectId={project.id} projectHead={project.head} {baseUrl} />
   {:else if view.resource === "issue"}
     <Issue
-      projectId={id}
+      projectId={project.id}
       projectHead={project.head}
       {baseUrl}
       issue={view.issue} />
   {:else if view.resource === "patches"}
-    <Patches
-      {baseUrl}
-      projectId={id}
-      patchCounters={project.patches}
-      state={view.state}
-      patches={view.patches} />
+    <Patches {baseUrl} {project} state={view.state} patches={view.patches} />
   {:else if view.resource === "patch"}
-    <Patch
-      patch={view.patch}
-      {baseUrl}
-      projectId={id}
-      projectDefaultBranch={project.defaultBranch}
-      projectHead={project.head}
-      {view} />
+    <Patch {baseUrl} {project} {view} />
   {:else}
     {unreachable(view)}
   {/if}
