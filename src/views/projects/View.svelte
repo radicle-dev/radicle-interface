@@ -107,7 +107,8 @@
       {baseUrl}
       projectId={id}
       patchCounters={project.patches}
-      search={view.search} />
+      state={view.state}
+      patches={view.patches} />
   {:else if view.resource === "patch"}
     <Patch
       patch={view.patch}

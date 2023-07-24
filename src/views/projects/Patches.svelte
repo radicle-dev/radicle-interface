@@ -1,14 +1,9 @@
-<script lang="ts" context="module">
-  import type { Patch, PatchState } from "@httpd-client";
-
-  export type PatchStatus = PatchState["status"];
-</script>
-
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl, Patch, PatchState } from "@httpd-client";
 
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
+  import { PATCHES_PER_PAGE } from "./router";
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
@@ -18,9 +13,10 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let search: string | undefined = undefined;
   export let projectId: string;
   export let baseUrl: BaseUrl;
+  export let patches: Patch[];
+  export let state: PatchState["status"];
   export let patchCounters: {
     draft: number;
     open: number;
@@ -28,28 +24,28 @@
     merged: number;
   };
 
-  $: searchParams = new URLSearchParams(search || "");
-  $: state = (searchParams.get("state") as PatchStatus) || "open";
-
-  const perPage = 10;
-
   let loading = false;
   let page = 0;
   let error: any;
-  let patches: Patch[] = [];
+  let allPatches: Patch[];
+
+  $: {
+    allPatches = patches;
+    page = 0;
+  }
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadPatches(state: PatchStatus): Promise<void> {
+  async function loadMore(state: PatchState["status"]): Promise<void> {
     loading = true;
+    page += 1;
     try {
       const response = await api.project.getAllPatches(projectId, {
         state,
         page,
-        perPage,
+        perPage: PATCHES_PER_PAGE,
       });
-      patches = [...patches, ...response];
-      page += 1;
+      allPatches = [...allPatches, ...response];
     } catch (e) {
       error = e;
     } finally {
@@ -58,12 +54,17 @@
   }
 
   interface Tab {
-    value: PatchStatus;
+    value: PatchState["status"];
     title: string;
     disabled: boolean;
   }
 
-  const stateOptions: PatchStatus[] = ["draft", "open", "archived", "merged"];
+  const stateOptions: PatchState["status"][] = [
+    "draft",
+    "open",
+    "archived",
+    "merged",
+  ];
   const options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${patchCounters[s]} ${s}`,
@@ -71,16 +72,7 @@
   }));
 
   $: showMoreButton =
-    !loading &&
-    !error &&
-    patchCounters[state] &&
-    patches.length < patchCounters[state];
-
-  $: {
-    page = 0;
-    patches = [];
-    void loadPatches(state);
-  }
+    !loading && !error && allPatches.length < patchCounters[state];
 </script>
 
 <style>
@@ -139,7 +131,7 @@
     </div>
   </div>
   <div class="patches-list">
-    {#each patches as patch}
+    {#each allPatches as patch (patch.id)}
       <div class="teaser">
         <PatchTeaser {baseUrl} {projectId} {patch} />
       </div>
@@ -164,7 +156,7 @@
     {/if}
 
     {#if showMoreButton}
-      <Button variant="foreground" on:click={() => loadPatches(state)}>
+      <Button variant="foreground" on:click={() => loadMore(state)}>
         More
       </Button>
     {/if}

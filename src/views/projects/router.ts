@@ -7,6 +7,7 @@ import type {
   Diff,
   Issue,
   Patch,
+  PatchState,
   Project,
   Remote,
   Tree,
@@ -18,6 +19,7 @@ import { unreachable } from "@app/lib/utils";
 import { seedPath } from "@app/views/seeds/router";
 
 export const COMMITS_PER_PAGE = 30;
+export const PATCHES_PER_PAGE = 10;
 
 export type ProjectRoute =
   | ProjectTreeRoute
@@ -125,7 +127,7 @@ export type ProjectLoadedView =
   | { resource: "issue"; issue: Issue }
   | { resource: "issues"; state: "open" | "closed" }
   | { resource: "newIssue" }
-  | { resource: "patches"; search: string }
+  | { resource: "patches"; patches: Patch[]; state: PatchState["status"] }
   | PatchView;
 
 interface LoadedSourceBrowsingParams {
@@ -271,19 +273,7 @@ export async function loadProjectRoute(
         },
       };
     } else if (route.resource === "project.patches") {
-      const project = await api.project.getById(route.project);
-      return {
-        resource: "projects",
-        params: {
-          id: route.project,
-          baseUrl: route.seed,
-          view: {
-            resource: "patches",
-            search: route.search || "",
-          },
-          project,
-        },
-      };
+      return loadPatchesView(route);
     } else {
       return unreachable(route);
     }
@@ -297,6 +287,37 @@ export async function loadProjectRoute(
       },
     };
   }
+}
+
+async function loadPatchesView(
+  route: ProjectPatchesRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.seed);
+  const searchParams = new URLSearchParams(route.search || "");
+  const state = (searchParams.get("state") as PatchState["status"]) || "open";
+
+  const [project, patches] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getAllPatches(route.project, {
+      state,
+      page: 0,
+      perPage: PATCHES_PER_PAGE,
+    }),
+  ]);
+
+  return {
+    resource: "projects",
+    params: {
+      id: route.project,
+      baseUrl: route.seed,
+      view: {
+        resource: "patches",
+        patches,
+        state,
+      },
+      project,
+    },
+  };
 }
 
 async function loadTreeView(
