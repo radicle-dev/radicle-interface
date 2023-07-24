@@ -7,7 +7,7 @@
   import FileLocationChange from "@app/views/projects/SourceBrowser/FileLocationChange.svelte";
 
   export let diff: Diff;
-  export let highlightedFiles: Map<string, string[]> | undefined = undefined;
+  export let highlighted: Map<string, string[][]> | undefined = undefined;
   export let revision: string;
   export let baseUrl: BaseUrl;
   export let projectId: string;
@@ -71,6 +71,7 @@
 <div class="diff-listing">
   {#each diff.added as file}
     <FileDiff
+      highlighted={highlighted?.get(file.path)}
       {projectId}
       {baseUrl}
       {file}
@@ -79,6 +80,7 @@
   {/each}
   {#each diff.deleted as file}
     <FileDiff
+      highlighted={highlighted?.get(file.path)}
       {projectId}
       {baseUrl}
       {file}
@@ -86,8 +88,7 @@
       headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
-    {@const highlighted = highlightedFiles?.get(file.path)}
-    <FileDiff {highlighted} {projectId} {baseUrl} {file} {revision} />
+    <FileDiff highlighted={highlighted?.get(file.path)} {projectId} {baseUrl} {file} {revision} />
   {/each}
   {#each diff.moved as file}
     <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="moved" />

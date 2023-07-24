@@ -11,7 +11,7 @@
   import Link from "@app/components/Link.svelte";
 
   export let file: DiffAddedDeletedModifiedChangeset;
-  export let highlighted: string[] | undefined = undefined;
+  export let highlighted: string[][] | undefined = undefined;
   export let revision: string;
   export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
   export let baseUrl: BaseUrl;
@@ -387,7 +387,13 @@
                   </td>
                   {#if highlighted}
                     <td class="diff-line-content">
-                      {@html highlighted[lineIdx]}
+                      {#if line.type === "context"}
+                        {@html highlighted[0][line.lineNoNew-1]}
+                      {:else if line.type === "deletion"}
+                        {@html highlighted[0][line.lineNo-1]}
+                      {:else if line.type === "addition"}
+                        {@html highlighted[headerBadgeCaption === "added" ? 0 : 1][line.lineNo-1]}
+                      {/if}
                     </td>
                   {:else}
                     <td class="diff-line-content">{line.line}</td>

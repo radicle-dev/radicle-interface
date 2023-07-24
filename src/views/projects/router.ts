@@ -134,7 +134,8 @@ export type ProjectLoadedView =
   | {
       resource: "commit";
       commit: Commit;
-      highlightedFiles: Map<string, string[]>;
+      // The blobs highlighted should be sorted by apply order from previous to current.
+      highlighted: Map<string, string[][]>;
     }
   | { resource: "issue"; issue: Issue }
   | { resource: "issues"; search: string }
@@ -194,6 +195,37 @@ function parseRevisionToOid(
   }
 }
 
+export async function highlightBlobs(
+  parser: Highlighter,
+  config: HighlightConfiguration,
+  content: string,
+): Promise<string[]> {
+  const tree = await parser.parse(content);
+  const captures = config.query.captures(tree.rootNode);
+  const capturesWithInjections = captures.map(capture =>
+    handleInjections(capture, parser),
+  );
+  const resolvedCaptures = (await Promise.all(capturesWithInjections)).flat();
+  return renderHTML(resolvedCaptures, content);
+}
+
+export async function setHighlightConfig(
+  parser: Highlighter,
+  path: string,
+): Promise<HighlightConfiguration | undefined> {
+  const fileExtension = getFileExtension(path);
+  if (!fileExtension) {
+    return;
+  }
+  const config = await HighlightConfiguration.create(fileExtension);
+  if (!config) {
+    return;
+  }
+  parser.setLanguage(config.language);
+
+  return config;
+}
+
 export async function loadProjectRoute(
   route: ProjectRoute,
 ): Promise<ProjectLoadedRoute | LoadError> {
@@ -209,37 +241,68 @@ export async function loadProjectRoute(
         api.project.getCommitBySha(route.project, route.commit),
       ]);
 
-      const files = new Map<string, string[]>();
-      for (const diff of Object.values(commit.diff).flat()) {
-        if ("path" in diff) {
-          const blob = await api.project.getBlob(
-            route.project,
-            route.commit,
-            diff.path,
-          );
-
-          const fileExtension = getFileExtension(blob.path);
-          if (!fileExtension) {
-            throw Error("File extension not found");
-          }
-
-          if (blob.content) {
-            const parser = await Highlighter.init();
-            const config = await HighlightConfiguration.create(fileExtension);
-            if (!config) {
-              throw Error("Highlight configuration not found");
-            }
-            parser.setLanguage(config.language);
-
-            const tree = await parser.parse(blob.content);
-            const captures = config.query.captures(tree.rootNode);
-            const capturesWithInjections = captures.map(capture =>
-              handleInjections(capture, parser),
+      const highlighted = new Map<string, string[][]>();
+      const parser = await Highlighter.init();
+      for (const [type, diff] of Object.entries(commit.diff)) {
+        if (type === "added") {
+          for (const file of diff) {
+            const blob = await api.project.getBlob(
+              route.project,
+              route.commit,
+              file.path,
             );
-            const resolvedCaptures = (
-              await Promise.all(capturesWithInjections)
-            ).flat();
-            files.set(diff.path, renderHTML(resolvedCaptures, blob.content));
+
+            if (blob.content) {
+              const config = await setHighlightConfig(parser, blob.path);
+              if (!config) continue;
+              const blobs = await highlightBlobs(parser, config, blob.content);
+
+              highlighted.set(blob.path, [blobs]);
+            }
+          }
+        } else if (type === "deleted") {
+          for (const file of diff) {
+            const blob = await api.project.getBlob(
+              route.project,
+              commit.commit.parents[0],
+              file.path,
+            );
+
+            if (blob.content) {
+              const config = await setHighlightConfig(parser, blob.path);
+              if (!config) continue;
+              const blobs = await highlightBlobs(parser, config, blob.content);
+
+              highlighted.set(blob.path, [blobs]);
+            }
+          }
+        } else if (type === "modified") {
+          for (const file of diff) {
+            const [blob, parent] = await Promise.all([
+              api.project.getBlob(route.project, route.commit, file.path),
+              api.project.getBlob(
+                route.project,
+                commit.commit.parents[0],
+                file.path,
+              ),
+            ]);
+
+            if (blob.content && parent.content) {
+              const config = await setHighlightConfig(parser, blob.path);
+              if (!config) continue;
+              const parentBlob = await highlightBlobs(
+                parser,
+                config,
+                parent.content,
+              );
+              const commitBlob = await highlightBlobs(
+                parser,
+                config,
+                blob.content,
+              );
+
+              highlighted.set(blob.path, [parentBlob, commitBlob]);
+            }
           }
         }
       }
@@ -253,7 +316,7 @@ export async function loadProjectRoute(
           view: {
             resource: "commit",
             commit,
-            highlightedFiles: files,
+            highlighted,
           },
         },
       };
@@ -495,7 +558,7 @@ async function loadHistoryView(
 
   const [tree, commitsResponse] = await Promise.all([
     api.project.getTree(route.project, commitId),
-    await api.project.getAllCommits(project.id, {
+    api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
       perPage: COMMITS_PER_PAGE,

@@ -15,6 +15,7 @@ export interface CommitHeader {
   id: string;
   author: GitPerson;
   summary: string;
+  parents: string[];
   description: string;
   committer: GitPerson & { time: number };
 }
@@ -23,6 +24,7 @@ export const commitHeaderSchema = object({
   id: string(),
   author: gitPersonSchema,
   summary: string(),
+  parents: array(string()),
   description: string(),
   committer: gitPersonSchema.merge(object({ time: number() })),
 }) satisfies ZodSchema<CommitHeader>;
