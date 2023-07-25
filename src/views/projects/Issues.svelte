@@ -57,7 +57,7 @@
   }
 
   const stateOptions: IssueState["status"][] = ["open", "closed"];
-  const options = stateOptions.map<Tab>(s => ({
+  $: options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${issueCounters[s]} ${s}`,
     disabled: issueCounters[s] === 0,

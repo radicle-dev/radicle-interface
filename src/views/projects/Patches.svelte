@@ -65,7 +65,8 @@
     "archived",
     "merged",
   ];
-  const options = stateOptions.map<Tab>(s => ({
+
+  $: options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${patchCounters[s]} ${s}`,
     disabled: patchCounters[s] === 0,
