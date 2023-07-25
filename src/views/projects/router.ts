@@ -6,6 +6,7 @@ import type {
   CommitHeader,
   Diff,
   Issue,
+  IssueState,
   Patch,
   PatchState,
   Project,
@@ -20,6 +21,7 @@ import { seedPath } from "@app/views/seeds/router";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
+export const ISSUES_PER_PAGE = 10;
 
 export type ProjectRoute =
   | ProjectTreeRoute
@@ -30,12 +32,7 @@ export type ProjectRoute =
       project: string;
       commit: string;
     }
-  | {
-      resource: "project.issues";
-      seed: BaseUrl;
-      project: string;
-      state?: "open" | "closed";
-    }
+  | ProjectIssuesRoute
   | { resource: "project.newIssue"; seed: BaseUrl; project: string }
   | {
       resource: "project.issue";
@@ -45,6 +42,13 @@ export type ProjectRoute =
     }
   | ProjectPatchesRoute
   | ProjectPatchRoute;
+
+interface ProjectIssuesRoute {
+  resource: "project.issues";
+  seed: BaseUrl;
+  project: string;
+  state?: "open" | "closed";
+}
 
 interface ProjectTreeRoute {
   resource: "project.tree";
@@ -125,7 +129,7 @@ export type ProjectLoadedView =
       commit: Commit;
     }
   | { resource: "issue"; issue: Issue }
-  | { resource: "issues"; state: "open" | "closed" }
+  | { resource: "issues"; issues: Issue[]; state: IssueState["status"] }
   | { resource: "newIssue" }
   | { resource: "patches"; patches: Patch[]; state: PatchState["status"] }
   | PatchView;
@@ -246,19 +250,7 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.patch") {
       return loadPatchView(route);
     } else if (route.resource === "project.issues") {
-      const project = await api.project.getById(route.project);
-      return {
-        resource: "projects",
-        params: {
-          id: route.project,
-          baseUrl: route.seed,
-          view: {
-            resource: "issues",
-            state: route.state || "open",
-          },
-          project,
-        },
-      };
+      return loadIssuesView(route);
     } else if (route.resource === "project.newIssue") {
       const project = await api.project.getById(route.project);
       return {
@@ -313,6 +305,36 @@ async function loadPatchesView(
       view: {
         resource: "patches",
         patches,
+        state,
+      },
+      project,
+    },
+  };
+}
+
+async function loadIssuesView(
+  route: ProjectIssuesRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.seed);
+  const state = route.state || "open";
+
+  const [project, issues] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getAllIssues(route.project, {
+      state,
+      page: 0,
+      perPage: ISSUES_PER_PAGE,
+    }),
+  ]);
+
+  return {
+    resource: "projects",
+    params: {
+      id: route.project,
+      baseUrl: route.seed,
+      view: {
+        resource: "issues",
+        issues,
         state,
       },
       project,

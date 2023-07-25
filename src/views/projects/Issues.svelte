@@ -1,17 +1,11 @@
-<script lang="ts" context="module">
-  import type { IssueState } from "@httpd-client";
-
-  export type IssueStatus = IssueState["status"];
-</script>
-
 <script lang="ts">
-  import type { Issue } from "@httpd-client";
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl, Issue, IssueState } from "@httpd-client";
 
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore } from "@app/lib/httpd";
+  import { ISSUES_PER_PAGE } from "./router";
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
@@ -23,28 +17,32 @@
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
+  export let issues: Issue[];
+  export let state: IssueState["status"];
   export let issueCounters: { open: number; closed: number };
-  export let state: "open" | "closed";
-
-  const perPage = 10;
 
   let loading = false;
   let page = 0;
   let error: any;
-  let issues: Issue[] = [];
+  let allIssues: Issue[];
+
+  $: {
+    allIssues = issues;
+    page = 0;
+  }
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadIssues(state: IssueStatus): Promise<void> {
+  async function loadIssues(state: IssueState["status"]): Promise<void> {
     loading = true;
+    page += 1;
     try {
       const response = await api.project.getAllIssues(projectId, {
         state,
         page,
-        perPage,
+        perPage: ISSUES_PER_PAGE,
       });
-      issues = [...issues, ...response];
-      page += 1;
+      allIssues = [...allIssues, ...response];
     } catch (e) {
       error = e;
     } finally {
@@ -53,12 +51,12 @@
   }
 
   interface Tab {
-    value: IssueStatus;
+    value: IssueState["status"];
     title: string;
     disabled: boolean;
   }
 
-  const stateOptions: IssueStatus[] = ["open", "closed"];
+  const stateOptions: IssueState["status"][] = ["open", "closed"];
   const options = stateOptions.map<Tab>(s => ({
     value: s,
     title: `${issueCounters[s]} ${s}`,
@@ -66,16 +64,7 @@
   }));
 
   $: showMoreButton =
-    !loading &&
-    !error &&
-    issueCounters[state] &&
-    issues.length < issueCounters[state];
-
-  $: {
-    page = 0;
-    issues = [];
-    void loadIssues(state);
-  }
+    !loading && !error && allIssues.length < issueCounters[state];
 </script>
 
 <style>
@@ -152,7 +141,7 @@
     {/if}
   </div>
   <div class="issues-list">
-    {#each issues as issue}
+    {#each allIssues as issue (issue.id)}
       <div class="teaser">
         <IssueTeaser {projectId} {baseUrl} {issue} />
       </div>
