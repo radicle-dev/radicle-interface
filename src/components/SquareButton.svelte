@@ -13,12 +13,12 @@
     align-items: center;
     height: 2rem;
     padding: 0 0.75rem;
-    background: var(--color-foreground-1);
+    background: var(--fill-ghost);
     border: none;
-    border-radius: var(--border-radius-small);
     color: var(--color-foreground);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
+    font-family: var(--font-family-inter);
+    font-size: var(--font-size-small);
+    font-weight: 600;
     white-space: nowrap;
     gap: 0.5rem;
   }
@@ -33,21 +33,21 @@
   }
 
   .active {
-    color: var(--color-background);
-    background: var(--color-foreground);
-    background-color: var(--color-foreground);
+    color: var(--foreground-match-background);
+    background: var(--fill-light);
+    background-color: var(--fill-light);
   }
 
   .active:hover {
-    background-color: var(--color-foreground);
+    background-color: var(--fill-light-hover);
   }
 
   .hoverable:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--fill-ghost-hover);
   }
 
   .active.hoverable:hover {
-    background-color: var(--color-foreground);
+    background-color: var(--fill-light-hover);
   }
 
   .disabled {

@@ -19,6 +19,10 @@
   import Loading from "@app/components/Loading.svelte";
   import NotFound from "@app/components/NotFound.svelte";
 
+  import "radicle-design-tokens/global.css";
+  import "radicle-design-tokens/light.css";
+  import "radicle-design-tokens/dark.css";
+
   const activeRouteStore = router.activeRouteStore;
 
   void router.loadFromLocation();
@@ -39,7 +43,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--header-gradient);
+    background: var(--background-default);
     background-repeat: no-repeat;
     background-size: 100% 6rem;
   }

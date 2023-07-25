@@ -20,11 +20,10 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 1rem;
-    border: 1px solid var(--color-secondary-5);
-    border-radius: var(--border-radius-small);
+    border: 1px solid var(--border-hint);
     min-width: 36rem;
     cursor: pointer;
-    background: var(--color-background-1);
+    background: var(--background-float);
   }
   .right {
     display: flex;
