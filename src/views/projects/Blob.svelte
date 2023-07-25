@@ -36,7 +36,7 @@
   }
 
   function updateSelectedLineId() {
-    const fragmentId = window.location.hash.substr(1);
+    const fragmentId = window.location.hash.substring(1);
     if (fragmentId && fragmentId.match(/^L\d+$/)) {
       selectedLineId = fragmentId;
     } else {

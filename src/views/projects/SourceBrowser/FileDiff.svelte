@@ -55,7 +55,7 @@
   }
 
   function updateSelection() {
-    const fragment = window.location.hash.substr(1);
+    const fragment = window.location.hash.substring(1);
     const match = fragment.match(/(.+):H(\d+)L(\d+)(H(\d+)L(\d+))?/);
     if (match && match[1] === file.path) {
       selection = {
