@@ -6,6 +6,7 @@ export interface Config {
   reactions: string[];
   seeds: {
     defaultHttpdPort: number;
+    defaultLocalHttpdPort: number;
     defaultNodePort: number;
     defaultHttpdScheme: string;
     pinned: { baseUrl: BaseUrl }[];
@@ -25,6 +26,7 @@ function getConfig(): Config {
       reactions: [],
       seeds: {
         defaultHttpdPort: 8081,
+        defaultLocalHttpdPort: 8081,
         defaultHttpdScheme: "http",
         defaultNodePort: 8776,
         pinned: [],

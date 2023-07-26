@@ -2,6 +2,7 @@
   "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "seeds": {
     "defaultHttpdPort": 443,
+    "defaultLocalHttpdPort": 8080,
     "defaultHttpdScheme": "https",
     "defaultNodePort": 8776,
     "pinned": [

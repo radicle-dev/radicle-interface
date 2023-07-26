@@ -94,6 +94,7 @@ export const test = base.extend<{
             reactions: [],
             seeds: {
               defaultHttpdPort: 8081,
+              defaultLocalHttpdPort: 8081,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
               pinned: [
@@ -231,6 +232,7 @@ export function appConfigWithFixture() {
     reactions: [],
     seeds: {
       defaultHttpdPort: 8081,
+      defaultLocalHttpdPort: 8081,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
       pinned: [
