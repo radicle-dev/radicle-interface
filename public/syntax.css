@@ -67,3 +67,7 @@
 .syntax.function.macro {
   color: var(--color-syntax-entity);
 }
+
+.syntax.variable {
+  color: var(--color-syntax-variable);
+}

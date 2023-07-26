@@ -5,6 +5,8 @@ import highlightsTs from "@app/lib/syntax/ts-highlights.scm?raw";
 import localsTs from "@app/lib/syntax/ts-locals.scm?raw";
 import highlightsJson from "@app/lib/syntax/json-highlights.scm?raw";
 import highlightsJsdoc from "@app/lib/syntax/jsdoc-highlights.scm?raw";
+import highlightsYaml from "@app/lib/syntax/yaml-highlights.scm?raw";
+import highlightsToml from "@app/lib/syntax/toml-highlights.scm?raw";
 import highlightsHtml from "@app/lib/syntax/html-highlights.scm?raw";
 import injectionsHtml from "@app/lib/syntax/html-injections.scm?raw";
 import highlightsSvelte from "@app/lib/syntax/svelte-highlights.scm?raw";
@@ -15,7 +17,9 @@ import injectionsRust from "@app/lib/syntax/rust-injections.scm?raw";
 import highlightsCss from "@app/lib/syntax/css-highlights.scm?raw";
 import treeSitterJavascript from "@app/lib/syntax/tree-sitter-javascript.wasm?url";
 import treeSitterJsdoc from "@app/lib/syntax/tree-sitter-jsdoc.wasm?url";
+import treeSitterYaml from "@app/lib/syntax/tree-sitter-yaml.wasm?url";
 import treeSitterTypescript from "@app/lib/syntax/tree-sitter-typescript.wasm?url";
+import treeSitterToml from "@app/lib/syntax/tree-sitter-toml.wasm?url";
 import treeSitterCss from "@app/lib/syntax/tree-sitter-css.wasm?url";
 import treeSitterHtml from "@app/lib/syntax/tree-sitter-html.wasm?url";
 import treeSitterRust from "@app/lib/syntax/tree-sitter-rust.wasm?url";
@@ -39,6 +43,14 @@ export const languageMap: Record<string, { language: string; query: string }> =
     mjs: {
       language: treeSitterJavascript,
       query: highlightsJs.concat(localsJs, injectionsJs),
+    },
+    yml: {
+      language: treeSitterYaml,
+      query: highlightsYaml,
+    },
+    toml: {
+      language: treeSitterToml,
+      query: highlightsToml,
     },
     jsdoc: {
       language: treeSitterJsdoc,
