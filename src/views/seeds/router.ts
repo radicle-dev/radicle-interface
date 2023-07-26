@@ -58,10 +58,14 @@ export async function loadProjects(
       };
     }),
   );
+  // Sorts projects by most recent commit descending.
+  const sortedProjects = results.sort(
+    (a, b) => b.activity[0].time - a.activity[0].time,
+  );
 
   return {
     total: nodeStats.projects.count,
-    projects: results,
+    projects: sortedProjects,
   };
 }
 
