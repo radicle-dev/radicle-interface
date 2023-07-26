@@ -14,11 +14,12 @@
   import Link from "@app/components/Link.svelte";
   import PortInput from "@app/App/Header/Connect/PortInput.svelte";
 
+  $: customUrl = `${httpd.api.baseUrl.scheme}://${httpd.api.baseUrl.hostname}:${customPort}`;
   $: command = import.meta.env.PROD
-    ? `rad web --backend ${httpd.api.url}`
-    : `rad web --frontend ${new URL(import.meta.url).origin} --backend ${
-        httpd.api.url
-      }`;
+    ? `rad web --backend ${customUrl}`
+    : `rad web --frontend ${
+        new URL(import.meta.url).origin
+      } --backend ${customUrl}`;
 
   let customPort = httpd.api.port;
   const buttonTitle: Record<HttpdState["state"], string> = {
