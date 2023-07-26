@@ -1,4 +1,5 @@
 import { test, cobUrl, expect } from "@tests/support/fixtures.js";
+import { createProject } from "@tests/support/project";
 
 test("navigate listing", async ({ page }) => {
   await page.goto(cobUrl);
@@ -35,6 +36,40 @@ test("navigate patch details", async ({ page }) => {
       `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files`,
     );
   }
+});
+
+test("test patches counters", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder, defaultBranch } = await createProject(
+    authenticatedPeer,
+    "patch-counters",
+  );
+  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(["commit", "--allow-empty", "-m", "1th"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches`);
+  await authenticatedPeer.git(["switch", defaultBranch], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(["switch", "-c", "feature-2"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(["commit", "--allow-empty", "-m", "2nd"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await page.getByRole("button", { name: "1 open" }).click();
+
+  await expect(page.getByRole("button", { name: "2 patches" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "2 open" })).toBeVisible();
+  await expect(page.locator(".patches-list .teaser")).toHaveCount(2);
 });
 
 test("use revision selector", async ({ page }) => {

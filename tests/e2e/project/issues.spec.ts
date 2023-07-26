@@ -19,6 +19,40 @@ test("navigate single issue", async ({ page }) => {
   );
 });
 
+test("test issue counters", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "issue-counters",
+  );
+  await authenticatedPeer.rad(
+    [
+      "issue",
+      "open",
+      "--title",
+      "First issue to test counters",
+      "--description",
+      "Let's see",
+    ],
+    { cwd: projectFolder },
+  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await authenticatedPeer.rad(
+    [
+      "issue",
+      "open",
+      "--title",
+      "Second issue to test counters",
+      "--description",
+      "Let's see",
+    ],
+    { cwd: projectFolder },
+  );
+  await page.getByRole("button", { name: "1 open" }).click();
+  await expect(page.getByRole("button", { name: "2 issues" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "2 open" })).toBeVisible();
+  await expect(page.locator(".issues-list .teaser")).toHaveCount(2);
+});
+
 test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
