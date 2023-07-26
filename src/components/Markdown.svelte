@@ -95,18 +95,17 @@
         name.startsWith(prefix),
       );
       if (!className) continue;
+      const languageName = className.slice(prefix.length);
 
       const highlighter = await Highlighter.init();
-      const config = await HighlightConfiguration.create(
-        className.slice(prefix.length),
-      );
+      const config = await HighlightConfiguration.create(languageName);
       if (!config) continue;
       highlighter.setLanguage(config.language);
       if (node.textContent) {
         const result = await highlighter.parse(node.textContent);
         const captures = config.query.captures(result.rootNode);
         const capturesWithInjections = captures.map(capture =>
-          handleInjections(capture, highlighter),
+          handleInjections(capture, highlighter, config, languageName)
         );
         const resolvedCaptures = (
           await Promise.all(capturesWithInjections)
