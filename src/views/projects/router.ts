@@ -199,11 +199,12 @@ export async function highlightBlobs(
   parser: Highlighter,
   config: HighlightConfiguration,
   content: string,
+  fileExtension: string,
 ): Promise<string[]> {
   const tree = await parser.parse(content);
   const captures = config.query.captures(tree.rootNode);
   const capturesWithInjections = captures.map(capture =>
-    handleInjections(capture, parser),
+    handleInjections(capture, parser, config, fileExtension),
   );
   const resolvedCaptures = (await Promise.all(capturesWithInjections)).flat();
   return renderHTML(resolvedCaptures, content);
@@ -211,12 +212,8 @@ export async function highlightBlobs(
 
 export async function setHighlightConfig(
   parser: Highlighter,
-  path: string,
+  fileExtension: string,
 ): Promise<HighlightConfiguration | undefined> {
-  const fileExtension = getFileExtension(path);
-  if (!fileExtension) {
-    return;
-  }
   const config = await HighlightConfiguration.create(fileExtension);
   if (!config) {
     return;
@@ -251,11 +248,13 @@ export async function loadProjectRoute(
               route.commit,
               file.path,
             );
+            const fileExtension = getFileExtension(blob.path);
+            if (!fileExtension) continue;
 
             if (blob.content) {
-              const config = await setHighlightConfig(parser, blob.path);
+              const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
-              const blobs = await highlightBlobs(parser, config, blob.content);
+              const blobs = await highlightBlobs(parser, config, blob.content, fileExtension);
 
               highlighted.set(blob.path, [blobs]);
             }
@@ -267,11 +266,13 @@ export async function loadProjectRoute(
               commit.commit.parents[0],
               file.path,
             );
+            const fileExtension = getFileExtension(blob.path);
+            if (!fileExtension) continue;
 
             if (blob.content) {
-              const config = await setHighlightConfig(parser, blob.path);
+              const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
-              const blobs = await highlightBlobs(parser, config, blob.content);
+              const blobs = await highlightBlobs(parser, config, blob.content, fileExtension);
 
               highlighted.set(blob.path, [blobs]);
             }
@@ -288,17 +289,21 @@ export async function loadProjectRoute(
             ]);
 
             if (blob.content && parent.content) {
-              const config = await setHighlightConfig(parser, blob.path);
+            const fileExtension = getFileExtension(blob.path);
+            if (!fileExtension) continue;
+              const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
               const parentBlob = await highlightBlobs(
                 parser,
                 config,
                 parent.content,
+                fileExtension,
               );
               const commitBlob = await highlightBlobs(
                 parser,
                 config,
                 blob.content,
+                fileExtension
               );
 
               highlighted.set(blob.path, [parentBlob, commitBlob]);
@@ -498,7 +503,7 @@ async function loadBlob(
         const tree = await parser.parse(blob.content);
         const captures = config.query.captures(tree.rootNode);
         const capturesWithInjections = captures.map(capture =>
-          handleInjections(capture, parser),
+          handleInjections(capture, parser, config, fileExtension),
         );
         const resolvedCaptures = (
           await Promise.all(capturesWithInjections)

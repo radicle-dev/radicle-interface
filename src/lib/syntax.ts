@@ -121,22 +121,27 @@ export function escapeHtml(unsafeHtml: string) {
 export async function handleInjections(
   injection: Parser.QueryCapture,
   highlighter: Highlighter,
+  highlightConfiguration: HighlightConfiguration,
+  baseLanguage?: string,
 ): Promise<Parser.QueryCapture[]> {
   if (injection.name === "injection.content") {
+    if (baseLanguage !== injection.setProperties["injection.language"]) {
     const injectionConfiguration = await HighlightConfiguration.create(
       injection.setProperties["injection.language"],
     );
     if (!injectionConfiguration) {
       return [injection];
     }
-    highlighter.setLanguage(injectionConfiguration.language);
+    highlightConfiguration = injectionConfiguration;
+    highlighter.setLanguage(highlightConfiguration.language);
+  }
 
     const result = await highlighter.parse(injection.node.text);
     const captures: Parser.QueryCapture[] = (
       await Promise.all(
-        injectionConfiguration.query
+        highlightConfiguration.query
           .captures(result.rootNode)
-          .map(async capture => await handleInjections(capture, highlighter)),
+          .map(async capture => await handleInjections(capture, highlighter, highlightConfiguration, baseLanguage)),
       )
     ).flat();
 
