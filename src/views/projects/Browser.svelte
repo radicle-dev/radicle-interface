@@ -175,7 +175,7 @@
         <div class="source-tree sticky">
           <TreeComponent
             projectId={project.id}
-            revision={revision ?? project.defaultBranch}
+            {revision}
             {baseUrl}
             {fetchTree}
             {path}

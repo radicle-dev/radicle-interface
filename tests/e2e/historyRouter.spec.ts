@@ -72,6 +72,24 @@ test.describe("project page navigation", () => {
     await expectUrlPersistsReload(page);
   });
 
+  test("navigate between tree and commit history while a file is selected", async ({
+    page,
+  }) => {
+    const projectTreeURL = `${sourceBrowsingUrl}`;
+
+    await page.goto(projectTreeURL);
+    await page
+      .getByRole("progressbar", { name: "Page loading" })
+      .waitFor({ state: "hidden" });
+    await expect(page).toHaveURL(projectTreeURL);
+
+    await page.getByText(".hidden").click();
+    await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
+
+    await page.getByRole("link", { name: "6 commits" }).click();
+    await expect(page).toHaveURL(`${sourceBrowsingUrl}/history`);
+  });
+
   test("navigate project paths", async ({ page }) => {
     const projectTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
 
@@ -92,7 +110,12 @@ test.describe("project page navigation", () => {
     await expectUrlPersistsReload(page);
   });
 
-  test("navigate project paths with a selected peer", async ({ page }) => {
+  test("navigate project paths with an explicitly selected peer", async ({
+    page,
+  }) => {
+    // If a branch isn't explicitly specified, the code assumes the project
+    // default branch is selected. We omit showing the default branch in the URL.
+
     const projectTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
     )}`;
@@ -101,14 +124,38 @@ test.describe("project page navigation", () => {
     await expect(page).toHaveURL(projectTreeURL);
 
     await page.getByText(".hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/tree/main/.hidden`);
+    await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
 
     await page.getByText("bin/").click();
     await page.getByText("true").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/tree/main/bin/true`);
+    await expect(page).toHaveURL(`${projectTreeURL}/tree/bin/true`);
 
     await expectBackAndForwardNavigationWorks(
-      `${projectTreeURL}/tree/main/.hidden`,
+      `${projectTreeURL}/tree/.hidden`,
+      page,
+    );
+    await expectUrlPersistsReload(page);
+  });
+
+  test("navigate project paths with an explicitly selected peer and branch", async ({
+    page,
+  }) => {
+    const projectTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
+      8,
+    )}/tree/main`;
+
+    await page.goto(projectTreeURL);
+    await expect(page).toHaveURL(projectTreeURL);
+
+    await page.getByText(".hidden").click();
+    await expect(page).toHaveURL(`${projectTreeURL}/.hidden`);
+
+    await page.getByText("bin/").click();
+    await page.getByText("true").click();
+    await expect(page).toHaveURL(`${projectTreeURL}/bin/true`);
+
+    await expectBackAndForwardNavigationWorks(
+      `${projectTreeURL}/.hidden`,
       page,
     );
     await expectUrlPersistsReload(page);

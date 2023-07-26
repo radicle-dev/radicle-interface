@@ -15,7 +15,7 @@
   export let peer: string | undefined;
   export let prefix: string;
   export let projectId: string;
-  export let revision: string;
+  export let revision: string | undefined;
 
   $: expanded = currentPath.indexOf(prefix) === 0;
   $: tree = expanded

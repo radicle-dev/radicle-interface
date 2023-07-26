@@ -12,7 +12,7 @@
   export let path: string;
   export let peer: string | undefined;
   export let projectId: string;
-  export let revision: string;
+  export let revision: string | undefined;
   export let tree: Tree;
 
   const dispatch = createEventDispatcher<{ select: string }>();
