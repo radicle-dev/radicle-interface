@@ -88,7 +88,12 @@
       headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff highlighted={highlighted?.get(file.path)} {projectId} {baseUrl} {file} {revision} />
+    <FileDiff
+      highlighted={highlighted?.get(file.path)}
+      {projectId}
+      {baseUrl}
+      {file}
+      {revision} />
   {/each}
   {#each diff.moved as file}
     <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="moved" />

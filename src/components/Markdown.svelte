@@ -105,7 +105,7 @@
         const result = await highlighter.parse(node.textContent);
         const captures = config.query.captures(result.rootNode);
         const capturesWithInjections = captures.map(capture =>
-          handleInjections(capture, highlighter, config, languageName)
+          handleInjections(capture, highlighter, config, languageName),
         );
         const resolvedCaptures = (
           await Promise.all(capturesWithInjections)

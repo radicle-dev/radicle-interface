@@ -388,11 +388,13 @@
                   {#if highlighted}
                     <td class="diff-line-content">
                       {#if line.type === "context"}
-                        {@html highlighted[0][line.lineNoNew-1]}
+                        {@html highlighted[0][line.lineNoNew - 1]}
                       {:else if line.type === "deletion"}
-                        {@html highlighted[0][line.lineNo-1]}
+                        {@html highlighted[0][line.lineNo - 1]}
                       {:else if line.type === "addition"}
-                        {@html highlighted[headerBadgeCaption === "added" ? 0 : 1][line.lineNo-1]}
+                        {@html highlighted[
+                          headerBadgeCaption === "added" ? 0 : 1
+                        ][line.lineNo - 1]}
                       {/if}
                     </td>
                   {:else}

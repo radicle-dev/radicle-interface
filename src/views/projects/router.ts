@@ -254,7 +254,12 @@ export async function loadProjectRoute(
             if (blob.content) {
               const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
-              const blobs = await highlightBlobs(parser, config, blob.content, fileExtension);
+              const blobs = await highlightBlobs(
+                parser,
+                config,
+                blob.content,
+                fileExtension,
+              );
 
               highlighted.set(blob.path, [blobs]);
             }
@@ -272,7 +277,12 @@ export async function loadProjectRoute(
             if (blob.content) {
               const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
-              const blobs = await highlightBlobs(parser, config, blob.content, fileExtension);
+              const blobs = await highlightBlobs(
+                parser,
+                config,
+                blob.content,
+                fileExtension,
+              );
 
               highlighted.set(blob.path, [blobs]);
             }
@@ -289,8 +299,8 @@ export async function loadProjectRoute(
             ]);
 
             if (blob.content && parent.content) {
-            const fileExtension = getFileExtension(blob.path);
-            if (!fileExtension) continue;
+              const fileExtension = getFileExtension(blob.path);
+              if (!fileExtension) continue;
               const config = await setHighlightConfig(parser, fileExtension);
               if (!config) continue;
               const parentBlob = await highlightBlobs(
@@ -303,7 +313,7 @@ export async function loadProjectRoute(
                 parser,
                 config,
                 blob.content,
-                fileExtension
+                fileExtension,
               );
 
               highlighted.set(blob.path, [parentBlob, commitBlob]);
