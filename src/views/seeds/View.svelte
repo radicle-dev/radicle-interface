@@ -20,10 +20,6 @@
   export let projects: ProjectActivity[] = [];
   export let version: string;
 
-  const hostname = isLocal(baseUrl.hostname)
-    ? "radicle.local"
-    : baseUrl.hostname;
-
   let error: any;
   let loadingProjects = false;
 
@@ -41,6 +37,7 @@
     }
   }
 
+  $: hostname = isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname;
   $: showMoreButton =
     !loadingProjects &&
     !error &&
