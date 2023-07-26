@@ -8,7 +8,7 @@
     "build:ipfs": "VITE_HASH_ROUTING=1 vite build --base ./",
     "postinstall": "scripts/copy-katex-assets && scripts/install-twemoji-assets",
     "check": "scripts/check",
-    "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html|yml)' --ignore-path .gitignore --write",
+    "format": "npx prettier '**/*.@(ts|js|svelte|json|css|html|yml)' --write",
     "test:unit": "TZ='UTC' vitest run",
     "test:e2e": "TZ='UTC' playwright test",
     "test:e2e:ipfs": "TZ='UTC' playwright test ./tests/e2e/hashRouter.spec.ts --config playwright.ipfs.config.ts",
