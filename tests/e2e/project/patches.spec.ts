@@ -1,7 +1,7 @@
 import { test, cobUrl, expect } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
 
-test("navigate listing", async ({ page }) => {
+test("navigate patch listing", async ({ page }) => {
   await page.goto(cobUrl);
   await page.getByRole("link", { name: "2 patches" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches`);

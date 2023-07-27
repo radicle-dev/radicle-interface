@@ -9,7 +9,7 @@
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let seed: BaseUrl;
+  export let node: BaseUrl;
   export let branches: Array<{ name: string; route: Route }>;
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
   export let historyLinkActive: boolean;
@@ -64,7 +64,7 @@
     route={{
       resource: "project.history",
       project: project.id,
-      seed: seed,
+      node: node,
       peer,
       revision,
     }}>

@@ -17,7 +17,7 @@ import type {
 import { HttpdClient } from "@httpd-client";
 import * as Syntax from "@app/lib/syntax";
 import { unreachable } from "@app/lib/utils";
-import { seedPath } from "@app/views/seeds/router";
+import { nodePath } from "@app/views/nodes/router";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -28,15 +28,15 @@ export type ProjectRoute =
   | ProjectHistoryRoute
   | {
       resource: "project.commit";
-      seed: BaseUrl;
+      node: BaseUrl;
       project: string;
       commit: string;
     }
   | ProjectIssuesRoute
-  | { resource: "project.newIssue"; seed: BaseUrl; project: string }
+  | { resource: "project.newIssue"; node: BaseUrl; project: string }
   | {
       resource: "project.issue";
-      seed: BaseUrl;
+      node: BaseUrl;
       project: string;
       issue: string;
     }
@@ -45,14 +45,14 @@ export type ProjectRoute =
 
 interface ProjectIssuesRoute {
   resource: "project.issues";
-  seed: BaseUrl;
+  node: BaseUrl;
   project: string;
   state?: "open" | "closed";
 }
 
 interface ProjectTreeRoute {
   resource: "project.tree";
-  seed: BaseUrl;
+  node: BaseUrl;
   project: string;
   path?: string;
   peer?: string;
@@ -62,7 +62,7 @@ interface ProjectTreeRoute {
 
 interface ProjectHistoryRoute {
   resource: "project.history";
-  seed: BaseUrl;
+  node: BaseUrl;
   project: string;
   peer?: string;
   revision?: string;
@@ -70,7 +70,7 @@ interface ProjectHistoryRoute {
 
 interface ProjectPatchRoute {
   resource: "project.patch";
-  seed: BaseUrl;
+  node: BaseUrl;
   project: string;
   patch: string;
   view?:
@@ -90,7 +90,7 @@ interface ProjectPatchRoute {
 
 interface ProjectPatchesRoute {
   resource: "project.patches";
-  seed: BaseUrl;
+  node: BaseUrl;
   project: string;
   search?: string;
 }
@@ -197,7 +197,7 @@ function parseRevisionToOid(
 export async function loadProjectRoute(
   route: ProjectRoute,
 ): Promise<ProjectLoadedRoute | LoadError> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
   try {
     if (route.resource === "project.tree") {
       return loadTreeView(route);
@@ -213,7 +213,7 @@ export async function loadProjectRoute(
         resource: "projects",
         params: {
           id: route.project,
-          baseUrl: route.seed,
+          baseUrl: route.node,
           project,
           view: {
             resource: "commit",
@@ -231,7 +231,7 @@ export async function loadProjectRoute(
           resource: "projects",
           params: {
             id: route.project,
-            baseUrl: route.seed,
+            baseUrl: route.node,
             project,
             view: {
               resource: "issue",
@@ -259,7 +259,7 @@ export async function loadProjectRoute(
         resource: "projects",
         params: {
           id: route.project,
-          baseUrl: route.seed,
+          baseUrl: route.node,
           view: {
             resource: "newIssue",
           },
@@ -286,7 +286,7 @@ export async function loadProjectRoute(
 async function loadPatchesView(
   route: ProjectPatchesRoute,
 ): Promise<ProjectLoadedRoute> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
   const searchParams = new URLSearchParams(route.search || "");
   const state = (searchParams.get("state") as PatchState["status"]) || "open";
 
@@ -303,7 +303,7 @@ async function loadPatchesView(
     resource: "projects",
     params: {
       id: route.project,
-      baseUrl: route.seed,
+      baseUrl: route.node,
       view: {
         resource: "patches",
         patches,
@@ -317,7 +317,7 @@ async function loadPatchesView(
 async function loadIssuesView(
   route: ProjectIssuesRoute,
 ): Promise<ProjectLoadedRoute> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
   const state = route.state || "open";
 
   const [project, issues] = await Promise.all([
@@ -333,7 +333,7 @@ async function loadIssuesView(
     resource: "projects",
     params: {
       id: route.project,
-      baseUrl: route.seed,
+      baseUrl: route.node,
       view: {
         resource: "issues",
         issues,
@@ -347,7 +347,7 @@ async function loadIssuesView(
 async function loadTreeView(
   route: ProjectTreeRoute,
 ): Promise<ProjectLoadedRoute> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
 
   const [project, peers, branchMap] = await Promise.all([
     api.project.getById(route.project),
@@ -380,7 +380,7 @@ async function loadTreeView(
     resource: "projects",
     params: {
       id: route.project,
-      baseUrl: route.seed,
+      baseUrl: route.node,
       project,
       view: {
         resource: "tree",
@@ -439,7 +439,7 @@ async function loadBlob(
 async function loadHistoryView(
   route: ProjectHistoryRoute,
 ): Promise<ProjectLoadedRoute> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
 
   const [project, peers, branchMap] = await Promise.all([
     api.project.getById(route.project),
@@ -475,7 +475,7 @@ async function loadHistoryView(
     resource: "projects",
     params: {
       id: route.project,
-      baseUrl: route.seed,
+      baseUrl: route.node,
       project,
       view: {
         resource: "history",
@@ -494,7 +494,7 @@ async function loadHistoryView(
 async function loadPatchView(
   route: ProjectPatchRoute,
 ): Promise<ProjectLoadedRoute> {
-  const api = new HttpdClient(route.seed);
+  const api = new HttpdClient(route.node);
   const [project, patch] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
@@ -547,7 +547,7 @@ async function loadPatchView(
     resource: "projects",
     params: {
       id: route.project,
-      baseUrl: route.seed,
+      baseUrl: route.node,
       project,
       view: {
         resource: "patch",
@@ -604,7 +604,7 @@ function sanitizeQueryString(queryString: string): string {
 }
 
 export function resolveProjectRoute(
-  seed: BaseUrl,
+  node: BaseUrl,
   project: string,
   segments: string[],
   urlSearch: string,
@@ -619,7 +619,7 @@ export function resolveProjectRoute(
   if (!content || content === "tree") {
     return {
       resource: "project.tree",
-      seed,
+      node,
       project,
       peer,
       path: undefined,
@@ -629,7 +629,7 @@ export function resolveProjectRoute(
   } else if (content === "history") {
     return {
       resource: "project.history",
-      seed,
+      node,
       project,
       peer,
       revision: segments.join("/"),
@@ -637,7 +637,7 @@ export function resolveProjectRoute(
   } else if (content === "commits") {
     return {
       resource: "project.commit",
-      seed,
+      node,
       project,
       commit: segments[0],
     };
@@ -646,13 +646,13 @@ export function resolveProjectRoute(
     if (issueOrAction === "new") {
       return {
         resource: "project.newIssue",
-        seed,
+        node,
         project,
       };
     } else if (issueOrAction) {
       return {
         resource: "project.issue",
-        seed,
+        node,
         project,
         issue: issueOrAction,
       };
@@ -666,20 +666,20 @@ export function resolveProjectRoute(
       }
       return {
         resource: "project.issues",
-        seed,
+        node,
         project,
         state,
       };
     }
   } else if (content === "patches") {
-    return resolvePatchesRoute(seed, project, segments, urlSearch);
+    return resolvePatchesRoute(node, project, segments, urlSearch);
   } else {
     return null;
   }
 }
 
 function resolvePatchesRoute(
-  seed: BaseUrl,
+  node: BaseUrl,
   project: string,
   segments: string[],
   urlSearch: string,
@@ -691,7 +691,7 @@ function resolvePatchesRoute(
     const tab = searchParams.get("tab");
     const base = {
       resource: "project.patch",
-      seed,
+      node,
       project,
       patch,
     } as const;
@@ -722,7 +722,7 @@ function resolvePatchesRoute(
   } else {
     return {
       resource: "project.patches",
-      seed,
+      node,
       project,
       search: sanitizeQueryString(urlSearch),
     };
@@ -730,9 +730,9 @@ function resolvePatchesRoute(
 }
 
 export function projectRouteToPath(route: ProjectRoute): string {
-  const seed = seedPath(route.seed);
+  const node = nodePath(route.node);
 
-  const pathSegments = [seed, route.project];
+  const pathSegments = [node, route.project];
 
   if (route.resource === "project.tree") {
     if (route.peer) {
@@ -802,9 +802,9 @@ export function projectRouteToPath(route: ProjectRoute): string {
 }
 
 function patchRouteToPath(route: ProjectPatchRoute): string {
-  const seed = seedPath(route.seed);
+  const node = nodePath(route.node);
 
-  const pathSegments = [seed, route.project];
+  const pathSegments = [node, route.project];
 
   pathSegments.push("patches", route.patch);
   if (route.view?.name === "commits" || route.view?.name === "files") {

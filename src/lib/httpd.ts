@@ -25,7 +25,7 @@ export const httpdStore = derived(store, s => s);
 
 export const api = new HttpdClient({
   hostname: "127.0.0.1",
-  port: config.seeds.defaultLocalHttpdPort,
+  port: config.nodes.defaultLocalHttpdPort,
   scheme: "http",
 });
 

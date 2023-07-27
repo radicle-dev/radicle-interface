@@ -1,6 +1,6 @@
 import { test, expect } from "@tests/support/fixtures.js";
 
-test("seed page", async ({ page }) => {
+test("node page", async ({ page }) => {
   await page.addInitScript(() => {
     window.initializeTestStubs = () => {
       window.e2eTestStubs.FakeTimers.install({
@@ -11,6 +11,6 @@ test("seed page", async ({ page }) => {
     };
   });
 
-  await page.goto("/seeds/radicle.local", { waitUntil: "networkidle" });
+  await page.goto("/nodes/radicle.local", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });

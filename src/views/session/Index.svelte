@@ -19,7 +19,7 @@
     if (isAuthenticated) {
       modal.show({ component: AuthenticatedModal, props: {} });
       void router.push({
-        resource: "seeds",
+        resource: "nodes",
         params: {
           baseUrl: httpd.api.baseUrl,
           projectPageIndex: 0,

@@ -130,7 +130,7 @@
         route={{
           resource: "project.patch",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           patch: patch.id,
         }}>
         <span class="patch-title">

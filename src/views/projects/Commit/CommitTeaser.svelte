@@ -100,7 +100,7 @@
         route={{
           resource: "project.commit",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           commit: commit.id,
         }}>
         <div class="summary" use:twemoji>
@@ -134,7 +134,7 @@
         route={{
           resource: "project.tree",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           revision: commit.id,
         }}>
         <Icon name="browse" />

@@ -92,7 +92,7 @@ export const test = base.extend<{
         await page.addInitScript(() => {
           window.APP_CONFIG = {
             reactions: [],
-            seeds: {
+            nodes: {
               defaultHttpdPort: 8081,
               defaultLocalHttpdPort: 8081,
               defaultHttpdScheme: "http",
@@ -230,7 +230,7 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
 export function appConfigWithFixture() {
   window.APP_CONFIG = {
     reactions: [],
-    seeds: {
+    nodes: {
       defaultHttpdPort: 8081,
       defaultLocalHttpdPort: 8081,
       defaultHttpdScheme: "http",
@@ -637,10 +637,10 @@ export const bobHead = "28f37105bb78db48111e36281291ff253dd050e8";
 export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
 export const cobRid = "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe";
 export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";
-export const sourceBrowsingUrl = `/seeds/127.0.0.1/${sourceBrowsingRid}`;
-export const cobUrl = `/seeds/127.0.0.1/${cobRid}`;
-export const markdownUrl = `/seeds/127.0.0.1/${markdownRid}`;
-export const seedRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
+export const sourceBrowsingUrl = `/nodes/127.0.0.1/${sourceBrowsingRid}`;
+export const cobUrl = `/nodes/127.0.0.1/${cobRid}`;
+export const markdownUrl = `/nodes/127.0.0.1/${markdownRid}`;
+export const nodeRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
 export const defaultHttpdPort = 8081;
 export const gitOptions = {
   alice: {

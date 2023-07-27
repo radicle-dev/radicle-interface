@@ -12,7 +12,7 @@
 
   import Home from "@app/views/home/Index.svelte";
   import Projects from "@app/views/projects/View.svelte";
-  import Seeds from "@app/views/seeds/View.svelte";
+  import Nodes from "@app/views/nodes/View.svelte";
   import Session from "@app/views/session/Index.svelte";
 
   import LoadError from "@app/components/LoadError.svelte";
@@ -63,8 +63,8 @@
   <div class="wrapper">
     {#if $activeRouteStore.resource === "home"}
       <Home {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "seeds"}
-      <Seeds {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "nodes"}
+      <Nodes {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
     {:else if $activeRouteStore.resource === "projects"}

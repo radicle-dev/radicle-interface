@@ -2,24 +2,24 @@ import {
   aliceMainHead,
   expect,
   sourceBrowsingRid,
-  seedRemote,
+  nodeRemote,
   test,
 } from "@tests/support/fixtures.js";
 
-test("seed metadata", async ({ page }) => {
-  await page.goto("/seeds/radicle.local");
+test("node metadata", async ({ page }) => {
+  await page.goto("/nodes/radicle.local");
 
   await expect(
     page.locator(".header").getByText("radicle.local"),
   ).toBeVisible();
   await expect(
-    page.getByText(`${seedRemote.substring(0, 6)}…${seedRemote.slice(-6)}`),
+    page.getByText(`${nodeRemote.substring(0, 6)}…${nodeRemote.slice(-6)}`),
   ).toBeVisible();
   await expect(page.getByText("0.1.0-")).toBeVisible();
 });
 
-test("seed projects", async ({ page }) => {
-  await page.goto("/seeds/radicle.local");
+test("node projects", async ({ page }) => {
+  await page.goto("/nodes/radicle.local");
   const project = page.locator(".project", { hasText: "source-browsing" });
 
   // Project metadata.

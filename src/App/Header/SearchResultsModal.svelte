@@ -38,7 +38,7 @@
               on:afterNavigate={modal.hide}
               route={{
                 resource: "project.tree",
-                seed: result.baseUrl,
+                node: result.baseUrl,
                 project: result.project.id,
               }}>
               <span title={result.baseUrl.hostname}>

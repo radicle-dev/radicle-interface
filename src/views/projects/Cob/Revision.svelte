@@ -213,7 +213,7 @@
             route={{
               resource: "project.patch",
               project: projectId,
-              seed: baseUrl,
+              node: baseUrl,
               patch: patchId,
               view: {
                 name: "diff",
@@ -239,7 +239,7 @@
                   route={{
                     resource: "project.patch",
                     project: projectId,
-                    seed: baseUrl,
+                    node: baseUrl,
                     patch: patchId,
                     view: {
                       name: "diff",
@@ -301,7 +301,7 @@
                       route={{
                         resource: "project.commit",
                         project: projectId,
-                        seed: baseUrl,
+                        node: baseUrl,
                         commit: commit.id,
                       }}>
                       <div class="commit-summary" use:twemoji>

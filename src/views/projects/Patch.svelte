@@ -131,7 +131,7 @@
     const baseRoute = {
       resource: "project.patch",
       project: projectId,
-      seed: baseUrl,
+      node: baseUrl,
       patch: patch.id,
     } as const;
     // For cleaner URLs, we omit the the revision part when we link to the
@@ -364,7 +364,7 @@
             route={{
               resource: "project.patch",
               project: projectId,
-              seed: baseUrl,
+              node: baseUrl,
               patch: patch.id,
               view: {
                 name: "diff",
@@ -400,7 +400,7 @@
                   route={{
                     resource: "project.patch",
                     project: projectId,
-                    seed: baseUrl,
+                    node: baseUrl,
                     patch: patch.id,
                     view: {
                       name: view.view.name,

@@ -19,13 +19,13 @@ export async function searchProjectsAndProfiles(
   query: string,
 ): Promise<SearchResult> {
   try {
-    const pinned = config.seeds.pinned.map(seed => ({
+    const pinned = config.nodes.pinned.map(node => ({
       id: query,
-      baseUrl: seed.baseUrl,
+      baseUrl: node.baseUrl,
     }));
 
     if (utils.isRepositoryId(query)) {
-      const results = await getProjectsFromSeeds(pinned);
+      const results = await getProjectsFromNodes(pinned);
 
       if (results.length === 0) {
         return { type: "nothing" };
@@ -49,7 +49,7 @@ export async function searchProjectsAndProfiles(
   }
 }
 
-export async function getProjectsFromSeeds(
+export async function getProjectsFromNodes(
   params: { id: string; baseUrl: BaseUrl }[],
 ): Promise<ProjectBaseUrl[]> {
   const projectPromises = params.map(async param => {

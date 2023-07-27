@@ -55,7 +55,7 @@ export interface RoutingEntry {
 
 interface PeerManagerParams {
   dataPath: string;
-  seed: string;
+  node: string;
   name: string;
   gitOptions?: Record<string, string>;
   outputLog: Stream.Writable;
@@ -68,7 +68,7 @@ export interface PeerManager {
   }): Promise<RadiclePeer>;
 }
 
-export function generateSeed(index: number) {
+export function generateNode(index: number) {
   return Array(64).fill(index.toString()).join("");
 }
 
@@ -95,7 +95,7 @@ export async function createPeerManager(createParams: {
         dataPath: createParams.dataDir,
         name: params.name,
         gitOptions: params.gitOptions,
-        seed: generateSeed(nodes.length + 1),
+        node: generateNode(nodes.length + 1),
         outputLog,
       });
       nodes.push(peer);
@@ -109,7 +109,7 @@ export class RadiclePeer {
   public checkoutPath: string;
   public nodeId: string;
 
-  #seed: string;
+  #node: string;
   #socket: string;
   #radHome: string;
   #eventRecords: NodeEvent[] = [];
@@ -123,7 +123,7 @@ export class RadiclePeer {
   private constructor(props: {
     checkoutPath: string;
     nodeId: string;
-    seed: string;
+    node: string;
     socket: string;
     gitOptions?: Record<string, string>;
     radHome: string;
@@ -132,7 +132,7 @@ export class RadiclePeer {
     this.checkoutPath = props.checkoutPath;
     this.nodeId = props.nodeId;
     this.#gitOptions = props.gitOptions;
-    this.#seed = props.seed;
+    this.#node = props.node;
     this.#socket = props.socket;
     this.#radHome = props.radHome;
     this.#outputLog = props.logFile;
@@ -151,7 +151,7 @@ export class RadiclePeer {
     dataPath,
     name,
     gitOptions,
-    seed,
+    node,
     outputLog: logFile,
   }: PeerManagerParams): Promise<RadiclePeer> {
     const checkoutPath = Path.join(dataPath, name, "copy");
@@ -168,7 +168,7 @@ export class RadiclePeer {
       ...gitOptions,
       RAD_HOME: radHome,
       RAD_PASSPHRASE: "asdf",
-      RAD_SEED: seed,
+      RAD_SEED: node,
       RAD_SOCKET: socket,
     };
 
@@ -178,7 +178,7 @@ export class RadiclePeer {
     return new RadiclePeer({
       checkoutPath,
       gitOptions,
-      seed,
+      node,
       socket,
       nodeId,
       radHome,
@@ -335,11 +335,11 @@ export class RadiclePeer {
       throw new Error("No httpd service running");
     }
 
-    return `/seeds/${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`;
+    return `/nodes/${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`;
   }
 
   public ridUrl(rid: string): string {
-    return `/seeds/${this.httpdBaseUrl.hostname}:${this.httpdBaseUrl.port}/${rid}`;
+    return `/nodes/${this.httpdBaseUrl.hostname}:${this.httpdBaseUrl.port}/${rid}`;
   }
 
   public get httpdBaseUrl(): BaseUrl {
@@ -371,7 +371,7 @@ export class RadiclePeer {
         RAD_HOME: this.#radHome,
         RAD_PASSPHRASE: "asdf",
         RAD_COMMIT_TIME: "1671125284",
-        RAD_SEED: this.#seed,
+        RAD_SEED: this.#node,
         RAD_SOCKET: this.#socket,
         ...opts?.env,
         ...this.#gitOptions,

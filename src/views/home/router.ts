@@ -3,7 +3,7 @@ import type { ProjectBaseUrl } from "@app/lib/search";
 import type { WeeklyActivity } from "@app/lib/commit";
 
 import { config } from "@app/lib/config";
-import { getProjectsFromSeeds } from "@app/lib/search";
+import { getProjectsFromNodes } from "@app/lib/search";
 import { loadProjectActivity } from "@app/lib/commit";
 
 export interface ProjectBaseUrlActivity extends ProjectBaseUrl {
@@ -21,15 +21,15 @@ export interface HomeLoadedRoute {
 
 export async function loadHomeRoute(): Promise<HomeLoadedRoute | LoadError> {
   try {
-    const projects = await getProjectsFromSeeds(config.projects.pinned);
+    const projects = await getProjectsFromNodes(config.projects.pinned);
     const results = await Promise.all(
-      projects.map(async projectSeed => {
+      projects.map(async projectNode => {
         const activity = await loadProjectActivity(
-          projectSeed.project.id,
-          projectSeed.baseUrl,
+          projectNode.project.id,
+          projectNode.baseUrl,
         );
         return {
-          ...projectSeed,
+          ...projectNode,
           activity,
         };
       }),

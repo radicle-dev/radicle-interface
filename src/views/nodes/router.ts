@@ -6,7 +6,7 @@ import { HttpdClient } from "@httpd-client";
 import { loadProjectActivity } from "@app/lib/commit";
 import { config } from "@app/lib/config";
 
-interface SeedsRouteParams {
+export interface NodesRouteParams {
   baseUrl: BaseUrl;
   projectPageIndex: number;
 }
@@ -16,13 +16,13 @@ export interface ProjectActivity {
   activity: WeeklyActivity[];
 }
 
-export interface SeedsRoute {
-  resource: "seeds";
-  params: SeedsRouteParams;
+export interface NodesRoute {
+  resource: "nodes";
+  params: NodesRouteParams;
 }
 
-export interface SeedsLoadedRoute {
-  resource: "seeds";
+export interface NodesLoadedRoute {
+  resource: "nodes";
   params: {
     baseUrl: BaseUrl;
     projectPageIndex: number;
@@ -69,19 +69,19 @@ export async function loadProjects(
   };
 }
 
-export function seedPath(baseUrl: BaseUrl) {
-  const port = baseUrl.port ?? config.seeds.defaultHttpdPort;
+export function nodePath(baseUrl: BaseUrl) {
+  const port = baseUrl.port ?? config.nodes.defaultHttpdPort;
 
-  if (port === config.seeds.defaultHttpdPort) {
-    return `/seeds/${baseUrl.hostname}`;
+  if (port === config.nodes.defaultHttpdPort) {
+    return `/nodes/${baseUrl.hostname}`;
   } else {
-    return `/seeds/${baseUrl.hostname}:${port}`;
+    return `/nodes/${baseUrl.hostname}:${port}`;
   }
 }
 
-export async function loadSeedRoute(
-  params: SeedsRouteParams,
-): Promise<SeedsLoadedRoute | LoadError> {
+export async function loadNodeRoute(
+  params: NodesRouteParams,
+): Promise<NodesLoadedRoute | LoadError> {
   const api = new HttpdClient(params.baseUrl);
   try {
     const projectPageIndex = 0;
@@ -90,7 +90,7 @@ export async function loadSeedRoute(
       loadProjects(projectPageIndex, params.baseUrl),
     ]);
     return {
-      resource: "seeds",
+      resource: "nodes",
       params: {
         projectPageIndex: projectPageIndex + 1,
         baseUrl: params.baseUrl,
@@ -105,7 +105,7 @@ export async function loadSeedRoute(
       resource: "loadError",
       params: {
         title: `${params.baseUrl.hostname}:${params.baseUrl.port}`,
-        errorMessage: "Not able to query this seed.",
+        errorMessage: "Not able to query this node.",
         stackTrace: error.stack,
       },
     };

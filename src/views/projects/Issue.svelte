@@ -169,7 +169,7 @@
         void router.push({
           resource: "project.issue",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           issue: issue.id,
         });
       }

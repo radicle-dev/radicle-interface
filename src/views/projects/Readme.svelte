@@ -25,7 +25,7 @@
         routeToPath({
           resource: "project.tree",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           peer,
           revision,
           path: "README.md",

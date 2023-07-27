@@ -7,7 +7,7 @@ window.origin = "http://localhost:3000";
 
 describe("route invariant when parsed", () => {
   const origin = "http://localhost:3000";
-  const seed = {
+  const node = {
     hostname: "willow.radicle.garden",
     port: 8000,
     scheme: "http",
@@ -16,21 +16,21 @@ describe("route invariant when parsed", () => {
   test("home", () => {
     return expectParsingInvariant({ resource: "home" });
   });
-  test("seeds", () => {
+  test("nodes", () => {
     expectParsingInvariant({
-      resource: "seeds",
+      resource: "nodes",
       params: {
         // TODO: This only works with the value 0. The value is not actually
         // extract.
         projectPageIndex: 0,
-        baseUrl: seed,
+        baseUrl: node,
       },
     });
   });
   test("projects.tree", () => {
     expectParsingInvariant({
       resource: "project.tree",
-      seed,
+      node,
       project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       route: "",
     });
@@ -39,7 +39,7 @@ describe("route invariant when parsed", () => {
   test("projects.tree with peer", () => {
     expectParsingInvariant({
       resource: "project.tree",
-      seed,
+      node,
       project: "PROJECT",
       peer: "PEER",
       route: "",
@@ -49,7 +49,7 @@ describe("route invariant when parsed", () => {
   test("projects.tree with peer and revision", () => {
     const route: Route = {
       resource: "project.tree",
-      seed,
+      node,
       project: "PROJECT",
       peer: "PEER",
       revision: "REVISION",
@@ -64,7 +64,7 @@ describe("route invariant when parsed", () => {
   test("projects.tree with peer and revision and path", () => {
     const route: Route = {
       resource: "project.tree",
-      seed,
+      node,
       project: "PROJECT",
       peer: "PEER",
       path: "PATH",
@@ -81,7 +81,7 @@ describe("route invariant when parsed", () => {
   test("projects.history", () => {
     expectParsingInvariant({
       resource: "project.history",
-      seed,
+      node,
       project: "PROJECT",
       revision: "",
     });
@@ -90,7 +90,7 @@ describe("route invariant when parsed", () => {
   test("projects.history with revision", () => {
     expectParsingInvariant({
       resource: "project.history",
-      seed,
+      node,
       project: "PROJECT",
       revision: "REVISION",
     });
@@ -99,7 +99,7 @@ describe("route invariant when parsed", () => {
   test("projects.commits", () => {
     expectParsingInvariant({
       resource: "project.commit",
-      seed,
+      node,
       project: "PROJECT",
       commit: "COMMIT",
     });
@@ -108,7 +108,7 @@ describe("route invariant when parsed", () => {
   test("projects.issues", () => {
     expectParsingInvariant({
       resource: "project.issues",
-      seed,
+      node,
       project: "PROJECT",
     });
   });
@@ -116,7 +116,7 @@ describe("route invariant when parsed", () => {
   test("projects.issues with state", () => {
     expectParsingInvariant({
       resource: "project.issues",
-      seed,
+      node,
       project: "PROJECT",
       state: "closed",
     });
@@ -125,7 +125,7 @@ describe("route invariant when parsed", () => {
   test("projects.newIssue", () => {
     expectParsingInvariant({
       resource: "project.newIssue",
-      seed,
+      node,
       project: "PROJECT",
     });
   });
@@ -133,7 +133,7 @@ describe("route invariant when parsed", () => {
   test("projects.issue", () => {
     expectParsingInvariant({
       resource: "project.issue",
-      seed,
+      node,
       project: "PROJECT",
       issue: "ISSUE",
     });
@@ -143,7 +143,7 @@ describe("route invariant when parsed", () => {
     () => {
       expectParsingInvariant({
         resource: "project.patches",
-        seed,
+        node,
         project: "PROJECT",
       });
     };
@@ -151,7 +151,7 @@ describe("route invariant when parsed", () => {
   test("projects.patches with search", () => {
     expectParsingInvariant({
       resource: "project.patches",
-      seed,
+      node,
       project: "PROJECT",
       search: "SEARCH",
     });
@@ -160,7 +160,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch default view", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
     });
@@ -169,7 +169,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch activity", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: { name: "activity" },
@@ -179,7 +179,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch commits", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: { name: "commits" },
@@ -189,7 +189,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch commits with revision", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: { name: "commits", revision: "REVISION" },
@@ -199,7 +199,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch files", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: { name: "files" },
@@ -209,7 +209,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch files with revision", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: { name: "files", revision: "REVISION" },
@@ -219,7 +219,7 @@ describe("route invariant when parsed", () => {
   test("projects.patch diff", () => {
     expectParsingInvariant({
       resource: "project.patch",
-      seed,
+      node,
       project: "PROJECT",
       patch: "PATCH",
       view: {
@@ -246,9 +246,9 @@ describe("pathToRoute", () => {
     expectPathToRoute("/", { resource: "home" });
   });
 
-  test("seeds", () => {
-    expectPathToRoute("/seeds/willow.radicle.garden", {
-      resource: "seeds",
+  test("nodes", () => {
+    expectPathToRoute("/nodes/willow.radicle.garden", {
+      resource: "nodes",
       params: {
         baseUrl: {
           hostname: "willow.radicle.garden",
@@ -262,10 +262,10 @@ describe("pathToRoute", () => {
 
   test("project with trailing slash", () => {
     expectPathToRoute(
-      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
       {
         resource: "project.tree",
-        seed: {
+        node: {
           hostname: "willow.radicle.garden",
           scheme: "http",
           port: defaultHttpdPort,
@@ -278,10 +278,10 @@ describe("pathToRoute", () => {
 
   test("project without trailing slash", () => {
     expectPathToRoute(
-      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       {
         resource: "project.tree",
-        seed: {
+        node: {
           hostname: "willow.radicle.garden",
           scheme: "http",
           port: defaultHttpdPort,
@@ -294,7 +294,7 @@ describe("pathToRoute", () => {
 
   test("non-existent project route", () => {
     expectPathToRoute(
-      "/seeds/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
+      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
       null,
     );
   });

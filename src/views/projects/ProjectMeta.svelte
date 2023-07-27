@@ -89,7 +89,7 @@
         route={{
           resource: "project.tree",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
         }}>
         <span class="project-name">
           {projectName}

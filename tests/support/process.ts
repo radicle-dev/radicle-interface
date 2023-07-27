@@ -8,7 +8,7 @@ import { execa } from "execa";
 import { make } from "./logLabel.js";
 
 // Processes that should be SIGKILLed when the Node process shutsdown.
-// We add all proxy and seed instances that we spawn to this list.
+// We add all proxy and node instances that we spawn to this list.
 const processes: ExecaChildProcess[] = [];
 
 onExit(killAllProcesses);

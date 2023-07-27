@@ -48,7 +48,7 @@
     selected: remote.id === peer,
     route: {
       resource: "project.tree",
-      seed: baseUrl,
+      node: baseUrl,
       project: project.id,
       peer: remote.id,
     } as Route,
@@ -58,7 +58,7 @@
     name,
     route: {
       resource: "project.tree",
-      seed: baseUrl,
+      node: baseUrl,
       project: project.id,
       peer,
       revision: name,
@@ -146,7 +146,7 @@
 </style>
 
 <SourceBrowsingHeader
-  seed={baseUrl}
+  node={baseUrl}
   {project}
   peers={peersWithRoute}
   branches={branchesWithRoute}

@@ -24,18 +24,18 @@ test("navigate between landing and project page", async ({ page }) => {
   await expectUrlPersistsReload(page);
 });
 
-test("navigation between seed and project pages", async ({ page }) => {
-  await page.goto("/#/seeds/radicle.local");
+test("navigation between node and project pages", async ({ page }) => {
+  await page.goto("/#/nodes/radicle.local");
 
   const project = page.locator(".project", { hasText: "source-browsing" });
   await project.click();
   await expect(page).toHaveURL(`/#${sourceBrowsingUrl}`);
 
-  await expectBackAndForwardNavigationWorks("/#/seeds/radicle.local", page);
+  await expectBackAndForwardNavigationWorks("/#/nodes/radicle.local", page);
   await expectUrlPersistsReload(page);
 
   await page.getByRole("link", { name: "radicle.local" }).click();
-  await expect(page).toHaveURL("/#/seeds/127.0.0.1");
+  await expect(page).toHaveURL("/#/nodes/127.0.0.1");
 });
 
 test.describe("project page navigation", () => {

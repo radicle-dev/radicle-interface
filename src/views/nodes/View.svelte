@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { ProjectActivity } from "@app/views/seeds/router";
+  import type { ProjectActivity } from "@app/views/nodes/router";
 
   import { config } from "@app/lib/config";
   import { isLocal, truncateId } from "@app/lib/utils";
-  import { loadProjects } from "@app/views/seeds/router";
+  import { loadProjects } from "@app/views/nodes/router";
 
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
@@ -71,7 +71,7 @@
     padding-bottom: 1.5rem;
     padding-right: 3rem;
   }
-  .seed-address {
+  .node-address {
     display: flex;
     align-items: center;
     color: var(--color-foreground-6);
@@ -98,11 +98,11 @@
     <tr>
       <td class="txt-highlight">Address</td>
       <td>
-        <div class="seed-address">
+        <div class="node-address">
           {truncateId(nid)}@{baseUrl.hostname}
           <Clipboard
             small
-            text={`${nid}@${baseUrl.hostname}:${config.seeds.defaultNodePort}`} />
+            text={`${nid}@${baseUrl.hostname}:${config.nodes.defaultNodePort}`} />
         </div>
       </td>
     </tr>
@@ -122,7 +122,7 @@
             route={{
               resource: "project.tree",
               project: project.id,
-              seed: baseUrl,
+              node: baseUrl,
             }}>
             <ProjectCard
               {activity}
@@ -146,7 +146,7 @@
     {/if}
     {#if error}
       <ErrorMessage
-        message="Not able to load more projects from this seed."
+        message="Not able to load more projects from this node."
         stackTrace={error.stack} />
     {/if}
   </div>

@@ -21,5 +21,5 @@ Your app is ready to be deployed!
 
 Latest production deployment 👉 https://app.radicle.xyz
 
-If you want to connect to pre-heartwood seed nodes, you can run the app locally
+If you want to connect to pre-heartwood nodes, you can run the app locally
 using the `legacy` tag, available by running `git checkout legacy`.

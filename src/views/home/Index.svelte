@@ -72,7 +72,7 @@
             route={{
               resource: "project.tree",
               project: project.id,
-              seed: baseUrl,
+              node: baseUrl,
             }}>
             <ProjectCard
               compact

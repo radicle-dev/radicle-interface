@@ -12,7 +12,7 @@ import {
   resolveProjectRoute,
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
-import { seedPath } from "@app/views/seeds/router";
+import { nodePath } from "@app/views/nodes/router";
 
 export { type Route };
 
@@ -128,7 +128,7 @@ function setTitle(loadedRoute: LoadedRoute) {
     title.push("Radicle");
   } else if (loadedRoute.resource === "projects") {
     title.push(...projectTitle(loadedRoute));
-  } else if (loadedRoute.resource === "seeds") {
+  } else if (loadedRoute.resource === "nodes") {
     title.push(loadedRoute.params.baseUrl.hostname);
   } else if (loadedRoute.resource === "session") {
     title.push("Authenticating");
@@ -151,15 +151,15 @@ export async function replace(newRoute: Route): Promise<void> {
 function extractBaseUrl(hostAndPort: string): BaseUrl {
   if (
     hostAndPort === "radicle.local" ||
-    hostAndPort === `radicle.local:${config.seeds.defaultHttpdPort}` ||
+    hostAndPort === `radicle.local:${config.nodes.defaultHttpdPort}` ||
     hostAndPort === "0.0.0.0" ||
-    hostAndPort === `0.0.0.0:${config.seeds.defaultHttpdPort}` ||
+    hostAndPort === `0.0.0.0:${config.nodes.defaultHttpdPort}` ||
     hostAndPort === "127.0.0.1" ||
-    hostAndPort === `127.0.0.1:${config.seeds.defaultHttpdPort}`
+    hostAndPort === `127.0.0.1:${config.nodes.defaultHttpdPort}`
   ) {
     return {
       hostname: "127.0.0.1",
-      port: config.seeds.defaultHttpdPort,
+      port: config.nodes.defaultHttpdPort,
       scheme: "http",
     };
   } else if (hostAndPort.includes(":")) {
@@ -169,13 +169,13 @@ function extractBaseUrl(hostAndPort: string): BaseUrl {
       port: Number(port),
       scheme: utils.isLocal(hostname)
         ? "http"
-        : config.seeds.defaultHttpdScheme,
+        : config.nodes.defaultHttpdScheme,
     };
   } else {
     return {
       hostname: hostAndPort,
-      port: config.seeds.defaultHttpdPort,
-      scheme: config.seeds.defaultHttpdScheme,
+      port: config.nodes.defaultHttpdPort,
+      scheme: config.nodes.defaultHttpdScheme,
     };
   }
 }
@@ -185,6 +185,7 @@ function urlToRoute(url: URL): Route | null {
 
   const resource = segments.shift();
   switch (resource) {
+    case "nodes":
     case "seeds": {
       const hostAndPort = segments.shift();
       if (hostAndPort) {
@@ -194,7 +195,7 @@ function urlToRoute(url: URL): Route | null {
           return resolveProjectRoute(baseUrl, id, segments, url.search);
         } else {
           return {
-            resource: "seeds",
+            resource: "nodes",
             params: { baseUrl, projectPageIndex: 0 },
           };
         }
@@ -229,8 +230,8 @@ export function routeToPath(route: Route): string {
     return "/";
   } else if (route.resource === "session") {
     return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
-  } else if (route.resource === "seeds") {
-    return seedPath(route.params.baseUrl);
+  } else if (route.resource === "nodes") {
+    return nodePath(route.params.baseUrl);
   } else if (route.resource === "loadError") {
     return "";
   } else if (

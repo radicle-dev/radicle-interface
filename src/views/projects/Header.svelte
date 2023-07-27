@@ -45,7 +45,7 @@
     route={{
       resource: "project.tree",
       project: projectId,
-      seed: baseUrl,
+      node: baseUrl,
       path: "/",
     }}>
     <SquareButton active={resource === "tree" || resource === "history"}>
@@ -59,7 +59,7 @@
     route={{
       resource: "project.issues",
       project: projectId,
-      seed: baseUrl,
+      node: baseUrl,
     }}>
     <SquareButton active={resource === "issues" || resource === "issue"}>
       <svelte:fragment slot="icon">
@@ -74,7 +74,7 @@
     route={{
       resource: "project.patches",
       project: projectId,
-      seed: baseUrl,
+      node: baseUrl,
     }}>
     <SquareButton active={resource === "patches" || resource === "patch"}>
       <svelte:fragment slot="icon">
@@ -88,7 +88,7 @@
 
   <Link
     route={{
-      resource: "seeds",
+      resource: "nodes",
       params: {
         baseUrl,
         projectPageIndex: 0,

@@ -4,7 +4,7 @@ import configJson from "@app/config.json";
 
 export interface Config {
   reactions: string[];
-  seeds: {
+  nodes: {
     defaultHttpdPort: number;
     defaultLocalHttpdPort: number;
     defaultNodePort: number;
@@ -24,7 +24,7 @@ function getConfig(): Config {
   if (window.VITEST) {
     return {
       reactions: [],
-      seeds: {
+      nodes: {
         defaultHttpdPort: 8081,
         defaultLocalHttpdPort: 8081,
         defaultHttpdScheme: "http",

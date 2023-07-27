@@ -13,8 +13,8 @@
 
   $: radCloneUrl = `rad clone ${id}`;
   $: portFragment =
-    baseUrl.scheme === config.seeds.defaultHttpdScheme &&
-    baseUrl.port === config.seeds.defaultHttpdPort
+    baseUrl.scheme === config.nodes.defaultHttpdScheme &&
+    baseUrl.port === config.nodes.defaultHttpdPort
       ? ""
       : `:${baseUrl.port}`;
   $: gitCloneUrl = `git clone ${baseUrl.scheme}://${

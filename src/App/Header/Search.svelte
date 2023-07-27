@@ -51,7 +51,7 @@
         void router.push({
           resource: "project.tree",
           project: project.id,
-          seed: baseUrl,
+          node: baseUrl,
         });
       } else {
         modal.show({

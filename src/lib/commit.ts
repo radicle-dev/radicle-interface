@@ -31,44 +31,38 @@ export function groupCommits(commits: CommitHeader[]): CommitGroup[] {
   const groupedCommits: CommitGroup[] = [];
   let groupDate: Date | undefined = undefined;
 
-  try {
-    commits = commits.sort((a, b) => {
-      if (a.committer.time > b.committer.time) {
-        return -1;
-      } else if (a.committer.time < b.committer.time) {
-        return 1;
-      }
-
-      return 0;
-    });
-
-    for (const commit of commits) {
-      const time = commit.committer.time * 1000;
-      const date = new Date(time);
-      const isNewDay =
-        !groupedCommits.length ||
-        !groupDate ||
-        date.getDate() < groupDate.getDate() ||
-        date.getMonth() < groupDate.getMonth() ||
-        date.getFullYear() < groupDate.getFullYear();
-
-      if (isNewDay) {
-        groupedCommits.push({
-          date: formatGroupTime(time),
-          time,
-          commits: [],
-          week: 0,
-        });
-        groupDate = date;
-      }
-      groupedCommits[groupedCommits.length - 1].commits.push(commit);
+  commits = commits.sort((a, b) => {
+    if (a.committer.time > b.committer.time) {
+      return -1;
+    } else if (a.committer.time < b.committer.time) {
+      return 1;
     }
-    return groupedCommits;
-  } catch (err) {
-    throw new Error(
-      "Not able to create commit history, please consider updating seed HTTP API.",
-    );
+
+    return 0;
+  });
+
+  for (const commit of commits) {
+    const time = commit.committer.time * 1000;
+    const date = new Date(time);
+    const isNewDay =
+      !groupedCommits.length ||
+      !groupDate ||
+      date.getDate() < groupDate.getDate() ||
+      date.getMonth() < groupDate.getMonth() ||
+      date.getFullYear() < groupDate.getFullYear();
+
+    if (isNewDay) {
+      groupedCommits.push({
+        date: formatGroupTime(time),
+        time,
+        commits: [],
+        week: 0,
+      });
+      groupDate = date;
+    }
+    groupedCommits[groupedCommits.length - 1].commits.push(commit);
   }
+  return groupedCommits;
 }
 
 function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {

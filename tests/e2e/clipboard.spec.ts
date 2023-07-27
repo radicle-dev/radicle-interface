@@ -4,7 +4,7 @@ import {
   expect,
   sourceBrowsingUrl,
   sourceBrowsingRid,
-  seedRemote,
+  nodeRemote,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -61,11 +61,11 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     );
   }
 
-  await page.goto("/seeds/radicle.local");
-  // Seed address.
+  await page.goto("/nodes/radicle.local");
+  // Node address.
   {
     await page.locator(".clipboard").first().click();
-    await expectClipboard(`${seedRemote}@127.0.0.1:8776`, page);
+    await expectClipboard(`${nodeRemote}@127.0.0.1:8776`, page);
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

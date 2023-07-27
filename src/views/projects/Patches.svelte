@@ -117,7 +117,7 @@
             route={{
               resource: "project.patches",
               project: projectId,
-              seed: baseUrl,
+              node: baseUrl,
               search: `state=${option.value}`,
             }}>
             <SquareButton

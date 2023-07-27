@@ -108,7 +108,7 @@
               route={{
                 resource: "project.issues",
                 project: projectId,
-                seed: baseUrl,
+                node: baseUrl,
                 state: option.value,
               }}>
               <SquareButton
@@ -134,7 +134,7 @@
         route={{
           resource: "project.newIssue",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
         }}>
         <SquareButton>New issue</SquareButton>
       </Link>

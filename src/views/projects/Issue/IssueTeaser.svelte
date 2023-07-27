@@ -107,7 +107,7 @@
         route={{
           resource: "project.issue",
           project: projectId,
-          seed: baseUrl,
+          node: baseUrl,
           issue: issue.id,
         }}>
         <span class="issue-title">

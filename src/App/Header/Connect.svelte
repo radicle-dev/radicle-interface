@@ -119,7 +119,7 @@
         <Link
           on:afterNavigate={closeFocused}
           route={{
-            resource: "seeds",
+            resource: "nodes",
             params: {
               baseUrl: httpd.api.baseUrl,
               projectPageIndex: 0,
@@ -152,7 +152,7 @@
         <Link
           on:afterNavigate={closeFocused}
           route={{
-            resource: "seeds",
+            resource: "nodes",
             params: {
               baseUrl: httpd.api.baseUrl,
               projectPageIndex: 0,

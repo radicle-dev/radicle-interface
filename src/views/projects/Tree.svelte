@@ -38,7 +38,7 @@
       route={{
         resource: "project.tree",
         project: projectId,
-        seed: baseUrl,
+        node: baseUrl,
         path: entry.path,
         peer,
         revision,

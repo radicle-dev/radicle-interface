@@ -1,6 +1,6 @@
 {
   "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
-  "seeds": {
+  "nodes": {
     "defaultHttpdPort": 443,
     "defaultLocalHttpdPort": 8080,
     "defaultHttpdScheme": "https",

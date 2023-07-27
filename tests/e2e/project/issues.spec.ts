@@ -97,7 +97,7 @@ test("go through the entire ui issue flow", async ({
   const { rid } = await createProject(authenticatedPeer, "commenting");
 
   await page.goto(
-    `/seeds/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}`,
+    `/nodes/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}`,
   );
   await page.getByRole("link", { name: "0 issues" }).click();
   await page.getByRole("link", { name: "New issue" }).click();
