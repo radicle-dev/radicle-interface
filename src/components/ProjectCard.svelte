@@ -65,9 +65,10 @@
     font-size: var(--font-size-tiny);
   }
   .stateHash {
-    color: var(--color-secondary);
-    font-size: var(--font-size-tiny);
+    color: var(--foreground-emphasized);
+    font-size: var(--font-size-small);
     font-family: var(--font-family-monospace);
+    font-weight: 700;
     min-height: 2rem;
     display: flex;
     align-items: center;

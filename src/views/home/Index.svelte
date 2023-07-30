@@ -35,7 +35,7 @@
     width: 16rem;
   }
   .heading {
-    color: var(--color-secondary);
+    color: var(--foreground-emphasized);
     padding: 1rem 0rem;
     font-size: var(--font-size-medium);
     margin-bottom: 1rem;
