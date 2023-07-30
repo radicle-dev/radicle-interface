@@ -18,7 +18,7 @@
 <style>
   .title {
     align-items: center;
-    color: var(--color-secondary);
+    color: var(--foreground-emphasized);
     display: flex;
     font-size: var(--font-size-x-large);
     font-weight: var(--font-weight-bold);
