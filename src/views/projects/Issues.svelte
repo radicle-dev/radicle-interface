@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Issue, IssueState } from "@httpd-client";
+  import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
 
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
@@ -15,11 +15,10 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let projectId: string;
+  export let project: Project;
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
   export let state: IssueState["status"];
-  export let issueCounters: { open: number; closed: number };
 
   let loading = false;
   let page = 0;
@@ -37,7 +36,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllIssues(projectId, {
+      const response = await api.project.getAllIssues(project.id, {
         state,
         page,
         perPage: ISSUES_PER_PAGE,
@@ -59,12 +58,12 @@
   const stateOptions: IssueState["status"][] = ["open", "closed"];
   $: options = stateOptions.map<Tab>(s => ({
     value: s,
-    title: `${issueCounters[s]} ${s}`,
-    disabled: issueCounters[s] === 0,
+    title: `${project.issues[s]} ${s}`,
+    disabled: project.issues[s] === 0,
   }));
 
   $: showMoreButton =
-    !loading && !error && allIssues.length < issueCounters[state];
+    !loading && !error && allIssues.length < project.issues[state];
 </script>
 
 <style>
@@ -107,7 +106,7 @@
             <Link
               route={{
                 resource: "project.issues",
-                project: projectId,
+                project: project.id,
                 node: baseUrl,
                 state: option.value,
               }}>
@@ -133,7 +132,7 @@
       <Link
         route={{
           resource: "project.newIssue",
-          project: projectId,
+          project: project.id,
           node: baseUrl,
         }}>
         <SquareButton>New issue</SquareButton>
@@ -143,7 +142,7 @@
   <div class="issues-list">
     {#each allIssues as issue (issue.id)}
       <div class="teaser">
-        <IssueTeaser {projectId} {baseUrl} {issue} />
+        <IssueTeaser projectId={project.id} {baseUrl} {issue} />
       </div>
     {:else}
       {#if error}

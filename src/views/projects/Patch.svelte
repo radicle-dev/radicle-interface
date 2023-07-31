@@ -56,10 +56,10 @@
 
   export let baseUrl: BaseUrl;
   export let project: Project;
-  export let view: PatchView;
+  export let patch: Patch;
+  export let view: PatchView["view"];
 
   $: api = new HttpdClient(baseUrl);
-  $: patch = view.patch;
 
   async function createReply({
     detail: reply,
@@ -104,10 +104,10 @@
       }
 
       let revision;
-      if (view.view.name === "diff") {
+      if (view.name === "diff") {
         revision = patch.revisions[patch.revisions.length - 1].id;
       } else {
-        revision = view.view.revision;
+        revision = view.revision;
       }
       await api.project.updatePatch(
         project.id,
@@ -167,10 +167,10 @@
   }
 
   let revisionId: string;
-  $: if (view.view.name === "diff") {
+  $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
   } else {
-    revisionId = view.view.revision;
+    revisionId = view.revision;
   }
 
   $: patchReviews = computeReviews(patch);
@@ -352,12 +352,12 @@
       <div style="display: flex; gap: 0.5rem;">
         {#each Object.entries(tabs) as [name, route]}
           <Link {route}>
-            <SquareButton size="small" active={name === view.view.name}>
+            <SquareButton size="small" active={name === view.name}>
               {capitalize(name)}
             </SquareButton>
           </Link>
         {/each}
-        {#if view.view.name === "diff"}
+        {#if view.name === "diff"}
           <Link
             route={{
               resource: "project.patch",
@@ -366,28 +366,28 @@
               patch: patch.id,
               view: {
                 name: "diff",
-                fromCommit: view.view.fromCommit,
-                toCommit: view.view.toCommit,
+                fromCommit: view.fromCommit,
+                toCommit: view.toCommit,
               },
             }}>
             <SquareButton size="small" active={true}>
-              Diff {view.view.fromCommit.substring(
+              Diff {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
                 0,
                 6,
-              )}..{view.view.toCommit.substring(0, 6)}
+              )}
             </SquareButton>
           </Link>
         {/if}
       </div>
 
-      {#if view.view.name === "commits" || view.view.name === "files"}
+      {#if view.name === "commits" || view.name === "files"}
         <Floating disabled={patch.revisions.length === 1}>
           <svelte:fragment slot="toggle">
             <SquareButton
               size="small"
               clickable={patch.revisions.length > 1}
               disabled={patch.revisions.length === 1}>
-              Revision {utils.formatObjectId(view.view.revision)}
+              Revision {utils.formatObjectId(view.revision)}
             </SquareButton>
           </svelte:fragment>
           <svelte:fragment slot="modal">
@@ -401,12 +401,12 @@
                     node: baseUrl,
                     patch: patch.id,
                     view: {
-                      name: view.view.name,
+                      name: view.name,
                       revision: item.id,
                     },
                   }}>
                   <DropdownItem
-                    selected={item.id === view.view.revision}
+                    selected={item.id === view.revision}
                     size="tiny">
                     Revision {utils.formatObjectId(item.id)}
                   </DropdownItem>
@@ -417,15 +417,15 @@
         </Floating>
       {/if}
     </div>
-    {#if view.view.name === "diff"}
+    {#if view.name === "diff"}
       <div style:margin-top="1rem">
         <Changeset
           projectId={project.id}
           {baseUrl}
-          revision={view.view.toCommit}
-          diff={view.view.diff} />
+          revision={view.toCommit}
+          diff={view.diff} />
       </div>
-    {:else if view.view.name === "activity"}
+    {:else if view.name === "activity"}
       {#each timelineTuple as [revision, timelines], index}
         {@const previousRevision =
           index > 0 ? patch.revisions[index - 1] : undefined}
@@ -448,22 +448,22 @@
           <div slot="body">No activity on this patch yet</div>
         </Placeholder>
       {/each}
-    {:else if view.view.name === "commits"}
+    {:else if view.name === "commits"}
       <div class="commit-list">
-        {#each view.view.commits as commit}
+        {#each view.commits as commit}
           <CommitTeaser projectId={project.id} {baseUrl} {commit} />
         {/each}
       </div>
-    {:else if view.view.name === "files"}
+    {:else if view.name === "files"}
       <div style:margin-top="1rem">
         <Changeset
           projectId={project.id}
           {baseUrl}
-          revision={view.view.revision}
-          diff={view.view.diff} />
+          revision={view.revision}
+          diff={view.diff} />
       </div>
     {:else}
-      {utils.unreachable(view.view.name)}
+      {utils.unreachable(view.name)}
     {/if}
   </div>
 

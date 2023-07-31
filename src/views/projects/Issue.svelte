@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Issue, IssueState } from "@httpd-client";
+  import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
   import type { IssueUpdateAction } from "@httpd-client/lib/project/issue";
   import type { Session } from "@app/lib/httpd";
 
@@ -27,10 +27,9 @@
 
   export let issue: Issue;
   export let baseUrl: BaseUrl;
-  export let projectId: string;
-  export let projectHead: string;
+  export let project: Project;
 
-  const rawPath = utils.getRawBasePath(projectId, baseUrl, projectHead);
+  const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
 
   $: groupedReactions = issue.discussion[0].reactions.reduce(
@@ -54,7 +53,7 @@
   }: CustomEvent<{ id: string; body: string }>) {
     if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         {
           type: "thread",
@@ -64,7 +63,7 @@
         api,
       );
       if (status === "success") {
-        issue = await refreshIssue(projectId, issue, api);
+        issue = await refreshIssue(project.id, issue, api);
       }
     }
   }
@@ -72,14 +71,14 @@
   async function createComment(body: string) {
     if ($httpdStore.state === "authenticated" && body.trim().length > 0) {
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         { type: "thread", action: { type: "comment", body } },
         $httpdStore.session,
         api,
       );
       if (status === "success") {
-        issue = await refreshIssue(projectId, issue, api);
+        issue = await refreshIssue(project.id, issue, api);
       }
     }
   }
@@ -91,14 +90,14 @@
       title !== issue.title
     ) {
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         { type: "edit", title },
         $httpdStore.session,
         api,
       );
       if (status === "success") {
-        issue = await refreshIssue(projectId, issue, api);
+        issue = await refreshIssue(project.id, issue, api);
       }
       issue.title = issue.title;
     } else {
@@ -114,7 +113,7 @@
         return;
       }
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         {
           type: "tag",
@@ -125,7 +124,7 @@
         api,
       );
       if (status === "success") {
-        issue = await refreshIssue(projectId, issue, api);
+        issue = await refreshIssue(project.id, issue, api);
       }
     }
   }
@@ -140,7 +139,7 @@
         return;
       }
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         {
           type: "assign",
@@ -151,7 +150,7 @@
         api,
       );
       if (status === "success") {
-        issue = await refreshIssue(projectId, issue, api);
+        issue = await refreshIssue(project.id, issue, api);
       }
     }
   }
@@ -159,7 +158,7 @@
   async function saveStatus({ detail: state }: CustomEvent<IssueState>) {
     if ($httpdStore.state === "authenticated") {
       const status = await updateIssue(
-        projectId,
+        project.id,
         issue.id,
         { type: "lifecycle", state },
         $httpdStore.session,
@@ -168,7 +167,7 @@
       if (status === "success") {
         void router.push({
           resource: "project.issue",
-          project: projectId,
+          project: project.id,
           node: baseUrl,
           issue: issue.id,
         });
@@ -345,7 +344,7 @@
       <div slot="description">
         <Markdown
           content={issue.discussion[0].body}
-          rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)} />
+          rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
         {#if issue.discussion[0].reactions}
           <div class="reactions txt-tiny">
             {#each groupedReactions as [reaction, nids], key}

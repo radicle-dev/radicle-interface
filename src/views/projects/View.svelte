@@ -65,26 +65,17 @@
   {:else if view.resource === "history"}
     <History {...view} {baseUrl} {project} />
   {:else if view.resource === "commit"}
-    <Commit commit={view.commit} {baseUrl} {project} />
+    <Commit {...view} {baseUrl} {project} />
   {:else if view.resource === "issues"}
-    <Issues
-      {baseUrl}
-      projectId={project.id}
-      issueCounters={project.issues}
-      state={view.state}
-      issues={view.issues} />
+    <Issues {...view} {baseUrl} {project} />
   {:else if view.resource === "newIssue"}
-    <NewIssue projectId={project.id} projectHead={project.head} {baseUrl} />
+    <NewIssue {baseUrl} {project} />
   {:else if view.resource === "issue"}
-    <Issue
-      projectId={project.id}
-      projectHead={project.head}
-      {baseUrl}
-      issue={view.issue} />
+    <Issue {...view} {baseUrl} {project} />
   {:else if view.resource === "patches"}
-    <Patches {baseUrl} {project} state={view.state} patches={view.patches} />
+    <Patches {...view} {baseUrl} {project} />
   {:else if view.resource === "patch"}
-    <Patch {baseUrl} {project} {view} />
+    <Patch {...view} {baseUrl} {project} />
   {:else}
     {unreachable(view)}
   {/if}

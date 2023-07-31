@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl, Project } from "@httpd-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -18,8 +18,7 @@
   import Textarea from "@app/components/Textarea.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
-  export let projectId: string;
-  export let projectHead: string;
+  export let project: Project;
   export let baseUrl: BaseUrl;
 
   let preview: boolean = false;
@@ -41,7 +40,7 @@
   async function createIssue(sessionId: string) {
     try {
       const result = await api.project.createIssue(
-        projectId,
+        project.id,
         {
           title: issueTitle,
           description: issueText ?? "",
@@ -53,7 +52,7 @@
 
       void router.push({
         resource: "project.issue",
-        project: projectId,
+        project: project.id,
         node: baseUrl,
         issue: result.id,
       });
@@ -151,9 +150,9 @@
               <Markdown
                 content={issueText}
                 rawPath={utils.getRawBasePath(
-                  projectId,
+                  project.id,
                   baseUrl,
-                  projectHead,
+                  project.head,
                 )} />
             {/if}
           </svelte:fragment>
