@@ -9,34 +9,34 @@
 
   export let action: "create" | "edit" | "view" = "view";
   export let editInProgress: boolean = false;
-  export let tags: string[] = [];
+  export let labels: string[] = [];
 
-  let updatedTags: string[] = tags;
+  let updatedLabels: string[] = labels;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
 
   $: sanitizedValue = inputValue.trim();
 
-  function addTag() {
+  function addLabel() {
     if (sanitizedValue.length > 0) {
-      if (updatedTags.includes(sanitizedValue)) {
-        validationMessage = "This tag is already added";
+      if (updatedLabels.includes(sanitizedValue)) {
+        validationMessage = "This label is already added";
       } else {
-        updatedTags = [...updatedTags, sanitizedValue];
+        updatedLabels = [...updatedLabels, sanitizedValue];
         inputValue = "";
         if (action === "create") {
-          dispatch("save", updatedTags);
+          dispatch("save", updatedLabels);
         }
       }
     } else {
-      validationMessage = "This tag is not valid";
+      validationMessage = "This label is not valid";
     }
   }
 
-  function removeTag({ detail: key }: { detail: number }) {
-    updatedTags = updatedTags.filter((_, i) => i !== key);
+  function removeLabel({ detail: key }: { detail: number }) {
+    updatedLabels = updatedLabels.filter((_, i) => i !== key);
     if (action === "create") {
-      dispatch("save", updatedTags);
+      dispatch("save", updatedLabels);
     }
   }
 </script>
@@ -57,7 +57,7 @@
     gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
-  .tag {
+  .label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -66,14 +66,14 @@
 
 <div>
   <div class="metadata-section-header">
-    <span>Tags</span>
+    <span>Labels</span>
     {#if action === "edit"}
       {#if editInProgress}
         <Button
           size="tiny"
           variant="text"
           on:click={() => {
-            dispatch("save", updatedTags);
+            dispatch("save", updatedLabels);
             editInProgress = !editInProgress;
           }}>
           save
@@ -91,15 +91,15 @@
     {/if}
   </div>
   <div class="metadata-section-body">
-    {#each updatedTags as tag, key (tag)}
+    {#each updatedLabels as label, key (label)}
       <Chip
-        on:remove={removeTag}
+        on:remove={removeLabel}
         removeable={editInProgress || action === "create"}
         {key}>
-        <div aria-label="chip" class="tag">{tag}</div>
+        <div aria-label="chip" class="label">{label}</div>
       </Chip>
     {:else}
-      <div class="txt-missing">No tags</div>
+      <div class="txt-missing">No labels</div>
     {/each}
   </div>
   {#if editInProgress || action === "create"}
@@ -107,10 +107,10 @@
       <TextInput
         bind:value={inputValue}
         valid={sanitizedValue.length > 0}
-        placeholder="Add tag"
+        placeholder="Add label"
         variant="form"
         {validationMessage}
-        on:submit={addTag}
+        on:submit={addLabel}
         on:input={() => (validationMessage = undefined)} />
     </div>
   {/if}

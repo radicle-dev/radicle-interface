@@ -1,4 +1,4 @@
-import type { Comment, ThreadUpdateAction } from "./comment.js";
+import type { Comment } from "./comment.js";
 import type { ZodSchema } from "zod";
 import { array, boolean, literal, object, string, union } from "zod";
 
@@ -22,7 +22,7 @@ export interface Issue {
   title: string;
   state: IssueState;
   discussion: Comment[];
-  tags: string[];
+  labels: string[];
   assignees: string[];
 }
 
@@ -32,7 +32,7 @@ export const issueSchema = object({
   title: string(),
   state: issueStateSchema,
   discussion: array(commentSchema),
-  tags: array(string()),
+  labels: array(string()),
   assignees: array(string()),
 }) satisfies ZodSchema<Issue>;
 
@@ -49,12 +49,19 @@ export const issueCreatedSchema = object({
 export const issuesSchema = array(issueSchema) satisfies ZodSchema<Issue[]>;
 
 export type IssueUpdateAction =
+  | { type: "edit"; title: string }
+  | { type: "label"; labels: string[] }
   | {
       type: "assign";
-      add: string[];
-      remove: string[];
+      assignees: string[];
     }
-  | { type: "edit"; title: string }
   | { type: "lifecycle"; state: IssueState }
-  | { type: "tag"; add: string[]; remove: string[] }
-  | { type: "thread"; action: ThreadUpdateAction };
+  | { type: "comment"; body: string; replyTo: string }
+  | { type: "comment.edit"; id: string; body: string }
+  | { type: "comment.redact"; id: string }
+  | {
+      type: "comment.react";
+      id: string;
+      reaction: string;
+      active: boolean;
+    };

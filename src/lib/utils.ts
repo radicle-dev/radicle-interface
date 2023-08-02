@@ -243,21 +243,7 @@ export function twemoji(
   });
 }
 
-export function createAddRemoveArrays(
-  currentArray: string[],
-  newArray: string[],
-): { add: string[]; remove: string[] } {
-  return {
-    add: newArray.filter(item => !currentArray.includes(item)),
-    remove: currentArray.filter(item => !newArray.includes(item)),
-  };
-}
-
 // Formats COBs Object Ids
 export function formatObjectId(id: string): string {
   return id.substring(0, 7);
-}
-
-export function stripDidPrefix(array: string[]): string[] {
-  return array.map(id => id.replace("did:key:", ""));
 }

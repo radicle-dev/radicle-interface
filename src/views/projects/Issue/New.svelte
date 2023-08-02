@@ -14,7 +14,7 @@
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import TagInput from "@app/views/projects/Cob/TagInput.svelte";
+  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
@@ -33,7 +33,7 @@
   let issueTitle = "";
   let issueText: string | undefined = undefined;
   let assignees: string[] = [];
-  let tags: string[] = [];
+  let labels: string[] = [];
 
   const api = new HttpdClient(baseUrl);
 
@@ -44,8 +44,8 @@
         {
           title: issueTitle,
           description: issueText ?? "",
-          assignees: utils.stripDidPrefix(assignees),
-          tags: tags,
+          assignees: assignees,
+          labels: labels,
         },
         sessionId,
       );
@@ -174,7 +174,7 @@
             {/if}
           </Button>
           <Button
-            disabled={!issueTitle}
+            disabled={!issueTitle || !issueText}
             size="small"
             variant="secondary"
             on:click={() => void createIssue(session.id)}>
@@ -187,9 +187,9 @@
           {action}
           on:save={({ detail: updatedAssignees }) =>
             (assignees = updatedAssignees)} />
-        <TagInput
+        <LabelInput
           {action}
-          on:save={({ detail: updatedTags }) => (tags = updatedTags)} />
+          on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
       </div>
     </div>
   {:else}

@@ -3,7 +3,6 @@ import type { BaseUrl } from "@httpd-client";
 import configJson from "@app/config.json";
 
 export interface Config {
-  reactions: string[];
   nodes: {
     defaultHttpdPort: number;
     defaultLocalHttpdPort: number;
@@ -23,7 +22,6 @@ export interface Config {
 function getConfig(): Config {
   if (window.VITEST) {
     return {
-      reactions: [],
       nodes: {
         defaultHttpdPort: 8081,
         defaultLocalHttpdPort: 8081,

@@ -21,7 +21,7 @@
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import TagInput from "./Cob/TagInput.svelte";
+  import LabelInput from "./Cob/LabelInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
@@ -56,8 +56,9 @@
         project.id,
         issue.id,
         {
-          type: "thread",
-          action: { type: "comment", body: reply.body, replyTo: reply.id },
+          type: "comment",
+          body: reply.body,
+          replyTo: reply.id,
         },
         $httpdStore.session,
         api,
@@ -73,7 +74,7 @@
       const status = await updateIssue(
         project.id,
         issue.id,
-        { type: "thread", action: { type: "comment", body } },
+        { type: "comment", body, replyTo: issue.id },
         $httpdStore.session,
         api,
       );
@@ -106,19 +107,17 @@
     }
   }
 
-  async function saveTags({ detail: tags }: CustomEvent<string[]>) {
+  async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
     if ($httpdStore.state === "authenticated") {
-      const { add, remove } = utils.createAddRemoveArrays(issue.tags, tags);
-      if (add.length === 0 && remove.length === 0) {
+      if (isEqual(issue.labels, labels)) {
         return;
       }
       const status = await updateIssue(
         project.id,
         issue.id,
         {
-          type: "tag",
-          add,
-          remove,
+          type: "label",
+          labels: labels,
         },
         $httpdStore.session,
         api,
@@ -131,11 +130,7 @@
 
   async function saveAssignees({ detail: assignees }: CustomEvent<string[]>) {
     if ($httpdStore.state === "authenticated") {
-      const { add, remove } = utils.createAddRemoveArrays(
-        issue.assignees,
-        assignees,
-      );
-      if (add.length === 0 && remove.length === 0) {
+      if (isEqual(issue.assignees, assignees)) {
         return;
       }
       const status = await updateIssue(
@@ -143,8 +138,7 @@
         issue.id,
         {
           type: "assign",
-          add: utils.stripDidPrefix(add),
-          remove: utils.stripDidPrefix(remove),
+          assignees: assignees,
         },
         $httpdStore.session,
         api,
@@ -405,6 +399,6 @@
       {action}
       assignees={issue.assignees}
       on:save={saveAssignees} />
-    <TagInput {action} tags={issue.tags} on:save={saveTags} />
+    <LabelInput {action} labels={issue.labels} on:save={saveLabels} />
   </div>
 </div>

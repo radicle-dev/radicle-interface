@@ -15,7 +15,7 @@ test("navigate single issue", async ({ page }) => {
   await page.getByText("This title has markdown").click();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/issues/4fc727e722d3979fd2073d9b56b2751658a4ae79`,
+    `${cobUrl}/issues/9cedac832f0791bea5c9cf8fa32db8a68c592166`,
   );
 });
 
@@ -71,7 +71,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   );
 
   await page.route(
-    `**/v1/projects/${rid}/issues/d316f7a90a40dacbfb8728044bad50c9f71d44ba`,
+    `**/v1/projects/${rid}/issues/ad9114fa910c67f09ce5d42d12c31038eb40fc86`,
     route => {
       if (route.request().method() !== "PATCH") {
         void route.fallback();
@@ -82,7 +82,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   );
 
   await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/d316f7a90a40dacbfb8728044bad50c9f71d44ba`,
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/ad9114fa910c67f09ce5d42d12c31038eb40fc86`,
   );
 
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
@@ -109,10 +109,10 @@ test("go through the entire ui issue flow", async ({
   await page.getByPlaceholder("Add assignee").fill(authenticatedPeer.nodeId);
   await page.getByPlaceholder("Add assignee").press("Enter");
 
-  await page.getByPlaceholder("Add tag").fill("bug");
-  await page.getByPlaceholder("Add tag").press("Enter");
-  await page.getByPlaceholder("Add tag").fill("documentation");
-  await page.getByPlaceholder("Add tag").press("Enter");
+  await page.getByPlaceholder("Add label").fill("bug");
+  await page.getByPlaceholder("Add label").press("Enter");
+  await page.getByPlaceholder("Add label").fill("documentation");
+  await page.getByPlaceholder("Add label").press("Enter");
 
   await page.getByRole("button", { name: "Submit" }).click();
 

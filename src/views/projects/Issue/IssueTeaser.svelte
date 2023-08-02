@@ -60,12 +60,12 @@
     gap: 0.5rem;
     color: var(--color-foreground-5);
   }
-  .tags {
+  .labels {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
   }
-  .tag {
+  .label {
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -88,7 +88,7 @@
   }
 
   @media (max-width: 960px) {
-    .tags {
+    .labels {
       display: none;
     }
   }
@@ -114,15 +114,15 @@
           <InlineMarkdown content={issue.title} />
         </span>
       </Link>
-      <span class="tags">
-        {#each issue.tags.slice(0, 4) as tag}
+      <span class="labels">
+        {#each issue.labels.slice(0, 4) as label}
           <Badge style="max-width:7rem" variant="secondary">
-            <span class="tag">{tag}</span>
+            <span class="label">{label}</span>
           </Badge>
         {/each}
-        {#if issue.tags.length > 4}
+        {#if issue.labels.length > 4}
           <Badge variant="foreground">
-            <span class="tag">+{issue.tags.length - 4} more tags</span>
+            <span class="label">+{issue.labels.length - 4} more labels</span>
           </Badge>
         {/if}
       </span>

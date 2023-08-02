@@ -1,4 +1,4 @@
-import type { Comment, ThreadUpdateAction } from "./comment.js";
+import type { Comment } from "./comment.js";
 import type { ZodSchema, z } from "zod";
 
 import { commentSchema } from "./comment.js";
@@ -101,9 +101,9 @@ export interface Patch {
   title: string;
   state: PatchState;
   target: string;
-  tags: string[];
+  labels: string[];
   merges: Merge[];
-  reviewers: string[];
+  assignees: string[];
   revisions: Revision[];
 }
 
@@ -113,37 +113,108 @@ export const patchSchema = object({
   title: string(),
   state: patchStateSchema,
   target: string(),
-  tags: array(string()),
+  labels: array(string()),
   merges: array(mergeSchema),
-  reviewers: array(string()),
+  assignees: array(string()),
   revisions: array(revisionSchema),
 }) satisfies ZodSchema<Patch>;
 
 export const patchesSchema = array(patchSchema) satisfies ZodSchema<Patch[]>;
 
+export type LifecycleState =
+  | { status: "draft" }
+  | { status: "open" }
+  | { status: "archived" };
+
+export type Range =
+  | {
+      type: "lines";
+      range: { start: number; end: number };
+    }
+  | {
+      type: "chars";
+      line: number;
+      range: { start: number; end: number };
+    };
+
+export type CodeLocation = {
+  path: string;
+  old?: Range;
+  new?: Range;
+};
+
 export type PatchUpdateAction =
-  | { type: "edit"; title: string; target: string }
-  | { type: "editRevision"; revision: string; description: string }
-  | { type: "editReview"; review: string; summary?: string }
-  | { type: "tag"; add: string[]; remove: string[] }
-  | { type: "revision"; description: string; base: string; oid: string }
-  | { type: "lifecycle"; state: PatchState }
-  | { type: "redact"; revision: string }
+  | { type: "edit"; title: string; target: "delegates" }
+  | { type: "label"; labels: string[] }
+  | { type: "assign"; assignees: string[] }
+  | { type: "merge"; revision: string; commit: string }
+  | { type: "lifecycle"; state: LifecycleState }
   | {
       type: "review";
       revision: string;
       summary?: string;
       verdict?: Verdict | null;
     }
-  | { type: "merge"; revision: string; commit: string }
-  | { type: "thread"; revision: string; action: ThreadUpdateAction };
+  | { type: "review.edit"; review: string; summary?: string }
+  | { type: "review.redact"; review: string }
+  | {
+      type: "review.comment";
+      review: string;
+      body: string;
+      location: CodeLocation;
+    }
+  | {
+      type: "review.comment.edit";
+      review: string;
+      comment: string;
+      body: string;
+    }
+  | {
+      type: "review.comment.redact";
+      review: string;
+      comment: string;
+    }
+  | {
+      type: "review.comment.react";
+      review: string;
+      comment: string;
+      reaction: string;
+      active: boolean;
+    }
+  | { type: "revision"; description: string; base: string; oid: string }
+  | { type: "revision.edit"; revision: string; description: string }
+  | { type: "revision.redact"; revision: string }
+  | {
+      type: "revision.comment";
+      revision: string;
+      body: string;
+      replyTo: string;
+    }
+  | {
+      type: "revision.comment.edit";
+      revision: string;
+      comment: string;
+      body: string;
+    }
+  | {
+      type: "revision.comment.redact";
+      revision: string;
+      comment: string;
+    }
+  | {
+      type: "revision.comment.react";
+      revision: string;
+      comment: string;
+      reaction: string;
+      active: boolean;
+    };
 
 export const patchCreateSchema = object({
   title: string(),
   description: string(),
   target: string(),
   oid: string(),
-  tags: array(string()),
+  labels: array(string()),
 });
 
 export type PatchCreate = z.infer<typeof patchCreateSchema>;

@@ -1,5 +1,4 @@
 {
-  "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "nodes": {
     "defaultHttpdPort": 443,
     "defaultLocalHttpdPort": 8080,

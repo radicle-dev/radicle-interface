@@ -98,7 +98,7 @@ describe("project", () => {
   test("#getIssueById(id, issueId)", async () => {
     await api.project.getIssueById(
       cobRid,
-      "4fc727e722d3979fd2073d9b56b2751658a4ae79",
+      "9cedac832f0791bea5c9cf8fa32db8a68c592166",
     );
   });
 
@@ -111,7 +111,7 @@ describe("project", () => {
   });
 
   testWithAPI(
-    "#createIssue(id, { title, description, assignees, tags })",
+    "#createIssue(id, { title, description, assignees, labels })",
     async ({ httpd: { api, peer } }) => {
       const sessionId = await authenticate(api, peer);
       const { id: issueId } = await api.project.createIssue(
@@ -120,7 +120,7 @@ describe("project", () => {
           title: "aaa",
           description: "bbb",
           assignees: [],
-          tags: ["bug", "documentation"],
+          labels: ["bug", "documentation"],
         },
         sessionId,
       );
@@ -130,7 +130,7 @@ describe("project", () => {
           title: "aaa",
           discussion: [{ body: "bbb" }],
           assignees: [],
-          tags: ["bug", "documentation"],
+          labels: ["bug", "documentation"],
         },
         api,
       );
@@ -153,17 +153,17 @@ describe("project", () => {
   );
 
   testWithAPI(
-    "#updateIssue(id, issueId, { type: 'tag' }, authToken)",
+    "#updateIssue(id, issueId, { type: 'label' }, authToken)",
     async ({ httpd: { api, peer } }) => {
       const sessionId = await authenticate(api, peer);
       const issueId = await createIssueToBeModified(api, sessionId);
       await api.project.updateIssue(
         cobRid,
         issueId,
-        { type: "tag", add: ["bug"], remove: [] },
+        { type: "label", labels: ["bug"] },
         sessionId,
       );
-      await assertIssue(issueId, { tags: ["bug"] }, api);
+      await assertIssue(issueId, { labels: ["bug"] }, api);
     },
   );
 
@@ -172,18 +172,16 @@ describe("project", () => {
     async ({ httpd: { api, peer } }) => {
       const sessionId = await authenticate(api, peer);
       const issueId = await createIssueToBeModified(api, sessionId);
-      const assignee = bobRemote.replace("did:key:", "");
       await api.project.updateIssue(
         cobRid,
         issueId,
         {
           type: "assign",
-          add: [assignee],
-          remove: [],
+          assignees: [bobRemote],
         },
         sessionId,
       );
-      await assertIssue(issueId, { assignees: [`did:key:${assignee}`] }, api);
+      await assertIssue(issueId, { assignees: [bobRemote] }, api);
     },
   );
 
@@ -211,7 +209,7 @@ describe("project", () => {
   test("#getPatchById(id, patchId)", async () => {
     await api.project.getPatchById(
       cobRid,
-      "013f8b2734df1840b2e33d52ff5632c8d66b199a",
+      "687c3268119d23c5da32055c0b44c03e0e4088b8",
     );
   });
 
@@ -230,7 +228,7 @@ describe("project", () => {
           description: "qqq",
           target: "d7dd8cecae16b1108234e09dbdb5d64ae394bc25",
           oid: "38c225e2a0b47ba59def211f4e4825c31d9463ec",
-          tags: [],
+          labels: [],
         },
         sessionId,
       );
@@ -240,7 +238,7 @@ describe("project", () => {
           title: "ppp",
           state: { status: "open" },
           target: "delegates",
-          tags: [],
+          labels: [],
           revisions: [
             {
               description: "qqq",
@@ -262,13 +260,13 @@ describe("project", () => {
       await api.project.updatePatch(
         cobRid,
         patchId,
-        { type: "tag", add: ["bug"], remove: [] },
+        { type: "label", labels: ["bug"] },
         sessionId,
       );
       await assertPatch(
         patchId,
         {
-          tags: ["bug"],
+          labels: ["bug"],
         },
         api,
       );

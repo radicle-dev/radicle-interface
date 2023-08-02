@@ -11,7 +11,7 @@ export async function createIssueToBeModified(
 ) {
   const { id } = await api.project.createIssue(
     cobRid,
-    { title: "aaa", description: "bbb", assignees: [], tags: [] },
+    { title: "aaa", description: "bbb", assignees: [], labels: [] },
     sessionId,
   );
 
@@ -29,7 +29,7 @@ export async function createPatchToBeModified(
       description: "ttt",
       target: "d7dd8cecae16b1108234e09dbdb5d64ae394bc25",
       oid: "38c225e2a0b47ba59def211f4e4825c31d9463ec",
-      tags: [],
+      labels: [],
     },
     sessionId,
   );

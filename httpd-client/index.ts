@@ -17,9 +17,12 @@ import type {
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
 import type {
+  CodeLocation,
+  LifecycleState,
   Merge,
   Patch,
   PatchState,
+  Range,
   Review,
   Revision,
 } from "./lib/project/patch.js";
@@ -35,6 +38,7 @@ import { Fetcher } from "./lib/fetcher.js";
 export type {
   BaseUrl,
   Blob,
+  CodeLocation,
   Comment,
   Commit,
   CommitHeader,
@@ -45,10 +49,12 @@ export type {
   HunkLine,
   Issue,
   IssueState,
+  LifecycleState,
   Merge,
   Patch,
   PatchState,
   Project,
+  Range,
   Remote,
   Review,
   Revision,

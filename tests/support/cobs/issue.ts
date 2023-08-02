@@ -5,7 +5,7 @@ export async function create(
   peer: RadiclePeer,
   title: string,
   description: string,
-  tags: string[],
+  labels: string[],
   options: Options,
 ): Promise<string> {
   const issueOptions: string[] = [
@@ -15,7 +15,7 @@ export async function create(
     title,
     "--description",
     description,
-    ...tags.map(tag => ["--tag", tag]).flat(),
+    ...labels.map(label => ["--label", label]).flat(),
   ];
   const { stdout } = await peer.rad(issueOptions, options);
   const match = stdout.match(/Issue {3}([a-zA-Z0-9]*)/);

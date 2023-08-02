@@ -23,15 +23,15 @@ test("issues page", async ({ page }) => {
 });
 
 test("issue page", async ({ page }) => {
-  await page.goto(`${cobUrl}/issues/4fc727e722d3979fd2073d9b56b2751658a4ae79`, {
+  await page.goto(`${cobUrl}/issues/9cedac832f0791bea5c9cf8fa32db8a68c592166`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/4038cc5bf6d38f0a5606982236e2abb113affaea`, {
+  await page.goto(`${cobUrl}/issues/278bbe0bf3af51e5de1dfe20fefbbec4e1121343`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/673c51821aee4b780d9661c20d267d66ec43d7ae`, {
+  await page.goto(`${cobUrl}/issues/61d2dbe81411ee6a9cce75451bc637541ea6a7c2`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -59,40 +59,41 @@ test("patches page", async ({ page }) => {
 test("patch page", async ({ page }) => {
   // Draft patch
   await page.goto(
-    `${cobUrl}/patches/f85dce5dced961ee0f47735401cee72a0ee77900`,
+    `${cobUrl}/patches/416d2f95f32a5fdee958172b724c8439ce5334e2`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Archived patch
   await page.goto(
-    `${cobUrl}/patches/8d83959d9889da0a94129d9ba06b87c8823972a8`,
+    `${cobUrl}/patches/43ae785a9ceaf289b2445fb5b8e01036d456b2be`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Merged patch
   await page.goto(
-    `${cobUrl}/patches/a5b1d30035da686ba1c4742f6fd25c43238df671`,
+    `${cobUrl}/patches/6a51e1d2e350136e7bcfad8f13d16488c1f1c99a`,
+    { waitUntil: "networkidle" },
+  );
+  await expect(page).toHaveScreenshot({ fullPage: true });
+  // Open patch "Add subtitle to README"
+  await page.goto(
+    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f`,
+    { waitUntil: "networkidle" },
+  );
+  await expect(page).toHaveScreenshot({ fullPage: true });
+  // Open patch "Taking another stab at the README"
+  await page.goto(
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.goto(
-    `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Open patch
-  await page.goto(
-    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`,
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=commits`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.goto(
-    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?tab=commits`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(
-    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?tab=files`,
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=files`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -104,6 +105,6 @@ test("failed diff loading for a specific revision", async ({ page }) => {
     route => route.fulfill({ status: 500 }),
   );
 
-  await page.goto(`${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`);
+  await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

@@ -17,7 +17,7 @@ test("navigate patch details", async ({ page }) => {
   await page.goto(`${cobUrl}/patches`);
   await page.getByText("Add subtitle to README").click();
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a`,
+    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f`,
   );
   await page.getByRole("link", { name: "Add subtitle to README" }).click();
   await expect(page).toHaveURL(
@@ -27,13 +27,13 @@ test("navigate patch details", async ({ page }) => {
   {
     await page.getByRole("link", { name: "Commits" }).click();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=commits`,
+      `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=commits`,
     );
   }
   {
     await page.getByRole("link", { name: "Files" }).click();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/013f8b2734df1840b2e33d52ff5632c8d66b199a?tab=files`,
+      `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=files`,
     );
   }
 });
@@ -73,7 +73,7 @@ test("test patches counters", async ({ page, authenticatedPeer }) => {
 });
 
 test("use revision selector", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`);
+  await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
   await page.getByRole("link", { name: "Files" }).click();
 
   // Validating the latest revision state
@@ -87,9 +87,9 @@ test("use revision selector", async ({ page }) => {
   ).toHaveText("Add more text");
 
   // Switching to the initial revision
-  await page.getByText("Revision 779ce78").click();
+  await page.getByText("Revision 0535843").click();
   await expect(page.locator(".dropdown")).toBeVisible();
-  await page.getByRole("link", { name: "Revision 0f3697f" }).click();
+  await page.getByRole("link", { name: "Revision 687c326" }).click();
   await expect(page.locator(".dropdown")).toBeHidden();
 
   // Validating the initial revision
@@ -103,12 +103,12 @@ test("use revision selector", async ({ page }) => {
   ).toBeHidden();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466/0f3697fed2743549e3bf531e9fa81284a6de1466?tab=files`,
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=files`,
   );
 });
 
 test("navigate through revision diffs", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466`);
+  await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
 
   const firstRevision = page.locator(".revision").first();
   const secondRevision = page.locator(".revision").nth(1);
@@ -123,19 +123,19 @@ test("navigate through revision diffs", async ({ page }) => {
       page.getByRole("link", { name: "Diff 38c225..9898da" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9898da6155467adad511f63bf0fb5aa4156b92ef`,
+      `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9898da6155467adad511f63bf0fb5aa4156b92ef`,
     );
     await page.goBack();
     await secondRevision.locator(".toggle").click();
     await secondRevision
-      .getByRole("link", { name: "Compare to previous revision (0f3697f)" })
+      .getByRole("link", { name: "Compare to previous revision (687c326)" })
       .click();
     await expect(
       page.getByRole("link", { name: "Diff 0dc373..9898da" }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=0dc373db601ccbcffa80dec932e4006516709ca6..9898da6155467adad511f63bf0fb5aa4156b92ef`,
+      `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?diff=0dc373db601ccbcffa80dec932e4006516709ca6..9898da6155467adad511f63bf0fb5aa4156b92ef`,
     );
     await page.goBack();
 
@@ -157,7 +157,7 @@ test("navigate through revision diffs", async ({ page }) => {
       page.getByRole("link", { name: "Diff 38c225..0dc373" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/0f3697fed2743549e3bf531e9fa81284a6de1466?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..0dc373db601ccbcffa80dec932e4006516709ca6`,
+      `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..0dc373db601ccbcffa80dec932e4006516709ca6`,
     );
   }
 });

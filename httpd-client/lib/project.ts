@@ -407,7 +407,7 @@ export class Client {
       title: string;
       description: string;
       assignees: string[];
-      tags: string[];
+      labels: string[];
     },
     authToken: string,
     options?: RequestOptions,

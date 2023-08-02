@@ -34,7 +34,7 @@
   import type { PatchView } from "./router";
 
   import * as utils from "@app/lib/utils";
-  import { capitalize } from "lodash";
+  import { capitalize, isEqual } from "lodash";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore } from "@app/lib/httpd";
 
@@ -52,7 +52,7 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
-  import TagInput from "@app/views/projects/Cob/TagInput.svelte";
+  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
 
   export let baseUrl: BaseUrl;
   export let project: Project;
@@ -69,13 +69,10 @@
         project.id,
         patch.id,
         {
-          type: "thread",
+          type: "revision.comment",
           revision: revisionId,
-          action: {
-            type: "comment",
-            body: reply.body,
-            replyTo: reply.id,
-          },
+          body: reply.body,
+          replyTo: reply.id,
         },
         $httpdStore.session.id,
       );
@@ -96,10 +93,9 @@
     }
   }
 
-  async function saveTags({ detail: tags }: CustomEvent<string[]>) {
+  async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
     if ($httpdStore.state === "authenticated") {
-      const { add, remove } = utils.createAddRemoveArrays(patch.tags, tags);
-      if (add.length === 0 && remove.length === 0) {
+      if (isEqual(patch.labels, labels)) {
         return;
       }
 
@@ -112,7 +108,7 @@
       await api.project.updatePatch(
         project.id,
         revision,
-        { type: "tag", add, remove },
+        { type: "label", labels: labels },
         $httpdStore.session.id,
       );
       patch = await api.project.getPatchById(project.id, patch.id);
@@ -493,6 +489,6 @@
         {/each}
       </div>
     </div>
-    <TagInput {action} tags={patch.tags} on:save={saveTags} />
+    <LabelInput {action} labels={patch.labels} on:save={saveLabels} />
   </div>
 </div>

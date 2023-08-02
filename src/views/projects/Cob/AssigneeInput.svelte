@@ -22,10 +22,11 @@
 
   function addAssignee() {
     if (parsedNodeId) {
-      if (updatedAssignees.includes(parsedNodeId.pubkey)) {
+      const assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
+      if (updatedAssignees.includes(assignee)) {
         validationMessage = "This assignee is already added";
       } else {
-        updatedAssignees = [...updatedAssignees, parsedNodeId.pubkey];
+        updatedAssignees = [...updatedAssignees, assignee];
         inputValue = "";
         if (action === "create") {
           dispatch("save", updatedAssignees);

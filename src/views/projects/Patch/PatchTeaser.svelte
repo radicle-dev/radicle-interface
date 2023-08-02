@@ -82,7 +82,7 @@
     align-self: center;
     margin: 0 1rem 0 1.25rem;
   }
-  .tags {
+  .labels {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -92,7 +92,7 @@
     align-items: center;
     gap: 0.5rem;
   }
-  .tag {
+  .label {
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -109,7 +109,7 @@
     color: var(--color-primary-6);
   }
   @media (max-width: 960px) {
-    .tags {
+    .labels {
       display: none;
     }
   }
@@ -137,15 +137,15 @@
           <InlineMarkdown content={patch.title} />
         </span>
       </Link>
-      <span class="tags">
-        {#each patch.tags.slice(0, 4) as tag}
+      <span class="labels">
+        {#each patch.labels.slice(0, 4) as label}
           <Badge style="max-width:7rem" variant="secondary">
-            <span class="tag">{tag}</span>
+            <span class="label">{label}</span>
           </Badge>
         {/each}
-        {#if patch.tags.length > 4}
+        {#if patch.labels.length > 4}
           <Badge variant="foreground">
-            <span class="tag">+{patch.tags.length - 4} more tags</span>
+            <span class="label">+{patch.labels.length - 4} more labels</span>
           </Badge>
         {/if}
       </span>

@@ -91,7 +91,6 @@ export const test = base.extend<{
         // access to any variables that we have in the test.
         await page.addInitScript(() => {
           window.APP_CONFIG = {
-            reactions: [],
             nodes: {
               defaultHttpdPort: 8081,
               defaultLocalHttpdPort: 8081,
@@ -229,7 +228,6 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
 
 export function appConfigWithFixture() {
   window.APP_CONFIG = {
-    reactions: [],
     nodes: {
       defaultHttpdPort: 8081,
       defaultLocalHttpdPort: 8081,
@@ -543,7 +541,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
-    ["tag", patchThree, "documentation"],
+    ["label", patchThree, "documentation"],
     createOptions(projectFolder, 1),
   );
   await peer.rad(
