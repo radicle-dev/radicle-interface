@@ -1,6 +1,9 @@
+<script lang="ts" context="module">
+  export type ActiveTab = "source" | "issues" | "patches" | undefined;
+</script>
+
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { ProjectLoadedView } from "@app/views/projects/router";
 
   import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
@@ -10,8 +13,8 @@
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let resource: ProjectLoadedView["resource"];
   export let baseUrl: BaseUrl;
+  export let activeTab: ActiveTab = undefined;
 
   export let projectId: string;
   export let projectName: string;
@@ -48,7 +51,7 @@
       node: baseUrl,
       path: "/",
     }}>
-    <SquareButton active={resource === "tree" || resource === "history"}>
+    <SquareButton active={activeTab === "source"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="chevron-left-right" />
       </svelte:fragment>
@@ -61,7 +64,7 @@
       project: projectId,
       node: baseUrl,
     }}>
-    <SquareButton active={resource === "issues" || resource === "issue"}>
+    <SquareButton active={activeTab === "issues"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="exclamation-circle" />
       </svelte:fragment>
@@ -76,7 +79,7 @@
       project: projectId,
       node: baseUrl,
     }}>
-    <SquareButton active={resource === "patches" || resource === "patch"}>
+    <SquareButton active={activeTab === "patches"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>

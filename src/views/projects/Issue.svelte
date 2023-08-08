@@ -20,13 +20,14 @@
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import Markdown from "@app/components/Markdown.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
+  import Layout from "./Layout.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
-  export let issue: Issue;
   export let baseUrl: BaseUrl;
+  export let issue: Issue;
   export let project: Project;
 
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
@@ -308,97 +309,99 @@
   }
 </style>
 
-<div class="issue">
-  <div>
-    <CobHeader
-      {action}
-      id={issue.id}
-      title={issue.title}
-      on:editTitle={editTitle}>
-      <svelte:fragment slot="icon">
-        <div
-          class="state"
-          class:closed={issue.state.status === "closed"}
-          class:open={issue.state.status === "open"}>
-          <Icon name="exclamation-circle" />
-        </div>
-      </svelte:fragment>
-      <svelte:fragment slot="state">
-        {#if issue.state.status === "open"}
-          <Badge variant="positive">
-            {issue.state.status}
-          </Badge>
-        {:else}
-          <Badge variant="negative">
-            {issue.state.status} as
-            {issue.state.reason}
-          </Badge>
-        {/if}
-      </svelte:fragment>
-      <div slot="description">
-        <Markdown
-          content={issue.discussion[0].body}
-          rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
-        {#if issue.discussion[0].reactions}
-          <div class="reactions txt-tiny">
-            {#each groupedReactions as [reaction, nids], key}
-              <Chip {key}>
-                <div class="reaction">
-                  <span>{reaction}</span>
-                  <span title={nids.join("\n")}>{nids.length}</span>
-                </div>
-              </Chip>
-            {/each}
+<Layout {baseUrl} {project} activeTab="issues">
+  <div class="issue">
+    <div>
+      <CobHeader
+        {action}
+        id={issue.id}
+        title={issue.title}
+        on:editTitle={editTitle}>
+        <svelte:fragment slot="icon">
+          <div
+            class="state"
+            class:closed={issue.state.status === "closed"}
+            class:open={issue.state.status === "open"}>
+            <Icon name="exclamation-circle" />
           </div>
-        {/if}
-      </div>
-      <div class="author" slot="author">
-        opened by <Authorship
-          authorId={issue.author.id}
-          authorAlias={issue.author.alias} />
-        {utils.formatTimestamp(issue.discussion[0].timestamp)}
-      </div>
-    </CobHeader>
-    {#each threads as thread (thread.root.id)}
-      <div class="thread">
-        <ThreadComponent {thread} {rawPath} on:reply={createReply} />
-      </div>
-    {/each}
-    {#if $httpdStore.state === "authenticated"}
-      <div style:margin-top="1rem">
-        <Textarea
-          resizable
-          on:submit={async () => {
-            await createComment(commentBody);
-            commentBody = "";
-          }}
-          bind:value={commentBody}
-          placeholder="Leave your comment" />
-        <div class="actions txt-small">
-          <CobStateButton
-            items={items.filter(([, state]) => !isEqual(state, issue.state))}
-            {selectedItem}
-            state={issue.state}
-            on:saveStatus={saveStatus} />
-          <Button
-            variant="secondary"
-            size="small"
-            disabled={!commentBody}
-            on:click={async () => {
+        </svelte:fragment>
+        <svelte:fragment slot="state">
+          {#if issue.state.status === "open"}
+            <Badge variant="positive">
+              {issue.state.status}
+            </Badge>
+          {:else}
+            <Badge variant="negative">
+              {issue.state.status} as
+              {issue.state.reason}
+            </Badge>
+          {/if}
+        </svelte:fragment>
+        <div slot="description">
+          <Markdown
+            content={issue.discussion[0].body}
+            rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
+          {#if issue.discussion[0].reactions}
+            <div class="reactions txt-tiny">
+              {#each groupedReactions as [reaction, nids], key}
+                <Chip {key}>
+                  <div class="reaction">
+                    <span>{reaction}</span>
+                    <span title={nids.join("\n")}>{nids.length}</span>
+                  </div>
+                </Chip>
+              {/each}
+            </div>
+          {/if}
+        </div>
+        <div class="author" slot="author">
+          opened by <Authorship
+            authorId={issue.author.id}
+            authorAlias={issue.author.alias} />
+          {utils.formatTimestamp(issue.discussion[0].timestamp)}
+        </div>
+      </CobHeader>
+      {#each threads as thread (thread.root.id)}
+        <div class="thread">
+          <ThreadComponent {thread} {rawPath} on:reply={createReply} />
+        </div>
+      {/each}
+      {#if $httpdStore.state === "authenticated"}
+        <div style:margin-top="1rem">
+          <Textarea
+            resizable
+            on:submit={async () => {
               await createComment(commentBody);
               commentBody = "";
-            }}>
-            Comment
-          </Button>
+            }}
+            bind:value={commentBody}
+            placeholder="Leave your comment" />
+          <div class="actions txt-small">
+            <CobStateButton
+              items={items.filter(([, state]) => !isEqual(state, issue.state))}
+              {selectedItem}
+              state={issue.state}
+              on:saveStatus={saveStatus} />
+            <Button
+              variant="secondary"
+              size="small"
+              disabled={!commentBody}
+              on:click={async () => {
+                await createComment(commentBody);
+                commentBody = "";
+              }}>
+              Comment
+            </Button>
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
+    <div class="metadata">
+      <AssigneeInput
+        {action}
+        assignees={issue.assignees}
+        on:save={saveAssignees} />
+      <LabelInput {action} labels={issue.labels} on:save={saveLabels} />
+    </div>
   </div>
-  <div class="metadata">
-    <AssigneeInput
-      {action}
-      assignees={issue.assignees}
-      on:save={saveAssignees} />
-    <LabelInput {action} labels={issue.labels} on:save={saveLabels} />
-  </div>
-</div>
+</Layout>

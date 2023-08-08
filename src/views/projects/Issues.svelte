@@ -10,14 +10,15 @@
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
+  import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let project: Project;
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
+  export let project: Project;
   export let state: IssueState["status"];
 
   let loading = false;
@@ -97,75 +98,77 @@
   }
 </style>
 
-<div class="issues">
-  <div class="section-header">
-    <div style="margin-bottom: 2rem;">
-      <div style="display: flex; gap: 0.5rem;">
-        {#each options as option}
-          {#if !option.disabled}
-            <Link
-              route={{
-                resource: "project.issues",
-                project: project.id,
-                node: baseUrl,
-                state: option.value,
-              }}>
+<Layout {baseUrl} {project} activeTab="issues">
+  <div class="issues">
+    <div class="section-header">
+      <div style="margin-bottom: 2rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          {#each options as option}
+            {#if !option.disabled}
+              <Link
+                route={{
+                  resource: "project.issues",
+                  project: project.id,
+                  node: baseUrl,
+                  state: option.value,
+                }}>
+                <SquareButton
+                  clickable={option.disabled}
+                  active={option.value === state}
+                  disabled={option.disabled}>
+                  {option.title}
+                </SquareButton>
+              </Link>
+            {:else}
               <SquareButton
                 clickable={option.disabled}
                 active={option.value === state}
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>
-            </Link>
-          {:else}
-            <SquareButton
-              clickable={option.disabled}
-              active={option.value === state}
-              disabled={option.disabled}>
-              {option.title}
-            </SquareButton>
-          {/if}
-        {/each}
+            {/if}
+          {/each}
+        </div>
       </div>
-    </div>
-    {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
-      <Link
-        route={{
-          resource: "project.newIssue",
-          project: project.id,
-          node: baseUrl,
-        }}>
-        <SquareButton>New issue</SquareButton>
-      </Link>
-    {/if}
-  </div>
-  <div class="issues-list">
-    {#each allIssues as issue (issue.id)}
-      <div class="teaser">
-        <IssueTeaser projectId={project.id} {baseUrl} {issue} />
-      </div>
-    {:else}
-      {#if error}
-        <ErrorMessage message="Couldn't load issues." stackTrace={error} />
-      {:else if loading}
-        <!-- We already show a loader below. -->
-      {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">{capitalize(state)} issues</div>
-          <div slot="body">No issues matched the current filter</div>
-        </Placeholder>
+      {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
+        <Link
+          route={{
+            resource: "project.newIssue",
+            project: project.id,
+            node: baseUrl,
+          }}>
+          <SquareButton>New issue</SquareButton>
+        </Link>
       {/if}
-    {/each}
-  </div>
-  <div class="more">
-    {#if loading}
-      <Loading small={page !== 0} center />
-    {/if}
+    </div>
+    <div class="issues-list">
+      {#each allIssues as issue (issue.id)}
+        <div class="teaser">
+          <IssueTeaser projectId={project.id} {baseUrl} {issue} />
+        </div>
+      {:else}
+        {#if error}
+          <ErrorMessage message="Couldn't load issues." stackTrace={error} />
+        {:else if loading}
+          <!-- We already show a loader below. -->
+        {:else}
+          <Placeholder emoji="🍂">
+            <div slot="title">{capitalize(state)} issues</div>
+            <div slot="body">No issues matched the current filter</div>
+          </Placeholder>
+        {/if}
+      {/each}
+    </div>
+    <div class="more">
+      {#if loading}
+        <Loading small={page !== 0} center />
+      {/if}
 
-    {#if showMoreButton}
-      <Button variant="foreground" on:click={() => loadIssues(state)}>
-        More
-      </Button>
-    {/if}
+      {#if showMoreButton}
+        <Button variant="foreground" on:click={() => loadIssues(state)}>
+          More
+        </Button>
+      {/if}
+    </div>
   </div>
-</div>
+</Layout>

@@ -29,9 +29,9 @@
 
 <script lang="ts">
   import type { BaseUrl, Patch } from "@httpd-client";
-  import type { Variant } from "@app/components/Badge.svelte";
-  import { type Route } from "@app/lib/router";
   import type { PatchView } from "./router";
+  import type { Route } from "@app/lib/router";
+  import type { Variant } from "@app/components/Badge.svelte";
 
   import * as utils from "@app/lib/utils";
   import { capitalize, isEqual } from "lodash";
@@ -47,16 +47,17 @@
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
+  import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
-  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
 
   export let baseUrl: BaseUrl;
-  export let project: Project;
   export let patch: Patch;
+  export let project: Project;
   export let view: PatchView["view"];
 
   $: api = new HttpdClient(baseUrl);
@@ -305,190 +306,192 @@
   }
 </style>
 
-<div class="patch">
-  <div>
-    <CobHeader id={patch.id} title={patch.title}>
-      <svelte:fragment slot="icon">
-        <div
-          class="state"
-          class:draft={patch.state.status === "draft"}
-          class:open={patch.state.status === "open"}
-          class:merged={patch.state.status === "merged"}
-          class:archived={patch.state.status === "archived"}>
-          <Icon name="patch" />
+<Layout {baseUrl} {project} activeTab="patches">
+  <div class="patch">
+    <div>
+      <CobHeader id={patch.id} title={patch.title}>
+        <svelte:fragment slot="icon">
+          <div
+            class="state"
+            class:draft={patch.state.status === "draft"}
+            class:open={patch.state.status === "open"}
+            class:merged={patch.state.status === "merged"}
+            class:archived={patch.state.status === "archived"}>
+            <Icon name="patch" />
+          </div>
+        </svelte:fragment>
+        <svelte:fragment slot="state">
+          <Badge variant={badgeColor(patch.state.status)}>
+            {patch.state.status}
+          </Badge>
+        </svelte:fragment>
+        <svelte:fragment slot="description">
+          {#if patch.revisions[0].description}
+            <Markdown
+              content={patch.revisions[0].description}
+              rawPath={utils.getRawBasePath(
+                project.id,
+                baseUrl,
+                patch.revisions[0].id,
+              )} />
+          {:else}
+            <span class="txt-missing">No description available</span>
+          {/if}
+        </svelte:fragment>
+        <div class="author" slot="author">
+          opened by <Authorship
+            authorId={patch.author.id}
+            authorAlias={patch.author.alias} />
+          {utils.formatTimestamp(patch.revisions[0].timestamp)}
         </div>
-      </svelte:fragment>
-      <svelte:fragment slot="state">
-        <Badge variant={badgeColor(patch.state.status)}>
-          {patch.state.status}
-        </Badge>
-      </svelte:fragment>
-      <svelte:fragment slot="description">
-        {#if patch.revisions[0].description}
-          <Markdown
-            content={patch.revisions[0].description}
-            rawPath={utils.getRawBasePath(
-              project.id,
-              baseUrl,
-              patch.revisions[0].id,
-            )} />
+      </CobHeader>
+
+      <div class="tab-line">
+        <div style="display: flex; gap: 0.5rem;">
+          {#each Object.entries(tabs) as [name, route]}
+            <Link {route}>
+              <SquareButton size="small" active={name === view.name}>
+                {capitalize(name)}
+              </SquareButton>
+            </Link>
+          {/each}
+          {#if view.name === "diff"}
+            <Link
+              route={{
+                resource: "project.patch",
+                project: project.id,
+                node: baseUrl,
+                patch: patch.id,
+                view: {
+                  name: "diff",
+                  fromCommit: view.fromCommit,
+                  toCommit: view.toCommit,
+                },
+              }}>
+              <SquareButton size="small" active={true}>
+                Diff {view.fromCommit.substring(
+                  0,
+                  6,
+                )}..{view.toCommit.substring(0, 6)}
+              </SquareButton>
+            </Link>
+          {/if}
+        </div>
+
+        {#if view.name === "commits" || view.name === "files"}
+          <Floating disabled={patch.revisions.length === 1}>
+            <svelte:fragment slot="toggle">
+              <SquareButton
+                size="small"
+                clickable={patch.revisions.length > 1}
+                disabled={patch.revisions.length === 1}>
+                Revision {utils.formatObjectId(view.revision)}
+              </SquareButton>
+            </svelte:fragment>
+            <svelte:fragment slot="modal">
+              <Dropdown items={patch.revisions}>
+                <svelte:fragment slot="item" let:item>
+                  <Link
+                    on:afterNavigate={closeFocused}
+                    route={{
+                      resource: "project.patch",
+                      project: project.id,
+                      node: baseUrl,
+                      patch: patch.id,
+                      view: {
+                        name: view.name,
+                        revision: item.id,
+                      },
+                    }}>
+                    <DropdownItem
+                      selected={item.id === view.revision}
+                      size="tiny">
+                      Revision {utils.formatObjectId(item.id)}
+                    </DropdownItem>
+                  </Link>
+                </svelte:fragment>
+              </Dropdown>
+            </svelte:fragment>
+          </Floating>
+        {/if}
+      </div>
+      {#if view.name === "diff"}
+        <div style:margin-top="1rem">
+          <Changeset
+            projectId={project.id}
+            {baseUrl}
+            revision={view.toCommit}
+            diff={view.diff} />
+        </div>
+      {:else if view.name === "activity"}
+        {#each timelineTuple as [revision, timelines], index}
+          {@const previousRevision =
+            index > 0 ? patch.revisions[index - 1] : undefined}
+          <RevisionComponent
+            {baseUrl}
+            projectId={project.id}
+            {timelines}
+            projectDefaultBranch={project.defaultBranch}
+            projectHead={project.head}
+            {...revision}
+            first={index === 0}
+            on:reply={createReply}
+            patchId={patch.id}
+            expanded={index === patch.revisions.length - 1}
+            previousRevId={previousRevision?.id}
+            previousRevOid={previousRevision?.oid} />
         {:else}
-          <span class="txt-missing">No description available</span>
-        {/if}
-      </svelte:fragment>
-      <div class="author" slot="author">
-        opened by <Authorship
-          authorId={patch.author.id}
-          authorAlias={patch.author.alias} />
-        {utils.formatTimestamp(patch.revisions[0].timestamp)}
-      </div>
-    </CobHeader>
-
-    <div class="tab-line">
-      <div style="display: flex; gap: 0.5rem;">
-        {#each Object.entries(tabs) as [name, route]}
-          <Link {route}>
-            <SquareButton size="small" active={name === view.name}>
-              {capitalize(name)}
-            </SquareButton>
-          </Link>
+          <Placeholder emoji="🍂">
+            <div slot="title">No activity</div>
+            <div slot="body">No activity on this patch yet</div>
+          </Placeholder>
         {/each}
-        {#if view.name === "diff"}
-          <Link
-            route={{
-              resource: "project.patch",
-              project: project.id,
-              node: baseUrl,
-              patch: patch.id,
-              view: {
-                name: "diff",
-                fromCommit: view.fromCommit,
-                toCommit: view.toCommit,
-              },
-            }}>
-            <SquareButton size="small" active={true}>
-              Diff {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
-                0,
-                6,
-              )}
-            </SquareButton>
-          </Link>
-        {/if}
-      </div>
-
-      {#if view.name === "commits" || view.name === "files"}
-        <Floating disabled={patch.revisions.length === 1}>
-          <svelte:fragment slot="toggle">
-            <SquareButton
-              size="small"
-              clickable={patch.revisions.length > 1}
-              disabled={patch.revisions.length === 1}>
-              Revision {utils.formatObjectId(view.revision)}
-            </SquareButton>
-          </svelte:fragment>
-          <svelte:fragment slot="modal">
-            <Dropdown items={patch.revisions}>
-              <svelte:fragment slot="item" let:item>
-                <Link
-                  on:afterNavigate={closeFocused}
-                  route={{
-                    resource: "project.patch",
-                    project: project.id,
-                    node: baseUrl,
-                    patch: patch.id,
-                    view: {
-                      name: view.name,
-                      revision: item.id,
-                    },
-                  }}>
-                  <DropdownItem
-                    selected={item.id === view.revision}
-                    size="tiny">
-                    Revision {utils.formatObjectId(item.id)}
-                  </DropdownItem>
-                </Link>
-              </svelte:fragment>
-            </Dropdown>
-          </svelte:fragment>
-        </Floating>
+      {:else if view.name === "commits"}
+        <div class="commit-list">
+          {#each view.commits as commit}
+            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+          {/each}
+        </div>
+      {:else if view.name === "files"}
+        <div style:margin-top="1rem">
+          <Changeset
+            projectId={project.id}
+            {baseUrl}
+            revision={view.revision}
+            diff={view.diff} />
+        </div>
+      {:else}
+        {utils.unreachable(view.name)}
       {/if}
     </div>
-    {#if view.name === "diff"}
-      <div style:margin-top="1rem">
-        <Changeset
-          projectId={project.id}
-          {baseUrl}
-          revision={view.toCommit}
-          diff={view.diff} />
-      </div>
-    {:else if view.name === "activity"}
-      {#each timelineTuple as [revision, timelines], index}
-        {@const previousRevision =
-          index > 0 ? patch.revisions[index - 1] : undefined}
-        <RevisionComponent
-          {baseUrl}
-          projectId={project.id}
-          {timelines}
-          projectDefaultBranch={project.defaultBranch}
-          projectHead={project.head}
-          {...revision}
-          first={index === 0}
-          on:reply={createReply}
-          patchId={patch.id}
-          expanded={index === patch.revisions.length - 1}
-          previousRevId={previousRevision?.id}
-          previousRevOid={previousRevision?.oid} />
-      {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">No activity</div>
-          <div slot="body">No activity on this patch yet</div>
-        </Placeholder>
-      {/each}
-    {:else if view.name === "commits"}
-      <div class="commit-list">
-        {#each view.commits as commit}
-          <CommitTeaser projectId={project.id} {baseUrl} {commit} />
-        {/each}
-      </div>
-    {:else if view.name === "files"}
-      <div style:margin-top="1rem">
-        <Changeset
-          projectId={project.id}
-          {baseUrl}
-          revision={view.revision}
-          diff={view.diff} />
-      </div>
-    {:else}
-      {utils.unreachable(view.name)}
-    {/if}
-  </div>
 
-  <div class="metadata">
-    <div>
-      <div class="metadata-section-header">Reviews</div>
-      <div class="metadata-section-body">
-        {#each Object.values(patchReviews) as { latest, review }}
-          <div class="review" class:txt-missing={!latest}>
-            <span
-              class:review-accept={review.verdict === "accept"}
-              class:review-reject={review.verdict === "reject"}>
-              {#if review.verdict === "accept"}
-                <Icon size="small" name="checkmark" />
-              {:else if review.verdict === "reject"}
-                <Icon size="small" name="cross" />
-              {:else}
-                <Icon size="small" name="chat" />
-              {/if}
-            </span>
-            <Authorship
-              authorId={review.author.id}
-              authorAlias={review.author.alias} />
-          </div>
-        {:else}
-          <div class="txt-missing">No reviews</div>
-        {/each}
+    <div class="metadata">
+      <div>
+        <div class="metadata-section-header">Reviews</div>
+        <div class="metadata-section-body">
+          {#each Object.values(patchReviews) as { latest, review }}
+            <div class="review" class:txt-missing={!latest}>
+              <span
+                class:review-accept={review.verdict === "accept"}
+                class:review-reject={review.verdict === "reject"}>
+                {#if review.verdict === "accept"}
+                  <Icon size="small" name="checkmark" />
+                {:else if review.verdict === "reject"}
+                  <Icon size="small" name="cross" />
+                {:else}
+                  <Icon size="small" name="chat" />
+                {/if}
+              </span>
+              <Authorship
+                authorId={review.author.id}
+                authorAlias={review.author.alias} />
+            </div>
+          {:else}
+            <div class="txt-missing">No reviews</div>
+          {/each}
+        </div>
       </div>
+      <LabelInput {action} labels={patch.labels} on:save={saveLabels} />
     </div>
-    <LabelInput {action} labels={patch.labels} on:save={saveLabels} />
   </div>
-</div>
+</Layout>

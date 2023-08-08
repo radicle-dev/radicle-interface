@@ -14,6 +14,7 @@
   import Button from "@app/components/Button.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Layout from "./Layout.svelte";
   import Loading from "@app/components/Loading.svelte";
   import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
   import { COMMITS_PER_PAGE } from "./router";
@@ -108,37 +109,39 @@
   }
 </style>
 
-<SourceBrowsingHeader
-  node={baseUrl}
-  {project}
-  peers={peersWithRoute}
-  branches={branchesWithRoute}
-  {revision}
-  {tree}
-  historyLinkActive={true} />
+<Layout {baseUrl} {project} {peer} activeTab="source">
+  <SourceBrowsingHeader
+    node={baseUrl}
+    {project}
+    peers={peersWithRoute}
+    branches={branchesWithRoute}
+    {revision}
+    {tree}
+    historyLinkActive={true} />
 
-<div class="history">
-  {#each groupCommits(allCommitHeaders) as group (group.time)}
-    <p style:color="var(--color-foreground-6)">{group.date}</p>
-    <div class="group">
-      {#each group.commits as commit (commit.id)}
-        <div class="teaser-wrapper">
-          <CommitTeaser projectId={project.id} {baseUrl} {commit} />
-        </div>
-      {/each}
+  <div class="history">
+    {#each groupCommits(allCommitHeaders) as group (group.time)}
+      <p style:color="var(--color-foreground-6)">{group.date}</p>
+      <div class="group">
+        {#each group.commits as commit (commit.id)}
+          <div class="teaser-wrapper">
+            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+          </div>
+        {/each}
+      </div>
+    {/each}
+    <div class="more">
+      {#if loading}
+        <Loading small={page !== 0} center />
+      {:else if allCommitHeaders.length < totalCommitCount}
+        <Button variant="foreground" on:click={loadMore}>More</Button>
+      {/if}
     </div>
-  {/each}
-  <div class="more">
-    {#if loading}
-      <Loading small={page !== 0} center />
-    {:else if allCommitHeaders.length < totalCommitCount}
-      <Button variant="foreground" on:click={loadMore}>More</Button>
-    {/if}
   </div>
-</div>
 
-{#if error}
-  <div class="message">
-    <ErrorMessage message="Couldn't load commits." stackTrace={error} />
-  </div>
-{/if}
+  {#if error}
+    <div class="message">
+      <ErrorMessage message="Couldn't load commits." stackTrace={error} />
+    </div>
+  {/if}
+</Layout>

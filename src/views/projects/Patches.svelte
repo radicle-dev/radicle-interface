@@ -7,15 +7,16 @@
 
   import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
-  export let project: Project;
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
+  export let project: Project;
   export let state: PatchState["status"];
 
   let loading = false;
@@ -95,65 +96,67 @@
   }
 </style>
 
-<div class="patches">
-  <div style="margin-bottom: 2rem;">
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-      {#each options as option}
-        {#if option.disabled}
-          <SquareButton
-            clickable={option.disabled}
-            active={option.value === state}
-            disabled={option.disabled}>
-            {option.title}
-          </SquareButton>
-        {:else}
-          <Link
-            route={{
-              resource: "project.patches",
-              project: project.id,
-              node: baseUrl,
-              search: `state=${option.value}`,
-            }}>
+<Layout {baseUrl} {project} activeTab="patches">
+  <div class="patches">
+    <div style="margin-bottom: 2rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        {#each options as option}
+          {#if option.disabled}
             <SquareButton
               clickable={option.disabled}
               active={option.value === state}
               disabled={option.disabled}>
               {option.title}
             </SquareButton>
-          </Link>
+          {:else}
+            <Link
+              route={{
+                resource: "project.patches",
+                project: project.id,
+                node: baseUrl,
+                search: `state=${option.value}`,
+              }}>
+              <SquareButton
+                clickable={option.disabled}
+                active={option.value === state}
+                disabled={option.disabled}>
+                {option.title}
+              </SquareButton>
+            </Link>
+          {/if}
+        {/each}
+      </div>
+    </div>
+    <div class="patches-list">
+      {#each allPatches as patch (patch.id)}
+        <div class="teaser">
+          <PatchTeaser {baseUrl} projectId={project.id} {patch} />
+        </div>
+      {:else}
+        {#if error}
+          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+        {:else if loading}
+          <!-- We already show a loader below. -->
+        {:else}
+          <Placeholder emoji="🍂">
+            <div slot="title">{capitalize(state)} patches</div>
+            <div slot="body">No patches matched the current filter</div>
+          </Placeholder>
         {/if}
       {/each}
     </div>
-  </div>
-  <div class="patches-list">
-    {#each allPatches as patch (patch.id)}
-      <div class="teaser">
-        <PatchTeaser {baseUrl} projectId={project.id} {patch} />
-      </div>
-    {:else}
-      {#if error}
-        <ErrorMessage message="Couldn't load patches." stackTrace={error} />
-      {:else if loading}
-        <!-- We already show a loader below. -->
-      {:else}
-        <Placeholder emoji="🍂">
-          <div slot="title">{capitalize(state)} patches</div>
-          <div slot="body">No patches matched the current filter</div>
-        </Placeholder>
+    <div class="more">
+      {#if loading}
+        <div style:margin-top={page === 0 ? "8rem" : ""}>
+          <Loading small={page !== 0} center />
+        </div>
       {/if}
-    {/each}
-  </div>
-  <div class="more">
-    {#if loading}
-      <div style:margin-top={page === 0 ? "8rem" : ""}>
-        <Loading small={page !== 0} center />
-      </div>
-    {/if}
 
-    {#if showMoreButton}
-      <Button variant="foreground" on:click={() => loadMore(state)}>
-        More
-      </Button>
-    {/if}
+      {#if showMoreButton}
+        <Button variant="foreground" on:click={() => loadMore(state)}>
+          More
+        </Button>
+      {/if}
+    </div>
   </div>
-</div>
+</Layout>

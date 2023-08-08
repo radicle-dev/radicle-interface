@@ -13,13 +13,14 @@
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import Markdown from "@app/components/Markdown.svelte";
-  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
-  import Textarea from "@app/components/Textarea.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
+  import Layout from "@app/views/projects/Layout.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
 
-  export let project: Project;
   export let baseUrl: BaseUrl;
+  export let project: Project;
 
   let preview: boolean = false;
   let action: "create" | "view";
@@ -124,76 +125,79 @@
   }
 </style>
 
-<main>
-  {#if $httpdStore.state === "authenticated"}
-    {@const session = $httpdStore.session}
-    <div class="form">
-      <div class="editor">
-        <CobHeader {action} bind:title={issueTitle}>
-          <svelte:fragment slot="state">
-            {#if action === "view"}
-              <Badge variant="positive">open</Badge>
-            {/if}
-          </svelte:fragment>
-          <svelte:fragment slot="description">
-            {#if action === "create"}
-              <Textarea
-                resizable
-                bind:value={issueText}
-                on:submit={() => {
-                  void createIssue(session.id);
-                }}
-                placeholder="Write a description" />
-            {:else if !issueText}
-              <p class="txt-missing">No description</p>
-            {:else}
-              <Markdown
-                content={issueText}
-                rawPath={utils.getRawBasePath(
-                  project.id,
-                  baseUrl,
-                  project.head,
-                )} />
-            {/if}
-          </svelte:fragment>
-          <div class="author" slot="author">
-            {#if action === "view"}
-              opened by <Authorship authorId={$httpdStore.session.publicKey} /> now
-            {/if}
+<Layout {baseUrl} {project} activeTab="issues">
+  <main>
+    {#if $httpdStore.state === "authenticated"}
+      {@const session = $httpdStore.session}
+      <div class="form">
+        <div class="editor">
+          <CobHeader {action} bind:title={issueTitle}>
+            <svelte:fragment slot="state">
+              {#if action === "view"}
+                <Badge variant="positive">open</Badge>
+              {/if}
+            </svelte:fragment>
+            <svelte:fragment slot="description">
+              {#if action === "create"}
+                <Textarea
+                  resizable
+                  bind:value={issueText}
+                  on:submit={() => {
+                    void createIssue(session.id);
+                  }}
+                  placeholder="Write a description" />
+              {:else if !issueText}
+                <p class="txt-missing">No description</p>
+              {:else}
+                <Markdown
+                  content={issueText}
+                  rawPath={utils.getRawBasePath(
+                    project.id,
+                    baseUrl,
+                    project.head,
+                  )} />
+              {/if}
+            </svelte:fragment>
+            <div class="author" slot="author">
+              {#if action === "view"}
+                opened by <Authorship
+                  authorId={$httpdStore.session.publicKey} /> now
+              {/if}
+            </div>
+          </CobHeader>
+          <div class="actions">
+            <Button
+              size="small"
+              variant="text"
+              on:click={() => (preview = !preview)}>
+              {#if preview}
+                Resume editing
+              {:else}
+                Preview
+              {/if}
+            </Button>
+            <Button
+              disabled={!issueTitle || !issueText}
+              size="small"
+              variant="secondary"
+              on:click={() => void createIssue(session.id)}>
+              Submit
+            </Button>
           </div>
-        </CobHeader>
-        <div class="actions">
-          <Button
-            size="small"
-            variant="text"
-            on:click={() => (preview = !preview)}>
-            {#if preview}
-              Resume editing
-            {:else}
-              Preview
-            {/if}
-          </Button>
-          <Button
-            disabled={!issueTitle || !issueText}
-            size="small"
-            variant="secondary"
-            on:click={() => void createIssue(session.id)}>
-            Submit
-          </Button>
+        </div>
+        <div class="metadata">
+          <AssigneeInput
+            {action}
+            on:save={({ detail: updatedAssignees }) =>
+              (assignees = updatedAssignees)} />
+          <LabelInput
+            {action}
+            on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
         </div>
       </div>
-      <div class="metadata">
-        <AssigneeInput
-          {action}
-          on:save={({ detail: updatedAssignees }) =>
-            (assignees = updatedAssignees)} />
-        <LabelInput
-          {action}
-          on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
-      </div>
-    </div>
-  {:else}
-    <ErrorMessage
-      message="Couldn't access issue creation. Make sure you're still logged in." />
-  {/if}
-</main>
+    {:else}
+      <ErrorMessage
+        message="Couldn't access issue creation. Make sure you're still logged in." />
+    {/if}
+  </main>
+</Layout>

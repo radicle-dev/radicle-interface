@@ -7,6 +7,7 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import Layout from "./Layout.svelte";
 
   export let baseUrl: BaseUrl;
   export let commit: Commit;
@@ -49,27 +50,29 @@
   }
 </style>
 
-<div class="commit">
-  <div class="header">
-    <div class="summary">
-      <div class="txt-medium txt-bold">
-        <InlineMarkdown fontSize="medium" content={header.summary} />
+<Layout {baseUrl} {project}>
+  <div class="commit">
+    <div class="header">
+      <div class="summary">
+        <div class="txt-medium txt-bold">
+          <InlineMarkdown fontSize="medium" content={header.summary} />
+        </div>
+        <div class="layout-desktop-flex txt-monospace sha1">
+          <span>{header.id}</span>
+          <Clipboard small text={header.id} />
+        </div>
+        <div class="layout-mobile-flex txt-monospace sha1 txt-small">
+          {formatCommit(header.id)}
+          <Clipboard small text={header.id} />
+        </div>
       </div>
-      <div class="layout-desktop-flex txt-monospace sha1">
-        <span>{header.id}</span>
-        <Clipboard small text={header.id} />
-      </div>
-      <div class="layout-mobile-flex txt-monospace sha1 txt-small">
-        {formatCommit(header.id)}
-        <Clipboard small text={header.id} />
-      </div>
+      <pre class="description txt-small">{header.description}</pre>
+      <CommitAuthorship {header} />
     </div>
-    <pre class="description txt-small">{header.description}</pre>
-    <CommitAuthorship {header} />
+    <Changeset
+      projectId={project.id}
+      {baseUrl}
+      diff={commit.diff}
+      revision={commit.commit.id} />
   </div>
-  <Changeset
-    projectId={project.id}
-    {baseUrl}
-    diff={commit.diff}
-    revision={commit.commit.id} />
-</div>
+</Layout>
