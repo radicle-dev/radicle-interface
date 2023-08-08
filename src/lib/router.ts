@@ -126,7 +126,16 @@ function setTitle(loadedRoute: LoadedRoute) {
   } else if (loadedRoute.resource === "notFound") {
     title.push("Page not found");
     title.push("Radicle");
-  } else if (loadedRoute.resource === "projects") {
+  } else if (
+    loadedRoute.resource === "project.tree" ||
+    loadedRoute.resource === "project.history" ||
+    loadedRoute.resource === "project.commit" ||
+    loadedRoute.resource === "project.issue" ||
+    loadedRoute.resource === "project.issues" ||
+    loadedRoute.resource === "project.newIssue" ||
+    loadedRoute.resource === "project.patches" ||
+    loadedRoute.resource === "project.patch"
+  ) {
     title.push(...projectTitle(loadedRoute));
   } else if (loadedRoute.resource === "nodes") {
     title.push(loadedRoute.params.baseUrl.hostname);

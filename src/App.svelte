@@ -68,58 +68,30 @@
 <div class="app">
   <Header />
   <div class="wrapper">
-    {#if $activeRouteStore.resource === "home"}
+    {#if $activeRouteStore.resource === "booting"}
+      <Loading />
+    {:else if $activeRouteStore.resource === "home"}
       <Home {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "nodes"}
       <Nodes {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
-    {:else if $activeRouteStore.resource === "projects"}
-      {#if $activeRouteStore.params.view.resource === "tree"}
-        <Browser
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "history"}
-        <History
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "commit"}
-        <Commit
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "issues"}
-        <Issues
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "newIssue"}
-        <NewIssue
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "issue"}
-        <Issue
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "patches"}
-        <Patches
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else if $activeRouteStore.params.view.resource === "patch"}
-        <Patch
-          {...$activeRouteStore.params.view}
-          baseUrl={$activeRouteStore.params.baseUrl}
-          project={$activeRouteStore.params.project} />
-      {:else}
-        {unreachable($activeRouteStore.params.view)}
-      {/if}
-    {:else if $activeRouteStore.resource === "booting"}
-      <Loading />
+    {:else if $activeRouteStore.resource === "project.tree"}
+      <Browser {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.history"}
+      <History {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.commit"}
+      <Commit {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.issues"}
+      <Issues {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.newIssue"}
+      <NewIssue {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.issue"}
+      <Issue {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.patches"}
+      <Patches {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.patch"}
+      <Patch {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "loadError"}
       <LoadError {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "notFound"}

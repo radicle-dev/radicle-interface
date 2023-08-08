@@ -95,77 +95,112 @@ interface ProjectPatchesRoute {
   search?: string;
 }
 
-export interface ProjectLoadedRoute {
-  resource: "projects";
-  params: ProjectLoadedParams;
-}
-
-export interface ProjectLoadedParams {
-  baseUrl: BaseUrl;
-  project: Project;
-  view: ProjectLoadedView;
-}
-
-export type ProjectLoadedView =
-  | TreeView
-  | HistoryView
+export type ProjectLoadedRoute =
   | {
-      resource: "commit";
-      commit: Commit;
+      resource: "project.tree";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+        peers: Remote[];
+        peer: string | undefined;
+        branches: string[];
+        revision: string | undefined;
+        tree: Tree;
+        path: string;
+        blobResult: BlobResult;
+      };
     }
-  | { resource: "issue"; issue: Issue }
-  | { resource: "issues"; issues: Issue[]; state: IssueState["status"] }
-  | { resource: "newIssue" }
-  | { resource: "patches"; patches: Patch[]; state: PatchState["status"] }
-  | PatchView;
+  | {
+      resource: "project.history";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+        peers: Remote[];
+        peer: string | undefined;
+        branches: string[];
+        revision: string | undefined;
+        tree: Tree;
+        commitHeaders: CommitHeader[];
+        totalCommitCount: number;
+      };
+    }
+  | {
+      resource: "project.commit";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
 
-export interface TreeView {
-  resource: "tree";
-  peers: Remote[];
-  peer: string | undefined;
-  branches: string[];
-  revision: string | undefined;
-  tree: Tree;
-  path: string;
-  blobResult: BlobResult;
-}
+        commit: Commit;
+      };
+    }
+  | {
+      resource: "project.issue";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+
+        issue: Issue;
+      };
+    }
+  | {
+      resource: "project.issues";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+
+        issues: Issue[];
+        state: IssueState["status"];
+      };
+    }
+  | {
+      resource: "project.newIssue";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+      };
+    }
+  | {
+      resource: "project.patches";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+
+        patches: Patch[];
+        state: PatchState["status"];
+      };
+    }
+  | {
+      resource: "project.patch";
+      params: {
+        baseUrl: BaseUrl;
+        project: Project;
+
+        patch: Patch;
+        view: PatchView;
+      };
+    };
 
 export type BlobResult =
   | { ok: true; blob: Blob; highlighted: Syntax.Root | undefined }
   | { ok: false; error: { message: string; path: string } };
 
-export interface HistoryView {
-  resource: "history";
-  peers: Remote[];
-  peer: string | undefined;
-  branches: string[];
-  revision: string | undefined;
-  tree: Tree;
-  commitHeaders: CommitHeader[];
-  totalCommitCount: number;
-}
-
-export interface PatchView {
-  resource: "patch";
-  patch: Patch;
-  view:
-    | {
-        name: "activity";
-        revision: string;
-      }
-    | {
-        name: "commits" | "files";
-        revision: string;
-        diff: Diff;
-        commits: CommitHeader[];
-      }
-    | {
-        name: "diff";
-        diff: Diff;
-        fromCommit: string;
-        toCommit: string;
-      };
-}
+export type PatchView =
+  | {
+      name: "activity";
+      revision: string;
+    }
+  | {
+      name: "commits" | "files";
+      revision: string;
+      diff: Diff;
+      commits: CommitHeader[];
+    }
+  | {
+      name: "diff";
+      diff: Diff;
+      fromCommit: string;
+      toCommit: string;
+    };
 
 // Check whether the input is a SHA1 commit.
 function isOid(input: string): boolean {
@@ -209,14 +244,11 @@ export async function loadProjectRoute(
       ]);
 
       return {
-        resource: "projects",
+        resource: "project.commit",
         params: {
           baseUrl: route.node,
           project,
-          view: {
-            resource: "commit",
-            commit,
-          },
+          commit,
         },
       };
     } else if (route.resource === "project.issue") {
@@ -226,14 +258,11 @@ export async function loadProjectRoute(
           api.project.getIssueById(route.project, route.issue),
         ]);
         return {
-          resource: "projects",
+          resource: "project.issue",
           params: {
             baseUrl: route.node,
             project,
-            view: {
-              resource: "issue",
-              issue,
-            },
+            issue,
           },
         };
       } catch (error: any) {
@@ -253,12 +282,9 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.newIssue") {
       const project = await api.project.getById(route.project);
       return {
-        resource: "projects",
+        resource: "project.newIssue",
         params: {
           baseUrl: route.node,
-          view: {
-            resource: "newIssue",
-          },
           project,
         },
       };
@@ -296,14 +322,11 @@ async function loadPatchesView(
   ]);
 
   return {
-    resource: "projects",
+    resource: "project.patches",
     params: {
       baseUrl: route.node,
-      view: {
-        resource: "patches",
-        patches,
-        state,
-      },
+      patches,
+      state,
       project,
     },
   };
@@ -325,14 +348,11 @@ async function loadIssuesView(
   ]);
 
   return {
-    resource: "projects",
+    resource: "project.issues",
     params: {
       baseUrl: route.node,
-      view: {
-        resource: "issues",
-        issues,
-        state,
-      },
+      issues,
+      state,
       project,
     },
   };
@@ -371,20 +391,17 @@ async function loadTreeView(
     loadBlob(api, project.id, commit, path),
   ]);
   return {
-    resource: "projects",
+    resource: "project.tree",
     params: {
       baseUrl: route.node,
       project,
-      view: {
-        resource: "tree",
-        peers,
-        peer: route.peer,
-        branches: Object.keys(branchMap || {}),
-        revision: route.revision,
-        tree,
-        path,
-        blobResult,
-      },
+      peers,
+      peer: route.peer,
+      branches: Object.keys(branchMap || {}),
+      revision: route.revision,
+      tree,
+      path,
+      blobResult,
     },
   };
 }
@@ -465,20 +482,17 @@ async function loadHistoryView(
   ]);
 
   return {
-    resource: "projects",
+    resource: "project.history",
     params: {
       baseUrl: route.node,
       project,
-      view: {
-        resource: "history",
-        peers,
-        peer: route.peer,
-        branches: Object.keys(branchMap || {}),
-        revision: route.revision,
-        tree,
-        commitHeaders: commitsResponse.commits.map(c => c.commit),
-        totalCommitCount: commitsResponse.stats.commits,
-      },
+      peers,
+      peer: route.peer,
+      branches: Object.keys(branchMap || {}),
+      revision: route.revision,
+      tree,
+      commitHeaders: commitsResponse.commits.map(c => c.commit),
+      totalCommitCount: commitsResponse.stats.commits,
     },
   };
 }
@@ -493,7 +507,7 @@ async function loadPatchView(
   ]);
   const latestRevision = patch.revisions[patch.revisions.length - 1];
 
-  let view: PatchView["view"];
+  let view: PatchView;
   switch (route.view?.name) {
     case "activity":
     case undefined: {
@@ -536,15 +550,12 @@ async function loadPatchView(
     }
   }
   return {
-    resource: "projects",
+    resource: "project.patch",
     params: {
       baseUrl: route.node,
       project,
-      view: {
-        resource: "patch",
-        patch,
-        view,
-      },
+      patch,
+      view,
     },
   };
 }
@@ -826,31 +837,31 @@ function patchRouteToPath(route: ProjectPatchRoute): string {
 export function projectTitle(loadedRoute: ProjectLoadedRoute) {
   const title: string[] = [];
 
-  if (loadedRoute.params.view.resource === "tree") {
+  if (loadedRoute.resource === "project.tree") {
     title.push(loadedRoute.params.project.name);
     title.push(loadedRoute.params.project.description);
-  } else if (loadedRoute.params.view.resource === "commit") {
-    title.push(loadedRoute.params.view.commit.commit.summary);
+  } else if (loadedRoute.resource === "project.commit") {
+    title.push(loadedRoute.params.commit.commit.summary);
     title.push("commit");
-  } else if (loadedRoute.params.view.resource === "history") {
+  } else if (loadedRoute.resource === "project.history") {
     title.push(loadedRoute.params.project.name);
     title.push("history");
-  } else if (loadedRoute.params.view.resource === "newIssue") {
+  } else if (loadedRoute.resource === "project.newIssue") {
     title.push("new issue");
-  } else if (loadedRoute.params.view.resource === "issue") {
-    title.push(loadedRoute.params.view.issue.title);
+  } else if (loadedRoute.resource === "project.issue") {
+    title.push(loadedRoute.params.issue.title);
     title.push("issue");
-  } else if (loadedRoute.params.view.resource === "issues") {
+  } else if (loadedRoute.resource === "project.issues") {
     title.push(loadedRoute.params.project.name);
     title.push("issues");
-  } else if (loadedRoute.params.view.resource === "patch") {
-    title.push(loadedRoute.params.view.patch.title);
+  } else if (loadedRoute.resource === "project.patch") {
+    title.push(loadedRoute.params.patch.title);
     title.push("patch");
-  } else if (loadedRoute.params.view.resource === "patches") {
+  } else if (loadedRoute.resource === "project.patches") {
     title.push(loadedRoute.params.project.name);
     title.push("patches");
   } else {
-    return unreachable(loadedRoute.params.view);
+    return unreachable(loadedRoute);
   }
 
   return title;

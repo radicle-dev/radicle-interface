@@ -58,7 +58,7 @@
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let project: Project;
-  export let view: PatchView["view"];
+  export let view: PatchView;
 
   $: api = new HttpdClient(baseUrl);
 
