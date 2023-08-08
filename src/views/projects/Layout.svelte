@@ -2,13 +2,20 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import Header from "./Header.svelte";
-  import ProjectMeta from "./ProjectMeta.svelte";
+  import dompurify from "dompurify";
 
-  export let baseUrl: BaseUrl;
-  export let project: Project;
-  export let peer: string | undefined = undefined;
+  import markdown from "@app/lib/markdown";
+  import { formatNodeId, twemoji } from "@app/lib/utils";
+
+  import Clipboard from "@app/components/Clipboard.svelte";
+  import Link from "@app/components/Link.svelte";
+
+  import Header from "./Header.svelte";
+
   export let activeTab: ActiveTab = undefined;
+  export let baseUrl: BaseUrl;
+  export let peer: string | undefined = undefined;
+  export let project: Project;
 </script>
 
 <style>
@@ -24,15 +31,104 @@
     min-width: var(--content-min-width);
     padding-bottom: 4rem;
   }
+  .title {
+    align-items: center;
+    color: var(--color-secondary);
+    display: flex;
+    font-size: var(--font-size-x-large);
+    font-weight: var(--font-weight-bold);
+    justify-content: left;
+    margin-bottom: 0.5rem;
+    overflow-x: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+  }
+  .divider {
+    color: var(--color-foreground-4);
+    margin: 0 0.5rem;
+    font-weight: var(--font-weight-normal);
+  }
+  .node-id {
+    color: var(--color-foreground-5);
+    font-weight: var(--font-weight-normal);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .project-name:hover {
+    color: inherit;
+  }
+  .id {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-tiny);
+    color: var(--color-foreground-5);
+    overflow-wrap: anywhere;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 0.125rem;
+  }
+  .description {
+    margin: 1rem 0 1.5rem 0;
+  }
+
+  .description :global(a) {
+    border-bottom: 1px solid var(--color-foreground-6);
+  }
+
+  .content {
+    padding: 0 2rem 0 8rem;
+  }
+
+  .truncate {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 960px) {
+    .content {
+      padding-left: 2rem;
+    }
+    .title {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
+  }
 </style>
 
 <div class="header">
-  <ProjectMeta
-    nodeId={peer}
-    projectDescription={project.description}
-    projectId={project.id}
-    projectName={project.name}
-    {baseUrl} />
+  <header class="content">
+    <div class="title">
+      <span class="truncate">
+        <Link
+          route={{
+            resource: "project.source",
+            project: project.id,
+            node: baseUrl,
+          }}>
+          <span class="project-name">
+            {project.name}
+          </span>
+        </Link>
+      </span>
+      {#if peer}
+        <span class="node-id">
+          <span class="divider">/</span>
+          <span title={peer}>{formatNodeId(peer)}</span>
+          <Clipboard text={peer} />
+        </span>
+      {/if}
+    </div>
+    <div class="id">
+      <span class="truncate">{project.id}</span>
+      <Clipboard small text={project.id} />
+    </div>
+    <div class="description" use:twemoji>
+      {@html dompurify.sanitize(markdown.parse(project.description))}
+    </div>
+  </header>
+
   <Header
     openIssueCount={project.issues.open}
     openPatchCount={project.patches.open}
