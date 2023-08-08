@@ -23,13 +23,7 @@
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding-top: 4rem;
-  }
-  main {
-    width: 100%;
-    max-width: var(--content-max-width);
-    min-width: var(--content-min-width);
-    padding-bottom: 4rem;
+    padding: 4rem 2rem 0 8rem;
   }
   .title {
     align-items: center;
@@ -71,67 +65,69 @@
   .description {
     margin: 1rem 0 1.5rem 0;
   }
-
   .description :global(a) {
     border-bottom: 1px solid var(--color-foreground-6);
   }
-
-  .content {
-    padding: 0 2rem 0 8rem;
-  }
-
   .truncate {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow-x: hidden;
   }
+  .content {
+    width: 100%;
+    max-width: var(--content-max-width);
+    min-width: var(--content-min-width);
+    padding-bottom: 4rem;
+  }
 
   @media (max-width: 960px) {
-    .content {
-      padding-left: 2rem;
+    .header {
+      padding: 4rem 0 0 2rem;
     }
     .title {
       font-size: var(--font-size-medium);
       font-weight: var(--font-weight-bold);
+      padding-right: 2rem;
     }
   }
 </style>
 
 <div class="header">
-  <header class="content">
-    <div class="title">
-      <span class="truncate">
-        <Link
-          route={{
-            resource: "project.source",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <span class="project-name">
-            {project.name}
-          </span>
-        </Link>
-      </span>
-      {#if peer}
-        <span class="node-id">
-          <span class="divider">/</span>
-          <span title={peer}>{formatNodeId(peer)}</span>
-          <Clipboard text={peer} />
+  <div class="title">
+    <span class="truncate">
+      <Link
+        route={{
+          resource: "project.source",
+          project: project.id,
+          node: baseUrl,
+        }}>
+        <span class="project-name">
+          {project.name}
         </span>
-      {/if}
-    </div>
-    <div class="id">
-      <span class="truncate">{project.id}</span>
-      <Clipboard small text={project.id} />
-    </div>
-    <div class="description" use:twemoji>
-      {@html dompurify.sanitize(markdown.parse(project.description))}
-    </div>
-  </header>
+      </Link>
+    </span>
+
+    {#if peer}
+      <span class="node-id">
+        <span class="divider">/</span>
+        <span title={peer}>{formatNodeId(peer)}</span>
+        <Clipboard text={peer} />
+      </span>
+    {/if}
+  </div>
+
+  <div class="id">
+    <span class="truncate">{project.id}</span>
+    <Clipboard small text={project.id} />
+  </div>
+
+  <div class="description" use:twemoji>
+    {@html dompurify.sanitize(markdown.parse(project.description))}
+  </div>
 
   <Header {project} {activeTab} {baseUrl} />
 </div>
 
-<main>
+<div class="content">
   <slot />
-</main>
+</div>
