@@ -3,8 +3,8 @@
 
   import { pluralize } from "@app/lib/pluralize";
 
-  import FileDiff from "@app/views/projects/SourceBrowser/FileDiff.svelte";
-  import FileLocationChange from "@app/views/projects/SourceBrowser/FileLocationChange.svelte";
+  import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
+  import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
 
   export let diff: Diff;
   export let revision: string;

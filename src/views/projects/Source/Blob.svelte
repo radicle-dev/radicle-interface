@@ -8,7 +8,7 @@
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
-  import Readme from "@app/views/projects/Readme.svelte";
+  import Readme from "./Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
   export let baseUrl: BaseUrl;

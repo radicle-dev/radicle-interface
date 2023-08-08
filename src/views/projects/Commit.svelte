@@ -3,7 +3,7 @@
 
   import { formatCommit } from "@app/lib/utils";
 
-  import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
+  import Changeset from "@app/views/projects/Changeset.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";

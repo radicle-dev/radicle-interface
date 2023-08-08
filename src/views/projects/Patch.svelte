@@ -40,7 +40,7 @@
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Changeset from "@app/views/projects/SourceBrowser/Changeset.svelte";
+  import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";

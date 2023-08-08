@@ -16,7 +16,7 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Layout from "./Layout.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
+  import Header from "./Source/Header.svelte";
   import { COMMITS_PER_PAGE } from "./router";
 
   export let baseUrl: BaseUrl;
@@ -110,7 +110,7 @@
 </style>
 
 <Layout {baseUrl} {project} {peer} activeTab="source">
-  <SourceBrowsingHeader
+  <Header
     node={baseUrl}
     {project}
     peers={peersWithRoute}

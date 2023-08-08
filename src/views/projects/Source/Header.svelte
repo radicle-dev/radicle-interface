@@ -4,8 +4,9 @@
 
   import { pluralize } from "@app/lib/pluralize";
 
-  import BranchSelector from "@app/views/projects/BranchSelector.svelte";
-  import PeerSelector from "@app/views/projects/PeerSelector.svelte";
+  import BranchSelector from "./BranchSelector.svelte";
+  import PeerSelector from "./PeerSelector.svelte";
+
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 

@@ -3,7 +3,7 @@
 
   import { formatCommit, twemoji } from "@app/lib/utils";
 
-  import ActivityDiagram from "@app/views/projects/ActivityDiagram.svelte";
+  import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
 
   export let compact = false;
   export let description: string;

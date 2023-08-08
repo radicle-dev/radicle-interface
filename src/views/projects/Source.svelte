@@ -9,10 +9,10 @@
   import Button from "@app/components/Button.svelte";
   import Layout from "./Layout.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import SourceBrowsingHeader from "./SourceBrowsingHeader.svelte";
+  import Header from "./Source/Header.svelte";
 
-  import BlobComponent from "./Blob.svelte";
-  import TreeComponent from "./Tree.svelte";
+  import BlobComponent from "./Source/Blob.svelte";
+  import TreeComponent from "./Source/Tree.svelte";
 
   export let baseUrl: BaseUrl;
   export let blobResult: BlobResult;
@@ -147,7 +147,7 @@
 </style>
 
 <Layout {baseUrl} {project} {peer} activeTab="source">
-  <SourceBrowsingHeader
+  <Header
     node={baseUrl}
     {project}
     peers={peersWithRoute}

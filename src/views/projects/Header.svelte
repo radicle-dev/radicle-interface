@@ -8,7 +8,7 @@
   import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
-  import CloneButton from "@app/views/projects/CloneButton.svelte";
+  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
