@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl, Project } from "@httpd-client";
 
   import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
@@ -15,13 +15,7 @@
 
   export let baseUrl: BaseUrl;
   export let activeTab: ActiveTab = undefined;
-
-  export let projectId: string;
-  export let projectName: string;
-
-  export let openPatchCount: number;
-  export let openIssueCount: number;
-  export let trackings: number;
+  export let project: Project;
 </script>
 
 <style>
@@ -47,7 +41,7 @@
   <Link
     route={{
       resource: "project.source",
-      project: projectId,
+      project: project.id,
       node: baseUrl,
       path: "/",
     }}>
@@ -61,33 +55,33 @@
   <Link
     route={{
       resource: "project.issues",
-      project: projectId,
+      project: project.id,
       node: baseUrl,
     }}>
     <SquareButton active={activeTab === "issues"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="exclamation-circle" />
       </svelte:fragment>
-      <span class="txt-bold">{openIssueCount}</span>
-      {pluralize("issue", openIssueCount)}
+      <span class="txt-bold">{project.issues.open}</span>
+      {pluralize("issue", project.issues.open)}
     </SquareButton>
   </Link>
 
   <Link
     route={{
       resource: "project.patches",
-      project: projectId,
+      project: project.id,
       node: baseUrl,
     }}>
     <SquareButton active={activeTab === "patches"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>
-      <span class="txt-bold">{openPatchCount}</span>
-      {pluralize("patch", openPatchCount)}
+      <span class="txt-bold">{project.patches.open}</span>
+      {pluralize("patch", project.patches.open)}
     </SquareButton>
   </Link>
-  <CloneButton {baseUrl} id={projectId} name={projectName} />
+  <CloneButton {baseUrl} id={project.id} name={project.name} />
 
   <Link
     route={{
@@ -101,11 +95,11 @@
       {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
-  <SquareButton hoverable={false} title="Tracked by {trackings} nodes">
+  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
     <svelte:fragment slot="icon">
       <Icon size="small" name="network" />
     </svelte:fragment>
-    <span class="txt-bold">{trackings}</span>
+    <span class="txt-bold">{project.trackings}</span>
     nodes
   </SquareButton>
 </div>

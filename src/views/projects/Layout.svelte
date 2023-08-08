@@ -129,14 +129,7 @@
     </div>
   </header>
 
-  <Header
-    openIssueCount={project.issues.open}
-    openPatchCount={project.patches.open}
-    projectId={project.id}
-    projectName={project.name}
-    trackings={project.trackings}
-    {activeTab}
-    {baseUrl} />
+  <Header {project} {activeTab} {baseUrl} />
 </div>
 
 <main>
