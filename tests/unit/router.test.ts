@@ -29,7 +29,7 @@ describe("route invariant when parsed", () => {
   });
   test("projects.tree", () => {
     expectParsingInvariant({
-      resource: "project.tree",
+      resource: "project.source",
       node,
       project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       route: "",
@@ -38,7 +38,7 @@ describe("route invariant when parsed", () => {
 
   test("projects.tree with peer", () => {
     expectParsingInvariant({
-      resource: "project.tree",
+      resource: "project.source",
       node,
       project: "PROJECT",
       peer: "PEER",
@@ -48,7 +48,7 @@ describe("route invariant when parsed", () => {
 
   test("projects.tree with peer and revision", () => {
     const route: Route = {
-      resource: "project.tree",
+      resource: "project.source",
       node,
       project: "PROJECT",
       peer: "PEER",
@@ -63,7 +63,7 @@ describe("route invariant when parsed", () => {
 
   test("projects.tree with peer and revision and path", () => {
     const route: Route = {
-      resource: "project.tree",
+      resource: "project.source",
       node,
       project: "PROJECT",
       peer: "PEER",
@@ -264,7 +264,7 @@ describe("pathToRoute", () => {
     expectPathToRoute(
       "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
       {
-        resource: "project.tree",
+        resource: "project.source",
         node: {
           hostname: "willow.radicle.garden",
           scheme: "http",
@@ -280,7 +280,7 @@ describe("pathToRoute", () => {
     expectPathToRoute(
       "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       {
-        resource: "project.tree",
+        resource: "project.source",
         node: {
           hostname: "willow.radicle.garden",
           scheme: "http",

@@ -120,7 +120,7 @@
         <div style:margin-bottom="0.5rem">
           <Link
             route={{
-              resource: "project.tree",
+              resource: "project.source",
               project: project.id,
               node: baseUrl,
             }}>

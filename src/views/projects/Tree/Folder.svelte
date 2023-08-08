@@ -98,7 +98,7 @@
           {:else}
             <Link
               route={{
-                resource: "project.tree",
+                resource: "project.source",
                 project: projectId,
                 node: baseUrl,
                 path: entry.path,

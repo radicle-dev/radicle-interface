@@ -48,7 +48,7 @@
     remote,
     selected: remote.id === peer,
     route: {
-      resource: "project.tree",
+      resource: "project.source",
       node: baseUrl,
       project: project.id,
       peer: remote.id,
@@ -58,7 +58,7 @@
   $: branchesWithRoute = branches.map(name => ({
     name,
     route: {
-      resource: "project.tree",
+      resource: "project.source",
       node: baseUrl,
       project: project.id,
       peer,

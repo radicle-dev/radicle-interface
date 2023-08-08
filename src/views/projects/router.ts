@@ -51,7 +51,7 @@ interface ProjectIssuesRoute {
 }
 
 interface ProjectTreeRoute {
-  resource: "project.tree";
+  resource: "project.source";
   node: BaseUrl;
   project: string;
   path?: string;
@@ -97,7 +97,7 @@ interface ProjectPatchesRoute {
 
 export type ProjectLoadedRoute =
   | {
-      resource: "project.tree";
+      resource: "project.source";
       params: {
         baseUrl: BaseUrl;
         project: Project;
@@ -233,7 +233,7 @@ export async function loadProjectRoute(
 ): Promise<ProjectLoadedRoute | LoadError> {
   const api = new HttpdClient(route.node);
   try {
-    if (route.resource === "project.tree") {
+    if (route.resource === "project.source") {
       return loadTreeView(route);
     } else if (route.resource === "project.history") {
       return loadHistoryView(route);
@@ -391,7 +391,7 @@ async function loadTreeView(
     loadBlob(api, project.id, commit, path),
   ]);
   return {
-    resource: "project.tree",
+    resource: "project.source",
     params: {
       baseUrl: route.node,
       project,
@@ -620,7 +620,7 @@ export function resolveProjectRoute(
 
   if (!content || content === "tree") {
     return {
-      resource: "project.tree",
+      resource: "project.source",
       node,
       project,
       peer,
@@ -736,7 +736,7 @@ export function projectRouteToPath(route: ProjectRoute): string {
 
   const pathSegments = [node, route.project];
 
-  if (route.resource === "project.tree") {
+  if (route.resource === "project.source") {
     if (route.peer) {
       pathSegments.push("remotes", route.peer);
     }
@@ -837,7 +837,7 @@ function patchRouteToPath(route: ProjectPatchRoute): string {
 export function projectTitle(loadedRoute: ProjectLoadedRoute) {
   const title: string[] = [];
 
-  if (loadedRoute.resource === "project.tree") {
+  if (loadedRoute.resource === "project.source") {
     title.push(loadedRoute.params.project.name);
     title.push(loadedRoute.params.project.description);
   } else if (loadedRoute.resource === "project.commit") {

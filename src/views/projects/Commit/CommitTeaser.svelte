@@ -132,7 +132,7 @@
       title="Browse the repository at this point in the history">
       <Link
         route={{
-          resource: "project.tree",
+          resource: "project.source",
           project: projectId,
           node: baseUrl,
           revision: commit.id,

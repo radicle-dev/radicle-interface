@@ -127,7 +127,7 @@ function setTitle(loadedRoute: LoadedRoute) {
     title.push("Page not found");
     title.push("Radicle");
   } else if (
-    loadedRoute.resource === "project.tree" ||
+    loadedRoute.resource === "project.source" ||
     loadedRoute.resource === "project.history" ||
     loadedRoute.resource === "project.commit" ||
     loadedRoute.resource === "project.issue" ||
@@ -244,7 +244,7 @@ export function routeToPath(route: Route): string {
   } else if (route.resource === "loadError") {
     return "";
   } else if (
-    route.resource === "project.tree" ||
+    route.resource === "project.source" ||
     route.resource === "project.history" ||
     route.resource === "project.commit" ||
     route.resource === "project.issues" ||

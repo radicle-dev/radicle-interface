@@ -49,7 +49,7 @@
       if (searchResult.results.length === 1) {
         const { project, baseUrl } = searchResult.results[0];
         void router.push({
-          resource: "project.tree",
+          resource: "project.source",
           project: project.id,
           node: baseUrl,
         });

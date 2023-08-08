@@ -23,7 +23,7 @@
       // Markdown.
       linkBaseUrl = new URL(
         routeToPath({
-          resource: "project.tree",
+          resource: "project.source",
           project: projectId,
           node: baseUrl,
           peer,

@@ -10,7 +10,6 @@
   import LoadingBar from "./App/LoadingBar.svelte";
   import ModalPortal from "./App/ModalPortal.svelte";
 
-  import Browser from "@app/views/projects/Browser.svelte";
   import Commit from "@app/views/projects/Commit.svelte";
   import History from "@app/views/projects/History.svelte";
   import Home from "@app/views/home/Index.svelte";
@@ -21,6 +20,7 @@
   import Patch from "@app/views/projects/Patch.svelte";
   import Patches from "@app/views/projects/Patches.svelte";
   import Session from "@app/views/session/Index.svelte";
+  import Source from "@app/views/projects/Source.svelte";
 
   import LoadError from "@app/components/LoadError.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -76,8 +76,8 @@
       <Nodes {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "session"}
       <Session activeRoute={$activeRouteStore} />
-    {:else if $activeRouteStore.resource === "project.tree"}
-      <Browser {...$activeRouteStore.params} />
+    {:else if $activeRouteStore.resource === "project.source"}
+      <Source {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "project.history"}
       <History {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "project.commit"}

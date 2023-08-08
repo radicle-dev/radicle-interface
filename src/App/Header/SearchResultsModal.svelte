@@ -37,7 +37,7 @@
             <Link
               on:afterNavigate={modal.hide}
               route={{
-                resource: "project.tree",
+                resource: "project.source",
                 node: result.baseUrl,
                 project: result.project.id,
               }}>

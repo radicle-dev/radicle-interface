@@ -339,7 +339,7 @@
     <div class="browse" title="View file">
       <Link
         route={{
-          resource: "project.tree",
+          resource: "project.source",
           project: projectId,
           node: baseUrl,
           path: file.path,
