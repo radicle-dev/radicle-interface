@@ -76,7 +76,7 @@ export async function navigateToUrl(
   } else {
     await navigate(action, {
       resource: "notFound",
-      params: { url: relativeUrl },
+      params: { title: "Page not found" },
     });
   }
 }
@@ -241,8 +241,6 @@ export function routeToPath(route: Route): string {
     return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "nodes") {
     return nodePath(route.params.baseUrl);
-  } else if (route.resource === "loadError") {
-    return "";
   } else if (
     route.resource === "project.source" ||
     route.resource === "project.history" ||
@@ -254,10 +252,12 @@ export function routeToPath(route: Route): string {
     route.resource === "project.patch"
   ) {
     return projectRouteToPath(route);
-  } else if (route.resource === "booting") {
+  } else if (
+    route.resource === "booting" ||
+    route.resource === "notFound" ||
+    route.resource === "loadError"
+  ) {
     return "";
-  } else if (route.resource === "notFound") {
-    return route.params.url;
   } else {
     return utils.unreachable(route);
   }

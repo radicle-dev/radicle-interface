@@ -24,29 +24,34 @@ export type RefsUpdate =
 
 export type NodeEvent =
   | {
-      type: "refs-fetched";
+      type: "refsFetched";
       remote: string;
       rid: string;
       updated: RefsUpdate[];
     }
   | {
-      type: "refs-synced";
+      type: "refsSynced";
       remote: string;
       rid: string;
     }
   | {
-      type: "seed-discovered";
+      type: "seedDiscovered";
       rid: string;
       nid: string;
     }
   | {
-      type: "seed-dropped";
+      type: "seedDropped";
       nid: string;
       rid: string;
     }
   | {
-      type: "peer-connected";
+      type: "peerConnected";
       nid: string;
+    }
+  | {
+      type: "peerDisconnected";
+      nid: string;
+      reason: string;
     };
 
 export interface RoutingEntry {
@@ -340,7 +345,7 @@ export class RadiclePeer {
       });
 
       await this.waitForEvent(
-        { type: "seed-discovered", rid, nid: this.nodeId },
+        { type: "seedDiscovered", rid, nid: this.nodeId },
         6000,
       );
     }
@@ -356,11 +361,11 @@ export class RadiclePeer {
     );
 
     await this.waitForEvent(
-      { type: "peer-connected", nid: remote.nodeId },
+      { type: "peerConnected", nid: remote.nodeId },
       1000,
     );
     await remote.waitForEvent(
-      { type: "peer-connected", nid: this.nodeId },
+      { type: "peerConnected", nid: this.nodeId },
       1000,
     );
   }

@@ -13,9 +13,9 @@ interface BootingRoute {
   resource: "booting";
 }
 
-interface NotFoundRoute {
+export interface NotFoundRoute {
   resource: "notFound";
-  params: { url: string };
+  params: { title: string };
 }
 
 interface SessionRoute {
@@ -23,10 +23,10 @@ interface SessionRoute {
   params: { id: string; signature: string; publicKey: string };
 }
 
-export interface LoadError {
+export interface LoadErrorRoute {
   resource: "loadError";
   params: {
-    title?: string;
+    title: string;
     errorMessage: string;
     stackTrace: string;
   };
@@ -35,7 +35,7 @@ export interface LoadError {
 export type Route =
   | BootingRoute
   | HomeRoute
-  | LoadError
+  | LoadErrorRoute
   | NotFoundRoute
   | ProjectRoute
   | NodesRoute
@@ -44,7 +44,7 @@ export type Route =
 export type LoadedRoute =
   | BootingRoute
   | HomeLoadedRoute
-  | LoadError
+  | LoadErrorRoute
   | NotFoundRoute
   | ProjectLoadedRoute
   | NodesLoadedRoute

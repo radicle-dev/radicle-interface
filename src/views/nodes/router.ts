@@ -1,5 +1,5 @@
 import type { BaseUrl, Project } from "@httpd-client";
-import type { LoadError } from "@app/lib/router/definitions";
+import type { NotFoundRoute } from "@app/lib/router/definitions";
 import type { WeeklyActivity } from "@app/lib/commit";
 
 import { HttpdClient } from "@httpd-client";
@@ -81,7 +81,7 @@ export function nodePath(baseUrl: BaseUrl) {
 
 export async function loadNodeRoute(
   params: NodesRouteParams,
-): Promise<NodesLoadedRoute | LoadError> {
+): Promise<NodesLoadedRoute | NotFoundRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
     const projectPageIndex = 0;
@@ -102,11 +102,9 @@ export async function loadNodeRoute(
     };
   } catch (error: any) {
     return {
-      resource: "loadError",
+      resource: "notFound",
       params: {
-        title: `${params.baseUrl.hostname}:${params.baseUrl.port}`,
-        errorMessage: "Not able to query this node.",
-        stackTrace: error.stack,
+        title: "Node not found",
       },
     };
   }

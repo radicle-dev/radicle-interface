@@ -17,6 +17,7 @@
   import Issues from "@app/views/projects/Issues.svelte";
   import NewIssue from "@app/views/projects/Issue/New.svelte";
   import Nodes from "@app/views/nodes/View.svelte";
+  import NotFound from "@app/views/NotFound.svelte";
   import Patch from "@app/views/projects/Patch.svelte";
   import Patches from "@app/views/projects/Patches.svelte";
   import Session from "@app/views/session/Index.svelte";
@@ -24,7 +25,6 @@
 
   import LoadError from "@app/components/LoadError.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import NotFound from "@app/components/NotFound.svelte";
 
   const activeRouteStore = router.activeRouteStore;
 
@@ -95,11 +95,7 @@
     {:else if $activeRouteStore.resource === "loadError"}
       <LoadError {...$activeRouteStore.params} />
     {:else if $activeRouteStore.resource === "notFound"}
-      <div class="layout-centered">
-        <NotFound
-          title="Page not found"
-          subtitle={`${$activeRouteStore.params.url.replace("/", "")}`} />
-      </div>
+      <NotFound {...$activeRouteStore.params} />
     {:else}
       {unreachable($activeRouteStore)}
     {/if}

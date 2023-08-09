@@ -1,4 +1,7 @@
-import type { LoadError } from "@app/lib/router/definitions";
+import type {
+  LoadErrorRoute,
+  NotFoundRoute,
+} from "@app/lib/router/definitions";
 import type {
   BaseUrl,
   Blob,
@@ -230,13 +233,13 @@ function parseRevisionToOid(
 
 export async function loadProjectRoute(
   route: ProjectRoute,
-): Promise<ProjectLoadedRoute | LoadError> {
+): Promise<ProjectLoadedRoute | LoadErrorRoute | NotFoundRoute> {
   const api = new HttpdClient(route.node);
   try {
     if (route.resource === "project.source") {
-      return loadTreeView(route);
+      return await loadTreeView(route);
     } else if (route.resource === "project.history") {
-      return loadHistoryView(route);
+      return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
       const [project, commit] = await Promise.all([
         api.project.getById(route.project),
@@ -252,33 +255,22 @@ export async function loadProjectRoute(
         },
       };
     } else if (route.resource === "project.issue") {
-      try {
-        const [project, issue] = await Promise.all([
-          api.project.getById(route.project),
-          api.project.getIssueById(route.project, route.issue),
-        ]);
-        return {
-          resource: "project.issue",
-          params: {
-            baseUrl: route.node,
-            project,
-            issue,
-          },
-        };
-      } catch (error: any) {
-        return {
-          resource: "loadError",
-          params: {
-            title: route.issue,
-            errorMessage: "Not able to load this issue.",
-            stackTrace: error.stack,
-          },
-        };
-      }
+      const [project, issue] = await Promise.all([
+        api.project.getById(route.project),
+        api.project.getIssueById(route.project, route.issue),
+      ]);
+      return {
+        resource: "project.issue",
+        params: {
+          baseUrl: route.node,
+          project,
+          issue,
+        },
+      };
     } else if (route.resource === "project.patch") {
-      return loadPatchView(route);
+      return await loadPatchView(route);
     } else if (route.resource === "project.issues") {
-      return loadIssuesView(route);
+      return await loadIssuesView(route);
     } else if (route.resource === "project.newIssue") {
       const project = await api.project.getById(route.project);
       return {
@@ -289,19 +281,40 @@ export async function loadProjectRoute(
         },
       };
     } else if (route.resource === "project.patches") {
-      return loadPatchesView(route);
+      return await loadPatchesView(route);
     } else {
       return unreachable(route);
     }
   } catch (error: any) {
-    return {
-      resource: "loadError",
-      params: {
-        title: route.project,
-        errorMessage: "Not able to load this project.",
-        stackTrace: error.stack,
-      },
-    };
+    if (error?.status === 404) {
+      let subject;
+
+      if (route.resource === "project.commit") {
+        subject = "Commit";
+      } else if (route.resource === "project.issue") {
+        subject = "Issue";
+      } else if (route.resource === "project.patch") {
+        subject = "Patch";
+      } else {
+        subject = "Project";
+      }
+
+      return {
+        resource: "notFound",
+        params: {
+          title: `${subject} not found`,
+        },
+      };
+    } else {
+      return {
+        resource: "loadError",
+        params: {
+          title: "Could not load this project",
+          errorMessage: error.message,
+          stackTrace: error.stack,
+        },
+      };
+    }
   }
 }
 

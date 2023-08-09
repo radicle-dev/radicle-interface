@@ -246,6 +246,24 @@ export function appConfigWithFixture() {
     projects: {
       pinned: [
         {
+          name: "cobs",
+          id: "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe",
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8081,
+            scheme: "http",
+          },
+        },
+        {
+          name: "markdown",
+          id: "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg",
+          baseUrl: {
+            hostname: "127.0.0.1",
+            port: 8081,
+            scheme: "http",
+          },
+        },
+        {
           name: "source-browsing",
           id: "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
           baseUrl: {
@@ -349,11 +367,11 @@ export async function createSourceBrowsingFixture(
   await bob.git(["push", "rad"], { cwd: bobProjectPath });
 
   await bob.waitForEvent(
-    { type: "refs-synced", remote: palm.nodeId, rid },
+    { type: "refsSynced", remote: palm.nodeId, rid },
     2000,
   );
   await bob.waitForEvent(
-    { type: "refs-synced", remote: alice.nodeId, rid },
+    { type: "refsSynced", remote: alice.nodeId, rid },
     2000,
   );
   await alice.stopNode();

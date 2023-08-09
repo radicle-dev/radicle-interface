@@ -14,3 +14,10 @@ test("node page", async ({ page }) => {
   await page.goto("/nodes/radicle.local", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
+
+test("node not found", async ({ page }) => {
+  await page.goto("/nodes/this.node.does.not.exist.xyz", {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot();
+});
