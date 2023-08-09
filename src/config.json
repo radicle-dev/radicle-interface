@@ -60,6 +60,24 @@
           "port": 443,
           "scheme": "https"
         }
+      },
+      {
+        "name": "radicle-tui",
+        "id": "rad:z39mP9rQAaGmERfUMPULfPUi473tY",
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
+      },
+      {
+        "name": "radicle-homepage",
+        "id": "rad:z2ATVRDqFu2Yq2MG5ZZCWecwSDYqj",
+        "baseUrl": {
+          "hostname": "seed.radicle.xyz",
+          "port": 443,
+          "scheme": "https"
+        }
       }
     ]
   }
