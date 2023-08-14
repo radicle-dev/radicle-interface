@@ -1,13 +1,15 @@
 <script lang="ts" strictEvents>
   import type { AuthorAliasColor } from "@app/components/Authorship.svelte";
 
+  import { createEventDispatcher } from "svelte";
+  import { httpdStore } from "@app/lib/httpd";
+
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
-  import Chip from "@app/components/Chip.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import Reactions from "@app/components/Reactions.svelte";
   import Textarea from "@app/components/Textarea.svelte";
-  import { createEventDispatcher } from "svelte";
 
   export let id: string | undefined = undefined;
   export let authorId: string;
@@ -21,12 +23,10 @@
   export let caption = "commented";
   export let rawPath: string;
 
-  const dispatch = createEventDispatcher<{ toggleReply: null }>();
-
-  $: groupedReactions = reactions?.reduce(
-    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
-    new Map<string, string[]>(),
-  );
+  const dispatch = createEventDispatcher<{
+    toggleReply: null;
+    react: { nids: string[]; id: string; reaction: string };
+  }>();
 </script>
 
 <style>
@@ -51,16 +51,11 @@
     display: flex;
     justify-content: flex-end;
   }
-  .action {
-    display: flex;
-    gap: 0.5rem;
-  }
   .reactions {
     margin-top: 1rem;
   }
-  .reaction {
-    display: inline-flex;
-    flex-direction: row;
+  .action {
+    display: flex;
     gap: 0.5rem;
   }
 </style>
@@ -99,16 +94,9 @@
     {:else}
       <Markdown {rawPath} content={body} />
     {/if}
-    {#if groupedReactions.size > 0}
+    {#if id && (reactions.length > 0 || $httpdStore.state === "authenticated")}
       <div class="reactions">
-        {#each groupedReactions as [reaction, nids], key}
-          <Chip {key}>
-            <div class="reaction">
-              <span>{reaction}</span>
-              <span title={nids.join("\n")}>{nids.length}</span>
-            </div>
-          </Chip>
-        {/each}
+        <Reactions {id} {reactions} on:react />
       </div>
     {/if}
   </div>

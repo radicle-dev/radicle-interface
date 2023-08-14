@@ -19,6 +19,48 @@ test("navigate single issue", async ({ page }) => {
   );
 });
 
+test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
+  await page.goto(authenticatedPeer.uiUrl());
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "handle-reactions",
+  );
+  await authenticatedPeer.rad(
+    [
+      "issue",
+      "open",
+      "--title",
+      "This is an issue to test reactions",
+      "--description",
+      "We'll write some comments and add and remove reactions to them",
+    ],
+    { cwd: projectFolder },
+  );
+  await page.goto(
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/48af7d329e5b44ee8d348eeb7e341370243db9ad`,
+  );
+  const commentReactionToggle = page.locator(".card-body .toggle").first();
+  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
+  await page.getByRole("button", { name: "Comment" }).click();
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "👍" }).click();
+  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();
+
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "🎉" }).click();
+  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeVisible();
+  await expect(page.locator(".reaction")).toHaveCount(2);
+
+  await page.locator("span").filter({ hasText: "👍 1" }).click();
+  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
+  await expect(page.locator(".reaction")).toHaveCount(1);
+
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "🎉" }).click();
+  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
+  await expect(page.locator(".reaction")).toHaveCount(0);
+});
+
 test("test issue counters", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,

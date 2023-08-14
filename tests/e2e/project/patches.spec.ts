@@ -38,6 +38,56 @@ test("navigate patch details", async ({ page }) => {
   }
 });
 
+test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
+  await page.goto(authenticatedPeer.uiUrl());
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "handle-reactions",
+  );
+  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(
+    ["commit", "--allow-empty", "-m", "Reaction patch"],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.rad(
+    [
+      "comment",
+      "bfc3bc2c6af29920283f83e7ada9d52b2d4d3a57",
+      "--message",
+      "This is a comment for reactions",
+    ],
+    { cwd: projectFolder },
+  );
+  await page.goto(
+    `${authenticatedPeer.uiUrl()}/${rid}/patches/bfc3bc2c6af29920283f83e7ada9d52b2d4d3a57`,
+  );
+  const commentReactionToggle = page.locator(".card-body .toggle").first();
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "👍" }).click();
+  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();
+
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "🎉" }).click();
+  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeVisible();
+  await expect(page.locator(".reaction")).toHaveCount(2);
+
+  await page.locator("span").filter({ hasText: "👍 1" }).click();
+  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
+  await expect(page.locator(".reaction")).toHaveCount(1);
+
+  await commentReactionToggle.click();
+  await page.getByRole("button", { name: "🎉" }).click();
+  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
+  await expect(page.locator(".reaction")).toHaveCount(0);
+});
+
 test("test patches counters", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder, defaultBranch } = await createProject(
     authenticatedPeer,

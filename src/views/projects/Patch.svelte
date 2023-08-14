@@ -80,6 +80,25 @@
       patch = await api.project.getPatchById(project.id, patch.id);
     }
   }
+  async function handleReaction({
+    detail: { nids, id, reaction },
+  }: CustomEvent<{ nids: string[]; id: string; reaction: string }>) {
+    if ($httpdStore.state === "authenticated") {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        {
+          type: "revision.comment.react",
+          revision: revisionId,
+          comment: id,
+          reaction,
+          active: nids.includes($httpdStore.session.publicKey) ? false : true,
+        },
+        $httpdStore.session.id,
+      );
+      patch = await api.project.getPatchById(project.id, patch.id);
+    }
+  }
   function badgeColor(status: string): Variant {
     if (status === "draft") {
       return "foreground";
@@ -435,6 +454,7 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
+            on:react={handleReaction}
             on:reply={createReply}
             patchId={patch.id}
             expanded={index === patch.revisions.length - 1}

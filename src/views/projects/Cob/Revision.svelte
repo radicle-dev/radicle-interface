@@ -339,6 +339,7 @@
             <Thread
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               thread={element.inner}
+              on:react
               on:reply />
           {:else if element.type === "merge"}
             <div
@@ -384,7 +385,8 @@
                     baseUrl,
                     projectHead,
                   )}
-                  body={review.summary} />
+                  body={review.summary}
+                  on:react />
               </div>
             {:else}
               <div

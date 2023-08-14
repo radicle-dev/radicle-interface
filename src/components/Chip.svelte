@@ -1,18 +1,24 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher<{ remove: number }>();
+  const dispatch = createEventDispatcher<{ remove: number; click: null }>();
 
   export let removeable: boolean = false;
+  export let clickable: boolean = false;
   export let key: number;
 </script>
 
 <style>
   .chip {
+    user-select: none;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     color: var(--color-secondary);
+  }
+  .clickable:hover {
+    cursor: pointer;
+    background-color: var(--color-secondary-5);
   }
   .section {
     display: flex;
@@ -45,7 +51,9 @@
 </style>
 
 <div class="chip">
-  <span class="section text" class:removeable>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <span class="section text" class:removeable class:clickable on:click>
     <slot />
   </span>
   {#if removeable}

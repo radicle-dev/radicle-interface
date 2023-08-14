@@ -15,7 +15,6 @@
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
-  import Chip from "@app/components/Chip.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
@@ -25,6 +24,7 @@
   import Markdown from "@app/components/Markdown.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
+  import Reactions from "@app/components/Reactions.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -32,11 +32,6 @@
 
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
-
-  $: groupedReactions = issue.discussion[0].reactions.reduce(
-    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
-    new Map<string, string[]>(),
-  );
 
   let action: "edit" | "view";
   $: action =
@@ -81,6 +76,32 @@
       );
       if (status === "success") {
         issue = await refreshIssue(project.id, issue, api);
+      }
+    }
+  }
+
+  async function handleReaction({
+    detail: { nids, id, reaction },
+  }: CustomEvent<{ nids: string[]; id: string; reaction: string }>) {
+    if ($httpdStore.state === "authenticated") {
+      try {
+        const status = await updateIssue(
+          project.id,
+          issue.id,
+          {
+            type: "comment.react",
+            id,
+            reaction,
+            active: nids.includes($httpdStore.session.publicKey) ? false : true,
+          },
+          $httpdStore.session,
+          api,
+        );
+        if (status === "success") {
+          issue = await refreshIssue(project.id, issue, api);
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
   }
@@ -262,17 +283,6 @@
     padding-left: 1rem;
     margin-left: 1rem;
   }
-  .reactions {
-    display: inline-flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    user-select: none;
-  }
-  .reaction {
-    display: inline-flex;
-    flex-direction: row;
-    gap: 0.5rem;
-  }
 
   .actions {
     display: flex;
@@ -286,6 +296,9 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.5rem;
+  }
+  .reactions {
+    margin-top: 1rem;
   }
   .thread {
     margin: 1rem 0;
@@ -341,16 +354,12 @@
           <Markdown
             content={issue.discussion[0].body}
             rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
-          {#if issue.discussion[0].reactions}
-            <div class="reactions txt-tiny">
-              {#each groupedReactions as [reaction, nids], key}
-                <Chip {key}>
-                  <div class="reaction">
-                    <span>{reaction}</span>
-                    <span title={nids.join("\n")}>{nids.length}</span>
-                  </div>
-                </Chip>
-              {/each}
+          {#if issue.discussion[0].reactions.length > 0 || $httpdStore.state === "authenticated"}
+            <div class="reactions">
+              <Reactions
+                id={issue.id}
+                reactions={issue.discussion[0].reactions}
+                on:react={handleReaction} />
             </div>
           {/if}
         </div>
@@ -363,7 +372,11 @@
       </CobHeader>
       {#each threads as thread (thread.root.id)}
         <div class="thread">
-          <ThreadComponent {thread} {rawPath} on:reply={createReply} />
+          <ThreadComponent
+            {thread}
+            {rawPath}
+            on:reply={createReply}
+            on:react={handleReaction} />
         </div>
       {/each}
       {#if $httpdStore.state === "authenticated"}

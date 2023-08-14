@@ -42,6 +42,7 @@
 
   const dispatch = createEventDispatcher<{
     reply: { id: string; body: string };
+    react: { nids: string[]; commentId: string | undefined; reaction: string };
     cancel: never;
   }>();
 
@@ -81,7 +82,8 @@
       timestamp={root.timestamp}
       body={root.body}
       showReplyIcon={Boolean($httpdStore.state === "authenticated")}
-      on:toggleReply={toggleReply} />
+      on:toggleReply={toggleReply}
+      on:react />
   </div>
   {#each replies as reply}
     <div class="comment reply">
@@ -93,7 +95,8 @@
         caption="replied"
         reactions={reply.reactions}
         timestamp={reply.timestamp}
-        body={reply.body} />
+        body={reply.body}
+        on:react />
     </div>
   {/each}
   {#if showReplyTextarea}
