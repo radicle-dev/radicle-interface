@@ -1,13 +1,15 @@
 <script lang="ts" strictEvents>
   import type { AuthorAliasColor } from "@app/components/Authorship.svelte";
 
+  import config from "@app/config.json";
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
-  import Chip from "@app/components/Chip.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import Reaction from "@app/components/Reaction.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher } from "svelte";
+  import Floating, { closeFocused } from "@app/components/Floating.svelte";
 
   export let id: string | undefined = undefined;
   export let authorId: string;
@@ -21,7 +23,10 @@
   export let caption = "commented";
   export let rawPath: string;
 
-  const dispatch = createEventDispatcher<{ toggleReply: null }>();
+  const dispatch = createEventDispatcher<{
+    toggleReply: null;
+    react: { nids: string[]; commentId: string | undefined; reaction: string };
+  }>();
 
   $: groupedReactions = reactions?.reduce(
     (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
@@ -47,6 +52,13 @@
     font-size: var(--font-size-small);
     padding: 0 1rem 0.7rem 1rem;
   }
+  .reaction-selector {
+    display: inline-flex;
+    background-color: var(--color-background-1);
+    border-radius: var(--border-radius-small);
+    position: absolute;
+    bottom: 2.2rem;
+  }
   .actions {
     display: flex;
     justify-content: flex-end;
@@ -56,6 +68,9 @@
     gap: 0.5rem;
   }
   .reactions {
+    position: relative;
+    display: inline-flex;
+    gap: 0.3rem;
     margin-top: 1rem;
   }
   .reaction {
@@ -99,17 +114,35 @@
     {:else}
       <Markdown {rawPath} content={body} />
     {/if}
-    {#if groupedReactions.size > 0}
-      <div class="reactions">
-        {#each groupedReactions as [reaction, nids], key}
-          <Chip {key}>
+    <div class="reactions">
+      <Floating>
+        <div class="reaction-selector" slot="modal">
+          {#each config.reactions as reaction}
+            <Button
+              size="small"
+              variant="text"
+              on:click={() => {
+                dispatch("react", { nids: [], commentId: id, reaction });
+                closeFocused();
+              }}>
+              {reaction}
+            </Button>
+          {/each}
+        </div>
+        <Reaction slot="toggle">+</Reaction>
+      </Floating>
+      {#if groupedReactions.size > 0}
+        {#each groupedReactions as [reaction, nids]}
+          <Reaction
+            on:click={() =>
+              dispatch("react", { nids, commentId: id, reaction })}>
             <div class="reaction">
               <span>{reaction}</span>
               <span title={nids.join("\n")}>{nids.length}</span>
             </div>
-          </Chip>
+          </Reaction>
         {/each}
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 </div>

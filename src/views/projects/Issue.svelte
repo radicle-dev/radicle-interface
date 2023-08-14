@@ -38,6 +38,11 @@
     new Map<string, string[]>(),
   );
 
+  $: publicKey =
+    $httpdStore.state === "authenticated"
+      ? $httpdStore.session.publicKey
+      : undefined;
+
   let action: "edit" | "view";
   $: action =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
@@ -76,6 +81,28 @@
         project.id,
         issue.id,
         { type: "comment", body, replyTo: issue.id },
+        $httpdStore.session,
+        api,
+      );
+      if (status === "success") {
+        issue = await refreshIssue(project.id, issue, api);
+      }
+    }
+  }
+
+  async function handleReaction({
+    detail: { nids, commentId, reaction },
+  }: CustomEvent<{ nids: string[]; commentId: string; reaction: string }>) {
+    if ($httpdStore.state === "authenticated") {
+      const status = await updateIssue(
+        project.id,
+        issue.id,
+        {
+          type: "comment.react",
+          id: commentId,
+          reaction,
+          active: publicKey && nids.includes(publicKey) ? false : true,
+        },
         $httpdStore.session,
         api,
       );
@@ -363,7 +390,11 @@
       </CobHeader>
       {#each threads as thread (thread.root.id)}
         <div class="thread">
-          <ThreadComponent {thread} {rawPath} on:reply={createReply} />
+          <ThreadComponent
+            {thread}
+            {rawPath}
+            on:reply={createReply}
+            on:react={handleReaction} />
         </div>
       {/each}
       {#if $httpdStore.state === "authenticated"}
