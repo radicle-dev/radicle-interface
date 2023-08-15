@@ -14,6 +14,7 @@ import { execa } from "execa";
 import * as Process from "./process.js";
 import { randomTag } from "@tests/support/support.js";
 import { sleep } from "@app/lib/sleep.js";
+import { array, boolean, literal, number, object, string, union, z } from "zod";
 
 export type RefsUpdate =
   | { updated: { name: string; old: string; new: string } }
@@ -105,6 +106,29 @@ export async function createPeerManager(createParams: {
   };
 }
 
+export const NodeConfigSchema = object({
+  node: object({
+    alias: string(),
+    peers: union([
+      object({ type: literal("static") }),
+      object({ type: literal("dynamic"), target: number() }),
+    ]),
+    connect: array(string()),
+    externalAddresses: array(string()),
+    network: union([literal("main"), literal("test")]),
+    relay: boolean(),
+    limits: object({
+      routingMaxSize: number(),
+      routingMaxAge: number(),
+      fetchConcurrency: number(),
+    }),
+    policy: union([literal("track"), literal("block")]),
+    scope: union([literal("trusted"), literal("all")]),
+  }),
+});
+
+export interface NodeConfig extends z.infer<typeof NodeConfigSchema> {}
+
 export class RadiclePeer {
   public checkoutPath: string;
   public nodeId: string;
@@ -173,6 +197,17 @@ export class RadiclePeer {
     };
 
     await execa("rad", ["auth", "--alias", name], { env });
+    const config = await Fs.readFile(
+      Path.join(radHome, "config.json"),
+      "utf-8",
+    );
+    const parsedConfig = NodeConfigSchema.parse(JSON.parse(config));
+    parsedConfig.node.network = "test";
+    await Fs.writeFile(
+      Path.join(radHome, "config.json"),
+      JSON.stringify(parsedConfig),
+      "utf-8",
+    );
     const { stdout: nodeId } = await execa("rad", ["self", "--nid"], { env });
 
     return new RadiclePeer({
