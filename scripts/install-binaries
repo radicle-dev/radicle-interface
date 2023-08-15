@@ -5,6 +5,7 @@ BINARIES=(rad radicle-node radicle-httpd git-remote-rad)
 REPO_ROOT=$(git rev-parse --show-toplevel)
 REV=$(cat "$REPO_ROOT/tests/support/heartwood-version")
 BINARY_PATH=$REPO_ROOT/tests/tmp/bin/${REV:0:7}
+USE_LOCAL_BINARIES=false
 OS=$(uname)
 
 show_usage() {
@@ -16,6 +17,7 @@ show_usage() {
   echo
   echo "OPTIONS:"
   echo "  -s --show-path         Print the binary path, and skip installation."
+  echo "  -l --local-path        Use local path instead of fetching from radicle.xyz."
   echo "  -h --help              Print this Help."
   echo
 }
@@ -26,6 +28,11 @@ while [ $# -ne 0 ]; do
       echo "$BINARY_PATH"
       exit
       ;;
+    --local-path | -l)
+      USE_LOCAL_BINARIES=true
+      SOURCE_PATH=$2
+      shift 2
+      ;;
     --help | -h)
       show_usage
       exit
@@ -34,9 +41,11 @@ while [ $# -ne 0 ]; do
 
 done
 
-
 echo
 echo "Using revision $REV"
+if [ "$USE_LOCAL_BINARIES" = true ]; then
+  echo "Using local binaries from $SOURCE_PATH"
+fi
 echo
 
 mkdir -p "$BINARY_PATH"
@@ -45,6 +54,9 @@ for BINARY_NAME in "${BINARIES[@]}"
 do
   if [ -x "$(command -v "$BINARY_PATH/$BINARY_NAME")" ]; then
     echo ✅ "$BINARY_NAME"
+  elif [ "$USE_LOCAL_BINARIES" = true ]; then
+    echo Copying "$BINARY_NAME" from "$SOURCE_PATH/$BINARY_NAME"
+    cp "$SOURCE_PATH/$BINARY_NAME" "$BINARY_PATH/$BINARY_NAME"
   else
     # To provide deterministic Node and Repo IDs, we need a rad CLI compiled with the --debug flag.
     if [ "$BINARY_NAME" = "rad" ]; then
