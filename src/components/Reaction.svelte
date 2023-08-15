@@ -1,4 +1,5 @@
 <script lang="ts" strictEvents>
+  export let clickable: boolean = false;
 </script>
 
 <style>
@@ -8,7 +9,7 @@
     align-items: center;
     color: var(--color-secondary);
   }
-  .section:hover {
+  .clickable {
     cursor: pointer;
     background-color: var(--color-secondary-4);
     color: var(--color-foreground);
@@ -28,7 +29,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="reaction" on:click>
-  <span class="section text">
+  <span class="section text" class:clickable>
     <slot />
   </span>
 </div>

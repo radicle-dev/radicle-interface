@@ -38,11 +38,6 @@
     new Map<string, string[]>(),
   );
 
-  $: publicKey =
-    $httpdStore.state === "authenticated"
-      ? $httpdStore.session.publicKey
-      : undefined;
-
   let action: "edit" | "view";
   $: action =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
@@ -94,20 +89,24 @@
     detail: { nids, commentId, reaction },
   }: CustomEvent<{ nids: string[]; commentId: string; reaction: string }>) {
     if ($httpdStore.state === "authenticated") {
-      const status = await updateIssue(
-        project.id,
-        issue.id,
-        {
-          type: "comment.react",
-          id: commentId,
-          reaction,
-          active: publicKey && nids.includes(publicKey) ? false : true,
-        },
-        $httpdStore.session,
-        api,
-      );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
+      try {
+        const status = await updateIssue(
+          project.id,
+          issue.id,
+          {
+            type: "comment.react",
+            id: commentId,
+            reaction,
+            active: nids.includes($httpdStore.session.publicKey) ? false : true,
+          },
+          $httpdStore.session,
+          api,
+        );
+        if (status === "success") {
+          issue = await refreshIssue(project.id, issue, api);
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
   }

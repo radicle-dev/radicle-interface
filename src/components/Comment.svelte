@@ -10,6 +10,7 @@
   import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher } from "svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import { httpdStore } from "@app/lib/httpd";
 
   export let id: string | undefined = undefined;
   export let authorId: string;
@@ -54,10 +55,23 @@
   }
   .reaction-selector {
     display: inline-flex;
+    align-items: center;
     background-color: var(--color-background-1);
     border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-foreground-3);
+    box-shadow: var(--elevation-low);
     position: absolute;
     bottom: 2.2rem;
+  }
+  .reaction-selector-item {
+    padding: 0.5rem;
+    border: 0;
+    background-color: transparent;
+  }
+  .reaction-selector-item:hover {
+    cursor: pointer;
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background);
   }
   .actions {
     display: flex;
@@ -72,11 +86,6 @@
     display: inline-flex;
     gap: 0.3rem;
     margin-top: 1rem;
-  }
-  .reaction {
-    display: inline-flex;
-    flex-direction: row;
-    gap: 0.5rem;
   }
 </style>
 
@@ -115,28 +124,32 @@
       <Markdown {rawPath} content={body} />
     {/if}
     <div class="reactions">
-      <Floating>
-        <div class="reaction-selector" slot="modal">
-          {#each config.reactions as reaction}
-            <Button
-              size="small"
-              variant="text"
-              on:click={() => {
-                dispatch("react", { nids: [], commentId: id, reaction });
-                closeFocused();
-              }}>
-              {reaction}
-            </Button>
-          {/each}
-        </div>
-        <Reaction slot="toggle">+</Reaction>
-      </Floating>
+      {#if $httpdStore.state === "authenticated"}
+        <Floating>
+          <div style:color="white" slot="modal">
+            <div class="reaction-selector">
+              {#each config.reactions as reaction}
+                <button
+                  class="reaction-selector-item"
+                  on:click={() => {
+                    dispatch("react", { nids: [], commentId: id, reaction });
+                    closeFocused();
+                  }}>
+                  {reaction}
+                </button>
+              {/each}
+            </div>
+          </div>
+          <Reaction slot="toggle">+</Reaction>
+        </Floating>
+      {/if}
       {#if groupedReactions.size > 0}
         {#each groupedReactions as [reaction, nids]}
           <Reaction
+            clickable={$httpdStore.state === "authenticated"}
             on:click={() =>
               dispatch("react", { nids, commentId: id, reaction })}>
-            <div class="reaction">
+            <div style:margin-right="0.2rem">
               <span>{reaction}</span>
               <span title={nids.join("\n")}>{nids.length}</span>
             </div>
