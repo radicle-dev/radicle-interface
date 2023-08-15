@@ -10,6 +10,7 @@ import getPort from "get-port";
 import lodash from "lodash";
 import waitOn from "wait-on";
 import { execa } from "execa";
+import * as readline from "node:readline/promises";
 
 import * as Process from "./process.js";
 import { randomTag } from "@tests/support/support.js";
@@ -292,24 +293,25 @@ export class RadiclePeer {
       resources: [`socket:${this.#socket}`],
     });
 
-    this.rad(["node", "events"], { cwd: this.#radHome }).stdout?.on(
-      "data",
-      (data: any) => {
-        data
-          .toString()
-          .split("\n")
-          .forEach((data: unknown) => {
-            if (data && typeof data === "string" && data.trim() !== "") {
-              try {
-                const result: NodeEvent = JSON.parse(data);
-                this.#eventRecords.push(result);
-              } catch (e) {
-                console.log("Error parsing event", data);
-              }
-            }
-          });
-      },
-    );
+    const stdout = this.rad(["node", "events"], { cwd: this.#radHome }).stdout;
+
+    if (stdout) {
+      readline
+        .createInterface({
+          input: stdout,
+          terminal: false,
+        })
+        .on("line", line => {
+          try {
+            const result: NodeEvent = JSON.parse(line);
+            this.#eventRecords.push(result);
+          } catch (e) {
+            console.log("Error parsing event", line);
+          }
+        });
+    } else {
+      throw new Error("Could not get stdout to track events");
+    }
   }
 
   public async stopNode() {
