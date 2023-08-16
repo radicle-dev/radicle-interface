@@ -109,11 +109,15 @@ export async function loadNodeRoute(
       },
     };
   } catch (error: any) {
-    return {
-      resource: "notFound",
-      params: {
-        title: "Node not found",
-      },
-    };
+    if (error.message === "Failed to fetch") {
+      return {
+        resource: "notFound",
+        params: {
+          title: "Node not found",
+        },
+      };
+    } else {
+      throw error;
+    }
   }
 }

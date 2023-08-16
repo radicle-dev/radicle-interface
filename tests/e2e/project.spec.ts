@@ -447,7 +447,6 @@ test("external markdown link", async ({ page }) => {
   });
   await page.goto(`${markdownUrl}/tree/main/footnotes.md`);
   await page.getByRole("link", { name: "https://example.com" }).click();
-  await page.pause();
   await expect(page).toHaveURL("https://example.com");
 });
 
