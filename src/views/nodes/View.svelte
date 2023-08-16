@@ -29,6 +29,11 @@
       const result = await loadProjects(projectPageIndex, baseUrl);
       projectCount = result.total;
       projects = [...projects, ...result.projects];
+      projects.sort(
+        (a, b) =>
+          b.latestCommitHeader.committer.time -
+          a.latestCommitHeader.committer.time,
+      );
       projectPageIndex += 1;
     } catch (err) {
       error = err;

@@ -25,6 +25,7 @@ import {
   object,
   string,
   union,
+  z,
 } from "zod";
 
 import {
@@ -46,26 +47,6 @@ import {
   patchCreatedSchema,
 } from "./project/patch.js";
 
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  defaultBranch: string;
-  delegates: string[];
-  head: string;
-  patches: {
-    open: number;
-    draft: number;
-    archived: number;
-    merged: number;
-  };
-  issues: {
-    open: number;
-    closed: number;
-  };
-  trackings: number;
-}
-
 const projectSchema = object({
   id: string(),
   name: string(),
@@ -84,25 +65,16 @@ const projectSchema = object({
     closed: number(),
   }),
   trackings: number(),
-}) satisfies ZodSchema<Project>;
+});
+const projectsSchema = array(projectSchema);
 
-const projectsSchema = array(projectSchema) satisfies ZodSchema<Project[]>;
-
-export interface Activity {
-  activity: number[];
-}
+export type Project = z.infer<typeof projectSchema>;
 
 const activitySchema = object({
   activity: array(number()),
-}) satisfies ZodSchema<Activity>;
+});
 
-export interface Blob {
-  binary: boolean;
-  content?: string;
-  name: string;
-  path: string;
-  lastCommit: CommitHeader;
-}
+export type Activity = z.infer<typeof activitySchema>;
 
 const blobSchema = object({
   binary: boolean(),
@@ -110,19 +82,17 @@ const blobSchema = object({
   name: string(),
   path: string(),
   lastCommit: commitHeaderSchema,
-}) satisfies ZodSchema<Blob>;
+});
 
-interface TreeEntry {
-  path: string;
-  name: string;
-  kind: "tree" | "blob";
-}
+export type Blob = z.infer<typeof blobSchema>;
 
 const treeEntrySchema = object({
   path: string(),
   name: string(),
   kind: union([literal("blob"), literal("tree")]),
-}) satisfies ZodSchema<TreeEntry>;
+});
+
+export type TreeEntry = z.infer<typeof treeEntrySchema>;
 
 export interface TreeStats {
   commits: number;
