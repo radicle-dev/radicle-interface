@@ -310,10 +310,12 @@ export async function createSourceBrowsingFixture(
     gitOptions: gitOptions["bob"],
   });
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
-  await alice.startNode();
-  await bob.startNode();
-  await alice.connect(palm);
-  await bob.connect(palm);
+  await alice.startNode({ connect: [palm.address] });
+  await bob.startNode({ connect: [palm.address] });
+  await alice.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
+  await palm.waitForEvent({ type: "peerConnected", nid: alice.nodeId }, 1000);
+  await bob.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
+  await palm.waitForEvent({ type: "peerConnected", nid: bob.nodeId }, 1000);
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
   await alice.git(["checkout", "feature/branch"], { cwd: aliceProjectPath });

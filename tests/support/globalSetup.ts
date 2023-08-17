@@ -51,7 +51,7 @@ export default async function globalSetup(): Promise<() => void> {
       gitOptions: gitOptions["alice"],
     });
     await palm.startHttpd(defaultHttpdPort);
-    await palm.startNode({ trackingPolicy: "track", trackingScope: "all" });
+    await palm.startNode({ policy: "track", scope: "all" });
 
     console.log("Creating source-browsing fixture");
     await createSourceBrowsingFixture(peerManager, palm);
