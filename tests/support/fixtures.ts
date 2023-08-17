@@ -310,10 +310,8 @@ export async function createSourceBrowsingFixture(
     gitOptions: gitOptions["bob"],
   });
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
-  await alice.startNode();
-  await bob.startNode();
-  await alice.connect(palm);
-  await bob.connect(palm);
+  await alice.startNode({ connect: [palm.address] });
+  await bob.startNode({ connect: [palm.address] });
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
   await alice.git(["checkout", "feature/branch"], { cwd: aliceProjectPath });

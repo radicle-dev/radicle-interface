@@ -203,17 +203,6 @@ export class RadiclePeer {
     };
 
     await execa("rad", ["auth", "--alias", name], { env });
-    const config = await Fs.readFile(
-      Path.join(radHome, "config.json"),
-      "utf-8",
-    );
-    const parsedConfig = NodeConfigSchema.parse(JSON.parse(config));
-    parsedConfig.node.network = "test";
-    await Fs.writeFile(
-      Path.join(radHome, "config.json"),
-      JSON.stringify(parsedConfig),
-      "utf-8",
-    );
     const { stdout: nodeId } = await execa("rad", ["self", "--nid"], { env });
 
     return new RadiclePeer({
@@ -265,14 +254,17 @@ export class RadiclePeer {
     this.#httpdBaseUrl = undefined;
   }
 
-  public async startNode(params?: {
-    trackingScope?: "trusted" | "all";
-    trackingPolicy?: "track" | "block";
-  }) {
+  public async startNode(nodeParams: Partial<NodeConfig["node"]> = {}) {
     const gitPort = await getPort();
     const gitSocketAddr = `0.0.0.0:${gitPort}`;
     const listenPort = await getPort();
     this.#listenSocketAddr = `0.0.0.0:${listenPort}`;
+
+    // We need to set the `config.json` file after creating the node identity and before starting it.
+    // Since we aren't able to pass these configuration options through the CLI.
+    const nodeConfig = await NodeConfigurator.create(this.#radHome);
+    nodeConfig.config = { network: "test", ...nodeParams };
+    await nodeConfig.save();
 
     const args = [
       "--git-daemon",
@@ -280,12 +272,6 @@ export class RadiclePeer {
       "--listen",
       this.#listenSocketAddr,
     ];
-    if (params?.trackingScope) {
-      args.push("--tracking-scope", params.trackingScope);
-    }
-    if (params?.trackingPolicy) {
-      args.push("--tracking-policy", params.trackingPolicy);
-    }
 
     this.#nodeProcess = this.spawn("radicle-node", args);
 
@@ -353,23 +339,11 @@ export class RadiclePeer {
     }
   }
 
-  public async connect(remote: RadiclePeer) {
-    if (!remote.#listenSocketAddr) {
+  public get address(): string {
+    if (!this.#listenSocketAddr) {
       throw new Error("Remote node has no listen addr yet");
     }
-    await this.rad(
-      ["node", "connect", `${remote.nodeId}@${remote.#listenSocketAddr}`],
-      { cwd: this.#radHome },
-    );
-
-    await this.waitForEvent(
-      { type: "peerConnected", nid: remote.nodeId },
-      1000,
-    );
-    await remote.waitForEvent(
-      { type: "peerConnected", nid: this.nodeId },
-      1000,
-    );
+    return `${this.nodeId}@${this.#listenSocketAddr}`;
   }
 
   public uiUrl(): string {
@@ -424,5 +398,30 @@ export class RadiclePeer {
     void Process.prefixOutput(childProcess, this.nodeId, this.#outputLog);
 
     return childProcess;
+  }
+}
+
+class NodeConfigurator {
+  #config: NodeConfig;
+  #configPath: string;
+
+  private constructor(config: NodeConfig, configPath: string) {
+    this.#config = config;
+    this.#configPath = configPath;
+  }
+
+  static async create(radHome: string) {
+    const configPath = Path.join(radHome, "config.json");
+    const config = await Fs.readFile(configPath, "utf-8");
+    const parsedConfig = NodeConfigSchema.parse(JSON.parse(config));
+    return new NodeConfigurator(parsedConfig, configPath);
+  }
+
+  public async save() {
+    await Fs.writeFile(this.#configPath, JSON.stringify(this.#config), "utf-8");
+  }
+
+  public set config(config: Partial<NodeConfig["node"]>) {
+    this.#config = { node: { ...this.#config.node, ...config } };
   }
 }
