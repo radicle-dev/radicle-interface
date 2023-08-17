@@ -121,7 +121,7 @@
 
   <div style:margin-bottom="5rem">
     <div style:margin-top="1rem">
-      {#each projects as { project, activity }}
+      {#each projects as { project, activity } (project.id)}
         <div style:margin-bottom="0.5rem">
           <Link
             route={{

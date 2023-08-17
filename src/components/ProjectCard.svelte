@@ -5,13 +5,12 @@
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
 
+  export let activity: WeeklyActivity[];
   export let compact = false;
   export let description: string;
   export let head: string;
   export let id: string;
   export let name: string;
-
-  export let activity: WeeklyActivity[];
 </script>
 
 <style>
