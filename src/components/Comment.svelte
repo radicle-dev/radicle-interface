@@ -54,7 +54,7 @@
     padding: 0 1rem 0.7rem 1rem;
   }
   .reaction-selector {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     background-color: var(--color-background-1);
     border-radius: var(--border-radius-small);
@@ -83,7 +83,8 @@
   }
   .reactions {
     position: relative;
-    display: inline-flex;
+    display: flex;
+    align-items: center;
     gap: 0.3rem;
     margin-top: 1rem;
   }
@@ -140,7 +141,7 @@
               {/each}
             </div>
           </div>
-          <Reaction slot="toggle">+</Reaction>
+          <Button variant="text" slot="toggle" size="tiny">+</Button>
         </Floating>
       {/if}
       {#if groupedReactions.size > 0}
