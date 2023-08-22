@@ -1,4 +1,4 @@
-import type { marked } from "marked";
+import type { Tokens } from "marked";
 
 import dompurify from "dompurify";
 import katexMarkedExtension from "marked-katex-extension";
@@ -28,7 +28,7 @@ const emojisMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic): string =>
+  renderer: (token: Tokens.Generic): string =>
     `<span>${token.text in emojis ? emojis[token.text] : token.text}</span>`,
 };
 
@@ -50,7 +50,7 @@ const footnoteReferenceMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic): string =>
+  renderer: (token: Tokens.Generic): string =>
     `<sup class="footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`,
 };
 const footnoteMatch = /^\[\^([^\]]+)\]:\s([\S]*)/;
@@ -69,7 +69,7 @@ const footnoteMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic): string =>
+  renderer: (token: Tokens.Generic): string =>
     `${
       token.reference === "0" ? "<hr />" : ""
     }<p class="txt-small" id="${footnotePrefix}:${token.reference}">${
@@ -97,8 +97,7 @@ const anchorMarkedExtension = {
       };
     }
   },
-  renderer: (token: marked.Tokens.Generic): string =>
-    `<a name="${token.text}"></a>`,
+  renderer: (token: Tokens.Generic): string => `<a name="${token.text}"></a>`,
 };
 
 export class Renderer extends BaseRenderer {
@@ -151,9 +150,6 @@ const markedInstance = new Marked(
       footnoteReferenceMarkedExtension,
       anchorMarkedExtension,
     ],
-    // TODO: Disables deprecated options, remove once removed from marked
-    mangle: false,
-    headerIds: false,
   },
 );
 

@@ -53,7 +53,9 @@
 
   function render(content: string): string {
     return dompurify.sanitize(
-      markdown.parse(content, { renderer: new Renderer(linkBaseUrl) }),
+      markdown.parse(content, {
+        renderer: new Renderer(linkBaseUrl),
+      }) as string,
     );
   }
 

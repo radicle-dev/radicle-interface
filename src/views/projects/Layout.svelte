@@ -16,6 +16,9 @@
   export let baseUrl: BaseUrl;
   export let peer: string | undefined = undefined;
   export let project: Project;
+
+  const render = (content: string): string =>
+    dompurify.sanitize(markdown.parse(content) as string);
 </script>
 
 <style>
@@ -122,7 +125,7 @@
   </div>
 
   <div class="description" use:twemoji>
-    {@html dompurify.sanitize(markdown.parse(project.description))}
+    {@html render(project.description)}
   </div>
 
   <Header {project} {activeTab} {baseUrl} />

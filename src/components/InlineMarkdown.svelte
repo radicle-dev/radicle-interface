@@ -8,7 +8,7 @@
   export let fontSize: "tiny" | "small" | "medium" = "small";
 
   const render = (content: string): string =>
-    dompurify.sanitize(markdown.parseInline(content));
+    dompurify.sanitize(markdown.parseInline(content) as string);
 </script>
 
 <style>
