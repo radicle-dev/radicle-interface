@@ -1,9 +1,9 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  import Button from "@app/components/Button.svelte";
   import Chip from "@app/components/Chip.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import config from "@app/config.json";
   import { httpdStore } from "@app/lib/httpd";
 
@@ -89,7 +89,9 @@
           </button>
         {/each}
       </div>
-      <Button variant="secondary" slot="toggle" size="tiny">+</Button>
+      <div slot="toggle" class="toggle">
+        <Icon name="face" />
+      </div>
     </Floating>
   {/if}
   {#if groupedReactions.size > 0}
