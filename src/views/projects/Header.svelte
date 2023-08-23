@@ -54,7 +54,7 @@
     }}>
     <SquareButton active={activeTab === "issues"}>
       <svelte:fragment slot="icon">
-        <Icon size="small" name="exclamation-circle" />
+        <Icon size="small" name="issue" />
       </svelte:fragment>
       <span class="txt-bold">{project.issues.open}</span>
       {pluralize("issue", project.issues.open)}

@@ -322,7 +322,7 @@
             class="state"
             class:closed={issue.state.status === "closed"}
             class:open={issue.state.status === "open"}>
-            <Icon name="exclamation-circle" />
+            <Icon name="issue" />
           </div>
         </svelte:fragment>
         <svelte:fragment slot="state">
