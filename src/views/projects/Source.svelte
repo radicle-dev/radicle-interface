@@ -75,8 +75,6 @@
   .container {
     display: flex;
     width: inherit;
-    margin-bottom: 4rem;
-    padding: 0 2rem 0 8rem;
   }
 
   .column-left {
@@ -102,19 +100,10 @@
   .source-tree {
     overflow-x: hidden;
   }
-  nav {
-    padding: 0 2rem;
-  }
   .sticky {
     position: sticky;
     top: 2rem;
     max-height: 100vh;
-  }
-
-  @media (max-width: 960px) {
-    .container {
-      padding-left: 2rem;
-    }
   }
 
   @media (max-width: 720px) {
@@ -126,7 +115,6 @@
       padding: 1.5rem;
     }
     .source-tree {
-      padding: 0 2rem;
       margin: 1rem 0;
     }
     .container {

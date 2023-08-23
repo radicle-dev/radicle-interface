@@ -21,7 +21,6 @@
 <style>
   .header {
     font-size: var(--font-size-tiny);
-    padding: 0 2rem 0 0rem;
     display: flex;
     align-items: center;
     justify-content: left;
@@ -75,20 +74,6 @@
       {pluralize("patch", project.patches.open)}
     </SquareButton>
   </Link>
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
-
-  <Link
-    route={{
-      resource: "nodes",
-      params: {
-        baseUrl,
-        projectPageIndex: 0,
-      },
-    }}>
-    <SquareButton>
-      {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
-    </SquareButton>
-  </Link>
   <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
     <svelte:fragment slot="icon">
       <Icon size="small" name="network" />
@@ -96,4 +81,23 @@
     <span class="txt-bold">{project.trackings}</span>
     nodes
   </SquareButton>
+
+  <div
+    class="layout-desktop-flex"
+    style="margin-left: auto; display: flex; gap: 0.5rem;">
+    <Link
+      route={{
+        resource: "nodes",
+        params: {
+          baseUrl,
+          projectPageIndex: 0,
+        },
+      }}>
+      <SquareButton>
+        {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
+      </SquareButton>
+    </Link>
+
+    <CloneButton {baseUrl} id={project.id} name={project.name} />
+  </div>
 </div>

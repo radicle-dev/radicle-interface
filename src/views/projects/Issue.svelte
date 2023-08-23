@@ -271,8 +271,6 @@
   .issue {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
@@ -314,7 +312,6 @@
     .issue {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      padding-left: 2rem;
     }
     .metadata {
       display: none;

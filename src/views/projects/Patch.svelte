@@ -244,8 +244,6 @@
   .patch {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
@@ -316,11 +314,6 @@
     }
     .metadata {
       display: none;
-    }
-  }
-  @media (max-width: 960px) {
-    .patch {
-      padding-left: 2rem;
     }
   }
 </style>

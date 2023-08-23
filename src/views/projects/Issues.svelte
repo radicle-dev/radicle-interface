@@ -69,7 +69,6 @@
 
 <style>
   .issues {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .issues-list {
@@ -89,12 +88,6 @@
     margin-top: 2rem;
     text-align: center;
     min-height: 3rem;
-  }
-
-  @media (max-width: 960px) {
-    .issues {
-      padding-left: 2rem;
-    }
   }
 </style>
 

@@ -73,7 +73,6 @@
 
 <style>
   .patches {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .patches-list {
@@ -87,12 +86,6 @@
   }
   .teaser:not(:last-child) {
     border-bottom: 1px dashed var(--color-background);
-  }
-
-  @media (max-width: 960px) {
-    .patches {
-      padding-left: 2rem;
-    }
   }
 </style>
 

@@ -45,6 +45,7 @@
     position: absolute;
     width: 24rem;
     z-index: 10;
+    right: 8rem;
   }
   @media (max-width: 720px) {
     .dropdown {

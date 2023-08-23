@@ -105,11 +105,6 @@
     align-items: center;
     gap: 0.5rem;
   }
-  @media (max-width: 960px) {
-    main {
-      padding-left: 2rem;
-    }
-  }
   @media (max-width: 720px) {
     .form {
       grid-template-columns: minmax(0, 1fr);
