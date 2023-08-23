@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Icon from "@app/components/Icon.svelte";
+
   export let active: boolean;
   export let name: string;
 </script>
@@ -9,7 +11,6 @@
     border-radius: var(--border-radius-small);
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
     line-height: 1.5em;
     margin: 0.125rem 0;
     padding: 0.25rem;
@@ -33,8 +34,17 @@
     overflow: hidden;
     max-width: 24ch;
   }
+  .icon-container {
+    color: var(--color-foreground-5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
 
 <div class="file" class:active>
+  <div class="icon-container">
+    <Icon name="file" />
+  </div>
   <span class="name">{name}</span>
 </div>

@@ -82,14 +82,14 @@ test("show source tree at specific revision", async ({ page }) => {
   await expect(page.getByTitle("Current branch")).toContainText(
     "335dd6dc89b535a4a31e9422c803199bb6b0a09a",
   );
-  await expect(page.locator(".source-tree")).toHaveText("bin/ src/");
+  await expect(page.locator(".source-tree")).toHaveText("bin src");
   await expectCounts({ commits: 2, contributors: 1 }, page);
 });
 
 test("source file highlighting", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByText("src/").click();
+  await page.getByText("src").click();
   await page.getByText("true.c").click();
 
   await expect(page.getByText("return")).toHaveCSS(
@@ -125,15 +125,15 @@ test("navigate deep file hierarchies", async ({ page }) => {
 
   const sourceTree = page.locator(".source-tree");
 
-  await sourceTree.getByText("deep/").click();
-  await sourceTree.getByText("directory/").click();
-  await sourceTree.getByText("hierarchy/").click();
-  await sourceTree.getByText("is/").click();
-  await sourceTree.getByText("entirely/").click();
-  await sourceTree.getByText("possible/").click();
-  await sourceTree.getByText("in/").nth(1).click();
-  await sourceTree.getByText("git/").click();
-  await sourceTree.getByText("repositories/").click();
+  await sourceTree.getByText("deep").click();
+  await sourceTree.getByText("directory").click();
+  await sourceTree.getByText("hierarchy").click();
+  await sourceTree.getByText("is").click();
+  await sourceTree.getByText("entirely").click();
+  await sourceTree.getByText("possible").click();
+  await sourceTree.getByText("in").nth(1).click();
+  await sourceTree.getByText("git").click();
+  await sourceTree.getByText("repositories").click();
   await sourceTree.getByText(".gitkeep").click();
   await expect(
     page.getByText("0801ace Add a deeply nested directory tree"),
@@ -146,15 +146,15 @@ test("navigate deep file hierarchies", async ({ page }) => {
 
     const sourceTree = page.locator(".source-tree");
 
-    await expect(sourceTree.getByText("deep/")).toBeVisible();
-    await expect(sourceTree.getByText("directory/")).toBeVisible();
-    await expect(sourceTree.getByText("hierarchy/")).toBeVisible();
-    await expect(sourceTree.getByText("is/")).toBeVisible();
-    await expect(sourceTree.getByText("entirely/")).toBeVisible();
-    await expect(sourceTree.getByText("possible/")).toBeVisible();
-    await expect(sourceTree.getByText("in/").nth(1)).toBeVisible();
-    await expect(sourceTree.getByText("git/")).toBeVisible();
-    await expect(sourceTree.getByText("repositories/")).toBeVisible();
+    await expect(sourceTree.getByText("deep")).toBeVisible();
+    await expect(sourceTree.getByText("directory")).toBeVisible();
+    await expect(sourceTree.getByText("hierarchy")).toBeVisible();
+    await expect(sourceTree.getByText("is")).toBeVisible();
+    await expect(sourceTree.getByText("entirely")).toBeVisible();
+    await expect(sourceTree.getByText("possible")).toBeVisible();
+    await expect(sourceTree.getByText("in").nth(1)).toBeVisible();
+    await expect(sourceTree.getByText("git").nth(1)).toBeVisible();
+    await expect(sourceTree.getByText("repositories")).toBeVisible();
     await expect(sourceTree.getByText(".gitkeep")).toBeVisible();
 
     await expect(
@@ -167,7 +167,7 @@ test("files with special characters in the filename", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   const sourceTree = page.locator(".source-tree");
-  await sourceTree.getByText("special/").click();
+  await sourceTree.getByText("special").click();
 
   await sourceTree.getByText("+plus+").click();
   await expect(page.locator(".file-name")).toContainText("+plus");
@@ -209,7 +209,7 @@ test("files with special characters in the filename", async ({ page }) => {
 test("binary files", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByText("bin/").click();
+  await page.getByText("bin").click();
   await page.getByText("true").click();
 
   await expect(page.getByText("Binary content")).toBeVisible();
@@ -218,7 +218,7 @@ test("binary files", async ({ page }) => {
 test("empty files", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByText("special/").click();
+  await page.getByText("special").click();
   await page.getByText("_underscore_").click();
 
   await expect(page.getByText("Empty file")).toBeVisible();
@@ -403,7 +403,7 @@ test.describe("browser error handling", () => {
     await page.goto(sourceBrowsingUrl);
 
     const sourceTree = page.locator(".source-tree");
-    await sourceTree.getByText("src/").click();
+    await sourceTree.getByText("src").click();
 
     await expect(page.getByText("Not able to expand directory")).toBeVisible();
   });

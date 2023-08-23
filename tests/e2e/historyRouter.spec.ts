@@ -99,7 +99,7 @@ test.describe("project page navigation", () => {
     await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/.hidden`);
 
-    await page.getByText("bin/").click();
+    await page.getByText("bin").click();
     await page.getByText("true").click();
     await expect(page).toHaveURL(`${projectTreeURL}/bin/true`);
 
@@ -126,7 +126,7 @@ test.describe("project page navigation", () => {
     await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
 
-    await page.getByText("bin/").click();
+    await page.getByText("bin").click();
     await page.getByText("true").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/bin/true`);
 
@@ -150,7 +150,7 @@ test.describe("project page navigation", () => {
     await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/.hidden`);
 
-    await page.getByText("bin/").click();
+    await page.getByText("bin").click();
     await page.getByText("true").click();
     await expect(page).toHaveURL(`${projectTreeURL}/bin/true`);
 

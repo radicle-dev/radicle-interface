@@ -7,6 +7,7 @@
   import Link from "@app/components/Link.svelte";
 
   import File from "./File.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let currentPath: string;
@@ -43,7 +44,7 @@
     cursor: pointer;
     padding: 0.25rem;
     margin: 0.125rem 0;
-    color: var(--color-foreground-6);
+    color: var(--color-foreground-5);
     user-select: none;
     line-height: 1.5rem;
     white-space: nowrap;
@@ -60,23 +61,35 @@
 
   .container {
     padding-left: 0.5rem;
-    margin: 0;
+    margin: 0 0 0 0.5rem;
   }
 
   .loading {
     display: inline-block;
     padding: 0.5rem 0;
   }
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="folder" on:click={onClick}>
-  <span class="folder-name">{name}/</span>
+  <div class="icon-container">
+    {#if expanded}
+      <Icon name="folder-open" />
+    {:else}
+      <Icon name="folder" />
+    {/if}
+  </div>
+  <span class="folder-name">{name}</span>
 </div>
 
-<div class="container">
-  {#if expanded}
+{#if expanded}
+  <div class="container">
     {#await tree}
       <span class="loading"><Loading noDelay small margins /></span>
     {:then tree}
@@ -112,5 +125,5 @@
         {/each}
       {/if}
     {/await}
-  {/if}
-</div>
+  </div>
+{/if}
