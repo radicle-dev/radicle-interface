@@ -46,7 +46,7 @@
     border-radius: var(--border-radius);
     font-family: var(--font-family-sans-serif);
     background: var(--color-background);
-    box-shadow: var(--elevation-high);
+    box-shadow: var(--elevation-low);
     min-width: 480px;
     max-width: 760px;
     text-align: center;

@@ -75,7 +75,13 @@
       {pluralize("patch", project.patches.open)}
     </SquareButton>
   </Link>
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
+  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
+    <svelte:fragment slot="icon">
+      <Icon size="small" name="network" />
+    </svelte:fragment>
+    <span class="txt-bold">{project.trackings}</span>
+    nodes
+  </SquareButton>
 
   <Link
     route={{
@@ -89,11 +95,6 @@
       {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
-  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
-    <svelte:fragment slot="icon">
-      <Icon size="small" name="network" />
-    </svelte:fragment>
-    <span class="txt-bold">{project.trackings}</span>
-    nodes
-  </SquareButton>
+
+  <CloneButton {baseUrl} id={project.id} name={project.name} />
 </div>

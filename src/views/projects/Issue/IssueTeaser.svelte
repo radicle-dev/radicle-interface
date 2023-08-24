@@ -25,10 +25,10 @@
   .issue-teaser {
     display: flex;
     padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-float);
   }
   .issue-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .subtitle {
     color: var(--color-foreground-6);

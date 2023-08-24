@@ -49,7 +49,7 @@
     white-space: nowrap;
   }
   .folder:hover {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-small);
   }
 

@@ -17,13 +17,13 @@
 
 <style>
   .teaser {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-float);
     padding: 0.75rem 0rem;
     display: flex;
     align-items: center;
   }
   .teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .hash {
     font-family: var(--font-family-monospace);

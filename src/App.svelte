@@ -46,7 +46,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--header-gradient);
+    background: var(--color-background-default);
     background-repeat: no-repeat;
     background-size: 100% 6rem;
   }

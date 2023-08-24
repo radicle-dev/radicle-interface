@@ -17,12 +17,17 @@
   }
 
   .file:hover {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-fill-ghost);
   }
 
   .file.active {
-    color: var(--color-foreground) !important;
-    background-color: var(--color-foreground-1);
+    color: var(--color-foreground-match-background) !important;
+    background-color: var(--color-fill-secondary);
+  }
+
+  .file.active:hover {
+    color: var(--color-foreground-match-background) !important;
+    background-color: var(--color-fill-secondary-hover);
   }
 
   .name {

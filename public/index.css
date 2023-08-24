@@ -5,8 +5,8 @@
 
 :root {
   --border-radius: 0.75rem;
-  --border-radius-tiny: 0.25rem;
-  --border-radius-small: 0.5rem;
+  --border-radius-tiny: 0.125rem;
+  --border-radius-small: 0.25rem;
   --border-radius-round: 10rem;
 
   --content-max-width: 1920px;
@@ -45,9 +45,9 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  color: var(--color-foreground);
+  color: var(--color-foreground-contrast);
   text-align: left;
-  background-color: var(--color-background);
+  background-color: var(--color-background-default);
   scrollbar-width: thin;
   scrollbar-height: thin;
   scrollbar-color: var(--color-foreground-4) transparent;

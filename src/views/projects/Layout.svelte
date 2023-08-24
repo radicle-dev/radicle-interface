@@ -30,7 +30,7 @@
   }
   .title {
     align-items: center;
-    color: var(--color-secondary);
+    color: var(--color-foreground-contrast);
     display: flex;
     font-size: var(--font-size-x-large);
     font-weight: var(--font-weight-bold);
@@ -64,8 +64,6 @@
     justify-content: left;
     align-items: center;
     gap: 0.125rem;
-  }
-  .description {
     margin: 1rem 0 1.5rem 0;
   }
   .description :global(a) {
@@ -119,13 +117,13 @@
     {/if}
   </div>
 
+  <div class="description" use:twemoji>
+    {@html render(project.description)}
+  </div>
+
   <div class="id">
     <span class="truncate">{project.id}</span>
     <Clipboard small text={project.id} />
-  </div>
-
-  <div class="description" use:twemoji>
-    {@html render(project.description)}
   </div>
 
   <Header {project} {activeTab} {baseUrl} />

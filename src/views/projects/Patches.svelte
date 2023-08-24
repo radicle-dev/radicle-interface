@@ -77,7 +77,7 @@
     font-size: var(--font-size-small);
   }
   .patches-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
   }
   .more {

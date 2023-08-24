@@ -15,14 +15,17 @@
   .positive {
     padding: 0.125rem 0.5rem;
     border-radius: var(--border-radius) 0 0 var(--border-radius);
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-3);
+    color: var(--color-foreground-success);
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-default);
   }
   .negative {
     padding: 0.125rem 0.5rem;
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-3);
+    color: var(--color-foreground-red);
+    border: 1px solid var(--color-border-hint);
+    border-left: 0;
+    background-color: var(--color-background-default);
   }
 </style>
 

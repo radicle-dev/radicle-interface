@@ -16,7 +16,7 @@
     max-width: 74rem;
   }
   .blurb {
-    color: var(--color-foreground);
+    color: var(--color-foreground-contrast);
     padding: 0rem;
     max-width: 70%;
     font-size: var(--font-size-medium);
@@ -35,7 +35,7 @@
     width: 16rem;
   }
   .heading {
-    color: var(--color-secondary);
+    color: var(--color-foreground-emphasized);
     padding: 1rem 0rem;
     font-size: var(--font-size-medium);
     margin-bottom: 1rem;

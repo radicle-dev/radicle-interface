@@ -37,10 +37,10 @@
   .patch-teaser {
     display: flex;
     padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-float);
   }
   .patch-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .meta {
     display: flex;
@@ -97,16 +97,16 @@
     text-overflow: ellipsis;
   }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-fill-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-fill-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   @media (max-width: 960px) {
     .labels {

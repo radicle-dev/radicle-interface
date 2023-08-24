@@ -32,7 +32,8 @@
 <style>
   .dropdown {
     align-items: center;
-    background: var(--color-background-1);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius);
     box-shadow: var(--elevation-low);
     color: var(--color-foreground-6);

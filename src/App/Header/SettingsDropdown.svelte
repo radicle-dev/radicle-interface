@@ -24,7 +24,8 @@
     top: 5rem;
     right: 1.5rem;
     width: 16.5rem;
-    background: var(--color-background-1);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;

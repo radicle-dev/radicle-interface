@@ -250,11 +250,11 @@
     vertical-align: top;
   }
   .diff-line.type-addition > * {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
     background-color: var(--color-positive-2);
   }
   .diff-line.type-deletion > * {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
     background-color: var(--color-negative-2);
   }
   .diff-line.selected > * {
@@ -262,11 +262,11 @@
     background-color: var(--color-foreground-4);
   }
   .diff-line.selected.type-addition > * {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
     background-color: var(--color-positive-4);
   }
   .diff-line.selected.type-deletion > * {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
     background-color: var(--color-negative-4);
   }
   .diff-line.hunk-header.selected {

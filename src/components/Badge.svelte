@@ -24,28 +24,28 @@
     white-space: nowrap;
   }
   .foreground {
-    color: var(--color-foreground-6);
-    background: var(--color-foreground-3);
+    color: var(--color-foreground-match-background);
+    background: var(--color-fill-gray);
   }
   .positive {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-3);
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-success);
   }
   .secondary {
-    color: var(--color-secondary-6);
-    background-color: var(--color-secondary-3);
+    color: var(--color-foreground-black);
+    background-color: var(--color-fill-secondary);
   }
   .negative {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-3);
+    color: var(--color-foreground-black);
+    background-color: var(--color-fill-danger);
   }
   .primary {
-    color: var(--color-primary-6);
-    background: var(--color-primary-3);
+    color: var(--color-foreground-match-background);
+    background: var(--color-fill-primary);
   }
   .caution {
-    color: var(--color-caution-6);
-    background: var(--color-caution-3);
+    color: var(--color-foreground-black);
+    background: var(--color-fill-yellow);
   }
 </style>
 

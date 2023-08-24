@@ -19,11 +19,11 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 1rem;
-    border: 1px solid var(--color-secondary-5);
+    border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
-    background: var(--color-background-1);
+    background: var(--color-background-float);
   }
   .right {
     display: flex;
@@ -57,15 +57,14 @@
     max-width: 14rem;
   }
   .project:hover {
-    border-color: var(--color-secondary);
-    background-color: var(--color-secondary-1);
+    border: 1px solid var(--color-border-focus);
   }
   .description {
     margin-bottom: 0.25rem;
     font-size: var(--font-size-tiny);
   }
   .stateHash {
-    color: var(--color-secondary);
+    color: var(--color-foreground-emphasized-hover);
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     min-height: 2rem;
@@ -81,7 +80,6 @@
   }
   .rid {
     visibility: hidden;
-    color: var(--color-foreground-5);
     font-weight: var(--font-weight-normal);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);

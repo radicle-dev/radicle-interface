@@ -83,7 +83,7 @@
     padding: 0 0.5rem 0 1rem;
     color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
-    border-color: var(--color-foreground-3);
+    border-color: var(--color-border-hint);
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
@@ -177,11 +177,11 @@
     position: relative;
     display: flex;
     overflow-x: auto;
-    border: 1px solid var(--color-foreground-3);
-    border-top-style: dashed;
+    border: 1px solid var(--color-border-hint);
+    border-top-style: solid;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
-    background: var(--color-background-1);
+    background: var(--color-background-float);
   }
 
   .binary {
