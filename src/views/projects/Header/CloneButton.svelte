@@ -4,8 +4,10 @@
   import { parseRepositoryId } from "@app/lib/utils";
   import { config } from "@app/lib/config";
 
+  import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let id: string;
@@ -23,65 +25,41 @@
 </script>
 
 <style>
-  .clone-button {
-    background-color: var(--color-caution-3);
-    border-radius: var(--border-radius-small);
-    color: var(--color-caution-6);
-    font-family: var(--font-family-monospace);
-    min-width: max-content;
-    height: 2rem;
-    line-height: initial;
-    padding: 0.5rem 0.75rem;
-  }
-  .clone-button:hover {
-    background-color: var(--color-caution-4);
-  }
-  .dropdown {
-    background-color: var(--color-background-1);
-    border-radius: var(--border-radius-small);
-    box-shadow: var(--elevation-low);
-    margin-top: 0.5rem;
-    padding: 1rem;
-    position: absolute;
-    width: 24rem;
-    z-index: 10;
-  }
-  @media (max-width: 720px) {
-    .dropdown {
-      width: auto;
-      left: 2rem;
-      right: 2rem;
-      z-index: 10;
-    }
-  }
   label {
-    color: var(--color-foreground-6);
     display: block;
-    font-size: var(--font-size-tiny);
-    padding: 0.5rem 0.5rem 0 0.25rem;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: 0.75rem;
   }
 </style>
 
-<Floating>
-  <div slot="toggle" class="clone-button" role="button">Clone</div>
-  <svelte:fragment slot="modal">
-    <div class="dropdown">
-      <Command color="caution" command={radCloneUrl} />
+<Popover
+  popoverPositionTop="3rem"
+  popoverPositionRight="0"
+  popoverWidth="26rem">
+  <Button slot="toggle" size="large" variant="primary">
+    Clone
+    <Icon name="download" />
+  </Button>
+
+  <svelte:fragment slot="popover">
+    <div style:margin-bottom="1.5rem">
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
           rel="noreferrer"
-          href="https://radicle.xyz/get-started.html"
-          class="link">
+          href="https://radicle.xyz/#try"
+          class="txt-link txt-bold">
           Radicle CLI
         </a>
         to clone this project.
       </label>
-      <br />
-      <Command color="caution" command={gitCloneUrl} />
-      <label for="git-clone-url">
-        Use Git to clone this repository from the URL above.
-      </label>
+      <Command command={radCloneUrl} />
+    </div>
+
+    <div>
+      <label for="git-clone-url">Use Git to clone this repository.</label>
+      <Command command={gitCloneUrl} />
     </div>
   </svelte:fragment>
-</Floating>
+</Popover>

@@ -8,8 +8,8 @@
   import * as httpd from "@app/lib/httpd";
   import Loading from "@app/components/Loading.svelte";
 
-  import AuthenticatedModal from "@app/views/session/AuthenticatedModal.svelte";
-  import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
+  import AuthenticatedModal from "@app/modals/AuthenticatedModal.svelte";
+  import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
 
   export let activeRoute: Extract<Route, { resource: "session" }>;
 
@@ -18,13 +18,6 @@
 
     if (isAuthenticated) {
       modal.show({ component: AuthenticatedModal, props: {} });
-      void router.push({
-        resource: "nodes",
-        params: {
-          baseUrl: httpd.api.baseUrl,
-          projectPageIndex: 0,
-        },
-      });
     } else {
       modal.show({
         component: AuthenticationErrorModal,
@@ -36,8 +29,8 @@
           ],
         },
       });
-      void router.push({ resource: "home" });
     }
+    void router.push({ resource: "home" });
   });
 </script>
 

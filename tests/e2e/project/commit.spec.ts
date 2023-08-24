@@ -1,10 +1,9 @@
 import {
-  test,
+  aliceRemote,
+  bobHead,
   expect,
   sourceBrowsingUrl,
-  bobRemote,
-  bobHead,
-  aliceRemote,
+  test,
 } from "@tests/support/fixtures.js";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
@@ -12,7 +11,7 @@ const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: "bob" }).click();
   await page.getByRole("link", { name: "7 commits" }).click();
 
   await page.getByText("Update readme").click();
@@ -30,9 +29,7 @@ test("relative timestamps", async ({ page }) => {
     };
   });
   await page.goto(commitUrl);
-  await expect(
-    page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
-  ).toBeVisible();
+  await expect(page.getByText("Bob Belcher committed now")).toBeVisible();
 });
 
 test("modified file", async ({ page }) => {
@@ -40,9 +37,8 @@ test("modified file", async ({ page }) => {
 
   // Commit header.
   {
-    const header = page.locator(".commit .header");
-    await expect(header.getByText("Update readme")).toBeVisible();
-    await expect(header.getByText(bobHead)).toBeVisible();
+    await expect(page.getByText("Update readme")).toBeVisible();
+    await expect(page.getByText(bobHead)).toBeVisible();
   }
 
   // Diff header.
@@ -84,10 +80,8 @@ test("moved file", async ({ page }) => {
     `${sourceBrowsingUrl}/remotes/${aliceRemote}/commits/f48a1056a5bd02277978f6e8a00517a967546340`,
   );
   await expect(
-    page.locator("header").filter({ hasText: "moves/111.txt → moves/222.txt" }),
+    page.getByText("moves/111.txt → moves/222.txt moved"),
   ).toBeVisible();
-
-  await expect(page.getByText("moved", { exact: true })).toBeVisible();
   await expect(page.getByText("333")).toBeVisible();
 });
 
@@ -96,11 +90,8 @@ test("copied file", async ({ page }) => {
     `${sourceBrowsingUrl}/remotes/${aliceRemote}/commits/f48a1056a5bd02277978f6e8a00517a967546340`,
   );
   await expect(
-    page
-      .locator("header")
-      .filter({ hasText: "copies/aaa.txt → copies/aaa_copy.txt" }),
+    page.getByText("copies/aaa.txt → copies/aaa_copy.txt copied"),
   ).toBeVisible();
-  await expect(page.getByText("copied", { exact: true })).toBeVisible();
 });
 
 test("binary file detection in diffs", async ({ page }) => {
@@ -123,9 +114,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   await expect(page).toHaveURL(
     `${sourceBrowsingUrl}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,
   );
-  await expect(page.getByTitle("Current branch")).toContainText(
-    "0801aceeab500033f8d608778218657bd626ef73",
-  );
+  await expect(page.getByTitle("Current branch")).toContainText("0801ace");
   await expect(page.locator(".source-tree >> text=.gitkeep")).toBeVisible();
   await expect(
     page.locator(

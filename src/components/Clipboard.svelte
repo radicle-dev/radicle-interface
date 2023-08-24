@@ -5,25 +5,24 @@
   import { toClipboard } from "@app/lib/utils";
 
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let text: string;
   export let small = false;
-  export let tiny = false;
   export let tooltip: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{ copied: null }>();
 
-  let icon: "clipboard-small" | "checkmark-small" | "clipboard" | "checkmark" =
-    small ? "clipboard-small" : "clipboard";
+  let icon: "clipboard" | "checkmark" = "clipboard";
 
   const restoreIcon = debounce(() => {
-    icon = small ? "clipboard-small" : "clipboard";
+    icon = "clipboard";
   }, 800);
 
-  async function copy() {
+  export async function copy() {
     await toClipboard(text);
     dispatch("copied");
-    icon = small ? "checkmark-small" : "checkmark";
+    icon = "checkmark";
     restoreIcon();
   }
 </script>
@@ -38,29 +37,23 @@
     align-items: center;
     user-select: none;
   }
-  .clipboard.small {
+  .small {
     width: 1.5rem;
     height: 1.5rem;
-  }
-  .clipboard.tiny {
-    width: 1rem;
-    height: 1rem;
-  }
-  .clipboard:hover :global(svg) {
-    fill: var(--color-foreground);
-  }
-  .clipboard:hover {
-    border-radius: var(--border-radius);
   }
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
 <span
+  role="button"
+  tabindex="0"
   title={tooltip}
   class="clipboard"
   class:small
-  class:tiny
   on:click|stopPropagation={copy}>
-  <Icon name={icon} />
+  {#if small}
+    <IconSmall name={icon} />
+  {:else}
+    <Icon name={icon} />
+  {/if}
 </span>

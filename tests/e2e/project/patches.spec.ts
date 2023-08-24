@@ -6,6 +6,7 @@ test("navigate patch listing", async ({ page }) => {
   await page.getByRole("link", { name: "2 patches" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches`);
 
+  await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.getByRole("link", { name: "1 merged" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
   await expect(
@@ -25,15 +26,9 @@ test("navigate patch details", async ({ page }) => {
   );
   await page.goBack();
   {
-    await page.getByRole("link", { name: "Commits" }).click();
+    await page.getByRole("link", { name: "Changes" }).click();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=commits`,
-    );
-  }
-  {
-    await page.getByRole("link", { name: "Files" }).click();
-    await expect(page).toHaveURL(
-      `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=files`,
+      `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=changes`,
     );
   }
 });
@@ -61,19 +56,17 @@ test("edit a patch", async ({ page, authenticatedPeer }) => {
   await expect(page.getByRole("button", { name: "1 patch" })).toBeVisible();
   await expect(page.getByText("open", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "edit" }).click();
+  await page.getByRole("button", { name: "edit labels" }).click();
   await page.getByPlaceholder("Add label").fill("bug");
   await page.getByPlaceholder("Add label").press("Enter");
   await page.getByPlaceholder("Add label").fill("documentation");
   await page.getByPlaceholder("Add label").press("Enter");
-  await page.getByRole("button", { name: "save" }).click();
+  await page.getByRole("button", { name: "save labels" }).click();
 
   await expect(
-    page.getByLabel("chip").filter({ hasText: "documentation" }),
+    page.locator(".badge").filter({ hasText: "documentation" }),
   ).toBeVisible();
-  await expect(
-    page.getByLabel("chip").filter({ hasText: "bug" }),
-  ).toBeVisible();
+  await expect(page.locator(".badge").filter({ hasText: "bug" })).toBeVisible();
 });
 
 test("leave a comment and reply", async ({ page, authenticatedPeer }) => {
@@ -96,13 +89,14 @@ test("leave a comment and reply", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/patches/d41fbd28b06a5fac51a2ba9e05ad9dc885676d71`,
   );
+  await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
   await expect(page.getByText("This is a comment")).toBeVisible();
 
-  await page.getByTitle("toggle-reply").click();
-  await page.getByPlaceholder("Leave your reply").fill("This is a reply");
-  await page.getByRole("button", { name: "Reply", exact: true }).click();
+  await page.getByRole("button", { name: "Reply to comment" }).click();
+  await page.getByPlaceholder("Reply to comment").fill("This is a reply");
+  await page.getByRole("button", { name: "Comment", exact: true }).click();
   await expect(page.getByText("This is a reply")).toBeVisible();
 });
 
@@ -126,25 +120,26 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/patches/af4099f53e96e28824d6df13136feeae10190679`,
   );
+  await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
   const commentReactionToggle = page.getByTitle("toggle-reaction").first();
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "👍 1" })).toBeVisible();
 
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "🎉 1" })).toBeVisible();
   await expect(page.locator(".reaction")).toHaveCount(2);
 
-  await page.getByRole("button", { name: "✕" }).nth(1).click();
+  await page.getByRole("button", { name: "👍" }).click();
   await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(1);
 
   await commentReactionToggle.click();
-  await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
+  await page.getByRole("button", { name: "🎉" }).first().click();
+  await expect(page.getByRole("button", { name: "🎉 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(0);
 });
 test("change patch state", async ({ page, authenticatedPeer }) => {
@@ -167,11 +162,11 @@ test("change patch state", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/patches/be66e6ccf14f603e9fec63a30db9dd24cc7adf4c`,
   );
-  await page.getByRole("button", { name: "Archive patch" }).click();
+  await page.getByRole("button", { name: "Archive patch" }).first().click();
   await expect(page.getByText("archived", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
 
-  await page.getByLabel("stateToggle").click();
+  await page.getByLabel("stateToggle").first().click();
   await page.getByText("Convert to draft").click();
   await page.getByText("Convert to draft").click();
   await expect(page.getByText("draft", { exact: true })).toBeVisible();
@@ -205,45 +200,50 @@ test("patches counters", async ({ page, authenticatedPeer }) => {
   await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
     cwd: projectFolder,
   });
-  await page.getByRole("button", { name: "1 open" }).click();
-
+  await page.getByRole("button", { name: "filter-dropdown" }).first().click();
+  await page.locator(".dropdown-item").getByText("1 open").click();
   await expect(page.getByRole("button", { name: "2 patches" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "2 open" })).toBeVisible();
-  await expect(page.locator(".patches-list .teaser")).toHaveCount(2);
+  await expect(
+    page.getByRole("button", { name: "filter-dropdown" }).first(),
+  ).toHaveText("2 open");
+  await expect(page.locator(".list .patch-teaser")).toHaveCount(2);
 });
 
 test("use revision selector", async ({ page }) => {
   await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
-  await page.getByRole("link", { name: "Files" }).click();
+  await page.getByRole("link", { name: "Changes" }).click();
 
   // Validating the latest revision state
   await expect(
     page.getByRole("cell", { name: "Had to push a new revision" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Commits" }).click();
-  await expect(page.locator(".commit-list .teaser")).toHaveCount(2);
-  await expect(
-    page.locator(".commit-list .teaser .markdown").first(),
-  ).toHaveText("Add more text");
+  await page.getByRole("link", { name: "Activity" }).click();
+  await expect(page.locator(".commits .teaser")).toHaveCount(2);
+  await expect(page.getByRole("link", { name: "Add more text" })).toBeVisible();
 
+  // Open the first revision and close the latest one
+  await page.getByLabel("expand").first().click();
+  await page.getByLabel("expand").last().click();
+
+  // Validating the initial revision
+  await expect(page.locator(".commits .teaser")).toHaveCount(1);
+  await expect(
+    page.getByRole("link", { name: "Rewrite subtitle to README" }),
+  ).toBeVisible();
+
+  await page.getByRole("link", { name: "Changes" }).click();
   // Switching to the initial revision
   await page.getByText("Revision 0535843").click();
   await expect(page.locator(".dropdown")).toBeVisible();
   await page.getByRole("link", { name: "Revision 687c326" }).click();
   await expect(page.locator(".dropdown")).toBeHidden();
 
-  // Validating the initial revision
-  await expect(page.locator(".commit-list .teaser")).toHaveCount(1);
-  await expect(
-    page.locator(".commit-list .teaser .markdown").first(),
-  ).toHaveText("Rewrite subtitle to README");
-  await page.getByRole("link", { name: "Files" }).click();
   await expect(
     page.getByRole("cell", { name: "Had to push a new revision" }),
   ).toBeHidden();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=files`,
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=changes`,
   );
 });
 
@@ -255,23 +255,29 @@ test("navigate through revision diffs", async ({ page }) => {
 
   // Second revision
   {
-    await secondRevision.locator(".toggle").click();
     await secondRevision
-      .getByRole("link", { name: "Compare to main (38c225e)" })
+      .getByRole("button", { name: "toggle-context-menu" })
+      .first()
+      .click();
+    await secondRevision
+      .getByRole("link", { name: "Compare to main: 38c225e" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Diff 38c225..9898da" }),
+      page.getByRole("link", { name: "Compare 38c225..9898da" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
       `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9898da6155467adad511f63bf0fb5aa4156b92ef`,
     );
     await page.goBack();
-    await secondRevision.locator(".toggle").click();
     await secondRevision
-      .getByRole("link", { name: "Compare to previous revision (687c326)" })
+      .getByRole("button", { name: "toggle-context-menu" })
+      .first()
+      .click();
+    await secondRevision
+      .getByRole("link", { name: "Compare to previous revision: 687c326" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Diff 0dc373..9898da" }),
+      page.getByRole("link", { name: "Compare 0dc373..9898da" }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(
@@ -283,18 +289,21 @@ test("navigate through revision diffs", async ({ page }) => {
       .getByRole("link", { name: "Compare 0dc373d..9898da6" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Diff 0dc373..9898da" }),
+      page.getByRole("link", { name: "Compare 0dc373..9898da" }),
     ).toBeVisible();
     await page.goBack();
   }
   // First revision
   {
-    await firstRevision.locator(".toggle").click();
     await firstRevision
-      .getByRole("link", { name: "Compare to main (38c225e)" })
+      .getByRole("button", { name: "toggle-context-menu" })
+      .first()
+      .click();
+    await firstRevision
+      .getByRole("link", { name: "Compare to main: 38c225e" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Diff 38c225..0dc373" }),
+      page.getByRole("link", { name: "Compare 38c225..0dc373" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
       `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..0dc373db601ccbcffa80dec932e4006516709ca6`,
@@ -302,10 +311,10 @@ test("navigate through revision diffs", async ({ page }) => {
   }
 });
 
-test("view file navigation from files tab", async ({ page }) => {
+test("view file navigation from changes tab", async ({ page }) => {
   await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
-  await page.getByRole("button", { name: "Files" }).click();
-  await page.getByTitle("View file").getByRole("link").click();
+  await page.getByRole("button", { name: "Changes" }).click();
+  await page.getByRole("button", { name: "View file" }).click();
   await expect(page).toHaveURL(
     `${cobUrl}/tree/9898da6155467adad511f63bf0fb5aa4156b92ef/README.md`,
   );

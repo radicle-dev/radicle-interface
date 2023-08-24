@@ -2,26 +2,18 @@
   import type { HttpdState } from "@app/lib/httpd";
 
   import * as httpd from "@app/lib/httpd";
-  import { closeFocused } from "@app/components/Floating.svelte";
+  import * as modal from "@app/lib/modal";
+  import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
 
-  import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
-  import Command from "@app/components/Command.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import ConnectModal from "@app/modals/ConnectModal.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
   import Link from "@app/components/Link.svelte";
-  import PortInput from "@app/App/Header/Connect/PortInput.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
-  $: customUrl = `${httpd.api.baseUrl.scheme}://${httpd.api.baseUrl.hostname}:${customPort}`;
-  $: command = import.meta.env.PROD
-    ? `rad web --backend ${customUrl}`
-    : `rad web --frontend ${
-        new URL(import.meta.url).origin
-      } --backend ${customUrl}`;
-
-  let customPort = httpd.api.port;
   const buttonTitle: Record<HttpdState["state"], string> = {
     stopped: "radicle-httpd is stopped",
     running: "radicle-httpd is running",
@@ -30,147 +22,149 @@
 </script>
 
 <style>
-  .dropdown {
-    align-items: center;
-    background: var(--color-background-1);
-    border-radius: var(--border-radius);
-    box-shadow: var(--elevation-low);
-    color: var(--color-foreground-6);
-    position: absolute;
-    right: 5rem;
-    top: 5rem;
-    width: 15rem;
-  }
-  .info {
-    display: flex;
-    padding: 1rem 1rem 0.5rem 1rem;
-  }
-  .avatar-id-container {
+  .container {
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 0.5rem 0.5rem 0.8rem;
-    width: 100%;
+    gap: 1.5rem;
+  }
+  .host {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-small);
+  }
+  .status {
+    font-size: var(--font-size-tiny);
+    color: var(--color-fill-gray);
+    text-align: left;
+  }
+  .separator {
+    height: 1px;
+    background-color: var(--color-border-hint);
+  }
+  .avatar {
+    height: 1.5rem;
+    color: var(--color-fill-secondary);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-regular);
+    font-family: var(--font-family-monospace);
+  }
+  .indicator {
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: var(--color-fill-secondary);
+    border-radius: var(--border-radius-round);
+    position: absolute;
+    top: -0.375rem;
+    right: -0.375rem;
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
-  .dropdown-button {
-    align-items: center;
-    border-top: 1px solid var(--color-foreground-3);
-    cursor: pointer;
+  .user {
     display: flex;
-    flex-direction: row;
-    font-weight: 600;
-    height: 2.5rem;
     justify-content: space-between;
-    line-height: 2.5rem;
-    padding: 0 1rem;
-    user-select: none;
-    width: 100%;
+    align-items: center;
   }
-  .dropdown-button:hover {
-    background-color: var(--color-foreground-3);
-    color: var(--color-foreground-6);
-  }
-  .rounded:last-of-type:hover {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
-  }
-  .stopped {
-    color: var(--color-foreground-5);
-  }
-  .running {
-    color: var(--color-foreground);
-  }
-  .authenticated {
-    color: var(--color-positive);
-  }
-  .toggle:hover .authenticated {
-    color: var(--color-positive);
+  .identity {
+    color: var(--color-fill-secondary);
+    display: flex;
   }
 </style>
 
-<Floating>
-  <div slot="toggle" class="toggle">
+{#if $httpdStore.state === "authenticated"}
+  <Popover
+    popoverPositionTop="3rem"
+    popoverPositionRight="0"
+    popoverWidth="25rem">
     <Button
+      slot="toggle"
       title={buttonTitle[$httpdStore.state]}
-      style="padding-left: 10px; padding-right: 1rem;"
+      size="large"
       variant="outline">
-      <div style="display: flex; gap: 0.5rem">
-        <div
-          class:authenticated={$httpdStore.state === "authenticated"}
-          class:stopped={$httpdStore.state === "stopped"}
-          class:running={$httpdStore.state === "running"}>
-          <Icon name="network" />
-        </div>
-        radicle.local
+      <div class="avatar">
+        <NodeId
+          large
+          disableTooltip
+          nodeId={$httpdStore.session.publicKey}
+          alias={$httpdStore.session.alias} />
       </div>
     </Button>
-  </div>
 
-  <div slot="modal">
-    {#if $httpdStore.state === "authenticated"}
-      <div class="dropdown">
-        <div class="avatar-id-container">
-          <div style="align-items: center; display: flex; gap: 0.25rem;">
-            <Authorship authorId={$httpdStore.session.publicKey} />
-            <Clipboard text={$httpdStore.session.publicKey} small />
+    <div slot="popover" class="container">
+      <div class="row">
+        <div class="status">Httpd server running</div>
+
+        <div class="host">
+          radicle.local
+
+          <Link
+            on:afterNavigate={closeFocused}
+            route={{
+              resource: "nodes",
+              params: {
+                baseUrl: httpd.api.baseUrl,
+                projectPageIndex: 0,
+              },
+            }}>
+            <IconButton>Browse</IconButton>
+          </Link>
+        </div>
+      </div>
+
+      <div class="separator" />
+
+      <div class="row">
+        <div class="status">Authenticated as</div>
+        <div class="user">
+          <div class="identity">
+            <NodeId
+              nodeId={$httpdStore.session.publicKey}
+              alias={$httpdStore.session.alias} />
           </div>
-        </div>
-
-        <Link
-          on:afterNavigate={closeFocused}
-          route={{
-            resource: "nodes",
-            params: {
-              baseUrl: httpd.api.baseUrl,
-              projectPageIndex: 0,
-            },
-          }}>
-          <div class="dropdown-button">Browse</div>
-        </Link>
-
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-          class="dropdown-button rounded"
-          on:click={() => {
-            void httpd.disconnect();
-            closeFocused();
-          }}>
-          Disconnect
+          <IconButton
+            on:click={() => {
+              void httpd.disconnect();
+              closeFocused();
+            }}>
+            Disconnect
+          </IconButton>
         </div>
       </div>
-    {:else if $httpdStore.state === "running"}
-      <div class="dropdown" style:width="20.5rem">
-        <div class="info">
-          To connect to your local Radicle node, run this command in your
-          terminal:
-        </div>
-        <div style:margin="0 1rem 0.5rem 1rem">
-          <Command {command} />
-        </div>
-        <PortInput bind:port={customPort} />
-        <Link
-          on:afterNavigate={closeFocused}
-          route={{
-            resource: "nodes",
-            params: {
-              baseUrl: httpd.api.baseUrl,
-              projectPageIndex: 0,
-            },
-          }}>
-          <div class="dropdown-button rounded">Browse</div>
-        </Link>
-      </div>
-    {:else}
-      <div class="dropdown" style:width="20.5rem">
-        <div class="info">
-          To access your local Radicle node on this site, run:
-        </div>
-        <div style:margin="0.5rem 1rem 1rem 1rem">
-          <Command command="radicle-httpd" />
-        </div>
-        <PortInput bind:port={customPort} />
-      </div>
-    {/if}
-  </div>
-</Floating>
+    </div>
+  </Popover>
+{:else if $httpdStore.state === "running"}
+  <Button
+    on:click={() => {
+      modal.show({
+        component: ConnectModal,
+        props: {},
+      });
+    }}
+    title={buttonTitle[$httpdStore.state]}
+    size="large"
+    variant="outline">
+    <Icon name="device" />
+    Read only
+    <div class="indicator" />
+  </Button>
+{:else}
+  <Button
+    on:click={() => {
+      modal.show({
+        component: ConnectModal,
+        props: {},
+      });
+    }}
+    title={buttonTitle[$httpdStore.state]}
+    size="large"
+    variant="secondary">
+    <Icon name="device" />
+    Connect
+  </Button>
+{/if}

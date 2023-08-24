@@ -3,11 +3,12 @@
 
   import { formatObjectId, formatTimestamp } from "@app/lib/utils";
 
-  import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -19,35 +20,35 @@
     }
     return acc;
   }, 0);
+
+  let hover = false;
 </script>
 
 <style>
   .issue-teaser {
     display: flex;
-    padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    padding: 1.25rem;
+    background-color: var(--color-background-float);
+    border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
   .issue-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-float-hover);
+  }
+  .content {
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
   }
   .subtitle {
-    color: var(--color-foreground-6);
-    font-size: var(--font-size-tiny);
-    font-family: var(--font-family-monospace);
-    margin-right: 0.4rem;
+    font-size: var(--font-size-small);
+    flex-wrap: wrap;
   }
   .summary {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-    padding-right: 1rem;
-  }
-  .issue-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: pointer;
   }
   .issue-title:hover {
     text-decoration: underline;
@@ -56,52 +57,48 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-right: 1rem;
     gap: 0.5rem;
-    color: var(--color-foreground-5);
   }
   .labels {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
+    flex-wrap: wrap;
   }
-  .label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .right {
-    align-self: center;
-    justify-self: center;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
     margin-left: auto;
+    color: var(--color-foreground-dim);
+    font-size: var(--font-size-tiny);
   }
   .state {
     justify-self: center;
-    align-self: center;
-    margin: 0 1rem 0 1.25rem;
+    align-self: flex-start;
+    margin-right: 1.5rem;
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .closed {
-    color: var(--color-negative-6);
-  }
-
-  @media (max-width: 960px) {
-    .labels {
-      display: none;
-    }
+    color: var(--color-foreground-red);
   }
 </style>
 
-<div class="issue-teaser">
+<div
+  role="button"
+  tabindex="0"
+  class="issue-teaser"
+  on:mouseenter={() => (hover = true)}
+  on:mouseleave={() => (hover = false)}>
   <div
     class="state"
     class:closed={issue.state.status === "closed"}
     class:open={issue.state.status === "open"}>
     <Icon name="issue" />
   </div>
-  <div>
+  <div class="content">
     <div class="summary">
       <Link
         route={{
@@ -111,35 +108,38 @@
           issue: issue.id,
         }}>
         <span class="issue-title">
-          <InlineMarkdown content={issue.title} />
+          <InlineMarkdown fontSize="regular" content={issue.title} />
         </span>
       </Link>
       <span class="labels">
         {#each issue.labels.slice(0, 4) as label}
-          <Badge style="max-width:7rem" variant="secondary">
-            <span class="label">{label}</span>
+          <Badge variant={hover ? "background" : "neutral"}>
+            {label}
           </Badge>
         {/each}
         {#if issue.labels.length > 4}
-          <Badge variant="foreground">
-            <span class="label">+{issue.labels.length - 4} more labels</span>
+          <Badge
+            title={issue.labels.slice(4, undefined).join(" ")}
+            variant={hover ? "background" : "neutral"}>
+            +{issue.labels.length - 4} more labels
           </Badge>
         {/if}
       </span>
     </div>
     <div class="summary subtitle">
-      {formatObjectId(issue.id)} opened {formatTimestamp(
-        issue.discussion[0].timestamp,
-      )} by
-      <Authorship authorId={issue.author.id} authorAlias={issue.author.alias} />
+      <span class="global-hash">{formatObjectId(issue.id)}</span>
+      opened {formatTimestamp(issue.discussion[0].timestamp)} by
+      <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
     </div>
   </div>
-  {#if commentCount > 0}
-    <div class="right">
-      <div class="comment-count">
-        <Icon name="chat" />
-        <span>{commentCount}</span>
+  <div class="right">
+    {#if commentCount > 0}
+      <div style:display="flex" style:gap="1rem">
+        <div class="comment-count">
+          <IconSmall name="chat" />
+          <span>{commentCount}</span>
+        </div>
       </div>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>

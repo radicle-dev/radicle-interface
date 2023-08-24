@@ -43,7 +43,7 @@
   .spinner > div {
     width: 18px;
     height: 18px;
-    background-color: var(--color-secondary);
+    background-color: var(--color-fill-secondary);
     border-radius: var(--border-radius-round);
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -154,10 +154,16 @@
       class:center
       class:margins
       class:condensed>
-      <div class="bounce1" style="background-color: var(--color-secondary)" />
+      <div
+        class="bounce1"
+        style="background-color: var(--color-fill-secondary)" />
       {#if !condensed}
-        <div class="bounce2" style="background-color: var(--color-secondary)" />
-        <div class="bounce3" style="background-color: var(--color-secondary)" />
+        <div
+          class="bounce2"
+          style="background-color: var(--color-fill-secondary)" />
+        <div
+          class="bounce3"
+          style="background-color: var(--color-fill-secondary)" />
       {/if}
     </div>
   </div>

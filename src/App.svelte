@@ -5,10 +5,11 @@
   import * as httpd from "@app/lib/httpd";
   import { unreachable } from "@app/lib/utils";
 
+  import Footer from "./App/Footer.svelte";
+  import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
   import Header from "./App/Header.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
   import LoadingBar from "./App/LoadingBar.svelte";
-  import ModalPortal from "./App/ModalPortal.svelte";
 
   import Commit from "@app/views/projects/Commit.svelte";
   import History from "@app/views/projects/History.svelte";
@@ -42,16 +43,7 @@
 
 <style>
   .app {
-    height: 100%;
     display: flex;
-    flex-direction: column;
-    background: var(--header-gradient);
-    background-repeat: no-repeat;
-    background-size: 100% 6rem;
-  }
-  .wrapper {
-    display: flex;
-    align-items: center;
     flex-direction: column;
     height: 100%;
   }
@@ -61,42 +53,43 @@
   <LoadingBar />
 {/if}
 
-<ModalPortal />
+<FullscreenModalPortal />
 <Hotkeys />
 
 <div class="app">
   <Header />
-  <div class="wrapper">
-    {#if $activeRouteStore.resource === "booting"}
-      <Loading />
-    {:else if $activeRouteStore.resource === "home"}
-      <Home {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "nodes"}
-      <Nodes {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "session"}
-      <Session activeRoute={$activeRouteStore} />
-    {:else if $activeRouteStore.resource === "project.source"}
-      <Source {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.history"}
-      <History {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.commit"}
-      <Commit {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.issues"}
-      <Issues {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.newIssue"}
-      <NewIssue {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.issue"}
-      <Issue {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.patches"}
-      <Patches {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "project.patch"}
-      <Patch {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "loadError"}
-      <LoadError {...$activeRouteStore.params} />
-    {:else if $activeRouteStore.resource === "notFound"}
-      <NotFound {...$activeRouteStore.params} />
-    {:else}
-      {unreachable($activeRouteStore)}
-    {/if}
+  {#if $activeRouteStore.resource === "booting"}
+    <Loading />
+  {:else if $activeRouteStore.resource === "home"}
+    <Home {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "nodes"}
+    <Nodes {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "session"}
+    <Session activeRoute={$activeRouteStore} />
+  {:else if $activeRouteStore.resource === "project.source"}
+    <Source {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.history"}
+    <History {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.commit"}
+    <Commit {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.issues"}
+    <Issues {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.newIssue"}
+    <NewIssue {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.issue"}
+    <Issue {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.patches"}
+    <Patches {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "project.patch"}
+    <Patch {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "loadError"}
+    <LoadError {...$activeRouteStore.params} />
+  {:else if $activeRouteStore.resource === "notFound"}
+    <NotFound {...$activeRouteStore.params} />
+  {:else}
+    {unreachable($activeRouteStore)}
+  {/if}
+  <div style:margin-top="auto">
+    <Footer />
   </div>
 </div>

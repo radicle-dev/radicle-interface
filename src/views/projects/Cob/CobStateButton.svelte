@@ -1,13 +1,16 @@
 <script lang="ts" strictEvents>
-  import Button from "@app/components/Button.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
-  import Floating from "@app/components/Floating.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
   import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
+
+  import { closeFocused } from "@app/components/Popover.svelte";
+
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import Icon from "@app/components/Icon.svelte";
+  import Button from "@app/components/Button.svelte";
 
   type CobState = $$Generic;
 
@@ -23,10 +26,6 @@
     selectedItem = item;
     closeFocused();
   }
-
-  const attachableStyle = `border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: 0;`;
 </script>
 
 <style>
@@ -34,51 +33,44 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-  }
-  .toggle {
-    cursor: pointer;
-    border: 1px solid var(--color-foreground);
-    border-radius: var(--border-radius-round);
-    border-top-left-radius: 0;
-    height: var(--button-small-height);
-    background: transparent;
-    color: var(--color-foreground);
-    border-bottom-left-radius: 0;
-    line-height: 1.6rem;
-    font-size: var(--font-size-regular);
-    padding: 0 0.2rem;
-  }
-  .toggle:hover {
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    border: 1px solid transparent;
+    gap: 1px;
   }
 </style>
 
 <div class="main">
   <Button
-    variant="foreground"
-    size="small"
-    on:click={() => dispatch("saveStatus", selectedItem[1])}
-    style={attachableStyle}>
+    styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
+    variant="gray-white"
+    on:click={() => dispatch("saveStatus", selectedItem[1])}>
+    <IconSmall name="patch" />
     {selectedItem[0]}
   </Button>
-  <Floating>
-    <svelte:fragment slot="toggle">
-      <button aria-label="stateToggle" class="toggle">
-        <Icon name="chevron-down" />
-      </button>
-    </svelte:fragment>
-    <svelte:fragment slot="modal">
-      <Dropdown items={items.filter(i => !isEqual(i, state))}>
+
+  <Popover
+    popoverPadding="0"
+    popoverPositionTop="2.5rem"
+    popoverPositionRight="0"
+    popoverBorderRadius="var(--border-radius-small)">
+    <Button
+      slot="toggle"
+      styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
+      stylePadding="0 0.25rem"
+      variant="gray-white"
+      ariaLabel="stateToggle">
+      <Icon name="chevron-down" />
+    </Button>
+    <div slot="popover">
+      <DropdownList items={items.filter(i => !isEqual(i, state))}>
         <svelte:fragment slot="item" let:item>
-          <DropdownItem
+          <DropdownListItem
             selected={false}
-            on:click={() => switchCaption(item)}
-            size="small">
+            on:click={() => switchCaption(item)}>
+            <IconSmall name="patch" />
             {item[0]}
-          </DropdownItem>
+          </DropdownListItem>
         </svelte:fragment>
-      </Dropdown>
-    </svelte:fragment>
-  </Floating>
+      </DropdownList>
+    </div>
+  </Popover>
 </div>

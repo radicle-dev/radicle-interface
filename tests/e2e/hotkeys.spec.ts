@@ -22,7 +22,9 @@ test("global hotkeys", async ({ page }) => {
     await expect(page.getByPlaceholder(searchPlaceholder)).toHaveValue(
       "searchquery?",
     );
-    await expect(page.getByText("Keyboard shortcuts")).not.toBeVisible();
+    await expect(
+      page.locator(".modal").getByText("Keyboard shortcuts"),
+    ).not.toBeVisible();
   }
 
   // Hitting `Esc` defocuses the input.

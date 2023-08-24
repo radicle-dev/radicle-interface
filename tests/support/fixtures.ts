@@ -169,7 +169,7 @@ export const test = base.extend<{
     await peer.startHttpd();
     await peer.startNode();
     await page.goto("/");
-    await page.getByRole("button", { name: "radicle.local" }).click();
+    await page.getByRole("button", { name: "Read only" }).click();
     await page
       .locator('input[name="port"]')
       .fill(peer.httpdBaseUrl.port.toString());
@@ -687,6 +687,7 @@ export const sourceBrowsingUrl = `/nodes/127.0.0.1/${sourceBrowsingRid}`;
 export const cobUrl = `/nodes/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/nodes/127.0.0.1/${markdownRid}`;
 export const nodeRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
+export const shortNodeRemote = "z6MktU…1xB22S";
 export const defaultHttpdPort = 8081;
 export const gitOptions = {
   alice: {

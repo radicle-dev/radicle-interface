@@ -1,8 +1,9 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  import Button from "@app/components/Button.svelte";
-  import Chip from "@app/components/Chip.svelte";
+  import Badge from "@app/components/Badge.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
@@ -14,28 +15,41 @@
   let updatedLabels: string[] = labels;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
+  let valid: boolean = false;
+  let sanitizedValue: string | undefined = undefined;
 
-  $: sanitizedValue = inputValue.trim();
+  $: {
+    sanitizedValue = inputValue.trim();
 
-  function addLabel() {
-    if (sanitizedValue.length > 0) {
-      if (updatedLabels.includes(sanitizedValue)) {
-        validationMessage = "This label is already added";
-      } else {
-        updatedLabels = [...updatedLabels, sanitizedValue];
-        inputValue = "";
-        if (action === "create" || action === "edit") {
-          dispatch("save", updatedLabels);
+    if (inputValue !== "") {
+      if (sanitizedValue.length > 0) {
+        if (updatedLabels.includes(sanitizedValue)) {
+          valid = false;
+          validationMessage = "This label is already added";
+        } else {
+          valid = true;
+          validationMessage = undefined;
         }
       }
     } else {
-      validationMessage = "This label is not valid";
+      valid = false;
+      validationMessage = "";
     }
   }
 
-  function removeLabel(remove: string) {
-    updatedLabels = updatedLabels.filter(label => label !== remove);
-    if (action === "create" || action === "edit") {
+  function addLabel() {
+    if (valid && sanitizedValue) {
+      updatedLabels = [...updatedLabels, sanitizedValue];
+      inputValue = "";
+      if (action === "create") {
+        dispatch("save", updatedLabels);
+      }
+    }
+  }
+
+  function removeLabel(label: string) {
+    updatedLabels = updatedLabels.filter(x => x !== label);
+    if (action === "create") {
       dispatch("save", updatedLabels);
     }
   }
@@ -48,27 +62,19 @@
     align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-6);
   }
   .metadata-section-body {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
   }
-  .close {
-    color: inherit;
-    border: none;
-    border-bottom-right-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    background-color: transparent;
-    line-height: 1.5;
-    padding: 0;
-    cursor: pointer;
-  }
-  .close:hover {
-    color: var(--color-foreground);
+  .actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 </style>
 
@@ -76,52 +82,67 @@
   <div class="metadata-section-header">
     <span>Labels</span>
     {#if action === "edit"}
-      {#if editInProgress}
-        <Button
-          size="tiny"
-          variant="text"
-          on:click={() => {
-            dispatch("save", updatedLabels);
-            editInProgress = !editInProgress;
-          }}>
-          save
-        </Button>
-      {:else}
-        <Button
-          size="tiny"
-          variant="text"
-          on:click={() => {
-            editInProgress = !editInProgress;
-          }}>
-          edit
-        </Button>
-      {/if}
+      <div class="actions">
+        {#if editInProgress}
+          <IconButton
+            title="save labels"
+            on:click={() => {
+              dispatch("save", updatedLabels);
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="checkmark" />
+          </IconButton>
+          <IconButton
+            title="dismiss changes"
+            on:click={() => {
+              updatedLabels = labels;
+              inputValue = "";
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="cross" />
+          </IconButton>
+        {:else}
+          <IconButton
+            title="edit labels"
+            on:click={() => {
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="edit" />
+          </IconButton>
+        {/if}
+      </div>
     {/if}
   </div>
   <div class="metadata-section-body">
-    {#each updatedLabels as label}
-      <Chip actionable={editInProgress || action === "create"}>
-        <div slot="content" aria-label="chip" class="txt-overflow">{label}</div>
-        <div slot="icon">
-          <button class="section close" on:click={() => removeLabel(label)}>
-            ✕
-          </button>
-        </div>
-      </Chip>
+    {#if editInProgress || action === "create"}
+      {#each updatedLabels as label}
+        <Badge variant="neutral">
+          <div aria-label="chip" class="label">{label}</div>
+          <span style:cursor="pointer">
+            <IconSmall name="cross" on:click={() => removeLabel(label)} />
+          </span>
+        </Badge>
+      {:else}
+        <div class="txt-missing">No labels</div>
+      {/each}
     {:else}
-      <div class="txt-missing">No labels</div>
-    {/each}
+      {#each updatedLabels as label}
+        <Badge variant="neutral">
+          {label}
+        </Badge>
+      {:else}
+        <div class="txt-missing">No labels</div>
+      {/each}
+    {/if}
   </div>
   {#if editInProgress || action === "create"}
-    <div style:margin-bottom="1rem">
+    <div style:margin-bottom="2rem" style:margin-top="1rem">
       <TextInput
-        bind:value={inputValue}
-        valid={sanitizedValue.length > 0}
-        placeholder="Add label"
-        variant="form"
+        {valid}
         {validationMessage}
-        on:submit={addLabel}
-        on:input={() => (validationMessage = undefined)} />
+        bind:value={inputValue}
+        placeholder="Add label"
+        on:submit={addLabel} />
     </div>
   {/if}
 </div>

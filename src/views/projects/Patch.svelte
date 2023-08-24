@@ -39,7 +39,7 @@
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { Session } from "@app/lib/httpd";
-  import type { Variant } from "@app/components/Badge.svelte";
+  import type { ComponentProps } from "svelte";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -48,26 +48,27 @@
   import { capitalize, isEqual } from "lodash";
   import { httpdStore } from "@app/lib/httpd";
 
-  import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import CommentTextarea from "@app/components/CommentTextarea.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
-  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
-  import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import Popover, { closeFocused } from "@app/components/Popover.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Radio from "@app/components/Radio.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
-  import Textarea from "@app/components/Textarea.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
@@ -132,7 +133,7 @@
       }
     }
   }
-  async function createComment() {
+  async function createComment(commentBody: string) {
     if (
       $httpdStore.state === "authenticated" &&
       commentBody.trim().length > 0
@@ -168,7 +169,7 @@
       }
     }
   }
-  function badgeColor(status: string): Variant {
+  function badgeColor(status: string): ComponentProps<Badge>["variant"] {
     if (status === "draft") {
       return "foreground";
     } else if (status === "open") {
@@ -241,7 +242,12 @@
       : "view"
   ) as "edit" | "view";
 
-  let tabs: Record<string, Route>;
+  type Tab = "activity" | "changes";
+
+  let tabs: Record<
+    Tab,
+    { icon: ComponentProps<IconSmall>["name"]; route: Route }
+  >;
   $: {
     const baseRoute = {
       resource: "project.patch",
@@ -255,16 +261,18 @@
     const revision = latestRevisionId === revisionId ? undefined : revisionId;
     tabs = {
       activity: {
-        ...baseRoute,
-        view: { name: "activity" },
+        route: {
+          ...baseRoute,
+          view: { name: "activity" },
+        },
+        icon: "activity",
       },
-      commits: {
-        ...baseRoute,
-        view: { name: "commits", revision },
-      },
-      files: {
-        ...baseRoute,
-        view: { name: "files", revision },
+      changes: {
+        route: {
+          ...baseRoute,
+          view: { name: "changes", revision },
+        },
+        icon: "diff",
       },
     };
   }
@@ -283,7 +291,6 @@
     return patchReviews;
   }
 
-  let commentBody = "";
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -347,36 +354,28 @@
   .patch {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    border-radius: var(--border-radius);
+    gap: 1.5rem;
     font-size: var(--font-size-small);
-    padding-left: 1rem;
-    margin-left: 1rem;
+    padding: 1rem;
+    margin-left: 3rem;
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+    height: fit-content;
   }
   .commit-list {
-    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
     margin-top: 1rem;
   }
-  .tab-line {
+  .tabs {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem 0;
-  }
-  .actions {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    margin: 0 0 2.5rem 0;
-    gap: 1rem;
+    margin: 3rem 0 1.5rem 0;
   }
   .author {
     display: flex;
@@ -385,40 +384,51 @@
     gap: 0.5rem;
   }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-foreground-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   .metadata-section-header {
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-6);
   }
   .metadata-section-body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
   }
   .review {
+    color: var(--color-fill-gray);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
   }
   .review-accept {
-    color: var(--color-positive);
+    color: var(--color-foreground-success);
   }
   .review-reject {
-    color: var(--color-negative);
+    color: var(--color-foreground-red);
   }
-
+  .diff-button-range {
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-bold);
+  }
+  .teaser-wrapper:not(:last-child) {
+    border-bottom: 1px solid var(--color-border-hint);
+  }
+  .connector {
+    width: 1px;
+    height: 1.5rem;
+    margin-left: 1rem;
+    background-color: var(--color-fill-separator);
+  }
   @media (max-width: 1092px) {
     .patch {
       display: grid;
@@ -426,11 +436,6 @@
     }
     .metadata {
       display: none;
-    }
-  }
-  @media (max-width: 960px) {
-    .patch {
-      padding-left: 2rem;
     }
   }
 </style>
@@ -450,7 +455,7 @@
           </div>
         </svelte:fragment>
         <svelte:fragment slot="state">
-          <Badge variant={badgeColor(patch.state.status)}>
+          <Badge size="small" variant={badgeColor(patch.state.status)}>
             {patch.state.status}
           </Badge>
         </svelte:fragment>
@@ -468,20 +473,24 @@
           {/if}
         </svelte:fragment>
         <div class="author" slot="author">
-          opened by <Authorship
-            authorId={patch.author.id}
-            authorAlias={patch.author.alias} />
+          opened by <NodeId
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
           {utils.formatTimestamp(patch.revisions[0].timestamp)}
         </div>
       </CobHeader>
 
-      <div class="tab-line">
-        <div style="display: flex; gap: 0.5rem;">
-          {#each Object.entries(tabs) as [name, route]}
+      <div class="tabs">
+        <Radio>
+          {#each Object.entries(tabs) as [name, { route, icon }]}
             <Link {route}>
-              <SquareButton size="small" active={name === view.name}>
+              <Button
+                styleBorderRadius="0"
+                size="regular"
+                variant={name === view.name ? "secondary" : "gray"}>
+                <IconSmall name={icon} />
                 {capitalize(name)}
-              </SquareButton>
+              </Button>
             </Link>
           {/each}
           {#if view.name === "diff"}
@@ -497,52 +506,87 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <SquareButton size="small" active={true}>
-                Diff {view.fromCommit.substring(
-                  0,
-                  6,
-                )}..{view.toCommit.substring(0, 6)}
-              </SquareButton>
+              <Button styleBorderRadius="0" size="regular" variant="secondary">
+                Compare <span class="diff-button-range">
+                  {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
+                    0,
+                    6,
+                  )}
+                </span>
+              </Button>
             </Link>
           {/if}
-        </div>
+        </Radio>
 
-        {#if view.name === "commits" || view.name === "files"}
-          <Floating disabled={patch.revisions.length === 1}>
-            <svelte:fragment slot="toggle">
-              <SquareButton
-                size="small"
-                clickable={patch.revisions.length > 1}
-                disabled={patch.revisions.length === 1}>
-                Revision {utils.formatObjectId(view.revision)}
-              </SquareButton>
-            </svelte:fragment>
-            <svelte:fragment slot="modal">
-              <Dropdown items={patch.revisions}>
-                <svelte:fragment slot="item" let:item>
-                  <Link
-                    on:afterNavigate={closeFocused}
-                    route={{
-                      resource: "project.patch",
-                      project: project.id,
-                      node: baseUrl,
-                      patch: patch.id,
-                      view: {
-                        name: view.name,
-                        revision: item.id,
-                      },
-                    }}>
-                    <DropdownItem
-                      selected={item.id === view.revision}
-                      size="tiny">
-                      Revision {utils.formatObjectId(item.id)}
-                    </DropdownItem>
-                  </Link>
-                </svelte:fragment>
-              </Dropdown>
-            </svelte:fragment>
-          </Floating>
-        {/if}
+        <div style:margin-left="auto">
+          {#if $httpdStore.state === "authenticated" && view.name === "activity"}
+            <CobStateButton
+              items={items.filter(([, state]) => !isEqual(state, patch.state))}
+              {selectedItem}
+              state={patch.state}
+              on:saveStatus={saveStatus} />
+          {/if}
+          {#if view.name === "commits" || view.name === "changes"}
+            <div style="margin-left: auto;">
+              <Popover
+                disabled={patch.revisions.length === 1}
+                popoverPadding="0"
+                popoverPositionTop="2.5rem"
+                popoverBorderRadius="var(--border-radius-small)">
+                <Button
+                  let:expanded
+                  slot="toggle"
+                  size="regular"
+                  disabled={patch.revisions.length === 1}>
+                  <span
+                    style:font-weight="var(--font-weight-regular)"
+                    style:color="var(--color-fill-gray)">
+                    Revision
+                  </span>
+                  <span
+                    style:color="var(--color-fill-secondary)"
+                    style:font-family="var(--font-family-monospace)">
+                    {utils.formatObjectId(view.revision)}
+                  </span>
+                  <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+                </Button>
+                <DropdownList slot="popover" items={patch.revisions}>
+                  <svelte:fragment slot="item" let:item>
+                    <Link
+                      on:afterNavigate={closeFocused}
+                      route={{
+                        resource: "project.patch",
+                        project: project.id,
+                        node: baseUrl,
+                        patch: patch.id,
+                        view: {
+                          name: view.name,
+                          revision: item.id,
+                        },
+                      }}>
+                      <DropdownListItem selected={item.id === view.revision}>
+                        <span
+                          style:font-weight="var(--font-weight-regular)"
+                          style:color={item.id === view.revision
+                            ? "var(--color-foreground-match-background)"
+                            : "var(--color-fill-gray)"}>
+                          Revision
+                        </span>
+                        <span
+                          style:color={item.id === view.revision
+                            ? "var(--color-foreground-match-background)"
+                            : "var(--color-fill-secondary)"}
+                          style:font-family="var(--font-family-monospace)">
+                          {utils.formatObjectId(item.id)}
+                        </span>
+                      </DropdownListItem>
+                    </Link>
+                  </svelte:fragment>
+                </DropdownList>
+              </Popover>
+            </div>
+          {/if}
+        </div>
       </div>
       {#if view.name === "diff"}
         <div style:margin-top="1rem">
@@ -570,20 +614,43 @@
             patchId={patch.id}
             expanded={index === patch.revisions.length - 1}
             previousRevId={previousRevision?.id}
-            previousRevOid={previousRevision?.oid} />
+            previousRevOid={previousRevision?.oid}>
+            {#if index === patch.revisions.length - 1}
+              {#if $httpdStore.state === "authenticated" && view.name === "activity"}
+                <div class="connector" />
+                <CommentTextarea
+                  on:submit={async event => {
+                    await createComment(event.detail.comment);
+                  }} />
+                <div class="connector" />
+                <div style="display: flex;">
+                  <CobStateButton
+                    items={items.filter(
+                      ([, state]) => !isEqual(state, patch.state),
+                    )}
+                    {selectedItem}
+                    state={patch.state}
+                    on:saveStatus={saveStatus} />
+                </div>
+              {/if}
+            {/if}
+          </RevisionComponent>
         {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">No activity</div>
-            <div slot="body">No activity on this patch yet</div>
-          </Placeholder>
+          <div style:margin="4rem 0">
+            <Placeholder
+              iconName="no-patches"
+              caption="No activity on this patch yet" />
+          </div>
         {/each}
       {:else if view.name === "commits"}
         <div class="commit-list">
           {#each view.commits as commit}
-            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+            <div class="teaser-wrapper">
+              <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+            </div>
           {/each}
         </div>
-      {:else if view.name === "files"}
+      {:else if view.name === "changes"}
         <div style:margin-top="1rem">
           <Changeset
             {baseUrl}
@@ -594,35 +661,6 @@
         </div>
       {:else}
         {utils.unreachable(view.name)}
-      {/if}
-      {#if $httpdStore.state === "authenticated" && view.name === "activity"}
-        <div style:margin-top="1rem">
-          <Textarea
-            resizable
-            on:submit={async () => {
-              await createComment();
-              commentBody = "";
-            }}
-            bind:value={commentBody}
-            placeholder="Leave your comment" />
-          <div class="actions txt-small">
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, patch.state))}
-              {selectedItem}
-              state={patch.state}
-              on:saveStatus={saveStatus} />
-            <Button
-              variant="secondary"
-              size="small"
-              disabled={!commentBody}
-              on:click={async () => {
-                await createComment();
-                commentBody = "";
-              }}>
-              Comment
-            </Button>
-          </div>
-        </div>
       {/if}
     </div>
 
@@ -636,16 +674,14 @@
                 class:review-accept={review.verdict === "accept"}
                 class:review-reject={review.verdict === "reject"}>
                 {#if review.verdict === "accept"}
-                  <Icon size="small" name="checkmark" />
+                  <IconSmall name="checkmark" />
                 {:else if review.verdict === "reject"}
-                  <Icon size="small" name="cross" />
+                  <IconSmall name="cross" />
                 {:else}
-                  <Icon size="small" name="chat" />
+                  <IconSmall name="chat" />
                 {/if}
               </span>
-              <Authorship
-                authorId={review.author.id}
-                authorAlias={review.author.alias} />
+              <NodeId nodeId={review.author.id} alias={review.author.alias} />
             </div>
           {:else}
             <div class="txt-missing">No reviews</div>

@@ -3,21 +3,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/Inter-Regular.woff");
+  src: url("fonts/Inter-Regular.woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/Inter-Medium.woff2");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 600;
   font-display: swap;
-  src: url("fonts/Inter-SemiBold.otf");
+  src: url("fonts/Inter-SemiBold.woff2");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/Inter-Bold.otf");
+  src: url("fonts/Inter-Bold.woff2");
 }
 
 @font-face {
@@ -25,60 +32,45 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-Regular.ttf");
+  src: url("fonts/JetBrainsMono-Regular.woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Medium.woff2");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 600;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-SemiBold.ttf");
+  src: url("fonts/JetBrainsMono-SemiBold.woff2");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-Bold.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-Italic.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-SemiBoldItalic.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-BoldItalic.ttf");
+  src: url("fonts/JetBrainsMono-Bold.woff2");
 }
 
 :root {
   --font-family-sans-serif: Inter, sans-serif;
   --font-family-monospace: monospace;
-  --font-weight-normal: 400;
-  --font-weight-medium: 600;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-size-tiny: 0.75rem;
-  --font-size-small: 0.875rem;
-  --font-size-regular: 1rem;
-  --font-size-medium: 1.25rem;
-  --font-size-large: 1.75rem;
-  --font-size-x-large: 2rem;
-  --font-size-xx-large: 3rem;
+  --font-size-tiny: 0.75rem; /* 12px */
+  --font-size-small: 0.875rem; /* 14px */
+  --font-size-regular: 1rem; /* 16px */
+  --font-size-medium: 1.25rem; /* 20px */
+  --font-size-large: 1.5rem; /* 24px */
+  --font-size-x-large: 2rem; /* 32px */
+  --font-size-xx-large: 3rem; /* 48px */
 }
 
 [data-codefont="system"] {
@@ -94,21 +86,17 @@ html {
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
   font-family: var(--font-family-sans-serif);
-  font-feature-settings: "ss01", "ss02", "cv01", "cv03";
+  font-feature-settings: "ss01", "cv01", "cv03";
   /* The root element font size has to be set in px,
    * otherwise Safari breaks. */
   font-size: 16px;
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-regular);
   line-height: 1.5;
 }
 
 p {
   margin: 1rem 0;
 }
-.txt-highlight {
-  color: var(--color-secondary);
-}
-
 .txt-tiny {
   font-size: var(--font-size-tiny);
 }
@@ -138,17 +126,13 @@ p {
   font-weight: var(--font-weight-bold) !important;
 }
 .txt-missing {
-  color: var(--color-foreground-5);
-  font-style: italic;
+  color: var(--color-foreground-dim);
 }
 .txt-link {
-  color: var(--color-foreground-6);
   text-decoration: none;
-  border-bottom: 1px dashed var(--color-foreground-5);
 }
 .txt-link:hover {
-  color: var(--color-foreground);
-  border-bottom-color: var(--color-foreground);
+  color: var(--color-fill-primary);
 }
 .txt-emoji {
   height: 1em;

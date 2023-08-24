@@ -1,152 +1,213 @@
-<script lang="ts">
+<script lang="ts" strictEvents>
+  export let ariaLabel: string | undefined = undefined;
   export let title: string | undefined = undefined;
   export let variant:
-    | "foreground"
-    | "negative"
+    | "background"
+    | "dim"
+    | "gray"
+    | "gray-white"
+    | "none"
     | "outline"
     | "primary"
     | "secondary"
-    | "text";
-  export let size: "tiny" | "small" | "regular" = "regular";
+    | "tab" = "gray";
+  export let size: "small" | "regular" | "large" = "regular";
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
-  export let waiting: boolean = false;
-  export let style: string | undefined = undefined;
+
+  export let styleFontFamily: string | undefined = undefined;
+  export let stylePadding: string | undefined = undefined;
+  export let styleWidth: "100%" | undefined = undefined;
+  export let styleBorderRadius: string | undefined = undefined;
 </script>
 
 <style>
   button {
-    background: transparent;
-    border-radius: var(--border-radius-round);
-    border: 1px solid var(--color-foreground);
+    position: relative;
     cursor: pointer;
-    font-family: var(--font-family-sans-serif);
-    font-feature-settings: "ss01", "ss02", "cv01", "cv03";
-    font-size: var(--font-size-regular);
-    line-height: 1.6rem;
-    display: inline-flex;
-    justify-content: center;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--border-radius-tiny);
+    font-family: var(--font-family-sans-serif);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+    gap: 0.5rem;
   }
-  button[disabled] {
+
+  button:disabled {
     cursor: not-allowed;
-  }
-  button:not([disabled]):hover {
-    color: var(--color-background);
-  }
-  .foreground {
-    color: var(--color-foreground);
-  }
-  .foreground[disabled] {
-    color: var(--color-foreground-5);
-    border-color: var(--color-foreground-5);
-  }
-  .foreground:not([disabled]):hover {
-    background-color: var(--color-foreground);
+    color: var(--color-foreground-disabled);
   }
 
-  .primary {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-  }
-  .primary[disabled] {
-    color: var(--color-primary-5);
-    border-color: var(--color-primary-5);
-  }
-  .primary:not([disabled]):hover {
-    background-color: var(--color-primary);
-  }
-
-  .secondary {
-    color: var(--color-secondary);
-    border-color: var(--color-secondary);
-  }
-  .secondary[disabled] {
-    color: var(--color-secondary-5);
-    border-color: var(--color-secondary-5);
-  }
-  .secondary:not([disabled]):hover {
-    background-color: var(--color-secondary);
-  }
-
-  .negative {
-    color: var(--color-negative);
-    border-color: var(--color-negative);
-  }
-  .negative[disabled] {
-    color: var(--color-negative-5);
-    border-color: var(--color-negative-5);
-  }
-  .negative:not([disabled]):hover {
-    background-color: var(--color-negative);
-  }
-
-  .text {
-    color: var(--color-foreground);
-    border: none;
-  }
-  .text[disabled] {
-    color: var(--color-foreground-5);
-  }
-  .text:not([disabled]):hover {
-    background-color: var(--color-foreground);
-  }
-
-  .outline {
-    color: var(--color-foreground);
-    border: none;
-    border: 1px solid transparent;
-  }
-  .outline[disabled] {
-    color: var(--color-foreground-5);
-  }
-  .outline:not([disabled]):hover {
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
-  }
-
-  .tiny {
-    font-size: var(--font-size-tiny);
-    height: var(--button-small-tiny);
+  .small {
+    height: var(--button-tiny-height);
     padding: 0 0.6rem;
   }
-  .small {
-    font-size: var(--font-size-small);
+
+  .regular {
     height: var(--button-small-height);
     padding: 0 0.75rem;
   }
-  .regular {
+
+  .large {
+    border-radius: var(--border-radius-small);
     height: var(--button-regular-height);
-    padding: 0 1.5rem;
-    min-width: 6rem;
+    padding: 0 1rem;
   }
 
-  .waiting {
-    cursor: waiting;
+  .background {
+    color: var(--color-fill-secondary);
+    background-color: var(--color-background-default);
+  }
+  .background[disabled] {
+    color: var(--color-foreground-disabled);
+    background-color: var(--color-background-default);
+  }
+  .background:not([disabled]):hover {
+    background-color: var(--color-fill-ghost);
+  }
+
+  .dim {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-fill-secondary);
+  }
+  .dim[disabled] {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-fill-secondary);
+  }
+  .dim:not([disabled]):hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-fill-secondary);
+  }
+
+  .gray {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-fill-secondary);
+  }
+  .gray[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
+  }
+  .gray:not([disabled]):hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-fill-secondary);
+  }
+
+  .gray-white {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-contrast);
+  }
+  .gray-white[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
+  }
+  .gray-white:not([disabled]):hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-foreground-contrast);
+  }
+
+  .none {
+    background-color: transparent;
+    color: var(--color-foreground-emphasized);
+  }
+  .none[disabled] {
+    background-color: transparent;
+    color: var(--color-foreground-emphasized);
+  }
+  .none:not([disabled]):hover {
+    background-color: var(--color-fill-ghost);
+  }
+
+  .outline {
+    background-color: transparent;
+    color: var(--color-foreground-contrast);
+    border: 1px solid var(--color-border-hint);
+  }
+  .outline[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .outline:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-border-focus);
+    color: var(--color-foreground-contrast);
+  }
+
+  .primary {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-primary);
+  }
+
+  .primary[disabled] {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-primary);
+  }
+
+  .primary:not([disabled]):hover {
+    background-color: var(--color-fill-primary-hover);
+  }
+
+  .secondary {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
+  }
+
+  .secondary[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
+  }
+
+  .secondary:not([disabled]):hover {
+    background-color: var(--color-fill-secondary-hover);
+  }
+
+  .tab {
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
+  }
+
+  .tab[disabled] {
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
+  }
+
+  .tab:not([disabled]):hover {
+    background-color: var(--color-fill-secondary-hover);
   }
 </style>
 
 <!-- svelte-ignore a11y-autofocus -->
 <button
-  {title}
-  {disabled}
-  {style}
+  aria-label={ariaLabel}
   {autofocus}
+  {disabled}
+  {title}
+  tabindex="0"
+  style:font-family={styleFontFamily}
+  style:padding={stylePadding}
+  style:width={styleWidth}
+  style:border-radius={styleBorderRadius}
+  on:blur
   on:click
   on:focus
-  on:blur
   on:mouseout
   on:mouseover
-  class:foreground={variant === "foreground"}
-  class:negative={variant === "negative"}
+  class:disabled
+  class:small={size === "small"}
+  class:regular={size === "regular"}
+  class:large={size === "large"}
+  class:background={variant === "background"}
+  class:dim={variant === "dim"}
+  class:gray={variant === "gray"}
+  class:gray-white={variant === "gray-white"}
+  class:none={variant === "none"}
   class:outline={variant === "outline"}
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
-  class:text={variant === "text"}
-  class:tiny={size === "tiny"}
-  class:small={size === "small"}
-  class:regular={size === "regular"}
-  class:waiting>
+  class:tab={variant === "tab"}>
   <slot />
 </button>

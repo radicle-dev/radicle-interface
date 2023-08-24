@@ -5,9 +5,15 @@
   import { toHtml } from "hast-util-to-html";
 
   import * as Syntax from "@app/lib/syntax";
+
   import Badge from "@app/components/Badge.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import ExpandButton from "@app/components/ExpandButton.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
+  import Loading from "@app/components/Loading.svelte";
+  import Placeholder from "@app/components/Placeholder.svelte";
 
   export let filePath: string;
   export let oldContent: string | undefined = undefined;
@@ -25,9 +31,10 @@
   export let projectId: string;
   export let visible: boolean = false;
 
-  let collapsed = false;
+  let expanded = true;
   let selection: Selection | undefined = undefined;
   let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
+  let syntaxHighlightingLoading: boolean = false;
 
   onMount(() => {
     window.addEventListener("click", deselectHandler);
@@ -47,7 +54,11 @@
   });
 
   $: if (visible) {
-    void highlightContent().then(output => (highlighting = output));
+    syntaxHighlightingLoading = true;
+    void highlightContent().then(output => {
+      highlighting = output;
+      syntaxHighlightingLoading = false;
+    });
   }
 
   onDestroy(() => {
@@ -229,7 +240,7 @@
 
 <style>
   .wrapper {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--border-radius-small);
     margin-bottom: 2rem;
     line-height: 1.5rem;
@@ -242,11 +253,12 @@
     flex-direction: row;
     height: 3rem;
     padding: 1rem;
+    gap: 0.5rem;
   }
   main {
     font-size: var(--font-size-small);
-    border-top: 1px dashed var(--color-foreground-4);
-    background-color: var(--color-foreground-1);
+    border-top: 1px solid var(--color-border-default);
+    background: var(--color-background-float);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
     overflow-x: auto;
   }
@@ -256,14 +268,8 @@
     align-items: center;
     gap: 1rem;
   }
-  .placeholder {
-    padding: 1rem;
-    color: var(--color-foreground-5);
-    text-align: center;
-  }
   .browse {
     margin-left: auto;
-    cursor: pointer;
   }
   .expand-button {
     cursor: pointer;
@@ -280,48 +286,91 @@
     vertical-align: top;
   }
   .diff-line.type-addition > * {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-2);
+    background-color: var(--color-fill-diff-green-light);
   }
   .diff-line.type-deletion > * {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-2);
+    background-color: var(--color-fill-diff-red-light);
   }
+
   .diff-line.selected > * {
-    color: var(--color-foreground-6);
-    background-color: var(--color-foreground-4);
+    background-color: var(--color-fill-float-hover);
   }
   .diff-line.selected.type-addition > * {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-4);
+    background-color: var(--color-fill-diff-green);
   }
   .diff-line.selected.type-deletion > * {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-4);
+    background-color: var(--color-fill-diff-red);
   }
-  .diff-line.hunk-header.selected {
-    background-color: var(--color-foreground-4);
+
+  .type-addition > .diff-line-number,
+  .type-addition > .diff-line-type {
+    color: var(--color-foreground-success);
   }
+  .type-deletion > .diff-line-number,
+  .type-deletion > .diff-line-type {
+    color: var(--color-foreground-red);
+  }
+
+  .diff-line.selected .selection-indicator-left {
+    background-color: var(--color-fill-secondary);
+  }
+  .type-addition.diff-line.selected .selection-indicator-left {
+    background-color: var(--color-fill-secondary);
+  }
+  .type-deletion.diff-line.selected .selection-indicator-left {
+    background-color: var(--color-fill-secondary);
+  }
+
+  .diff-line.selected .selection-indicator-right {
+    background-color: var(--color-fill-secondary);
+  }
+  .type-addition.diff-line.selected .selection-indicator-right {
+    background-color: var(--color-fill-secondary);
+  }
+  .type-deletion.diff-line.selected .selection-indicator-right {
+    background-color: var(--color-fill-secondary);
+  }
+
+  .selection-start {
+    box-shadow: 0 -1px 0 0 var(--color-fill-secondary);
+    z-index: 1;
+  }
+  .selection-end {
+    box-shadow: 0 1px 0 0 var(--color-fill-secondary);
+    z-index: 1;
+  }
+
+  .selection-start.selection-end {
+    box-shadow: 0 0 0 1px var(--color-fill-secondary);
+    z-index: 1;
+  }
+
   .diff-line-number {
+    font-family: var(--font-family-monospace);
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
     cursor: pointer;
+    color: var(--color-foreground-disabled);
   }
   .diff-line-number.left {
     position: relative;
     padding: 0 0.5rem 0 0.75rem;
   }
-  .selection-indicator {
+  .selection-indicator-left {
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
-    width: 4px;
+    width: 1px;
   }
-  .diff-line.selected .selection-indicator {
-    background: var(--color-primary);
+  .selection-indicator-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
   }
   .diff-line-number.right {
     padding: 0 0.75rem 0 0.5rem;
@@ -341,29 +390,27 @@
   }
   .diff-expand-header {
     padding-left: 0.5rem;
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-dim);
   }
-  .diff-line-number {
-    color: var(--color-foreground-5);
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 </style>
 
 <div id={filePath} class="wrapper">
-  <header class="header">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="expand-button" on:click={() => (collapsed = !collapsed)}>
-      {#if collapsed}
-        <Icon name="chevron-right" />
-      {:else}
-        <Icon name="chevron-down" />
-      {/if}
-    </div>
+  <div class="header">
+    <ExpandButton bind:expanded />
     <div class="actions">
-      {#if headerBadgeCaption === "moved" || headerBadgeCaption === "copied"}
-        <p class="txt-regular">{oldFilePath} → {filePath}</p>
+      {#if (headerBadgeCaption === "moved" || headerBadgeCaption === "copied") && oldFilePath}
+        <span>
+          <FilePath filenameWithPath={oldFilePath} /> → <FilePath
+            filenameWithPath={filePath} />
+        </span>
       {:else}
-        <p class="txt-regular">{filePath}</p>
+        <FilePath filenameWithPath={filePath} />
       {/if}
       {#if headerBadgeCaption === "added"}
         <Badge variant="positive">added</Badge>
@@ -376,7 +423,10 @@
       {/if}
     </div>
     {#if revision}
-      <div class="browse" title="View file">
+      <div class="header-right">
+        {#if syntaxHighlightingLoading}
+          <Loading small />
+        {/if}
         <Link
           route={{
             resource: "project.source",
@@ -385,12 +435,14 @@
             path: filePath,
             revision,
           }}>
-          <Icon name="browse" />
+          <IconButton title="View file">
+            <IconSmall name="chevron-left-right" />
+          </IconButton>
         </Link>
       </div>
     {/if}
-  </header>
-  {#if !collapsed}
+  </div>
+  {#if expanded}
     <main>
       {#if fileDiff.type === "plain"}
         {#if fileDiff.hunks.length > 0}
@@ -400,21 +452,33 @@
                 class="diff-line hunk-header"
                 class:selected={hunkHeaderSelected(selection, hunkIdx)}>
                 <td colspan={2} style:position="relative">
-                  <div class="selection-indicator" />
+                  <div class="selection-indicator-left" />
                 </td>
-                <td colspan={6} class="diff-expand-header">
+                <td
+                  colspan={6}
+                  class="diff-expand-header"
+                  style:position="relative">
                   {hunk.header}
+                  <div class="selection-indicator-right" />
                 </td>
               </tr>
               {#each hunk.lines as line, lineIdx}
                 <tr
+                  style:position="relative"
                   class={`diff-line type-${line.type}`}
+                  class:selection-start={selection?.startHunk === hunkIdx &&
+                    selection.startLine === lineIdx}
+                  class:selection-end={(selection?.endHunk === hunkIdx &&
+                    selection.endLine === lineIdx) ||
+                    (selection?.startHunk === hunkIdx &&
+                      selection.startLine === lineIdx &&
+                      selection?.endHunk === undefined)}
                   class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
                   <td
                     id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
                     class="diff-line-number left"
                     on:click={e => selectLine(hunkIdx, lineIdx, e)}>
-                    <div class="selection-indicator" />
+                    <div class="selection-indicator-left" />
                     {lineNumberL(line)}
                   </td>
                   <td
@@ -438,15 +502,20 @@
                       {line.line}
                     {/if}
                   </td>
+                  <div class="selection-indicator-right" />
                 </tr>
               {/each}
             {/each}
           </table>
         {:else}
-          <div class="placeholder">Empty file</div>
+          <div style:margin="1rem 0">
+            <Placeholder iconName="empty-file" caption="Empty file" inline />
+          </div>
         {/if}
       {:else}
-        <div class="placeholder">Binary file</div>
+        <div style:margin="1rem 0">
+          <Placeholder iconName="binary-file" caption="Binary file" inline />
+        </div>
       {/if}
     </main>
   {/if}

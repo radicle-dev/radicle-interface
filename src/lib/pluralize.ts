@@ -5,6 +5,7 @@ export const pluralRules = {
   file: "files",
   insertion: "insertions",
   issue: "issues",
+  node: "nodes",
   patch: "patches",
   remote: "remotes",
 } as const;

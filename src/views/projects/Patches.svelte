@@ -1,18 +1,22 @@
 <script lang="ts">
   import type { BaseUrl, Patch, PatchState, Project } from "@httpd-client";
 
-  import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
   import { PATCHES_PER_PAGE } from "./router";
 
   import Button from "@app/components/Button.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
+  import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -48,12 +52,6 @@
     }
   }
 
-  interface Tab {
-    value: PatchState["status"];
-    title: string;
-    disabled: boolean;
-  }
-
   const stateOptions: PatchState["status"][] = [
     "draft",
     "open",
@@ -61,11 +59,12 @@
     "merged",
   ];
 
-  $: options = stateOptions.map<Tab>(s => ({
-    value: s,
-    title: `${project.patches[s]} ${s}`,
-    disabled: project.patches[s] === 0,
-  }));
+  const stateColor: Record<PatchState["status"], string> = {
+    draft: "var(--color-fill-gray)",
+    open: "var(--color-fill-success)",
+    archived: "var(--color-foreground-yellow)",
+    merged: "var(--color-fill-primary)",
+  };
 
   $: showMoreButton =
     !loading && !error && allPatches.length < project.patches[state];
@@ -73,87 +72,94 @@
 
 <style>
   .patches {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
-  }
-  .patches-list {
-    border-radius: var(--border-radius);
-    overflow: hidden;
   }
   .more {
     margin-top: 2rem;
-    text-align: center;
     min-height: 3rem;
-  }
-  .teaser:not(:last-child) {
-    border-bottom: 1px dashed var(--color-background);
-  }
-
-  @media (max-width: 960px) {
-    .patches {
-      padding-left: 2rem;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
   <div class="patches">
-    <div style="margin-bottom: 2rem;">
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        {#each options as option}
-          {#if option.disabled}
-            <SquareButton
-              clickable={option.disabled}
-              active={option.value === state}
-              disabled={option.disabled}>
-              {option.title}
-            </SquareButton>
-          {:else}
+    <List items={allPatches}>
+      <div slot="header" style="display: flex;">
+        <Popover
+          popoverPadding="0"
+          popoverPositionTop="2.5rem"
+          popoverBorderRadius="var(--border-radius-small)">
+          <Button
+            let:expanded
+            slot="toggle"
+            ariaLabel="filter-dropdown"
+            title="Filter patches by state">
+            <div style:color={stateColor[state]}>
+              <Icon name="patch" />
+            </div>
+            {project.patches[state]}
+            {state}
+            <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+          </Button>
+          <DropdownList slot="popover" items={stateOptions}>
             <Link
+              slot="item"
+              let:item
+              on:afterNavigate={() => closeFocused()}
               route={{
                 resource: "project.patches",
                 project: project.id,
                 node: baseUrl,
-                search: `state=${option.value}`,
+                search: `state=${item}`,
               }}>
-              <SquareButton
-                clickable={option.disabled}
-                active={option.value === state}
-                disabled={option.disabled}>
-                {option.title}
-              </SquareButton>
+              <DropdownListItem selected={item === state}>
+                <div
+                  style:color={item === state
+                    ? "var(--color-foreground-white)"
+                    : stateColor[item]}>
+                  <Icon name="patch" />
+                </div>
+                {project.patches[item]}
+                {item}
+              </DropdownListItem>
             </Link>
-          {/if}
-        {/each}
+          </DropdownList>
+        </Popover>
       </div>
-    </div>
-    <div class="patches-list">
-      {#each allPatches as patch (patch.id)}
-        <div class="teaser">
-          <PatchTeaser {baseUrl} projectId={project.id} {patch} />
-        </div>
-      {:else}
+
+      <PatchTeaser
+        slot="item"
+        let:item
+        {baseUrl}
+        projectId={project.id}
+        patch={item} />
+
+      <svelte:fragment slot="body">
         {#if error}
-          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
-        {:else if loading}
-          <!-- We already show a loader below. -->
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} patches</div>
-            <div slot="body">No patches matched the current filter</div>
-          </Placeholder>
+          <ErrorMessage message="Couldn't load patches" {error} />
         {/if}
-      {/each}
-    </div>
+
+        {#if project.patches[state] === 0}
+          <div style:margin="4rem 0" style:width="100%">
+            <Placeholder
+              iconName="no-patches"
+              caption={`No ${state} patches`} />
+          </div>
+        {/if}
+      </svelte:fragment>
+    </List>
+
     <div class="more">
       {#if loading}
         <div style:margin-top={page === 0 ? "8rem" : ""}>
-          <Loading small={page !== 0} center />
+          <Loading noDelay small={page !== 0} center />
         </div>
       {/if}
 
       {#if showMoreButton}
-        <Button variant="foreground" on:click={() => loadMore(state)}>
+        <Button size="large" variant="outline" on:click={() => loadMore(state)}>
           More
         </Button>
       {/if}

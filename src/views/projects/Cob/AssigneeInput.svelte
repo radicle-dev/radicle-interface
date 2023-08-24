@@ -4,8 +4,9 @@
   import { formatNodeId, parseNodeId } from "@app/lib/utils";
 
   import Avatar from "@app/components/Avatar.svelte";
-  import Button from "@app/components/Button.svelte";
-  import Chip from "@app/components/Chip.svelte";
+  import Badge from "@app/components/Badge.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
@@ -17,29 +18,44 @@
   let updatedAssignees: string[] = assignees;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
+  let valid: boolean = false;
+  let assignee: string | undefined = undefined;
 
-  $: parsedNodeId = parseNodeId(inputValue);
-
-  function addAssignee() {
-    if (parsedNodeId) {
-      const assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
-      if (updatedAssignees.includes(assignee)) {
-        validationMessage = "This assignee is already added";
-      } else {
-        updatedAssignees = [...updatedAssignees, assignee];
-        inputValue = "";
-        if (action === "create") {
-          dispatch("save", updatedAssignees);
+  $: {
+    if (inputValue !== "") {
+      const parsedNodeId = parseNodeId(inputValue);
+      if (parsedNodeId) {
+        assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
+        if (updatedAssignees.includes(assignee)) {
+          valid = false;
+          validationMessage = "This assignee is already added";
+        } else {
+          valid = true;
+          validationMessage = undefined;
         }
+      } else {
+        valid = false;
+        validationMessage = "This assignee is not valid";
       }
     } else {
-      validationMessage = "This assignee is not valid";
+      valid = false;
+      validationMessage = "";
     }
   }
 
-  function removeAssignee(remove: string) {
-    updatedAssignees = updatedAssignees.filter(assignee => assignee !== remove);
-    if (action === "create" || action === "edit") {
+  function addAssignee() {
+    if (valid && assignee) {
+      updatedAssignees = [...updatedAssignees, assignee];
+      inputValue = "";
+      if (action === "create") {
+        dispatch("save", updatedAssignees);
+      }
+    }
+  }
+
+  function removeAssignee(assignee: string) {
+    updatedAssignees = updatedAssignees.filter(x => x !== assignee);
+    if (action === "create") {
       dispatch("save", updatedAssignees);
     }
   }
@@ -48,39 +64,29 @@
 <style>
   .header {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-    color: var(--color-foreground-6);
+  }
+  .actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
   .body {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
   }
-
-  .close {
-    color: inherit;
-    border: none;
-    border-bottom-right-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    background-color: transparent;
-    line-height: 1.5;
-    padding: 0;
-    cursor: pointer;
-  }
-  .close:hover {
-    color: var(--color-foreground);
-  }
-
-  .chip-content {
+  .assignee {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
 </style>
 
@@ -88,56 +94,72 @@
   <div class="header">
     <span>Assignees</span>
     {#if action === "edit"}
-      {#if editInProgress}
-        <Button
-          size="tiny"
-          variant="text"
-          on:click={() => {
-            dispatch("save", updatedAssignees);
-            editInProgress = !editInProgress;
-          }}>
-          save
-        </Button>
-      {:else}
-        <Button
-          size="tiny"
-          variant="text"
-          on:click={() => {
-            editInProgress = !editInProgress;
-          }}>
-          edit
-        </Button>
-      {/if}
+      <div class="actions">
+        {#if editInProgress}
+          <IconButton
+            on:click={() => {
+              dispatch("save", updatedAssignees);
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="checkmark" />
+          </IconButton>
+          <IconButton
+            on:click={() => {
+              updatedAssignees = assignees;
+              inputValue = "";
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="cross" />
+          </IconButton>
+        {:else}
+          <IconButton
+            on:click={() => {
+              editInProgress = !editInProgress;
+            }}>
+            <IconSmall name="edit" />
+          </IconButton>
+        {/if}
+      </div>
     {/if}
   </div>
   <div class="body">
-    {#each updatedAssignees as assignee (assignee)}
-      <Chip actionable={editInProgress || action === "create"}>
-        <div slot="content" aria-label="chip" class="txt-overflow chip-content">
-          <Avatar inline nodeId={assignee} />
-          <span>{formatNodeId(assignee)}</span>
-        </div>
-        <button
-          slot="icon"
-          class="section close"
-          on:click={() => removeAssignee(assignee)}>
-          ✕
-        </button>
-      </Chip>
+    {#if editInProgress || action === "create"}
+      {#each updatedAssignees as assignee}
+        <Badge variant="neutral">
+          <div class="assignee">
+            <Avatar inline nodeId={assignee} />
+            <span>{formatNodeId(assignee)}</span>
+            <span style:cursor="pointer">
+              <IconSmall
+                name="cross"
+                on:click={() => removeAssignee(assignee)} />
+            </span>
+          </div>
+        </Badge>
+      {:else}
+        <div class="txt-missing">No assignees</div>
+      {/each}
     {:else}
-      <div class="txt-missing">No assignees</div>
-    {/each}
+      {#each updatedAssignees as assignee}
+        <Badge variant="neutral">
+          <div class="assignee">
+            <Avatar inline nodeId={assignee} />
+            <span>{formatNodeId(assignee)}</span>
+          </div>
+        </Badge>
+      {:else}
+        <div class="txt-missing">No assignees</div>
+      {/each}
+    {/if}
   </div>
   {#if editInProgress || action === "create"}
-    <div style:margin-bottom="1rem">
+    <div style:margin-bottom="1rem" style:margin-top="1rem">
       <TextInput
-        bind:value={inputValue}
-        valid={Boolean(parsedNodeId)}
-        placeholder="Add assignee"
-        variant="form"
+        {valid}
         {validationMessage}
-        on:submit={addAssignee}
-        on:input={() => (validationMessage = undefined)} />
+        bind:value={inputValue}
+        placeholder="Add assignee"
+        on:submit={addAssignee} />
     </div>
   {/if}
 </div>

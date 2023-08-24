@@ -1,3 +1,9 @@
+export interface Embed {
+  oid: string;
+  name: string;
+  content: string;
+}
+
 async function parseGitOid(bytes: Uint8Array): Promise<string> {
   // Create the header
   const header = new TextEncoder().encode(`blob ${bytes.length}\0`);

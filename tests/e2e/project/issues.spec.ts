@@ -7,6 +7,7 @@ test("navigate issue listing", async ({ page }) => {
   await page.getByRole("link", { name: "1 issue" }).click();
   await expect(page).toHaveURL(`${cobUrl}/issues`);
 
+  await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.getByRole("link", { name: "2 closed" }).click();
   await expect(page).toHaveURL(`${cobUrl}/issues?state=closed`);
 });
@@ -40,23 +41,26 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/issues/48af7d329e5b44ee8d348eeb7e341370243db9ad`,
   );
-  const commentReactionToggle = page.getByTitle("toggle-reaction");
+  const commentReactionToggle = page
+    .getByTitle("toggle-reaction-popover")
+    .last();
+  await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).click();
+  await page.getByRole("button", { name: "Comment" }).first().click();
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "👍 1" })).toBeVisible();
 
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "🎉 1" })).toBeVisible();
   await expect(page.locator(".reaction")).toHaveCount(2);
 
-  await page.locator("span").filter({ hasText: "✕" }).nth(1).click();
+  await page.getByRole("button", { name: "👍" }).click();
   await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(1);
 
-  await page.locator("span").filter({ hasText: "✕" }).nth(0).click();
+  await page.getByRole("button", { name: "🎉" }).click();
   await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(0);
 });
@@ -89,10 +93,13 @@ test("test issue counters", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.getByRole("button", { name: "1 open" }).click();
+  await page.getByRole("button", { name: "filter-dropdown" }).first().click();
+  await page.locator(".dropdown-item").getByText("1 open").click();
   await expect(page.getByRole("button", { name: "2 issues" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "2 open" })).toBeVisible();
-  await expect(page.locator(".issues-list .teaser")).toHaveCount(2);
+  await expect(
+    page.getByRole("button", { name: "filter-dropdown" }).first(),
+  ).toHaveText("2 open");
+  await expect(page.locator(".list .issue-teaser")).toHaveCount(2);
 
   await page
     .getByRole("link", { name: "First issue to test counters" })
@@ -133,8 +140,9 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
     `${authenticatedPeer.uiUrl()}/${rid}/issues/ad9114fa910c67f09ce5d42d12c31038eb40fc86`,
   );
 
+  await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).click();
+  await page.getByRole("button", { name: "Comment" }).first().click();
   await expect(page.getByText("Issue editing failed")).toBeVisible();
 });
 
@@ -166,32 +174,31 @@ test("go through the entire ui issue flow", async ({
   await expect(page.getByText("This is a title")).toBeVisible();
   await expect(page.getByText("This is a description")).toBeVisible();
   await expect(
-    page.getByLabel("chip").filter({
-      hasText: `did:key:${authenticatedPeer.nodeId.substring(
+    page.getByText(
+      `did:key:${authenticatedPeer.nodeId.substring(
         0,
         6,
       )}…${authenticatedPeer.nodeId.slice(-6)}`,
-    }),
+    ),
   ).toBeVisible();
   await expect(
-    page.getByLabel("chip").filter({ hasText: "documentation" }),
+    page.locator(".badge").filter({ hasText: "documentation" }),
   ).toBeVisible();
-  await expect(
-    page.getByLabel("chip").filter({ hasText: "bug" }),
-  ).toBeVisible();
+  await expect(page.locator(".badge").filter({ hasText: "bug" })).toBeVisible();
 
-  await page.getByLabel("editTitle").click();
+  await page.getByRole("button", { name: "edit title" }).click();
   await page.getByPlaceholder("Title").fill("This is a new title");
-  await page.getByLabel("editTitle").click();
+  await page.getByRole("button", { name: "save title" }).click();
   await expect(page.getByText("This is a new title")).toBeVisible();
 
+  await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).click();
+  await page.getByRole("button", { name: "Comment" }).first().click();
   await expect(page.getByText("This is a comment")).toBeVisible();
 
-  await page.getByTitle("toggle-reply").click();
-  await page.getByPlaceholder("Leave your reply").fill("This is a reply");
-  await page.getByRole("button", { name: "Reply", exact: true }).click();
+  await page.getByRole("button", { name: "Reply to comment" }).click();
+  await page.getByPlaceholder("Reply to comment").fill("This is a reply");
+  await page.getByRole("button", { name: "Comment", exact: true }).click();
   await expect(page.getByText("This is a reply")).toBeVisible();
 
   await page.getByRole("button", { name: "Close issue as solved" }).click();
@@ -200,7 +207,7 @@ test("go through the entire ui issue flow", async ({
   await page.getByRole("button", { name: "Reopen issue" }).click();
   await expect(page.getByText("open", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "stateToggle" }).click();
+  await page.getByRole("button", { name: "stateToggle" }).first().click();
   await page.getByText("Close issue as other").click();
   await page.getByRole("button", { name: "Close issue as other" }).click();
   await expect(page.getByText("closed as other")).toBeVisible();
@@ -265,6 +272,6 @@ test("handling embeds", async ({ page, authenticatedPeer }) => {
   );
 
   await expect(
-    page.getByLabel("chip").filter({ hasText: "radicle-228x228.png" }),
+    page.locator(".badge").filter({ hasText: "radicle-228x228.png" }),
   ).toBeVisible();
 });

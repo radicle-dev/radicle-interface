@@ -2,11 +2,9 @@ import type { Page } from "@playwright/test";
 
 import {
   aliceMainHead,
-  aliceRemote,
   bobHead,
-  bobRemote,
-  expect,
   cobUrl,
+  expect,
   markdownUrl,
   sourceBrowsingRid,
   sourceBrowsingUrl,
@@ -76,12 +74,12 @@ test("show source tree at specific revision", async ({ page }) => {
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
-    .getByTitle("Browse the repository at this point in the history")
+    .getByRole("button", {
+      name: "Browse the repository at this point in the history",
+    })
     .click();
 
-  await expect(page.getByTitle("Current branch")).toContainText(
-    "335dd6dc89b535a4a31e9422c803199bb6b0a09a",
-  );
+  await expect(page.getByTitle("Current branch")).toContainText("335dd6d");
   await expect(page.locator(".source-tree")).toHaveText("bin src");
   await expectCounts({ commits: 2, contributors: 1 }, page);
 });
@@ -100,7 +98,7 @@ test("source file highlighting", async ({ page }) => {
 
 test("navigate line numbers", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
-  await page.getByRole("button", { name: "Plain" }).click();
+  await page.getByRole("button", { name: "Markdown" }).click();
 
   await page.getByRole("link", { name: "5", exact: true }).click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -117,7 +115,9 @@ test("navigate line numbers", async ({ page }) => {
   // Check that we go back to the Markdown view when navigating to a different
   // file.
   await page.getByRole("link", { name: "footnotes.md" }).click();
-  await expect(page.getByRole("button", { name: "Plain" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+    /secondary/,
+  );
 });
 
 test("navigate deep file hierarchies", async ({ page }) => {
@@ -212,7 +212,7 @@ test("binary files", async ({ page }) => {
   await page.getByText("bin").click();
   await page.getByText("true").click();
 
-  await expect(page.getByText("Binary content")).toBeVisible();
+  await expect(page.getByText("Binary file")).toBeVisible();
 });
 
 test("empty files", async ({ page }) => {
@@ -241,12 +241,21 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    const toggleButton = page.getByTitle("Toggle render method");
-    await expect(toggleButton).toHaveText("Plain");
-    await toggleButton.click();
+    await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
+      /secondary/,
+    );
+    await expect(
+      page.getByRole("button", { name: "Markdown" }),
+    ).not.toHaveClass(/secondary/);
+    await page.getByRole("button", { name: "Markdown" }).click();
+    await expect(page.getByRole("button", { name: "Plain" })).not.toHaveClass(
+      /secondary/,
+    );
+    await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+      /secondary/,
+    );
     await expect(page.getByText("##### Table of Contents")).toBeVisible();
-    await expect(toggleButton).toHaveText("Markdown");
-    await toggleButton.click();
+    await page.getByRole("button", { name: "Plain" }).click();
   }
 
   // Internal links go to anchor.
@@ -276,19 +285,12 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(`${aliceRemote}`).click();
-    await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
-        -6,
-      )} (alice) delegate`,
-    );
-    await expect(
-      page.getByText(
-        `source-browsing / did:key:${aliceRemote
-          .substring(8)
-          .substring(0, 6)}…${aliceRemote.slice(-6)}`,
-      ),
-    ).toBeVisible();
+    await page
+      .getByRole("link", {
+        name: "alice delegate",
+      })
+      .click();
+    await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
 
     // Default `main` branch.
     {
@@ -319,9 +321,7 @@ test("peer and branch switching", async ({ page }) => {
       );
       await expectCounts({ commits: 1, contributors: 1 }, page);
 
-      await expect(
-        page.getByText("We couldn't find any files at this revision."),
-      ).toBeVisible();
+      await expect(page.getByText("No files at this revision")).toBeVisible();
     }
   }
 
@@ -341,12 +341,8 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
-    await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} (bob)`,
-    );
+    await page.getByRole("link", { name: "bob" }).click();
+    await expect(page.getByTitle("Change peer")).toContainText("bob");
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
     // Default `main` branch.
@@ -366,30 +362,34 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(aliceRemote).click();
+  await page
+    .getByRole("link", {
+      name: "alice delegate",
+    })
+    .click();
 
   await page.getByText("Clone").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
-  await page.getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Theme" }).first().click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).toBeVisible();
 
   await page.getByTitle("Change peer").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText(bobRemote)).toBeVisible();
+  await expect(page.getByText("bob")).toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 });
 
@@ -405,7 +405,7 @@ test.describe("browser error handling", () => {
     const sourceTree = page.locator(".source-tree");
     await sourceTree.getByText("src").click();
 
-    await expect(page.getByText("Not able to expand directory")).toBeVisible();
+    await expect(page.getByText("File not found")).toBeVisible();
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
@@ -416,7 +416,7 @@ test.describe("browser error handling", () => {
     await page.goto(sourceBrowsingUrl);
     await page.getByText(".hidden").click();
 
-    await expect(page.getByText("Not able to load file")).toBeVisible();
+    await expect(page.getByText("File not found")).toBeVisible();
   });
   test("error appears when README can't be loaded", async ({ page }) => {
     await page.route(
@@ -425,9 +425,7 @@ test.describe("browser error handling", () => {
     );
 
     await page.goto(sourceBrowsingUrl);
-    await expect(
-      page.getByText("The README could not be loaded"),
-    ).toBeVisible();
+    await expect(page.getByText("File not found")).toBeVisible();
   });
   test("error appears when navigating to missing file", async ({ page }) => {
     await page.route(
@@ -437,7 +435,7 @@ test.describe("browser error handling", () => {
 
     await page.goto(`${sourceBrowsingUrl}/tree/master/.hidden`);
 
-    await expect(page.getByText("Not able to load file")).toBeVisible();
+    await expect(page.getByText("File not found")).toBeVisible();
   });
 });
 
@@ -465,7 +463,7 @@ test("internal file markdown link", async ({ page }) => {
   );
   await expect(
     page.locator(".file-header", {
-      hasText: "assets/".concat(String.fromCharCode(160), "​black-square.png"),
+      hasText: "assets/black-square.png",
     }),
   ).toBeVisible();
   await expect(
@@ -475,10 +473,10 @@ test("internal file markdown link", async ({ page }) => {
 
 test("diff selection de-select", async ({ page }) => {
   await page.goto(
-    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=files#README.md:H0L0H0L3`,
+    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=changes#README.md:H0L0H0L3`,
   );
   await page.getByText("Add subtitle to README").click();
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=files`,
+    `${cobUrl}/patches/e35c10c370de7fb94e95dbdf05ab93000132683f?tab=changes`,
   );
 });

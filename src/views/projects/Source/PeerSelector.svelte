@@ -2,17 +2,18 @@
   import type { Remote } from "@httpd-client";
   import { type Route } from "@app/lib/router";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
-  import { formatNodeId, truncateId } from "@app/lib/utils";
+  import { closeFocused } from "@app/components/Popover.svelte";
+  import { formatNodeId } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
-  import Avatar from "@app/components/Avatar.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
-  import Floating from "@app/components/Floating.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
 
@@ -27,104 +28,65 @@
 </script>
 
 <style>
-  .selector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-family-monospace);
-  }
-  .selector .peer {
-    padding: 0.5rem 0.75rem;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
-    border-radius: var(--border-radius-small);
-  }
-  .selector .peer.not-allowed {
-    cursor: not-allowed;
-  }
-  .peer:hover {
-    background-color: var(--color-foreground-2);
-  }
-  .prefix {
-    display: inline-block;
-    color: var(--color-secondary-6);
-  }
-  .stat {
-    display: flex;
-    align-items: center;
-    font-family: var(--font-family-monospace);
-    padding: 0.5rem;
-    height: 2rem;
-    line-height: initial;
-    background: var(--color-foreground-1);
-    gap: 0.5rem;
-  }
   .avatar-id {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    color: var(--color-fill-secondary);
+    align-items: center;
+    justify-content: center;
   }
-  .alias {
-    color: var(--color-secondary-6);
+  .avatar-id.selected {
+    color: red;
   }
 </style>
 
-<Floating>
-  <div slot="toggle" class="selector" title="Change peer">
-    <div class="stat peer" class:not-allowed={!peers}>
-      {#if selectedPeer}
-        <span class="avatar-id">
-          <Avatar nodeId={selectedPeer.id} inline />
-          <!-- Ignore prettier to avoid getting a whitespace between
-             did:key: and the nid due to a newline. -->
-          <!-- prettier-ignore -->
-          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(selectedPeer.id)}</span>
-          {#if selectedPeer.alias}
-            <span class="alias">({selectedPeer.alias})</span>
-          {/if}
-        </span>
-        {#if selectedPeer.delegate}
-          <Badge variant="primary">delegate</Badge>
-        {/if}
-      {:else}
-        <Icon size="small" name="fork" />{peers.length}
-        {pluralize("remote", peers.length)}
-      {/if}
-    </div>
-  </div>
+<Popover
+  popoverPadding="0"
+  popoverPositionTop="2.5rem"
+  popoverBorderRadius="var(--border-radius-small)">
+  <Button let:expanded slot="toggle" title="Change peer" disabled={!peers}>
+    {#if !selectedPeer}
+      <IconSmall name="delegate" />
+    {/if}
 
-  <svelte:fragment slot="modal">
-    <Dropdown items={peers}>
-      <svelte:fragment slot="item" let:item>
-        <div class="dropdown-item">
-          <Link on:afterNavigate={() => closeFocused()} route={item.route}>
-            <DropdownItem
-              selected={item.selected}
-              title={createTitle(item.remote)}
-              size="tiny">
-              <span class="avatar-id">
-                <Avatar nodeId={item.remote.id} inline />
-                <div class="layout-desktop">
-                  <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{item.remote.id}</span>
-                  {#if item.remote.alias}
-                    <span class="alias">({item.remote.alias})</span>
-                  {/if}
-                </div>
-                <div class="layout-mobile">
-                  <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{truncateId(item.remote.id)}</span>
-                  {#if item.remote.alias}
-                    <span class="alias">({item.remote.alias})</span>
-                  {/if}
-                </div>
-              </span>
-              {#if item.remote.delegate}
-                <Badge variant="primary">delegate</Badge>
-              {/if}
-            </DropdownItem>
-          </Link>
-        </div>
-      </svelte:fragment>
-    </Dropdown>
-  </svelte:fragment>
-</Floating>
+    {#if selectedPeer}
+      <NodeId nodeId={selectedPeer.id} alias={selectedPeer.alias} />
+      {#if selectedPeer.delegate}
+        <Badge size="tiny" variant="secondary">delegate</Badge>
+      {/if}
+    {:else}
+      {peers.length}
+      {pluralize("remote", peers.length)}
+    {/if}
+    <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+  </Button>
+
+  <DropdownList slot="popover" items={peers}>
+    <svelte:fragment slot="item" let:item>
+      <Link on:afterNavigate={() => closeFocused()} route={item.route}>
+        <DropdownListItem
+          selected={item.selected}
+          title={createTitle(item.remote)}>
+          <span class="avatar-id" class:selected={item.selected}>
+            <NodeId
+              disableTooltip
+              styleColor={item.selected
+                ? "var(--color-foreground-match-background)"
+                : undefined}
+              nodeId={item.remote.id}
+              alias={item.remote.alias} />
+          </span>
+          {#if item.remote.delegate}
+            <div style:color="var(--color-fill-secondary)">
+              <Badge
+                size="tiny"
+                variant={item.selected ? "background" : "secondary"}>
+                delegate
+              </Badge>
+            </div>
+          {/if}
+        </DropdownListItem>
+      </Link>
+    </svelte:fragment>
+  </DropdownList>
+</Popover>

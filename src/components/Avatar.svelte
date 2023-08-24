@@ -20,6 +20,7 @@
   .avatar {
     display: block;
     border-radius: var(--border-radius-round);
+    box-shadow: 0 0 0 1px var(--color-border-match-background);
     min-width: 1rem;
     min-height: 1rem;
     height: 100%;

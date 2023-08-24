@@ -7,12 +7,15 @@
   import BranchSelector from "./BranchSelector.svelte";
   import PeerSelector from "./PeerSelector.svelte";
 
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
+  import Radio from "@app/components/Radio.svelte";
 
   export let node: BaseUrl;
   export let branches: Array<{ name: string; route: Route }>;
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
+  export let filesLinkActive: boolean;
   export let historyLinkActive: boolean;
   export let revision: string | undefined;
   export let tree: Tree;
@@ -35,19 +38,14 @@
 <style>
   .header {
     font-size: var(--font-size-tiny);
-    padding: 0 2rem 0 8rem;
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
   }
 
   @media (max-width: 960px) {
-    .header {
-      padding-left: 2rem;
-    }
     .header {
       margin-bottom: 1.5rem;
     }
@@ -59,24 +57,54 @@
     <PeerSelector {peers} />
   {/if}
 
-  <BranchSelector {branches} selectedCommitId={commitId} {selectedBranch} />
+  <BranchSelector
+    {branches}
+    {project}
+    {node}
+    selectedCommitId={commitId}
+    {selectedBranch} />
 
-  <Link
-    route={{
-      resource: "project.history",
-      project: project.id,
-      node: node,
-      peer,
-      revision,
-    }}>
-    <SquareButton active={historyLinkActive}>
-      <span class="txt-bold">{tree.stats.commits}</span>
-      {pluralize("commit", tree.stats.commits)}
-    </SquareButton>
-  </Link>
+  <Radio>
+    <Link
+      route={{
+        resource: "project.source",
+        project: project.id,
+        node: node,
+        peer,
+        revision,
+      }}>
+      <Button
+        styleBorderRadius="0"
+        variant={filesLinkActive ? "secondary" : "gray"}>
+        <IconSmall name="file" />Files
+      </Button>
+    </Link>
 
-  <SquareButton hoverable={false}>
-    <span class="txt-bold">{tree.stats.contributors}</span>
-    {pluralize("contributor", tree.stats.contributors)}
-  </SquareButton>
+    <Link
+      route={{
+        resource: "project.history",
+        project: project.id,
+        node: node,
+        peer,
+        revision,
+      }}>
+      <Button
+        styleBorderRadius="0"
+        variant={historyLinkActive ? "secondary" : "gray"}>
+        <IconSmall name="commit" />
+        <div>
+          {tree.stats.commits}
+          {pluralize("commit", tree.stats.commits)}
+        </div>
+      </Button>
+    </Link>
+
+    <Button styleBorderRadius="0" disabled>
+      <IconSmall name="user" />
+      <div>
+        {tree.stats.contributors}
+        {pluralize("contributor", tree.stats.contributors)}
+      </div>
+    </Button>
+  </Radio>
 </div>

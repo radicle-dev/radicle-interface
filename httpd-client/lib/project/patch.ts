@@ -53,7 +53,7 @@ const mergeSchema = object({
   timestamp: number(),
 }) satisfies ZodSchema<Merge>;
 
-type Verdict = "accept" | "reject";
+export type Verdict = "accept" | "reject";
 
 export interface Review {
   author: { id: string; alias?: string };

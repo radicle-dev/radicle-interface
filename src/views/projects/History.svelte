@@ -10,14 +10,15 @@
 
   import { HttpdClient } from "@httpd-client";
   import { groupCommits } from "@app/lib/commit";
+  import { COMMITS_PER_PAGE } from "./router";
 
-  import Button from "@app/components/Button.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Header from "./Source/Header.svelte";
   import Layout from "./Layout.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import Header from "./Source/Header.svelte";
-  import { COMMITS_PER_PAGE } from "./router";
+  import Button from "@app/components/Button.svelte";
+  import List from "@app/components/List.svelte";
 
   export let baseUrl: BaseUrl;
   export let branches: string[];
@@ -86,62 +87,72 @@
 
 <style>
   .history {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
-  }
-  .group {
-    margin-bottom: 2rem;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-  }
-  .teaser-wrapper:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
   }
   .more {
     margin-top: 2rem;
-    text-align: center;
     min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  @media (max-width: 960px) {
-    .history {
-      padding-left: 2rem;
+  .group-header {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground-dim);
+  }
+  .group-header:first-child {
+    margin-top: 0;
+  }
+
+  @media (max-width: 720px) {
+    .group-header {
+      margin-left: 1rem;
     }
   }
 </style>
 
-<Layout {baseUrl} {project} {peer} activeTab="source">
-  <Header
-    node={baseUrl}
-    {project}
-    peers={peersWithRoute}
-    branches={branchesWithRoute}
-    {revision}
-    {tree}
-    historyLinkActive={true} />
+<Layout {baseUrl} {project} activeTab="source">
+  <svelte:fragment slot="subheader">
+    <div style:margin-top="1rem">
+      <Header
+        node={baseUrl}
+        {project}
+        peers={peersWithRoute}
+        branches={branchesWithRoute}
+        {revision}
+        {tree}
+        filesLinkActive={false}
+        historyLinkActive={true} />
+    </div>
+  </svelte:fragment>
 
   <div class="history">
     {#each groupCommits(allCommitHeaders) as group (group.time)}
-      <p style:color="var(--color-foreground-6)">{group.date}</p>
-      <div class="group">
-        {#each group.commits as commit (commit.id)}
-          <div class="teaser-wrapper">
-            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
-          </div>
-        {/each}
-      </div>
+      <div class="group-header">{group.date}</div>
+      <List items={group.commits}>
+        <CommitTeaser
+          slot="item"
+          let:item
+          projectId={project.id}
+          {baseUrl}
+          commit={item} />
+      </List>
     {/each}
     <div class="more">
       {#if loading}
         <Loading small={page !== 0} center />
       {:else if allCommitHeaders.length < totalCommitCount}
-        <Button variant="foreground" on:click={loadMore}>More</Button>
+        <Button size="large" variant="outline" on:click={loadMore}>More</Button>
       {/if}
     </div>
   </div>
 
   {#if error}
     <div class="message">
-      <ErrorMessage message="Couldn't load commits." stackTrace={error} />
+      <ErrorMessage message="Couldn't load commits" {error} />
     </div>
   {/if}
 </Layout>

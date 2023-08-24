@@ -3,21 +3,22 @@
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
 
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import KeyHint from "@app/components/KeyHint.svelte";
   import Loading from "@app/components/Loading.svelte";
 
   export let name: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let value: string | undefined = undefined;
 
-  export let variant: "regular" | "form" | "modal" = "regular";
   export let size: "regular" | "small" = "regular";
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
   export let loading: boolean = false;
-  export let valid: boolean = false;
+  export let valid: boolean = true;
   export let validationMessage: string | undefined = undefined;
+  export let showKeyHint: boolean = true;
 
   const dispatch = createEventDispatcher<{
     blur: FocusEvent;
@@ -71,115 +72,127 @@
     margin: 0;
     position: relative;
     flex: 1;
+    align-items: center;
     height: var(--button-regular-height);
+    background: var(--color-background-dip);
+    font-size: var(--font-size-small);
   }
   input {
-    background: transparent;
-    border-radius: var(--border-radius-round);
-    color: var(--color-foreground);
-    font-size: inherit;
-    font-family: var(--font-family-sans-serif);
-    height: var(--button-regular-height);
+    background: var(--color-background-dip);
+    color: var(--color-foreground-contrast);
+    font-family: var(--font-family-monospace);
+    border: 1px solid var(--color-border-hint);
     line-height: 1.6;
-    margin: 0;
     outline: none;
     text-overflow: ellipsis;
     width: 100%;
+    height: 100%;
+    padding-left: 0.75rem;
+    margin: 0;
   }
   input::placeholder {
-    color: var(--color-secondary);
+    font-family: var(--font-family-sans-serif);
+    color: var(--color-foreground-dim);
     opacity: 1 !important;
   }
+  input:hover:not(.invalid) {
+    border: 1px solid var(--color-border-default);
+  }
+  input:hover:not(.invalid) + .right-container {
+    border-top: 1px solid var(--color-border-default);
+    border-right: 1px solid var(--color-border-default);
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-fill-contrast);
+  }
+  input:focus:not(.invalid) + .right-container {
+    border-top: 1px solid var(--color-fill-secondary);
+    border-right: 1px solid var(--color-fill-secondary);
+    border-bottom: 1px solid var(--color-fill-secondary);
+    color: var(--color-fill-contrast);
+  }
+  input:focus:not(.invalid) {
+    border: 1px solid var(--color-fill-secondary);
+  }
   input[disabled] {
-    color: var(--color-secondary);
     cursor: not-allowed;
   }
-  .regular {
-    border: 1px solid var(--color-secondary);
-    padding: 1rem 1.5rem;
-  }
-  .form,
-  .modal {
-    background: var(--color-foreground-1);
-    border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-foreground-1);
-  }
-  .form::placeholder,
-  .modal::placeholder {
-    color: var(--color-foreground-5);
-  }
-  .form:focus,
-  .form:hover,
-  .modal:focus,
-  .modal:hover {
-    border: 1px solid var(--color-foreground-4);
-  }
-  .modal {
-    background: var(--color-background);
-  }
   .left-container {
-    color: var(--color-secondary);
+    color: var(--color-fill-secondary);
     position: absolute;
     left: 0;
     top: 0;
     display: flex;
     align-items: center;
-    height: var(--button-regular-height);
     padding-right: 0.5rem;
     padding-left: 0.5rem;
     gap: 0.5rem;
+    height: 100%;
   }
   .right-container {
-    color: var(--color-secondary);
+    border: 1px solid transparent;
+    color: var(--color-fill-gray);
     position: absolute;
     right: 0;
     top: 0;
     display: flex;
     align-items: center;
-    height: var(--button-regular-height);
-    padding-right: 1rem;
     padding-left: 0.5rem;
-    gap: 0.5rem;
-  }
-  .small {
-    height: var(--button-small-height);
-    font-size: var(--font-size-small);
+    overflow: hidden;
+    height: 100%;
   }
   .validation-message {
-    color: var(--color-negative);
-    font-size: var(--font-size-small);
-    margin-left: 1rem;
+    color: var(--color-foreground-red);
     position: relative;
     margin-top: 0.5rem;
   }
   .validation-wrapper {
     position: absolute;
     width: 100%;
+    height: 100%;
+  }
+  .invalid {
+    border: 1px solid var(--color-border-error);
   }
 
-  .key-hint {
-    color: var(--color-foreground-6);
-    background-color: var(--color-secondary-1);
-    border: 1px solid var(--color-secondary-5);
-    border-radius: 6px;
-    box-shadow: inset 0 -3px 0 var(--color-secondary-5);
-    padding: 0 5px;
+  .small {
+    height: var(--button-small-height);
+  }
+  .small input {
+    border-radius: var(--border-radius-tiny);
+  }
+  .small .right-container {
+    border-top-right-radius: var(--border-radius-tiny);
+    border-bottom-right-radius: var(--border-radius-tiny);
+    gap: 0.25rem;
+  }
+
+  .regular {
+    height: var(--button-regular-height);
+  }
+  .regular input {
+    border-radius: var(--border-radius-small);
+  }
+  .regular .right-container {
+    border-top-right-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
+    padding-right: 0.5rem;
+    gap: 0.5rem;
   }
 </style>
 
-<div class="wrapper" class:small={size === "small"}>
+<div
+  class="wrapper"
+  class:small={size === "small"}
+  class:regular={size === "regular"}>
   <div class="validation-wrapper">
-    <div class="left-container" bind:clientWidth={leftContainerWidth}>
-      {#if $$slots.left}
+    {#if $$slots.left}
+      <div class="left-container" bind:clientWidth={leftContainerWidth}>
         <slot name="left" />
-      {/if}
-    </div>
+      </div>
+    {/if}
 
     <input
-      class:regular={variant === "regular"}
-      class:form={variant === "form"}
-      class:modal={variant === "modal"}
-      class:small={size === "small"}
+      class:invalid={!valid && value}
       style:padding-left={leftContainerWidth
         ? `${leftContainerWidth}px`
         : "auto"}
@@ -202,28 +215,29 @@
     <div
       class="right-container"
       class:small={size === "small"}
-      style:padding-right={variant === "modal" ? "0.5rem" : "1rem"}
       bind:clientWidth={rightContainerWidth}>
-      {#if $$slots.right}
-        <slot name="right" />
-      {/if}
-
       {#if loading}
         <Loading small noDelay />
       {/if}
 
-      {#if valid && !loading && isFocused}
+      {#if valid && !loading && isFocused && showKeyHint}
         {#if success}
-          <Icon name="checkmark" size="small" />
+          <IconSmall name="checkmark" />
         {:else}
-          <div class="key-hint">⏎</div>
+          <KeyHint>⏎</KeyHint>
         {/if}
+      {/if}
+
+      {#if $$slots.right}
+        <slot name="right" />
       {/if}
     </div>
 
-    {#if validationMessage}
+    {#if !valid && validationMessage}
       <div class="validation-message">
-        {validationMessage}
+        <div style="display: flex; align-items: center; gap: 0.25rem;">
+          <IconSmall name="exclamation-circle" />{validationMessage}
+        </div>
       </div>
     {/if}
   </div>

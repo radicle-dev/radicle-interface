@@ -3,6 +3,10 @@
 
   import config from "@app/config.json";
 
+  import IconButton from "./IconButton.svelte";
+  import IconSmall from "./IconSmall.svelte";
+  import Popover, { closeFocused } from "./Popover.svelte";
+
   export let nid: string;
   export let reactions: Map<string, string[]>;
 
@@ -15,10 +19,7 @@
   .selector {
     display: flex;
     align-items: center;
-    background-color: var(--color-background-1);
-    border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-foreground-3);
-    box-shadow: var(--elevation-low);
+    border-radius: var(--border-radius-tiny);
     padding: 0.2rem;
     gap: 0.2rem;
   }
@@ -29,26 +30,36 @@
   }
   .selector button.active {
     border-radius: var(--border-radius-small);
-    background-color: var(--color-background);
+    background-color: var(--color-fill-ghost);
   }
   .selector button:hover {
     cursor: pointer;
     border-radius: var(--border-radius-small);
-    background-color: var(--color-background);
+    background-color: var(--color-fill-ghost);
   }
 </style>
 
-<div class="selector">
-  {#each config.reactions as reaction}
-    <button
-      class:active={reactions.get(reaction)?.includes(nid)}
-      on:click={() => {
-        dispatch("select", {
-          nids: reactions.get(reaction) ?? [],
-          reaction,
-        });
-      }}>
-      {reaction}
-    </button>
-  {/each}
-</div>
+<Popover
+  popoverPositionBottom="2rem"
+  popoverPositionLeft="0"
+  popoverPadding="0">
+  <IconButton slot="toggle" title="toggle-reaction-popover">
+    <IconSmall name="face" />
+  </IconButton>
+
+  <div class="selector" slot="popover">
+    {#each config.reactions as reaction}
+      <button
+        class:active={reactions.get(reaction)?.includes(nid)}
+        on:click={() => {
+          dispatch("select", {
+            nids: reactions.get(reaction) ?? [],
+            reaction,
+          });
+          closeFocused();
+        }}>
+        {reaction}
+      </button>
+    {/each}
+  </div>
+</Popover>

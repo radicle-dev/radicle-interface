@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { twemoji } from "@app/lib/utils";
+  import Icon from "@app/components/Icon.svelte";
 
   export let title: string;
 </script>
@@ -9,22 +9,13 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 1rem;
-  }
-
-  .emoji {
-    display: flex;
-    font-size: var(--font-size-xx-large);
-  }
-
-  .title {
-    color: var(--color-secondary);
+    gap: 1.5rem;
   }
 </style>
 
 <div class="layout-centered">
   <div class="container">
-    <div class="emoji" use:twemoji>🏜️</div>
+    <Icon name="desert" size="48" />
     <div class="title txt-medium txt-bold">{title}</div>
   </div>
 </div>

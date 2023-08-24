@@ -5,13 +5,12 @@
 <script lang="ts">
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
-  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
-  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import Radio from "@app/components/Radio.svelte";
 
   export let baseUrl: BaseUrl;
   export let activeTab: ActiveTab = undefined;
@@ -20,80 +19,73 @@
 
 <style>
   .header {
-    font-size: var(--font-size-tiny);
-    padding: 0 2rem 0 0rem;
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
   }
 </style>
 
 <div class="header">
-  <Link
-    route={{
-      resource: "project.source",
-      project: project.id,
-      node: baseUrl,
-      path: "/",
-    }}>
-    <SquareButton active={activeTab === "source"}>
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="chevron-left-right" />
-      </svelte:fragment>
-      Source
-    </SquareButton>
-  </Link>
-  <Link
-    route={{
-      resource: "project.issues",
-      project: project.id,
-      node: baseUrl,
-    }}>
-    <SquareButton active={activeTab === "issues"}>
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="issue" />
-      </svelte:fragment>
-      <span class="txt-bold">{project.issues.open}</span>
-      {pluralize("issue", project.issues.open)}
-    </SquareButton>
-  </Link>
+  <Radio outline>
+    <Link
+      route={{
+        resource: "project.source",
+        project: project.id,
+        node: baseUrl,
+        path: "/",
+      }}>
+      <Button variant={activeTab === "source" ? "secondary" : "background"}>
+        <IconSmall name="chevron-left-right" />
+        Source
+      </Button>
+    </Link>
+    <Link
+      route={{
+        resource: "project.issues",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <Button variant={activeTab === "issues" ? "secondary" : "background"}>
+        <IconSmall name="issue" />
+        <div>
+          {project.issues.open}
+          {pluralize("issue", project.issues.open)}
+        </div>
+      </Button>
+    </Link>
 
-  <Link
-    route={{
-      resource: "project.patches",
-      project: project.id,
-      node: baseUrl,
-    }}>
-    <SquareButton active={activeTab === "patches"}>
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="patch" />
-      </svelte:fragment>
-      <span class="txt-bold">{project.patches.open}</span>
-      {pluralize("patch", project.patches.open)}
-    </SquareButton>
-  </Link>
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
+    <Link
+      route={{
+        resource: "project.patches",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <Button variant={activeTab === "patches" ? "secondary" : "background"}>
+        <IconSmall name="patch" />
+        <div>
+          {project.patches.open}
+          {pluralize("patch", project.patches.open)}
+          <div></div>
+        </div>
+      </Button>
+    </Link>
 
-  <Link
-    route={{
-      resource: "nodes",
-      params: {
-        baseUrl,
-        projectPageIndex: 0,
-      },
-    }}>
-    <SquareButton>
-      {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
-    </SquareButton>
-  </Link>
-  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
-    <svelte:fragment slot="icon">
-      <Icon size="small" name="network" />
-    </svelte:fragment>
-    <span class="txt-bold">{project.trackings}</span>
-    nodes
-  </SquareButton>
+    <div class="layout-desktop">
+      <Button
+        disabled
+        variant="background"
+        title="Tracked by {project.trackings} {pluralize(
+          'node',
+          project.trackings,
+        )}">
+        <IconSmall name="network" />
+        <div>
+          {project.trackings}
+          {pluralize("node", project.trackings)}
+        </div>
+      </Button>
+    </div>
+  </Radio>
 </div>

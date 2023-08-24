@@ -88,12 +88,7 @@ test("patch page", async ({ page }) => {
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.goto(
-    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=commits`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(
-    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=files`,
+    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=changes`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });

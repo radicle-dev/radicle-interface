@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
+  import type { Embed } from "@app/lib/file";
   import type { IssueUpdateAction } from "@httpd-client/lib/project/issue";
   import type { Session } from "@app/lib/httpd";
 
@@ -10,25 +11,22 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { ResponseError } from "@httpd-client/lib/fetcher";
-  import { embed } from "@app/lib/file";
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
-  import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import CommentTextarea from "@app/components/CommentTextarea.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
-  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
-  import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
-  import Layout from "@app/views/projects/Layout.svelte";
+  import LabelInput from "./Cob/LabelInput.svelte";
+  import Layout from "./Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
-  import Textarea from "@app/components/Textarea.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -38,9 +36,6 @@
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
 
-  let newEmbeds: { name: string; content: string }[] = [];
-  let selectionStart = 0;
-  let selectionEnd = 0;
   let action: "edit" | "view";
   $: action =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
@@ -51,40 +46,6 @@
     ["Close issue as solved", { status: "closed", reason: "solved" }],
     ["Close issue as other", { status: "closed", reason: "other" }],
   ];
-
-  const MAX_BLOB_SIZE = 4_194_304;
-
-  function handleFileDrop(event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer) {
-      const embeds = Array.from(event.dataTransfer.files).map(embed);
-      void Promise.all(embeds).then(embeds =>
-        embeds.forEach(embed => {
-          if (embed.content.length > MAX_BLOB_SIZE) {
-            modal.show({
-              component: ErrorModal,
-              props: {
-                title: "File too large",
-                subtitle: [
-                  "The file you tried to upload is too large.",
-                  "The maximum file size is 4MB.",
-                ],
-                error: { message: `File ${embed.name} is too large` },
-              },
-            });
-            return;
-          }
-          newEmbeds.push({ name: embed.name, content: embed.content });
-          const embedText = `![${embed.name}](${embed.oid})\n`;
-          commentBody = commentBody
-            .slice(0, selectionStart)
-            .concat(embedText, commentBody.slice(selectionEnd));
-          selectionStart += embedText.length;
-          selectionEnd = selectionStart;
-        }),
-      );
-    }
-  }
 
   async function createReply({
     detail: reply,
@@ -112,7 +73,7 @@
     }
   }
 
-  async function createComment(body: string) {
+  async function createComment(body: string, embeds: Embed[]) {
     if ($httpdStore.state === "authenticated" && body.trim().length > 0) {
       const status = await updateIssue(
         project.id,
@@ -120,7 +81,7 @@
         {
           type: "comment",
           body,
-          embeds: newEmbeds,
+          embeds: embeds,
           replyTo: issue.id,
         },
         $httpdStore.session,
@@ -354,34 +315,32 @@
     (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
     new Map<string, string[]>(),
   );
-
-  let commentBody: string = "";
 </script>
 
 <style>
   .issue {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
-    padding-left: 1rem;
-    margin-left: 1rem;
+    padding: 1rem;
+    margin-left: 3rem;
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+    height: fit-content;
+    gap: 1.5rem;
   }
 
-  .actions {
+  .threads {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    margin: 0 0 2.5rem 0;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 1.5rem;
   }
+
   .author {
     display: flex;
     align-items: center;
@@ -389,39 +348,22 @@
     gap: 0.5rem;
   }
   .reactions {
-    position: relative;
     display: flex;
-    align-items: center;
-    flex-direction: row;
     gap: 0.5rem;
-  }
-  .thread {
-    margin: 1rem 0;
-  }
-  .open {
-    color: var(--color-positive-6);
-  }
-  .closed {
-    color: var(--color-negative-6);
-  }
-  .reaction-selector {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;
-  }
-  .toggle {
+    height: 22px;
     margin-top: 1rem;
   }
-  .toggle:hover {
-    color: var(--color-foreground-5);
-    cursor: pointer;
+  .open {
+    color: var(--color-fill-success);
+  }
+  .closed {
+    color: var(--color-foreground-red);
   }
 
   @media (max-width: 960px) {
     .issue {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      padding-left: 2rem;
     }
     .metadata {
       display: none;
@@ -431,7 +373,7 @@
 
 <Layout {baseUrl} {project} activeTab="issues">
   <div class="issue">
-    <div>
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
       <CobHeader
         {action}
         id={issue.id}
@@ -447,11 +389,11 @@
         </svelte:fragment>
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
-            <Badge variant="positive">
+            <Badge size="small" variant="positive">
               {issue.state.status}
             </Badge>
           {:else}
-            <Badge variant="negative">
+            <Badge size="small" variant="negative">
               {issue.state.status} as
               {issue.state.reason}
             </Badge>
@@ -463,79 +405,53 @@
             rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
           <div class="reactions">
             {#if $httpdStore.state === "authenticated"}
-              <Floating>
-                <div class="reaction-selector" slot="modal">
-                  <ReactionSelector
-                    nid={$httpdStore.session.publicKey}
-                    reactions={issueReactions}
-                    on:select={async event => {
-                      await handleReaction({ ...event.detail, id: issue.id });
-                      closeFocused();
-                    }} />
-                </div>
-                <div class="toggle" slot="toggle">
-                  <Icon name="face" />
-                </div>
-              </Floating>
+              <ReactionSelector
+                nid={$httpdStore.session.publicKey}
+                reactions={issueReactions}
+                on:select={async event => {
+                  await handleReaction({ ...event.detail, id: issue.id });
+                }} />
             {/if}
             {#if issueReactions.size > 0}
-              <div style:margin-top="1rem">
-                <Reactions
-                  reactions={issueReactions}
-                  on:remove={event =>
-                    handleReaction({ ...event.detail, id: issue.id })} />
-              </div>
+              <Reactions
+                clickable={$httpdStore.state === "authenticated"}
+                reactions={issueReactions}
+                on:remove={event =>
+                  handleReaction({ ...event.detail, id: issue.id })} />
             {/if}
           </div>
         </div>
         <div class="author" slot="author">
-          opened by <Authorship
-            authorId={issue.author.id}
-            authorAlias={issue.author.alias} />
+          opened by <NodeId
+            nodeId={issue.author.id}
+            alias={issue.author.alias} />
           {utils.formatTimestamp(issue.discussion[0].timestamp)}
         </div>
       </CobHeader>
-      {#each threads as thread (thread.root.id)}
-        <div class="thread">
-          <ThreadComponent
-            {thread}
-            {rawPath}
-            on:reply={createReply}
-            on:react={event => handleReaction(event.detail)} />
+      {#if threads.length > 0}
+        <div class="threads">
+          {#each threads as thread (thread.root.id)}
+            <ThreadComponent
+              enableAttachments
+              {thread}
+              {rawPath}
+              on:reply={createReply}
+              on:react={event => handleReaction(event.detail)} />
+          {/each}
         </div>
-      {/each}
+      {/if}
       {#if $httpdStore.state === "authenticated"}
-        <div style:margin-top="1rem">
-          <Textarea
-            resizable
-            bind:selectionStart
-            bind:selectionEnd
-            on:drop={handleFileDrop}
-            on:submit={async () => {
-              await createComment(commentBody);
-              newEmbeds = [];
-              commentBody = "";
-            }}
-            bind:value={commentBody}
-            placeholder="Leave your comment" />
-          <div class="actions txt-small">
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, issue.state))}
-              {selectedItem}
-              state={issue.state}
-              on:saveStatus={saveStatus} />
-            <Button
-              variant="secondary"
-              size="small"
-              disabled={!commentBody}
-              on:click={async () => {
-                await createComment(commentBody);
-                newEmbeds = [];
-                commentBody = "";
-              }}>
-              Comment
-            </Button>
-          </div>
+        <CommentTextarea
+          enableAttachments
+          on:submit={async event => {
+            await createComment(event.detail.comment, event.detail.embeds);
+          }} />
+        <div style:display="flex">
+          <CobStateButton
+            items={items.filter(([, state]) => !isEqual(state, issue.state))}
+            {selectedItem}
+            state={issue.state}
+            on:saveStatus={saveStatus} />
         </div>
       {/if}
     </div>

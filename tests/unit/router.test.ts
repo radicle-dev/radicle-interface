@@ -196,23 +196,23 @@ describe("route invariant when parsed", () => {
     });
   });
 
-  test("projects.patch files", () => {
+  test("projects.patch changes", () => {
     expectParsingInvariant({
       resource: "project.patch",
       node,
       project: "PROJECT",
       patch: "PATCH",
-      view: { name: "files" },
+      view: { name: "changes" },
     });
   });
 
-  test("projects.patch files with revision", () => {
+  test("projects.patch changes with revision", () => {
     expectParsingInvariant({
       resource: "project.patch",
       node,
       project: "PROJECT",
       patch: "PATCH",
-      view: { name: "files", revision: "REVISION" },
+      view: { name: "changes", revision: "REVISION" },
     });
   });
 

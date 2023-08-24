@@ -4,9 +4,9 @@
 }
 
 :root {
-  --border-radius: 0.75rem;
-  --border-radius-tiny: 0.25rem;
-  --border-radius-small: 0.5rem;
+  --border-radius-tiny: 2px;
+  --border-radius-small: 4px;
+  --border-radius-regular: 8px;
   --border-radius-round: 10rem;
 
   --content-max-width: 1920px;
@@ -17,20 +17,6 @@
   --button-regular-height: 2.5rem;
   --button-small-height: 2rem;
   --button-tiny-height: 1.5rem;
-
-  --header-gradient: linear-gradient(
-    180deg,
-    var(--color-secondary-3) 0%,
-    transparent 100%
-  );
-}
-
-[data-theme="light"] {
-  --header-gradient: linear-gradient(
-    180deg,
-    var(--color-secondary-2) 0%,
-    transparent 100%
-  );
 }
 
 html {
@@ -45,12 +31,12 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  color: var(--color-foreground);
+  color: var(--color-foreground-contrast);
   text-align: left;
-  background-color: var(--color-background);
+  background-color: var(--color-background-default);
   scrollbar-width: thin;
   scrollbar-height: thin;
-  scrollbar-color: var(--color-foreground-4) transparent;
+  scrollbar-color: var(--color-fill-ghost) transparent;
 }
 
 @media (max-width: 720px) {
@@ -60,8 +46,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-primary);
-  color: var(--color-background);
+  background: var(--color-fill-yellow);
+  color: var(--color-foreground-black);
 }
 
 /* Chrome/Edge/Safari scrollbar */
@@ -74,14 +60,14 @@ body {
 }
 *::-webkit-scrollbar-thumb {
   background: transparent;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-regular);
 }
 *::-webkit-scrollbar-corner {
   background: transparent;
 }
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-  background-color: var(--color-foreground-4);
+  background-color: var(--color-fill-ghost);
 }
 
 main {
@@ -93,7 +79,13 @@ a {
   text-decoration: none;
 }
 
-a:hover {
-  color: var(--color-foreground);
-  border-bottom-color: var(--color-foreground);
+pre {
+  margin: 0;
+}
+
+.global-hash {
+  color: var(--color-foreground-emphasized);
+  font-size: var(--font-size-small);
+  font-family: var(--font-family-monospace);
+  font-weight: var(--font-weight-regular);
 }

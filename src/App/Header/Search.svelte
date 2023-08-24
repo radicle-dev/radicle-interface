@@ -9,7 +9,7 @@
   import { unreachable } from "@app/lib/utils";
 
   import Icon from "@app/components/Icon.svelte";
-  import SearchResultsModal from "@app/App/Header/SearchResultsModal.svelte";
+  import SearchResultsModal from "@app/modals/SearchResultsModal.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   const dispatch = createEventDispatcher<{
@@ -100,6 +100,7 @@
   .search {
     transition: all 0.2s;
     width: 11rem;
+    color: var(--color-fill-secondary);
   }
   .expanded {
     width: 25.5rem;

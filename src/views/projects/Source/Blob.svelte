@@ -5,11 +5,18 @@
   import { toHtml } from "hast-util-to-html";
 
   import * as Syntax from "@app/lib/syntax";
-  import { isMarkdownPath, twemoji } from "@app/lib/utils";
+  import { isMarkdownPath } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
+  import { routeToPath } from "@app/lib/router";
 
-  import Readme from "./Readme.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import Link from "@app/components/Link.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
+  import Placeholder from "@app/components/Placeholder.svelte";
+  import Radio from "@app/components/Radio.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
@@ -21,11 +28,6 @@
   export let rawPath: string;
 
   $: lastCommit = blob.lastCommit;
-
-  $: parentDir = blob.path
-    .match(/^.*\/|/)
-    ?.values()
-    .next().value;
 
   $: content = highlighted ? lineNumbersGutter(highlighted) : undefined;
 
@@ -47,9 +49,29 @@
   $: isMarkdown = isMarkdownPath(blob.path);
   $: showMarkdown = isMarkdown && selectedLineId === undefined;
 
-  function toggleMarkdown() {
-    window.location.hash = "";
-    showMarkdown = !showMarkdown;
+  let linkBaseUrl: string | undefined;
+
+  $: {
+    if (!path || path === "/") {
+      // For the default root path, the `tree/<revision>` portion is omitted
+      // from the URL. This means that links cannot be resolved with respect
+      // to the current location. To work around this we provide path that
+      // results a fully expanded URL with which we can resolve all links in the
+      // Markdown.
+      linkBaseUrl = new URL(
+        routeToPath({
+          resource: "project.source",
+          project: projectId,
+          node: baseUrl,
+          peer,
+          revision,
+          path: "README.md",
+        }),
+        window.origin,
+      ).href;
+    } else {
+      linkBaseUrl = undefined;
+    }
   }
 
   afterUpdate(() => {
@@ -75,61 +97,37 @@
 </script>
 
 <style>
-  header .file-header {
+  .file-header {
     display: flex;
     height: 3rem;
     align-items: center;
-    justify-content: space-between;
     padding: 0 0.5rem 0 1rem;
-    color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
-    border-color: var(--color-foreground-3);
+    border-color: var(--color-border-hint);
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
   }
 
-  .file-header .right {
+  .right {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-  }
-
-  header .file-name {
-    font-weight: var(--font-weight-normal);
-    flex-shrink: 0;
+    gap: 0.5rem;
+    margin-left: auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-right: 1rem;
   }
 
-  .last-commit {
-    padding: 0.5rem 0.75rem;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
-    font-size: var(--font-size-tiny);
-    border-radius: var(--border-radius-small);
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .last-commit .hash {
-    font-weight: var(--font-weight-bold);
-    font-family: var(--font-family-monospace);
-    margin-right: 0.25rem;
-  }
-
-  .toggle {
-    margin-right: 0.5rem;
+  .file-name {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
+    flex-shrink: 0;
+    padding-right: 0.5rem;
   }
 
   .code :global(.line-number) {
-    color: var(--color-foreground-4);
+    font-family: var(--font-family-monospace);
+    color: var(--color-foreground-disabled);
     text-align: right;
     padding: 0;
     user-select: none;
@@ -140,7 +138,7 @@
   }
   .code :global(.line-number:hover) {
     cursor: pointer;
-    color: var(--color-foreground);
+    color: var(--color-foreground-gray);
   }
 
   .code :global(.content) {
@@ -153,10 +151,16 @@
     line-height: 22px; /* This seems to be the line-height of a pre code block */
   }
   .code :global(.highlight) {
-    background-color: var(--color-caution-3);
+    background-color: var(--color-fill-float-hover);
+    box-shadow: 0 0 0 1px var(--color-fill-secondary);
   }
-  .code :global(.highlight td a) {
-    color: var(--color-foreground);
+  .code :global(.highlight td:first-child) {
+    background-color: var(--color-fill-float-hover);
+    border-left: 1px solid var(--color-fill-secondary);
+  }
+  .code :global(.highlight td:last-child) {
+    background-color: var(--color-fill-float-hover);
+    border-right: 1px solid var(--color-fill-secondary);
   }
 
   .code :global(.line-content) {
@@ -174,108 +178,130 @@
   }
 
   .container {
-    position: relative;
-    display: flex;
     overflow-x: auto;
-    border: 1px solid var(--color-foreground-3);
-    border-top-style: dashed;
+    border: 1px solid var(--color-border-hint);
+    border-top-style: solid;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
-    background: var(--color-background-1);
-  }
-
-  .binary {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    background: var(--color-background-float);
     width: 100%;
-    height: 16rem;
-    background-color: var(--color-foreground-1);
-    color: var(--color-foreground-6);
-    font-family: var(--font-family-monospace);
-  }
-  .binary > * {
-    margin-bottom: 1rem;
+    border-bottom-left-radius: var(--border-radius-small);
+    border-bottom-right-radius: var(--border-radius-small);
   }
 
   .no-scrollbar {
     scrollbar-width: none;
   }
 
-  .markdown {
-    max-width: 64rem;
-  }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-
-  @media (max-width: 960px) {
-    .code {
-      font-size: var(--font-size-small);
-    }
+  .commit-teaser {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: var(--border-radius-tiny);
+    background-color: var(--color-fill-ghost-hover);
+    gap: 0.75rem;
+    padding-right: 0.75rem;
+    height: var(--button-small-height);
   }
 
   @media (max-width: 720px) {
-    .right {
-      justify-content: center;
+    .commit-teaser {
+      padding: 0 0.75rem;
+    }
+    .file-header {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .hash-button {
+      display: none;
+    }
+    .container {
+      border-left: none;
+      border-right: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 </style>
 
-<div class:markdown={isMarkdown}>
-  <header>
-    <div class="file-header">
-      <span class="file-name">
-        <span style:color="var(--color-foreground-5)">{parentDir}</span>
-        &#8203;
-        <span>{blob.name}</span>
-      </span>
-      <div class="right">
-        {#if isMarkdown}
-          <div title="Toggle render method" class="toggle">
-            <SquareButton clickable on:click={toggleMarkdown}>
-              {showMarkdown ? "Plain" : "Markdown"}
-            </SquareButton>
-          </div>
-        {/if}
-        <a href="{rawPath}/{blob.path}" class="toggle">
-          <SquareButton clickable>Raw</SquareButton>
-        </a>
-        <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-          <span class="hash">
-            {lastCommit.id.slice(0, 7)}
-          </span>
-          {lastCommit.summary}
-        </div>
+<div class="file-header">
+  <span class="file-name">
+    <FilePath filenameWithPath={blob.path} />
+  </span>
+  <div class="right">
+    <div class="commit-teaser">
+      <div class="hash-button">
+        <Link
+          route={{
+            resource: "project.commit",
+            project: projectId,
+            node: baseUrl,
+            commit: lastCommit.id,
+          }}>
+          <Button variant="gray" styleBorderRadius="0">
+            <span
+              class="global-hash"
+              style:font-weight="var(--font-weight-bold)">
+              {lastCommit.id.slice(0, 7)}
+            </span>
+          </Button>
+        </Link>
       </div>
+      <InlineMarkdown fontSize="small" content={lastCommit.summary} />
     </div>
-  </header>
-  <div class="container">
-    {#if blob.binary}
-      <div class="binary">
-        <div use:twemoji>👀</div>
-        <span class="txt-tiny">Binary content</span>
-      </div>
-    {:else if showMarkdown && blob.content}
-      <Readme
-        {baseUrl}
-        {projectId}
-        {peer}
-        {revision}
-        content={blob.content}
-        {rawPath}
-        {path} />
-    {:else if content}
-      <table class="code no-scrollbar">
-        {@html toHtml(content)}
-      </table>
-    {:else}
-      <div class="binary">
-        <div use:twemoji>🍂</div>
-        <span class="txt-tiny">Empty file</span>
-      </div>
-    {/if}
+    <div class="layout-desktop-flex" style:gap="0.5rem">
+      {#if isMarkdown}
+        <Radio ariaLabel="Toggle render method">
+          <Button
+            styleBorderRadius="0"
+            variant={showMarkdown ? "secondary" : "gray"}
+            on:click={() => {
+              window.location.hash = "";
+              showMarkdown = true;
+            }}>
+            Plain
+          </Button>
+          <Button
+            styleBorderRadius="0"
+            variant={!showMarkdown ? "secondary" : "gray"}
+            on:click={() => {
+              showMarkdown = false;
+            }}>
+            Markdown
+          </Button>
+        </Radio>
+      {/if}
+      <a href="{rawPath}/{blob.path}">
+        <Button variant="secondary">
+          Raw
+          <IconSmall name="arrow-box-up-right" />
+        </Button>
+      </a>
+    </div>
   </div>
+</div>
+
+<div class="container">
+  {#if blob.binary}
+    <div style:margin="4rem 0" style:width="100%">
+      <Placeholder iconName="binary-file" caption="Binary file" />
+    </div>
+  {:else if showMarkdown && blob.content}
+    <div style:padding="2rem">
+      <Markdown {linkBaseUrl} content={blob.content} {rawPath} {path} />
+    </div>
+  {:else if content}
+    <table class="code no-scrollbar">
+      {@html toHtml(content)}
+    </table>
+  {:else}
+    <div style:margin="4rem 0" style:width="100%">
+      <Placeholder iconName="empty-file" caption="Empty file" />
+    </div>
+  {/if}
 </div>

@@ -4,64 +4,55 @@
   import { formatTimestamp, gravatarURL } from "@app/lib/utils";
 
   export let header: CommitHeader;
-  export let noTime = false;
-  export let noAuthor = false;
 </script>
 
 <style>
   .authorship {
     display: flex;
+    font-size: var(--font-size-small);
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .person {
+    display: flex;
     align-items: center;
-    gap: 0.25rem;
-    color: var(--color-foreground-6);
-  }
-  .authorship .author,
-  .authorship .committer {
+    flex-wrap: nowrap;
     white-space: nowrap;
+    gap: 0.5rem;
   }
-  .authorship .avatar {
+  .avatar {
     width: 1rem;
     height: 1rem;
-    border-radius: var(--border-radius);
-  }
-
-  @media (max-width: 720px) {
-    .authorship {
-      display: none;
-    }
+    border-radius: var(--border-radius-round);
   }
 </style>
 
-<span class="authorship txt-tiny">
+<span class="authorship">
+  <slot />
   {#if header.author.email === header.committer.email}
-    <img
-      class="avatar"
-      alt="avatar"
-      src={gravatarURL(header.committer.email)} />
-    <span class="layout-desktop-inline committer">
+    <div class="person">
+      <img
+        class="avatar"
+        alt="avatar"
+        src={gravatarURL(header.committer.email)} />
       {header.committer.name}
-    </span>
-    <span>committed</span>
+    </div>
+    committed
+    {formatTimestamp(header.committer.time)}
   {:else}
-    {#if !noAuthor}
+    <div class="person">
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
-      <span class="layout-desktop-inline author">
-        {header.author.name}
-      </span>
-      <span>authored</span>
-    {/if}
-    <img
-      class="avatar"
-      alt="avatar"
-      src={gravatarURL(header.committer.email)} />
-    <span class="layout-desktop-inline committer">
+      {header.author.name}
+    </div>
+    authored and
+    <div class="person">
+      <img
+        class="avatar"
+        alt="avatar"
+        src={gravatarURL(header.committer.email)} />
       {header.committer.name}
-    </span>
-    <span>committed</span>
-  {/if}
-  {#if !noTime}
-    <span class="layout-desktop-inline">
-      {formatTimestamp(header.committer.time)}
-    </span>
+    </div>
+    committed
+    {formatTimestamp(header.committer.time)}
   {/if}
 </span>

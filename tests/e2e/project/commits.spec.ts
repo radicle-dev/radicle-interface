@@ -1,11 +1,9 @@
 import {
-  test,
-  expect,
-  sourceBrowsingUrl,
-  bobRemote,
-  aliceRemote,
-  gitOptions,
   aliceMainHead,
+  expect,
+  gitOptions,
+  sourceBrowsingUrl,
+  test,
 } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
 
@@ -16,12 +14,13 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(aliceRemote).click();
-    await expect(page.getByTitle("Change peer")).toHaveText(
-      `  did:key:${aliceRemote
-        .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} (alice) delegate`,
-    );
+    await page
+      .getByRole("link", {
+        name: "alice delegate",
+      })
+      .click();
+
+    await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(page.locator(".history .teaser")).toHaveCount(6);
@@ -52,26 +51,23 @@ test("peer and branch switching", async ({ page }) => {
       "orphaned-branch af3641c",
     );
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".group .teaser")).toHaveCount(1);
+    await expect(page.locator(".list")).toHaveCount(1);
   }
 
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
-    await expect(page.getByTitle("Change peer")).toContainText(
-      ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} `,
-    );
+    await page.getByRole("link", { name: "bob" }).click();
+
+    await expect(page.getByTitle("Change peer")).toContainText("bob");
 
     await expect(page.getByText("Wednesday, December 21, 2022")).toBeVisible();
-    await expect(page.locator(".group").first().locator(".teaser")).toHaveCount(
+    await expect(page.locator(".list").first().locator(".teaser")).toHaveCount(
       1,
     );
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".group").last().locator(".teaser")).toHaveCount(
+    await expect(page.locator(".list").last().locator(".teaser")).toHaveCount(
       6,
     );
 
@@ -90,13 +86,11 @@ test("peer and branch switching", async ({ page }) => {
 test("expand commit message", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByRole("link", { name: "6 commits" }).click();
-  const commitToggle = page
-    .locator("div")
-    .filter({ hasText: /^Add a C source file and its binary …$/ })
-    .getByRole("button", { name: "…" });
+  const commitToggle = page.getByRole("button", { name: "expand" }).first();
+
   await commitToggle.click();
   const expandedCommit = page.getByText(
-    "The binary was compiled with: `gcc -Oz -O3 true.c`. Signed-off-by: Alice Liddell",
+    "Signed-off-by: Alice Liddell <alice@radicle.xyz>",
   );
 
   await expect(expandedCommit).toBeVisible();
@@ -120,12 +114,8 @@ test("relative timestamps", async ({ page }) => {
   await page.getByRole("link", { name: "6 commits" }).click();
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
-  await expect(page.getByTitle("Change peer")).toHaveText(
-    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-      -6,
-    )} (bob)`,
-  );
+  await page.getByRole("link", { name: "bob" }).click();
+  await expect(page.getByTitle("Change peer")).toHaveText("bob");
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");
   await expect(latestCommit).toContainText("28f3710");

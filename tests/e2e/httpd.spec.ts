@@ -7,7 +7,7 @@ test("rad web command reacts to port change", async ({ page, peerManager }) => {
   await peer.startHttpd(8090);
 
   await page.goto("/");
-  await page.getByRole("button", { name: "radicle.local" }).click();
+  await page.getByRole("button", { name: "Read only" }).click();
 
   await expect(
     page.getByText(

@@ -6,12 +6,12 @@
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
 
-  import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -51,108 +51,108 @@
 </script>
 
 <style>
+  .layout {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0 5rem 0;
+  }
   .wrapper {
     width: 720px;
-    margin: 5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3.5rem;
   }
   .header {
-    align-items: center;
-    color: var(--color-secondary);
     display: flex;
-    flex-direction: row;
-    font-size: var(--font-size-large);
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .title {
+    display: flex;
+    font-size: var(--font-size-x-large);
     font-weight: var(--font-weight-bold);
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    overflow-x: hidden;
-    text-align: left;
-    text-overflow: ellipsis;
-    width: 100%;
   }
-  table {
-    border-collapse: collapse;
-  }
-  td {
-    padding-bottom: 1.5rem;
-    padding-right: 3rem;
-  }
-  .node-address {
+  .address {
+    color: var(--color-fill-secondary);
+    font-family: var(--font-family-monospace);
     display: flex;
-    align-items: center;
-    color: var(--color-foreground-6);
-    white-space: nowrap;
+  }
+  .info {
+    display: flex;
+    justify-content: space-between;
+  }
+  .version {
+    color: var(--color-fill-gray);
+    font-family: var(--font-family-monospace);
+  }
+  .projects {
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
   }
   .more {
-    margin-top: 2rem;
-    text-align: center;
-  }
-  @media (max-width: 720px) {
-    .wrapper {
-      width: 100%;
-      padding: 1.5rem;
-    }
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 
-<div class="wrapper">
-  <div class="header">
-    {hostname}
-  </div>
-
-  <table>
-    <tr>
-      <td class="txt-highlight">Address</td>
-      <td>
-        <div class="node-address">
+<div class="layout">
+  <div class="wrapper">
+    <div class="header">
+      <div class="title">
+        {hostname}
+      </div>
+      <div class="info">
+        <div class="address">
           {truncateId(nid)}@{baseUrl.hostname}
           <Clipboard
             small
             text={`${nid}@${baseUrl.hostname}:${config.nodes.defaultNodePort}`} />
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td class="txt-highlight">Version</td>
-      <td>
-        {version}
-      </td>
-    </tr>
-  </table>
-
-  <div style:margin-bottom="5rem">
-    <div style:margin-top="1rem">
-      {#each projects as { project, activity } (project.id)}
-        <div style:margin-bottom="0.5rem">
-          <Link
-            route={{
-              resource: "project.source",
-              project: project.id,
-              node: baseUrl,
-            }}>
-            <ProjectCard
-              {activity}
-              id={project.id}
-              name={project.name}
-              description={project.description}
-              head={project.head} />
-          </Link>
+        <div class="version">
+          v{version}
         </div>
+      </div>
+    </div>
+
+    <div class="projects">
+      {#each projects as { project, activity } (project.id)}
+        <Link
+          route={{
+            resource: "project.source",
+            project: project.id,
+            node: baseUrl,
+          }}>
+          <ProjectCard
+            {activity}
+            id={project.id}
+            name={project.name}
+            description={project.description}
+            head={project.head} />
+        </Link>
       {/each}
     </div>
+
     {#if loadingProjects}
       <div class="more">
-        <Loading small />
+        <Loading noDelay small />
       </div>
     {/if}
+
     {#if showMoreButton}
       <div class="more">
-        <Button variant="foreground" on:click={loadMore}>More</Button>
+        <Button size="large" variant="outline" on:click={loadMore}>More</Button>
       </div>
     {/if}
+
     {#if error}
       <ErrorMessage
-        message="Not able to load more projects from this node."
-        stackTrace={error.stack} />
+        message="Not able to load more projects from this node"
+        {error} />
     {/if}
   </div>
 </div>

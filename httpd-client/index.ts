@@ -28,6 +28,7 @@ import type {
   Range,
   Review,
   Revision,
+  Verdict,
 } from "./lib/project/patch.js";
 import type { RequestOptions, Method } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
@@ -65,6 +66,7 @@ export type {
   Review,
   Revision,
   Tree,
+  Verdict,
 };
 
 export interface Node {

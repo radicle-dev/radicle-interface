@@ -43,25 +43,25 @@
     display: flex;
     cursor: pointer;
     padding: 0.25rem;
-    margin: 0.125rem 0;
-    color: var(--color-foreground-5);
+    margin: 0.25rem 0;
     user-select: none;
     line-height: 1.5rem;
     white-space: nowrap;
   }
   .folder:hover {
-    background-color: var(--color-foreground-1);
-    border-radius: var(--border-radius-small);
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
   }
 
   .folder-name {
     margin-left: 0.25rem;
-    color: var(--color-secondary-6);
+    font-size: var(--font-size-regular);
+    font-weight: var(--font-weight-medium);
   }
 
   .container {
-    padding-left: 0.5rem;
-    margin: 0 0 0 0.5rem;
+    padding-left: 1rem;
+    margin-left: 0.5rem;
   }
 
   .loading {
@@ -72,12 +72,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--color-fill-secondary);
   }
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="folder" on:click={onClick}>
+<div role="button" tabindex="0" class="folder" on:click={onClick}>
   <div class="icon-container">
     {#if expanded}
       <Icon name="folder-open" />

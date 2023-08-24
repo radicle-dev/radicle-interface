@@ -1,11 +1,7 @@
 :root {
-  --elevation-low: 0px 16px 32px 32px #00000070;
-  --elevation-high: 0px 0px 1px var(--color-secondary),
-    0px 8px 64px var(--color-secondary-5);
+  --elevation-low: 0 0 64px 0 #00000099;
 }
 
 [data-theme="light"] {
-  --elevation-low: 0px 16px 32px 16px #00000020;
-  --elevation-high: 0px 0px 1px var(--color-secondary),
-    0px 8px 64px var(--color-secondary-3);
+  --elevation-low: 0 0 64px 0 #0000001a;
 }

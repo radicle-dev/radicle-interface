@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { twemoji } from "@app/lib/utils";
-
-  import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import Command from "./Command.svelte";
+  import Icon from "./Icon.svelte";
 
   export let title: string;
   export let errorMessage: string;
@@ -10,20 +9,41 @@
 
 <style>
   .wrapper {
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .emoji {
+  .container {
     display: flex;
-    font-size: var(--font-size-xx-large);
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .help {
+    font-size: var(--font-size-small);
   }
 </style>
 
 <div class="wrapper layout-centered">
-  <div class="emoji" use:twemoji>🏜️</div>
-  <div class="title txt-medium txt-bold txt-highlight">
-    {title}
+  <Icon name="desert" size="48" />
+  <div class="container">
+    <div class="txt-medium txt-bold">
+      {title}
+    </div>
+    <div class="help">
+      If you need help resolving this issue, copy the error message
+      <br />
+      below and send it to us on
+      <a class="txt-link" href="https://radicle.zulipchat.com/" target="_blank">
+        radicle.zulipchat.com
+      </a>
+    </div>
   </div>
 
-  <ErrorMessage message={errorMessage} {stackTrace} />
+  <div style:max-width="25rem">
+    <Command
+      command={JSON.stringify({ errorMessage, stackTrace })}
+      fullWidth
+      showPrompt={false} />
+  </div>
 </div>

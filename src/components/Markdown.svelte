@@ -15,7 +15,7 @@
     canonicalize,
     isCommit,
   } from "@app/lib/utils";
-  import { mimes } from "@app/lib/file";
+  import { mimes, type Embed } from "@app/lib/file";
 
   export let content: string;
   // If present, resolve all relative links with respect to this URL
@@ -24,9 +24,7 @@
   export let rawPath: string | undefined = undefined;
   // If present, means we are in a preview context,
   // use this for image previews instead of /raw URLs.
-  export let embeds:
-    | Map<string, { name: string; content: string }>
-    | undefined = undefined;
+  export let embeds: Embed[] | undefined = undefined;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(
@@ -79,6 +77,24 @@
       }
     }
 
+    // If the embed is a preview stored in-memory.
+    for (const i of container.querySelectorAll("img")) {
+      const imagePath = i.getAttribute("src");
+
+      // If the image is an oid embed
+      if (imagePath && isCommit(imagePath)) {
+        const embed = embeds?.find(e => {
+          return e.oid === imagePath;
+        });
+        if (embed) {
+          const fileExtension = embed.name.split(".").pop();
+          if (fileExtension) {
+            i.setAttribute("src", embed.content);
+          }
+        }
+      }
+    }
+
     // Iterate over all images, and replace the source with a canonicalized URL
     // pointing at the projects /raw endpoint.
     if (rawPath) {
@@ -87,23 +103,15 @@
 
         // If the image is an oid embed
         if (imagePath && isCommit(imagePath)) {
-          const embed = embeds?.get(imagePath);
-          if (embed) {
-            const fileExtension = embed.name.split(".").pop();
-            if (fileExtension) {
-              i.setAttribute("src", embed.content);
-            }
-          } else {
-            const fileExtension = i.alt.split(".").pop();
-            const url = new URL(rawPath);
-            // If a user changes the alt text of an image,
-            // the browser is still able to infer the mime type.
-            if (fileExtension && fileExtension in mimes) {
-              url.search = `?mime=${mimes[fileExtension]}`;
-            }
-            url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
-            i.setAttribute("src", url.toString());
+          const fileExtension = i.alt.split(".").pop();
+          const url = new URL(rawPath);
+          // If a user changes the alt text of an image,
+          // the browser is still able to infer the mime type.
+          if (fileExtension && fileExtension in mimes) {
+            url.search = `?mime=${mimes[fileExtension]}`;
           }
+          url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
+          i.setAttribute("src", url.toString());
           continue;
         }
 
@@ -153,8 +161,7 @@
   .front-matter {
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
-    color: var(--color-foreground);
-    border: 1px dashed var(--color-foreground-4);
+    border: 1px dashed var(--color-border-default);
     padding: 0.5rem;
     margin-bottom: 2rem;
   }
@@ -168,40 +175,31 @@
     padding-left: 0.5rem;
   }
 
-  .markdown :global(h1),
-  .markdown :global(h2),
-  .markdown :global(h3),
-  .markdown :global(h4),
-  .markdown :global(h5),
-  .markdown :global(h6) {
-    color: var(--color-foreground);
-  }
-
   .markdown :global(h1) {
     font-size: calc(var(--font-size-x-large) * 0.75);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
-    border-bottom: 1px solid var(--color-foreground-4);
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
   .markdown :global(h2) {
     font-size: var(--font-size-medium);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
-    border-bottom: 1px dashed var(--color-foreground-4);
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
   .markdown :global(h3) {
     font-size: calc(var(--font-size-medium) * 0.9);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 0.5rem 0;
     margin: 1rem 0 0.25rem;
   }
 
   .markdown :global(h4) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-regular);
     padding: 0.5rem 0;
     margin: 1rem 0 0.125rem;
@@ -209,14 +207,14 @@
 
   .markdown :global(h5),
   .markdown :global(h6) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     padding: 0.35rem 0;
     margin: 1rem 0 0.125rem;
   }
 
   .markdown :global(h6) {
-    color: var(--color-foreground-6);
+    color: var(--color-foreground-gray);
   }
 
   .markdown :global(p) {
@@ -230,14 +228,14 @@
   }
 
   .markdown :global(blockquote) {
-    color: var(--color-foreground-6);
-    border-left: 0.3rem solid var(--color-foreground-4);
+    color: var(--color-foreground-gray);
+    border-left: 0.3rem solid var(--color-fill-ghost);
     padding: 0 0 0 1rem;
     margin: 1rem 0 1rem 0;
   }
 
   .markdown :global(strong) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
 
   .markdown :global(.footnote-ref > a),
@@ -254,9 +252,8 @@
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
-    color: var(--color-foreground-6);
-    background-color: var(--color-foreground-2);
-    border-radius: 0.5rem;
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
     padding: 0.125rem 0.25rem;
   }
 
@@ -268,7 +265,7 @@
   .markdown :global(pre) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
     padding: 1rem !important;
     border-radius: var(--border-radius-small);
     margin: 1rem 0;
@@ -284,11 +281,10 @@
   .markdown :global(a > code) {
     background: none;
     padding: 0;
-    color: var(--color-foreground);
   }
   .markdown :global(a) {
     text-decoration: none;
-    border-bottom: 1px solid var(--color-foreground-6);
+    border-bottom: 1px solid var(--color-foreground-contrast);
   }
   .markdown :global(a.no-underline) {
     border-bottom: none;
@@ -300,7 +296,7 @@
     overflow: hidden;
     background: transparent;
     border: 0;
-    border-bottom: 1px solid var(--color-foreground-4);
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
   .markdown :global(ol) {
@@ -334,17 +330,17 @@
     border-collapse: collapse;
     border-radius: 0.5rem;
     border-style: hidden;
-    box-shadow: 0 0 0 1px var(--color-foreground-4);
+    box-shadow: 0 0 0 1px var(--color-border-hint);
     overflow: hidden;
   }
   .markdown :global(td) {
     text-align: left;
     text-overflow: ellipsis;
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-hint);
     padding: 0.5rem 1rem;
   }
   .markdown :global(tr:nth-child(even)) {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-background-default);
   }
   .markdown :global(th) {
     text-align: center;

@@ -60,10 +60,10 @@
 
 <style>
   textarea {
-    background-color: var(--color-foreground-1);
-    border: 1px solid var(--color-foreground-1);
-    color: var(--color-foreground);
-    border-radius: 0.5rem;
+    background-color: var(--color-background-dip);
+    border: 1px solid var(--color-border-hint);
+    color: var(--color-foreground-default);
+    border-radius: var(--border-radius-small);
     font-family: inherit;
     height: 5rem;
     padding: 1rem;
@@ -94,17 +94,16 @@
   }
 
   textarea::placeholder {
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-dim);
   }
-
-  textarea:focus,
+  textarea:focus {
+    border: 1px solid var(--color-border-default);
+  }
   textarea:hover {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-default);
   }
-  .caption {
-    color: var(--color-foreground-4);
-    margin-left: 0.75rem;
-    text-align: left;
+  textarea:focus {
+    border: 1px solid var(--color-fill-secondary);
   }
 </style>
 
@@ -121,7 +120,3 @@
   on:drop
   on:keydown|stopPropagation={handleKeydown}
   on:keypress />
-
-<div class="caption txt-small">
-  Markdown supported. Press {isMac() ? "⌘" : "ctrl"}↵ to comment.
-</div>

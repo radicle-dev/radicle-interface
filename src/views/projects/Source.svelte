@@ -7,12 +7,14 @@
   import { HttpdClient } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
+  import File from "@app/components/File.svelte";
+  import Header from "./Source/Header.svelte";
   import Layout from "./Layout.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import Header from "./Source/Header.svelte";
 
   import BlobComponent from "./Source/Blob.svelte";
   import TreeComponent from "./Source/Tree.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
 
   export let baseUrl: BaseUrl;
   export let blobResult: BlobResult;
@@ -75,35 +77,25 @@
   .container {
     display: flex;
     width: inherit;
-    margin-bottom: 4rem;
-    padding: 0 2rem 0 8rem;
   }
 
   .column-left {
     display: flex;
     flex-direction: column;
-    padding-right: 1rem;
+    padding-right: 1.5rem;
   }
 
   .column-right {
     display: flex;
     flex-direction: column;
-    padding-left: 1rem;
     min-width: var(--content-min-width);
-    width: 100%;
-  }
-
-  .placeholder {
-    display: flex;
-    flex-direction: column;
     width: 100%;
   }
 
   .source-tree {
     overflow-x: hidden;
-  }
-  nav {
-    padding: 0 2rem;
+    width: 17.5rem;
+    padding-right: 0.25rem;
   }
   .sticky {
     position: sticky;
@@ -111,22 +103,12 @@
     max-height: 100vh;
   }
 
-  @media (max-width: 960px) {
-    .container {
-      padding-left: 2rem;
-    }
-  }
-
   @media (max-width: 720px) {
     .column-right {
       padding: 1.5rem 0;
       min-width: 0;
     }
-    .placeholder {
-      padding: 1.5rem;
-    }
     .source-tree {
-      padding: 0 2rem;
       margin: 1rem 0;
     }
     .container {
@@ -137,44 +119,40 @@
       display: none;
       padding-right: 0;
     }
-    .column-left-visible {
-      display: block;
-    }
     .sticky {
       max-height: initial;
     }
   }
 </style>
 
-<Layout {baseUrl} {project} {peer} activeTab="source">
-  <Header
-    node={baseUrl}
-    {project}
-    peers={peersWithRoute}
-    branches={branchesWithRoute}
-    {revision}
-    {tree}
-    historyLinkActive={false} />
+<Layout {baseUrl} {project} activeTab="source">
+  <svelte:fragment slot="subheader">
+    <div style:margin-top="1rem">
+      <Header
+        node={baseUrl}
+        {project}
+        peers={peersWithRoute}
+        branches={branchesWithRoute}
+        {revision}
+        {tree}
+        filesLinkActive={true}
+        historyLinkActive={false} />
 
-  <main>
-    <!-- Mobile navigation -->
-    {#if tree.entries.length > 0}
-      <nav class="layout-mobile">
-        <Button
-          style="width: 100%;"
-          variant="secondary"
-          on:click={() => {
-            mobileFileTree = !mobileFileTree;
-          }}>
-          Browse
-        </Button>
-      </nav>
-    {/if}
-
-    <div class="container center-content">
       {#if tree.entries.length > 0}
-        <div class="column-left" class:column-left-visible={mobileFileTree}>
-          <div class="source-tree sticky">
+        <div class="layout-mobile">
+          <Button
+            styleWidth="100%"
+            size="large"
+            variant="outline"
+            on:click={() => {
+              mobileFileTree = !mobileFileTree;
+            }}>
+            Browse
+          </Button>
+        </div>
+
+        {#if mobileFileTree}
+          <div class="layout-mobile" style:margin-top="1rem">
             <TreeComponent
               projectId={project.id}
               {revision}
@@ -184,47 +162,58 @@
               {peer}
               {tree}
               on:select={() => {
-                // Close mobile tree if user navigates to other file.
                 mobileFileTree = false;
               }} />
           </div>
-        </div>
-        <div class="column-right">
-          {#if blobResult.ok}
-            <BlobComponent
-              {baseUrl}
-              projectId={project.id}
-              {peer}
-              {revision}
-              {path}
-              blob={blobResult.blob}
-              highlighted={blobResult.highlighted}
-              rawPath={utils.getRawBasePath(
-                project.id,
-                baseUrl,
-                tree.lastCommit.id,
-              )} />
-          {:else}
-            <Placeholder emoji="🍂">
-              <span slot="title">
-                <div class="txt-monospace">{blobResult.error.path}</div>
-              </span>
-              <span slot="body">
-                {blobResult.error.message}
-              </span>
-            </Placeholder>
-          {/if}
-        </div>
-      {:else}
-        <div class="placeholder">
-          <Placeholder emoji="👀">
-            <span slot="title">Nothing to show</span>
-            <span slot="body">
-              We couldn't find any files at this revision.
-            </span>
-          </Placeholder>
-        </div>
+        {/if}
       {/if}
     </div>
-  </main>
+  </svelte:fragment>
+
+  <div class="container center-content">
+    {#if tree.entries.length > 0}
+      <div class="column-left">
+        <div class="source-tree sticky">
+          <TreeComponent
+            projectId={project.id}
+            {revision}
+            {baseUrl}
+            {fetchTree}
+            {path}
+            {peer}
+            {tree} />
+        </div>
+      </div>
+      <div class="column-right">
+        {#if blobResult.ok}
+          <BlobComponent
+            {baseUrl}
+            projectId={project.id}
+            {peer}
+            {revision}
+            {path}
+            blob={blobResult.blob}
+            highlighted={blobResult.highlighted}
+            rawPath={utils.getRawBasePath(
+              project.id,
+              baseUrl,
+              tree.lastCommit.id,
+            )} />
+        {:else}
+          <File>
+            <FilePath
+              slot="left-header"
+              filenameWithPath={blobResult.error.path} />
+            <div style:margin="4rem 0" style:width="100%">
+              <Placeholder iconName="no-file" caption="File not found" />
+            </div>
+          </File>
+        {/if}
+      </div>
+    {:else}
+      <div style:margin="4rem 0" style:width="100%">
+        <Placeholder iconName="no-file" caption="No files at this revision" />
+      </div>
+    {/if}
+  </div>
 </Layout>

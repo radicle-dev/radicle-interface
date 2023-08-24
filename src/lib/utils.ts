@@ -121,6 +121,10 @@ export function parseUsername(input: string): string {
   return parts[parts.length - 1];
 }
 
+export function absoluteTimestamp(time: number | undefined) {
+  return time ? new Date(time * 1000).toString() : undefined;
+}
+
 export const formatTimestamp = (
   timestamp: number,
   current = new Date().getTime(),

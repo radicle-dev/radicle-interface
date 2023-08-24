@@ -5,7 +5,7 @@
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
-  export let fontSize: "tiny" | "small" | "medium" = "small";
+  export let fontSize: "tiny" | "small" | "regular" | "medium" = "small";
 
   const render = (content: string): string =>
     dompurify.sanitize(markdown.parseInline(content) as string);
@@ -14,10 +14,12 @@
 <style>
   .markdown :global(code) {
     font-family: var(--font-family-monospace);
-    color: var(--color-foreground-6);
-    background-color: var(--color-foreground-3);
-    border-radius: 0.5rem;
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
     padding: 0.125rem 0.25rem;
+  }
+  .markdown :global(strong) {
+    font-weight: var(--font-weight-semibold);
   }
 </style>
 
@@ -25,6 +27,7 @@
   class="markdown"
   use:twemoji
   class:txt-medium={fontSize === "medium"}
+  class:txt-regular={fontSize === "regular"}
   class:txt-small={fontSize === "small"}
   class:txt-tiny={fontSize === "tiny"}>
   {@html render(content)}

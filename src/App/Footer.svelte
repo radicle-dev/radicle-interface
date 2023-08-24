@@ -1,0 +1,84 @@
+<script lang="ts">
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import KeyHint from "@app/components/KeyHint.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import RadworksLogo from "@app/components/RadworksLogo.svelte";
+  import ThemeSettings from "./Header/ThemeSettings.svelte";
+</script>
+
+<style>
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-small);
+    color: var(--color-foreground-dim);
+    height: 2.25rem;
+    background-color: var(--color-background-dip);
+    padding: 1rem 1.5rem;
+  }
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .right {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .radworks {
+    display: flex;
+    color: var(--color-foreground-contrast);
+  }
+
+  .radworks:hover {
+    color: var(--color-fill-primary);
+  }
+</style>
+
+<div class="footer">
+  <div class="left">
+    <span class="layout-desktop">Supported by</span>
+    <a
+      target="_blank"
+      rel="noreferrer"
+      class="radworks"
+      href="https://radworks.org">
+      <RadworksLogo />
+    </a>
+  </div>
+
+  <div class="center layout-desktop">
+    Press <KeyHint>?</KeyHint>
+    for keyboard shortcuts
+  </div>
+  <div class="right">
+    <Popover
+      popoverPositionBottom="2rem"
+      popoverPositionRight="0"
+      popoverWidth="21rem">
+      <IconButton slot="toggle">
+        <IconSmall name="brush" />
+        Theme
+      </IconButton>
+
+      <ThemeSettings slot="popover" />
+    </Popover>
+
+    <a
+      style:display="flex"
+      style:align-items="center"
+      style:gap="0.25rem"
+      target="_blank"
+      rel="noreferrer"
+      class="txt-link"
+      href="https://radicle.xyz">
+      radicle.xyz
+      <IconSmall name="arrow-box-up-right" />
+    </a>
+  </div>
+</div>

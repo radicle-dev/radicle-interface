@@ -83,7 +83,7 @@ interface ProjectPatchRoute {
         name: "activity";
       }
     | {
-        name: "commits" | "files";
+        name: "commits" | "changes";
         revision?: string;
       }
     | {
@@ -191,7 +191,7 @@ export type PatchView =
       revision: string;
     }
   | {
-      name: "commits" | "files";
+      name: "commits" | "changes";
       revision: string;
       oid: string;
       diff: Diff;
@@ -529,7 +529,7 @@ async function loadPatchView(
       break;
     }
     case "commits":
-    case "files": {
+    case "changes": {
       const revisionId = route.view.revision;
       const revision =
         patch.revisions.find(r => r.id === revisionId) || latestRevision;
@@ -724,7 +724,7 @@ function resolvePatchesRoute(
       }
     }
 
-    if (tab === "commits" || tab === "files") {
+    if (tab === "commits" || tab === "changes") {
       return {
         ...base,
         view: { name: tab, revision },
@@ -825,7 +825,7 @@ function patchRouteToPath(route: ProjectPatchRoute): string {
   const pathSegments = [node, route.project];
 
   pathSegments.push("patches", route.patch);
-  if (route.view?.name === "commits" || route.view?.name === "files") {
+  if (route.view?.name === "commits" || route.view?.name === "changes") {
     if (route.view.revision) {
       pathSegments.push(route.view.revision);
     }

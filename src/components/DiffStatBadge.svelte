@@ -5,32 +5,36 @@
 
 <style>
   .badge {
-    font-size: var(--font-size-tiny);
-    line-height: 1.6;
-    height: var(--button-tiny-height);
     display: flex;
-    flex-direction: row;
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family-monospace);
+    height: var(--button-tiny-height);
     white-space: nowrap;
+    border-radius: var(--border-radius-round);
+    overflow: hidden;
   }
   .positive {
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-3);
+    display: flex;
+    padding: 0 6px;
+    align-items: center;
+    color: var(--color-foreground-success);
+    background-color: var(--color-fill-diff-green-light);
   }
   .negative {
-    padding: 0.125rem 0.5rem;
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-3);
+    display: flex;
+    padding: 0 6px;
+    align-items: center;
+    color: var(--color-foreground-red);
+    background-color: var(--color-fill-diff-red-light);
   }
 </style>
 
 <div class="badge">
-  <span class="positive">
-    + {insertions}
-  </span>
-  <span class="negative">
-    - {deletions}
-  </span>
+  <div class="positive">
+    +{insertions}
+  </div>
+  <div class="negative">
+    -{deletions}
+  </div>
 </div>

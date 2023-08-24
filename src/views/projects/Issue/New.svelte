@@ -5,12 +5,12 @@
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { embed } from "@app/lib/file";
+  import { embed, type Embed } from "@app/lib/file";
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
-  import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
-  import Authorship from "@app/components/Authorship.svelte";
+  import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
@@ -19,11 +19,12 @@
   import Layout from "@app/views/projects/Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Textarea from "@app/components/Textarea.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let project: Project;
 
-  const newEmbeds: Map<string, { name: string; content: string }> = new Map();
+  let newEmbeds: Embed[] = [];
   let selectionStart = 0;
   let selectionEnd = 0;
   let preview: boolean = false;
@@ -48,7 +49,10 @@
       const embeds = Array.from(event.dataTransfer.files).map(embed);
       void Promise.all(embeds).then(embeds =>
         embeds.forEach(({ oid, name, content }) => {
-          newEmbeds.set(oid, { name, content });
+          newEmbeds = [
+            ...newEmbeds,
+            { oid: oid, name: name, content: content },
+          ];
           const embedText = `![${name}](${oid})\n`;
           issueText = issueText
             .slice(0, selectionStart)
@@ -92,12 +96,11 @@
       });
     }
   }
+
+  $: valid = issueTitle && issueText;
 </script>
 
 <style>
-  main {
-    padding: 0 2rem 0 8rem;
-  }
   .form {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
@@ -113,8 +116,7 @@
   .metadata {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
-    border-radius: var(--border-radius);
+    gap: 2rem;
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;
@@ -123,15 +125,13 @@
     flex: 2;
     padding-right: 1rem;
   }
+  .open {
+    color: var(--color-fill-success);
+  }
   .author {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  @media (max-width: 960px) {
-    main {
-      padding-left: 2rem;
-    }
   }
   @media (max-width: 720px) {
     .form {
@@ -155,9 +155,14 @@
       <div class="form">
         <div class="editor">
           <CobHeader {action} bind:title={issueTitle}>
+            <svelte:fragment slot="icon">
+              <div class="open">
+                <Icon name="issue" />
+              </div>
+            </svelte:fragment>
             <svelte:fragment slot="state">
               {#if action === "view"}
-                <Badge variant="positive">open</Badge>
+                <Badge size="small" variant="positive">open</Badge>
               {/if}
             </svelte:fragment>
             <svelte:fragment slot="description">
@@ -169,34 +174,27 @@
                   on:drop={handleFileDrop}
                   bind:value={issueText}
                   on:submit={() => {
-                    void createIssue(session.id);
+                    if (valid) {
+                      void createIssue(session.id);
+                    }
                   }}
                   placeholder="Write a description" />
               {:else if !issueText}
                 <p class="txt-missing">No description</p>
               {:else}
-                <Markdown
-                  embeds={newEmbeds}
-                  content={issueText}
-                  rawPath={utils.getRawBasePath(
-                    project.id,
-                    baseUrl,
-                    project.head,
-                  )} />
+                <Markdown embeds={newEmbeds} content={issueText} />
               {/if}
             </svelte:fragment>
             <div class="author" slot="author">
               {#if action === "view"}
-                opened by <Authorship
-                  authorId={$httpdStore.session.publicKey} /> now
+                opened by <NodeId
+                  nodeId={$httpdStore.session.publicKey}
+                  alias={$httpdStore.session.alias} /> now
               {/if}
             </div>
           </CobHeader>
           <div class="actions">
-            <Button
-              size="small"
-              variant="text"
-              on:click={() => (preview = !preview)}>
+            <Button variant="none" on:click={() => (preview = !preview)}>
               {#if preview}
                 Resume editing
               {:else}
@@ -204,8 +202,7 @@
               {/if}
             </Button>
             <Button
-              disabled={!issueTitle || !issueText}
-              size="small"
+              disabled={!valid}
               variant="secondary"
               on:click={() => void createIssue(session.id)}>
               Submit
@@ -224,7 +221,7 @@
       </div>
     {:else}
       <ErrorMessage
-        message="Couldn't access issue creation. Make sure you're still logged in." />
+        message="Couldn't access issue creation. Make sure you're authenticated." />
     {/if}
   </main>
 </Layout>

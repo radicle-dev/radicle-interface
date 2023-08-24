@@ -1,25 +1,25 @@
 <script lang="ts">
-  import type { BaseUrl, DiffResponse } from "@httpd-client";
+  import type { BaseUrl, DiffResponse, Verdict } from "@httpd-client";
   import type { Timeline } from "@app/views/projects/Patch.svelte";
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { onMount } from "svelte";
-  import { twemoji } from "@app/lib/utils";
 
-  import Authorship from "@app/components/Authorship.svelte";
-  import Avatar from "@app/components/Avatar.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
+  import CobCommitTeaser from "./CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import Floating from "@app/components/Floating.svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import ExpandButton from "@app/components/ExpandButton.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
+  import Loading from "@app/components/Loading.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -41,7 +41,7 @@
 
   const api = new HttpdClient(baseUrl);
 
-  function formatVerdict(verdict?: string | null) {
+  function formatVerdict(verdict?: Verdict | null) {
     switch (verdict) {
       case "accept":
         return "accepted revision";
@@ -52,22 +52,24 @@
     }
   }
 
-  function aliasColorForVerdict(verdict?: string | null) {
+  function verdictIconColor(verdict?: Verdict | null) {
     switch (verdict) {
       case "accept":
-        return "--color-positive-5";
+        return "var(--color-foreground-success)";
       case "reject":
-        return "--color-negative-5";
+        return "var(--color-foreground-red)";
       default:
-        return "--color-foreground-5";
+        return "var(--color-foreground-gray)";
     }
   }
 
   let response: DiffResponse | undefined = undefined;
   let error: any | undefined = undefined;
+  let loading: boolean = false;
 
   onMount(async () => {
     try {
+      loading = true;
       response = await api.project.getDiff(
         projectId,
         revisionBase,
@@ -75,6 +77,8 @@
       );
     } catch (err: any) {
       error = err;
+    } finally {
+      loading = false;
     }
   });
 </script>
@@ -86,22 +90,20 @@
     align-items: center;
   }
   .merge {
-    background-color: var(--color-primary-3);
-    color: var(--color-primary-6);
+    border: 1px solid var(--color-border-merged);
+    background-color: var(--color-fill-merged);
   }
   .positive-review {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-3);
+    border: 1px solid var(--color-fill-diff-green);
+    background-color: var(--color-fill-diff-green-light);
   }
   .comment-review {
-    background-color: var(--color-foreground-1);
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-fill-float);
   }
   .negative-review {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-3);
-  }
-  .authorship-box {
-    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-fill-diff-red);
+    background-color: var(--color-fill-diff-red-light);
   }
 
   .diff-error {
@@ -110,97 +112,105 @@
   .revision {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    border-radius: var(--border-radius-small);
   }
   .revision-box {
-    border: 1px solid var(--color-foreground-3);
     border-radius: var(--border-radius-small);
   }
   .revision-header {
-    height: 3rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
     background: none;
-    padding: 1rem;
-    padding-right: 1.5rem;
+    padding: 0.5rem;
+    font-size: var(--font-size-small);
+    height: 2.5rem;
   }
   .revision-name {
     display: flex;
-    user-select: none;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: var(--font-weight-medium);
   }
   .revision-data {
-    gap: 0.5rem;
+    gap: 0.75rem;
     display: flex;
     align-items: center;
-  }
-  .expand-button {
-    margin-right: 0.5rem;
-    user-select: none;
-    cursor: pointer;
+    margin-left: auto;
+    color: var(--color-foreground-dim);
   }
   .revision-description {
     margin-bottom: 1rem;
+    margin-left: 2rem;
+  }
+  .compare-dropdown-item {
+    font-weight: var(--font-weight-regular);
+  }
+  .patch-header {
+    background-color: var(--color-fill-float);
+    border-bottom: 1px solid var(--color-fill-separator);
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+  }
+  .authorship-header {
+    display: flex;
+    align-items: center;
+    min-height: 3.5rem;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    font-size: var(--font-size-small);
+  }
+  .timestamp {
+    margin-left: auto;
+    font-size: var(--font-size-small);
+    color: var(--color-fill-gray);
   }
   .commits {
-    margin-top: 0.5rem;
-  }
-  .commit-event {
-    color: var(--color-foreground-6);
-    padding: 0.5rem 0.5rem 0.5rem 0.25rem;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    font-family: var(--font-family-monospace);
+    flex-direction: column;
+    font-size: var(--font-size-small);
+    border-left: 1px solid var(--color-fill-separator);
+    margin-left: 1rem;
+    gap: 0.5rem;
+    padding: 1rem 1rem;
   }
-  .commit-event:last-child {
-    padding: 0.5rem 0.5rem 0 0.25rem;
+
+  .expanded {
+    box-shadow: 0 0 0 1px var(--color-border-hint);
   }
-  .commit-event span {
-    display: flex;
-    gap: 0.25rem;
-    align-items: center;
+  .commit-dot {
+    border-radius: var(--border-radius-round);
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    top: 0.5rem;
+    left: -18.5px;
+    background-color: var(--color-fill-separator);
   }
-  .commit-pointer {
-    color: var(--color-foreground-5);
-    user-select: none;
-  }
-  .commit-separator {
-    width: 0;
-    height: 1rem;
-    color: var(--color-foreground-5);
-    position: relative;
-    top: -1.15rem;
-    left: -1.155rem;
-    user-select: none;
-  }
-  .commit-summary:hover {
-    text-decoration: underline;
+  .connector {
+    width: 1px;
+    height: 1.5rem;
+    margin-left: 1rem;
+    background-color: var(--color-fill-separator);
   }
 </style>
 
-<div class="revision">
-  <div class="revision-box">
+<div class="revision" style:margin-bottom={expanded ? "2rem" : "0.5rem"}>
+  <div class="revision-box" class:expanded>
     <div class="revision-header">
       <div class="revision-name">
-        <div class="expand-button">
-          <Icon
-            name={expanded ? "chevron-down" : "chevron-right"}
-            on:click={() => (expanded = !expanded)} />
-        </div>
+        <ExpandButton bind:expanded />
         <span>
-          <span style:color="var(--color-foreground-6)">Revision</span>
-          {utils.formatObjectId(revisionId)}
+          Revision
+          <span class="global-hash">{utils.formatObjectId(revisionId)}</span>
         </span>
-        <Clipboard text={revisionId} small />
       </div>
-      <div class="txt-small" />
       <div class="revision-data">
-        <span class="layout-desktop txt-small">
-          {utils.formatTimestamp(revisionTimestamp)}
-        </span>
+        {utils.formatTimestamp(revisionTimestamp)}
+        {#if loading}
+          <Loading small />
+        {/if}
         {#if response?.diff.stats}
           {@const { insertions, deletions } = response.diff.stats}
           <DiffStatBadge {insertions} {deletions} />
@@ -221,112 +231,145 @@
                 toCommit: revisionOid,
               },
             }}>
-            <Icon name="diff" />
+            <IconButton>
+              <IconSmall name="diff" />
+            </IconButton>
+          </Link>
+        {:else}
+          <Link
+            title="Compare {utils.formatObjectId(
+              projectHead,
+            )}..{utils.formatObjectId(revisionOid)}"
+            route={{
+              resource: "project.patch",
+              project: projectId,
+              node: baseUrl,
+              patch: patchId,
+              view: {
+                name: "diff",
+                fromCommit: projectHead,
+                toCommit: revisionOid,
+              },
+            }}>
+            <IconButton>
+              <IconSmall name="diff" />
+            </IconButton>
           </Link>
         {/if}
-        <Floating>
-          <svelte:fragment slot="toggle">
-            <Icon name="ellipsis" />
-          </svelte:fragment>
-          <svelte:fragment slot="modal">
-            <Dropdown
-              items={previousRevOid && previousRevId
-                ? [projectHead, previousRevOid]
-                : [projectHead]}>
-              <svelte:fragment slot="item" let:item>
-                <Link
-                  title="{item}..{revisionOid}"
-                  route={{
-                    resource: "project.patch",
-                    project: projectId,
-                    node: baseUrl,
-                    patch: patchId,
-                    view: {
-                      name: "diff",
-                      fromCommit: item,
-                      toCommit: revisionOid,
-                    },
-                  }}>
-                  {#if item === projectHead}
-                    <DropdownItem selected={false} size="small">
-                      Compare to {projectDefaultBranch} ({utils.formatObjectId(
-                        projectHead,
-                      )})
-                    </DropdownItem>
-                  {:else if previousRevId}
-                    <DropdownItem selected={false} size="small">
-                      Compare to previous revision ({utils.formatObjectId(
-                        previousRevId,
-                      )})
-                    </DropdownItem>
-                  {/if}
-                </Link>
-              </svelte:fragment>
-            </Dropdown>
-          </svelte:fragment>
-        </Floating>
+        <Popover
+          popoverPadding="0"
+          popoverPositionTop="2.5rem"
+          popoverBorderRadius="var(--border-radius-small)">
+          <IconButton slot="toggle" title="toggle-context-menu">
+            <IconSmall name="more" />
+          </IconButton>
+          <DropdownList
+            slot="popover"
+            items={previousRevOid && previousRevId
+              ? [projectHead, previousRevOid]
+              : [projectHead]}>
+            <Link
+              let:item
+              slot="item"
+              title="{item}..{revisionOid}"
+              route={{
+                resource: "project.patch",
+                project: projectId,
+                node: baseUrl,
+                patch: patchId,
+                view: {
+                  name: "diff",
+                  fromCommit: item,
+                  toCommit: revisionOid,
+                },
+              }}>
+              {#if item === projectHead}
+                <DropdownListItem selected={false}>
+                  <span class="compare-dropdown-item">
+                    Compare to {projectDefaultBranch}:
+                    <span
+                      style:color="var(--color-fill-secondary)"
+                      style:font-weight="var(--font-weight-bold)"
+                      style:font-family="var(--font-family-monospace)">
+                      {utils.formatObjectId(projectHead)}
+                    </span>
+                  </span>
+                </DropdownListItem>
+              {:else if previousRevId}
+                <DropdownListItem selected={false}>
+                  <span class="compare-dropdown-item">
+                    Compare to previous revision: <span
+                      style:color="var(--color-fill-secondary)"
+                      style:font-weight="var(--font-weight-bold)"
+                      style:font-family="var(--font-family-monospace)">
+                      {utils.formatObjectId(previousRevId)}
+                    </span>
+                  </span>
+                </DropdownListItem>
+              {/if}
+            </Link>
+          </DropdownList>
+        </Popover>
       </div>
     </div>
     {#if expanded}
-      {@const caption =
-        patchId === revisionId
-          ? "opened this patch"
-          : `updated to ${utils.formatObjectId(revisionId)}`}
-      <div style:margin="0 1rem 1rem 2.5rem">
-        {#if revisionDescription && !first}
-          <div class="revision-description txt-small">
-            <Markdown
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              content={revisionDescription} />
+      <div>
+        <div class="patch-header">
+          <div
+            class="authorship-header"
+            style:border-top="1px solid var(--color-fill-separator)">
+            <div style:color="var(--color-fill-success)">
+              <IconSmall name="patch" />
+            </div>
+
+            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias}>
+            </NodeId>
+
+            {#if patchId === revisionId}
+              opened this patch
+            {:else}
+              updated to <span class="global-hash">
+                {utils.formatObjectId(revisionId)}
+              </span>
+            {/if}
+
+            <div
+              class="timestamp"
+              title={utils.absoluteTimestamp(revisionTimestamp)}>
+              {utils.formatTimestamp(revisionTimestamp)}
+            </div>
           </div>
-        {/if}
-        <div class="txt-tiny">
-          <Authorship
-            authorId={revisionAuthor.id}
-            authorAlias={revisionAuthor.alias}
-            timestamp={revisionTimestamp}>
-            {caption}
-          </Authorship>
-          {#if response?.commits}
-            <div class="commits txt-tiny">
-              {#each response.commits.reverse() as commit, i}
-                <div class="commit-event">
-                  <span>
-                    <span class="commit-pointer">╰─</span>
-                    <span class="commit-separator">
-                      {i === 0 ? "╎" : "│"}
-                    </span>
-                    <Avatar inline nodeId={revisionAuthor.id} />
-                    <Link
-                      route={{
-                        resource: "project.commit",
-                        project: projectId,
-                        node: baseUrl,
-                        commit: commit.id,
-                      }}>
-                      <div class="commit-summary" use:twemoji>
-                        <InlineMarkdown
-                          content={commit.summary}
-                          fontSize="tiny" />
-                      </div>
-                    </Link>
-                  </span>
-                  <span>
-                    {utils.formatCommit(commit.id)}
-                  </span>
-                </div>
-              {/each}
+          {#if revisionDescription && !first}
+            <div class="revision-description txt-small">
+              <Markdown
+                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+                content={revisionDescription} />
             </div>
           {/if}
         </div>
+        {#if loading}
+          <div style:height="3.5rem">
+            <Loading small />
+          </div>
+        {/if}
+        {#if response?.commits}
+          <div class="commits">
+            {#each response.commits.reverse() as commit}
+              <div style:position="relative">
+                <div class="commit-dot" />
+                <CobCommitTeaser {commit} {baseUrl} {projectId} />
+              </div>
+            {/each}
+          </div>
+        {/if}
       </div>
       {#if error}
         <div
           class="diff-error txt-monospace txt-small"
           style:border-radius="var(--border-radius-small">
           <ErrorMessage
-            message="Failed to load diff for this revision."
-            stackTrace={error.stack.toString()} />
+            message="Failed to load diff for this revision"
+            {error} />
         </div>
       {/if}
     {/if}
@@ -334,94 +377,72 @@
   {#if expanded}
     {#if timelines.length > 0}
       {#each timelines as element}
-        <div style:margin-left="1.5rem">
-          {#if element.type === "thread"}
-            <Thread
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              thread={element.inner}
-              on:react
-              on:reply />
-          {:else if element.type === "merge"}
-            <div
-              class="action merge layout-desktop txt-tiny"
-              style:padding="1rem">
-              <Authorship
-                authorId={element.inner.author.id}
-                authorAlias={element.inner.author.alias}
-                timestamp={element.timestamp}
-                authorAliasColor="--color-primary-5">
-                merged
+        {#if element.type === "thread"}
+          <div class="connector" />
+          <Thread
+            enableAttachments={false}
+            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+            thread={element.inner}
+            on:react
+            on:reply />
+        {:else if element.type === "merge"}
+          <div class="connector" />
+          <div class="action merge">
+            <div class="authorship-header">
+              <div style:color="var(--color-fill-primary)">
+                <IconSmall name="patch" />
+              </div>
+
+              <NodeId
+                nodeId={element.inner.author.id}
+                alias={element.inner.author.alias}>
+              </NodeId>
+
+              merged
+              <span class="global-hash">
                 {utils.formatCommit(element.inner.commit)}
-              </Authorship>
-            </div>
-            <div class="action merge layout-mobile txt-tiny">
-              <Authorship
-                authorId={element.inner.author.id}
-                authorAlias={element.inner.author.alias}
-                authorAliasColor="--color-primary-5">
-                merged
-                {utils.formatCommit(element.inner.commit)}
-              </Authorship>
-            </div>
-          {:else if element.type === "review"}
-            {@const [author, review] = element.inner}
-            {#if review.summary}
+              </span>
+
               <div
-                class="action"
-                class:comment-review={review.verdict === null}
-                class:positive-review={review.verdict === "accept"}
-                class:negative-review={review.verdict === "reject"}>
-                <!-- TODO: Empty array for reactions prop is a workaround
+                class="timestamp"
+                title={utils.absoluteTimestamp(revisionTimestamp)}>
+                {utils.formatTimestamp(revisionTimestamp)}
+              </div>
+            </div>
+          </div>
+        {:else if element.type === "review"}
+          {@const [author, review] = element.inner}
+          <div class="connector" />
+          <div
+            class="action"
+            class:comment-review={review.verdict === null}
+            class:positive-review={review.verdict === "accept"}
+            class:negative-review={review.verdict === "reject"}>
+            <!-- TODO: Empty array for reactions prop is a workaround
                   until review comments have reactions -->
-                <CommentComponent
-                  caption={formatVerdict(review.verdict)}
-                  authorId={author}
-                  authorAlias={review.author.alias}
-                  authorAliasColor={aliasColorForVerdict(review.verdict)}
-                  reactions={[]}
-                  timestamp={review.timestamp}
-                  rawPath={utils.getRawBasePath(
-                    projectId,
-                    baseUrl,
-                    projectHead,
-                  )}
-                  body={review.summary}
-                  on:react />
+            <CommentComponent
+              caption={formatVerdict(review.verdict)}
+              authorId={author}
+              authorAlias={review.author.alias}
+              reactions={[]}
+              timestamp={review.timestamp}
+              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+              body={review.summary ?? ""}
+              on:react>
+              <div slot="icon" style:color={verdictIconColor(review.verdict)}>
+                {#if review.verdict === "accept"}
+                  <IconSmall name="checkmark" />
+                {:else if review.verdict === "reject"}
+                  <IconSmall name="cross" />
+                {:else}
+                  <IconSmall name="chat" />
+                {/if}
               </div>
-            {:else}
-              <div
-                class="action layout-desktop-flex txt-tiny"
-                class:comment-review={review.verdict === null}
-                class:positive-review={review.verdict === "accept"}
-                class:negative-review={review.verdict === "reject"}>
-                <div class="authorship-box">
-                  <Authorship
-                    authorId={author}
-                    authorAlias={review.author.alias}
-                    authorAliasColor={aliasColorForVerdict(review.verdict)}
-                    timestamp={element.timestamp}>
-                    {formatVerdict(review.verdict)}
-                  </Authorship>
-                </div>
-              </div>
-              <div
-                class="action layout-mobile-flex txt-tiny"
-                class:comment-review={review.verdict === null}
-                class:positive-review={review.verdict === "accept"}
-                class:negative-review={review.verdict === "reject"}>
-                <div class="authorship-box">
-                  <Authorship
-                    authorId={author}
-                    authorAlias={review.author.alias}
-                    authorAliasColor={aliasColorForVerdict(review.verdict)}>
-                    {formatVerdict(review.verdict)}
-                  </Authorship>
-                </div>
-              </div>
-            {/if}
-          {/if}
-        </div>
+            </CommentComponent>
+          </div>
+        {/if}
       {/each}
     {/if}
+    <slot />
   {/if}
 </div>

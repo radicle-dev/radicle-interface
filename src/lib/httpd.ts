@@ -7,6 +7,7 @@ import { config } from "@app/lib/config";
 export interface Session {
   id: string;
   publicKey: string;
+  alias: string;
 }
 
 export type HttpdState =
@@ -55,9 +56,14 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
+      const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
-        session: { id: params.id, publicKey: params.publicKey },
+        session: {
+          id: params.id,
+          publicKey: params.publicKey,
+          alias: sess.alias,
+        },
       });
       return true;
     } catch (error) {

@@ -64,22 +64,22 @@
     margin-left: 1rem;
   }
   .changeset-summary .additions {
-    color: var(--color-positive-6);
+    color: var(--color-foreground-success);
   }
   .changeset-summary .deletions {
-    color: var(--color-negative-6);
+    color: var(--color-foreground-red);
   }
 </style>
 
 <div class="changeset-summary">
   <span>{diffDescription(diff)}</span>
   with
-  <span class="additions">
+  <span class:additions={diff.stats.insertions > 0}>
     {diff.stats.insertions}
     {pluralize("insertion", diff.stats.insertions)}
   </span>
   and
-  <span class="deletions">
+  <span class:deletions={diff.stats.deletions > 0}>
     {diff.stats.deletions}
     {pluralize("deletion", diff.stats.deletions)}
   </span>
