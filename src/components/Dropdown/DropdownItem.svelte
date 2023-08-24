@@ -19,7 +19,11 @@
   }
   .item:hover,
   .selected {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
+  }
+
+  .item:hover.selected {
+    background-color: var(--color-fill-ghost-hover);
   }
 </style>
 

@@ -43,13 +43,14 @@
 <style>
   .modal {
     padding: 2rem 3rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-regular);
     font-family: var(--font-family-sans-serif);
-    background: var(--color-background);
-    box-shadow: var(--elevation-high);
+    background: var(--color-background-float);
+    box-shadow: var(--elevation-low);
     min-width: 480px;
     max-width: 760px;
     text-align: center;
+    border: 1px solid var(--color-border-hint);
   }
   .title {
     color: var(--color-foreground);

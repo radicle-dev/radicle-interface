@@ -32,8 +32,9 @@
 <style>
   .dropdown {
     align-items: center;
-    background: var(--color-background-1);
-    border-radius: var(--border-radius);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-regular);
     box-shadow: var(--elevation-low);
     color: var(--color-foreground-6);
     position: absolute;
@@ -71,8 +72,8 @@
     color: var(--color-foreground-6);
   }
   .rounded:last-of-type:hover {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius-regular);
+    border-bottom-right-radius: var(--border-radius-regular);
   }
   .stopped {
     color: var(--color-foreground-5);

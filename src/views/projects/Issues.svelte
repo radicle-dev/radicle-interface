@@ -73,11 +73,12 @@
     font-size: var(--font-size-small);
   }
   .issues-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .section-header {
     display: flex;
@@ -165,7 +166,10 @@
       {/if}
 
       {#if showMoreButton}
-        <Button variant="foreground" on:click={() => loadIssues(state)}>
+        <Button
+          size="small"
+          variant="foreground"
+          on:click={() => loadIssues(state)}>
           More
         </Button>
       {/if}

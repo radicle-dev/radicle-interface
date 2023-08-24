@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   export type AuthorAliasColor =
     | "--color-primary-5"
-    | "--color-foreground-5"
+    | "--color-fill-gray"
     | "--color-positive-5"
     | "--color-negative-5"
     | undefined;
@@ -13,7 +13,7 @@
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
-  export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
+  export let authorAliasColor: AuthorAliasColor = "--color-fill-gray";
   export let caption: string | undefined = undefined;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
@@ -34,6 +34,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: var(--font-family-monospace);
+    color: var(--color-fill-secondary);
+    font-weight: var(--font-weight-bold);
   }
   .body {
     white-space: nowrap;

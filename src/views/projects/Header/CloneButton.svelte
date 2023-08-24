@@ -24,20 +24,22 @@
 
 <style>
   .clone-button {
-    background-color: var(--color-caution-3);
+    background-color: var(--color-fill-primary);
     border-radius: var(--border-radius-small);
-    color: var(--color-caution-6);
-    font-family: var(--font-family-monospace);
+    color: var(--color-foreground-match-background);
+    font-family: var(--font-family-sans-serif);
+    font-weight: var(--font-weight-medium);
     min-width: max-content;
     height: 2rem;
     line-height: initial;
     padding: 0.5rem 0.75rem;
   }
   .clone-button:hover {
-    background-color: var(--color-caution-4);
+    background-color: var(--color-fill-primary-hover);
   }
   .dropdown {
-    background-color: var(--color-background-1);
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
     border-radius: var(--border-radius-small);
     box-shadow: var(--elevation-low);
     margin-top: 0.5rem;

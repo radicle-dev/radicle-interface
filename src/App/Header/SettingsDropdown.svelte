@@ -24,8 +24,9 @@
     top: 5rem;
     right: 1.5rem;
     width: 16.5rem;
-    background: var(--color-background-1);
-    border-radius: var(--border-radius);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-regular);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,8 +34,8 @@
     box-shadow: var(--elevation-low);
   }
   .dropdown:hover :last-child {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius-regular);
+    border-bottom-right-radius: var(--border-radius-regular);
   }
   .item {
     width: 100%;
@@ -69,8 +70,8 @@
     cursor: pointer;
   }
   .font:last-of-type {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius-regular);
+    border-bottom-right-radius: var(--border-radius-regular);
   }
   .selector:hover {
     background-color: var(--color-foreground-3);

@@ -59,7 +59,7 @@
       case "reject":
         return "--color-negative-5";
       default:
-        return "--color-foreground-5";
+        return "--color-fill-gray";
     }
   }
 

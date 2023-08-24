@@ -70,13 +70,13 @@
       revision,
     }}>
     <SquareButton active={historyLinkActive}>
-      <span class="txt-bold">{tree.stats.commits}</span>
+      <span>{tree.stats.commits}</span>
       {pluralize("commit", tree.stats.commits)}
     </SquareButton>
   </Link>
 
   <SquareButton hoverable={false}>
-    <span class="txt-bold">{tree.stats.contributors}</span>
+    <span>{tree.stats.contributors}</span>
     {pluralize("contributor", tree.stats.contributors)}
   </SquareButton>
 </div>

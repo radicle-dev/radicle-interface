@@ -37,10 +37,10 @@
   .patch-teaser {
     display: flex;
     padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-float);
   }
   .patch-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .meta {
     display: flex;
@@ -96,17 +96,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .hash {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fill-secondary);
+  }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-fill-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-fill-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   @media (max-width: 960px) {
     .labels {
@@ -152,7 +158,7 @@
     </div>
     <div class="summary">
       <span class="meta id">
-        {formatObjectId(patch.id)}
+        <span class="hash">{formatObjectId(patch.id)}</span>
         {patch.revisions.length > 1 ? "updated" : "opened"}
         {formatTimestamp(latestRevision.timestamp)} by
         <Authorship

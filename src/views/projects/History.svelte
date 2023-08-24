@@ -91,11 +91,12 @@
   }
   .group {
     margin-bottom: 2rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .teaser-wrapper:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .more {
     margin-top: 2rem;
@@ -134,7 +135,9 @@
       {#if loading}
         <Loading small={page !== 0} center />
       {:else if allCommitHeaders.length < totalCommitCount}
-        <Button variant="foreground" on:click={loadMore}>More</Button>
+        <Button variant="foreground" size="small" on:click={loadMore}>
+          More
+        </Button>
       {/if}
     </div>
   </div>

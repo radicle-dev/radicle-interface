@@ -33,17 +33,28 @@
     justify-content: center;
     font-family: var(--font-family-monospace);
   }
+  .title {
+    display: flex;
+    gap: 0.5rem;
+    font-family: var(--font-family-sans-serif);
+    font-weight: var(--font-weight-medium);
+  }
   .selector .peer {
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
+    background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-small);
+    font-weight: var(--font-weight-medium);
+  }
+  .dropdown-item {
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-medium);
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;
   }
   .peer:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost-hover);
   }
   .prefix {
     display: inline-block;
@@ -62,9 +73,10 @@
   .avatar-id {
     display: flex;
     gap: 0.25rem;
+    color: var(--color-fill-secondary);
   }
   .alias {
-    color: var(--color-secondary-6);
+    color: var(--color-foreground-dim);
   }
 </style>
 
@@ -83,11 +95,13 @@
           {/if}
         </span>
         {#if selectedPeer.delegate}
-          <Badge variant="primary">delegate</Badge>
+          <Badge variant="secondary">delegate</Badge>
         {/if}
       {:else}
-        <Icon size="small" name="fork" />{peers.length}
-        {pluralize("remote", peers.length)}
+        <div class="title">
+          <Icon size="small" name="fork" />{peers.length}
+          {pluralize("remote", peers.length)}
+        </div>
       {/if}
     </div>
   </div>
@@ -119,7 +133,7 @@
                 </div>
               </span>
               {#if item.remote.delegate}
-                <Badge variant="primary">delegate</Badge>
+                <Badge variant="secondary">delegate</Badge>
               {/if}
             </DropdownItem>
           </Link>

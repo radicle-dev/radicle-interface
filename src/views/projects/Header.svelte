@@ -56,7 +56,7 @@
       <svelte:fragment slot="icon">
         <Icon size="small" name="issue" />
       </svelte:fragment>
-      <span class="txt-bold">{project.issues.open}</span>
+      <span>{project.issues.open}</span>
       {pluralize("issue", project.issues.open)}
     </SquareButton>
   </Link>
@@ -71,11 +71,17 @@
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>
-      <span class="txt-bold">{project.patches.open}</span>
+      <span>{project.patches.open}</span>
       {pluralize("patch", project.patches.open)}
     </SquareButton>
   </Link>
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
+  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
+    <svelte:fragment slot="icon">
+      <Icon size="small" name="network" />
+    </svelte:fragment>
+    <span>{project.trackings}</span>
+    nodes
+  </SquareButton>
 
   <Link
     route={{
@@ -89,11 +95,6 @@
       {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
     </SquareButton>
   </Link>
-  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
-    <svelte:fragment slot="icon">
-      <Icon size="small" name="network" />
-    </svelte:fragment>
-    <span class="txt-bold">{project.trackings}</span>
-    nodes
-  </SquareButton>
+
+  <CloneButton {baseUrl} id={project.id} name={project.name} />
 </div>

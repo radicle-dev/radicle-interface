@@ -74,9 +74,9 @@
     height: var(--button-regular-height);
   }
   input {
-    background: transparent;
-    border-radius: var(--border-radius-round);
-    color: var(--color-foreground);
+    background: var(--color-background-dip);
+    border-radius: var(--border-radius-small);
+    color: var(--color-foreground-contrast);
     font-size: inherit;
     font-family: var(--font-family-sans-serif);
     height: var(--button-regular-height);
@@ -87,7 +87,7 @@
     width: 100%;
   }
   input::placeholder {
-    color: var(--color-secondary);
+    color: var(--color-foreground-dim);
     opacity: 1 !important;
   }
   input[disabled] {
@@ -95,7 +95,7 @@
     cursor: not-allowed;
   }
   .regular {
-    border: 1px solid var(--color-secondary);
+    border: 1px solid var(--color-border-hint);
     padding: 1rem 1.5rem;
   }
   .form,

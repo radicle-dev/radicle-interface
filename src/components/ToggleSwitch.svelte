@@ -13,7 +13,7 @@
   }
 
   .toggle label {
-    background-color: var(--color-background-1);
+    background-color: var(--color-background-dip);
     border: 1px solid var(--color-foreground-6);
     border-radius: var(--border-radius-round);
     cursor: pointer;
@@ -25,7 +25,7 @@
   }
 
   .toggle label::after {
-    background-color: var(--color-foreground-6);
+    background-color: var(--color-fill-gray);
     border-radius: var(--border-radius-round);
     content: " ";
     cursor: pointer;
@@ -39,12 +39,12 @@
   }
 
   .toggle input[type="checkbox"]:checked ~ label {
-    background-color: var(--color-background-1);
-    border-color: var(--color-foreground-6);
+    background-color: var(--color-background-dip);
+    border-color: var(--color-border-default);
   }
 
   .toggle input[type="checkbox"]:checked ~ label::after {
-    background-color: var(--color-foreground-6);
+    background-color: var(--color-fill-gray);
     transform: translateX(15px);
   }
 </style>

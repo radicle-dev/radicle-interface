@@ -13,11 +13,12 @@
     align-items: center;
     height: 2rem;
     padding: 0 0.75rem;
-    background: var(--color-foreground-1);
+    background: var(--color-fill-ghost);
     border: none;
     border-radius: var(--border-radius-small);
     color: var(--color-foreground);
-    font-family: var(--font-family-monospace);
+    font-family: var(--font-family-sans-serif);
+    font-weight: var(--font-weight-medium);
     font-size: var(--font-size-tiny);
     white-space: nowrap;
     gap: 0.5rem;
@@ -33,32 +34,35 @@
   }
 
   .active {
-    color: var(--color-background);
-    background: var(--color-foreground);
-    background-color: var(--color-foreground);
+    color: var(--color-foreground-match-background);
+    background: var(--fill-light);
+    background-color: var(--color-fill-secondary);
   }
 
   .active:hover {
-    background-color: var(--color-foreground);
+    background-color: var(--fill-light-hover);
   }
 
   .hoverable:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost-hover);
   }
 
   .active.hoverable:hover {
-    background-color: var(--color-foreground);
+    background-color: var(--color-fill-secondary-hover);
   }
 
   .disabled {
     cursor: not-allowed;
-    color: var(--color-foreground-5);
+    color: var(--color-foreground);
   }
   .disabled.active {
-    color: var(--color-background);
+    color: var(--color-foreground-match-background);
   }
   .disabled:hover {
-    background: var(--color-foreground-1);
+    background: var(--color-fill-ghost);
+  }
+  .disabled:hover.active {
+    background: var(--color-fill-secondary);
   }
 </style>
 

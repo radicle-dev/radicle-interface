@@ -18,12 +18,17 @@
   }
 
   .file:hover {
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-fill-ghost);
   }
 
   .file.active {
-    color: var(--color-foreground) !important;
-    background-color: var(--color-foreground-1);
+    color: var(--color-foreground-match-background) !important;
+    background-color: var(--color-fill-secondary);
+  }
+
+  .file.active:hover {
+    color: var(--color-foreground-match-background) !important;
+    background-color: var(--color-fill-secondary-hover);
   }
 
   .name {
@@ -35,10 +40,13 @@
     max-width: 24ch;
   }
   .icon-container {
-    color: var(--color-foreground-5);
+    color: var(--color-fill-secondary);
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .active .icon-container {
+    color: var(--color-foreground-match-background);
   }
 </style>
 

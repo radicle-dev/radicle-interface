@@ -44,14 +44,14 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   {
     await page.getByRole("button", { name: "Clone" }).click();
     await page.getByText("rad clone").hover();
-    await page.getByText("rad clone").locator(".clipboard").first().click();
+    await page.getByText("rad clone").click();
     await expectClipboard(`rad clone ${sourceBrowsingRid}`, page);
   }
 
   // `git clone` URL.
   {
     await page.getByText("git clone").hover();
-    await page.getByText("git clone").locator(".clipboard").first().click();
+    await page.getByText("git clone").click();
     await expectClipboard(
       `git clone http://127.0.0.1/${sourceBrowsingRid.replace(
         "rad:",

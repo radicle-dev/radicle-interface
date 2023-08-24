@@ -18,8 +18,8 @@
 <style>
   button {
     background: transparent;
-    border-radius: var(--border-radius-round);
-    border: 1px solid var(--color-foreground);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-border-hint);
     cursor: pointer;
     font-family: var(--font-family-sans-serif);
     font-feature-settings: "ss01", "ss02", "cv01", "cv03";
@@ -96,13 +96,13 @@
   .outline {
     color: var(--color-foreground);
     border: none;
-    border: 1px solid transparent;
+    border: 1px solid var(--color-border-hint);
   }
   .outline[disabled] {
     color: var(--color-foreground-5);
   }
   .outline:not([disabled]):hover {
-    border: 1px solid var(--color-foreground);
+    border: 1px solid var(--color-border-focus);
     color: var(--color-foreground);
   }
 

@@ -354,13 +354,12 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;
   }
   .commit-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
     margin-top: 1rem;
   }
@@ -385,16 +384,16 @@
     gap: 0.5rem;
   }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-fill-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-fill-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   .metadata-section-header {
     font-size: var(--font-size-small);

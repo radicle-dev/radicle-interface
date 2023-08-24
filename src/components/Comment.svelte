@@ -15,7 +15,7 @@
   export let id: string | undefined = undefined;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
-  export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
+  export let authorAliasColor: AuthorAliasColor = "--color-fill-gray";
   export let timestamp: number;
   export let body: string;
   export let reactions: [string, string][];

@@ -21,8 +21,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-foreground-3);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-border-default);
     padding: 1rem;
   }
   .title {

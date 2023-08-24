@@ -24,25 +24,28 @@
     line-height: initial;
 
     font-family: var(--font-family-monospace);
-    color: var(--color-secondary);
   }
   .branch-name {
     height: 2rem;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-secondary-2);
+    background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
+    font-weight: var(--font-weight-bold);
   }
   .branch-name.not-allowed {
     cursor: not-allowed;
   }
   .branch-name:hover:not(.not-allowed) {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost-hover);
   }
   .commit-id {
+    color: var(--color-fill-secondary);
     height: 2rem;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-secondary-1);
     border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
+    background-color: var(--color-background-dip);
+    border: 1px solid var(--color-border-hint);
+    font-weight: var(--font-weight-bold);
   }
   .commit-id.standalone {
     border-radius: var(--border-radius-small);

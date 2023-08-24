@@ -25,10 +25,10 @@
   .issue-teaser {
     display: flex;
     padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    background-color: var(--color-background-float);
   }
   .issue-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .subtitle {
     color: var(--color-foreground-6);
@@ -69,7 +69,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
+  .hash {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fill-secondary);
+  }
   .right {
     align-self: center;
     justify-self: center;
@@ -81,10 +86,10 @@
     margin: 0 1rem 0 1.25rem;
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .closed {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
   }
 
   @media (max-width: 960px) {
@@ -128,9 +133,8 @@
       </span>
     </div>
     <div class="summary subtitle">
-      {formatObjectId(issue.id)} opened {formatTimestamp(
-        issue.discussion[0].timestamp,
-      )} by
+      <span class="hash">{formatObjectId(issue.id)}</span>
+      opened {formatTimestamp(issue.discussion[0].timestamp)} by
       <Authorship authorId={issue.author.id} authorAlias={issue.author.alias} />
     </div>
   </div>

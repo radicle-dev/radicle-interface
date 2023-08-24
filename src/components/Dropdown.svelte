@@ -7,7 +7,8 @@
 <style>
   .dropdown {
     align-items: center;
-    background-color: var(--color-background-1);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
     margin-top: 0.5rem;
     padding: 0.5rem 0;
     position: absolute;

@@ -34,8 +34,8 @@
   .toggle {
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: var(--border-radius-round);
-    border: 1px solid var(--color-foreground);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-border-hint);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,6 +46,7 @@
   .toggle:hover {
     background-color: var(--color-foreground);
     color: var(--color-background);
+    border: 1px solid var(--color-border-focus);
   }
   .logo {
     height: var(--button-regular-height);
@@ -73,7 +74,7 @@
     <Floating>
       <div slot="toggle">
         <button class="toggle" aria-label="Settings" name="Settings">
-          <Icon name="gear" />
+          <Icon name="brush" />
         </button>
       </div>
       <SettingsDropdown slot="modal" />

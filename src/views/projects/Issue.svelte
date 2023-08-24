@@ -290,7 +290,6 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;
@@ -320,10 +319,10 @@
     margin: 1rem 0;
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .closed {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
   }
   .reaction-selector {
     position: absolute;

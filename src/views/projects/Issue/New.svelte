@@ -91,7 +91,6 @@
     display: flex;
     flex-direction: column;
     gap: 4rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;

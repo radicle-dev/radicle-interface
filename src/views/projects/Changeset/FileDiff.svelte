@@ -199,7 +199,7 @@
 
 <style>
   .wrapper {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--border-radius-small);
     margin-bottom: 2rem;
     line-height: 1.5rem;
@@ -215,7 +215,7 @@
   }
   main {
     font-size: var(--font-size-small);
-    border-top: 1px dashed var(--color-foreground-4);
+    border-top: 1px solid var(--color-border-default);
     background-color: var(--color-foreground-1);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
     overflow-x: auto;
@@ -250,11 +250,11 @@
     vertical-align: top;
   }
   .diff-line.type-addition > * {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
     background-color: var(--color-positive-2);
   }
   .diff-line.type-deletion > * {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
     background-color: var(--color-negative-2);
   }
   .diff-line.selected > * {
@@ -262,11 +262,11 @@
     background-color: var(--color-foreground-4);
   }
   .diff-line.selected.type-addition > * {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
     background-color: var(--color-positive-4);
   }
   .diff-line.selected.type-deletion > * {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
     background-color: var(--color-negative-4);
   }
   .diff-line.hunk-header.selected {
@@ -291,7 +291,7 @@
     width: 4px;
   }
   .diff-line.selected .selection-indicator {
-    background: var(--color-primary);
+    background: var(--color-fill-yellow);
   }
   .diff-line-number.right {
     padding: 0 0.75rem 0 0.5rem;

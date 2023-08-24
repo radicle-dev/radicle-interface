@@ -8,6 +8,7 @@
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
+  import Icon from "@app/components/Icon.svelte";
   import Readme from "./Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
@@ -83,7 +84,7 @@
     padding: 0 0.5rem 0 1rem;
     color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
-    border-color: var(--color-foreground-3);
+    border-color: var(--color-border-hint);
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
@@ -97,6 +98,7 @@
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    gap: 0.5rem;
   }
 
   header .file-name {
@@ -109,9 +111,13 @@
   }
 
   .last-commit {
-    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    height: 2rem;
+    font-family: var(--font-family-monospace);
     color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
+    background-color: var(--color-fill-ghost);
     font-size: var(--font-size-tiny);
     border-radius: var(--border-radius-small);
     overflow-x: hidden;
@@ -122,10 +128,7 @@
     font-weight: var(--font-weight-bold);
     font-family: var(--font-family-monospace);
     margin-right: 0.25rem;
-  }
-
-  .toggle {
-    margin-right: 0.5rem;
+    color: var(--color-fill-secondary);
   }
 
   .code :global(.line-number) {
@@ -153,10 +156,11 @@
     line-height: 22px; /* This seems to be the line-height of a pre code block */
   }
   .code :global(.highlight) {
-    background-color: var(--color-caution-3);
+    background-color: var(--color-fill-yellow);
+    color: var(--color-foreground-black);
   }
   .code :global(.highlight td a) {
-    color: var(--color-foreground);
+    color: var(--color-foreground-black);
   }
 
   .code :global(.line-content) {
@@ -177,11 +181,11 @@
     position: relative;
     display: flex;
     overflow-x: auto;
-    border: 1px solid var(--color-foreground-3);
-    border-top-style: dashed;
+    border: 1px solid var(--color-border-hint);
+    border-top-style: solid;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
-    background: var(--color-background-1);
+    background: var(--color-background-float);
   }
 
   .binary {
@@ -233,22 +237,26 @@
         <span>{blob.name}</span>
       </span>
       <div class="right">
-        {#if isMarkdown}
-          <div title="Toggle render method" class="toggle">
-            <SquareButton clickable on:click={toggleMarkdown}>
-              {showMarkdown ? "Plain" : "Markdown"}
-            </SquareButton>
-          </div>
-        {/if}
-        <a href="{rawPath}/{blob.path}" class="toggle">
-          <SquareButton clickable>Raw</SquareButton>
-        </a>
         <div class="last-commit" title={lastCommit.author.name} use:twemoji>
           <span class="hash">
             {lastCommit.id.slice(0, 7)}
           </span>
           {lastCommit.summary}
         </div>
+        {#if isMarkdown}
+          <div title="Toggle render method">
+            <SquareButton active clickable on:click={toggleMarkdown}>
+              {showMarkdown ? "Plain" : "Markdown"}
+            </SquareButton>
+          </div>
+        {/if}
+        <a href="{rawPath}/{blob.path}">
+          <SquareButton clickable active>
+            <span style="display: flex; gap: 0.25rem;">
+              Raw <Icon size="small" name="arrow-box-up-right" />
+            </span>
+          </SquareButton>
+        </a>
       </div>
     </div>
   </header>

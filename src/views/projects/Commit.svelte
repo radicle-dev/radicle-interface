@@ -23,8 +23,8 @@
   .header {
     padding: 1rem;
     margin-bottom: 1.5rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-foreground-3);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-border-default);
   }
   .summary {
     display: flex;
@@ -39,7 +39,7 @@
   }
   .sha1 {
     align-items: center;
-    color: var(--color-foreground-5);
+    color: var(--color-fill-secondary);
     font-size: var(--font-size-small);
   }
 
