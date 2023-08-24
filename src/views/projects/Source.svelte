@@ -135,16 +135,16 @@
 </style>
 
 <Layout {baseUrl} {project} {peer} activeTab="source">
-  <Header
-    node={baseUrl}
-    {project}
-    peers={peersWithRoute}
-    branches={branchesWithRoute}
-    {revision}
-    {tree}
-    historyLinkActive={false} />
+  <svelte:fragment slot="subheader">
+    <Header
+      node={baseUrl}
+      {project}
+      peers={peersWithRoute}
+      branches={branchesWithRoute}
+      {revision}
+      {tree}
+      historyLinkActive={false} />
 
-  <main>
     <!-- Mobile navigation -->
     {#if tree.entries.length > 0}
       <nav class="layout-mobile">
@@ -158,61 +158,61 @@
         </Button>
       </nav>
     {/if}
+  </svelte:fragment>
 
-    <div class="container center-content">
-      {#if tree.entries.length > 0}
-        <div class="column-left" class:column-left-visible={mobileFileTree}>
-          <div class="source-tree sticky">
-            <TreeComponent
-              projectId={project.id}
-              {revision}
-              {baseUrl}
-              {fetchTree}
-              {path}
-              {peer}
-              {tree}
-              on:select={() => {
-                // Close mobile tree if user navigates to other file.
-                mobileFileTree = false;
-              }} />
-          </div>
+  <div class="container center-content">
+    {#if tree.entries.length > 0}
+      <div class="column-left" class:column-left-visible={mobileFileTree}>
+        <div class="source-tree sticky">
+          <TreeComponent
+            projectId={project.id}
+            {revision}
+            {baseUrl}
+            {fetchTree}
+            {path}
+            {peer}
+            {tree}
+            on:select={() => {
+              // Close mobile tree if user navigates to other file.
+              mobileFileTree = false;
+            }} />
         </div>
-        <div class="column-right">
-          {#if blobResult.ok}
-            <BlobComponent
-              {baseUrl}
-              projectId={project.id}
-              {peer}
-              {revision}
-              {path}
-              blob={blobResult.blob}
-              highlighted={blobResult.highlighted}
-              rawPath={utils.getRawBasePath(
-                project.id,
-                baseUrl,
-                tree.lastCommit.id,
-              )} />
-          {:else}
-            <Placeholder emoji="🍂">
-              <span slot="title">
-                <div class="txt-monospace">{blobResult.error.path}</div>
-              </span>
-              <span slot="body">
-                {blobResult.error.message}
-              </span>
-            </Placeholder>
-          {/if}
-        </div>
-      {:else}
-        <div class="placeholder">
-          <Placeholder emoji="👀">
-            <span slot="title">Nothing to show</span>
+      </div>
+      <div class="column-right">
+        {#if blobResult.ok}
+          <BlobComponent
+            {baseUrl}
+            projectId={project.id}
+            {peer}
+            {revision}
+            {path}
+            blob={blobResult.blob}
+            highlighted={blobResult.highlighted}
+            rawPath={utils.getRawBasePath(
+              project.id,
+              baseUrl,
+              tree.lastCommit.id,
+            )} />
+        {:else}
+          <Placeholder emoji="🍂">
+            <span slot="title">
+              <div class="txt-monospace">{blobResult.error.path}</div>
+            </span>
             <span slot="body">
-              We couldn't find any files at this revision.
+              {blobResult.error.message}
             </span>
           </Placeholder>
-        </div>
-      {/if}
-    </div>
-  </main>
+        {/if}
+      </div>
+    {:else}
+      <div class="placeholder">
+        <Placeholder emoji="👀">
+          <span slot="title">Nothing to show</span>
+          <span slot="body">
+            We couldn't find any files at this revision.
+          </span>
+        </Placeholder>
+      </div>
+    {/if}
+  </div>
 </Layout>

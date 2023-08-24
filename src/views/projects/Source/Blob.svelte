@@ -75,7 +75,7 @@
 </script>
 
 <style>
-  header .file-header {
+  .file-header {
     display: flex;
     height: 3rem;
     align-items: center;
@@ -99,7 +99,7 @@
     width: 100%;
   }
 
-  header .file-name {
+  .file-name {
     font-weight: var(--font-weight-normal);
     flex-shrink: 0;
     white-space: nowrap;
@@ -207,46 +207,48 @@
     display: none;
   }
 
-  @media (max-width: 960px) {
-    .code {
-      font-size: var(--font-size-small);
-    }
-  }
-
   @media (max-width: 720px) {
-    .right {
-      justify-content: center;
+    .file-header {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .container {
+      border-left: none;
+      border-right: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 </style>
 
-<header>
-  <div class="file-header">
-    <span class="file-name">
-      <span style:color="var(--color-foreground-5)">{parentDir}</span>
-      &#8203;
-      <span>{blob.name}</span>
-    </span>
-    <div class="right">
-      {#if isMarkdown}
-        <div title="Toggle render method" class="toggle">
-          <SquareButton clickable on:click={toggleMarkdown}>
-            {showMarkdown ? "Plain" : "Markdown"}
-          </SquareButton>
-        </div>
-      {/if}
-      <a href="{rawPath}/{blob.path}" class="toggle">
-        <SquareButton clickable>Raw</SquareButton>
-      </a>
-      <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-        <span class="hash">
-          {lastCommit.id.slice(0, 7)}
-        </span>
-        {lastCommit.summary}
+<div class="file-header">
+  <span class="file-name">
+    <span style:color="var(--color-foreground-5)">{parentDir}</span>
+    &#8203;
+    <span>{blob.name}</span>
+  </span>
+  <div class="right">
+    {#if isMarkdown}
+      <div title="Toggle render method" class="toggle">
+        <SquareButton clickable on:click={toggleMarkdown}>
+          {showMarkdown ? "Plain" : "Markdown"}
+        </SquareButton>
       </div>
+    {/if}
+    <a href="{rawPath}/{blob.path}" class="toggle">
+      <SquareButton clickable>Raw</SquareButton>
+    </a>
+    <div class="last-commit" title={lastCommit.author.name} use:twemoji>
+      <span class="hash">
+        {lastCommit.id.slice(0, 7)}
+      </span>
+      {lastCommit.summary}
     </div>
   </div>
-</header>
+</div>
+
 <div class="container">
   {#if blob.binary}
     <div class="binary">

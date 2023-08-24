@@ -22,11 +22,8 @@
 </script>
 
 <style>
-  .container {
-    width: 100%;
-    padding: 4rem 8rem;
-  }
   .header {
+    padding: 4rem 8rem 0 8rem;
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
@@ -83,12 +80,15 @@
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding-bottom: 4rem;
+    padding: 0 8rem 0 8rem;
   }
 
   @media (max-width: 960px) {
-    .container {
-      padding: 4rem 4rem;
+    .header {
+      padding: 4rem 1rem 0 1rem;
+    }
+    .content {
+      padding: 0 1rem 4rem 1rem;
     }
     .title {
       font-size: var(--font-size-medium);
@@ -98,50 +98,49 @@
   }
 
   @media (max-width: 720px) {
-    .container {
-      padding: 4rem 1rem;
+    .content {
+      padding: 0 0 4rem 0;
     }
   }
 </style>
 
-<div class="container">
-  <div class="header">
-    <div class="title">
-      <span class="truncate">
-        <Link
-          route={{
-            resource: "project.source",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <span class="project-name">
-            {project.name}
-          </span>
-        </Link>
-      </span>
-
-      {#if peer}
-        <span class="node-id">
-          <span class="divider">/</span>
-          <span title={peer}>{formatNodeId(peer)}</span>
-          <Clipboard text={peer} />
+<div class="header">
+  <div class="title">
+    <span class="truncate">
+      <Link
+        route={{
+          resource: "project.source",
+          project: project.id,
+          node: baseUrl,
+        }}>
+        <span class="project-name">
+          {project.name}
         </span>
-      {/if}
-    </div>
+      </Link>
+    </span>
 
-    <div class="id">
-      <span class="truncate">{project.id}</span>
-      <Clipboard small text={project.id} />
-    </div>
-
-    <div class="description" use:twemoji>
-      {@html render(project.description)}
-    </div>
-
-    <Header {project} {activeTab} {baseUrl} />
+    {#if peer}
+      <span class="node-id">
+        <span class="divider">/</span>
+        <span title={peer}>{formatNodeId(peer)}</span>
+        <Clipboard text={peer} />
+      </span>
+    {/if}
   </div>
 
-  <div class="content">
-    <slot />
+  <div class="id">
+    <span class="truncate">{project.id}</span>
+    <Clipboard small text={project.id} />
   </div>
+
+  <div class="description" use:twemoji>
+    {@html render(project.description)}
+  </div>
+
+  <Header {project} {activeTab} {baseUrl} />
+  <slot name="subheader" />
+</div>
+
+<div class="content">
+  <slot />
 </div>
