@@ -4,9 +4,9 @@
 }
 
 :root {
-  --border-radius: 0.75rem;
-  --border-radius-tiny: 0.25rem;
-  --border-radius-small: 0.5rem;
+  --border-radius-tiny: 2px;
+  --border-radius-small: 4px;
+  --border-radius-regular: 8px;
   --border-radius-round: 10rem;
 
   --content-max-width: 1920px;
@@ -45,12 +45,12 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  color: var(--color-foreground);
+  color: var(--color-foreground-contrast);
   text-align: left;
-  background-color: var(--color-background);
+  background-color: var(--color-background-default);
   scrollbar-width: thin;
   scrollbar-height: thin;
-  scrollbar-color: var(--color-foreground-4) transparent;
+  scrollbar-color: var(--color-fill-ghost) transparent;
 }
 
 @media (max-width: 720px) {
@@ -60,8 +60,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-primary);
-  color: var(--color-background);
+  background: var(--color-fill-yellow);
+  color: var(--color-foreground-black);
 }
 
 /* Chrome/Edge/Safari scrollbar */
@@ -74,14 +74,14 @@ body {
 }
 *::-webkit-scrollbar-thumb {
   background: transparent;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-regular);
 }
 *::-webkit-scrollbar-corner {
   background: transparent;
 }
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-  background-color: var(--color-foreground-4);
+  background-color: var(--color-fill-ghost);
 }
 
 main {

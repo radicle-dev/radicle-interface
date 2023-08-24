@@ -17,14 +17,8 @@
 </script>
 
 <style>
-  .commit {
-    padding: 1rem 2rem 0 8rem;
-  }
   .header {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-foreground-3);
+    margin-bottom: 3rem;
   }
   .summary {
     display: flex;
@@ -39,40 +33,32 @@
   }
   .sha1 {
     align-items: center;
-    color: var(--color-foreground-5);
+    color: var(--color-fill-secondary);
     font-size: var(--font-size-small);
-  }
-
-  @media (max-width: 960px) {
-    .commit {
-      padding-left: 2rem;
-    }
   }
 </style>
 
 <Layout {baseUrl} {project}>
-  <div class="commit">
-    <div class="header">
-      <div class="summary">
-        <div class="txt-medium txt-bold">
-          <InlineMarkdown fontSize="medium" content={header.summary} />
-        </div>
-        <div class="layout-desktop-flex txt-monospace sha1">
-          <span>{header.id}</span>
-          <Clipboard small text={header.id} />
-        </div>
-        <div class="layout-mobile-flex txt-monospace sha1 txt-small">
-          {formatCommit(header.id)}
-          <Clipboard small text={header.id} />
-        </div>
+  <div class="header">
+    <div class="summary">
+      <div class="txt-medium txt-bold">
+        <InlineMarkdown fontSize="medium" content={header.summary} />
       </div>
-      <pre class="description txt-small">{header.description}</pre>
-      <CommitAuthorship {header} />
+      <div class="layout-desktop-flex txt-monospace sha1">
+        <span>{header.id}</span>
+        <Clipboard small text={header.id} />
+      </div>
+      <div class="layout-mobile-flex txt-monospace sha1 txt-small">
+        {formatCommit(header.id)}
+        <Clipboard small text={header.id} />
+      </div>
     </div>
-    <Changeset
-      projectId={project.id}
-      {baseUrl}
-      diff={commit.diff}
-      revision={commit.commit.id} />
+    <pre class="description txt-small">{header.description}</pre>
+    <CommitAuthorship {header} />
   </div>
+  <Changeset
+    projectId={project.id}
+    {baseUrl}
+    diff={commit.diff}
+    revision={commit.commit.id} />
 </Layout>

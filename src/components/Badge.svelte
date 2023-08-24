@@ -2,6 +2,8 @@
   export type Variant =
     | "caution"
     | "foreground"
+    | "background"
+    | "neutral"
     | "negative"
     | "positive"
     | "primary"
@@ -11,41 +13,66 @@
 <script lang="ts">
   export let variant: Variant;
   export let style: string | undefined = undefined;
+  export let size: "tiny" | "small" | "medium" = "tiny";
 </script>
 
 <style>
   .badge {
-    border-radius: var(--border-radius);
-    padding: 0.125rem 0.5rem;
+    border-radius: var(--border-radius-round);
     font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold);
     line-height: 1.6;
     height: var(--button-tiny-height);
     display: flex;
     white-space: nowrap;
+    align-items: center;
+  }
+  .background {
+    color: var(--color-fill-secondary);
+    background: var(--color-foreground-match-background);
   }
   .foreground {
-    color: var(--color-foreground-6);
-    background: var(--color-foreground-3);
+    color: var(--color-foreground-contrast);
+    background: var(--color-fill-gray);
+  }
+  .neutral {
+    color: var(--color-foreground-contrast);
+    background: var(--color-fill-ghost);
   }
   .positive {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-3);
+    color: var(--color-foreground-white);
+    background-color: var(--color-fill-success);
   }
   .secondary {
-    color: var(--color-secondary-6);
-    background-color: var(--color-secondary-3);
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
   }
   .negative {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-3);
+    color: var(--color-foreground-white);
+    background-color: var(--color-foreground-red);
   }
   .primary {
-    color: var(--color-primary-6);
-    background: var(--color-primary-3);
+    color: var(--color-foreground-match-background);
+    background: var(--color-fill-primary);
   }
   .caution {
-    color: var(--color-caution-6);
-    background: var(--color-caution-3);
+    color: var(--color-foreground-black);
+    background: var(--color-fill-yellow);
+  }
+  .tiny {
+    height: 1.375rem;
+    font-size: var(--font-size-tiny);
+    padding: 0.25rem 0.5rem;
+  }
+  .small {
+    height: 2rem;
+    font-size: var(--font-size-small);
+    padding: 0.5rem 0.75rem;
+  }
+  .medium {
+    height: 2.5rem;
+    font-size: var(--font-size-small);
+    padding: 0.75rem 1rem;
   }
 </style>
 
@@ -55,8 +82,13 @@
   on:mouseleave
   class="badge"
   {style}
+  class:tiny={size === "tiny"}
+  class:small={size === "small"}
+  class:medium={size === "medium"}
   class:caution={variant === "caution"}
+  class:background={variant === "background"}
   class:foreground={variant === "foreground"}
+  class:neutral={variant === "neutral"}
   class:negative={variant === "negative"}
   class:positive={variant === "positive"}
   class:primary={variant === "primary"}

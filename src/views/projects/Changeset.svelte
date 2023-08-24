@@ -47,10 +47,10 @@
     margin-left: 1rem;
   }
   .changeset-summary .additions {
-    color: var(--color-positive-6);
+    color: var(--color-foreground-success);
   }
   .changeset-summary .deletions {
-    color: var(--color-negative-6);
+    color: var(--color-foreground-red);
   }
 </style>
 

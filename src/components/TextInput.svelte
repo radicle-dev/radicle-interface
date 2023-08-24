@@ -3,7 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
 
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Loading from "@app/components/Loading.svelte";
 
   export let name: string | undefined = undefined;
@@ -74,9 +74,9 @@
     height: var(--button-regular-height);
   }
   input {
-    background: transparent;
-    border-radius: var(--border-radius-round);
-    color: var(--color-foreground);
+    background: var(--color-background-dip);
+    border-radius: var(--border-radius-small);
+    color: var(--color-foreground-contrast);
     font-size: inherit;
     font-family: var(--font-family-sans-serif);
     height: var(--button-regular-height);
@@ -87,7 +87,7 @@
     width: 100%;
   }
   input::placeholder {
-    color: var(--color-secondary);
+    color: var(--color-foreground-dim);
     opacity: 1 !important;
   }
   input[disabled] {
@@ -95,14 +95,14 @@
     cursor: not-allowed;
   }
   .regular {
-    border: 1px solid var(--color-secondary);
+    border: 1px solid var(--color-border-hint);
     padding: 1rem 1.5rem;
   }
   .form,
   .modal {
     background: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-foreground-1);
+    border: 1px solid var(--color-border-hint);
   }
   .form::placeholder,
   .modal::placeholder {
@@ -112,7 +112,7 @@
   .form:hover,
   .modal:focus,
   .modal:hover {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-hint);
   }
   .modal {
     background: var(--color-background);
@@ -214,7 +214,7 @@
 
       {#if valid && !loading && isFocused}
         {#if success}
-          <Icon name="checkmark" size="small" />
+          <IconSmall name="checkmark" />
         {:else}
           <div class="key-hint">⏎</div>
         {/if}

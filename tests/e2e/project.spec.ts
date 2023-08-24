@@ -2,12 +2,12 @@ import type { Page } from "@playwright/test";
 
 import {
   aliceMainHead,
-  aliceRemote,
   bobHead,
-  bobRemote,
-  expect,
   cobUrl,
+  expect,
   markdownUrl,
+  shortAliceRemote,
+  shortBobRemote,
   sourceBrowsingRid,
   sourceBrowsingUrl,
   test,
@@ -79,9 +79,7 @@ test("show source tree at specific revision", async ({ page }) => {
     .getByTitle("Browse the repository at this point in the history")
     .click();
 
-  await expect(page.getByTitle("Current branch")).toContainText(
-    "335dd6dc89b535a4a31e9422c803199bb6b0a09a",
-  );
+  await expect(page.getByTitle("Current branch")).toContainText("335dd6d");
   await expect(page.locator(".source-tree")).toHaveText("bin src");
   await expectCounts({ commits: 2, contributors: 1 }, page);
 });
@@ -100,7 +98,7 @@ test("source file highlighting", async ({ page }) => {
 
 test("navigate line numbers", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
-  await page.getByRole("button", { name: "Plain" }).click();
+  await page.getByRole("button", { name: "Markdown" }).click();
 
   await page.getByRole("link", { name: "5", exact: true }).click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -117,7 +115,9 @@ test("navigate line numbers", async ({ page }) => {
   // Check that we go back to the Markdown view when navigating to a different
   // file.
   await page.getByRole("link", { name: "footnotes.md" }).click();
-  await expect(page.getByRole("button", { name: "Plain" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+    /secondary/,
+  );
 });
 
 test("navigate deep file hierarchies", async ({ page }) => {
@@ -241,12 +241,21 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    const toggleButton = page.getByTitle("Toggle render method");
-    await expect(toggleButton).toHaveText("Plain");
-    await toggleButton.click();
+    await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
+      /secondary/,
+    );
+    await expect(
+      page.getByRole("button", { name: "Markdown" }),
+    ).not.toHaveClass(/secondary/);
+    await page.getByRole("button", { name: "Markdown" }).click();
+    await expect(page.getByRole("button", { name: "Plain" })).not.toHaveClass(
+      /secondary/,
+    );
+    await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+      /secondary/,
+    );
     await expect(page.getByText("##### Table of Contents")).toBeVisible();
-    await expect(toggleButton).toHaveText("Markdown");
-    await toggleButton.click();
+    await page.getByRole("button", { name: "Plain" }).click();
   }
 
   // Internal links go to anchor.
@@ -276,19 +285,14 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(`${aliceRemote}`).click();
+    await page
+      .getByRole("link", {
+        name: `${shortAliceRemote} (alice) delegate`,
+      })
+      .click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
-        -6,
-      )} (alice) delegate`,
+      `${shortAliceRemote} (alice) delegate`,
     );
-    await expect(
-      page.getByText(
-        `source-browsing / did:key:${aliceRemote
-          .substring(8)
-          .substring(0, 6)}…${aliceRemote.slice(-6)}`,
-      ),
-    ).toBeVisible();
 
     // Default `main` branch.
     {
@@ -341,11 +345,9 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
-    await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} (bob)`,
+    await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
+    await expect(page.getByTitle("Change peer")).toContainText(
+      `${shortBobRemote} (bob)`,
     );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
@@ -366,30 +368,34 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(aliceRemote).click();
+  await page
+    .getByRole("link", {
+      name: `${shortAliceRemote} (alice) delegate`,
+    })
+    .click();
 
   await page.getByText("Clone").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).toBeVisible();
 
   await page.getByTitle("Change peer").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText(bobRemote)).toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 });
 

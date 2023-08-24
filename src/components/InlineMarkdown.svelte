@@ -5,7 +5,7 @@
   import { twemoji } from "@app/lib/utils";
 
   export let content: string;
-  export let fontSize: "tiny" | "small" | "medium" = "small";
+  export let fontSize: "tiny" | "small" | "regular" | "medium" = "small";
 
   const render = (content: string): string =>
     dompurify.sanitize(markdown.parseInline(content) as string);
@@ -25,6 +25,7 @@
   class="markdown"
   use:twemoji
   class:txt-medium={fontSize === "medium"}
+  class:txt-regular={fontSize === "regular"}
   class:txt-small={fontSize === "small"}
   class:txt-tiny={fontSize === "tiny"}>
   {@html render(content)}

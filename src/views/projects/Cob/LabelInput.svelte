@@ -1,8 +1,8 @@
 <script lang="ts" strictEvents>
   import { createEventDispatcher } from "svelte";
 
-  import Button from "@app/components/Button.svelte";
   import Chip from "@app/components/Chip.svelte";
+  import Button from "@app/components/Button.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
@@ -70,8 +70,8 @@
     {#if action === "edit"}
       {#if editInProgress}
         <Button
-          size="tiny"
-          variant="text"
+          size="small"
+          variant="background"
           on:click={() => {
             dispatch("save", updatedLabels);
             editInProgress = !editInProgress;
@@ -80,8 +80,8 @@
         </Button>
       {:else}
         <Button
-          size="tiny"
-          variant="text"
+          size="small"
+          variant="background"
           on:click={() => {
             editInProgress = !editInProgress;
           }}>

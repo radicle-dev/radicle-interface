@@ -649,8 +649,10 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
 export const aliceMainHead = "dd068e9aff9a569e597f6abaf84f120dd0cbbd70";
 export const aliceRemote =
   "did:key:z6MkqGC3nWZhYieEVTVDKW5v588CiGfsDSmRVG9ZwwWTvLSK";
+export const shortAliceRemote = "did:key:z6MkqG…WTvLSK";
 export const bobRemote =
   "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
+export const shortBobRemote = "did:key:z6Mkg4…7SV7v5";
 export const bobHead = "28f37105bb78db48111e36281291ff253dd050e8";
 export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
 export const cobRid = "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe";
@@ -659,6 +661,7 @@ export const sourceBrowsingUrl = `/nodes/127.0.0.1/${sourceBrowsingRid}`;
 export const cobUrl = `/nodes/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/nodes/127.0.0.1/${markdownRid}`;
 export const nodeRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
+export const shortNodeRemote = "z6MktU…1xB22S";
 export const defaultHttpdPort = 8081;
 export const gitOptions = {
   alice: {

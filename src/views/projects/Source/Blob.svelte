@@ -8,8 +8,11 @@
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import Link from "@app/components/Link.svelte";
+  import Radio from "@app/components/Radio.svelte";
   import Readme from "./Readme.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
@@ -47,11 +50,6 @@
   $: isMarkdown = isMarkdownPath(blob.path);
   $: showMarkdown = isMarkdown && selectedLineId === undefined;
 
-  function toggleMarkdown() {
-    window.location.hash = "";
-    showMarkdown = !showMarkdown;
-  }
-
   afterUpdate(() => {
     for (const item of document.getElementsByClassName("highlight")) {
       item.classList.remove("highlight");
@@ -75,60 +73,37 @@
 </script>
 
 <style>
-  header .file-header {
+  .file-header {
     display: flex;
     height: 3rem;
     align-items: center;
-    justify-content: space-between;
     padding: 0 0.5rem 0 1rem;
     color: var(--color-foreground);
     border-width: 1px 1px 0 1px;
-    border-color: var(--color-foreground-3);
+    border-color: var(--color-border-hint);
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
   }
 
-  .file-header .right {
+  .right {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-  }
-
-  header .file-name {
-    font-weight: var(--font-weight-normal);
-    flex-shrink: 0;
+    gap: 0.5rem;
+    margin-left: auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-right: 1rem;
   }
 
-  .last-commit {
-    padding: 0.5rem 0.75rem;
-    color: var(--color-secondary);
-    background-color: var(--color-secondary-2);
-    font-size: var(--font-size-tiny);
-    border-radius: var(--border-radius-small);
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .last-commit .hash {
-    font-weight: var(--font-weight-bold);
-    font-family: var(--font-family-monospace);
-    margin-right: 0.25rem;
-  }
-
-  .toggle {
-    margin-right: 0.5rem;
+  .file-name {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
+    flex-shrink: 0;
+    padding-right: 0.5rem;
   }
 
   .code :global(.line-number) {
+    font-family: var(--font-family-monospace);
     color: var(--color-foreground-4);
     text-align: right;
     padding: 0;
@@ -153,10 +128,11 @@
     line-height: 22px; /* This seems to be the line-height of a pre code block */
   }
   .code :global(.highlight) {
-    background-color: var(--color-caution-3);
+    background-color: var(--color-fill-yellow);
+    color: var(--color-foreground-black);
   }
   .code :global(.highlight td a) {
-    color: var(--color-foreground);
+    color: var(--color-foreground-black);
   }
 
   .code :global(.line-content) {
@@ -177,13 +153,12 @@
     position: relative;
     display: flex;
     overflow-x: auto;
-    border: 1px solid var(--color-foreground-3);
-    border-top-style: dashed;
+    border: 1px solid var(--color-border-hint);
+    border-top-style: solid;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
-    background: var(--color-background-1);
+    background: var(--color-background-float);
   }
-
   .binary {
     display: flex;
     flex-direction: column;
@@ -203,79 +178,118 @@
     scrollbar-width: none;
   }
 
-  .markdown {
-    max-width: 64rem;
-  }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-
-  @media (max-width: 960px) {
-    .code {
-      font-size: var(--font-size-small);
-    }
+  .commit-teaser {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: var(--border-radius-tiny);
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
+    background-color: var(--color-fill-ghost);
+    gap: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   @media (max-width: 720px) {
-    .right {
-      justify-content: center;
+    .file-header {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .hash {
+      display: none;
+    }
+    .container {
+      border-left: none;
+      border-right: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 </style>
 
-<div class:markdown={isMarkdown}>
-  <header>
-    <div class="file-header">
-      <span class="file-name">
-        <span style:color="var(--color-foreground-5)">{parentDir}</span>
-        &#8203;
-        <span>{blob.name}</span>
-      </span>
-      <div class="right">
-        {#if isMarkdown}
-          <div title="Toggle render method" class="toggle">
-            <SquareButton clickable on:click={toggleMarkdown}>
-              {showMarkdown ? "Plain" : "Markdown"}
-            </SquareButton>
-          </div>
-        {/if}
-        <a href="{rawPath}/{blob.path}" class="toggle">
-          <SquareButton clickable>Raw</SquareButton>
-        </a>
-        <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-          <span class="hash">
-            {lastCommit.id.slice(0, 7)}
-          </span>
-          {lastCommit.summary}
-        </div>
-      </div>
+<div class="file-header">
+  <span class="file-name">
+    <span style:color="var(--color-foreground-5)">{parentDir}</span>
+    &#8203;
+    <span>{blob.name}</span>
+  </span>
+  <div class="right">
+    <div class="commit-teaser">
+      <Link
+        route={{
+          resource: "project.commit",
+          project: projectId,
+          node: baseUrl,
+          commit: lastCommit.id,
+        }}>
+        <Button variant="dim" square>
+          <span class="hash">{lastCommit.id.slice(0, 7)}</span>
+        </Button>
+      </Link>
+      {lastCommit.summary}
     </div>
-  </header>
-  <div class="container">
-    {#if blob.binary}
-      <div class="binary">
-        <div use:twemoji>👀</div>
-        <span class="txt-tiny">Binary content</span>
-      </div>
-    {:else if showMarkdown && blob.content}
-      <Readme
-        {baseUrl}
-        {projectId}
-        {peer}
-        {revision}
-        content={blob.content}
-        {rawPath}
-        {path} />
-    {:else if content}
-      <table class="code no-scrollbar">
-        {@html toHtml(content)}
-      </table>
-    {:else}
-      <div class="binary">
-        <div use:twemoji>🍂</div>
-        <span class="txt-tiny">Empty file</span>
-      </div>
-    {/if}
+    <div class="layout-desktop-flex" style:gap="0.5rem">
+      {#if isMarkdown}
+        <Radio ariaLabel="Toggle render method">
+          <Button
+            square
+            variant={showMarkdown ? "secondary" : "gray"}
+            on:click={() => {
+              window.location.hash = "";
+              showMarkdown = true;
+            }}>
+            Plain
+          </Button>
+          <Button
+            square
+            variant={!showMarkdown ? "secondary" : "gray"}
+            on:click={() => {
+              showMarkdown = false;
+            }}>
+            Markdown
+          </Button>
+        </Radio>
+      {/if}
+      <a href="{rawPath}/{blob.path}">
+        <Button variant="secondary">
+          Raw
+          <svelte:fragment slot="icon-right">
+            <IconSmall name="arrow-box-up-right" />
+          </svelte:fragment>
+        </Button>
+      </a>
+    </div>
   </div>
+</div>
+
+<div class="container">
+  {#if blob.binary}
+    <div class="binary">
+      <div use:twemoji>👀</div>
+      <span class="txt-tiny">Binary content</span>
+    </div>
+  {:else if showMarkdown && blob.content}
+    <Readme
+      {baseUrl}
+      {projectId}
+      {peer}
+      {revision}
+      content={blob.content}
+      {rawPath}
+      {path} />
+  {:else if content}
+    <table class="code no-scrollbar">
+      {@html toHtml(content)}
+    </table>
+  {:else}
+    <div class="binary">
+      <div use:twemoji>🍂</div>
+      <span class="txt-tiny">Empty file</span>
+    </div>
+  {/if}
 </div>

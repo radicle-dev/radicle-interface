@@ -1,121 +1,75 @@
 :root {
-  --color-primary: #ff55ff;
-  --color-primary-1: #ff55ff09;
-  --color-primary-2: #ff55ff11;
-  --color-primary-3: #ff55ff22;
-  --color-primary-4: #ff55ff33;
-  --color-primary-5: #ff55ff77;
-  --color-primary-6: hsl(300, 100%, 90%);
-
-  --color-secondary: #5555ff;
-  --color-secondary-1: #5555ff09;
-  --color-secondary-2: #5555ff11;
-  --color-secondary-3: #5555ff22;
-  --color-secondary-4: #5555ff33;
-  --color-secondary-5: #5555ff77;
-  --color-secondary-6: hsl(240, 100%, 90%);
-
-  --color-tertiary: #55ffff;
-  --color-tertiary-1: #55ffff09;
-  --color-tertiary-2: #55ffff11;
-  --color-tertiary-3: #55ffff22;
-  --color-tertiary-4: #55ffff33;
-  --color-tertiary-5: #55ffff77;
-  --color-tertiary-6: #abf9f9;
-
-  --color-caution: #ffff99;
-  --color-caution-1: #ffff9909;
-  --color-caution-2: #ffff9911;
-  --color-caution-3: #ffff9922;
-  --color-caution-4: #ffff9933;
-  --color-caution-5: #ffff9977;
-  --color-caution-6: hsl(60, 100%, 90%);
-
-  --color-positive: #53db53;
-  --color-positive-1: #53db5309;
-  --color-positive-2: #53db5311;
-  --color-positive-3: #53db5322;
-  --color-positive-4: #53db5333;
-  --color-positive-5: #53db5377;
-  --color-positive-6: hsl(120, 100%, 90%);
-
-  --color-negative: #ff5555;
-  --color-negative-1: #ff555509;
-  --color-negative-2: #ff555511;
-  --color-negative-3: #ff555522;
-  --color-negative-4: #ff555533;
-  --color-negative-5: #ff555577;
-  --color-negative-6: hsl(0, 100%, 90%);
-
-  --color-foreground: #ffffff;
-  --color-foreground-1: #121a21;
-  --color-foreground-2: #181f28;
-  --color-foreground-3: #212832;
-  --color-foreground-4: #2b313d;
-  --color-foreground-5: #585c6f;
-  --color-foreground-6: #c2c3d4;
-
-  --color-background: #0b131a;
-  --color-background-1: #121a21;
+  --color-background-default: #fafaff;
+  --color-background-float: #ffffff;
+  --color-background-dip: #f0f0f5;
+  --color-foreground-contrast: #14151a;
+  --color-foreground-dim: #2e2f38;
+  --color-foreground-emphasized: #7070ff;
+  --color-foreground-emphasized-hover: #8585ff;
+  --color-foreground-match-background: #fafaff;
+  --color-foreground-white: #ffffff;
+  --color-foreground-black: #000000;
+  --color-foreground-primary: #ff55ff;
+  --color-foreground-success: #5f930b;
+  --color-foreground-red: #af1833;
+  --color-border-hint: #eaeaf1;
+  --color-border-focus: #7070ff;
+  --color-border-contrast: #24252d;
+  --color-border-default: #b2b2cc;
+  --color-border-red: #af1833;
+  --color-fill-secondary: #7070ff;
+  --color-fill-secondary-hover: #8585ff;
+  --color-fill-ghost: #f0f0f5;
+  --color-fill-ghost-hover: #eaeaf1;
+  --color-fill-separator: #eaeaf1;
+  --color-fill-primary: #ff70ff;
+  --color-fill-success: #82c80f;
+  --color-fill-yellow: #ffe609;
+  --color-fill-danger: #e64764;
+  --color-fill-gray: #9494b8;
+  --color-fill-primary-hover: #ff80ff;
+  --color-fill-diff-green: #e1fab8;
+  --color-fill-diff-green-light: #eafccf;
+  --color-fill-diff-red: #f6bcc6;
+  --color-fill-diff-red-light: #fce9ec;
+  --color-fill-float: #ffffff;
+  --color-fill-float-hover: #f9f9fb;
 }
 
-[data-theme="light"] {
-  --color-primary: #ff55ff;
-  --color-primary-1: #ff55ff30;
-  --color-primary-2: #ff55ff45;
-  --color-primary-3: #ff55ff60;
-  --color-primary-4: #ff55ff80;
-  --color-primary-5: #ff55ffaa;
-  --color-primary-6: hsl(300, 40%, 30%);
-
-  --color-secondary: #5555ff;
-  --color-secondary-1: #5555ff10;
-  --color-secondary-2: #5555ff20;
-  --color-secondary-3: #5555ff60;
-  --color-secondary-4: #5555ff80;
-  --color-secondary-5: #5555ffaa;
-  --color-secondary-6: hsl(240, 40%, 30%);
-
-  --color-tertiary: #2ed4c1;
-  --color-tertiary-1: #2ed4c120;
-  --color-tertiary-2: #2ed4c140;
-  --color-tertiary-3: #2ed4c160;
-  --color-tertiary-4: #2ed4c180;
-  --color-tertiary-5: #2ed4c1aa;
-  --color-tertiary-6: #005050;
-
-  --color-caution: hsl(60, 100%, 30%);
-  --color-caution-1: #d3d34d20;
-  --color-caution-2: #d3d34d40;
-  --color-caution-3: #d3d34d60;
-  --color-caution-4: #d3d34d80;
-  --color-caution-5: #d3d34daa;
-  --color-caution-6: hsl(60, 82%, 22%);
-
-  --color-positive: #53db53;
-  --color-positive-1: #53db5320;
-  --color-positive-2: #53db5340;
-  --color-positive-3: #53db5360;
-  --color-positive-4: #53db5380;
-  --color-positive-5: #53db53aa;
-  --color-positive-6: hsl(120, 40%, 30%);
-
-  --color-negative: #ff5555;
-  --color-negative-1: #ff555520;
-  --color-negative-2: #ff555540;
-  --color-negative-3: #ff555560;
-  --color-negative-4: #ff555580;
-  --color-negative-5: #ff5555aa;
-  --color-negative-6: hsl(0, 40%, 30%);
-
-  --color-foreground: #1a1a2c;
-  --color-foreground-1: #ebecf8;
-  --color-foreground-2: #e3e3f3;
-  --color-foreground-3: #d2d2e8;
-  --color-foreground-4: #9b9bc0;
-  --color-foreground-5: #6f6f8a;
-  --color-foreground-6: #42425a;
-
-  --color-background: #f3f6fd;
-  --color-background-1: #ffffff;
+:root[data-theme="dark"] {
+  --color-background-default: #0a0d10;
+  --color-background-float: #14151a;
+  --color-background-dip: #000000;
+  --color-foreground-contrast: #f9f9fb;
+  --color-foreground-dim: #b2b2cc;
+  --color-foreground-emphasized: #7070ff;
+  --color-foreground-emphasized-hover: #8585ff;
+  --color-foreground-match-background: #0a0d10;
+  --color-foreground-white: #ffffff;
+  --color-foreground-black: #000000;
+  --color-foreground-primary: #ff55ff;
+  --color-foreground-success: #82c80f;
+  --color-foreground-red: #d71d3f;
+  --color-border-hint: #24252d;
+  --color-border-focus: #7070ff;
+  --color-border-contrast: #ebebff;
+  --color-border-default: #2e2f38;
+  --color-border-error: #af1833;
+  --color-fill-secondary: #7070ff;
+  --color-fill-secondary-hover: #8585ff;
+  --color-fill-ghost: #24252d;
+  --color-fill-ghost-hover: #2e2f38;
+  --color-fill-separator: #24252d;
+  --color-fill-primary: #ff70ff;
+  --color-fill-success: #82c80f;
+  --color-fill-danger: #871227;
+  --color-fill-yellow: #ffe609;
+  --color-fill-gray: #9494b8;
+  --color-fill-primary-hover: #ff80ff;
+  --color-fill-diff-red: #5a0c1a;
+  --color-fill-diff-red-light: #2d060d;
+  --color-fill-diff-green: #283e05;
+  --color-fill-diff-green-light: #1c2b03;
+  --color-fill-float: #14151a;
+  --color-fill-float-hover: #1b1c22;
 }

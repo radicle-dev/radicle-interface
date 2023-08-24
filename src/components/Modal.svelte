@@ -43,13 +43,14 @@
 <style>
   .modal {
     padding: 2rem 3rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-regular);
     font-family: var(--font-family-sans-serif);
-    background: var(--color-background);
-    box-shadow: var(--elevation-high);
+    background: var(--color-background-float);
+    box-shadow: var(--elevation-low);
     min-width: 480px;
     max-width: 760px;
     text-align: center;
+    border: 1px solid var(--color-border-hint);
   }
   .title {
     color: var(--color-foreground);
@@ -118,24 +119,26 @@
 
   <div class="actions">
     {#if primaryAction}
-      <Button
-        style={$$slots.body ? "margin-top: 1rem;" : "margin-top: 3rem;"}
-        autofocus
-        variant="primary"
-        {...primaryAction.props}
-        on:click={primaryAction.callback}>
-        {primaryAction.name}
-      </Button>
+      <div style:margin-top={$$slots.body ? "1rem" : "3rem"}>
+        <Button
+          autofocus
+          variant="primary"
+          {...primaryAction.props}
+          on:click={primaryAction.callback}>
+          {primaryAction.name}
+        </Button>
+      </div>
     {/if}
 
     {#if closeAction !== false}
-      <Button
-        style={$$slots.body ? "margin-top: 1rem;" : "margin-top: 3rem;"}
-        variant="foreground"
-        {...closeAction?.props}
-        on:click={closeAction?.callback ?? modal.hide}>
-        {closeAction?.name ?? "Close"}
-      </Button>
+      <div style:margin-top={$$slots.body ? "1rem" : "3rem"}>
+        <Button
+          variant="outline"
+          {...closeAction?.props}
+          on:click={closeAction?.callback ?? modal.hide}>
+          {closeAction?.name ?? "Close"}
+        </Button>
+      </div>
     {/if}
   </div>
 </div>

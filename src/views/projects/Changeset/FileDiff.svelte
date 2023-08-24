@@ -199,7 +199,7 @@
 
 <style>
   .wrapper {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-default);
     border-radius: var(--border-radius-small);
     margin-bottom: 2rem;
     line-height: 1.5rem;
@@ -215,8 +215,8 @@
   }
   main {
     font-size: var(--font-size-small);
-    border-top: 1px dashed var(--color-foreground-4);
-    background-color: var(--color-foreground-1);
+    border-top: 1px solid var(--color-border-default);
+    background: var(--color-background-float);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
     overflow-x: auto;
   }
@@ -228,8 +228,8 @@
   }
   .placeholder {
     padding: 1rem;
-    color: var(--color-foreground-5);
     text-align: center;
+    color: var(--color-foreground-dim);
   }
   .browse {
     margin-left: auto;
@@ -250,34 +250,37 @@
     vertical-align: top;
   }
   .diff-line.type-addition > * {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-2);
+    background-color: var(--color-fill-diff-green-light);
   }
   .diff-line.type-deletion > * {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-2);
+    background-color: var(--color-fill-diff-red-light);
   }
   .diff-line.selected > * {
-    color: var(--color-foreground-6);
-    background-color: var(--color-foreground-4);
+    background-color: var(--color-fill-float-hover);
   }
   .diff-line.selected.type-addition > * {
-    color: var(--color-positive-6);
-    background-color: var(--color-positive-4);
+    background-color: var(--color-fill-diff-green);
   }
   .diff-line.selected.type-deletion > * {
-    color: var(--color-negative-6);
-    background-color: var(--color-negative-4);
+    background-color: var(--color-fill-diff-red);
   }
-  .diff-line.hunk-header.selected {
-    background-color: var(--color-foreground-4);
+  .diff-line.selected .selection-indicator {
+    background-color: var(--color-fill-yellow);
+  }
+  .type-addition.diff-line.selected .selection-indicator {
+    background-color: var(--color-fill-yellow);
+  }
+  .type-deletion.diff-line.selected .selection-indicator {
+    background-color: var(--color-fill-yellow);
   }
   .diff-line-number {
+    font-family: var(--font-family-monospace);
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
     cursor: pointer;
+    color: var(--color-foreground-dim);
   }
   .diff-line-number.left {
     position: relative;
@@ -289,9 +292,6 @@
     top: 0;
     bottom: 0;
     width: 4px;
-  }
-  .diff-line.selected .selection-indicator {
-    background: var(--color-primary);
   }
   .diff-line-number.right {
     padding: 0 0.75rem 0 0.5rem;
@@ -310,10 +310,7 @@
   }
   .diff-expand-header {
     padding-left: 0.5rem;
-    color: var(--color-foreground-5);
-  }
-  .diff-line-number {
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-dim);
   }
 </style>
 

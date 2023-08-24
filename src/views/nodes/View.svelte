@@ -6,12 +6,12 @@
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
 
-  import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -60,7 +60,7 @@
     color: var(--color-secondary);
     display: flex;
     flex-direction: row;
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-x-large);
     font-weight: var(--font-weight-bold);
     justify-content: space-between;
     margin-bottom: 2rem;
@@ -84,7 +84,10 @@
   }
   .more {
     margin-top: 2rem;
-    text-align: center;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   @media (max-width: 720px) {
     .wrapper {
@@ -122,7 +125,7 @@
   <div style:margin-bottom="5rem">
     <div style:margin-top="1rem">
       {#each projects as { project, activity } (project.id)}
-        <div style:margin-bottom="0.5rem">
+        <div style:margin-bottom="2rem">
           <Link
             route={{
               resource: "project.source",
@@ -141,12 +144,12 @@
     </div>
     {#if loadingProjects}
       <div class="more">
-        <Loading small />
+        <Loading noDelay small />
       </div>
     {/if}
     {#if showMoreButton}
       <div class="more">
-        <Button variant="foreground" on:click={loadMore}>More</Button>
+        <Button size="large" variant="outline" on:click={loadMore}>More</Button>
       </div>
     {/if}
     {#if error}

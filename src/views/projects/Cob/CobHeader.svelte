@@ -20,10 +20,6 @@
   header {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-foreground-3);
-    padding: 1rem;
   }
   .title {
     overflow: hidden;
@@ -32,6 +28,8 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-medium);
   }
   .subtitle {
     display: flex;
@@ -39,7 +37,7 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
     font-family: var(--font-family-monospace);
     color: var(--color-foreground-6);
   }
@@ -48,14 +46,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
   .id {
     display: flex;
     align-items: center;
+    color: var(--color-fill-secondary);
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-bold);
   }
   .description {
     font-size: var(--font-size-small);
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
   .toggle:hover {
     cursor: pointer;
@@ -64,7 +66,7 @@
 </style>
 
 <header>
-  <div class="summary txt-medium">
+  <div class="summary">
     {#if editable}
       <TextInput variant="form" placeholder="Title" bind:value={title} />
     {:else if title}

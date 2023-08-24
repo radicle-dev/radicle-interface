@@ -17,6 +17,7 @@
     justify-content: space-between;
     border-top: 1px solid var(--color-foreground-3);
     height: 2.5rem;
+    font-size: var(--font-size-small);
   }
 </style>
 

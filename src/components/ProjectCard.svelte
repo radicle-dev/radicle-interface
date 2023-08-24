@@ -19,11 +19,11 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 1rem;
-    border: 1px solid var(--color-secondary-5);
+    box-shadow: 0 0 0 1px var(--color-border-hint);
     border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
-    background: var(--color-background-1);
+    background: var(--color-background-float);
   }
   .right {
     display: flex;
@@ -55,39 +55,42 @@
   .activity {
     width: 100%;
     max-width: 14rem;
+    margin-top: 0.5rem;
   }
   .project:hover {
-    border-color: var(--color-secondary);
-    background-color: var(--color-secondary-1);
+    box-shadow: 0 0 0 2px var(--color-border-focus);
   }
   .description {
-    margin-bottom: 0.25rem;
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
   }
   .stateHash {
-    color: var(--color-secondary);
-    font-size: var(--font-size-tiny);
+    color: var(--color-foreground-emphasized-hover);
+    font-size: var(--font-size-small);
     font-family: var(--font-family-monospace);
-    min-height: 2rem;
+    font-weight: var(--font-weight-bold);
     display: flex;
     align-items: center;
   }
   .id {
     display: flex;
     justify-content: space-between;
-    font-size: var(--font-size-regular);
+    font-size: var(--font-size-medium);
     font-weight: var(--font-weight-medium);
-    margin-bottom: 0.5rem;
   }
   .rid {
     visibility: hidden;
-    color: var(--color-foreground-5);
-    font-weight: var(--font-weight-normal);
+    color: var(--color-fill-secondary);
+    font-weight: var(--font-weight-bold);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-tiny);
   }
   .project:hover .rid {
     visibility: visible;
+  }
+  .text {
+    display: flex;
+    gap: 0.25rem;
+    flex-direction: column;
   }
   @media (max-width: 720px) {
     .project {
@@ -98,17 +101,18 @@
 
 <div class="project" class:compact>
   <div class="left">
-    <div class="id">
-      <span class="name">{name}</span>
+    <div class="text">
+      <div class="id">{name}</div>
+      <div class="description" use:twemoji>{description}</div>
+      <div class="stateHash">
+        {#if compact}
+          {formatCommit(head)}
+        {:else}
+          {head}
+        {/if}
+      </div>
     </div>
-    <div class="description" use:twemoji>{description}</div>
-    <div class="stateHash">
-      {#if compact}
-        {formatCommit(head)}
-      {:else}
-        {head}
-      {/if}
-    </div>
+
     {#if compact}
       <div class="activity">
         <ActivityDiagram {activity} viewBoxHeight={70} />

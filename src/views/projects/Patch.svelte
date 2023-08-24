@@ -50,7 +50,6 @@
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
@@ -60,13 +59,14 @@
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
   import Textarea from "@app/components/Textarea.svelte";
 
   export let baseUrl: BaseUrl;
@@ -341,35 +341,36 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
+
+  let expanded: boolean = false;
 </script>
 
 <style>
   .patch {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
-    padding-left: 1rem;
-    margin-left: 1rem;
+    padding: 1rem;
+    margin-left: 3rem;
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+    height: fit-content;
   }
   .commit-list {
-    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
     margin-top: 1rem;
   }
   .tab-line {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem 0;
+    margin: 3rem 0 1.5rem 0;
   }
   .actions {
     display: flex;
@@ -385,16 +386,16 @@
     gap: 0.5rem;
   }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-fill-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-fill-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   .metadata-section-header {
     font-size: var(--font-size-small);
@@ -418,6 +419,13 @@
   .review-reject {
     color: var(--color-negative);
   }
+  .diff-button-range {
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-bold);
+  }
+  .teaser-wrapper:not(:last-child) {
+    border-bottom: 1px solid var(--color-border-hint);
+  }
 
   @media (max-width: 1092px) {
     .patch {
@@ -426,11 +434,6 @@
     }
     .metadata {
       display: none;
-    }
-  }
-  @media (max-width: 960px) {
-    .patch {
-      padding-left: 2rem;
     }
   }
 </style>
@@ -450,7 +453,7 @@
           </div>
         </svelte:fragment>
         <svelte:fragment slot="state">
-          <Badge variant={badgeColor(patch.state.status)}>
+          <Badge size="small" variant={badgeColor(patch.state.status)}>
             {patch.state.status}
           </Badge>
         </svelte:fragment>
@@ -479,9 +482,11 @@
         <div style="display: flex; gap: 0.5rem;">
           {#each Object.entries(tabs) as [name, route]}
             <Link {route}>
-              <SquareButton size="small" active={name === view.name}>
+              <Button
+                size="regular"
+                variant={name === view.name ? "secondary" : "gray"}>
                 {capitalize(name)}
-              </SquareButton>
+              </Button>
             </Link>
           {/each}
           {#if view.name === "diff"}
@@ -497,51 +502,57 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <SquareButton size="small" active={true}>
-                Diff {view.fromCommit.substring(
-                  0,
-                  6,
-                )}..{view.toCommit.substring(0, 6)}
-              </SquareButton>
+              <Button size="regular" variant="secondary">
+                Diff <span class="diff-button-range">
+                  {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
+                    0,
+                    6,
+                  )}
+                </span>
+              </Button>
             </Link>
           {/if}
         </div>
 
         {#if view.name === "commits" || view.name === "files"}
-          <Floating disabled={patch.revisions.length === 1}>
-            <svelte:fragment slot="toggle">
-              <SquareButton
-                size="small"
-                clickable={patch.revisions.length > 1}
-                disabled={patch.revisions.length === 1}>
-                Revision {utils.formatObjectId(view.revision)}
-              </SquareButton>
-            </svelte:fragment>
-            <svelte:fragment slot="modal">
-              <Dropdown items={patch.revisions}>
-                <svelte:fragment slot="item" let:item>
-                  <Link
-                    on:afterNavigate={closeFocused}
-                    route={{
-                      resource: "project.patch",
-                      project: project.id,
-                      node: baseUrl,
-                      patch: patch.id,
-                      view: {
-                        name: view.name,
-                        revision: item.id,
-                      },
-                    }}>
-                    <DropdownItem
-                      selected={item.id === view.revision}
-                      size="tiny">
-                      Revision {utils.formatObjectId(item.id)}
-                    </DropdownItem>
-                  </Link>
-                </svelte:fragment>
-              </Dropdown>
-            </svelte:fragment>
-          </Floating>
+          <div style="margin-left: auto;">
+            <Floating disabled={patch.revisions.length === 1} bind:expanded>
+              <svelte:fragment slot="toggle">
+                <Button
+                  size="regular"
+                  clickable={patch.revisions.length > 1}
+                  disabled={patch.revisions.length === 1}>
+                  Revision {utils.formatObjectId(view.revision)}
+                  <svelte:fragment slot="icon-right">
+                    <IconSmall
+                      name={expanded ? "chevron-up" : "chevron-down"} />
+                  </svelte:fragment>
+                </Button>
+              </svelte:fragment>
+              <svelte:fragment slot="modal">
+                <Dropdown items={patch.revisions}>
+                  <svelte:fragment slot="item" let:item>
+                    <Link
+                      on:afterNavigate={closeFocused}
+                      route={{
+                        resource: "project.patch",
+                        project: project.id,
+                        node: baseUrl,
+                        patch: patch.id,
+                        view: {
+                          name: view.name,
+                          revision: item.id,
+                        },
+                      }}>
+                      <DropdownItem selected={item.id === view.revision}>
+                        Revision {utils.formatObjectId(item.id)}
+                      </DropdownItem>
+                    </Link>
+                  </svelte:fragment>
+                </Dropdown>
+              </svelte:fragment>
+            </Floating>
+          </div>
         {/if}
       </div>
       {#if view.name === "diff"}
@@ -579,7 +590,9 @@
       {:else if view.name === "commits"}
         <div class="commit-list">
           {#each view.commits as commit}
-            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+            <div class="teaser-wrapper">
+              <CommitTeaser projectId={project.id} {baseUrl} {commit} />
+            </div>
           {/each}
         </div>
       {:else if view.name === "files"}
@@ -611,7 +624,6 @@
               on:saveStatus={saveStatus} />
             <Button
               variant="secondary"
-              size="small"
               disabled={!commentBody}
               on:click={async () => {
                 await createComment();
@@ -634,11 +646,11 @@
                 class:review-accept={review.verdict === "accept"}
                 class:review-reject={review.verdict === "reject"}>
                 {#if review.verdict === "accept"}
-                  <Icon size="small" name="checkmark" />
+                  <IconSmall name="checkmark" />
                 {:else if review.verdict === "reject"}
-                  <Icon size="small" name="cross" />
+                  <IconSmall name="cross" />
                 {:else}
-                  <Icon size="small" name="chat" />
+                  <IconSmall name="chat" />
                 {/if}
               </span>
               <Authorship

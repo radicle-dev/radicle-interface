@@ -1,9 +1,10 @@
 <script lang="ts" context="module">
   export type AuthorAliasColor =
     | "--color-primary-5"
-    | "--color-foreground-5"
+    | "--color-fill-gray"
     | "--color-positive-5"
     | "--color-negative-5"
+    | "--color-foreground-match-background"
     | undefined;
 </script>
 
@@ -13,7 +14,9 @@
 
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
-  export let authorAliasColor: AuthorAliasColor = "--color-foreground-5";
+  export let authorAliasColor: AuthorAliasColor = "--color-fill-gray";
+  export let authorIdColor: "--color-foreground-match-background" | undefined =
+    undefined;
   export let caption: string | undefined = undefined;
   export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
@@ -26,36 +29,37 @@
   .authorship {
     display: inline-flex;
     align-items: center;
-    color: inherit;
-    padding: 0.125rem 0;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    font-size: var(--font-size-small);
+    font-family: var(--font-family-monospace);
   }
-  .id {
+  .author-id {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: var(--color-fill-secondary);
+    font-weight: var(--font-weight-bold);
+  }
+  .alias {
+    font-weight: var(--font-weight-medium);
   }
   .body {
     white-space: nowrap;
   }
 </style>
 
-<span class="authorship txt-tiny">
+<span class="authorship">
   {#if !noAvatar}
     <Avatar inline nodeId={authorId} />
   {/if}
-  <span class="id layout-desktop">
+  <span class="author-id" style:color="var({authorIdColor})">
     {formatNodeId(authorId)}
-    {#if authorAlias}
-      <span style:color="var({authorAliasColor})">({authorAlias})</span>
-    {/if}
   </span>
-  <span class="id layout-mobile">
-    {formatNodeId(authorId).replace("did:key:", "")}
-    {#if authorAlias}
-      <span style:color="var({authorAliasColor})">({authorAlias})</span>
-    {/if}
-  </span>
+  {#if authorAlias}
+    <span class="alias" style:color="var({authorAliasColor})">
+      ({authorAlias})
+    </span>
+  {/if}
   {#if !caption}
     <slot />
   {:else}

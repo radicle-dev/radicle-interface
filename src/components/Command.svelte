@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { SvelteComponent } from "svelte";
+
   import Clipboard from "@app/components/Clipboard.svelte";
 
   export let command: string;
-  export let color: "caution" | "foreground" = "foreground";
+
+  let clipboard: SvelteComponent;
 </script>
 
 <style>
@@ -10,56 +13,55 @@
     display: flex;
   }
   .cmd {
+    cursor: pointer;
     height: 2rem;
     line-height: 2rem;
     background-color: var(--color-foreground-3);
     border-radius: var(--border-radius-small);
     display: inline-block;
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
     overflow: hidden;
-    padding: 0 0.5rem;
+    padding: 0 2.5rem 0 0.5rem;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
+    border: 1px solid var(--color-border-hint);
+    color: var(--color-foreground-dim);
+    user-select: none;
+  }
+  .cmd:hover {
+    border: 1px solid var(--color-border-default);
+    color: var(--color-foreground-contrast);
+  }
+  .cmd:hover .clipboard {
+    background-color: var(--color-fill-ghost-hover);
   }
   .clipboard {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    background-image: linear-gradient(
-      -90deg,
-      var(--color-foreground-2),
-      var(--color-foreground-2),
-      transparent
-    );
+    justify-content: center;
+    background-color: var(--color-fill-ghost);
     position: absolute;
     right: 0;
     top: 0;
-    visibility: hidden;
-    width: 3rem;
+    width: 2rem;
     height: 100%;
-  }
-  .cmd:hover .clipboard {
-    visibility: visible;
-  }
-  .caution {
-    background-color: var(--color-caution-3);
-    color: var(--color-caution-6);
-  }
-  .caution .clipboard {
-    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
-      linear-gradient(var(--color-background), var(--color-background));
-    -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
-    mask: linear-gradient(90deg, transparent 0%, #fff 50%);
   }
 </style>
 
 <div class="wrapper">
-  <div class="cmd" class:caution={color === "caution"}>
-    {command}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div
+    class="cmd"
+    on:click={() => {
+      clipboard.copy();
+    }}>
+    $ {command}
     <div class="clipboard">
-      <Clipboard text={command} small />
+      <Clipboard bind:this={clipboard} small text={command} />
     </div>
   </div>
 </div>

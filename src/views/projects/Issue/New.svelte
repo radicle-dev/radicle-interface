@@ -72,9 +72,6 @@
 </script>
 
 <style>
-  main {
-    padding: 0 2rem 0 8rem;
-  }
   .form {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
@@ -91,7 +88,6 @@
     display: flex;
     flex-direction: column;
     gap: 4rem;
-    border-radius: var(--border-radius);
     font-size: var(--font-size-small);
     padding-left: 1rem;
     margin-left: 1rem;
@@ -104,11 +100,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  @media (max-width: 960px) {
-    main {
-      padding-left: 2rem;
-    }
   }
   @media (max-width: 720px) {
     .form {
@@ -166,10 +157,7 @@
             </div>
           </CobHeader>
           <div class="actions">
-            <Button
-              size="small"
-              variant="text"
-              on:click={() => (preview = !preview)}>
+            <Button variant="none" on:click={() => (preview = !preview)}>
               {#if preview}
                 Resume editing
               {:else}
@@ -178,7 +166,6 @@
             </Button>
             <Button
               disabled={!issueTitle || !issueText}
-              size="small"
               variant="secondary"
               on:click={() => void createIssue(session.id)}>
               Submit

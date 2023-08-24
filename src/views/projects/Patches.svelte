@@ -5,14 +5,13 @@
   import { HttpdClient } from "@httpd-client";
   import { PATCHES_PER_PAGE } from "./router";
 
-  import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -73,87 +72,104 @@
 
 <style>
   .patches {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .patches-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+    background-color: var(--color-background-float);
   }
   .more {
     margin-top: 2rem;
-    text-align: center;
     min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px dashed var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
-  @media (max-width: 960px) {
-    .patches {
-      padding-left: 2rem;
+  .tab-bar {
+    display: flex;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    background-color: var(--color-background-float);
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+    border-radius: 2px;
+    width: fit-content;
+    overflow: hidden;
+  }
+
+  @media (max-width: 720px) {
+    .patches-list {
+      border-radius: 0;
     }
   }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
-  <div class="patches">
-    <div style="margin-bottom: 2rem;">
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        {#each options as option}
-          {#if option.disabled}
-            <SquareButton
-              clickable={option.disabled}
-              active={option.value === state}
+  <svelte:fragment slot="subheader">
+    <div class="tab-bar">
+      {#each options as option}
+        {#if option.disabled}
+          <Button
+            clickable={!option.disabled}
+            square={option.value === state}
+            variant={option.value === state ? "tab" : "none"}
+            disabled={option.disabled}>
+            {option.title}
+          </Button>
+        {:else}
+          <Link
+            route={{
+              resource: "project.patches",
+              project: project.id,
+              node: baseUrl,
+              search: `state=${option.value}`,
+            }}>
+            <Button
+              clickable={!option.disabled}
+              square={option.value === state}
+              variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
               {option.title}
-            </SquareButton>
-          {:else}
-            <Link
-              route={{
-                resource: "project.patches",
-                project: project.id,
-                node: baseUrl,
-                search: `state=${option.value}`,
-              }}>
-              <SquareButton
-                clickable={option.disabled}
-                active={option.value === state}
-                disabled={option.disabled}>
-                {option.title}
-              </SquareButton>
-            </Link>
-          {/if}
-        {/each}
-      </div>
-    </div>
-    <div class="patches-list">
-      {#each allPatches as patch (patch.id)}
-        <div class="teaser">
-          <PatchTeaser {baseUrl} projectId={project.id} {patch} />
-        </div>
-      {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
-        {:else if loading}
-          <!-- We already show a loader below. -->
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} patches</div>
-            <div slot="body">No patches matched the current filter</div>
-          </Placeholder>
+            </Button>
+          </Link>
         {/if}
       {/each}
     </div>
+  </svelte:fragment>
+
+  <div class="patches">
+    {#if allPatches.length > 0}
+      <div class="patches-list">
+        {#each allPatches as patch (patch.id)}
+          <div class="teaser">
+            <PatchTeaser {baseUrl} projectId={project.id} {patch} />
+          </div>
+        {/each}
+      </div>
+    {:else if error}
+      <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+    {:else if loading}
+      <!-- We already show a loader below. -->
+    {:else}
+      <Placeholder emoji="🍂">
+        <div slot="title">{capitalize(state)} patches</div>
+        <div slot="body">No patches matched the current filter</div>
+      </Placeholder>
+    {/if}
     <div class="more">
       {#if loading}
         <div style:margin-top={page === 0 ? "8rem" : ""}>
-          <Loading small={page !== 0} center />
+          <Loading noDelay small={page !== 0} center />
         </div>
       {/if}
 
       {#if showMoreButton}
-        <Button variant="foreground" on:click={() => loadMore(state)}>
+        <Button size="large" variant="outline" on:click={() => loadMore(state)}>
           More
         </Button>
       {/if}

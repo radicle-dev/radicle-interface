@@ -1,11 +1,11 @@
 import {
-  test,
-  expect,
-  sourceBrowsingUrl,
-  bobRemote,
-  aliceRemote,
-  gitOptions,
   aliceMainHead,
+  expect,
+  gitOptions,
+  shortAliceRemote,
+  shortBobRemote,
+  sourceBrowsingUrl,
+  test,
 } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
 
@@ -16,11 +16,14 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(aliceRemote).click();
+    await page
+      .getByRole("link", {
+        name: `${shortAliceRemote} (alice) delegate`,
+      })
+      .click();
+
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `  did:key:${aliceRemote
-        .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} (alice) delegate`,
+      `${shortAliceRemote} (alice) delegate`,
     );
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
@@ -58,11 +61,10 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
+    await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
+
     await expect(page.getByTitle("Change peer")).toContainText(
-      ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} `,
+      `${shortBobRemote} (bob)`,
     );
 
     await expect(page.getByText("Wednesday, December 21, 2022")).toBeVisible();
@@ -90,13 +92,11 @@ test("peer and branch switching", async ({ page }) => {
 test("expand commit message", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByRole("link", { name: "6 commits" }).click();
-  const commitToggle = page
-    .locator("div")
-    .filter({ hasText: /^Add a C source file and its binary …$/ })
-    .getByRole("button", { name: "…" });
+  const commitToggle = page.locator(".expand-toggle").first();
+
   await commitToggle.click();
   const expandedCommit = page.getByText(
-    "The binary was compiled with: `gcc -Oz -O3 true.c`. Signed-off-by: Alice Liddell",
+    "Signed-off-by: Alice Liddell <alice@radicle.xyz>",
   );
 
   await expect(expandedCommit).toBeVisible();
@@ -120,18 +120,16 @@ test("relative timestamps", async ({ page }) => {
   await page.getByRole("link", { name: "6 commits" }).click();
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
   await expect(page.getByTitle("Change peer")).toHaveText(
-    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-      -6,
-    )} (bob)`,
+    `${shortBobRemote} (bob)`,
   );
   const latestCommit = page.locator(".teaser").first();
-  await expect(latestCommit).toContainText("Bob Belcher committed now");
+  await expect(latestCommit).toContainText("committed now by Bob Belcher");
   await expect(latestCommit).toContainText("28f3710");
   const earliestCommit = page.locator(".teaser").last();
   await expect(earliestCommit).toContainText(
-    "Alice Liddell committed last month",
+    "committed last month by Alice Liddell",
   );
 });
 

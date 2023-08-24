@@ -120,7 +120,7 @@
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);
     color: var(--color-foreground);
-    border: 1px dashed var(--color-foreground-4);
+    border: 1px dashed var(--color-border-default);
     padding: 0.5rem;
     margin-bottom: 2rem;
   }
@@ -145,7 +145,7 @@
 
   .markdown :global(h1) {
     font-size: calc(var(--font-size-x-large) * 0.75);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
     border-bottom: 1px solid var(--color-foreground-4);
@@ -153,7 +153,7 @@
 
   .markdown :global(h2) {
     font-size: var(--font-size-medium);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
     border-bottom: 1px dashed var(--color-foreground-4);
@@ -161,13 +161,13 @@
 
   .markdown :global(h3) {
     font-size: calc(var(--font-size-medium) * 0.9);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 0.5rem 0;
     margin: 1rem 0 0.25rem;
   }
 
   .markdown :global(h4) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-regular);
     padding: 0.5rem 0;
     margin: 1rem 0 0.125rem;
@@ -175,7 +175,7 @@
 
   .markdown :global(h5),
   .markdown :global(h6) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     padding: 0.35rem 0;
     margin: 1rem 0 0.125rem;
@@ -197,13 +197,13 @@
 
   .markdown :global(blockquote) {
     color: var(--color-foreground-6);
-    border-left: 0.3rem solid var(--color-foreground-4);
+    border-left: 0.3rem solid var(--color-fill-ghost);
     padding: 0 0 0 1rem;
     margin: 1rem 0 1rem 0;
   }
 
   .markdown :global(strong) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
 
   .markdown :global(.footnote-ref > a),
@@ -221,7 +221,7 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
     color: var(--color-foreground-6);
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
     border-radius: 0.5rem;
     padding: 0.125rem 0.25rem;
   }
@@ -234,7 +234,7 @@
   .markdown :global(pre) {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
     padding: 1rem !important;
     border-radius: var(--border-radius-small);
     margin: 1rem 0;
@@ -300,7 +300,7 @@
     border-collapse: collapse;
     border-radius: 0.5rem;
     border-style: hidden;
-    box-shadow: 0 0 0 1px var(--color-foreground-4);
+    box-shadow: 0 0 0 1px var(--color-border-hint);
     overflow: hidden;
   }
   .markdown :global(td) {

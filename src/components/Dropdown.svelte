@@ -7,9 +7,9 @@
 <style>
   .dropdown {
     align-items: center;
-    background-color: var(--color-background-1);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
     margin-top: 0.5rem;
-    padding: 0.5rem 0;
     position: absolute;
     box-shadow: var(--elevation-low);
     z-index: 10;
@@ -17,10 +17,19 @@
     overflow-y: auto;
     max-height: 60vh;
   }
+  .dropdown-item {
+    padding: 0.25rem 0.25rem 0 0.25rem;
+    font-size: var(--font-size-small);
+  }
+  .dropdown-item:last-child {
+    padding-bottom: 0.25rem;
+  }
 </style>
 
 <div class="dropdown">
   {#each items as item}
-    <slot name="item" {item} />
+    <div class="dropdown-item">
+      <slot name="item" {item} />
+    </div>
   {/each}
 </div>

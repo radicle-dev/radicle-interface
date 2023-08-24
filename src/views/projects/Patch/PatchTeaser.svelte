@@ -36,35 +36,32 @@
 <style>
   .patch-teaser {
     display: flex;
-    padding: 0.75rem 0;
-    background-color: var(--color-foreground-1);
+    padding: 1.25rem;
   }
   .patch-teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
-  .meta {
+  .content {
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .subtitle {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
     color: var(--color-foreground-6);
-    font-size: var(--font-size-tiny);
-    font-family: var(--font-family-monospace);
-    margin: 0 0.5rem;
-  }
-  .id {
-    margin: 0;
+    font-size: var(--font-size-small);
+    flex-wrap: wrap;
   }
   .summary {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    padding-right: 2rem;
   }
   .patch-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: var(--font-weight-medium);
   }
   .patch-title:hover {
     text-decoration: underline;
@@ -73,14 +70,13 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding-right: 1rem;
     margin-left: auto;
     color: var(--color-foreground-5);
   }
   .state {
     justify-self: center;
     align-self: center;
-    margin: 0 1rem 0 1.25rem;
+    margin-right: 1.5rem;
   }
   .labels {
     display: flex;
@@ -96,17 +92,22 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .hash {
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fill-secondary);
+  }
   .draft {
-    color: var(--color-foreground-6);
+    color: var(--color-fill-gray);
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .archived {
-    color: var(--color-caution-6);
+    color: var(--color-fill-yellow);
   }
   .merged {
-    color: var(--color-primary-6);
+    color: var(--color-fill-primary);
   }
   @media (max-width: 960px) {
     .labels {
@@ -124,7 +125,7 @@
     class:archived={patch.state.status === "archived"}>
     <Icon name="patch" />
   </div>
-  <div>
+  <div class="content">
     <div class="summary">
       <Link
         route={{
@@ -134,7 +135,7 @@
           patch: patch.id,
         }}>
         <span class="patch-title">
-          <InlineMarkdown content={patch.title} />
+          <InlineMarkdown fontSize="regular" content={patch.title} />
         </span>
       </Link>
       <span class="labels">
@@ -151,8 +152,8 @@
       </span>
     </div>
     <div class="summary">
-      <span class="meta id">
-        {formatObjectId(patch.id)}
+      <span class="subtitle">
+        <span class="hash">{formatObjectId(patch.id)}</span>
         {patch.revisions.length > 1 ? "updated" : "opened"}
         {formatTimestamp(latestRevision.timestamp)} by
         <Authorship

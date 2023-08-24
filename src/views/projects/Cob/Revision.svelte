@@ -17,6 +17,7 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
@@ -59,7 +60,7 @@
       case "reject":
         return "--color-negative-5";
       default:
-        return "--color-foreground-5";
+        return "--color-fill-gray";
     }
   }
 
@@ -112,6 +113,10 @@
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1rem;
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background-float);
+    overflow: hidden;
   }
   .revision-box {
     border: 1px solid var(--color-foreground-3);
@@ -120,20 +125,23 @@
   .revision-header {
     height: 3rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
     background: none;
-    padding: 1rem;
-    padding-right: 1.5rem;
+    padding: 0.5rem;
+    background-color: var(--color-background-default);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
   }
   .revision-name {
     display: flex;
-    user-select: none;
+    align-items: center;
   }
   .revision-data {
-    gap: 0.5rem;
+    gap: 0.75rem;
     display: flex;
     align-items: center;
+    margin-left: auto;
   }
   .expand-button {
     margin-right: 0.5rem;
@@ -145,6 +153,12 @@
   }
   .commits {
     margin-top: 0.5rem;
+  }
+  .hash {
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fill-secondary);
+    font-size: var(--font-size-small);
   }
   .commit-event {
     color: var(--color-foreground-6);
@@ -179,6 +193,9 @@
   .commit-summary:hover {
     text-decoration: underline;
   }
+  .authorship-header {
+    font-size: var(--font-size-small);
+  }
 </style>
 
 <div class="revision">
@@ -191,10 +208,12 @@
             on:click={() => (expanded = !expanded)} />
         </div>
         <span>
-          <span style:color="var(--color-foreground-6)">Revision</span>
-          {utils.formatObjectId(revisionId)}
+          Revision
+          <span class="hash">{utils.formatObjectId(revisionId)}</span>
         </span>
-        <Clipboard text={revisionId} small />
+        <span style:color="var(--color-fill-secondary)">
+          <Clipboard text={revisionId} small />
+        </span>
       </div>
       <div class="txt-small" />
       <div class="revision-data">
@@ -221,12 +240,38 @@
                 toCommit: revisionOid,
               },
             }}>
-            <Icon name="diff" />
+            <div style:color="var(--color-foreground-dim)">
+              <Icon name="diff" />
+            </div>
+          </Link>
+        {:else}
+          <Link
+            title="Compare {utils.formatObjectId(
+              projectHead,
+            )}..{utils.formatObjectId(revisionOid)}"
+            route={{
+              resource: "project.patch",
+              project: projectId,
+              node: baseUrl,
+              patch: patchId,
+              view: {
+                name: "diff",
+                fromCommit: projectHead,
+                toCommit: revisionOid,
+              },
+            }}>
+            <div style:color="var(--color-foreground-dim)">
+              <Icon name="diff" />
+            </div>
           </Link>
         {/if}
         <Floating>
           <svelte:fragment slot="toggle">
-            <Icon name="ellipsis" />
+            <div
+              style:margin-right="0.25rem"
+              style:color="var(--color-foreground-dim)">
+              <IconSmall name="ellipsis" />
+            </div>
           </svelte:fragment>
           <svelte:fragment slot="modal">
             <Dropdown
@@ -248,13 +293,13 @@
                     },
                   }}>
                   {#if item === projectHead}
-                    <DropdownItem selected={false} size="small">
+                    <DropdownItem selected={false}>
                       Compare to {projectDefaultBranch} ({utils.formatObjectId(
                         projectHead,
                       )})
                     </DropdownItem>
                   {:else if previousRevId}
-                    <DropdownItem selected={false} size="small">
+                    <DropdownItem selected={false}>
                       Compare to previous revision ({utils.formatObjectId(
                         previousRevId,
                       )})
@@ -272,7 +317,7 @@
         patchId === revisionId
           ? "opened this patch"
           : `updated to ${utils.formatObjectId(revisionId)}`}
-      <div style:margin="0 1rem 1rem 2.5rem">
+      <div style:margin="1rem 1rem 1rem 2.5rem">
         {#if revisionDescription && !first}
           <div class="revision-description txt-small">
             <Markdown
@@ -280,7 +325,7 @@
               content={revisionDescription} />
           </div>
         {/if}
-        <div class="txt-tiny">
+        <div class="authorship-header">
           <Authorship
             authorId={revisionAuthor.id}
             authorAlias={revisionAuthor.alias}
@@ -307,12 +352,14 @@
                       <div class="commit-summary" use:twemoji>
                         <InlineMarkdown
                           content={commit.summary}
-                          fontSize="tiny" />
+                          fontSize="small" />
                       </div>
                     </Link>
                   </span>
                   <span>
-                    {utils.formatCommit(commit.id)}
+                    <span class="hash">
+                      {utils.formatCommit(commit.id)}
+                    </span>
                   </span>
                 </div>
               {/each}

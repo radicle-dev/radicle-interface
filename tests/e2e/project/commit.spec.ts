@@ -1,10 +1,10 @@
 import {
-  test,
-  expect,
-  sourceBrowsingUrl,
-  bobRemote,
-  bobHead,
   aliceRemote,
+  bobHead,
+  expect,
+  shortBobRemote,
+  sourceBrowsingUrl,
+  test,
 } from "@tests/support/fixtures.js";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
@@ -12,7 +12,7 @@ const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
   await page.getByRole("link", { name: "7 commits" }).click();
 
   await page.getByText("Update readme").click();
@@ -30,9 +30,7 @@ test("relative timestamps", async ({ page }) => {
     };
   });
   await page.goto(commitUrl);
-  await expect(
-    page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
-  ).toBeVisible();
+  await expect(page.getByText("committed now by Bob Belcher")).toBeVisible();
 });
 
 test("modified file", async ({ page }) => {
@@ -40,9 +38,8 @@ test("modified file", async ({ page }) => {
 
   // Commit header.
   {
-    const header = page.locator(".commit .header");
-    await expect(header.getByText("Update readme")).toBeVisible();
-    await expect(header.getByText(bobHead)).toBeVisible();
+    await expect(page.getByText("Update readme")).toBeVisible();
+    await expect(page.getByText(bobHead)).toBeVisible();
   }
 
   // Diff header.
@@ -103,9 +100,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   await expect(page).toHaveURL(
     `${sourceBrowsingUrl}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,
   );
-  await expect(page.getByTitle("Current branch")).toContainText(
-    "0801aceeab500033f8d608778218657bd626ef73",
-  );
+  await expect(page.getByTitle("Current branch")).toContainText("0801ace");
   await expect(page.locator(".source-tree >> text=.gitkeep")).toBeVisible();
   await expect(
     page.locator(

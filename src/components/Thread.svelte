@@ -1,12 +1,13 @@
 <script lang="ts" strictEvents>
   import type { Comment } from "@httpd-client";
 
-  import Button from "@app/components/Button.svelte";
-  import CommentComponent from "@app/components/Comment.svelte";
-  import Textarea from "@app/components/Textarea.svelte";
   import { createEventDispatcher, tick } from "svelte";
-  import { scrollIntoView } from "@app/lib/utils";
   import { httpdStore } from "@app/lib/httpd";
+  import { scrollIntoView } from "@app/lib/utils";
+
+  import CommentComponent from "@app/components/Comment.svelte";
+  import Button from "@app/components/Button.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
 
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
@@ -108,7 +109,7 @@
         on:submit={reply}
         placeholder="Leave your reply" />
       <div class="actions">
-        <Button variant="text" size="small" on:click={cancel}>Dismiss</Button>
+        <Button variant="none" size="small" on:click={cancel}>Dismiss</Button>
         <Button
           variant="secondary"
           size="small"

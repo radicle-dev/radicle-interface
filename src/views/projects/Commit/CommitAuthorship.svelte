@@ -4,64 +4,57 @@
   import { formatTimestamp, gravatarURL } from "@app/lib/utils";
 
   export let header: CommitHeader;
-  export let noTime = false;
-  export let noAuthor = false;
 </script>
 
 <style>
   .authorship {
     display: flex;
-    align-items: center;
-    gap: 0.25rem;
     color: var(--color-foreground-6);
+    font-size: var(--font-size-small);
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
-  .authorship .author,
-  .authorship .committer {
+  .person {
+    display: flex;
+    align-items: center;
     white-space: nowrap;
+    gap: 0.5rem;
   }
-  .authorship .avatar {
+  .avatar {
     width: 1rem;
     height: 1rem;
-    border-radius: var(--border-radius);
-  }
-
-  @media (max-width: 720px) {
-    .authorship {
-      display: none;
-    }
+    border-radius: var(--border-radius-round);
   }
 </style>
 
-<span class="authorship txt-tiny">
+<span class="authorship">
+  <slot />
   {#if header.author.email === header.committer.email}
-    <img
-      class="avatar"
-      alt="avatar"
-      src={gravatarURL(header.committer.email)} />
-    <span class="layout-desktop-inline committer">
-      {header.committer.name}
-    </span>
-    <span>committed</span>
-  {:else}
-    {#if !noAuthor}
-      <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
-      <span class="layout-desktop-inline author">
-        {header.author.name}
-      </span>
-      <span>authored</span>
-    {/if}
-    <img
-      class="avatar"
-      alt="avatar"
-      src={gravatarURL(header.committer.email)} />
-    <span class="layout-desktop-inline committer">
-      {header.committer.name}
-    </span>
-    <span>committed</span>
-  {/if}
-  {#if !noTime}
-    <span class="layout-desktop-inline">
+    <div class="person">
+      committed
       {formatTimestamp(header.committer.time)}
-    </span>
+      by
+      <img
+        class="avatar"
+        alt="avatar"
+        src={gravatarURL(header.committer.email)} />
+      {header.committer.name}
+    </div>
+  {:else}
+    <div class="person">
+      authored by
+      <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
+      {header.author.name}
+    </div>
+    <div class="person">
+      committed
+      {formatTimestamp(header.committer.time)}
+      by
+      <img
+        class="avatar"
+        alt="avatar"
+        src={gravatarURL(header.committer.email)} />
+      {header.committer.name}
+    </div>
   {/if}
 </span>

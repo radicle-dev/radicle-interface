@@ -14,11 +14,11 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    color: var(--color-secondary);
+    color: var(--color-foreground-match-background);
   }
   .clickable:hover {
     cursor: pointer;
-    background-color: var(--color-secondary-5);
+    background-color: var(--color-fill-secondary-hover);
   }
   .section {
     display: flex;
@@ -27,22 +27,22 @@
     padding: 0.2rem 0.5rem;
   }
   .text {
-    background-color: var(--color-secondary-3);
-    border-radius: var(--border-radius);
+    background-color: var(--color-fill-secondary);
+    border-radius: var(--border-radius-round);
   }
   .close {
     align-self: stretch;
-    color: var(--color-secondary);
+    color: var(--color-foreground-match-background);
     border: none;
-    border-bottom-right-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    background-color: var(--color-secondary-2);
+    border-bottom-right-radius: var(--border-radius-round);
+    border-top-right-radius: var(--border-radius-round);
+    background-color: var(--color-fill-secondary);
     line-height: 1.5;
     cursor: pointer;
   }
   .close:hover {
-    background-color: var(--color-secondary-5);
-    color: var(--color-foreground);
+    background-color: var(--color-fill-secondary-hover);
+    color: var(--color-foreground-match-background);
   }
   .removeable {
     border-bottom-right-radius: 0;

@@ -1,8 +1,8 @@
 import {
   aliceMainHead,
   expect,
+  shortNodeRemote,
   sourceBrowsingRid,
-  nodeRemote,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -12,9 +12,7 @@ test("node metadata", async ({ page }) => {
   await expect(
     page.locator(".header").getByText("radicle.local"),
   ).toBeVisible();
-  await expect(
-    page.getByText(`${nodeRemote.substring(0, 6)}…${nodeRemote.slice(-6)}`),
-  ).toBeVisible();
+  await expect(page.getByText(shortNodeRemote)).toBeVisible();
   await expect(page.getByText("0.1.0-")).toBeVisible();
 });
 

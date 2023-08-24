@@ -5,6 +5,7 @@
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -12,83 +13,93 @@
   export let commit: CommitHeader;
   export let projectId: string;
 
-  let expandCommitMessage = false;
+  let commitMessageVisible = false;
 </script>
 
 <style>
   .teaser {
-    background-color: var(--color-foreground-1);
-    padding: 0.75rem 0rem;
     display: flex;
+    background-color: var(--color-background-float);
     align-items: center;
+    padding: 1.25rem;
+    font-size: var(--font-size-small);
   }
   .teaser:hover {
-    background-color: var(--color-foreground-2);
+    background-color: var(--color-fill-ghost);
   }
   .hash {
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
-    padding: 0 1.5rem;
-  }
-  .left {
-    padding-left: 1rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fill-secondary);
   }
   .message {
     align-items: center;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 0.25rem;
+  }
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
   .expand-toggle {
-    background-color: var(--color-foreground-2);
-    border: 1px solid var(--color-foreground-5);
+    background-color: transparent;
+    border: 0;
     border-radius: var(--border-radius-tiny);
-    color: var(--color-foreground);
+    color: var(--color-foreground-dim);
     cursor: pointer;
-    font-weight: var(--font-weight-medium);
-    height: 12px;
-    line-height: 6px;
-    padding: 0 5px 5px;
+    font-weight: var(--font-weight-semibold);
+    height: 18px;
+    width: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .expand-toggle:hover {
-    background-color: var(--color-foreground-5);
+    color: var(--color-foreground-contrast);
+    background-color: var(--color-fill-ghost-hover);
   }
   .right {
     display: flex;
     align-items: center;
-    padding-right: 1.5rem;
     margin-left: auto;
+    gap: 1.5rem;
   }
   .summary {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
   }
   .summary:hover {
     text-decoration: underline;
   }
   .browse {
+    background-color: transparent;
+    border-radius: var(--border-radius-tiny);
+    color: var(--color-foreground-dim);
+    cursor: pointer;
     display: flex;
     width: 100%;
     height: 100%;
+    padding: 0 0.25rem;
+  }
+  .browse:hover {
+    color: var(--color-foreground-contrast);
+    background-color: var(--color-fill-ghost-hover);
+    padding: 0 0.25rem;
+  }
+  .commit-message {
+    margin: 0.5rem 0;
+    font-size: var(--font-size-regular);
   }
 
   @media (max-width: 720px) {
-    .hash {
-      padding-right: 0;
-    }
     .left {
       overflow: hidden;
     }
     .browse {
       display: none !important;
-    }
-    .summary {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
     }
   }
 </style>
@@ -104,29 +115,33 @@
           commit: commit.id,
         }}>
         <div class="summary" use:twemoji>
-          <InlineMarkdown content={commit.summary} />
+          <InlineMarkdown fontSize="regular" content={commit.summary} />
         </div>
       </Link>
       {#if commit.description}
         <button
-          class:expand-open={expandCommitMessage}
-          class="expand-toggle txt-tiny"
-          on:click={() => (expandCommitMessage = !expandCommitMessage)}>
-          …
+          name="expand-toggle"
+          class:expand-open={commitMessageVisible}
+          class="expand-toggle"
+          on:click={() => (commitMessageVisible = !commitMessageVisible)}>
+          {#if commitMessageVisible}
+            <IconSmall name="chevron-up" />
+          {:else}
+            <IconSmall name="chevron-down" />
+          {/if}
         </button>
       {/if}
     </div>
-    {#if expandCommitMessage}
-      <div style:margin="0.5rem 0">
-        <pre
-          class="txt-monospace txt-tiny"
-          style:margin="0">{commit.description.trim()}</pre>
+    {#if commitMessageVisible}
+      <div class="commit-message" style:margin="0.5rem 0">
+        <pre style:margin="0">{commit.description.trim()}</pre>
       </div>
     {/if}
-    <CommitAuthorship header={commit} />
+    <CommitAuthorship header={commit}>
+      <span class="hash">{formatCommit(commit.id)}</span>
+    </CommitAuthorship>
   </div>
-  <div class="right">
-    <span class="hash txt-highlight">{formatCommit(commit.id)}</span>
+  <div class="right layout-desktop-flex">
     <div
       class="browse"
       title="Browse the repository at this point in the history">

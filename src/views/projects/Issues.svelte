@@ -7,14 +7,13 @@
   import { httpdStore } from "@app/lib/httpd";
   import { ISSUES_PER_PAGE } from "./router";
 
-  import Button from "@app/components/Button.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import SquareButton from "@app/components/SquareButton.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
@@ -69,103 +68,114 @@
 
 <style>
   .issues {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .issues-list {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
-  }
-  .section-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .more {
     margin-top: 2rem;
-    text-align: center;
     min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  @media (max-width: 960px) {
-    .issues {
-      padding-left: 2rem;
+  .tab-bar {
+    display: flex;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    background-color: var(--color-background-float);
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+    border-radius: 2px;
+    width: fit-content;
+    overflow: hidden;
+  }
+  @media (max-width: 720px) {
+    .issues-list {
+      border-radius: 0;
     }
   }
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">
-  <div class="issues">
-    <div class="section-header">
-      <div style="margin-bottom: 2rem;">
-        <div style="display: flex; gap: 0.5rem;">
-          {#each options as option}
-            {#if !option.disabled}
-              <Link
-                route={{
-                  resource: "project.issues",
-                  project: project.id,
-                  node: baseUrl,
-                  state: option.value,
-                }}>
-                <SquareButton
-                  clickable={option.disabled}
-                  active={option.value === state}
-                  disabled={option.disabled}>
-                  {option.title}
-                </SquareButton>
-              </Link>
-            {:else}
-              <SquareButton
-                clickable={option.disabled}
-                active={option.value === state}
-                disabled={option.disabled}>
-                {option.title}
-              </SquareButton>
-            {/if}
-          {/each}
-        </div>
-      </div>
-      {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
+  <svelte:fragment slot="subheader">
+    <div class="tab-bar">
+      {#each options as option}
+        {#if !option.disabled}
+          <Link
+            route={{
+              resource: "project.issues",
+              project: project.id,
+              node: baseUrl,
+              state: option.value,
+            }}>
+            <Button
+              clickable={option.disabled}
+              square={option.value === state}
+              variant={option.value === state ? "tab" : "none"}
+              disabled={option.disabled}>
+              {option.title}
+            </Button>
+          </Link>
+        {:else}
+          <Button
+            clickable={option.disabled}
+            square={option.value === state}
+            variant={option.value === state ? "tab" : "none"}
+            disabled={option.disabled}>
+            {option.title}
+          </Button>
+        {/if}
+      {/each}
+    </div>
+    {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
+      <div style="margin-left: auto;">
         <Link
           route={{
             resource: "project.newIssue",
             project: project.id,
             node: baseUrl,
           }}>
-          <SquareButton>New issue</SquareButton>
+          <Button>New issue</Button>
         </Link>
-      {/if}
-    </div>
-    <div class="issues-list">
-      {#each allIssues as issue (issue.id)}
-        <div class="teaser">
-          <IssueTeaser projectId={project.id} {baseUrl} {issue} />
-        </div>
-      {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load issues." stackTrace={error} />
-        {:else if loading}
-          <!-- We already show a loader below. -->
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} issues</div>
-            <div slot="body">No issues matched the current filter</div>
-          </Placeholder>
-        {/if}
-      {/each}
-    </div>
+      </div>
+    {/if}
+  </svelte:fragment>
+
+  <div class="issues">
+    {#if allIssues.length > 0}
+      <div class="issues-list">
+        {#each allIssues as issue (issue.id)}
+          <div class="teaser">
+            <IssueTeaser projectId={project.id} {baseUrl} {issue} />
+          </div>
+        {/each}
+      </div>
+    {:else if error}
+      <ErrorMessage message="Couldn't load issues." stackTrace={error} />
+    {:else if loading}
+      <!-- We already show a loader below. -->
+    {:else}
+      <Placeholder emoji="🍂">
+        <div slot="title">{capitalize(state)} issues</div>
+        <div slot="body">No issues matched the current filter</div>
+      </Placeholder>
+    {/if}
     <div class="more">
       {#if loading}
-        <Loading small={page !== 0} center />
+        <Loading noDelay small={page !== 0} center />
       {/if}
 
       {#if showMoreButton}
-        <Button variant="foreground" on:click={() => loadIssues(state)}>
+        <Button
+          size="large"
+          variant="outline"
+          on:click={() => loadIssues(state)}>
           More
         </Button>
       {/if}

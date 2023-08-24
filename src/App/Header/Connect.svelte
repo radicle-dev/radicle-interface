@@ -32,18 +32,20 @@
 <style>
   .dropdown {
     align-items: center;
-    background: var(--color-background-1);
-    border-radius: var(--border-radius);
+    background: var(--color-background-float);
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-regular);
     box-shadow: var(--elevation-low);
     color: var(--color-foreground-6);
     position: absolute;
     right: 5rem;
-    top: 5rem;
+    top: 4.5rem;
     width: 15rem;
   }
   .info {
     display: flex;
     padding: 1rem 1rem 0.5rem 1rem;
+    font-size: var(--font-size-small);
   }
   .avatar-id-container {
     display: flex;
@@ -71,20 +73,17 @@
     color: var(--color-foreground-6);
   }
   .rounded:last-of-type:hover {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
-  }
-  .stopped {
-    color: var(--color-foreground-5);
+    border-bottom-left-radius: var(--border-radius-regular);
+    border-bottom-right-radius: var(--border-radius-regular);
   }
   .running {
-    color: var(--color-foreground);
+    color: var(--color-fill-secondary);
   }
   .authenticated {
-    color: var(--color-positive);
+    color: var(--color-fill-success);
   }
   .toggle:hover .authenticated {
-    color: var(--color-positive);
+    color: var(--color-fill-success);
   }
 </style>
 
@@ -92,17 +91,17 @@
   <div slot="toggle" class="toggle">
     <Button
       title={buttonTitle[$httpdStore.state]}
-      style="padding-left: 10px; padding-right: 1rem;"
+      size="large"
       variant="outline">
-      <div style="display: flex; gap: 0.5rem">
+      <svelte:fragment slot="icon">
         <div
           class:authenticated={$httpdStore.state === "authenticated"}
           class:stopped={$httpdStore.state === "stopped"}
           class:running={$httpdStore.state === "running"}>
           <Icon name="network" />
         </div>
-        radicle.local
-      </div>
+      </svelte:fragment>
+      radicle.local
     </Button>
   </div>
 
@@ -164,7 +163,8 @@
     {:else}
       <div class="dropdown" style:width="20.5rem">
         <div class="info">
-          To access your local Radicle node on this site, run:
+          To access your local Radicle node on this site, run this command in
+          your terminal:
         </div>
         <div style:margin="0.5rem 1rem 1rem 1rem">
           <Command command="radicle-httpd" />
