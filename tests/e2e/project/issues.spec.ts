@@ -161,7 +161,6 @@ test("go through the entire ui issue flow", async ({
   await page.getByPlaceholder("Add label").press("Enter");
   await page.getByPlaceholder("Add label").fill("documentation");
   await page.getByPlaceholder("Add label").press("Enter");
-
   await page.getByRole("button", { name: "Submit" }).click();
 
   await expect(page.getByText("This is a title")).toBeVisible();

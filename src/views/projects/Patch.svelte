@@ -1,5 +1,12 @@
 <script lang="ts" context="module">
-  import type { Comment, Review, Merge, Project } from "@httpd-client";
+  import type {
+    Comment,
+    Review,
+    Merge,
+    Project,
+    LifecycleState,
+    PatchState,
+  } from "@httpd-client";
 
   interface Thread {
     root: Comment;
@@ -28,32 +35,39 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Patch } from "@httpd-client";
+  import type { BaseUrl, Patch, PatchUpdateAction } from "@httpd-client";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
+  import type { Session } from "@app/lib/httpd";
   import type { Variant } from "@app/components/Badge.svelte";
 
+  import * as modal from "@app/lib/modal";
+  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { capitalize, isEqual } from "lodash";
   import { HttpdClient } from "@httpd-client";
+  import { capitalize, isEqual } from "lodash";
   import { httpdStore } from "@app/lib/httpd";
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
+  import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
+  import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
-  import Layout from "./Layout.svelte";
+  import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
+  import Textarea from "@app/components/Textarea.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
@@ -62,11 +76,17 @@
 
   $: api = new HttpdClient(baseUrl);
 
+  const items: [string, LifecycleState][] = [
+    ["Reopen patch", { status: "open" }],
+    ["Archive patch", { status: "archived" }],
+    ["Convert to draft", { status: "draft" }],
+  ];
+
   async function createReply({
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
     if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
-      await api.project.updatePatch(
+      const status = await updatePatch(
         project.id,
         patch.id,
         {
@@ -75,16 +95,26 @@
           body: reply.body,
           replyTo: reply.id,
         },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      patch = await api.project.getPatchById(project.id, patch.id);
+      if (status === "success") {
+        patch = await api.project.getPatchById(project.id, patch.id);
+      }
     }
   }
-  async function handleReaction({
-    detail: { nids, id, reaction },
-  }: CustomEvent<{ nids: string[]; id: string; reaction: string }>) {
+  async function handleReaction(
+    revisionId: string,
+    {
+      detail: { nids, id, reaction },
+    }: CustomEvent<{
+      nids: string[];
+      id: string;
+      reaction: string;
+    }>,
+  ) {
     if ($httpdStore.state === "authenticated") {
-      await api.project.updatePatch(
+      const status = await updatePatch(
         project.id,
         patch.id,
         {
@@ -94,9 +124,48 @@
           reaction,
           active: nids.includes($httpdStore.session.publicKey) ? false : true,
         },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      patch = await api.project.getPatchById(project.id, patch.id);
+      if (status === "success") {
+        patch = await api.project.getPatchById(project.id, patch.id);
+      }
+    }
+  }
+  async function createComment() {
+    if (
+      $httpdStore.state === "authenticated" &&
+      commentBody.trim().length > 0
+    ) {
+      const status = await updatePatch(
+        project.id,
+        patch.id,
+        { type: "revision.comment", body: commentBody, revision: revisionId },
+        $httpdStore.session,
+        api,
+      );
+      if (status === "success") {
+        patch = await api.project.getPatchById(project.id, patch.id);
+      }
+    }
+  }
+  async function saveStatus({ detail: state }: CustomEvent<PatchState>) {
+    if ($httpdStore.state === "authenticated" && state.status !== "merged") {
+      const status = await updatePatch(
+        project.id,
+        patch.id,
+        { type: "lifecycle", state },
+        $httpdStore.session,
+        api,
+      );
+      if (status === "success") {
+        void router.push({
+          resource: "project.patch",
+          project: project.id,
+          node: baseUrl,
+          patch: patch.id,
+        });
+      }
     }
   }
   function badgeColor(status: string): Variant {
@@ -125,20 +194,52 @@
       } else {
         revision = view.revision;
       }
-      await api.project.updatePatch(
+      const status = await updatePatch(
         project.id,
         revision,
         { type: "label", labels: labels },
-        $httpdStore.session.id,
+        $httpdStore.session,
+        api,
       );
-      patch = await api.project.getPatchById(project.id, patch.id);
+      if (status === "success") {
+        patch = await api.project.getPatchById(project.id, patch.id);
+      }
     }
   }
 
-  const action: "create" | "edit" | "view" =
+  export async function updatePatch(
+    projectId: string,
+    patchId: string,
+    action: PatchUpdateAction,
+    session: Session,
+    api: HttpdClient,
+  ): Promise<"success" | "error"> {
+    try {
+      await api.project.updatePatch(projectId, patchId, action, session.id);
+      return "success";
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch editing failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error,
+          },
+        });
+      }
+      return "error";
+    }
+  }
+
+  $: action = (
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? "edit"
-      : "view";
+      : "view"
+  ) as "edit" | "view";
 
   let tabs: Record<string, Route>;
   $: {
@@ -182,6 +283,7 @@
     return patchReviews;
   }
 
+  let commentBody = "";
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -190,6 +292,7 @@
   }
 
   $: patchReviews = computeReviews(patch);
+  $: selectedItem = patch.state.status === "open" ? items[1] : items[0];
   $: timelineTuple = patch.revisions.map<
     [
       {
@@ -267,6 +370,13 @@
     justify-content: space-between;
     align-items: center;
     margin: 1rem 0;
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 0 0 2.5rem 0;
+    gap: 1rem;
   }
   .author {
     display: flex;
@@ -454,7 +564,7 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
-            on:react={handleReaction}
+            on:react={event => handleReaction(revisionId, event)}
             on:reply={createReply}
             patchId={patch.id}
             expanded={index === patch.revisions.length - 1}
@@ -482,6 +592,35 @@
         </div>
       {:else}
         {utils.unreachable(view.name)}
+      {/if}
+      {#if $httpdStore.state === "authenticated" && view.name === "activity"}
+        <div style:margin-top="1rem">
+          <Textarea
+            resizable
+            on:submit={async () => {
+              await createComment();
+              commentBody = "";
+            }}
+            bind:value={commentBody}
+            placeholder="Leave your comment" />
+          <div class="actions txt-small">
+            <CobStateButton
+              items={items.filter(([, state]) => !isEqual(state, patch.state))}
+              {selectedItem}
+              state={patch.state}
+              on:saveStatus={saveStatus} />
+            <Button
+              variant="secondary"
+              size="small"
+              disabled={!commentBody}
+              on:click={async () => {
+                await createComment();
+                commentBody = "";
+              }}>
+              Comment
+            </Button>
+          </div>
+        </div>
       {/if}
     </div>
 

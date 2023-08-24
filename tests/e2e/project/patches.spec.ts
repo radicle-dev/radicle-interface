@@ -38,17 +38,20 @@ test("navigate patch details", async ({ page }) => {
   }
 });
 
-test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
+test("go through the entire ui patch flow", async ({
+  page,
+  authenticatedPeer,
+}) => {
   await page.goto(authenticatedPeer.uiUrl());
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
-    "handle-reactions",
+    "commenting",
   );
   await authenticatedPeer.git(["switch", "-c", "feature-1"], {
     cwd: projectFolder,
   });
   await authenticatedPeer.git(
-    ["commit", "--allow-empty", "-m", "Reaction patch"],
+    ["commit", "--allow-empty", "-m", "Some patch title"],
     {
       cwd: projectFolder,
     },
@@ -56,19 +59,36 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
   await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.rad(
-    [
-      "comment",
-      "bfc3bc2c6af29920283f83e7ada9d52b2d4d3a57",
-      "--message",
-      "This is a comment for reactions",
-    ],
-    { cwd: projectFolder },
-  );
   await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/patches/bfc3bc2c6af29920283f83e7ada9d52b2d4d3a57`,
+    `${authenticatedPeer.uiUrl()}/${rid}/patches/d41fbd28b06a5fac51a2ba9e05ad9dc885676d71`,
   );
-  const commentReactionToggle = page.getByTitle("toggle-reaction");
+  await expect(page.getByRole("button", { name: "1 patch" })).toBeVisible();
+  await expect(page.getByText("open", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "edit" }).click();
+  await page.getByPlaceholder("Add label").fill("bug");
+  await page.getByPlaceholder("Add label").press("Enter");
+  await page.getByPlaceholder("Add label").fill("documentation");
+  await page.getByPlaceholder("Add label").press("Enter");
+  await page.getByRole("button", { name: "save" }).click();
+
+  await expect(
+    page.getByLabel("chip").filter({ hasText: "documentation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("chip").filter({ hasText: "bug" }),
+  ).toBeVisible();
+
+  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
+  await page.getByRole("button", { name: "Comment" }).click();
+  await expect(page.getByText("This is a comment")).toBeVisible();
+
+  await page.getByTitle("toggle-reply").click();
+  await page.getByPlaceholder("Leave your reply").fill("This is a reply");
+  await page.getByRole("button", { name: "Reply", exact: true }).click();
+  await expect(page.getByText("This is a reply")).toBeVisible();
+
+  const commentReactionToggle = page.getByTitle("toggle-reaction").first();
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "👍" }).click();
   await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();
@@ -86,6 +106,16 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
   await page.getByRole("button", { name: "🎉" }).click();
   await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Archive patch" }).click();
+  await expect(page.getByText("archived", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
+
+  await page.getByLabel("stateToggle").click();
+  await page.getByText("Convert to draft").click();
+  await page.getByText("Convert to draft").click();
+  await expect(page.getByText("draft", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
 });
 
 test("test patches counters", async ({ page, authenticatedPeer }) => {

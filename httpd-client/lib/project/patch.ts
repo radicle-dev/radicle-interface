@@ -188,7 +188,7 @@ export type PatchUpdateAction =
       type: "revision.comment";
       revision: string;
       body: string;
-      replyTo: string;
+      replyTo?: string;
     }
   | {
       type: "revision.comment.edit";

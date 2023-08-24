@@ -18,8 +18,8 @@
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import Markdown from "@app/components/Markdown.svelte";
   import Link from "@app/components/Link.svelte";
+  import Markdown from "@app/components/Markdown.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;

@@ -1,6 +1,4 @@
 <script lang="ts" strictEvents>
-  import type { IssueState } from "@httpd-client";
-
   import Button from "@app/components/Button.svelte";
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
@@ -11,15 +9,17 @@
   import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
 
-  export let state: IssueState;
-  export let selectedItem: [string, IssueState];
-  export let items: [string, IssueState][];
+  type CobState = $$Generic;
+
+  export let state: CobState;
+  export let selectedItem: [string, CobState];
+  export let items: [string, CobState][];
 
   const dispatch = createEventDispatcher<{
-    saveStatus: IssueState;
+    saveStatus: CobState;
   }>();
 
-  function switchCaption(item: [string, IssueState]) {
+  function switchCaption(item: [string, CobState]) {
     selectedItem = item;
     closeFocused();
   }
