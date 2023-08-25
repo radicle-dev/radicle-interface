@@ -39,7 +39,7 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/issues/48af7d329e5b44ee8d348eeb7e341370243db9ad`,
   );
-  const commentReactionToggle = page.locator(".card-body .toggle").first();
+  const commentReactionToggle = page.getByTitle("toggle-reaction");
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
   await commentReactionToggle.click();
@@ -190,7 +190,7 @@ test("go through the entire ui issue flow", async ({
   await page.getByRole("button", { name: "Comment" }).click();
   await expect(page.getByText("This is a comment")).toBeVisible();
 
-  await page.getByRole("button", { name: "reply" }).click();
+  await page.getByTitle("toggle-reply").click();
   await page.getByPlaceholder("Leave your reply").fill("This is a reply");
   await page.getByRole("button", { name: "Reply", exact: true }).click();
   await expect(page.getByText("This is a reply")).toBeVisible();

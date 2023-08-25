@@ -68,7 +68,7 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `${authenticatedPeer.uiUrl()}/${rid}/patches/bfc3bc2c6af29920283f83e7ada9d52b2d4d3a57`,
   );
-  const commentReactionToggle = page.locator(".card-body .toggle").first();
+  const commentReactionToggle = page.getByTitle("toggle-reaction");
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "👍" }).click();
   await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeVisible();

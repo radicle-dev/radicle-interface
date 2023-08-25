@@ -5,9 +5,10 @@
   import { httpdStore } from "@app/lib/httpd";
 
   import Authorship from "@app/components/Authorship.svelte";
-  import Button from "@app/components/Button.svelte";
+  import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
   import Textarea from "@app/components/Textarea.svelte";
 
@@ -27,6 +28,11 @@
     toggleReply: null;
     react: { nids: string[]; id: string; reaction: string };
   }>();
+
+  $: groupedReactions = reactions?.reduce(
+    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
+    new Map<string, string[]>(),
+  );
 </script>
 
 <style>
@@ -49,14 +55,19 @@
   }
   .actions {
     display: flex;
+    flex-direction: row;
     justify-content: flex-end;
-  }
-  .reactions {
-    margin-top: 1rem;
-  }
-  .action {
-    display: flex;
+    align-items: center;
     gap: 0.5rem;
+  }
+  .reaction-selector {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+  }
+  .toggle:hover {
+    color: var(--color-foreground-5);
+    cursor: pointer;
   }
 </style>
 
@@ -70,15 +81,29 @@
       {timestamp} />
     <div class="actions">
       {#if showReplyIcon}
-        <Button
-          variant="text"
-          size="tiny"
-          on:click={() => dispatch("toggleReply")}>
-          <div class="action">
-            <Icon name="chat" />
-            <span>reply</span>
-          </div>
-        </Button>
+        <div class="toggle" title="toggle-reply">
+          <Icon on:click={() => dispatch("toggleReply")} name="arrow-reply" />
+        </div>
+      {/if}
+      {#if id && $httpdStore.state === "authenticated"}
+        <div style:position="relative">
+          <Floating>
+            <div class="reaction-selector" slot="modal">
+              <ReactionSelector
+                nid={$httpdStore.session.publicKey}
+                reactions={groupedReactions}
+                on:select={event => {
+                  if (id) {
+                    dispatch("react", { id, ...event.detail });
+                    closeFocused();
+                  }
+                }} />
+            </div>
+            <div class="toggle" title="toggle-reaction" slot="toggle">
+              <Icon name="face" />
+            </div>
+          </Floating>
+        </div>
       {/if}
     </div>
   </div>
@@ -94,9 +119,16 @@
     {:else}
       <Markdown {rawPath} content={body} />
     {/if}
-    {#if id && (reactions.length > 0 || $httpdStore.state === "authenticated")}
-      <div class="reactions">
-        <Reactions {id} {reactions} on:react />
+    {#if id && groupedReactions.size > 0}
+      <div style:margin-top="1rem">
+        <Reactions
+          reactions={groupedReactions}
+          clickable={Boolean($httpdStore.state === "authenticated")}
+          on:remove={event => {
+            if (id) {
+              dispatch("react", { id, ...event.detail });
+            }
+          }} />
       </div>
     {/if}
   </div>

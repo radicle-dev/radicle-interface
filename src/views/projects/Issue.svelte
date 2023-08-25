@@ -18,13 +18,15 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
+  import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import ReactionSelector from "@app/components/ReactionSelector.svelte";
+  import Reactions from "@app/components/Reactions.svelte";
   import Textarea from "@app/components/Textarea.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
-  import Reactions from "@app/components/Reactions.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -81,8 +83,14 @@
   }
 
   async function handleReaction({
-    detail: { nids, id, reaction },
-  }: CustomEvent<{ nids: string[]; id: string; reaction: string }>) {
+    nids,
+    id,
+    reaction,
+  }: {
+    nids: string[];
+    id: string;
+    reaction: string;
+  }) {
     if ($httpdStore.state === "authenticated") {
       try {
         const status = await updateIssue(
@@ -263,6 +271,10 @@
           .sort((a, b) => a.timestamp - b.timestamp),
       };
     }, []);
+  $: issueReactions = issue.discussion[0].reactions?.reduce(
+    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
+    new Map<string, string[]>(),
+  );
 
   let commentBody: string = "";
 </script>
@@ -298,7 +310,11 @@
     gap: 0.5rem;
   }
   .reactions {
-    margin-top: 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
   }
   .thread {
     margin: 1rem 0;
@@ -308,6 +324,18 @@
   }
   .closed {
     color: var(--color-negative-6);
+  }
+  .reaction-selector {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+  }
+  .toggle {
+    margin-top: 1rem;
+  }
+  .toggle:hover {
+    color: var(--color-foreground-5);
+    cursor: pointer;
   }
 
   @media (max-width: 960px) {
@@ -354,14 +382,33 @@
           <Markdown
             content={issue.discussion[0].body}
             rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
-          {#if issue.discussion[0].reactions.length > 0 || $httpdStore.state === "authenticated"}
-            <div class="reactions">
-              <Reactions
-                id={issue.id}
-                reactions={issue.discussion[0].reactions}
-                on:react={handleReaction} />
-            </div>
-          {/if}
+          <div class="reactions">
+            {#if $httpdStore.state === "authenticated"}
+              <Floating>
+                <div class="reaction-selector" slot="modal">
+                  <ReactionSelector
+                    nid={$httpdStore.session.publicKey}
+                    reactions={issueReactions}
+                    on:select={async event => {
+                      await handleReaction({ ...event.detail, id: issue.id });
+                      closeFocused();
+                    }} />
+                </div>
+                <div class="toggle" slot="toggle">
+                  <Icon name="face" />
+                </div>
+              </Floating>
+            {/if}
+            {#if issueReactions.size > 0}
+              <div style:margin-top="1rem">
+                <Reactions
+                  clickable={$httpdStore.state === "authenticated"}
+                  reactions={issueReactions}
+                  on:remove={event =>
+                    handleReaction({ ...event.detail, id: issue.id })} />
+              </div>
+            {/if}
+          </div>
         </div>
         <div class="author" slot="author">
           opened by <Authorship
@@ -376,7 +423,7 @@
             {thread}
             {rawPath}
             on:reply={createReply}
-            on:react={handleReaction} />
+            on:react={event => handleReaction(event.detail)} />
         </div>
       {/each}
       {#if $httpdStore.state === "authenticated"}
