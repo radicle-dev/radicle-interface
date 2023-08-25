@@ -181,9 +181,9 @@ test("go through the entire ui issue flow", async ({
     page.getByLabel("chip").filter({ hasText: "bug" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit" }).first().click();
+  await page.getByLabel("editTitle").click();
   await page.getByPlaceholder("Title").fill("This is a new title");
-  await page.getByRole("button", { name: "save" }).click();
+  await page.getByLabel("editTitle").click();
   await expect(page.getByText("This is a new title")).toBeVisible();
 
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");

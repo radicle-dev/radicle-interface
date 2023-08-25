@@ -2,8 +2,8 @@
   import { createEventDispatcher } from "svelte";
 
   import * as utils from "@app/lib/utils";
-  import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
@@ -57,6 +57,10 @@
     font-size: var(--font-size-small);
     margin-top: 1rem;
   }
+  .toggle:hover {
+    cursor: pointer;
+    color: var(--color-foreground-5);
+  }
 </style>
 
 <header>
@@ -72,19 +76,14 @@
       <span class="txt-missing">No title</span>
     {/if}
     {#if action === "edit"}
-      <Button
-        variant="foreground"
-        size="small"
-        on:click={() => {
-          editable = !editable;
-          dispatch("editTitle", title);
-        }}>
-        {#if editable}
-          save
-        {:else}
-          edit
-        {/if}
-      </Button>
+      <div class="toggle" aria-label="editTitle">
+        <Icon
+          name={editable ? "checkmark" : "pen"}
+          on:click={() => {
+            editable = !editable;
+            dispatch("editTitle", title);
+          }} />
+      </div>
     {/if}
   </div>
   <div class="subtitle">
