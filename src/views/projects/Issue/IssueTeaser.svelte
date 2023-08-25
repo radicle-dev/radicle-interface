@@ -81,10 +81,10 @@
     margin: 0 1rem 0 1.25rem;
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .closed {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
   }
 
   @media (max-width: 960px) {

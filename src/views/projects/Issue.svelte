@@ -304,10 +304,10 @@
     margin: 1rem 0;
   }
   .open {
-    color: var(--color-positive-6);
+    color: var(--color-fill-success);
   }
   .closed {
-    color: var(--color-negative-6);
+    color: var(--color-fill-danger);
   }
 
   @media (max-width: 960px) {
