@@ -79,6 +79,7 @@
   .patches-list {
     border-radius: var(--border-radius-small);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .more {
     margin-top: 2rem;
@@ -86,7 +87,7 @@
     min-height: 3rem;
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px dashed var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
   @media (max-width: 960px) {

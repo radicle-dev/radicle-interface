@@ -93,9 +93,10 @@
     margin-bottom: 2rem;
     border-radius: var(--border-radius);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .teaser-wrapper:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .more {
     margin-top: 2rem;

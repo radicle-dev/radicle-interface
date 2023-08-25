@@ -75,9 +75,10 @@
   .issues-list {
     border-radius: var(--border-radius-small);
     overflow: hidden;
+    border: 1px solid var(--color-border-hint);
   }
   .teaser:not(:last-child) {
-    border-bottom: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .section-header {
     display: flex;
