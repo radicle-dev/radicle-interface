@@ -100,7 +100,7 @@
   .search {
     transition: all 0.2s;
     width: 11rem;
-    color: var(--color-fill-secondary)
+    color: var(--color-fill-secondary);
   }
   .expanded {
     width: 25.5rem;
