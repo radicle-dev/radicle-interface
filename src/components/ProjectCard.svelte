@@ -19,7 +19,7 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 1rem;
-    border: 1px solid var(--color-border-hint);
+    box-shadow: 0 0 0 1px var(--color-border-hint);
     border-radius: var(--border-radius-small);
     min-width: 36rem;
     cursor: pointer;
@@ -57,7 +57,7 @@
     max-width: 14rem;
   }
   .project:hover {
-    border: 1px solid var(--color-border-focus);
+    box-shadow: 0 0 0 2px var(--color-border-focus);
   }
   .description {
     margin-bottom: 0.25rem;
