@@ -8,7 +8,6 @@
   import Authorship from "@app/components/Authorship.svelte";
   import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
-  import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
