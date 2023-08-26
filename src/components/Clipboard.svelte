@@ -9,6 +9,7 @@
   export let text: string;
   export let small = false;
   export let tooltip: string | undefined = undefined;
+  export let withText: boolean = false;
 
   const dispatch = createEventDispatcher<{ copied: null }>();
 
@@ -29,32 +30,50 @@
 
 <style>
   .clipboard {
-    width: 2rem;
-    height: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    border: 1px solid var(--color-border-hint);
+    border-radius: 0.125rem;
+    padding: 0.25rem 0.5rem;
     cursor: pointer;
-    display: inline-flex;
-    justify-content: center;
     align-items: center;
     user-select: none;
+    color: var(--color-foreground-emphasized);
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-tiny);
   }
+
+  .clipboard-text {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .clipboard.small {
-    width: 1.5rem;
     height: 1.5rem;
   }
+  .clipboard :global(svg) {
+    fill: var(--color-foreground-emphasized);
+  }
   .clipboard:hover :global(svg) {
-    fill: var(--color-foreground);
+    fill: var(--color-foreground-emphasized-hover);
   }
   .clipboard:hover {
-    border-radius: var(--border-radius);
+    color: var(--color-foreground-emphasized-hover);
+    border: 1px solid var(--color-border-default);
   }
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
+
 <span
   title={tooltip}
   class="clipboard"
   class:small
   on:click|stopPropagation={copy}>
+  {#if withText}
+    <span class="clipboard-text">{text}</span>
+  {/if}
   <Icon name={icon} />
 </span>

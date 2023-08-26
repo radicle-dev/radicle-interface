@@ -56,9 +56,11 @@
     color: inherit;
   }
   .id {
+    block-size: fit-content;
     font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-medium);
     font-size: var(--font-size-tiny);
-    color: var(--color-foreground-5);
+    color: var(--color-foreground-emphasized);
     overflow-wrap: anywhere;
     display: flex;
     justify-content: left;
@@ -66,6 +68,7 @@
     gap: 0.125rem;
     margin: 1rem 0 1.5rem 0;
   }
+
   .description :global(a) {
     border-bottom: 1px solid var(--color-foreground-6);
   }
@@ -122,8 +125,7 @@
   </div>
 
   <div class="id">
-    <span class="truncate">{project.id}</span>
-    <Clipboard small text={project.id} />
+    <Clipboard withText text={project.id} />
   </div>
 
   <Header {project} {activeTab} {baseUrl} />

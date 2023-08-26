@@ -4,8 +4,8 @@
   import { parseRepositoryId } from "@app/lib/utils";
   import { config } from "@app/lib/config";
 
-  import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import Clipboard from "@app/components/Clipboard.svelte";
 
   export let baseUrl: BaseUrl;
   export let id: string;
@@ -38,6 +38,9 @@
     background-color: var(--color-fill-primary-hover);
   }
   .dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     border: 1px solid var(--color-border-hint);
     background-color: var(--color-background-float);
     border-radius: var(--border-radius-small);
@@ -68,7 +71,6 @@
   <div slot="toggle" class="clone-button" role="button">Clone</div>
   <svelte:fragment slot="modal">
     <div class="dropdown">
-      <Command color="caution" command={radCloneUrl} />
       <label for="rad-clone-url">
         Use the <a
           target="_blank"
@@ -77,13 +79,13 @@
           class="link">
           Radicle CLI
         </a>
-        to clone this project.
+        to clone this project:
       </label>
+      <Clipboard withText text={radCloneUrl} />
+
       <br />
-      <Command color="caution" command={gitCloneUrl} />
-      <label for="git-clone-url">
-        Use Git to clone this repository from the URL above.
-      </label>
+      <label for="git-clone-url">Use Git to clone this repository:</label>
+      <Clipboard withText text={gitCloneUrl} />
     </div>
   </svelte:fragment>
 </Floating>

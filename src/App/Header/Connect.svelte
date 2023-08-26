@@ -147,7 +147,7 @@
           terminal:
         </div>
         <div style:margin="0 1rem 0.5rem 1rem">
-          <Command {command} />
+          <Clipboard withText text={command} />
         </div>
         <PortInput bind:port={customPort} />
         <Link
@@ -168,7 +168,7 @@
           To access your local Radicle node on this site, run:
         </div>
         <div style:margin="0.5rem 1rem 1rem 1rem">
-          <Command command="radicle-httpd" />
+          <Clipboard withText text="radicle-httpd" />
         </div>
         <PortInput bind:port={customPort} />
       </div>
