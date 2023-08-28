@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { ProjectBaseUrlActivity } from "./router";
 
+  import { api } from "@app/lib/httpd";
   import { twemoji } from "@app/lib/utils";
 
   import Link from "@app/components/Link.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
   export let projects: ProjectBaseUrlActivity[];
+
+  $: localProjects = projects[0]?.baseUrl === api.baseUrl;
 </script>
 
 <style>
@@ -61,8 +64,13 @@
 
   {#if projects.length > 0}
     <div class="heading">
-      Explore <span class="txt-bold">projects</span>
-      on the Radicle network.
+      {#if localProjects}
+        Explore <span class="txt-bold">projects</span>
+        on your local node.
+      {:else}
+        Explore <span class="txt-bold">projects</span>
+        on the Radicle network.
+      {/if}
     </div>
 
     <div class="projects">

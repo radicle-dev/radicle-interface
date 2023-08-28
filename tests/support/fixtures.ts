@@ -226,11 +226,11 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
   }
 }
 
-export function appConfigWithFixture() {
+export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
   window.APP_CONFIG = {
     nodes: {
       defaultHttpdPort: 8081,
-      defaultLocalHttpdPort: 8081,
+      defaultLocalHttpdPort: defaultLocalHttpdPort,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
       pinned: [

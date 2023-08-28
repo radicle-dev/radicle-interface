@@ -28,8 +28,7 @@
 
   const activeRouteStore = router.activeRouteStore;
 
-  void router.loadFromLocation();
-  httpd.initialize();
+  void httpd.initialize().finally(() => void router.loadFromLocation());
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
     const plausible = Plausible({

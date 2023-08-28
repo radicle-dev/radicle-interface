@@ -147,7 +147,7 @@ function pollSession() {
   pollHttpdStateHandle = window.setInterval(() => checkState(), 10_000);
 }
 
-export function initialize() {
+export async function initialize() {
   // Sync session state changes with other open tabs and windows.
   addEventListener("storage", event => {
     if (
@@ -159,7 +159,7 @@ export function initialize() {
     }
   });
 
-  void checkState();
+  await checkState();
 
   // Properly clean up setInterval and restart session polling when Vite
   // performs hot module reload on file changes.

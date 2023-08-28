@@ -2,6 +2,9 @@ import type { LoadErrorRoute } from "@app/lib/router/definitions";
 import type { ProjectBaseUrl } from "@app/lib/search";
 import type { WeeklyActivity } from "@app/lib/commit";
 
+import { get } from "svelte/store";
+
+import { api, httpdStore } from "@app/lib/httpd";
 import { config } from "@app/lib/config";
 import { getProjectsFromNodes } from "@app/lib/search";
 import { loadProjectActivity } from "@app/lib/commit";
@@ -22,7 +25,15 @@ export interface HomeLoadedRoute {
 export async function loadHomeRoute(): Promise<
   HomeLoadedRoute | LoadErrorRoute
 > {
-  const projects = await getProjectsFromNodes(config.projects.pinned);
+  let projects: ProjectBaseUrl[] = [];
+  if (get(httpdStore).state !== "stopped") {
+    projects = (await api.project.getAll()).map(project => ({
+      project,
+      baseUrl: api.baseUrl,
+    }));
+  } else {
+    projects = await getProjectsFromNodes(config.projects.pinned);
+  }
   const results = await Promise.all(
     projects.map(async projectNode => {
       const activity = await loadProjectActivity(

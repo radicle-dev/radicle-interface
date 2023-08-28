@@ -36,7 +36,7 @@ test("load error", async ({ page }) => {
     route => route.fulfill({ status: 500 }),
   );
 
-  await page.addInitScript(appConfigWithFixture);
+  await page.addInitScript(appConfigWithFixture, 8090);
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });

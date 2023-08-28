@@ -13,7 +13,7 @@ test("show pinned projects", async ({ page }) => {
   await page.addInitScript(appConfigWithFixture);
   await page.goto("/");
   await expect(
-    page.getByText("Explore projects on the Radicle network."),
+    page.getByText("Explore projects on your local node."),
   ).toBeVisible();
 
   // Shows pinned project name.
