@@ -93,6 +93,12 @@ test("test issue counters", async ({ page, authenticatedPeer }) => {
   await expect(page.getByRole("button", { name: "2 issues" })).toBeVisible();
   await expect(page.getByRole("button", { name: "2 open" })).toBeVisible();
   await expect(page.locator(".issues-list .teaser")).toHaveCount(2);
+
+  await page
+    .getByRole("link", { name: "First issue to test counters" })
+    .click();
+  await page.getByRole("button", { name: "Close issue as solved" }).click();
+  await expect(page.getByRole("button", { name: "1 issue" })).toBeVisible();
 });
 
 test("test issue editing failing", async ({ page, authenticatedPeer }) => {
