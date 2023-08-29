@@ -87,6 +87,7 @@
     border-style: solid;
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
+    gap: 0.5rem;
   }
 
   .file-header .right {
@@ -106,7 +107,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-right: 1rem;
   }
 
   .last-commit {
@@ -126,7 +126,7 @@
   .last-commit .hash {
     font-weight: var(--font-weight-bold);
     font-family: var(--font-family-monospace);
-    margin-right: 0.25rem;
+    margin-right: 0.5rem;
     color: var(--color-fill-secondary);
   }
 
@@ -233,23 +233,24 @@
     <span>{blob.name}</span>
   </span>
   <div class="right">
+  <div class="last-commit" title={lastCommit.author.name} use:twemoji>
+    <span class="hash">
+      {lastCommit.id.slice(0, 7)}
+    </span>
+    {lastCommit.summary}
+  </div>
+
+  </div>
     {#if isMarkdown}
       <div title="Toggle render method" class="toggle">
-        <SquareButton clickable on:click={toggleMarkdown}>
+        <SquareButton variant="secondary" clickable on:click={toggleMarkdown}>
           {showMarkdown ? "Plain" : "Markdown"}
         </SquareButton>
       </div>
     {/if}
     <a href="{rawPath}/{blob.path}" class="toggle">
-      <SquareButton clickable>Raw</SquareButton>
+      <SquareButton variant="secondary" clickable>Raw</SquareButton>
     </a>
-    <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-      <span class="hash">
-        {lastCommit.id.slice(0, 7)}
-      </span>
-      {lastCommit.summary}
-    </div>
-  </div>
 </div>
 
 <div class="container">
