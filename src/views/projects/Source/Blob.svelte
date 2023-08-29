@@ -8,7 +8,6 @@
   import { isMarkdownPath, twemoji } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
 
-  import Icon from "@app/components/Icon.svelte";
   import Readme from "./Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
 
@@ -76,7 +75,7 @@
 </script>
 
 <style>
-  header .file-header {
+  .file-header {
     display: flex;
     height: 3rem;
     align-items: center;
@@ -101,7 +100,7 @@
     gap: 0.5rem;
   }
 
-  header .file-name {
+  .file-name {
     font-weight: var(--font-weight-normal);
     flex-shrink: 0;
     white-space: nowrap;
@@ -207,83 +206,75 @@
     scrollbar-width: none;
   }
 
-  .markdown {
-    max-width: 64rem;
-  }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
 
-  @media (max-width: 960px) {
-    .code {
-      font-size: var(--font-size-small);
-    }
-  }
-
   @media (max-width: 720px) {
-    .right {
-      justify-content: center;
+    .file-header {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .container {
+      border-left: none;
+      border-right: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 </style>
 
-<div class:markdown={isMarkdown}>
-  <header>
-    <div class="file-header">
-      <span class="file-name">
-        <span style:color="var(--color-foreground-5)">{parentDir}</span>
-        &#8203;
-        <span>{blob.name}</span>
-      </span>
-      <div class="right">
-        <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-          <span class="hash">
-            {lastCommit.id.slice(0, 7)}
-          </span>
-          {lastCommit.summary}
-        </div>
-        {#if isMarkdown}
-          <div title="Toggle render method">
-            <SquareButton active clickable on:click={toggleMarkdown}>
-              {showMarkdown ? "Plain" : "Markdown"}
-            </SquareButton>
-          </div>
-        {/if}
-        <a href="{rawPath}/{blob.path}">
-          <SquareButton clickable active>
-            <span style="display: flex; gap: 0.25rem;">
-              Raw <Icon size="small" name="arrow-box-up-right" />
-            </span>
-          </SquareButton>
-        </a>
-      </div>
-    </div>
-  </header>
-  <div class="container">
-    {#if blob.binary}
-      <div class="binary">
-        <div use:twemoji>👀</div>
-        <span class="txt-tiny">Binary content</span>
-      </div>
-    {:else if showMarkdown && blob.content}
-      <Readme
-        {baseUrl}
-        {projectId}
-        {peer}
-        {revision}
-        content={blob.content}
-        {rawPath}
-        {path} />
-    {:else if content}
-      <table class="code no-scrollbar">
-        {@html toHtml(content)}
-      </table>
-    {:else}
-      <div class="binary">
-        <div use:twemoji>🍂</div>
-        <span class="txt-tiny">Empty file</span>
+<div class="file-header">
+  <span class="file-name">
+    <span style:color="var(--color-foreground-5)">{parentDir}</span>
+    &#8203;
+    <span>{blob.name}</span>
+  </span>
+  <div class="right">
+    {#if isMarkdown}
+      <div title="Toggle render method" class="toggle">
+        <SquareButton clickable on:click={toggleMarkdown}>
+          {showMarkdown ? "Plain" : "Markdown"}
+        </SquareButton>
       </div>
     {/if}
+    <a href="{rawPath}/{blob.path}" class="toggle">
+      <SquareButton clickable>Raw</SquareButton>
+    </a>
+    <div class="last-commit" title={lastCommit.author.name} use:twemoji>
+      <span class="hash">
+        {lastCommit.id.slice(0, 7)}
+      </span>
+      {lastCommit.summary}
+    </div>
   </div>
+</div>
+
+<div class="container">
+  {#if blob.binary}
+    <div class="binary">
+      <div use:twemoji>👀</div>
+      <span class="txt-tiny">Binary content</span>
+    </div>
+  {:else if showMarkdown && blob.content}
+    <Readme
+      {baseUrl}
+      {projectId}
+      {peer}
+      {revision}
+      content={blob.content}
+      {rawPath}
+      {path} />
+  {:else if content}
+    <table class="code no-scrollbar">
+      {@html toHtml(content)}
+    </table>
+  {:else}
+    <div class="binary">
+      <div use:twemoji>🍂</div>
+      <span class="txt-tiny">Empty file</span>
+    </div>
+  {/if}
 </div>

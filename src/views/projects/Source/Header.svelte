@@ -35,19 +35,14 @@
 <style>
   .header {
     font-size: var(--font-size-tiny);
-    padding: 0 2rem 0 8rem;
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 2rem;
   }
 
   @media (max-width: 960px) {
-    .header {
-      padding-left: 2rem;
-    }
     .header {
       margin-bottom: 1.5rem;
     }

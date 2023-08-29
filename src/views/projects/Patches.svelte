@@ -73,7 +73,6 @@
 
 <style>
   .patches {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .patches-list {
@@ -89,17 +88,11 @@
   .teaser:not(:last-child) {
     border-bottom: 1px solid var(--color-border-hint);
   }
-
-  @media (max-width: 960px) {
-    .patches {
-      padding-left: 2rem;
-    }
-  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
-  <div class="patches">
-    <div style="margin-bottom: 2rem;">
+  <svelte:fragment slot="subheader">
+    <div style:margin-top="1rem">
       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
         {#each options as option}
           {#if option.disabled}
@@ -128,6 +121,9 @@
         {/each}
       </div>
     </div>
+  </svelte:fragment>
+
+  <div class="patches">
     <div class="patches-list">
       {#each allPatches as patch (patch.id)}
         <div class="teaser">

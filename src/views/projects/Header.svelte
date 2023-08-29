@@ -5,10 +5,8 @@
 <script lang="ts">
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import { isLocal } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
-  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
@@ -21,13 +19,11 @@
 <style>
   .header {
     font-size: var(--font-size-tiny);
-    padding: 0 2rem 0 0rem;
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
   }
 </style>
 
@@ -82,19 +78,4 @@
     <span>{project.trackings}</span>
     nodes
   </SquareButton>
-
-  <Link
-    route={{
-      resource: "nodes",
-      params: {
-        baseUrl,
-        projectPageIndex: 0,
-      },
-    }}>
-    <SquareButton>
-      {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
-    </SquareButton>
-  </Link>
-
-  <CloneButton {baseUrl} id={project.id} name={project.name} />
 </div>

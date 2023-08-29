@@ -30,9 +30,7 @@ test("relative timestamps", async ({ page }) => {
     };
   });
   await page.goto(commitUrl);
-  await expect(
-    page.locator(`.commit .header >> text=${"Bob Belcher committed now"}`),
-  ).toBeVisible();
+  await expect(page.getByText("Bob Belcher committed now")).toBeVisible();
 });
 
 test("modified file", async ({ page }) => {
@@ -40,9 +38,8 @@ test("modified file", async ({ page }) => {
 
   // Commit header.
   {
-    const header = page.locator(".commit .header");
-    await expect(header.getByText("Update readme")).toBeVisible();
-    await expect(header.getByText(bobHead)).toBeVisible();
+    await expect(page.getByText("Update readme")).toBeVisible();
+    await expect(page.getByText(bobHead)).toBeVisible();
   }
 
   // Diff header.

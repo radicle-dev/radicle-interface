@@ -5,10 +5,12 @@
   import dompurify from "dompurify";
 
   import markdown from "@app/lib/markdown";
-  import { formatNodeId, twemoji } from "@app/lib/utils";
+  import { formatNodeId, twemoji, isLocal } from "@app/lib/utils";
 
   import Clipboard from "@app/components/Clipboard.svelte";
+  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Link from "@app/components/Link.svelte";
+  import SquareButton from "@app/components/SquareButton.svelte";
 
   import Header from "./Header.svelte";
 
@@ -23,10 +25,10 @@
 
 <style>
   .header {
+    padding: 3rem 8rem 3rem 8rem;
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding: 4rem 2rem 0 8rem;
   }
   .title {
     align-items: center;
@@ -64,7 +66,7 @@
     justify-content: left;
     align-items: center;
     gap: 0.125rem;
-    margin: 1rem 0 1.5rem 0;
+    margin: 1rem 0 3rem 0;
   }
   .description :global(a) {
     border-bottom: 1px solid var(--color-foreground-6);
@@ -78,17 +80,26 @@
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding-bottom: 4rem;
+    padding: 0 8rem 4rem 8rem;
   }
 
   @media (max-width: 960px) {
     .header {
-      padding: 4rem 0 0 2rem;
+      padding: 4rem 1rem 0 1rem;
+    }
+    .content {
+      padding: 0 1rem 4rem 1rem;
     }
     .title {
       font-size: var(--font-size-medium);
       font-weight: var(--font-weight-bold);
       padding-right: 2rem;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .content {
+      padding: 0 0 4rem 0;
     }
   }
 </style>
@@ -115,6 +126,24 @@
         <Clipboard text={peer} />
       </span>
     {/if}
+    <div
+      class="layout-desktop-flex"
+      style="margin-left: auto; display: flex; gap: 0.5rem;">
+      <Link
+        route={{
+          resource: "nodes",
+          params: {
+            baseUrl,
+            projectPageIndex: 0,
+          },
+        }}>
+        <SquareButton>
+          {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
+        </SquareButton>
+      </Link>
+
+      <CloneButton {baseUrl} id={project.id} name={project.name} />
+    </div>
   </div>
 
   <div class="description" use:twemoji>
@@ -127,6 +156,7 @@
   </div>
 
   <Header {project} {activeTab} {baseUrl} />
+  <slot name="subheader" />
 </div>
 
 <div class="content">

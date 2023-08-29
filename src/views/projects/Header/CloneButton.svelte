@@ -29,6 +29,7 @@
     color: var(--color-foreground-match-background);
     font-family: var(--font-family-sans-serif);
     font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-tiny);
     min-width: max-content;
     height: 2rem;
     line-height: initial;
@@ -47,6 +48,7 @@
     position: absolute;
     width: 24rem;
     z-index: 10;
+    right: 8rem;
   }
   @media (max-width: 720px) {
     .dropdown {

@@ -69,7 +69,6 @@
 
 <style>
   .issues {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .issues-list {
@@ -80,68 +79,59 @@
   .teaser:not(:last-child) {
     border-bottom: 1px solid var(--color-border-hint);
   }
-  .section-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
   .more {
     margin-top: 2rem;
     text-align: center;
     min-height: 3rem;
   }
-
-  @media (max-width: 960px) {
-    .issues {
-      padding-left: 2rem;
-    }
-  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">
-  <div class="issues">
-    <div class="section-header">
-      <div style="margin-bottom: 2rem;">
-        <div style="display: flex; gap: 0.5rem;">
-          {#each options as option}
-            {#if !option.disabled}
-              <Link
-                route={{
-                  resource: "project.issues",
-                  project: project.id,
-                  node: baseUrl,
-                  state: option.value,
-                }}>
-                <SquareButton
-                  clickable={option.disabled}
-                  active={option.value === state}
-                  disabled={option.disabled}>
-                  {option.title}
-                </SquareButton>
-              </Link>
-            {:else}
+  <svelte:fragment slot="subheader">
+    <div style:display="flex" style:margin-top="1rem">
+      <div style="display: flex; gap: 0.5rem;">
+        {#each options as option}
+          {#if !option.disabled}
+            <Link
+              route={{
+                resource: "project.issues",
+                project: project.id,
+                node: baseUrl,
+                state: option.value,
+              }}>
               <SquareButton
                 clickable={option.disabled}
                 active={option.value === state}
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>
-            {/if}
-          {/each}
-        </div>
+            </Link>
+          {:else}
+            <SquareButton
+              clickable={option.disabled}
+              active={option.value === state}
+              disabled={option.disabled}>
+              {option.title}
+            </SquareButton>
+          {/if}
+        {/each}
       </div>
       {#if $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)}
-        <Link
-          route={{
-            resource: "project.newIssue",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <SquareButton>New issue</SquareButton>
-        </Link>
+        <div style="margin-left: auto;">
+          <Link
+            route={{
+              resource: "project.newIssue",
+              project: project.id,
+              node: baseUrl,
+            }}>
+            <SquareButton>New issue</SquareButton>
+          </Link>
+        </div>
       {/if}
     </div>
+  </svelte:fragment>
+
+  <div class="issues">
     <div class="issues-list">
       {#each allIssues as issue (issue.id)}
         <div class="teaser">

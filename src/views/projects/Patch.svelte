@@ -347,16 +347,18 @@
   .patch {
     display: grid;
     grid-template-columns: minmax(0, 3fr) 1fr;
-    padding: 1rem 2rem 0 8rem;
-    margin-bottom: 4.5rem;
   }
   .metadata {
     display: flex;
     flex-direction: column;
     gap: 2rem;
     font-size: var(--font-size-small);
-    padding-left: 1rem;
-    margin-left: 1rem;
+    padding: 1rem;
+    margin-left: 3rem;
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+    height: fit-content;
   }
   .commit-list {
     border-radius: var(--border-radius-small);
@@ -368,7 +370,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 1rem 0;
+    margin: 3rem 0 1rem 0;
   }
   .actions {
     display: flex;
@@ -425,11 +427,6 @@
     }
     .metadata {
       display: none;
-    }
-  }
-  @media (max-width: 960px) {
-    .patch {
-      padding-left: 2rem;
     }
   }
 </style>

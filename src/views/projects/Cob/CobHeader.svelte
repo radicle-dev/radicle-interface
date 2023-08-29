@@ -20,10 +20,6 @@
   header {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
-    border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-border-default);
-    padding: 1rem;
   }
   .title {
     overflow: hidden;
@@ -48,6 +44,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
   .id {
     display: flex;
@@ -55,7 +52,7 @@
   }
   .description {
     font-size: var(--font-size-small);
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
   .toggle:hover {
     cursor: pointer;

@@ -86,7 +86,6 @@
 
 <style>
   .history {
-    padding: 0 2rem 0 8rem;
     font-size: var(--font-size-small);
   }
   .group {
@@ -103,22 +102,21 @@
     text-align: center;
     min-height: 3rem;
   }
-  @media (max-width: 960px) {
-    .history {
-      padding-left: 2rem;
-    }
-  }
 </style>
 
 <Layout {baseUrl} {project} {peer} activeTab="source">
-  <Header
-    node={baseUrl}
-    {project}
-    peers={peersWithRoute}
-    branches={branchesWithRoute}
-    {revision}
-    {tree}
-    historyLinkActive={true} />
+  <svelte:fragment slot="subheader">
+    <div style:margin-top="1rem">
+      <Header
+        node={baseUrl}
+        {project}
+        peers={peersWithRoute}
+        branches={branchesWithRoute}
+        {revision}
+        {tree}
+        historyLinkActive={true} />
+    </div>
+  </svelte:fragment>
 
   <div class="history">
     {#each groupCommits(allCommitHeaders) as group (group.time)}
