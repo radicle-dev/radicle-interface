@@ -233,24 +233,23 @@
     <span>{blob.name}</span>
   </span>
   <div class="right">
-  <div class="last-commit" title={lastCommit.author.name} use:twemoji>
-    <span class="hash">
-      {lastCommit.id.slice(0, 7)}
-    </span>
-    {lastCommit.summary}
+    <div class="last-commit" title={lastCommit.author.name} use:twemoji>
+      <span class="hash">
+        {lastCommit.id.slice(0, 7)}
+      </span>
+      {lastCommit.summary}
+    </div>
   </div>
-
-  </div>
-    {#if isMarkdown}
-      <div title="Toggle render method" class="toggle">
-        <SquareButton variant="secondary" clickable on:click={toggleMarkdown}>
-          {showMarkdown ? "Plain" : "Markdown"}
-        </SquareButton>
-      </div>
-    {/if}
-    <a href="{rawPath}/{blob.path}" class="toggle">
-      <SquareButton variant="secondary" clickable>Raw</SquareButton>
-    </a>
+  {#if isMarkdown}
+    <div title="Toggle render method" class="toggle">
+      <SquareButton variant="secondary" clickable on:click={toggleMarkdown}>
+        {showMarkdown ? "Plain" : "Markdown"}
+      </SquareButton>
+    </div>
+  {/if}
+  <a href="{rawPath}/{blob.path}" class="toggle">
+    <SquareButton variant="secondary" clickable>Raw</SquareButton>
+  </a>
 </div>
 
 <div class="container">

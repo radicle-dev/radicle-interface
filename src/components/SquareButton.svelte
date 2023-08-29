@@ -4,7 +4,7 @@
   export let hoverable: boolean = true;
   export let size: "small" | "regular" | "large" = "regular";
   export let title: string | undefined = undefined;
-  export let variant: "primary" | "secondary" | "gray" = "gray";
+  export let variant: "primary" | "secondary" | "gray" | "background" = "gray";
 </script>
 
 <style>
@@ -15,11 +15,11 @@
     padding: 0 0.75rem;
     background: var(--color-fill-ghost);
     border: none;
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-tiny);
     color: var(--color-foreground);
     font-family: var(--font-family-sans-serif);
     font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
     white-space: nowrap;
     gap: 0.5rem;
   }
@@ -29,6 +29,7 @@
   }
 
   .large {
+    border-radius: var(--border-radius-small);
     height: var(--button-regular-height);
     padding: 0 1rem;
     font-size: var(--font-size-small);
@@ -55,6 +56,14 @@
   .secondary {
     color: var(--color-foreground-match-background);
     background-color: var(--color-fill-secondary);
+  }
+
+  .background {
+    color: var(--color-fill-secondary);
+    background-color: var(--color-fill-background);
+  }
+  .background.hoverable:hover {
+    background-color: var(--color-fill-ghost);
   }
 
   .secondary:hover {
@@ -93,6 +102,7 @@
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
   class:gray={variant === "gray"}
+  class:background={variant === "background"}
   class:hoverable
   class:disabled
   class:small={size === "small"}

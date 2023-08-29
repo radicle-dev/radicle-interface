@@ -36,6 +36,7 @@
   .title {
     display: flex;
     gap: 0.5rem;
+    font-size: var(--font-size-small);
     font-family: var(--font-family-sans-serif);
     font-weight: var(--font-weight-medium);
   }

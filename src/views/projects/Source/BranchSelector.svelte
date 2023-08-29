@@ -21,13 +21,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: initial;
 
     font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
   }
   .branch-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 0.75rem;
     height: 2rem;
-    padding: 0.5rem 0.75rem;
     background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
     font-weight: var(--font-weight-bold);
@@ -39,9 +42,12 @@
     background-color: var(--color-fill-ghost-hover);
   }
   .commit-id {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: var(--color-fill-secondary);
     height: 2rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0 0.75rem;
     border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
     background-color: var(--color-background-dip);
     border: 1px solid var(--color-border-hint);

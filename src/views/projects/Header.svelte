@@ -25,57 +25,73 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+  .tab-bar {
+    border: 1px solid var(--color-fill-secondary);
+    display: flex;
+    padding: 3px;
+    border-radius: var(--border-radius-small);
+    gap: 0.25rem;
+  }
 </style>
 
 <div class="header">
-  <Link
-    route={{
-      resource: "project.source",
-      project: project.id,
-      node: baseUrl,
-      path: "/",
-    }}>
-    <SquareButton variant={activeTab === "source" ? "secondary" : "gray"}>
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="chevron-left-right" />
-      </svelte:fragment>
-      Source
-    </SquareButton>
-  </Link>
-  <Link
-    route={{
-      resource: "project.issues",
-      project: project.id,
-      node: baseUrl,
-    }}>
-    <SquareButton variant={activeTab === "issues" ? "secondary" : "gray"}>
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="issue" />
-      </svelte:fragment>
-      <span>{project.issues.open}</span>
-      {pluralize("issue", project.issues.open)}
-    </SquareButton>
-  </Link>
+  <div class="tab-bar">
+    <Link
+      route={{
+        resource: "project.source",
+        project: project.id,
+        node: baseUrl,
+        path: "/",
+      }}>
+      <SquareButton
+        variant={activeTab === "source" ? "secondary" : "background"}>
+        <svelte:fragment slot="icon">
+          <Icon size="small" name="chevron-left-right" />
+        </svelte:fragment>
+        Source
+      </SquareButton>
+    </Link>
+    <Link
+      route={{
+        resource: "project.issues",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <SquareButton
+        variant={activeTab === "issues" ? "secondary" : "background"}>
+        <svelte:fragment slot="icon">
+          <Icon size="small" name="issue" />
+        </svelte:fragment>
+        <span>{project.issues.open}</span>
+        {pluralize("issue", project.issues.open)}
+      </SquareButton>
+    </Link>
 
-  <Link
-    route={{
-      resource: "project.patches",
-      project: project.id,
-      node: baseUrl,
-    }}>
-    <SquareButton variant={activeTab === "patches" ? "secondary" : "gray"}>
+    <Link
+      route={{
+        resource: "project.patches",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <SquareButton
+        variant={activeTab === "patches" ? "secondary" : "background"}>
+        <svelte:fragment slot="icon">
+          <Icon size="small" name="patch" />
+        </svelte:fragment>
+        <span>{project.patches.open}</span>
+        {pluralize("patch", project.patches.open)}
+      </SquareButton>
+    </Link>
+
+    <SquareButton
+      variant="background"
+      hoverable={false}
+      title="Tracked by {project.trackings} nodes">
       <svelte:fragment slot="icon">
-        <Icon size="small" name="patch" />
+        <Icon size="small" name="network" />
       </svelte:fragment>
-      <span>{project.patches.open}</span>
-      {pluralize("patch", project.patches.open)}
+      <span>{project.trackings}</span>
+      nodes
     </SquareButton>
-  </Link>
-  <SquareButton hoverable={false} title="Tracked by {project.trackings} nodes">
-    <svelte:fragment slot="icon">
-      <Icon size="small" name="network" />
-    </svelte:fragment>
-    <span>{project.trackings}</span>
-    nodes
-  </SquareButton>
+  </div>
 </div>
