@@ -98,7 +98,7 @@
           {#if option.disabled}
             <SquareButton
               clickable={option.disabled}
-              active={option.value === state}
+              variant={option.value === state ? "secondary" : "gray"}
               disabled={option.disabled}>
               {option.title}
             </SquareButton>
@@ -112,7 +112,7 @@
               }}>
               <SquareButton
                 clickable={option.disabled}
-                active={option.value === state}
+                variant={option.value === state ? "secondary" : "gray"}
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>

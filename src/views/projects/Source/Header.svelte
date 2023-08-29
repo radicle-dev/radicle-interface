@@ -64,7 +64,7 @@
       peer,
       revision,
     }}>
-    <SquareButton active={historyLinkActive}>
+    <SquareButton variant={historyLinkActive ? "secondary" : "gray"}>
       <span>{tree.stats.commits}</span>
       {pluralize("commit", tree.stats.commits)}
     </SquareButton>

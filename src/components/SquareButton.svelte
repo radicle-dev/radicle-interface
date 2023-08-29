@@ -1,10 +1,10 @@
 <script lang="ts" strictEvents>
-  export let active: boolean = false;
   export let clickable: boolean = false;
   export let disabled: boolean = false;
   export let hoverable: boolean = true;
-  export let size: "small" | "regular" = "regular";
+  export let size: "small" | "regular" | "large" = "regular";
   export let title: string | undefined = undefined;
+  export let variant: "primary" | "secondary" | "gray" = "gray";
 </script>
 
 <style>
@@ -28,40 +28,57 @@
     height: var(--button-tiny-height);
   }
 
+  .large {
+    height: var(--button-regular-height);
+    padding: 0 1rem;
+    font-size: var(--font-size-small);
+  }
+
   .clickable {
     cursor: pointer;
     user-select: none;
   }
 
-  .active {
+  .primary {
     color: var(--color-foreground-match-background);
-    background: var(--fill-light);
+    background-color: var(--color-fill-primary);
+  }
+
+  .primary:hover {
+    background-color: var(--color-fill-primary-hover);
+  }
+
+  .primary.hoverable:hover {
+    background-color: var(--color-fill-primary-hover);
+  }
+
+  .secondary {
+    color: var(--color-foreground-match-background);
     background-color: var(--color-fill-secondary);
   }
 
-  .active:hover {
+  .secondary:hover {
     background-color: var(--fill-light-hover);
+  }
+
+  .secondary.hoverable:hover {
+    background-color: var(--color-fill-secondary-hover);
   }
 
   .hoverable:hover {
     background-color: var(--color-fill-ghost-hover);
   }
 
-  .active.hoverable:hover {
-    background-color: var(--color-fill-secondary-hover);
-  }
-
   .disabled {
     cursor: not-allowed;
-    color: var(--color-foreground);
   }
-  .disabled.active {
+  .disabled.secondary {
     color: var(--color-foreground-match-background);
   }
   .disabled:hover {
     background: var(--color-fill-ghost);
   }
-  .disabled:hover.active {
+  .disabled:hover.secondary {
     background: var(--color-fill-secondary);
   }
 </style>
@@ -73,10 +90,13 @@
   tabindex="0"
   on:click
   class="square-button"
-  class:active
+  class:primary={variant === "primary"}
+  class:secondary={variant === "secondary"}
+  class:gray={variant === "gray"}
   class:hoverable
   class:disabled
   class:small={size === "small"}
+  class:large={size === "large"}
   class:clickable>
   <slot name="icon" />
   <div style:display="block">

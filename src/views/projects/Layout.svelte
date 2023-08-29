@@ -59,8 +59,9 @@
   }
   .id {
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
-    color: var(--color-foreground-5);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-fill-secondary);
     overflow-wrap: anywhere;
     display: flex;
     justify-content: left;
@@ -137,7 +138,7 @@
             projectPageIndex: 0,
           },
         }}>
-        <SquareButton>
+        <SquareButton size="large">
           {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
         </SquareButton>
       </Link>

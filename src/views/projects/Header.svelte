@@ -35,7 +35,7 @@
       node: baseUrl,
       path: "/",
     }}>
-    <SquareButton active={activeTab === "source"}>
+    <SquareButton variant={activeTab === "source" ? "secondary" : "gray"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="chevron-left-right" />
       </svelte:fragment>
@@ -48,7 +48,7 @@
       project: project.id,
       node: baseUrl,
     }}>
-    <SquareButton active={activeTab === "issues"}>
+    <SquareButton variant={activeTab === "issues" ? "secondary" : "gray"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="issue" />
       </svelte:fragment>
@@ -63,7 +63,7 @@
       project: project.id,
       node: baseUrl,
     }}>
-    <SquareButton active={activeTab === "patches"}>
+    <SquareButton variant={activeTab === "patches" ? "secondary" : "gray"}>
       <svelte:fragment slot="icon">
         <Icon size="small" name="patch" />
       </svelte:fragment>

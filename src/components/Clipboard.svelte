@@ -37,15 +37,9 @@
     align-items: center;
     user-select: none;
   }
-  .clipboard.small {
+  .small {
     width: 1.5rem;
     height: 1.5rem;
-  }
-  .clipboard:hover :global(svg) {
-    fill: var(--color-foreground);
-  }
-  .clipboard:hover {
-    border-radius: var(--border-radius);
   }
 </style>
 

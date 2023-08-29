@@ -475,7 +475,9 @@
         <div style="display: flex; gap: 0.5rem;">
           {#each Object.entries(tabs) as [name, route]}
             <Link {route}>
-              <SquareButton size="small" active={name === view.name}>
+              <SquareButton
+                size="small"
+                variant={name === view.name ? "secondary" : "gray"}>
                 {capitalize(name)}
               </SquareButton>
             </Link>
@@ -493,7 +495,7 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <SquareButton size="small" active={true}>
+              <SquareButton size="small" variant="secondary">
                 Diff {view.fromCommit.substring(
                   0,
                   6,

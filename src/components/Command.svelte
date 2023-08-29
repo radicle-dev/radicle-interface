@@ -2,7 +2,6 @@
   import Clipboard from "@app/components/Clipboard.svelte";
 
   export let command: string;
-  export let color: "caution" | "foreground" = "foreground";
 </script>
 
 <style>
@@ -16,50 +15,34 @@
     border-radius: var(--border-radius-small);
     display: inline-block;
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
     overflow: hidden;
-    padding: 0 0.5rem;
+    padding: 0 2rem 0 0.5rem;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
+    border: 1px solid var(--color-border-hint);
+    color: var(--color-foreground-dim);
   }
   .clipboard {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    background-image: linear-gradient(
-      -90deg,
-      var(--color-foreground-2),
-      var(--color-foreground-2),
-      transparent
-    );
+    justify-content: center;
+    background-color: var(--color-fill-ghost);
     position: absolute;
     right: 0;
     top: 0;
-    visibility: hidden;
-    width: 3rem;
+    width: 2rem;
     height: 100%;
-  }
-  .cmd:hover .clipboard {
-    visibility: visible;
-  }
-  .caution {
-    background-color: var(--color-caution-3);
-    color: var(--color-caution-6);
-  }
-  .caution .clipboard {
-    background: linear-gradient(var(--color-caution-3), var(--color-caution-3)),
-      linear-gradient(var(--color-background), var(--color-background));
-    -webkit-mask: linear-gradient(90deg, transparent 0%, #fff 50%);
-    mask: linear-gradient(90deg, transparent 0%, #fff 50%);
   }
 </style>
 
 <div class="wrapper">
-  <div class="cmd" class:caution={color === "caution"}>
+  <div class="cmd">
     {command}
     <div class="clipboard">
-      <Clipboard text={command} small />
+      <Clipboard small text={command} />
     </div>
   </div>
 </div>
