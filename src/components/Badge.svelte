@@ -11,7 +11,7 @@
 <script lang="ts">
   export let variant: Variant;
   export let style: string | undefined = undefined;
-  export let size: "tiny" | "small" | "medium" = "small";
+  export let size: "tiny" | "small" | "medium" = "tiny";
 </script>
 
 <style>
