@@ -47,12 +47,16 @@
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-fill-ghost);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-tiny);
     font-weight: var(--font-weight-medium);
   }
   .dropdown-item {
+    padding: 0.25rem 0.25rem 0 0.25rem;
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-medium);
+  }
+  .dropdown-item:last-child {
+    padding-bottom: 0.25rem;
   }
   .selector .peer.not-allowed {
     cursor: not-allowed;
@@ -68,6 +72,7 @@
     display: flex;
     align-items: center;
     font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
     padding: 0.5rem;
     height: 2rem;
     line-height: initial;
@@ -76,8 +81,9 @@
   }
   .avatar-id {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
     color: var(--color-fill-secondary);
+    align-items: center;
   }
   .alias {
     color: var(--color-foreground-dim);
@@ -99,7 +105,7 @@
           {/if}
         </span>
         {#if selectedPeer.delegate}
-          <Badge variant="secondary">delegate</Badge>
+          <Badge size="tiny" variant="secondary">delegate</Badge>
         {/if}
           <div style="margin: -8px">
             <Icon name={expanded ? "chevron-up" : "chevron-down"} />
@@ -125,12 +131,12 @@
             <DropdownItem
               selected={item.selected}
               title={createTitle(item.remote)}
-              size="tiny">
+              size="small">
               <span class="avatar-id">
                 <Avatar nodeId={item.remote.id} inline />
                 <div class="layout-desktop">
                   <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{item.remote.id}</span>
+                  <span><span class="prefix">did:key:</span>{truncateId(item.remote.id)}</span>
                   {#if item.remote.alias}
                     <span class="alias">({item.remote.alias})</span>
                   {/if}
@@ -144,7 +150,7 @@
                 </div>
               </span>
               {#if item.remote.delegate}
-                <Badge variant="secondary">delegate</Badge>
+                <Badge size="tiny" variant="secondary">delegate</Badge>
               {/if}
             </DropdownItem>
           </Link>

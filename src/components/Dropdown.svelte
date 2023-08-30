@@ -10,7 +10,6 @@
     background: var(--color-background-float);
     border: 1px solid var(--color-border-hint);
     margin-top: 0.5rem;
-    padding: 0.5rem 0;
     position: absolute;
     box-shadow: var(--elevation-low);
     z-index: 10;

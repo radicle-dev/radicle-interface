@@ -11,7 +11,7 @@
     align-items: center;
     flex-direction: row;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     white-space: nowrap;
     /* makes sure peer selector items with badges are same height
        as ones without */

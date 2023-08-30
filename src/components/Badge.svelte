@@ -11,17 +11,19 @@
 <script lang="ts">
   export let variant: Variant;
   export let style: string | undefined = undefined;
+  export let size: "tiny" | "small" | "medium" = "small";
 </script>
 
 <style>
   .badge {
     border-radius: var(--border-radius-round);
-    padding: 0.125rem 0.5rem;
     font-size: var(--font-size-tiny);
+    font-weight: var(--font-weight-bold);
     line-height: 1.6;
     height: var(--button-tiny-height);
     display: flex;
     white-space: nowrap;
+    align-items: center;
   }
   .foreground {
     color: var(--color-foreground-match-background);
@@ -47,6 +49,21 @@
     color: var(--color-foreground-black);
     background: var(--color-fill-yellow);
   }
+  .tiny{
+    height: 1.375rem;
+    font-size: var(--font-size-tiny);
+    padding: 0.25rem 0.5rem;
+  }
+  .small{
+    height: 2rem;
+    font-size: var(--font-size-small);
+    padding: 0.5rem 0.75rem;
+  }
+  .medium{
+    height: 2.5rem;
+    font-size: var(--font-size-small);
+    padding: 0.75rem 1rem;
+  }
 </style>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -55,6 +72,9 @@
   on:mouseleave
   class="badge"
   {style}
+  class:tiny={size === "tiny"}
+  class:small={size === "small"}
+  class:medium={size === "medium"}
   class:caution={variant === "caution"}
   class:foreground={variant === "foreground"}
   class:negative={variant === "negative"}
