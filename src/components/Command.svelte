@@ -18,7 +18,7 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-medium);
     overflow: hidden;
-    padding: 0 2rem 0 0.5rem;
+    padding: 0 2.5rem 0 0.5rem;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -35,6 +35,9 @@
     top: 0;
     width: 2rem;
     height: 100%;
+  }
+  .clipboard:hover {
+    background-color: var(--color-fill-ghost-hover);
   }
 </style>
 

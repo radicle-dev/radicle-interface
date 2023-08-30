@@ -102,7 +102,7 @@
   .modal {
     background: var(--color-foreground-1);
     border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-foreground-1);
+    border: 1px solid var(--color-border-hint);
   }
   .form::placeholder,
   .modal::placeholder {
@@ -112,7 +112,7 @@
   .form:hover,
   .modal:focus,
   .modal:hover {
-    border: 1px solid var(--color-foreground-4);
+    border: 1px solid var(--color-border-hint);
   }
   .modal {
     background: var(--color-background);
