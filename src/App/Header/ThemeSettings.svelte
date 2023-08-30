@@ -30,7 +30,7 @@
     position: absolute;
     top: 4.5rem;
     right: 1.5rem;
-    width: 22rem;
+    width: 20.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
