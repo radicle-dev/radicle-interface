@@ -94,7 +94,6 @@
     .title {
       font-size: var(--font-size-medium);
       font-weight: var(--font-weight-bold);
-      padding-right: 2rem;
     }
   }
 
