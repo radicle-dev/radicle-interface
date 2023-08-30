@@ -19,9 +19,8 @@ test("settings persistance", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
   await page.getByRole("button", { name: "Settings" }).click();
 
-  await page.locator(".theme .toggle").click();
-  await page.getByText("Code font").click();
   await page.getByText("System").click();
+  await page.getByRole("button", { name: "Light Mode" }).click();
 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("html")).toHaveAttribute("data-codefont", "system");
@@ -36,7 +35,7 @@ test("change theme", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
   await page.getByRole("button", { name: "Settings" }).click();
 
-  await page.locator(".theme .toggle").click();
+  await page.getByRole("button", { name: "Light Mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
@@ -45,7 +44,7 @@ test("change theme", async ({ page }) => {
   // Source highlighting reacts to theme change.
   await expect(page.getByText("() {")).toHaveCSS("color", "rgb(20, 21, 26)");
 
-  await page.locator(".theme .toggle").click();
+  await page.getByRole("button", { name: "Dark Mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
@@ -59,7 +58,6 @@ test("change code font", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
 
   await page.getByRole("button", { name: "Settings" }).click();
-  await page.getByText("Code font").click();
 
   await page.getByText("System").click();
   await expect(page.getByText("System")).toHaveClass(/active/);

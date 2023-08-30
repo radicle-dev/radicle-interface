@@ -5,7 +5,7 @@
 
   import Connect from "@app/App/Header/Connect.svelte";
   import Search from "@app/App/Header/Search.svelte";
-  import SettingsDropdown from "@app/App/Header/SettingsDropdown.svelte";
+  import ThemeSettings from "@app/App/Header/ThemeSettings.svelte";
 </script>
 
 <style>
@@ -77,7 +77,7 @@
           <Icon name="brush" />
         </button>
       </div>
-      <SettingsDropdown slot="modal" />
+      <ThemeSettings slot="modal" />
     </Floating>
   </div>
 </header>
