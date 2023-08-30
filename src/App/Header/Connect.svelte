@@ -39,7 +39,7 @@
     color: var(--color-foreground-6);
     position: absolute;
     right: 5rem;
-    top: 5rem;
+    top: 4.5rem;
     width: 15rem;
   }
   .info {
