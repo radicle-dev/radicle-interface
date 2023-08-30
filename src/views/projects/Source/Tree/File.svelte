@@ -37,7 +37,6 @@
     white-space: nowrap;
     text-overflow: ellipsis !important;
     overflow: hidden;
-    max-width: 24ch;
   }
   .icon-container {
     color: var(--color-fill-secondary);

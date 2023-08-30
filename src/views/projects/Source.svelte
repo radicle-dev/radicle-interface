@@ -80,13 +80,12 @@
   .column-left {
     display: flex;
     flex-direction: column;
-    padding-right: 1rem;
+    padding-right: 1.5rem;
   }
 
   .column-right {
     display: flex;
     flex-direction: column;
-    padding-left: 1rem;
     min-width: var(--content-min-width);
     width: 100%;
   }
@@ -99,6 +98,8 @@
 
   .source-tree {
     overflow-x: hidden;
+    width: 17.5rem;
+    padding-right: 0.25rem;
   }
   .sticky {
     position: sticky;
