@@ -24,6 +24,8 @@
       ? `${nodeId} is a delegate of this project`
       : `${nodeId} is a peer tracked by this node`;
   }
+
+  let expanded: boolean;
 </script>
 
 <style>
@@ -35,6 +37,7 @@
   }
   .title {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
     font-size: var(--font-size-small);
     font-family: var(--font-family-sans-serif);
@@ -81,7 +84,7 @@
   }
 </style>
 
-<Floating>
+<Floating bind:expanded={expanded}>
   <div slot="toggle" class="selector" title="Change peer">
     <div class="stat peer" class:not-allowed={!peers}>
       {#if selectedPeer}
@@ -98,10 +101,17 @@
         {#if selectedPeer.delegate}
           <Badge variant="secondary">delegate</Badge>
         {/if}
+          <div style="margin: -8px">
+            <Icon name={expanded ? "chevron-up" : "chevron-down"} />
+          </div>
       {:else}
         <div class="title">
-          <Icon size="small" name="fork" />{peers.length}
+          <Icon size="small" name="fork" />
+          {peers.length}
           {pluralize("remote", peers.length)}
+          <div style="margin: -8px">
+            <Icon name={expanded ? "chevron-up" : "chevron-down"} />
+          </div>
         </div>
       {/if}
     </div>

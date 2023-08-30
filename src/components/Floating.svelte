@@ -10,7 +10,7 @@
 <script lang="ts">
   export let disabled = false;
 
-  let expanded = false;
+  export let expanded = false;
   let thisComponent: HTMLDivElement;
 
   function clickOutside(ev: MouseEvent | TouchEvent) {

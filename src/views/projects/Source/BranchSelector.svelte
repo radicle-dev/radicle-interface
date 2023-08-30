@@ -1,12 +1,14 @@
 <script lang="ts">
+  import type { Route } from "@app/lib/router";
+
   import * as utils from "@app/lib/utils";
   import { closeFocused } from "@app/components/Floating.svelte";
 
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
-  import type { Route } from "@app/lib/router";
 
   export let selectedBranch: string | undefined;
   export let selectedCommitId: string;
@@ -14,6 +16,8 @@
 
   $: hideDropdown = branches.length <= 1;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
+
+  let expanded: boolean;
 </script>
 
 <style>
@@ -60,13 +64,16 @@
 
 <div class="commit" title="Current branch">
   {#if selectedBranch}
-    <Floating disabled={hideDropdown}>
+    <Floating disabled={hideDropdown} bind:expanded={expanded}>
       <div
         slot="toggle"
         title="Change branch"
         class="branch-name"
         class:not-allowed={hideDropdown}>
         {selectedBranch}
+        <div style="margin-right: -8px">
+          <Icon name={expanded ? "chevron-up" : "chevron-down"} />
+        </div>
       </div>
       <Dropdown slot="modal" items={branches}>
         <Link
