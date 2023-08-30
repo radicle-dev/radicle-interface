@@ -1,10 +1,10 @@
 import {
-  test,
-  expect,
-  sourceBrowsingUrl,
-  bobRemote,
-  bobHead,
   aliceRemote,
+  bobHead,
+  expect,
+  shortBobRemote,
+  sourceBrowsingUrl,
+  test,
 } from "@tests/support/fixtures.js";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
@@ -12,7 +12,7 @@ const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
   await page.getByRole("link", { name: "7 commits" }).click();
 
   await page.getByText("Update readme").click();

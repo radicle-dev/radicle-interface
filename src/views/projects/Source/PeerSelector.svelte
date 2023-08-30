@@ -64,10 +64,6 @@
   .peer:hover {
     background-color: var(--color-fill-ghost-hover);
   }
-  .prefix {
-    display: inline-block;
-    color: var(--color-secondary-6);
-  }
   .stat {
     display: flex;
     align-items: center;
@@ -90,16 +86,13 @@
   }
 </style>
 
-<Floating bind:expanded={expanded}>
+<Floating bind:expanded>
   <div slot="toggle" class="selector" title="Change peer">
     <div class="stat peer" class:not-allowed={!peers}>
       {#if selectedPeer}
         <span class="avatar-id">
           <Avatar nodeId={selectedPeer.id} inline />
-          <!-- Ignore prettier to avoid getting a whitespace between
-             did:key: and the nid due to a newline. -->
-          <!-- prettier-ignore -->
-          <span><span style:color="var(--color-secondary-5)">did:key:</span>{truncateId(selectedPeer.id)}</span>
+          did:key:{truncateId(selectedPeer.id)}
           {#if selectedPeer.alias}
             <span class="alias">({selectedPeer.alias})</span>
           {/if}
@@ -107,9 +100,9 @@
         {#if selectedPeer.delegate}
           <Badge size="tiny" variant="secondary">delegate</Badge>
         {/if}
-          <div style="margin: -8px">
-            <Icon name={expanded ? "chevron-up" : "chevron-down"} />
-          </div>
+        <div style="margin: -8px">
+          <Icon name={expanded ? "chevron-up" : "chevron-down"} />
+        </div>
       {:else}
         <div class="title">
           <Icon size="small" name="fork" />
@@ -135,15 +128,13 @@
               <span class="avatar-id">
                 <Avatar nodeId={item.remote.id} inline />
                 <div class="layout-desktop">
-                  <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{truncateId(item.remote.id)}</span>
+                  did:key:{truncateId(item.remote.id)}
                   {#if item.remote.alias}
                     <span class="alias">({item.remote.alias})</span>
                   {/if}
                 </div>
                 <div class="layout-mobile">
-                  <!-- prettier-ignore -->
-                  <span><span class="prefix">did:key:</span>{truncateId(item.remote.id)}</span>
+                  did:key:{truncateId(item.remote.id)}
                   {#if item.remote.alias}
                     <span class="alias">({item.remote.alias})</span>
                   {/if}

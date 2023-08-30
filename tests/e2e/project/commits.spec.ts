@@ -1,11 +1,11 @@
 import {
-  test,
-  expect,
-  sourceBrowsingUrl,
-  bobRemote,
-  aliceRemote,
-  gitOptions,
   aliceMainHead,
+  expect,
+  gitOptions,
+  shortAliceRemote,
+  shortBobRemote,
+  sourceBrowsingUrl,
+  test,
 } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
 
@@ -16,11 +16,15 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(aliceRemote).click();
+    await page.pause();
+    await page
+      .getByRole("link", {
+        name: `${shortAliceRemote} (alice) delegate`,
+      })
+      .click();
+
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `  did:key:${aliceRemote
-        .substring(8)
-        .substring(0, 6)}…${aliceRemote.slice(-6)} (alice) delegate`,
+      `${shortAliceRemote} (alice) delegate`,
     );
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
@@ -58,11 +62,10 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
+    await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
+
     await expect(page.getByTitle("Change peer")).toContainText(
-      ` did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} `,
+      `${shortBobRemote} (bob)`,
     );
 
     await expect(page.getByText("Wednesday, December 21, 2022")).toBeVisible();
@@ -120,11 +123,9 @@ test("relative timestamps", async ({ page }) => {
   await page.getByRole("link", { name: "6 commits" }).click();
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(bobRemote).click();
+  await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
   await expect(page.getByTitle("Change peer")).toHaveText(
-    `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-      -6,
-    )} (bob)`,
+    `${shortBobRemote} (bob)`,
   );
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText("Bob Belcher committed now");

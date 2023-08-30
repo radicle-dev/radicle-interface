@@ -72,7 +72,7 @@
 
 <div class="commit" title="Current branch">
   {#if selectedBranch}
-    <Floating disabled={hideDropdown} bind:expanded={expanded}>
+    <Floating disabled={hideDropdown} bind:expanded>
       <div
         slot="toggle"
         title="Change branch"
@@ -86,10 +86,10 @@
       <Dropdown slot="modal" items={branches}>
         <svelte:fragment slot="item" let:item>
           <div class="dropdown-item">
-            <Link
-              route={item.route}
-              on:afterNavigate={() => closeFocused()}>
-              <DropdownItem selected={item.name === selectedBranch} size="small">
+            <Link route={item.route} on:afterNavigate={() => closeFocused()}>
+              <DropdownItem
+                selected={item.name === selectedBranch}
+                size="small">
                 {item.name}
               </DropdownItem>
             </Link>

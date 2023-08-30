@@ -2,12 +2,12 @@ import type { Page } from "@playwright/test";
 
 import {
   aliceMainHead,
-  aliceRemote,
   bobHead,
-  bobRemote,
-  expect,
   cobUrl,
+  expect,
   markdownUrl,
+  shortAliceRemote,
+  shortBobRemote,
   sourceBrowsingRid,
   sourceBrowsingUrl,
   test,
@@ -276,18 +276,16 @@ test("peer and branch switching", async ({ page }) => {
   // Alice's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(`${aliceRemote}`).click();
+    await page
+      .getByRole("link", {
+        name: `${shortAliceRemote} (alice) delegate`,
+      })
+      .click();
     await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${aliceRemote.substring(8).substring(0, 6)}…${aliceRemote.slice(
-        -6,
-      )} (alice) delegate`,
+      `${shortAliceRemote} (alice) delegate`,
     );
     await expect(
-      page.getByText(
-        `source-browsing / did:key:${aliceRemote
-          .substring(8)
-          .substring(0, 6)}…${aliceRemote.slice(-6)}`,
-      ),
+      page.getByText(`source-browsing / ${shortAliceRemote}`),
     ).toBeVisible();
 
     // Default `main` branch.
@@ -341,11 +339,9 @@ test("peer and branch switching", async ({ page }) => {
   // Bob's peer.
   {
     await page.getByTitle("Change peer").click();
-    await page.getByText(bobRemote).click();
-    await expect(page.getByTitle("Change peer")).toHaveText(
-      `did:key:${bobRemote.substring(8).substring(0, 6)}…${bobRemote.slice(
-        -6,
-      )} (bob)`,
+    await page.getByRole("link", { name: `${shortBobRemote} (bob)` }).click();
+    await expect(page.getByTitle("Change peer")).toContainText(
+      `${shortBobRemote} (bob)`,
     );
     await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
 
@@ -366,30 +362,34 @@ test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   await page.getByTitle("Change peer").click();
-  await page.getByText(aliceRemote).click();
+  await page
+    .getByRole("link", {
+      name: `${shortAliceRemote} (alice) delegate`,
+    })
+    .click();
 
   await page.getByText("Clone").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob hyyzz9")).not.toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).not.toBeVisible();
   await expect(page.getByText("feature/branch")).toBeVisible();
 
   await page.getByTitle("Change peer").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText(bobRemote)).toBeVisible();
+  await expect(page.getByText(shortBobRemote).first()).toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 });
 

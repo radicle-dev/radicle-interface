@@ -49,17 +49,17 @@
     color: var(--color-foreground-black);
     background: var(--color-fill-yellow);
   }
-  .tiny{
+  .tiny {
     height: 1.375rem;
     font-size: var(--font-size-tiny);
     padding: 0.25rem 0.5rem;
   }
-  .small{
+  .small {
     height: 2rem;
     font-size: var(--font-size-small);
     padding: 0.5rem 0.75rem;
   }
-  .medium{
+  .medium {
     height: 2.5rem;
     font-size: var(--font-size-small);
     padding: 0.75rem 1rem;
