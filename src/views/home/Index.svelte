@@ -11,14 +11,13 @@
 
 <style>
   .wrapper {
-    padding: 3rem 3rem;
+    padding: 3rem 15rem;
     width: 100%;
-    max-width: 74rem;
   }
   .blurb {
     color: var(--color-foreground-contrast);
     padding: 0rem;
-    max-width: 70%;
+    max-width: 65%;
     font-size: var(--font-size-medium);
     text-align: left;
     margin-bottom: 1.5rem;
@@ -27,7 +26,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 3rem;
     width: 100%;
   }
   .project {
@@ -39,7 +38,21 @@
     font-size: var(--font-size-medium);
     margin-bottom: 1rem;
   }
+  @media (max-width: 1200px) {
+    .wrapper {
+      padding: 3rem 4rem;
+    }
+    .projects {
+      gap: 2rem;
+    }
+  }
   @media (max-width: 720px) {
+    .wrapper {
+      padding: 3rem 2rem;
+    }
+    .projects {
+      gap: 1rem;
+    }
     .blurb {
       max-width: none;
       font-size: var(--font-size-regular);

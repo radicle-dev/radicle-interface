@@ -122,7 +122,7 @@
   <div style:margin-bottom="5rem">
     <div style:margin-top="1rem">
       {#each projects as { project, activity } (project.id)}
-        <div style:margin-bottom="0.5rem">
+        <div style:margin-bottom="2rem">
           <Link
             route={{
               resource: "project.source",
