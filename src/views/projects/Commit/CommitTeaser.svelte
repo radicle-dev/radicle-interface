@@ -17,34 +17,34 @@
 
 <style>
   .teaser {
-    background-color: var(--color-background-float);
-    padding: 0.75rem 0rem;
     display: flex;
+    background-color: var(--color-background-float);
     align-items: center;
+    padding: 1.5rem;
+    font-size: var(--font-size-small);
   }
   .teaser:hover {
     background-color: var(--color-fill-ghost);
   }
   .hash {
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
-    padding: 0 1.5rem;
-    color: var(--color-fill-secondary);
     font-weight: var(--font-weight-bold);
-  }
-  .left {
-    padding-left: 1rem;
+    color: var(--color-fill-secondary);
   }
   .message {
     align-items: center;
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    margin-bottom: 0.25rem;
+  }
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
   .expand-toggle {
-    background-color: var(--color-foreground-2);
-    border: 1px solid var(--color-foreground-5);
+    background-color: var(--color-background-dip);
+    border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius-tiny);
     color: var(--color-foreground);
     cursor: pointer;
@@ -54,19 +54,20 @@
     padding: 0 5px 5px;
   }
   .expand-toggle:hover {
-    background-color: var(--color-foreground-5);
+    border: 1px solid var(--color-border-focus);
   }
   .right {
     display: flex;
     align-items: center;
-    padding-right: 1.5rem;
     margin-left: auto;
+    gap: 1.5rem;
   }
   .summary {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
   }
   .summary:hover {
     text-decoration: underline;
@@ -106,7 +107,7 @@
           commit: commit.id,
         }}>
         <div class="summary" use:twemoji>
-          <InlineMarkdown content={commit.summary} />
+          <InlineMarkdown fontSize="regular" content={commit.summary} />
         </div>
       </Link>
       {#if commit.description}

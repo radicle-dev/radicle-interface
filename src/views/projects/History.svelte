@@ -102,6 +102,21 @@
     text-align: center;
     min-height: 3rem;
   }
+  .group-header {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+  }
+
+  @media (max-width: 720px) {
+    .group-header {
+      margin-left: 1rem;
+    }
+    .group {
+      border-radius: 0;
+    }
+  }
 </style>
 
 <Layout {baseUrl} {project} {peer} activeTab="source">
@@ -120,7 +135,7 @@
 
   <div class="history">
     {#each groupCommits(allCommitHeaders) as group (group.time)}
-      <p style:color="var(--color-foreground-6)">{group.date}</p>
+      <div class="group-header">{group.date}</div>
       <div class="group">
         {#each group.commits as commit (commit.id)}
           <div class="teaser-wrapper">
