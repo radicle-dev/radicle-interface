@@ -51,7 +51,7 @@
   }
   .folder:hover {
     background-color: var(--color-fill-ghost);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-tiny);
   }
 
   .folder-name {

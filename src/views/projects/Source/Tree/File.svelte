@@ -8,7 +8,7 @@
 <style>
   .file {
     color: var(--color-foreground-6);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-tiny);
     cursor: pointer;
     display: flex;
     line-height: 1.5em;
