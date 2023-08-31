@@ -38,6 +38,7 @@
   .subtitle {
     color: var(--color-foreground-6);
     font-size: var(--font-size-small);
+    flex-wrap: wrap;
   }
   .summary {
     display: flex;
@@ -46,9 +47,6 @@
     gap: 0.5rem;
   }
   .issue-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     cursor: pointer;
     font-weight: var(--font-weight-medium);
   }

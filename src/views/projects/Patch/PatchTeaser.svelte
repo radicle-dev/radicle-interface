@@ -54,6 +54,7 @@
     gap: 0.5rem;
     color: var(--color-foreground-6);
     font-size: var(--font-size-small);
+    flex-wrap: wrap;
   }
   .summary {
     display: flex;
@@ -61,9 +62,6 @@
     gap: 0.5rem;
   }
   .patch-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-weight: var(--font-weight-medium);
   }
   .patch-title:hover {

@@ -84,6 +84,11 @@
     text-align: center;
     min-height: 3rem;
   }
+  @media (max-width: 720px) {
+  .issues-list {
+    border-radius: 0;
+  }
+  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">

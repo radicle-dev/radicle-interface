@@ -35,6 +35,7 @@
     align-items: center;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
   .left {
@@ -63,9 +64,6 @@
     gap: 1.5rem;
   }
   .summary {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-medium);
   }
@@ -79,19 +77,11 @@
   }
 
   @media (max-width: 720px) {
-    .hash {
-      padding-right: 0;
-    }
     .left {
       overflow: hidden;
     }
     .browse {
       display: none !important;
-    }
-    .summary {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
     }
   }
 </style>
@@ -112,6 +102,7 @@
       </Link>
       {#if commit.description}
         <button
+            style="display: inline;"
           class:expand-open={expandCommitMessage}
           class="expand-toggle txt-tiny"
           on:click={() => (expandCommitMessage = !expandCommitMessage)}>
@@ -126,9 +117,11 @@
           style:margin="0">{commit.description.trim()}</pre>
       </div>
     {/if}
-    <CommitAuthorship header={commit} />
+    <CommitAuthorship header={commit}>
+    <span class="hash layout-mobile">{formatCommit(commit.id)}</span>
+    </CommitAuthorship>
   </div>
-  <div class="right">
+  <div class="right layout-desktop-flex">
     <span class="hash">{formatCommit(commit.id)}</span>
     <div
       class="browse"

@@ -112,7 +112,6 @@
     margin-top: 0;
   }
 
-
   @media (max-width: 720px) {
     .group-header {
       margin-left: 1rem;

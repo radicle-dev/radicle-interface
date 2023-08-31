@@ -28,30 +28,33 @@
 </style>
 
 <span class="authorship">
+  <slot />
   {#if header.author.email === header.committer.email}
     <div class="person">
+      committed
+      {formatTimestamp(header.committer.time)}
+      by
       <img
         class="avatar"
         alt="avatar"
         src={gravatarURL(header.committer.email)} />
       {header.committer.name}
-      committed
-      {formatTimestamp(header.committer.time)}
     </div>
   {:else}
     <div class="person">
+      authored
+      by
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
       {header.author.name}
-      authored
     </div>
     <div class="person">
+      committed
+      {formatTimestamp(header.committer.time)}
       <img
         class="avatar"
         alt="avatar"
         src={gravatarURL(header.committer.email)} />
       {header.committer.name}
-      committed
-      {formatTimestamp(header.committer.time)}
     </div>
   {/if}
 </span>

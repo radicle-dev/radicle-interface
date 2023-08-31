@@ -88,6 +88,12 @@
   .teaser:not(:last-child) {
     border-bottom: 1px solid var(--color-border-hint);
   }
+
+  @media (max-width: 720px) {
+  .patches-list {
+    border-radius: 0;
+  }
+  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
