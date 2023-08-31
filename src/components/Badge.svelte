@@ -2,6 +2,7 @@
   export type Variant =
     | "caution"
     | "foreground"
+    | "background"
     | "negative"
     | "positive"
     | "primary"
@@ -24,6 +25,10 @@
     display: flex;
     white-space: nowrap;
     align-items: center;
+  }
+  .background {
+    color: var(--color-fill-secondary);
+    background: var(--color-foreground-match-background);
   }
   .foreground {
     color: var(--color-foreground-match-background);
@@ -76,6 +81,7 @@
   class:small={size === "small"}
   class:medium={size === "medium"}
   class:caution={variant === "caution"}
+  class:background={variant === "background"}
   class:foreground={variant === "foreground"}
   class:negative={variant === "negative"}
   class:positive={variant === "positive"}

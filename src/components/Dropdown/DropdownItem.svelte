@@ -16,14 +16,20 @@
     /* makes sure peer selector items with badges are same height
        as ones without */
     height: 34px;
+    border-radius: var(--border-radius-tiny);
   }
   .item:hover,
   .selected {
     background-color: var(--color-fill-ghost);
   }
 
+  .selected {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
+  }
+
   .item:hover.selected {
-    background-color: var(--color-fill-ghost-hover);
+    background-color: var(--color-fill-secondary-hover);
   }
 </style>
 

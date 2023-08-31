@@ -81,8 +81,14 @@
     color: var(--color-fill-secondary);
     align-items: center;
   }
+  .avatar-id.selected {
+    color: var(--color-foreground-match-background);
+  }
   .alias {
     color: var(--color-foreground-dim);
+  }
+  .alias.selected {
+    color: var(--color-foreground-match-background);
   }
 </style>
 
@@ -125,23 +131,15 @@
               selected={item.selected}
               title={createTitle(item.remote)}
               size="small">
-              <span class="avatar-id">
+              <span class="avatar-id" class:selected={item.selected}>
                 <Avatar nodeId={item.remote.id} inline />
-                <div class="layout-desktop">
                   did:key:{truncateId(item.remote.id)}
                   {#if item.remote.alias}
-                    <span class="alias">({item.remote.alias})</span>
+                    <span class="alias" class:selected={item.selected}>({item.remote.alias})</span>
                   {/if}
-                </div>
-                <div class="layout-mobile">
-                  did:key:{truncateId(item.remote.id)}
-                  {#if item.remote.alias}
-                    <span class="alias">({item.remote.alias})</span>
-                  {/if}
-                </div>
               </span>
               {#if item.remote.delegate}
-                <Badge size="tiny" variant="secondary">delegate</Badge>
+                <Badge size="tiny" variant={item.selected ? "background": "secondary"}>delegate</Badge>
               {/if}
             </DropdownItem>
           </Link>
