@@ -86,7 +86,7 @@
 
   @media (max-width: 960px) {
     .header {
-      padding: 4rem 1rem 0 1rem;
+      padding: 4rem 1rem 3rem 1rem;
     }
     .content {
       padding: 0 1rem 4rem 1rem;
