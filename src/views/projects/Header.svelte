@@ -83,6 +83,7 @@
       </SquareButton>
     </Link>
 
+    <div class="layout-desktop">
     <SquareButton
       variant="background"
       hoverable={false}
@@ -93,5 +94,6 @@
       <span>{project.trackings}</span>
       nodes
     </SquareButton>
+    </div>
   </div>
 </div>
