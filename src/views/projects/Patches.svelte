@@ -124,34 +124,33 @@
   </svelte:fragment>
 
   <div class="patches">
-    <div class="patches-list">
-      {#each allPatches as patch (patch.id)}
-        <div class="teaser">
-          <PatchTeaser {baseUrl} projectId={project.id} {patch} />
+      {#if allPatches.length > 0}
+        <div class="patches-list">
+          {#each allPatches as patch (patch.id)}
+            <div class="teaser">
+              <PatchTeaser {baseUrl} projectId={project.id} {patch} />
+            </div>
+          {/each}
         </div>
+      {:else if error}
+        <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+      {:else if loading}
+        <!-- We already show a loader below. -->
       {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
-        {:else if loading}
-          <!-- We already show a loader below. -->
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} patches</div>
-            <div slot="body">No patches matched the current filter</div>
-          </Placeholder>
-        {/if}
-      {/each}
-    </div>
+        <Placeholder emoji="🍂">
+          <div slot="title">{capitalize(state)} patches</div>
+          <div slot="body">No patches matched the current filter</div>
+        </Placeholder>
+      {/if}
     <div class="more">
       {#if loading}
         <div style:margin-top={page === 0 ? "8rem" : ""}>
-          <Loading small={page !== 0} center />
+          <Loading noDelay small={page !== 0} center />
         </div>
       {/if}
 
       {#if showMoreButton}
         <Button
-          size="small"
           variant="foreground"
           on:click={() => loadMore(state)}>
           More

@@ -24,30 +24,33 @@
 <style>
   .issue-teaser {
     display: flex;
-    padding: 0.75rem 0;
     background-color: var(--color-background-float);
+    padding: 1.5rem;
   }
   .issue-teaser:hover {
     background-color: var(--color-fill-ghost);
   }
+  .content {
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+  }
   .subtitle {
     color: var(--color-foreground-6);
-    font-size: var(--font-size-tiny);
-    font-family: var(--font-family-monospace);
-    margin-right: 0.4rem;
+    font-size: var(--font-size-small);
   }
   .summary {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-    padding-right: 1rem;
   }
   .issue-title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: pointer;
+    font-weight: var(--font-weight-medium);
   }
   .issue-title:hover {
     text-decoration: underline;
@@ -56,7 +59,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-right: 1rem;
     gap: 0.5rem;
     color: var(--color-foreground-5);
   }
@@ -71,7 +73,6 @@
   }
   .hash {
     font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-bold);
     color: var(--color-fill-secondary);
   }
@@ -83,7 +84,7 @@
   .state {
     justify-self: center;
     align-self: center;
-    margin: 0 1rem 0 1.25rem;
+    margin-right: 1.5rem;
   }
   .open {
     color: var(--color-fill-success);
@@ -106,7 +107,7 @@
     class:open={issue.state.status === "open"}>
     <Icon name="issue" />
   </div>
-  <div>
+  <div class="content">
     <div class="summary">
       <Link
         route={{
@@ -116,7 +117,7 @@
           issue: issue.id,
         }}>
         <span class="issue-title">
-          <InlineMarkdown content={issue.title} />
+          <InlineMarkdown fontSize="regular" content={issue.title} />
         </span>
       </Link>
       <span class="labels">

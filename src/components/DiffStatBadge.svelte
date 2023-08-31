@@ -5,35 +5,38 @@
 
 <style>
   .badge {
-    font-size: var(--font-size-tiny);
-    line-height: 1.6;
-    height: var(--button-tiny-height);
     display: flex;
-    flex-direction: row;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family-monospace);
+    height: var(--button-small-height);
     white-space: nowrap;
+    border-radius: var(--border-radius-round);
+    border: 1px solid var(--color-border-hint);
+    overflow: hidden;
+    background-color: var(--color-background-default);
   }
   .positive {
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--border-radius-round) 0 0 var(--border-radius-round);
+    display: flex;
+    border-right: 1px solid var(--color-border-hint);
+    padding: 0 0.75rem;
+    align-items: center;
     color: var(--color-foreground-success);
-    border: 1px solid var(--color-border-hint);
-    background-color: var(--color-background-default);
   }
   .negative {
-    padding: 0.125rem 0.5rem;
-    border-radius: 0 var(--border-radius-round) var(--border-radius-round) 0;
-    color: var(--color-foreground-red);
-    border: 1px solid var(--color-border-hint);
+    display: flex;
     border-left: 0;
-    background-color: var(--color-background-default);
+    padding: 0 0.75rem;
+    align-items: center;
+    color: var(--color-foreground-red);
   }
 </style>
 
 <div class="badge">
-  <span class="positive">
+  <div class="positive">
     + {insertions}
-  </span>
-  <span class="negative">
+  </div>
+  <div class="negative">
     - {deletions}
-  </span>
+  </div>
 </div>

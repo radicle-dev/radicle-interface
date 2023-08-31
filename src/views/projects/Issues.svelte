@@ -132,34 +132,31 @@
   </svelte:fragment>
 
   <div class="issues">
-    <div class="issues-list">
-      {#each allIssues as issue (issue.id)}
-        <div class="teaser">
-          <IssueTeaser projectId={project.id} {baseUrl} {issue} />
-        </div>
-      {:else}
-        {#if error}
-          <ErrorMessage message="Couldn't load issues." stackTrace={error} />
-        {:else if loading}
-          <!-- We already show a loader below. -->
-        {:else}
-          <Placeholder emoji="🍂">
-            <div slot="title">{capitalize(state)} issues</div>
-            <div slot="body">No issues matched the current filter</div>
-          </Placeholder>
-        {/if}
-      {/each}
-    </div>
+    {#if allIssues.length > 0}
+      <div class="issues-list">
+        {#each allIssues as issue (issue.id)}
+          <div class="teaser">
+            <IssueTeaser projectId={project.id} {baseUrl} {issue} />
+          </div>
+        {/each}
+      </div>
+    {:else if error}
+      <ErrorMessage message="Couldn't load issues." stackTrace={error} />
+    {:else if loading}
+      <!-- We already show a loader below. -->
+    {:else}
+      <Placeholder emoji="🍂">
+        <div slot="title">{capitalize(state)} issues</div>
+        <div slot="body">No issues matched the current filter</div>
+      </Placeholder>
+    {/if}
     <div class="more">
       {#if loading}
-        <Loading small={page !== 0} center />
+        <Loading noDelay small={page !== 0} center />
       {/if}
 
       {#if showMoreButton}
-        <Button
-          size="small"
-          variant="foreground"
-          on:click={() => loadIssues(state)}>
+        <Button variant="foreground" on:click={() => loadIssues(state)}>
           More
         </Button>
       {/if}

@@ -27,23 +27,23 @@
     display: inline-flex;
     align-items: center;
     color: inherit;
-    padding: 0.125rem 0;
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
   .id {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-family: var(--font-family-monospace);
     color: var(--color-fill-secondary);
+    font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-small);
   }
   .body {
     white-space: nowrap;
   }
 </style>
 
-<span class="authorship txt-tiny">
+<span class="authorship">
   {#if !noAvatar}
     <Avatar inline nodeId={authorId} />
   {/if}
