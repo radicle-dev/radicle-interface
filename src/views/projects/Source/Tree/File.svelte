@@ -12,7 +12,7 @@
     cursor: pointer;
     display: flex;
     line-height: 1.5em;
-    margin: 0.125rem 0;
+    margin: 0.25rem 0;
     padding: 0.25rem;
     width: 100%;
   }
@@ -37,6 +37,8 @@
     white-space: nowrap;
     text-overflow: ellipsis !important;
     overflow: hidden;
+    font-size: var(--font-size-regular);
+    font-weight: var(--font-weight-medium);
   }
   .icon-container {
     color: var(--color-fill-secondary);

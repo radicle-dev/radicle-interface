@@ -43,7 +43,7 @@
     display: flex;
     cursor: pointer;
     padding: 0.25rem;
-    margin: 0.125rem 0;
+    margin: 0.25rem 0;
     color: var(--color-foreground-5);
     user-select: none;
     line-height: 1.5rem;
@@ -57,11 +57,13 @@
   .folder-name {
     margin-left: 0.25rem;
     color: var(--color-secondary-6);
+    font-size: var(--font-size-regular);
+    font-weight: var(--font-weight-medium);
   }
 
   .container {
-    padding-left: 0.5rem;
-    margin: 0 0 0 0.5rem;
+    padding-left: 1rem;
+    margin-left: 0.5rem;
   }
 
   .loading {

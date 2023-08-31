@@ -75,7 +75,7 @@
     display: flex;
     justify-content: space-between;
     font-size: var(--font-size-medium);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-medium);
   }
   .rid {
     visibility: hidden;
