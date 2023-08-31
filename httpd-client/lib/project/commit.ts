@@ -98,30 +98,28 @@ const diffContentSchema = object({
   ]),
 });
 
-type DiffAddedChangeset = z.infer<typeof diffAddedChangesetSchema>;
-
-const diffAddedChangesetSchema = object({
+const diffChangesetSchema = object({
   path: string(),
   diff: diffContentSchema,
-  new: diffFileSchema,
 });
+
+type DiffAddedChangeset = z.infer<typeof diffAddedChangesetSchema>;
+
+const diffAddedChangesetSchema = diffChangesetSchema.merge(
+  object({ new: diffFileSchema }),
+);
 
 type DiffDeletedChangeset = z.infer<typeof diffDeletedChangesetSchema>;
 
-const diffDeletedChangesetSchema = object({
-  path: string(),
-  diff: diffContentSchema,
-  old: diffFileSchema,
-});
+const diffDeletedChangesetSchema = diffChangesetSchema.merge(
+  object({ old: diffFileSchema }),
+);
 
 type DiffModifiedChangeset = z.infer<typeof diffModifiedChangesetSchema>;
 
-const diffModifiedChangesetSchema = object({
-  path: string(),
-  diff: diffContentSchema,
-  new: diffFileSchema,
-  old: diffFileSchema,
-});
+const diffModifiedChangesetSchema = diffChangesetSchema.merge(
+  object({ new: diffFileSchema, old: diffFileSchema }),
+);
 
 type DiffCopiedChangeset = z.infer<typeof diffCopiedChangesetSchema>;
 
