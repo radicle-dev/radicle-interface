@@ -133,13 +133,19 @@
               size="small">
               <span class="avatar-id" class:selected={item.selected}>
                 <Avatar nodeId={item.remote.id} inline />
-                  did:key:{truncateId(item.remote.id)}
-                  {#if item.remote.alias}
-                    <span class="alias" class:selected={item.selected}>({item.remote.alias})</span>
-                  {/if}
+                did:key:{truncateId(item.remote.id)}
+                {#if item.remote.alias}
+                  <span class="alias" class:selected={item.selected}>
+                    ({item.remote.alias})
+                  </span>
+                {/if}
               </span>
               {#if item.remote.delegate}
-                <Badge size="tiny" variant={item.selected ? "background": "secondary"}>delegate</Badge>
+                <Badge
+                  size="tiny"
+                  variant={item.selected ? "background" : "secondary"}>
+                  delegate
+                </Badge>
               {/if}
             </DropdownItem>
           </Link>
