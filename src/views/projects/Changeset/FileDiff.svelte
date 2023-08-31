@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type { DiffContent } from "@httpd-client/lib/project/commit";
-  import type { BaseUrl, HunkLine } from "@httpd-client";
+  import type { BaseUrl, DiffContent, HunkLine } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
