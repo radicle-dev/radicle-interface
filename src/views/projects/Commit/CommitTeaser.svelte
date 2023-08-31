@@ -102,7 +102,7 @@
       </Link>
       {#if commit.description}
         <button
-            style="display: inline;"
+          style="display: inline;"
           class:expand-open={expandCommitMessage}
           class="expand-toggle txt-tiny"
           on:click={() => (expandCommitMessage = !expandCommitMessage)}>
@@ -118,7 +118,7 @@
       </div>
     {/if}
     <CommitAuthorship header={commit}>
-    <span class="hash layout-mobile">{formatCommit(commit.id)}</span>
+      <span class="hash layout-mobile">{formatCommit(commit.id)}</span>
     </CommitAuthorship>
   </div>
   <div class="right layout-desktop-flex">

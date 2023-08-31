@@ -90,9 +90,9 @@
   }
 
   @media (max-width: 720px) {
-  .patches-list {
-    border-radius: 0;
-  }
+    .patches-list {
+      border-radius: 0;
+    }
   }
 </style>
 

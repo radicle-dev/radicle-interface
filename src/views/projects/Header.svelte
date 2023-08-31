@@ -84,16 +84,16 @@
     </Link>
 
     <div class="layout-desktop">
-    <SquareButton
-      variant="background"
-      hoverable={false}
-      title="Tracked by {project.trackings} nodes">
-      <svelte:fragment slot="icon">
-        <Icon size="small" name="network" />
-      </svelte:fragment>
-      <span>{project.trackings}</span>
-      nodes
-    </SquareButton>
+      <SquareButton
+        variant="background"
+        hoverable={false}
+        title="Tracked by {project.trackings} nodes">
+        <svelte:fragment slot="icon">
+          <Icon size="small" name="network" />
+        </svelte:fragment>
+        <span>{project.trackings}</span>
+        nodes
+      </SquareButton>
     </div>
   </div>
 </div>

@@ -42,8 +42,7 @@
     </div>
   {:else}
     <div class="person">
-      authored
-      by
+      authored by
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
       {header.author.name}
     </div>

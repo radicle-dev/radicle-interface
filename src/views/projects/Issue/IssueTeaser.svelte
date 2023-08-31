@@ -64,10 +64,7 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-  }
-  .label {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-wrap: wrap;
   }
   .hash {
     font-family: var(--font-family-monospace);
@@ -89,12 +86,6 @@
   }
   .closed {
     color: var(--color-fill-danger);
-  }
-
-  @media (max-width: 960px) {
-    .labels {
-      display: none;
-    }
   }
 </style>
 
@@ -118,18 +109,6 @@
           <InlineMarkdown fontSize="regular" content={issue.title} />
         </span>
       </Link>
-      <span class="labels">
-        {#each issue.labels.slice(0, 4) as label}
-          <Badge style="max-width:7rem" variant="secondary">
-            <span class="label">{label}</span>
-          </Badge>
-        {/each}
-        {#if issue.labels.length > 4}
-          <Badge variant="foreground">
-            <span class="label">+{issue.labels.length - 4} more labels</span>
-          </Badge>
-        {/if}
-      </span>
     </div>
     <div class="summary subtitle">
       <span class="hash">{formatObjectId(issue.id)}</span>
@@ -137,12 +116,24 @@
       <Authorship authorId={issue.author.id} authorAlias={issue.author.alias} />
     </div>
   </div>
-  {#if commentCount > 0}
-    <div class="right">
+  <div class="right">
+    <span class="labels">
+      {#each issue.labels.slice(0, 4) as label}
+        <Badge variant="secondary">
+          {label}
+        </Badge>
+      {/each}
+      {#if issue.labels.length > 4}
+        <Badge variant="foreground">
+          +{issue.labels.length - 4} more labels
+        </Badge>
+      {/if}
+    </span>
+    {#if commentCount > 0}
       <div class="comment-count">
         <Icon name="chat" />
         <span>{commentCount}</span>
       </div>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>

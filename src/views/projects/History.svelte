@@ -151,9 +151,7 @@
       {#if loading}
         <Loading small={page !== 0} center />
       {:else if allCommitHeaders.length < totalCommitCount}
-        <Button variant="foreground" on:click={loadMore}>
-          More
-        </Button>
+        <Button variant="foreground" on:click={loadMore}>More</Button>
       {/if}
     </div>
   </div>
