@@ -126,9 +126,6 @@
       display: none;
       padding-right: 0;
     }
-    .column-left-visible {
-      display: block;
-    }
     .sticky {
       max-height: initial;
     }
@@ -147,9 +144,8 @@
         {tree}
         historyLinkActive={false} />
 
-      <!-- Mobile navigation -->
       {#if tree.entries.length > 0}
-        <nav class="layout-mobile">
+        <div class="layout-mobile">
           <Button
             style="width: 100%;"
             variant="secondary"
@@ -158,14 +154,30 @@
             }}>
             Browse
           </Button>
-        </nav>
+        </div>
+
+        {#if mobileFileTree}
+          <div style:margin-top="1rem">
+            <TreeComponent
+              projectId={project.id}
+              {revision}
+              {baseUrl}
+              {fetchTree}
+              {path}
+              {peer}
+              {tree}
+              on:select={() => {
+                mobileFileTree = false;
+              }} />
+          </div>
+        {/if}
       {/if}
     </div>
   </svelte:fragment>
 
   <div class="container center-content">
     {#if tree.entries.length > 0}
-      <div class="column-left" class:column-left-visible={mobileFileTree}>
+      <div class="column-left">
         <div class="source-tree sticky">
           <TreeComponent
             projectId={project.id}
@@ -174,11 +186,7 @@
             {fetchTree}
             {path}
             {peer}
-            {tree}
-            on:select={() => {
-              // Close mobile tree if user navigates to other file.
-              mobileFileTree = false;
-            }} />
+            {tree} />
         </div>
       </div>
       <div class="column-right">
