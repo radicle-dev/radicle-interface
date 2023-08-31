@@ -1,16 +1,14 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type {
-    BaseUrl,
-    DiffAddedDeletedModifiedChangeset,
-    HunkLine,
-  } from "@httpd-client";
+  import type { DiffContent } from "@httpd-client/lib/project/commit";
+  import type { BaseUrl, HunkLine } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
-  export let file: DiffAddedDeletedModifiedChangeset;
+  export let filePath: string;
+  export let fileDiff: DiffContent;
   export let revision: string;
   export let headerBadgeCaption: "added" | "deleted" | undefined = undefined;
   export let baseUrl: BaseUrl;
@@ -28,11 +26,9 @@
     if (selection) {
       document
         .getElementById(
-          [
-            file.path,
-            "H" + selection.startHunk,
-            "L" + selection.startLine,
-          ].join("-"),
+          [filePath, "H" + selection.startHunk, "L" + selection.startLine].join(
+            "-",
+          ),
         )
         ?.scrollIntoView();
     }
@@ -57,7 +53,7 @@
   function updateSelection() {
     const fragment = window.location.hash.substring(1);
     const match = fragment.match(/(.+):H(\d+)L(\d+)(H(\d+)L(\d+))?/);
-    if (match && match[1] === file.path) {
+    if (match && match[1] === filePath) {
       selection = {
         startHunk: parseInt(match[2]),
         startLine: parseInt(match[3]),
@@ -139,7 +135,7 @@
     lineIdx: number,
     event: MouseEvent,
   ): string {
-    const path = file.path;
+    const path = filePath;
     // single line selection
     if (!event.shiftKey) {
       return path + ":H" + hunkIdx + "L" + lineIdx;
@@ -317,7 +313,7 @@
   }
 </style>
 
-<div id={file.path} class="wrapper">
+<div id={filePath} class="wrapper">
   <header class="header">
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -329,7 +325,7 @@
       {/if}
     </div>
     <div class="actions">
-      <p class="txt-regular">{file.path}</p>
+      <p class="txt-regular">{filePath}</p>
       {#if headerBadgeCaption === "added"}
         <Badge variant="positive">added</Badge>
       {:else if headerBadgeCaption === "deleted"}
@@ -342,7 +338,7 @@
           resource: "project.source",
           project: projectId,
           node: baseUrl,
-          path: file.path,
+          path: filePath,
           revision,
         }}>
         <Icon name="browse" />
@@ -351,10 +347,10 @@
   </header>
   {#if !collapsed}
     <main>
-      {#if file.diff.type === "plain"}
-        {#if file.diff.hunks.length > 0}
+      {#if fileDiff.type === "plain"}
+        {#if fileDiff.hunks.length > 0}
           <table class="diff" data-file-diff-select>
-            {#each file.diff.hunks as hunk, hunkIdx}
+            {#each fileDiff.hunks as hunk, hunkIdx}
               <tr
                 class="diff-line hunk-header"
                 class:selected={hunkHeaderSelected(selection, hunkIdx)}>
@@ -370,7 +366,7 @@
                   class={`diff-line type-${line.type}`}
                   class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
                   <td
-                    id={[file.path, "H" + hunkIdx, "L" + lineIdx].join("-")}
+                    id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
                     class="diff-line-number left"
                     on:click={e => selectLine(hunkIdx, lineIdx, e)}>
                     <div class="selection-indicator" />

@@ -1,11 +1,12 @@
 <script lang="ts">
-  import type { BaseUrl, DiffCopiedMovedChangeset } from "@httpd-client";
+  import type { BaseUrl } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
-  export let file: DiffCopiedMovedChangeset;
+  export let newPath: string;
+  export let oldPath: string;
   export let revision: string;
   export let mode: "moved" | "copied";
   export let baseUrl: BaseUrl;
@@ -40,10 +41,10 @@
   }
 </style>
 
-<div id={file.newPath} class="wrapper">
+<div id={newPath} class="wrapper">
   <header class="header">
     <div class="actions">
-      <p class="txt-regular">{file.oldPath} → {file.newPath}</p>
+      <p class="txt-regular">{oldPath} → {newPath}</p>
       {#if mode === "moved"}
         <Badge variant="foreground">moved</Badge>
       {:else if mode === "copied"}
@@ -56,7 +57,7 @@
           resource: "project.source",
           project: projectId,
           node: baseUrl,
-          path: file.newPath,
+          path: newPath,
           revision,
         }}>
         <Icon name="browse" />

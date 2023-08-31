@@ -72,25 +72,53 @@
     <FileDiff
       {projectId}
       {baseUrl}
-      {file}
       {revision}
+      filePath={file.path}
+      fileDiff={file.diff}
       headerBadgeCaption="added" />
   {/each}
   {#each diff.deleted as file}
     <FileDiff
       {projectId}
       {baseUrl}
-      {file}
       {revision}
+      filePath={file.path}
+      fileDiff={file.diff}
       headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
-    <FileDiff {projectId} {baseUrl} {file} {revision} />
+    <FileDiff
+      {projectId}
+      {baseUrl}
+      {revision}
+      filePath={file.path}
+      fileDiff={file.diff} />
   {/each}
   {#each diff.moved as file}
-    <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="moved" />
+    {#if file.diff}
+      <FileDiff
+        {projectId}
+        {baseUrl}
+        {revision}
+        filePath={file.newPath}
+        fileDiff={file.diff} />
+    {:else}
+      <FileLocationChange
+        {projectId}
+        {baseUrl}
+        {revision}
+        newPath={file.newPath}
+        oldPath={file.oldPath}
+        mode="moved" />
+    {/if}
   {/each}
   {#each diff.copied as file}
-    <FileLocationChange {projectId} {baseUrl} {file} {revision} mode="copied" />
+    <FileLocationChange
+      {projectId}
+      {baseUrl}
+      {revision}
+      newPath={file.newPath}
+      oldPath={file.oldPath}
+      mode="copied" />
   {/each}
 </div>

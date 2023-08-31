@@ -11,8 +11,6 @@ import type {
   Commit,
   CommitHeader,
   Diff,
-  DiffAddedDeletedModifiedChangeset,
-  DiffCopiedMovedChangeset,
   HunkLine,
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
@@ -44,8 +42,6 @@ export type {
   Commit,
   CommitHeader,
   Diff,
-  DiffAddedDeletedModifiedChangeset,
-  DiffCopiedMovedChangeset,
   DiffResponse,
   HunkLine,
   Issue,
