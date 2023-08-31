@@ -273,11 +273,13 @@
     background-color: var(--color-foreground-4);
   }
   .diff-line-number {
+    font-family: var(--font-family-monospace);
     text-align: right;
     user-select: none;
     line-height: 1.5rem;
     min-width: 3rem;
     cursor: pointer;
+    color: var(--color-foreground-5);
   }
   .diff-line-number.left {
     position: relative;
@@ -310,9 +312,6 @@
   }
   .diff-expand-header {
     padding-left: 0.5rem;
-    color: var(--color-foreground-5);
-  }
-  .diff-line-number {
     color: var(--color-foreground-5);
   }
 </style>

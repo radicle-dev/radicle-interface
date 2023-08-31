@@ -131,6 +131,7 @@
   }
 
   .code :global(.line-number) {
+    font-family: var(--font-family-monospace);
     color: var(--color-foreground-4);
     text-align: right;
     padding: 0;
