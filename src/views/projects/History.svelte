@@ -103,11 +103,15 @@
     min-height: 3rem;
   }
   .group-header {
-    margin-top: 2rem;
+    margin-top: 3rem;
     margin-bottom: 1rem;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
   }
+  .group-header:first-child {
+    margin-top: 0;
+  }
+
 
   @media (max-width: 720px) {
     .group-header {
@@ -148,7 +152,7 @@
       {#if loading}
         <Loading small={page !== 0} center />
       {:else if allCommitHeaders.length < totalCommitCount}
-        <Button variant="foreground" size="small" on:click={loadMore}>
+        <Button variant="foreground" on:click={loadMore}>
           More
         </Button>
       {/if}
