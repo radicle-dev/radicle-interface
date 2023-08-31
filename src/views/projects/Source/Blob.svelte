@@ -102,7 +102,7 @@
   }
 
   .file-name {
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     flex-shrink: 0;
     white-space: nowrap;
     overflow: hidden;

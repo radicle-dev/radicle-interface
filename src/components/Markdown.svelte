@@ -145,7 +145,7 @@
 
   .markdown :global(h1) {
     font-size: calc(var(--font-size-x-large) * 0.75);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 1rem 0 0.5rem 0;
     margin: 0 0 0.75rem;
     border-bottom: 1px solid var(--color-foreground-4);
@@ -153,7 +153,7 @@
 
   .markdown :global(h2) {
     font-size: var(--font-size-medium);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
     border-bottom: 1px dashed var(--color-foreground-4);
@@ -161,13 +161,13 @@
 
   .markdown :global(h3) {
     font-size: calc(var(--font-size-medium) * 0.9);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     padding: 0.5rem 0;
     margin: 1rem 0 0.25rem;
   }
 
   .markdown :global(h4) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-regular);
     padding: 0.5rem 0;
     margin: 1rem 0 0.125rem;
@@ -175,7 +175,7 @@
 
   .markdown :global(h5),
   .markdown :global(h6) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     padding: 0.35rem 0;
     margin: 1rem 0 0.125rem;
@@ -203,7 +203,7 @@
   }
 
   .markdown :global(strong) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
 
   .markdown :global(.footnote-ref > a),

@@ -18,7 +18,7 @@
     border-radius: var(--border-radius-tiny);
     color: var(--color-foreground);
     font-family: var(--font-family-sans-serif);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     white-space: nowrap;
     gap: 0.5rem;

@@ -40,7 +40,7 @@
   label {
     display: block;
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     margin-bottom: 0.75rem;
   }
 

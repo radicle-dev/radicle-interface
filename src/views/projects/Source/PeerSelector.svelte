@@ -41,19 +41,19 @@
     gap: 0.5rem;
     font-size: var(--font-size-small);
     font-family: var(--font-family-sans-serif);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
   .selector .peer {
     padding: 0.5rem 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-tiny);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
   .dropdown-item {
     padding: 0.25rem 0.25rem 0 0.25rem;
     font-family: var(--font-family-monospace);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
   .dropdown-item:last-child {
     padding-bottom: 0.25rem;

@@ -63,7 +63,7 @@
   .dropdown-item {
     padding: 0.25rem 0.25rem 0 0.25rem;
     font-family: var(--font-family-monospace);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
   }
   .dropdown-item:last-child {
     padding-bottom: 0.25rem;

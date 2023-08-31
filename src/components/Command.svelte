@@ -16,7 +16,7 @@
     display: inline-block;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     overflow: hidden;
     padding: 0 2.5rem 0 0.5rem;
     position: relative;

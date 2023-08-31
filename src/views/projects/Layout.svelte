@@ -45,11 +45,11 @@
   .divider {
     color: var(--color-foreground-4);
     margin: 0 0.5rem;
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
   }
   .node-id {
     color: var(--color-foreground-5);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-regular);
     display: flex;
     align-items: center;
     white-space: nowrap;
@@ -60,7 +60,7 @@
   .id {
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     color: var(--color-fill-secondary);
     overflow-wrap: anywhere;
     display: flex;

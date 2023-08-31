@@ -3,21 +3,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/Inter-Regular.woff");
+  src: url("fonts/Inter-Regular.woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/Inter-Medium.woff2");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 600;
   font-display: swap;
-  src: url("fonts/Inter-SemiBold.otf");
+  src: url("fonts/Inter-SemiBold.woff2");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/Inter-Bold.otf");
+  src: url("fonts/Inter-Bold.woff2");
 }
 
 @font-face {
@@ -25,52 +32,37 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-Regular.ttf");
+  src: url("fonts/JetBrainsMono-Regular.woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/JetBrainsMono-Medium.woff2");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 600;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-SemiBold.ttf");
+  src: url("fonts/JetBrainsMono-SemiBold.woff2");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 700;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-Bold.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-Italic.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-SemiBoldItalic.ttf");
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url("fonts/JetBrainsMono-BoldItalic.ttf");
+  src: url("fonts/JetBrainsMono-Bold.woff2");
 }
 
 :root {
   --font-family-sans-serif: Inter, sans-serif;
   --font-family-monospace: monospace;
-  --font-weight-normal: 400;
-  --font-weight-medium: 600;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-size-tiny: 0.75rem; /* 12px */
   --font-size-small: 0.875rem; /* 14px */
@@ -98,7 +90,7 @@ html {
   /* The root element font size has to be set in px,
    * otherwise Safari breaks. */
   font-size: 16px;
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-regular);
   line-height: 1.5;
 }
 

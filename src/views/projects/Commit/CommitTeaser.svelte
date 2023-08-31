@@ -48,7 +48,7 @@
     border-radius: var(--border-radius-tiny);
     color: var(--color-foreground);
     cursor: pointer;
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     height: 12px;
     line-height: 6px;
     padding: 0 5px 5px;
