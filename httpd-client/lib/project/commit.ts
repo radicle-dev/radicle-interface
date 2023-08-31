@@ -1,22 +1,8 @@
 import type { z } from "zod";
+export type { Commits, HunkLine, Commit, Diff, CommitHeader, DiffContent };
+
 import { array, literal, number, object, optional, string, union } from "zod";
-
 export { commitHeaderSchema, diffSchema, commitSchema, commitsSchema };
-
-export type {
-  Commits,
-  HunkLine,
-  Commit,
-  DiffFile,
-  Diff,
-  DiffCopiedChangeset,
-  DiffMovedChangeset,
-  CommitHeader,
-  DiffAddedChangeset,
-  DiffDeletedChangeset,
-  DiffModifiedChangeset,
-  DiffContent,
-};
 
 const gitPersonSchema = object({
   name: string(),
@@ -49,8 +35,6 @@ const deletionHunkLineSchema = object({
   lineNo: number(),
   type: literal("deletion"),
 });
-
-type DiffFile = z.infer<typeof diffFileSchema>;
 
 const diffFileSchema = object({
   oid: string(),
@@ -103,32 +87,22 @@ const diffChangesetSchema = object({
   diff: diffContentSchema,
 });
 
-type DiffAddedChangeset = z.infer<typeof diffAddedChangesetSchema>;
-
 const diffAddedChangesetSchema = diffChangesetSchema.merge(
   object({ new: diffFileSchema }),
 );
-
-type DiffDeletedChangeset = z.infer<typeof diffDeletedChangesetSchema>;
 
 const diffDeletedChangesetSchema = diffChangesetSchema.merge(
   object({ old: diffFileSchema }),
 );
 
-type DiffModifiedChangeset = z.infer<typeof diffModifiedChangesetSchema>;
-
 const diffModifiedChangesetSchema = diffChangesetSchema.merge(
   object({ new: diffFileSchema, old: diffFileSchema }),
 );
-
-type DiffCopiedChangeset = z.infer<typeof diffCopiedChangesetSchema>;
 
 const diffCopiedChangesetSchema = object({
   newPath: string(),
   oldPath: string(),
 });
-
-type DiffMovedChangeset = z.infer<typeof diffMovedChangesetSchema>;
 
 const diffMovedChangesetSchema = diffCopiedChangesetSchema.merge(
   object({
