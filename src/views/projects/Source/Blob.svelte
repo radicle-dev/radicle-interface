@@ -102,7 +102,8 @@
   }
 
   .file-name {
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
     flex-shrink: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -117,7 +118,7 @@
     font-family: var(--font-family-monospace);
     color: var(--color-secondary);
     background-color: var(--color-fill-ghost);
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-small);
     border-radius: var(--border-radius-small);
     overflow-x: hidden;
     text-overflow: ellipsis;
