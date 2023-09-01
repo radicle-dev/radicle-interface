@@ -250,27 +250,16 @@
     vertical-align: top;
   }
   .diff-line.type-addition > * {
-    color: var(--color-fill-success);
-    background-color: var(--color-positive-2);
+    background-color: var(--color-fill-diff-green-light);
   }
   .diff-line.type-deletion > * {
-    color: var(--color-fill-danger);
-    background-color: var(--color-negative-2);
+    background-color: var(--color-fill-diff-red-light);
   }
-  .diff-line.selected > * {
-    color: var(--color-foreground-6);
-    background-color: var(--color-foreground-4);
+  .type-addition .diff-line-number {
+    background-color: var(--color-fill-diff-green);
   }
-  .diff-line.selected.type-addition > * {
-    color: var(--color-fill-success);
-    background-color: var(--color-positive-4);
-  }
-  .diff-line.selected.type-deletion > * {
-    color: var(--color-fill-danger);
-    background-color: var(--color-negative-4);
-  }
-  .diff-line.hunk-header.selected {
-    background-color: var(--color-foreground-4);
+  .type-deletion .diff-line-number {
+    background-color: var(--color-fill-diff-red);
   }
   .diff-line-number {
     font-family: var(--font-family-monospace);
