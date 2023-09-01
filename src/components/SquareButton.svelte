@@ -4,7 +4,13 @@
   export let hoverable: boolean = true;
   export let size: "small" | "regular" | "large" = "regular";
   export let title: string | undefined = undefined;
-  export let variant: "primary" | "secondary" | "gray" | "background" = "gray";
+  export let variant:
+    | "primary"
+    | "secondary"
+    | "gray"
+    | "none"
+    | "tab"
+    | "background" = "gray";
 </script>
 
 <style>
@@ -78,14 +84,37 @@
     background-color: var(--color-fill-ghost-hover);
   }
 
+  .tab {
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
+  }
+  .tab.hoverable:hover {
+    background-color: var(--color-fill-secondary);
+  }
+
+  .tab:hover {
+    background-color: var(--color-fill-ghost);
+  }
+
+  .none {
+    background-color: transparent;
+    color: var(--color-foreground-emphasized);
+  }
+
+  .none:hover {
+    background-color: var(--color-fill-ghost);
+  }
+
   .disabled {
     cursor: not-allowed;
+    color: var(--color-foreground-emphasized);
   }
   .disabled.secondary {
     color: var(--color-foreground-match-background);
   }
   .disabled:hover {
-    background: var(--color-fill-ghost);
+    background: none;
+    box-shadow: none;
   }
   .disabled:hover.secondary {
     background: var(--color-fill-secondary);
@@ -99,6 +128,8 @@
   tabindex="0"
   on:click
   class="square-button"
+  class:tab={variant === "tab"}
+  class:none={variant === "none"}
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
   class:gray={variant === "gray"}
