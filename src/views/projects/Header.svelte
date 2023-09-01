@@ -10,6 +10,7 @@
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let baseUrl: BaseUrl;
   export let activeTab: ActiveTab = undefined;
@@ -46,7 +47,7 @@
       <SquareButton
         variant={activeTab === "source" ? "secondary" : "background"}>
         <svelte:fragment slot="icon">
-          <Icon size="small" name="chevron-left-right" />
+          <IconSmall name="source" size={16} />
         </svelte:fragment>
         Source
       </SquareButton>
@@ -60,7 +61,7 @@
       <SquareButton
         variant={activeTab === "issues" ? "secondary" : "background"}>
         <svelte:fragment slot="icon">
-          <Icon size="small" name="issue" />
+          <IconSmall name="issue" size={16} />
         </svelte:fragment>
         <span>{project.issues.open}</span>
         {pluralize("issue", project.issues.open)}
@@ -76,7 +77,7 @@
       <SquareButton
         variant={activeTab === "patches" ? "secondary" : "background"}>
         <svelte:fragment slot="icon">
-          <Icon size="small" name="patch" />
+          <IconSmall name="patch" size={16} />
         </svelte:fragment>
         <span>{project.patches.open}</span>
         {pluralize("patch", project.patches.open)}
@@ -89,7 +90,7 @@
         hoverable={false}
         title="Tracked by {project.trackings} nodes">
         <svelte:fragment slot="icon">
-          <Icon size="small" name="network" />
+          <IconSmall name="node" size={16} />
         </svelte:fragment>
         <span>{project.trackings}</span>
         nodes
