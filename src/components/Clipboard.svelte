@@ -19,7 +19,7 @@
     icon = small ? "clipboard-small" : "clipboard";
   }, 800);
 
-  async function copy() {
+  export async function copy() {
     await toClipboard(text);
     dispatch("copied");
     icon = small ? "checkmark-small" : "checkmark";
