@@ -118,11 +118,10 @@
       </div>
     {/if}
     <CommitAuthorship header={commit}>
-      <span class="hash layout-mobile">{formatCommit(commit.id)}</span>
+      <span class="hash">{formatCommit(commit.id)}</span>
     </CommitAuthorship>
   </div>
   <div class="right layout-desktop-flex">
-    <span class="hash">{formatCommit(commit.id)}</span>
     <div
       class="browse"
       title="Browse the repository at this point in the history">

@@ -49,6 +49,7 @@
     <div class="person">
       committed
       {formatTimestamp(header.committer.time)}
+      by
       <img
         class="avatar"
         alt="avatar"
