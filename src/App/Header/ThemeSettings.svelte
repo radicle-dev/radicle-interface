@@ -81,7 +81,7 @@
 
   .active {
     background-color: var(--color-fill-secondary);
-    color: var(--color-foreground-black);
+    color: var(--color-foreground-match-background);
   }
 
   .active:hover {
