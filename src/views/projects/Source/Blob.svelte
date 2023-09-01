@@ -10,6 +10,7 @@
 
   import Readme from "./Readme.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
@@ -251,7 +252,12 @@
       </div>
     {/if}
     <a href="{rawPath}/{blob.path}">
-      <SquareButton variant="secondary" clickable>Raw</SquareButton>
+      <SquareButton variant="secondary" clickable>
+        Raw
+        <svelte:fragment slot="icon-right">
+          <IconSmall name="arrow-box-up-right" />
+        </svelte:fragment>
+      </SquareButton>
     </a>
   </div>
 </div>

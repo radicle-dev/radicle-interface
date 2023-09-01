@@ -7,6 +7,7 @@
   import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let id: string;
@@ -56,7 +57,12 @@
 
 <Floating>
   <div slot="toggle">
-    <SquareButton size="large" variant="primary">Clone</SquareButton>
+    <SquareButton size="large" variant="primary">
+      Clone
+      <svelte:fragment slot="icon-right">
+        <Icon name="download" />
+      </svelte:fragment>
+    </SquareButton>
   </div>
   <svelte:fragment slot="modal">
     <div class="dropdown">

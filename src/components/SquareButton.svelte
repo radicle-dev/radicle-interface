@@ -143,4 +143,5 @@
   <div style:display="block">
     <slot />
   </div>
+  <slot name="icon-right" />
 </div>
