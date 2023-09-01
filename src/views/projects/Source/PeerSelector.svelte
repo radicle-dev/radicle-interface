@@ -12,6 +12,7 @@
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
@@ -111,7 +112,7 @@
         </div>
       {:else}
         <div class="title">
-          <Icon size="small" name="fork" />
+          <IconSmall name="delegate" />
           {peers.length}
           {pluralize("remote", peers.length)}
           <div style="margin: -8px">
