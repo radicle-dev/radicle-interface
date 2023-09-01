@@ -7,7 +7,6 @@
 
   import { pluralize } from "@app/lib/pluralize";
 
-  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import SquareButton from "@app/components/SquareButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
