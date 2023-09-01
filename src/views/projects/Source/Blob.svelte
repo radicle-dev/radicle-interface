@@ -242,16 +242,18 @@
       {lastCommit.summary}
     </div>
   </div>
-  {#if isMarkdown}
-    <div title="Toggle render method" class="toggle">
-      <SquareButton variant="secondary" clickable on:click={toggleMarkdown}>
-        {showMarkdown ? "Plain" : "Markdown"}
-      </SquareButton>
-    </div>
-  {/if}
-  <a href="{rawPath}/{blob.path}" class="toggle">
-    <SquareButton variant="secondary" clickable>Raw</SquareButton>
-  </a>
+  <div class="layout-desktop-flex" style:gap="0.5rem">
+    {#if isMarkdown}
+      <div title="Toggle render method">
+        <SquareButton variant="secondary" clickable on:click={toggleMarkdown}>
+          {showMarkdown ? "Plain" : "Markdown"}
+        </SquareButton>
+      </div>
+    {/if}
+    <a href="{rawPath}/{blob.path}">
+      <SquareButton variant="secondary" clickable>Raw</SquareButton>
+    </a>
+  </div>
 </div>
 
 <div class="container">
