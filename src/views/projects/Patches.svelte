@@ -78,7 +78,8 @@
   .patches-list {
     border-radius: var(--border-radius-small);
     overflow: hidden;
-    border: 1px solid var(--color-border-hint);
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+    background-color: var(--color-background-float);
   }
   .more {
     margin-top: 2rem;
@@ -87,6 +88,15 @@
   }
   .teaser:not(:last-child) {
     border-bottom: 1px solid var(--color-border-hint);
+  }
+
+  .tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--color-background-float);
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+    border-radius: 2px;
+    width: fit-content;
   }
 
   @media (max-width: 720px) {
@@ -99,12 +109,12 @@
 <Layout {baseUrl} {project} activeTab="patches">
   <svelte:fragment slot="subheader">
     <div style:margin-top="1rem">
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <div class="tab-bar">
         {#each options as option}
           {#if option.disabled}
             <SquareButton
               clickable={option.disabled}
-              variant={option.value === state ? "secondary" : "gray"}
+              variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
               {option.title}
             </SquareButton>
@@ -118,7 +128,7 @@
               }}>
               <SquareButton
                 clickable={option.disabled}
-                variant={option.value === state ? "secondary" : "gray"}
+                variant={option.value === state ? "tab" : "none"}
                 disabled={option.disabled}>
                 {option.title}
               </SquareButton>

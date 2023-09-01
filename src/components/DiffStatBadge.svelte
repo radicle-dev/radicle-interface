@@ -12,7 +12,7 @@
     height: var(--button-small-height);
     white-space: nowrap;
     border-radius: var(--border-radius-round);
-    border: 1px solid var(--color-border-hint);
+    box-shadow: inset 0 0 0 1px var(--color-border-hint);
     overflow: hidden;
     background-color: var(--color-background-default);
   }
