@@ -60,6 +60,7 @@
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
@@ -632,11 +633,11 @@
                 class:review-accept={review.verdict === "accept"}
                 class:review-reject={review.verdict === "reject"}>
                 {#if review.verdict === "accept"}
-                  <Icon size="small" name="checkmark" />
+                  <IconSmall name="checkmark" />
                 {:else if review.verdict === "reject"}
-                  <Icon size="small" name="cross" />
+                  <IconSmall name="cross" />
                 {:else}
-                  <Icon size="small" name="chat" />
+                  <IconSmall name="chat" />
                 {/if}
               </span>
               <Authorship

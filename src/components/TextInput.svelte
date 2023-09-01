@@ -3,7 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
 
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Loading from "@app/components/Loading.svelte";
 
   export let name: string | undefined = undefined;
@@ -214,7 +214,7 @@
 
       {#if valid && !loading && isFocused}
         {#if success}
-          <Icon name="checkmark" size="small" />
+          <IconSmall name="checkmark" />
         {:else}
           <div class="key-hint">⏎</div>
         {/if}

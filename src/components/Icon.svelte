@@ -1,7 +1,6 @@
 <script lang="ts">
   import { unreachable } from "@app/lib/utils";
 
-  export let size: "small" | "regular" = "regular";
   export let name:
     | "arrow-box-up-right"
     | "arrow-reply"
@@ -9,14 +8,12 @@
     | "brush"
     | "chat"
     | "checkmark"
-    | "checkmark-small"
     | "chevron-down"
     | "chevron-left"
     | "chevron-left-right"
     | "chevron-right"
     | "chevron-up"
     | "clipboard"
-    | "clipboard-small"
     | "cross"
     | "diff"
     | "ellipsis"
@@ -49,8 +46,8 @@
 <svg
   role="img"
   on:click
-  height={size === "regular" ? "24" : "16"}
-  width={size === "regular" ? "24" : "16"}
+  height="24"
+  width="24"
   fill="currentColor"
   viewBox="0 0 24 24">
   {#if name === "arrow-box-up-right"}
@@ -175,16 +172,6 @@
          13.6465C5.84171 13.4512 6.15829 13.4512 6.35355 13.6465L8.69852
          15.9914C9.35028 16.6432 10.4302 16.5584 10.9723 15.813L17.5956
          6.70592C17.7581 6.48259 18.0708 6.43322 18.2941 6.59564Z" />
-  {:else if name === "checkmark-small"}
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M16.2481 8.56588C16.4878 8.70288 16.5711 9.00831 16.4341
-      9.24807L13.0837 15.1113C12.593 15.9701 11.42 16.1271 10.7207
-      15.4278L8.64645 13.3536C8.45118 13.1583 8.45118 12.8417 8.64645
-      12.6464C8.84171 12.4512 9.15829 12.4512 9.35355 12.6464L11.4278
-      14.7207C11.6609 14.9538 12.0519 14.9014 12.2154 14.6152L15.5659
-      8.75193C15.7029 8.51217 16.0083 8.42887 16.2481 8.56588Z" />
   {:else if name === "chevron-down"}
     <path
       fill-rule="evenodd"
@@ -254,18 +241,6 @@
       15.5 8.5 14.8284 8.5 14V9.5ZM10 5.5C9.72386 5.5 9.5 5.72386 9.5 6V14C9.5
       14.2761 9.72386 14.5 10 14.5H18C18.2761 14.5 18.5 14.2761 18.5 14V6C18.5
       5.72386 18.2761 5.5 18 5.5H10Z" />
-  {:else if name === "clipboard-small"}
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M10 6.5C10 5.67157 10.6716 5 11.5 5H17.5C18.3284 5 19 5.67157 19
-      6.5V12.5C19 13.3284 18.3284 14 17.5 14H15V16.5C15 17.3284 14.3284 18 13.5
-      18H7.5C6.67157 18 6 17.3284 6 16.5V10.5C6 9.67157 6.67157 9 7.5
-      9H10V6.5ZM10 10H7.5C7.22386 10 7 10.2239 7 10.5V16.5C7 16.7761 7.22386 17
-      7.5 17H13.5C13.7761 17 14 16.7761 14 16.5V14H11.5C10.6716 14 10 13.3284
-      10 12.5V10ZM11.5 13C11.2239 13 11 12.7761 11 12.5V6.5C11 6.22386 11.2239
-      6 11.5 6H17.5C17.7761 6 18 6.22386 18 6.5V12.5C18 12.7761 17.7761 13 17.5
-      13H11.5Z" />
   {:else if name === "cross"}
     <path
       fill-rule="evenodd"
