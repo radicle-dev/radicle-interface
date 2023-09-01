@@ -11,23 +11,27 @@
   --color-foreground-black: #000000;
   --color-foreground-primary: #ff55ff;
   --color-foreground-success: #0fc821;
-  --color-foreground-red: #ed2727;
+  --color-foreground-red: #a00d0d;
   --color-border-hint: #eaeaf1;
   --color-border-focus: #7070ff;
   --color-border-contrast: #24252d;
   --color-border-default: #b2b2cc;
-  --color-border-red: #ed2727;
+  --color-border-red: #a00d0d;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
   --color-fill-ghost: #f0f0f5;
   --color-fill-ghost-hover: #eaeaf1;
   --color-fill-separator: #eaeaf1;
   --color-fill-primary: #ff70ff;
-  --color-fill-primary-hover: #ff80ff;
   --color-fill-success: #0fc821;
   --color-fill-yellow: #ffe609;
-  --color-fill-danger: #ff5151;
+  --color-fill-danger: #ee2f2f;
   --color-fill-gray: #9494b8;
+  --color-fill-primary-hover: #ff80ff;
+  --color-fill-diff-green: #a1f7a9;
+  --color-fill-diff-green-light: #e7fdea;
+  --color-fill-diff-red: #ff9494;
+  --color-fill-diff-red-light: #ffebeb;
 }
 
 :root[data-theme="dark"] {
@@ -42,22 +46,26 @@
   --color-foreground-white: #ffffff;
   --color-foreground-black: #000000;
   --color-foreground-primary: #ff55ff;
-  --color-foreground-success: #0fc821;
-  --color-foreground-red: #ed2727;
+  --color-foreground-success: #0b9318;
+  --color-foreground-red: #d01111;
   --color-border-hint: #24252d;
   --color-border-focus: #7070ff;
   --color-border-contrast: #ebebff;
   --color-border-default: #2e2f38;
-  --color-border-error: #ed2727;
+  --color-border-error: #a00d0d;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
   --color-fill-ghost: #24252d;
   --color-fill-ghost-hover: #2e2f38;
   --color-fill-separator: #24252d;
   --color-fill-primary: #ff70ff;
-  --color-fill-primary-hover: #ff80ff;
-  --color-fill-success: #63f272;
+  --color-fill-success: #0b9318;
+  --color-fill-danger: #710909;
   --color-fill-yellow: #ffe609;
-  --color-fill-danger: #ff5151;
   --color-fill-gray: #9494b8;
+  --color-fill-primary-hover: #ff80ff;
+  --color-fill-diff-red: #710909;
+  --color-fill-diff-red-light: #2f0404;
+  --color-fill-diff-green: #075f10;
+  --color-fill-diff-green-light: #042f08;
 }
