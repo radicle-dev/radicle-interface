@@ -92,6 +92,7 @@
 
   .tab-bar {
     display: flex;
+    margin-top: 1rem;
     flex-wrap: wrap;
     background-color: var(--color-background-float);
     box-shadow: inset 0 0 0 1px var(--color-border-hint);
@@ -108,34 +109,32 @@
 
 <Layout {baseUrl} {project} activeTab="patches">
   <svelte:fragment slot="subheader">
-    <div style:margin-top="1rem">
-      <div class="tab-bar">
-        {#each options as option}
-          {#if option.disabled}
+    <div class="tab-bar">
+      {#each options as option}
+        {#if option.disabled}
+          <SquareButton
+            clickable={option.disabled}
+            variant={option.value === state ? "tab" : "none"}
+            disabled={option.disabled}>
+            {option.title}
+          </SquareButton>
+        {:else}
+          <Link
+            route={{
+              resource: "project.patches",
+              project: project.id,
+              node: baseUrl,
+              search: `state=${option.value}`,
+            }}>
             <SquareButton
               clickable={option.disabled}
               variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
               {option.title}
             </SquareButton>
-          {:else}
-            <Link
-              route={{
-                resource: "project.patches",
-                project: project.id,
-                node: baseUrl,
-                search: `state=${option.value}`,
-              }}>
-              <SquareButton
-                clickable={option.disabled}
-                variant={option.value === state ? "tab" : "none"}
-                disabled={option.disabled}>
-                {option.title}
-              </SquareButton>
-            </Link>
-          {/if}
-        {/each}
-      </div>
+          </Link>
+        {/if}
+      {/each}
     </div>
   </svelte:fragment>
 
