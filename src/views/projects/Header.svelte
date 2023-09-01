@@ -46,7 +46,7 @@
       <SquareButton
         variant={activeTab === "source" ? "secondary" : "background"}>
         <svelte:fragment slot="icon">
-          <IconSmall name="chevronLeftRight" />
+          <IconSmall name="chevron-left-right" />
         </svelte:fragment>
         Source
       </SquareButton>

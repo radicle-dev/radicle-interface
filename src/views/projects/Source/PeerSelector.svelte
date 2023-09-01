@@ -11,7 +11,6 @@
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
-  import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -45,7 +44,7 @@
     font-weight: var(--font-weight-semibold);
   }
   .selector .peer {
-    padding: 0.5rem 0.75rem;
+    padding: 0 0.75rem;
     color: var(--color-secondary);
     background-color: var(--color-fill-ghost);
     border-radius: var(--border-radius-tiny);
@@ -107,17 +106,13 @@
         {#if selectedPeer.delegate}
           <Badge size="tiny" variant="secondary">delegate</Badge>
         {/if}
-        <div style="margin: -8px">
-          <Icon name={expanded ? "chevron-up" : "chevron-down"} />
-        </div>
+        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
       {:else}
         <div class="title">
           <IconSmall name="delegate" />
           {peers.length}
           {pluralize("remote", peers.length)}
-          <div style="margin: -8px">
-            <Icon name={expanded ? "chevron-up" : "chevron-down"} />
-          </div>
+          <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
         </div>
       {/if}
     </div>

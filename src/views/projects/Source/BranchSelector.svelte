@@ -7,7 +7,7 @@
   import Dropdown from "@app/components/Dropdown.svelte";
   import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
   import Floating from "@app/components/Floating.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let selectedBranch: string | undefined;
@@ -33,6 +33,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem;
     padding: 0 0.75rem;
     height: 2rem;
     background-color: var(--color-fill-ghost);
@@ -79,9 +80,7 @@
         class="branch-name"
         class:not-allowed={hideDropdown}>
         {selectedBranch}
-        <div style="margin-right: -8px">
-          <Icon name={expanded ? "chevron-up" : "chevron-down"} />
-        </div>
+        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
       </div>
       <Dropdown slot="modal" items={branches}>
         <svelte:fragment slot="item" let:item>
