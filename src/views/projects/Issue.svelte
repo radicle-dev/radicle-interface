@@ -5,10 +5,12 @@
 
   import { isEqual } from "lodash";
 
-  import * as router from "@app/lib/router";
   import * as modal from "@app/lib/modal";
+  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
+  import { ResponseError } from "@httpd-client/lib/fetcher";
+  import { embed } from "@app/lib/file";
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
@@ -17,11 +19,12 @@
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
+  import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import LabelInput from "./Cob/LabelInput.svelte";
-  import Layout from "./Layout.svelte";
+  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
+  import Layout from "@app/views/projects/Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
@@ -35,6 +38,9 @@
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
 
+  let newEmbeds: { name: string; content: string }[] = [];
+  let selectionStart = 0;
+  let selectionEnd = 0;
   let action: "edit" | "view";
   $: action =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
@@ -46,9 +52,47 @@
     ["Close issue as other", { status: "closed", reason: "other" }],
   ];
 
+  const MAX_BLOB_SIZE = 4_194_304;
+
+  function handleFileDrop(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      const embeds = Array.from(event.dataTransfer.files).map(embed);
+      void Promise.all(embeds).then(embeds =>
+        embeds.forEach(embed => {
+          if (embed.content.length > MAX_BLOB_SIZE) {
+            modal.show({
+              component: ErrorModal,
+              props: {
+                title: "File too large",
+                subtitle: [
+                  "The file you tried to upload is too large.",
+                  "The maximum file size is 4MB.",
+                ],
+                error: { message: `File ${embed.name} is too large` },
+              },
+            });
+            return;
+          }
+          newEmbeds.push({ name: embed.name, content: embed.content });
+          const embedText = `![${embed.name}](${embed.oid})\n`;
+          commentBody = commentBody
+            .slice(0, selectionStart)
+            .concat(embedText, commentBody.slice(selectionEnd));
+          selectionStart += embedText.length;
+          selectionEnd = selectionStart;
+        }),
+      );
+    }
+  }
+
   async function createReply({
     detail: reply,
-  }: CustomEvent<{ id: string; body: string }>) {
+  }: CustomEvent<{
+    id: string;
+    embeds: { name: string; content: string }[];
+    body: string;
+  }>) {
     if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
       const status = await updateIssue(
         project.id,
@@ -56,6 +100,7 @@
         {
           type: "comment",
           body: reply.body,
+          embeds: reply.embeds,
           replyTo: reply.id,
         },
         $httpdStore.session,
@@ -72,7 +117,12 @@
       const status = await updateIssue(
         project.id,
         issue.id,
-        { type: "comment", body, replyTo: issue.id },
+        {
+          type: "comment",
+          body,
+          embeds: newEmbeds,
+          replyTo: issue.id,
+        },
         $httpdStore.session,
         api,
       );
@@ -218,7 +268,10 @@
               "There was an error while refreshing this issue.",
               "Check your radicle-httpd logs for details.",
             ],
-            error,
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
           },
         });
       }
@@ -237,7 +290,23 @@
       await api.project.updateIssue(projectId, issueId, action, session.id);
       return "success";
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof ResponseError && error.status === 413) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue editing failed",
+            subtitle: [
+              "Not able to upload the attached file.",
+              "Try to reduce the size of your attachment.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.body as string,
+              stack: error.stack,
+            },
+          },
+        });
+      } else if (error instanceof Error) {
         modal.show({
           component: ErrorModal,
           props: {
@@ -246,7 +315,10 @@
               "There was an error while updating the issue.",
               "Check your radicle-httpd logs for details.",
             ],
-            error,
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
           },
         });
       }
@@ -256,6 +328,13 @@
 
   const issueDescription = issue.discussion[0];
 
+  $: embeds = issue.discussion.reduce(
+    (acc, comment) => {
+      acc.push(...comment.embeds);
+      return acc;
+    },
+    [] as { name: string; content: string }[],
+  );
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
     .filter(
@@ -402,7 +481,6 @@
             {#if issueReactions.size > 0}
               <div style:margin-top="1rem">
                 <Reactions
-                  clickable={$httpdStore.state === "authenticated"}
                   reactions={issueReactions}
                   on:remove={event =>
                     handleReaction({ ...event.detail, id: issue.id })} />
@@ -430,8 +508,12 @@
         <div style:margin-top="1rem">
           <Textarea
             resizable
+            bind:selectionStart
+            bind:selectionEnd
+            on:drop={handleFileDrop}
             on:submit={async () => {
               await createComment(commentBody);
+              newEmbeds = [];
               commentBody = "";
             }}
             bind:value={commentBody}
@@ -448,6 +530,7 @@
               disabled={!commentBody}
               on:click={async () => {
                 await createComment(commentBody);
+                newEmbeds = [];
                 commentBody = "";
               }}>
               Comment
@@ -462,6 +545,7 @@
         assignees={issue.assignees}
         on:save={saveAssignees} />
       <LabelInput {action} labels={issue.labels} on:save={saveLabels} />
+      <Embeds {embeds} />
     </div>
   </div>
 </Layout>

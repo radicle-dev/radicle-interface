@@ -7,12 +7,34 @@
   import { createEventDispatcher, tick } from "svelte";
   import { scrollIntoView } from "@app/lib/utils";
   import { httpdStore } from "@app/lib/httpd";
+  import { embed } from "@app/lib/file";
 
+  export let newEmbeds: { name: string; content: string }[] = [];
+  export let selectionStart = 0;
+  export let selectionEnd = 0;
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
   export let showReplyTextarea = false;
 
   let replyText = "";
+
+  function handleFileDrop(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      const embeds = Array.from(event.dataTransfer.files).map(embed);
+      void Promise.all(embeds).then(embeds =>
+        embeds.forEach(embed => {
+          newEmbeds.push({ name: embed.name, content: embed.content });
+          const embedText = `![${embed.name}](${embed.oid})\n`;
+          replyText = replyText
+            .slice(0, selectionStart)
+            .concat(embedText, replyText.slice(selectionEnd));
+          selectionStart += embedText.length;
+          selectionEnd = selectionStart;
+        }),
+      );
+    }
+  }
 
   function cancel() {
     showReplyTextarea = false;
@@ -36,12 +58,18 @@
   }
 
   function reply() {
-    dispatch("reply", { id: root.id, body: replyText });
+    dispatch("reply", { id: root.id, embeds: newEmbeds, body: replyText });
+    replyText = "";
+    newEmbeds = [];
     showReplyTextarea = false;
   }
 
   const dispatch = createEventDispatcher<{
-    reply: { id: string; body: string };
+    reply: {
+      id: string;
+      embeds: { name: string; content: string }[];
+      body: string;
+    };
     react: { nids: string[]; commentId: string | undefined; reaction: string };
     cancel: never;
   }>();
@@ -106,6 +134,9 @@
         focus={showReplyTextarea}
         bind:value={replyText}
         on:submit={reply}
+        on:drop={handleFileDrop}
+        bind:selectionStart
+        bind:selectionEnd
         placeholder="Leave your reply" />
       <div class="actions">
         <Button variant="text" size="small" on:click={cancel}>Dismiss</Button>

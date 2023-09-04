@@ -4,7 +4,8 @@
 
   export let title: string;
   export let subtitle: string[];
-  export let error: Error;
+  // This is more explicit than the standard error type.
+  export let error: { message: string; stack?: string };
 </script>
 
 <Modal {title} emoji="🚨">

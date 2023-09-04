@@ -94,12 +94,17 @@ export class Fetcher {
   ): Promise<TypeOf<T>> {
     const response = await this.fetch(params);
 
-    const responseBody = await response.json();
-
     if (!response.ok) {
+      let responseBody = await response.text();
+      try {
+        responseBody = JSON.parse(responseBody);
+      } catch (_e: unknown) {
+        // We keep the original text response body.
+      }
       throw new ResponseError(params.method, response, responseBody);
     }
 
+    const responseBody = await response.json();
     const result = schema.safeParse(responseBody);
     if (result.success) {
       return result.data;

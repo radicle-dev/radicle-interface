@@ -37,9 +37,9 @@
     }
   }
 
-  function removeAssignee({ detail: key }: { detail: number }) {
-    updatedAssignees = updatedAssignees.filter((_, i) => i !== key);
-    if (action === "create") {
+  function removeAssignee(remove: string) {
+    updatedAssignees = updatedAssignees.filter(assignee => assignee !== remove);
+    if (action === "create" || action === "edit") {
       dispatch("save", updatedAssignees);
     }
   }
@@ -62,11 +62,25 @@
     margin-bottom: 1.25rem;
   }
 
+  .close {
+    color: inherit;
+    border: none;
+    border-bottom-right-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    background-color: transparent;
+    line-height: 1.5;
+    padding: 0;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--color-foreground);
+  }
+
   .chip-content {
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 0.5rem;
-    white-space: nowrap;
   }
 </style>
 
@@ -97,15 +111,18 @@
     {/if}
   </div>
   <div class="body">
-    {#each updatedAssignees as assignee, key (assignee)}
-      <Chip
-        on:remove={removeAssignee}
-        removeable={editInProgress || action === "create"}
-        {key}>
-        <div aria-label="chip" class="chip-content">
+    {#each updatedAssignees as assignee (assignee)}
+      <Chip actionable={editInProgress || action === "create"}>
+        <div slot="content" aria-label="chip" class="txt-overflow chip-content">
           <Avatar inline nodeId={assignee} />
           <span>{formatNodeId(assignee)}</span>
         </div>
+        <button
+          slot="icon"
+          class="section close"
+          on:click={() => removeAssignee(assignee)}>
+          ✕
+        </button>
       </Chip>
     {:else}
       <div class="txt-missing">No assignees</div>

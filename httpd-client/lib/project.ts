@@ -372,6 +372,7 @@ export class Client {
       title: string;
       description: string;
       assignees: string[];
+      embeds: { name: string; content: string }[];
       labels: string[];
     },
     authToken: string,

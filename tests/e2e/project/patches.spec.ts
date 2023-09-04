@@ -138,7 +138,7 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
   await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeVisible();
   await expect(page.locator(".reaction")).toHaveCount(2);
 
-  await page.locator("span").filter({ hasText: "👍 1" }).click();
+  await page.getByRole("button", { name: "✕" }).nth(1).click();
   await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(1);
 

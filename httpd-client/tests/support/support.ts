@@ -11,7 +11,7 @@ export async function createIssueToBeModified(
 ) {
   const { id } = await api.project.createIssue(
     cobRid,
-    { title: "aaa", description: "bbb", assignees: [], labels: [] },
+    { title: "aaa", description: "bbb", embeds: [], assignees: [], labels: [] },
     sessionId,
   );
 

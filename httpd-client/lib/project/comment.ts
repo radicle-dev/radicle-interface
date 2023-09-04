@@ -1,20 +1,14 @@
-import type { ZodSchema } from "zod";
+import type { z } from "zod";
 import { array, number, object, string, tuple } from "zod";
 
-export interface Comment {
-  id: string;
-  author: { id: string; alias?: string };
-  body: string;
-  reactions: [string, string][];
-  timestamp: number;
-  replyTo: string | null;
-}
+export type Comment = z.infer<typeof commentSchema>;
 
 export const commentSchema = object({
   id: string(),
   author: object({ id: string(), alias: string().optional() }),
   body: string(),
+  embeds: array(object({ name: string(), content: string() })),
   reactions: array(tuple([string(), string()])),
   timestamp: number(),
   replyTo: string().nullable(),
-}) satisfies ZodSchema<Comment>;
+});

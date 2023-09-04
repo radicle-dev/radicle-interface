@@ -319,6 +319,9 @@ export class RadiclePeer {
         "--json",
       ]);
 
+      if (!entries) {
+        throw new Error("No entries found in the routing table");
+      }
       entries.split("\n").forEach(entry => {
         if (entry && entry.trim() !== "") {
           try {

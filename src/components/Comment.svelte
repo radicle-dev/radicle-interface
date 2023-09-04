@@ -123,7 +123,6 @@
       <div style:margin-top="1rem">
         <Reactions
           reactions={groupedReactions}
-          clickable={Boolean($httpdStore.state === "authenticated")}
           on:remove={event => {
             if (id) {
               dispatch("react", { id, ...event.detail });

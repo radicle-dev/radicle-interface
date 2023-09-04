@@ -166,6 +166,10 @@ export function isUrl(input: string): boolean {
   return /^https?:\/\//.test(input);
 }
 
+export function isCommit(input: string): boolean {
+  return /^[a-f0-9]{40}$/.test(input);
+}
+
 export function isFulfilled<T>(
   input: PromiseSettledResult<T>,
 ): input is PromiseFulfilledResult<T> {

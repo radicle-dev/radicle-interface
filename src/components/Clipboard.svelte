@@ -8,6 +8,7 @@
 
   export let text: string;
   export let small = false;
+  export let tiny = false;
   export let tooltip: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{ copied: null }>();
@@ -41,6 +42,10 @@
     width: 1.5rem;
     height: 1.5rem;
   }
+  .clipboard.tiny {
+    width: 1rem;
+    height: 1rem;
+  }
   .clipboard:hover :global(svg) {
     fill: var(--color-foreground);
   }
@@ -55,6 +60,7 @@
   title={tooltip}
   class="clipboard"
   class:small
+  class:tiny
   on:click|stopPropagation={copy}>
   <Icon name={icon} />
 </span>

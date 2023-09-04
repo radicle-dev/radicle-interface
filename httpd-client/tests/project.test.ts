@@ -120,6 +120,7 @@ describe("project", () => {
           title: "aaa",
           description: "bbb",
           assignees: [],
+          embeds: [],
           labels: ["bug", "documentation"],
         },
         sessionId,

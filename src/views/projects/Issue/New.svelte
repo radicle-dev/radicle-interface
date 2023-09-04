@@ -5,6 +5,7 @@
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
+  import { embed } from "@app/lib/file";
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
@@ -22,6 +23,9 @@
   export let baseUrl: BaseUrl;
   export let project: Project;
 
+  const newEmbeds: Map<string, { name: string; content: string }> = new Map();
+  let selectionStart = 0;
+  let selectionEnd = 0;
   let preview: boolean = false;
   let action: "create" | "view";
   $: action =
@@ -32,11 +36,29 @@
       : "view";
 
   let issueTitle = "";
-  let issueText: string | undefined = undefined;
+  let issueText = "";
   let assignees: string[] = [];
   let labels: string[] = [];
 
   const api = new HttpdClient(baseUrl);
+
+  function handleFileDrop(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      const embeds = Array.from(event.dataTransfer.files).map(embed);
+      void Promise.all(embeds).then(embeds =>
+        embeds.forEach(({ oid, name, content }) => {
+          newEmbeds.set(oid, { name, content });
+          const embedText = `![${name}](${oid})\n`;
+          issueText = issueText
+            .slice(0, selectionStart)
+            .concat(embedText, issueText.slice(selectionEnd));
+          selectionStart += embedText.length;
+          selectionEnd = selectionStart;
+        }),
+      );
+    }
+  }
 
   async function createIssue(sessionId: string) {
     try {
@@ -44,8 +66,9 @@
         project.id,
         {
           title: issueTitle,
-          description: issueText ?? "",
+          description: issueText,
           assignees: assignees,
+          embeds: [...newEmbeds.values()],
           labels: labels,
         },
         sessionId,
@@ -141,6 +164,9 @@
               {#if action === "create"}
                 <Textarea
                   resizable
+                  bind:selectionStart
+                  bind:selectionEnd
+                  on:drop={handleFileDrop}
                   bind:value={issueText}
                   on:submit={() => {
                     void createIssue(session.id);
@@ -150,6 +176,7 @@
                 <p class="txt-missing">No description</p>
               {:else}
                 <Markdown
+                  embeds={newEmbeds}
                   content={issueText}
                   rawPath={utils.getRawBasePath(
                     project.id,

@@ -1,11 +1,14 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { afterUpdate, beforeUpdate, createEventDispatcher } from "svelte";
   import { isMac } from "@app/lib/utils";
 
   export let resizable: boolean = false;
   export let value: string | number | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let focus: boolean = false;
+  // Defaulting selectionStart and selectionEnd to 0, since no full support yet.
+  export let selectionStart = 0;
+  export let selectionEnd = 0;
 
   let textareaElement: HTMLTextAreaElement | undefined = undefined;
 
@@ -26,6 +29,19 @@
     textareaElement.focus();
     focus = false;
   }
+
+  beforeUpdate(() => {
+    if (textareaElement) {
+      ({ selectionStart, selectionEnd } = textareaElement);
+    }
+  });
+
+  afterUpdate(() => {
+    if (textareaElement) {
+      textareaElement.setSelectionRange(selectionStart, selectionEnd);
+      textareaElement.focus();
+    }
+  });
 
   const dispatch = createEventDispatcher<{
     submit: null;
@@ -95,12 +111,14 @@
 <textarea
   bind:this={textareaElement}
   bind:value
+  aria-label="textarea-comment"
   class="txt-small"
   class:resizable
   {placeholder}
   on:change
   on:click
   on:input
+  on:drop
   on:keydown|stopPropagation={handleKeydown}
   on:keypress />
 

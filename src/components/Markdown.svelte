@@ -8,13 +8,25 @@
   import markdown from "@app/lib/markdown";
   import { Renderer } from "@app/lib/markdown";
   import { highlight } from "@app/lib/syntax";
-  import { isUrl, twemoji, scrollIntoView, canonicalize } from "@app/lib/utils";
+  import {
+    isUrl,
+    twemoji,
+    scrollIntoView,
+    canonicalize,
+    isCommit,
+  } from "@app/lib/utils";
+  import { mimes } from "@app/lib/file";
 
   export let content: string;
   // If present, resolve all relative links with respect to this URL
   export let linkBaseUrl: string | undefined = undefined;
   export let path: string = "/";
   export let rawPath: string | undefined = undefined;
+  // If present, means we are in a preview context,
+  // use this for image previews instead of /raw URLs.
+  export let embeds:
+    | Map<string, { name: string; content: string }>
+    | undefined = undefined;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(
@@ -72,6 +84,28 @@
     if (rawPath) {
       for (const i of container.querySelectorAll("img")) {
         const imagePath = i.getAttribute("src");
+
+        // If the image is an oid embed
+        if (imagePath && isCommit(imagePath)) {
+          const embed = embeds?.get(imagePath);
+          if (embed) {
+            const fileExtension = embed.name.split(".").pop();
+            if (fileExtension) {
+              i.setAttribute("src", embed.content);
+            }
+          } else {
+            const fileExtension = i.alt.split(".").pop();
+            const url = new URL(rawPath);
+            // If a user changes the alt text of an image,
+            // the browser is still able to infer the mime type.
+            if (fileExtension && fileExtension in mimes) {
+              url.search = `?mime=${mimes[fileExtension]}`;
+            }
+            url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
+            i.setAttribute("src", url.toString());
+          }
+          continue;
+        }
 
         // Make sure the source isn't a URL before trying to fetch it from the repo
         if (

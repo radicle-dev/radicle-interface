@@ -310,8 +310,8 @@ export async function createSourceBrowsingFixture(
     gitOptions: gitOptions["bob"],
   });
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
-  await alice.startNode({ connect: [palm.address] });
-  await bob.startNode({ connect: [palm.address] });
+  await alice.startNode({ connect: [palm.address], alias: "alice" });
+  await bob.startNode({ connect: [palm.address], alias: "bob" });
   await alice.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
   await palm.waitForEvent({ type: "peerConnected", nid: alice.nodeId }, 1000);
   await bob.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
@@ -339,7 +339,9 @@ export async function createSourceBrowsingFixture(
   );
   // Needed due to rad init not pushing all branches.
   await alice.git(["push", "rad", "--all"], { cwd: aliceProjectPath });
-  await alice.rad(["track", bob.nodeId], { cwd: aliceProjectPath });
+  await alice.rad(["track", bob.nodeId, "--alias", "bob"], {
+    cwd: aliceProjectPath,
+  });
 
   await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId);
   await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId);

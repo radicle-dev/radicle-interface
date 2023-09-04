@@ -51,14 +51,24 @@ export default async function globalSetup(): Promise<() => void> {
       gitOptions: gitOptions["alice"],
     });
     await palm.startHttpd(defaultHttpdPort);
-    await palm.startNode({ policy: "track", scope: "all" });
+    await palm.startNode({ policy: "track", scope: "all", alias: "palm" });
 
-    console.log("Creating source-browsing fixture");
-    await createSourceBrowsingFixture(peerManager, palm);
-    console.log("Creating markdown fixture");
-    await createMarkdownFixture(palm);
-    console.log("Creating cobs fixture");
-    await createCobsFixture(palm);
+    try {
+      await createSourceBrowsingFixture(peerManager, palm);
+      console.log("Creating source-browsing fixture");
+      await createMarkdownFixture(palm);
+      console.log("Creating markdown fixture");
+      await createCobsFixture(palm);
+      console.log("Creating cobs fixture");
+    } catch (error) {
+      console.log("");
+      console.log("Not able to create the required fixtures.");
+      console.log("Make sure you are not using binaries compiled for release.");
+      console.log("");
+      console.log(error);
+      console.log("");
+      process.exit(1);
+    }
     console.log("Running tests");
     await palm.stopNode();
   } else {

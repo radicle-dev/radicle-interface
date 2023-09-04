@@ -24,7 +24,7 @@
       } else {
         updatedLabels = [...updatedLabels, sanitizedValue];
         inputValue = "";
-        if (action === "create") {
+        if (action === "create" || action === "edit") {
           dispatch("save", updatedLabels);
         }
       }
@@ -33,9 +33,9 @@
     }
   }
 
-  function removeLabel({ detail: key }: { detail: number }) {
-    updatedLabels = updatedLabels.filter((_, i) => i !== key);
-    if (action === "create") {
+  function removeLabel(remove: string) {
+    updatedLabels = updatedLabels.filter(label => label !== remove);
+    if (action === "create" || action === "edit") {
       dispatch("save", updatedLabels);
     }
   }
@@ -57,10 +57,18 @@
     gap: 0.5rem;
     margin-bottom: 1.25rem;
   }
-  .label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .close {
+    color: inherit;
+    border: none;
+    border-bottom-right-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    background-color: transparent;
+    line-height: 1.5;
+    padding: 0;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--color-foreground);
   }
 </style>
 
@@ -91,12 +99,14 @@
     {/if}
   </div>
   <div class="metadata-section-body">
-    {#each updatedLabels as label, key (label)}
-      <Chip
-        on:remove={removeLabel}
-        removeable={editInProgress || action === "create"}
-        {key}>
-        <div aria-label="chip" class="label">{label}</div>
+    {#each updatedLabels as label}
+      <Chip actionable={editInProgress || action === "create"}>
+        <div slot="content" aria-label="chip" class="txt-overflow">{label}</div>
+        <div slot="icon">
+          <button class="section close" on:click={() => removeLabel(label)}>
+            ✕
+          </button>
+        </div>
       </Chip>
     {:else}
       <div class="txt-missing">No labels</div>

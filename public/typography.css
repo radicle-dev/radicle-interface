@@ -156,3 +156,8 @@ p {
   margin: 0 0.05em 0 0.1em;
   vertical-align: -0.1em;
 }
+.txt-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -56,7 +56,12 @@ export type IssueUpdateAction =
       assignees: string[];
     }
   | { type: "lifecycle"; state: IssueState }
-  | { type: "comment"; body: string; replyTo: string }
+  | {
+      type: "comment";
+      body: string;
+      embeds: { name: string; content: string }[];
+      replyTo: string;
+    }
   | { type: "comment.edit"; id: string; body: string }
   | { type: "comment.redact"; id: string }
   | {
