@@ -87,11 +87,21 @@ test("moved file", async ({ page }) => {
     page.locator("header").filter({ hasText: "moves/111.txt → moves/222.txt" }),
   ).toBeVisible();
 
-  // TODO: Add assertions for diff.
+  await expect(page.getByText("moved", { exact: true })).toBeVisible();
   await expect(page.getByText("333")).toBeVisible();
 });
 
-// TODO: Add copy operation detection spec.
+test("copied file", async ({ page }) => {
+  await page.goto(
+    `${sourceBrowsingUrl}/remotes/${aliceRemote}/commits/f48a1056a5bd02277978f6e8a00517a967546340`,
+  );
+  await expect(
+    page
+      .locator("header")
+      .filter({ hasText: "copies/aaa.txt → copies/aaa_copy.txt" }),
+  ).toBeVisible();
+  await expect(page.getByText("copied", { exact: true })).toBeVisible();
+});
 
 test("navigation to source tree at specific revision", async ({ page }) => {
   await page.goto(
