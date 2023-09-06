@@ -43,26 +43,22 @@
 </style>
 
 <Floating bind:expanded>
-  <div slot="toggle" title="Change peer">
-    <Button disabled={!peers}>
-      {#if !selectedPeer}
-        <IconSmall name="delegate" />
-      {/if}
+  <Button slot="toggle" title="Change peer" disabled={!peers}>
+    {#if !selectedPeer}
+      <IconSmall name="delegate" />
+    {/if}
 
-      {#if selectedPeer}
-        <Authorship
-          authorId={selectedPeer.id}
-          authorAlias={selectedPeer.alias} />
-        {#if selectedPeer.delegate}
-          <Badge size="tiny" variant="secondary">delegate</Badge>
-        {/if}
-      {:else}
-        {peers.length}
-        {pluralize("remote", peers.length)}
+    {#if selectedPeer}
+      <Authorship authorId={selectedPeer.id} authorAlias={selectedPeer.alias} />
+      {#if selectedPeer.delegate}
+        <Badge size="tiny" variant="secondary">delegate</Badge>
       {/if}
-      <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-    </Button>
-  </div>
+    {:else}
+      {peers.length}
+      {pluralize("remote", peers.length)}
+    {/if}
+    <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+  </Button>
 
   <DropdownList slot="modal" items={peers}>
     <svelte:fragment slot="item" let:item>

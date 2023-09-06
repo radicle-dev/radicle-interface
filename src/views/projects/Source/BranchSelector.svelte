@@ -39,17 +39,16 @@
 <div class="commit" title="Current branch">
   {#if selectedBranch}
     <Floating disabled={hideDropdown} bind:expanded>
-      <svelte:fragment slot="toggle">
-        <Button
-          square
-          title="Change branch"
-          disabled={hideDropdown}
-          clickable={!hideDropdown}>
-          <IconSmall name="branch" />
-          {selectedBranch}
-          <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-        </Button>
-      </svelte:fragment>
+      <Button
+        slot="toggle"
+        square
+        title="Change branch"
+        disabled={hideDropdown}
+        clickable={!hideDropdown}>
+        <IconSmall name="branch" />
+        {selectedBranch}
+        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+      </Button>
 
       <DropdownList slot="modal" items={branches}>
         <svelte:fragment slot="item" let:item>

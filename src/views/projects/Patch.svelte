@@ -517,37 +517,34 @@
         {#if view.name === "commits" || view.name === "files"}
           <div style="margin-left: auto;">
             <Floating disabled={patch.revisions.length === 1} bind:expanded>
-              <svelte:fragment slot="toggle">
-                <Button
-                  size="regular"
-                  clickable={patch.revisions.length > 1}
-                  disabled={patch.revisions.length === 1}>
-                  Revision {utils.formatObjectId(view.revision)}
-                  <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-                </Button>
-              </svelte:fragment>
-              <svelte:fragment slot="modal">
-                <DropdownList items={patch.revisions}>
-                  <svelte:fragment slot="item" let:item>
-                    <Link
-                      on:afterNavigate={closeFocused}
-                      route={{
-                        resource: "project.patch",
-                        project: project.id,
-                        node: baseUrl,
-                        patch: patch.id,
-                        view: {
-                          name: view.name,
-                          revision: item.id,
-                        },
-                      }}>
-                      <DropdownListItem selected={item.id === view.revision}>
-                        Revision {utils.formatObjectId(item.id)}
-                      </DropdownListItem>
-                    </Link>
-                  </svelte:fragment>
-                </DropdownList>
-              </svelte:fragment>
+              <Button
+                slot="toggle"
+                size="regular"
+                clickable={patch.revisions.length > 1}
+                disabled={patch.revisions.length === 1}>
+                Revision {utils.formatObjectId(view.revision)}
+                <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+              </Button>
+              <DropdownList slot="modal" items={patch.revisions}>
+                <svelte:fragment slot="item" let:item>
+                  <Link
+                    on:afterNavigate={closeFocused}
+                    route={{
+                      resource: "project.patch",
+                      project: project.id,
+                      node: baseUrl,
+                      patch: patch.id,
+                      view: {
+                        name: view.name,
+                        revision: item.id,
+                      },
+                    }}>
+                    <DropdownListItem selected={item.id === view.revision}>
+                      Revision {utils.formatObjectId(item.id)}
+                    </DropdownListItem>
+                  </Link>
+                </svelte:fragment>
+              </DropdownList>
             </Floating>
           </div>
         {/if}

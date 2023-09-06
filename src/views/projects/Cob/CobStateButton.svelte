@@ -49,21 +49,15 @@
     {selectedItem[0]}
   </Button>
   <Floating>
-    <svelte:fragment slot="toggle">
-      <Button square variant="none" ariaLabel="stateToggle">
-        <Icon name="chevron-down" />
-      </Button>
-    </svelte:fragment>
-    <svelte:fragment slot="modal">
-      <DropdownList items={items.filter(i => !isEqual(i, state))}>
-        <svelte:fragment slot="item" let:item>
-          <DropdownListItem
-            selected={false}
-            on:click={() => switchCaption(item)}>
-            {item[0]}
-          </DropdownListItem>
-        </svelte:fragment>
-      </DropdownList>
-    </svelte:fragment>
+    <Button slot="toggle" square variant="none" ariaLabel="stateToggle">
+      <Icon name="chevron-down" />
+    </Button>
+    <DropdownList slot="modal" items={items.filter(i => !isEqual(i, state))}>
+      <svelte:fragment slot="item" let:item>
+        <DropdownListItem selected={false} on:click={() => switchCaption(item)}>
+          {item[0]}
+        </DropdownListItem>
+      </svelte:fragment>
+    </DropdownList>
   </Floating>
 </div>
