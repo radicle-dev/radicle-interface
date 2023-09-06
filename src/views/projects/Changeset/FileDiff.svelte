@@ -7,6 +7,7 @@
   } from "@httpd-client";
 
   import Badge from "@app/components/Badge.svelte";
+  import ExpandButton from "@app/components/ExpandButton.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -16,7 +17,7 @@
   export let baseUrl: BaseUrl;
   export let projectId: string;
 
-  let collapsed = false;
+  let expanded = true;
   let selection: Selection | undefined = undefined;
 
   onMount(() => {
@@ -212,6 +213,7 @@
     flex-direction: row;
     height: 3rem;
     padding: 1rem;
+    gap: 0.5rem;
   }
   main {
     font-size: var(--font-size-small);
@@ -315,16 +317,8 @@
 </style>
 
 <div id={file.path} class="wrapper">
-  <header class="header">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="expand-button" on:click={() => (collapsed = !collapsed)}>
-      {#if collapsed}
-        <Icon name="chevron-right" />
-      {:else}
-        <Icon name="chevron-down" />
-      {/if}
-    </div>
+  <div class="header">
+    <ExpandButton bind:expanded />
     <div class="actions">
       <p class="txt-regular">{file.path}</p>
       {#if headerBadgeCaption === "added"}
@@ -345,8 +339,8 @@
         <Icon name="browse" />
       </Link>
     </div>
-  </header>
-  {#if !collapsed}
+  </div>
+  {#if expanded}
     <main>
       {#if file.diff.type === "plain"}
         {#if file.diff.hunks.length > 0}

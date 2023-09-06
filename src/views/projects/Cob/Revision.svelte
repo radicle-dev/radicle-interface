@@ -15,12 +15,13 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import ModalToggle from "@app/components/ModalToggle.svelte";
+  import ExpandButton from "@app/components/ExpandButton.svelte";
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -136,17 +137,13 @@
   .revision-name {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
   }
   .revision-data {
     gap: 0.75rem;
     display: flex;
     align-items: center;
     margin-left: auto;
-  }
-  .expand-button {
-    margin-right: 0.5rem;
-    user-select: none;
-    cursor: pointer;
   }
   .revision-description {
     margin-bottom: 1rem;
@@ -202,11 +199,7 @@
   <div class="revision-box">
     <div class="revision-header">
       <div class="revision-name">
-        <div class="expand-button">
-          <Icon
-            name={expanded ? "chevron-down" : "chevron-right"}
-            on:click={() => (expanded = !expanded)} />
-        </div>
+        <ExpandButton bind:expanded />
         <span>
           Revision
           <span class="hash">{utils.formatObjectId(revisionId)}</span>

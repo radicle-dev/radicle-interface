@@ -4,8 +4,8 @@
   import { formatCommit, twemoji } from "@app/lib/utils";
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
+  import ExpandButton from "@app/components/ExpandButton.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -43,23 +43,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
-  .expand-toggle {
-    background-color: transparent;
-    border: 0;
-    border-radius: var(--border-radius-tiny);
-    color: var(--color-foreground-dim);
-    cursor: pointer;
-    font-weight: var(--font-weight-semibold);
-    height: 18px;
-    width: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .expand-toggle:hover {
-    color: var(--color-foreground-contrast);
-    background-color: var(--color-fill-ghost-hover);
   }
   .right {
     display: flex;
@@ -119,17 +102,9 @@
         </div>
       </Link>
       {#if commit.description}
-        <button
-          name="expand-toggle"
-          class:expand-open={commitMessageVisible}
-          class="expand-toggle"
-          on:click={() => (commitMessageVisible = !commitMessageVisible)}>
-          {#if commitMessageVisible}
-            <IconSmall name="chevron-up" />
-          {:else}
-            <IconSmall name="chevron-down" />
-          {/if}
-        </button>
+        <ExpandButton
+          variant="foreground"
+          bind:expanded={commitMessageVisible} />
       {/if}
     </div>
     {#if commitMessageVisible}
