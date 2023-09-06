@@ -93,14 +93,12 @@
       title={buttonTitle[$httpdStore.state]}
       size="large"
       variant="outline">
-      <svelte:fragment slot="icon">
-        <div
-          class:authenticated={$httpdStore.state === "authenticated"}
-          class:stopped={$httpdStore.state === "stopped"}
-          class:running={$httpdStore.state === "running"}>
-          <Icon name="network" />
-        </div>
-      </svelte:fragment>
+      <div
+        class:authenticated={$httpdStore.state === "authenticated"}
+        class:stopped={$httpdStore.state === "stopped"}
+        class:running={$httpdStore.state === "running"}>
+        <Icon name="network" />
+      </div>
       radicle.local
     </Button>
   </div>

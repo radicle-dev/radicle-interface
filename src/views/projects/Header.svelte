@@ -37,9 +37,7 @@
         path: "/",
       }}>
       <Button variant={activeTab === "source" ? "secondary" : "background"}>
-        <svelte:fragment slot="icon">
-          <IconSmall name="chevron-left-right" />
-        </svelte:fragment>
+        <IconSmall name="chevron-left-right" />
         Source
       </Button>
     </Link>
@@ -50,9 +48,7 @@
         node: baseUrl,
       }}>
       <Button variant={activeTab === "issues" ? "secondary" : "background"}>
-        <svelte:fragment slot="icon">
-          <IconSmall name="issue" />
-        </svelte:fragment>
+        <IconSmall name="issue" />
         <div>
           {project.issues.open}
           {pluralize("issue", project.issues.open)}
@@ -67,9 +63,7 @@
         node: baseUrl,
       }}>
       <Button variant={activeTab === "patches" ? "secondary" : "background"}>
-        <svelte:fragment slot="icon">
-          <IconSmall name="patch" />
-        </svelte:fragment>
+        <IconSmall name="patch" />
         <div>
           {project.patches.open}
           {pluralize("patch", project.patches.open)}
@@ -84,9 +78,7 @@
         variant="background"
         hoverable={false}
         title="Tracked by {project.trackings} nodes">
-        <svelte:fragment slot="icon">
-          <IconSmall name="network" />
-        </svelte:fragment>
+        <IconSmall name="network" />
         <div>
           {project.trackings} nodes
         </div>

@@ -523,10 +523,7 @@
                   clickable={patch.revisions.length > 1}
                   disabled={patch.revisions.length === 1}>
                   Revision {utils.formatObjectId(view.revision)}
-                  <svelte:fragment slot="icon-right">
-                    <IconSmall
-                      name={expanded ? "chevron-up" : "chevron-down"} />
-                  </svelte:fragment>
+                  <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
                 </Button>
               </svelte:fragment>
               <svelte:fragment slot="modal">

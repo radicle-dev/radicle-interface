@@ -258,9 +258,7 @@
       <a href="{rawPath}/{blob.path}">
         <Button variant="secondary">
           Raw
-          <svelte:fragment slot="icon-right">
-            <IconSmall name="arrow-box-up-right" />
-          </svelte:fragment>
+          <IconSmall name="arrow-box-up-right" />
         </Button>
       </a>
     </div>

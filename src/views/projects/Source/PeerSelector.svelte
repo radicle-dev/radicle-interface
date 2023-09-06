@@ -45,11 +45,9 @@
 <Floating bind:expanded>
   <div slot="toggle" title="Change peer">
     <Button disabled={!peers}>
-      <svelte:fragment slot="icon">
-        {#if !selectedPeer}
-          <IconSmall name="delegate" />
-        {/if}
-      </svelte:fragment>
+      {#if !selectedPeer}
+        <IconSmall name="delegate" />
+      {/if}
 
       {#if selectedPeer}
         <Authorship
@@ -62,10 +60,7 @@
         {peers.length}
         {pluralize("remote", peers.length)}
       {/if}
-
-      <svelte:fragment slot="icon-right">
-        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-      </svelte:fragment>
+      <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
     </Button>
   </div>
 

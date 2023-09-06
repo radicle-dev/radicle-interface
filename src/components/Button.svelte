@@ -213,7 +213,5 @@
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
   class:tab={variant === "tab"}>
-  <slot name="icon" />
   <slot />
-  <slot name="icon-right" />
 </button>

@@ -45,13 +45,9 @@
           title="Change branch"
           disabled={hideDropdown}
           clickable={!hideDropdown}>
-          <svelte:fragment slot="icon">
-            <IconSmall name="branch" />
-          </svelte:fragment>
+          <IconSmall name="branch" />
           {selectedBranch}
-          <svelte:fragment slot="icon-right">
-            <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-          </svelte:fragment>
+          <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
         </Button>
       </svelte:fragment>
 
