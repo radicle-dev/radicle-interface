@@ -26,7 +26,6 @@
 <style>
   .issue-teaser {
     display: flex;
-    background-color: var(--color-background-float);
     padding: 1.25rem;
   }
   .issue-teaser:hover {

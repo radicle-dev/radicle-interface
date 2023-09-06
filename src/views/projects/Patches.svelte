@@ -1,17 +1,23 @@
 <script lang="ts">
   import type { BaseUrl, Patch, PatchState, Project } from "@httpd-client";
 
-  import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
   import { PATCHES_PER_PAGE } from "./router";
 
+  import Button from "@app/components/Button.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
+  import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import ModalToggle, {
+    closeFocused,
+  } from "@app/components/ModalToggle.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import Button from "@app/components/Button.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -47,12 +53,6 @@
     }
   }
 
-  interface Tab {
-    value: PatchState["status"];
-    title: string;
-    disabled: boolean;
-  }
-
   const stateOptions: PatchState["status"][] = [
     "draft",
     "open",
@@ -60,11 +60,14 @@
     "merged",
   ];
 
-  $: options = stateOptions.map<Tab>(s => ({
-    value: s,
-    title: `${project.patches[s]} ${s}`,
-    disabled: project.patches[s] === 0,
-  }));
+  const stateColor: Record<PatchState["status"], string> = {
+    draft: "var(--color-fill-gray)",
+    open: "var(--color-fill-success)",
+    archived: "var(--color-fill-yellow)",
+    merged: "var(--color-fill-primary)",
+  };
+
+  let expanded: boolean = false;
 
   $: showMoreButton =
     !loading && !error && allPatches.length < project.patches[state];
@@ -74,10 +77,9 @@
   .patches {
     font-size: var(--font-size-small);
   }
-  .patches-list {
-    border-radius: var(--border-radius-small);
-    overflow: hidden;
-    box-shadow: inset 0 0 0 1px var(--color-border-hint);
+  .selected-icon {
+    padding: 0.25rem;
+    border-radius: var(--border-radius-tiny);
     background-color: var(--color-background-float);
   }
   .more {
@@ -87,78 +89,66 @@
     align-items: center;
     justify-content: center;
   }
-  .teaser:not(:last-child) {
-    border-bottom: 1px solid var(--color-border-hint);
-  }
-
-  .tab-bar {
-    display: flex;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-    background-color: var(--color-background-float);
-    box-shadow: inset 0 0 0 1px var(--color-border-hint);
-    border-radius: 2px;
-    width: fit-content;
-    overflow: hidden;
-  }
-
-  @media (max-width: 720px) {
-    .patches-list {
-      border-radius: 0;
-    }
-  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
-  <svelte:fragment slot="subheader">
-    <div class="tab-bar">
-      {#each options as option}
-        {#if option.disabled}
-          <Button
-            styleBorderRadius="0"
-            variant={option.value === state ? "tab" : "none"}
-            disabled={option.disabled}>
-            {option.title}
-          </Button>
-        {:else}
+  <div class="patches">
+    <List items={allPatches}>
+      <ModalToggle slot="header" bind:expanded>
+        <Button slot="toggle" title="Filter patches by state">
+          <div style:color={stateColor[state]}>
+            <IconSmall name="patch" />
+          </div>
+          {project.patches[state]}
+          {state}
+          <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+        </Button>
+
+        <DropdownList slot="modal" items={stateOptions}>
           <Link
+            slot="item"
+            let:item
+            disabled={project.patches[item] === 0}
+            on:afterNavigate={() => closeFocused()}
             route={{
               resource: "project.patches",
               project: project.id,
               node: baseUrl,
-              search: `state=${option.value}`,
+              search: `state=${item}`,
             }}>
-            <Button
-              styleBorderRadius="0"
-              variant={option.value === state ? "tab" : "none"}
-              disabled={option.disabled}>
-              {option.title}
-            </Button>
+            <DropdownListItem
+              selected={item === state}
+              disabled={project.patches[item] === 0}>
+              <div class="selected-icon" style:color={stateColor[item]}>
+                <IconSmall name="patch" />
+              </div>
+              {project.patches[item]}
+              {item}
+            </DropdownListItem>
           </Link>
-        {/if}
-      {/each}
-    </div>
-  </svelte:fragment>
+        </DropdownList>
+      </ModalToggle>
 
-  <div class="patches">
-    {#if allPatches.length > 0}
-      <div class="patches-list">
-        {#each allPatches as patch (patch.id)}
-          <div class="teaser">
-            <PatchTeaser {baseUrl} projectId={project.id} {patch} />
-          </div>
-        {/each}
-      </div>
-    {:else if error}
-      <ErrorMessage message="Couldn't load patches." stackTrace={error} />
-    {:else if loading}
-      <!-- We already show a loader below. -->
-    {:else}
-      <Placeholder emoji="🍂">
-        <div slot="title">{capitalize(state)} patches</div>
-        <div slot="body">No patches matched the current filter</div>
-      </Placeholder>
-    {/if}
+      <PatchTeaser
+        slot="item"
+        let:item
+        {baseUrl}
+        projectId={project.id}
+        patch={item} />
+
+      <svelte:fragment slot="body">
+        {#if error}
+          <ErrorMessage message="Couldn't load patches." stackTrace={error} />
+        {/if}
+
+        {#if project.patches[state] === 0}
+          <Placeholder emoji="🍂">
+            <div slot="title">No {state} patches.</div>
+          </Placeholder>
+        {/if}
+      </svelte:fragment>
+    </List>
+
     <div class="more">
       {#if loading}
         <div style:margin-top={page === 0 ? "8rem" : ""}>

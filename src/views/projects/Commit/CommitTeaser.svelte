@@ -19,7 +19,6 @@
 <style>
   .teaser {
     display: flex;
-    background-color: var(--color-background-float);
     align-items: center;
     padding: 1.25rem;
     font-size: var(--font-size-small);

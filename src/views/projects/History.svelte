@@ -18,6 +18,7 @@
   import Layout from "./Layout.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Button from "@app/components/Button.svelte";
+  import List from "@app/components/List.svelte";
 
   export let baseUrl: BaseUrl;
   export let branches: string[];
@@ -88,15 +89,6 @@
   .history {
     font-size: var(--font-size-small);
   }
-  .group {
-    margin-bottom: 2rem;
-    border-radius: var(--border-radius-small);
-    overflow: hidden;
-    border: 1px solid var(--color-border-hint);
-  }
-  .teaser-wrapper:not(:last-child) {
-    border-bottom: 1px solid var(--color-border-hint);
-  }
   .more {
     margin-top: 2rem;
     min-height: 3rem;
@@ -118,9 +110,6 @@
     .group-header {
       margin-left: 1rem;
     }
-    .group {
-      border-radius: 0;
-    }
   }
 </style>
 
@@ -141,13 +130,14 @@
   <div class="history">
     {#each groupCommits(allCommitHeaders) as group (group.time)}
       <div class="group-header">{group.date}</div>
-      <div class="group">
-        {#each group.commits as commit (commit.id)}
-          <div class="teaser-wrapper">
-            <CommitTeaser projectId={project.id} {baseUrl} {commit} />
-          </div>
-        {/each}
-      </div>
+      <List items={group.commits}>
+        <CommitTeaser
+          slot="item"
+          let:item
+          projectId={project.id}
+          {baseUrl}
+          commit={item} />
+      </List>
     {/each}
     <div class="more">
       {#if loading}

@@ -42,8 +42,8 @@
   class:foreground={variant === "foreground"}
   on:click={() => (expanded = !expanded)}>
   {#if expanded}
-    <Icon name="chevron-down" />
-  {:else}
     <Icon name="chevron-up" />
+  {:else}
+    <Icon name="chevron-down" />
   {/if}
 </button>

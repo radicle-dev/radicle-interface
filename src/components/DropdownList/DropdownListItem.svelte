@@ -1,5 +1,6 @@
 <script lang="ts">
   export let selected: boolean;
+  export let disabled: boolean = false;
   export let title: string | undefined = undefined;
 </script>
 
@@ -30,10 +31,15 @@
   .item:hover.selected {
     background-color: var(--color-fill-secondary-hover);
   }
+
+  .item:hover.disabled {
+    cursor: not-allowed;
+    background-color: var(--color-background-float);
+  }
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="item" class:selected {title} on:click>
+<div class="item" class:selected class:disabled {title} on:click>
   <slot />
 </div>

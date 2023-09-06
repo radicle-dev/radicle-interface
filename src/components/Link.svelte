@@ -5,6 +5,7 @@
   import { push, routeToPath, useDefaultNavigation } from "@app/lib/router";
 
   export let route: Route;
+  export let disabled: boolean = false;
   export let title: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
@@ -12,6 +13,11 @@
   }>();
 
   function navigateToRoute(event: MouseEvent): void {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+
     if (useDefaultNavigation(event)) {
       return;
     }
