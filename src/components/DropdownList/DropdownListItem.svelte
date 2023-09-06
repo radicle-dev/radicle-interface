@@ -22,16 +22,16 @@
   .selected {
     background-color: var(--color-fill-ghost);
   }
-
   .selected {
     color: var(--color-foreground-match-background);
     background-color: var(--color-fill-secondary);
   }
-
   .item:hover.selected {
     background-color: var(--color-fill-secondary-hover);
   }
-
+  .item:hover.selected.disabled {
+    background-color: var(--color-fill-secondary);
+  }
   .item:hover.disabled {
     cursor: not-allowed;
     background-color: var(--color-background-float);
