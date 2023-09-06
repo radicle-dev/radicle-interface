@@ -115,7 +115,7 @@
       {#each options as option}
         {#if option.disabled}
           <Button
-            square={option.value === state}
+            styleBorderRadius="0"
             variant={option.value === state ? "tab" : "none"}
             disabled={option.disabled}>
             {option.title}
@@ -129,7 +129,7 @@
               search: `state=${option.value}`,
             }}>
             <Button
-              square={option.value === state}
+              styleBorderRadius="0"
               variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
               {option.title}

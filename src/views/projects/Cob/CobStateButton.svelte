@@ -43,13 +43,17 @@
 
 <div class="main">
   <Button
-    square
+    styleBorderRadius="0"
     variant="none"
     on:click={() => dispatch("saveStatus", selectedItem[1])}>
     {selectedItem[0]}
   </Button>
   <ModalToggle>
-    <Button slot="toggle" square variant="none" ariaLabel="stateToggle">
+    <Button
+      slot="toggle"
+      styleBorderRadius="0"
+      variant="none"
+      ariaLabel="stateToggle">
       <Icon name="chevron-down" />
     </Button>
     <DropdownList slot="modal" items={items.filter(i => !isEqual(i, state))}>

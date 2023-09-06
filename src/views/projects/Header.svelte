@@ -74,9 +74,8 @@
 
     <div class="layout-desktop">
       <Button
-        styleCursor="default"
+        disabled
         variant="background"
-        hoverable={false}
         title="Tracked by {project.trackings} nodes">
         <IconSmall name="network" />
         <div>

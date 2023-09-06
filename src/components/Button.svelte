@@ -1,4 +1,5 @@
 <script lang="ts" strictEvents>
+  export let ariaLabel: string | undefined = undefined;
   export let title: string | undefined = undefined;
   export let variant:
     | "background"
@@ -10,21 +11,19 @@
     | "secondary"
     | "tab" = "gray";
   export let size: "small" | "regular" | "large" = "regular";
-  export let ariaLabel: string | undefined = undefined;
-
-  export let styleCursor: "pointer" | "default" = "pointer";
-  export let styleFontFamily: string | undefined = undefined;
-  export let stylePadding: string | undefined = undefined;
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
-  export let hoverable: boolean = true;
-  export let stretch: boolean = false;
-  export let square: boolean = false;
+
+  export let styleFontFamily: string | undefined = undefined;
+  export let stylePadding: string | undefined = undefined;
+  export let styleWidth: "100%" | undefined = undefined;
+  export let styleBorderRadius: "0" | undefined = undefined;
 </script>
 
 <style>
   button {
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,6 +37,10 @@
     font-size: var(--font-size-small);
     white-space: nowrap;
     gap: 0.5rem;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 
   .small {
@@ -57,77 +60,54 @@
     font-size: var(--font-size-small);
   }
 
-  .secondary {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-secondary);
-  }
-
   .background {
     color: var(--color-fill-secondary);
     background-color: var(--color-fill-background);
   }
-  .background.hoverable:hover {
+  .background[disabled] {
+    color: var(--color-fill-secondary);
+    background-color: var(--color-fill-background);
+  }
+  .background:not([disabled]):hover {
     background-color: var(--color-fill-ghost);
   }
 
-  .secondary:hover {
-    background-color: var(--fill-light-hover);
+  .dim {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-fill-secondary);
   }
-
-  .secondary.hoverable:hover {
-    background-color: var(--color-fill-secondary-hover);
+  .dim[disabled] {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-fill-secondary);
   }
-
-  .hoverable:hover {
+  .dim:not([disabled]):hover {
     background-color: var(--color-fill-ghost-hover);
+    color: var(--color-fill-secondary);
   }
 
-  .tab {
-    background-color: var(--color-fill-secondary);
-    color: var(--color-foreground-match-background);
-  }
-  .tab.hoverable:hover {
-    background-color: var(--color-fill-secondary);
-  }
-
-  .tab:hover {
+  .gray {
     background-color: var(--color-fill-ghost);
+    color: var(--color-fill-secondary);
+  }
+  .gray[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-fill-secondary);
+  }
+  .gray:not([disabled]):hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-fill-secondary);
   }
 
   .none {
     background-color: transparent;
     color: var(--color-foreground-emphasized);
   }
-
-  .none:hover {
+  .none[disabled] {
+    background-color: transparent;
+    color: var(--color-foreground-emphasized);
+  }
+  .none:not([disabled]):hover {
     background-color: var(--color-fill-ghost);
-  }
-
-  .disabled {
-    cursor: not-allowed;
-  }
-  .disabled.secondary {
-    color: var(--color-foreground-match-background);
-  }
-  .disabled:hover {
-    background: none;
-    box-shadow: none;
-  }
-  .disabled:hover.secondary {
-    background: var(--color-fill-secondary);
-  }
-
-  .primary {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-primary);
-  }
-
-  .primary:hover {
-    background-color: var(--color-fill-primary-hover);
-  }
-
-  .primary.hoverable:hover {
-    background-color: var(--color-fill-primary-hover);
   }
 
   .outline {
@@ -146,39 +126,46 @@
     color: var(--color-foreground);
   }
 
-  .gray {
-    background-color: var(--color-fill-ghost);
-    color: var(--color-fill-secondary);
-  }
-  .gray[disabled] {
-    background-color: var(--color-fill-ghost);
-    color: var(--color-fill-secondary);
-  }
-  .gray:not([disabled]).hoverable:hover {
-    background-color: var(--color-fill-ghost-hover);
-    color: var(--color-fill-secondary);
+  .primary {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-primary);
   }
 
-  .dim {
-    background-color: var(--color-fill-float-hover);
-    color: var(--color-fill-secondary);
-  }
-  .dim[disabled] {
-    background-color: var(--color-fill-float-hover);
-    color: var(--color-fill-secondary);
-  }
-  .dim:not([disabled]):hover {
-    background-color: var(--color-fill-float-hover);
-    background-color: var(--color-fill-ghost-hover);
-    color: var(--color-fill-secondary);
+  .primary[disabled] {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-primary);
   }
 
-  .stretch {
-    width: 100%;
+  .primary:not([disabled]):hover {
+    background-color: var(--color-fill-primary-hover);
   }
 
-  .square {
-    border-radius: 0;
+  .secondary {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
+  }
+
+  .secondary[disabled] {
+    color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
+  }
+
+  .secondary:not([disabled]):hover {
+    background-color: var(--color-fill-secondary-hover);
+  }
+
+  .tab {
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
+  }
+
+  .tab[disabled] {
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
+  }
+
+  .tab:not([disabled]):hover {
+    background-color: var(--color-fill-secondary-hover);
   }
 </style>
 
@@ -189,18 +176,16 @@
   {disabled}
   {title}
   tabindex="0"
-  style:cursor={disabled ? "undefined" : styleCursor}
   style:font-family={styleFontFamily}
   style:padding={stylePadding}
+  style:width={styleWidth}
+  style:border-radius={styleBorderRadius}
   on:blur
   on:click
   on:focus
   on:mouseout
   on:mouseover
-  class:hoverable
   class:disabled
-  class:stretch
-  class:square
   class:small={size === "small"}
   class:regular={size === "regular"}
   class:large={size === "large"}

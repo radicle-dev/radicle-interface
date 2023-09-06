@@ -115,7 +115,7 @@
               state: option.value,
             }}>
             <Button
-              square={option.value === state}
+              styleBorderRadius={option.value === state ? "0" : undefined}
               variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
               {option.title}
@@ -123,7 +123,7 @@
           </Link>
         {:else}
           <Button
-            square={option.value === state}
+            styleBorderRadius={option.value === state ? "0" : undefined}
             variant={option.value === state ? "tab" : "none"}
             disabled={option.disabled}>
             {option.title}

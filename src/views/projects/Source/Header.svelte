@@ -79,7 +79,7 @@
     </Button>
   </Link>
 
-  <Button hoverable={false} styleCursor="default">
+  <Button disabled>
     <IconSmall name="user" />
     <div>
       {tree.stats.contributors}

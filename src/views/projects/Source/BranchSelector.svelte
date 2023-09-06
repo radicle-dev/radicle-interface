@@ -41,7 +41,7 @@
     <ModalToggle disabled={hideDropdown} bind:expanded>
       <Button
         slot="toggle"
-        square
+        styleBorderRadius="0"
         title="Change branch"
         disabled={hideDropdown}>
         <IconSmall name="branch" />
@@ -61,7 +61,7 @@
     </ModalToggle>
   {/if}
 
-  <Button square variant="dim">
+  <Button styleBorderRadius="0" variant="dim">
     <Link
       route={{
         resource: "project.commit",

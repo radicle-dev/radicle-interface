@@ -227,7 +227,7 @@
           node: baseUrl,
           commit: lastCommit.id,
         }}>
-        <Button variant="dim" square>
+        <Button variant="dim" styleBorderRadius="0">
           <span class="hash">{lastCommit.id.slice(0, 7)}</span>
         </Button>
       </Link>
@@ -237,7 +237,7 @@
       {#if isMarkdown}
         <Radio ariaLabel="Toggle render method">
           <Button
-            square
+            styleBorderRadius="0"
             variant={showMarkdown ? "secondary" : "gray"}
             on:click={() => {
               window.location.hash = "";
@@ -246,7 +246,7 @@
             Plain
           </Button>
           <Button
-            square
+            styleBorderRadius="0"
             variant={!showMarkdown ? "secondary" : "gray"}
             on:click={() => {
               showMarkdown = false;

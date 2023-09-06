@@ -55,14 +55,14 @@
       <Radio>
         <Button
           ariaLabel="Light Mode"
-          square
+          styleBorderRadius="0"
           variant={$theme === "light" ? "secondary" : "gray"}
           on:click={() => switchTheme("light")}>
           <Icon name="sun" />
         </Button>
         <Button
           ariaLabel="Dark Mode"
-          square
+          styleBorderRadius="0"
           variant={$theme === "dark" ? "secondary" : "gray"}
           on:click={() => switchTheme("dark")}>
           <Icon name="moon" />
@@ -76,7 +76,7 @@
       <Radio>
         {#each codeFonts as font}
           <Button
-            square
+            styleBorderRadius="0"
             styleFontFamily={font.fontFamily}
             on:click={() => switchFont(font.storedName)}
             variant={$codeFont === font.storedName ? "secondary" : "gray"}>

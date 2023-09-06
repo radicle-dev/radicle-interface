@@ -147,7 +147,7 @@
       {#if tree.entries.length > 0}
         <div class="layout-mobile">
           <Button
-            stretch
+            styleWidth="100%"
             size="large"
             variant="outline"
             on:click={() => {
