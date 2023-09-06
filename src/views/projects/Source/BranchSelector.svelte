@@ -3,11 +3,11 @@
   import type { Route } from "@app/lib/router";
 
   import * as utils from "@app/lib/utils";
-  import { closeFocused } from "@app/components/Floating.svelte";
+  import { closeFocused } from "@app/components/ModalToggle.svelte";
 
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
@@ -38,7 +38,7 @@
 
 <div class="commit" title="Current branch">
   {#if selectedBranch}
-    <Floating disabled={hideDropdown} bind:expanded>
+    <ModalToggle disabled={hideDropdown} bind:expanded>
       <Button
         slot="toggle"
         square
@@ -59,7 +59,7 @@
           </Link>
         </svelte:fragment>
       </DropdownList>
-    </Floating>
+    </ModalToggle>
   {/if}
 
   <Button square variant="dim">

@@ -2,11 +2,11 @@
   import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
+  import { closeFocused } from "@app/components/ModalToggle.svelte";
 
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Button from "@app/components/Button.svelte";
 
@@ -48,7 +48,7 @@
     on:click={() => dispatch("saveStatus", selectedItem[1])}>
     {selectedItem[0]}
   </Button>
-  <Floating>
+  <ModalToggle>
     <Button slot="toggle" square variant="none" ariaLabel="stateToggle">
       <Icon name="chevron-down" />
     </Button>
@@ -59,5 +59,5 @@
         </DropdownListItem>
       </svelte:fragment>
     </DropdownList>
-  </Floating>
+  </ModalToggle>
 </div>

@@ -57,7 +57,9 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import ModalToggle, {
+    closeFocused,
+  } from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
@@ -516,7 +518,7 @@
 
         {#if view.name === "commits" || view.name === "files"}
           <div style="margin-left: auto;">
-            <Floating disabled={patch.revisions.length === 1} bind:expanded>
+            <ModalToggle disabled={patch.revisions.length === 1} bind:expanded>
               <Button
                 slot="toggle"
                 size="regular"
@@ -545,7 +547,7 @@
                   </Link>
                 </svelte:fragment>
               </DropdownList>
-            </Floating>
+            </ModalToggle>
           </div>
         {/if}
       </div>

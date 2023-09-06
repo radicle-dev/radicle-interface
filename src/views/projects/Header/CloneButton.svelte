@@ -6,8 +6,8 @@
 
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
-  import Floating from "@app/components/Floating.svelte";
-  import FloatingModal from "@app/components/FloatingModal.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
+  import ModalStyling from "@app/components/ModalStyling.svelte";
   import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
@@ -34,13 +34,13 @@
   }
 </style>
 
-<Floating>
+<ModalToggle>
   <Button slot="toggle" size="large" variant="primary">
     Clone
     <Icon name="download" />
   </Button>
 
-  <FloatingModal slot="modal" style="top: 12rem; right: 8rem; width: 26rem;">
+  <ModalStyling slot="modal" style="top: 12rem; right: 8rem; width: 26rem;">
     <div style:margin-bottom="1.5rem">
       <label for="rad-clone-url">
         Use the <a
@@ -59,5 +59,5 @@
       <label for="git-clone-url">Use Git to clone this repository.</label>
       <Command command={gitCloneUrl} />
     </div>
-  </FloatingModal>
-</Floating>
+  </ModalStyling>
+</ModalToggle>

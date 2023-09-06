@@ -15,7 +15,7 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
@@ -265,7 +265,7 @@
             </div>
           </Link>
         {/if}
-        <Floating>
+        <ModalToggle>
           <svelte:fragment slot="toggle">
             <div
               style:margin-right="0.25rem"
@@ -309,7 +309,7 @@
               </svelte:fragment>
             </DropdownList>
           </svelte:fragment>
-        </Floating>
+        </ModalToggle>
       </div>
     </div>
     {#if expanded}

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Floating from "@app/components/Floating.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
   import Button from "@app/components/Button.svelte";
   import Connect from "@app/App/Header/Connect.svelte";
-  import FloatingModal from "@app/components/FloatingModal.svelte";
+  import ModalStyling from "@app/components/ModalStyling.svelte";
   import Search from "@app/App/Header/Search.svelte";
   import ThemeSettings from "@app/App/Header/ThemeSettings.svelte";
 </script>
@@ -56,7 +56,7 @@
     <div class="layout-desktop">
       <Connect />
     </div>
-    <Floating>
+    <ModalToggle>
       <Button
         slot="toggle"
         variant="outline"
@@ -66,11 +66,11 @@
         <Icon name="brush" />
       </Button>
 
-      <FloatingModal
+      <ModalStyling
         slot="modal"
         style="top: 4.5rem; right: 1.5rem; width: 21rem;">
         <ThemeSettings />
-      </FloatingModal>
-    </Floating>
+      </ModalStyling>
+    </ModalToggle>
   </div>
 </header>

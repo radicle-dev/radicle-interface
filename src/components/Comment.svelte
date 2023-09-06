@@ -5,7 +5,9 @@
   import { httpdStore } from "@app/lib/httpd";
 
   import Authorship from "@app/components/Authorship.svelte";
-  import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import ModalToggle, {
+    closeFocused,
+  } from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
@@ -87,7 +89,7 @@
       {/if}
       {#if id && $httpdStore.state === "authenticated"}
         <div style:position="relative">
-          <Floating>
+          <ModalToggle>
             <div class="reaction-selector" slot="modal">
               <ReactionSelector
                 nid={$httpdStore.session.publicKey}
@@ -102,7 +104,7 @@
             <div class="toggle" title="toggle-reaction" slot="toggle">
               <Icon name="face" />
             </div>
-          </Floating>
+          </ModalToggle>
         </div>
       {/if}
     </div>

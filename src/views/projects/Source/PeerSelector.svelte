@@ -2,7 +2,7 @@
   import type { Remote } from "@httpd-client";
   import { type Route } from "@app/lib/router";
 
-  import { closeFocused } from "@app/components/Floating.svelte";
+  import { closeFocused } from "@app/components/ModalToggle.svelte";
   import { formatNodeId } from "@app/lib/utils";
   import { pluralize } from "@app/lib/pluralize";
 
@@ -10,7 +10,7 @@
   import Badge from "@app/components/Badge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import Floating from "@app/components/Floating.svelte";
+  import ModalToggle from "@app/components/ModalToggle.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
@@ -42,7 +42,7 @@
   }
 </style>
 
-<Floating bind:expanded>
+<ModalToggle bind:expanded>
   <Button slot="toggle" title="Change peer" disabled={!peers}>
     {#if !selectedPeer}
       <IconSmall name="delegate" />
@@ -88,4 +88,4 @@
       </Link>
     </svelte:fragment>
   </DropdownList>
-</Floating>
+</ModalToggle>

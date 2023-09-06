@@ -17,7 +17,9 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import Floating, { closeFocused } from "@app/components/Floating.svelte";
+  import ModalToggle, {
+    closeFocused,
+  } from "@app/components/ModalToggle.svelte";
   import Icon from "@app/components/Icon.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
@@ -384,7 +386,7 @@
             rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
           <div class="reactions">
             {#if $httpdStore.state === "authenticated"}
-              <Floating>
+              <ModalToggle>
                 <div class="reaction-selector" slot="modal">
                   <ReactionSelector
                     nid={$httpdStore.session.publicKey}
@@ -397,7 +399,7 @@
                 <div class="toggle" slot="toggle">
                   <Icon name="face" />
                 </div>
-              </Floating>
+              </ModalToggle>
             {/if}
             {#if issueReactions.size > 0}
               <div style:margin-top="1rem">
