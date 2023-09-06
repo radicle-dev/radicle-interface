@@ -115,7 +115,6 @@
       {#each options as option}
         {#if option.disabled}
           <Button
-            clickable={!option.disabled}
             square={option.value === state}
             variant={option.value === state ? "tab" : "none"}
             disabled={option.disabled}>
@@ -130,7 +129,6 @@
               search: `state=${option.value}`,
             }}>
             <Button
-              clickable={!option.disabled}
               square={option.value === state}
               variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>

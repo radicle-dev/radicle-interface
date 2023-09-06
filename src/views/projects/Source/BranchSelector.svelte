@@ -43,8 +43,7 @@
         slot="toggle"
         square
         title="Change branch"
-        disabled={hideDropdown}
-        clickable={!hideDropdown}>
+        disabled={hideDropdown}>
         <IconSmall name="branch" />
         {selectedBranch}
         <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />

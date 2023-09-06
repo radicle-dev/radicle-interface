@@ -115,7 +115,6 @@
               state: option.value,
             }}>
             <Button
-              clickable={option.disabled}
               square={option.value === state}
               variant={option.value === state ? "tab" : "none"}
               disabled={option.disabled}>
@@ -124,7 +123,6 @@
           </Link>
         {:else}
           <Button
-            clickable={option.disabled}
             square={option.value === state}
             variant={option.value === state ? "tab" : "none"}
             disabled={option.disabled}>

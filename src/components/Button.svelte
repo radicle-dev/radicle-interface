@@ -12,11 +12,11 @@
   export let size: "small" | "regular" | "large" = "regular";
   export let ariaLabel: string | undefined = undefined;
 
-  export let stylePadding: string | undefined = undefined;
+  export let styleCursor: "pointer" | "default" = "pointer";
   export let styleFontFamily: string | undefined = undefined;
+  export let stylePadding: string | undefined = undefined;
 
   export let autofocus: boolean = false;
-  export let clickable: boolean = true;
   export let disabled: boolean = false;
   export let hoverable: boolean = true;
   export let stretch: boolean = false;
@@ -180,10 +180,6 @@
   .square {
     border-radius: 0;
   }
-
-  .clickable {
-    cursor: pointer;
-  }
 </style>
 
 <!-- svelte-ignore a11y-autofocus -->
@@ -193,8 +189,9 @@
   {disabled}
   {title}
   tabindex="0"
-  style:padding={stylePadding}
+  style:cursor={disabled ? "undefined" : styleCursor}
   style:font-family={styleFontFamily}
+  style:padding={stylePadding}
   on:blur
   on:click
   on:focus
@@ -202,7 +199,6 @@
   on:mouseover
   class:hoverable
   class:disabled
-  class:clickable
   class:stretch
   class:square
   class:small={size === "small"}

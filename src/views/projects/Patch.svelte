@@ -522,7 +522,6 @@
               <Button
                 slot="toggle"
                 size="regular"
-                clickable={patch.revisions.length > 1}
                 disabled={patch.revisions.length === 1}>
                 Revision {utils.formatObjectId(view.revision)}
                 <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />

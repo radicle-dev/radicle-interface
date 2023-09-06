@@ -74,7 +74,7 @@
 
     <div class="layout-desktop">
       <Button
-        clickable={false}
+        styleCursor="default"
         variant="background"
         hoverable={false}
         title="Tracked by {project.trackings} nodes">
