@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "@app/components/Modal.svelte";
+  import FullscreenModal from "@app/components/FullscreenModal.svelte";
 </script>
 
 <style>
@@ -41,7 +41,7 @@
   }
 </style>
 
-<Modal emoji="⌨️" title="Keyboard shortcuts" closeAction={false}>
+<FullscreenModal emoji="⌨️" title="Keyboard shortcuts" closeAction={false}>
   <div slot="body" style:margin="1rem 0">
     <div class="hotkeys">
       <div class="group">
@@ -76,4 +76,4 @@
       </div>
     </div>
   </div>
-</Modal>
+</FullscreenModal>

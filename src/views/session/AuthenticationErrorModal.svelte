@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Modal from "@app/components/Modal.svelte";
+  import FullscreenModal from "@app/components/FullscreenModal.svelte";
 
   export let title: string;
   export let subtitle: string[];
 </script>
 
-<Modal {title} emoji="🚨">
+<FullscreenModal {title} emoji="🚨">
   <div slot="subtitle">
     {@html subtitle.join("<br />")}
   </div>
-</Modal>
+</FullscreenModal>

@@ -8,7 +8,7 @@
   import Header from "./App/Header.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
   import LoadingBar from "./App/LoadingBar.svelte";
-  import ModalPortal from "./App/ModalPortal.svelte";
+  import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
 
   import Commit from "@app/views/projects/Commit.svelte";
   import History from "@app/views/projects/History.svelte";
@@ -61,7 +61,7 @@
   <LoadingBar />
 {/if}
 
-<ModalPortal />
+<FullscreenModalPortal />
 <Hotkeys />
 
 <div class="app">

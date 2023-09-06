@@ -5,7 +5,7 @@
   import { formatRepositoryId } from "@app/lib/utils";
 
   import Link from "@app/components/Link.svelte";
-  import Modal from "@app/components/Modal.svelte";
+  import FullscreenModal from "@app/components/FullscreenModal.svelte";
 
   export let query: string;
   export let results: ProjectBaseUrl[];
@@ -27,7 +27,7 @@
   }
 </style>
 
-<Modal emoji="🔍" title={`Results for "${query}"`}>
+<FullscreenModal emoji="🔍" title={`Results for "${query}"`}>
   <span slot="body" class="results">
     {#if results.length > 0}
       <div class="txt-highlight txt-medium">Projects</div>
@@ -53,4 +53,4 @@
       </ul>
     {/if}
   </span>
-</Modal>
+</FullscreenModal>

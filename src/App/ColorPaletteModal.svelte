@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "@app/components/Modal.svelte";
+  import FullscreenModal from "@app/components/FullscreenModal.svelte";
 
   function extractCssVariables(variableName: string) {
     return Array.from(document.styleSheets)
@@ -132,7 +132,7 @@
   }
 </style>
 
-<Modal closeAction={false}>
+<FullscreenModal closeAction={false}>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div slot="body">
@@ -156,4 +156,4 @@
       </div>
     </div>
   </div>
-</Modal>
+</FullscreenModal>

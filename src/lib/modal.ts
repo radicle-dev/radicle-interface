@@ -4,14 +4,14 @@ import { derived, get, writable } from "svelte/store";
 
 type HideCallback = () => void;
 
-type Modal = {
+type FullscreenModal = {
   component: ComponentType;
   props: Record<string, unknown>;
   hideCallback?: HideCallback;
   disableHide?: boolean;
 };
 
-const store = writable<Modal | undefined>(undefined);
+const store = writable<FullscreenModal | undefined>(undefined);
 export const modalStore = derived(store, s => s);
 
 export function enableHide() {

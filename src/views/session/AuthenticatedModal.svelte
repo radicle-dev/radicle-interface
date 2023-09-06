@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Modal from "@app/components/Modal.svelte";
+  import FullscreenModal from "@app/components/FullscreenModal.svelte";
 </script>
 
-<Modal title="Authenticated" emoji="🤝">
+<FullscreenModal title="Authenticated" emoji="🤝">
   <div slot="subtitle">
     You're now connected to your <br />
     local Radicle node.
   </div>
-</Modal>
+</FullscreenModal>
