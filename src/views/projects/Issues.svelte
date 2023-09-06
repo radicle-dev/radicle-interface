@@ -129,7 +129,10 @@
                 project: project.id,
                 node: baseUrl,
               }}>
-              <Button variant="secondary">New issue</Button>
+              <Button variant="secondary">
+                <IconSmall name="plus" />
+                New Issue
+              </Button>
             </Link>
           </div>
         {/if}
