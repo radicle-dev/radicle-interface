@@ -18,7 +18,6 @@
   export let authorIdColor: "--color-foreground-match-background" | undefined =
     undefined;
   export let caption: string | undefined = undefined;
-  export let noAvatar: boolean = false;
   export let timestamp: number | undefined = undefined;
 
   const relativeTimestamp = (time: number | undefined) =>
@@ -49,9 +48,7 @@
 </style>
 
 <span class="authorship">
-  {#if !noAvatar}
-    <Avatar inline nodeId={authorId} />
-  {/if}
+  <Avatar inline nodeId={authorId} />
   <span class="author-id" style:color="var({authorIdColor})">
     {formatNodeId(authorId)}
   </span>
