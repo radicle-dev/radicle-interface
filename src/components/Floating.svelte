@@ -41,7 +41,7 @@
 
 <svelte:window on:click={clickOutside} on:touchstart={clickOutside} />
 
-<div bind:this={thisComponent}>
+<div bind:this={thisComponent} class="container">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div

@@ -29,18 +29,9 @@
 
 <style>
   .container {
-    position: absolute;
-    top: 4.5rem;
-    right: 1.5rem;
-    width: 21rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--color-background-float);
-    border: 1px solid var(--color-border-hint);
-    border-radius: var(--border-radius-regular);
-    box-shadow: var(--elevation-low);
-    padding: 1rem;
     gap: 1.5rem;
     font-size: var(--font-size-small);
   }
@@ -86,7 +77,7 @@
         {#each codeFonts as font}
           <Button
             square
-            style={`font-family: ${font.fontFamily}`}
+            styleFontFamily={font.fontFamily}
             on:click={() => switchFont(font.storedName)}
             variant={$codeFont === font.storedName ? "secondary" : "gray"}>
             {font.displayName}

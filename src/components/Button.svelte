@@ -11,7 +11,9 @@
     | "tab" = "gray";
   export let size: "small" | "regular" | "large" = "regular";
   export let ariaLabel: string | undefined = undefined;
-  export let style: string | undefined = undefined;
+
+  export let stylePadding: string | undefined = undefined;
+  export let styleFontFamily: string | undefined = undefined;
 
   export let autofocus: boolean = false;
   export let clickable: boolean = true;
@@ -189,9 +191,10 @@
   aria-label={ariaLabel}
   {autofocus}
   {disabled}
-  {style}
   {title}
   tabindex="0"
+  style:padding={stylePadding}
+  style:font-family={styleFontFamily}
   on:blur
   on:click
   on:focus

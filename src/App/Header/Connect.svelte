@@ -10,9 +10,10 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import Command from "@app/components/Command.svelte";
   import Floating from "@app/components/Floating.svelte";
+  import FloatingModal from "@app/components/FloatingModal.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
-  import PortInput from "@app/App/Header/Connect/PortInput.svelte";
+  import TextInput from "@app/components/TextInput.svelte";
 
   $: customUrl = `${httpd.api.baseUrl.scheme}://${httpd.api.baseUrl.hostname}:${customPort}`;
   $: command = import.meta.env.PROD
@@ -27,148 +28,95 @@
     running: "radicle-httpd is running",
     authenticated: "radicle-httpd is running - signed in",
   };
+
+  $: validPortNumber = Number(customPort) > 0 && Number(customPort) <= 65535;
 </script>
 
 <style>
-  .dropdown {
-    align-items: center;
-    background: var(--color-background-float);
-    border: 1px solid var(--color-border-hint);
-    border-radius: var(--border-radius-regular);
-    box-shadow: var(--elevation-low);
-    color: var(--color-foreground-6);
-    position: absolute;
-    right: 5rem;
-    top: 4.5rem;
-    width: 15rem;
-  }
-  .info {
-    display: flex;
-    padding: 1rem 1rem 0.5rem 1rem;
-    font-size: var(--font-size-small);
-  }
-  .avatar-id-container {
-    display: flex;
-    flex-direction: column;
-    padding: 0.5rem 0.5rem 0.5rem 0.8rem;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  .dropdown-button {
-    align-items: center;
-    border-top: 1px solid var(--color-foreground-3);
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    font-weight: 600;
-    height: 2.5rem;
-    justify-content: space-between;
-    line-height: 2.5rem;
-    padding: 0 1rem;
-    user-select: none;
-    width: 100%;
-  }
-  .dropdown-button:hover {
-    background-color: var(--color-foreground-3);
-    color: var(--color-foreground-6);
-  }
-  .rounded:last-of-type:hover {
-    border-bottom-left-radius: var(--border-radius-regular);
-    border-bottom-right-radius: var(--border-radius-regular);
-  }
   .running {
     color: var(--color-fill-secondary);
   }
   .authenticated {
     color: var(--color-fill-success);
   }
-  .toggle:hover .authenticated {
-    color: var(--color-fill-success);
-  }
 </style>
 
 <Floating>
-  <div slot="toggle" class="toggle">
-    <Button
-      title={buttonTitle[$httpdStore.state]}
-      size="large"
-      variant="outline">
-      <div
-        class:authenticated={$httpdStore.state === "authenticated"}
-        class:stopped={$httpdStore.state === "stopped"}
-        class:running={$httpdStore.state === "running"}>
-        <Icon name="network" />
-      </div>
-      radicle.local
-    </Button>
-  </div>
+  <Button
+    stylePadding="0 1rem 0 0.5rem"
+    slot="toggle"
+    title={buttonTitle[$httpdStore.state]}
+    size="large"
+    variant="outline">
+    <div
+      class:authenticated={$httpdStore.state === "authenticated"}
+      class:stopped={$httpdStore.state === "stopped"}
+      class:running={$httpdStore.state === "running"}>
+      <Icon name="network" />
+    </div>
+    radicle.local
+  </Button>
 
-  <div slot="modal">
+  <FloatingModal slot="modal" style="top: 4.5rem; right: 5rem; width: 20.5rem;">
     {#if $httpdStore.state === "authenticated"}
-      <div class="dropdown">
-        <div class="avatar-id-container">
-          <div style="align-items: center; display: flex; gap: 0.25rem;">
-            <Authorship authorId={$httpdStore.session.publicKey} />
-            <Clipboard text={$httpdStore.session.publicKey} small />
-          </div>
-        </div>
+      <Authorship authorId={$httpdStore.session.publicKey} />
+      <Clipboard text={$httpdStore.session.publicKey} small />
 
-        <Link
-          on:afterNavigate={closeFocused}
-          route={{
-            resource: "nodes",
-            params: {
-              baseUrl: httpd.api.baseUrl,
-              projectPageIndex: 0,
-            },
-          }}>
-          <div class="dropdown-button">Browse</div>
-        </Link>
+      <Link
+        on:afterNavigate={closeFocused}
+        route={{
+          resource: "nodes",
+          params: {
+            baseUrl: httpd.api.baseUrl,
+            projectPageIndex: 0,
+          },
+        }}>
+        <Button size="small" variant="outline">Browse</Button>
+      </Link>
 
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-          class="dropdown-button rounded"
-          on:click={() => {
-            void httpd.disconnect();
-            closeFocused();
-          }}>
-          Disconnect
-        </div>
-      </div>
+      <Button
+        size="small"
+        variant="outline"
+        on:click={() => {
+          void httpd.disconnect();
+          closeFocused();
+        }}>
+        Disconnect
+      </Button>
     {:else if $httpdStore.state === "running"}
-      <div class="dropdown" style:width="20.5rem">
-        <div class="info">
-          To connect to your local Radicle node, run this command in your
-          terminal:
-        </div>
-        <div style:margin="0 1rem 0.5rem 1rem">
-          <Command {command} />
-        </div>
-        <PortInput bind:port={customPort} />
-        <Link
-          on:afterNavigate={closeFocused}
-          route={{
-            resource: "nodes",
-            params: {
-              baseUrl: httpd.api.baseUrl,
-              projectPageIndex: 0,
-            },
-          }}>
-          <div class="dropdown-button rounded">Browse</div>
-        </Link>
-      </div>
+      To connect to your local Radicle node, run this command in your terminal:
+      <Command {command} />
+      Port:
+      <TextInput
+        name="port"
+        size="small"
+        variant="modal"
+        bind:value={customPort}
+        valid={validPortNumber}
+        on:submit={() => httpd.changeHttpdPort(Number(customPort))} />
+      <Link
+        on:afterNavigate={closeFocused}
+        route={{
+          resource: "nodes",
+          params: {
+            baseUrl: httpd.api.baseUrl,
+            projectPageIndex: 0,
+          },
+        }}>
+        <Button size="small" variant="outline">Browse</Button>
+      </Link>
     {:else}
-      <div class="dropdown" style:width="20.5rem">
-        <div class="info">
-          To access your local Radicle node on this site, run this command in
-          your terminal:
-        </div>
-        <div style:margin="0.5rem 1rem 1rem 1rem">
-          <Command command="radicle-httpd" />
-        </div>
-        <PortInput bind:port={customPort} />
-      </div>
+      To access your local Radicle node on this site, run this command in your
+      terminal:
+      <Command command="radicle-httpd" />
+      Port:
+      <TextInput
+        name="port"
+        size="small"
+        variant="modal"
+        bind:value={customPort}
+        valid={validPortNumber}
+        on:submit={() => httpd.changeHttpdPort(Number(customPort))} />
     {/if}
-  </div>
+  </FloatingModal>
 </Floating>

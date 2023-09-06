@@ -5,6 +5,7 @@
 
   import Button from "@app/components/Button.svelte";
   import Connect from "@app/App/Header/Connect.svelte";
+  import FloatingModal from "@app/components/FloatingModal.svelte";
   import Search from "@app/App/Header/Search.svelte";
   import ThemeSettings from "@app/App/Header/ThemeSettings.svelte";
 </script>
@@ -56,12 +57,20 @@
       <Connect />
     </div>
     <Floating>
-      <div slot="toggle">
-        <Button variant="outline" size="large" ariaLabel="Settings">
-          <Icon name="brush" />
-        </Button>
-      </div>
-      <ThemeSettings slot="modal" />
+      <Button
+        slot="toggle"
+        variant="outline"
+        size="large"
+        ariaLabel="Settings"
+        stylePadding="0.5rem">
+        <Icon name="brush" />
+      </Button>
+
+      <FloatingModal
+        slot="modal"
+        style="top: 4.5rem; right: 1.5rem; width: 21rem;">
+        <ThemeSettings />
+      </FloatingModal>
     </Floating>
   </div>
 </header>
