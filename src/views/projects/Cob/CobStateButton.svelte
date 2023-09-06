@@ -4,8 +4,8 @@
 
   import { closeFocused } from "@app/components/Floating.svelte";
 
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Button from "@app/components/Button.svelte";
@@ -55,13 +55,15 @@
       </Button>
     </svelte:fragment>
     <svelte:fragment slot="modal">
-      <Dropdown items={items.filter(i => !isEqual(i, state))}>
+      <DropdownList items={items.filter(i => !isEqual(i, state))}>
         <svelte:fragment slot="item" let:item>
-          <DropdownItem selected={false} on:click={() => switchCaption(item)}>
+          <DropdownListItem
+            selected={false}
+            on:click={() => switchCaption(item)}>
             {item[0]}
-          </DropdownItem>
+          </DropdownListItem>
         </svelte:fragment>
-      </Dropdown>
+      </DropdownList>
     </svelte:fragment>
   </Floating>
 </div>

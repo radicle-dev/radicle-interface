@@ -8,8 +8,8 @@
 
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -64,10 +64,12 @@
     </Button>
   </div>
 
-  <Dropdown slot="modal" items={peers}>
+  <DropdownList slot="modal" items={peers}>
     <svelte:fragment slot="item" let:item>
       <Link on:afterNavigate={() => closeFocused()} route={item.route}>
-        <DropdownItem selected={item.selected} title={createTitle(item.remote)}>
+        <DropdownListItem
+          selected={item.selected}
+          title={createTitle(item.remote)}>
           <span class="avatar-id" class:selected={item.selected}>
             <Authorship
               authorAliasColor={item.selected
@@ -86,8 +88,8 @@
               delegate
             </Badge>
           {/if}
-        </DropdownItem>
+        </DropdownListItem>
       </Link>
     </svelte:fragment>
-  </Dropdown>
+  </DropdownList>
 </Floating>

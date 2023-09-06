@@ -54,8 +54,8 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -527,7 +527,7 @@
                 </Button>
               </svelte:fragment>
               <svelte:fragment slot="modal">
-                <Dropdown items={patch.revisions}>
+                <DropdownList items={patch.revisions}>
                   <svelte:fragment slot="item" let:item>
                     <Link
                       on:afterNavigate={closeFocused}
@@ -541,12 +541,12 @@
                           revision: item.id,
                         },
                       }}>
-                      <DropdownItem selected={item.id === view.revision}>
+                      <DropdownListItem selected={item.id === view.revision}>
                         Revision {utils.formatObjectId(item.id)}
-                      </DropdownItem>
+                      </DropdownListItem>
                     </Link>
                   </svelte:fragment>
-                </Dropdown>
+                </DropdownList>
               </svelte:fragment>
             </Floating>
           </div>

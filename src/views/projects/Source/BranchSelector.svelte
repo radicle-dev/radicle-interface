@@ -5,8 +5,8 @@
   import * as utils from "@app/lib/utils";
   import { closeFocused } from "@app/components/Floating.svelte";
 
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Floating from "@app/components/Floating.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -51,15 +51,15 @@
         </Button>
       </svelte:fragment>
 
-      <Dropdown slot="modal" items={branches}>
+      <DropdownList slot="modal" items={branches}>
         <svelte:fragment slot="item" let:item>
           <Link route={item.route} on:afterNavigate={() => closeFocused()}>
-            <DropdownItem selected={item.name === selectedBranch}>
+            <DropdownListItem selected={item.name === selectedBranch}>
               {item.name}
-            </DropdownItem>
+            </DropdownListItem>
           </Link>
         </svelte:fragment>
-      </Dropdown>
+      </DropdownList>
     </Floating>
   {/if}
 

@@ -12,8 +12,8 @@
   import Clipboard from "@app/components/Clipboard.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
-  import Dropdown from "@app/components/Dropdown.svelte";
-  import DropdownItem from "@app/components/Dropdown/DropdownItem.svelte";
+  import DropdownList from "@app/components/DropdownList.svelte";
+  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Floating from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -274,7 +274,7 @@
             </div>
           </svelte:fragment>
           <svelte:fragment slot="modal">
-            <Dropdown
+            <DropdownList
               items={previousRevOid && previousRevId
                 ? [projectHead, previousRevOid]
                 : [projectHead]}>
@@ -293,21 +293,21 @@
                     },
                   }}>
                   {#if item === projectHead}
-                    <DropdownItem selected={false}>
+                    <DropdownListItem selected={false}>
                       Compare to {projectDefaultBranch} ({utils.formatObjectId(
                         projectHead,
                       )})
-                    </DropdownItem>
+                    </DropdownListItem>
                   {:else if previousRevId}
-                    <DropdownItem selected={false}>
+                    <DropdownListItem selected={false}>
                       Compare to previous revision ({utils.formatObjectId(
                         previousRevId,
                       )})
-                    </DropdownItem>
+                    </DropdownListItem>
                   {/if}
                 </Link>
               </svelte:fragment>
-            </Dropdown>
+            </DropdownList>
           </svelte:fragment>
         </Floating>
       </div>
