@@ -8,8 +8,8 @@
   import * as httpd from "@app/lib/httpd";
   import Loading from "@app/components/Loading.svelte";
 
-  import AuthenticatedModal from "@app/views/session/AuthenticatedModal.svelte";
-  import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
+  import AuthenticatedModal from "@app/modals/AuthenticatedModal.svelte";
+  import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
 
   export let activeRoute: Extract<Route, { resource: "session" }>;
 

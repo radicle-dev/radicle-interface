@@ -8,7 +8,7 @@
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
-  import AuthenticationErrorModal from "@app/views/session/AuthenticationErrorModal.svelte";
+  import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
   import Authorship from "@app/components/Authorship.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";

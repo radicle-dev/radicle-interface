@@ -16,7 +16,7 @@
   import Badge from "@app/components/Badge.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
-  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";

@@ -56,7 +56,7 @@
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import ErrorModal from "@app/views/projects/Cob/ErrorModal.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import Floating, { closeFocused } from "@app/components/Floating.svelte";
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";

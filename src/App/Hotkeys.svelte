@@ -1,8 +1,8 @@
 <script lang="ts">
   import * as modal from "@app/lib/modal";
 
-  import ColorPaletteModal from "@app/App/ColorPaletteModal.svelte";
-  import HotkeysModal from "@app/App/HotkeysModal.svelte";
+  import ColorPaletteModal from "@app/modals/ColorPaletteModal.svelte";
+  import HotkeysModal from "@app/modals/HotkeysModal.svelte";
   import { searchPlaceholder } from "@app/lib/shared";
 
   const onKeydown = (event: KeyboardEvent) => {
