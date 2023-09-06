@@ -64,34 +64,30 @@
     </Button>
   </div>
 
-  <svelte:fragment slot="modal">
-    <Dropdown items={peers}>
-      <svelte:fragment slot="item" let:item>
-        <Link on:afterNavigate={() => closeFocused()} route={item.route}>
-          <DropdownItem
-            selected={item.selected}
-            title={createTitle(item.remote)}>
-            <span class="avatar-id" class:selected={item.selected}>
-              <Authorship
-                authorAliasColor={item.selected
-                  ? "--color-foreground-match-background"
-                  : undefined}
-                authorIdColor={item.selected
-                  ? "--color-foreground-match-background"
-                  : undefined}
-                authorId={item.remote.id}
-                authorAlias={item.remote.alias} />
-            </span>
-            {#if item.remote.delegate}
-              <Badge
-                size="tiny"
-                variant={item.selected ? "background" : "secondary"}>
-                delegate
-              </Badge>
-            {/if}
-          </DropdownItem>
-        </Link>
-      </svelte:fragment>
-    </Dropdown>
-  </svelte:fragment>
+  <Dropdown slot="modal" items={peers}>
+    <svelte:fragment slot="item" let:item>
+      <Link on:afterNavigate={() => closeFocused()} route={item.route}>
+        <DropdownItem selected={item.selected} title={createTitle(item.remote)}>
+          <span class="avatar-id" class:selected={item.selected}>
+            <Authorship
+              authorAliasColor={item.selected
+                ? "--color-foreground-match-background"
+                : undefined}
+              authorIdColor={item.selected
+                ? "--color-foreground-match-background"
+                : undefined}
+              authorId={item.remote.id}
+              authorAlias={item.remote.alias} />
+          </span>
+          {#if item.remote.delegate}
+            <Badge
+              size="tiny"
+              variant={item.selected ? "background" : "secondary"}>
+              delegate
+            </Badge>
+          {/if}
+        </DropdownItem>
+      </Link>
+    </svelte:fragment>
+  </Dropdown>
 </Floating>

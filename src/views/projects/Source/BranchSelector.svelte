@@ -55,11 +55,7 @@
         <svelte:fragment slot="item" let:item>
           <Link route={item.route} on:afterNavigate={() => closeFocused()}>
             <DropdownItem selected={item.name === selectedBranch}>
-              <div
-                style:font-weight="var(--font-weight-semibold)"
-                style:font-family="var(--font-family-monospace)">
-                {item.name}
-              </div>
+              {item.name}
             </DropdownItem>
           </Link>
         </svelte:fragment>

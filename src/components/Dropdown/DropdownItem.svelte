@@ -12,11 +12,10 @@
     gap: 0.5rem;
     padding: 0.5rem;
     white-space: nowrap;
-    /* makes sure peer selector items with badges are same height
-       as ones without */
-    height: 34px;
     border-radius: var(--border-radius-tiny);
     font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground-dim);
   }
   .item:hover,
   .selected {
