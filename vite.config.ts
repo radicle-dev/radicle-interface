@@ -22,6 +22,10 @@ export default defineConfig({
   server: {
     host: "localhost",
     port: 3000,
+    watch: {
+      // reference: https://stackoverflow.com/a/75238360
+      useFsEvents: false,
+    },
   },
   resolve: {
     alias: {
