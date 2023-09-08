@@ -9,7 +9,6 @@
     border-radius: var(--border-radius-small);
     overflow: hidden;
     box-shadow: inset 0 0 0 1px var(--color-border-hint);
-    background-color: var(--color-background-float);
   }
 
   .list-item:not(:last-child) {

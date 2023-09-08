@@ -18,6 +18,7 @@
   } from "@app/components/ModalToggle.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -78,7 +79,6 @@
     font-size: var(--font-size-small);
   }
   .selected-icon {
-    padding: 0.25rem;
     border-radius: var(--border-radius-tiny);
     background-color: var(--color-background-float);
   }
@@ -97,13 +97,12 @@
       <ModalToggle slot="header" bind:expanded>
         <Button slot="toggle" title="Filter patches by state">
           <div style:color={stateColor[state]}>
-            <IconSmall name="patch" />
+            <Icon name="patch" />
           </div>
           {project.patches[state]}
           {state}
           <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
         </Button>
-
         <DropdownList slot="modal" items={stateOptions}>
           <Link
             slot="item"
@@ -120,7 +119,7 @@
               selected={item === state}
               disabled={project.patches[item] === 0}>
               <div class="selected-icon" style:color={stateColor[item]}>
-                <IconSmall name="patch" />
+                <Icon name="patch" />
               </div>
               {project.patches[item]}
               {item}

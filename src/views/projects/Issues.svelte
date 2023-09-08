@@ -19,6 +19,7 @@
   import Loading from "@app/components/Loading.svelte";
   import ModalToggle from "@app/components/ModalToggle.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
@@ -70,8 +71,7 @@
     font-size: var(--font-size-small);
   }
   .selected-icon {
-    padding: 0.25rem;
-    border-radius: var(--border-radius-tiny);
+    border-radius: 100px;
     background-color: var(--color-background-float);
   }
   .more {
@@ -90,7 +90,7 @@
         <ModalToggle bind:expanded>
           <Button slot="toggle" title="Filter issues by state">
             <div style:color={stateColor[state]}>
-              <IconSmall name="issue" />
+              <Icon name="issue" />
             </div>
             {project.issues[state]}
             {state}
@@ -113,7 +113,7 @@
                 selected={item === state}
                 disabled={project.issues[item] === 0}>
                 <div class="selected-icon" style:color={stateColor[item]}>
-                  <IconSmall name="issue" />
+                  <Icon name="issue" />
                 </div>
                 {project.issues[item]}
                 {item}

@@ -11,12 +11,21 @@
   --color-foreground-black: #000000;
   --color-foreground-primary: #ff55ff;
   --color-foreground-success: #5f930b;
+  --color-foreground-primary-fade: linear-gradient(
+    0deg,
+    #ff80ff 0%,
+    #ff1aff 100
+  );
   --color-foreground-red: #af1833;
+  --color-foreground-yellow: #e5c001;
+  --color-foreground-gray: #9494b8;
+  --color-foreground-disabled: #70718f;
   --color-border-hint: #eaeaf1;
   --color-border-focus: #7070ff;
   --color-border-contrast: #24252d;
   --color-border-default: #b2b2cc;
   --color-border-red: #af1833;
+  --boxShadow-lg: 0 0 64px 0 #0000001a;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
   --color-fill-ghost: #f0f0f5;
@@ -37,24 +46,33 @@
 }
 
 :root[data-theme="dark"] {
-  --color-background-default: #0a0d10;
-  --color-background-float: #14151a;
-  --color-background-dip: #000000;
-  --color-foreground-contrast: #f9f9fb;
-  --color-foreground-dim: #b2b2cc;
-  --color-foreground-emphasized: #7070ff;
-  --color-foreground-emphasized-hover: #8585ff;
-  --color-foreground-match-background: #0a0d10;
-  --color-foreground-white: #ffffff;
-  --color-foreground-black: #000000;
-  --color-foreground-primary: #ff55ff;
-  --color-foreground-success: #82c80f;
-  --color-foreground-red: #d71d3f;
+  --color-background-default: #0a0d10; /* Use on full screen background.*/
+  --color-background-float: #14151a; /* A shade lighter than the default background for elements that float above the default background, eg. modals, popovers.*/
+  --color-background-dip: #000000; /* A shade darker than the default background for elements that are below the default background, eg. read only card, info section.*/
+  --color-foreground-contrast: #f9f9fb; /* For text and icons on full screen background eg. body text, icons, button text.*/
+  --color-foreground-dim: #b2b2cc; /* For deemphasized text and icons on full screen background eg. time stamps.*/
+  --color-foreground-emphasized: #7070ff; /* For emphasized text and icons on full screen background eg. links, ids.*/
+  --color-foreground-emphasized-hover: #8585ff; /* A shade lighter than emphasized for hovering interactive text and icons eg. links, ids.*/
+  --color-foreground-match-background: #0a0d10; /* To use on backgrounds contrasting the default background eg. button text on a blue button.*/
+  --color-foreground-white: #ffffff; /* Plain white for going as bright as you can.*/
+  --color-foreground-black: #000000; /* Plain black, for going as dark as you can.*/
+  --color-foreground-primary: #ff55ff; /* To use for the most important action on the page eg. CTA link*/
+  --color-foreground-success: #82c80f; /* To signify success or open eg. issues.*/
+  --color-foreground-primary-fade: linear-gradient(
+    0deg,
+    #750075 0%,
+    #ff55ff 100
+  ); /* Fades from primary to a darker shade for graph lines.*/
+  --color-foreground-red: #d71d3f; /* To signify error eg. text field hints.*/
+  --color-foreground-gray: #9494b8;
+  --color-foreground-yellow: #e5c001;
+  --color-foreground-disabled: #70718f;
   --color-border-hint: #24252d;
   --color-border-focus: #7070ff;
   --color-border-contrast: #ebebff;
   --color-border-default: #2e2f38;
   --color-border-error: #af1833;
+  --boxShadow-lg: 0 0 64px 0 #00000099;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
   --color-fill-ghost: #24252d;

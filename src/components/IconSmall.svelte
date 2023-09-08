@@ -1,6 +1,6 @@
 <script lang="ts">
   import { unreachable } from "@app/lib/utils";
-
+  export let size = 16;
   export let name:
     | "arrow-box-up-right"
     | "branch"
@@ -31,13 +31,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<svg
-  role="img"
-  on:click
-  width="16"
-  height="16"
-  fill="currentColor"
-  viewBox="0 0 16 16">
+<svg role="img" on:click width={size} fill="currentColor" viewBox="0 0 16 16">
   {#if name === "arrow-box-up-right"}
     <path
       fill-rule="evenodd"

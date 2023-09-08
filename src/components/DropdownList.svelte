@@ -16,6 +16,7 @@
     border-radius: var(--border-radius-small);
     overflow-y: auto;
     max-height: 60vh;
+    padding: 0.155rem;
   }
   .dropdown-item {
     padding: 0.25rem 0.25rem 0 0.25rem;

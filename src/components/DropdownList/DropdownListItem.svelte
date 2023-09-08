@@ -11,12 +11,16 @@
     align-items: center;
     flex-direction: row;
     gap: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.25rem;
+    padding-right: 1rem;
     white-space: nowrap;
     border-radius: var(--border-radius-tiny);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-semibold);
     color: var(--color-foreground-dim);
+  }
+  .item.disabled {
+    color: var(--color-foreground-disabled);
   }
   .item:hover,
   .selected {

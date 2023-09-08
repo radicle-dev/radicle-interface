@@ -37,6 +37,7 @@
   .patch-teaser {
     display: flex;
     padding: 1.25rem;
+    background-color: var(--color-background-float);
   }
   .patch-teaser:hover {
     background-color: var(--color-fill-ghost);
