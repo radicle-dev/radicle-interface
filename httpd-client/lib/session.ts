@@ -1,6 +1,6 @@
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type { SuccessResponse } from "./shared.js";
-import type { ZodSchema, z } from "zod";
+import type { z } from "zod";
 
 import { number, object, string } from "zod";
 
@@ -14,21 +14,16 @@ export const sessionPayloadSchema = object({
 
 export type SessionPayload = z.infer<typeof sessionPayloadSchema>;
 
-interface Session {
-  sessionId: string;
-  status: string;
-  publicKey: string;
-  issuedAt: number;
-  expiresAt: number;
-}
-
 const sessionSchema = object({
   sessionId: string(),
   status: string(),
   publicKey: string(),
+  alias: string(),
   issuedAt: number(),
   expiresAt: number(),
-}) satisfies ZodSchema<Session>;
+});
+
+export type Session = z.infer<typeof sessionSchema>;
 
 export class Client {
   #fetcher: Fetcher;
