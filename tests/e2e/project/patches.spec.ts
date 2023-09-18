@@ -38,11 +38,7 @@ test("navigate patch details", async ({ page }) => {
   }
 });
 
-test("go through the entire ui patch flow", async ({
-  page,
-  authenticatedPeer,
-}) => {
-  await page.goto(authenticatedPeer.uiUrl());
+test("edit a patch", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
     "commenting",
@@ -78,7 +74,28 @@ test("go through the entire ui patch flow", async ({
   await expect(
     page.getByLabel("chip").filter({ hasText: "bug" }),
   ).toBeVisible();
+});
 
+test("leave a comment and reply", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "commenting",
+  );
+  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(
+    ["commit", "--allow-empty", "-m", "Some patch title"],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await page.goto(
+    `${authenticatedPeer.uiUrl()}/${rid}/patches/d41fbd28b06a5fac51a2ba9e05ad9dc885676d71`,
+  );
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
   await expect(page.getByText("This is a comment")).toBeVisible();
@@ -87,7 +104,30 @@ test("go through the entire ui patch flow", async ({
   await page.getByPlaceholder("Leave your reply").fill("This is a reply");
   await page.getByRole("button", { name: "Reply", exact: true }).click();
   await expect(page.getByText("This is a reply")).toBeVisible();
+});
 
+test("add and remove reactions", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "reactions",
+  );
+  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(
+    ["commit", "--allow-empty", "-m", "Some patch title"],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await page.goto(
+    `${authenticatedPeer.uiUrl()}/${rid}/patches/af4099f53e96e28824d6df13136feeae10190679`,
+  );
+  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
+  await page.getByRole("button", { name: "Comment" }).click();
   const commentReactionToggle = page.getByTitle("toggle-reaction").first();
   await commentReactionToggle.click();
   await page.getByRole("button", { name: "👍" }).click();
@@ -106,7 +146,27 @@ test("go through the entire ui patch flow", async ({
   await page.getByRole("button", { name: "🎉" }).click();
   await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
   await expect(page.locator(".reaction")).toHaveCount(0);
-
+});
+test("change patch state", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder } = await createProject(
+    authenticatedPeer,
+    "lifecycle",
+  );
+  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(
+    ["commit", "--allow-empty", "-m", "Some patch title"],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+    cwd: projectFolder,
+  });
+  await page.goto(
+    `${authenticatedPeer.uiUrl()}/${rid}/patches/be66e6ccf14f603e9fec63a30db9dd24cc7adf4c`,
+  );
   await page.getByRole("button", { name: "Archive patch" }).click();
   await expect(page.getByText("archived", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
@@ -118,7 +178,7 @@ test("go through the entire ui patch flow", async ({
   await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
 });
 
-test("test patches counters", async ({ page, authenticatedPeer }) => {
+test("patches counters", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder, defaultBranch } = await createProject(
     authenticatedPeer,
     "patch-counters",
