@@ -26,7 +26,7 @@ export async function createProject(
       defaultBranch,
       "--description",
       description,
-      "--announce",
+      "--public",
     ],
     {
       cwd: projectFolder,

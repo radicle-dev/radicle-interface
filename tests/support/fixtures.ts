@@ -333,7 +333,7 @@ export async function createSourceBrowsingFixture(
       "main",
       "--description",
       "Git repository for source browsing tests",
-      "--announce",
+      "--public",
     ],
     { cwd: aliceProjectPath },
   );
