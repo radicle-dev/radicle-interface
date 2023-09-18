@@ -4,7 +4,8 @@ import { test, expect } from "@tests/support/fixtures.js";
 test("global hotkeys", async ({ page }) => {
   await page.goto("/");
   await page.locator("body").press(`/`);
-  await page.keyboard.type("searchquery");
+  // Delaying the input speed a bit to imitate a real user.
+  await page.keyboard.type("searchquery", { delay: 100 });
 
   // Keyboard hint shows up in the search bar.
   {
