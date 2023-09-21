@@ -6,6 +6,7 @@ import type {
   BaseUrl,
   Blob,
   Commit,
+  CommitBlob,
   CommitHeader,
   Diff,
   Issue,
@@ -197,6 +198,7 @@ export type PatchView =
       revision: string;
       diff: Diff;
       commits: CommitHeader[];
+      files: Record<string, CommitBlob>;
     }
   | {
       name: "diff";
@@ -537,7 +539,7 @@ async function loadPatchView(
           `revision ${revisionId} of patch ${route.patch} not found`,
         );
       }
-      const { diff, commits } = await api.project.getDiff(
+      const { diff, commits, files } = await api.project.getDiff(
         route.project,
         revision.base,
         revision.oid,
@@ -547,6 +549,7 @@ async function loadPatchView(
         revision: revision.id,
         diff,
         commits,
+        files,
       };
       break;
     }

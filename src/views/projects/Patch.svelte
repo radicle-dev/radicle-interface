@@ -587,7 +587,7 @@
           <Changeset
             projectId={project.id}
             {baseUrl}
-            revision={view.revision}
+            files={view.files}
             diff={view.diff} />
         </div>
       {:else}

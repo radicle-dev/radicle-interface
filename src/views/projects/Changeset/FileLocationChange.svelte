@@ -7,7 +7,7 @@
 
   export let newPath: string;
   export let oldPath: string;
-  export let revision: string;
+  export let revision: string | undefined = undefined;
   export let mode: "moved" | "copied";
   export let baseUrl: BaseUrl;
   export let projectId: string;

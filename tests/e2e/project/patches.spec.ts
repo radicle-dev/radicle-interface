@@ -301,3 +301,12 @@ test("navigate through revision diffs", async ({ page }) => {
     );
   }
 });
+
+test("view file navigation from files tab", async ({ page }) => {
+  await page.goto(`${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`);
+  await page.getByRole("button", { name: "Files" }).click();
+  await page.getByTitle("View file").getByRole("link").click();
+  await expect(page).toHaveURL(
+    `${cobUrl}/tree/9898da6155467adad511f63bf0fb5aa4156b92ef/README.md`,
+  );
+});

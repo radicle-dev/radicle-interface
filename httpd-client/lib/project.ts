@@ -1,4 +1,4 @@
-import type { Commit, CommitHeader, Commits, Diff } from "./project/commit.js";
+import type { Commit, Commits } from "./project/commit.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
   Issue,
@@ -86,6 +86,14 @@ const blobSchema = object({
 
 export type Blob = z.infer<typeof blobSchema>;
 
+const commitBlobSchema = object({
+  binary: boolean(),
+  content: optional(string()),
+  lastCommit: commitHeaderSchema,
+});
+
+export type CommitBlob = z.infer<typeof commitBlobSchema>;
+
 const treeEntrySchema = object({
   path: string(),
   name: string(),
@@ -100,13 +108,7 @@ export interface TreeStats {
   contributors: number;
 }
 
-export interface Tree {
-  entries: TreeEntry[];
-  lastCommit: CommitHeader;
-  name: string;
-  path: string;
-  stats: TreeStats;
-}
+export type Tree = z.infer<typeof treeSchema>;
 
 const treeSchema = object({
   entries: array(treeEntrySchema),
@@ -118,33 +120,26 @@ const treeSchema = object({
     branches: number(),
     contributors: number(),
   }),
-}) satisfies ZodSchema<Tree>;
+});
 
-export interface Remote {
-  id: string;
-  alias?: string;
-  heads: Record<string, string>;
-  delegate: boolean;
-}
+export type Remote = z.infer<typeof remoteSchema>;
 
 const remoteSchema = object({
   id: string(),
   alias: string().optional(),
   heads: record(string(), string()),
   delegate: boolean(),
-}) satisfies ZodSchema<Remote>;
+});
 
 const remotesSchema = array(remoteSchema) satisfies ZodSchema<Remote[]>;
 
-export interface DiffResponse {
-  commits: CommitHeader[];
-  diff: Diff;
-}
+export type DiffResponse = z.infer<typeof diffResponseSchema>;
 
 const diffResponseSchema = object({
   commits: array(commitHeaderSchema),
   diff: diffSchema,
-}) satisfies ZodSchema<DiffResponse>;
+  files: record(string(), commitBlobSchema),
+});
 
 export class Client {
   #fetcher: Fetcher;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Diff } from "@httpd-client";
+  import type { BaseUrl, CommitBlob, Diff } from "@httpd-client";
 
   import { pluralize } from "@app/lib/pluralize";
 
@@ -7,7 +7,10 @@
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
 
   export let diff: Diff;
-  export let revision: string;
+  // This only is needed in commit view where we have a useful revision.
+  export let revision: string | undefined = undefined;
+  // This only is needed for patch changesets where we have different files with different last commits.
+  export let files: Record<string, CommitBlob> = {};
   export let baseUrl: BaseUrl;
   export let projectId: string;
 
@@ -72,7 +75,7 @@
     <FileDiff
       {projectId}
       {baseUrl}
-      {revision}
+      revision={revision ?? files[file.new.oid].lastCommit.id}
       filePath={file.path}
       fileDiff={file.diff}
       headerBadgeCaption="added" />
@@ -81,7 +84,7 @@
     <FileDiff
       {projectId}
       {baseUrl}
-      {revision}
+      revision={revision ?? files[file.old.oid].lastCommit.id}
       filePath={file.path}
       fileDiff={file.diff}
       headerBadgeCaption="deleted" />
@@ -90,7 +93,7 @@
     <FileDiff
       {projectId}
       {baseUrl}
-      {revision}
+      revision={revision ?? files[file.new.oid].lastCommit.id}
       filePath={file.path}
       fileDiff={file.diff} />
   {/each}
@@ -108,7 +111,6 @@
       <FileLocationChange
         {projectId}
         {baseUrl}
-        {revision}
         newPath={file.newPath}
         oldPath={file.oldPath}
         mode="moved" />
@@ -118,7 +120,6 @@
     <FileLocationChange
       {projectId}
       {baseUrl}
-      {revision}
       newPath={file.newPath}
       oldPath={file.oldPath}
       mode="copied" />

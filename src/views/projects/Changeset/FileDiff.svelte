@@ -9,7 +9,7 @@
   export let filePath: string;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
-  export let revision: string;
+  export let revision: string | undefined = undefined;
   export let headerBadgeCaption:
     | "added"
     | "deleted"
@@ -345,18 +345,20 @@
         <Badge variant="foreground">copied</Badge>
       {/if}
     </div>
-    <div class="browse" title="View file">
-      <Link
-        route={{
-          resource: "project.source",
-          project: projectId,
-          node: baseUrl,
-          path: filePath,
-          revision,
-        }}>
-        <Icon name="browse" />
-      </Link>
-    </div>
+    {#if revision}
+      <div class="browse" title="View file">
+        <Link
+          route={{
+            resource: "project.source",
+            project: projectId,
+            node: baseUrl,
+            path: filePath,
+            revision,
+          }}>
+          <Icon name="browse" />
+        </Link>
+      </div>
+    {/if}
   </header>
   {#if !collapsed}
     <main>
