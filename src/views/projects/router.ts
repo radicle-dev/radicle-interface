@@ -9,6 +9,7 @@ import type {
   CommitBlob,
   CommitHeader,
   Diff,
+  DiffBlob,
   Issue,
   IssueState,
   Patch,
@@ -133,7 +134,6 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-
         commit: Commit;
       };
     }
@@ -151,7 +151,6 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-
         issues: Issue[];
         state: IssueState["status"];
       };
@@ -168,7 +167,6 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-
         patches: Patch[];
         state: PatchState["status"];
       };
@@ -178,7 +176,6 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-
         patch: Patch;
         view: PatchView;
       };
@@ -196,6 +193,7 @@ export type PatchView =
   | {
       name: "commits" | "files";
       revision: string;
+      oid: string;
       diff: Diff;
       commits: CommitHeader[];
       files: Record<string, CommitBlob>;
@@ -203,6 +201,7 @@ export type PatchView =
   | {
       name: "diff";
       diff: Diff;
+      files: Record<string, DiffBlob>;
       fromCommit: string;
       toCommit: string;
     };
@@ -547,6 +546,7 @@ async function loadPatchView(
       view = {
         name: route.view?.name,
         revision: revision.id,
+        oid: revision.oid,
         diff,
         commits,
         files,
@@ -555,13 +555,13 @@ async function loadPatchView(
     }
     case "diff": {
       const { fromCommit, toCommit } = route.view;
-      const { diff } = await api.project.getDiff(
+      const { diff, files } = await api.project.getDiff(
         route.project,
         fromCommit,
         toCommit,
       );
 
-      view = { name: "diff", fromCommit, toCommit, diff };
+      view = { name: "diff", fromCommit, toCommit, files, diff };
       break;
     }
   }

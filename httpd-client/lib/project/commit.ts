@@ -1,17 +1,34 @@
 import type { z } from "zod";
 export type {
+  Commit,
+  CommitHeader,
   Commits,
+  Diff,
+  DiffContent,
+  DiffFile,
   HunkLine,
   Hunks,
-  Commit,
-  Diff,
-  CommitHeader,
-  DiffFile,
-  DiffContent,
 };
 
-import { array, literal, number, object, optional, string, union } from "zod";
-export { commitHeaderSchema, diffSchema, commitSchema, commitsSchema };
+import {
+  array,
+  boolean,
+  literal,
+  number,
+  object,
+  optional,
+  record,
+  string,
+  union,
+} from "zod";
+export {
+  commitBlobSchema,
+  commitHeaderSchema,
+  commitSchema,
+  commitsSchema,
+  diffBlobSchema,
+  diffSchema,
+};
 
 const gitPersonSchema = object({
   name: string(),
@@ -28,6 +45,22 @@ const commitHeaderSchema = object({
   parents: array(string()),
   committer: gitPersonSchema.merge(object({ time: number() })),
 });
+
+const diffBlobSchema = object({
+  binary: boolean(),
+  content: string(),
+  id: string(),
+  lastCommit: commitHeaderSchema,
+});
+
+export type DiffBlob = z.infer<typeof diffBlobSchema>;
+
+const commitBlobSchema = object({
+  binary: boolean(),
+  content: string(),
+});
+
+export type CommitBlob = z.infer<typeof commitBlobSchema>;
 
 type AdditionHunkLine = z.infer<typeof additionHunkLineSchema>;
 
@@ -146,12 +179,13 @@ const commitSchema = object({
   commit: commitHeaderSchema,
   diff: diffSchema,
   branches: array(string()),
+  files: record(string(), commitBlobSchema),
 });
 
 type Commits = z.infer<typeof commitsSchema>;
 
 const commitsSchema = object({
-  commits: array(commitSchema),
+  commits: array(commitSchema.omit({ files: true })),
   stats: object({
     commits: number(),
     branches: number(),

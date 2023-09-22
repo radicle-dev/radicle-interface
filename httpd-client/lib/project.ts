@@ -29,6 +29,7 @@ import {
 } from "zod";
 
 import {
+  diffBlobSchema,
   commitHeaderSchema,
   commitSchema,
   commitsSchema,
@@ -86,14 +87,6 @@ const blobSchema = object({
 
 export type Blob = z.infer<typeof blobSchema>;
 
-const commitBlobSchema = object({
-  binary: boolean(),
-  content: optional(string()),
-  lastCommit: commitHeaderSchema,
-});
-
-export type CommitBlob = z.infer<typeof commitBlobSchema>;
-
 const treeEntrySchema = object({
   path: string(),
   name: string(),
@@ -138,7 +131,7 @@ export type DiffResponse = z.infer<typeof diffResponseSchema>;
 const diffResponseSchema = object({
   commits: array(commitHeaderSchema),
   diff: diffSchema,
-  files: record(string(), commitBlobSchema),
+  files: record(string(), diffBlobSchema),
 });
 
 export class Client {

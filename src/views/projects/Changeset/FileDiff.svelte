@@ -1,12 +1,17 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
   import type { BaseUrl, DiffContent, HunkLine } from "@httpd-client";
 
+  import { onDestroy, onMount } from "svelte";
+  import { toHtml } from "hast-util-to-html";
+
+  import * as Syntax from "@app/lib/syntax";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let filePath: string;
+  export let oldContent: string | undefined = undefined;
+  export let content: string | undefined = undefined;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
   export let revision: string | undefined = undefined;
@@ -18,9 +23,11 @@
     | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let projectId: string;
+  export let visible: boolean = false;
 
   let collapsed = false;
   let selection: Selection | undefined = undefined;
+  let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
 
   onMount(() => {
     window.addEventListener("click", deselectHandler);
@@ -39,6 +46,10 @@
     }
   });
 
+  $: if (visible) {
+    void highlightContent().then(output => (highlighting = output));
+  }
+
   onDestroy(() => {
     window.removeEventListener("click", deselectHandler);
     window.removeEventListener("hashchange", updateSelection);
@@ -53,6 +64,24 @@
     ) {
       updateHash("");
     }
+  }
+
+  async function highlightContent() {
+    const extension = filePath.split(".").pop();
+    const highlighted: { new?: string[]; old?: string[] } = {};
+    if (extension) {
+      if (content) {
+        highlighted["new"] = toHtml(
+          await Syntax.highlight(content, extension),
+        ).split("\n");
+      }
+      if (oldContent) {
+        highlighted["old"] = toHtml(
+          await Syntax.highlight(oldContent, extension),
+        ).split("\n");
+      }
+    }
+    return Object.entries(highlighted).length > 0 ? highlighted : undefined;
   }
 
   function updateSelection() {
@@ -298,6 +327,7 @@
     padding: 0 0.75rem 0 0.5rem;
   }
   .diff-line-content {
+    color: unset !important;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     width: 100%;
@@ -395,7 +425,19 @@
                   <td class="diff-line-type" data-line-type={line.type}>
                     {lineSign(line)}
                   </td>
-                  <td class="diff-line-content">{line.line}</td>
+                  <td class="diff-line-content">
+                    {#if highlighting}
+                      {#if line.type === "addition" && highlighting.new}
+                        {@html highlighting.new[line.lineNo - 1]}
+                      {:else if line.type === "context" && highlighting.new}
+                        {@html highlighting.new[line.lineNoNew - 1]}
+                      {:else if line.type === "deletion" && highlighting.old}
+                        {@html highlighting.old[line.lineNo - 1]}
+                      {/if}
+                    {:else}
+                      {line.line}
+                    {/if}
+                  </td>
                 </tr>
               {/each}
             {/each}

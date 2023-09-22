@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Commit, BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Commit, Project } from "@httpd-client";
 
   import { formatCommit } from "@app/lib/utils";
 
@@ -70,8 +70,9 @@
       <CommitAuthorship {header} />
     </div>
     <Changeset
-      projectId={project.id}
       {baseUrl}
+      projectId={project.id}
+      files={commit.files}
       diff={commit.diff}
       revision={commit.commit.id} />
   </div>

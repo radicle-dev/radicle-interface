@@ -547,9 +547,10 @@
       {#if view.name === "diff"}
         <div style:margin-top="1rem">
           <Changeset
-            projectId={project.id}
             {baseUrl}
+            projectId={project.id}
             revision={view.toCommit}
+            files={view.files}
             diff={view.diff} />
         </div>
       {:else if view.name === "activity"}
@@ -585,8 +586,9 @@
       {:else if view.name === "files"}
         <div style:margin-top="1rem">
           <Changeset
-            projectId={project.id}
             {baseUrl}
+            projectId={project.id}
+            revision={view.oid}
             files={view.files}
             diff={view.diff} />
         </div>
