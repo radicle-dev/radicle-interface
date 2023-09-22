@@ -91,7 +91,7 @@
       {projectId}
       {baseUrl}
       revision={revision ?? files[file.new.oid].lastCommit.id}
-      content={files[file.new.oid].content}
+      content={files[file.new.oid]?.content}
       filePath={file.path}
       fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
       headerBadgeCaption="added" />
@@ -101,7 +101,7 @@
       {projectId}
       {baseUrl}
       revision={revision ?? files[file.old.oid].lastCommit.id}
-      content={files[file.old.oid].content}
+      content={files[file.old.oid]?.content}
       filePath={file.path}
       fileDiff={{ ...file.diff, type: getFileType(file.diff, file.old) }}
       headerBadgeCaption="deleted" />
@@ -111,8 +111,8 @@
       {projectId}
       {baseUrl}
       revision={revision ?? files[file.new.oid].lastCommit.id}
-      oldContent={files[file.old.oid].content}
-      content={files[file.new.oid].content}
+      oldContent={files[file.old.oid]?.content}
+      content={files[file.new.oid]?.content}
       filePath={file.path}
       fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }} />
   {/each}

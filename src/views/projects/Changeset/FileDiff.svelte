@@ -11,7 +11,7 @@
 
   export let filePath: string;
   export let oldContent: string | undefined = undefined;
-  export let content: string;
+  export let content: string | undefined = undefined;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
   export let revision: string | undefined = undefined;
@@ -65,7 +65,8 @@
     let highlightedOldContent: string[] | undefined = undefined;
     let highlightedContent: string[] | undefined = undefined;
 
-    if (extension) {
+    console.log(content);
+    if (extension && content) {
       highlightedContent = toHtml(
         await Syntax.highlight(content, extension),
       ).split("\n");
