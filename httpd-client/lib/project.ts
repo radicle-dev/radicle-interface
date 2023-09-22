@@ -1,4 +1,8 @@
-import type { Commit, CommitHeader, Commits } from "./project/commit.js";
+import type {
+  CommitHeader,
+  CommitWithFiles,
+  Commits,
+} from "./project/commit.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
   Issue,
@@ -29,8 +33,9 @@ import {
 } from "zod";
 
 import {
+  commitBlobSchema,
   commitHeaderSchema,
-  commitSchema,
+  commitSchemaWithFiles,
   commitsSchema,
   diffSchema,
 } from "./project/commit.js";
@@ -85,15 +90,6 @@ const blobSchema = object({
 });
 
 export type Blob = z.infer<typeof blobSchema>;
-
-const commitBlobSchema = object({
-  binary: boolean(),
-  content: string(),
-  id: string(),
-  lastCommit: commitHeaderSchema,
-});
-
-export type CommitBlob = z.infer<typeof commitBlobSchema>;
 
 const treeEntrySchema = object({
   path: string(),
@@ -305,14 +301,14 @@ export class Client {
     id: string,
     sha: string,
     options?: RequestOptions,
-  ): Promise<Commit> {
+  ): Promise<CommitWithFiles> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `projects/${id}/commits/${sha}`,
         options,
       },
-      commitSchema,
+      commitSchemaWithFiles,
     );
   }
 

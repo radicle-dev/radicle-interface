@@ -133,7 +133,6 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-
         commit: Commit;
       };
     }

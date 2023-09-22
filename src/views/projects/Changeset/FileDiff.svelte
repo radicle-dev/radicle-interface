@@ -80,8 +80,7 @@
     return undefined;
   }
 
-  // TODO: this is a hacky way to get the root element of the component
-  let root: any;
+  let root: { new: string[]; old?: string[] } | undefined = undefined;
   void highlightContent().then(r => (root = r));
 
   function updateSelection() {

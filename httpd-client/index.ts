@@ -1,7 +1,6 @@
 import type { BaseUrl } from "./lib/fetcher.js";
 import type {
   Blob,
-  CommitBlob,
   Project,
   Remote,
   Tree,
@@ -10,6 +9,8 @@ import type {
 import type { Comment } from "./lib/project/comment.js";
 import type {
   Commit,
+  CommitBlob,
+  CommitWithFiles,
   CommitHeader,
   Diff,
   DiffContent,
@@ -41,6 +42,7 @@ export type {
   BaseUrl,
   Blob,
   CommitBlob,
+  CommitWithFiles,
   CodeLocation,
   Comment,
   Commit,

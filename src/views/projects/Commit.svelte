@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Commit, BaseUrl, Project } from "@httpd-client";
+  import type { CommitWithFiles, BaseUrl, Project } from "@httpd-client";
 
   import { formatCommit } from "@app/lib/utils";
 
@@ -10,7 +10,7 @@
   import Layout from "./Layout.svelte";
 
   export let baseUrl: BaseUrl;
-  export let commit: Commit;
+  export let commit: CommitWithFiles;
   export let project: Project;
 
   $: header = commit.commit;
@@ -72,6 +72,7 @@
     <Changeset
       projectId={project.id}
       {baseUrl}
+      files={commit.files}
       diff={commit.diff}
       revision={commit.commit.id} />
   </div>
