@@ -1,4 +1,4 @@
-import type { Commit, Commits } from "./project/commit.js";
+import type { Commit, CommitHeader, Commits } from "./project/commit.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
   Issue,
@@ -88,7 +88,8 @@ export type Blob = z.infer<typeof blobSchema>;
 
 const commitBlobSchema = object({
   binary: boolean(),
-  content: optional(string()),
+  content: string(),
+  id: string(),
   lastCommit: commitHeaderSchema,
 });
 

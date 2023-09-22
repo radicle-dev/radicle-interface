@@ -1,12 +1,17 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
   import type { BaseUrl, DiffContent, HunkLine } from "@httpd-client";
 
+  import { onDestroy, onMount } from "svelte";
+  import { toHtml } from "hast-util-to-html";
+
+  import * as Syntax from "@app/lib/syntax";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let filePath: string;
+  export let oldContent: string | undefined = undefined;
+  export let content: string;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
   export let revision: string | undefined = undefined;
@@ -54,6 +59,30 @@
       updateHash("");
     }
   }
+
+  async function highlightContent() {
+    const extension = filePath.split(".").pop();
+    let highlightedOldContent: string[] | undefined = undefined;
+    let highlightedContent: string[] | undefined = undefined;
+
+    if (extension) {
+      highlightedContent = toHtml(
+        await Syntax.highlight(content, extension),
+      ).split("\n");
+      if (oldContent) {
+        highlightedOldContent = toHtml(
+          await Syntax.highlight(oldContent, extension),
+        ).split("\n");
+        return { old: highlightedOldContent, new: highlightedContent };
+      }
+      return { new: highlightedContent };
+    }
+    return undefined;
+  }
+
+  // TODO: this is a hacky way to get the root element of the component
+  let root: any;
+  void highlightContent().then(r => (root = r));
 
   function updateSelection() {
     const fragment = window.location.hash.substring(1);
@@ -395,7 +424,19 @@
                   <td class="diff-line-type" data-line-type={line.type}>
                     {lineSign(line)}
                   </td>
-                  <td class="diff-line-content">{line.line}</td>
+                  <td class="diff-line-content">
+                    {#if root}
+                      {#if line.type === "addition"}
+                        {@html root.new[line.lineNo - 1]}
+                      {:else if line.type === "context"}
+                        {@html root.new[line.lineNoNew - 1]}
+                      {:else if line.type === "deletion" && root.old}
+                        {@html root.old[line.lineNo - 1]}
+                      {/if}
+                    {:else}
+                      {line.line}
+                    {/if}
+                  </td>
                 </tr>
               {/each}
             {/each}

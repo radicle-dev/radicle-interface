@@ -40,6 +40,7 @@ import { Fetcher } from "./lib/fetcher.js";
 export type {
   BaseUrl,
   Blob,
+  CommitBlob,
   CodeLocation,
   Comment,
   Commit,
