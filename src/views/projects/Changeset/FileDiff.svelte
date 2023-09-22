@@ -65,7 +65,6 @@
     let highlightedOldContent: string[] | undefined = undefined;
     let highlightedContent: string[] | undefined = undefined;
 
-    console.log(content);
     if (extension && content) {
       highlightedContent = toHtml(
         await Syntax.highlight(content, extension),
@@ -328,6 +327,7 @@
     padding: 0 0.75rem 0 0.5rem;
   }
   .diff-line-content {
+    color: unset !important;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     width: 100%;
