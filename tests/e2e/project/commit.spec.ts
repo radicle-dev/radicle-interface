@@ -103,6 +103,13 @@ test("copied file", async ({ page }) => {
   await expect(page.getByText("copied", { exact: true })).toBeVisible();
 });
 
+test("binary file detection in diffs", async ({ page }) => {
+  await page.goto(
+    `${sourceBrowsingUrl}/commits/335dd6dc89b535a4a31e9422c803199bb6b0a09a`,
+  );
+  await expect(page.getByText("Binary file")).toBeVisible();
+});
+
 test("navigation to source tree at specific revision", async ({ page }) => {
   await page.goto(
     `${sourceBrowsingUrl}/commits/0801aceeab500033f8d608778218657bd626ef73`,

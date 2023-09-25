@@ -13,6 +13,7 @@ import type {
   CommitHeader,
   Diff,
   DiffContent,
+  DiffFile,
   HunkLine,
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
@@ -46,6 +47,7 @@ export type {
   CommitHeader,
   Diff,
   DiffContent,
+  DiffFile,
   DiffResponse,
   HunkLine,
   Issue,

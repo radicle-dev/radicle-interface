@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, CommitBlob, Diff } from "@httpd-client";
+  import type {
+    BaseUrl,
+    Diff,
+    CommitBlob,
+    DiffContent,
+    DiffFile,
+  } from "@httpd-client";
 
   import { pluralize } from "@app/lib/pluralize";
 
@@ -42,6 +48,15 @@
     }
     return s.join(", ");
   };
+
+  // Since libgit2 optimizes around not loading the content, when no content callbacks are configured,
+  // and we don't want to loop over all diffs in radicle-surf to get a correct answer.
+  // We assume that a `blobExecutable` file with no hunks is a binary file.
+  function getFileType(diff: DiffContent, file: DiffFile): DiffContent["type"] {
+    return file.mode === "blobExecutable" && diff.hunks.length === 0
+      ? "binary"
+      : diff.type;
+  }
 </script>
 
 <style>
@@ -77,7 +92,7 @@
       {baseUrl}
       revision={revision ?? files[file.new.oid].lastCommit.id}
       filePath={file.path}
-      fileDiff={file.diff}
+      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
       headerBadgeCaption="added" />
   {/each}
   {#each diff.deleted as file}
@@ -86,7 +101,7 @@
       {baseUrl}
       revision={revision ?? files[file.old.oid].lastCommit.id}
       filePath={file.path}
-      fileDiff={file.diff}
+      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.old) }}
       headerBadgeCaption="deleted" />
   {/each}
   {#each diff.modified as file}
@@ -95,7 +110,7 @@
       {baseUrl}
       revision={revision ?? files[file.new.oid].lastCommit.id}
       filePath={file.path}
-      fileDiff={file.diff} />
+      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }} />
   {/each}
   {#each diff.moved as file}
     {#if file.diff}

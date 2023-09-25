@@ -1,5 +1,14 @@
 import type { z } from "zod";
-export type { Commits, HunkLine, Commit, Diff, CommitHeader, DiffContent };
+export type {
+  Commits,
+  HunkLine,
+  Hunks,
+  Commit,
+  Diff,
+  CommitHeader,
+  DiffFile,
+  DiffContent,
+};
 
 import { array, literal, number, object, optional, string, union } from "zod";
 export { commitHeaderSchema, diffSchema, commitSchema, commitsSchema };
@@ -36,6 +45,8 @@ const deletionHunkLineSchema = object({
   type: literal("deletion"),
 });
 
+type DiffFile = z.infer<typeof diffFileSchema>;
+
 const diffFileSchema = object({
   oid: string(),
   mode: union([
@@ -63,6 +74,8 @@ const hunkLineSchema = union([
   deletionHunkLineSchema,
   contextHunkLineSchema,
 ]);
+
+type Hunks = z.infer<typeof changesetHunkSchema>;
 
 const changesetHunkSchema = object({
   header: string(),
