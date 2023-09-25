@@ -5,9 +5,9 @@ import type {
 import type {
   BaseUrl,
   Blob,
-  Commit,
   CommitBlob,
   CommitHeader,
+  CommitWithFiles,
   Diff,
   Issue,
   IssueState,
@@ -133,7 +133,7 @@ export type ProjectLoadedRoute =
       params: {
         baseUrl: BaseUrl;
         project: Project;
-        commit: Commit;
+        commit: CommitWithFiles;
       };
     }
   | {
