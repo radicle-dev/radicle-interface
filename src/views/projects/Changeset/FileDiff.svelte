@@ -23,9 +23,11 @@
     | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let projectId: string;
+  export let visible: boolean = false;
 
   let collapsed = false;
   let selection: Selection | undefined = undefined;
+  let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
 
   onMount(() => {
     window.addEventListener("click", deselectHandler);
@@ -43,6 +45,10 @@
         ?.scrollIntoView();
     }
   });
+
+  $: if (visible) {
+    void highlightContent().then(output => (highlighting = output));
+  }
 
   onDestroy(() => {
     window.removeEventListener("click", deselectHandler);
@@ -62,26 +68,21 @@
 
   async function highlightContent() {
     const extension = filePath.split(".").pop();
-    let highlightedOldContent: string[] | undefined = undefined;
-    let highlightedContent: string[] | undefined = undefined;
-
-    if (extension && content) {
-      highlightedContent = toHtml(
-        await Syntax.highlight(content, extension),
-      ).split("\n");
+    const highlighted: { new?: string[]; old?: string[] } = {};
+    if (extension) {
+      if (content) {
+        highlighted["new"] = toHtml(
+          await Syntax.highlight(content, extension),
+        ).split("\n");
+      }
       if (oldContent) {
-        highlightedOldContent = toHtml(
+        highlighted["old"] = toHtml(
           await Syntax.highlight(oldContent, extension),
         ).split("\n");
-        return { old: highlightedOldContent, new: highlightedContent };
       }
-      return { new: highlightedContent };
     }
-    return undefined;
+    return Object.entries(highlighted).length > 0 ? highlighted : undefined;
   }
-
-  let root: { new: string[]; old?: string[] } | undefined = undefined;
-  void highlightContent().then(r => (root = r));
 
   function updateSelection() {
     const fragment = window.location.hash.substring(1);
@@ -425,13 +426,13 @@
                     {lineSign(line)}
                   </td>
                   <td class="diff-line-content">
-                    {#if root}
-                      {#if line.type === "addition"}
-                        {@html root.new[line.lineNo - 1]}
-                      {:else if line.type === "context"}
-                        {@html root.new[line.lineNoNew - 1]}
-                      {:else if line.type === "deletion" && root.old}
-                        {@html root.old[line.lineNo - 1]}
+                    {#if highlighting}
+                      {#if line.type === "addition" && highlighting.new}
+                        {@html highlighting.new[line.lineNo - 1]}
+                      {:else if line.type === "context" && highlighting.new}
+                        {@html highlighting.new[line.lineNoNew - 1]}
+                      {:else if line.type === "deletion" && highlighting.old}
+                        {@html highlighting.old[line.lineNo - 1]}
                       {/if}
                     {:else}
                       {line.line}

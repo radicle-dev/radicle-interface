@@ -11,6 +11,7 @@
 
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
+  import Observer, { intersection } from "@app/components/Observer.svelte";
 
   export let diff: Diff;
   // This only is needed in commit view where we have a useful revision.
@@ -86,62 +87,77 @@
   </span>
 </div>
 <div class="diff-listing">
-  {#each diff.added as file}
-    <FileDiff
-      {projectId}
-      {baseUrl}
-      revision={revision ?? files[file.new.oid].lastCommit.id}
-      content={files[file.new.oid]?.content}
-      filePath={file.path}
-      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
-      headerBadgeCaption="added" />
-  {/each}
-  {#each diff.deleted as file}
-    <FileDiff
-      {projectId}
-      {baseUrl}
-      revision={revision ?? files[file.old.oid].lastCommit.id}
-      content={files[file.old.oid]?.content}
-      filePath={file.path}
-      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.old) }}
-      headerBadgeCaption="deleted" />
-  {/each}
-  {#each diff.modified as file}
-    <FileDiff
-      {projectId}
-      {baseUrl}
-      revision={revision ?? files[file.new.oid].lastCommit.id}
-      oldContent={files[file.old.oid]?.content}
-      content={files[file.new.oid]?.content}
-      filePath={file.path}
-      fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }} />
-  {/each}
-  {#each diff.moved as file}
-    {#if file.diff}
-      <FileDiff
-        {projectId}
-        {baseUrl}
-        {revision}
-        content=""
-        filePath={file.newPath}
-        oldFilePath={file.oldPath}
-        fileDiff={file.diff}
-        headerBadgeCaption="moved" />
-    {:else}
+  <Observer let:filesVisibility let:observer>
+    {#each diff.added as file}
+      <div use:intersection={observer} id={"observer:" + file.path}>
+        <FileDiff
+          {projectId}
+          {baseUrl}
+          {revision}
+          visible={filesVisibility.has(file.path)}
+          content={files[file.new.oid]?.content}
+          filePath={file.path}
+          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
+          headerBadgeCaption="added" />
+      </div>
+    {/each}
+    {#each diff.deleted as file}
+      <div use:intersection={observer} id={"observer:" + file.path}>
+        <FileDiff
+          {projectId}
+          {baseUrl}
+          {revision}
+          visible={filesVisibility.has(file.path)}
+          oldContent={files[file.old.oid]?.content}
+          filePath={file.path}
+          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.old) }}
+          headerBadgeCaption="deleted" />
+      </div>
+    {/each}
+    {#each diff.modified as file}
+      <div use:intersection={observer} id={"observer:" + file.path}>
+        <FileDiff
+          {projectId}
+          {baseUrl}
+          {revision}
+          visible={filesVisibility.has(file.path)}
+          oldContent={files[file.old.oid]?.content}
+          content={files[file.new.oid]?.content}
+          filePath={file.path}
+          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }} />
+      </div>
+    {/each}
+    {#each diff.moved as file}
+      {#if file.diff}
+        <div use:intersection={observer} id={"observer:" + file.newPath}>
+          <FileDiff
+            {projectId}
+            {baseUrl}
+            {revision}
+            content=""
+            visible={filesVisibility.has(file.newPath)}
+            filePath={file.newPath}
+            oldFilePath={file.oldPath}
+            fileDiff={file.diff}
+            headerBadgeCaption="moved" />
+        </div>
+      {:else}
+        <FileLocationChange
+          {projectId}
+          {baseUrl}
+          {revision}
+          newPath={file.newPath}
+          oldPath={file.oldPath}
+          mode="moved" />
+      {/if}
+    {/each}
+    {#each diff.copied as file}
       <FileLocationChange
         {projectId}
         {baseUrl}
         newPath={file.newPath}
         oldPath={file.oldPath}
-        mode="moved" />
-    {/if}
-  {/each}
-  {#each diff.copied as file}
-    <FileLocationChange
-      {projectId}
-      {baseUrl}
-      newPath={file.newPath}
-      oldPath={file.oldPath}
-      mode="copied" />
-  {/each}
+        mode="copied" />
+    {/each}
+  </Observer>
 </div>
