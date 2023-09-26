@@ -1,8 +1,4 @@
-import type {
-  CommitHeader,
-  CommitWithFiles,
-  Commits,
-} from "./project/commit.js";
+import type { CommitWithFiles, Commits } from "./project/commit.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
   Issue,

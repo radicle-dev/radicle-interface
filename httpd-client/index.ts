@@ -41,7 +41,6 @@ import { Fetcher } from "./lib/fetcher.js";
 export type {
   BaseUrl,
   Blob,
-  CommitBlob,
   CommitWithFiles,
   CodeLocation,
   Comment,
