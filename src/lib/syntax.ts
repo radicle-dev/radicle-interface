@@ -1,14 +1,13 @@
-import type { Root } from "@wooorm/starry-night";
-import type { ElementContent } from "hast";
+import type { ElementContent, Root } from "hast";
 
 import onigurumaWASMUrl from "vscode-oniguruma/release/onig.wasm?url";
-import sourceAsciiDoc from "@wooorm/starry-night/lang/text.html.asciidoc";
-import sourceDockerfile from "@wooorm/starry-night/lang/source.dockerfile";
-import sourceErlang from "@wooorm/starry-night/lang/source.erlang.js";
-import sourceSolidity from "@wooorm/starry-night/lang/source.solidity.js";
-import sourceSvelte from "@wooorm/starry-night/lang/source.svelte.js";
-import sourceToml from "@wooorm/starry-night/lang/source.toml";
-import sourceTsx from "@wooorm/starry-night/lang/source.tsx";
+import sourceAsciiDoc from "@wooorm/starry-night/text.html.asciidoc";
+import sourceDockerfile from "@wooorm/starry-night/source.dockerfile";
+import sourceErlang from "@wooorm/starry-night/source.erlang";
+import sourceSolidity from "@wooorm/starry-night/source.solidity";
+import sourceSvelte from "@wooorm/starry-night/source.svelte";
+import sourceToml from "@wooorm/starry-night/source.toml";
+import sourceTsx from "@wooorm/starry-night/source.tsx";
 import { createStarryNight, common } from "@wooorm/starry-night";
 
 export { type Root };

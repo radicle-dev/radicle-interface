@@ -4,6 +4,7 @@
 // with Radicle Linking Exception. For full terms see the included
 // LICENSE file.
 
+//@ts-expect-error the typescript bindings are out of date.
 import * as Bacon from "baconjs";
 
 // A task executor that runs only one task concurrently. If a new task
