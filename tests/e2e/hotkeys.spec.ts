@@ -4,6 +4,7 @@ import { test, expect } from "@tests/support/fixtures.js";
 test("global hotkeys", async ({ page }) => {
   await page.goto("/");
   await page.locator("body").press(`/`);
+  await expect(page.locator(".search.expanded")).toBeVisible();
   // Delaying the input speed a bit to imitate a real user.
   await page.keyboard.type("searchquery", { delay: 100 });
 
