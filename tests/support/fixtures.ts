@@ -411,10 +411,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
   );
   const { stdout: commentIssueOne } = await peer.rad(
     [
+      "issue",
       "comment",
       issueOne,
       "--message",
       "This is a multiline comment\n\nWith some more text.",
+      "--quiet",
     ],
     createOptions(projectFolder, 2),
   );
@@ -426,12 +428,14 @@ export async function createCobsFixture(peer: RadiclePeer) {
   );
   const { stdout: replyIssueOne } = await peer.rad(
     [
+      "issue",
       "comment",
       issueOne,
       "--message",
       "This is a reply, to a first comment.",
       "--reply-to",
       commentIssueOne,
+      "--quiet",
     ],
     createOptions(projectFolder, 3),
   );
@@ -443,10 +447,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
   );
   await peer.rad(
     [
+      "issue",
       "comment",
       issueOne,
       "--message",
       "A root level comment after a reply, for margins sake.",
+      "--quiet",
     ],
     createOptions(projectFolder, 4),
   );
@@ -484,43 +490,63 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   const { stdout: commentPatchOne } = await peer.rad(
-    ["comment", patchOne, "--message", "I'll review the patch"],
+    [
+      "patch",
+      "comment",
+      patchOne,
+      "--message",
+      "I'll review the patch",
+      "--quiet",
+    ],
     createOptions(projectFolder, 1),
   );
   await peer.rad(
     [
+      "patch",
       "comment",
       patchOne,
       "--message",
       "Thanks for that!",
       "--reply-to",
       commentPatchOne,
+      "--quiet",
     ],
     createOptions(projectFolder, 2),
   );
   await peer.rad(
     [
+      "patch",
       "comment",
       patchOne,
       "--message",
       "Yeah no problem!",
       "--reply-to",
       commentPatchOne,
+      "--quiet",
     ],
     createOptions(projectFolder, 3),
   );
   const { stdout: commentTwo } = await peer.rad(
-    ["comment", patchOne, "--message", "Looking good so far"],
+    [
+      "patch",
+      "comment",
+      patchOne,
+      "--message",
+      "Looking good so far",
+      "--quiet",
+    ],
     createOptions(projectFolder, 4),
   );
   await peer.rad(
     [
+      "patch",
       "comment",
       patchOne,
       "--message",
       "Thanks again!",
       "--reply-to",
       commentTwo,
+      "--quiet",
     ],
     createOptions(projectFolder, 5),
   );
