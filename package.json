@@ -61,7 +61,7 @@
     "hast-util-to-html": "^9.0.0",
     "lodash": "^4.17.21",
     "marked": "^9.0.3",
-    "marked-katex-extension": "^3.0.6",
+    "marked-katex-extension": "^4.0.0",
     "marked-linkify-it": "^3.1.4",
     "md5": "^2.3.0",
     "plausible-tracker": "^0.3.8",
