@@ -1,11 +1,5 @@
 name: check-e2e
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   check-e2e:

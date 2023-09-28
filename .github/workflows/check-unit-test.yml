@@ -1,11 +1,5 @@
 name: check-unit-test
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   check-unit-test:

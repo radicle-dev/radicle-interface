@@ -1,11 +1,5 @@
 name: check-visual
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   generate-visual-diffs:
@@ -65,7 +59,7 @@ jobs:
           if [ ${{ github.ref }} = "refs/heads/master" ]; then
             npm run test:e2e -- --project visual --update-snapshots || true;
           else
-            npm run test:e2e -- --project visual || true;
+            npm run test:e2e -- --project visual;
           fi
 
       # We don't care about logs in visual snapshot tests, only the images.
@@ -94,39 +88,3 @@ jobs:
           else
             echo "present=false" >> $GITHUB_OUTPUT
           fi
-
-      - name: Find Comment
-        if: github.ref != 'refs/heads/master'
-        uses: peter-evans/find-comment@v2
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: "**Visual diff results for latest changes**"
-
-      - name: Create or update comment
-        if: github.ref != 'refs/heads/master' && steps.check_artifacts.outputs.present == 'false'
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            **Visual diff results for latest changes**
-
-              ✅ There are no visual differences between `master` and this branch.
-          edit-mode: replace
-
-      - name: Create or update comment
-        if: github.ref != 'refs/heads/master' && steps.check_artifacts.outputs.present == 'true'
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            **Visual diff results for latest changes**
-
-            ⚠️ There are visual differences between `master` and this branch.
-            👉 [Latest diff snapshots](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-            - [ ] The visual changes were intentional.
-
-          edit-mode: replace
