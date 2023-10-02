@@ -50,6 +50,7 @@
     height: 3rem;
   }
   .card-body {
+    word-wrap: break-word;
     font-size: var(--font-size-small);
     padding: 0 1rem 0.7rem 1rem;
   }
