@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { EmbedWithOid } from "@app/lib/file";
+
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { afterUpdate } from "svelte";
@@ -15,7 +17,7 @@
     canonicalize,
     isCommit,
   } from "@app/lib/utils";
-  import { mimes, type Embed } from "@app/lib/file";
+  import { mimes } from "@app/lib/file";
 
   export let content: string;
   // If present, resolve all relative links with respect to this URL
@@ -24,7 +26,7 @@
   export let rawPath: string | undefined = undefined;
   // If present, means we are in a preview context,
   // use this for image previews instead of /raw URLs.
-  export let embeds: Embed[] | undefined = undefined;
+  export let embeds: EmbedWithOid[] | undefined = undefined;
 
   $: doc = matter(content);
   $: frontMatter = Object.entries(doc.data).filter(

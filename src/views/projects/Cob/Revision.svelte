@@ -385,9 +385,9 @@
         {#if element.type === "thread"}
           <div class="connector" />
           <Thread
-            enableAttachments={false}
             rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             thread={element.inner}
+            on:editComment
             on:react
             on:reply />
         {:else if element.type === "merge"}

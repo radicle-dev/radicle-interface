@@ -6,12 +6,12 @@
   import * as utils from "@app/lib/utils";
 
   import CommentComponent from "@app/components/Comment.svelte";
-  import CommentTextarea from "./CommentTextarea.svelte";
+  import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import IconSmall from "./IconSmall.svelte";
 
   export let thread: { root: Comment; replies: Comment[] };
   export let rawPath: string;
-  export let enableAttachments: boolean;
+  export let enableAttachments: boolean = false;
 
   async function toggleReply() {
     // This tick allows the DOM to update before scrolling.
@@ -28,6 +28,7 @@
       embeds: { name: string; content: string }[];
       body: string;
     };
+    editComment: { id: string; body: string };
     react: { nids: string[]; commentId: string | undefined; reaction: string };
     cancel: never;
   }>();
@@ -70,7 +71,10 @@
       authorAlias={root.author.alias}
       reactions={root.reactions}
       timestamp={root.timestamp}
+      disableEdit={root.embeds.length > 0}
       body={root.body}
+      on:edit={event =>
+        dispatch("editComment", { id: root.id, body: event.detail })}
       on:react>
       <IconSmall name="chat" slot="icon" />
     </CommentComponent>
@@ -88,14 +92,17 @@
           isLastReply={replies[replies.length - 1] === reply}
           reactions={reply.reactions}
           timestamp={reply.timestamp}
+          disableEdit={reply.embeds.length > 0}
           body={reply.body}
+          on:edit={event =>
+            dispatch("editComment", { id: reply.id, body: event.detail })}
           on:react />
       {/each}
     </div>
   {/if}
   {#if $httpdStore.state === "authenticated"}
     <div id={`reply-${root.id}`} class="reply">
-      <CommentTextarea
+      <CommentToggleInput
         inline
         placeholder="Reply to comment"
         on:click={toggleReply}

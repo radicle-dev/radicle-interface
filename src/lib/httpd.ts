@@ -3,6 +3,7 @@ import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
+import { isLocal } from "@app/lib/utils";
 
 export interface Session {
   id: string;
@@ -23,6 +24,13 @@ const HTTPD_CUSTOM_PORT_KEY = "httpdCustomPort";
 
 const store = writable<HttpdState>({ state: "stopped" });
 export const httpdStore = derived(store, s => s);
+export const authenticated = derived(store, s =>
+  s.state === "authenticated" ? s : undefined,
+);
+export const authenticatedLocal = derived(
+  store,
+  s => (hostname: string) => s.state === "authenticated" && isLocal(hostname),
+);
 
 export const api = new HttpdClient({
   hostname: "127.0.0.1",

@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Embed } from "@app/lib/file";
+  import type { Embed, EmbedWithOid } from "@app/lib/file";
 
   import { createEventDispatcher } from "svelte";
 
@@ -11,31 +11,34 @@
 
   import Button from "./Button.svelte";
   import IconSmall from "./IconSmall.svelte";
+  import Loading from "./Loading.svelte";
   import Markdown from "./Markdown.svelte";
   import Radio from "./Radio.svelte";
   import Textarea from "./Textarea.svelte";
 
   export let enableAttachments: boolean = false;
   export let placeholder: string = "Leave your comment";
+  export let submitCaption: string = "Comment";
   export let focus: boolean = false;
   export let inline: boolean = false;
+  export let body: string = "";
+  export let submitInProgress: boolean = false;
 
-  let commentBody: string = "";
-  let active: boolean = false;
   let preview: boolean = false;
-  let newEmbeds: Embed[] = [];
+  let newEmbeds: EmbedWithOid[] = [];
   let selectionStart = 0;
   let selectionEnd = 0;
 
   const dispatch = createEventDispatcher<{
     submit: { comment: string; embeds: Embed[] };
+    close: null;
     click: null;
   }>();
 
   function submit() {
-    dispatch("submit", { comment: commentBody, embeds: newEmbeds });
+    dispatch("submit", { comment: body, embeds: newEmbeds });
+    preview = false;
     newEmbeds = [];
-    active = false;
   }
 
   const MAX_BLOB_SIZE = 4_194_304;
@@ -73,9 +76,9 @@
             },
           ];
           const embedText = `![${embed.name}](${embed.oid})\n`;
-          commentBody = commentBody
+          body = body
             .slice(0, selectionStart)
-            .concat(embedText, commentBody.slice(selectionEnd));
+            .concat(embedText, body.slice(selectionEnd));
           selectionStart += embedText.length;
           selectionEnd = selectionStart;
         }),
@@ -93,6 +96,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    width: 100%;
   }
   .inline {
     border: 0;
@@ -120,90 +124,71 @@
     margin-left: 1px;
     margin-top: 1px;
   }
-  .inactive {
-    box-shadow: 0 0 0 1px var(--color-border-hint);
-    border-radius: var(--border-radius-small);
-    padding: 0.5rem 0.75rem;
-    background-color: var(--color-background-dip);
-    font-size: var(--font-size-small);
-    color: var(--color-fill-gray);
-    cursor: text;
-  }
-  .inactive:hover {
-    box-shadow: 0 0 0 1px var(--color-border-default);
-  }
 </style>
 
-{#if active}
-  <div class="comment-section" class:inline>
-    <Radio>
+<div class="comment-section" class:inline>
+  <Radio>
+    <Button
+      styleBorderRadius="0"
+      variant={!preview ? "secondary" : "gray"}
+      on:click={() => {
+        preview = false;
+      }}>
+      <IconSmall name="edit" />
+      Edit
+    </Button>
+    <Button
+      styleBorderRadius="0"
+      disabled={body === ""}
+      variant={preview ? "secondary" : "gray"}
+      on:click={() => {
+        preview = true;
+      }}>
+      <IconSmall name="eye-open" />
+      Preview
+    </Button>
+  </Radio>
+  {#if preview}
+    <div class="preview">
+      <Markdown content={body} embeds={newEmbeds} />
+    </div>
+  {:else}
+    <Textarea
+      on:drop={handleFileDrop}
+      bind:selectionEnd
+      bind:selectionStart
+      {focus}
+      on:submit={submit}
+      bind:value={body}
+      {placeholder} />
+  {/if}
+  <div class="actions">
+    {#if !preview}
+      <div class="caption">
+        Markdown supported. {#if enableAttachments}Drop attachments into the
+          text area.{/if} Press {utils.isMac() ? "⌘" : "ctrl"}↵ to submit.
+      </div>
+    {/if}
+    <div class="buttons">
       <Button
-        styleBorderRadius="0"
-        variant={!preview ? "secondary" : "gray"}
+        disabled={submitInProgress}
+        variant="outline"
         on:click={() => {
           preview = false;
+          dispatch("close");
         }}>
-        <IconSmall name="edit" />
-        Edit
+        Cancel
       </Button>
       <Button
-        styleBorderRadius="0"
-        disabled={commentBody === ""}
-        variant={preview ? "secondary" : "gray"}
-        on:click={() => {
-          preview = true;
-        }}>
-        <IconSmall name="eye-open" />
-        Preview
+        variant="secondary"
+        disabled={!body || submitInProgress}
+        on:click={submit}>
+        {#if submitInProgress}
+          <Loading small noDelay />
+        {:else}
+          {submitCaption}
+        {/if}
       </Button>
-    </Radio>
-    {#if preview}
-      <div class="preview">
-        <Markdown content={commentBody} embeds={newEmbeds} />
-      </div>
-    {:else}
-      <Textarea
-        on:drop={handleFileDrop}
-        bind:selectionEnd
-        bind:selectionStart
-        {focus}
-        on:submit={submit}
-        bind:value={commentBody}
-        {placeholder} />
-    {/if}
-    <div class="actions">
-      {#if !preview}
-        <div class="caption">
-          Markdown supported. {#if enableAttachments}Drop attachments into the
-            text area.{/if} Press {utils.isMac() ? "⌘" : "ctrl"}↵ to submit.
-        </div>
-      {/if}
-      <div class="buttons">
-        <Button
-          variant="outline"
-          on:click={() => {
-            preview = false;
-            active = false;
-          }}>
-          Cancel
-        </Button>
-        <Button variant="secondary" disabled={!commentBody} on:click={submit}>
-          Comment
-        </Button>
-      </div>
     </div>
   </div>
-{:else}
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    class="inactive"
-    role="button"
-    tabindex="0"
-    on:click={() => {
-      commentBody = "";
-      active = true;
-      dispatch("click");
-    }}>
-    {placeholder}
-  </div>
-{/if}
+</div>

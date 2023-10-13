@@ -115,7 +115,7 @@ test("navigate line numbers", async ({ page }) => {
   // Check that we go back to the Markdown view when navigating to a different
   // file.
   await page.getByRole("link", { name: "footnotes.md" }).click();
-  await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
+  await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
     /secondary/,
   );
 });

@@ -1,3 +1,4 @@
+import type { Embed } from "@app/lib/file.js";
 import type { Comment } from "./comment.js";
 import type { ZodSchema, z } from "zod";
 
@@ -162,12 +163,15 @@ export type PatchUpdateAction =
       review: string;
       body: string;
       location: CodeLocation;
+      replyTo?: string;
+      embeds?: Embed[];
     }
   | {
       type: "review.comment.edit";
       review: string;
       comment: string;
       body: string;
+      embeds: Embed[];
     }
   | {
       type: "review.comment.redact";
@@ -188,6 +192,8 @@ export type PatchUpdateAction =
       type: "revision.comment";
       revision: string;
       body: string;
+      embeds?: Embed[];
+      location?: CodeLocation;
       replyTo?: string;
     }
   | {
@@ -195,6 +201,7 @@ export type PatchUpdateAction =
       revision: string;
       comment: string;
       body: string;
+      embeds: Embed[];
     }
   | {
       type: "revision.comment.redact";

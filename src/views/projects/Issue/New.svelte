@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { BaseUrl, Project } from "@httpd-client";
+  import type { EmbedWithOid } from "@app/lib/file";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
-  import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { embed, type Embed } from "@app/lib/file";
-  import { httpdStore } from "@app/lib/httpd";
+  import { embed } from "@app/lib/file";
+  import { authenticatedLocal, httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
@@ -25,17 +25,10 @@
   export let project: Project;
   export let tracking: boolean;
 
-  let newEmbeds: Embed[] = [];
+  let newEmbeds: EmbedWithOid[] = [];
+  let preview: boolean = false;
   let selectionStart = 0;
   let selectionEnd = 0;
-  let preview: boolean = false;
-  let action: "create" | "view";
-  $: action =
-    $httpdStore.state === "authenticated" &&
-    utils.isLocal(baseUrl.hostname) &&
-    !preview
-      ? "create"
-      : "view";
 
   let issueTitle = "";
   let issueText = "";
@@ -155,19 +148,23 @@
       {@const session = $httpdStore.session}
       <div class="form">
         <div class="editor">
-          <CobHeader {action} bind:title={issueTitle}>
+          <CobHeader
+            mode="readWrite"
+            {preview}
+            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+            bind:title={issueTitle}>
             <svelte:fragment slot="icon">
               <div class="open">
                 <Icon name="issue" />
               </div>
             </svelte:fragment>
             <svelte:fragment slot="state">
-              {#if action === "view"}
+              {#if preview}
                 <Badge size="small" variant="positive">open</Badge>
               {/if}
             </svelte:fragment>
             <svelte:fragment slot="description">
-              {#if action === "create"}
+              {#if !preview}
                 <Textarea
                   bind:selectionStart
                   bind:selectionEnd
@@ -186,7 +183,7 @@
               {/if}
             </svelte:fragment>
             <div class="author" slot="author">
-              {#if action === "view"}
+              {#if preview}
                 opened by <NodeId
                   nodeId={$httpdStore.session.publicKey}
                   alias={$httpdStore.session.alias} /> now
@@ -211,11 +208,15 @@
         </div>
         <div class="metadata">
           <AssigneeInput
-            {action}
+            hideEditIcon
+            mode="readWrite"
+            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
             on:save={({ detail: updatedAssignees }) =>
               (assignees = updatedAssignees)} />
           <LabelInput
-            {action}
+            hideEditIcon
+            mode="readWrite"
+            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
             on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
         </div>
       </div>

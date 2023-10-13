@@ -36,6 +36,7 @@
 
 <script lang="ts">
   import type { BaseUrl, Patch, PatchUpdateAction } from "@httpd-client";
+  import type { Embed } from "@app/lib/file";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { Session } from "@app/lib/httpd";
@@ -46,27 +47,33 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { capitalize, isEqual } from "lodash";
-  import { httpdStore } from "@app/lib/httpd";
+  import {
+    authenticated,
+    authenticatedLocal,
+    httpdStore,
+  } from "@app/lib/httpd";
 
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
-  import CommentTextarea from "@app/components/CommentTextarea.svelte";
+  import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
+  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
 
@@ -84,10 +91,99 @@
     ["Convert to draft", { status: "draft" }],
   ];
 
+  async function editTitle({ detail: title }: CustomEvent<string>) {
+    if ($authenticated && title.trim().length > 0 && title !== patch.title) {
+      try {
+        saveTitleInProgress = true;
+        const status = await updatePatch(
+          project.id,
+          patch.id,
+          {
+            type: "edit",
+            title,
+            target: "delegates",
+          },
+          $authenticated.session,
+          api,
+        );
+        if (status === "success") {
+          patch = await api.project.getPatchById(project.id, patch.id);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: "Patch title editing failed",
+              subtitle: [
+                "There was an error while updating the issue.",
+                "Check your radicle-httpd logs for details.",
+              ],
+              error: {
+                message: error.message,
+                stack: error.stack,
+              },
+            },
+          });
+        }
+      } finally {
+        saveTitleInProgress = false;
+      }
+    }
+  }
+
+  async function editDescription({
+    detail: { comment: description },
+  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
+    if (
+      $authenticated &&
+      description.trim().length > 0 &&
+      description !== patch.title
+    ) {
+      try {
+        saveDescriptionInProgress = true;
+        const status = await updatePatch(
+          project.id,
+          patch.id,
+          {
+            type: "revision.edit",
+            revision: patch.id,
+            description,
+          },
+          $authenticated.session,
+          api,
+        );
+        if (status === "success") {
+          editingDescription = false;
+          patch = await api.project.getPatchById(project.id, patch.id);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: "Patch description editing failed",
+              subtitle: [
+                "There was an error while updating the issue.",
+                "Check your radicle-httpd logs for details.",
+              ],
+              error: {
+                message: error.message,
+                stack: error.stack,
+              },
+            },
+          });
+        }
+      } finally {
+        saveDescriptionInProgress = false;
+      }
+    }
+  }
+
   async function createReply({
     detail: reply,
   }: CustomEvent<{ id: string; body: string }>) {
-    if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
+    if ($authenticated && reply.body.trim().length > 0) {
       const status = await updatePatch(
         project.id,
         patch.id,
@@ -97,7 +193,7 @@
           body: reply.body,
           replyTo: reply.id,
         },
-        $httpdStore.session,
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -115,7 +211,7 @@
       reaction: string;
     }>,
   ) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       const status = await updatePatch(
         project.id,
         patch.id,
@@ -124,9 +220,11 @@
           revision: revisionId,
           comment: id,
           reaction,
-          active: nids.includes($httpdStore.session.publicKey) ? false : true,
+          active: nids.includes($authenticated.session.publicKey)
+            ? false
+            : true,
         },
-        $httpdStore.session,
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -135,15 +233,16 @@
     }
   }
   async function createComment(commentBody: string) {
-    if (
-      $httpdStore.state === "authenticated" &&
-      commentBody.trim().length > 0
-    ) {
+    if ($authenticated && commentBody.trim().length > 0) {
       const status = await updatePatch(
         project.id,
         patch.id,
-        { type: "revision.comment", body: commentBody, revision: revisionId },
-        $httpdStore.session,
+        {
+          type: "revision.comment",
+          body: commentBody,
+          revision: revisionId,
+        },
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -151,13 +250,37 @@
       }
     }
   }
+
+  async function editComment({
+    detail: { id, body },
+  }: CustomEvent<{ id: string; body: string }>) {
+    if ($authenticated && body.trim().length > 0) {
+      const status = await updatePatch(
+        project.id,
+        patch.id,
+        {
+          type: "revision.comment.edit",
+          comment: id,
+          body,
+          revision: revisionId,
+          embeds: [],
+        },
+        $authenticated.session,
+        api,
+      );
+      if (status === "success") {
+        patch = await api.project.getPatchById(project.id, patch.id);
+      }
+    }
+  }
+
   async function saveStatus({ detail: state }: CustomEvent<PatchState>) {
-    if ($httpdStore.state === "authenticated" && state.status !== "merged") {
+    if ($authenticated && state.status !== "merged") {
       const status = await updatePatch(
         project.id,
         patch.id,
         { type: "lifecycle", state },
-        $httpdStore.session,
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -170,22 +293,9 @@
       }
     }
   }
-  function badgeColor(status: string): ComponentProps<Badge>["variant"] {
-    if (status === "draft") {
-      return "foreground";
-    } else if (status === "open") {
-      return "positive";
-    } else if (status === "archived") {
-      return "caution";
-    } else if (status === "merged") {
-      return "primary";
-    } else {
-      return "foreground";
-    }
-  }
 
   async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       if (isEqual(patch.labels, labels)) {
         return;
       }
@@ -200,7 +310,7 @@
         project.id,
         revision,
         { type: "label", labels: labels },
-        $httpdStore.session,
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -237,11 +347,19 @@
     }
   }
 
-  $: action = (
-    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
-      ? "edit"
-      : "view"
-  ) as "edit" | "view";
+  function badgeColor(status: string): ComponentProps<Badge>["variant"] {
+    if (status === "draft") {
+      return "foreground";
+    } else if (status === "open") {
+      return "positive";
+    } else if (status === "archived") {
+      return "caution";
+    } else if (status === "merged") {
+      return "primary";
+    } else {
+      return "foreground";
+    }
+  }
 
   type Tab = "activity" | "changes";
 
@@ -292,6 +410,7 @@
     return patchReviews;
   }
 
+  let editingDescription = false;
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -299,6 +418,8 @@
     revisionId = view.revision;
   }
 
+  $: description = patch.revisions[0].description;
+  $: newDescription = description;
   $: patchReviews = computeReviews(patch);
   $: selectedItem = patch.state.status === "open" ? items[1] : items[0];
   $: timelineTuple = patch.revisions.map<
@@ -349,6 +470,9 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
+
+  let saveDescriptionInProgress = false;
+  let saveTitleInProgress = false;
 </script>
 
 <style>
@@ -417,6 +541,16 @@
   .review-reject {
     color: var(--color-foreground-red);
   }
+  .revision-description {
+    display: flex;
+    width: 100%;
+  }
+  .edit-buttons {
+    display: flex;
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
   .diff-button-range {
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-bold);
@@ -444,7 +578,12 @@
 <Layout {baseUrl} {project} {tracking} activeTab="patches">
   <div class="patch">
     <div>
-      <CobHeader id={patch.id} title={patch.title}>
+      <CobHeader
+        id={patch.id}
+        title={patch.title}
+        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        submitInProgress={saveTitleInProgress}
+        on:editTitle={editTitle}>
         <svelte:fragment slot="icon">
           <div
             class="state"
@@ -461,17 +600,36 @@
           </Badge>
         </svelte:fragment>
         <svelte:fragment slot="description">
-          {#if patch.revisions[0].description}
-            <Markdown
-              content={patch.revisions[0].description}
-              rawPath={utils.getRawBasePath(
-                project.id,
-                baseUrl,
-                patch.revisions[0].id,
-              )} />
-          {:else}
-            <span class="txt-missing">No description available</span>
-          {/if}
+          <div class="revision-description">
+            {#if $authenticatedLocal(baseUrl.hostname) && editingDescription}
+              <ExtendedTextarea
+                body={newDescription}
+                submitCaption="Save"
+                submitInProgress={saveDescriptionInProgress}
+                placeholder="Leave your description"
+                on:close={() => (editingDescription = false)}
+                on:submit={editDescription} />
+            {:else if description}
+              <Markdown
+                content={description}
+                rawPath={utils.getRawBasePath(
+                  project.id,
+                  baseUrl,
+                  patch.revisions[0].id,
+                )} />
+            {:else}
+              <span class="txt-missing">No description available</span>
+            {/if}
+            {#if $authenticatedLocal(baseUrl.hostname) && !editingDescription}
+              <div class="edit-buttons">
+                <IconButton
+                  title="edit description"
+                  on:click={() => (editingDescription = true)}>
+                  <IconSmall name={"edit"} />
+                </IconButton>
+              </div>
+            {/if}
+          </div>
         </svelte:fragment>
         <div class="author" slot="author">
           opened by <NodeId
@@ -610,6 +768,7 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
+            on:editComment={editComment}
             on:react={event => handleReaction(revisionId, event)}
             on:reply={createReply}
             patchId={patch.id}
@@ -619,7 +778,8 @@
             {#if index === patch.revisions.length - 1}
               {#if $httpdStore.state === "authenticated" && view.name === "activity"}
                 <div class="connector" />
-                <CommentTextarea
+                <CommentToggleInput
+                  placeholder="Leave your comment"
                   on:submit={async event => {
                     await createComment(event.detail.comment);
                   }} />
@@ -689,7 +849,10 @@
           {/each}
         </div>
       </div>
-      <LabelInput {action} labels={patch.labels} on:save={saveLabels} />
+      <LabelInput
+        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        labels={patch.labels}
+        on:save={saveLabels} />
     </div>
   </div>
 </Layout>

@@ -8,14 +8,15 @@
   import TextInput from "@app/components/TextInput.svelte";
   import IconButton from "@app/components/IconButton.svelte";
 
-  export let action: "create" | "edit" | "view" = "view";
+  export let locallyAuthenticated: boolean = false;
+  export let preview: boolean = false;
+  export let mode: "readWrite" | "readOnly" = "readOnly";
   export let id: string | undefined = undefined;
   export let title: string = "";
+  export let submitInProgress: boolean = false;
   const oldTitle = title;
 
   const dispatch = createEventDispatcher<{ editTitle: string }>();
-
-  $: editable = action === "create" ? true : false;
 </script>
 
 <style>
@@ -65,15 +66,15 @@
 
 <div class="header">
   <div class="summary">
-    {#if editable}
+    {#if locallyAuthenticated && !preview && mode === "readWrite"}
       <div><slot name="icon" /></div>
       <TextInput
         placeholder="Title"
         bind:value={title}
-        showKeyHint={action === "edit"}
+        showKeyHint={mode === "readWrite" && Boolean(id)}
         on:submit={() => {
-          if (action === "edit") {
-            editable = !editable;
+          if (mode === "readWrite") {
+            mode = "readOnly";
             dispatch("editTitle", title);
           }
         }} />
@@ -85,30 +86,34 @@
     {:else}
       <span class="txt-missing">No title</span>
     {/if}
-    {#if action === "edit"}
+    <!-- When creating a new COB id is undefined -->
+    {#if locallyAuthenticated && id}
       <div class="edit-buttons">
-        {#if editable}
+        {#if mode === "readWrite"}
           <IconButton
             title="save title"
+            loading={submitInProgress}
             on:click={() => {
-              editable = !editable;
+              mode = "readOnly";
               dispatch("editTitle", title);
             }}>
             <IconSmall name={"checkmark"} />
           </IconButton>
           <IconButton
             title="dismiss changes"
+            loading={submitInProgress}
             on:click={() => {
               title = oldTitle;
-              editable = !editable;
+              mode = "readOnly";
             }}>
             <IconSmall name={"cross"} />
           </IconButton>
         {:else}
           <IconButton
             title="edit title"
+            loading={submitInProgress}
             on:click={() => {
-              editable = !editable;
+              mode = "readWrite";
               dispatch("editTitle", title);
             }}>
             <IconSmall name={"edit"} />

@@ -1,29 +1,35 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, tick } from "svelte";
 
-  import { httpdStore } from "@app/lib/httpd";
+  import { authenticated } from "@app/lib/httpd";
   import * as utils from "@app/lib/utils";
 
+  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import NodeId from "./NodeId.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
-  import Textarea from "@app/components/Textarea.svelte";
 
   export let id: string | undefined = undefined;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
   export let body: string;
   export let reactions: [string, string][];
-  export let action: "create" | "view" = "view";
   export let caption = "commented";
   export let rawPath: string;
   export let timestamp: number;
   export let isReply: boolean = false;
   export let isLastReply: boolean = false;
+  //  TODO: Remove flag once `radicle-httpd` fixes embed editing
+  export let disableEdit: boolean = false;
+
+  let editInProgress = false;
 
   const dispatch = createEventDispatcher<{
     react: { nids: string[]; id: string; reaction: string };
+    edit: string;
   }>();
 
   $: groupedReactions = reactions?.reduce(
@@ -64,13 +70,18 @@
   }
   .timestamp {
     color: var(--color-fill-gray);
-    margin-left: auto;
     font-size: var(--font-size-small);
+  }
+  .header-right {
+    display: flex;
+    margin-left: auto;
+    gap: 0.5rem;
   }
   .card-body {
     word-wrap: break-word;
     font-size: var(--font-size-small);
     padding-left: 2rem;
+    padding-right: 2rem;
   }
   .actions {
     display: flex;
@@ -79,6 +90,10 @@
     gap: 0.5rem;
     padding-left: 2rem;
     height: 22px;
+  }
+  .edit-buttons {
+    display: flex;
+    gap: 0.25rem;
   }
   .reply .card-body,
   .reply .actions {
@@ -108,30 +123,50 @@
       </div>
       <NodeId nodeId={authorId} alias={authorAlias} />
       {caption}
-      <div class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
-        {utils.formatTimestamp(timestamp)}
+      <div class="header-right">
+        {#if id && $authenticated && !editInProgress && !disableEdit}
+          <div class="edit-buttons">
+            <IconButton
+              title="edit comment"
+              on:click={() => (editInProgress = true)}>
+              <IconSmall name={"edit"} />
+            </IconButton>
+          </div>
+        {/if}
+        <div class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
+          {utils.formatTimestamp(timestamp)}
+        </div>
       </div>
     </div>
   </div>
 
   <div class="card-body">
-    {#if action === "create"}
-      <Textarea
-        resizable
-        bind:value={body}
-        on:submit
-        placeholder="Leave a comment" />
+    {#if editInProgress}
+      <ExtendedTextarea
+        {body}
+        enableAttachments
+        submitCaption="Save"
+        placeholder="Leave your description"
+        on:submit={({ detail: { comment } }) => {
+          editInProgress = false;
+          dispatch("edit", comment);
+        }}
+        on:close={async () => {
+          body = body;
+          await tick();
+          editInProgress = false;
+        }} />
     {:else if body.trim() === ""}
       <span class="txt-missing">No description</span>
     {:else}
       <Markdown {rawPath} content={body} />
     {/if}
   </div>
-  {#if (id && $httpdStore.state === "authenticated") || (id && groupedReactions.size > 0)}
+  {#if (id && $authenticated) || (id && groupedReactions.size > 0)}
     <div class="actions">
-      {#if id && $httpdStore.state === "authenticated"}
+      {#if id && $authenticated}
         <ReactionSelector
-          nid={$httpdStore.session.publicKey}
+          nid={$authenticated.session.publicKey}
           reactions={groupedReactions}
           on:select={event => {
             if (id) {
@@ -141,7 +176,7 @@
       {/if}
       {#if id && groupedReactions.size > 0}
         <Reactions
-          clickable={$httpdStore.state === "authenticated"}
+          clickable={Boolean($authenticated)}
           reactions={groupedReactions}
           on:remove={event => {
             if (id) {

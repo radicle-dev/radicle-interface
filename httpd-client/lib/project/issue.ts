@@ -1,3 +1,4 @@
+import type { Embed } from "@app/lib/file.js";
 import type { Comment } from "./comment.js";
 import type { ZodSchema } from "zod";
 import { array, boolean, literal, object, string, union } from "zod";
@@ -59,10 +60,15 @@ export type IssueUpdateAction =
   | {
       type: "comment";
       body: string;
-      embeds: { name: string; content: string }[];
-      replyTo: string;
+      embeds?: Embed[];
+      replyTo?: string;
     }
-  | { type: "comment.edit"; id: string; body: string }
+  | {
+      type: "comment.edit";
+      id: string;
+      body: string;
+      embeds: Embed[];
+    }
   | { type: "comment.redact"; id: string }
   | {
       type: "comment.react";

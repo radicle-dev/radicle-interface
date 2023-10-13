@@ -8,8 +8,9 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let action: "create" | "edit" | "view" = "view";
-  export let editInProgress: boolean = false;
+  export let hideEditIcon: boolean = false;
+  export let mode: "readWrite" | "readOnly" = "readOnly";
+  export let locallyAuthenticated: boolean = false;
   export let labels: string[] = [];
 
   let updatedLabels: string[] = labels;
@@ -41,7 +42,7 @@
     if (valid && sanitizedValue) {
       updatedLabels = [...updatedLabels, sanitizedValue];
       inputValue = "";
-      if (action === "create") {
+      if (mode === "readWrite") {
         dispatch("save", updatedLabels);
       }
     }
@@ -49,7 +50,7 @@
 
   function removeLabel(label: string) {
     updatedLabels = updatedLabels.filter(x => x !== label);
-    if (action === "create") {
+    if (mode === "readWrite") {
       dispatch("save", updatedLabels);
     }
   }
@@ -81,14 +82,14 @@
 <div>
   <div class="metadata-section-header">
     <span>Labels</span>
-    {#if action === "edit"}
+    {#if locallyAuthenticated && !hideEditIcon}
       <div class="actions">
-        {#if editInProgress}
+        {#if mode === "readWrite"}
           <IconButton
             title="save labels"
             on:click={() => {
               dispatch("save", updatedLabels);
-              editInProgress = !editInProgress;
+              mode = "readOnly";
             }}>
             <IconSmall name="checkmark" />
           </IconButton>
@@ -97,16 +98,12 @@
             on:click={() => {
               updatedLabels = labels;
               inputValue = "";
-              editInProgress = !editInProgress;
+              mode = "readOnly";
             }}>
             <IconSmall name="cross" />
           </IconButton>
         {:else}
-          <IconButton
-            title="edit labels"
-            on:click={() => {
-              editInProgress = !editInProgress;
-            }}>
+          <IconButton title="edit labels" on:click={() => (mode = "readWrite")}>
             <IconSmall name="edit" />
           </IconButton>
         {/if}
@@ -114,7 +111,7 @@
     {/if}
   </div>
   <div class="metadata-section-body">
-    {#if editInProgress || action === "create"}
+    {#if locallyAuthenticated && mode === "readWrite"}
       {#each updatedLabels as label}
         <Badge variant="neutral">
           <div aria-label="chip" class="label">{label}</div>
@@ -135,7 +132,7 @@
       {/each}
     {/if}
   </div>
-  {#if editInProgress || action === "create"}
+  {#if locallyAuthenticated && mode === "readWrite"}
     <div style:margin-bottom="2rem" style:margin-top="1rem">
       <TextInput
         {valid}

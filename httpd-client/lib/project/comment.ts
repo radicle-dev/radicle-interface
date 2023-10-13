@@ -2,6 +2,7 @@ import type { z } from "zod";
 import { array, number, object, string, tuple } from "zod";
 
 export type Comment = z.infer<typeof commentSchema>;
+export type Embed = z.infer<typeof commentSchema>["embeds"][0];
 
 export const commentSchema = object({
   id: string(),

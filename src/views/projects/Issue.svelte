@@ -4,23 +4,26 @@
   import type { IssueUpdateAction } from "@httpd-client/lib/project/issue";
   import type { Session } from "@app/lib/httpd";
 
-  import { isEqual } from "lodash";
+  import { isEqual, uniqBy } from "lodash";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { ResponseError } from "@httpd-client/lib/fetcher";
-  import { httpdStore } from "@app/lib/httpd";
+  import { authenticated, authenticatedLocal } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Badge from "@app/components/Badge.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
-  import CommentTextarea from "@app/components/CommentTextarea.svelte";
+  import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
+  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
@@ -37,11 +40,6 @@
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
 
-  let action: "edit" | "view";
-  $: action =
-    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
-      ? "edit"
-      : "view";
   const items: [string, IssueState][] = [
     ["Reopen issue", { status: "open" }],
     ["Close issue as solved", { status: "closed", reason: "solved" }],
@@ -49,23 +47,18 @@
   ];
 
   async function createReply({
-    detail: reply,
+    detail: { body, embeds, id },
   }: CustomEvent<{
     id: string;
-    embeds: { name: string; content: string }[];
+    embeds: Embed[];
     body: string;
   }>) {
-    if ($httpdStore.state === "authenticated" && reply.body.trim().length > 0) {
+    if ($authenticated && body.trim().length > 0) {
       const status = await updateIssue(
         project.id,
         issue.id,
-        {
-          type: "comment",
-          body: reply.body,
-          embeds: reply.embeds,
-          replyTo: reply.id,
-        },
-        $httpdStore.session,
+        { type: "comment", body, embeds, replyTo: id },
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -74,22 +67,70 @@
     }
   }
 
-  async function createComment(body: string, embeds: Embed[]) {
-    if ($httpdStore.state === "authenticated" && body.trim().length > 0) {
+  async function createComment({
+    detail: { comment, embeds },
+  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
+    if ($authenticated && comment.trim().length > 0) {
       const status = await updateIssue(
         project.id,
         issue.id,
-        {
-          type: "comment",
-          body,
-          embeds: embeds,
-          replyTo: issue.id,
-        },
-        $httpdStore.session,
+        { type: "comment", body: comment, embeds, replyTo: issue.id },
+        $authenticated.session,
         api,
       );
       if (status === "success") {
         issue = await refreshIssue(project.id, issue, api);
+      }
+    }
+  }
+
+  async function editComment(id: string, body: string) {
+    if ($authenticated && body.trim().length > 0) {
+      try {
+        if (issue.id === id) {
+          saveDescriptionInProgress = true;
+        } else {
+          saveCommentInProgress = true;
+        }
+        const status = await updateIssue(
+          project.id,
+          issue.id,
+          {
+            type: "comment.edit",
+            id,
+            body,
+            embeds: embeds[id],
+          },
+          $authenticated.session,
+          api,
+        );
+        if (status === "success") {
+          issue = await refreshIssue(project.id, issue, api);
+        } else {
+          // Reassigning issue.discussion overwrites the changed comment in Comment
+          issue.discussion = issue.discussion;
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: "Issue comment editing failed",
+              subtitle: [
+                "There was an error while updating the issue.",
+                "Check your radicle-httpd logs for details.",
+              ],
+              error: {
+                message: error.message,
+                stack: error.stack,
+              },
+            },
+          });
+        }
+      } finally {
+        editingIssueDescription = false;
+        saveDescriptionInProgress = false;
+        saveCommentInProgress = false;
       }
     }
   }
@@ -103,7 +144,7 @@
     id: string;
     reaction: string;
   }) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       try {
         const status = await updateIssue(
           project.id,
@@ -112,9 +153,11 @@
             type: "comment.react",
             id,
             reaction,
-            active: nids.includes($httpdStore.session.publicKey) ? false : true,
+            active: nids.includes($authenticated.session.publicKey)
+              ? false
+              : true,
           },
-          $httpdStore.session,
+          $authenticated.session,
           api,
         );
         if (status === "success") {
@@ -127,22 +170,40 @@
   }
 
   async function editTitle({ detail: title }: CustomEvent<string>) {
-    if (
-      $httpdStore.state === "authenticated" &&
-      title.trim().length > 0 &&
-      title !== issue.title
-    ) {
-      const status = await updateIssue(
-        project.id,
-        issue.id,
-        { type: "edit", title },
-        $httpdStore.session,
-        api,
-      );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
+    if ($authenticated && title.trim().length > 0 && title !== issue.title) {
+      try {
+        saveTitleInProgress = true;
+        const status = await updateIssue(
+          project.id,
+          issue.id,
+          { type: "edit", title },
+          $authenticated.session,
+          api,
+        );
+        if (status === "success") {
+          issue = await refreshIssue(project.id, issue, api);
+        }
+        issue.title = issue.title;
+      } catch (error) {
+        if (error instanceof Error) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: "Issue title editing failed",
+              subtitle: [
+                "There was an error while updating the issue.",
+                "Check your radicle-httpd logs for details.",
+              ],
+              error: {
+                message: error.message,
+                stack: error.stack,
+              },
+            },
+          });
+        }
+      } finally {
+        saveTitleInProgress = false;
       }
-      issue.title = issue.title;
     } else {
       // Reassigning issue.title overwrites the invalid title in IssueHeader
       issue.title = issue.title;
@@ -150,39 +211,36 @@
   }
 
   async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       if (isEqual(issue.labels, labels)) {
         return;
       }
       const status = await updateIssue(
         project.id,
         issue.id,
-        {
-          type: "label",
-          labels: labels,
-        },
-        $httpdStore.session,
+        { type: "label", labels },
+        $authenticated.session,
         api,
       );
       if (status === "success") {
         issue = await refreshIssue(project.id, issue, api);
+      } else {
+        // Reassigning issue overwrites the label changes.
+        issue = issue;
       }
     }
   }
 
   async function saveAssignees({ detail: assignees }: CustomEvent<string[]>) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       if (isEqual(issue.assignees, assignees)) {
         return;
       }
       const status = await updateIssue(
         project.id,
         issue.id,
-        {
-          type: "assign",
-          assignees: assignees,
-        },
-        $httpdStore.session,
+        { type: "assign", assignees },
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -192,12 +250,12 @@
   }
 
   async function saveStatus({ detail: state }: CustomEvent<IssueState>) {
-    if ($httpdStore.state === "authenticated") {
+    if ($authenticated) {
       const status = await updateIssue(
         project.id,
         issue.id,
         { type: "lifecycle", state },
-        $httpdStore.session,
+        $authenticated.session,
         api,
       );
       if (status === "success") {
@@ -289,14 +347,16 @@
   }
 
   const issueDescription = issue.discussion[0];
+  let editingIssueDescription = false;
 
   $: embeds = issue.discussion.reduce(
     (acc, comment) => {
-      acc.push(...comment.embeds);
+      acc[comment.id] = comment.embeds;
       return acc;
     },
-    [] as { name: string; content: string }[],
+    {} as Record<string, Embed[]>,
   );
+  $: uniqueEmbeds = uniqBy(Object.values(embeds).flat(), "content");
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
     .filter(
@@ -316,6 +376,10 @@
     (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
     new Map<string, string[]>(),
   );
+
+  let saveDescriptionInProgress = false;
+  let saveTitleInProgress = false;
+  let saveCommentInProgress = false;
 </script>
 
 <style>
@@ -354,6 +418,12 @@
     height: 22px;
     margin-top: 1rem;
   }
+  .markdown {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
   .open {
     color: var(--color-fill-success);
   }
@@ -376,9 +446,10 @@
   <div class="issue">
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
       <CobHeader
-        {action}
+        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
         id={issue.id}
         title={issue.title}
+        submitInProgress={saveTitleInProgress}
         on:editTitle={editTitle}>
         <svelte:fragment slot="icon">
           <div
@@ -401,21 +472,47 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          <Markdown
-            content={issue.discussion[0].body}
-            rawPath={utils.getRawBasePath(project.id, baseUrl, project.head)} />
+          {#if $authenticatedLocal(baseUrl.hostname) && editingIssueDescription}
+            <ExtendedTextarea
+              enableAttachments
+              body={issue.discussion[0].body}
+              submitCaption="Save"
+              submitInProgress={saveDescriptionInProgress}
+              placeholder="Leave a description"
+              on:close={() => (editingIssueDescription = false)}
+              on:submit={async ({ detail: { comment } }) => {
+                void editComment(issue.id, comment);
+              }} />
+          {:else}
+            <div class="markdown">
+              <Markdown
+                content={issue.discussion[0].body}
+                rawPath={utils.getRawBasePath(
+                  project.id,
+                  baseUrl,
+                  project.head,
+                )} />
+              <!-- TODO: Remove if statement once `radicle-httpd` fixes embed editing -->
+              {#if issue.discussion[0].embeds.length === 0}
+                <IconButton
+                  title="edit description"
+                  on:click={() => (editingIssueDescription = true)}>
+                  <IconSmall name={"edit"} />
+                </IconButton>
+              {/if}
+            </div>
+          {/if}
           <div class="reactions">
-            {#if $httpdStore.state === "authenticated"}
+            {#if $authenticated}
               <ReactionSelector
-                nid={$httpdStore.session.publicKey}
+                nid={$authenticated.session.publicKey}
                 reactions={issueReactions}
-                on:select={async event => {
-                  await handleReaction({ ...event.detail, id: issue.id });
-                }} />
+                on:select={event =>
+                  handleReaction({ ...event.detail, id: issue.id })} />
             {/if}
             {#if issueReactions.size > 0}
               <Reactions
-                clickable={$httpdStore.state === "authenticated"}
+                clickable={Boolean($authenticated)}
                 reactions={issueReactions}
                 on:remove={event =>
                   handleReaction({ ...event.detail, id: issue.id })} />
@@ -436,17 +533,19 @@
               enableAttachments
               {thread}
               {rawPath}
+              on:editComment={({ detail: { id, body } }) =>
+                editComment(id, body)}
               on:reply={createReply}
               on:react={event => handleReaction(event.detail)} />
           {/each}
         </div>
       {/if}
-      {#if $httpdStore.state === "authenticated"}
-        <CommentTextarea
+      {#if $authenticated}
+        <CommentToggleInput
+          placeholder="Leave your comment"
           enableAttachments
-          on:submit={async event => {
-            await createComment(event.detail.comment, event.detail.embeds);
-          }} />
+          submitInProgress={saveCommentInProgress}
+          on:submit={createComment} />
         <div style:display="flex">
           <CobStateButton
             items={items.filter(([, state]) => !isEqual(state, issue.state))}
@@ -458,11 +557,14 @@
     </div>
     <div class="metadata">
       <AssigneeInput
-        {action}
+        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
         assignees={issue.assignees}
         on:save={saveAssignees} />
-      <LabelInput {action} labels={issue.labels} on:save={saveLabels} />
-      <Embeds {embeds} />
+      <LabelInput
+        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        labels={issue.labels}
+        on:save={saveLabels} />
+      <Embeds embeds={uniqueEmbeds} />
     </div>
   </div>
 </Layout>

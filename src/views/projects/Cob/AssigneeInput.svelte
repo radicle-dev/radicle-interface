@@ -11,8 +11,9 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let action: "create" | "edit" | "view";
-  export let editInProgress: boolean = false;
+  export let mode: "readWrite" | "readOnly" = "readOnly";
+  export let hideEditIcon: boolean = false;
+  export let locallyAuthenticated: boolean = false;
   export let assignees: string[] = [];
 
   let updatedAssignees: string[] = assignees;
@@ -47,7 +48,7 @@
     if (valid && assignee) {
       updatedAssignees = [...updatedAssignees, assignee];
       inputValue = "";
-      if (action === "create") {
+      if (mode !== "readOnly") {
         dispatch("save", updatedAssignees);
       }
     }
@@ -55,7 +56,7 @@
 
   function removeAssignee(assignee: string) {
     updatedAssignees = updatedAssignees.filter(x => x !== assignee);
-    if (action === "create") {
+    if (mode !== "readOnly") {
       dispatch("save", updatedAssignees);
     }
   }
@@ -93,13 +94,13 @@
 <div>
   <div class="header">
     <span>Assignees</span>
-    {#if action === "edit"}
+    {#if locallyAuthenticated && !hideEditIcon}
       <div class="actions">
-        {#if editInProgress}
+        {#if mode !== "readOnly"}
           <IconButton
             on:click={() => {
               dispatch("save", updatedAssignees);
-              editInProgress = !editInProgress;
+              mode = "readOnly";
             }}>
             <IconSmall name="checkmark" />
           </IconButton>
@@ -107,15 +108,12 @@
             on:click={() => {
               updatedAssignees = assignees;
               inputValue = "";
-              editInProgress = !editInProgress;
+              mode = "readOnly";
             }}>
             <IconSmall name="cross" />
           </IconButton>
         {:else}
-          <IconButton
-            on:click={() => {
-              editInProgress = !editInProgress;
-            }}>
+          <IconButton on:click={() => (mode = "readWrite")}>
             <IconSmall name="edit" />
           </IconButton>
         {/if}
@@ -123,7 +121,7 @@
     {/if}
   </div>
   <div class="body">
-    {#if editInProgress || action === "create"}
+    {#if locallyAuthenticated && mode === "readWrite"}
       {#each updatedAssignees as assignee}
         <Badge variant="neutral">
           <div class="assignee">
@@ -152,7 +150,7 @@
       {/each}
     {/if}
   </div>
-  {#if editInProgress || action === "create"}
+  {#if locallyAuthenticated && mode === "readWrite"}
     <div style:margin-bottom="1rem" style:margin-top="1rem">
       <TextInput
         {valid}

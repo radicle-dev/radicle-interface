@@ -1,7 +1,9 @@
 export interface Embed {
-  oid: string;
   name: string;
   content: string;
+}
+export interface EmbedWithOid extends Embed {
+  oid: string;
 }
 
 async function parseGitOid(bytes: Uint8Array): Promise<string> {
@@ -99,9 +101,7 @@ const mimes: Record<string, string> = {
   zip: "application/zip",
 };
 
-async function embed(
-  file: File,
-): Promise<{ oid: string; name: string; content: string }> {
+async function embed(file: File): Promise<EmbedWithOid> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const oid = await parseGitOid(bytes);
   const content = await base64String(file);

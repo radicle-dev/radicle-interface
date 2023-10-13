@@ -1,6 +1,9 @@
 <script lang="ts">
+  import Loading from "./Loading.svelte";
+
   export let title: string | undefined = undefined;
   export let ariaLabel: string | undefined = undefined;
+  export let loading: boolean = false;
 </script>
 
 <style>
@@ -23,13 +26,17 @@
   }
 </style>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div
-  role="button"
-  tabindex="0"
-  aria-label={ariaLabel}
-  {title}
-  class="button"
-  on:click>
-  <slot />
-</div>
+{#if loading}
+  <Loading small noDelay />
+{:else}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div
+    role="button"
+    tabindex="0"
+    aria-label={ariaLabel}
+    {title}
+    class="button"
+    on:click>
+    <slot />
+  </div>
+{/if}

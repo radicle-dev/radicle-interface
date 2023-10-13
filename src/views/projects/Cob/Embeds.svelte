@@ -1,8 +1,10 @@
 <script lang="ts" strictEvents>
+  import type { Embed } from "@app/lib/file";
+
   import Badge from "@app/components/Badge.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
 
-  export let embeds: { name: string; content: string }[] = [];
+  export let embeds: Embed[] = [];
 </script>
 
 <style>

@@ -1,3 +1,4 @@
+import type { Embed } from "@app/lib/file.js";
 import type { Commit, Commits } from "./project/commit.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
@@ -365,7 +366,7 @@ export class Client {
       title: string;
       description: string;
       assignees: string[];
-      embeds: { name: string; content: string }[];
+      embeds: Embed[];
       labels: string[];
     },
     authToken: string,
