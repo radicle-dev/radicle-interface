@@ -63,7 +63,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // Node address.
   {
     await page.locator(".clipboard").first().click();
-    await expectClipboard(`${nodeRemote}@127.0.0.1:8776`, page);
+    await expectClipboard(`${nodeRemote}`, page);
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

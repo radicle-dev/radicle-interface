@@ -30,10 +30,10 @@ import type {
   Revision,
   Verdict,
 } from "./lib/project/patch.js";
-import type { RequestOptions, Method } from "./lib/fetcher.js";
+import type { RequestOptions } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
-import { array, literal, number, object, string, union } from "zod";
+import { z, array, boolean, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
 import * as session from "./lib/session.js";
@@ -69,28 +69,48 @@ export type {
   Verdict,
 };
 
-export interface Node {
-  id: string;
-}
+export type Node = z.infer<typeof nodeSchema>;
 
 const nodeSchema = object({
   id: string(),
-}) satisfies ZodSchema<Node>;
+  config: object({
+    alias: string(),
+    peers: union([
+      object({ type: literal("static") }),
+      object({ type: literal("dynamic"), target: number() }),
+    ]),
+    connect: array(string()),
+    externalAddresses: array(string()),
+    network: union([literal("main"), literal("test")]),
+    relay: boolean(),
+    limits: object({
+      routingMaxSize: number(),
+      routingMaxAge: number(),
+      fetchConcurrency: number(),
+      rate: object({
+        inbound: object({
+          fillRate: number(),
+          capacity: number(),
+        }),
+        outbound: object({
+          fillRate: number(),
+          capacity: number(),
+        }),
+      }),
+    }),
+    policy: union([literal("track"), literal("block")]),
+    scope: union([literal("trusted"), literal("all")]),
+  }).nullable(),
+  state: union([literal("running"), literal("stopped")]),
+});
 
-export interface NodeInfo {
-  message: string;
-  service: string;
-  version: string;
-  node: Node;
-  path: string;
-  links: { href: string; rel: string; type: Method }[];
-}
+export type NodeInfo = z.infer<typeof nodeInfoSchema>;
 
 const nodeInfoSchema = object({
   message: string(),
   service: string(),
   version: string(),
-  node: nodeSchema,
+  node: nodeSchema.pick({ id: true }),
   path: string(),
   links: array(
     object({
@@ -104,7 +124,7 @@ const nodeInfoSchema = object({
       ]),
     }),
   ),
-}) satisfies ZodSchema<NodeInfo>;
+});
 
 export interface NodeStats {
   projects: { count: number };

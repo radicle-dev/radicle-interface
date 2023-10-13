@@ -31,6 +31,7 @@ export interface NodesLoadedRoute {
     baseUrl: BaseUrl;
     projectPageIndex: number;
     version: string;
+    externalAddresses: string[];
     nid: string;
     projects: ProjectActivity[];
     projectCount: number;
@@ -96,8 +97,9 @@ export async function loadNodeRoute(
   const api = new HttpdClient(params.baseUrl);
   try {
     const projectPageIndex = 0;
-    const [nodeInfo, { projects, total }] = await Promise.all([
+    const [nodeInfo, node, { projects, total }] = await Promise.all([
       api.getNodeInfo(),
+      api.getNode(),
       loadProjects(projectPageIndex, params.baseUrl),
     ]);
     return {
@@ -106,6 +108,7 @@ export async function loadNodeRoute(
         projectPageIndex: projectPageIndex + 1,
         baseUrl: params.baseUrl,
         nid: nodeInfo.node.id,
+        externalAddresses: node.config?.externalAddresses ?? [],
         version: nodeInfo.version,
         projects: projects,
         projectCount: total,

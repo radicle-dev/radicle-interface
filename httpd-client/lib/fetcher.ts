@@ -74,7 +74,7 @@ export interface FetchParams {
   headers?: Record<string, string>;
 }
 
-export type Method = "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
+type Method = "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
 
 export class Fetcher {
   #baseUrl: BaseUrl;

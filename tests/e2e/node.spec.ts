@@ -6,14 +6,29 @@ import {
   test,
 } from "@tests/support/fixtures.js";
 
-test("node metadata", async ({ page }) => {
-  await page.goto("/nodes/radicle.local");
+test("node metadata", async ({ page, peerManager }) => {
+  const peer = await peerManager.startPeer({
+    name: "node-metadata-peer",
+  });
+  await peer.startHttpd();
+  await peer.startNode({
+    policy: "track",
+    scope: "all",
+    alias: "palm",
+    externalAddresses: ["seed.radicle.test:8123"],
+  });
+
+  await page.goto(peer.uiUrl());
 
   await expect(
     page.locator(".header").getByText("radicle.local"),
   ).toBeVisible();
-  await expect(page.getByText(shortNodeRemote)).toBeVisible();
+  await expect(
+    page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
+  ).toBeVisible();
   await expect(page.getByText("0.1.0-")).toBeVisible();
+  await peer.stopHttpd();
+  await peer.stopNode();
 });
 
 test("node projects", async ({ page }) => {

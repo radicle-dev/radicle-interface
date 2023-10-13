@@ -2,7 +2,6 @@
   import type { BaseUrl } from "@httpd-client";
   import type { ProjectActivity } from "@app/views/nodes/router";
 
-  import { config } from "@app/lib/config";
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
 
@@ -15,6 +14,7 @@
 
   export let baseUrl: BaseUrl;
   export let nid: string;
+  export let externalAddresses: string[];
   export let projectCount: number;
   export let projectPageIndex: number;
   export let projects: ProjectActivity[] = [];
@@ -107,11 +107,24 @@
         {hostname}
       </div>
       <div class="info">
-        <div class="address">
-          {truncateId(nid)}@{baseUrl.hostname}
-          <Clipboard
-            small
-            text={`${nid}@${baseUrl.hostname}:${config.nodes.defaultNodePort}`} />
+        <div>
+          {#each externalAddresses as address}
+            <!-- If there are externalAddresses this is probably a remote node -->
+            <!-- in that case, we show all the defined externalAddresses as a listing -->
+            <div class="address">
+              {truncateId(nid)}@{address}
+              <Clipboard small text={`${nid}@${address}`} />
+            </div>
+          {:else}
+            <!-- else this is probably a local node -->
+            <!-- So we show only the nid -->
+            <div class="address layout-desktop">
+              {nid}<Clipboard small text={nid} />
+            </div>
+            <div class="address layout-mobile">
+              {truncateId(nid)}<Clipboard small text={nid} />
+            </div>
+          {/each}
         </div>
         <div class="version">
           v{version}
