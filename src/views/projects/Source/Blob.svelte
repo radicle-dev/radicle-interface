@@ -264,7 +264,7 @@
               window.location.hash = "";
               showMarkdown = true;
             }}>
-            Plain
+            Markdown
           </Button>
           <Button
             styleBorderRadius="0"
@@ -272,7 +272,7 @@
             on:click={() => {
               showMarkdown = false;
             }}>
-            Markdown
+            Plain
           </Button>
         </Radio>
       {/if}

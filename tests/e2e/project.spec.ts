@@ -98,7 +98,7 @@ test("source file highlighting", async ({ page }) => {
 
 test("navigate line numbers", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`);
-  await page.getByRole("button", { name: "Markdown" }).click();
+  await page.getByRole("button", { name: "Plain" }).click();
 
   await page.getByRole("link", { name: "5", exact: true }).click();
   await expect(page.locator("#L5")).toHaveClass("line highlight");
@@ -115,7 +115,7 @@ test("navigate line numbers", async ({ page }) => {
   // Check that we go back to the Markdown view when navigating to a different
   // file.
   await page.getByRole("link", { name: "footnotes.md" }).click();
-  await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+  await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
     /secondary/,
   );
 });
@@ -241,21 +241,21 @@ test("markdown files", async ({ page }) => {
 
   // Switch between raw and rendered modes.
   {
-    await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
-      /secondary/,
-    );
-    await expect(
-      page.getByRole("button", { name: "Markdown" }),
-    ).not.toHaveClass(/secondary/);
-    await page.getByRole("button", { name: "Markdown" }).click();
-    await expect(page.getByRole("button", { name: "Plain" })).not.toHaveClass(
-      /secondary/,
-    );
     await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
       /secondary/,
     );
-    await expect(page.getByText("##### Table of Contents")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Plain" })).not.toHaveClass(
+      /secondary/,
+    );
     await page.getByRole("button", { name: "Plain" }).click();
+    await expect(
+      page.getByRole("button", { name: "Markdown" }),
+    ).not.toHaveClass(/secondary/);
+    await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
+      /secondary/,
+    );
+    await expect(page.getByText("##### Table of Contents")).toBeVisible();
+    await page.getByRole("button", { name: "Markdown" }).click();
   }
 
   // Internal links go to anchor.
