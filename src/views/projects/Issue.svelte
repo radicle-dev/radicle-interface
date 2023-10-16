@@ -32,6 +32,7 @@
   export let baseUrl: BaseUrl;
   export let issue: Issue;
   export let project: Project;
+  export let tracking: boolean;
 
   const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
@@ -371,7 +372,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {baseUrl} {project} {tracking} activeTab="issues">
   <div class="issue">
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
       <CobHeader

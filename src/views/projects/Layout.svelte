@@ -7,16 +7,18 @@
   import markdown from "@app/lib/markdown";
   import { twemoji, isLocal } from "@app/lib/utils";
 
+  import Button from "@app/components/Button.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Link from "@app/components/Link.svelte";
-  import Button from "@app/components/Button.svelte";
 
   import Header from "./Header.svelte";
+  import TrackButton from "./Header/TrackButton.svelte";
 
   export let activeTab: ActiveTab = undefined;
   export let baseUrl: BaseUrl;
   export let project: Project;
+  export let tracking: boolean;
 
   const render = (content: string): string =>
     dompurify.sanitize(markdown.parse(content) as string);
@@ -117,7 +119,10 @@
           {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
         </Button>
       </Link>
-
+      <TrackButton
+        {tracking}
+        trackings={project.trackings}
+        projectId={project.id} />
       <CloneButton {baseUrl} id={project.id} name={project.name} />
     </div>
   </div>

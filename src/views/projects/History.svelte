@@ -29,6 +29,7 @@
   export let revision: string | undefined;
   export let totalCommitCount: number;
   export let tree: Tree;
+  export let tracking: boolean;
 
   const api = new HttpdClient(baseUrl);
 
@@ -114,7 +115,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="source">
+<Layout {baseUrl} {project} {tracking} activeTab="source">
   <svelte:fragment slot="subheader">
     <div style:margin-top="1rem">
       <Header

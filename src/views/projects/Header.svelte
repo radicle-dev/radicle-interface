@@ -71,21 +71,5 @@
         </div>
       </Button>
     </Link>
-
-    <div class="layout-desktop">
-      <Button
-        disabled
-        variant="background"
-        title="Tracked by {project.trackings} {pluralize(
-          'node',
-          project.trackings,
-        )}">
-        <IconSmall name="network" />
-        <div>
-          {project.trackings}
-          {pluralize("node", project.trackings)}
-        </div>
-      </Button>
-    </div>
   </Radio>
 </div>

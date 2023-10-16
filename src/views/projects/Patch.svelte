@@ -74,6 +74,7 @@
   export let patch: Patch;
   export let project: Project;
   export let view: PatchView;
+  export let tracking: boolean;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -440,7 +441,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches">
+<Layout {baseUrl} {project} {tracking} activeTab="patches">
   <div class="patch">
     <div>
       <CobHeader id={patch.id} title={patch.title}>

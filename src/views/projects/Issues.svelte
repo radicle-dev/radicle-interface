@@ -25,6 +25,7 @@
   export let issues: Issue[];
   export let project: Project;
   export let state: IssueState["status"];
+  export let tracking: boolean;
 
   let loading = false;
   let page = 0;
@@ -78,7 +79,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {baseUrl} {project} {tracking} activeTab="issues">
   <div class="issues">
     <List items={allIssues}>
       <div slot="header" style="display: flex;">

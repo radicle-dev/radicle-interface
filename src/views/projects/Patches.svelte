@@ -22,6 +22,7 @@
   export let patches: Patch[];
   export let project: Project;
   export let state: PatchState["status"];
+  export let tracking: boolean;
 
   let loading = false;
   let page = 0;
@@ -83,7 +84,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches">
+<Layout {baseUrl} {project} {tracking} activeTab="patches">
   <div class="patches">
     <List items={allPatches}>
       <div slot="header" style="display: flex;">

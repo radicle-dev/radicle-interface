@@ -23,6 +23,7 @@
 
   export let baseUrl: BaseUrl;
   export let project: Project;
+  export let tracking: boolean;
 
   let newEmbeds: Embed[] = [];
   let selectionStart = 0;
@@ -148,7 +149,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {baseUrl} {project} {tracking} activeTab="issues">
   <main>
     {#if $httpdStore.state === "authenticated"}
       {@const session = $httpdStore.session}
