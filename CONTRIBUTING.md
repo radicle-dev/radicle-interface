@@ -18,7 +18,7 @@ simple guidelines.
 
 Proposing changes
 -----------------
-When proposing changes via a pull-request or patch:
+When proposing changes via a patch:
 
 * Isolate changes in separate commits to make the review process easier.
 * Don't make unrelated changes, unless it happens to be an obvious improvement to

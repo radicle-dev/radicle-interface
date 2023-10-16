@@ -1,6 +1,8 @@
 # Radicle Interface
 
-> ✨ Interact with Radicle.
+✨ A web-based Radicle user interface.
+
+To propose changes open an [issue][is] or a [patch][pa] on [Radicle][ra].
 
 ## Available Scripts
 
@@ -19,7 +21,14 @@ Your app is ready to be deployed!
 
 ## Deployments
 
-Latest production deployment 👉 https://app.radicle.xyz
+Latest public production deployment 👉 [app.radicle.xyz][ap]
 
 If you want to connect to pre-heartwood nodes, you can run the app locally
 using the `legacy` tag, available by running `git checkout legacy`.
+
+
+
+[ap]: https://app.radicle.xyz
+[is]: https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/issues
+[pa]: https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/patches
+[ra]: https://radicle.xyz
