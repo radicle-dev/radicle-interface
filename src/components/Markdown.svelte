@@ -218,7 +218,7 @@
   }
 
   .markdown :global(p) {
-    line-height: 1.625;
+    line-height: 1.625rem;
     margin-top: 0;
     margin-bottom: 0.625rem;
   }

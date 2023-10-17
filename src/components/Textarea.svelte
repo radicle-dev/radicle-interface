@@ -2,17 +2,21 @@
   import { afterUpdate, beforeUpdate, createEventDispatcher } from "svelte";
   import { isMac } from "@app/lib/utils";
 
-  export let resizable: boolean = false;
   export let value: string | number | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let focus: boolean = false;
+  // If `false` we automatically grow the textarea height.
+  // If `true` we show a resize handle on the lower right-hand side of the
+  // textarea to allow resizing the textarea manually.
+  export let resizable: boolean = false;
+
   // Defaulting selectionStart and selectionEnd to 0, since no full support yet.
-  export let selectionStart = 0;
-  export let selectionEnd = 0;
+  export let selectionStart: number = 0;
+  export let selectionEnd: number = 0;
 
   let textareaElement: HTMLTextAreaElement | undefined = undefined;
 
-  // We either auto-grow the text area, or allow the user to resize it. These
+  // We either auto-grow the textarea, or allow the user to resize it. These
   // options are mutually exclusive because a user resized textarea would
   // automatically shrink upon text input otherwise.
   $: if (textareaElement && !resizable) {
@@ -66,20 +70,17 @@
     border-radius: var(--border-radius-small);
     font-family: inherit;
     height: 5rem;
-    padding: 1rem;
+    padding: 0.75rem;
     width: 100%;
-    min-height: 2.5rem;
+    min-height: 6.375rem;
     resize: none;
     overflow: hidden;
+    line-height: 1.625rem;
   }
 
   .resizable {
     resize: vertical;
     overflow: scroll;
-  }
-
-  textarea::-webkit-scrollbar {
-    display: none;
   }
 
   textarea::-webkit-scrollbar-corner {

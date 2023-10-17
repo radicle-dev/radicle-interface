@@ -115,9 +115,10 @@
   }
   .preview {
     font-size: var(--font-size-small);
-    padding-top: 1rem;
-    padding-left: 1rem;
-    min-height: 5rem;
+    min-height: 6.375rem;
+    padding: 0.75rem;
+    margin-left: 1px;
+    margin-top: 1px;
   }
   .inactive {
     box-shadow: 0 0 0 1px var(--color-border-hint);
@@ -166,7 +167,6 @@
         bind:selectionEnd
         bind:selectionStart
         {focus}
-        resizable
         on:submit={submit}
         bind:value={commentBody}
         {placeholder} />

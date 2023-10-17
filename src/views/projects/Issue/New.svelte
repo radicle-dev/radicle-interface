@@ -168,7 +168,6 @@
             <svelte:fragment slot="description">
               {#if action === "create"}
                 <Textarea
-                  resizable
                   bind:selectionStart
                   bind:selectionEnd
                   on:drop={handleFileDrop}
