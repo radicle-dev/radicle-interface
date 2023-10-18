@@ -79,7 +79,11 @@
         </div>
       </Link>
       {#if commit.description}
-        <ExpandButton variant="inline" bind:expanded={commitMessageVisible} />
+        <ExpandButton
+          variant="inline"
+          on:toggle={() => {
+            commitMessageVisible = !commitMessageVisible;
+          }} />
       {/if}
     </div>
     {#if commitMessageVisible}

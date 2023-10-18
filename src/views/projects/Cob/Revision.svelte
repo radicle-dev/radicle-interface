@@ -23,7 +23,7 @@
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
-  export let expanded: boolean = true;
+  export let expanded: boolean = false;
   export let patchId: string;
   export let projectHead: string;
   export let projectDefaultBranch: string;
@@ -124,7 +124,7 @@
     background: none;
     padding: 0.5rem;
     font-size: var(--font-size-small);
-    height: 2.5rem;
+    height: 3rem;
   }
   .revision-name {
     display: flex;
@@ -200,7 +200,10 @@
   <div class="revision-box" class:expanded>
     <div class="revision-header">
       <div class="revision-name">
-        <ExpandButton bind:expanded />
+        <ExpandButton
+          on:toggle={() => {
+            expanded = !expanded;
+          }} />
         <span>
           Revision
           <span class="global-hash">{utils.formatObjectId(revisionId)}</span>

@@ -1,65 +1,86 @@
+<script lang="ts">
+  import { tick } from "svelte";
+  import ExpandButton from "./ExpandButton.svelte";
+
+  export let collapsable: boolean = false;
+
+  let expanded = true;
+  let header: HTMLDivElement;
+</script>
+
 <style>
   .header {
     display: flex;
     height: 3rem;
     align-items: center;
     padding: 0 0.5rem 0 1rem;
-    border-width: 1px 1px 0 1px;
-    border-color: var(--color-border-hint);
-    border-style: solid;
+    border: 1px solid var(--color-border-hint);
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
+    background-color: var(--color-background-default);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .collapsed {
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-border-hint);
+  }
+
+  .left {
+    display: flex;
+    gap: 0.5rem;
+    margin-right: 1rem;
   }
 
   .right {
     display: flex;
     gap: 0.5rem;
     margin-left: auto;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .left {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-small);
-    flex-shrink: 0;
-    padding-right: 0.5rem;
   }
 
   .container {
     position: relative;
-    display: flex;
     overflow-x: auto;
     border: 1px solid var(--color-border-hint);
-    border-top-style: solid;
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
+    border-top: 0;
     background: var(--color-background-float);
-    width: 100%;
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
   }
 
   @media (max-width: 720px) {
+    .header,
     .container {
-      border-left: none;
-      border-right: none;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      border-radius: 0;
     }
   }
 </style>
 
-<div class="header">
-  <span class="left">
+<div bind:this={header} class="header" class:collapsed={!expanded}>
+  <div class="left">
+    {#if collapsable}
+      <ExpandButton
+        on:toggle={async () => {
+          expanded = !expanded;
+          if (!expanded) {
+            await tick();
+            header.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }} />
+    {/if}
     <slot name="left-header" />
-  </span>
+  </div>
+
   <div class="right">
     <slot name="right-header" />
   </div>
 </div>
 
-<div class="container">
-  <slot />
-</div>
+{#if expanded}
+  <div class="container">
+    <slot />
+  </div>
+{/if}

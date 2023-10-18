@@ -158,6 +158,9 @@
 </script>
 
 <style>
+  :global(html) {
+    scroll-padding-top: 4rem;
+  }
   .front-matter {
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);

@@ -7,7 +7,7 @@
   import * as Syntax from "@app/lib/syntax";
 
   import Badge from "@app/components/Badge.svelte";
-  import ExpandButton from "@app/components/ExpandButton.svelte";
+  import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -31,7 +31,6 @@
   export let projectId: string;
   export let visible: boolean = false;
 
-  let expanded = true;
   let selection: Selection | undefined = undefined;
   let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
   let syntaxHighlightingLoading: boolean = false;
@@ -49,7 +48,7 @@
             "-",
           ),
         )
-        ?.scrollIntoView();
+        ?.scrollIntoView({ block: "center" });
     }
   });
 
@@ -239,25 +238,8 @@
 </script>
 
 <style>
-  .wrapper {
-    border: 1px solid var(--color-border-default);
-    border-radius: var(--border-radius-small);
-    margin-bottom: 2rem;
-    line-height: 1.5rem;
-  }
-  .header {
-    align-items: center;
-    background: none;
-    border-radius: 0;
-    display: flex;
-    flex-direction: row;
-    height: 3rem;
-    padding: 1rem;
-    gap: 0.5rem;
-  }
   main {
     font-size: var(--font-size-small);
-    border-top: 1px solid var(--color-border-default);
     background: var(--color-background-float);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
     overflow-x: auto;
@@ -392,131 +374,123 @@
     padding-left: 0.5rem;
     color: var(--color-foreground-dim);
   }
-  .header-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
 </style>
 
-<div id={filePath} class="wrapper">
-  <div class="header">
-    <ExpandButton bind:expanded />
-    <div class="actions">
-      {#if (headerBadgeCaption === "moved" || headerBadgeCaption === "copied") && oldFilePath}
-        <span>
-          <FilePath filenameWithPath={oldFilePath} /> → <FilePath
-            filenameWithPath={filePath} />
-        </span>
-      {:else}
-        <FilePath filenameWithPath={filePath} />
-      {/if}
-      {#if headerBadgeCaption === "added"}
-        <Badge variant="positive">added</Badge>
-      {:else if headerBadgeCaption === "deleted"}
-        <Badge variant="negative">deleted</Badge>
-      {:else if headerBadgeCaption === "moved"}
-        <Badge variant="foreground">moved</Badge>
-      {:else if headerBadgeCaption === "copied"}
-        <Badge variant="foreground">copied</Badge>
-      {/if}
-    </div>
-    {#if revision}
-      <div class="header-right">
-        {#if syntaxHighlightingLoading}
-          <Loading small />
-        {/if}
-        <Link
-          route={{
-            resource: "project.source",
-            project: projectId,
-            node: baseUrl,
-            path: filePath,
-            revision,
-          }}>
-          <IconButton title="View file">
-            <IconSmall name="chevron-left-right" />
-          </IconButton>
-        </Link>
-      </div>
+<File collapsable>
+  <svelte:fragment slot="left-header">
+    {#if (headerBadgeCaption === "moved" || headerBadgeCaption === "copied") && oldFilePath}
+      <span>
+        <FilePath filenameWithPath={oldFilePath} /> → <FilePath
+          filenameWithPath={filePath} />
+      </span>
+    {:else}
+      <FilePath filenameWithPath={filePath} />
     {/if}
-  </div>
-  {#if expanded}
-    <main>
-      {#if fileDiff.type === "plain"}
-        {#if fileDiff.hunks.length > 0}
-          <table class="diff" data-file-diff-select>
-            {#each fileDiff.hunks as hunk, hunkIdx}
+
+    {#if headerBadgeCaption === "added"}
+      <Badge variant="positive">added</Badge>
+    {:else if headerBadgeCaption === "deleted"}
+      <Badge variant="negative">deleted</Badge>
+    {:else if headerBadgeCaption === "moved"}
+      <Badge variant="foreground">moved</Badge>
+    {:else if headerBadgeCaption === "copied"}
+      <Badge variant="foreground">copied</Badge>
+    {/if}
+  </svelte:fragment>
+
+  <svelte:fragment slot="right-header">
+    {#if revision}
+      {#if syntaxHighlightingLoading}
+        <Loading small />
+      {/if}
+      <Link
+        route={{
+          resource: "project.source",
+          project: projectId,
+          node: baseUrl,
+          path: filePath,
+          revision,
+        }}>
+        <IconButton title="View file">
+          <IconSmall name="chevron-left-right" />
+        </IconButton>
+      </Link>
+    {/if}
+  </svelte:fragment>
+
+  <main>
+    {#if fileDiff.type === "plain"}
+      {#if fileDiff.hunks.length > 0}
+        <table class="diff" data-file-diff-select>
+          {#each fileDiff.hunks as hunk, hunkIdx}
+            <tr
+              class="diff-line hunk-header"
+              class:selected={hunkHeaderSelected(selection, hunkIdx)}>
+              <td colspan={2} style:position="relative">
+                <div class="selection-indicator-left" />
+              </td>
+              <td
+                colspan={6}
+                class="diff-expand-header"
+                style:position="relative">
+                {hunk.header}
+                <div class="selection-indicator-right" />
+              </td>
+            </tr>
+            {#each hunk.lines as line, lineIdx}
               <tr
-                class="diff-line hunk-header"
-                class:selected={hunkHeaderSelected(selection, hunkIdx)}>
-                <td colspan={2} style:position="relative">
+                style:position="relative"
+                class={`diff-line type-${line.type}`}
+                class:selection-start={selection?.startHunk === hunkIdx &&
+                  selection.startLine === lineIdx}
+                class:selection-end={(selection?.endHunk === hunkIdx &&
+                  selection.endLine === lineIdx) ||
+                  (selection?.startHunk === hunkIdx &&
+                    selection.startLine === lineIdx &&
+                    selection?.endHunk === undefined)}
+                class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
+                <td
+                  id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
+                  class="diff-line-number left"
+                  on:click={e => selectLine(hunkIdx, lineIdx, e)}>
                   <div class="selection-indicator-left" />
+                  {lineNumberL(line)}
                 </td>
                 <td
-                  colspan={6}
-                  class="diff-expand-header"
-                  style:position="relative">
-                  {hunk.header}
-                  <div class="selection-indicator-right" />
+                  class="diff-line-number right"
+                  on:click={e => selectLine(hunkIdx, lineIdx, e)}>
+                  {lineNumberR(line)}
                 </td>
-              </tr>
-              {#each hunk.lines as line, lineIdx}
-                <tr
-                  style:position="relative"
-                  class={`diff-line type-${line.type}`}
-                  class:selection-start={selection?.startHunk === hunkIdx &&
-                    selection.startLine === lineIdx}
-                  class:selection-end={(selection?.endHunk === hunkIdx &&
-                    selection.endLine === lineIdx) ||
-                    (selection?.startHunk === hunkIdx &&
-                      selection.startLine === lineIdx &&
-                      selection?.endHunk === undefined)}
-                  class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
-                  <td
-                    id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
-                    class="diff-line-number left"
-                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
-                    <div class="selection-indicator-left" />
-                    {lineNumberL(line)}
-                  </td>
-                  <td
-                    class="diff-line-number right"
-                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
-                    {lineNumberR(line)}
-                  </td>
-                  <td class="diff-line-type" data-line-type={line.type}>
-                    {lineSign(line)}
-                  </td>
-                  <td class="diff-line-content">
-                    {#if highlighting}
-                      {#if line.type === "addition" && highlighting.new}
-                        {@html highlighting.new[line.lineNo - 1]}
-                      {:else if line.type === "context" && highlighting.new}
-                        {@html highlighting.new[line.lineNoNew - 1]}
-                      {:else if line.type === "deletion" && highlighting.old}
-                        {@html highlighting.old[line.lineNo - 1]}
-                      {/if}
-                    {:else}
-                      {line.line}
+                <td class="diff-line-type" data-line-type={line.type}>
+                  {lineSign(line)}
+                </td>
+                <td class="diff-line-content">
+                  {#if highlighting}
+                    {#if line.type === "addition" && highlighting.new}
+                      {@html highlighting.new[line.lineNo - 1]}
+                    {:else if line.type === "context" && highlighting.new}
+                      {@html highlighting.new[line.lineNoNew - 1]}
+                    {:else if line.type === "deletion" && highlighting.old}
+                      {@html highlighting.old[line.lineNo - 1]}
                     {/if}
-                  </td>
-                  <div class="selection-indicator-right" />
-                </tr>
-              {/each}
+                  {:else}
+                    {line.line}
+                  {/if}
+                </td>
+                <div class="selection-indicator-right" />
+              </tr>
             {/each}
-          </table>
-        {:else}
-          <div style:margin="1rem 0">
-            <Placeholder iconName="empty-file" caption="Empty file" inline />
-          </div>
-        {/if}
+          {/each}
+        </table>
       {:else}
         <div style:margin="1rem 0">
-          <Placeholder iconName="binary-file" caption="Binary file" inline />
+          <Placeholder iconName="empty-file" caption="Empty file" inline />
         </div>
       {/if}
-    </main>
-  {/if}
-</div>
+    {:else}
+      <div style:margin="1rem 0">
+        <Placeholder iconName="binary-file" caption="Binary file" inline />
+      </div>
+    {/if}
+  </main>
+</File>

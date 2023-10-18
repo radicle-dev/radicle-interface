@@ -59,19 +59,24 @@
 </script>
 
 <style>
-  .changeset-summary {
+  .summary {
     padding-bottom: 1.5rem;
     margin-left: 1rem;
   }
-  .changeset-summary .additions {
+  .additions {
     color: var(--color-foreground-success);
   }
-  .changeset-summary .deletions {
+  .deletions {
     color: var(--color-foreground-red);
+  }
+  .diff-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 </style>
 
-<div class="changeset-summary">
+<div class="summary">
   <span>{diffDescription(diff)}</span>
   with
   <span class:additions={diff.stats.insertions > 0}>
@@ -84,7 +89,8 @@
     {pluralize("deletion", diff.stats.deletions)}
   </span>
 </div>
-<div class="diff-listing">
+
+<div class="diff-list">
   <Observer let:filesVisibility let:observer>
     {#each diff.added as file}
       <div use:intersection={observer} id={"observer:" + file.path}>

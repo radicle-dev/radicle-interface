@@ -10,8 +10,9 @@
 </script>
 
 <style>
-  .container {
+  .file-path {
     font-size: var(--font-size-small);
+    white-space: nowrap;
   }
 
   .path {
@@ -25,4 +26,4 @@
 </style>
 
 <!-- prettier-ignore -->
-<span class="container"><span class="path">{path}</span><span class="filename">{filename}</span></span>
+<span class="file-path"><span class="path">{path}</span><span class="filename">{filename}</span></span>

@@ -56,7 +56,7 @@ test("navigate to project", async ({ page }) => {
   }
 
   // Navigate to the project README.md by default.
-  await expect(page.locator(".file-name")).toContainText("README.md");
+  await expect(page.locator(".filename")).toContainText("README.md");
 
   // Show a commit teaser.
   await expect(page.getByText("dd068e9 Add README.md")).toBeVisible();
@@ -170,40 +170,40 @@ test("files with special characters in the filename", async ({ page }) => {
   await sourceTree.getByText("special").click();
 
   await sourceTree.getByText("+plus+").click();
-  await expect(page.locator(".file-name")).toContainText("+plus");
+  await expect(page.locator(".filename")).toContainText("+plus");
 
   await sourceTree.getByText("-dash-").click();
-  await expect(page.locator(".file-name")).toContainText("-dash-");
+  await expect(page.locator(".filename")).toContainText("-dash-");
 
   await sourceTree.getByText(":colon:").click();
-  await expect(page.locator(".file-name")).toContainText(":colon:");
+  await expect(page.locator(".filename")).toContainText(":colon:");
 
   await sourceTree.getByText(";semicolon;").click();
-  await expect(page.locator(".file-name")).toContainText(";semicolon;");
+  await expect(page.locator(".filename")).toContainText(";semicolon;");
 
   await sourceTree.getByText("@at@").click();
-  await expect(page.locator(".file-name")).toContainText("@at@");
+  await expect(page.locator(".filename")).toContainText("@at@");
 
   await sourceTree.getByText("_underscore_").click();
-  await expect(page.locator(".file-name")).toContainText("_underscore_");
+  await expect(page.locator(".filename")).toContainText("_underscore_");
 
   // TODO: fix these errors in `radicle-httpd` for the following edge cases.
   //
   // await sourceTree.getByText("back\\slash").click();
-  // await expect(page.locator(".file-name")).toContainText("back\\slash");
+  // await expect(page.locator(".filename")).toContainText("back\\slash");
   // await sourceTree.getByText("qs?param1=value?param2=value2#hash").click();
-  // await expect(page.locator(".file-name")).toContainText(
+  // await expect(page.locator(".filename")).toContainText(
   //   "qs?param1=value?param2=value2#hash",
   // );
 
   await sourceTree.getByText("spaces are okay").click();
-  await expect(page.locator(".file-name")).toContainText("spaces are okay");
+  await expect(page.locator(".filename")).toContainText("spaces are okay");
 
   await sourceTree.getByText("~tilde~").click();
-  await expect(page.locator(".file-name")).toContainText("~tilde~");
+  await expect(page.locator(".filename")).toContainText("~tilde~");
 
   await sourceTree.getByText("👹👹👹").click();
-  await expect(page.locator(".file-name")).toContainText("👹👹👹");
+  await expect(page.locator(".filename")).toContainText("👹👹👹");
 });
 
 test("binary files", async ({ page }) => {
@@ -453,7 +453,7 @@ test("internal file markdown link", async ({ page }) => {
   await page.getByRole("link", { name: "Markdown Cheatsheet" }).click();
   await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md`);
   await expect(
-    page.locator(".file-header", { hasText: "cheatsheet.md" }),
+    page.locator(".filename", { hasText: "cheatsheet.md" }),
   ).toBeVisible();
 
   await page.goto(`${markdownUrl}/tree/main/link-files.md`);
@@ -462,7 +462,7 @@ test("internal file markdown link", async ({ page }) => {
     `${markdownUrl}/tree/main/assets/black-square.png`,
   );
   await expect(
-    page.locator(".file-header", {
+    page.locator(".file-path", {
       hasText: "assets/black-square.png",
     }),
   ).toBeVisible();

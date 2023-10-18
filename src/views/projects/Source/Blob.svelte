@@ -10,13 +10,14 @@
   import { routeToPath } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
+  import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Radio from "@app/components/Radio.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
@@ -82,7 +83,7 @@
       const target = document.getElementById(selectedLineId);
       if (target) {
         target.classList.add("highlight");
-        target.scrollIntoView();
+        target.scrollIntoView({ block: "center" });
       }
     }
   });
@@ -97,34 +98,6 @@
 </script>
 
 <style>
-  .file-header {
-    display: flex;
-    height: 3rem;
-    align-items: center;
-    padding: 0 0.5rem 0 1rem;
-    border-width: 1px 1px 0 1px;
-    border-color: var(--color-border-hint);
-    border-style: solid;
-    border-top-left-radius: var(--border-radius-small);
-    border-top-right-radius: var(--border-radius-small);
-  }
-
-  .right {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .file-name {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-small);
-    flex-shrink: 0;
-    padding-right: 0.5rem;
-  }
-
   .code :global(.line-number) {
     font-family: var(--font-family-monospace);
     color: var(--color-foreground-disabled);
@@ -177,18 +150,6 @@
     margin-bottom: 1.5rem;
   }
 
-  .container {
-    overflow-x: auto;
-    border: 1px solid var(--color-border-hint);
-    border-top-style: solid;
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
-    background: var(--color-background-float);
-    width: 100%;
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
-  }
-
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -211,29 +172,15 @@
     .commit-teaser {
       padding: 0 0.75rem;
     }
-    .file-header {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-left: none;
-      border-right: none;
-    }
     .hash-button {
       display: none;
-    }
-    .container {
-      border-left: none;
-      border-right: none;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
     }
   }
 </style>
 
-<div class="file-header">
-  <span class="file-name">
-    <FilePath filenameWithPath={blob.path} />
-  </span>
-  <div class="right">
+<File>
+  <FilePath slot="left-header" filenameWithPath={blob.path} />
+  <svelte:fragment slot="right-header">
     <div class="commit-teaser">
       <div class="hash-button">
         <Link
@@ -252,7 +199,9 @@
           </Button>
         </Link>
       </div>
-      <InlineMarkdown fontSize="small" content={lastCommit.summary} />
+      <div style:white-space="nowrap">
+        <InlineMarkdown fontSize="small" content={lastCommit.summary} />
+      </div>
     </div>
     <div class="layout-desktop-flex" style:gap="0.5rem">
       {#if isMarkdown}
@@ -283,10 +232,8 @@
         </Button>
       </a>
     </div>
-  </div>
-</div>
+  </svelte:fragment>
 
-<div class="container">
   {#if blob.binary}
     <div style:margin="4rem 0" style:width="100%">
       <Placeholder iconName="binary-file" caption="Binary file" />
@@ -304,4 +251,4 @@
       <Placeholder iconName="empty-file" caption="Empty file" />
     </div>
   {/if}
-</div>
+</File>
