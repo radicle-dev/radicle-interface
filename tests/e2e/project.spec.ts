@@ -65,7 +65,7 @@ test("navigate to project", async ({ page }) => {
   await expect(page.getByText("Git test repository")).toBeVisible();
 
   // Number of nodes tracking this project.
-  await expect(page.getByText("3 nodes")).toBeVisible();
+  await expect(page.getByText("Tracking 3")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {

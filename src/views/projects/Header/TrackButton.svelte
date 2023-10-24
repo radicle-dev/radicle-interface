@@ -21,12 +21,19 @@
     font-weight: var(--font-weight-regular);
     margin-bottom: 0.75rem;
   }
+  code {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
+    padding: 0.125rem 0.25rem;
+  }
 </style>
 
 <Popover
   popoverPositionTop="3rem"
   popoverPositionRight="0"
-  popoverWidth="26rem">
+  popoverWidth="33rem">
   <Button
     slot="toggle"
     size="large"
@@ -57,10 +64,22 @@
         Radicle CLI
       </a>
       to {command} this project.
-      <br />
-      <br />
-      Tracking means subscribing to updates from this repository. It also helps with
-      increasing its availability over the Radicle network.
+      {#if command === "track"}
+        <br />
+        <br />
+        The
+        <code>track</code>
+        command serves a dual purpose:
+        <ul style:padding="0 1rem" style:margin-top="0.5rem">
+          <li>
+            Keeps your local Radicle node in sync with updates from this
+            project.
+          </li>
+          <li>
+            Propagates them across the Radicle network to other peers like you.
+          </li>
+        </ul>
+      {/if}
     </div>
     <Command command={`rad ${command} ${projectId}`} />
   </svelte:fragment>
