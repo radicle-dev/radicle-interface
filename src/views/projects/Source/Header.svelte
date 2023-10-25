@@ -75,7 +75,7 @@
       }}>
       <Button
         styleBorderRadius="0"
-        variant={filesLinkActive ? "secondary" : "gray"}>
+        variant={filesLinkActive ? "gray-white" : "dim"}>
         <IconSmall name="file" />Files
       </Button>
     </Link>
@@ -90,7 +90,7 @@
       }}>
       <Button
         styleBorderRadius="0"
-        variant={historyLinkActive ? "secondary" : "gray"}>
+        variant={historyLinkActive ? "gray-white" : "dim"}>
         <IconSmall name="commit" />
         <div>
           {tree.stats.commits}
@@ -98,13 +98,13 @@
         </div>
       </Button>
     </Link>
-
-    <Button styleBorderRadius="0" disabled>
-      <IconSmall name="user" />
-      <div>
-        {tree.stats.contributors}
-        {pluralize("contributor", tree.stats.contributors)}
-      </div>
-    </Button>
   </Radio>
+
+  <Button disabled variant="outline">
+    <IconSmall name="user" />
+    <div>
+      {tree.stats.contributors}
+      {pluralize("contributor", tree.stats.contributors)}
+    </div>
+  </Button>
 </div>

@@ -73,7 +73,7 @@
 
   .dim {
     background-color: var(--color-fill-float-hover);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-gray);
   }
   .dim[disabled] {
     background-color: var(--color-fill-float-hover);
@@ -81,7 +81,7 @@
   }
   .dim:not([disabled]):hover {
     background-color: var(--color-fill-ghost-hover);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-gray);
   }
 
   .gray {

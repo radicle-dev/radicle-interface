@@ -27,7 +27,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1px;
   }
 
   .identifier {
@@ -44,6 +43,7 @@
       popoverBorderRadius="var(--border-radius-small)"
       disabled={hideDropdown}>
       <Button
+        variant="outline"
         let:expanded
         slot="toggle"
         styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
@@ -67,6 +67,7 @@
   {/if}
 
   <Button
+    variant={selectedBranch ? "gray" : "outline"}
     styleBorderRadius={selectedBranch
       ? "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
       : "var(--border-radius-tiny)"}>

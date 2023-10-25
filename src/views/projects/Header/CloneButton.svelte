@@ -37,7 +37,7 @@
   popoverPositionTop="3rem"
   popoverPositionRight="0"
   popoverWidth="26rem">
-  <Button slot="toggle" size="large" variant="primary">
+  <Button slot="toggle" size="large" variant="secondary">
     Clone
     <Icon name="download" />
   </Button>

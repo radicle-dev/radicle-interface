@@ -171,7 +171,7 @@
   <Radio>
     <Button
       styleBorderRadius="0"
-      variant={!preview ? "secondary" : "gray"}
+      variant={!preview ? "gray-white" : "dim"}
       on:click={() => {
         preview = false;
       }}>
@@ -181,7 +181,7 @@
     <Button
       styleBorderRadius="0"
       disabled={body === ""}
-      variant={preview ? "secondary" : "gray"}
+      variant={preview ? "gray-white" : "dim"}
       on:click={() => {
         preview = true;
       }}>

@@ -650,7 +650,7 @@
               <Button
                 styleBorderRadius="0"
                 size="regular"
-                variant={name === view.name ? "secondary" : "gray"}>
+                variant={name === view.name ? "gray-white" : "dim"}>
                 <IconSmall name={icon} />
                 {capitalize(name)}
               </Button>
@@ -669,7 +669,7 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <Button styleBorderRadius="0" size="regular" variant="secondary">
+              <Button styleBorderRadius="0" size="regular" variant="gray-white">
                 Compare <span class="diff-button-range">
                   {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
                     0,

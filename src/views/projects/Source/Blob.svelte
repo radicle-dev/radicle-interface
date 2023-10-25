@@ -208,7 +208,7 @@
         <Radio ariaLabel="Toggle render method">
           <Button
             styleBorderRadius="0"
-            variant={showMarkdown ? "secondary" : "gray"}
+            variant={showMarkdown ? "gray-white" : "dim"}
             on:click={() => {
               window.location.hash = "";
               showMarkdown = true;
@@ -217,7 +217,7 @@
           </Button>
           <Button
             styleBorderRadius="0"
-            variant={!showMarkdown ? "secondary" : "gray"}
+            variant={!showMarkdown ? "gray-white" : "dim"}
             on:click={() => {
               showMarkdown = false;
             }}>
@@ -226,7 +226,7 @@
         </Radio>
       {/if}
       <a href="{rawPath}/{blob.path}">
-        <Button variant="secondary">
+        <Button variant="gray-white">
           Raw
           <IconSmall name="arrow-box-up-right" />
         </Button>

@@ -56,14 +56,14 @@
         <Button
           ariaLabel="Light Mode"
           styleBorderRadius="0"
-          variant={$theme === "light" ? "secondary" : "gray"}
+          variant={$theme === "light" ? "gray-white" : "dim"}
           on:click={() => switchTheme("light")}>
           <Icon name="sun" />
         </Button>
         <Button
           ariaLabel="Dark Mode"
           styleBorderRadius="0"
-          variant={$theme === "dark" ? "secondary" : "gray"}
+          variant={$theme === "dark" ? "gray-white" : "dim"}
           on:click={() => switchTheme("dark")}>
           <Icon name="moon" />
         </Button>
@@ -79,7 +79,7 @@
             styleBorderRadius="0"
             styleFontFamily={font.fontFamily}
             on:click={() => switchFont(font.storedName)}
-            variant={$codeFont === font.storedName ? "secondary" : "gray"}>
+            variant={$codeFont === font.storedName ? "gray-white" : "dim"}>
             {font.displayName}
           </Button>
         {/each}
