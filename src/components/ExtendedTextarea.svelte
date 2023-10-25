@@ -28,6 +28,9 @@
   let newEmbeds: EmbedWithOid[] = [];
   let selectionStart = 0;
   let selectionEnd = 0;
+  let inputFiles: FileList | undefined = undefined;
+
+  const inputId = `input-label-${crypto.randomUUID()}`;
 
   const dispatch = createEventDispatcher<{
     submit: { comment: string; embeds: Embed[] };
@@ -43,47 +46,78 @@
 
   const MAX_BLOB_SIZE = 4_194_304;
 
-  function handleFileDrop(event: DragEvent) {
+  function handleFileDrop(event: { detail: DragEvent }) {
+    if (!enableAttachments) {
+      return;
+    }
+
+    event.detail.preventDefault();
+    if (event.detail.dataTransfer) {
+      attachEmbeds(event.detail.dataTransfer.files);
+    }
+  }
+
+  function handleFilePaste(event: ClipboardEvent) {
+    // Always allow pasting text content.
+    if (event.clipboardData && event.clipboardData.files.length === 0) {
+      return;
+    }
+
     if (!enableAttachments) {
       return;
     }
 
     event.preventDefault();
-    if (event.dataTransfer) {
-      const embeds = Array.from(event.dataTransfer.files).map(embed);
-      void Promise.all(embeds).then(embeds =>
-        embeds.forEach(embed => {
-          if (embed.content.length > MAX_BLOB_SIZE) {
-            modal.show({
-              component: ErrorModal,
-              props: {
-                title: "File too large",
-                subtitle: [
-                  "The file you tried to upload is too large.",
-                  "The maximum file size is 4MB.",
-                ],
-                error: { message: `File ${embed.name} is too large` },
-              },
-            });
-            return;
-          }
-          newEmbeds = [
-            ...newEmbeds,
-            {
-              oid: embed.oid,
-              name: embed.name,
-              content: embed.content,
-            },
-          ];
-          const embedText = `![${embed.name}](${embed.oid})\n`;
-          body = body
-            .slice(0, selectionStart)
-            .concat(embedText, body.slice(selectionEnd));
-          selectionStart += embedText.length;
-          selectionEnd = selectionStart;
-        }),
-      );
+    if (event.clipboardData) {
+      attachEmbeds(event.clipboardData.files);
     }
+  }
+
+  function handleFileSelect(event: Event) {
+    if (!enableAttachments) {
+      return;
+    }
+
+    event.preventDefault();
+    if (inputFiles) {
+      attachEmbeds(inputFiles);
+    }
+  }
+
+  function attachEmbeds(files: FileList) {
+    const embeds = Array.from(files).map(embed);
+    void Promise.all(embeds).then(embeds =>
+      embeds.forEach(embed => {
+        if (embed.content.length > MAX_BLOB_SIZE) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: "File too large",
+              subtitle: [
+                "The file you tried to upload is too large.",
+                "The maximum file size is 4MB.",
+              ],
+              error: { message: `File ${embed.name} is too large` },
+            },
+          });
+          return;
+        }
+        newEmbeds = [
+          ...newEmbeds,
+          {
+            oid: embed.oid,
+            name: embed.name,
+            content: embed.content,
+          },
+        ];
+        const embedText = `![${embed.name}](${embed.oid})\n`;
+        body = body
+          .slice(0, selectionStart)
+          .concat(embedText, body.slice(selectionEnd));
+        selectionStart += embedText.length;
+        selectionEnd = selectionStart;
+      }),
+    );
   }
 </script>
 
@@ -107,6 +141,7 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
+    gap: 1rem;
   }
   .buttons {
     display: flex;
@@ -123,6 +158,12 @@
     padding: 0.75rem;
     margin-left: 1px;
     margin-top: 1px;
+  }
+  label {
+    color: var(--color-foreground-contrast);
+  }
+  label:hover {
+    color: var(--color-foreground-primary);
   }
 </style>
 
@@ -153,8 +194,16 @@
       <Markdown content={body} embeds={newEmbeds} />
     </div>
   {:else}
+    <input
+      multiple
+      bind:files={inputFiles}
+      style:display="none"
+      type="file"
+      id={inputId}
+      on:change={handleFileSelect} />
     <Textarea
       on:drop={handleFileDrop}
+      on:paste={handleFilePaste}
       bind:selectionEnd
       bind:selectionStart
       {focus}
@@ -165,8 +214,15 @@
   <div class="actions">
     {#if !preview}
       <div class="caption">
-        Markdown supported. {#if enableAttachments}Drop attachments into the
-          text area.{/if} Press {utils.isMac() ? "⌘" : "ctrl"}↵ to submit.
+        {#if enableAttachments}
+          Add files by dragging & dropping, <label
+            for={inputId}
+            style:cursor="pointer">
+            selecting
+          </label>
+          or pasting them.
+        {/if}
+        Markdown supported. Press {utils.isMac() ? "⌘" : "ctrl"}↵ to submit.
       </div>
     {/if}
     <div class="buttons">

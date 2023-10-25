@@ -1,9 +1,10 @@
 <script lang="ts">
   import Loading from "./Loading.svelte";
 
-  export let title: string | undefined = undefined;
   export let ariaLabel: string | undefined = undefined;
+  export let inline: boolean = false;
   export let loading: boolean = false;
+  export let title: string | undefined = undefined;
 </script>
 
 <style>
@@ -19,6 +20,9 @@
     padding: 2px 4px;
     gap: 0.25rem;
     font-size: var(--font-size-small);
+  }
+  .inline {
+    display: inline-flex;
   }
   .button:hover {
     color: var(--color-foreground-contrast);
@@ -36,6 +40,7 @@
     aria-label={ariaLabel}
     {title}
     class="button"
+    class:inline
     on:click>
     <slot />
   </div>

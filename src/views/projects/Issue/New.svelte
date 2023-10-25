@@ -37,10 +37,10 @@
 
   const api = new HttpdClient(baseUrl);
 
-  function handleFileDrop(event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer) {
-      const embeds = Array.from(event.dataTransfer.files).map(embed);
+  function handleFileDrop(event: { detail: DragEvent }) {
+    event.detail.preventDefault();
+    if (event.detail.dataTransfer) {
+      const embeds = Array.from(event.detail.dataTransfer.files).map(embed);
       void Promise.all(embeds).then(embeds =>
         embeds.forEach(({ oid, name, content }) => {
           newEmbeds = [

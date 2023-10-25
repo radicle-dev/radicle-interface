@@ -49,7 +49,10 @@
 
   const dispatch = createEventDispatcher<{
     submit: null;
+    drop: DragEvent;
   }>();
+
+  let dragging: boolean = false;
 
   function handleKeydown(event: KeyboardEvent) {
     const auxiliarKey = isMac() ? event.metaKey : event.ctrlKey;
@@ -59,6 +62,11 @@
     if (event.key === "Escape") {
       textareaElement?.blur();
     }
+  }
+
+  function handleDropAndForward(event: DragEvent) {
+    dragging = false;
+    dispatch("drop", event);
   }
 </script>
 
@@ -106,6 +114,9 @@
   textarea:focus {
     border: 1px solid var(--color-fill-secondary);
   }
+  .drag {
+    border: 1px dashed var(--color-fill-secondary) !important;
+  }
 </style>
 
 <textarea
@@ -114,10 +125,14 @@
   aria-label="textarea-comment"
   class="txt-small"
   class:resizable
+  class:drag={dragging}
   {placeholder}
   on:change
   on:click
   on:input
-  on:drop
+  on:drop={handleDropAndForward}
+  on:paste
+  on:dragenter={() => (dragging = true)}
+  on:dragleave={() => (dragging = false)}
   on:keydown|stopPropagation={handleKeydown}
   on:keypress />
