@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Link from "@app/components/Link.svelte";
-
   import Connect from "@app/App/Header/Connect.svelte";
-  import Search from "@app/App/Header/Search.svelte";
+  import Link from "@app/components/Link.svelte";
 </script>
 
 <style>
@@ -44,7 +42,6 @@
         alt="Radicle logo"
         src="/radicle.svg" />
     </Link>
-    <Search />
   </div>
 
   <div class="right">

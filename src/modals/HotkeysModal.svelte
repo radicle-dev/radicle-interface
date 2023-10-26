@@ -40,11 +40,6 @@
           <KeyHint>?</KeyHint>
         </div>
 
-        <div class="pair">
-          <div class="description">Search</div>
-          <KeyHint>/</KeyHint>
-        </div>
-
         {#if import.meta.env.DEV}
           <div class="pair">
             <div class="description">Color palette</div>
