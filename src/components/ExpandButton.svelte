@@ -5,8 +5,8 @@
   import IconSmall from "./IconSmall.svelte";
 
   export let variant: "left-aligned" | "inline" = "left-aligned";
+  export let expanded: boolean = true;
 
-  let expanded: boolean = true;
   const dispatch = createEventDispatcher<{
     toggle: { expanded: boolean };
   }>();

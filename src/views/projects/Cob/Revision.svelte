@@ -201,6 +201,7 @@
     <div class="revision-header">
       <div class="revision-name">
         <ExpandButton
+          {expanded}
           on:toggle={() => {
             expanded = !expanded;
           }} />
