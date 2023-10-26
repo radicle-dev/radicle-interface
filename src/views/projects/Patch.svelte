@@ -182,7 +182,7 @@
 
   async function createReply({
     detail: reply,
-  }: CustomEvent<{ id: string; body: string }>) {
+  }: CustomEvent<{ id: string; body: string; embeds: Embed[] }>) {
     if ($authenticated && reply.body.trim().length > 0) {
       const status = await updatePatch(
         project.id,
@@ -191,6 +191,7 @@
           type: "revision.comment",
           revision: revisionId,
           body: reply.body,
+          embeds: reply.embeds,
           replyTo: reply.id,
         },
         $authenticated.session,
@@ -232,14 +233,17 @@
       }
     }
   }
-  async function createComment(commentBody: string) {
-    if ($authenticated && commentBody.trim().length > 0) {
+  async function createComment({
+    detail: { comment, embeds },
+  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
+    if ($authenticated && comment.trim().length > 0) {
       const status = await updatePatch(
         project.id,
         patch.id,
         {
           type: "revision.comment",
-          body: commentBody,
+          body: comment,
+          embeds,
           revision: revisionId,
         },
         $authenticated.session,
@@ -252,8 +256,8 @@
   }
 
   async function editComment({
-    detail: { id, body },
-  }: CustomEvent<{ id: string; body: string }>) {
+    detail: { id, body, embeds },
+  }: CustomEvent<{ id: string; body: string; embeds: Embed[] }>) {
     if ($authenticated && body.trim().length > 0) {
       const status = await updatePatch(
         project.id,
@@ -263,7 +267,7 @@
           comment: id,
           body,
           revision: revisionId,
-          embeds: [],
+          embeds,
         },
         $authenticated.session,
         api,
@@ -779,10 +783,9 @@
               {#if $httpdStore.state === "authenticated" && view.name === "activity"}
                 <div class="connector" />
                 <CommentToggleInput
+                  enableAttachments
                   placeholder="Leave your comment"
-                  on:submit={async event => {
-                    await createComment(event.detail.comment);
-                  }} />
+                  on:submit={createComment} />
                 <div class="connector" />
                 <div style="display: flex;">
                   <CobStateButton

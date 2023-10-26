@@ -1,4 +1,6 @@
 <script lang="ts" strictEvents>
+  import type { Embed } from "@app/lib/file";
+
   import { createEventDispatcher, tick } from "svelte";
 
   import { authenticated } from "@app/lib/httpd";
@@ -16,6 +18,7 @@
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
   export let body: string;
+  export let enableAttachments: boolean = false;
   export let reactions: [string, string][];
   export let caption = "commented";
   export let rawPath: string;
@@ -29,7 +32,7 @@
 
   const dispatch = createEventDispatcher<{
     react: { nids: string[]; id: string; reaction: string };
-    edit: string;
+    edit: { comment: string; embeds: Embed[] };
   }>();
 
   $: groupedReactions = reactions?.reduce(
@@ -144,12 +147,12 @@
     {#if editInProgress}
       <ExtendedTextarea
         {body}
-        enableAttachments
+        {enableAttachments}
         submitCaption="Save"
         placeholder="Leave your description"
-        on:submit={({ detail: { comment } }) => {
+        on:submit={({ detail: { comment, embeds } }) => {
           editInProgress = false;
-          dispatch("edit", comment);
+          dispatch("edit", { comment, embeds });
         }}
         on:close={async () => {
           body = body;

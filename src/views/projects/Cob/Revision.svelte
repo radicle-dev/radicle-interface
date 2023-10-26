@@ -385,6 +385,7 @@
         {#if element.type === "thread"}
           <div class="connector" />
           <Thread
+            enableAttachments
             rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             thread={element.inner}
             on:editComment

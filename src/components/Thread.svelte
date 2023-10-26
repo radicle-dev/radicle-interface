@@ -1,5 +1,6 @@
 <script lang="ts" strictEvents>
   import type { Comment } from "@httpd-client";
+  import type { Embed } from "@app/lib/file";
 
   import { createEventDispatcher, tick } from "svelte";
   import { httpdStore } from "@app/lib/httpd";
@@ -25,10 +26,10 @@
   const dispatch = createEventDispatcher<{
     reply: {
       id: string;
-      embeds: { name: string; content: string }[];
+      embeds: Embed[];
       body: string;
     };
-    editComment: { id: string; body: string };
+    editComment: { id: string; body: string; embeds: Embed[] };
     react: { nids: string[]; commentId: string | undefined; reaction: string };
     cancel: never;
   }>();
@@ -73,8 +74,12 @@
       timestamp={root.timestamp}
       disableEdit={root.embeds.length > 0}
       body={root.body}
-      on:edit={event =>
-        dispatch("editComment", { id: root.id, body: event.detail })}
+      on:edit={({ detail }) =>
+        dispatch("editComment", {
+          id: root.id,
+          body: detail.comment,
+          embeds: detail.embeds,
+        })}
       on:react>
       <IconSmall name="chat" slot="icon" />
     </CommentComponent>
@@ -94,8 +99,12 @@
           timestamp={reply.timestamp}
           disableEdit={reply.embeds.length > 0}
           body={reply.body}
-          on:edit={event =>
-            dispatch("editComment", { id: reply.id, body: event.detail })}
+          on:edit={({ detail }) =>
+            dispatch("editComment", {
+              id: reply.id,
+              body: detail.comment,
+              embeds: detail.embeds,
+            })}
           on:react />
       {/each}
     </div>
