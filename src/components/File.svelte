@@ -3,8 +3,8 @@
   import ExpandButton from "./ExpandButton.svelte";
 
   export let collapsable: boolean = false;
+  export let expanded: boolean = true;
 
-  let expanded = true;
   let header: HTMLDivElement;
 </script>
 

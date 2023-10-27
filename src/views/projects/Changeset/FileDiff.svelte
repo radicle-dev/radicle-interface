@@ -30,6 +30,7 @@
   export let baseUrl: BaseUrl;
   export let projectId: string;
   export let visible: boolean = false;
+  export let expanded: boolean = true;
 
   let selection: Selection | undefined = undefined;
   let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
@@ -376,7 +377,7 @@
   }
 </style>
 
-<File collapsable>
+<File collapsable {expanded}>
   <svelte:fragment slot="left-header">
     {#if (headerBadgeCaption === "moved" || headerBadgeCaption === "copied") && oldFilePath}
       <span>

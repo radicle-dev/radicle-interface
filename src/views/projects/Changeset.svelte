@@ -9,6 +9,7 @@
 
   import { pluralize } from "@app/lib/pluralize";
 
+  import Button from "@app/components/Button.svelte";
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
   import Observer, { intersection } from "@app/components/Observer.svelte";
@@ -18,6 +19,8 @@
   export let baseUrl: BaseUrl;
   export let projectId: string;
   export let revision: string;
+
+  let expanded = true;
 
   const diffDescription = ({
     modified,
@@ -59,9 +62,12 @@
 </script>
 
 <style>
-  .summary {
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     padding-bottom: 1.5rem;
-    margin-left: 1rem;
   }
   .additions {
     color: var(--color-foreground-success);
@@ -76,18 +82,28 @@
   }
 </style>
 
-<div class="summary">
-  <span>{diffDescription(diff)}</span>
-  with
-  <span class:additions={diff.stats.insertions > 0}>
-    {diff.stats.insertions}
-    {pluralize("insertion", diff.stats.insertions)}
-  </span>
-  and
-  <span class:deletions={diff.stats.deletions > 0}>
-    {diff.stats.deletions}
-    {pluralize("deletion", diff.stats.deletions)}
-  </span>
+<div class="header">
+  <summary style:margin-left="1rem">
+    <span>{diffDescription(diff)}</span>
+    with
+    <span class:additions={diff.stats.insertions > 0}>
+      {diff.stats.insertions}
+      {pluralize("insertion", diff.stats.insertions)}
+    </span>
+    and
+    <span class:deletions={diff.stats.deletions > 0}>
+      {diff.stats.deletions}
+      {pluralize("deletion", diff.stats.deletions)}
+    </span>
+  </summary>
+  <div style:display="flex" style:gap="1rem">
+    <Button variant="outline" on:click={() => (expanded = true)}>
+      Expand all
+    </Button>
+    <Button variant="outline" on:click={() => (expanded = false)}>
+      Collapse all
+    </Button>
+  </div>
 </div>
 
 <div class="diff-list">
@@ -98,6 +114,7 @@
           {projectId}
           {baseUrl}
           {revision}
+          {expanded}
           visible={filesVisibility.has(file.path)}
           content={files[file.new.oid]?.content}
           filePath={file.path}
@@ -111,6 +128,7 @@
           {projectId}
           {baseUrl}
           {revision}
+          {expanded}
           visible={filesVisibility.has(file.path)}
           oldContent={files[file.old.oid]?.content}
           filePath={file.path}
@@ -124,6 +142,7 @@
           {projectId}
           {baseUrl}
           {revision}
+          {expanded}
           visible={filesVisibility.has(file.path)}
           oldContent={files[file.old.oid]?.content}
           content={files[file.new.oid]?.content}
@@ -138,6 +157,7 @@
             {projectId}
             {baseUrl}
             {revision}
+            {expanded}
             content=""
             visible={filesVisibility.has(file.newPath)}
             filePath={file.newPath}
