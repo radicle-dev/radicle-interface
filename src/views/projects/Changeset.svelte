@@ -9,10 +9,10 @@
 
   import { pluralize } from "@app/lib/pluralize";
 
-  import Button from "@app/components/Button.svelte";
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
   import Observer, { intersection } from "@app/components/Observer.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
 
   export let diff: Diff;
   export let files: Record<string, CommitBlob>;
@@ -96,14 +96,17 @@
       {pluralize("deletion", diff.stats.deletions)}
     </span>
   </summary>
-  <div style:display="flex" style:gap="1rem">
-    <Button variant="outline" on:click={() => (expanded = true)}>
-      Expand all
-    </Button>
-    <Button variant="outline" on:click={() => (expanded = false)}>
-      Collapse all
-    </Button>
-  </div>
+  {#if diff.stats.filesChanged > 1}
+    <div style:display="flex" style:gap="1rem">
+      <IconButton on:click={() => (expanded = !expanded)}>
+        {#if expanded === true}
+          Collapse all
+        {:else}
+          Expand all
+        {/if}
+      </IconButton>
+    </div>
+  {/if}
 </div>
 
 <div class="diff-list">

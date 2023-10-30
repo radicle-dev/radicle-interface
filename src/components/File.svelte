@@ -63,6 +63,7 @@
   <div class="left">
     {#if collapsable}
       <ExpandButton
+        {expanded}
         on:toggle={async () => {
           expanded = !expanded;
           if (!expanded) {
