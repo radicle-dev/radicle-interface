@@ -10,11 +10,9 @@ simple guidelines.
 
       // Return the current UNIX time.
 
-* Make sure all commits are signed off, using `git commit -s`.
 * Sign all your comments with your public key, using `git commit -S`.
 * Follow the guidelines when proposing code changes (see below).
 * Write properly formatted git commits (see below).
-* Read the DCO.
 
 Proposing changes
 -----------------
