@@ -17,7 +17,7 @@ test("navigate single issue", async ({ page }) => {
   await page.getByText("This title has markdown").click();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/issues/9cedac832f0791bea5c9cf8fa32db8a68c592166`,
+    `${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`,
   );
 });
 
@@ -39,7 +39,7 @@ test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
     { cwd: projectFolder },
   );
   await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/48af7d329e5b44ee8d348eeb7e341370243db9ad`,
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/a9d83773ac2fb8f5f654640477b9225a684cb53f`,
   );
   const commentReactionToggle = page
     .getByTitle("toggle-reaction-popover")
@@ -126,7 +126,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   );
 
   await page.route(
-    `**/v1/projects/${rid}/issues/ad9114fa910c67f09ce5d42d12c31038eb40fc86`,
+    `**/v1/projects/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
     route => {
       if (route.request().method() !== "PATCH") {
         void route.fallback();
@@ -137,7 +137,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   );
 
   await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/ad9114fa910c67f09ce5d42d12c31038eb40fc86`,
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
   );
 
   await page.getByRole("button", { name: "Leave your comment" }).click();

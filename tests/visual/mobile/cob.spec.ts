@@ -30,7 +30,7 @@ test("issues page", async ({ page }) => {
 });
 
 test("issue page", async ({ page }) => {
-  await page.goto(`${cobUrl}/issues/9cedac832f0791bea5c9cf8fa32db8a68c592166`, {
+  await page.goto(`${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -66,7 +66,7 @@ test("patches page", async ({ page }) => {
 test("patch page", async ({ page }) => {
   // Draft patch
   await page.goto(
-    `${cobUrl}/patches/416d2f95f32a5fdee958172b724c8439ce5334e2`,
+    `${cobUrl}/patches/dc9d006aa7131b62c14d570d79e079bb130ed2ea`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -84,12 +84,12 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Open patch
   await page.goto(
-    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8`,
+    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.goto(
-    `${cobUrl}/patches/687c3268119d23c5da32055c0b44c03e0e4088b8?tab=changes`,
+    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?tab=changes`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });

@@ -98,7 +98,7 @@ describe("project", () => {
   test("#getIssueById(id, issueId)", async () => {
     await api.project.getIssueById(
       cobRid,
-      "9cedac832f0791bea5c9cf8fa32db8a68c592166",
+      "d72196335761c1d5fa7883f6620e7334b34e38f9",
     );
   });
 
@@ -210,7 +210,7 @@ describe("project", () => {
   test("#getPatchById(id, patchId)", async () => {
     await api.project.getPatchById(
       cobRid,
-      "687c3268119d23c5da32055c0b44c03e0e4088b8",
+      "679b2c84a8e15ce1f73c4c231b55431b89b2559a",
     );
   });
 
