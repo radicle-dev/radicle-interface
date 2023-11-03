@@ -2,8 +2,8 @@
 import type * as Stream from "node:stream";
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
+import assert from "node:assert";
 import { test as base, expect, type ViewportSize } from "@playwright/test";
-import { object, string, ZodSchema } from "zod";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
@@ -19,18 +19,6 @@ export { expect };
 const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 
 type ViewportTypes = "iPhoneXR" | "Desktop";
-
-interface Auth {
-  sessionId: string;
-  publicKey: string;
-  signature: string;
-}
-
-const authSchema = object({
-  sessionId: string(),
-  publicKey: string(),
-  signature: string(),
-}) satisfies ZodSchema<Auth>;
 
 export const viewportSizes: Record<ViewportTypes, ViewportSize> = {
   iPhoneXR: { width: 414, height: 896 },
@@ -167,28 +155,22 @@ export const test = base.extend<{
 
     await peer.startHttpd();
     await peer.startNode();
-    await page.goto("/");
-    await page.getByRole("button", { name: "Authenticate" }).click();
-    await page
-      .locator('input[name="port"]')
-      .fill(peer.httpdBaseUrl.port.toString());
-    await page.locator('input[name="port"]').press("Enter");
     const { stdout } = await peer.spawn("rad-web", [
-      "--frontend",
       "http://localhost:3001",
-      "--backend",
-      `${peer.httpdBaseUrl.scheme}://${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
-      "--json",
+      "--no-open",
+      "--connect",
+      "--listen",
+      `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
     ]);
-    const result = authSchema.safeParse(JSON.parse(stdout));
-    if (result.success) {
-      const { sessionId, publicKey, signature } = result.data;
-      await page.goto(`/session/${sessionId}?pk=${publicKey}&sig=${signature}`);
-      await expect(page.getByText("Authenticated")).toBeVisible();
-      await page.getByRole("button", { name: "Close" }).click();
-    } else {
-      throw new Error("Not able to parse rad web output");
-    }
+    const match = stdout.match(
+      /Open the following URL to connect: (http:\/\/\S+)/,
+    );
+    assert(
+      match !== null && match[1],
+      `Failed to get authentication URL from: ${stdout}`,
+    );
+    await page.goto(match[1]);
+    await page.getByText("Successfully authenticated").waitFor();
 
     await use(peer);
   },

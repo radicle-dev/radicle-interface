@@ -1,12 +1,11 @@
 <script lang="ts">
   import * as httpd from "@app/lib/httpd";
-  import * as modal from "@app/lib/modal";
   import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
 
   import Avatar from "@app/components/Avatar.svelte";
   import Button from "@app/components/Button.svelte";
-  import ConnectModal from "@app/modals/ConnectModal.svelte";
+  import Command from "@app/components/Command.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NodeId from "@app/components/NodeId.svelte";
@@ -78,31 +77,23 @@
       </div>
     </div>
   </Popover>
-{:else if $httpdStore.state === "running"}
-  <Button
-    on:click={() => {
-      modal.show({
-        component: ConnectModal,
-        props: {},
-      });
-    }}
-    size="large"
-    variant="secondary-toggle-off">
-    <IconSmall name="key" />
-    Authenticate
-    <div class="indicator" />
-  </Button>
 {:else}
-  <Button
-    on:click={() => {
-      modal.show({
-        component: ConnectModal,
-        props: {},
-      });
-    }}
-    size="large"
-    variant="secondary-toggle-off">
-    <IconSmall name="chat" />
-    Authenticate
-  </Button>
+  <Popover popoverPositionTop="3rem" popoverPositionRight="0">
+    <Button
+      slot="toggle"
+      let:toggle
+      on:click={toggle}
+      size="large"
+      variant="secondary-toggle-off">
+      <IconSmall name="key" />
+      Authenticate
+      <div class="indicator" />
+    </Button>
+    <div slot="popover" class="connect-popover">
+      <div style:margin-bottom="1em">
+        Authenticate with your local backend to make changes
+      </div>
+      <Command fullWidth command={`rad-web ${window.origin} --connect`} />
+    </div>
+  </Popover>
 {/if}

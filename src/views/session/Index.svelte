@@ -14,6 +14,10 @@
   export let activeRoute: Extract<Route, { resource: "session" }>;
 
   onMount(async () => {
+    const port = Number.parseInt(activeRoute.params.apiAddr.split(":")[1]);
+    if (port > 0 && port < 2 ** 16) {
+      httpd.changeHttpdPort(port);
+    }
     const isAuthenticated = await httpd.authenticate(activeRoute.params);
 
     if (isAuthenticated) {

@@ -220,6 +220,7 @@ function urlToRoute(url: URL): Route | null {
             id,
             signature: url.searchParams.get("sig") ?? "",
             publicKey: url.searchParams.get("pk") ?? "",
+            apiAddr: url.searchParams.get("addr") ?? "127.0.0.1:8080",
           },
         };
       }

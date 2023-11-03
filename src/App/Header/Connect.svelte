@@ -7,7 +7,6 @@
 
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
-  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -33,16 +32,13 @@
     align-items: center;
     font-size: var(--font-size-small);
   }
-  .label {
-    display: block;
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-regular);
-    margin-bottom: 0.75rem;
-  }
   .status {
     font-size: var(--font-size-tiny);
     color: var(--color-fill-gray);
     text-align: left;
+  }
+  .connect-popover {
+    font-size: var(--font-size-small);
   }
 </style>
 
@@ -58,17 +54,12 @@
       <IconSmall name="device" />
       Connect
     </Button>
-
-    <div slot="popover" style:width="23rem">
-      <div class="label">
-        Use the
-        <ExternalLink href="https://radicle.xyz/#try">Radicle CLI</ExternalLink>
-        to connect your device.
+    <div slot="popover" class="connect-popover">
+      <div style:margin-bottom="1em">
+        Start the backend to browse projecs on your local machine, create
+        issues, and participate in discussions.
       </div>
-      <div class="label">
-        Run the following command to start the httpd daemon.
-      </div>
-      <Command command="radicle-httpd" fullWidth />
+      <Command fullWidth command={`rad-web ${window.origin}`} />
     </div>
   </Popover>
 {:else}

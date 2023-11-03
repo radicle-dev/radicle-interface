@@ -1,24 +1,31 @@
 import type { HttpdClient } from "@httpd-client";
 import type { RadiclePeer } from "@tests/support/peerManager.js";
 
-import { sessionPayloadSchema } from "@httpd-client/lib/session.js";
+import assert from "node:assert";
 
 export async function authenticate(
   api: HttpdClient,
   peer: RadiclePeer,
 ): Promise<string> {
-  const { stdout } = await peer.rad(["web", "--backend", api.url, "--json"]);
-  const session = sessionPayloadSchema.safeParse(JSON.parse(stdout));
+  const { stdout } = await peer.spawn("rad-web", [
+    "http://localhost:3001",
+    "--no-open",
+    "--connect",
+    "--listen",
+    `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
+  ]);
+  const match = stdout.match(/Visit (http:\/\/\S+) to connect/);
+  assert(
+    match !== null && match[1],
+    `Failed to get authentication URL from: ${stdout}`,
+  );
 
-  if (!session.success) {
-    throw new Error("Failed to parse session payload");
-  }
+  const authUrl = new URL(match[1]);
+  const sessionId = authUrl.pathname.split("/")[2];
 
-  const { sessionId, signature, publicKey } = session.data;
   await api.session.update(sessionId, {
-    sig: signature,
-    pk: publicKey,
+    sig: authUrl.searchParams.get("sig")!,
+    pk: authUrl.searchParams.get("pk")!,
   });
-
   return sessionId;
 }
