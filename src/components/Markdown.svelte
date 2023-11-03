@@ -135,6 +135,12 @@
     const treeChanges: Promise<void>[] = [];
 
     for (const node of nodes) {
+      const preElement = node.parentElement as HTMLElement;
+      const copyButton = document.createElement("radicle-clipboard");
+      copyButton.setAttribute("text", node.textContent || "");
+      copyButton.setAttribute("small", "");
+      preElement.prepend(copyButton);
+
       const className = Array.from(node.classList).find(name =>
         name.startsWith(prefix),
       );
@@ -194,6 +200,22 @@
     padding: 0.25rem 0;
     margin: 2rem 0 0.5rem;
     border-bottom: 1px solid var(--color-border-hint);
+  }
+
+  .markdown :global(radicle-clipboard) {
+    display: none;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+
+  .markdown :global(radicle-clipboard) {
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-small);
+  }
+
+  .markdown :global(pre:hover radicle-clipboard) {
+    display: flex;
   }
 
   .markdown :global(h3) {
@@ -268,6 +290,7 @@
   }
 
   .markdown :global(pre) {
+    position: relative;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
     background-color: var(--color-fill-ghost);
