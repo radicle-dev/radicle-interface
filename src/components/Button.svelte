@@ -138,8 +138,9 @@
   }
 
   .primary {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-primary);
+    color: var(--color-fill-primary);
+    background-color: var(--color-fill-merged);
+    border: 1px solid var(--color-border-merged);
   }
 
   .primary[disabled] {
@@ -148,7 +149,7 @@
   }
 
   .primary:not([disabled]):hover {
-    background-color: var(--color-fill-primary-hover);
+    border: 1px solid var(--color-fill-primary);
   }
 
   .secondary {

@@ -169,7 +169,7 @@ export const test = base.extend<{
     await peer.startHttpd();
     await peer.startNode();
     await page.goto("/");
-    await page.getByRole("button", { name: "Read only" }).click();
+    await page.getByRole("button", { name: "Authenticate" }).click();
     await page
       .locator('input[name="port"]')
       .fill(peer.httpdBaseUrl.port.toString());

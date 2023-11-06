@@ -1,6 +1,10 @@
 <script lang="ts">
   import Connect from "@app/App/Header/Connect.svelte";
   import Link from "@app/components/Link.svelte";
+  import NodeInfo from "@app/App/Header/NodeInfo.svelte";
+  import Authenticate from "./Header/Authenticate.svelte";
+  import { httpdStore } from "@app/lib/httpd";
+  import { nodeStore } from "@app/lib/node";
 </script>
 
 <style>
@@ -44,9 +48,13 @@
     </Link>
   </div>
 
-  <div class="right">
-    <div class="layout-desktop">
-      <Connect />
-    </div>
+  <div class="right layout-desktop-flex">
+    {#if $httpdStore.state !== "stopped"}
+      {#if $nodeStore}
+        <NodeInfo running={$nodeStore === "running"} />
+      {/if}
+      <Authenticate />
+    {/if}
+    <Connect />
   </div>
 </header>

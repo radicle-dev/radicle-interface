@@ -136,7 +136,7 @@ async function checkState() {
             update(httpdState);
           }
         } else {
-          await api.getNode();
+          await api.getNodeInfo();
           update({ state: "running" });
         }
       } catch (error) {

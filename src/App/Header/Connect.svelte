@@ -1,18 +1,12 @@
 <script lang="ts">
   import type { HttpdState } from "@app/lib/httpd";
 
-  import * as httpd from "@app/lib/httpd";
-  import * as modal from "@app/lib/modal";
-  import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
 
   import Button from "@app/components/Button.svelte";
-  import ConnectModal from "@app/modals/ConnectModal.svelte";
-  import Icon from "@app/components/Icon.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
-  import Link from "@app/components/Link.svelte";
-  import NodeId from "@app/components/NodeId.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import Command from "@app/components/Command.svelte";
 
   const buttonTitle: Record<HttpdState["state"], string> = {
     stopped: "radicle-httpd is stopped",
@@ -22,64 +16,19 @@
 </script>
 
 <style>
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: "23rem";
-  }
-  .host {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .label {
+    display: block;
     font-size: var(--font-size-small);
-  }
-  .status {
-    font-size: var(--font-size-tiny);
-    color: var(--color-fill-gray);
-    text-align: left;
-  }
-  .separator {
-    height: 1px;
-    background-color: var(--color-border-hint);
-  }
-  .avatar {
-    height: 1.5rem;
-    color: var(--color-fill-secondary);
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: center;
     font-weight: var(--font-weight-regular);
-    font-family: var(--font-family-monospace);
-  }
-  .indicator {
-    width: 0.75rem;
-    height: 0.75rem;
-    background-color: var(--color-fill-secondary);
-    border-radius: var(--border-radius-round);
-    position: absolute;
-    top: -0.375rem;
-    right: -0.375rem;
-  }
-  .row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .user {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .identity {
-    color: var(--color-fill-secondary);
-    display: flex;
+    margin-bottom: 0.75rem;
   }
 </style>
 
-{#if $httpdStore.state === "authenticated"}
-  <Popover popoverPositionTop="3rem" popoverPositionRight="0">
+{#if $httpdStore.state === "stopped"}
+  <Popover
+    popoverPositionTop="3rem"
+    popoverPositionRight="0"
+    popoverPositionLeft="-13rem">
     <Button
       slot="toggle"
       let:toggle
@@ -87,84 +36,32 @@
       title={buttonTitle[$httpdStore.state]}
       size="large"
       variant="outline">
-      <div class="avatar">
-        <NodeId
-          large
-          disableTooltip
-          nodeId={$httpdStore.session.publicKey}
-          alias={$httpdStore.session.alias} />
-      </div>
+      <IconSmall name="device" />
+      Connect
     </Button>
 
-    <div slot="popover" class="container">
-      <div class="row">
-        <div class="status">Httpd server running</div>
-
-        <div class="host">
-          radicle.local
-
-          <Link
-            on:afterNavigate={closeFocused}
-            route={{
-              resource: "nodes",
-              params: {
-                baseUrl: httpd.api.baseUrl,
-                projectPageIndex: 0,
-              },
-            }}>
-            <IconButton>Browse</IconButton>
-          </Link>
+    <svelte:fragment slot="popover">
+      <div>
+        <div class="label">
+          Use the <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://radicle.xyz/#try"
+            class="txt-link txt-bold">
+            Radicle CLI
+          </a>
+          to connect your device.
         </div>
-      </div>
-
-      <div class="separator" />
-
-      <div class="row">
-        <div class="status">Authenticated as</div>
-        <div class="user">
-          <div class="identity">
-            <NodeId
-              nodeId={$httpdStore.session.publicKey}
-              alias={$httpdStore.session.alias} />
-          </div>
-          <IconButton
-            on:click={() => {
-              void httpd.disconnect();
-              closeFocused();
-            }}>
-            Disconnect
-          </IconButton>
+        <div class="label">
+          Run the following command to start the httpd daemon.
         </div>
+        <Command command="radicle-httpd" fullWidth />
       </div>
-    </div>
+    </svelte:fragment>
   </Popover>
-{:else if $httpdStore.state === "running"}
-  <Button
-    on:click={() => {
-      modal.show({
-        component: ConnectModal,
-        props: {},
-      });
-    }}
-    title={buttonTitle[$httpdStore.state]}
-    size="large"
-    variant="outline">
-    <Icon name="device" />
-    Read only
-    <div class="indicator" />
-  </Button>
 {:else}
-  <Button
-    on:click={() => {
-      modal.show({
-        component: ConnectModal,
-        props: {},
-      });
-    }}
-    title={buttonTitle[$httpdStore.state]}
-    size="large"
-    variant="secondary">
-    <Icon name="device" />
-    Connect
+  <Button title={buttonTitle[$httpdStore.state]} size="large" variant="primary">
+    <IconSmall name="device" />
+    Connected
   </Button>
 {/if}
