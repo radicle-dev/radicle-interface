@@ -492,8 +492,7 @@
                   baseUrl,
                   project.head,
                 )} />
-              <!-- TODO: Remove if statement once `radicle-httpd` fixes embed editing -->
-              {#if issue.discussion[0].embeds.length === 0}
+              {#if $authenticatedLocal(baseUrl.hostname)}
                 <IconButton
                   title="edit description"
                   on:click={() => (editingIssueDescription = true)}>

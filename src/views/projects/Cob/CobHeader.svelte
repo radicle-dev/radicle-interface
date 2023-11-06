@@ -57,6 +57,7 @@
   .description {
     font-size: var(--font-size-small);
     margin-top: 1rem;
+    word-break: break-word;
   }
   .edit-buttons {
     display: flex;
