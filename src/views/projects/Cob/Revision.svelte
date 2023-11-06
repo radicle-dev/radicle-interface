@@ -6,7 +6,7 @@
   import { HttpdClient } from "@httpd-client";
   import { onMount } from "svelte";
 
-  import CobCommitTeaser from "./CobCommitTeaser.svelte";
+  import CobCommitListing from "@app/views/projects/Cob/CobCommitListing.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -166,27 +166,8 @@
     font-size: var(--font-size-small);
     color: var(--color-fill-gray);
   }
-  .commits {
-    display: flex;
-    flex-direction: column;
-    font-size: var(--font-size-small);
-    border-left: 1px solid var(--color-fill-separator);
-    margin-left: 1rem;
-    gap: 0.5rem;
-    padding: 1rem 1rem;
-  }
-
   .expanded {
     box-shadow: 0 0 0 1px var(--color-border-hint);
-  }
-  .commit-dot {
-    border-radius: var(--border-radius-round);
-    width: 4px;
-    height: 4px;
-    position: absolute;
-    top: 0.5rem;
-    left: -18.5px;
-    background-color: var(--color-fill-separator);
   }
   .connector {
     width: 1px;
@@ -358,14 +339,7 @@
           </div>
         {/if}
         {#if response?.commits}
-          <div class="commits">
-            {#each response.commits.reverse() as commit}
-              <div style:position="relative">
-                <div class="commit-dot" />
-                <CobCommitTeaser {commit} {baseUrl} {projectId} />
-              </div>
-            {/each}
-          </div>
+          <CobCommitListing commits={response.commits} {baseUrl} {projectId} />
         {/if}
       </div>
       {#if error}
