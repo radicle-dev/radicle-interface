@@ -42,7 +42,7 @@
     if (valid && sanitizedValue) {
       updatedLabels = [...updatedLabels, sanitizedValue];
       inputValue = "";
-      if (mode === "readWrite") {
+      if (hideEditIcon) {
         dispatch("save", updatedLabels);
       }
     }
@@ -50,7 +50,7 @@
 
   function removeLabel(label: string) {
     updatedLabels = updatedLabels.filter(x => x !== label);
-    if (mode === "readWrite") {
+    if (hideEditIcon) {
       dispatch("save", updatedLabels);
     }
   }

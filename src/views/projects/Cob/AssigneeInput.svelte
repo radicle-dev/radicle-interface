@@ -48,7 +48,7 @@
     if (valid && assignee) {
       updatedAssignees = [...updatedAssignees, assignee];
       inputValue = "";
-      if (mode !== "readOnly") {
+      if (hideEditIcon) {
         dispatch("save", updatedAssignees);
       }
     }
@@ -56,7 +56,7 @@
 
   function removeAssignee(assignee: string) {
     updatedAssignees = updatedAssignees.filter(x => x !== assignee);
-    if (mode !== "readOnly") {
+    if (hideEditIcon) {
       dispatch("save", updatedAssignees);
     }
   }
