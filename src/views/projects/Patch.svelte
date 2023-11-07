@@ -776,6 +776,7 @@
             on:react={event => handleReaction(revisionId, event)}
             on:reply={createReply}
             patchId={patch.id}
+            patchState={patch.state}
             expanded={index === patch.revisions.length - 1}
             previousRevId={previousRevision?.id}
             previousRevOid={previousRevision?.oid}>

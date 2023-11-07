@@ -1,5 +1,10 @@
 <script lang="ts">
-  import type { BaseUrl, DiffResponse, Verdict } from "@httpd-client";
+  import type {
+    BaseUrl,
+    DiffResponse,
+    PatchState,
+    Verdict,
+  } from "@httpd-client";
   import type { Timeline } from "@app/views/projects/Patch.svelte";
 
   import * as utils from "@app/lib/utils";
@@ -25,6 +30,7 @@
   export let baseUrl: BaseUrl;
   export let expanded: boolean = false;
   export let patchId: string;
+  export let patchState: PatchState;
   export let projectHead: string;
   export let projectDefaultBranch: string;
   export let projectId: string;
@@ -60,6 +66,20 @@
         return "var(--color-foreground-red)";
       default:
         return "var(--color-foreground-gray)";
+    }
+  }
+
+  function badgeColor({ status }: PatchState): string | undefined {
+    if (status === "draft") {
+      return "var(--color-foreground-gray)";
+    } else if (status === "open") {
+      return "var(--color-foreground-success)";
+    } else if (status === "archived") {
+      return "var(--color-foreground-yellow)";
+    } else if (status === "merged") {
+      return "var(--color-fill-primary)";
+    } else {
+      return "var(--color-foreground-success)";
     }
   }
 
@@ -304,7 +324,7 @@
           <div
             class="authorship-header"
             style:border-top="1px solid var(--color-fill-separator)">
-            <div style:color="var(--color-fill-success)">
+            <div style:color={badgeColor(patchState)}>
               <IconSmall name="patch" />
             </div>
 
