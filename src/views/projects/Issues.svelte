@@ -89,6 +89,8 @@
           <Button
             let:expanded
             slot="toggle"
+            let:toggle
+            on:click={toggle}
             ariaLabel="filter-dropdown"
             title="Filter issues by state">
             <div style:color={stateColor[state]}>

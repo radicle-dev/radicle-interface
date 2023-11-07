@@ -43,7 +43,11 @@
   popoverPositionBottom="2rem"
   popoverPositionLeft="0"
   popoverPadding="0">
-  <IconButton slot="toggle" title="toggle-reaction-popover">
+  <IconButton
+    slot="toggle"
+    let:toggle
+    on:click={toggle}
+    title="toggle-reaction-popover">
     <IconSmall name="face" />
   </IconButton>
 

@@ -61,7 +61,7 @@
       popoverPositionBottom="2rem"
       popoverPositionRight="0"
       popoverWidth="21rem">
-      <IconButton slot="toggle">
+      <IconButton slot="toggle" let:toggle on:click={toggle}>
         <IconSmall name="brush" />
         Theme
       </IconButton>

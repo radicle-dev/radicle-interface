@@ -8,7 +8,6 @@
 </script>
 
 <script lang="ts">
-  export let disabled = false;
   export let popoverBorderRadius: string | undefined = undefined;
   export let popoverPadding: string | undefined = undefined;
   export let popoverPositionBottom: string | undefined = undefined;
@@ -27,13 +26,11 @@
   }
 
   function toggle() {
-    if (!disabled) {
-      expanded = !expanded;
-      if ($focused === thisComponent) {
-        closeFocused();
-      } else {
-        focused.set(thisComponent);
-      }
+    expanded = !expanded;
+    if ($focused === thisComponent) {
+      closeFocused();
+    } else {
+      focused.set(thisComponent);
     }
   }
 
@@ -55,15 +52,7 @@
 <svelte:window on:click={clickOutside} on:touchstart={clickOutside} />
 
 <div bind:this={thisComponent} style:position="relative">
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div
-    role="button"
-    tabindex="0"
-    on:click={toggle}
-    style:user-select="none"
-    style:cursor={disabled ? "not-allowed" : "pointer"}>
-    <slot name="toggle" {expanded} />
-  </div>
+  <slot name="toggle" {expanded} {toggle} />
 
   {#if expanded}
     <div

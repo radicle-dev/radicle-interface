@@ -54,6 +54,8 @@
     popoverBorderRadius="var(--border-radius-small)">
     <Button
       slot="toggle"
+      let:toggle
+      on:click={toggle}
       styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
       stylePadding="0 0.25rem"
       variant="gray-white"

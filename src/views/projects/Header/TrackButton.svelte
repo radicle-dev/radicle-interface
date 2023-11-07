@@ -36,6 +36,8 @@
   popoverWidth="33rem">
   <Button
     slot="toggle"
+    let:toggle
+    on:click={toggle}
     size="large"
     variant="outline"
     title="Tracked by {trackings} {pluralize('node', trackings)}">

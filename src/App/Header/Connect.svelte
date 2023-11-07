@@ -84,6 +84,8 @@
     popoverWidth="25rem">
     <Button
       slot="toggle"
+      let:toggle
+      on:click={toggle}
       title={buttonTitle[$httpdStore.state]}
       size="large"
       variant="outline">

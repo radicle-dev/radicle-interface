@@ -692,13 +692,14 @@
           {#if view.name === "commits" || view.name === "changes"}
             <div style="margin-left: auto;">
               <Popover
-                disabled={patch.revisions.length === 1}
                 popoverPadding="0"
                 popoverPositionTop="2.5rem"
                 popoverBorderRadius="var(--border-radius-small)">
                 <Button
                   let:expanded
                   slot="toggle"
+                  let:toggle
+                  on:click={toggle}
                   size="regular"
                   disabled={patch.revisions.length === 1}>
                   <span

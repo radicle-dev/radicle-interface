@@ -44,7 +44,13 @@
   popoverPadding="0"
   popoverPositionTop="2.5rem"
   popoverBorderRadius="var(--border-radius-small)">
-  <Button let:expanded slot="toggle" title="Change peer" disabled={!peers}>
+  <Button
+    slot="toggle"
+    let:expanded
+    let:toggle
+    on:click={toggle}
+    title="Change peer"
+    disabled={!peers}>
     {#if !selectedPeer}
       <IconSmall name="delegate" />
     {/if}

@@ -266,7 +266,11 @@
           popoverPositionTop="2.5rem"
           popoverPositionRight="0"
           popoverBorderRadius="var(--border-radius-small)">
-          <IconButton slot="toggle" title="toggle-context-menu">
+          <IconButton
+            slot="toggle"
+            let:toggle
+            on:click={toggle}
+            title="toggle-context-menu">
             <IconSmall name="more" />
           </IconButton>
           <DropdownList

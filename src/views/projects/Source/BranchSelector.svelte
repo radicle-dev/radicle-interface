@@ -40,11 +40,12 @@
     <Popover
       popoverPadding="0"
       popoverPositionTop="2.5rem"
-      popoverBorderRadius="var(--border-radius-small)"
-      disabled={hideDropdown}>
+      popoverBorderRadius="var(--border-radius-small)">
       <Button
         variant="outline"
         let:expanded
+        let:toggle
+        on:click={toggle}
         slot="toggle"
         styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
         title="Change branch"
