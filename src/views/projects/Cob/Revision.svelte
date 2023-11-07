@@ -398,7 +398,11 @@
                 alias={element.inner.author.alias}>
               </NodeId>
 
-              merged
+              merged revision
+              <span class="global-hash">
+                {utils.formatObjectId(element.inner.revision)}
+              </span>
+              at commit
               <span class="global-hash">
                 {utils.formatCommit(element.inner.commit)}
               </span>
