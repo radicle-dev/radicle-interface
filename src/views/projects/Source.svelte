@@ -29,6 +29,12 @@
 
   // Whether the mobile file tree is visible.
   let mobileFileTree = false;
+  let treeElement: HTMLElement | undefined = undefined;
+  let treeOverflow: boolean = false;
+
+  $: if (treeElement) {
+    treeOverflow = treeElement.scrollHeight > treeElement.offsetHeight;
+  }
 
   const api = new HttpdClient(baseUrl);
 
@@ -97,6 +103,10 @@
     overflow-x: hidden;
     width: 17.5rem;
     padding-right: 0.25rem;
+  }
+  .source-tree-overflow {
+    border-bottom: 1px solid var(--color-fill-separator);
+    border-top: 1px solid var(--color-fill-separator);
   }
   .sticky {
     position: sticky;
@@ -174,7 +184,10 @@
   <div class="container center-content">
     {#if tree.entries.length > 0}
       <div class="column-left">
-        <div class="source-tree sticky">
+        <div
+          bind:this={treeElement}
+          class="source-tree sticky"
+          class:source-tree-overflow={treeOverflow}>
           <TreeComponent
             projectId={project.id}
             {revision}
