@@ -30,10 +30,7 @@
   }
 </style>
 
-<Popover
-  popoverPositionTop="3rem"
-  popoverPositionRight="0"
-  popoverWidth="33rem">
+<Popover popoverPositionTop="3rem" popoverPositionRight="0">
   <Button
     slot="toggle"
     let:toggle
@@ -56,7 +53,7 @@
     </span>
   </Button>
 
-  <svelte:fragment slot="popover">
+  <div slot="popover" style:width="31rem">
     <div class="track-label">
       Use the <a
         target="_blank"
@@ -84,5 +81,5 @@
       {/if}
     </div>
     <Command command={`rad ${command} ${projectId}`} />
-  </svelte:fragment>
+  </div>
 </Popover>

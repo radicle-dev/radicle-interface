@@ -57,16 +57,15 @@
     for keyboard shortcuts
   </div>
   <div class="right">
-    <Popover
-      popoverPositionBottom="2rem"
-      popoverPositionRight="0"
-      popoverWidth="21rem">
+    <Popover popoverPositionBottom="2rem" popoverPositionRight="0">
       <IconButton slot="toggle" let:toggle on:click={toggle}>
         <IconSmall name="brush" />
         Theme
       </IconButton>
 
-      <ThemeSettings slot="popover" />
+      <div slot="popover" style:width="19rem">
+        <ThemeSettings />
+      </div>
     </Popover>
 
     <a

@@ -33,10 +33,7 @@
   }
 </style>
 
-<Popover
-  popoverPositionTop="3rem"
-  popoverPositionRight="0"
-  popoverWidth="26rem">
+<Popover popoverPositionTop="3rem" popoverPositionRight="0">
   <Button
     slot="toggle"
     let:toggle
@@ -47,7 +44,7 @@
     <Icon name="download" />
   </Button>
 
-  <svelte:fragment slot="popover">
+  <div slot="popover" style:width="24rem">
     <div style:margin-bottom="1.5rem">
       <label for="rad-clone-url">
         Use the <a
@@ -66,5 +63,5 @@
       <label for="git-clone-url">Use Git to clone this repository.</label>
       <Command command={gitCloneUrl} />
     </div>
-  </svelte:fragment>
+  </div>
 </Popover>

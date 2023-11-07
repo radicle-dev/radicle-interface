@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    width: "23rem";
   }
   .host {
     display: flex;
@@ -78,10 +79,7 @@
 </style>
 
 {#if $httpdStore.state === "authenticated"}
-  <Popover
-    popoverPositionTop="3rem"
-    popoverPositionRight="0"
-    popoverWidth="25rem">
+  <Popover popoverPositionTop="3rem" popoverPositionRight="0">
     <Button
       slot="toggle"
       let:toggle

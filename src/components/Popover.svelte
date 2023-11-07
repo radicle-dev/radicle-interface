@@ -14,7 +14,6 @@
   export let popoverPositionLeft: string | undefined = undefined;
   export let popoverPositionRight: string | undefined = undefined;
   export let popoverPositionTop: string | undefined = undefined;
-  export let popoverWidth: string | undefined = undefined;
 
   let expanded = false;
   let thisComponent: HTMLDivElement;
@@ -62,8 +61,7 @@
       style:right={popoverPositionRight}
       style:top={popoverPositionTop}
       style:padding={popoverPadding}
-      style:border-radius={popoverBorderRadius}
-      style:width={popoverWidth}>
+      style:border-radius={popoverBorderRadius}>
       <slot name="popover" />
     </div>
   {/if}
