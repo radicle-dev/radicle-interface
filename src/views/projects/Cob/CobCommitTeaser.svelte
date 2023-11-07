@@ -46,6 +46,7 @@
   }
   .commit-message {
     margin: 0.5rem 0;
+    font-size: var(--font-size-tiny);
   }
 
   @media (max-width: 720px) {
