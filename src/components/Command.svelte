@@ -66,7 +66,7 @@
     {#if showPrompt}${/if}
     {command}
     <div class="clipboard">
-      <Clipboard bind:this={clipboard} small text={command} />
+      <Clipboard bind:this={clipboard} text={command} />
     </div>
   </div>
 </div>

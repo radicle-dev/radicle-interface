@@ -4,10 +4,10 @@
   import { formatCommit } from "@app/lib/utils";
 
   import Changeset from "@app/views/projects/Changeset.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
 
   export let baseUrl: BaseUrl;
   export let commit: Commit;
@@ -49,12 +49,12 @@
         <InlineMarkdown fontSize="medium" content={header.summary} />
       </div>
       <div class="layout-desktop-flex txt-monospace sha1">
-        <span>{header.id}</span>
-        <Clipboard small text={header.id} />
+        <CopyableId id={header.id} />
       </div>
       <div class="layout-mobile-flex txt-monospace sha1 txt-small">
-        {formatCommit(header.id)}
-        <Clipboard small text={header.id} />
+        <CopyableId id={header.id}>
+          {formatCommit(header.id)}
+        </CopyableId>
       </div>
     </div>
     <pre class="description txt-small">{header.description}</pre>

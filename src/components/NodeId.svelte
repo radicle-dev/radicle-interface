@@ -3,7 +3,7 @@
 
   import Avatar from "./Avatar.svelte";
   import HoverPopover from "./HoverPopover.svelte";
-  import Clipboard from "./Clipboard.svelte";
+  import CopyableId from "./CopyableId.svelte";
 
   export let nodeId: string;
   export let alias: string | undefined = undefined;
@@ -29,13 +29,6 @@
     height: 1.25rem;
     gap: 0.5rem;
   }
-  .node-id {
-    height: 2.5rem;
-    padding: 0 0.5rem 0 0.75rem;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-  }
 </style>
 
 <HoverPopover
@@ -51,10 +44,9 @@
     {/if}
   </div>
 
-  <div slot="popover" class="node-id">
-    <span class="global-hash">{formatNodeId(nodeId)}</span>
-    <span style:color="var(--color-fill-secondary)">
-      <Clipboard small text={nodeId} />
-    </span>
+  <div style:padding="0.5rem 0.5rem 0.5rem 0.75rem" slot="popover">
+    <CopyableId id={nodeId}>
+      {formatNodeId(nodeId)}
+    </CopyableId>
   </div>
 </HoverPopover>

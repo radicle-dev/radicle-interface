@@ -8,12 +8,12 @@
   import { twemoji, isLocal } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Link from "@app/components/Link.svelte";
 
   import Header from "./Header.svelte";
   import TrackButton from "./Header/TrackButton.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
 
   export let activeTab: ActiveTab = undefined;
   export let baseUrl: BaseUrl;
@@ -45,22 +45,8 @@
   .project-name:hover {
     color: inherit;
   }
-  .id {
-    color: var(--color-fill-secondary);
-    overflow-wrap: anywhere;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    gap: 0.125rem;
-    margin: 1rem 0 3rem 0;
-  }
   .description :global(a) {
     border-bottom: 1px solid var(--color-foreground-contrast);
-  }
-  .truncate {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow-x: hidden;
   }
   .content {
     width: 100%;
@@ -91,7 +77,7 @@
 
 <div class="header">
   <div class="title">
-    <span class="truncate">
+    <span class="txt-overflow">
       <Link
         route={{
           resource: "project.source",
@@ -131,9 +117,8 @@
     {@html render(project.description)}
   </div>
 
-  <div class="id">
-    <span class="truncate global-hash">{project.id}</span>
-    <Clipboard small text={project.id} />
+  <div style:margin-bottom="3rem">
+    <CopyableId id={project.id} />
   </div>
 
   <Header {project} {activeTab} {baseUrl} />

@@ -32,9 +32,7 @@
     {#each embeds as embed}
       <Badge variant="neutral">
         <span class="txt-overflow">{embed.name}</span>
-        <Clipboard
-          text={`![${embed.name}](${embed.content.substring(4)})`}
-          small />
+        <Clipboard text={`![${embed.name}](${embed.content.substring(4)})`} />
       </Badge>
     {:else}
       <div class="txt-missing">No attachments</div>

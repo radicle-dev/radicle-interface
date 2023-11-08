@@ -6,11 +6,9 @@
 
   import { toClipboard } from "@app/lib/utils";
 
-  import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
 
   export let text: string;
-  export let small = false;
   export let tooltip: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{ copied: null }>();
@@ -31,17 +29,13 @@
 
 <style>
   .clipboard {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-  }
-  .small {
-    width: 1.5rem;
-    height: 1.5rem;
   }
 </style>
 
@@ -51,11 +45,6 @@
   tabindex="0"
   title={tooltip}
   class="clipboard"
-  class:small
   on:click|stopPropagation={copy}>
-  {#if small}
-    <IconSmall name={icon} />
-  {:else}
-    <Icon name={icon} />
-  {/if}
+  <IconSmall name={icon} />
 </span>

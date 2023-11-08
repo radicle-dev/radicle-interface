@@ -5,12 +5,12 @@
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
 
-  import Clipboard from "@app/components/Clipboard.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
   import Button from "@app/components/Button.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -74,11 +74,6 @@
     font-size: var(--font-size-x-large);
     font-weight: var(--font-weight-bold);
   }
-  .address {
-    color: var(--color-fill-secondary);
-    font-family: var(--font-family-monospace);
-    display: flex;
-  }
   .info {
     display: flex;
     justify-content: space-between;
@@ -86,6 +81,7 @@
   .version {
     color: var(--color-fill-gray);
     font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
   }
   .projects {
     display: flex;
@@ -111,18 +107,19 @@
           {#each externalAddresses as address}
             <!-- If there are externalAddresses this is probably a remote node -->
             <!-- in that case, we show all the defined externalAddresses as a listing -->
-            <div class="address">
+            <CopyableId id={`${nid}@${address}`}>
               {truncateId(nid)}@{address}
-              <Clipboard small text={`${nid}@${address}`} />
-            </div>
+            </CopyableId>
           {:else}
             <!-- else this is probably a local node -->
             <!-- So we show only the nid -->
-            <div class="address layout-desktop">
-              {nid}<Clipboard small text={nid} />
+            <div class="layout-desktop">
+              <CopyableId id={nid} />
             </div>
-            <div class="address layout-mobile">
-              {truncateId(nid)}<Clipboard small text={nid} />
+            <div class="layout-mobile">
+              <CopyableId id={nid}>
+                {truncateId(nid)}
+              </CopyableId>
             </div>
           {/each}
         </div>
