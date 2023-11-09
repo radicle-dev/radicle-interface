@@ -69,11 +69,11 @@
     "--color-foreground-emphasized",
     "--color-foreground-gray",
     "--color-foreground-match",
+    "--color-foreground-primary",
     "--color-foreground-red",
     "--color-foreground-success",
     "--color-foreground-white",
     "--color-foreground-yellow",
-    "--color-prettylights-syntax",
   ];
 
   const colors = extractCssVariables("--color").filter(c => {
