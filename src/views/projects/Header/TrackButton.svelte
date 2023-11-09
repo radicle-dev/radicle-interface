@@ -39,9 +39,13 @@
     variant="outline"
     title="Tracked by {trackings} {pluralize('node', trackings)}">
     {#if tracking}
-      <IconSmall name="tracking-on" />
+      <div style:color="var(--color-fill-secondary)">
+        <IconSmall name="network" />
+      </div>
     {:else}
-      <IconSmall name="tracking-off" />
+      <div style:color="var(--color-foreground-contrast)">
+        <IconSmall name="network" />
+      </div>
     {/if}
     <span>
       {buttonTitle}

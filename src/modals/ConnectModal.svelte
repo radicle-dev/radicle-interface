@@ -86,7 +86,7 @@
 </style>
 
 <Modal title="Connect and authenticate">
-  <Icon name="review" size="48" slot="icon" />
+  <Icon name="key" size="48" slot="icon" />
 
   <svelte:fragment slot="subtitle">
     Complete the steps below to browse projects on your local machine,
