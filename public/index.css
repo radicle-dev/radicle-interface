@@ -46,7 +46,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-fill-yellow);
+  background: var(--color-fill-yellow-iconic);
   color: var(--color-foreground-black);
 }
 
