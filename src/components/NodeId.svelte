@@ -21,13 +21,29 @@
     gap: 0.25rem;
     height: 1rem;
     font-family: var(--font-family-monospace);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-contrast);
   }
   .large {
     height: 1.25rem;
     gap: 0.5rem;
+  }
+  .popover-avatar {
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
+    color: var(--color-foreground-contrast);
+  }
+  .popover-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
   }
 </style>
 
@@ -45,8 +61,17 @@
   </div>
 
   <div style:padding="0.5rem 0.5rem 0.5rem 0.75rem" slot="popover">
-    <CopyableId id={nodeId}>
-      {formatNodeId(nodeId)}
-    </CopyableId>
+    <div class="popover-container">
+      <div class="popover-avatar">
+        <Avatar {nodeId} />
+        {#if alias}
+          {alias}
+        {/if}
+      </div>
+
+      <CopyableId id={nodeId}>
+        {formatNodeId(nodeId)}
+      </CopyableId>
+    </div>
   </div>
 </HoverPopover>
