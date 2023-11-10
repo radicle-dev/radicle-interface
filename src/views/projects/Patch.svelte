@@ -35,23 +35,18 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Patch, PatchUpdateAction } from "@httpd-client";
+  import type { BaseUrl, Patch } from "@httpd-client";
   import type { Embed } from "@app/lib/file";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
-  import type { Session } from "@app/lib/httpd";
   import type { ComponentProps } from "svelte";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { capitalize, isEqual } from "lodash";
-  import {
-    authenticated,
-    authenticatedLocal,
-    httpdStore,
-  } from "@app/lib/httpd";
+  import { capitalize, isEqual, partial } from "lodash";
+  import { httpdStore, type Session } from "@app/lib/httpd";
 
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
@@ -91,153 +86,165 @@
     ["Convert to draft", { status: "draft" }],
   ];
 
-  async function editTitle({ detail: title }: CustomEvent<string>) {
-    if ($authenticated && title.trim().length > 0 && title !== patch.title) {
-      try {
-        saveTitleInProgress = true;
-        const status = await updatePatch(
-          project.id,
-          patch.id,
-          {
-            type: "edit",
-            title,
-            target: "delegates",
-          },
-          $authenticated.session,
-          api,
-        );
-        if (status === "success") {
-          patch = await api.project.getPatchById(project.id, patch.id);
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: "Patch title editing failed",
-              subtitle: [
-                "There was an error while updating the issue.",
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
+  async function editTitle(sessionId: string, title: string) {
+    try {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        {
+          type: "edit",
+          title,
+          target: "delegates",
+        },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch title editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
             },
-          });
-        }
-      } finally {
-        saveTitleInProgress = false;
+          },
+        });
       }
+    } finally {
+      await refreshPatch();
     }
   }
 
-  async function editDescription({
-    detail: { comment: description },
-  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
-    if (
-      $authenticated &&
-      description.trim().length > 0 &&
-      description !== patch.title
-    ) {
-      try {
-        saveDescriptionInProgress = true;
-        const status = await updatePatch(
-          project.id,
-          patch.id,
-          {
-            type: "revision.edit",
-            revision: patch.id,
-            description,
-          },
-          $authenticated.session,
-          api,
-        );
-        if (status === "success") {
-          editingDescription = false;
-          patch = await api.project.getPatchById(project.id, patch.id);
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: "Patch description editing failed",
-              subtitle: [
-                "There was an error while updating the issue.",
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
+  async function editDescription(sessionId: string, description: string) {
+    try {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        {
+          type: "revision.edit",
+          revision: patch.id,
+          description,
+        },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch description editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
             },
-          });
-        }
-      } finally {
-        saveDescriptionInProgress = false;
+          },
+        });
       }
+    } finally {
+      await refreshPatch();
     }
   }
 
-  async function createReply({
-    detail: reply,
-  }: CustomEvent<{ id: string; body: string; embeds: Embed[] }>) {
-    if ($authenticated && reply.body.trim().length > 0) {
-      const status = await updatePatch(
+  async function createReply(
+    sessionId: string,
+    revisionId: string,
+    replyTo: string,
+    body: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updatePatch(
         project.id,
         patch.id,
         {
           type: "revision.comment",
           revision: revisionId,
-          body: reply.body,
-          embeds: reply.embeds,
-          replyTo: reply.id,
+          body,
+          embeds,
+          replyTo,
         },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        patch = await api.project.getPatchById(project.id, patch.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch comment reply creation failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshPatch();
     }
   }
+
   async function handleReaction(
+    session: Session,
     revisionId: string,
-    {
-      detail: { nids, id, reaction },
-    }: CustomEvent<{
-      nids: string[];
-      id: string;
-      reaction: string;
-    }>,
+    commentId: string,
+    nids: string[],
+    reaction: string,
   ) {
-    if ($authenticated) {
-      const status = await updatePatch(
+    try {
+      await api.project.updatePatch(
         project.id,
         patch.id,
         {
           type: "revision.comment.react",
           revision: revisionId,
-          comment: id,
+          comment: commentId,
           reaction,
-          active: nids.includes($authenticated.session.publicKey)
-            ? false
-            : true,
+          active: nids.includes(session.publicKey) ? false : true,
         },
-        $authenticated.session,
-        api,
+        session.id,
       );
-      if (status === "success") {
-        patch = await api.project.getPatchById(project.id, patch.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch comment reaction editing failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshPatch();
     }
   }
-  async function createComment({
-    detail: { comment, embeds },
-  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
-    if ($authenticated && comment.trim().length > 0) {
-      const status = await updatePatch(
+  async function createComment(
+    sessionId: string,
+    revisionId: string,
+    comment: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updatePatch(
         project.id,
         patch.id,
         {
@@ -246,20 +253,39 @@
           embeds,
           revision: revisionId,
         },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        patch = await api.project.getPatchById(project.id, patch.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch comment creation failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshPatch();
     }
   }
 
-  async function editComment({
-    detail: { id, body, embeds },
-  }: CustomEvent<{ id: string; body: string; embeds: Embed[] }>) {
-    if ($authenticated && body.trim().length > 0) {
-      const status = await updatePatch(
+  async function editComment(
+    sessionId: string,
+    revisionId: string,
+    id: string,
+    body: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updatePatch(
         project.id,
         patch.id,
         {
@@ -269,85 +295,121 @@
           revision: revisionId,
           embeds,
         },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        patch = await api.project.getPatchById(project.id, patch.id);
-      }
-    }
-  }
-
-  async function saveStatus({ detail: state }: CustomEvent<PatchState>) {
-    if ($authenticated && state.status !== "merged") {
-      const status = await updatePatch(
-        project.id,
-        patch.id,
-        { type: "lifecycle", state },
-        $authenticated.session,
-        api,
-      );
-      if (status === "success") {
-        void router.push({
-          resource: "project.patch",
-          project: project.id,
-          node: baseUrl,
-          patch: patch.id,
-        });
-      }
-    }
-  }
-
-  async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
-    if ($authenticated) {
-      if (isEqual(patch.labels, labels)) {
-        return;
-      }
-
-      let revision;
-      if (view.name === "diff") {
-        revision = patch.revisions[patch.revisions.length - 1].id;
-      } else {
-        revision = view.revision;
-      }
-      const status = await updatePatch(
-        project.id,
-        revision,
-        { type: "label", labels: labels },
-        $authenticated.session,
-        api,
-      );
-      if (status === "success") {
-        patch = await api.project.getPatchById(project.id, patch.id);
-      }
-    }
-  }
-
-  export async function updatePatch(
-    projectId: string,
-    patchId: string,
-    action: PatchUpdateAction,
-    session: Session,
-    api: HttpdClient,
-  ): Promise<"success" | "error"> {
-    try {
-      await api.project.updatePatch(projectId, patchId, action, session.id);
-      return "success";
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
           component: ErrorModal,
           props: {
-            title: "Patch editing failed",
+            title: "Patch comment editing failed",
             subtitle: [
               "There was an error while updating the patch.",
               "Check your radicle-httpd logs for details.",
             ],
-            error,
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
           },
         });
       }
-      return "error";
+    } finally {
+      await refreshPatch();
+    }
+  }
+
+  async function saveStatus(sessionId: string, state: PatchState) {
+    try {
+      if (state.status !== "merged") {
+        await api.project.updatePatch(
+          project.id,
+          patch.id,
+          { type: "lifecycle", state },
+          sessionId,
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch status change failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      void router.push({
+        resource: "project.patch",
+        project: project.id,
+        node: baseUrl,
+        patch: patch.id,
+      });
+    }
+  }
+
+  async function saveLabels(sessionId: string, labels: string[]) {
+    try {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        { type: "label", labels },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Patch label change failed",
+            subtitle: [
+              "There was an error while updating the patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      await refreshPatch();
+    }
+  }
+
+  // Refreshes the given patch by fetching it from the server.
+  // If the fetch fails, the given patch is returned.
+  async function refreshPatch() {
+    try {
+      patch = await api.project.getPatchById(project.id, patch.id);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Unable to fetch patch",
+            subtitle: [
+              "There was an error while refreshing this patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      patch = patch;
     }
   }
 
@@ -415,6 +477,7 @@
   }
 
   let editingDescription = false;
+  let editingLabels = false;
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -474,9 +537,10 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
-
-  let saveDescriptionInProgress = false;
-  let saveTitleInProgress = false;
+  $: session =
+    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
+      ? $httpdStore.session
+      : undefined;
 </script>
 
 <style>
@@ -585,9 +649,7 @@
       <CobHeader
         id={patch.id}
         title={patch.title}
-        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
-        submitInProgress={saveTitleInProgress}
-        on:editTitle={editTitle}>
+        editTitle={session && partial(editTitle, session.id)}>
         <svelte:fragment slot="icon">
           <div
             class="state"
@@ -605,14 +667,23 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if $authenticatedLocal(baseUrl.hostname) && editingDescription}
+            {#if session && editingDescription}
               <ExtendedTextarea
                 body={newDescription}
                 submitCaption="Save"
-                submitInProgress={saveDescriptionInProgress}
+                submitInProgress={editingDescription}
                 placeholder="Leave your description"
                 on:close={() => (editingDescription = false)}
-                on:submit={editDescription} />
+                on:submit={async ({ detail: { comment } }) => {
+                  editingDescription = true;
+                  if (session) {
+                    try {
+                      await editDescription(session.id, comment);
+                    } finally {
+                      editingDescription = false;
+                    }
+                  }
+                }} />
             {:else if description}
               <Markdown
                 content={description}
@@ -624,7 +695,7 @@
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
-            {#if $authenticatedLocal(baseUrl.hostname) && !editingDescription}
+            {#if session && !editingDescription}
               <div class="edit-buttons">
                 <IconButton
                   title="edit description"
@@ -682,12 +753,12 @@
         </Radio>
 
         <div style:margin-left="auto">
-          {#if $httpdStore.state === "authenticated" && view.name === "activity"}
+          {#if session && view.name === "activity"}
             <CobStateButton
               items={items.filter(([, state]) => !isEqual(state, patch.state))}
               {selectedItem}
               state={patch.state}
-              on:saveStatus={saveStatus} />
+              save={session && partial(saveStatus, session.id)} />
           {/if}
           {#if view.name === "commits" || view.name === "changes"}
             <div style="margin-left: auto;">
@@ -773,21 +844,25 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
-            on:editComment={editComment}
-            on:react={event => handleReaction(revisionId, event)}
-            on:reply={createReply}
+            editComment={session &&
+              partial(editComment, session.id, revision.revisionId)}
+            handleReaction={session &&
+              partial(handleReaction, session, revision.revisionId)}
+            createReply={session &&
+              partial(createReply, session.id, revision.revisionId)}
             patchId={patch.id}
             patchState={patch.state}
             expanded={index === patch.revisions.length - 1}
             previousRevId={previousRevision?.id}
             previousRevOid={previousRevision?.oid}>
             {#if index === patch.revisions.length - 1}
-              {#if $httpdStore.state === "authenticated" && view.name === "activity"}
+              {#if session && view.name === "activity"}
                 <div class="connector" />
                 <CommentToggleInput
                   enableAttachments
                   placeholder="Leave your comment"
-                  on:submit={createComment} />
+                  submit={session &&
+                    partial(createComment, session.id, revision.revisionId)} />
                 <div class="connector" />
                 <div style="display: flex;">
                   <CobStateButton
@@ -796,7 +871,7 @@
                     )}
                     {selectedItem}
                     state={patch.state}
-                    on:saveStatus={saveStatus} />
+                    save={session && partial(saveStatus, session.id)} />
                 </div>
               {/if}
             {/if}
@@ -855,9 +930,19 @@
         </div>
       </div>
       <LabelInput
-        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        locallyAuthenticated={Boolean(session)}
+        submitInProgress={editingLabels}
         labels={patch.labels}
-        on:save={saveLabels} />
+        on:save={async ({ detail: newLabels }) => {
+          if (session) {
+            editingLabels = true;
+            try {
+              await saveLabels(session.id, newLabels);
+            } finally {
+              editingLabels = false;
+            }
+          }
+        }} />
     </div>
   </div>
 </Layout>

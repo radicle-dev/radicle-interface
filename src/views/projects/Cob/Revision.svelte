@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Embed } from "@httpd-client/lib/project/comment";
   import type {
     BaseUrl,
     DiffResponse,
@@ -44,6 +45,15 @@
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
+  export let editComment:
+    | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
+    | undefined;
+  export let handleReaction:
+    | ((commentId: string, nids: string[], reaction: string) => Promise<void>)
+    | undefined;
+  export let createReply:
+    | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
+    | undefined;
 
   const api = new HttpdClient(baseUrl);
 
@@ -386,9 +396,9 @@
             enableAttachments
             rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             thread={element.inner}
-            on:editComment
-            on:react
-            on:reply />
+            {editComment}
+            {createReply}
+            {handleReaction} />
         {:else if element.type === "merge"}
           <div class="connector" />
           <div class="action merge">
@@ -426,17 +436,13 @@
             class:comment-review={review.verdict === null}
             class:positive-review={review.verdict === "accept"}
             class:negative-review={review.verdict === "reject"}>
-            <!-- TODO: Empty array for reactions prop is a workaround
-                  until review comments have reactions -->
             <CommentComponent
               caption={formatVerdict(review.verdict)}
               authorId={author}
               authorAlias={review.author.alias}
-              reactions={[]}
               timestamp={review.timestamp}
               rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
-              body={review.summary ?? ""}
-              on:react>
+              body={review.summary ?? ""}>
               <div slot="icon" style:color={verdictIconColor(review.verdict)}>
                 {#if review.verdict === "accept"}
                   <IconSmall name="checkmark" />
