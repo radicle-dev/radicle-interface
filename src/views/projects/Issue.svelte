@@ -1,17 +1,17 @@
 <script lang="ts">
   import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
   import type { Embed } from "@app/lib/file";
-  import type { IssueUpdateAction } from "@httpd-client/lib/project/issue";
   import type { Session } from "@app/lib/httpd";
 
-  import { isEqual, uniqBy } from "lodash";
+  import { isEqual, uniqBy, partial } from "lodash";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { ResponseError } from "@httpd-client/lib/fetcher";
-  import { authenticated, authenticatedLocal } from "@app/lib/httpd";
+  import { closeFocused } from "@app/components/Popover.svelte";
+  import { groupReactions } from "@app/lib/reactions";
+  import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -46,238 +46,281 @@
     ["Close issue as other", { status: "closed", reason: "other" }],
   ];
 
-  async function createReply({
-    detail: { body, embeds, id },
-  }: CustomEvent<{
-    id: string;
-    embeds: Embed[];
-    body: string;
-  }>) {
-    if ($authenticated && body.trim().length > 0) {
-      const status = await updateIssue(
+  async function createReply(
+    sessionId: string,
+    replyTo: string,
+    body: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updateIssue(
         project.id,
         issue.id,
-        { type: "comment", body, embeds, replyTo: id },
-        $authenticated.session,
-        api,
+        { type: "comment", body, embeds, replyTo },
+        sessionId,
       );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Comment reply creation failed",
+            subtitle: [
+              "There was an error while creating this reply.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshIssue();
     }
   }
 
-  async function createComment({
-    detail: { comment, embeds },
-  }: CustomEvent<{ comment: string; embeds: Embed[] }>) {
-    if ($authenticated && comment.trim().length > 0) {
-      const status = await updateIssue(
+  async function createComment(
+    sessionId: string,
+    body: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updateIssue(
         project.id,
         issue.id,
-        { type: "comment", body: comment, embeds, replyTo: issue.id },
-        $authenticated.session,
-        api,
+        { type: "comment", body, embeds, replyTo: issue.id },
+        sessionId,
       );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
-      }
-    }
-  }
-
-  async function editComment(id: string, body: string) {
-    if ($authenticated && body.trim().length > 0) {
-      try {
-        if (issue.id === id) {
-          saveDescriptionInProgress = true;
-        } else {
-          saveCommentInProgress = true;
-        }
-        const status = await updateIssue(
-          project.id,
-          issue.id,
-          {
-            type: "comment.edit",
-            id,
-            body,
-            embeds: embeds[id],
-          },
-          $authenticated.session,
-          api,
-        );
-        if (status === "success") {
-          issue = await refreshIssue(project.id, issue, api);
-        } else {
-          // Reassigning issue.discussion overwrites the changed comment in Comment
-          issue.discussion = issue.discussion;
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: "Issue comment editing failed",
-              subtitle: [
-                "There was an error while updating the issue.",
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Comment creation failed",
+            subtitle: [
+              "There was an error while creating this comment.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
             },
-          });
-        }
-      } finally {
-        editingIssueDescription = false;
-        saveDescriptionInProgress = false;
-        saveCommentInProgress = false;
-      }
-    }
-  }
-
-  async function handleReaction({
-    nids,
-    id,
-    reaction,
-  }: {
-    nids: string[];
-    id: string;
-    reaction: string;
-  }) {
-    if ($authenticated) {
-      try {
-        const status = await updateIssue(
-          project.id,
-          issue.id,
-          {
-            type: "comment.react",
-            id,
-            reaction,
-            active: nids.includes($authenticated.session.publicKey)
-              ? false
-              : true,
           },
-          $authenticated.session,
-          api,
-        );
-        if (status === "success") {
-          issue = await refreshIssue(project.id, issue, api);
-        }
-      } catch (e) {
-        console.error(e);
+        });
       }
+    } finally {
+      await refreshIssue();
     }
   }
 
-  async function editTitle({ detail: title }: CustomEvent<string>) {
-    if ($authenticated && title.trim().length > 0 && title !== issue.title) {
-      try {
-        saveTitleInProgress = true;
-        const status = await updateIssue(
-          project.id,
-          issue.id,
-          { type: "edit", title },
-          $authenticated.session,
-          api,
-        );
-        if (status === "success") {
-          issue = await refreshIssue(project.id, issue, api);
-        }
-        issue.title = issue.title;
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: "Issue title editing failed",
-              subtitle: [
-                "There was an error while updating the issue.",
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
+  async function editComment(
+    sessionId: string,
+    id: string,
+    body: string,
+    embeds: Embed[],
+  ) {
+    try {
+      await api.project.updateIssue(
+        project.id,
+        issue.id,
+        { type: "comment.edit", id, body, embeds },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue comment editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
             },
-          });
-        }
-      } finally {
-        saveTitleInProgress = false;
+          },
+        });
       }
-    } else {
-      // Reassigning issue.title overwrites the invalid title in IssueHeader
-      issue.title = issue.title;
+    } finally {
+      await refreshIssue();
     }
   }
 
-  async function saveLabels({ detail: labels }: CustomEvent<string[]>) {
-    if ($authenticated) {
-      if (isEqual(issue.labels, labels)) {
-        return;
+  async function handleReaction(
+    session: Session,
+    commentId: string,
+    nids: string[],
+    reaction: string,
+  ) {
+    try {
+      await api.project.updateIssue(
+        project.id,
+        issue.id,
+        {
+          type: "comment.react",
+          id: commentId,
+          reaction,
+          active: nids.includes(session.publicKey) ? false : true,
+        },
+        session.id,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Editing reactions failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
-      const status = await updateIssue(
+    } finally {
+      await refreshIssue();
+    }
+  }
+
+  async function editTitle(sessionId: string, title: string) {
+    try {
+      await api.project.updateIssue(
+        project.id,
+        issue.id,
+        { type: "edit", title },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue title editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      await refreshIssue();
+    }
+  }
+
+  async function saveLabels(sessionId: string, labels: string[]) {
+    try {
+      await api.project.updateIssue(
         project.id,
         issue.id,
         { type: "label", labels },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
-      } else {
-        // Reassigning issue overwrites the label changes.
-        issue = issue;
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue labels editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshIssue();
     }
   }
 
-  async function saveAssignees({ detail: assignees }: CustomEvent<string[]>) {
-    if ($authenticated) {
-      if (isEqual(issue.assignees, assignees)) {
-        return;
-      }
-      const status = await updateIssue(
+  async function saveAssignees(sessionId: string, assignees: string[]) {
+    try {
+      await api.project.updateIssue(
         project.id,
         issue.id,
         { type: "assign", assignees },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        issue = await refreshIssue(project.id, issue, api);
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue assignees editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
       }
+    } finally {
+      await refreshIssue();
     }
   }
 
-  async function saveStatus({ detail: state }: CustomEvent<IssueState>) {
-    if ($authenticated) {
-      const status = await updateIssue(
+  async function saveStatus(sessionId: string, state: IssueState) {
+    try {
+      await api.project.updateIssue(
         project.id,
         issue.id,
         { type: "lifecycle", state },
-        $authenticated.session,
-        api,
+        sessionId,
       );
-      if (status === "success") {
-        void router.push({
-          resource: "project.issue",
-          project: project.id,
-          node: baseUrl,
-          issue: issue.id,
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Issue status editing failed",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
         });
       }
+    } finally {
+      void router.push({
+        resource: "project.issue",
+        project: project.id,
+        node: baseUrl,
+        issue: issue.id,
+      });
     }
   }
 
   // Refreshes the given issue by fetching it from the server.
   // If the fetch fails, the given issue is returned.
-  export async function refreshIssue(
-    projectId: string,
-    issue: Issue,
-    api: HttpdClient,
-  ) {
+  async function refreshIssue() {
     try {
-      return await api.project.getIssueById(projectId, issue.id);
+      issue = await api.project.getIssueById(project.id, issue.id);
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
@@ -295,54 +338,8 @@
           },
         });
       }
-      return issue;
-    }
-  }
-
-  export async function updateIssue(
-    projectId: string,
-    issueId: string,
-    action: IssueUpdateAction,
-    session: Session,
-    api: HttpdClient,
-  ): Promise<"success" | "error"> {
-    try {
-      await api.project.updateIssue(projectId, issueId, action, session.id);
-      return "success";
-    } catch (error) {
-      if (error instanceof ResponseError && error.status === 413) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Issue editing failed",
-            subtitle: [
-              "Not able to upload the attached file.",
-              "Try to reduce the size of your attachment.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.body as string,
-              stack: error.stack,
-            },
-          },
-        });
-      } else if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Issue editing failed",
-            subtitle: [
-              "There was an error while updating the issue.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-      return "error";
+    } finally {
+      issue = issue;
     }
   }
 
@@ -372,14 +369,14 @@
           .sort((a, b) => a.timestamp - b.timestamp),
       };
     }, []);
-  $: issueReactions = issue.discussion[0].reactions?.reduce(
-    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
-    new Map<string, string[]>(),
-  );
+  $: session =
+    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
+      ? $httpdStore.session
+      : undefined;
 
+  let editingAssignees = false;
+  let editingLabels = false;
   let saveDescriptionInProgress = false;
-  let saveTitleInProgress = false;
-  let saveCommentInProgress = false;
 </script>
 
 <style>
@@ -446,11 +443,9 @@
   <div class="issue">
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
       <CobHeader
-        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
         id={issue.id}
         title={issue.title}
-        submitInProgress={saveTitleInProgress}
-        on:editTitle={editTitle}>
+        editTitle={session && partial(editTitle, session.id)}>
         <svelte:fragment slot="icon">
           <div
             class="state"
@@ -472,7 +467,7 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          {#if $authenticatedLocal(baseUrl.hostname) && editingIssueDescription}
+          {#if session && editingIssueDescription}
             <ExtendedTextarea
               enableAttachments
               body={issue.discussion[0].body}
@@ -480,8 +475,15 @@
               submitInProgress={saveDescriptionInProgress}
               placeholder="Leave a description"
               on:close={() => (editingIssueDescription = false)}
-              on:submit={async ({ detail: { comment } }) => {
-                void editComment(issue.id, comment);
+              on:submit={async ({ detail: { comment, embeds } }) => {
+                if (session) {
+                  try {
+                    saveDescriptionInProgress = true;
+                    await editComment(session.id, issue.id, comment, embeds);
+                  } finally {
+                    saveDescriptionInProgress = false;
+                  }
+                }
               }} />
           {:else}
             <div class="markdown">
@@ -492,7 +494,7 @@
                   baseUrl,
                   project.head,
                 )} />
-              {#if $authenticatedLocal(baseUrl.hostname)}
+              {#if session}
                 <IconButton
                   title="edit description"
                   on:click={() => (editingIssueDescription = true)}>
@@ -502,19 +504,24 @@
             </div>
           {/if}
           <div class="reactions">
-            {#if $authenticated}
+            {#if session}
               <ReactionSelector
-                nid={$authenticated.session.publicKey}
-                reactions={issueReactions}
-                on:select={event =>
-                  handleReaction({ ...event.detail, id: issue.id })} />
+                reactions={groupReactions(issue.discussion[0].reactions)}
+                on:select={async ({ detail: { nids, reaction } }) => {
+                  try {
+                    if (session) {
+                      await handleReaction(session, issue.id, nids, reaction);
+                    }
+                  } finally {
+                    closeFocused();
+                  }
+                }} />
             {/if}
-            {#if issueReactions.size > 0}
+            {#if issue.discussion[0].reactions.length > 0}
               <Reactions
-                clickable={Boolean($authenticated)}
-                reactions={issueReactions}
-                on:remove={event =>
-                  handleReaction({ ...event.detail, id: issue.id })} />
+                reactions={groupReactions(issue.discussion[0].reactions)}
+                handleReaction={session &&
+                  partial(handleReaction, session, issue.id)} />
             {/if}
           </div>
         </div>
@@ -532,37 +539,57 @@
               enableAttachments
               {thread}
               {rawPath}
-              on:editComment={({ detail: { id, body } }) =>
-                editComment(id, body)}
-              on:reply={createReply}
-              on:react={event => handleReaction(event.detail)} />
+              editComment={session && partial(editComment, session.id)}
+              createReply={session && partial(createReply, session.id)}
+              handleReaction={session && partial(handleReaction, session)} />
           {/each}
         </div>
       {/if}
-      {#if $authenticated}
+      {#if session}
         <CommentToggleInput
           placeholder="Leave your comment"
           enableAttachments
-          submitInProgress={saveCommentInProgress}
-          on:submit={createComment} />
+          submit={session && partial(createComment, session.id)} />
         <div style:display="flex">
           <CobStateButton
             items={items.filter(([, state]) => !isEqual(state, issue.state))}
             {selectedItem}
             state={issue.state}
-            on:saveStatus={saveStatus} />
+            save={session && partial(saveStatus, session.id)} />
         </div>
       {/if}
     </div>
     <div class="metadata">
       <AssigneeInput
-        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        locallyAuthenticated={Boolean(session)}
         assignees={issue.assignees}
-        on:save={saveAssignees} />
+        submitInProgress={editingAssignees}
+        on:save={async ({ detail: newAssignees }) => {
+          if (session) {
+            editingAssignees = true;
+            try {
+              await saveAssignees(session.id, newAssignees);
+            } finally {
+              editingAssignees = false;
+            }
+          }
+          await refreshIssue();
+        }} />
       <LabelInput
-        locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+        locallyAuthenticated={Boolean(session)}
         labels={issue.labels}
-        on:save={saveLabels} />
+        submitInProgress={editingLabels}
+        on:save={async ({ detail: newLabels }) => {
+          if (session) {
+            editingLabels = true;
+            try {
+              await saveLabels(session.id, newLabels);
+            } finally {
+              editingLabels = false;
+            }
+          }
+          await refreshIssue();
+        }} />
       <Embeds embeds={uniqueEmbeds} />
     </div>
   </div>

@@ -1,6 +1,4 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
-
   import * as utils from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -8,15 +6,27 @@
   import TextInput from "@app/components/TextInput.svelte";
   import IconButton from "@app/components/IconButton.svelte";
 
-  export let locallyAuthenticated: boolean = false;
   export let preview: boolean = false;
-  export let mode: "readWrite" | "readOnly" = "readOnly";
+  export let mode: "readCreate" | "readWrite" | "readOnly" = "readOnly";
   export let id: string | undefined = undefined;
   export let title: string = "";
-  export let submitInProgress: boolean = false;
-  const oldTitle = title;
+  export let editTitle: ((title: string) => Promise<void>) | undefined =
+    undefined;
 
-  const dispatch = createEventDispatcher<{ editTitle: string }>();
+  async function handleTitleEdit() {
+    if (editTitle) {
+      mode = "readOnly";
+      editingTitle = true;
+      try {
+        await editTitle(title);
+      } finally {
+        editingTitle = false;
+      }
+    }
+  }
+
+  const oldTitle = title;
+  let editingTitle = false;
 </script>
 
 <style>
@@ -67,18 +77,13 @@
 
 <div class="header">
   <div class="summary">
-    {#if locallyAuthenticated && !preview && mode === "readWrite"}
+    {#if (editTitle && !preview && mode === "readWrite") || (!preview && mode === "readCreate")}
       <div><slot name="icon" /></div>
       <TextInput
         placeholder="Title"
         bind:value={title}
         showKeyHint={mode === "readWrite" && Boolean(id)}
-        on:submit={() => {
-          if (mode === "readWrite") {
-            mode = "readOnly";
-            dispatch("editTitle", title);
-          }
-        }} />
+        on:submit={handleTitleEdit} />
     {:else if title}
       <div class="title">
         <div><slot name="icon" /></div>
@@ -88,21 +93,18 @@
       <span class="txt-missing">No title</span>
     {/if}
     <!-- When creating a new COB id is undefined -->
-    {#if locallyAuthenticated && id}
+    {#if editTitle && id}
       <div class="edit-buttons">
         {#if mode === "readWrite"}
           <IconButton
             title="save title"
-            loading={submitInProgress}
-            on:click={() => {
-              mode = "readOnly";
-              dispatch("editTitle", title);
-            }}>
+            loading={editingTitle}
+            on:click={handleTitleEdit}>
             <IconSmall name={"checkmark"} />
           </IconButton>
           <IconButton
             title="dismiss changes"
-            loading={submitInProgress}
+            loading={editingTitle}
             on:click={() => {
               title = oldTitle;
               mode = "readOnly";
@@ -112,11 +114,8 @@
         {:else}
           <IconButton
             title="edit title"
-            loading={submitInProgress}
-            on:click={() => {
-              mode = "readWrite";
-              dispatch("editTitle", title);
-            }}>
+            loading={editingTitle}
+            on:click={() => (mode = "readWrite")}>
             <IconSmall name={"edit"} />
           </IconButton>
         {/if}

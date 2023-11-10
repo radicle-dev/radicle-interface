@@ -1,7 +1,6 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import IconSmall from "@app/components/IconSmall.svelte";
 
-  import { createEventDispatcher } from "svelte";
   import { isEqual } from "lodash";
 
   import { closeFocused } from "@app/components/Popover.svelte";
@@ -17,10 +16,7 @@
   export let state: CobState;
   export let selectedItem: [string, CobState];
   export let items: [string, CobState][];
-
-  const dispatch = createEventDispatcher<{
-    saveStatus: CobState;
-  }>();
+  export let save: (state: CobState) => Promise<void>;
 
   function switchCaption(item: [string, CobState]) {
     selectedItem = item;
@@ -42,7 +38,7 @@
   <Button
     styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
     variant="gray-white"
-    on:click={() => dispatch("saveStatus", selectedItem[1])}>
+    on:click={() => void save(selectedItem[1])}>
     <IconSmall name="patch" />
     {selectedItem[0]}
   </Button>

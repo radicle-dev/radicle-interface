@@ -1,14 +1,15 @@
 <script lang="ts">
+  import type { GroupedReactions } from "@app/lib/reactions";
+
   import { createEventDispatcher } from "svelte";
 
   import config from "@app/config.json";
 
   import IconButton from "./IconButton.svelte";
   import IconSmall from "./IconSmall.svelte";
-  import Popover, { closeFocused } from "./Popover.svelte";
+  import Popover from "./Popover.svelte";
 
-  export let nid: string;
-  export let reactions: Map<string, string[]>;
+  export let reactions: GroupedReactions | undefined;
 
   const dispatch = createEventDispatcher<{
     select: { nids: string[]; reaction: string };
@@ -54,14 +55,12 @@
   <div class="selector" slot="popover">
     {#each config.reactions as reaction}
       <button
-        class:active={reactions.get(reaction)?.includes(nid)}
-        on:click={() => {
+        class:active={Boolean(reactions?.get(reaction)?.self)}
+        on:click={() =>
           dispatch("select", {
-            nids: reactions.get(reaction) ?? [],
+            nids: reactions?.get(reaction)?.all ?? [],
             reaction,
-          });
-          closeFocused();
-        }}>
+          })}>
         {reaction}
       </button>
     {/each}

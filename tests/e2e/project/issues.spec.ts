@@ -143,7 +143,7 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).first().click();
-  await expect(page.getByText("Issue editing failed")).toBeVisible();
+  await expect(page.getByText("Comment creation failed")).toBeVisible();
 });
 
 test("go through the entire ui issue flow", async ({

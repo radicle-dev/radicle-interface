@@ -1,9 +1,10 @@
 <script lang="ts" strictEvents>
   import type { Embed } from "@app/lib/file";
+  import type { GroupedReactions } from "@app/lib/reactions";
 
-  import { createEventDispatcher, tick } from "svelte";
+  import { tick } from "svelte";
 
-  import { authenticated } from "@app/lib/httpd";
+  import { closeFocused } from "./Popover.svelte";
   import * as utils from "@app/lib/utils";
 
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
@@ -19,7 +20,7 @@
   export let authorAlias: string | undefined = undefined;
   export let body: string;
   export let enableAttachments: boolean = false;
-  export let reactions: [string, string][];
+  export let reactions: GroupedReactions | undefined = undefined;
   export let caption = "commented";
   export let rawPath: string;
   export let timestamp: number;
@@ -29,16 +30,14 @@
   export let disableEdit: boolean = false;
 
   let editInProgress = false;
+  let submitInProgress = false;
 
-  const dispatch = createEventDispatcher<{
-    react: { nids: string[]; id: string; reaction: string };
-    edit: { comment: string; embeds: Embed[] };
-  }>();
-
-  $: groupedReactions = reactions?.reduce(
-    (acc, [nid, emoji]) => acc.set(emoji, [...(acc.get(emoji) ?? []), nid]),
-    new Map<string, string[]>(),
-  );
+  export let editComment:
+    | ((body: string, embeds: Embed[]) => Promise<void>)
+    | undefined = undefined;
+  export let handleReaction:
+    | ((nids: string[], reaction: string) => Promise<void>)
+    | undefined = undefined;
 </script>
 
 <style>
@@ -127,7 +126,7 @@
       <NodeId nodeId={authorId} alias={authorAlias} />
       {caption}
       <div class="header-right">
-        {#if id && $authenticated && !editInProgress && !disableEdit}
+        {#if id && editComment && !editInProgress && !disableEdit}
           <div class="edit-buttons">
             <IconButton
               title="edit comment"
@@ -144,15 +143,21 @@
   </div>
 
   <div class="card-body">
-    {#if editInProgress}
+    {#if editComment && editInProgress}
+      {@const editComment_ = editComment}
       <ExtendedTextarea
         {body}
         {enableAttachments}
+        {submitInProgress}
         submitCaption="Save"
-        placeholder="Leave your description"
-        on:submit={({ detail: { comment, embeds } }) => {
-          editInProgress = false;
-          dispatch("edit", { comment, embeds });
+        placeholder="Leave your comment"
+        on:submit={async ({ detail: { comment, embeds } }) => {
+          submitInProgress = true;
+          try {
+            await editComment_(comment, embeds);
+          } finally {
+            submitInProgress = false;
+          }
         }}
         on:close={async () => {
           body = body;
@@ -165,27 +170,22 @@
       <Markdown {rawPath} content={body} />
     {/if}
   </div>
-  {#if (id && $authenticated) || (id && groupedReactions.size > 0)}
+  {#if (id && handleReaction) || (id && reactions && reactions.size > 0)}
     <div class="actions">
-      {#if id && $authenticated}
+      {#if id && handleReaction}
+        {@const handleReaction_ = handleReaction}
         <ReactionSelector
-          nid={$authenticated.session.publicKey}
-          reactions={groupedReactions}
-          on:select={event => {
-            if (id) {
-              dispatch("react", { id, ...event.detail });
+          {reactions}
+          on:select={async ({ detail: { nids, reaction } }) => {
+            try {
+              await handleReaction_(nids, reaction);
+            } finally {
+              closeFocused();
             }
           }} />
       {/if}
-      {#if id && groupedReactions.size > 0}
-        <Reactions
-          clickable={Boolean($authenticated)}
-          reactions={groupedReactions}
-          on:remove={event => {
-            if (id) {
-              dispatch("react", { id, ...event.detail });
-            }
-          }} />
+      {#if id && reactions && reactions.size > 0}
+        <Reactions {handleReaction} {reactions} />
       {/if}
     </div>
   {/if}

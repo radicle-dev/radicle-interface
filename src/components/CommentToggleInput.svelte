@@ -1,14 +1,7 @@
 <script lang="ts">
   import type { Embed } from "@app/lib/file";
-  import { createEventDispatcher } from "svelte";
-  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
 
-  const dispatch = createEventDispatcher<{
-    submit: {
-      comment: string;
-      embeds: Embed[];
-    };
-  }>();
+  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
 
   export let body: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
@@ -16,8 +9,9 @@
   export let enableAttachments: boolean = false;
   export let inline: boolean = false;
   export let focus: boolean = false;
-  export let submitInProgress: boolean = false;
+  export let submit: (comment: string, embeds: Embed[]) => Promise<void>;
 
+  let submitInProgress: boolean = false;
   let active: boolean = false;
 </script>
 
@@ -46,9 +40,14 @@
     {body}
     {enableAttachments}
     on:close={() => (active = false)}
-    on:submit={event => {
-      active = false;
-      dispatch("submit", event.detail);
+    on:submit={async ({ detail: { comment, embeds } }) => {
+      try {
+        submitInProgress = true;
+        await submit(comment, embeds);
+      } finally {
+        submitInProgress = false;
+        active = false;
+      }
     }} />
 {:else}
   <!-- svelte-ignore a11y-click-events-have-key-events -->

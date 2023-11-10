@@ -11,10 +11,10 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let mode: "readWrite" | "readOnly" = "readOnly";
-  export let hideEditIcon: boolean = false;
+  export let mode: "readCreate" | "readEdit" | "readOnly" = "readOnly";
   export let locallyAuthenticated: boolean = false;
   export let assignees: string[] = [];
+  export let submitInProgress: boolean = false;
 
   let updatedAssignees: string[] = assignees;
   let inputValue = "";
@@ -48,7 +48,7 @@
     if (valid && assignee) {
       updatedAssignees = [...updatedAssignees, assignee];
       inputValue = "";
-      if (hideEditIcon) {
+      if (mode === "readCreate") {
         dispatch("save", updatedAssignees);
       }
     }
@@ -56,7 +56,7 @@
 
   function removeAssignee(assignee: string) {
     updatedAssignees = updatedAssignees.filter(x => x !== assignee);
-    if (hideEditIcon) {
+    if (mode === "readCreate") {
       dispatch("save", updatedAssignees);
     }
   }
@@ -94,10 +94,11 @@
 <div>
   <div class="header">
     <span>Assignees</span>
-    {#if locallyAuthenticated && !hideEditIcon}
+    {#if locallyAuthenticated}
       <div class="actions">
-        {#if mode !== "readOnly"}
+        {#if mode === "readEdit"}
           <IconButton
+            loading={submitInProgress}
             on:click={() => {
               dispatch("save", updatedAssignees);
               mode = "readOnly";
@@ -105,6 +106,7 @@
             <IconSmall name="checkmark" />
           </IconButton>
           <IconButton
+            loading={submitInProgress}
             on:click={() => {
               updatedAssignees = assignees;
               inputValue = "";
@@ -112,8 +114,10 @@
             }}>
             <IconSmall name="cross" />
           </IconButton>
-        {:else}
-          <IconButton on:click={() => (mode = "readWrite")}>
+        {:else if mode !== "readCreate"}
+          <IconButton
+            loading={submitInProgress}
+            on:click={() => (mode = "readEdit")}>
             <IconSmall name="edit" />
           </IconButton>
         {/if}
@@ -121,7 +125,7 @@
     {/if}
   </div>
   <div class="body">
-    {#if locallyAuthenticated && mode === "readWrite"}
+    {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
       {#each updatedAssignees as assignee}
         <Badge variant="neutral">
           <div class="assignee">
@@ -150,11 +154,12 @@
       {/each}
     {/if}
   </div>
-  {#if locallyAuthenticated && mode === "readWrite"}
+  {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
     <div style:margin-bottom="1rem" style:margin-top="1rem">
       <TextInput
         {valid}
         {validationMessage}
+        disabled={submitInProgress}
         bind:value={inputValue}
         placeholder="Add assignee"
         on:submit={addAssignee} />

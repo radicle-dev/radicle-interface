@@ -4,9 +4,10 @@
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
+  import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { embed } from "@app/lib/file";
-  import { authenticatedLocal, httpdStore } from "@app/lib/httpd";
+  import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
@@ -34,6 +35,8 @@
   let issueText = "";
   let assignees: string[] = [];
   let labels: string[] = [];
+
+  let creatingIssue: boolean = false;
 
   const api = new HttpdClient(baseUrl);
 
@@ -92,6 +95,10 @@
   }
 
   $: valid = issueTitle && issueText;
+  $: session =
+    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
+      ? $httpdStore.session
+      : undefined;
 </script>
 
 <style>
@@ -144,15 +151,10 @@
 
 <Layout {baseUrl} {project} {tracking} activeTab="issues">
   <main>
-    {#if $httpdStore.state === "authenticated"}
-      {@const session = $httpdStore.session}
+    {#if session}
       <div class="form">
         <div class="editor">
-          <CobHeader
-            mode="readWrite"
-            {preview}
-            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
-            bind:title={issueTitle}>
+          <CobHeader mode="readCreate" {preview} bind:title={issueTitle}>
             <svelte:fragment slot="icon">
               <div class="open">
                 <Icon name="issue" />
@@ -170,9 +172,14 @@
                   bind:selectionEnd
                   on:drop={handleFileDrop}
                   bind:value={issueText}
-                  on:submit={() => {
-                    if (valid) {
-                      void createIssue(session.id);
+                  on:submit={async () => {
+                    if (valid && session) {
+                      creatingIssue = true;
+                      try {
+                        await createIssue(session.id);
+                      } finally {
+                        creatingIssue = false;
+                      }
                     }
                   }}
                   placeholder="Write a description" />
@@ -185,13 +192,16 @@
             <div class="author" slot="author">
               {#if preview}
                 opened by <NodeId
-                  nodeId={$httpdStore.session.publicKey}
-                  alias={$httpdStore.session.alias} /> now
+                  nodeId={session.publicKey}
+                  alias={session.alias} /> now
               {/if}
             </div>
           </CobHeader>
           <div class="actions">
-            <Button variant="none" on:click={() => (preview = !preview)}>
+            <Button
+              disabled={creatingIssue}
+              variant="none"
+              on:click={() => (preview = !preview)}>
               {#if preview}
                 Resume editing
               {:else}
@@ -199,24 +209,31 @@
               {/if}
             </Button>
             <Button
-              disabled={!valid}
+              disabled={!valid || creatingIssue}
               variant="secondary"
-              on:click={() => void createIssue(session.id)}>
+              on:click={async () => {
+                if (session) {
+                  creatingIssue = true;
+                  try {
+                    await createIssue(session.id);
+                  } finally {
+                    creatingIssue = false;
+                  }
+                }
+              }}>
               Submit
             </Button>
           </div>
         </div>
         <div class="metadata">
           <AssigneeInput
-            hideEditIcon
-            mode="readWrite"
-            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+            mode="readCreate"
+            locallyAuthenticated={Boolean(session)}
             on:save={({ detail: updatedAssignees }) =>
               (assignees = updatedAssignees)} />
           <LabelInput
-            hideEditIcon
-            mode="readWrite"
-            locallyAuthenticated={$authenticatedLocal(baseUrl.hostname)}
+            mode="readCreate"
+            locallyAuthenticated={Boolean(session)}
             on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
         </div>
       </div>

@@ -1,14 +1,12 @@
-<script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
+<script lang="ts">
+  import type { GroupedReactions } from "@app/lib/reactions";
 
   import IconButton from "./IconButton.svelte";
 
-  export let reactions: Map<string, string[]>;
-  export let clickable: boolean = false;
-
-  const dispatch = createEventDispatcher<{
-    remove: { nids: string[]; reaction: string };
-  }>();
+  export let reactions: GroupedReactions;
+  export let handleReaction:
+    | ((nids: string[], reaction: string) => Promise<void>)
+    | undefined;
 </script>
 
 <style>
@@ -25,11 +23,11 @@
 </style>
 
 <div class="reactions">
-  {#each reactions as [reaction, nids]}
+  {#each reactions as [reaction, { all: nids }]}
     <IconButton
-      on:click={() => {
-        if (clickable) {
-          dispatch("remove", { nids, reaction });
+      on:click={async () => {
+        if (handleReaction) {
+          await handleReaction(nids, reaction);
         }
       }}>
       <div class="reaction txt-tiny">

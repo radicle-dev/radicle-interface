@@ -1,18 +1,50 @@
-<script lang="ts" strictEvents>
+<script lang="ts" context="module">
   import type { Comment } from "@httpd-client";
+  import { groupReactions } from "@app/lib/reactions";
+
+  function groupReactionsInThread(thread: {
+    root: Comment;
+    replies: Comment[];
+  }) {
+    return {
+      root: {
+        ...thread.root,
+        reactions: groupReactions(thread.root.reactions),
+      },
+      replies: thread.replies.map(reply => ({
+        ...reply,
+        reactions: groupReactions(reply.reactions),
+      })),
+    };
+  }
+</script>
+
+<script lang="ts" strictEvents>
   import type { Embed } from "@app/lib/file";
 
-  import { createEventDispatcher, tick } from "svelte";
-  import { httpdStore } from "@app/lib/httpd";
+  import { tick } from "svelte";
+  import { partial } from "lodash";
   import * as utils from "@app/lib/utils";
 
   import CommentComponent from "@app/components/Comment.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import IconSmall from "./IconSmall.svelte";
 
-  export let thread: { root: Comment; replies: Comment[] };
+  export let thread: {
+    root: Comment;
+    replies: Comment[];
+  };
   export let rawPath: string;
   export let enableAttachments: boolean = false;
+  export let editComment:
+    | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
+    | undefined;
+  export let createReply:
+    | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
+    | undefined;
+  export let handleReaction:
+    | ((commentId: string, nids: string[], reaction: string) => Promise<void>)
+    | undefined;
 
   async function toggleReply() {
     // This tick allows the DOM to update before scrolling.
@@ -23,19 +55,9 @@
     });
   }
 
-  const dispatch = createEventDispatcher<{
-    reply: {
-      id: string;
-      embeds: Embed[];
-      body: string;
-    };
-    editComment: { id: string; body: string; embeds: Embed[] };
-    react: { nids: string[]; commentId: string | undefined; reaction: string };
-    cancel: never;
-  }>();
-
-  $: root = thread.root;
-  $: replies = thread.replies;
+  $: threadWithReactions = groupReactionsInThread(thread);
+  $: root = threadWithReactions.root;
+  $: replies = threadWithReactions.replies;
 </script>
 
 <style>
@@ -74,13 +96,8 @@
       timestamp={root.timestamp}
       disableEdit={root.embeds.length > 0}
       body={root.body}
-      on:edit={({ detail }) =>
-        dispatch("editComment", {
-          id: root.id,
-          body: detail.comment,
-          embeds: detail.embeds,
-        })}
-      on:react>
+      editComment={editComment && partial(editComment, root.id)}
+      handleReaction={handleReaction && partial(handleReaction, root.id)}>
       <IconSmall name="chat" slot="icon" />
     </CommentComponent>
   </div>
@@ -99,30 +116,20 @@
           timestamp={reply.timestamp}
           disableEdit={reply.embeds.length > 0}
           body={reply.body}
-          on:edit={({ detail }) =>
-            dispatch("editComment", {
-              id: reply.id,
-              body: detail.comment,
-              embeds: detail.embeds,
-            })}
-          on:react />
+          editComment={editComment && partial(editComment, reply.id)}
+          handleReaction={handleReaction &&
+            partial(handleReaction, reply.id)} />
       {/each}
     </div>
   {/if}
-  {#if $httpdStore.state === "authenticated"}
+  {#if createReply}
     <div id={`reply-${root.id}`} class="reply">
       <CommentToggleInput
         inline
         placeholder="Reply to comment"
         on:click={toggleReply}
         {enableAttachments}
-        on:submit={async event => {
-          dispatch("reply", {
-            id: root.id,
-            embeds: event.detail.embeds,
-            body: event.detail.comment,
-          });
-        }} />
+        submit={partial(createReply, root.id)} />
     </div>
   {/if}
 </div>

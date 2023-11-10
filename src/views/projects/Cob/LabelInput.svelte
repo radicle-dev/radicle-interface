@@ -8,10 +8,10 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let hideEditIcon: boolean = false;
-  export let mode: "readWrite" | "readOnly" = "readOnly";
+  export let mode: "readCreate" | "readEdit" | "readOnly" = "readOnly";
   export let locallyAuthenticated: boolean = false;
   export let labels: string[] = [];
+  export let submitInProgress: boolean = false;
 
   let updatedLabels: string[] = labels;
   let inputValue = "";
@@ -42,7 +42,7 @@
     if (valid && sanitizedValue) {
       updatedLabels = [...updatedLabels, sanitizedValue];
       inputValue = "";
-      if (hideEditIcon) {
+      if (mode === "readCreate") {
         dispatch("save", updatedLabels);
       }
     }
@@ -50,7 +50,7 @@
 
   function removeLabel(label: string) {
     updatedLabels = updatedLabels.filter(x => x !== label);
-    if (hideEditIcon) {
+    if (mode === "readCreate") {
       dispatch("save", updatedLabels);
     }
   }
@@ -82,10 +82,11 @@
 <div>
   <div class="metadata-section-header">
     <span>Labels</span>
-    {#if locallyAuthenticated && !hideEditIcon}
+    {#if locallyAuthenticated}
       <div class="actions">
-        {#if mode === "readWrite"}
+        {#if mode === "readEdit"}
           <IconButton
+            loading={submitInProgress}
             title="save labels"
             on:click={() => {
               dispatch("save", updatedLabels);
@@ -94,6 +95,7 @@
             <IconSmall name="checkmark" />
           </IconButton>
           <IconButton
+            loading={submitInProgress}
             title="dismiss changes"
             on:click={() => {
               updatedLabels = labels;
@@ -102,8 +104,11 @@
             }}>
             <IconSmall name="cross" />
           </IconButton>
-        {:else}
-          <IconButton title="edit labels" on:click={() => (mode = "readWrite")}>
+        {:else if mode !== "readCreate"}
+          <IconButton
+            loading={submitInProgress}
+            title="edit labels"
+            on:click={() => (mode = "readEdit")}>
             <IconSmall name="edit" />
           </IconButton>
         {/if}
@@ -111,7 +116,7 @@
     {/if}
   </div>
   <div class="metadata-section-body">
-    {#if locallyAuthenticated && mode === "readWrite"}
+    {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
       {#each updatedLabels as label}
         <Badge variant="neutral">
           <div aria-label="chip" class="label">{label}</div>
@@ -132,11 +137,12 @@
       {/each}
     {/if}
   </div>
-  {#if locallyAuthenticated && mode === "readWrite"}
+  {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
     <div style:margin-bottom="2rem" style:margin-top="1rem">
       <TextInput
         {valid}
         {validationMessage}
+        disabled={submitInProgress}
         bind:value={inputValue}
         placeholder="Add label"
         on:submit={addLabel} />
