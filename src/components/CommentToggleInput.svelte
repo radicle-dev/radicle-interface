@@ -11,8 +11,7 @@
   export let focus: boolean = false;
   export let submit: (comment: string, embeds: Embed[]) => Promise<void>;
 
-  let submitInProgress: boolean = false;
-  let active: boolean = false;
+  let state: "collapsed" | "expanded" | "submit" = "collapsed";
 </script>
 
 <style>
@@ -30,23 +29,22 @@
   }
 </style>
 
-{#if active}
+{#if state !== "collapsed"}
   <ExtendedTextarea
     {inline}
     {placeholder}
     {submitCaption}
-    {submitInProgress}
+    submitInProgress={state === "submit"}
     {focus}
     {body}
     {enableAttachments}
-    on:close={() => (active = false)}
+    on:close={() => (state = "collapsed")}
     on:submit={async ({ detail: { comment, embeds } }) => {
       try {
-        submitInProgress = true;
+        state = "submit";
         await submit(comment, embeds);
       } finally {
-        submitInProgress = false;
-        active = false;
+        state = "collapsed";
       }
     }} />
 {:else}
@@ -55,7 +53,7 @@
     class="inactive"
     role="button"
     tabindex="0"
-    on:click={() => (active = true)}>
+    on:click={() => (state = "expanded")}>
     {placeholder}
   </div>
 {/if}

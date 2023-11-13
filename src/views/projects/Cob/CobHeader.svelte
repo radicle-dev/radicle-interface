@@ -16,17 +16,17 @@
   async function handleTitleEdit() {
     if (editTitle) {
       mode = "readOnly";
-      editingTitle = true;
+      submitNewTitle = true;
       try {
         await editTitle(title);
       } finally {
-        editingTitle = false;
+        submitNewTitle = false;
       }
     }
   }
 
   const oldTitle = title;
-  let editingTitle = false;
+  let submitNewTitle = false;
 </script>
 
 <style>
@@ -98,13 +98,13 @@
         {#if mode === "readWrite"}
           <IconButton
             title="save title"
-            loading={editingTitle}
+            loading={submitNewTitle}
             on:click={handleTitleEdit}>
             <IconSmall name={"checkmark"} />
           </IconButton>
           <IconButton
             title="dismiss changes"
-            loading={editingTitle}
+            loading={submitNewTitle}
             on:click={() => {
               title = oldTitle;
               mode = "readOnly";
@@ -114,7 +114,7 @@
         {:else}
           <IconButton
             title="edit title"
-            loading={editingTitle}
+            loading={submitNewTitle}
             on:click={() => (mode = "readWrite")}>
             <IconSmall name={"edit"} />
           </IconButton>

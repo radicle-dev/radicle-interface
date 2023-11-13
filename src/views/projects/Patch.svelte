@@ -476,8 +476,11 @@
     return patchReviews;
   }
 
-  let editingDescription = false;
-  let editingLabels = false;
+  type State = "read" | "submit" | "edit";
+
+  let descriptionState: State = "read";
+  let labelState: State = "read";
+
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -667,20 +670,20 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if session && editingDescription}
+            {#if session && descriptionState !== "read"}
               <ExtendedTextarea
                 body={newDescription}
                 submitCaption="Save"
-                submitInProgress={editingDescription}
+                submitInProgress={descriptionState === "submit"}
                 placeholder="Leave your description"
-                on:close={() => (editingDescription = false)}
+                on:close={() => (descriptionState = "read")}
                 on:submit={async ({ detail: { comment } }) => {
-                  editingDescription = true;
+                  descriptionState = "submit";
                   if (session) {
                     try {
                       await editDescription(session.id, comment);
                     } finally {
-                      editingDescription = false;
+                      descriptionState = "read";
                     }
                   }
                 }} />
@@ -695,11 +698,11 @@
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
-            {#if session && !editingDescription}
+            {#if session && descriptionState === "read"}
               <div class="edit-buttons">
                 <IconButton
                   title="edit description"
-                  on:click={() => (editingDescription = true)}>
+                  on:click={() => (descriptionState = "edit")}>
                   <IconSmall name={"edit"} />
                 </IconButton>
               </div>
@@ -931,15 +934,15 @@
       </div>
       <LabelInput
         locallyAuthenticated={Boolean(session)}
-        submitInProgress={editingLabels}
+        submitInProgress={labelState === "submit"}
         labels={patch.labels}
         on:save={async ({ detail: newLabels }) => {
           if (session) {
-            editingLabels = true;
+            labelState = "submit";
             try {
               await saveLabels(session.id, newLabels);
             } finally {
-              editingLabels = false;
+              labelState = "read";
             }
           }
         }} />

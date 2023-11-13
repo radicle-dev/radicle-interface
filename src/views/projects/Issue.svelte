@@ -343,9 +343,6 @@
     }
   }
 
-  const issueDescription = issue.discussion[0];
-  let editingIssueDescription = false;
-
   $: embeds = issue.discussion.reduce(
     (acc, comment) => {
       acc[comment.id] = comment.embeds;
@@ -358,8 +355,8 @@
   $: threads = issue.discussion
     .filter(
       comment =>
-        (comment.id !== issueDescription.id && !comment.replyTo) ||
-        comment.replyTo === issueDescription.id,
+        (comment.id !== issue.discussion[0].id && !comment.replyTo) ||
+        comment.replyTo === issue.discussion[0].id,
     )
     .map(thread => {
       return {
@@ -374,9 +371,11 @@
       ? $httpdStore.session
       : undefined;
 
-  let editingAssignees = false;
-  let editingLabels = false;
-  let saveDescriptionInProgress = false;
+  type State = "read" | "edit" | "submit";
+
+  let assigneeState: State = "read";
+  let labelState: State = "read";
+  let descriptionState: State = "read";
 </script>
 
 <style>
@@ -467,21 +466,21 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          {#if session && editingIssueDescription}
+          {#if session && descriptionState !== "read"}
             <ExtendedTextarea
               enableAttachments
               body={issue.discussion[0].body}
               submitCaption="Save"
-              submitInProgress={saveDescriptionInProgress}
+              submitInProgress={descriptionState === "submit"}
               placeholder="Leave a description"
-              on:close={() => (editingIssueDescription = false)}
+              on:close={() => (descriptionState = "read")}
               on:submit={async ({ detail: { comment, embeds } }) => {
                 if (session) {
                   try {
-                    saveDescriptionInProgress = true;
+                    descriptionState = "submit";
                     await editComment(session.id, issue.id, comment, embeds);
                   } finally {
-                    saveDescriptionInProgress = false;
+                    descriptionState = "read";
                   }
                 }
               }} />
@@ -497,8 +496,8 @@
               {#if session}
                 <IconButton
                   title="edit description"
-                  on:click={() => (editingIssueDescription = true)}>
-                  <IconSmall name={"edit"} />
+                  on:click={() => (descriptionState = "edit")}>
+                  <IconSmall name="edit" />
                 </IconButton>
               {/if}
             </div>
@@ -563,14 +562,14 @@
       <AssigneeInput
         locallyAuthenticated={Boolean(session)}
         assignees={issue.assignees}
-        submitInProgress={editingAssignees}
+        submitInProgress={assigneeState === "submit"}
         on:save={async ({ detail: newAssignees }) => {
           if (session) {
-            editingAssignees = true;
+            assigneeState = "submit";
             try {
               await saveAssignees(session.id, newAssignees);
             } finally {
-              editingAssignees = false;
+              assigneeState = "read";
             }
           }
           await refreshIssue();
@@ -578,14 +577,14 @@
       <LabelInput
         locallyAuthenticated={Boolean(session)}
         labels={issue.labels}
-        submitInProgress={editingLabels}
+        submitInProgress={labelState === "submit"}
         on:save={async ({ detail: newLabels }) => {
           if (session) {
-            editingLabels = true;
+            labelState = "submit";
             try {
               await saveLabels(session.id, newLabels);
             } finally {
-              editingLabels = false;
+              labelState = "read";
             }
           }
           await refreshIssue();

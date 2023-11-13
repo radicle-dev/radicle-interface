@@ -29,8 +29,7 @@
   //  TODO: Remove flag once `radicle-httpd` fixes embed editing
   export let disableEdit: boolean = false;
 
-  let editInProgress = false;
-  let submitInProgress = false;
+  let state: "read" | "edit" | "submit" = "read";
 
   export let editComment:
     | ((body: string, embeds: Embed[]) => Promise<void>)
@@ -126,11 +125,9 @@
       <NodeId nodeId={authorId} alias={authorAlias} />
       {caption}
       <div class="header-right">
-        {#if id && editComment && !editInProgress && !disableEdit}
+        {#if id && editComment && state === "read" && !disableEdit}
           <div class="edit-buttons">
-            <IconButton
-              title="edit comment"
-              on:click={() => (editInProgress = true)}>
+            <IconButton title="edit comment" on:click={() => (state = "edit")}>
               <IconSmall name={"edit"} />
             </IconButton>
           </div>
@@ -143,26 +140,26 @@
   </div>
 
   <div class="card-body">
-    {#if editComment && editInProgress}
+    {#if editComment && state !== "read"}
       {@const editComment_ = editComment}
       <ExtendedTextarea
         {body}
         {enableAttachments}
-        {submitInProgress}
+        submitInProgress={state === "submit"}
         submitCaption="Save"
         placeholder="Leave your comment"
         on:submit={async ({ detail: { comment, embeds } }) => {
-          submitInProgress = true;
+          state = "submit";
           try {
             await editComment_(comment, embeds);
           } finally {
-            submitInProgress = false;
+            state = "read";
           }
         }}
         on:close={async () => {
           body = body;
           await tick();
-          editInProgress = false;
+          state = "read";
         }} />
     {:else if body.trim() === ""}
       <span class="txt-missing">No description</span>
