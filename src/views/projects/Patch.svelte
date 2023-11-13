@@ -675,7 +675,7 @@
                 body={newDescription}
                 submitCaption="Save"
                 submitInProgress={descriptionState === "submit"}
-                placeholder="Leave your description"
+                placeholder="Leave a description"
                 on:close={() => (descriptionState = "read")}
                 on:submit={async ({ detail: { comment } }) => {
                   descriptionState = "submit";

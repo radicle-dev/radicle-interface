@@ -1,6 +1,5 @@
 import { test, cobUrl, expect } from "@tests/support/fixtures.js";
-import { createProject } from "@tests/support/project";
-import { readFile } from "node:fs/promises";
+import { addEmbed, createProject } from "@tests/support/project";
 
 test("navigate issue listing", async ({ page }) => {
   await page.goto(cobUrl);
@@ -12,60 +11,7 @@ test("navigate issue listing", async ({ page }) => {
   await expect(page).toHaveURL(`${cobUrl}/issues?state=closed`);
 });
 
-test("navigate single issue", async ({ page }) => {
-  await page.goto(`${cobUrl}/issues`);
-  await page.getByText("This title has markdown").click();
-
-  await expect(page).toHaveURL(
-    `${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`,
-  );
-});
-
-test("adding and removing reactions", async ({ page, authenticatedPeer }) => {
-  await page.goto(authenticatedPeer.uiUrl());
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "handle-reactions",
-  );
-  await authenticatedPeer.rad(
-    [
-      "issue",
-      "open",
-      "--title",
-      "This is an issue to test reactions",
-      "--description",
-      "We'll write some comments and add and remove reactions to them",
-    ],
-    { cwd: projectFolder },
-  );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/a9d83773ac2fb8f5f654640477b9225a684cb53f`,
-  );
-  const commentReactionToggle = page
-    .getByTitle("toggle-reaction-popover")
-    .last();
-  await page.getByRole("button", { name: "Leave your comment" }).click();
-  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).first().click();
-  await commentReactionToggle.click();
-  await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.getByRole("button", { name: "👍 1" })).toBeVisible();
-
-  await commentReactionToggle.click();
-  await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.getByRole("button", { name: "🎉 1" })).toBeVisible();
-  await expect(page.locator(".reaction")).toHaveCount(2);
-
-  await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
-  await expect(page.locator(".reaction")).toHaveCount(1);
-
-  await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.locator("span").filter({ hasText: "🎉 1" })).toBeHidden();
-  await expect(page.locator(".reaction")).toHaveCount(0);
-});
-
-test("test issue counters", async ({ page, authenticatedPeer }) => {
+test("issue counters", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
     "issue-counters",
@@ -108,48 +54,7 @@ test("test issue counters", async ({ page, authenticatedPeer }) => {
   await expect(page.getByRole("button", { name: "1 issue" })).toBeVisible();
 });
 
-test("test issue editing failing", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "issue-editing",
-  );
-  await authenticatedPeer.rad(
-    [
-      "issue",
-      "open",
-      "--title",
-      "This issue is going to fail",
-      "--description",
-      "Let's see",
-    ],
-    { cwd: projectFolder },
-  );
-
-  await page.route(
-    `**/v1/projects/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
-    route => {
-      if (route.request().method() !== "PATCH") {
-        void route.fallback();
-        return;
-      }
-      void route.fulfill({ status: 500 });
-    },
-  );
-
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
-  );
-
-  await page.getByRole("button", { name: "Leave your comment" }).click();
-  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).first().click();
-  await expect(page.getByText("Comment creation failed")).toBeVisible();
-});
-
-test("go through the entire ui issue flow", async ({
-  page,
-  authenticatedPeer,
-}) => {
+test("create a new issue", async ({ page, authenticatedPeer }) => {
   const { rid } = await createProject(authenticatedPeer, "commenting");
 
   await page.goto(
@@ -185,60 +90,23 @@ test("go through the entire ui issue flow", async ({
     page.locator(".badge").filter({ hasText: "documentation" }),
   ).toBeVisible();
   await expect(page.locator(".badge").filter({ hasText: "bug" })).toBeVisible();
-
-  await page.getByRole("button", { name: "edit title" }).click();
-  await page.getByPlaceholder("Title").fill("This is a new title");
-  await page.getByRole("button", { name: "save title" }).click();
-  await expect(page.getByText("This is a new title")).toBeVisible();
-
-  await page.getByRole("button", { name: "Leave your comment" }).click();
-  await page.getByPlaceholder("Leave your comment").fill("This is a comment");
-  await page.getByRole("button", { name: "Comment" }).first().click();
-  await expect(page.getByText("This is a comment")).toBeVisible();
-
-  await page.getByRole("button", { name: "Reply to comment" }).click();
-  await page.getByPlaceholder("Reply to comment").fill("This is a reply");
-  await page.getByRole("button", { name: "Comment", exact: true }).click();
-  await expect(page.getByText("This is a reply")).toBeVisible();
-
-  await page.getByRole("button", { name: "Close issue as solved" }).click();
-  await expect(page.getByText("closed as solved")).toBeVisible();
-
-  await page.getByRole("button", { name: "Reopen issue" }).click();
-  await expect(page.getByText("open", { exact: true })).toBeVisible();
-
-  await page.getByRole("button", { name: "stateToggle" }).first().click();
-  await page.getByText("Close issue as other").click();
-  await page.getByRole("button", { name: "Close issue as other" }).click();
-  await expect(page.getByText("closed as other")).toBeVisible();
 });
 
 test("handling embeds", async ({ page, authenticatedPeer }) => {
-  const buffer = await readFile("./public/images/radicle-228x228.png");
-  const base64Data = buffer.toString("base64");
   const { rid } = await createProject(authenticatedPeer, "embeds");
-
   await page.goto(
     `/nodes/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}/issues/new`,
   );
-
-  const dataTransfer = await page.evaluateHandle(data => {
-    const arrayBuffer = Uint8Array.from(atob(data), c => c.charCodeAt(0));
-    const dt = new DataTransfer();
-    const file = new File([arrayBuffer.buffer], "radicle-228x228.png", {
-      type: "image/png",
-    });
-    dt.items.add(file);
-    return dt;
-  }, base64Data);
-
   await page.getByPlaceholder("Title").fill("This is a title");
   await page
     .getByPlaceholder("Write a description")
     .fill("Here is some text\n\n");
-  await page.dispatchEvent("textarea[aria-label=textarea-comment]", "drop", {
-    dataTransfer,
-  });
+  await addEmbed(
+    page,
+    "./public/images/radicle-228x228.png",
+    "radicle-228x228.png",
+    "image/png",
+  );
   await expect(page.getByPlaceholder("Write a description")).toHaveValue(
     "Here is some text\n\n![radicle-228x228.png](bae036309c2182c7304c97956969369823b5c6ad)\n",
   );

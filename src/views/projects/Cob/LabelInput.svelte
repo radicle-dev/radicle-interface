@@ -120,9 +120,9 @@
       {#each updatedLabels as label}
         <Badge variant="neutral">
           <div aria-label="chip" class="label">{label}</div>
-          <span style:cursor="pointer">
+          <IconButton title="remove label">
             <IconSmall name="cross" on:click={() => removeLabel(label)} />
-          </span>
+          </IconButton>
         </Badge>
       {:else}
         <div class="txt-missing">No labels</div>

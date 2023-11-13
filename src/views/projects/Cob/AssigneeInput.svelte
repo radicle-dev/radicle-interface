@@ -98,6 +98,7 @@
       <div class="actions">
         {#if mode === "readEdit"}
           <IconButton
+            title="save assignees"
             loading={submitInProgress}
             on:click={() => {
               dispatch("save", updatedAssignees);
@@ -106,6 +107,7 @@
             <IconSmall name="checkmark" />
           </IconButton>
           <IconButton
+            title="dismiss changes"
             loading={submitInProgress}
             on:click={() => {
               updatedAssignees = assignees;
@@ -116,6 +118,7 @@
           </IconButton>
         {:else if mode !== "readCreate"}
           <IconButton
+            title="edit assignees"
             loading={submitInProgress}
             on:click={() => (mode = "readEdit")}>
             <IconSmall name="edit" />
@@ -131,11 +134,11 @@
           <div class="assignee">
             <Avatar inline nodeId={assignee} />
             <span>{formatNodeId(assignee)}</span>
-            <span style:cursor="pointer">
+            <IconButton title="remove assignee">
               <IconSmall
                 name="cross"
                 on:click={() => removeAssignee(assignee)} />
-            </span>
+            </IconButton>
           </div>
         </Badge>
       {:else}
