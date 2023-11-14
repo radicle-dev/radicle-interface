@@ -338,8 +338,6 @@
           },
         });
       }
-    } finally {
-      issue = issue;
     }
   }
 
@@ -444,7 +442,8 @@
       <CobHeader
         id={issue.id}
         title={issue.title}
-        editTitle={session && partial(editTitle, session.id)}>
+        editTitle={session && partial(editTitle, session.id)}
+        on:refresh={refreshIssue}>
         <svelte:fragment slot="icon">
           <div
             class="state"

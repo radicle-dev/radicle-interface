@@ -1,4 +1,6 @@
 <script lang="ts" strictEvents>
+  import { createEventDispatcher } from "svelte";
+
   import * as utils from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -25,7 +27,8 @@
     }
   }
 
-  const oldTitle = title;
+  const dispatch = createEventDispatcher<{ refresh: null }>();
+
   let submitNewTitle = false;
 </script>
 
@@ -106,7 +109,7 @@
             title="dismiss changes"
             loading={submitNewTitle}
             on:click={() => {
-              title = oldTitle;
+              dispatch("refresh");
               mode = "readOnly";
             }}>
             <IconSmall name={"cross"} />

@@ -408,8 +408,6 @@
           },
         });
       }
-    } finally {
-      patch = patch;
     }
   }
 
@@ -652,7 +650,8 @@
       <CobHeader
         id={patch.id}
         title={patch.title}
-        editTitle={session && partial(editTitle, session.id)}>
+        editTitle={session && partial(editTitle, session.id)}
+        on:refresh={refreshPatch}>
         <svelte:fragment slot="icon">
           <div
             class="state"
