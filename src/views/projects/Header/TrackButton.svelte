@@ -58,7 +58,7 @@
     </span>
   </Button>
 
-  <div slot="popover" style:width="31rem">
+  <div slot="popover" style:width={tracking ? "19.5rem" : "30.5rem"}>
     <div class="track-label">
       Use the <ExternalLink href="https://radicle.xyz/#try">
         Radicle CLI
