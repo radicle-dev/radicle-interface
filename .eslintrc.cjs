@@ -80,6 +80,10 @@ module.exports = {
         selector: "typeLike",
         format: ["PascalCase"],
       },
+      // Disable @typescript-eslint/naming-convention format for imports
+      // https://github.com/typescript-eslint/typescript-eslint/pull/7269#issuecomment-1777628591
+      // https://github.com/typescript-eslint/typescript-eslint/issues/7892
+      { selector: "import", format: null },
       {
         selector: ["objectLiteralProperty"],
         modifiers: ["requiresQuotes"],

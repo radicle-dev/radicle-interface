@@ -149,9 +149,7 @@ export class Fetcher {
 
     const pathSegment = path === undefined ? "" : `/${path}`;
 
-    let url = `${this.#baseUrl.scheme}://${this.#baseUrl.hostname}:${
-      this.#baseUrl.port
-    }/api/v1${pathSegment}`;
+    let url = `${this.#baseUrl.scheme}://${this.#baseUrl.hostname}:${this.#baseUrl.port}/api/v1${pathSegment}`;
 
     if (query) {
       const searchparams = new URLSearchParams(query as Record<string, string>);
