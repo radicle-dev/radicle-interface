@@ -3,6 +3,7 @@
 
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
 
@@ -59,13 +60,9 @@
 
   <div slot="popover" style:width="31rem">
     <div class="track-label">
-      Use the <a
-        target="_blank"
-        rel="noreferrer"
-        href="https://radicle.xyz/#try"
-        class="txt-link txt-bold">
+      Use the <ExternalLink href="https://radicle.xyz/#try">
         Radicle CLI
-      </a>
+      </ExternalLink>
       to {command} this project.
       {#if command === "track"}
         <br />

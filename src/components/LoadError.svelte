@@ -1,5 +1,6 @@
 <script lang="ts">
   import Command from "./Command.svelte";
+  import ExternalLink from "./ExternalLink.svelte";
   import Icon from "./Icon.svelte";
 
   export let title: string;
@@ -34,9 +35,9 @@
       If you need help resolving this issue, copy the error message
       <br />
       below and send it to us on
-      <a class="txt-link" href="https://radicle.zulipchat.com/" target="_blank">
+      <ExternalLink href="https://radicle.zulipchat.com">
         radicle.zulipchat.com
-      </a>
+      </ExternalLink>
     </div>
   </div>
 

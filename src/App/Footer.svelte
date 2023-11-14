@@ -30,13 +30,16 @@
     gap: 1.5rem;
   }
 
-  .radworks {
-    display: flex;
+  .logo {
     color: var(--color-foreground-contrast);
   }
 
-  .radworks:hover {
-    color: var(--color-fill-primary);
+  a {
+    display: flex;
+  }
+
+  a:hover {
+    color: var(--color-fill-secondary);
   }
 </style>
 
@@ -44,9 +47,9 @@
   <div class="left">
     <span class="layout-desktop">Supported by</span>
     <a
+      class="logo"
       target="_blank"
       rel="noreferrer"
-      class="radworks"
       href="https://radworks.org">
       <RadworksLogo />
     </a>
@@ -74,7 +77,6 @@
       style:gap="0.25rem"
       target="_blank"
       rel="noreferrer"
-      class="txt-link"
       href="https://radicle.xyz">
       radicle.xyz
       <IconSmall name="arrow-box-up-right" />

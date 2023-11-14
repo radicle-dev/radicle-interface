@@ -1,7 +1,8 @@
 <script lang="ts">
   import Command from "@app/components/Command.svelte";
-  import Modal from "@app/components/Modal.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import Modal from "@app/components/Modal.svelte";
 
   export let title: string;
   export let subtitle: string[];
@@ -20,9 +21,9 @@
     If you need help resolving this issue, copy the error message
     <br />
     below and send it to us on
-    <a class="txt-link" href="https://radicle.zulipchat.com/" target="_blank">
+    <ExternalLink href="https://radicle.zulipchat.com">
       radicle.zulipchat.com
-    </a>
+    </ExternalLink>
   </div>
 
   <div slot="body">

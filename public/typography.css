@@ -128,12 +128,6 @@ p {
 .txt-missing {
   color: var(--color-foreground-dim);
 }
-.txt-link {
-  text-decoration: none;
-}
-.txt-link:hover {
-  color: var(--color-fill-primary);
-}
 .txt-emoji {
   height: 1em;
   width: 1em;
