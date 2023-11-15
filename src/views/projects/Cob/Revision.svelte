@@ -45,6 +45,7 @@
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
+  export let canEditComment: (author: string) => true | undefined;
   export let editComment:
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
@@ -431,6 +432,7 @@
             enableAttachments
             rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             thread={element.inner}
+            {canEditComment}
             {editComment}
             {createReply}
             {handleReaction} />

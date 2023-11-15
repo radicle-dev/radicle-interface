@@ -6,6 +6,7 @@
   import { isEqual, uniqBy, partial } from "lodash";
 
   import * as modal from "@app/lib/modal";
+  import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
@@ -442,7 +443,13 @@
       <CobHeader
         id={issue.id}
         title={issue.title}
-        editTitle={session && partial(editTitle, session.id)}
+        editTitle={session &&
+          role.isDelegateOrAuthor(
+            session.publicKey,
+            project.delegates,
+            issue.author.id,
+          ) &&
+          partial(editTitle, session.id)}
         on:refresh={refreshIssue}>
         <svelte:fragment slot="icon">
           <div
@@ -465,7 +472,7 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          {#if session && descriptionState !== "read"}
+          {#if descriptionState !== "read"}
             <ExtendedTextarea
               enableAttachments
               body={issue.discussion[0].body}
@@ -492,7 +499,7 @@
                   baseUrl,
                   project.head,
                 )} />
-              {#if session}
+              {#if role.isDelegateOrAuthor(session?.publicKey, project.delegates, issue.author.id)}
                 <IconButton
                   title="edit description"
                   on:click={() => (descriptionState = "edit")}>
@@ -537,6 +544,11 @@
               enableAttachments
               {thread}
               {rawPath}
+              canEditComment={partial(
+                role.isDelegateOrAuthor,
+                session?.publicKey,
+                project.delegates,
+              )}
               editComment={session && partial(editComment, session.id)}
               createReply={session && partial(createReply, session.id)}
               handleReaction={session && partial(handleReaction, session)} />
@@ -547,19 +559,23 @@
         <CommentToggleInput
           placeholder="Leave your comment"
           enableAttachments
-          submit={session && partial(createComment, session.id)} />
+          submit={partial(createComment, session.id)} />
         <div style:display="flex">
-          <CobStateButton
-            items={items.filter(([, state]) => !isEqual(state, issue.state))}
-            {selectedItem}
-            state={issue.state}
-            save={session && partial(saveStatus, session.id)} />
+          {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+            <CobStateButton
+              items={items.filter(([, state]) => !isEqual(state, issue.state))}
+              {selectedItem}
+              state={issue.state}
+              save={partial(saveStatus, session.id)} />
+          {/if}
         </div>
       {/if}
     </div>
     <div class="metadata">
       <AssigneeInput
-        locallyAuthenticated={Boolean(session)}
+        locallyAuthenticated={Boolean(
+          role.isDelegate(session?.publicKey, project.delegates),
+        )}
         assignees={issue.assignees}
         submitInProgress={assigneeState === "submit"}
         on:save={async ({ detail: newAssignees }) => {
@@ -574,7 +590,9 @@
           await refreshIssue();
         }} />
       <LabelInput
-        locallyAuthenticated={Boolean(session)}
+        locallyAuthenticated={Boolean(
+          role.isDelegate(session?.publicKey, project.delegates),
+        )}
         labels={issue.labels}
         submitInProgress={labelState === "submit"}
         on:save={async ({ detail: newLabels }) => {

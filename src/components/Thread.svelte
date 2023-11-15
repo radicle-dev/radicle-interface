@@ -22,9 +22,9 @@
 <script lang="ts" strictEvents>
   import type { Embed } from "@app/lib/file";
 
-  import { tick } from "svelte";
-  import { partial } from "lodash";
   import * as utils from "@app/lib/utils";
+  import { partial } from "lodash";
+  import { tick } from "svelte";
 
   import CommentComponent from "@app/components/Comment.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
@@ -36,6 +36,7 @@
   };
   export let rawPath: string;
   export let enableAttachments: boolean = false;
+  export let canEditComment: (author: string) => true | undefined;
   export let editComment:
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
@@ -96,7 +97,9 @@
       timestamp={root.timestamp}
       disableEdit={root.embeds.length > 0}
       body={root.body}
-      editComment={editComment && partial(editComment, root.id)}
+      editComment={editComment &&
+        canEditComment(root.author.id) &&
+        partial(editComment, root.id)}
       handleReaction={handleReaction && partial(handleReaction, root.id)}>
       <IconSmall name="chat" slot="icon" />
     </CommentComponent>
@@ -116,7 +119,9 @@
           timestamp={reply.timestamp}
           disableEdit={reply.embeds.length > 0}
           body={reply.body}
-          editComment={editComment && partial(editComment, reply.id)}
+          editComment={editComment &&
+            canEditComment(reply.author.id) &&
+            partial(editComment, reply.id)}
           handleReaction={handleReaction &&
             partial(handleReaction, reply.id)} />
       {/each}

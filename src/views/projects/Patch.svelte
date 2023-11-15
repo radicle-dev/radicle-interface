@@ -42,6 +42,7 @@
   import type { ComponentProps } from "svelte";
 
   import * as modal from "@app/lib/modal";
+  import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
@@ -650,7 +651,13 @@
       <CobHeader
         id={patch.id}
         title={patch.title}
-        editTitle={session && partial(editTitle, session.id)}
+        editTitle={session &&
+          role.isDelegateOrAuthor(
+            session.publicKey,
+            project.delegates,
+            patch.author.id,
+          ) &&
+          partial(editTitle, session.id)}
         on:refresh={refreshPatch}>
         <svelte:fragment slot="icon">
           <div
@@ -697,7 +704,7 @@
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
-            {#if session && descriptionState === "read"}
+            {#if role.isDelegateOrAuthor(session?.publicKey, project.delegates, patch.author.id) && descriptionState === "read"}
               <div class="edit-buttons">
                 <IconButton
                   title="edit description"
@@ -755,12 +762,12 @@
         </Radio>
 
         <div style:margin-left="auto">
-          {#if session && view.name === "activity"}
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && view.name === "activity"}
             <CobStateButton
               items={items.filter(([, state]) => !isEqual(state, patch.state))}
               {selectedItem}
               state={patch.state}
-              save={session && partial(saveStatus, session.id)} />
+              save={partial(saveStatus, session.id)} />
           {/if}
           {#if view.name === "commits" || view.name === "changes"}
             <div style="margin-left: auto;">
@@ -846,6 +853,11 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
+            canEditComment={partial(
+              role.isDelegateOrAuthor,
+              session?.publicKey,
+              project.delegates,
+            )}
             editComment={session &&
               partial(editComment, session.id, revision.revisionId)}
             handleReaction={session &&
@@ -863,17 +875,22 @@
                 <CommentToggleInput
                   enableAttachments
                   placeholder="Leave your comment"
-                  submit={session &&
-                    partial(createComment, session.id, revision.revisionId)} />
+                  submit={partial(
+                    createComment,
+                    session.id,
+                    revision.revisionId,
+                  )} />
                 <div class="connector" />
                 <div style="display: flex;">
-                  <CobStateButton
-                    items={items.filter(
-                      ([, state]) => !isEqual(state, patch.state),
-                    )}
-                    {selectedItem}
-                    state={patch.state}
-                    save={session && partial(saveStatus, session.id)} />
+                  {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+                    <CobStateButton
+                      items={items.filter(
+                        ([, state]) => !isEqual(state, patch.state),
+                      )}
+                      {selectedItem}
+                      state={patch.state}
+                      save={partial(saveStatus, session.id)} />
+                  {/if}
                 </div>
               {/if}
             {/if}
@@ -932,7 +949,10 @@
         </div>
       </div>
       <LabelInput
-        locallyAuthenticated={Boolean(session)}
+        locallyAuthenticated={role.isDelegate(
+          session?.publicKey,
+          project.delegates,
+        )}
         submitInProgress={labelState === "submit"}
         labels={patch.labels}
         on:save={async ({ detail: newLabels }) => {
