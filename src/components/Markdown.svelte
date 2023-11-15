@@ -289,6 +289,10 @@
     padding: 0;
   }
 
+  .markdown :global(:not(pre) code) {
+    font-size: inherit;
+  }
+
   .markdown :global(pre) {
     position: relative;
     font-family: var(--font-family-monospace);
