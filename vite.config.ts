@@ -14,6 +14,16 @@ export default defineConfig({
   },
   plugins: [
     svelte({
+      // Reference: https://github.com/sveltejs/vite-plugin-svelte/issues/270#issuecomment-1033190138
+      experimental: {
+        dynamicCompileOptions({ filename }) {
+          if (path.basename(filename) === "Clipboard.svelte") {
+            return {
+              customElement: true,
+            };
+          }
+        },
+      },
       compilerOptions: { dev: process.env.NODE_ENV !== "production" },
     }),
     configureDevServer(),
