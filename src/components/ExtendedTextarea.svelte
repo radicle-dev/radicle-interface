@@ -167,7 +167,11 @@
   }
 </style>
 
-<div class="comment-section" class:inline>
+<div
+  class="comment-section"
+  aria-label="extended-textarea"
+  title=""
+  class:inline>
   <Radio>
     <Button
       styleBorderRadius="0"

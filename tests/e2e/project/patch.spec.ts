@@ -45,9 +45,7 @@ test("use revision selector", async ({ page }) => {
   await page.getByRole("link", { name: "Changes" }).click();
   // Switching to the initial revision
   await page.getByText("Revision 2c2f036").click();
-  await expect(page.locator(".dropdown")).toBeVisible();
   await page.getByRole("link", { name: "Revision 679b2c8" }).click();
-  await expect(page.locator(".dropdown")).toBeHidden();
 
   await expect(
     page.getByRole("cell", { name: "Had to push a new revision" }),

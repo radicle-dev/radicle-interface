@@ -57,9 +57,7 @@ export async function expectThreadCommentingToWork(page: Page) {
   await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
-  await expect(
-    page.getByRole("button", { name: "Comment", exact: true }),
-  ).toBeHidden();
+  await expect(page.getByLabel("extended-textarea")).toBeHidden();
   await page.reload();
   await expect(page.getByText("This is a comment")).toBeVisible();
 
@@ -68,16 +66,14 @@ export async function expectThreadCommentingToWork(page: Page) {
     .getByPlaceholder("Leave your comment")
     .fill("This is an edited comment");
   await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByRole("button", { name: "Save" })).toBeHidden();
+  await expect(page.getByLabel("extended-textarea")).toBeHidden();
   await page.reload();
   await expect(page.getByText("This is an edited comment")).toBeVisible();
 
   await page.getByRole("button", { name: "Reply to comment" }).click();
   await page.getByPlaceholder("Reply to comment").fill("This is a reply");
   await page.getByRole("button", { name: "Comment", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Comment", exact: true }),
-  ).toBeHidden();
+  await expect(page.getByLabel("extended-textarea")).toBeHidden();
   await page.reload();
   await expect(page.getByText("This is a reply")).toBeVisible();
 
@@ -86,7 +82,7 @@ export async function expectThreadCommentingToWork(page: Page) {
     .getByPlaceholder("Leave your comment")
     .fill("This is an edited reply");
   await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByRole("button", { name: "Save" })).toBeHidden();
+  await expect(page.getByLabel("extended-textarea")).toBeHidden();
   await page.reload();
   await expect(page.getByText("This is an edited reply")).toBeVisible();
 }
