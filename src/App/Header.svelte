@@ -4,7 +4,6 @@
   import NodeInfo from "@app/App/Header/NodeInfo.svelte";
   import Authenticate from "./Header/Authenticate.svelte";
   import { httpdStore } from "@app/lib/httpd";
-  import { nodeStore } from "@app/lib/node";
 </script>
 
 <style>
@@ -50,9 +49,7 @@
 
   <div class="right layout-desktop-flex">
     {#if $httpdStore.state !== "stopped"}
-      {#if $nodeStore}
-        <NodeInfo running={$nodeStore === "running"} />
-      {/if}
+      <NodeInfo running={$httpdStore.node === "running"} />
       <Authenticate />
     {/if}
     <Connect />

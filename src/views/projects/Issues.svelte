@@ -4,7 +4,8 @@
   import { HttpdClient } from "@httpd-client";
   import { ISSUES_PER_PAGE } from "./router";
   import { closeFocused } from "@app/components/Popover.svelte";
-  import { authenticatedLocal } from "@app/lib/httpd";
+  import { httpdStore } from "@app/lib/httpd";
+  import { isLocal } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -125,7 +126,7 @@
             </Link>
           </DropdownList>
         </Popover>
-        {#if $authenticatedLocal(baseUrl.hostname)}
+        {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
           <div style="margin-left: auto;">
             <Link
               route={{

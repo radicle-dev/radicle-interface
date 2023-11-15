@@ -3,7 +3,6 @@ import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
-import { isLocal } from "@app/lib/utils";
 
 export interface Session {
   id: string;
@@ -13,10 +12,11 @@ export interface Session {
 
 export type HttpdState =
   | { state: "stopped" }
-  | { state: "running" }
+  | { state: "running"; node: "running" | "stopped" }
   | {
       state: "authenticated";
       session: Session;
+      node: "running" | "stopped";
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
@@ -24,13 +24,6 @@ const HTTPD_CUSTOM_PORT_KEY = "httpdCustomPort";
 
 const store = writable<HttpdState>({ state: "stopped" });
 export const httpdStore = derived(store, s => s);
-export const authenticated = derived(store, s =>
-  s.state === "authenticated" ? s : undefined,
-);
-export const authenticatedLocal = derived(
-  store,
-  s => (hostname: string) => s.state === "authenticated" && isLocal(hostname),
-);
 
 export const api = new HttpdClient({
   hostname: "127.0.0.1",
@@ -64,6 +57,7 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
+      const { state: node } = await api.getNode();
       const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
@@ -72,6 +66,7 @@ export async function authenticate(params: {
           publicKey: params.publicKey,
           alias: sess.alias,
         },
+        node,
       });
       return true;
     } catch (error) {
@@ -93,7 +88,8 @@ export async function disconnect() {
 
       try {
         await api.session.delete(httpd.session.id);
-        update({ state: "running" });
+        const { state: node } = await api.getNode();
+        update({ state: "running", node });
       } catch (error) {
         console.error(error);
         update({ state: "stopped" });
@@ -124,6 +120,7 @@ async function checkState() {
   await stateMutex
     .runExclusive(async () => {
       try {
+        const { state: node } = await api.getNode();
         if (httpdState && httpdState.state === "authenticated") {
           const sess = await api.session.getById(httpdState.session.id);
           const unixTimeInSeconds = Math.floor(Date.now() / 1000);
@@ -131,13 +128,12 @@ async function checkState() {
             sess.status === "unauthorized" ||
             sess.expiresAt < unixTimeInSeconds
           ) {
-            update({ state: "running" });
+            update({ state: "running", node });
           } else {
-            update(httpdState);
+            update({ ...httpdState, node });
           }
         } else {
-          await api.getNodeInfo();
-          update({ state: "running" });
+          update({ state: "running", node });
         }
       } catch (error) {
         if (error instanceof TypeError && error.message !== "Failed to fetch") {

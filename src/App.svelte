@@ -3,7 +3,6 @@
 
   import * as router from "@app/lib/router";
   import * as httpd from "@app/lib/httpd";
-  import * as node from "@app/lib/node";
   import { unreachable } from "@app/lib/utils";
 
   import Footer from "./App/Footer.svelte";
@@ -31,7 +30,6 @@
   const activeRouteStore = router.activeRouteStore;
 
   void httpd.initialize().finally(() => void router.loadFromLocation());
-  void node.initialize();
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
     const plausible = Plausible({
