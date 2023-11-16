@@ -6,7 +6,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        browser: [chromium, firefox]
+        browser: [chromium]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium firefox
+        run: npx playwright install chromium
 
       - name: Install Radicle binaries
         run: |
