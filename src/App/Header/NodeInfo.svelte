@@ -1,8 +1,9 @@
 <script lang="ts">
   import Button from "@app/components/Button.svelte";
-  import Popover from "@app/components/Popover.svelte";
   import Command from "@app/components/Command.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
   export let running: boolean = false;
 </script>
@@ -16,16 +17,13 @@
   }
 </style>
 
-<Popover
-  popoverPositionTop="3rem"
-  popoverPositionRight="-13rem"
-  popoverPositionLeft="0">
+<Popover popoverPositionTop="3rem" popoverPositionRight="0">
   <Button
     slot="toggle"
     let:toggle
     on:click={toggle}
     size="large"
-    variant={running ? "primary" : "outline"}>
+    variant={running ? "primary" : "primary-outline"}>
     <IconSmall name="broadcasting" />
     {#if running}
       Syncing
@@ -34,31 +32,21 @@
     {/if}
   </Button>
 
-  <svelte:fragment slot="popover">
+  <div slot="popover" style:width="18rem">
     {#if running}
       <div class="label">
-        Use the <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://radicle.xyz/#try"
-          class="txt-link txt-bold">
-          Radicle CLI
-        </a>
+        Use the
+        <ExternalLink href="https://radicle.xyz/#try">Radicle CLI</ExternalLink>
         to stop your node.
       </div>
       <Command command="rad node stop" fullWidth />
     {:else}
       <div class="label">
-        Use the <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://radicle.xyz/#try"
-          class="txt-link txt-bold">
-          Radicle CLI
-        </a>
+        Use the
+        <ExternalLink href="https://radicle.xyz/#try">Radicle CLI</ExternalLink>
         to start your node.
       </div>
       <Command command="rad node start" fullWidth />
     {/if}
-  </svelte:fragment>
+  </div>
 </Popover>

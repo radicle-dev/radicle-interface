@@ -8,6 +8,7 @@
     | "gray-white"
     | "none"
     | "outline"
+    | "primary-outline"
     | "primary"
     | "secondary"
     | "tab" = "gray";
@@ -137,6 +138,21 @@
     color: var(--color-foreground-contrast);
   }
 
+  .primary-outline {
+    background-color: transparent;
+    color: var(--color-foreground-contrast);
+    border: 1px solid var(--color-border-hint);
+  }
+  .primary-outline[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .primary-outline:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-fill-primary);
+    color: var(--color-foreground-contrast);
+  }
+
   .primary {
     color: var(--color-fill-primary);
     background-color: var(--color-fill-merged);
@@ -207,6 +223,7 @@
   class:gray-white={variant === "gray-white"}
   class:none={variant === "none"}
   class:outline={variant === "outline"}
+  class:primary-outline={variant === "primary-outline"}
   class:primary={variant === "primary"}
   class:secondary={variant === "secondary"}
   class:tab={variant === "tab"}>

@@ -8,7 +8,6 @@
   import ConnectModal from "@app/modals/ConnectModal.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Popover from "@app/components/Popover.svelte";
 </script>
@@ -17,22 +16,13 @@
   .container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
-  .host {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: var(--font-size-small);
+    gap: 0.5rem;
+    min-width: 18rem;
   }
   .status {
     font-size: var(--font-size-tiny);
     color: var(--color-fill-gray);
     text-align: left;
-  }
-  .separator {
-    height: 1px;
-    background-color: var(--color-border-hint);
   }
   .avatar {
     height: 1.5rem;
@@ -53,15 +43,11 @@
     top: -0.375rem;
     right: -0.375rem;
   }
-  .row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
   .user {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
   }
   .identity {
     color: var(--color-fill-secondary);
@@ -70,10 +56,7 @@
 </style>
 
 {#if $httpdStore.state === "authenticated"}
-  <Popover
-    popoverPositionTop="3rem"
-    popoverPositionRight="-10rem"
-    popoverPositionLeft="0">
+  <Popover popoverPositionTop="3rem" popoverPositionRight="0">
     <Button
       slot="toggle"
       let:toggle
@@ -91,44 +74,20 @@
     </Button>
 
     <div slot="popover" class="container">
-      <div class="row">
-        <div class="status">Httpd server running</div>
-
-        <div class="host">
-          radicle.local
-
-          <Link
-            on:afterNavigate={closeFocused}
-            route={{
-              resource: "nodes",
-              params: {
-                baseUrl: httpd.api.baseUrl,
-                projectPageIndex: 0,
-              },
-            }}>
-            <IconButton>Browse</IconButton>
-          </Link>
+      <div class="status">Authenticated as</div>
+      <div class="user">
+        <div class="identity">
+          <NodeId
+            nodeId={$httpdStore.session.publicKey}
+            alias={$httpdStore.session.alias} />
         </div>
-      </div>
-
-      <div class="separator" />
-
-      <div class="row">
-        <div class="status">Authenticated as</div>
-        <div class="user">
-          <div class="identity">
-            <NodeId
-              nodeId={$httpdStore.session.publicKey}
-              alias={$httpdStore.session.alias} />
-          </div>
-          <IconButton
-            on:click={() => {
-              void httpd.disconnect();
-              closeFocused();
-            }}>
-            Disconnect
-          </IconButton>
-        </div>
+        <IconButton
+          on:click={() => {
+            void httpd.disconnect();
+            closeFocused();
+          }}>
+          Disconnect
+        </IconButton>
       </div>
     </div>
   </Popover>
@@ -141,7 +100,7 @@
       });
     }}
     size="large"
-    variant="outline">
+    variant="primary-outline">
     <IconSmall name="key" />
     Authenticate
     <div class="indicator" />
@@ -155,7 +114,7 @@
       });
     }}
     size="large"
-    variant="outline">
+    variant="primary-outline">
     <IconSmall name="chat" />
     Authenticate
   </Button>
