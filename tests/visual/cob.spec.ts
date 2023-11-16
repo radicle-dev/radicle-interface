@@ -65,13 +65,13 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Archived patch
   await page.goto(
-    `${cobUrl}/patches/43ae785a9ceaf289b2445fb5b8e01036d456b2be`,
+    `${cobUrl}/patches/08d97e8cb6f94448d0452884a9bf686beecc8549`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Merged patch
   await page.goto(
-    `${cobUrl}/patches/6a51e1d2e350136e7bcfad8f13d16488c1f1c99a`,
+    `${cobUrl}/patches/cf0b92b99dd3e36d251f3d75e12b626c62d20e4c`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -83,12 +83,23 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Open patch "Taking another stab at the README"
   await page.goto(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
+
+  // Expand commit messages to check border line height
+  await page.getByLabel("expand").nth(2).click();
+  await expect(page).toHaveScreenshot({ fullPage: true });
+
+  // Expand the commit message in the first revision
+  await page.getByLabel("expand").first().click();
+  await expect(page).toHaveScreenshot({ fullPage: true });
+  await page.getByLabel("expand").nth(1).click();
+  await expect(page).toHaveScreenshot({ fullPage: true });
+
   await page.goto(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?tab=changes`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -100,6 +111,6 @@ test("failed diff loading for a specific revision", async ({ page }) => {
     route => route.fulfill({ status: 500 }),
   );
 
-  await page.goto(`${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`);
+  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

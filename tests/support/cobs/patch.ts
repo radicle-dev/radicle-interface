@@ -3,7 +3,7 @@ import type { Options } from "execa";
 
 export async function create(
   peer: RadiclePeer,
-  commit: string,
+  commitLines: string[],
   branch: string,
   changeFn: () => Promise<void>,
   messages: string[],
@@ -16,7 +16,10 @@ export async function create(
   }
   await changeFn();
   await peer.git(["add", "."], options);
-  await peer.git(["commit", "-m", commit], options);
+  await peer.git(
+    ["commit"].concat(...commitLines.map(line => ["-m", line])),
+    options,
+  );
   const cmd = [
     "push",
     ...messages.map(msg => ["-o", `patch.message=${msg}`]).flat(),

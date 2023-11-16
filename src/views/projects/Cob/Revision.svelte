@@ -12,7 +12,7 @@
   import { HttpdClient } from "@httpd-client";
   import { onMount } from "svelte";
 
-  import CobCommitListing from "@app/views/projects/Cob/CobCommitListing.svelte";
+  import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -24,8 +24,8 @@
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Markdown from "@app/components/Markdown.svelte";
-  import Popover from "@app/components/Popover.svelte";
   import NodeId from "@app/components/NodeId.svelte";
+  import Popover from "@app/components/Popover.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -196,8 +196,36 @@
     font-size: var(--font-size-small);
     color: var(--color-fill-gray);
   }
+  .commits {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.875rem;
+    margin-left: 1rem;
+    gap: 0.5rem;
+    padding: 1rem 1rem;
+    border-left: 1px solid var(--color-fill-separator);
+  }
+
+  .commit:last-of-type::after {
+    content: "";
+    position: absolute;
+    left: -17px;
+    top: 12px;
+    bottom: -1rem;
+    border-left: 1px solid var(--color-background-default);
+  }
   .expanded {
     box-shadow: 0 0 0 1px var(--color-border-hint);
+  }
+  .commit-dot {
+    border-radius: var(--border-radius-round);
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    top: 0.5rem;
+    left: -18.5px;
+    background-color: var(--color-fill-separator);
   }
   .connector {
     width: 1px;
@@ -373,7 +401,14 @@
           </div>
         {/if}
         {#if response?.commits}
-          <CobCommitListing commits={response.commits} {baseUrl} {projectId} />
+          <div class="commits">
+            {#each response.commits.reverse() as commit}
+              <div class="commit" style:position="relative">
+                <div class="commit-dot" />
+                <CobCommitTeaser {commit} {baseUrl} {projectId} />
+              </div>
+            {/each}
+          </div>
         {/if}
       </div>
       {#if error}

@@ -84,12 +84,12 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   // Open patch
   await page.goto(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.goto(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?tab=changes`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
     { waitUntil: "networkidle" },
   );
   await expect(page).toHaveScreenshot({ fullPage: true });

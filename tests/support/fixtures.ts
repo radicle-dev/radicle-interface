@@ -483,7 +483,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
   const patchOne = await patch.create(
     peer,
-    "Add README\n\nThis commit adds more information to the README",
+    ["Add README", "This commit adds more information to the README"],
     "feature/add-readme",
     () => Fs.writeFile(Path.join(projectFolder, "README.md"), "# Cobs Repo"),
     ["Let's add a README", "This repo needed a README"],
@@ -563,7 +563,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
   const patchTwo = await patch.create(
     peer,
-    "Add subtitle to README",
+    ["Add subtitle to README"],
     "feature/add-more-text",
     () =>
       Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Subtitle"),
@@ -577,7 +577,11 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
   const patchThree = await patch.create(
     peer,
-    "Rewrite subtitle to README",
+    [
+      "Rewrite subtitle to README",
+      "This was really necessary",
+      "Blazingly fast",
+    ],
     "feature/better-subtitle",
     () =>
       Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Better?"),
@@ -621,7 +625,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
   const patchFour = await patch.create(
     peer,
-    "This patch is going to be archived",
+    ["This patch is going to be archived"],
     "feature/archived",
     () =>
       Fs.writeFile(Path.join(projectFolder, "CONTRIBUTING.md"), "# Archived"),
@@ -636,7 +640,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
   const patchFive = await patch.create(
     peer,
-    "This patch is going to be reverted to draft",
+    ["This patch is going to be reverted to draft"],
     "feature/draft",
     () => Fs.writeFile(Path.join(projectFolder, "LICENSE"), "Draft"),
     [],

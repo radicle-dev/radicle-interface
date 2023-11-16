@@ -64,7 +64,7 @@ test("diff selection", async ({ page }) => {
   });
 
   await page.goto(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?tab=changes#README.md:H0L0H0L3`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes#README.md:H0L0H0L3`,
   );
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

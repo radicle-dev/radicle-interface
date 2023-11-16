@@ -21,7 +21,7 @@ test("navigate patch details", async ({ page }) => {
 });
 
 test("use revision selector", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`);
+  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
   await page.getByRole("link", { name: "Changes" }).click();
 
   // Validating the latest revision state
@@ -29,7 +29,7 @@ test("use revision selector", async ({ page }) => {
     page.getByRole("cell", { name: "Had to push a new revision" }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Activity" }).click();
-  await expect(page.locator(".commits .teaser")).toHaveCount(2);
+  await expect(page.getByLabel("commit-teaser")).toHaveCount(2);
   await expect(page.getByRole("link", { name: "Add more text" })).toBeVisible();
 
   // Open the first revision and close the latest one
@@ -37,27 +37,29 @@ test("use revision selector", async ({ page }) => {
   await page.getByLabel("expand").last().click();
 
   // Validating the initial revision
-  await expect(page.locator(".commits .teaser")).toHaveCount(1);
+  await expect(page.getByLabel("commit-teaser")).toHaveCount(3);
   await expect(
-    page.getByRole("link", { name: "Rewrite subtitle to README" }),
+    page.getByRole("link", { name: "Rewrite subtitle to README" }).first(),
   ).toBeVisible();
 
   await page.getByRole("link", { name: "Changes" }).click();
   // Switching to the initial revision
-  await page.getByText("Revision 2c2f036").click();
-  await page.getByRole("link", { name: "Revision 679b2c8" }).click();
+
+  await page.getByRole("button", { name: "Revision 92f6a0c" }).click();
+  await page.getByRole("button", { name: "Revision fa393ed" }).click();
+  // getByRole("link", { name: "Revision 92f6a0c" })
 
   await expect(
     page.getByRole("cell", { name: "Had to push a new revision" }),
   ).toBeHidden();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a/679b2c84a8e15ce1f73c4c231b55431b89b2559a?tab=changes`,
+    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
   );
 });
 
 test("navigate through revision diffs", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`);
+  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
 
   const firstRevision = page.locator(".revision").first();
   const secondRevision = page.locator(".revision").nth(1);
@@ -72,10 +74,10 @@ test("navigate through revision diffs", async ({ page }) => {
       .getByRole("link", { name: "Compare to main: 38c225e" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Compare 38c225..9898da" }),
+      page.getByRole("button", { name: "Compare 38c225..9e4fea" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9898da6155467adad511f63bf0fb5aa4156b92ef`,
+      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9e4feab1b2123dfa5f22bd0e4656060ec9296638`,
     );
     await page.goBack();
     await secondRevision
@@ -83,22 +85,23 @@ test("navigate through revision diffs", async ({ page }) => {
       .first()
       .click();
     await secondRevision
-      .getByRole("link", { name: "Compare to previous revision: 679b2c8" })
+      .getByRole("link", { name: "Compare to previous revision: fa393ed" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Compare 0dc373..9898da" }),
+      page.getByRole("button", { name: "Compare 88b7fd..9e4fea" }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?diff=0dc373db601ccbcffa80dec932e4006516709ca6..9898da6155467adad511f63bf0fb5aa4156b92ef`,
+      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=88b7fd90389c1a629f91ed7bf838d4b947426622..9e4feab1b2123dfa5f22bd0e4656060ec9296638`,
     );
     await page.goBack();
 
     await secondRevision
-      .getByRole("link", { name: "Compare 0dc373d..9898da6" })
+      .getByRole("link", { name: "Compare 88b7fd9..9e4feab" })
+      .getByRole("button")
       .click();
     await expect(
-      page.getByRole("link", { name: "Compare 0dc373..9898da" }),
+      page.getByRole("link", { name: "Compare 88b7fd9..9e4fea" }),
     ).toBeVisible();
     await page.goBack();
   }
@@ -112,20 +115,20 @@ test("navigate through revision diffs", async ({ page }) => {
       .getByRole("link", { name: "Compare to main: 38c225e" })
       .click();
     await expect(
-      page.getByRole("link", { name: "Compare 38c225..0dc373" }),
+      page.getByRole("button", { name: "Compare 38c225..88b7fd" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..0dc373db601ccbcffa80dec932e4006516709ca6`,
+      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..88b7fd90389c1a629f91ed7bf838d4b947426622`,
     );
   }
 });
 
 test("view file navigation from changes tab", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/679b2c84a8e15ce1f73c4c231b55431b89b2559a`);
+  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
   await page.getByRole("button", { name: "Changes" }).click();
   await page.getByRole("button", { name: "View file" }).click();
   await expect(page).toHaveURL(
-    `${cobUrl}/tree/9898da6155467adad511f63bf0fb5aa4156b92ef/README.md`,
+    `${cobUrl}/tree/9e4feab1b2123dfa5f22bd0e4656060ec9296638/README.md`,
   );
 });
 

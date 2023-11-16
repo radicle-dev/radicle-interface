@@ -56,7 +56,7 @@
   }
 </style>
 
-<div class="teaser">
+<div class="teaser" aria-label="commit-teaser">
   <div class="left">
     <div class="message">
       <span class="global-hash">{formatCommit(commit.id)}</span>
