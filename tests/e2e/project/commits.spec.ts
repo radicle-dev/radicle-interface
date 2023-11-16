@@ -150,7 +150,10 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page.getByLabel("canonical-branch")).toHaveText("main");
   await expect(page.getByTitle("Current HEAD")).toHaveText("516fa74");
 
-  await page.getByText("alice-project").click();
+  await page
+    .getByRole("banner")
+    .getByRole("link", { name: "alice-project" })
+    .click();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}`);
   await page.getByRole("link", { name: "2 commits" }).click();
 

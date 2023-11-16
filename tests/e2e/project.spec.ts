@@ -36,7 +36,7 @@ test("navigate to project", async ({ page }) => {
 
   // Header.
   {
-    const name = page.getByText("source-browsing");
+    const name = page.getByRole("link", { name: "source-browsing" }).nth(1);
     const id = page.getByText(sourceBrowsingRid);
     const description = page.getByText(
       "Git repository for source browsing tests",
@@ -331,7 +331,7 @@ test("peer and branch switching", async ({ page }) => {
 
   // Reset the source browser by clicking the project title.
   {
-    await page.getByText("source-browsing").click();
+    await page.getByRole("link", { name: "source-browsing" }).nth(1).click();
 
     await expect(page.getByTitle("Change peer")).not.toContainText("alice");
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");

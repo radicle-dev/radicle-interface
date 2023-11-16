@@ -5,9 +5,8 @@
   import dompurify from "dompurify";
 
   import markdown from "@app/lib/markdown";
-  import { twemoji, isLocal } from "@app/lib/utils";
+  import { twemoji } from "@app/lib/utils";
 
-  import Button from "@app/components/Button.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -93,18 +92,6 @@
     <div
       class="layout-desktop-flex"
       style="margin-left: auto; display: flex; gap: 0.5rem;">
-      <Link
-        route={{
-          resource: "nodes",
-          params: {
-            baseUrl,
-            projectPageIndex: 0,
-          },
-        }}>
-        <Button size="large" variant="outline">
-          {isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname}
-        </Button>
-      </Link>
       <TrackButton
         {tracking}
         trackings={project.trackings}

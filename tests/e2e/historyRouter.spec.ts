@@ -34,7 +34,7 @@ test("navigation between node and project pages", async ({ page }) => {
   await expectBackAndForwardNavigationWorks("/nodes/radicle.local", page);
   await expectUrlPersistsReload(page);
 
-  await page.getByRole("link", { name: "radicle.local" }).click();
+  await page.getByRole("link", { name: "Local Node" }).click();
   await expect(page).toHaveURL("/nodes/127.0.0.1");
 });
 

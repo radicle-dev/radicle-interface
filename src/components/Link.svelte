@@ -7,6 +7,7 @@
   export let route: Route;
   export let disabled: boolean = false;
   export let title: string | undefined = undefined;
+  export let style: string | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
     afterNavigate: null;
@@ -28,6 +29,6 @@
   }
 </script>
 
-<a on:click={navigateToRoute} href={routeToPath(route)} {title}>
+<a on:click={navigateToRoute} href={routeToPath(route)} {title} {style}>
   <slot />
 </a>

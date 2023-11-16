@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { httpdStore } from "@app/lib/httpd";
+
+  import Authenticate from "./Header/Authenticate.svelte";
+  import Breadcrumbs from "./Header/Breadcrumbs.svelte";
   import Connect from "@app/App/Header/Connect.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeInfo from "@app/App/Header/NodeInfo.svelte";
-  import Authenticate from "./Header/Authenticate.svelte";
-  import { httpdStore } from "@app/lib/httpd";
 </script>
 
 <style>
@@ -12,8 +14,7 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-    padding: 1.5rem;
-    height: 5.5rem;
+    padding: 1rem;
   }
   .left,
   .right {
@@ -45,6 +46,9 @@
         alt="Radicle logo"
         src="/radicle.svg" />
     </Link>
+    <div class="layout-desktop">
+      <Breadcrumbs />
+    </div>
   </div>
 
   <div class="right layout-desktop-flex">
