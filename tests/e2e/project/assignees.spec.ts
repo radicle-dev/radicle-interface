@@ -52,7 +52,6 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
   await expect(
     page.getByRole("button", { name: "save assignees" }),
   ).toBeHidden();
-  await page.reload();
   await expect(
     page.getByRole("button", { name: "avatar did:key:z6MktU…1xB22S" }),
   ).toBeVisible();
@@ -71,7 +70,6 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
   await expect(
     page.getByRole("button", { name: "save assignees" }),
   ).toBeHidden();
-  await page.reload();
   await expect(
     page.getByRole("button", { name: "avatar did:key:z6Mkkf…XVsVz5" }),
   ).toBeVisible();

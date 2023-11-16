@@ -114,7 +114,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   await expect(page).toHaveURL(
     `${sourceBrowsingUrl}/tree/0801aceeab500033f8d608778218657bd626ef73/deep/directory/hierarchy/is/entirely/possible/in/git/repositories/.gitkeep`,
   );
-  await expect(page.getByTitle("Current branch")).toContainText("0801ace");
+  await expect(page.getByTitle("Current HEAD")).toContainText("0801ace");
   await expect(page.locator(".source-tree >> text=.gitkeep")).toBeVisible();
   await expect(
     page.locator(

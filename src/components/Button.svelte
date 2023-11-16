@@ -16,6 +16,7 @@
 
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
+  export let notAllowed: boolean = true;
 
   export let styleFontFamily: string | undefined = undefined;
   export let stylePadding: string | undefined = undefined;
@@ -40,8 +41,10 @@
   }
 
   button:disabled {
-    cursor: not-allowed;
     color: var(--color-foreground-disabled);
+  }
+  button:disabled.not-allowed {
+    cursor: not-allowed;
   }
 
   .small {
@@ -214,6 +217,7 @@
   on:mouseout
   on:mouseover
   class:disabled
+  class:not-allowed={notAllowed}
   class:small={size === "small"}
   class:regular={size === "regular"}
   class:large={size === "large"}

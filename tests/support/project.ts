@@ -58,7 +58,6 @@ export async function expectThreadCommentingToWork(page: Page) {
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
   await expect(page.getByLabel("extended-textarea")).toBeHidden();
-  await page.reload();
   await expect(page.getByText("This is a comment")).toBeVisible();
 
   await page.getByRole("button", { name: "edit comment" }).first().click();
@@ -67,14 +66,12 @@ export async function expectThreadCommentingToWork(page: Page) {
     .fill("This is an edited comment");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByLabel("extended-textarea")).toBeHidden();
-  await page.reload();
   await expect(page.getByText("This is an edited comment")).toBeVisible();
 
   await page.getByRole("button", { name: "Reply to comment" }).click();
   await page.getByPlaceholder("Reply to comment").fill("This is a reply");
   await page.getByRole("button", { name: "Comment", exact: true }).click();
   await expect(page.getByLabel("extended-textarea")).toBeHidden();
-  await page.reload();
   await expect(page.getByText("This is a reply")).toBeVisible();
 
   await page.getByRole("button", { name: "edit comment" }).nth(1).click();
@@ -83,7 +80,6 @@ export async function expectThreadCommentingToWork(page: Page) {
     .fill("This is an edited reply");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByLabel("extended-textarea")).toBeHidden();
-  await page.reload();
   await expect(page.getByText("This is an edited reply")).toBeVisible();
 }
 
@@ -108,7 +104,6 @@ export async function expectLabelEditingToWork(page: Page) {
   await page.keyboard.press("Enter");
   await page.getByRole("button", { name: "save labels" }).click();
   await expect(page.getByRole("button", { name: "save labels" })).toBeHidden();
-  await page.reload();
   await expect(page.getByRole("button", { name: "bug" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "documentation" }),
@@ -122,7 +117,6 @@ export async function expectLabelEditingToWork(page: Page) {
     .click();
   await page.getByRole("button", { name: "save labels" }).click();
   await expect(page.getByRole("button", { name: "save labels" })).toBeHidden();
-  await page.reload();
   await expect(page.getByRole("button", { name: "bug" })).toBeVisible();
 }
 

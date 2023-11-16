@@ -27,7 +27,7 @@
     box-shadow: var(--elevation-low);
     position: relative;
     right: 1rem;
-    z-index: 1;
+    z-index: 10;
   }
 </style>
 

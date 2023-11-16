@@ -38,18 +38,18 @@ test("peer and branch switching", async ({ page }) => {
     await page.getByTitle("Change branch").click();
     await page.getByText("feature/branch").click();
 
-    await expect(page.getByTitle("Current branch")).toContainText(
-      "feature/branch 1aded56",
-    );
+    await expect(
+      page.getByRole("button", { name: "feature/branch" }),
+    ).toBeVisible();
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(page.locator(".history .teaser")).toHaveCount(9);
 
     await page.getByTitle("Change branch").click();
     await page.getByText("orphaned-branch").click();
 
-    await expect(page.getByTitle("Current branch")).toContainText(
-      "orphaned-branch af3641c",
-    );
+    await expect(
+      page.getByRole("button", { name: "orphaned-branch" }),
+    ).toBeVisible();
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(page.locator(".list")).toHaveCount(1);
   }
@@ -146,7 +146,9 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await page.reload();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
   await expect(page.getByRole("link", { name: "2 commits" })).toBeVisible();
-  await expect(page.getByTitle("Current branch")).toContainText("main 516fa74");
+
+  await expect(page.getByLabel("canonical-branch")).toHaveText("main");
+  await expect(page.getByTitle("Current HEAD")).toHaveText("516fa74");
 
   await page.getByText("alice-project").click();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}`);
@@ -171,5 +173,6 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page.getByRole("link", { name: "3 commits" })).toHaveText(
     "3 commits",
   );
-  await expect(page.getByTitle("Current branch")).toContainText("main bb9089a");
+  await expect(page.getByLabel("canonical-branch")).toHaveText("main");
+  await expect(page.getByTitle("Current HEAD")).toHaveText("bb9089a");
 });

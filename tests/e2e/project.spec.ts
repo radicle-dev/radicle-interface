@@ -49,8 +49,9 @@ test("navigate to project", async ({ page }) => {
 
   // Project menu shows default selected branch and commit and contributor counts.
   {
-    await expect(page.getByTitle("Current branch")).toContainText(
-      `main ${aliceMainHead.substring(0, 7)}`,
+    await expect(page.getByLabel("canonical-branch")).toBeVisible();
+    await expect(page.getByTitle("Current HEAD")).toHaveText(
+      aliceMainHead.substring(0, 7),
     );
     await expectCounts({ commits: 6, contributors: 1 }, page);
   }
@@ -79,7 +80,7 @@ test("show source tree at specific revision", async ({ page }) => {
     })
     .click();
 
-  await expect(page.getByTitle("Current branch")).toContainText("335dd6d");
+  await expect(page.getByTitle("Current HEAD")).toContainText("335dd6d");
   await expect(page.locator(".source-tree")).toHaveText("bin src");
   await expectCounts({ commits: 2, contributors: 1 }, page);
 });
@@ -294,8 +295,9 @@ test("peer and branch switching", async ({ page }) => {
 
     // Default `main` branch.
     {
-      await expect(page.getByTitle("Current branch")).toContainText(
-        `main ${aliceMainHead.substring(0, 7)}`,
+      await expect(page.getByTitle("Change branch")).toHaveText("main");
+      await expect(page.getByTitle("Current HEAD")).toHaveText(
+        aliceMainHead.substring(0, 7),
       );
       await expectCounts({ commits: 6, contributors: 1 }, page);
     }
@@ -305,9 +307,10 @@ test("peer and branch switching", async ({ page }) => {
       await page.getByTitle("Change branch").click();
       await page.getByText("feature/branch").click();
 
-      await expect(page.getByTitle("Current branch")).toContainText(
-        "feature/branch 1aded56",
-      );
+      await expect(
+        page.getByRole("button", { name: "feature/branch" }),
+      ).toBeVisible();
+      await expect(page.getByTitle("Current HEAD")).toHaveText("1aded56");
       await expectCounts({ commits: 9, contributors: 1 }, page);
     }
 
@@ -316,9 +319,10 @@ test("peer and branch switching", async ({ page }) => {
       await page.getByTitle("Change branch").click();
       await page.getByText("orphaned-branch").click();
 
-      await expect(page.getByTitle("Current branch")).toContainText(
-        "orphaned-branch af3641c",
-      );
+      await expect(
+        page.getByRole("button", { name: "orphaned-branch" }),
+      ).toBeVisible();
+      await expect(page.getByTitle("Current HEAD")).toHaveText("af3641c");
       await expectCounts({ commits: 1, contributors: 1 }, page);
 
       await expect(page.getByText("No files at this revision")).toBeVisible();
@@ -332,8 +336,9 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).not.toContainText("alice");
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
 
-    await expect(page.getByTitle("Current branch")).toContainText(
-      `main ${aliceMainHead.substring(0, 7)}`,
+    await expect(page.getByLabel("canonical-branch")).toBeVisible();
+    await expect(page.getByTitle("Current HEAD")).toHaveText(
+      aliceMainHead.substring(0, 7),
     );
     await expect(page.getByText("Git test repository")).toBeVisible();
   }
@@ -347,8 +352,9 @@ test("peer and branch switching", async ({ page }) => {
 
     // Default `main` branch.
     {
-      await expect(page.getByTitle("Current branch")).toContainText(
-        `main ${bobHead.substring(0, 7)}`,
+      await expect(page.getByLabel("canonical-branch")).toBeVisible();
+      await expect(page.getByTitle("Current HEAD")).toHaveText(
+        bobHead.substring(0, 7),
       );
       await expectCounts({ commits: 7, contributors: 2 }, page);
       await expect(

@@ -138,7 +138,6 @@
       const preElement = node.parentElement as HTMLElement;
       const copyButton = document.createElement("radicle-clipboard");
       copyButton.setAttribute("text", node.textContent || "");
-      copyButton.setAttribute("small", "");
       preElement.prepend(copyButton);
 
       const className = Array.from(node.classList).find(name =>

@@ -11,6 +11,7 @@
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
   import Radio from "@app/components/Radio.svelte";
+  import HoverPopover from "@app/components/HoverPopover.svelte";
 
   export let node: BaseUrl;
   export let branches: Array<{ name: string; route: Route }>;
@@ -100,11 +101,20 @@
     </Link>
   </Radio>
 
-  <Button disabled variant="outline">
-    <IconSmall name="user" />
-    <div>
-      {tree.stats.contributors}
-      {pluralize("contributor", tree.stats.contributors)}
+  <HoverPopover popoverPositionLeft="0" popoverPositionTop="0.5rem">
+    <Button disabled notAllowed={false} variant="outline" slot="toggle">
+      <IconSmall name="user" />
+      <div>
+        {tree.stats.contributors}
+        {pluralize("contributor", tree.stats.contributors)}
+      </div>
+    </Button>
+    <div
+      class="txt-small"
+      style:padding="0.5rem 0.5rem 0.5rem 0.75rem"
+      slot="popover">
+      <div style:margin-bottom="1rem">Coming soon.</div>
+      <div>Listing all contributors is not yet implemented.</div>
     </div>
-  </Button>
+  </HoverPopover>
 </div>
