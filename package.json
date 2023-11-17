@@ -21,7 +21,7 @@
   "devDependencies": {
     "@playwright/test": "^1.39.0",
     "@sinonjs/fake-timers": "^11.2.2",
-    "@sveltejs/vite-plugin-svelte": "^2.5.2",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@tsconfig/svelte": "^5.0.2",
     "@types/dompurify": "^3.0.5",
     "@types/katex": "^0.16.6",
@@ -45,7 +45,7 @@
     "prettier-plugin-svelte": "^3.1.0",
     "svelte-check": "^3.6.0",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0",
+    "vite": "^5.0.0",
     "vitest": "^0.34.6",
     "wait-on": "^7.1.0"
   },

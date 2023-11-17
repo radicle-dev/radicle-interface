@@ -1,7 +1,3 @@
-import type { Connect, ViteDevServer } from "vite";
-import type http from "node:http";
-
-import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
@@ -15,19 +11,15 @@ export default defineConfig({
   plugins: [
     svelte({
       // Reference: https://github.com/sveltejs/vite-plugin-svelte/issues/270#issuecomment-1033190138
-      experimental: {
-        dynamicCompileOptions({ filename }) {
-          if (path.basename(filename) === "Clipboard.svelte") {
-            return {
-              customElement: true,
-            };
-          }
-        },
+      dynamicCompileOptions({ filename }) {
+        if (path.basename(filename) === "Clipboard.svelte") {
+          return {
+            customElement: true,
+          };
+        }
       },
       compilerOptions: { dev: process.env.NODE_ENV !== "production" },
     }),
-    configureDevServer(),
-    configurePreviewServer(),
   ],
   server: {
     host: "localhost",
@@ -85,38 +77,3 @@ export default defineConfig({
     PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
   },
 });
-
-function configureDevServer() {
-  return {
-    name: "configure-dev-server",
-    configureServer(server: ViteDevServer) {
-      return () => {
-        server.middlewares.use((req, _res, next) => {
-          req.url = "/index.html";
-          next();
-        });
-      };
-    },
-  };
-}
-
-function configurePreviewServer() {
-  return {
-    name: "configure-preview-server",
-    configurePreviewServer(server: {
-      middlewares: Connect.Server;
-      httpServer: http.Server;
-    }) {
-      server.middlewares.use((req, _res, next) => {
-        if (
-          fs.existsSync(`./public${req.url}`) ||
-          req.url?.startsWith("/assets")
-        ) {
-          return next();
-        }
-        req.url = "/index.html";
-        next();
-      });
-    },
-  };
-}
