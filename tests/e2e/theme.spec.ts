@@ -38,10 +38,10 @@ test("change theme", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
-    "rgb(245, 245, 255)",
+    "rgb(250, 250, 255)",
   );
   // Source highlighting reacts to theme change.
-  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(20, 21, 26)");
+  await expect(page.getByText("() {")).toHaveCSS("color", "rgb(35, 37, 99)");
 
   await page.getByRole("button", { name: "Dark Mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
