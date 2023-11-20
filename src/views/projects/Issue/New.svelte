@@ -11,16 +11,17 @@
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
-  import NodeId from "@app/components/NodeId.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
+  import TextInput from "@app/components/TextInput.svelte";
   import Textarea from "@app/components/Textarea.svelte";
-  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let project: Project;
@@ -126,9 +127,6 @@
     flex: 2;
     padding-right: 1rem;
   }
-  .open {
-    color: var(--color-fill-success);
-  }
   .author {
     display: flex;
     align-items: center;
@@ -154,11 +152,18 @@
     {#if session}
       <div class="form">
         <div class="editor">
-          <CobHeader mode="readCreate" {preview} bind:title={issueTitle}>
-            <svelte:fragment slot="icon">
-              <div class="open">
-                <Icon name="issue" />
-              </div>
+          <CobHeader>
+            <svelte:fragment slot="title">
+              {#if !preview}
+                <TextInput
+                  placeholder="Title"
+                  bind:value={issueTitle}
+                  showKeyHint={false} />
+              {:else if issueTitle}
+                <InlineMarkdown fontSize="medium" content={issueTitle} />
+              {:else}
+                <span class="txt-missing">No title</span>
+              {/if}
             </svelte:fragment>
             <svelte:fragment slot="state">
               {#if preview}

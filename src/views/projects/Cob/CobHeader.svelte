@@ -1,35 +1,7 @@
-<script lang="ts" strictEvents>
-  import { createEventDispatcher } from "svelte";
-
+<script lang="ts">
   import * as utils from "@app/lib/utils";
 
-  import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import TextInput from "@app/components/TextInput.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
-
-  export let preview: boolean = false;
-  export let mode: "readCreate" | "readWrite" | "readOnly" = "readOnly";
   export let id: string | undefined = undefined;
-  export let title: string = "";
-  export let editTitle: ((title: string) => Promise<void>) | undefined =
-    undefined;
-
-  async function handleTitleEdit() {
-    if (editTitle) {
-      mode = "readOnly";
-      submitNewTitle = true;
-      try {
-        await editTitle(title);
-      } finally {
-        submitNewTitle = false;
-      }
-    }
-  }
-
-  const dispatch = createEventDispatcher<{ refresh: null }>();
-
-  let submitNewTitle = false;
 </script>
 
 <style>
@@ -39,17 +11,6 @@
     border: 1px solid var(--color-border-hint);
     padding: 1.5rem;
     border-radius: var(--border-radius-small);
-  }
-  .title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--font-size-large);
-    font-weight: var(--font-weight-medium);
-    height: 2.5rem;
   }
   .subtitle {
     display: flex;
@@ -72,58 +33,11 @@
     margin-top: 1rem;
     word-break: break-word;
   }
-  .edit-buttons {
-    display: flex;
-    gap: 0.25rem;
-  }
 </style>
 
 <div class="header">
   <div class="summary">
-    {#if (editTitle && !preview && mode === "readWrite") || (!preview && mode === "readCreate")}
-      <div><slot name="icon" /></div>
-      <TextInput
-        placeholder="Title"
-        bind:value={title}
-        showKeyHint={mode === "readWrite" && Boolean(id)}
-        on:submit={handleTitleEdit} />
-    {:else if title}
-      <div class="title">
-        <div><slot name="icon" /></div>
-        <InlineMarkdown fontSize="medium" content={title} />
-      </div>
-    {:else}
-      <span class="txt-missing">No title</span>
-    {/if}
-    <!-- When creating a new COB id is undefined -->
-    {#if editTitle && id}
-      <div class="edit-buttons">
-        {#if mode === "readWrite"}
-          <IconButton
-            title="save title"
-            loading={submitNewTitle}
-            on:click={handleTitleEdit}>
-            <IconSmall name={"checkmark"} />
-          </IconButton>
-          <IconButton
-            title="dismiss changes"
-            loading={submitNewTitle}
-            on:click={() => {
-              dispatch("refresh");
-              mode = "readOnly";
-            }}>
-            <IconSmall name={"cross"} />
-          </IconButton>
-        {:else}
-          <IconButton
-            title="edit title"
-            loading={submitNewTitle}
-            on:click={() => (mode = "readWrite")}>
-            <IconSmall name={"edit"} />
-          </IconButton>
-        {/if}
-      </div>
-    {/if}
+    <slot name="title" />
   </div>
   <div class="subtitle">
     <slot name="state" />

@@ -163,16 +163,23 @@ test("change patch state", async ({ page, authenticatedPeer }) => {
   await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
 });
 
-test("edit title", async ({ page, authenticatedPeer }) => {
+test("edit patch", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
-    "edit-title",
+    "edit-patch",
   );
-  await authenticatedPeer.git(["switch", "-c", "edit-title"], {
+  await authenticatedPeer.git(["switch", "-c", "edit-patch"], {
     cwd: projectFolder,
   });
   await authenticatedPeer.git(
-    ["commit", "--allow-empty", "-m", "Some patch title"],
+    [
+      "commit",
+      "--allow-empty",
+      "-m",
+      "Some patch title",
+      "-m",
+      "This should be a description",
+    ],
     {
       cwd: projectFolder,
     },
@@ -185,62 +192,36 @@ test("edit title", async ({ page, authenticatedPeer }) => {
   await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches/${patchId}`);
 
   const titleLocator = page.getByText("Some patch title").first();
+  const descriptionLocator = page.getByText("This should be a description");
   await expect(titleLocator).toBeVisible();
+  await expect(descriptionLocator).toBeVisible();
   await expect(page.getByPlaceholder("Title")).toBeHidden();
+  await expect(page.getByPlaceholder("Leave a description")).toBeHidden();
 
-  await page.getByRole("button", { name: "edit title" }).click();
+  await page.getByRole("button", { name: "edit patch" }).click();
   await page
     .getByPlaceholder("Title")
     .fill("This is a modified patch title to be dismissed");
-  await page.getByRole("button", { name: "dismiss changes" }).click();
-  await expect(titleLocator).toBeVisible();
-
-  await page.getByRole("button", { name: "edit title" }).click();
-  await page.getByPlaceholder("Title").fill("This is a modified patch title");
-  await page.getByRole("button", { name: "save title" }).click();
-  await expect(page.getByRole("button", { name: "save title" })).toBeHidden();
-  await page.reload();
-  await expect(page.getByText("This is a modified patch title")).toBeVisible();
-});
-
-test("edit description", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "edit-description",
-  );
-  await authenticatedPeer.git(["switch", "-c", "edit-description"], {
-    cwd: projectFolder,
-  });
-  await authenticatedPeer.git(
-    ["commit", "--allow-empty", "-m", "Some patch title"],
-    {
-      cwd: projectFolder,
-    },
-  );
-  const patchId = extractPatchId(
-    await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
-      cwd: projectFolder,
-    }),
-  );
-  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches/${patchId}`);
-
-  await expect(page.getByText("No description available")).toBeVisible();
-  await expect(page.getByPlaceholder("Leave a description")).toBeHidden();
-
-  await page.getByRole("button", { name: "edit description" }).click();
   await page
     .getByPlaceholder("Leave a description")
     .fill("This is a modified patch description to be dismissed");
   await page.getByRole("button", { name: "Cancel" }).click();
-  await expect(page.getByText("No description available")).toBeVisible();
+  await expect(titleLocator).toBeVisible();
+  await expect(descriptionLocator).toBeVisible();
 
-  await page.getByRole("button", { name: "edit description" }).click();
+  await page.getByRole("button", { name: "edit patch" }).click();
+  await page.getByPlaceholder("Title").fill("This is a modified patch title");
   await page
     .getByPlaceholder("Leave a description")
     .fill("This is a modified patch description");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("button", { name: "Save" })).toBeHidden();
+  await expect(page.getByText("This is a modified patch title")).toBeVisible();
+  await expect(
+    page.getByText("This is a modified patch description"),
+  ).toBeVisible();
   await page.reload();
+  await expect(page.getByText("This is a modified patch title")).toBeVisible();
   await expect(
     page.getByText("This is a modified patch description"),
   ).toBeVisible();

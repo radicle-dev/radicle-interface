@@ -63,6 +63,7 @@
   import Icon from "@app/components/Icon.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
@@ -72,6 +73,7 @@
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
+  import TextInput from "@app/components/TextInput.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
@@ -87,41 +89,11 @@
     ["Convert to draft", { status: "draft" }],
   ];
 
-  async function editTitle(sessionId: string, title: string) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "edit",
-          title,
-          target: "delegates",
-        },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch title editing failed",
-            subtitle: [
-              "There was an error while updating the issue.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function editDescription(sessionId: string, description: string) {
+  async function editPatch(
+    sessionId: string,
+    title: string,
+    description: string,
+  ) {
     try {
       await api.project.updatePatch(
         project.id,
@@ -133,14 +105,20 @@
         },
         sessionId,
       );
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        { type: "edit", title, target: "delegates" },
+        sessionId,
+      );
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
           component: ErrorModal,
           props: {
-            title: "Patch description editing failed",
+            title: "Patch editing failed",
             subtitle: [
-              "There was an error while updating the issue.",
+              "There was an error while updating the patch.",
               "Check your radicle-httpd logs for details.",
             ],
             error: {
@@ -477,7 +455,7 @@
 
   type State = "read" | "submit" | "edit";
 
-  let descriptionState: State = "read";
+  let patchState: State = "read";
   let labelState: State = "read";
 
   let revisionId: string;
@@ -562,6 +540,17 @@
     border-radius: var(--border-radius-small);
     height: fit-content;
   }
+  .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-medium);
+    height: 2.5rem;
+  }
   .commit-list {
     border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius-small);
@@ -615,12 +604,6 @@
     display: flex;
     width: 100%;
   }
-  .edit-buttons {
-    display: flex;
-    margin-left: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-  }
   .diff-button-range {
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-bold);
@@ -648,26 +631,43 @@
 <Layout {baseUrl} {project} {tracking} activeTab="patches">
   <div class="patch">
     <div>
-      <CobHeader
-        id={patch.id}
-        title={patch.title}
-        editTitle={session &&
-          role.isDelegateOrAuthor(
-            session.publicKey,
-            project.delegates,
-            patch.author.id,
-          ) &&
-          partial(editTitle, session.id)}
-        on:refresh={refreshPatch}>
-        <svelte:fragment slot="icon">
-          <div
-            class="state"
-            class:draft={patch.state.status === "draft"}
-            class:open={patch.state.status === "open"}
-            class:merged={patch.state.status === "merged"}
-            class:archived={patch.state.status === "archived"}>
-            <Icon name="patch" />
-          </div>
+      <CobHeader id={patch.id}>
+        <svelte:fragment slot="title">
+          {#if patchState !== "read"}
+            <div
+              class="state"
+              class:draft={patch.state.status === "draft"}
+              class:open={patch.state.status === "open"}
+              class:merged={patch.state.status === "merged"}
+              class:archived={patch.state.status === "archived"}>
+              <Icon name="patch" />
+            </div>
+            <TextInput
+              placeholder="Title"
+              bind:value={patch.title}
+              showKeyHint={false} />
+          {:else if !patch.title}
+            <span class="txt-missing">No title</span>
+          {:else}
+            <div class="title">
+              <div
+                class="state"
+                class:draft={patch.state.status === "draft"}
+                class:open={patch.state.status === "open"}
+                class:merged={patch.state.status === "merged"}
+                class:archived={patch.state.status === "archived"}>
+                <Icon name="patch" />
+              </div>
+              <InlineMarkdown fontSize="medium" content={patch.title} />
+            </div>
+          {/if}
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
+            <IconButton
+              title="edit patch"
+              on:click={() => (patchState = "edit")}>
+              <IconSmall name={"edit"} />
+            </IconButton>
+          {/if}
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="small" variant={badgeColor(patch.state.status)}>
@@ -676,20 +676,23 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if session && descriptionState !== "read"}
+            {#if session && patchState !== "read"}
               <ExtendedTextarea
                 body={newDescription}
                 submitCaption="Save"
-                submitInProgress={descriptionState === "submit"}
+                submitInProgress={patchState === "submit"}
                 placeholder="Leave a description"
-                on:close={() => (descriptionState = "read")}
+                on:close={() => {
+                  patchState = "read";
+                  void refreshPatch();
+                }}
                 on:submit={async ({ detail: { comment } }) => {
-                  descriptionState = "submit";
+                  patchState = "submit";
                   if (session) {
                     try {
-                      await editDescription(session.id, comment);
+                      await editPatch(session.id, patch.title, comment);
                     } finally {
-                      descriptionState = "read";
+                      patchState = "read";
                     }
                   }
                 }} />
@@ -703,15 +706,6 @@
                 )} />
             {:else}
               <span class="txt-missing">No description available</span>
-            {/if}
-            {#if role.isDelegateOrAuthor(session?.publicKey, project.delegates, patch.author.id) && descriptionState === "read"}
-              <div class="edit-buttons">
-                <IconButton
-                  title="edit description"
-                  on:click={() => (descriptionState = "edit")}>
-                  <IconSmall name={"edit"} />
-                </IconButton>
-              </div>
             {/if}
           </div>
         </svelte:fragment>

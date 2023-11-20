@@ -48,11 +48,11 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
   await expect(page.getByText("Comment creation failed")).toBeVisible();
 });
 
-test("edit title", async ({ page, authenticatedPeer }) => {
+test("edit issue", async ({ page, authenticatedPeer }) => {
   await page.goto(authenticatedPeer.uiUrl());
   const { rid, projectFolder } = await createProject(
     authenticatedPeer,
-    "edit-title",
+    "edit-issue",
   );
   await authenticatedPeer.rad(
     [
@@ -61,78 +61,51 @@ test("edit title", async ({ page, authenticatedPeer }) => {
       "--title",
       "This is an issue to edit its title",
       "--description",
-      "We'll give it a title and edit it.",
+      "We'll give it a description and edit it.",
     ],
     { cwd: projectFolder },
   );
   await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/616e240787b6527780636caae581ca9975060733`,
+    `${authenticatedPeer.uiUrl()}/${rid}/issues/df476a2b747a782c20991a258bfb7fc726cb4b0b`,
   );
 
   await expect(
     page.getByText("This is an issue to edit its title"),
   ).toBeVisible();
   await expect(page.getByPlaceholder("Title")).toBeHidden();
-
-  await page.getByRole("button", { name: "edit title" }).click();
-  await page
-    .getByPlaceholder("Title")
-    .fill("This is a modified issue title to be dismissed");
-  await page.getByRole("button", { name: "dismiss changes" }).click();
-  await expect(
-    page.getByText("This is an issue to edit its title"),
-  ).toBeVisible();
-
-  await page.getByRole("button", { name: "edit title" }).click();
-  await page.getByPlaceholder("Title").fill("This is a modified issue title");
-  await page.getByRole("button", { name: "save title" }).click();
-  await expect(page.getByRole("button", { name: "save title" })).toBeHidden();
-  await page.reload();
-  await expect(page.getByText("This is a modified issue title")).toBeVisible();
-});
-
-test("edit description", async ({ page, authenticatedPeer }) => {
-  await page.goto(authenticatedPeer.uiUrl());
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "edit-description",
-  );
-  await authenticatedPeer.rad(
-    [
-      "issue",
-      "open",
-      "--title",
-      "This is an issue to edit its description",
-      "--description",
-      "We'll give it a description and edit it.",
-    ],
-    { cwd: projectFolder },
-  );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/335e2823a71ac91203913a484dd771fd79f75139`,
-  );
-
   await expect(
     page.getByText("We'll give it a description and edit it."),
   ).toBeVisible();
   await expect(page.getByPlaceholder("Leave a description")).toBeHidden();
 
-  await page.getByRole("button", { name: "edit description" }).click();
+  await page.getByRole("button", { name: "edit issue" }).click();
+  await page
+    .getByPlaceholder("Title")
+    .fill("This is a modified issue title to be dismissed");
   await page
     .getByPlaceholder("Leave a description")
     .fill("This is a modified issue description to be dismissed");
   await page.getByRole("button", { name: "Cancel" }).click();
   await expect(
+    page.getByText("This is an issue to edit its title"),
+  ).toBeVisible();
+  await expect(
     page.getByText("We'll give it a description and edit it."),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit description" }).click();
+  await page.getByRole("button", { name: "edit issue" }).click();
+  await page.getByPlaceholder("Title").fill("This is a modified issue title");
   await page
     .getByPlaceholder("Leave a description")
     .fill("This is a modified issue description");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("button", { name: "Save" })).toBeHidden();
-  await page.reload();
+  await expect(page.getByText("This is a modified issue title")).toBeVisible();
+  await expect(
+    page.getByText("This is a modified issue description"),
+  ).toBeVisible();
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.getByText("This is a modified issue title")).toBeVisible();
   await expect(
     page.getByText("This is a modified issue description"),
   ).toBeVisible();

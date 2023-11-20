@@ -25,12 +25,14 @@
   import Icon from "@app/components/Icon.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
+  import TextInput from "@app/components/TextInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
@@ -192,7 +194,13 @@
     }
   }
 
-  async function editTitle(sessionId: string, title: string) {
+  async function editIssue(
+    sessionId: string,
+    title: string,
+    id: string,
+    body: string,
+    embeds: Embed[],
+  ) {
     try {
       await api.project.updateIssue(
         project.id,
@@ -200,12 +208,18 @@
         { type: "edit", title },
         sessionId,
       );
+      await api.project.updateIssue(
+        project.id,
+        issue.id,
+        { type: "comment.edit", id, body, embeds },
+        sessionId,
+      );
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
           component: ErrorModal,
           props: {
-            title: "Issue title editing failed",
+            title: "Issue editing failed",
             subtitle: [
               "There was an error while updating the issue.",
               "Check your radicle-httpd logs for details.",
@@ -374,7 +388,7 @@
 
   let assigneeState: State = "read";
   let labelState: State = "read";
-  let descriptionState: State = "read";
+  let issueState: State = "read";
 </script>
 
 <style>
@@ -406,6 +420,17 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.5rem;
+  }
+  .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-medium);
+    height: 2.5rem;
   }
   .reactions {
     display: flex;
@@ -440,24 +465,39 @@
 <Layout {baseUrl} {project} {tracking} activeTab="issues">
   <div class="issue">
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-      <CobHeader
-        id={issue.id}
-        title={issue.title}
-        editTitle={session &&
-          role.isDelegateOrAuthor(
-            session.publicKey,
-            project.delegates,
-            issue.author.id,
-          ) &&
-          partial(editTitle, session.id)}
-        on:refresh={refreshIssue}>
-        <svelte:fragment slot="icon">
-          <div
-            class="state"
-            class:closed={issue.state.status === "closed"}
-            class:open={issue.state.status === "open"}>
-            <Icon name="issue" />
-          </div>
+      <CobHeader id={issue.id}>
+        <svelte:fragment slot="title">
+          {#if issueState !== "read"}
+            <div
+              class="state"
+              class:closed={issue.state.status === "closed"}
+              class:open={issue.state.status === "open"}>
+              <Icon name="issue" />
+            </div>
+            <TextInput
+              placeholder="Title"
+              bind:value={issue.title}
+              showKeyHint={false} />
+          {:else if !issue.title}
+            <span class="txt-missing">No title</span>
+          {:else}
+            <div class="title">
+              <div
+                class="state"
+                class:closed={issue.state.status === "closed"}
+                class:open={issue.state.status === "open"}>
+                <Icon name="issue" />
+              </div>
+              <InlineMarkdown fontSize="medium" content={issue.title} />
+            </div>
+          {/if}
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
+            <IconButton
+              title="edit issue"
+              on:click={() => (issueState = "edit")}>
+              <IconSmall name={"edit"} />
+            </IconButton>
+          {/if}
         </svelte:fragment>
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
@@ -472,21 +512,30 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          {#if descriptionState !== "read"}
+          {#if issueState !== "read"}
             <ExtendedTextarea
               enableAttachments
               body={issue.discussion[0].body}
               submitCaption="Save"
-              submitInProgress={descriptionState === "submit"}
+              submitInProgress={issueState === "submit"}
               placeholder="Leave a description"
-              on:close={() => (descriptionState = "read")}
+              on:close={() => {
+                issueState = "read";
+                void refreshIssue();
+              }}
               on:submit={async ({ detail: { comment, embeds } }) => {
                 if (session) {
                   try {
-                    descriptionState = "submit";
-                    await editComment(session.id, issue.id, comment, embeds);
+                    issueState = "submit";
+                    await editIssue(
+                      session.id,
+                      issue.title,
+                      issue.id,
+                      comment,
+                      embeds,
+                    );
                   } finally {
-                    descriptionState = "read";
+                    issueState = "read";
                   }
                 }
               }} />
@@ -499,13 +548,6 @@
                   baseUrl,
                   project.head,
                 )} />
-              {#if role.isDelegateOrAuthor(session?.publicKey, project.delegates, issue.author.id)}
-                <IconButton
-                  title="edit description"
-                  on:click={() => (descriptionState = "edit")}>
-                  <IconSmall name="edit" />
-                </IconButton>
-              {/if}
             </div>
           {/if}
           <div class="reactions">
