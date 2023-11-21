@@ -36,7 +36,7 @@
 </style>
 
 <div class="header">
-  <div class="summary">
+  <div role="heading" aria-level={2} class="summary">
     <slot name="title" />
   </div>
   <div class="subtitle">

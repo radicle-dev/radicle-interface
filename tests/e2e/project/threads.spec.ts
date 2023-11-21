@@ -22,9 +22,12 @@ test("leave comments and replies", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/017f0c6827fb19e4cfd5103e452ba58665f01798`,
-  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page
+    .getByRole("link", {
+      name: "This is an issue to write comments and replies",
+    })
+    .click();
   await expectThreadCommentingToWork(page);
 
   await authenticatedPeer.git(["switch", "-c", "feature-1"], {

@@ -4,24 +4,19 @@ import { createProject, extractPatchId } from "@tests/support/project";
 test("navigate patch details", async ({ page }) => {
   await page.goto(`${cobUrl}/patches`);
   await page.getByText("Add subtitle to README").click();
-  await expect(page).toHaveURL(
-    `${cobUrl}/patches/1cd7fe9598c0a877c32c516bddb3de70dfb53366`,
-  );
+  await expect(page).toHaveURL(/patches\/[a-f0-9]{40}$/);
   await page.getByRole("link", { name: "Add subtitle to README" }).click();
-  await expect(page).toHaveURL(
-    `${cobUrl}/commits/8c900d6cb38811e099efb3cbbdbfaba817bcf970`,
-  );
+  await expect(page).toHaveURL(/commits\/[a-f0-9]{40}$/);
   await page.goBack();
-  {
-    await page.getByRole("link", { name: "Changes" }).click();
-    await expect(page).toHaveURL(
-      `${cobUrl}/patches/1cd7fe9598c0a877c32c516bddb3de70dfb53366?tab=changes`,
-    );
-  }
+  await page.getByRole("link", { name: "Changes" }).click();
+  await expect(page).toHaveURL(/patches\/[a-f0-9]{40}\?tab=changes$/);
 });
 
 test("use revision selector", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
   await page.getByRole("link", { name: "Changes" }).click();
 
   // Validating the latest revision state
@@ -45,23 +40,26 @@ test("use revision selector", async ({ page }) => {
   await page.getByRole("link", { name: "Changes" }).click();
   // Switching to the initial revision
 
-  await page.getByRole("button", { name: "Revision 92f6a0c" }).click();
-  await page.getByRole("button", { name: "Revision fa393ed" }).click();
-  // getByRole("link", { name: "Revision 92f6a0c" })
+  await page.getByRole("button", { name: "Revision" }).first().click();
+  await page.getByRole("button", { name: "Revision" }).nth(1).click();
 
   await expect(
     page.getByRole("cell", { name: "Had to push a new revision" }),
   ).toBeHidden();
 
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
+    /patches\/[a-f0-9]{40}\/[a-f0-9]{40}\?tab=changes$/,
   );
 });
 
 test("navigate through revision diffs", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
 
   const firstRevision = page.locator(".revision").first();
+  const firstRevisionId = "a27a6b7";
   const secondRevision = page.locator(".revision").nth(1);
 
   // Second revision
@@ -77,7 +75,7 @@ test("navigate through revision diffs", async ({ page }) => {
       page.getByRole("button", { name: "Compare 38c225..9e4fea" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..9e4feab1b2123dfa5f22bd0e4656060ec9296638`,
+      /patches\/[a-f0-9]{40}\?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec\.\.9e4feab1b2123dfa5f22bd0e4656060ec9296638$/,
     );
     await page.goBack();
     await secondRevision
@@ -85,14 +83,16 @@ test("navigate through revision diffs", async ({ page }) => {
       .first()
       .click();
     await secondRevision
-      .getByRole("link", { name: "Compare to previous revision: fa393ed" })
+      .getByRole("link", {
+        name: `Compare to previous revision: ${firstRevisionId}`,
+      })
       .click();
     await expect(
       page.getByRole("button", { name: "Compare 88b7fd..9e4fea" }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=88b7fd90389c1a629f91ed7bf838d4b947426622..9e4feab1b2123dfa5f22bd0e4656060ec9296638`,
+      /patches\/[a-f0-9]{40}\?diff=88b7fd90389c1a629f91ed7bf838d4b947426622\.\.9e4feab1b2123dfa5f22bd0e4656060ec9296638$/,
     );
     await page.goBack();
 
@@ -118,17 +118,19 @@ test("navigate through revision diffs", async ({ page }) => {
       page.getByRole("button", { name: "Compare 38c225..88b7fd" }),
     ).toBeVisible();
     await expect(page).toHaveURL(
-      `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec..88b7fd90389c1a629f91ed7bf838d4b947426622`,
+      /patches\/[a-f0-9]{40}\?diff=38c225e2a0b47ba59def211f4e4825c31d9463ec\.\.88b7fd90389c1a629f91ed7bf838d4b947426622$/,
     );
   }
 });
 
 test("view file navigation from changes tab", async ({ page }) => {
-  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
+  await page.goto(`${cobUrl}/patches`);
+  await page.getByRole("link", { name: "Add subtitle to README" }).click();
+  await page.getByRole("link", { name: "Changes" }).click();
   await page.getByRole("button", { name: "Changes" }).click();
   await page.getByRole("button", { name: "View file" }).click();
   await expect(page).toHaveURL(
-    `${cobUrl}/tree/9e4feab1b2123dfa5f22bd0e4656060ec9296638/README.md`,
+    `${cobUrl}/tree/8c900d6cb38811e099efb3cbbdbfaba817bcf970/README.md`,
   );
 });
 

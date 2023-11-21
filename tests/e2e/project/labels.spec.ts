@@ -22,9 +22,8 @@ test("add and remove labels", async ({ page, authenticatedPeer }) => {
     { cwd: projectFolder },
   );
 
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/5129d02476bc8c85f35e06a7d19dde487b0a8b13`,
-  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page.getByRole("link", { name: "This is an issue to test" }).click();
   await expectLabelEditingToWork(page);
 
   await authenticatedPeer.git(["switch", "-c", "handle-labels"], {

@@ -479,10 +479,10 @@ test("internal file markdown link", async ({ page }) => {
 
 test("diff selection de-select", async ({ page }) => {
   await page.goto(
-    `${cobUrl}/patches/1cd7fe9598c0a877c32c516bddb3de70dfb53366?tab=changes#README.md:H0L0H0L3`,
+    `${cobUrl}/patches/7db70f2ed80235db7f0ab9e5537e76572a304991?tab=changes#README.md:H0L0H0L3`,
   );
   await page.getByText("Add subtitle to README").click();
   await expect(page).toHaveURL(
-    `${cobUrl}/patches/1cd7fe9598c0a877c32c516bddb3de70dfb53366?tab=changes`,
+    `${cobUrl}/patches/7db70f2ed80235db7f0ab9e5537e76572a304991?tab=changes`,
   );
 });

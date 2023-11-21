@@ -5,9 +5,7 @@ test("navigate single issue", async ({ page }) => {
   await page.goto(`${cobUrl}/issues`);
   await page.getByText("This title has markdown").click();
 
-  await expect(page).toHaveURL(
-    `${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`,
-  );
+  await expect(page).toHaveURL(/\/issues\/[0-9a-f]{40}/);
 });
 
 test("test issue editing failing", async ({ page, authenticatedPeer }) => {
@@ -27,21 +25,16 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
     { cwd: projectFolder },
   );
 
-  await page.route(
-    `**/v1/projects/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
-    route => {
-      if (route.request().method() !== "PATCH") {
-        void route.fallback();
-        return;
-      }
-      void route.fulfill({ status: 500 });
-    },
-  );
+  await page.route(`**/v1/projects/${rid}/issues/*`, async route => {
+    if (route.request().method() === "PATCH") {
+      return route.fulfill({ status: 500 });
+    } else {
+      return route.fallback();
+    }
+  });
 
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/ecd5f103110b08b93bede17163d35de1e1068148`,
-  );
-
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page.getByRole("link", { name: "This issue is going to fail" }).click();
   await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).first().click();
@@ -65,9 +58,10 @@ test("edit issue", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/df476a2b747a782c20991a258bfb7fc726cb4b0b`,
-  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page
+    .getByRole("link", { name: "This is an issue to edit its title" })
+    .click();
 
   await expect(
     page.getByText("This is an issue to edit its title"),
@@ -127,8 +121,9 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/cb5f9b2de24ecfdd293a607c96d78aacc911b589`,
-  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page
+    .getByRole("link", { name: "This is an issue to test reactions" })
+    .click();
   await expectReactionsToWork(page);
 });

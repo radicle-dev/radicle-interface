@@ -23,18 +23,17 @@ test("issues page", async ({ page }) => {
 });
 
 test("issue page", async ({ page }) => {
-  await page.goto(`${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/278bbe0bf3af51e5de1dfe20fefbbec4e1121343`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/61d2dbe81411ee6a9cce75451bc637541ea6a7c2`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  const issues = [
+    ["This title has markdown", "open"],
+    ["A closed issue", "closed"],
+    ["A solved issue", "closed"],
+  ];
+  for (const [name, state] of issues) {
+    await page.goto(`${cobUrl}/issues?state=${state}`);
+    await page.getByRole("link", { name }).click();
+    await page.getByRole("heading", { name }).waitFor();
+    await expect(page).toHaveScreenshot({ fullPage: true });
+  }
 });
 
 test("patches page", async ({ page }) => {
@@ -57,36 +56,20 @@ test("patches page", async ({ page }) => {
 });
 
 test("patch page", async ({ page }) => {
-  // Draft patch
-  await page.goto(
-    `${cobUrl}/patches/dc9d006aa7131b62c14d570d79e079bb130ed2ea`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Archived patch
-  await page.goto(
-    `${cobUrl}/patches/08d97e8cb6f94448d0452884a9bf686beecc8549`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Merged patch
-  await page.goto(
-    `${cobUrl}/patches/cf0b92b99dd3e36d251f3d75e12b626c62d20e4c`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Open patch "Add subtitle to README"
-  await page.goto(
-    `${cobUrl}/patches/1cd7fe9598c0a877c32c516bddb3de70dfb53366`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Open patch "Taking another stab at the README"
-  await page.goto(
-    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  const patches = [
+    ["This patch is going to be reverted to draft", "draft"],
+    ["This patch is going to be archived", "archived"],
+    ["Let's add a README", "merged"],
+    ["Add subtitle to README", "open"],
+    ["Taking another stab at the README", "open"],
+  ];
+
+  for (const [name, state] of patches) {
+    await page.goto(`${cobUrl}/patches?state=${state}`);
+    await page.getByRole("link", { name }).click();
+    await page.getByRole("heading", { name }).waitFor();
+    await expect(page).toHaveScreenshot({ fullPage: true });
+  }
 
   // Expand commit messages to check border line height
   await page.getByLabel("expand").nth(2).click();
@@ -97,11 +80,10 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.getByLabel("expand").nth(1).click();
   await expect(page).toHaveScreenshot({ fullPage: true });
-
-  await page.goto(
-    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
-    { waitUntil: "networkidle" },
-  );
+  await page.getByRole("button", { name: "Changes" }).click();
+  await page
+    .getByText("1 file changed with 5 insertions and 1 deletion")
+    .waitFor();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
 
@@ -111,6 +93,12 @@ test("failed diff loading for a specific revision", async ({ page }) => {
     route => route.fulfill({ status: 500 }),
   );
 
-  await page.goto(`${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`);
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
+  await page
+    .getByRole("heading", { name: "Taking another stab at the README" })
+    .waitFor();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

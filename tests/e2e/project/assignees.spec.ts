@@ -18,9 +18,12 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.goto(
-    `${authenticatedPeer.uiUrl()}/${rid}/issues/4fe061828a067ae52bda43537ca61b7aeeb44563`,
-  );
+  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
+  await page
+    .getByRole("link", {
+      name: "This is an issue to test assignee handling",
+    })
+    .click();
 
   await expect(page.getByText("No assignees")).toBeVisible();
 

@@ -127,6 +127,7 @@ export const NodeConfigSchema = object({
       routingMaxSize: number(),
       routingMaxAge: number(),
       fetchConcurrency: number(),
+      gossipMaxAge: number(),
     }),
     policy: union([literal("track"), literal("block")]),
     scope: union([literal("trusted"), literal("all")]),
@@ -255,23 +256,26 @@ export class RadiclePeer {
   }
 
   public async startNode(nodeParams: Partial<NodeConfig["node"]> = {}) {
-    const gitPort = await getPort();
-    const gitSocketAddr = `0.0.0.0:${gitPort}`;
     const listenPort = await getPort();
     this.#listenSocketAddr = `0.0.0.0:${listenPort}`;
 
-    // We need to set the `config.json` file after creating the node identity and before starting it.
-    // Since we aren't able to pass these configuration options through the CLI.
     await updateNodeConfig(this.#radHome, nodeParams);
 
-    const args = [
-      "--git-daemon",
-      gitSocketAddr,
+    // Because of a bug in `radicle-node`, `limits.gossipMaxAge` is not included
+    // in the default config. We add it manually.
+    await updateNodeConfig(this.#radHome, {
+      limits: {
+        routingMaxSize: 1000,
+        routingMaxAge: 604800,
+        fetchConcurrency: 1,
+        gossipMaxAge: 1209600,
+      },
+    });
+
+    this.#nodeProcess = this.spawn("radicle-node", [
       "--listen",
       this.#listenSocketAddr,
-    ];
-
-    this.#nodeProcess = this.spawn("radicle-node", args);
+    ]);
 
     await waitOn({
       resources: [`socket:${this.#socket}`],

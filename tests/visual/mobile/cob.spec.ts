@@ -30,18 +30,17 @@ test("issues page", async ({ page }) => {
 });
 
 test("issue page", async ({ page }) => {
-  await page.goto(`${cobUrl}/issues/d72196335761c1d5fa7883f6620e7334b34e38f9`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/278bbe0bf3af51e5de1dfe20fefbbec4e1121343`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/issues/61d2dbe81411ee6a9cce75451bc637541ea6a7c2`, {
-    waitUntil: "networkidle",
-  });
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  const issues = [
+    ["This title has markdown", "open"],
+    ["A closed issue", "closed"],
+    ["A solved issue", "closed"],
+  ];
+  for (const [name, state] of issues) {
+    await page.goto(`${cobUrl}/issues?state=${state}`);
+    await page.getByRole("link", { name }).click();
+    await page.getByRole("heading", { name }).waitFor();
+    await expect(page).toHaveScreenshot({ fullPage: true });
+  }
 });
 
 test("patches page", async ({ page }) => {
@@ -64,33 +63,18 @@ test("patches page", async ({ page }) => {
 });
 
 test("patch page", async ({ page }) => {
-  // Draft patch
-  await page.goto(
-    `${cobUrl}/patches/dc9d006aa7131b62c14d570d79e079bb130ed2ea`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Archived patch
-  await page.goto(
-    `${cobUrl}/patches/43ae785a9ceaf289b2445fb5b8e01036d456b2be`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Merged patch
-  await page.goto(
-    `${cobUrl}/patches/6a51e1d2e350136e7bcfad8f13d16488c1f1c99a`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  // Open patch
-  await page.goto(
-    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(
-    `${cobUrl}/patches/fa393edeb28bdd189bd0c0d7a262cb30d9109595?tab=changes`,
-    { waitUntil: "networkidle" },
-  );
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  const patches = [
+    ["This patch is going to be reverted to draft", "draft"],
+    ["This patch is going to be archived", "archived"],
+    ["Let's add a README", "merged"],
+    ["Add subtitle to README", "open"],
+    ["Taking another stab at the README", "open"],
+  ];
+
+  for (const [name, state] of patches) {
+    await page.goto(`${cobUrl}/patches?state=${state}`);
+    await page.getByRole("link", { name }).click();
+    await page.getByRole("heading", { name }).waitFor();
+    await expect(page).toHaveScreenshot({ fullPage: true });
+  }
 });
