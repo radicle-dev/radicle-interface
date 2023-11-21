@@ -2,7 +2,6 @@ import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import {
   assertRadInstalled,
-  promptWorkspaceRemoval,
   removeWorkspace,
   tmpDir,
 } from "@tests/support/support.js";
@@ -30,9 +29,6 @@ export default async function globalSetup(): Promise<() => void> {
 
   if (!process.env.SKIP_FIXTURE_CREATION) {
     console.log("Setting up global test environment");
-    if (!process.env.CI) {
-      await promptWorkspaceRemoval();
-    }
     await removeWorkspace();
 
     const peerManager = await createPeerManager({

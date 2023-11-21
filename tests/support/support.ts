@@ -5,7 +5,6 @@ import * as Crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import * as Path from "node:path";
 import * as Fs from "node:fs/promises";
-import * as readline from "node:readline/promises";
 
 // Generate string of 12 random characters with 8 bits of entropy.
 export function randomTag(): string {
@@ -43,32 +42,6 @@ export async function assertRadInstalled(): Promise<void> {
       `rad version ${version} does not satisfy ${heartwoodShortSha}`,
     );
   }
-}
-
-export async function promptWorkspaceRemoval(): Promise<void> {
-  console.log("");
-  console.log("This will irrevocably destroy the following directories:");
-  console.log("");
-  workspacePaths.forEach(path => console.log(path));
-  console.log("");
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const result = await rl.question(
-    "Are you sure you want to continue? [yes/no]: ",
-  );
-  rl.close();
-
-  if (result.toLowerCase() === "yes") {
-    console.log("Done");
-    return;
-  }
-
-  console.log("Ok, I won't touch your data.");
-  process.exit(1);
 }
 
 export async function removeWorkspace(): Promise<void> {
