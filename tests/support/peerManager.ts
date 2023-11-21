@@ -251,7 +251,7 @@ export class RadiclePeer {
       resources: [
         `tcp:${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
       ],
-      timeout: 7000,
+      timeout: 2000,
     });
   }
 
@@ -266,6 +266,7 @@ export class RadiclePeer {
         `tcp:${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
       ],
       reverse: true,
+      timeout: 2000,
     });
 
     this.#httpdBaseUrl = undefined;
@@ -295,6 +296,7 @@ export class RadiclePeer {
 
     await waitOn({
       resources: [`socket:${this.#socket}`],
+      timeout: 2000,
     });
 
     const { stdout } = this.rad(["node", "events"], {
@@ -335,6 +337,7 @@ export class RadiclePeer {
     await waitOn({
       resources: [`socket:${this.#socket}`],
       reverse: true,
+      timeout: 2000,
     });
   }
 
