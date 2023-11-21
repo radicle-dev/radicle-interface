@@ -9,7 +9,7 @@ import { test as base, expect, type ViewportSize } from "@playwright/test";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
-import * as logLabel from "@tests/support/logLabel.js";
+import * as logLabel from "@tests/support/logPrefix.js";
 import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
@@ -52,7 +52,7 @@ export const test = base.extend<{
 
   forAllTests: [
     async ({ customAppConfig, outputLog, page }, use) => {
-      const browserLabel = logLabel.make("browser");
+      const browserLabel = logLabel.logPrefix("browser");
       page.on("console", msg => {
         // Ignore common console logs that we don't care about.
         if (
@@ -111,7 +111,7 @@ export const test = base.extend<{
         });
       }
 
-      const playwrightLabel = logLabel.make("playwright");
+      const playwrightLabel = logLabel.logPrefix("playwright");
 
       function isLocalhost(url: URL) {
         return url.hostname === "localhost" || url.hostname === "127.0.0.1";

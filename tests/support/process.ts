@@ -5,7 +5,7 @@ import onExit from "exit-hook";
 import { StringDecoder } from "string_decoder";
 import { execa } from "execa";
 
-import { make } from "./logLabel.js";
+import { logPrefix } from "./logPrefix.js";
 
 // Processes that should be SIGKILLed when the Node process shutsdown.
 // We add all proxy and node instances that we spawn to this list.
@@ -42,7 +42,7 @@ export function prefixOutput(
   label: string,
   output: Stream.Writable,
 ): ExecaChildProcess {
-  const pref = make(label);
+  const pref = logPrefix(label);
   if (childProcess.stdout) {
     const stdoutPrefix = new LinePrefix(pref);
     childProcess.stdout.pipe(stdoutPrefix).pipe(output, { end: false });

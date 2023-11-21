@@ -23,7 +23,7 @@ const availableColors: ColorName[] = [
 
 const assignedColors: Record<string, ColorName> = {};
 
-export function make(label: string): string {
+export function logPrefix(label: string): string {
   if (assignedColors[label] === undefined) {
     const color = availableColors.pop();
     if (!color) {
