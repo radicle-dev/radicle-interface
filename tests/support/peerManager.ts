@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { BaseUrl } from "@httpd-client";
-import type { ExecaChildProcess, Options } from "execa";
+import type { ExecaChildProcess, Options as ExecaOptions } from "execa";
 
 import * as Fs from "node:fs/promises";
 import * as Os from "node:os";
 import * as Path from "node:path";
 import * as Stream from "node:stream";
+import * as Util from "node:util";
 import getPort from "get-port";
 import lodash from "lodash";
 import waitOn from "wait-on";
@@ -16,6 +17,7 @@ import * as Process from "./process.js";
 import { randomTag } from "@tests/support/support.js";
 import { sleep } from "@app/lib/sleep.js";
 import { array, boolean, literal, number, object, string, union, z } from "zod";
+import { logPrefix } from "./logPrefix.js";
 
 export type RefsUpdate =
   | { updated: { name: string; old: string; new: string } }
@@ -63,6 +65,7 @@ export interface RoutingEntry {
 interface PeerManagerParams {
   dataPath: string;
   node: string;
+  // Name for easy identification. Used on file system and in logs.
   name: string;
   gitOptions?: Record<string, string>;
   outputLog: Stream.Writable;
@@ -136,6 +139,14 @@ export const NodeConfigSchema = object({
 
 export interface NodeConfig extends z.infer<typeof NodeConfigSchema> {}
 
+// Options passed to `RadiclePeer#rad` and `RadiclePeer#git` that control how
+// the process is spawned.
+interface SpawnOptions extends ExecaOptions {
+  // Sets the prefix for the commands output in the logs. If `null`, does not
+  // log any output. Defaults to `<peer name> <binary name>`.
+  logPrefix?: string | null;
+}
+
 export class RadiclePeer {
   public checkoutPath: string;
   public nodeId: string;
@@ -150,6 +161,8 @@ export class RadiclePeer {
   #httpdBaseUrl?: BaseUrl;
   #nodeProcess?: ExecaChildProcess;
   #httpdProcess?: ExecaChildProcess;
+  // Name for easy identification. Used on file system and in logs.
+  #name: string;
 
   private constructor(props: {
     checkoutPath: string;
@@ -159,6 +172,7 @@ export class RadiclePeer {
     gitOptions?: Record<string, string>;
     radHome: string;
     logFile: Stream.Writable;
+    name: string;
   }) {
     this.checkoutPath = props.checkoutPath;
     this.nodeId = props.nodeId;
@@ -167,6 +181,7 @@ export class RadiclePeer {
     this.#socket = props.socket;
     this.#radHome = props.radHome;
     this.#outputLog = props.logFile;
+    this.#name = props.name;
   }
 
   public async waitForEvent(searchEvent: NodeEvent, timeoutInMs: number) {
@@ -214,6 +229,7 @@ export class RadiclePeer {
       nodeId,
       radHome,
       logFile,
+      name,
     });
   }
 
@@ -281,25 +297,36 @@ export class RadiclePeer {
       resources: [`socket:${this.#socket}`],
     });
 
-    const stdout = this.rad(["node", "events"], { cwd: this.#radHome }).stdout;
+    const { stdout } = this.rad(["node", "events"], {
+      cwd: this.#radHome,
+      logPrefix: null,
+    });
 
-    if (stdout) {
-      readline
-        .createInterface({
-          input: stdout,
-          terminal: false,
-        })
-        .on("line", line => {
-          try {
-            const result: NodeEvent = JSON.parse(line);
-            this.#eventRecords.push(result);
-          } catch (e) {
-            console.log("Error parsing event", line);
-          }
-        });
-    } else {
+    if (!stdout) {
       throw new Error("Could not get stdout to track events");
     }
+
+    readline
+      .createInterface({
+        input: stdout,
+        terminal: false,
+      })
+      .on("line", line => {
+        let event;
+        try {
+          event = JSON.parse(line);
+        } catch (e) {
+          console.log("Error parsing event", line);
+          return;
+        }
+
+        this.#eventRecords.push(event);
+        for (const line of Util.inspect(event, { depth: null }).split("\n")) {
+          this.#outputLog.write(
+            `${logPrefix(`${this.#name} node events`)} ${line}\n`,
+          );
+        }
+      });
   }
 
   public async stopNode() {
@@ -315,13 +342,10 @@ export class RadiclePeer {
     let remaining = nodes;
 
     while (remaining.length > 0) {
-      const { stdout: entries } = await this.rad([
-        "node",
-        "routing",
-        "--rid",
-        rid,
-        "--json",
-      ]);
+      const { stdout: entries } = await this.rad(
+        ["node", "routing", "--rid", rid, "--json"],
+        { logPrefix: null },
+      );
 
       if (!entries) {
         throw new Error("No entries found in the routing table");
@@ -371,18 +395,18 @@ export class RadiclePeer {
     return this.#httpdBaseUrl;
   }
 
-  public git(args: string[] = [], opts?: Options): ExecaChildProcess {
+  public git(args: string[] = [], opts?: SpawnOptions): ExecaChildProcess {
     return this.spawn("git", args, { ...opts });
   }
 
-  public rad(args: string[] = [], opts?: Options): ExecaChildProcess {
+  public rad(args: string[] = [], opts?: SpawnOptions): ExecaChildProcess {
     return this.spawn("rad", args, { ...opts });
   }
 
   public spawn(
     cmd: string,
     args: string[] = [],
-    opts?: Options,
+    opts?: SpawnOptions,
   ): ExecaChildProcess {
     opts = {
       ...opts,
@@ -400,7 +424,13 @@ export class RadiclePeer {
     };
     const childProcess = Process.spawn(cmd, args, opts);
 
-    void Process.prefixOutput(childProcess, this.nodeId, this.#outputLog);
+    if (opts.logPrefix !== null) {
+      void Process.prefixOutput(
+        childProcess,
+        opts.logPrefix || `${this.#name} ${cmd}`,
+        this.#outputLog,
+      );
+    }
 
     return childProcess;
   }
