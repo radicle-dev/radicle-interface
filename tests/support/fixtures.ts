@@ -312,9 +312,7 @@ export async function createSourceBrowsingFixture(
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
   await alice.startNode({ connect: [palm.address], alias: "alice" });
   await bob.startNode({ connect: [palm.address], alias: "bob" });
-  await alice.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
   await palm.waitForEvent({ type: "peerConnected", nid: alice.nodeId }, 1000);
-  await bob.waitForEvent({ type: "peerConnected", nid: palm.nodeId }, 1000);
   await palm.waitForEvent({ type: "peerConnected", nid: bob.nodeId }, 1000);
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
@@ -337,21 +335,29 @@ export async function createSourceBrowsingFixture(
     ],
     { cwd: aliceProjectPath },
   );
+  await alice.waitForEvent(
+    {
+      type: "seedDiscovered",
+      rid,
+      nid: palm.nodeId,
+    },
+    2000,
+  );
+
   // Needed due to rad init not pushing all branches.
   await alice.git(["push", "rad", "--all"], { cwd: aliceProjectPath });
-  await alice.rad(["track", bob.nodeId, "--alias", "bob"], {
-    cwd: aliceProjectPath,
-  });
+  await alice.stopNode();
 
-  await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId);
-  await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId);
-  await palm.waitForRoutes(rid, alice.nodeId, palm.nodeId);
+  await bob.waitForEvent(
+    {
+      type: "seedDiscovered",
+      rid,
+      nid: palm.nodeId,
+    },
+    2000,
+  );
 
   await bob.rad(["clone", rid], { cwd: bob.checkoutPath });
-
-  await alice.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
-  await bob.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
-  await palm.waitForRoutes(rid, alice.nodeId, palm.nodeId, bob.nodeId);
 
   await Fs.writeFile(
     Path.join(bob.checkoutPath, "source-browsing", "README.md"),
@@ -369,16 +375,6 @@ export async function createSourceBrowsingFixture(
     { cwd: bobProjectPath },
   );
   await bob.git(["push", "rad"], { cwd: bobProjectPath });
-
-  await bob.waitForEvent(
-    { type: "refsSynced", remote: palm.nodeId, rid },
-    2000,
-  );
-  await bob.waitForEvent(
-    { type: "refsSynced", remote: alice.nodeId, rid },
-    2000,
-  );
-  await alice.stopNode();
   await bob.stopNode();
 }
 

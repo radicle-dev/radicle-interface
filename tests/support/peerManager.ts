@@ -187,8 +187,19 @@ export class RadiclePeer {
   public async waitForEvent(searchEvent: NodeEvent, timeoutInMs: number) {
     const start = new Date().getTime();
 
-    while (new Date().getTime() - start > timeoutInMs) {
-      this.#eventRecords.find(event => lodash.isEqual(searchEvent, event));
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      if (this.#eventRecords.find(lodash.matches(searchEvent))) {
+        return;
+      }
+      if (new Date().getTime() - start > timeoutInMs) {
+        throw Error(
+          `Timeout waiting for event on node ${this.#name} ${Util.inspect(
+            searchEvent,
+            { depth: null },
+          )}`,
+        );
+      }
       await sleep(100);
     }
   }
@@ -339,36 +350,6 @@ export class RadiclePeer {
       reverse: true,
       timeout: 2000,
     });
-  }
-
-  public async waitForRoutes(rid: string, ...nodes: string[]) {
-    let remaining = nodes;
-
-    while (remaining.length > 0) {
-      const { stdout: entries } = await this.rad(
-        ["node", "routing", "--rid", rid, "--json"],
-        { logPrefix: null },
-      );
-
-      if (!entries) {
-        throw new Error("No entries found in the routing table");
-      }
-      entries.split("\n").forEach(entry => {
-        if (entry && entry.trim() !== "") {
-          try {
-            const result: RoutingEntry = JSON.parse(entry);
-            remaining = remaining.filter(nid => result.nid !== nid);
-          } catch (e) {
-            console.log("Error parsing entry", entry);
-          }
-        }
-      });
-
-      await this.waitForEvent(
-        { type: "seedDiscovered", rid, nid: this.nodeId },
-        6000,
-      );
-    }
   }
 
   public get address(): string {

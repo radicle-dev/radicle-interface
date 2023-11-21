@@ -38,7 +38,7 @@ export default async function globalSetup(): Promise<() => void> {
     const peerManager = await createPeerManager({
       dataDir: Path.resolve(Path.join(tmpDir, "peers")),
       outputLog: FsSync.createWriteStream(
-        Path.join(tmpDir, "peerManager.log"),
+        Path.join(tmpDir, "globalSetup.log"),
       ).setMaxListeners(16),
     });
 
