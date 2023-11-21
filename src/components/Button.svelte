@@ -8,9 +8,11 @@
     | "gray-white"
     | "none"
     | "outline"
-    | "primary-outline"
-    | "primary"
+    | "primary-toggle-off"
+    | "primary-toggle-on"
     | "secondary"
+    | "secondary-toggle-off"
+    | "secondary-toggle-on"
     | "tab" = "gray";
   export let size: "small" | "regular" | "large" = "regular";
 
@@ -141,34 +143,64 @@
     color: var(--color-foreground-contrast);
   }
 
-  .primary-outline {
-    background-color: transparent;
-    color: var(--color-foreground-contrast);
-    border: 1px solid var(--color-border-hint);
-  }
-  .primary-outline[disabled] {
-    background-color: transparent;
-    color: var(--color-fill-gray);
-  }
-  .primary-outline:not([disabled]):hover {
-    background-color: transparent;
-    border: 1px solid var(--color-fill-primary);
-    color: var(--color-foreground-contrast);
-  }
-
-  .primary {
+  .primary-toggle-on {
     color: var(--color-fill-primary);
     background-color: var(--color-fill-merged);
     border: 1px solid var(--color-border-merged);
   }
 
-  .primary[disabled] {
+  .primary-toggle-on[disabled] {
     color: var(--color-foreground-match-background);
     background-color: var(--color-fill-primary);
   }
 
-  .primary:not([disabled]):hover {
-    border: 1px solid var(--color-fill-primary);
+  .primary-toggle-on:not([disabled]):hover {
+    border: 1px solid var(--color-border-primary);
+  }
+
+  .primary-toggle-off {
+    background-color: transparent;
+    color: var(--color-foreground-dim);
+    border: 1px solid var(--color-border-hint);
+  }
+  .primary-toggle-off[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .primary-toggle-off:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-border-primary);
+    color: var(--color-foreground-dim);
+  }
+
+  .secondary-toggle-off {
+    background-color: transparent;
+    color: var(--color-foreground-dim);
+    border: 1px solid var(--color-border-hint);
+  }
+  .secondary-toggle-off[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .secondary-toggle-off:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-fill-secondary);
+    color: var(--color-foreground-dim);
+  }
+
+  .secondary-toggle-on {
+    background-color: var(--color-fill-selected);
+    color: var(--color-foreground-emphasized);
+    border: 1px solid var(--color-border-selected);
+  }
+  .secondary-toggle-on[disabled] {
+    background-color: var(--color-fill-selected);
+    color: var(--color-fill-gray);
+  }
+  .secondary-toggle-on:not([disabled]):hover {
+    background-color: var(--color-fill-selected);
+    border: 1px solid var(--color-border-focus);
+    color: var(--color-foreground-emphasized);
   }
 
   .secondary {
@@ -223,12 +255,14 @@
   class:large={size === "large"}
   class:background={variant === "background"}
   class:dim={variant === "dim"}
-  class:gray={variant === "gray"}
   class:gray-white={variant === "gray-white"}
+  class:gray={variant === "gray"}
   class:none={variant === "none"}
   class:outline={variant === "outline"}
-  class:primary-outline={variant === "primary-outline"}
-  class:primary={variant === "primary"}
+  class:primary-toggle-off={variant === "primary-toggle-off"}
+  class:primary-toggle-on={variant === "primary-toggle-on"}
+  class:secondary-toggle-off={variant === "secondary-toggle-off"}
+  class:secondary-toggle-on={variant === "secondary-toggle-on"}
   class:secondary={variant === "secondary"}
   class:tab={variant === "tab"}>
   <slot />

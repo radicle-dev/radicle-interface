@@ -62,7 +62,7 @@
       let:toggle
       on:click={toggle}
       size="large"
-      variant="primary">
+      variant="primary-toggle-on">
       <div class="avatar">
         <NodeId
           large
@@ -100,7 +100,7 @@
       });
     }}
     size="large"
-    variant="primary-outline">
+    variant="primary-toggle-off">
     <IconSmall name="key" />
     Authenticate
     <div class="indicator" />
@@ -114,7 +114,7 @@
       });
     }}
     size="large"
-    variant="primary-outline">
+    variant="primary-toggle-off">
     <IconSmall name="chat" />
     Authenticate
   </Button>

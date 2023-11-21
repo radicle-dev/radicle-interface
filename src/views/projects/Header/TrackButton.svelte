@@ -37,22 +37,12 @@
     let:toggle
     on:click={toggle}
     size="large"
-    variant="outline"
+    variant={tracking ? "secondary-toggle-on" : "secondary-toggle-off"}
     title="Tracked by {trackings} {pluralize('node', trackings)}">
-    {#if tracking}
-      <div style:color="var(--color-fill-secondary)">
-        <IconSmall name="network" />
-      </div>
-    {:else}
-      <div style:color="var(--color-foreground-contrast)">
-        <IconSmall name="network" />
-      </div>
-    {/if}
+    <IconSmall name="network" />
     <span>
       {buttonTitle}
-      <span
-        style:color="var(--color-foreground-dim)"
-        style:font-weight="var(--font-weight-regular)">
+      <span style:font-weight="var(--font-weight-regular)">
         {trackings}
       </span>
     </span>

@@ -23,7 +23,7 @@
     let:toggle
     on:click={toggle}
     size="large"
-    variant={running ? "primary" : "primary-outline"}>
+    variant={running ? "primary-toggle-on" : "primary-toggle-off"}>
     <IconSmall name="broadcasting" />
     {#if running}
       Syncing
