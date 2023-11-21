@@ -21,15 +21,14 @@ const availableColors: ColorName[] = [
   "cyan",
 ];
 
+let nextColorIndex = 0;
+
 const assignedColors: Record<string, ColorName> = {};
 
 export function logPrefix(label: string): string {
   if (assignedColors[label] === undefined) {
-    const color = availableColors.pop();
-    if (!color) {
-      throw new Error("We're out of colors. 🤷");
-    }
-
+    const color = availableColors[nextColorIndex];
+    nextColorIndex = (nextColorIndex + 1) % availableColors.length;
     assignedColors[label] = color;
   }
 
