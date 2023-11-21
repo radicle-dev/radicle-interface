@@ -3,6 +3,7 @@
   "include": ["src", "tests", "httpd-client", "./*.js", "./*.ts"],
   "exclude": ["node_modules/*"],
   "compilerOptions": {
+    "noEmit": true,
     "target": "es2020",
     "module": "es2022",
     "types": ["vite/client"],
@@ -24,6 +25,5 @@
       "@public/*": ["./public/*"],
       "@tests/*": ["./tests/*"]
     }
-  },
-  "noEmit": true
+  }
 }
