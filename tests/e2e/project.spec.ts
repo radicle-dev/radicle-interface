@@ -352,7 +352,7 @@ test("peer and branch switching", async ({ page }) => {
 
     // Default `main` branch.
     {
-      await expect(page.getByLabel("canonical-branch")).toBeVisible();
+      await expect(page.getByRole("button", { name: "main" })).toBeVisible();
       await expect(page.getByTitle("Current HEAD")).toHaveText(
         bobHead.substring(0, 7),
       );

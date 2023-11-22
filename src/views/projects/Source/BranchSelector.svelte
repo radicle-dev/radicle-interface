@@ -19,7 +19,7 @@
   export let selectedBranch: string | undefined;
   export let selectedCommitId: string;
 
-  $: hideDropdown = branches.length <= 1;
+  $: onCanonicalBranch = branches.length === 0;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
 </script>
 
@@ -38,7 +38,7 @@
 
 <div class="branch">
   {#if selectedBranch}
-    {#if hideDropdown}
+    {#if onCanonicalBranch}
       <HoverPopover popoverPositionLeft="0" popoverPositionTop="0.5rem">
         <Button
           ariaLabel="canonical-branch"
@@ -73,15 +73,18 @@
           on:click={toggle}
           slot="toggle"
           styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
-          title="Change branch"
-          disabled={hideDropdown}>
+          title="Change branch">
           <IconSmall name="branch" />
           <div class="identifier">{selectedBranch}</div>
-          <IconSmall
-            name={hideDropdown && expanded ? "chevron-up" : "chevron-down"} />
+          {#if !onCanonicalBranch}
+            <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+          {/if}
         </Button>
 
-        <DropdownList slot="popover" items={branches}>
+        <DropdownList
+          slot="popover"
+          styleDropdownMinWidth="12.5rem"
+          items={branches}>
           <svelte:fragment slot="item" let:item>
             <Link route={item.route} on:afterNavigate={() => closeFocused()}>
               <DropdownListItem selected={item.name === selectedBranch}>

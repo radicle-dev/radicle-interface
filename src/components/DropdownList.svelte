@@ -2,6 +2,7 @@
   type T = $$Generic;
 
   export let items: T[];
+  export let styleDropdownMinWidth: string | undefined = undefined;
 </script>
 
 <style>
@@ -20,7 +21,7 @@
   }
 </style>
 
-<div class="dropdown">
+<div class="dropdown" style:min-width={styleDropdownMinWidth}>
   {#each items as item}
     <div class="dropdown-item">
       <slot name="item" {item} />
