@@ -16,7 +16,7 @@ const config: PlaywrightTestConfig = {
   reporter: "list",
   globalSetup: "./tests/support/globalSetup",
   use: {
-    actionTimeout: 0,
+    actionTimeout: 5000,
     baseURL: "http://localhost:3001",
     trace: "retain-on-failure",
   },
