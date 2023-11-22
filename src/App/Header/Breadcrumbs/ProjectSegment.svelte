@@ -15,6 +15,7 @@
   .segment {
     display: flex;
     align-items: center;
+    gap: 0.25rem;
   }
   .segment :global(a:hover) {
     color: var(--color-fill-primary);
