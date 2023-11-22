@@ -70,9 +70,12 @@
   }
   .top-level-comment {
     background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+  }
+  .has-replies {
     border-bottom: 1px solid var(--color-fill-separator);
-    border-top-left-radius: var(--border-radius-small);
-    border-top-right-radius: var(--border-radius-small);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
   .replies {
     margin-left: 1rem;
@@ -83,11 +86,7 @@
 </style>
 
 <div class="comments">
-  <div
-    class="top-level-comment"
-    style:border-bottom={replies.length > 0
-      ? "1px solid var(--color-fill-separator)"
-      : undefined}>
+  <div class="top-level-comment" class:has-replies={replies.length > 0}>
     <CommentComponent
       {rawPath}
       id={root.id}
