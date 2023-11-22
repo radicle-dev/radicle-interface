@@ -154,18 +154,19 @@
       </div>
     {/each}
     {#each diff.moved as file}
-      {#if file.diff}
+      {#if "diff" in file}
         <div use:intersection={observer} id={"observer:" + file.newPath}>
           <FileDiff
             {projectId}
             {baseUrl}
             {revision}
             {expanded}
-            content=""
+            content={files[file.new.oid]?.content}
+            oldContent={files[file.old.oid]?.content}
             visible={filesVisibility.has(file.newPath)}
             filePath={file.newPath}
             oldFilePath={file.oldPath}
-            fileDiff={file.diff}
+            fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
             headerBadgeCaption="moved" />
         </div>
       {:else}

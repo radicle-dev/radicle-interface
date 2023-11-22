@@ -16,7 +16,6 @@ import {
   literal,
   number,
   object,
-  optional,
   record,
   string,
   union,
@@ -151,11 +150,18 @@ const diffCopiedChangesetSchema = object({
 
 const diffMovedChangesetSchema = diffCopiedChangesetSchema.merge(
   object({
-    old: optional(diffFileSchema),
-    new: optional(diffFileSchema),
-    diff: optional(diffContentSchema),
+    current: diffFileSchema,
   }),
 );
+
+const diffMovedWithModificationsChangesetSchema =
+  diffCopiedChangesetSchema.merge(
+    object({
+      old: diffFileSchema,
+      new: diffFileSchema,
+      diff: diffContentSchema,
+    }),
+  );
 
 type Diff = z.infer<typeof diffSchema>;
 
@@ -163,7 +169,12 @@ const diffSchema = object({
   added: array(diffAddedChangesetSchema),
   deleted: array(diffDeletedChangesetSchema),
   modified: array(diffModifiedChangesetSchema),
-  moved: array(diffMovedChangesetSchema),
+  moved: array(
+    union([
+      diffMovedChangesetSchema,
+      diffMovedWithModificationsChangesetSchema,
+    ]),
+  ),
   copied: array(diffCopiedChangesetSchema),
   stats: object({
     filesChanged: number(),
