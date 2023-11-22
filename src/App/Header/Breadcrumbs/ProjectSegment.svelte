@@ -1,17 +1,21 @@
 <script lang="ts">
   import type { ProjectLoadedRoute } from "@app/views/projects/router";
 
-  import { capitalize } from "lodash";
   import * as utils from "@app/lib/utils";
 
   import CopyableId from "@app/components/CopyableId.svelte";
   import Link from "@app/components/Link.svelte";
   import Separator from "./Separator.svelte";
+  import { unreachable } from "@app/lib/utils";
 
   export let activeRoute: ProjectLoadedRoute;
 </script>
 
 <style>
+  .segment {
+    display: flex;
+    align-items: center;
+  }
   .segment :global(a:hover) {
     color: var(--color-fill-primary);
   }
@@ -28,25 +32,52 @@
   </Link>
 </span>
 
-<Separator />
-
 <span class="segment">
-  <Link
-    route={{
-      resource: "project.source",
-      project: activeRoute.params.project.id,
-      node: activeRoute.params.baseUrl,
-    }}>
-    {#if activeRoute.resource === "project.history" || activeRoute.resource === "project.commit"}
+  {#if activeRoute.resource === "project.history"}
+    <Separator />
+    <Link
+      route={{
+        resource: "project.history",
+        project: activeRoute.params.project.id,
+        node: activeRoute.params.baseUrl,
+      }}>
       Commits
-    {:else if activeRoute.resource === "project.newIssue" || activeRoute.resource === "project.issue"}
+    </Link>
+  {:else if activeRoute.resource === "project.commit"}
+    <Separator />
+    <Link
+      route={{
+        resource: "project.history",
+        project: activeRoute.params.project.id,
+        node: activeRoute.params.baseUrl,
+      }}>
+      Commits
+    </Link>
+  {:else if activeRoute.resource === "project.newIssue" || activeRoute.resource === "project.issue" || activeRoute.resource === "project.issues"}
+    <Separator />
+    <Link
+      route={{
+        resource: "project.issues",
+        project: activeRoute.params.project.id,
+        node: activeRoute.params.baseUrl,
+      }}>
       Issues
-    {:else if activeRoute.resource === "project.patch"}
+    </Link>
+  {:else if activeRoute.resource === "project.patch" || activeRoute.resource === "project.patches"}
+    <Separator />
+    <Link
+      route={{
+        resource: "project.patches",
+        project: activeRoute.params.project.id,
+        node: activeRoute.params.baseUrl,
+      }}>
       Patches
-    {:else}
-      {capitalize(activeRoute.resource.split(".")[1])}
-    {/if}
-  </Link>
+    </Link>
+  {:else if activeRoute.resource === "project.source"}
+    <!-- Don't show anything, project name already links here -->
+  {:else}
+    {unreachable(activeRoute)}
+  {/if}
 </span>
 
 {#if activeRoute.resource === "project.commit"}
