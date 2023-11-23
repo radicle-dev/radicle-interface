@@ -111,7 +111,7 @@
     </Button>
     <div class="txt-small" slot="popover">
       <div style:margin-bottom="1rem">Coming soon.</div>
-      <div>Listing all contributors is not yet implemented.</div>
+      <div>Listing contributors is not implemented yet.</div>
     </div>
   </HoverPopover>
 </div>
