@@ -6,7 +6,9 @@
   import { afterUpdate } from "svelte";
   import { toDom } from "hast-util-to-dom";
 
+  import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import markdown from "@app/lib/markdown";
   import { Renderer } from "@app/lib/markdown";
   import { highlight } from "@app/lib/syntax";
@@ -28,11 +30,35 @@
   // use this for image previews instead of /raw URLs.
   export let embeds: EmbedWithOid[] | undefined = undefined;
 
-  $: doc = matter(content);
-  $: frontMatter = Object.entries(doc.data).filter(
-    ([, val]) => typeof val === "string" || typeof val === "number",
-  );
   let container: HTMLElement;
+  let frontMatter: [string, any][] | undefined = undefined;
+
+  $: {
+    try {
+      const doc = matter(content);
+      content = doc.content;
+      frontMatter = Object.entries(doc.data).filter(
+        ([, val]) => typeof val === "string" || typeof val === "number",
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Not able to parse frontmatter",
+            subtitle: [
+              "There was an error while trying to parse the frontmatter in this document.",
+              "Check your dev console logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    }
+  }
 
   /**
    * Do internal navigation on for clicks on anchor elements if possible
@@ -381,7 +407,7 @@
   }
 </style>
 
-{#if frontMatter.length > 0}
+{#if frontMatter && frontMatter.length > 0}
   <div class="front-matter">
     <table>
       {#each frontMatter as [key, val]}
@@ -402,5 +428,5 @@
   bind:this={container}
   use:twemoji={{ exclude: ["21a9"] }}
   on:click={navigateInternalOnAnchor}>
-  {@html render(doc.content)}
+  {@html render(content)}
 </div>
