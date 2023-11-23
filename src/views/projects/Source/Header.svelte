@@ -109,10 +109,7 @@
         {pluralize("contributor", tree.stats.contributors)}
       </div>
     </Button>
-    <div
-      class="txt-small"
-      style:padding="0.5rem 0.5rem 0.5rem 0.75rem"
-      slot="popover">
+    <div class="txt-small" slot="popover">
       <div style:margin-bottom="1rem">Coming soon.</div>
       <div>Listing all contributors is not yet implemented.</div>
     </div>

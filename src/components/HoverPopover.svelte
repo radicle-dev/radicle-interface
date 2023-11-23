@@ -28,6 +28,7 @@
     position: relative;
     right: 1rem;
     z-index: 10;
+    padding: 1rem;
   }
 </style>
 

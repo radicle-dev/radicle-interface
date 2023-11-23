@@ -50,10 +50,7 @@
           <IconSmall name="branch" />
           <div class="identifier">{project.defaultBranch}</div>
         </Button>
-        <div
-          class="txt-small"
-          style:padding="0.5rem 0.5rem 0.5rem 0.75rem"
-          slot="popover">
+        <div class="txt-small" slot="popover">
           <div style:margin-bottom="1rem">
             You are currently browsing the canonical branch.
           </div>
