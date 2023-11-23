@@ -101,7 +101,7 @@
     </Link>
   </Radio>
 
-  <HoverPopover popoverPositionLeft="0" popoverPositionTop="0.5rem">
+  <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
     <Button disabled notAllowed={false} variant="outline" slot="toggle">
       <IconSmall name="user" />
       <div>

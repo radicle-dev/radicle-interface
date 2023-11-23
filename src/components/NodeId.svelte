@@ -49,8 +49,9 @@
 
 <HoverPopover
   disabled={disableTooltip}
-  popoverPositionLeft="-4.5rem"
-  popoverPositionTop="-4.5rem">
+  stylePopoverPositionLeft="-4.5rem"
+  stylePopoverPadding="0.5rem 0.5rem 0.5rem 0.75rem"
+  stylePopoverPositionTop="-4.5rem">
   <div slot="toggle" class="avatar-alias" style:color={styleColor} class:large>
     <Avatar {nodeId} />
     {#if alias}
@@ -60,7 +61,7 @@
     {/if}
   </div>
 
-  <div style:padding="0.5rem 0.5rem 0.5rem 0.75rem" slot="popover">
+  <div slot="popover">
     <div class="popover-container">
       <div class="popover-avatar">
         <Avatar {nodeId} />

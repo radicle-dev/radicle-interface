@@ -4,8 +4,9 @@
   export let disabled: boolean = false;
 
   export let onShow: () => void = () => {};
-  export let popoverPositionLeft: string | undefined = undefined;
-  export let popoverPositionTop: string | undefined = undefined;
+  export let stylePopoverPositionLeft: string | undefined = undefined;
+  export let stylePopoverPositionTop: string | undefined = undefined;
+  export let stylePopoverPadding: string | undefined = "1rem";
 
   let visible: boolean = false;
 
@@ -28,7 +29,6 @@
     position: relative;
     right: 1rem;
     z-index: 10;
-    padding: 1rem;
   }
 </style>
 
@@ -48,8 +48,9 @@
     <div style:position="absolute" on:click|stopPropagation>
       <div
         class="popover"
-        style:left={popoverPositionLeft}
-        style:top={popoverPositionTop}>
+        style:padding={stylePopoverPadding}
+        style:left={stylePopoverPositionLeft}
+        style:top={stylePopoverPositionTop}>
         <slot name="popover" />
       </div>
     </div>

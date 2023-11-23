@@ -39,7 +39,9 @@
 <div class="branch">
   {#if selectedBranch}
     {#if onCanonicalBranch}
-      <HoverPopover popoverPositionLeft="0" popoverPositionTop="0.5rem">
+      <HoverPopover
+        stylePopoverPositionLeft="0"
+        stylePopoverPositionTop="0.5rem">
         <Button
           ariaLabel="canonical-branch"
           variant="outline"
