@@ -50,7 +50,6 @@ const diffBlobSchema = object({
   binary: boolean(),
   content: string(),
   id: string(),
-  lastCommit: commitHeaderSchema,
 });
 
 export type DiffBlob = z.infer<typeof diffBlobSchema>;
