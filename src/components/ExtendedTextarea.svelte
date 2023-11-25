@@ -21,6 +21,7 @@
   export let submitCaption: string = "Comment";
   export let focus: boolean = false;
   export let inline: boolean = false;
+  export let rawPath: string;
   export let body: string = "";
   export let submitInProgress: boolean = false;
 
@@ -195,7 +196,7 @@
   </Radio>
   {#if preview}
     <div class="preview">
-      <Markdown content={body} embeds={newEmbeds} />
+      <Markdown {rawPath} content={body} embeds={newEmbeds} />
     </div>
   {:else}
     <input

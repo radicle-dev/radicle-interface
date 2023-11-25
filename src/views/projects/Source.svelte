@@ -3,7 +3,6 @@
   import type { BlobResult } from "./router";
   import type { Route } from "@app/lib/router";
 
-  import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
@@ -17,6 +16,7 @@
   import FilePath from "@app/components/FilePath.svelte";
 
   export let baseUrl: BaseUrl;
+  export let rawPath: (commit?: string) => string;
   export let blobResult: BlobResult;
   export let branches: string[];
   export let path: string;
@@ -208,11 +208,7 @@
             {path}
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
-            rawPath={utils.getRawBasePath(
-              project.id,
-              baseUrl,
-              tree.lastCommit.id,
-            )} />
+            rawPath={rawPath(tree.lastCommit.id)} />
         {:else}
           <File>
             <FilePath

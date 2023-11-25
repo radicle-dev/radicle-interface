@@ -143,6 +143,7 @@
     {#if editComment && state !== "read"}
       {@const editComment_ = editComment}
       <ExtendedTextarea
+        {rawPath}
         {body}
         {enableAttachments}
         submitInProgress={state === "submit"}

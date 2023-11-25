@@ -77,6 +77,7 @@
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
+  export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
   export let tracking: boolean;
@@ -678,6 +679,7 @@
           <div class="revision-description">
             {#if session && patchState !== "read"}
               <ExtendedTextarea
+                rawPath={rawPath(patch.revisions[0].id)}
                 body={newDescription}
                 submitCaption="Save"
                 submitInProgress={patchState === "submit"}
@@ -699,11 +701,7 @@
             {:else if description}
               <Markdown
                 content={description}
-                rawPath={utils.getRawBasePath(
-                  project.id,
-                  baseUrl,
-                  patch.revisions[0].id,
-                )} />
+                rawPath={rawPath(patch.revisions[0].id)} />
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
@@ -841,6 +839,7 @@
             index > 0 ? patch.revisions[index - 1] : undefined}
           <RevisionComponent
             {baseUrl}
+            {rawPath}
             projectId={project.id}
             {timelines}
             projectDefaultBranch={project.defaultBranch}
@@ -867,6 +866,7 @@
               {#if session && view.name === "activity"}
                 <div class="connector" />
                 <CommentToggleInput
+                  rawPath={rawPath(patch.revisions[0].id)}
                   enableAttachments
                   placeholder="Leave your comment"
                   submit={partial(

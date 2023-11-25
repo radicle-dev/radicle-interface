@@ -129,6 +129,7 @@
   {#if createReply}
     <div id={`reply-${root.id}`} class="reply">
       <CommentToggleInput
+        {rawPath}
         inline
         placeholder="Reply to comment"
         on:click={toggleReply}

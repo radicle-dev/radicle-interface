@@ -25,6 +25,7 @@
 
   export let baseUrl: BaseUrl;
   export let project: Project;
+  export let rawPath: (commit?: string) => string;
   export let tracking: boolean;
 
   let newEmbeds: EmbedWithOid[] = [];
@@ -191,7 +192,10 @@
               {:else if !issueText}
                 <p class="txt-missing">No description</p>
               {:else}
-                <Markdown embeds={newEmbeds} content={issueText} />
+                <Markdown
+                  rawPath={rawPath(project.head)}
+                  embeds={newEmbeds}
+                  content={issueText} />
               {/if}
             </svelte:fragment>
             <div class="author" slot="author">

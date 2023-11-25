@@ -30,6 +30,7 @@
 
   export let baseUrl: BaseUrl;
   export let expanded: boolean = false;
+  export let rawPath: (commit?: string) => string;
   export let patchId: string;
   export let patchState: PatchState;
   export let projectHead: string;
@@ -391,7 +392,7 @@
           {#if revisionDescription && !first}
             <div class="revision-description txt-small">
               <Markdown
-                rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
+                rawPath={rawPath(projectHead)}
                 content={revisionDescription} />
             </div>
           {/if}
@@ -430,8 +431,8 @@
           <div class="connector" />
           <Thread
             enableAttachments
-            rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
             thread={element.inner}
+            rawPath={rawPath(projectHead)}
             {canEditComment}
             {editComment}
             {createReply}
@@ -474,11 +475,11 @@
             class:positive-review={review.verdict === "accept"}
             class:negative-review={review.verdict === "reject"}>
             <CommentComponent
+              rawPath={rawPath(projectHead)}
               caption={formatVerdict(review.verdict)}
               authorId={author}
               authorAlias={review.author.alias}
               timestamp={review.timestamp}
-              rawPath={utils.getRawBasePath(projectId, baseUrl, projectHead)}
               body={review.summary ?? ""}>
               <div slot="icon" style:color={verdictIconColor(review.verdict)}>
                 {#if review.verdict === "accept"}

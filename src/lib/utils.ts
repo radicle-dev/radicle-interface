@@ -1,5 +1,3 @@
-import type { BaseUrl } from "@httpd-client";
-
 import md5 from "md5";
 import bs58 from "bs58";
 import twemojiModule from "twemoji";
@@ -8,14 +6,6 @@ import { base } from "@app/lib/router";
 
 export async function toClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
-}
-
-export function getRawBasePath(
-  id: string,
-  baseUrl: BaseUrl,
-  commit: string,
-): string {
-  return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}/raw/${id}/${commit}`;
 }
 
 export function formatLocationHash(hash: string | null): number | null {

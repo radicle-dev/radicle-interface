@@ -38,9 +38,9 @@
   export let baseUrl: BaseUrl;
   export let issue: Issue;
   export let project: Project;
+  export let rawPath: (commit?: string) => string;
   export let tracking: boolean;
 
-  const rawPath = utils.getRawBasePath(project.id, baseUrl, project.head);
   const api = new HttpdClient(baseUrl);
 
   const items: [string, IssueState][] = [
@@ -514,6 +514,7 @@
         <div slot="description">
           {#if issueState !== "read"}
             <ExtendedTextarea
+              rawPath={rawPath(project.head)}
               enableAttachments
               body={issue.discussion[0].body}
               submitCaption="Save"
@@ -543,11 +544,7 @@
             <div class="markdown">
               <Markdown
                 content={issue.discussion[0].body}
-                rawPath={utils.getRawBasePath(
-                  project.id,
-                  baseUrl,
-                  project.head,
-                )} />
+                rawPath={rawPath(project.head)} />
             </div>
           {/if}
           <div class="reactions">
@@ -585,7 +582,7 @@
             <ThreadComponent
               enableAttachments
               {thread}
-              {rawPath}
+              rawPath={rawPath(project.head)}
               canEditComment={partial(
                 role.isDelegateOrAuthor,
                 session?.publicKey,
@@ -599,6 +596,7 @@
       {/if}
       {#if session}
         <CommentToggleInput
+          rawPath={rawPath(project.head)}
           placeholder="Leave your comment"
           enableAttachments
           submit={partial(createComment, session.id)} />

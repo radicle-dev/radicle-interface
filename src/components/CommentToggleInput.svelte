@@ -6,6 +6,7 @@
   export let body: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
   export let submitCaption: string | undefined = undefined;
+  export let rawPath: string;
   export let enableAttachments: boolean = false;
   export let inline: boolean = false;
   export let focus: boolean = false;
@@ -31,6 +32,7 @@
 
 {#if state !== "collapsed"}
   <ExtendedTextarea
+    {rawPath}
     {inline}
     {placeholder}
     {submitCaption}

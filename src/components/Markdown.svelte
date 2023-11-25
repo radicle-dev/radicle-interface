@@ -23,7 +23,7 @@
   // If present, resolve all relative links with respect to this URL
   export let linkBaseUrl: string | undefined = undefined;
   export let path: string = "/";
-  export let rawPath: string | undefined = undefined;
+  export let rawPath: string;
   // If present, means we are in a preview context,
   // use this for image previews instead of /raw URLs.
   export let embeds: EmbedWithOid[] | undefined = undefined;
