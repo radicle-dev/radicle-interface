@@ -40,7 +40,11 @@
     </div>
     <div style:max-width="25rem">
       <Command
-        command={JSON.stringify({ message: error.message, stack: error.stack })}
+        command={JSON.stringify({
+          message: error.message,
+          stack: error.stack,
+          ...error,
+        })}
         fullWidth
         showPrompt={false} />
     </div>
