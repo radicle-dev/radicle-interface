@@ -8,7 +8,7 @@ import * as Path from "node:path";
 import * as Stream from "node:stream";
 import * as Util from "node:util";
 import getPort from "get-port";
-import lodash from "lodash";
+import matches from "lodash/matches.js";
 import waitOn from "wait-on";
 import { execa } from "execa";
 import * as readline from "node:readline/promises";
@@ -189,7 +189,7 @@ export class RadiclePeer {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (this.#eventRecords.find(lodash.matches(searchEvent))) {
+      if (this.#eventRecords.find(matches(searchEvent))) {
         return;
       }
       if (new Date().getTime() - start > timeoutInMs) {

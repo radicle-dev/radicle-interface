@@ -23,7 +23,7 @@
   import type { Embed } from "@app/lib/file";
 
   import * as utils from "@app/lib/utils";
-  import { partial } from "lodash";
+  import partial from "lodash/partial";
   import { tick } from "svelte";
 
   import CommentComponent from "@app/components/Comment.svelte";

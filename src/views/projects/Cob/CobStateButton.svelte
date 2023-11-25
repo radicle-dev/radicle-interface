@@ -1,7 +1,7 @@
 <script lang="ts">
   import IconSmall from "@app/components/IconSmall.svelte";
 
-  import { isEqual } from "lodash";
+  import isEqual from "lodash/isEqual";
 
   import { closeFocused } from "@app/components/Popover.svelte";
 

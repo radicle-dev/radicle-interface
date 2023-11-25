@@ -46,7 +46,9 @@
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
-  import { capitalize, isEqual, partial } from "lodash";
+  import capitalize from "lodash/capitalize";
+  import isEqual from "lodash/isEqual";
+  import partial from "lodash/partial";
   import { httpdStore, type Session } from "@app/lib/httpd";
 
   import Badge from "@app/components/Badge.svelte";

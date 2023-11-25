@@ -3,7 +3,9 @@
   import type { Embed } from "@app/lib/file";
   import type { Session } from "@app/lib/httpd";
 
-  import { isEqual, uniqBy, partial } from "lodash";
+  import isEqual from "lodash/isEqual";
+  import uniqBy from "lodash/uniqBy";
+  import partial from "lodash/partial";
 
   import * as modal from "@app/lib/modal";
   import * as role from "@app/lib/roles";

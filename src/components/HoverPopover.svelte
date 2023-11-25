@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { debounce } from "lodash";
+  import debounce from "lodash/debounce";
 
   export let disabled: boolean = false;
 

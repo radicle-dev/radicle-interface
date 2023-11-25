@@ -1,7 +1,7 @@
 import type { HttpdClient } from "@httpd-client";
 
 import { expect } from "vitest";
-import { isMatch } from "lodash";
+import isMatch from "lodash/isMatch";
 
 import { cobRid } from "@tests/support/fixtures";
 
