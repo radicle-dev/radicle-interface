@@ -1,5 +1,4 @@
-import type { Embed } from "@app/lib/file.js";
-import type { Comment } from "./comment.js";
+import type { Comment, Embed } from "./comment.js";
 import type { ZodSchema, z } from "zod";
 
 import { commentSchema } from "./comment.js";

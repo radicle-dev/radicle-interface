@@ -1,6 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Project } from "@httpd-client";
-  import type { EmbedWithOid } from "@app/lib/file";
+  import type { BaseUrl, Embed, Project } from "@httpd-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -28,7 +27,6 @@
   export let rawPath: (commit?: string) => string;
   export let tracking: boolean;
 
-  let newEmbeds: EmbedWithOid[] = [];
   let preview: boolean = false;
   let selectionStart = 0;
   let selectionEnd = 0;
@@ -41,6 +39,7 @@
   let creatingIssue: boolean = false;
 
   const api = new HttpdClient(baseUrl);
+  const newEmbeds = new Map<string, Embed>();
 
   function handleFileDrop(event: { detail: DragEvent }) {
     event.detail.preventDefault();
@@ -48,10 +47,7 @@
       const embeds = Array.from(event.detail.dataTransfer.files).map(embed);
       void Promise.all(embeds).then(embeds =>
         embeds.forEach(({ oid, name, content }) => {
-          newEmbeds = [
-            ...newEmbeds,
-            { oid: oid, name: name, content: content },
-          ];
+          newEmbeds.set(oid, { name, content });
           const embedText = `![${name}](${oid})\n`;
           issueText = issueText
             .slice(0, selectionStart)

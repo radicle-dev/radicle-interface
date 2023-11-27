@@ -6,7 +6,7 @@ import type {
   Tree,
   DiffResponse,
 } from "./lib/project.js";
-import type { Comment } from "./lib/project/comment.js";
+import type { Comment, Embed } from "./lib/project/comment.js";
 import type {
   Commit,
   CommitBlob,
@@ -52,6 +52,7 @@ export type {
   DiffContent,
   DiffFile,
   DiffResponse,
+  Embed,
   HunkLine,
   Issue,
   IssueState,

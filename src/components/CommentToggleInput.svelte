@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Embed } from "@app/lib/file";
+  import type { Embed } from "@httpd-client";
 
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
 
@@ -44,7 +44,7 @@
     on:submit={async ({ detail: { comment, embeds } }) => {
       try {
         state = "submit";
-        await submit(comment, embeds);
+        await submit(comment, Array.from(embeds.values()));
       } finally {
         state = "collapsed";
       }

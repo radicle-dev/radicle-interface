@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Embed, EmbedWithOid } from "@app/lib/file";
+  import type { Embed } from "@httpd-client";
 
   import { createEventDispatcher } from "svelte";
 
@@ -23,10 +23,10 @@
   export let inline: boolean = false;
   export let rawPath: string;
   export let body: string = "";
+  export let embeds: Map<string, Embed> = new Map();
   export let submitInProgress: boolean = false;
 
   let preview: boolean = false;
-  let newEmbeds: EmbedWithOid[] = [];
   let selectionStart = 0;
   let selectionEnd = 0;
   let inputFiles: FileList | undefined = undefined;
@@ -34,15 +34,14 @@
   const inputId = `input-label-${crypto.randomUUID()}`;
 
   const dispatch = createEventDispatcher<{
-    submit: { comment: string; embeds: Embed[] };
+    submit: { comment: string; embeds: Map<string, Embed> };
     close: null;
     click: null;
   }>();
 
   function submit() {
-    dispatch("submit", { comment: body, embeds: newEmbeds });
+    dispatch("submit", { comment: body, embeds });
     preview = false;
-    newEmbeds = [];
   }
 
   const MAX_BLOB_SIZE = 4_194_304;
@@ -86,10 +85,10 @@
   }
 
   function attachEmbeds(files: FileList) {
-    const embeds = Array.from(files).map(embed);
-    void Promise.all(embeds).then(embeds =>
-      embeds.forEach(embed => {
-        if (embed.content.length > MAX_BLOB_SIZE) {
+    const embedPromise = Array.from(files).map(embed);
+    void Promise.all(embedPromise).then(newEmbeds =>
+      newEmbeds.forEach(({ oid, name, content }) => {
+        if (content.length > MAX_BLOB_SIZE) {
           modal.show({
             component: ErrorModal,
             props: {
@@ -103,15 +102,8 @@
           });
           return;
         }
-        newEmbeds = [
-          ...newEmbeds,
-          {
-            oid: embed.oid,
-            name: embed.name,
-            content: embed.content,
-          },
-        ];
-        const embedText = `![${embed.name}](${embed.oid})\n`;
+        embeds.set(oid, { name, content });
+        const embedText = `![${name}](${oid})\n`;
         body = body
           .slice(0, selectionStart)
           .concat(embedText, body.slice(selectionEnd));
@@ -196,7 +188,7 @@
   </Radio>
   {#if preview}
     <div class="preview">
-      <Markdown {rawPath} content={body} embeds={newEmbeds} />
+      <Markdown {rawPath} content={body} {embeds} />
     </div>
   {:else}
     <input

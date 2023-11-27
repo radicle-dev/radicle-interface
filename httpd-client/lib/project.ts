@@ -1,5 +1,5 @@
-import type { Embed } from "@app/lib/file.js";
 import type { Commit, Commits } from "./project/commit.js";
+import type { Embed } from "./project/comment.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type {
   Issue,

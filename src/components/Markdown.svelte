@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { EmbedWithOid } from "@app/lib/file";
+  import type { Embed } from "@httpd-client";
 
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
@@ -28,7 +28,7 @@
   export let rawPath: string;
   // If present, means we are in a preview context,
   // use this for image previews instead of /raw URLs.
-  export let embeds: EmbedWithOid[] | undefined = undefined;
+  export let embeds: Map<string, Embed> | undefined = undefined;
 
   let container: HTMLElement;
   let frontMatter: [string, any][] | undefined = undefined;
@@ -112,10 +112,9 @@
 
       // If the image is an oid embed
       if (imagePath && isCommit(imagePath)) {
-        const embed = embeds?.find(e => {
-          return e.oid === imagePath;
-        });
-        if (embed) {
+        const embed = embeds?.get(imagePath);
+        // If the embed content is the base64 encoded image, use it directly.
+        if (embed && embed.content.startsWith("data:")) {
           i.setAttribute("src", embed.content);
           continue;
         }

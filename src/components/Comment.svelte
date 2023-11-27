@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Embed } from "@app/lib/file";
+  import type { Embed } from "@httpd-client";
   import type { GroupedReactions } from "@app/lib/reactions";
 
   import { tick } from "svelte";
@@ -21,6 +21,7 @@
   export let body: string;
   export let enableAttachments: boolean = false;
   export let reactions: GroupedReactions | undefined = undefined;
+  export let embeds: Map<string, Embed> | undefined = undefined;
   export let caption = "commented";
   export let rawPath: string;
   export let timestamp: number;
@@ -145,6 +146,7 @@
       <ExtendedTextarea
         {rawPath}
         {body}
+        {embeds}
         {enableAttachments}
         submitInProgress={state === "submit"}
         submitCaption="Save"
@@ -152,7 +154,7 @@
         on:submit={async ({ detail: { comment, embeds } }) => {
           state = "submit";
           try {
-            await editComment_(comment, embeds);
+            await editComment_(comment, Array.from(embeds.values()));
           } finally {
             state = "read";
           }

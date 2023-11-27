@@ -1,6 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
-  import type { Embed } from "@app/lib/file";
+  import type {
+    BaseUrl,
+    Issue,
+    IssueState,
+    Embed,
+    Project,
+  } from "@httpd-client";
   import type { Session } from "@app/lib/httpd";
 
   import isEqual from "lodash/isEqual";
@@ -15,6 +20,7 @@
   import { closeFocused } from "@app/components/Popover.svelte";
   import { groupReactions } from "@app/lib/reactions";
   import { httpdStore } from "@app/lib/httpd";
+  import { parseEmbedIntoMap } from "@app/lib/file";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -358,14 +364,10 @@
     }
   }
 
-  $: embeds = issue.discussion.reduce(
-    (acc, comment) => {
-      acc[comment.id] = comment.embeds;
-      return acc;
-    },
-    {} as Record<string, Embed[]>,
+  $: uniqueEmbeds = uniqBy(
+    issue.discussion.flatMap(comment => comment.embeds),
+    "content",
   );
-  $: uniqueEmbeds = uniqBy(Object.values(embeds).flat(), "content");
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
     .filter(
@@ -518,6 +520,7 @@
             <ExtendedTextarea
               rawPath={rawPath(project.head)}
               enableAttachments
+              embeds={parseEmbedIntoMap(issue.discussion[0].embeds)}
               body={issue.discussion[0].body}
               submitCaption="Save"
               submitInProgress={issueState === "submit"}
@@ -535,7 +538,7 @@
                       issue.title,
                       issue.id,
                       comment,
-                      embeds,
+                      Array.from(embeds.values()),
                     );
                   } finally {
                     issueState = "read";

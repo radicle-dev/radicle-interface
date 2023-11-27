@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Embed } from "@httpd-client/lib/project/comment";
   import type {
     BaseUrl,
     DiffResponse,
+    Embed,
     PatchState,
     Verdict,
   } from "@httpd-client";

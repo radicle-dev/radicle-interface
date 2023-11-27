@@ -20,10 +20,11 @@
 </script>
 
 <script lang="ts" strictEvents>
-  import type { Embed } from "@app/lib/file";
+  import type { Embed } from "@httpd-client";
 
   import * as utils from "@app/lib/utils";
   import partial from "lodash/partial";
+  import { parseEmbedIntoMap } from "@app/lib/file";
   import { tick } from "svelte";
 
   import CommentComponent from "@app/components/Comment.svelte";
@@ -88,13 +89,14 @@
 <div class="comments">
   <div class="top-level-comment" class:has-replies={replies.length > 0}>
     <CommentComponent
+      {enableAttachments}
       {rawPath}
       id={root.id}
       authorId={root.author.id}
       authorAlias={root.author.alias}
       reactions={root.reactions}
+      embeds={parseEmbedIntoMap(root.embeds)}
       timestamp={root.timestamp}
-      disableEdit={root.embeds.length > 0}
       body={root.body}
       editComment={editComment &&
         canEditComment(root.author.id) &&
@@ -107,6 +109,7 @@
     <div class="replies">
       {#each replies as reply}
         <CommentComponent
+          {enableAttachments}
           {rawPath}
           id={reply.id}
           authorId={reply.author.id}
@@ -115,8 +118,8 @@
           isReply
           isLastReply={replies[replies.length - 1] === reply}
           reactions={reply.reactions}
+          embeds={parseEmbedIntoMap(reply.embeds)}
           timestamp={reply.timestamp}
-          disableEdit={reply.embeds.length > 0}
           body={reply.body}
           editComment={editComment &&
             canEditComment(reply.author.id) &&

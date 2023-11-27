@@ -35,8 +35,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Patch } from "@httpd-client";
-  import type { Embed } from "@app/lib/file";
+  import type { BaseUrl, Embed, Patch } from "@httpd-client";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { ComponentProps } from "svelte";
@@ -45,10 +44,11 @@
   import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { HttpdClient } from "@httpd-client";
   import capitalize from "lodash/capitalize";
   import isEqual from "lodash/isEqual";
   import partial from "lodash/partial";
+  import uniqBy from "lodash/uniqBy";
+  import { HttpdClient } from "@httpd-client";
   import { httpdStore, type Session } from "@app/lib/httpd";
 
   import Badge from "@app/components/Badge.svelte";
@@ -60,6 +60,7 @@
   import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
+  import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -468,6 +469,12 @@
     revisionId = view.revision;
   }
 
+  $: uniqueEmbeds = uniqBy(
+    patch.revisions.flatMap(({ discussions }) =>
+      discussions.flatMap(comment => comment.embeds),
+    ),
+    "content",
+  );
   $: description = patch.revisions[0].description;
   $: newDescription = description;
   $: patchReviews = computeReviews(patch);
@@ -961,6 +968,7 @@
             }
           }
         }} />
+      <Embeds embeds={uniqueEmbeds} />
     </div>
   </div>
 </Layout>
