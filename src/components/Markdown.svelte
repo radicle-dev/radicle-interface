@@ -79,7 +79,8 @@
       }
     }
 
-    // If the embed is a preview stored in-memory.
+    // Iterate over all images, and replace the source with a canonicalized URL
+    // pointing at the projects /raw endpoint.
     for (const i of container.querySelectorAll("img")) {
       const imagePath = i.getAttribute("src");
 
@@ -89,42 +90,29 @@
           return e.oid === imagePath;
         });
         if (embed) {
-          const fileExtension = embed.name.split(".").pop();
-          if (fileExtension) {
-            i.setAttribute("src", embed.content);
-          }
-        }
-      }
-    }
-
-    // Iterate over all images, and replace the source with a canonicalized URL
-    // pointing at the projects /raw endpoint.
-    if (rawPath) {
-      for (const i of container.querySelectorAll("img")) {
-        const imagePath = i.getAttribute("src");
-
-        // If the image is an oid embed
-        if (imagePath && isCommit(imagePath)) {
-          const fileExtension = i.alt.split(".").pop();
-          const url = new URL(rawPath);
-          // If a user changes the alt text of an image,
-          // the browser is still able to infer the mime type.
-          if (fileExtension && fileExtension in mimes) {
-            url.search = `?mime=${mimes[fileExtension]}`;
-          }
-          url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
-          i.setAttribute("src", url.toString());
+          i.setAttribute("src", embed.content);
           continue;
         }
 
-        // Make sure the source isn't a URL before trying to fetch it from the repo
-        if (
-          imagePath &&
-          !isUrl(imagePath) &&
-          !imagePath.startsWith(`${router.base}twemoji`)
-        ) {
-          i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
+        const fileExtension = i.alt.split(".").pop();
+        const url = new URL(rawPath);
+        // If a user changes the alt text of an image,
+        // the browser is still able to infer the mime type.
+        if (fileExtension && fileExtension in mimes) {
+          url.search = `?mime=${mimes[fileExtension]}`;
         }
+        url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
+        i.setAttribute("src", url.toString());
+        continue;
+      }
+
+      // Make sure the source isn't a URL before trying to fetch it from the repo
+      if (
+        imagePath &&
+        !isUrl(imagePath) &&
+        !imagePath.startsWith(`${router.base}twemoji`)
+      ) {
+        i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
       }
     }
 
