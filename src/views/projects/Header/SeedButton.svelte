@@ -5,11 +5,11 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
 
+  export let disabled: boolean;
   export let projectId: string;
   export let seedCount: number;
   export let seeding: boolean;
-
-  $: buttonTitle = seeding ? "Seeding" : "Seed";
+  export let editSeeding: (() => Promise<void>) | undefined;
 </script>
 
 <style>
@@ -30,14 +30,21 @@
 
 <Popover popoverPositionTop="3rem" popoverPositionRight="0">
   <Button
+    {disabled}
     slot="toggle"
     let:toggle
-    on:click={toggle}
+    on:click={async () => {
+      if (editSeeding) {
+        await editSeeding();
+      } else {
+        toggle();
+      }
+    }}
     size="large"
     variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="network" />
     <span>
-      {buttonTitle}
+      {seeding ? "Seeding" : "Seed"}
       <span style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>

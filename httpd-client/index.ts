@@ -6,6 +6,7 @@ import type {
   Tree,
   DiffResponse,
 } from "./lib/project.js";
+import type { SuccessResponse } from "./lib/shared.js";
 import type { Comment, Embed } from "./lib/project/comment.js";
 import type {
   Commit,
@@ -38,6 +39,7 @@ import { z, array, boolean, literal, number, object, string, union } from "zod";
 import * as project from "./lib/project.js";
 import * as session from "./lib/session.js";
 import { Fetcher } from "./lib/fetcher.js";
+import { successResponseSchema } from "./lib/shared.js";
 
 export type {
   BaseUrl,
@@ -127,6 +129,16 @@ const nodeInfoSchema = object({
   ),
 });
 
+export type NodeTracking = z.infer<typeof nodeTrackingSchema>;
+
+const nodeTrackingSchema = array(
+  object({
+    id: string(),
+    scope: string(),
+    policy: string(),
+  }),
+);
+
 export interface NodeStats {
   projects: { count: number };
   users: { count: number };
@@ -186,6 +198,49 @@ export class HttpdClient {
         options,
       },
       nodeStatsSchema,
+    );
+  }
+
+  public async getTracking(options?: RequestOptions): Promise<NodeTracking> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "GET",
+        path: "node/policies/repos",
+        options,
+      },
+      nodeTrackingSchema,
+    );
+  }
+
+  public async seedById(
+    id: string,
+    authToken: string,
+    options?: RequestOptions,
+  ): Promise<SuccessResponse> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "PUT",
+        path: `node/policies/repos/${id}`,
+        headers: { Authorization: `Bearer ${authToken}` },
+        options,
+      },
+      successResponseSchema,
+    );
+  }
+
+  public async stopSeedingById(
+    id: string,
+    authToken: string,
+    options?: RequestOptions,
+  ): Promise<SuccessResponse> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "DELETE",
+        path: `node/policies/repos/${id}`,
+        headers: { Authorization: `Bearer ${authToken}` },
+        options,
+      },
+      successResponseSchema,
     );
   }
 

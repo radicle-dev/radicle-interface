@@ -19,11 +19,12 @@ import type {
   Tree,
 } from "@httpd-client";
 
-import { HttpdClient } from "@httpd-client";
 import * as Syntax from "@app/lib/syntax";
-import { isLocal, unreachable } from "@app/lib/utils";
-import { nodePath } from "@app/views/nodes/router";
 import * as httpd from "@app/lib/httpd";
+import { HttpdClient } from "@httpd-client";
+import { ResponseError } from "@httpd-client/lib/fetcher";
+import { nodePath } from "@app/views/nodes/router";
+import { unreachable } from "@app/lib/utils";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -245,21 +246,17 @@ function parseRevisionToOid(
 }
 
 async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
-  if (isLocal(route.node.hostname)) {
-    return true;
-  } else {
-    try {
-      await httpd.api.project.getById(route.project);
-      return true;
-    } catch (error: any) {
-      if (error.status === 404) {
-        return false;
-      } else {
-        // Either `radicle-httpd` isn't running or there was some other
-        // error.
-        return false;
-      }
+  try {
+    const tracking = await httpd.api.getTracking();
+    return tracking.some(({ id }) => id === route.project);
+  } catch (error) {
+    if (error instanceof ResponseError && error.status === 404) {
+      return false;
     }
+
+    // Either `radicle-httpd` isn't running or there was some other
+    // error.
+    return false;
   }
 }
 

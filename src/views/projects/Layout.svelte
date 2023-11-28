@@ -4,13 +4,16 @@
 
   import dompurify from "dompurify";
 
+  import * as modal from "@app/lib/modal";
   import capitalize from "lodash/capitalize";
   import markdown from "@app/lib/markdown";
+  import { httpdStore, api } from "@app/lib/httpd";
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import Header from "@app/views/projects/Header.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
@@ -20,8 +23,50 @@
   export let project: Project;
   export let seeding: boolean;
 
+  let editSeedingInProgress = false;
+
+  async function editSeeding() {
+    if ($httpdStore.state === "authenticated") {
+      try {
+        editSeedingInProgress = true;
+        if (seeding) {
+          await api.stopSeedingById(project.id, $httpdStore.session.id);
+        } else {
+          await api.seedById(project.id, $httpdStore.session.id);
+        }
+        seeding = !seeding;
+      } catch (error) {
+        if (error instanceof Error) {
+          modal.show({
+            component: ErrorModal,
+            props: {
+              title: seeding
+                ? "Stop seeding project failed"
+                : "Seeding project failed",
+              subtitle: [
+                `There was an error while trying to ${
+                  seeding ? "stop seeding" : "seed"
+                } this project.`,
+                "Check your radicle-httpd logs for details.",
+              ],
+              error: {
+                message: error.message,
+                stack: error.stack,
+              },
+            },
+          });
+        }
+      } finally {
+        editSeedingInProgress = false;
+      }
+    }
+  }
+
   const render = (content: string): string =>
     dompurify.sanitize(markdown.parse(content) as string);
+
+  $: session =
+    $httpdStore.state === "authenticated" ? $httpdStore.session : undefined;
 </script>
 
 <style>
@@ -101,8 +146,10 @@
       style="margin-left: auto; display: flex; gap: 0.5rem;">
       <SeedButton
         {seeding}
-        seedCount={project.seeding}
-        projectId={project.id} />
+        disabled={editSeedingInProgress}
+        projectId={project.id}
+        editSeeding={session && editSeeding}
+        seedCount={project.seeding} />
       <CloneButton {baseUrl} id={project.id} name={project.name} />
     </div>
   </div>
