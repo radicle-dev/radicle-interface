@@ -35,9 +35,6 @@
     align-items: center;
     justify-content: center;
   }
-  .avatar-id.selected {
-    color: red;
-  }
 </style>
 
 <Popover
@@ -73,7 +70,7 @@
         <DropdownListItem
           selected={item.selected}
           title={createTitle(item.remote)}>
-          <span class="avatar-id" class:selected={item.selected}>
+          <span class="avatar-id">
             <NodeId
               disableTooltip
               styleColor={item.selected
