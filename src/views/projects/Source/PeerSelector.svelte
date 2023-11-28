@@ -27,16 +27,6 @@
   }
 </script>
 
-<style>
-  .avatar-id {
-    display: flex;
-    gap: 0.5rem;
-    color: var(--color-fill-secondary);
-    align-items: center;
-    justify-content: center;
-  }
-</style>
-
 <Popover
   popoverPadding="0"
   popoverPositionTop="2.5rem"
@@ -70,15 +60,10 @@
         <DropdownListItem
           selected={item.selected}
           title={createTitle(item.remote)}>
-          <span class="avatar-id">
-            <NodeId
-              disableTooltip
-              styleColor={item.selected
-                ? "var(--color-foreground-match-background)"
-                : undefined}
-              nodeId={item.remote.id}
-              alias={item.remote.alias} />
-          </span>
+          <NodeId
+            disableTooltip
+            nodeId={item.remote.id}
+            alias={item.remote.alias} />
           {#if item.remote.delegate}
             <div style:color="var(--color-fill-secondary)">
               <Badge

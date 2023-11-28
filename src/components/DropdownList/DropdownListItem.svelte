@@ -27,14 +27,14 @@
     background-color: var(--color-fill-ghost);
   }
   .selected {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-secondary);
+    color: var(--color-fill-secondary);
+    background-color: var(--color-fill-ghost);
   }
   .item:hover.selected {
-    background-color: var(--color-fill-secondary-hover);
+    background-color: var(--color-fill-ghost-hover);
   }
   .item:hover.selected.disabled {
-    background-color: var(--color-fill-secondary);
+    background-color: var(--color-fill-ghost);
   }
   .item:hover.disabled {
     cursor: not-allowed;

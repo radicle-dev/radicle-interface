@@ -62,7 +62,7 @@
       <DropdownList items={items.filter(i => !isEqual(i, state))}>
         <svelte:fragment slot="item" let:item>
           <DropdownListItem
-            selected={false}
+            selected={isEqual(item[1], selectedItem[1])}
             on:click={() => switchCaption(item)}>
             <IconSmall name="patch" />
             {item[0]}

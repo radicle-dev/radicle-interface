@@ -813,14 +813,12 @@
                         <span
                           style:font-weight="var(--font-weight-regular)"
                           style:color={item.id === view.revision
-                            ? "var(--color-foreground-match-background)"
+                            ? "var(--color-fill-secondary)"
                             : "var(--color-fill-gray)"}>
                           Revision
                         </span>
                         <span
-                          style:color={item.id === view.revision
-                            ? "var(--color-foreground-match-background)"
-                            : "var(--color-fill-secondary)"}
+                          style:color="var(--color-fill-secondary)"
                           style:font-family="var(--font-family-monospace)">
                           {utils.formatObjectId(item.id)}
                         </span>

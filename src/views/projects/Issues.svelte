@@ -116,7 +116,7 @@
               <DropdownListItem selected={item === state}>
                 <div
                   style:color={item === state
-                    ? "var(--color-foreground-white)"
+                    ? "var(--color-fill-secondary)"
                     : stateColor[item]}>
                   <Icon name="issue" />
                 </div>

@@ -92,7 +92,7 @@
 
   .gray {
     background-color: var(--color-fill-ghost);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-contrast);
   }
   .gray[disabled] {
     background-color: var(--color-fill-ghost);
@@ -100,7 +100,7 @@
   }
   .gray:not([disabled]):hover {
     background-color: var(--color-fill-ghost-hover);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-contrast);
   }
 
   .gray-white {

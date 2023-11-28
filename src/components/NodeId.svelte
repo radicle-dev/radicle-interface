@@ -9,8 +9,6 @@
   export let alias: string | undefined = undefined;
   export let disableTooltip: boolean = false;
   export let large: boolean = false;
-
-  export let styleColor: string | undefined = undefined;
 </script>
 
 <style>
@@ -23,7 +21,6 @@
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
-    color: var(--color-foreground-contrast);
   }
   .large {
     height: 1.25rem;
@@ -37,13 +34,11 @@
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
-    color: var(--color-foreground-contrast);
   }
   .popover-container {
     display: flex;
     align-items: center;
     gap: 1rem;
-    color: white;
   }
 </style>
 
@@ -52,7 +47,7 @@
   stylePopoverPositionLeft="-4.5rem"
   stylePopoverPadding="0.5rem 0.5rem 0.5rem 0.75rem"
   stylePopoverPositionTop="-4.5rem">
-  <div slot="toggle" class="avatar-alias" style:color={styleColor} class:large>
+  <div slot="toggle" class="avatar-alias" class:large>
     <Avatar {nodeId} />
     {#if alias}
       {alias}

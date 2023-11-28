@@ -49,10 +49,6 @@
     align-items: center;
     gap: 1rem;
   }
-  .identity {
-    color: var(--color-fill-secondary);
-    display: flex;
-  }
 </style>
 
 {#if $httpdStore.state === "authenticated"}
@@ -67,7 +63,6 @@
         <NodeId
           large
           disableTooltip
-          styleColor="var(--color-fill-primary)"
           nodeId={$httpdStore.session.publicKey}
           alias={$httpdStore.session.alias} />
       </div>
@@ -76,11 +71,9 @@
     <div slot="popover" class="container">
       <div class="status">Authenticated as</div>
       <div class="user">
-        <div class="identity">
-          <NodeId
-            nodeId={$httpdStore.session.publicKey}
-            alias={$httpdStore.session.alias} />
-        </div>
+        <NodeId
+          nodeId={$httpdStore.session.publicKey}
+          alias={$httpdStore.session.alias} />
         <IconButton
           on:click={() => {
             void httpd.disconnect();
