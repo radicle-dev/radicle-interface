@@ -54,7 +54,7 @@
       on:click={toggle}
       title={buttonTitle[$httpdStore.state]}
       size="large"
-      variant="primary-toggle-off">
+      variant="secondary-toggle-off">
       <IconSmall name="device" />
       Connect
     </Button>
@@ -79,7 +79,7 @@
       on:click={toggle}
       title={buttonTitle[$httpdStore.state]}
       size="large"
-      variant="primary-toggle-on">
+      variant="secondary-toggle-on">
       <IconSmall name="device" />
       Connected
     </Button>

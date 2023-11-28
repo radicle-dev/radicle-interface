@@ -18,7 +18,7 @@
     gap: 0.25rem;
   }
   .segment :global(a:hover) {
-    color: var(--color-fill-primary);
+    color: var(--color-fill-secondary);
   }
 </style>
 

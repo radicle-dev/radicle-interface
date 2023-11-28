@@ -26,7 +26,7 @@
   }
   .avatar {
     height: 1.5rem;
-    color: var(--color-fill-primary) !important;
+    color: var(--color-fill-secondary) !important;
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -58,7 +58,7 @@
       let:toggle
       on:click={toggle}
       size="large"
-      variant="primary-toggle-on">
+      variant="secondary-toggle-on">
       <div class="avatar">
         <NodeId
           large
@@ -93,7 +93,7 @@
       });
     }}
     size="large"
-    variant="primary-toggle-off">
+    variant="secondary-toggle-off">
     <IconSmall name="key" />
     Authenticate
     <div class="indicator" />
@@ -107,7 +107,7 @@
       });
     }}
     size="large"
-    variant="primary-toggle-off">
+    variant="secondary-toggle-off">
     <IconSmall name="chat" />
     Authenticate
   </Button>
