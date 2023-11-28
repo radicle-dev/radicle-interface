@@ -11,10 +11,13 @@
     align-items: center;
     gap: 0.25rem;
     text-decoration: none;
+  }
+
+  .link {
     box-shadow: 0 1px 0 0 var(--color-foreground-contrast);
   }
 
-  a:hover {
+  a:hover .link {
     color: var(--color-fill-secondary);
     box-shadow: 0 1px 0 0 var(--color-fill-secondary);
   }
@@ -31,6 +34,6 @@
 </style>
 
 <a {href} target="_blank" rel="noreferrer">
-  <slot>{href}</slot>
+  <span class="link"><slot>{href}</slot></span>
   <span class="icon"><IconSmall name="arrow-box-up-right" /></span>
 </a>
