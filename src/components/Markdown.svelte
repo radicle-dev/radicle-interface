@@ -328,7 +328,7 @@
   }
   .markdown :global(a) {
     text-decoration: none;
-    border-bottom: 1px solid var(--color-foreground-contrast);
+    border-bottom: 1px solid currentColor;
   }
   .markdown :global(a.no-underline) {
     border-bottom: none;
