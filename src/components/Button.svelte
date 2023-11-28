@@ -38,6 +38,7 @@
     font-family: var(--font-family-sans-serif);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
+    font-feature-settings: inherit;
     white-space: nowrap;
     gap: 0.5rem;
   }
