@@ -2,11 +2,12 @@
   import type { ProjectLoadedRoute } from "@app/views/projects/router";
 
   import * as utils from "@app/lib/utils";
+  import { unreachable } from "@app/lib/utils";
 
   import CopyableId from "@app/components/CopyableId.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Separator from "./Separator.svelte";
-  import { unreachable } from "@app/lib/utils";
 
   export let activeRoute: ProjectLoadedRoute;
 </script>
@@ -23,6 +24,9 @@
 </style>
 
 <span class="segment">
+  {#if activeRoute.params.project.visibility?.type === "private"}
+    <IconSmall name="lock" />
+  {/if}
   <Link
     route={{
       resource: "project.source",

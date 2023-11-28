@@ -141,6 +141,7 @@
             {activity}
             id={project.id}
             name={project.name}
+            visibility={project.visibility?.type}
             description={project.description}
             head={project.head} />
         </Link>

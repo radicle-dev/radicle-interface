@@ -4,15 +4,16 @@
 
   import dompurify from "dompurify";
 
+  import capitalize from "lodash/capitalize";
   import markdown from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
+  import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
-  import Link from "@app/components/Link.svelte";
-
-  import Header from "./Header.svelte";
-  import TrackButton from "./Header/TrackButton.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import Header from "@app/views/projects/Header.svelte";
+  import Link from "@app/components/Link.svelte";
+  import TrackButton from "@app/views/projects/Header/TrackButton.svelte";
 
   export let activeTab: ActiveTab = undefined;
   export let baseUrl: BaseUrl;
@@ -32,6 +33,7 @@
   }
   .title {
     align-items: center;
+    gap: 0.5rem;
     color: var(--color-foreground-contrast);
     display: flex;
     font-size: var(--font-size-x-large);
@@ -88,6 +90,11 @@
         </span>
       </Link>
     </span>
+    {#if project.visibility && project.visibility.type === "private"}
+      <Badge variant="caution" size="tiny">
+        {capitalize(project.visibility.type)}
+      </Badge>
+    {/if}
 
     <div
       class="layout-desktop-flex"

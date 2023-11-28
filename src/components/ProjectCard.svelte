@@ -1,14 +1,18 @@
 <script lang="ts">
   import type { WeeklyActivity } from "@app/lib/commit";
 
+  import capitalize from "lodash/capitalize";
   import { formatCommit, twemoji } from "@app/lib/utils";
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
+  import Badge from "@app/components/Badge.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let activity: WeeklyActivity[];
   export let compact = false;
   export let description: string;
   export let head: string;
+  export let visibility: "public" | "private" = "public";
   export let id: string;
   export let name: string;
 </script>
@@ -63,11 +67,18 @@
   .description {
     font-size: var(--font-size-small);
   }
-  .id {
+  .title {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-medium);
+  }
+  .name {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
   }
   .rid {
     visibility: hidden;
@@ -93,7 +104,22 @@
 <div class="project" class:compact>
   <div class="left">
     <div class="text">
-      <div class="id">{name}</div>
+      <div class="title">
+        <span class="name" title={name}>
+          {name}
+        </span>
+        {#if visibility === "private"}
+          {#if compact}
+            <div title="Private" style:color="var(--color-foreground-yellow)">
+              <IconSmall name="lock" />
+            </div>
+          {:else}
+            <Badge variant="yellowOutline" size="tiny">
+              {capitalize(visibility)}
+            </Badge>
+          {/if}
+        {/if}
+      </div>
       <div class="description" use:twemoji>{description}</div>
       <div class="global-hash">
         {#if compact}

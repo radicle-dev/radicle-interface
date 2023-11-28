@@ -98,6 +98,7 @@
               compact
               description={project.description}
               head={project.head}
+              visibility={project.visibility?.type}
               id={project.id}
               name={project.name}
               {activity} />
