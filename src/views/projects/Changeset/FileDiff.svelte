@@ -380,9 +380,10 @@
 <File collapsable {expanded}>
   <svelte:fragment slot="left-header">
     {#if (headerBadgeCaption === "moved" || headerBadgeCaption === "copied") && oldFilePath}
-      <span>
-        <FilePath filenameWithPath={oldFilePath} /> → <FilePath
-          filenameWithPath={filePath} />
+      <span style="display: flex; align-items: center; flex-wrap: wrap;">
+        <FilePath filenameWithPath={oldFilePath} />
+        <span style:padding="0 0.5rem">→</span>
+        <FilePath filenameWithPath={filePath} />
       </span>
     {:else}
       <FilePath filenameWithPath={filePath} />

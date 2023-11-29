@@ -32,6 +32,7 @@
     display: flex;
     gap: 0.5rem;
     margin-right: 1rem;
+    align-items: center;
   }
 
   .right {
