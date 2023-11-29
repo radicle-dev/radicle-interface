@@ -36,7 +36,7 @@ body {
   background-color: var(--color-background-default);
   scrollbar-width: thin;
   scrollbar-height: thin;
-  scrollbar-color: var(--color-fill-ghost) transparent;
+  scrollbar-color: var(--color-fill-separator) transparent;
 }
 
 @media (max-width: 720px) {
@@ -67,7 +67,7 @@ body {
 }
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-  background-color: var(--color-fill-ghost);
+  background-color: var(--color-fill-separator);
 }
 
 main {
