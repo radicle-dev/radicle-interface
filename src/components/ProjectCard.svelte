@@ -19,6 +19,7 @@
 
 <style>
   .project {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -36,6 +37,8 @@
     align-items: flex-end;
   }
   .left {
+    display: flex;
+    flex-direction: column;
     width: 50%;
   }
   .description {
@@ -60,6 +63,10 @@
     width: 100%;
     max-width: 14rem;
     margin-top: 0.5rem;
+  }
+  .compact .activity {
+    position: absolute;
+    bottom: 0;
   }
   .project:hover {
     box-shadow: 0 0 0 2px var(--color-border-focus);
@@ -97,6 +104,9 @@
   @media (max-width: 720px) {
     .project {
       min-width: 0;
+    }
+    .left {
+      width: 100%;
     }
   }
 </style>
