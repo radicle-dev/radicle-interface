@@ -27,7 +27,7 @@
     background-color: var(--color-fill-ghost);
   }
   .selected {
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-contrast);
     background-color: var(--color-fill-ghost);
   }
   .item:hover.selected {

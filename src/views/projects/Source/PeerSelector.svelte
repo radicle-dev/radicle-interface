@@ -66,11 +66,7 @@
             alias={item.remote.alias} />
           {#if item.remote.delegate}
             <div style:color="var(--color-fill-secondary)">
-              <Badge
-                size="tiny"
-                variant={item.selected ? "background" : "secondary"}>
-                delegate
-              </Badge>
+              <Badge size="tiny" variant="secondary">delegate</Badge>
             </div>
           {/if}
         </DropdownListItem>

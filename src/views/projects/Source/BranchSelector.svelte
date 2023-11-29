@@ -44,7 +44,7 @@
         stylePopoverPositionTop="0.5rem">
         <Button
           ariaLabel="canonical-branch"
-          variant="outline"
+          variant="gray-white"
           styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
           slot="toggle"
           disabled
@@ -66,7 +66,7 @@
         popoverPositionTop="2.5rem"
         popoverBorderRadius="var(--border-radius-small)">
         <Button
-          variant="outline"
+          variant="gray-white"
           let:expanded
           let:toggle
           on:click={toggle}
@@ -98,7 +98,7 @@
 
   <Button
     title="Current HEAD"
-    variant={selectedBranch ? "gray" : "outline"}
+    variant="dim"
     styleBorderRadius={selectedBranch
       ? "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
       : "var(--border-radius-tiny)"}>

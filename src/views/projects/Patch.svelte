@@ -783,9 +783,7 @@
                   on:click={toggle}
                   size="regular"
                   disabled={patch.revisions.length === 1}>
-                  <span
-                    style:font-weight="var(--font-weight-regular)"
-                    style:color="var(--color-fill-gray)">
+                  <span style:color="var(--color-foreground-contrast)">
                     Revision
                   </span>
                   <span
@@ -811,9 +809,8 @@
                       }}>
                       <DropdownListItem selected={item.id === view.revision}>
                         <span
-                          style:font-weight="var(--font-weight-regular)"
                           style:color={item.id === view.revision
-                            ? "var(--color-fill-secondary)"
+                            ? "var(--color-foreground-contrast)"
                             : "var(--color-fill-gray)"}>
                           Revision
                         </span>
