@@ -29,7 +29,6 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    border: 1px solid transparent;
     gap: 1px;
   }
 </style>

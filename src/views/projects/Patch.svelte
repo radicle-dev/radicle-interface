@@ -881,9 +881,9 @@
                     session.id,
                     revision.revisionId,
                   )} />
-                <div class="connector" />
-                <div style="display: flex;">
-                  {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+                {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+                  <div class="connector" />
+                  <div style="display: flex;">
                     <CobStateButton
                       items={items.filter(
                         ([, state]) => !isEqual(state, patch.state),
@@ -891,8 +891,8 @@
                       {selectedItem}
                       state={patch.state}
                       save={partial(saveStatus, session.id)} />
-                  {/if}
-                </div>
+                  </div>
+                {/if}
               {/if}
             {/if}
           </RevisionComponent>
