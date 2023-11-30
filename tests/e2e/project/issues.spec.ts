@@ -12,10 +12,9 @@ test("navigate issue listing", async ({ page }) => {
 });
 
 test("issue counters", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "issue-counters",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "issue-counters",
+  });
   await authenticatedPeer.rad(
     [
       "issue",
@@ -55,7 +54,9 @@ test("issue counters", async ({ page, authenticatedPeer }) => {
 });
 
 test("create a new issue", async ({ page, authenticatedPeer }) => {
-  const { rid } = await createProject(authenticatedPeer, "commenting");
+  const { rid } = await createProject(authenticatedPeer, {
+    name: "commenting",
+  });
 
   await page.goto(
     `/nodes/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}`,

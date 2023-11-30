@@ -8,10 +8,9 @@ import {
 } from "@tests/support/project";
 
 test("leave comments and replies", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "commenting",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "commenting",
+  });
   await authenticatedPeer.rad(
     [
       "issue",
@@ -50,10 +49,9 @@ test("leave comments and replies", async ({ page, authenticatedPeer }) => {
 });
 
 test("add and remove reactions", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "reactions",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "reactions",
+  });
   await authenticatedPeer.git(["switch", "-c", "feature-1"], {
     cwd: projectFolder,
   });
@@ -73,10 +71,9 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
 });
 
 test("handling embeds", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "embeds",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "embeds",
+  });
   await authenticatedPeer.rad(
     [
       "issue",

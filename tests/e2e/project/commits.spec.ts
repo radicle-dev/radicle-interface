@@ -132,7 +132,9 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   });
   await alice.startHttpd();
   await alice.startNode();
-  const { rid, projectFolder } = await createProject(alice, "alice-project");
+  const { rid, projectFolder } = await createProject(alice, {
+    name: "alice-project",
+  });
   await page.goto(`${alice.uiUrl()}/${rid}`);
   await page.getByRole("link", { name: "1 commit" }).click();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);

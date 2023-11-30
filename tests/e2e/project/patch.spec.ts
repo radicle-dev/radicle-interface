@@ -135,10 +135,9 @@ test("view file navigation from changes tab", async ({ page }) => {
 });
 
 test("change patch state", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "lifecycle",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "lifecycle",
+  });
   await authenticatedPeer.git(["switch", "-c", "feature-1"], {
     cwd: projectFolder,
   });
@@ -166,10 +165,9 @@ test("change patch state", async ({ page, authenticatedPeer }) => {
 });
 
 test("edit patch", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "edit-patch",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "edit-patch",
+  });
   await authenticatedPeer.git(["switch", "-c", "edit-patch"], {
     cwd: projectFolder,
   });

@@ -9,9 +9,17 @@ import { readFileSync } from "node:fs";
 // Create a project using the rad CLI.
 export async function createProject(
   peer: RadiclePeer,
-  name: string,
-  description = "",
-  defaultBranch = "main",
+  {
+    name,
+    description = "",
+    defaultBranch = "main",
+    visibility = "public",
+  }: {
+    name: string;
+    description?: string;
+    defaultBranch?: string;
+    visibility?: "public" | "private";
+  },
 ): Promise<{ rid: string; projectFolder: string; defaultBranch: string }> {
   const projectFolder = Path.join(peer.checkoutPath, name);
 
@@ -30,7 +38,7 @@ export async function createProject(
       defaultBranch,
       "--description",
       description,
-      "--public",
+      `--${visibility}`,
     ],
     {
       cwd: projectFolder,

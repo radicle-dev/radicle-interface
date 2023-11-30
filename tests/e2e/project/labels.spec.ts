@@ -6,10 +6,9 @@ import {
 } from "@tests/support/project";
 
 test("add and remove labels", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "handle-labels",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "handle-labels",
+  });
   await authenticatedPeer.rad(
     [
       "issue",

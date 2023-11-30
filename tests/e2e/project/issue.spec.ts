@@ -13,10 +13,9 @@ test("navigate single issue", async ({ page }) => {
 });
 
 test("test issue editing failing", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "issue-editing",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "issue-editing",
+  });
   await authenticatedPeer.rad(
     [
       "issue",
@@ -47,10 +46,9 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
 
 test("edit issue", async ({ page, authenticatedPeer }) => {
   await page.goto(authenticatedPeer.uiUrl());
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "edit-issue",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "edit-issue",
+  });
   await authenticatedPeer.rad(
     [
       "issue",
@@ -110,10 +108,9 @@ test("edit issue", async ({ page, authenticatedPeer }) => {
 });
 
 test("add and remove reactions", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "handle-reactions",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "handle-reactions",
+  });
   await authenticatedPeer.rad(
     [
       "issue",
@@ -133,7 +130,7 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
 });
 
 test("handling embeds", async ({ page, authenticatedPeer }) => {
-  const { rid } = await createProject(authenticatedPeer, "embeds");
+  const { rid } = await createProject(authenticatedPeer, { name: "embeds" });
   await page.goto(
     `/nodes/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}/issues/new`,
   );

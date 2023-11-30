@@ -3,10 +3,9 @@ import { createProject } from "@tests/support/project";
 
 test("add and remove assignees", async ({ page, authenticatedPeer }) => {
   await page.goto(authenticatedPeer.uiUrl());
-  const { rid, projectFolder } = await createProject(
-    authenticatedPeer,
-    "handle-assignees",
-  );
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "handle-assignees",
+  });
   await authenticatedPeer.rad(
     [
       "issue",

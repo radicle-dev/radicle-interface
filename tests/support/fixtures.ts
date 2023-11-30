@@ -369,7 +369,9 @@ export async function createSourceBrowsingFixture(
 export async function createCobsFixture(peer: RadiclePeer) {
   await peer.rad(["track", peer.nodeId, "--alias", "palm"]);
   await Fs.mkdir(Path.join(tmpDir, "repos", "cobs"));
-  const { projectFolder, defaultBranch } = await createProject(peer, "cobs");
+  const { projectFolder, defaultBranch } = await createProject(peer, {
+    name: "cobs",
+  });
   const issueOne = await issue.create(
     peer,
     "This `title` has **markdown**",
@@ -644,7 +646,7 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
     "-C",
     Path.join(tmpDir, "repos", "markdown"),
   ]);
-  const { projectFolder } = await createProject(peer, "markdown");
+  const { projectFolder } = await createProject(peer, { name: "markdown" });
   await Fs.cp(Path.join(tmpDir, "repos", "markdown"), projectFolder, {
     recursive: true,
   });

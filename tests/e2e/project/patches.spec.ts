@@ -17,7 +17,7 @@ test("navigate patch listing", async ({ page }) => {
 test("patches counters", async ({ page, authenticatedPeer }) => {
   const { rid, projectFolder, defaultBranch } = await createProject(
     authenticatedPeer,
-    "patch-counters",
+    { name: "patch-counters" },
   );
   await authenticatedPeer.git(["switch", "-c", "feature-1"], {
     cwd: projectFolder,
