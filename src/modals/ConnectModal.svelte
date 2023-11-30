@@ -12,11 +12,9 @@
   import TextInput from "@app/components/TextInput.svelte";
 
   $: customUrl = `${httpd.api.baseUrl.scheme}://${httpd.api.baseUrl.hostname}:${customPort}`;
-  $: command = import.meta.env.PROD
-    ? `rad web --backend ${customUrl}`
-    : `rad web --frontend ${
-        new URL(import.meta.url).origin
-      } --backend ${customUrl}`;
+  $: command = `rad web --frontend ${
+    new URL(import.meta.url).origin
+  } --backend ${customUrl}`;
   let customPort = httpd.api.port;
   $: validPortNumber = Number(customPort) > 0 && Number(customPort) <= 65535;
 
