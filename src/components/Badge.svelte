@@ -47,7 +47,7 @@
     background-color: var(--color-fill-secondary);
   }
   .negative {
-    color: var(--color-foreground-white);
+    color: var(--color-foreground-match-background);
     background-color: var(--color-foreground-red);
   }
   .primary {
