@@ -212,10 +212,10 @@
   .commit:last-of-type::after {
     content: "";
     position: absolute;
-    left: -17px;
+    left: -18.5px;
     top: 12px;
     bottom: -1rem;
-    border-left: 1px solid var(--color-background-default);
+    border-left: 4px solid var(--color-background-default);
   }
   .expanded {
     box-shadow: 0 0 0 1px var(--color-border-hint);
