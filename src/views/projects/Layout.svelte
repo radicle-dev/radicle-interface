@@ -91,7 +91,7 @@
       </Link>
     </span>
     {#if project.visibility && project.visibility.type === "private"}
-      <Badge variant="caution" size="tiny">
+      <Badge variant="yellowOutline" size="tiny">
         {capitalize(project.visibility.type)}
       </Badge>
     {/if}
