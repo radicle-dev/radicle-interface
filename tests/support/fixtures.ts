@@ -672,6 +672,13 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
     cwd: projectFolder,
   });
   await peer.git(["push", "rad"], { cwd: projectFolder });
+  await issue.create(
+    peer,
+    "This `title` has **markdown**",
+    'This is a description\n\nWith some multiline text.\n\n```\n23-11-06 10:19 ➜  radicle-jetbrains-plugin git:(main) rad id update --title "Godify jchrist" --description "where jchrist ascends to a god of this project" --delegate did:key:z6MkpaATbhkGbSMysNomYTFVvKG5bnNKYZ2cCamfoHzX9SnL --threshold 1\n\n✓ Identity revision 029837dde8f5c49704e50a19cd709473ac66a456 created\n```',
+    ["bug", "feature-request"],
+    { cwd: projectFolder },
+  );
 }
 
 export const aliceMainHead = "dd068e9aff9a569e597f6abaf84f120dd0cbbd70";

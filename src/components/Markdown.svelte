@@ -151,7 +151,13 @@
       const preElement = node.parentElement as HTMLElement;
       const copyButton = document.createElement("radicle-clipboard");
       copyButton.setAttribute("text", node.textContent || "");
-      preElement.prepend(copyButton);
+      // Create a wrapper around the pre element,
+      // so we can position the copy button that works even when scrolling horizontally.
+      const preWrapper = document.createElement("div");
+      preWrapper.classList.add("pre-wrapper");
+      preElement.parentNode?.insertBefore(preWrapper, preElement);
+      preWrapper.appendChild(preElement);
+      preWrapper.appendChild(copyButton);
 
       const className = Array.from(node.classList).find(name =>
         name.startsWith(prefix),
@@ -214,6 +220,11 @@
     border-bottom: 1px solid var(--color-border-hint);
   }
 
+  .markdown :global(.pre-wrapper) {
+    position: relative;
+    margin: 1rem 0;
+  }
+
   .markdown :global(radicle-clipboard) {
     display: none;
     position: absolute;
@@ -226,7 +237,7 @@
     border-radius: var(--border-radius-small);
   }
 
-  .markdown :global(pre:hover radicle-clipboard) {
+  .markdown :global(.pre-wrapper:hover > radicle-clipboard) {
     display: flex;
   }
 
@@ -296,23 +307,21 @@
     padding: 0.125rem 0.25rem;
   }
 
-  .markdown :global(pre code) {
+  .markdown :global(pre > code) {
     background: none;
     padding: 0;
   }
 
-  .markdown :global(:not(pre) code) {
+  .markdown :global(:not(pre) > code) {
     font-size: inherit;
   }
 
   .markdown :global(pre) {
-    position: relative;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-regular);
     background-color: var(--color-fill-ghost);
     padding: 1rem !important;
     border-radius: var(--border-radius-small);
-    margin: 1rem 0;
     overflow: scroll;
     scrollbar-width: none;
   }

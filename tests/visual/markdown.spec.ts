@@ -184,3 +184,11 @@ test("relative image not able to being loaded", async ({ page }) => {
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
+
+test("markdown in issues is not overflowing", async ({ page }) => {
+  await page.goto(`${markdownUrl}/issues`, {
+    waitUntil: "networkidle",
+  });
+  await page.getByRole("link", { name: "This title has markdown" }).click();
+  await expect(page).toHaveScreenshot({ fullPage: true });
+});

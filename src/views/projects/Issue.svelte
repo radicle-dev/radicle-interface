@@ -442,12 +442,6 @@
     height: 22px;
     margin-top: 1rem;
   }
-  .markdown {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
   .open {
     color: var(--color-fill-success);
   }
@@ -546,11 +540,9 @@
                 }
               }} />
           {:else}
-            <div class="markdown">
-              <Markdown
-                content={issue.discussion[0].body}
-                rawPath={rawPath(project.head)} />
-            </div>
+            <Markdown
+              content={issue.discussion[0].body}
+              rawPath={rawPath(project.head)} />
           {/if}
           <div class="reactions">
             {#if session}
