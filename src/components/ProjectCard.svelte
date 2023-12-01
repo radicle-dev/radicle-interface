@@ -142,7 +142,13 @@
 
     {#if compact}
       <div class="activity">
-        <ActivityDiagram {activity} viewBoxHeight={70} />
+        <ActivityDiagram
+          {id}
+          {activity}
+          viewBoxHeight={70}
+          styleColor={visibility === "private"
+            ? "var(--color-foreground-yellow)"
+            : "var(--color-foreground-primary)"} />
       </div>
     {/if}
   </div>
@@ -153,7 +159,13 @@
         <span class="rid layout-desktop">{id}</span>
       </div>
       <div class="layout-desktop activity">
-        <ActivityDiagram {activity} viewBoxHeight={100} />
+        <ActivityDiagram
+          {id}
+          {activity}
+          viewBoxHeight={100}
+          styleColor={visibility === "private"
+            ? "var(--color-foreground-yellow)"
+            : "var(--color-foreground-primary)"} />
       </div>
     </div>
   {/if}

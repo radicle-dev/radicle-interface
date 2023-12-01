@@ -3,8 +3,10 @@
 
   import { onMount } from "svelte";
 
+  export let id: string;
   export let activity: WeeklyActivity[];
   export let viewBoxHeight: number;
+  export let styleColor: string;
 
   const strokeWidth = 3;
   const viewBoxWidth = 600;
@@ -97,34 +99,30 @@
 </script>
 
 <svg
+  style:color={styleColor}
   viewBox="0 0 {viewBoxWidth} {heightWithPadding}"
   xmlns="http://www.w3.org/2000/svg">
-  <svg style="height: 0; width: 0;" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="fillGradient" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stop-color="#ff55ff" stop-opacity="0" />
-        <stop offset="100%" stop-color="#ff55ff" stop-opacity="0.2" />
-      </linearGradient>
-    </defs>
-  </svg>
-  <svg style="height: 0; width: 0;" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stop-color="#ff55ff" stop-opacity="0.2" />
-        <stop offset="50%" stop-color="#ff55ff" stop-opacity="0.8" />
-        <stop offset="100%" stop-color="#ff55ff" stop-opacity="1" />
-      </linearGradient>
-    </defs>
-  </svg>
+  <linearGradient id={`${id}:fillGradient`} x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0%" stop-color="currentColor" stop-opacity="0" />
+    <stop offset="100%" stop-color="currentColor" stop-opacity="0.2" />
+  </linearGradient>
+  <linearGradient id={`${id}:gradient`} x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0%" stop-color="currentColor" stop-opacity="0.2" />
+    <stop offset="50%" stop-color="currentColor" stop-opacity="0.8" />
+    <stop offset="100%" stop-color="currentColor" stop-opacity="1" />
+  </linearGradient>
   {#if activity.length > 0}
     <g>
       <path
         fill="transparent"
-        stroke="url(#gradient)"
+        stroke={`url(#${id}:gradient)`}
         stroke-width={strokeWidth}
         stroke-linejoin="round"
         d={path} />
-      <path fill="url(#fillGradient)" stroke="transparent" d={areaPath} />
+      <path
+        fill={`url(#${id}:fillGradient)`}
+        stroke="transparent"
+        d={areaPath} />
     </g>
   {:else}
     <!-- If no commits have been made in a year, we show a straight line -->
@@ -133,7 +131,7 @@
       y1={viewBoxHeight}
       x2="600"
       y2={viewBoxHeight}
-      stroke="#ff55ff"
+      stroke="currentColor"
       stroke-width={1} />
   {/if}
 </svg>
