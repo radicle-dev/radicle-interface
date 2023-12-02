@@ -1,8 +1,6 @@
 <script lang="ts">
   import debounce from "lodash/debounce";
 
-  export let disabled: boolean = false;
-
   export let onShow: () => void = () => {};
   export let stylePopoverPositionLeft: string | undefined = undefined;
   export let stylePopoverPositionTop: string | undefined = undefined;
@@ -11,11 +9,9 @@
   let visible: boolean = false;
 
   const setVisible = debounce((value: boolean) => {
-    if (!disabled) {
-      visible = value;
-      if (visible) {
-        onShow();
-      }
+    visible = value;
+    if (visible) {
+      onShow();
     }
   }, 150);
 </script>

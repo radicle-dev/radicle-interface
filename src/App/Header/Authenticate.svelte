@@ -4,6 +4,7 @@
   import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
 
+  import Avatar from "@app/components/Avatar.svelte";
   import Button from "@app/components/Button.svelte";
   import ConnectModal from "@app/modals/ConnectModal.svelte";
   import IconButton from "@app/components/IconButton.svelte";
@@ -24,14 +25,8 @@
     color: var(--color-fill-gray);
     text-align: left;
   }
-  .avatar {
-    height: 1.5rem;
-    color: var(--color-fill-secondary) !important;
+  .peer-info {
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--font-weight-regular);
     font-family: var(--font-family-monospace);
   }
   .indicator {
@@ -59,12 +54,11 @@
       on:click={toggle}
       size="large"
       variant="secondary-toggle-on">
-      <div class="avatar">
-        <NodeId
-          large
-          disableTooltip
-          nodeId={$httpdStore.session.publicKey}
-          alias={$httpdStore.session.alias} />
+      <div class="peer-info">
+        <div style:height="1.25rem" style:margin-right="0.5rem">
+          <Avatar nodeId={$httpdStore.session.publicKey} />
+        </div>
+        {$httpdStore.session.alias}
       </div>
     </Button>
 

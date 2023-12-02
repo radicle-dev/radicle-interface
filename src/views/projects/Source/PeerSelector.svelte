@@ -14,6 +14,7 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
+  import Avatar from "@app/components/Avatar.svelte";
 
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
 
@@ -60,10 +61,10 @@
         <DropdownListItem
           selected={item.selected}
           title={createTitle(item.remote)}>
-          <NodeId
-            disableTooltip
-            nodeId={item.remote.id}
-            alias={item.remote.alias} />
+          <Avatar nodeId={item.remote.id} />
+          <span style:font-family="var(--font-family-monospace)">
+            {item.remote.alias || formatNodeId(item.remote.id)}
+          </span>
           {#if item.remote.delegate}
             <div style:color="var(--color-fill-secondary)">
               <Badge size="tiny" variant="secondary">delegate</Badge>

@@ -7,7 +7,6 @@
 
   export let nodeId: string;
   export let alias: string | undefined = undefined;
-  export let disableTooltip: boolean = false;
   export let large: boolean = false;
 </script>
 
@@ -43,7 +42,6 @@
 </style>
 
 <HoverPopover
-  disabled={disableTooltip}
   stylePopoverPositionLeft="-4.5rem"
   stylePopoverPadding="0.5rem 0.5rem 0.5rem 0.75rem"
   stylePopoverPositionTop="-4.5rem">
