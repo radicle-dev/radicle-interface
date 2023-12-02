@@ -174,8 +174,7 @@ export const test = base.extend<{
       .locator('input[name="port"]')
       .fill(peer.httpdBaseUrl.port.toString());
     await page.locator('input[name="port"]').press("Enter");
-    const { stdout } = await peer.rad([
-      "web",
+    const { stdout } = await peer.spawn("rad-web", [
       "--frontend",
       "http://localhost:3001",
       "--backend",
@@ -589,7 +588,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
-    ["label", patchThree, "documentation"],
+    ["patch", "label", patchThree, "--label", "documentation"],
     createOptions(projectFolder, 1),
   );
   await peer.rad(

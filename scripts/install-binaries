@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BINARIES=(rad radicle-node radicle-httpd git-remote-rad)
+BINARIES=(rad rad-web radicle-node radicle-httpd git-remote-rad)
 REPO_ROOT=$(git rev-parse --show-toplevel)
 REV=$(cat "$REPO_ROOT/tests/support/heartwood-version")
 BINARY_PATH=$REPO_ROOT/tests/tmp/bin/${REV:0:7}
