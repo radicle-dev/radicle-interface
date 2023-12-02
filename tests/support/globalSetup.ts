@@ -1,4 +1,4 @@
-import * as FsSync from "node:fs";
+import * as Fs from "node:fs";
 import * as Path from "node:path";
 import {
   assertRadInstalled,
@@ -11,7 +11,6 @@ import {
   createSourceBrowsingFixture,
   defaultHttpdPort,
   gitOptions,
-  startPalmHttpd,
 } from "@tests/support/fixtures.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { killAllProcesses } from "@tests/support/process.js";
@@ -29,33 +28,42 @@ export default async function globalSetup(): Promise<() => void> {
   }
 
   if (!process.env.SKIP_FIXTURE_CREATION) {
-    console.log("Setting up global test environment");
+    console.log(
+      "Recreating static fixtures. Set SKIP_FIXTURE_CREATION to skip this",
+    );
     await removeWorkspace();
+  }
 
-    // Workaround for fixing MaxListenersExceededWarning.
-    // Since every prefixOutput stream adds stream listeners that don't autoClose.
-    // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
-    const peerManager = await createPeerManager({
-      dataDir: Path.resolve(Path.join(tmpDir, "peers")),
-      outputLog: FsSync.createWriteStream(
-        Path.join(tmpDir, "globalSetup.log"),
-      ).setMaxListeners(16),
-    });
+  const peerManager = await createPeerManager({
+    dataDir: Path.resolve(tmpDir, "peers"),
+    outputLog: Fs.createWriteStream(
+      Path.resolve(tmpDir, "globalPeerManager.log"),
+    )
+      // Workaround for fixing MaxListenersExceededWarning.
+      // Since every prefixOutput stream adds stream listeners that don't autoClose.
+      // TODO: We still seem to have some descriptors left open when running vitest, which we should handle.
+      .setMaxListeners(16),
+  });
 
-    const palm = await peerManager.startPeer({
-      name: "palm",
-      gitOptions: gitOptions["alice"],
-    });
+  const palm = await peerManager.startPeer({
+    name: "palm",
+    gitOptions: gitOptions["alice"],
+  });
+
+  await palm.startHttpd(defaultHttpdPort);
+
+  if (!process.env.SKIP_FIXTURE_CREATION) {
     await palm.startHttpd(defaultHttpdPort);
     await palm.startNode({ policy: "track", scope: "all", alias: "palm" });
 
     try {
-      await createSourceBrowsingFixture(peerManager, palm);
       console.log("Creating source-browsing fixture");
-      await createMarkdownFixture(palm);
+      await createSourceBrowsingFixture(peerManager, palm);
       console.log("Creating markdown fixture");
-      await createCobsFixture(palm);
+      await createMarkdownFixture(palm);
       console.log("Creating cobs fixture");
+      await createCobsFixture(palm);
+      console.log("All fixtures created");
     } catch (error) {
       console.log("");
       console.log("Not able to create the required fixtures.");
@@ -65,11 +73,11 @@ export default async function globalSetup(): Promise<() => void> {
       console.log("");
       process.exit(1);
     }
-    console.log("Running tests");
     await palm.stopNode();
-  } else {
-    await startPalmHttpd(defaultHttpdPort);
   }
 
-  return () => killAllProcesses();
+  return async () => {
+    await palm.stopNode();
+    killAllProcesses();
+  };
 }

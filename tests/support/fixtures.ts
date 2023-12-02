@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type * as Stream from "node:stream";
-import type { PeerManager, RadiclePeer } from "./peerManager.js";
-
 import * as Fs from "node:fs/promises";
-import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import { test as base, expect, type ViewportSize } from "@playwright/test";
+import { object, string, ZodSchema } from "zod";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
@@ -14,7 +12,7 @@ import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
-import { object, string, ZodSchema } from "zod";
+import type { PeerManager, RadiclePeer } from "./peerManager.js";
 
 export { expect };
 
@@ -274,15 +272,6 @@ export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
       ],
     },
   };
-}
-
-export async function startPalmHttpd(httpdPort: number) {
-  const peerManager = await createPeerManager({
-    dataDir: Path.resolve(Path.join(tmpDir, "peers")),
-    outputLog: FsSync.createWriteStream(Path.resolve(Path.join(tmpDir, "log"))),
-  });
-  const palm = await peerManager.startPeer({ name: "palm" });
-  await palm.startHttpd(httpdPort);
 }
 
 export async function createSourceBrowsingFixture(
