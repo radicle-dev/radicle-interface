@@ -20,7 +20,7 @@ export const testFixture = test.extend<TestFixtures>({
         Path.join(tmpDir, "peerManager.log"),
       ).setMaxListeners(16),
     });
-    const peer = await peerManager.startPeer({
+    const peer = await peerManager.createPeer({
       name: "palm",
       gitOptions: gitOptions["alice"],
     });

@@ -126,7 +126,7 @@ test("relative timestamps", async ({ page }) => {
 });
 
 test("pushing changes while viewing history", async ({ page, peerManager }) => {
-  const alice = await peerManager.startPeer({
+  const alice = await peerManager.createPeer({
     name: "alice",
     gitOptions: gitOptions["alice"],
   });

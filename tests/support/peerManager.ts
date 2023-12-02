@@ -72,7 +72,7 @@ interface PeerManagerParams {
 }
 
 export interface PeerManager {
-  startPeer(params: {
+  createPeer(params: {
     name: string;
     gitOptions?: Record<string, string>;
   }): Promise<RadiclePeer>;
@@ -98,17 +98,17 @@ export async function createPeerManager(createParams: {
     outputLog = outputLogFile.createWriteStream();
   }
 
-  const nodes: RadiclePeer[] = [];
+  const peers: RadiclePeer[] = [];
   return {
-    async startPeer(params) {
+    async createPeer(params) {
       const peer = await RadiclePeer.create({
         dataPath: createParams.dataDir,
         name: params.name,
         gitOptions: params.gitOptions,
-        node: generateNode(nodes.length + 1),
+        node: generateNode(peers.length + 1),
         outputLog,
       });
-      nodes.push(peer);
+      peers.push(peer);
 
       return peer;
     },

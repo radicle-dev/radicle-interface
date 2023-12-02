@@ -7,7 +7,7 @@ import {
 } from "@tests/support/fixtures.js";
 
 test("node metadata", async ({ page, peerManager }) => {
-  const peer = await peerManager.startPeer({
+  const peer = await peerManager.createPeer({
     name: "node-metadata-peer",
   });
   await peer.startHttpd();

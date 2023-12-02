@@ -159,7 +159,7 @@ export const test = base.extend<{
   },
 
   authenticatedPeer: async ({ page, peerManager }, use) => {
-    const peer = await peerManager.startPeer({
+    const peer = await peerManager.createPeer({
       name: "httpd",
       gitOptions: gitOptions["bob"],
     });
@@ -288,12 +288,12 @@ export async function createSourceBrowsingFixture(
     sourceBrowsingDir,
   ]);
   const rid = sourceBrowsingRid;
-  const alice = await peerManager.startPeer({
+  const alice = await peerManager.createPeer({
     name: "alice",
     gitOptions: gitOptions["alice"],
   });
   const aliceProjectPath = Path.join(alice.checkoutPath, "source-browsing");
-  const bob = await peerManager.startPeer({
+  const bob = await peerManager.createPeer({
     name: "bob",
     gitOptions: gitOptions["bob"],
   });
