@@ -64,7 +64,7 @@ export interface RoutingEntry {
 
 interface PeerManagerParams {
   dataPath: string;
-  node: string;
+  radSeed: string;
   // Name for easy identification. Used on file system and in logs.
   name: string;
   gitOptions?: Record<string, string>;
@@ -76,10 +76,6 @@ export interface PeerManager {
     name: string;
     gitOptions?: Record<string, string>;
   }): Promise<RadiclePeer>;
-}
-
-export function generateNode(index: number) {
-  return Array(64).fill(index.toString()).join("");
 }
 
 export async function createPeerManager(createParams: {
@@ -105,7 +101,9 @@ export async function createPeerManager(createParams: {
         dataPath: createParams.dataDir,
         name: params.name,
         gitOptions: params.gitOptions,
-        node: generateNode(peers.length + 1),
+        radSeed: Array(64)
+          .fill((peers.length + 1).toString())
+          .join(""),
         outputLog,
       });
       peers.push(peer);
@@ -155,7 +153,7 @@ export class RadiclePeer {
   public checkoutPath: string;
   public nodeId: string;
 
-  #node: string;
+  #radSeed: string;
   #socket: string;
   #radHome: string;
   #eventRecords: NodeEvent[] = [];
@@ -171,7 +169,7 @@ export class RadiclePeer {
   private constructor(props: {
     checkoutPath: string;
     nodeId: string;
-    node: string;
+    radSeed: string;
     socket: string;
     gitOptions?: Record<string, string>;
     radHome: string;
@@ -181,7 +179,7 @@ export class RadiclePeer {
     this.checkoutPath = props.checkoutPath;
     this.nodeId = props.nodeId;
     this.#gitOptions = props.gitOptions;
-    this.#node = props.node;
+    this.#radSeed = props.radSeed;
     this.#socket = props.socket;
     this.#radHome = props.radHome;
     this.#outputLog = props.logFile;
@@ -212,7 +210,7 @@ export class RadiclePeer {
     dataPath,
     name,
     gitOptions,
-    node,
+    radSeed: node,
     outputLog: logFile,
   }: PeerManagerParams): Promise<RadiclePeer> {
     const checkoutPath = Path.join(dataPath, name, "copy");
@@ -239,7 +237,7 @@ export class RadiclePeer {
     return new RadiclePeer({
       checkoutPath,
       gitOptions,
-      node,
+      radSeed: node,
       socket,
       nodeId,
       radHome,
@@ -408,7 +406,7 @@ export class RadiclePeer {
         RAD_HOME: this.#radHome,
         RAD_PASSPHRASE: "asdf",
         RAD_COMMIT_TIME: "1671125284",
-        RAD_SEED: this.#node,
+        RAD_SEED: this.#radSeed,
         RAD_SOCKET: this.#socket,
         ...opts?.env,
         ...this.#gitOptions,
