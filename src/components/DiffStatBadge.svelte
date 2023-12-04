@@ -14,6 +14,12 @@
     border-radius: var(--border-radius-round);
     overflow: hidden;
   }
+  .badge:hover .positive {
+    background-color: var(--color-fill-diff-green);
+  }
+  .badge:hover .negative {
+    background-color: var(--color-fill-diff-red);
+  }
   .positive {
     display: flex;
     padding: 0 6px;

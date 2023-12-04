@@ -7,6 +7,7 @@
     absoluteTimestamp,
     formatObjectId,
     formatTimestamp,
+    formatCommit,
   } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
@@ -182,9 +183,25 @@
       {#await diffPromise}
         <Loading small />
       {:then { diff }}
-        <DiffStatBadge
-          insertions={diff.stats.insertions}
-          deletions={diff.stats.deletions} />
+        <Link
+          title="Compare {formatCommit(latestRevision.base)}..{formatCommit(
+            latestRevision.oid,
+          )}"
+          route={{
+            resource: "project.patch",
+            project: projectId,
+            node: baseUrl,
+            patch: patch.id,
+            view: {
+              name: "diff",
+              fromCommit: latestRevision.base,
+              toCommit: latestRevision.oid,
+            },
+          }}>
+          <DiffStatBadge
+            insertions={diff.stats.insertions}
+            deletions={diff.stats.deletions} />
+        </Link>
       {/await}
     </div>
   </div>

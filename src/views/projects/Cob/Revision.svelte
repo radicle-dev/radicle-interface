@@ -40,8 +40,6 @@
   export let rawPath: (commit?: string) => string;
   export let patchId: string;
   export let patchState: PatchState;
-  export let projectHead: string;
-  export let projectDefaultBranch: string;
   export let projectId: string;
   export let revisionBase: string;
   export let revisionId: string;
@@ -52,6 +50,7 @@
   export let revisionAuthor: { id: string; alias?: string | undefined };
   export let revisionDescription: string;
   export let timelines: Timeline[];
+  export let previousRevBase: string | undefined = undefined;
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
@@ -126,14 +125,15 @@
   let loading: boolean = false;
   let revisionState: State = "read";
 
+  $: fromCommit =
+    previousRevBase !== revisionBase
+      ? revisionBase
+      : previousRevBase ?? revisionBase;
+
   onMount(async () => {
     try {
       loading = true;
-      response = await api.project.getDiff(
-        projectId,
-        revisionBase,
-        revisionOid,
-      );
+      response = await api.project.getDiff(projectId, fromCommit, revisionOid);
     } catch (err: any) {
       error = err;
     } finally {
@@ -292,48 +292,19 @@
           <Loading small />
         {/if}
         {#if response?.diff.stats}
-          {@const { insertions, deletions } = response.diff.stats}
-          <DiffStatBadge {insertions} {deletions} />
-        {/if}
-        {#if previousRevOid}
           <Link
-            title="Compare {utils.formatObjectId(
-              previousRevOid,
-            )}..{utils.formatObjectId(revisionOid)}"
+            title="Compare {utils.formatCommit(
+              fromCommit,
+            )}..{utils.formatCommit(revisionOid)}"
             route={{
               resource: "project.patch",
               project: projectId,
               node: baseUrl,
               patch: patchId,
-              view: {
-                name: "diff",
-                fromCommit: previousRevOid,
-                toCommit: revisionOid,
-              },
+              view: { name: "diff", fromCommit, toCommit: revisionOid },
             }}>
-            <IconButton>
-              <IconSmall name="diff" />
-            </IconButton>
-          </Link>
-        {:else}
-          <Link
-            title="Compare {utils.formatObjectId(
-              projectHead,
-            )}..{utils.formatObjectId(revisionOid)}"
-            route={{
-              resource: "project.patch",
-              project: projectId,
-              node: baseUrl,
-              patch: patchId,
-              view: {
-                name: "diff",
-                fromCommit: projectHead,
-                toCommit: revisionOid,
-              },
-            }}>
-            <IconButton>
-              <IconSmall name="diff" />
-            </IconButton>
+            {@const { insertions, deletions } = response.diff.stats}
+            <DiffStatBadge {insertions} {deletions} />
           </Link>
         {/if}
         <Popover
@@ -351,12 +322,16 @@
           <DropdownList
             slot="popover"
             items={previousRevOid && previousRevId
-              ? [projectHead, previousRevOid]
-              : [projectHead]}>
+              ? [revisionBase, previousRevOid]
+              : [revisionBase]}>
+            {@const baseMismatch = previousRevBase !== revisionBase}
             <Link
               let:item
+              disabled={item !== revisionBase && baseMismatch}
               slot="item"
-              title="{item}..{revisionOid}"
+              title="Compare {utils.formatCommit(item)}..{utils.formatCommit(
+                revisionOid,
+              )}"
               route={{
                 resource: "project.patch",
                 project: projectId,
@@ -368,20 +343,27 @@
                   toCommit: revisionOid,
                 },
               }}>
-              {#if item === projectHead}
+              {#if item === revisionBase}
                 <DropdownListItem selected={false}>
                   <span class="compare-dropdown-item">
-                    Compare to {projectDefaultBranch}:
+                    Compare to base:
                     <span
                       style:color="var(--color-fill-secondary)"
                       style:font-weight="var(--font-weight-bold)"
                       style:font-family="var(--font-family-monospace)">
-                      {utils.formatObjectId(projectHead)}
+                      {utils.formatObjectId(revisionBase)}
                     </span>
                   </span>
                 </DropdownListItem>
               {:else if previousRevId}
-                <DropdownListItem selected={false}>
+                <DropdownListItem
+                  selected={false}
+                  disabled={baseMismatch}
+                  title={baseMismatch
+                    ? "Previous revision has different base"
+                    : `${utils.formatCommit(item)}..${utils.formatCommit(
+                        revisionOid,
+                      )}`}>
                   <span class="compare-dropdown-item">
                     Compare to previous revision: <span
                       style:color="var(--color-fill-secondary)"
@@ -411,12 +393,21 @@
             </NodeId>
 
             {#if patchId === revisionId}
-              opened this patch
+              opened this patch on base
+              <span class="global-oid">
+                {utils.formatObjectId(revisionBase)}
+              </span>
             {:else}
               updated to
               <span class="global-oid">
                 {utils.formatObjectId(revisionId)}
               </span>
+              {#if previousRevBase && previousRevBase !== revisionBase}
+                with base
+                <span class="global-oid">
+                  {utils.formatObjectId(revisionBase)}
+                </span>
+              {/if}
             {/if}
             <span title={utils.absoluteTimestamp(revisionTimestamp)}>
               {utils.formatTimestamp(revisionTimestamp)}
@@ -464,7 +455,7 @@
           {:else if revisionDescription && !first}
             <div class="revision-description txt-small">
               <Markdown
-                rawPath={rawPath(projectHead)}
+                rawPath={rawPath(revisionBase)}
                 content={revisionDescription} />
             </div>
           {/if}
@@ -528,7 +519,7 @@
           <Thread
             enableAttachments
             thread={element.inner}
-            rawPath={rawPath(projectHead)}
+            rawPath={rawPath(revisionBase)}
             canEditComment={canEdit}
             {editComment}
             {createReply}
@@ -570,7 +561,7 @@
             class:positive-review={review.verdict === "accept"}
             class:negative-review={review.verdict === "reject"}>
             <CommentComponent
-              rawPath={rawPath(projectHead)}
+              rawPath={rawPath(revisionBase)}
               authorId={author}
               authorAlias={review.author.alias}
               timestamp={review.timestamp}

@@ -975,8 +975,6 @@
               {rawPath}
               projectId={project.id}
               {timelines}
-              projectDefaultBranch={project.defaultBranch}
-              projectHead={project.head}
               {...revision}
               first={index === 0}
               canEdit={partial(
@@ -1003,6 +1001,7 @@
               patchState={patch.state}
               initiallyExpanded={index === patch.revisions.length - 1}
               previousRevId={previousRevision?.id}
+              previousRevBase={previousRevision?.base}
               previousRevOid={previousRevision?.oid}>
               {#if index === patch.revisions.length - 1}
                 {#if $experimental && session && view.name === "activity"}

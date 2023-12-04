@@ -69,7 +69,7 @@ test("navigate through revision diffs", async ({ page }) => {
       .first()
       .click();
     await secondRevision
-      .getByRole("link", { name: "Compare to main: 38c225e" })
+      .getByRole("link", { name: "Compare to base: 38c225e" })
       .click();
     await expect(
       page.getByRole("button", { name: "Compare 38c225..9e4fea" }),
@@ -95,25 +95,10 @@ test("navigate through revision diffs", async ({ page }) => {
       /patches\/[a-f0-9]{40}\?diff=88b7fd90389c1a629f91ed7bf838d4b947426622\.\.9e4feab1b2123dfa5f22bd0e4656060ec9296638$/,
     );
     await page.goBack();
-
-    await secondRevision
-      .getByRole("link", { name: "Compare 88b7fd9..9e4feab" })
-      .getByRole("button")
-      .click();
-    await expect(
-      page.getByRole("link", { name: "Compare 88b7fd..9e4fea" }),
-    ).toBeVisible();
-    await page.goBack();
   }
-  // First revision
+  // First revision and DiffStatBadge shortcut.
   {
-    await firstRevision
-      .getByRole("button", { name: "toggle-context-menu" })
-      .first()
-      .click();
-    await firstRevision
-      .getByRole("link", { name: "Compare to main: 38c225e" })
-      .click();
+    await firstRevision.getByTitle("Compare 38c225e..88b7fd9").click();
     await expect(
       page.getByRole("button", { name: "Compare 38c225..88b7fd" }),
     ).toBeVisible();
