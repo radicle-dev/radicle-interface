@@ -180,12 +180,30 @@
       {/if}
     {/each}
     {#each diff.copied as file}
-      <FileLocationChange
-        {projectId}
-        {baseUrl}
-        newPath={file.newPath}
-        oldPath={file.oldPath}
-        mode="copied" />
+      {#if "diff" in file}
+        <div use:intersection={observer} id={"observer:" + file.newPath}>
+          <FileDiff
+            {projectId}
+            {baseUrl}
+            {revision}
+            {expanded}
+            content={files[file.new.oid]?.content}
+            oldContent={files[file.old.oid]?.content}
+            visible={filesVisibility.has(file.newPath)}
+            filePath={file.newPath}
+            oldFilePath={file.oldPath}
+            fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
+            headerBadgeCaption="copied" />
+        </div>
+      {:else}
+        <FileLocationChange
+          {projectId}
+          {baseUrl}
+          {revision}
+          newPath={file.newPath}
+          oldPath={file.oldPath}
+          mode="copied" />
+      {/if}
     {/each}
   </Observer>
 </div>

@@ -148,14 +148,24 @@ const diffCopiedChangesetSchema = object({
   oldPath: string(),
 });
 
-const diffMovedChangesetSchema = diffCopiedChangesetSchema.merge(
-  object({
-    current: diffFileSchema,
-  }),
-);
-
-const diffMovedWithModificationsChangesetSchema =
+const diffCopiedWithModificationsChangesetSchema =
   diffCopiedChangesetSchema.merge(
+    object({
+      old: diffFileSchema,
+      new: diffFileSchema,
+      diff: diffContentSchema,
+    }),
+  );
+
+const diffMovedChangesetSchema = object({
+  newPath: string(),
+  oldPath: string(),
+  current: diffFileSchema,
+});
+
+const diffMovedWithModificationsChangesetSchema = diffMovedChangesetSchema
+  .omit({ current: true })
+  .merge(
     object({
       old: diffFileSchema,
       new: diffFileSchema,
@@ -175,7 +185,12 @@ const diffSchema = object({
       diffMovedWithModificationsChangesetSchema,
     ]),
   ),
-  copied: array(diffCopiedChangesetSchema),
+  copied: array(
+    union([
+      diffCopiedWithModificationsChangesetSchema,
+      diffCopiedChangesetSchema,
+    ]),
+  ),
   stats: object({
     filesChanged: number(),
     insertions: number(),
