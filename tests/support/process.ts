@@ -1,7 +1,6 @@
 import type { ExecaChildProcess, Options } from "execa";
 
 import * as Stream from "node:stream";
-import onExit from "exit-hook";
 import { StringDecoder } from "string_decoder";
 import { execa } from "execa";
 
@@ -11,7 +10,9 @@ import { logPrefix } from "./logPrefix.js";
 // We add all proxy and node instances that we spawn to this list.
 const processes: ExecaChildProcess[] = [];
 
-onExit(killAllProcesses);
+process.on("exit", killAllProcesses);
+process.on("SIGINT", killAllProcesses);
+process.on("SIGTERM", killAllProcesses);
 
 // Kill all processes with SIGKILL
 export function killAllProcesses(): void {
@@ -20,6 +21,7 @@ export function killAllProcesses(): void {
       process.kill("SIGKILL");
     }
   }
+  process.exit();
 }
 
 // Spawn a process with `execa` and register it.
