@@ -3,7 +3,6 @@ on: push
 
 jobs:
   check-e2e:
-    continue-on-error: true
     strategy:
       matrix:
         browser: [chromium]
