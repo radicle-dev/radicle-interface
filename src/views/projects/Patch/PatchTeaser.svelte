@@ -41,8 +41,7 @@
     display: flex;
     padding: 1.25rem;
     background-color: var(--color-background-float);
-    border-bottom-left-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
+    border-bottom: 1px solid var(--color-fill-separator);
   }
   .patch-teaser:hover {
     background-color: var(--color-fill-float-hover);
@@ -106,11 +105,6 @@
   }
   .merged {
     color: var(--color-fill-primary);
-  }
-  @media (max-width: 960px) {
-    .labels {
-      display: none;
-    }
   }
 </style>
 

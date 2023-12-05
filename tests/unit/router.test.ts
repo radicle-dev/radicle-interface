@@ -176,26 +176,6 @@ describe("route invariant when parsed", () => {
     });
   });
 
-  test("projects.patch commits", () => {
-    expectParsingInvariant({
-      resource: "project.patch",
-      node,
-      project: "PROJECT",
-      patch: "PATCH",
-      view: { name: "commits" },
-    });
-  });
-
-  test("projects.patch commits with revision", () => {
-    expectParsingInvariant({
-      resource: "project.patch",
-      node,
-      project: "PROJECT",
-      patch: "PATCH",
-      view: { name: "commits", revision: "REVISION" },
-    });
-  });
-
   test("projects.patch changes", () => {
     expectParsingInvariant({
       resource: "project.patch",

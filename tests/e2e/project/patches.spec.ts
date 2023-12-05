@@ -3,11 +3,11 @@ import { createProject } from "@tests/support/project";
 
 test("navigate patch listing", async ({ page }) => {
   await page.goto(cobUrl);
-  await page.getByRole("link", { name: "2 patches" }).click();
+  await page.getByRole("link", { name: "Patches 2" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches`);
 
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
-  await page.getByRole("link", { name: "1 merged" }).click();
+  await page.getByRole("link", { name: "Merged 1" }).click();
   await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
   await expect(
     page.locator(".comments").filter({ hasText: "5" }),
@@ -42,10 +42,10 @@ test("patches counters", async ({ page, authenticatedPeer }) => {
     cwd: projectFolder,
   });
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
-  await page.locator(".dropdown-item").getByText("1 open").click();
-  await expect(page.getByRole("button", { name: "2 patches" })).toBeVisible();
+  await page.locator(".dropdown-item").getByText("Open 1").click();
+  await expect(page.getByRole("button", { name: "Patches 2" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "filter-dropdown" }).first(),
-  ).toHaveText("2 open");
-  await expect(page.locator(".list .patch-teaser")).toHaveCount(2);
+  ).toHaveText("Open 2");
+  await expect(page.locator(".patch-teaser")).toHaveCount(2);
 });

@@ -12,6 +12,7 @@
 
   import BlobComponent from "./Source/Blob.svelte";
   import TreeComponent from "./Source/Tree.svelte";
+  import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
   export let rawPath: (commit?: string) => string;
@@ -25,7 +26,6 @@
   export let tree: Tree;
   export let seeding: boolean;
 
-  // Whether the mobile file tree is visible.
   let mobileFileTree = false;
   let treeElement: HTMLElement | undefined = undefined;
   let treeOverflow: boolean = false;
@@ -82,6 +82,7 @@
   .container {
     display: flex;
     width: inherit;
+    padding: 0 1rem 1rem 1rem;
   }
 
   .column-left {
@@ -113,80 +114,60 @@
   }
   .sticky {
     position: sticky;
-    top: 2rem;
-    max-height: 100vh;
-  }
-
-  @media (max-width: 720px) {
-    .column-right {
-      padding: 1.5rem 0;
-      min-width: 0;
-    }
-    .source-tree {
-      margin: 1rem 0;
-    }
-    .container {
-      padding: 0;
-      flex-direction: column;
-    }
-    .column-left {
-      display: none;
-      padding-right: 0;
-    }
-    .sticky {
-      max-height: initial;
-    }
+    top: 4.5rem;
+    max-height: calc(100vh - 5.5rem);
   }
 </style>
 
-<Layout {baseUrl} {project} {seeding} activeTab="source">
-  <svelte:fragment slot="subheader">
-    <div style:margin-top="1rem">
-      <Header
-        node={baseUrl}
-        {project}
-        peers={peersWithRoute}
-        branches={branchesWithRoute}
-        {revision}
-        {tree}
-        filesLinkActive={true}
-        historyLinkActive={false} />
+<Layout {baseUrl} {project} activeTab="source" styleRightContentPadding="0">
+  <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-      {#if tree.entries.length > 0}
-        <div class="layout-mobile">
-          <Button
-            styleWidth="100%"
-            size="large"
-            variant="outline"
-            on:click={() => {
-              mobileFileTree = !mobileFileTree;
-            }}>
-            Browse
-          </Button>
+  <div style:margin-top="1rem" style:margin-left="1rem" slot="subheader">
+    <Header
+      node={baseUrl}
+      {project}
+      peers={peersWithRoute}
+      branches={branchesWithRoute}
+      {revision}
+      {tree}
+      filesLinkActive={true}
+      historyLinkActive={false} />
+  </div>
+  <div class="global-hide-on-desktop">
+    {#if tree.entries.length > 0}
+      <div style:margin="1rem">
+        <Button
+          styleWidth="100%"
+          size="large"
+          variant="outline"
+          on:click={() => {
+            mobileFileTree = !mobileFileTree;
+          }}>
+          Browse
+        </Button>
+      </div>
+
+      {#if mobileFileTree}
+        <div class="layout-mobile" style:margin="1rem">
+          <TreeComponent
+            projectId={project.id}
+            {revision}
+            {baseUrl}
+            {fetchTree}
+            {path}
+            {peer}
+            {tree}
+            on:select={() => {
+              mobileFileTree = false;
+            }} />
         </div>
-
-        {#if mobileFileTree}
-          <div class="layout-mobile" style:margin-top="1rem">
-            <TreeComponent
-              projectId={project.id}
-              {revision}
-              {baseUrl}
-              {fetchTree}
-              {path}
-              {peer}
-              {tree}
-              on:select={() => {
-                mobileFileTree = false;
-              }} />
-          </div>
-        {/if}
       {/if}
-    </div>
-  </svelte:fragment>
+    {/if}
+  </div>
 
   <div class="container center-content">
     {#if tree.entries.length > 0}
-      <div class="column-left">
+      <div class="column-left global-hide-on-mobile">
         <div
           bind:this={treeElement}
           class="source-tree sticky"

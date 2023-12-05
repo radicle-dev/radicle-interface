@@ -2,16 +2,13 @@
   import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
   import { type Route } from "@app/lib/router";
 
-  import { pluralize } from "@app/lib/pluralize";
-
   import BranchSelector from "./BranchSelector.svelte";
   import PeerSelector from "./PeerSelector.svelte";
 
+  import Button from "@app/components/Button.svelte";
+  import HoverPopover from "@app/components/HoverPopover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import Button from "@app/components/Button.svelte";
-  import Radio from "@app/components/Radio.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
 
   export let node: BaseUrl;
   export let branches: Array<{ name: string; route: Route }>;
@@ -37,23 +34,52 @@
 </script>
 
 <style>
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
   .header {
     font-size: var(--font-size-tiny);
     display: flex;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
-    gap: 1rem;
+    position: relative;
+  }
+  .header::after {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    bottom: 0;
+    border-bottom: 1px solid var(--color-fill-separator);
+    width: calc(100% + 1rem);
+    z-index: -1;
   }
 
-  @media (max-width: 960px) {
-    .header {
-      margin-bottom: 1.5rem;
-    }
+  .counter {
+    border-radius: var(--border-radius-tiny);
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-dim);
+    padding: 0 0.25rem;
+  }
+
+  .title-counter {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .selected {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-contrast);
   }
 </style>
 
-<div class="header">
+<div class="top-header">
   {#if peers.length > 0}
     <PeerSelector {peers} />
   {/if}
@@ -64,8 +90,10 @@
     {node}
     selectedCommitId={commitId}
     {selectedBranch} />
+</div>
 
-  <Radio>
+<div class="header">
+  <div style="display: flex; gap: 0.25rem;">
     <Link
       route={{
         resource: "project.source",
@@ -76,7 +104,7 @@
       }}>
       <Button
         styleBorderRadius="0"
-        variant={filesLinkActive ? "gray-white" : "dim"}>
+        variant={filesLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="file" />Files
       </Button>
     </Link>
@@ -91,22 +119,24 @@
       }}>
       <Button
         styleBorderRadius="0"
-        variant={historyLinkActive ? "gray-white" : "dim"}>
+        variant={historyLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="commit" />
-        <div>
-          {tree.stats.commits}
-          {pluralize("commit", tree.stats.commits)}
+        <div class="title-counter">
+          Commits
+          <div class="counter" class:selected={historyLinkActive}>
+            {tree.stats.commits}
+          </div>
         </div>
       </Button>
     </Link>
-  </Radio>
+  </div>
 
   <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
-    <Button disabled notAllowed={false} variant="outline" slot="toggle">
+    <Button disabled notAllowed={false} variant="tab" slot="toggle">
       <IconSmall name="user" />
-      <div>
-        {tree.stats.contributors}
-        {pluralize("contributor", tree.stats.contributors)}
+      <div class="title-counter">
+        Contributors
+        <div class="counter">{tree.stats.contributors}</div>
       </div>
     </Button>
     <div class="txt-small" slot="popover">

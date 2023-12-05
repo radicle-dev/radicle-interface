@@ -18,16 +18,12 @@ async function expectCounts(
 ) {
   await expect(
     page.getByRole("link", {
-      name: `${params.commits} ${params.commits === 1 ? "commit" : "commits"}`,
+      name: `Commits ${params.commits}`,
     }),
   ).toBeVisible();
 
   await expect(
-    page.getByText(
-      `${params.contributors} ${
-        params.contributors === 1 ? "contributor" : "contributors"
-      }`,
-    ),
+    page.getByText(`Contributors ${params.contributors}`),
   ).toBeVisible();
 }
 
@@ -71,7 +67,7 @@ test("navigate to project", async ({ page }) => {
 
 test("show source tree at specific revision", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "6 commits" }).click();
+  await page.getByRole("link", { name: "Commits 6" }).click();
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
@@ -171,22 +167,22 @@ test("files with special characters in the filename", async ({ page }) => {
   await sourceTree.getByText("special").click();
 
   await sourceTree.getByText("+plus+").click();
-  await expect(page.locator(".filename")).toContainText("+plus");
+  await expect(page.getByRole("banner")).toContainText("+plus");
 
   await sourceTree.getByText("-dash-").click();
-  await expect(page.locator(".filename")).toContainText("-dash-");
+  await expect(page.getByRole("banner")).toContainText("-dash-");
 
   await sourceTree.getByText(":colon:").click();
-  await expect(page.locator(".filename")).toContainText(":colon:");
+  await expect(page.getByRole("banner")).toContainText(":colon:");
 
   await sourceTree.getByText(";semicolon;").click();
-  await expect(page.locator(".filename")).toContainText(";semicolon;");
+  await expect(page.getByRole("banner")).toContainText(";semicolon;");
 
   await sourceTree.getByText("@at@").click();
-  await expect(page.locator(".filename")).toContainText("@at@");
+  await expect(page.getByRole("banner")).toContainText("@at@");
 
   await sourceTree.getByText("_underscore_").click();
-  await expect(page.locator(".filename")).toContainText("_underscore_");
+  await expect(page.getByRole("banner")).toContainText("_underscore_");
 
   // TODO: fix these errors in `radicle-httpd` for the following edge cases.
   //
@@ -198,13 +194,13 @@ test("files with special characters in the filename", async ({ page }) => {
   // );
 
   await sourceTree.getByText("spaces are okay").click();
-  await expect(page.locator(".filename")).toContainText("spaces are okay");
+  await expect(page.getByRole("banner")).toContainText("spaces are okay");
 
   await sourceTree.getByText("~tilde~").click();
-  await expect(page.locator(".filename")).toContainText("~tilde~");
+  await expect(page.getByRole("banner")).toContainText("~tilde~");
 
   await sourceTree.getByText("👹👹👹").click();
-  await expect(page.locator(".filename")).toContainText("👹👹👹");
+  await expect(page.getByRole("banner")).toContainText("👹👹👹");
 });
 
 test("binary files", async ({ page }) => {
@@ -380,7 +376,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
-  await page.getByRole("button", { name: "Theme" }).first().click();
+  await page.getByRole("button", { name: "Settings" }).first().click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
   await expect(page.getByText("bob")).not.toBeVisible();
@@ -458,20 +454,14 @@ test("internal file markdown link", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/link-files.md`);
   await page.getByRole("link", { name: "Markdown Cheatsheet" }).click();
   await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md`);
-  await expect(
-    page.locator(".filename", { hasText: "cheatsheet.md" }),
-  ).toBeVisible();
+  await expect(page.getByText("cheatsheet.md").nth(2)).toBeVisible();
 
   await page.goto(`${markdownUrl}/tree/main/link-files.md`);
   await page.getByRole("link", { name: "black square" }).click();
   await expect(page).toHaveURL(
     `${markdownUrl}/tree/main/assets/black-square.png`,
   );
-  await expect(
-    page.locator(".file-path", {
-      hasText: "assets/black-square.png",
-    }),
-  ).toBeVisible();
+  await expect(page.getByText("assets/black-square.png").nth(1)).toBeVisible();
   await expect(
     page.getByRole("link", { name: "black-square.png" }),
   ).toBeVisible();

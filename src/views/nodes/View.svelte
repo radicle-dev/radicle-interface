@@ -5,6 +5,7 @@
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
 
+  import AppLayout from "@app/App/AppLayout.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -91,74 +92,71 @@
   }
 </style>
 
-<div class="layout">
-  <div class="wrapper">
-    <div class="header">
-      <div class="title">
-        {hostname}
-      </div>
-      <div class="info">
-        <div>
-          {#each externalAddresses as address}
-            <!-- If there are externalAddresses this is probably a remote node -->
-            <!-- in that case, we show all the defined externalAddresses as a listing -->
-            <CopyableId id={`${nid}@${address}`}>
-              {truncateId(nid)}@{address}
-            </CopyableId>
-          {:else}
-            <!-- else this is probably a local node -->
-            <!-- So we show only the nid -->
-            <div class="layout-desktop">
-              <CopyableId id={nid} />
-            </div>
-            <div class="layout-mobile">
-              <CopyableId id={nid}>
-                {truncateId(nid)}
+<AppLayout>
+  <div class="layout">
+    <div class="wrapper">
+      <div class="header">
+        <div class="title">
+          {hostname}
+        </div>
+        <div class="info">
+          <div>
+            {#each externalAddresses as address}
+              <!-- If there are externalAddresses this is probably a remote node -->
+              <!-- in that case, we show all the defined externalAddresses as a listing -->
+              <CopyableId id={`${nid}@${address}`}>
+                {truncateId(nid)}@{address}
               </CopyableId>
-            </div>
-          {/each}
+            {:else}
+              <!-- else this is probably a local node -->
+              <!-- So we show only the nid -->
+              <CopyableId id={nid} />
+            {/each}
+          </div>
+          <div class="version">
+            v{version}
+          </div>
         </div>
-        <div class="version">
-          v{version}
+      </div>
+
+      <div class="projects">
+        {#each projects as { project, activity } (project.id)}
+          <Link
+            route={{
+              resource: "project.source",
+              project: project.id,
+              node: baseUrl,
+            }}>
+            <ProjectCard
+              {activity}
+              id={project.id}
+              name={project.name}
+              visibility={project.visibility?.type}
+              description={project.description}
+              head={project.head} />
+          </Link>
+        {/each}
+      </div>
+
+      {#if loadingProjects}
+        <div class="more">
+          <Loading noDelay small />
         </div>
-      </div>
+      {/if}
+
+      {#if showMoreButton}
+        <div class="more">
+          <Button size="large" variant="outline" on:click={loadMore}>
+            More
+          </Button>
+        </div>
+      {/if}
+
+      {#if error}
+        <ErrorMessage
+          message="Not able to load more projects from this node"
+          {error} />
+      {/if}
     </div>
-
-    <div class="projects">
-      {#each projects as { project, activity } (project.id)}
-        <Link
-          route={{
-            resource: "project.source",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <ProjectCard
-            {activity}
-            id={project.id}
-            name={project.name}
-            visibility={project.visibility?.type}
-            description={project.description}
-            head={project.head} />
-        </Link>
-      {/each}
-    </div>
-
-    {#if loadingProjects}
-      <div class="more">
-        <Loading noDelay small />
-      </div>
-    {/if}
-
-    {#if showMoreButton}
-      <div class="more">
-        <Button size="large" variant="outline" on:click={loadMore}>More</Button>
-      </div>
-    {/if}
-
-    {#if error}
-      <ErrorMessage
-        message="Not able to load more projects from this node"
-        {error} />
-    {/if}
   </div>
-</div>
+</AppLayout>

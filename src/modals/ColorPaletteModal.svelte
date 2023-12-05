@@ -111,7 +111,7 @@
   .color {
     width: 3rem;
     height: 3rem;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-regular);
     outline-style: solid !important;
     outline-color: #88888899 !important;
     outline-offset: 0.3rem;

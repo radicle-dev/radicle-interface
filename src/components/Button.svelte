@@ -13,7 +13,12 @@
     | "secondary"
     | "secondary-toggle-off"
     | "secondary-toggle-on"
-    | "tab" = "gray";
+    | "secondary-mobile"
+    | "secondary-mobile-toggle"
+    | "naked-toggle-off"
+    | "naked-toggle-on"
+    | "tab"
+    | "tab-active" = "gray";
   export let size: "small" | "regular" | "large" = "regular";
 
   export let autofocus: boolean = false;
@@ -24,6 +29,9 @@
   export let stylePadding: string | undefined = undefined;
   export let styleWidth: "100%" | undefined = undefined;
   export let styleBorderRadius: string | undefined = undefined;
+  export let styleJustifyContent: "center" | "flex-start" = "center";
+
+  let hover: boolean = false;
 </script>
 
 <style>
@@ -32,7 +40,6 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
     border: none;
     border-radius: var(--border-radius-tiny);
     font-family: var(--font-family-sans-serif);
@@ -41,6 +48,7 @@
     font-feature-settings: inherit;
     white-space: nowrap;
     gap: 0.5rem;
+    touch-action: manipulation;
   }
 
   button:disabled {
@@ -67,7 +75,7 @@
   }
 
   .background {
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-dim);
     background-color: var(--color-background-default);
   }
   .background[disabled] {
@@ -75,6 +83,7 @@
     background-color: var(--color-background-default);
   }
   .background:not([disabled]):hover {
+    color: var(--color-foreground-contrast);
     background-color: var(--color-fill-ghost);
   }
 
@@ -131,7 +140,7 @@
 
   .outline {
     background-color: transparent;
-    color: var(--color-foreground-contrast);
+    color: var(--color-foreground-dim);
     border: 1px solid var(--color-border-hint);
   }
   .outline[disabled] {
@@ -141,7 +150,6 @@
   .outline:not([disabled]):hover {
     background-color: transparent;
     border: 1px solid var(--color-border-focus);
-    color: var(--color-foreground-contrast);
   }
 
   .primary-toggle-on {
@@ -204,6 +212,35 @@
     color: var(--color-foreground-emphasized);
   }
 
+  .naked-toggle-off {
+    background-color: transparent;
+    color: var(--color-foreground-dim);
+    border: 1px solid transparent;
+  }
+  .naked-toggle-off[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .naked-toggle-off:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-fill-secondary);
+  }
+
+  .naked-toggle-on {
+    background-color: transparent;
+    color: var(--color-foreground-emphasized);
+    border: 1px solid transparent;
+  }
+  .naked-toggle-on[disabled] {
+    background-color: transparent;
+    color: var(--color-fill-gray);
+  }
+  .naked-toggle-on:not([disabled]):hover {
+    background-color: transparent;
+    border: 1px solid var(--color-border-focus);
+    color: var(--color-foreground-emphasized-hover);
+  }
+
   .secondary {
     color: var(--color-foreground-match-background);
     background-color: var(--color-fill-secondary);
@@ -218,18 +255,61 @@
     background-color: var(--color-fill-secondary-hover);
   }
 
-  .tab {
-    background-color: var(--color-fill-secondary);
+  .secondary-mobile {
+    color: var(--color-foreground-dim);
+    background-color: var(--color-background-default);
+  }
+
+  .secondary-mobile[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
+  }
+
+  .secondary-mobile:not([disabled]):active {
     color: var(--color-foreground-match-background);
+    background-color: var(--color-fill-secondary);
+  }
+
+  .secondary-mobile-toggle {
+    color: var(--color-foreground-dim);
+    background-color: var(--color-background-default);
+  }
+
+  .secondary-mobile-toggle[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
+  }
+
+  .tab {
+    background-color: var(--color-background-default);
+    color: var(--color-foreground-contrast);
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--color-fill-separator);
   }
 
   .tab[disabled] {
-    background-color: var(--color-fill-secondary);
-    color: var(--color-foreground-match-background);
+    background-color: var(--color-background-default);
+    color: var(--color-foreground-disabled);
   }
 
   .tab:not([disabled]):hover {
-    background-color: var(--color-fill-secondary-hover);
+    background-color: var(--color-fill-float-hover);
+    border-top-right-radius: var(--border-radius-tiny) !important;
+    border-top-left-radius: var(--border-radius-tiny) !important;
+  }
+
+  .tab-active {
+    background-color: var(--color-background-default);
+    border: 1px solid var(--color-fill-separator);
+    border-bottom: 1px solid var(--color-background-default);
+    color: var(--color-foreground-contrast);
+    border-top-right-radius: var(--border-radius-tiny) !important;
+    border-top-left-radius: var(--border-radius-tiny) !important;
+  }
+
+  .tab-active[disabled] {
+    background-color: var(--color-background-default);
+    color: var(--color-foreground-disabled);
   }
 </style>
 
@@ -244,11 +324,18 @@
   style:padding={stylePadding}
   style:width={styleWidth}
   style:border-radius={styleBorderRadius}
+  style:justify-content={styleJustifyContent}
   on:blur
   on:click
   on:focus
   on:mouseout
   on:mouseover
+  on:mouseenter={() => {
+    hover = true;
+  }}
+  on:mouseleave={() => {
+    hover = false;
+  }}
   class:disabled
   class:not-allowed={notAllowed}
   class:small={size === "small"}
@@ -264,7 +351,12 @@
   class:primary-toggle-on={variant === "primary-toggle-on"}
   class:secondary-toggle-off={variant === "secondary-toggle-off"}
   class:secondary-toggle-on={variant === "secondary-toggle-on"}
+  class:naked-toggle-off={variant === "naked-toggle-off"}
+  class:naked-toggle-on={variant === "naked-toggle-on"}
   class:secondary={variant === "secondary"}
-  class:tab={variant === "tab"}>
-  <slot />
+  class:secondary-mobile={variant === "secondary-mobile"}
+  class:secondary-mobile-toggle={variant === "secondary-mobile-toggle"}
+  class:tab={variant === "tab"}
+  class:tab-active={variant === "tab-active"}>
+  <slot {hover} />
 </button>

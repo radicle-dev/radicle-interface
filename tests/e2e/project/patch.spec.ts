@@ -155,13 +155,13 @@ test("change patch state", async ({ page, authenticatedPeer }) => {
   await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches/${patchId}`);
   await page.getByRole("button", { name: "Archive patch" }).first().click();
   await expect(page.getByText("archived", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Patches 0" })).toBeVisible();
 
   await page.getByLabel("stateToggle").first().click();
   await page.getByText("Convert to draft").click();
   await page.getByText("Convert to draft").click();
   await expect(page.getByText("draft", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "0 patches" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Patches 0" })).toBeVisible();
 });
 
 test("edit patch", async ({ page, authenticatedPeer }) => {

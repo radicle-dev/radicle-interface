@@ -5,9 +5,7 @@
   import * as httpd from "@app/lib/httpd";
   import { unreachable } from "@app/lib/utils";
 
-  import Footer from "./App/Footer.svelte";
   import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
-  import Header from "./App/Header.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
   import LoadingBar from "./App/LoadingBar.svelte";
 
@@ -42,10 +40,12 @@
 </script>
 
 <style>
-  .app {
+  .loading {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     height: 100%;
+    align-items: center;
   }
 </style>
 
@@ -56,40 +56,36 @@
 <FullscreenModalPortal />
 <Hotkeys />
 
-<div class="app">
-  <Header />
-  {#if $activeRouteStore.resource === "booting"}
+{#if $activeRouteStore.resource === "booting"}
+  <div class="loading">
     <Loading />
-  {:else if $activeRouteStore.resource === "home"}
-    <Home {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "nodes"}
-    <Nodes {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "session"}
-    <Session activeRoute={$activeRouteStore} />
-  {:else if $activeRouteStore.resource === "project.source"}
-    <Source {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.history"}
-    <History {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.commit"}
-    <Commit {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.issues"}
-    <Issues {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.newIssue"}
-    <NewIssue {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.issue"}
-    <Issue {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.patches"}
-    <Patches {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "project.patch"}
-    <Patch {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "loadError"}
-    <LoadError {...$activeRouteStore.params} />
-  {:else if $activeRouteStore.resource === "notFound"}
-    <NotFound {...$activeRouteStore.params} />
-  {:else}
-    {unreachable($activeRouteStore)}
-  {/if}
-  <div style:margin-top="auto">
-    <Footer />
   </div>
-</div>
+{:else if $activeRouteStore.resource === "home"}
+  <Home {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "nodes"}
+  <Nodes {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "session"}
+  <Session activeRoute={$activeRouteStore} />
+{:else if $activeRouteStore.resource === "project.source"}
+  <Source {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.history"}
+  <History {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.commit"}
+  <Commit {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.issues"}
+  <Issues {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.newIssue"}
+  <NewIssue {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.issue"}
+  <Issue {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.patches"}
+  <Patches {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "project.patch"}
+  <Patch {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "loadError"}
+  <LoadError {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "notFound"}
+  <NotFound {...$activeRouteStore.params} />
+{:else}
+  {unreachable($activeRouteStore)}
+{/if}

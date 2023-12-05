@@ -2,6 +2,7 @@ import {
   aliceRemote,
   bobHead,
   expect,
+  shortBobHead,
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
@@ -12,7 +13,7 @@ test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();
-  await page.getByRole("link", { name: "7 commits" }).click();
+  await page.getByRole("link", { name: "Commits 7" }).click();
 
   await page.getByText("Update readme").click();
   await expect(page).toHaveURL(commitUrl);
@@ -38,7 +39,9 @@ test("modified file", async ({ page }) => {
   // Commit header.
   {
     await expect(page.getByText("Update readme")).toBeVisible();
-    await expect(page.getByText(bobHead)).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: shortBobHead }),
+    ).toBeVisible();
   }
 
   // Diff header.
@@ -117,8 +120,10 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   await expect(page.getByTitle("Current HEAD")).toContainText("0801ace");
   await expect(page.locator(".source-tree >> text=.gitkeep")).toBeVisible();
   await expect(
-    page.locator(
-      "text=deep/directory/hierarchy/is/entirely/possible/in/git/repositories/",
-    ),
+    page
+      .locator(
+        "text=deep/directory/hierarchy/is/entirely/possible/in/git/repositories/",
+      )
+      .nth(1),
   ).toBeVisible();
 });

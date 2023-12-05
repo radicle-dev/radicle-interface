@@ -6,6 +6,8 @@
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as httpd from "@app/lib/httpd";
+
+  import AppLayout from "@app/App/AppLayout.svelte";
   import Loading from "@app/components/Loading.svelte";
 
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
@@ -37,4 +39,6 @@
   });
 </script>
 
-<Loading center />
+<AppLayout>
+  <Loading center />
+</AppLayout>

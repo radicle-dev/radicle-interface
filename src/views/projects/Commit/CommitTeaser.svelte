@@ -56,12 +56,6 @@
     margin: 0.5rem 0;
     font-size: var(--font-size-small);
   }
-
-  @media (max-width: 720px) {
-    .left {
-      overflow: hidden;
-    }
-  }
 </style>
 
 <div class="teaser">

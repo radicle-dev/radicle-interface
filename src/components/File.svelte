@@ -4,6 +4,7 @@
 
   export let collapsable: boolean = false;
   export let expanded: boolean = true;
+  export let sticky: boolean = true;
 
   let header: HTMLDivElement;
 </script>
@@ -18,9 +19,12 @@
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
     background-color: var(--color-background-default);
-    position: sticky;
-    top: 0;
     z-index: 1;
+  }
+
+  .sticky {
+    position: sticky;
+    top: 3.5rem;
   }
 
   .collapsed {
@@ -51,16 +55,14 @@
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
   }
-
   @media (max-width: 720px) {
-    .header,
-    .container {
-      border-radius: 0;
+    .sticky {
+      top: 0rem;
     }
   }
 </style>
 
-<div bind:this={header} class="header" class:collapsed={!expanded}>
+<div bind:this={header} class="header" class:collapsed={!expanded} class:sticky>
   <div class="left">
     {#if collapsable}
       <ExpandButton

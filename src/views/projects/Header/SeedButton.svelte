@@ -26,6 +26,21 @@
     border-radius: var(--border-radius-tiny);
     padding: 0.125rem 0.25rem;
   }
+  .title-counter {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .counter {
+    font-weight: var(--font-weight-regular);
+    border-radius: var(--border-radius-tiny);
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-dim);
+    padding: 0 0.25rem;
+  }
+  .seeding {
+    background-color: var(--color-fill-counter-emphasized);
+    color: var(--color-foreground-emphasized);
+  }
 </style>
 
 <Popover popoverPositionTop="3rem" popoverPositionRight="0">
@@ -43,9 +58,12 @@
     size="large"
     variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="network" />
-    <span>
+    <span class="title-counter">
       {seeding ? "Seeding" : "Seed"}
-      <span style:font-weight="var(--font-weight-regular)">
+      <span
+        class="counter"
+        class:seeding
+        style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>
     </span>

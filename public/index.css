@@ -39,12 +39,6 @@ body {
   scrollbar-color: var(--color-fill-separator) transparent;
 }
 
-@media (max-width: 720px) {
-  body {
-    min-width: 0;
-  }
-}
-
 ::selection {
   background: var(--color-fill-yellow-iconic);
   color: var(--color-foreground-black);
@@ -88,4 +82,29 @@ pre {
   font-size: var(--font-size-small);
   font-family: var(--font-family-monospace);
   font-weight: var(--font-weight-regular);
+}
+
+.global-counter {
+  border-radius: var(--border-radius-tiny);
+  background-color: var(--color-fill-ghost);
+  color: var(--color-foreground-dim);
+  padding: 0 0.25rem;
+  display: block;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  body {
+    min-width: 0;
+  }
+  .global-hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .global-hide-on-desktop {
+    display: none !important;
+  }
 }

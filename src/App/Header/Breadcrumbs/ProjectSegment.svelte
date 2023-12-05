@@ -8,6 +8,7 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Separator from "./Separator.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
 
   export let activeRoute: ProjectLoadedRoute;
 </script>
@@ -24,16 +25,18 @@
 </style>
 
 <span class="segment">
-  {#if activeRoute.params.project.visibility?.type === "private"}
-    <IconSmall name="lock" />
-  {/if}
   <Link
     route={{
       resource: "project.source",
       project: activeRoute.params.project.id,
       node: activeRoute.params.baseUrl,
     }}>
-    {activeRoute.params.project.name}
+    <div class="segment">
+      {#if activeRoute.params.project.visibility?.type === "private"}
+        <IconSmall name="lock" />
+      {/if}
+      {activeRoute.params.project.name}
+    </div>
   </Link>
 </span>
 
@@ -79,7 +82,10 @@
       Patches
     </Link>
   {:else if activeRoute.resource === "project.source"}
-    <!-- Don't show anything, project name already links here -->
+    {#if activeRoute.params.path !== "/"}
+      <Separator />
+      <FilePath filenameWithPath={activeRoute.params.path} />
+    {/if}
   {:else}
     {unreachable(activeRoute)}
   {/if}

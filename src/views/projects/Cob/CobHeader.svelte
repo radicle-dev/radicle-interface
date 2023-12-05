@@ -8,8 +8,6 @@
   .header {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--color-border-hint);
-    padding: 1.5rem;
     border-radius: var(--border-radius-small);
   }
   .subtitle {

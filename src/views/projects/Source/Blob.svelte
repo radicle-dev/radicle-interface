@@ -150,6 +150,11 @@
     margin-bottom: 1.5rem;
   }
 
+  .teaser-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -167,18 +172,9 @@
     padding-right: 0.75rem;
     height: var(--button-small-height);
   }
-
-  @media (max-width: 720px) {
-    .commit-teaser {
-      padding: 0 0.75rem;
-    }
-    .hash-button {
-      display: none;
-    }
-  }
 </style>
 
-<File>
+<File sticky={false}>
   <FilePath slot="left-header" filenameWithPath={blob.path} />
   <svelte:fragment slot="right-header">
     <div class="commit-teaser">
@@ -203,7 +199,7 @@
         <InlineMarkdown fontSize="small" content={lastCommit.summary} />
       </div>
     </div>
-    <div class="layout-desktop-flex" style:gap="0.5rem">
+    <div class="global-hide-on-mobile teaser-buttons">
       {#if isMarkdown}
         <Radio ariaLabel="Toggle render method">
           <Button

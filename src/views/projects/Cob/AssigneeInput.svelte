@@ -113,7 +113,8 @@
         </Badge>
       {/each}
       {#if showInput}
-        <div style="width:100%; display: flex; align-items: center;">
+        <div
+          style="width:100%; display: flex; align-items: center; gap: 0.5rem;">
           <TextInput
             {valid}
             autofocus

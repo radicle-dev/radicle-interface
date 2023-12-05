@@ -25,7 +25,6 @@
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
-  export let seeding: boolean;
 
   let preview: boolean = false;
   let selectionStart = 0;
@@ -101,9 +100,8 @@
 
 <style>
   .form {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) 1fr;
-    margin-bottom: 1rem;
+    display: flex;
+    flex: 1;
   }
   .actions {
     display: flex;
@@ -115,36 +113,27 @@
   .metadata {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
     font-size: var(--font-size-small);
-    padding-left: 1rem;
-    margin-left: 1rem;
+    padding: 1rem;
+    margin-left: 3rem;
+    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-background-float);
+    border-radius: var(--border-radius-small);
+    height: fit-content;
+    gap: 1.5rem;
+    width: 20rem;
   }
   .editor {
     flex: 2;
-    padding-right: 1rem;
   }
   .author {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-  @media (max-width: 720px) {
-    .form {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .editor {
-      padding-right: 0;
-    }
-    .metadata {
-      margin-left: 0;
-      padding-left: 0;
-      gap: 2rem;
-    }
-  }
 </style>
 
-<Layout {baseUrl} {project} {seeding} activeTab="issues">
+<Layout {baseUrl} {project} activeTab="issues">
   <main>
     {#if session}
       <div class="form">

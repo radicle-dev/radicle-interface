@@ -45,7 +45,7 @@
 
 <div class="footer">
   <div class="left">
-    <span class="layout-desktop">Supported by</span>
+    Supported by
     <a
       class="logo"
       target="_blank"
@@ -55,15 +55,15 @@
     </a>
   </div>
 
-  <div class="center layout-desktop">
+  <div class="center">
     Press <KeyHint>?</KeyHint>
     for keyboard shortcuts
   </div>
   <div class="right">
     <Popover popoverPositionBottom="2rem" popoverPositionRight="0">
       <IconButton slot="toggle" let:toggle on:click={toggle}>
-        <IconSmall name="brush" />
-        Theme
+        <IconSmall name="settings" />
+        Settings
       </IconButton>
 
       <div slot="popover" style:width="19rem">

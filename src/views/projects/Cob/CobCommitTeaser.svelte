@@ -48,12 +48,6 @@
     margin: 0.5rem 0;
     font-size: var(--font-size-tiny);
   }
-
-  @media (max-width: 720px) {
-    .left {
-      overflow: hidden;
-    }
-  }
 </style>
 
 <div class="teaser" aria-label="commit-teaser">

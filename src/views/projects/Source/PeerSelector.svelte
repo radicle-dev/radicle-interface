@@ -4,7 +4,6 @@
 
   import { closeFocused } from "@app/components/Popover.svelte";
   import { formatNodeId } from "@app/lib/utils";
-  import { pluralize } from "@app/lib/pluralize";
 
   import NodeId from "@app/components/NodeId.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -28,6 +27,15 @@
   }
 </script>
 
+<style>
+  .counter {
+    border-radius: var(--border-radius-tiny);
+    background-color: var(--color-fill-counter);
+    color: var(--color-foreground-contrast);
+    padding: 0 0.25rem;
+  }
+</style>
+
 <Popover
   popoverPadding="0"
   popoverPositionTop="2.5rem"
@@ -49,8 +57,10 @@
         <Badge size="tiny" variant="secondary">delegate</Badge>
       {/if}
     {:else}
-      {peers.length}
-      {pluralize("remote", peers.length)}
+      Remotes
+      <div class="counter">
+        {peers.length}
+      </div>
     {/if}
     <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
   </Button>

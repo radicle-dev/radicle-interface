@@ -9,7 +9,7 @@ import { createProject } from "@tests/support/project";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "6 commits" }).click();
+  await page.getByRole("link", { name: "Commits 6" }).click();
 
   // Alice's peer.
   {
@@ -23,7 +23,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".history .teaser")).toHaveCount(6);
+    await expect(page.locator(".list .teaser")).toHaveCount(6);
 
     const latestCommit = page.locator(".teaser").first();
     await expect(latestCommit).toContainText("Add README.md");
@@ -42,7 +42,7 @@ test("peer and branch switching", async ({ page }) => {
       page.getByRole("button", { name: "feature/branch" }),
     ).toBeVisible();
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".history .teaser")).toHaveCount(9);
+    await expect(page.locator(".list .teaser")).toHaveCount(9);
 
     await page.getByTitle("Change branch").click();
     await page.getByText("orphaned-branch").click();
@@ -85,7 +85,7 @@ test("peer and branch switching", async ({ page }) => {
 
 test("expand commit message", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "6 commits" }).click();
+  await page.getByRole("link", { name: "Commits 6" }).click();
   const commitToggle = page.getByRole("button", { name: "expand" }).first();
 
   await commitToggle.click();
@@ -111,7 +111,7 @@ test("relative timestamps", async ({ page }) => {
   });
 
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "6 commits" }).click();
+  await page.getByRole("link", { name: "Commits 6" }).click();
 
   await page.getByTitle("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();
@@ -136,7 +136,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     name: "alice-project",
   });
   await page.goto(`${alice.uiUrl()}/${rid}`);
-  await page.getByRole("link", { name: "1 commit" }).click();
+  await page.getByRole("link", { name: "Commits 1" }).click();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
 
   await alice.git(["commit", "--allow-empty", "--message", "first change"], {
@@ -147,7 +147,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   });
   await page.reload();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
-  await expect(page.getByRole("link", { name: "2 commits" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Commits 2" })).toBeVisible();
 
   await expect(page.getByLabel("canonical-branch")).toHaveText("main");
   await expect(page.getByTitle("Current HEAD")).toHaveText("516fa74");
@@ -157,7 +157,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     .getByRole("link", { name: "alice-project" })
     .click();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}`);
-  await page.getByRole("link", { name: "2 commits" }).click();
+  await page.getByRole("link", { name: "Commits 2" }).click();
 
   await alice.git(
     [
@@ -175,8 +175,8 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   });
   await page.reload();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
-  await expect(page.getByRole("link", { name: "3 commits" })).toHaveText(
-    "3 commits",
+  await expect(page.getByRole("link", { name: "Commits 3" })).toHaveText(
+    "Commits 3",
   );
   await expect(page.getByLabel("canonical-branch")).toHaveText("main");
   await expect(page.getByTitle("Current HEAD")).toHaveText("bb9089a");

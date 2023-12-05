@@ -25,19 +25,19 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-    padding: 1rem;
+    padding: 0.5rem;
+    height: 3.5rem;
   }
   .left,
   .right {
     display: flex;
     align-items: center;
-    height: var(--button-regular-height);
     gap: 1rem;
   }
 
   .logo {
     height: var(--button-regular-height);
-    margin-right: 0.5rem;
+    margin: 0 0.5rem;
   }
   .label {
     display: block;
@@ -59,29 +59,24 @@
     font-weight: var(--font-weight-bold);
     margin-bottom: 0.5rem;
   }
-  @media (max-width: 720px) {
-    header .right {
-      gap: 1rem;
-    }
-  }
 </style>
 
-<header>
+<header class="global-hide-on-mobile">
   <div class="left">
-    <Link route={{ resource: "home" }}>
+    <Link
+      style="display: flex; align-items: center;"
+      route={{ resource: "home" }}>
       <img
-        width="40"
-        height="40"
+        width="24"
+        height="24"
         class="logo"
         alt="Radicle logo"
         src="/radicle.svg" />
     </Link>
-    <div class="layout-desktop">
-      <Breadcrumbs />
-    </div>
+    <Breadcrumbs />
   </div>
 
-  <div class="right layout-desktop-flex">
+  <div class="right">
     {#if $httpdStore.state === "stopped"}
       <Popover popoverPositionTop="3rem" popoverPositionRight="0">
         <Button
@@ -90,7 +85,7 @@
           on:click={toggle}
           title={buttonTitle[$httpdStore.state]}
           size="large"
-          variant="secondary-toggle-off">
+          variant="naked-toggle-off">
           <IconSmall name="device" />
           Connect
         </Button>

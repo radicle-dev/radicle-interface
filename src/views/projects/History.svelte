@@ -12,13 +12,14 @@
   import { groupCommits } from "@app/lib/commit";
   import { COMMITS_PER_PAGE } from "./router";
 
+  import Button from "@app/components/Button.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Header from "./Source/Header.svelte";
   import Layout from "./Layout.svelte";
-  import Loading from "@app/components/Loading.svelte";
-  import Button from "@app/components/Button.svelte";
   import List from "@app/components/List.svelte";
+  import Loading from "@app/components/Loading.svelte";
+  import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
   export let branches: string[];
@@ -87,17 +88,15 @@
 </script>
 
 <style>
-  .history {
-    font-size: var(--font-size-small);
-  }
   .more {
-    margin-top: 2rem;
+    margin: 2rem 0;
     min-height: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .group-header {
+    margin-left: 1rem;
     margin-top: 3rem;
     margin-bottom: 1rem;
     font-size: var(--font-size-small);
@@ -107,41 +106,36 @@
   .group-header:first-child {
     margin-top: 0;
   }
-
-  @media (max-width: 720px) {
-    .group-header {
-      margin-left: 1rem;
-    }
-  }
 </style>
 
-<Layout {baseUrl} {project} {seeding} activeTab="source">
-  <svelte:fragment slot="subheader">
-    <div style:margin-top="1rem">
-      <Header
-        node={baseUrl}
-        {project}
-        peers={peersWithRoute}
-        branches={branchesWithRoute}
-        {revision}
-        {tree}
-        filesLinkActive={false}
-        historyLinkActive={true} />
-    </div>
-  </svelte:fragment>
+<Layout {baseUrl} {project} activeTab="source" styleRightContentPadding="0">
+  <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-  <div class="history">
-    {#each groupCommits(allCommitHeaders) as group (group.time)}
-      <div class="group-header">{group.date}</div>
-      <List items={group.commits}>
-        <CommitTeaser
-          slot="item"
-          let:item
-          projectId={project.id}
-          {baseUrl}
-          commit={item} />
-      </List>
-    {/each}
+  <div style:margin-top="1rem" style:margin-left="1rem" slot="subheader">
+    <Header
+      node={baseUrl}
+      {project}
+      peers={peersWithRoute}
+      branches={branchesWithRoute}
+      {revision}
+      {tree}
+      filesLinkActive={false}
+      historyLinkActive={true} />
+  </div>
+
+  {#each groupCommits(allCommitHeaders) as group (group.time)}
+    <div class="group-header">{group.date}</div>
+    <List items={group.commits}>
+      <CommitTeaser
+        slot="item"
+        let:item
+        projectId={project.id}
+        {baseUrl}
+        commit={item} />
+    </List>
+  {/each}
+
+  {#if loading || allCommitHeaders.length < totalCommitCount}
     <div class="more">
       {#if loading}
         <Loading small={page !== 0} center />
@@ -149,7 +143,7 @@
         <Button size="large" variant="outline" on:click={loadMore}>More</Button>
       {/if}
     </div>
-  </div>
+  {/if}
 
   {#if error}
     <div class="message">

@@ -57,7 +57,6 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
-  import CommitTeaser from "@app/views/projects/Commit/CommitTeaser.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
@@ -83,7 +82,6 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
-  export let seeding: boolean;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -555,8 +553,8 @@
 
 <style>
   .patch {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) 1fr;
+    display: flex;
+    flex: 1;
   }
   .metadata {
     display: flex;
@@ -569,6 +567,7 @@
     background-color: var(--color-background-float);
     border-radius: var(--border-radius-small);
     height: fit-content;
+    width: 20rem;
   }
   .title {
     overflow: hidden;
@@ -578,18 +577,11 @@
     align-items: center;
     gap: 0.5rem;
     font-size: var(--font-size-large);
-    font-weight: var(--font-weight-medium);
     height: 2.5rem;
-  }
-  .commit-list {
-    border: 1px solid var(--color-border-hint);
-    border-radius: var(--border-radius-small);
-    overflow: hidden;
-    margin-top: 1rem;
   }
   .tabs {
     display: flex;
-    margin: 3rem 0 1.5rem 0;
+    margin: 3rem 0 1rem 0;
   }
   .author {
     display: flex;
@@ -638,29 +630,22 @@
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-bold);
   }
-  .teaser-wrapper:not(:last-child) {
-    border-bottom: 1px solid var(--color-border-hint);
-  }
   .connector {
     width: 1px;
     height: 1.5rem;
     margin-left: 1rem;
     background-color: var(--color-fill-separator);
   }
-  @media (max-width: 1092px) {
+  @media (max-width: 720px) {
     .patch {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .metadata {
-      display: none;
+      display: block;
     }
   }
 </style>
 
-<Layout {baseUrl} {project} {seeding} activeTab="patches">
+<Layout {baseUrl} {project} activeTab="patches" styleContentMargin="0">
   <div class="patch">
-    <div>
+    <div style="display: flex; flex: 1; flex-direction: column;">
       <CobHeader id={patch.id}>
         <svelte:fragment slot="title">
           {#if patchState !== "read"}
@@ -688,7 +673,7 @@
                 class:archived={patch.state.status === "archived"}>
                 <Icon name="patch" />
               </div>
-              <InlineMarkdown fontSize="medium" content={patch.title} />
+              <InlineMarkdown fontSize="large" content={patch.title} />
             </div>
           {/if}
           {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
@@ -700,7 +685,7 @@
           {/if}
         </svelte:fragment>
         <svelte:fragment slot="state">
-          <Badge size="small" variant={badgeColor(patch.state.status)}>
+          <Badge size="tiny" variant={badgeColor(patch.state.status)}>
             {patch.state.status}
           </Badge>
         </svelte:fragment>
@@ -788,7 +773,7 @@
               state={patch.state}
               save={partial(saveStatus, session.id)} />
           {/if}
-          {#if view.name === "commits" || view.name === "changes"}
+          {#if view.name === "changes"}
             <div style="margin-left: auto;">
               <Popover
                 popoverPadding="0"
@@ -920,14 +905,6 @@
               caption="No activity on this patch yet" />
           </div>
         {/each}
-      {:else if view.name === "commits"}
-        <div class="commit-list">
-          {#each view.commits as commit}
-            <div class="teaser-wrapper">
-              <CommitTeaser projectId={project.id} {baseUrl} {commit} />
-            </div>
-          {/each}
-        </div>
       {:else if view.name === "changes"}
         <div style:margin-top="1rem">
           <Changeset
@@ -938,11 +915,11 @@
             diff={view.diff} />
         </div>
       {:else}
-        {utils.unreachable(view.name)}
+        {utils.unreachable(view)}
       {/if}
     </div>
 
-    <div class="metadata">
+    <div class="metadata global-hide-on-mobile">
       <div>
         <div class="metadata-section-header">Reviews</div>
         <div class="metadata-section-body">

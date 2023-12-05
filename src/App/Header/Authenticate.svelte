@@ -52,7 +52,7 @@
       let:toggle
       on:click={toggle}
       size="large"
-      variant="secondary-toggle-on">
+      variant="naked-toggle-on">
       <div class="peer-info">
         <div style:height="1.25rem" style:margin-right="0.5rem">
           <Avatar nodeId={$httpdStore.session.publicKey} />
@@ -84,7 +84,7 @@
       let:toggle
       on:click={toggle}
       size="large"
-      variant="secondary-toggle-off">
+      variant="naked-toggle-off">
       <IconSmall name="key" />
       Authenticate
     </Button>

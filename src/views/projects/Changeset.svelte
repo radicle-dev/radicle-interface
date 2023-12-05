@@ -7,8 +7,6 @@
     DiffFile,
   } from "@httpd-client";
 
-  import { pluralize } from "@app/lib/pluralize";
-
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
   import Observer, { intersection } from "@app/components/Observer.svelte";
@@ -21,6 +19,10 @@
   export let revision: string;
 
   let expanded = true;
+
+  function pluralize(singular: string, count: number): string {
+    return count === 1 ? singular : `${singular}s`;
+  }
 
   const diffDescription = ({
     modified,
@@ -67,7 +69,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 1.5rem;
+    padding-bottom: 1rem;
   }
   .additions {
     color: var(--color-foreground-success);
@@ -80,10 +82,13 @@
     flex-direction: column;
     gap: 1.5rem;
   }
+  .summary {
+    font-size: var(--font-size-small);
+  }
 </style>
 
 <div class="header">
-  <summary style:margin-left="1rem">
+  <div class="summary">
     <span>{diffDescription(diff)}</span>
     with
     <span class:additions={diff.stats.insertions > 0}>
@@ -95,7 +100,7 @@
       {diff.stats.deletions}
       {pluralize("deletion", diff.stats.deletions)}
     </span>
-  </summary>
+  </div>
   {#if diff.stats.filesChanged > 1}
     <div style:display="flex" style:gap="1rem">
       <IconButton on:click={() => (expanded = !expanded)}>

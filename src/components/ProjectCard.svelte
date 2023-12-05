@@ -101,14 +101,6 @@
     gap: 0.25rem;
     flex-direction: column;
   }
-  @media (max-width: 720px) {
-    .project {
-      min-width: 0;
-    }
-    .left {
-      width: 100%;
-    }
-  }
 </style>
 
 <div class="project" class:compact>
@@ -156,9 +148,9 @@
   {#if !compact}
     <div class="right">
       <div class="id">
-        <span class="rid layout-desktop">{id}</span>
+        <span class="rid">{id}</span>
       </div>
-      <div class="layout-desktop activity">
+      <div class="activity">
         <ActivityDiagram
           {id}
           {activity}

@@ -4,6 +4,7 @@
   import { api } from "@app/lib/httpd";
   import { twemoji } from "@app/lib/utils";
 
+  import AppLayout from "@app/App/AppLayout.svelte";
   import Link from "@app/components/Link.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
@@ -14,13 +15,12 @@
 
 <style>
   .wrapper {
-    padding: 3rem 15rem;
+    padding: 3rem 16vw;
     width: 100%;
   }
   .blurb {
     color: var(--color-foreground-contrast);
     padding: 0rem;
-    max-width: 65%;
     font-size: var(--font-size-medium);
     text-align: left;
     margin-bottom: 1.5rem;
@@ -29,8 +29,9 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 3rem;
+    gap: 2.5rem;
     width: 100%;
+    max-width: var(--content-max-width);
   }
   .project {
     width: 16rem;
@@ -41,70 +42,64 @@
     font-size: var(--font-size-medium);
     margin-bottom: 1rem;
   }
-  @media (max-width: 1200px) {
-    .wrapper {
-      padding: 3rem 4rem;
-    }
-    .projects {
-      gap: 2rem;
-    }
-  }
+
   @media (max-width: 720px) {
-    .wrapper {
-      padding: 3rem 2rem;
+    .project {
+      width: 100%;
     }
     .projects {
-      gap: 1rem;
+      margin-bottom: 4.5rem;
+      gap: 1.5rem;
     }
-    .blurb {
-      max-width: none;
-      font-size: var(--font-size-regular);
-    }
-    .heading {
-      font-size: var(--font-size-regular);
+    .wrapper {
+      width: 100%;
+      padding: 1rem 1.5rem 0 1.5rem;
     }
   }
 </style>
 
-<div class="wrapper">
-  <div class="blurb">
-    <p use:twemoji>
-      Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software
-      over a peer-to-peer network 🌐 built on Git.
-    </p>
+<AppLayout>
+  <div class="wrapper">
+    <div class="blurb">
+      <p use:twemoji>
+        Radicle 🌱 enables developers 🧙 to securely collaborate 🔐 on software
+        <br class="global-hide-on-mobile" />
+        over a peer-to-peer network 🌐 built on Git.
+      </p>
+    </div>
+
+    {#if projects.length > 0}
+      <div class="heading">
+        {#if localProjects}
+          <!-- prettier-ignore -->
+          <span>Explore projects on your <span class="txt-bold">local node</span>.</span>
+        {:else}
+          <!-- prettier-ignore -->
+          <span>Explore projects on the <span class="txt-bold">Radicle network</span>.</span>
+        {/if}
+      </div>
+
+      <div class="projects">
+        {#each projects as { project, baseUrl, activity }}
+          <div class="project">
+            <Link
+              route={{
+                resource: "project.source",
+                project: project.id,
+                node: baseUrl,
+              }}>
+              <ProjectCard
+                compact
+                description={project.description}
+                head={project.head}
+                visibility={project.visibility?.type}
+                id={project.id}
+                name={project.name}
+                {activity} />
+            </Link>
+          </div>
+        {/each}
+      </div>
+    {/if}
   </div>
-
-  {#if projects.length > 0}
-    <div class="heading">
-      {#if localProjects}
-        <!-- prettier-ignore -->
-        <span>Explore projects on your <span class="txt-bold">local node</span>.</span>
-      {:else}
-        <!-- prettier-ignore -->
-        <span>Explore projects on the <span class="txt-bold">Radicle network</span>.</span>
-      {/if}
-    </div>
-
-    <div class="projects">
-      {#each projects as { project, baseUrl, activity }}
-        <div class="project">
-          <Link
-            route={{
-              resource: "project.source",
-              project: project.id,
-              node: baseUrl,
-            }}>
-            <ProjectCard
-              compact
-              description={project.description}
-              head={project.head}
-              visibility={project.visibility?.type}
-              id={project.id}
-              name={project.name}
-              {activity} />
-          </Link>
-        </div>
-      {/each}
-    </div>
-  {/if}
-</div>
+</AppLayout>

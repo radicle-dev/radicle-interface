@@ -1,171 +1,427 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
+  import type { SvelteComponent } from "svelte";
 
-  import dompurify from "dompurify";
+  import { onMount } from "svelte";
 
-  import * as modal from "@app/lib/modal";
-  import capitalize from "lodash/capitalize";
-  import markdown from "@app/lib/markdown";
-  import { httpdStore, api } from "@app/lib/httpd";
-  import { twemoji } from "@app/lib/utils";
-
-  import Badge from "@app/components/Badge.svelte";
-  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
+  import AppHeader from "@app/App/Header.svelte";
+  import Clipboard from "@app/components/Clipboard.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
-  import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import Header from "@app/views/projects/Header.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
+
+  import Button from "@app/components/Button.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import KeyHint from "@app/components/KeyHint.svelte";
   import Link from "@app/components/Link.svelte";
-  import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import RadworksLogo from "@app/components/RadworksLogo.svelte";
+  import ThemeSettings from "@app/App/Header/ThemeSettings.svelte";
+  import MobileFooter from "@app/App/MobileFooter.svelte";
 
   export let activeTab: ActiveTab = undefined;
   export let baseUrl: BaseUrl;
   export let project: Project;
-  export let seeding: boolean;
+  export let styleRightContentPadding: string = "1rem";
+  export let styleContentMargin: string = "1rem 0 0 0";
 
-  let editSeedingInProgress = false;
+  let expanded = true;
 
-  async function editSeeding() {
-    if ($httpdStore.state === "authenticated") {
-      try {
-        editSeedingInProgress = true;
-        if (seeding) {
-          await api.stopSeedingById(project.id, $httpdStore.session.id);
-        } else {
-          await api.seedById(project.id, $httpdStore.session.id);
-        }
-        seeding = !seeding;
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: seeding
-                ? "Stop seeding project failed"
-                : "Seeding project failed",
-              subtitle: [
-                `There was an error while trying to ${
-                  seeding ? "stop seeding" : "seed"
-                } this project.`,
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
-            },
-          });
-        }
-      } finally {
-        editSeedingInProgress = false;
-      }
+  const SIDEBAR_STATE_KEY = "sidebarState";
+  export function storeSidebarState(expanded: boolean): void {
+    window.localStorage.setItem(
+      SIDEBAR_STATE_KEY,
+      expanded ? "expanded" : "collapsed",
+    );
+  }
+
+  function loadSidebarState(): boolean {
+    const storedSidebarState = window.localStorage.getItem(SIDEBAR_STATE_KEY);
+
+    if (storedSidebarState === null) {
+      return true;
+    } else {
+      return storedSidebarState === "expanded" ? true : false;
     }
   }
 
-  const render = (content: string): string =>
-    dompurify.sanitize(markdown.parse(content) as string);
+  onMount(() => {
+    expanded = loadSidebarState();
+  });
+  let clipboard: SvelteComponent;
 
-  $: session =
-    $httpdStore.state === "authenticated" ? $httpdStore.session : undefined;
+  let outerWidth: number;
+  let rightContentMaxWidth: string;
+  let rightContentMargin: string;
+
+  $: if (outerWidth <= 720) {
+    rightContentMaxWidth = "unset";
+    rightContentMargin = "0 0 3rem 0";
+  } else {
+    if (expanded) {
+      rightContentMaxWidth = `calc(100vw - 23rem)`;
+      rightContentMargin = "3.5rem 0 0 22.5rem";
+    } else {
+      rightContentMaxWidth = `calc(100vw - 4.5rem)`;
+      rightContentMargin = "3.5rem 0 0 4.5rem";
+    }
+  }
 </script>
 
 <style>
-  .header {
-    padding: 3rem 8rem 3rem 8rem;
-    width: 100%;
-    max-width: var(--content-max-width);
-    min-width: var(--content-min-width);
-  }
-  .title {
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-foreground-contrast);
+  .layout {
     display: flex;
-    font-size: var(--font-size-x-large);
-    font-weight: var(--font-weight-bold);
-    justify-content: left;
-    margin-bottom: 0.5rem;
-    text-align: left;
-    text-overflow: ellipsis;
   }
-  .project-name:hover {
-    color: inherit;
+  .expanded {
+    width: 22.5rem;
+    position: fixed;
+    height: 100%;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    padding: 4.5rem 1rem 1rem 1rem;
+    border-right: 1px solid var(--color-fill-separator);
+    z-index: 1;
   }
-  .description :global(a) {
-    border-bottom: 1px solid var(--color-foreground-contrast);
+  .collapsed {
+    width: 4.5rem;
+    position: fixed;
+    height: 100%;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    padding: 4.5rem 1rem 1rem 1rem;
+    border-right: 1px solid var(--color-fill-separator);
+    z-index: 1;
+  }
+  .right-content {
+    margin-top: 3.5rem;
+    width: 100%;
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
   }
   .content {
     width: 100%;
     max-width: var(--content-max-width);
     min-width: var(--content-min-width);
-    padding: 0 8rem 4rem 8rem;
+  }
+  .id {
+    border-radius: var(--border-radius-regular);
+    border: 1px solid var(--color-border-hint);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  @media (max-width: 960px) {
-    .header {
-      padding: 4rem 1rem 3rem 1rem;
-    }
-    .content {
-      padding: 0 1rem 4rem 1rem;
-    }
-    .title {
-      font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
-    }
+  .header-container {
+    border-bottom: 1px solid var(--color-fill-separator);
+    background-color: var(--color-background-default);
+    width: 100%;
+    position: fixed;
+    z-index: 2;
+  }
+  .help {
+    font-size: var(--font-size-small);
+    color: var(--color-foreground-dim);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .help-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .logo {
+    color: var(--color-foreground-contrast);
+  }
+  .divider {
+    border-bottom: 1px solid var(--color-fill-separator);
+  }
+  a:hover {
+    color: var(--color-fill-secondary);
   }
 
-  @media (max-width: 720px) {
-    .content {
-      padding: 0 0 4rem 0;
-    }
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .counter {
+    border-radius: var(--border-radius-tiny);
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-dim);
+    padding: 0 0.25rem;
+  }
+
+  .selected {
+    background-color: var(--color-fill-counter);
+    color: var(--color-foreground-contrast);
+  }
+
+  .hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-foreground-contrast);
+  }
+
+  .title-counter {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    width: 100%;
   }
 </style>
 
-<div class="header">
-  <div class="title">
-    <span class="txt-overflow">
+<svelte:window bind:outerWidth />
+
+<div class="header-container">
+  <AppHeader />
+</div>
+
+<div class="layout">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div class="sidebar global-hide-on-mobile">
+    <div class={expanded ? "expanded" : "collapsed"}>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {#if expanded}
+          <div class="id" style:padding="0.5rem 0.75rem">
+            <CopyableId id={project.id} />
+          </div>
+        {:else}
+          <div
+            title="Copy RID to clipboard"
+            class="id"
+            style:color="var(--color-fill-secondary)"
+            style:cursor="pointer"
+            style:padding="0.5rem 1rem"
+            role="button"
+            tabindex="0"
+            on:click={() => {
+              clipboard.copy();
+            }}>
+            <Clipboard bind:this={clipboard} text={project.id} />
+          </div>
+        {/if}
+        <div class="container">
+          <Link
+            title="Home"
+            route={{
+              resource: "project.source",
+              project: project.id,
+              node: baseUrl,
+              path: "/",
+            }}>
+            <Button
+              size="large"
+              styleWidth="100%"
+              styleJustifyContent={expanded ? "flex-start" : "center"}
+              variant={activeTab === "source" ? "gray" : "background"}>
+              <IconSmall name="home" />
+              {#if expanded}
+                Home
+              {/if}
+            </Button>
+          </Link>
+          <Link
+            title={`${project.issues.open} Issues`}
+            route={{
+              resource: "project.issues",
+              project: project.id,
+              node: baseUrl,
+            }}>
+            <Button
+              let:hover
+              size="large"
+              styleJustifyContent={expanded ? "flex-start" : "center"}
+              styleWidth="100%"
+              variant={activeTab === "issues" ? "gray" : "background"}>
+              <IconSmall name="issue" />
+              {#if expanded}
+                <div class="title-counter">
+                  Issues
+                  <span
+                    class="counter"
+                    class:selected={activeTab === "issues"}
+                    class:hover={hover && activeTab !== "issues"}>
+                    {project.issues.open}
+                  </span>
+                </div>
+              {/if}
+            </Button>
+          </Link>
+
+          <Link
+            title={`${project.patches.open} Patches`}
+            route={{
+              resource: "project.patches",
+              project: project.id,
+              node: baseUrl,
+            }}>
+            <Button
+              let:hover
+              size="large"
+              styleWidth="100%"
+              styleJustifyContent={expanded ? "flex-start" : "center"}
+              variant={activeTab === "patches" ? "gray" : "background"}>
+              <IconSmall name="patch" />
+              {#if expanded}
+                <div class="title-counter">
+                  Patches
+                  <span
+                    class="counter"
+                    class:hover={hover && activeTab !== "patches"}
+                    class:selected={activeTab === "patches"}>
+                    {project.patches.open}
+                  </span>
+                </div>
+              {/if}
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div
+        class="footer"
+        style:flex-direction={expanded ? "row" : "column-reverse"}>
+        <IconButton
+          title={expanded ? "Collapse" : "Expand"}
+          on:click={() => {
+            expanded = !expanded;
+            storeSidebarState(expanded);
+          }}>
+          {#if expanded}
+            <IconSmall name="chevron-left" /> Collapse
+          {:else}
+            <IconSmall name="chevron-right" />
+          {/if}
+        </IconButton>
+        <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
+          <IconButton
+            title="Settings"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="settings" />
+            {#if expanded}
+              Settings
+            {/if}
+          </IconButton>
+
+          <div slot="popover" style:width="18.5rem">
+            <ThemeSettings />
+          </div>
+        </Popover>
+
+        <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
+          <IconButton title="Help" slot="toggle" let:toggle on:click={toggle}>
+            <IconSmall name="help" />
+            {#if expanded}
+              Help
+            {/if}
+          </IconButton>
+
+          <div slot="popover" style:width="18.5rem">
+            <div class="help">
+              <div class="help-item">
+                Supported by
+                <a
+                  class="logo"
+                  target="_blank"
+                  rel="noreferrer"
+                  href="https://radworks.org">
+                  <RadworksLogo />
+                </a>
+              </div>
+              <div class="help-item">
+                About
+                <ExternalLink href="https://radicle.xyz">
+                  radicle.xyz
+                </ExternalLink>
+              </div>
+              <div class="divider" />
+              <div class="help-item">
+                Keyboard shortcuts <KeyHint>?</KeyHint>
+              </div>
+            </div>
+          </div>
+        </Popover>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="right-content"
+    style:padding={styleRightContentPadding}
+    style:max-width={rightContentMaxWidth}
+    style:margin={rightContentMargin}>
+    <slot name="header" />
+    <slot name="subheader" />
+
+    <div class="content" style:margin={styleContentMargin}>
+      <slot />
+    </div>
+  </div>
+</div>
+
+<div class="global-hide-on-desktop">
+  <MobileFooter>
+    <div style:width="100%">
       <Link
+        title="Home"
         route={{
           resource: "project.source",
           project: project.id,
           node: baseUrl,
+          path: "/",
         }}>
-        <span class="project-name">
-          {project.name}
-        </span>
+        <Button
+          variant={activeTab === "source" ? "secondary" : "secondary-mobile"}
+          styleWidth="100%">
+          <IconSmall name="home" />
+        </Button>
       </Link>
-    </span>
-    {#if project.visibility && project.visibility.type === "private"}
-      <Badge variant="yellowOutline" size="tiny">
-        {capitalize(project.visibility.type)}
-      </Badge>
-    {/if}
-
-    <div
-      class="layout-desktop-flex"
-      style="margin-left: auto; display: flex; gap: 0.5rem;">
-      <SeedButton
-        {seeding}
-        disabled={editSeedingInProgress}
-        projectId={project.id}
-        editSeeding={session && editSeeding}
-        seedCount={project.seeding} />
-      <CloneButton {baseUrl} id={project.id} name={project.name} />
     </div>
-  </div>
 
-  <div class="description" use:twemoji>
-    {@html render(project.description)}
-  </div>
+    <div style:width="100%">
+      <Link
+        title={`${project.issues.open} Issues`}
+        route={{
+          resource: "project.issues",
+          project: project.id,
+          node: baseUrl,
+        }}>
+        <Button
+          variant={activeTab === "issues" ? "secondary" : "secondary-mobile"}
+          styleWidth="100%">
+          <IconSmall name="issue" />
+        </Button>
+      </Link>
+    </div>
 
-  <div style:margin-bottom="3rem">
-    <CopyableId id={project.id} />
-  </div>
-
-  <Header {project} {activeTab} {baseUrl} />
-  <slot name="subheader" />
-</div>
-
-<div class="content">
-  <slot />
+    <div style:width="100%">
+      <Link
+        title={`${project.patches.open} Patches`}
+        route={{
+          resource: "project.patches",
+          project: project.id,
+          node: baseUrl,
+        }}>
+        <Button
+          variant={activeTab === "patches" ? "secondary" : "secondary-mobile"}
+          styleWidth="100%">
+          <IconSmall name="patch" />
+        </Button>
+      </Link>
+    </div>
+  </MobileFooter>
 </div>

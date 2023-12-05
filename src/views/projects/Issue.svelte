@@ -47,7 +47,6 @@
   export let issue: Issue;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
-  export let seeding: boolean;
 
   const api = new HttpdClient(baseUrl);
 
@@ -401,8 +400,8 @@
 
 <style>
   .issue {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) 1fr;
+    display: flex;
+    flex: 1;
   }
   .metadata {
     display: flex;
@@ -415,6 +414,7 @@
     border-radius: var(--border-radius-small);
     height: fit-content;
     gap: 1.5rem;
+    width: 20rem;
   }
 
   .threads {
@@ -441,7 +441,6 @@
     align-items: center;
     gap: 0.5rem;
     font-size: var(--font-size-large);
-    font-weight: var(--font-weight-medium);
     height: 2.5rem;
   }
   .reactions {
@@ -457,20 +456,16 @@
     color: var(--color-foreground-red);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 720px) {
     .issue {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .metadata {
-      display: none;
+      display: block;
     }
   }
 </style>
 
-<Layout {baseUrl} {project} {seeding} activeTab="issues">
+<Layout {baseUrl} {project} activeTab="issues" styleContentMargin="0">
   <div class="issue">
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div style="display: flex; flex: 1; flex-direction: column; gap: 1.5rem;">
       <CobHeader id={issue.id}>
         <svelte:fragment slot="title">
           {#if issueState !== "read"}
@@ -494,7 +489,7 @@
                 class:open={issue.state.status === "open"}>
                 <Icon name="issue" />
               </div>
-              <InlineMarkdown fontSize="medium" content={issue.title} />
+              <InlineMarkdown fontSize="large" content={issue.title} />
             </div>
           {/if}
           {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
@@ -507,11 +502,11 @@
         </svelte:fragment>
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
-            <Badge size="small" variant="positive">
+            <Badge size="tiny" variant="positive">
               {issue.state.status}
             </Badge>
           {:else}
-            <Badge size="small" variant="negative">
+            <Badge size="tiny" variant="negative">
               {issue.state.status} as
               {issue.state.reason}
             </Badge>
@@ -624,7 +619,7 @@
         </div>
       {/if}
     </div>
-    <div class="metadata">
+    <div class="metadata global-hide-on-mobile">
       <AssigneeInput
         locallyAuthenticated={Boolean(
           role.isDelegate(session?.publicKey, project.delegates),

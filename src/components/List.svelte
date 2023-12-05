@@ -6,39 +6,20 @@
 
 <style>
   .list {
-    border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-border-hint);
+    border-top: 1px solid var(--color-fill-separator);
+    border-bottom: 1px solid var(--color-fill-separator);
   }
-
   .list-item:not(:last-child) {
-    border-bottom: 1px solid var(--color-border-hint);
-  }
-
-  .header {
-    padding: 0.5rem;
-
-    border-bottom: 1px solid var(--color-border-hint);
-  }
-
-  @media (max-width: 720px) {
-    .list {
-      border-radius: 0;
-    }
+    border-bottom: 1px solid var(--color-fill-separator);
   }
 </style>
 
-<div class="list">
-  {#if $$slots.header}
-    <div class="header">
-      <slot name="header" />
-    </div>
-  {/if}
-
-  {#each items as item}
-    <div class="list-item">
-      <slot name="item" {item} />
-    </div>
-  {/each}
-
-  <slot name="body" />
-</div>
+{#if items.length > 0}
+  <div class="list">
+    {#each items as item}
+      <div class="list-item">
+        <slot name="item" {item} />
+      </div>
+    {/each}
+  </div>
+{/if}

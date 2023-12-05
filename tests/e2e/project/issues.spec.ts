@@ -3,11 +3,11 @@ import { createProject } from "@tests/support/project";
 
 test("navigate issue listing", async ({ page }) => {
   await page.goto(cobUrl);
-  await page.getByRole("link", { name: "1 issue" }).click();
+  await page.getByRole("link", { name: "Issues 1" }).click();
   await expect(page).toHaveURL(`${cobUrl}/issues`);
 
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
-  await page.getByRole("link", { name: "2 closed" }).click();
+  await page.getByRole("link", { name: "Closed 2" }).click();
   await expect(page).toHaveURL(`${cobUrl}/issues?state=closed`);
 });
 
@@ -39,18 +39,18 @@ test("issue counters", async ({ page, authenticatedPeer }) => {
     { cwd: projectFolder },
   );
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
-  await page.locator(".dropdown-item").getByText("1 open").click();
-  await expect(page.getByRole("button", { name: "2 issues" })).toBeVisible();
+  await page.locator(".dropdown-item").getByText("Open 1").click();
+  await expect(page.getByRole("button", { name: "Issues 2" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "filter-dropdown" }).first(),
-  ).toHaveText("2 open");
-  await expect(page.locator(".list .issue-teaser")).toHaveCount(2);
+  ).toHaveText("Open 2");
+  await expect(page.locator(".issue-teaser")).toHaveCount(2);
 
   await page
     .getByRole("link", { name: "First issue to test counters" })
     .click();
   await page.getByRole("button", { name: "Close issue as solved" }).click();
-  await expect(page.getByRole("button", { name: "1 issue" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Issues 1" })).toBeVisible();
 });
 
 test("create a new issue", async ({ page, authenticatedPeer }) => {
@@ -61,7 +61,7 @@ test("create a new issue", async ({ page, authenticatedPeer }) => {
   await page.goto(
     `/nodes/${authenticatedPeer.httpdBaseUrl.hostname}:${authenticatedPeer.httpdBaseUrl.port}/${rid}`,
   );
-  await page.getByRole("link", { name: "0 issues" }).click();
+  await page.getByRole("link", { name: "Issues 0" }).click();
   await page.getByRole("link", { name: "New issue" }).click();
   await page.getByPlaceholder("Title").fill("This is a title");
   await page
