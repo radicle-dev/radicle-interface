@@ -27,7 +27,7 @@ export async function loadHomeRoute(): Promise<
 > {
   let projects: ProjectBaseUrl[] = [];
   if (get(httpdStore).state !== "stopped") {
-    projects = (await api.project.getAll()).map(project => ({
+    projects = (await api.project.getAll({ perPage: 30 })).map(project => ({
       project,
       baseUrl: api.baseUrl,
     }));
