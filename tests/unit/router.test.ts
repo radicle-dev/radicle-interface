@@ -8,7 +8,7 @@ window.origin = "http://localhost:3000";
 describe("route invariant when parsed", () => {
   const origin = "http://localhost:3000";
   const node = {
-    hostname: "willow.radicle.garden",
+    hostname: "example.node.tld",
     port: 8000,
     scheme: "http",
   };
@@ -247,11 +247,11 @@ describe("pathToRoute", () => {
   });
 
   test("nodes", () => {
-    expectPathToRoute("/nodes/willow.radicle.garden", {
+    expectPathToRoute("/nodes/example.node.tld", {
       resource: "nodes",
       params: {
         baseUrl: {
-          hostname: "willow.radicle.garden",
+          hostname: "example.node.tld",
           scheme: "http",
           port: defaultHttpdPort,
         },
@@ -262,11 +262,11 @@ describe("pathToRoute", () => {
 
   test("project with trailing slash", () => {
     expectPathToRoute(
-      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
+      "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
       {
         resource: "project.source",
         node: {
-          hostname: "willow.radicle.garden",
+          hostname: "example.node.tld",
           scheme: "http",
           port: defaultHttpdPort,
         },
@@ -278,11 +278,11 @@ describe("pathToRoute", () => {
 
   test("project without trailing slash", () => {
     expectPathToRoute(
-      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       {
         resource: "project.source",
         node: {
-          hostname: "willow.radicle.garden",
+          hostname: "example.node.tld",
           scheme: "http",
           port: defaultHttpdPort,
         },
@@ -294,7 +294,7 @@ describe("pathToRoute", () => {
 
   test("non-existent project route", () => {
     expectPathToRoute(
-      "/nodes/willow.radicle.garden/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
+      "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
       null,
     );
   });
