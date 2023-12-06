@@ -12,7 +12,7 @@ test("node metadata", async ({ page, peerManager }) => {
   });
   await peer.startHttpd();
   await peer.startNode({
-    policy: "track",
+    policy: "allow",
     scope: "all",
     alias: "palm",
     externalAddresses: ["seed.radicle.test:8123"],

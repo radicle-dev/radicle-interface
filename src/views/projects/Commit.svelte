@@ -12,7 +12,7 @@
   export let baseUrl: BaseUrl;
   export let commit: Commit;
   export let project: Project;
-  export let tracking: boolean;
+  export let seeding: boolean;
 
   $: header = commit.commit;
 </script>
@@ -42,7 +42,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} {tracking}>
+<Layout {baseUrl} {project} {seeding}>
   <div class="header">
     <div class="summary">
       <div class="txt-medium txt-bold">

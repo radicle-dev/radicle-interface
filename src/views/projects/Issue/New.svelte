@@ -25,7 +25,7 @@
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
-  export let tracking: boolean;
+  export let seeding: boolean;
 
   let preview: boolean = false;
   let selectionStart = 0;
@@ -144,7 +144,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} {tracking} activeTab="issues">
+<Layout {baseUrl} {project} {seeding} activeTab="issues">
   <main>
     {#if session}
       <div class="form">

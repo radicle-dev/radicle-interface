@@ -131,9 +131,13 @@ export const NodeConfigSchema = object({
       routingMaxAge: number(),
       fetchConcurrency: number(),
       gossipMaxAge: number(),
+      rate: object({
+        inbound: object({ fillRate: number(), capacity: number() }),
+        outbound: object({ fillRate: number(), capacity: number() }),
+      }),
     }),
-    policy: union([literal("track"), literal("block")]),
-    scope: union([literal("trusted"), literal("all")]),
+    policy: union([literal("allow"), literal("block")]),
+    scope: union([literal("followed"), literal("all")]),
   }),
 });
 
@@ -297,6 +301,10 @@ export class RadiclePeer {
         routingMaxAge: 604800,
         fetchConcurrency: 1,
         gossipMaxAge: 1209600,
+        rate: {
+          inbound: { fillRate: 0.2, capacity: 32 },
+          outbound: { fillRate: 1.0, capacity: 64 },
+        },
       },
     });
 

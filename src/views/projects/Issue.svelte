@@ -47,7 +47,7 @@
   export let issue: Issue;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
-  export let tracking: boolean;
+  export let seeding: boolean;
 
   const api = new HttpdClient(baseUrl);
 
@@ -460,7 +460,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} {tracking} activeTab="issues">
+<Layout {baseUrl} {project} {seeding} activeTab="issues">
   <div class="issue">
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
       <CobHeader id={issue.id}>

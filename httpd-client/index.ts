@@ -99,8 +99,8 @@ const nodeSchema = object({
         }),
       }),
     }),
-    policy: union([literal("track"), literal("block")]),
-    scope: union([literal("trusted"), literal("all")]),
+    policy: union([literal("allow"), literal("block")]),
+    scope: union([literal("followed"), literal("all")]),
   }).nullable(),
   state: union([literal("running"), literal("stopped")]),
 });

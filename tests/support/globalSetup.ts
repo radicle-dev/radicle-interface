@@ -54,7 +54,7 @@ export default async function globalSetup(): Promise<() => void> {
 
   if (!process.env.SKIP_FIXTURE_CREATION) {
     await palm.startHttpd(defaultHttpdPort);
-    await palm.startNode({ policy: "track", scope: "all", alias: "palm" });
+    await palm.startNode({ policy: "allow", scope: "all", alias: "palm" });
 
     try {
       console.log("Creating source-browsing fixture");

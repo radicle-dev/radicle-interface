@@ -83,7 +83,7 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
-  export let tracking: boolean;
+  export let seeding: boolean;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -638,7 +638,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} {tracking} activeTab="patches">
+<Layout {baseUrl} {project} {seeding} activeTab="patches">
   <div class="patch">
     <div>
       <CobHeader id={patch.id}>

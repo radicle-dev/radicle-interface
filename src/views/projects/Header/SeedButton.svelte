@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { pluralize } from "@app/lib/pluralize";
-
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
@@ -8,15 +6,14 @@
   import Popover from "@app/components/Popover.svelte";
 
   export let projectId: string;
-  export let trackings: number;
-  export let tracking: boolean;
+  export let seedCount: number;
+  export let seeding: boolean;
 
-  $: buttonTitle = tracking ? "Tracking" : "Track";
-  $: command = tracking ? "untrack" : "track";
+  $: buttonTitle = seeding ? "Seeding" : "Seed";
 </script>
 
 <style>
-  .track-label {
+  .seed-label {
     display: block;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
@@ -37,28 +34,27 @@
     let:toggle
     on:click={toggle}
     size="large"
-    variant={tracking ? "secondary-toggle-on" : "secondary-toggle-off"}
-    title="Tracked by {trackings} {pluralize('node', trackings)}">
+    variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="network" />
     <span>
       {buttonTitle}
       <span style:font-weight="var(--font-weight-regular)">
-        {trackings}
+        {seedCount}
       </span>
     </span>
   </Button>
 
-  <div slot="popover" style:width={tracking ? "19.5rem" : "30.5rem"}>
-    <div class="track-label">
+  <div slot="popover" style:width={seeding ? "19.5rem" : "30.5rem"}>
+    <div class="seed-label">
       Use the <ExternalLink href="https://radicle.xyz/#try">
         Radicle CLI
       </ExternalLink>
-      to {command} this project.
-      {#if command === "track"}
+      to {seeding ? "stop seeding" : "seed"} this project.
+      {#if !seeding}
         <br />
         <br />
         The
-        <code>track</code>
+        <code>seed</code>
         command serves a dual purpose:
         <ul style:padding="0 1rem" style:margin-top="0.5rem">
           <li>
@@ -71,6 +67,6 @@
         </ul>
       {/if}
     </div>
-    <Command command={`rad ${command} ${projectId}`} />
+    <Command command={`rad seed ${projectId} ${seeding ? "--delete" : ""}`} />
   </div>
 </Popover>

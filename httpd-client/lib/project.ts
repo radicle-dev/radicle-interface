@@ -70,7 +70,7 @@ const projectSchema = object({
     open: number(),
     closed: number(),
   }),
-  trackings: number(),
+  seeding: number(),
 });
 const projectsSchema = array(projectSchema);
 

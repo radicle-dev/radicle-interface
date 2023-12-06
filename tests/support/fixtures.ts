@@ -367,7 +367,7 @@ export async function createSourceBrowsingFixture(
 }
 
 export async function createCobsFixture(peer: RadiclePeer) {
-  await peer.rad(["track", peer.nodeId, "--alias", "palm"]);
+  await peer.rad(["follow", peer.nodeId, "--alias", "palm"]);
   await Fs.mkdir(Path.join(tmpDir, "repos", "cobs"));
   const { projectFolder, defaultBranch } = await createProject(peer, {
     name: "cobs",
@@ -392,7 +392,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     },
   );
   await peer.rad(
-    ["assign", issueOne, "--to", `did:key:${peer.nodeId}`],
+    ["issue", "assign", issueOne, "--add", `did:key:${peer.nodeId}`],
     createOptions(projectFolder, 1),
   );
   const { stdout: commentIssueOne } = await peer.rad(
@@ -537,7 +537,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     createOptions(projectFolder, 5),
   );
   await peer.rad(
-    ["review", patchOne, "-m", "LGTM", "--accept"],
+    ["patch", "review", patchOne, "-m", "LGTM", "--accept"],
     createOptions(projectFolder, 6),
   );
   await patch.merge(
@@ -557,7 +557,14 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
-    ["review", patchTwo, "-m", "Not the README we are looking for", "--reject"],
+    [
+      "patch",
+      "review",
+      patchTwo,
+      "-m",
+      "Not the README we are looking for",
+      "--reject",
+    ],
     createOptions(projectFolder, 1),
   );
 
@@ -579,11 +586,11 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
-    ["patch", "label", patchThree, "--label", "documentation"],
+    ["patch", "label", patchThree, "--add", "documentation"],
     createOptions(projectFolder, 1),
   );
   await peer.rad(
-    ["review", patchThree, "-m", "This looks better"],
+    ["patch", "review", patchThree, "-m", "This looks better"],
     createOptions(projectFolder, 2),
   );
   await Fs.appendFile(
@@ -605,7 +612,14 @@ export async function createCobsFixture(peer: RadiclePeer) {
     createOptions(projectFolder, 3),
   );
   await peer.rad(
-    ["review", patchThree, "-m", "No this doesn't look better", "--reject"],
+    [
+      "patch",
+      "review",
+      patchThree,
+      "-m",
+      "No this doesn't look better",
+      "--reject",
+    ],
     createOptions(projectFolder, 2),
   );
 
@@ -618,7 +632,10 @@ export async function createCobsFixture(peer: RadiclePeer) {
     [],
     { cwd: projectFolder },
   );
-  await peer.rad(["review", patchFour], createOptions(projectFolder, 1));
+  await peer.rad(
+    ["patch", "review", patchFour],
+    createOptions(projectFolder, 1),
+  );
   await peer.rad(
     ["patch", "archive", patchFour],
     createOptions(projectFolder, 2),

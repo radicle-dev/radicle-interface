@@ -115,7 +115,7 @@ export type ProjectLoadedRoute =
         path: string;
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -130,7 +130,7 @@ export type ProjectLoadedRoute =
         tree: Tree;
         commitHeaders: CommitHeader[];
         totalCommitCount: number;
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -139,7 +139,7 @@ export type ProjectLoadedRoute =
         baseUrl: BaseUrl;
         project: Project;
         commit: Commit;
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -149,7 +149,7 @@ export type ProjectLoadedRoute =
         project: Project;
         rawPath: (commit?: string) => string;
         issue: Issue;
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -159,7 +159,7 @@ export type ProjectLoadedRoute =
         project: Project;
         issues: Issue[];
         state: IssueState["status"];
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -168,7 +168,7 @@ export type ProjectLoadedRoute =
         baseUrl: BaseUrl;
         project: Project;
         rawPath: (commit?: string) => string;
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -178,7 +178,7 @@ export type ProjectLoadedRoute =
         project: Project;
         patches: Patch[];
         state: PatchState["status"];
-        tracking: boolean;
+        seeding: boolean;
       };
     }
   | {
@@ -189,7 +189,7 @@ export type ProjectLoadedRoute =
         rawPath: (commit?: string) => string;
         patch: Patch;
         view: PatchView;
-        tracking: boolean;
+        seeding: boolean;
       };
     };
 
@@ -244,7 +244,7 @@ function parseRevisionToOid(
   }
 }
 
-async function isLocalNodeTracking(route: ProjectRoute): Promise<boolean> {
+async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
   if (isLocal(route.node.hostname)) {
     return true;
   } else {
@@ -278,10 +278,10 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.history") {
       return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
-      const [project, commit, tracking] = await Promise.all([
+      const [project, commit, seeding] = await Promise.all([
         api.project.getById(route.project),
         api.project.getCommitBySha(route.project, route.commit),
-        isLocalNodeTracking(route),
+        isLocalNodeSeeding(route),
       ]);
 
       return {
@@ -290,14 +290,14 @@ export async function loadProjectRoute(
           baseUrl: route.node,
           project,
           commit,
-          tracking,
+          seeding,
         },
       };
     } else if (route.resource === "project.issue") {
-      const [project, issue, tracking] = await Promise.all([
+      const [project, issue, seeding] = await Promise.all([
         api.project.getById(route.project),
         api.project.getIssueById(route.project, route.issue),
-        isLocalNodeTracking(route),
+        isLocalNodeSeeding(route),
       ]);
       return {
         resource: "project.issue",
@@ -306,7 +306,7 @@ export async function loadProjectRoute(
           project,
           rawPath,
           issue,
-          tracking,
+          seeding,
         },
       };
     } else if (route.resource === "project.patch") {
@@ -314,9 +314,9 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.issues") {
       return await loadIssuesView(route);
     } else if (route.resource === "project.newIssue") {
-      const [project, tracking] = await Promise.all([
+      const [project, seeding] = await Promise.all([
         api.project.getById(route.project),
-        isLocalNodeTracking(route),
+        isLocalNodeSeeding(route),
       ]);
       return {
         resource: "project.newIssue",
@@ -324,7 +324,7 @@ export async function loadProjectRoute(
           baseUrl: route.node,
           project,
           rawPath,
-          tracking,
+          seeding,
         },
       };
     } else if (route.resource === "project.patches") {
@@ -372,14 +372,14 @@ async function loadPatchesView(
   const searchParams = new URLSearchParams(route.search || "");
   const state = (searchParams.get("state") as PatchState["status"]) || "open";
 
-  const [project, patches, tracking] = await Promise.all([
+  const [project, patches, seeding] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllPatches(route.project, {
       state,
       page: 0,
       perPage: PATCHES_PER_PAGE,
     }),
-    isLocalNodeTracking(route),
+    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -389,7 +389,7 @@ async function loadPatchesView(
       patches,
       state,
       project,
-      tracking,
+      seeding,
     },
   };
 }
@@ -400,14 +400,14 @@ async function loadIssuesView(
   const api = new HttpdClient(route.node);
   const state = route.state || "open";
 
-  const [project, issues, tracking] = await Promise.all([
+  const [project, issues, seeding] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllIssues(route.project, {
       state,
       page: 0,
       perPage: ISSUES_PER_PAGE,
     }),
-    isLocalNodeTracking(route),
+    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -417,7 +417,7 @@ async function loadIssuesView(
       issues,
       state,
       project,
-      tracking,
+      seeding,
     },
   };
 }
@@ -431,11 +431,11 @@ async function loadTreeView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, peers, branchMap, tracking] = await Promise.all([
+  const [project, peers, branchMap, seeding] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     getPeerBranches(api, route.project, route.peer),
-    isLocalNodeTracking(route),
+    isLocalNodeSeeding(route),
   ]);
 
   if (route.route) {
@@ -472,7 +472,7 @@ async function loadTreeView(
       tree,
       path,
       blobResult,
-      tracking,
+      seeding,
     },
   };
 }
@@ -543,14 +543,14 @@ async function loadHistoryView(
     );
   }
 
-  const [tree, commitsResponse, tracking] = await Promise.all([
+  const [tree, commitsResponse, seeding] = await Promise.all([
     api.project.getTree(route.project, commitId),
     await api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
       perPage: COMMITS_PER_PAGE,
     }),
-    isLocalNodeTracking(route),
+    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -565,7 +565,7 @@ async function loadHistoryView(
       tree,
       commitHeaders: commitsResponse.commits.map(c => c.commit),
       totalCommitCount: commitsResponse.stats.commits,
-      tracking,
+      seeding,
     },
   };
 }
@@ -578,10 +578,10 @@ async function loadPatchView(
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
       route.project
     }${commit ? `/${commit}` : ""}`;
-  const [project, patch, tracking] = await Promise.all([
+  const [project, patch, seeding] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
-    isLocalNodeTracking(route),
+    isLocalNodeSeeding(route),
   ]);
   const latestRevision = patch.revisions[patch.revisions.length - 1];
 
@@ -637,7 +637,7 @@ async function loadPatchView(
       rawPath,
       patch,
       view,
-      tracking,
+      seeding,
     },
   };
 }

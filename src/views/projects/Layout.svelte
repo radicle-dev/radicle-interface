@@ -13,12 +13,12 @@
   import CopyableId from "@app/components/CopyableId.svelte";
   import Header from "@app/views/projects/Header.svelte";
   import Link from "@app/components/Link.svelte";
-  import TrackButton from "@app/views/projects/Header/TrackButton.svelte";
+  import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
 
   export let activeTab: ActiveTab = undefined;
   export let baseUrl: BaseUrl;
   export let project: Project;
-  export let tracking: boolean;
+  export let seeding: boolean;
 
   const render = (content: string): string =>
     dompurify.sanitize(markdown.parse(content) as string);
@@ -99,9 +99,9 @@
     <div
       class="layout-desktop-flex"
       style="margin-left: auto; display: flex; gap: 0.5rem;">
-      <TrackButton
-        {tracking}
-        trackings={project.trackings}
+      <SeedButton
+        {seeding}
+        seedCount={project.seeding}
         projectId={project.id} />
       <CloneButton {baseUrl} id={project.id} name={project.name} />
     </div>
