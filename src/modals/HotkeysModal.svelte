@@ -1,31 +1,28 @@
 <script lang="ts">
-  import Modal from "@app/components/Modal.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
+  import Modal from "@app/components/Modal.svelte";
 </script>
 
 <style>
   .hotkeys {
-    gap: 3rem;
     justify-content: center;
+    gap: 1rem;
     display: flex;
-    font-size: var(--font-size-small);
-  }
-
-  .description {
-    text-align: left;
+    flex-direction: column;
+    font-size: var(--font-size-regular);
   }
 
   .pair {
     display: flex;
-    width: 8rem;
+    width: 24rem;
     justify-content: space-between;
   }
-
-  .group {
+  .keys {
     display: flex;
-    gap: 1rem;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
   }
 </style>
 
@@ -34,29 +31,30 @@
 
   <div slot="body">
     <div class="hotkeys">
-      <div class="group">
-        <div class="pair">
-          <div class="description">Shortcuts</div>
-          <KeyHint>?</KeyHint>
-        </div>
-
-        {#if import.meta.env.DEV}
-          <div class="pair">
-            <div class="description">Color palette</div>
-            <KeyHint>d</KeyHint>
-          </div>
-        {/if}
+      <div class="pair">
+        <span>Submit</span>
+        <KeyHint>⏎</KeyHint>
       </div>
 
-      <div class="group">
-        <div class="pair">
-          <div class="description">Submit</div>
+      <div class="pair">
+        <span>Post comment</span>
+        <div class="keys">
+          <KeyHint>⌘</KeyHint> +
           <KeyHint>⏎</KeyHint>
         </div>
+      </div>
 
-        <div class="pair">
-          <div class="description">Close</div>
-          <KeyHint>esc</KeyHint>
+      <div class="pair">
+        <span>Close</span>
+        <KeyHint>ESC</KeyHint>
+      </div>
+
+      <div class="pair">
+        <span>Select multiple lines</span>
+        <div class="keys">
+          <KeyHint>Shift</KeyHint>
+          +
+          <IconSmall name="cursor" />
         </div>
       </div>
     </div>
