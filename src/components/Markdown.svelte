@@ -105,6 +105,20 @@
       }
     }
 
+    // Replace standard HTML checkboxes with our custom radicle-icon-small element
+    for (const i of container.querySelectorAll('input[type="checkbox"]')) {
+      i.parentElement?.classList.add("task-item");
+
+      const checkbox = document.createElement("radicle-icon-small");
+      const checked = i.getAttribute("checked");
+      checkbox.setAttribute(
+        "name",
+        checked === null ? "checkbox-unchecked" : "checkbox-checked",
+      );
+      i.insertAdjacentElement("beforebegin", checkbox);
+      i.remove();
+    }
+
     // Iterate over all images, and replace the source with a canonicalized URL
     // pointing at the projects /raw endpoint.
     for (const i of container.querySelectorAll("img")) {
@@ -275,6 +289,17 @@
 
   .markdown :global(p:only-child) {
     margin-bottom: 0;
+  }
+
+  .markdown :global(li.task-item) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: -1.2rem;
+    color: var(--color-foreground-dim);
+  }
+  .markdown :global(li.task-item:not(:last-child)) {
+    margin-bottom: 0.25rem;
   }
 
   .markdown :global(blockquote) {

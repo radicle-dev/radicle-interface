@@ -12,10 +12,11 @@ export default defineConfig({
     svelte({
       // Reference: https://github.com/sveltejs/vite-plugin-svelte/issues/270#issuecomment-1033190138
       dynamicCompileOptions({ filename }) {
-        if (path.basename(filename) === "Clipboard.svelte") {
-          return {
-            customElement: true,
-          };
+        if (
+          path.basename(filename) === "Clipboard.svelte" ||
+          path.basename(filename) === "IconSmall.svelte"
+        ) {
+          return { customElement: true };
         }
       },
       compilerOptions: { dev: process.env.NODE_ENV !== "production" },

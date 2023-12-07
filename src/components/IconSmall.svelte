@@ -1,3 +1,5 @@
+<svelte:options customElement="radicle-icon-small" />
+
 <script lang="ts">
   import { unreachable } from "@app/lib/utils";
   export let name:
@@ -8,6 +10,8 @@
     | "broadcasting"
     | "brush"
     | "chat"
+    | "checkbox-unchecked"
+    | "checkbox-checked"
     | "checkmark"
     | "chevron-down"
     | "chevron-left"
@@ -134,6 +138,16 @@
       d="M4 5.5a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5zm0 2a.5.5 0 01.5-.5h4.75a.5.5 0 010 1H4.5a.5.5 0 01-.5-.5z"
       clip-rule="evenodd">
     </path>
+  {:else if name === "checkbox-checked"}
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M0 2C0 0.895431 0.895431 0 2 0H14C15.1046 0 16 0.895431 16 2V14C16 15.1046 15.1046 16 14 16H2C0.895431 16 0 15.1046 0 14V2ZM13.8107 3.5855C14.134 3.13778 14.0332 2.51269 13.5855 2.18933C13.1378 1.86598 12.5127 1.9668 12.1893 2.41452L6.41921 10.4039L3.74742 7.39815C3.3805 6.98537 2.74843 6.94818 2.33565 7.3151C1.92286 7.68202 1.88568 8.31409 2.2526 8.72688L5.7526 12.6644C5.95412 12.8911 6.24764 13.0141 6.55057 12.9987C6.8535 12.9834 7.1331 12.8314 7.31069 12.5855L13.8107 3.5855Z" />
+  {:else if name === "checkbox-unchecked"}
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M14 1H2C1.44772 1 1 1.44772 1 2V14C1 14.5523 1.44772 15 2 15H14C14.5523 15 15 14.5523 15 14V2C15 1.44772 14.5523 1 14 1ZM2 0C0.895431 0 0 0.895431 0 2V14C0 15.1046 0.895431 16 2 16H14C15.1046 16 16 15.1046 16 14V2C16 0.895431 15.1046 0 14 0H2Z" />
   {:else if name === "checkmark"}
     <path
       fill-rule="evenodd"
