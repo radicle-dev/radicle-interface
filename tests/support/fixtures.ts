@@ -156,6 +156,7 @@ export const test = base.extend<{
       outputLog,
     });
     await use(peerManager);
+    await peerManager.shutdown();
   },
 
   authenticatedPeer: async ({ page, peerManager }, use) => {
@@ -190,9 +191,6 @@ export const test = base.extend<{
     }
 
     await use(peer);
-
-    await peer.stopHttpd();
-    await peer.stopNode();
   },
 
   // eslint-disable-next-line no-empty-pattern

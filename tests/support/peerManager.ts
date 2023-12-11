@@ -76,6 +76,10 @@ export interface PeerManager {
     name: string;
     gitOptions?: Record<string, string>;
   }): Promise<RadiclePeer>;
+  /**
+   * Kill all processes spawned by any of the peers
+   */
+  shutdown(): Promise<void>;
 }
 
 export async function createPeerManager(createParams: {
@@ -109,6 +113,9 @@ export async function createPeerManager(createParams: {
       peers.push(peer);
 
       return peer;
+    },
+    async shutdown() {
+      await Promise.all(peers.map(peer => peer.shutdown()));
     },
   };
 }
@@ -165,6 +172,7 @@ export class RadiclePeer {
   #httpdProcess?: ExecaChildProcess;
   // Name for easy identification. Used on file system and in logs.
   #name: string;
+  #childProcesses: ExecaChildProcess[] = [];
 
   private constructor(props: {
     checkoutPath: string;
@@ -270,9 +278,9 @@ export class RadiclePeer {
 
   public async stopHttpd() {
     if (!this.#httpdBaseUrl || !this.#httpdProcess) {
-      throw new Error("No httpd service running");
+      return;
     }
-    this.#httpdProcess?.kill("SIGTERM");
+    this.#httpdProcess.kill("SIGTERM");
 
     await waitOn({
       resources: [
@@ -358,6 +366,17 @@ export class RadiclePeer {
     });
   }
 
+  /**
+   * Kill all child processes created with `spawn()`, the node process and the
+   * HTTP API process.
+   */
+  public async shutdown() {
+    // We don’t care about proper cleanup. We just want to make sure that no
+    // processes are running anymore.
+    this.#childProcesses.forEach(p => p.kill("SIGKILL"));
+    await Promise.all([this.stopNode(), this.stopHttpd()]);
+  }
+
   public get address(): string {
     if (!this.#listenSocketAddr) {
       throw new Error("Remote node has no listen addr yet");
@@ -413,6 +432,7 @@ export class RadiclePeer {
       },
     };
     const childProcess = Process.spawn(cmd, args, opts);
+    this.#childProcesses.push(childProcess);
 
     if (opts.logPrefix !== null) {
       void Process.prefixOutput(

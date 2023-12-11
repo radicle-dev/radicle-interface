@@ -77,7 +77,7 @@ export default async function globalSetup(): Promise<() => void> {
   }
 
   return async () => {
-    await palm.stopNode();
+    await peerManager.shutdown();
     killAllProcesses();
   };
 }

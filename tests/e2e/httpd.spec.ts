@@ -1,7 +1,7 @@
 import { expect, test } from "@tests/support/fixtures.js";
 
 test("rad web command reacts to port change", async ({ page, peerManager }) => {
-  const peer = await peerManager.startPeer({
+  const peer = await peerManager.createPeer({
     name: "port-test",
   });
   await peer.startHttpd(8090);
