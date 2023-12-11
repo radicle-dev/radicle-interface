@@ -6,14 +6,12 @@
   import { HttpdClient } from "@httpd-client";
 
   import Button from "@app/components/Button.svelte";
-  import File from "@app/components/File.svelte";
   import Header from "./Source/Header.svelte";
   import Layout from "./Layout.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
 
   import BlobComponent from "./Source/Blob.svelte";
   import TreeComponent from "./Source/Tree.svelte";
-  import FilePath from "@app/components/FilePath.svelte";
 
   export let baseUrl: BaseUrl;
   export let rawPath: (commit?: string) => string;
@@ -97,6 +95,11 @@
     flex-direction: column;
     min-width: var(--content-min-width);
     width: 100%;
+  }
+  .placeholder {
+    padding: 4rem 0;
+    border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-small);
   }
 
   .source-tree {
@@ -209,20 +212,19 @@
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
             rawPath={rawPath(tree.lastCommit.id)} />
+        {:else if path === "/"}
+          <div class="placeholder">
+            <Placeholder iconName="no-file" caption="No README found." />
+          </div>
         {:else}
-          <File>
-            <FilePath
-              slot="left-header"
-              filenameWithPath={blobResult.error.path} />
-            <div style:margin="4rem 0" style:width="100%">
-              <Placeholder iconName="no-file" caption="File not found" />
-            </div>
-          </File>
+          <div class="placeholder">
+            <Placeholder iconName="no-file" caption="File not found." />
+          </div>
         {/if}
       </div>
     {:else}
-      <div style:margin="4rem 0" style:width="100%">
-        <Placeholder iconName="no-file" caption="No files at this revision" />
+      <div class="placeholder">
+        <Placeholder iconName="no-file" caption="No files at this revision." />
       </div>
     {/if}
   </div>

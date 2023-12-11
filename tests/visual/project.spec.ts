@@ -4,6 +4,7 @@ import {
   cobUrl,
   sourceBrowsingUrl,
   aliceRemote,
+  markdownUrl,
 } from "@tests/support/fixtures.js";
 
 test("source page", async ({ page }) => {
@@ -79,6 +80,13 @@ test("project load error", async ({ page }) => {
 
 test("project not found", async ({ page }) => {
   await page.goto(`/nodes/127.0.0.1/rad:z4Vzzzzzzzzzzzzzzzzzzzzzzzzzz`, {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot();
+});
+
+test("readme not found", async ({ page }) => {
+  await page.goto(`${markdownUrl}/tree`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot();
