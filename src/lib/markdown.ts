@@ -51,7 +51,7 @@ const footnoteReferenceMarkedExtension = {
     }
   },
   renderer: (token: Tokens.Generic): string =>
-    `<sup class="footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`,
+    `<sup class="txt-tiny footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`,
 };
 const footnoteMatch = /^\[\^([^\]]+)\]:\s([\S]*)/;
 const footnoteMarkedExtension = {
@@ -70,13 +70,13 @@ const footnoteMarkedExtension = {
     }
   },
   renderer: (token: Tokens.Generic): string =>
-    `${
-      token.reference === "0" ? "<hr />" : ""
-    }<p class="txt-small" id="${footnotePrefix}:${token.reference}">${
+    `<p class="txt-small footnote" id="${footnotePrefix}:${
       token.reference
-    }. ${markedInstance.parseInline(
+    }"><span class="marker">${
+      token.reference
+    }.</span> ${markedInstance.parseInline(
       token.text,
-    )} <a class="txt-tiny ref-arrow" href="#${referencePrefix}:${
+    )} <a class="txt-tiny ref-arrow no-underline" href="#${referencePrefix}:${
       token.reference
     }">↩</a></p>`,
 };

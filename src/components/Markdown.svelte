@@ -313,10 +313,22 @@
     font-weight: var(--font-weight-semibold);
   }
 
-  .markdown :global(.footnote-ref > a),
-  .markdown :global(a.ref-arrow) {
-    border-bottom: none;
-    color: unset;
+  .markdown :global(.footnote-ref) {
+    vertical-align: top;
+    position: relative;
+    top: -0.4rem;
+  }
+  .markdown :global(.footnote-ref),
+  .markdown :global(.footnote > .marker),
+  .markdown :global(.footnote > .ref-arrow) {
+    color: var(--color-foreground-dim);
+  }
+  .markdown :global(.footnote-ref:hover),
+  .markdown :global(.footnote .ref-arrow:hover) {
+    color: var(--color-foreground);
+  }
+  .markdown :global(.footnote) {
+    margin-bottom: 0;
   }
 
   .markdown :global(img) {
@@ -361,11 +373,10 @@
     padding: 0;
   }
   .markdown :global(a) {
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
+    text-decoration: underline;
   }
   .markdown :global(a.no-underline) {
-    border-bottom: none;
+    text-decoration: none;
   }
 
   .markdown :global(hr) {
