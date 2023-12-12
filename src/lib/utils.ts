@@ -1,3 +1,5 @@
+import type { Comment } from "@httpd-client";
+
 import md5 from "md5";
 import bs58 from "bs58";
 import twemojiModule from "twemoji";
@@ -81,6 +83,14 @@ export function truncateId(pubkey: string): string {
 
 export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
+}
+
+export function formatEditedCaption(lastEdit: Comment["edits"][0]) {
+  return ` ${
+    lastEdit.author.alias
+      ? lastEdit.author.alias
+      : formatNodeId(lastEdit.author.id)
+  } edited ${formatTimestamp(lastEdit.timestamp / 1000)}`;
 }
 
 // Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".

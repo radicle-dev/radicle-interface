@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Embed } from "@httpd-client";
+  import type { Comment, Embed } from "@httpd-client";
   import type { GroupedReactions } from "@app/lib/reactions";
 
   import { tick } from "svelte";
@@ -27,6 +27,7 @@
   export let timestamp: number;
   export let isReply: boolean = false;
   export let isLastReply: boolean = false;
+  export let lastEdit: Comment["edits"][0] | undefined = undefined;
 
   let state: "read" | "edit" | "submit" = "read";
 
@@ -68,7 +69,7 @@
   .icon {
     color: var(--color-fill-gray);
   }
-  .timestamp {
+  .card-metadata {
     color: var(--color-fill-gray);
     font-size: var(--font-size-small);
   }
@@ -123,6 +124,12 @@
       </div>
       <NodeId nodeId={authorId} alias={authorAlias} />
       {caption}
+      {#if lastEdit}
+        <div class="card-metadata">•</div>
+        <div class="card-metadata" title={utils.formatEditedCaption(lastEdit)}>
+          edited
+        </div>
+      {/if}
       <div class="header-right">
         {#if id && editComment && state === "read"}
           <div class="edit-buttons">
@@ -131,7 +138,7 @@
             </IconButton>
           </div>
         {/if}
-        <div class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
+        <div class="card-metadata" title={utils.absoluteTimestamp(timestamp)}>
           {utils.formatTimestamp(timestamp)}
         </div>
       </div>

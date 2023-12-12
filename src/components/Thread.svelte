@@ -92,6 +92,7 @@
       {enableAttachments}
       {rawPath}
       id={root.id}
+      lastEdit={root.edits.length > 1 ? root.edits.pop() : undefined}
       authorId={root.author.id}
       authorAlias={root.author.alias}
       reactions={root.reactions}
@@ -111,6 +112,7 @@
         <CommentComponent
           {enableAttachments}
           {rawPath}
+          lastEdit={reply.edits.length > 1 ? reply.edits.pop() : undefined}
           id={reply.id}
           authorId={reply.author.id}
           authorAlias={reply.author.alias}

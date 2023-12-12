@@ -387,6 +387,10 @@
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? $httpdStore.session
       : undefined;
+  $: lastDescriptionEdit =
+    issue.discussion[0].edits.length > 1
+      ? issue.discussion[0].edits.pop()
+      : undefined;
 
   type State = "read" | "edit" | "submit";
 
@@ -424,6 +428,10 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.5rem;
+  }
+  .author-metadata {
+    color: var(--color-fill-gray);
+    font-size: var(--font-size-small);
   }
   .title {
     overflow: hidden;
@@ -571,6 +579,14 @@
             nodeId={issue.author.id}
             alias={issue.author.alias} />
           {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          {#if lastDescriptionEdit}
+            <div class="author-metadata">•</div>
+            <div
+              class="author-metadata"
+              title={utils.formatEditedCaption(lastDescriptionEdit)}>
+              edited
+            </div>
+          {/if}
         </div>
       </CobHeader>
       {#if threads.length > 0}

@@ -8,6 +8,14 @@ export const commentSchema = object({
   id: string(),
   author: object({ id: string(), alias: string().optional() }),
   body: string(),
+  edits: array(
+    object({
+      author: object({ id: string(), alias: string().optional() }),
+      body: string(),
+      embeds: array(object({ name: string(), content: string() })),
+      timestamp: number(),
+    }),
+  ),
   embeds: array(object({ name: string(), content: string() })),
   reactions: array(tuple([string(), string()])),
   timestamp: number(),
