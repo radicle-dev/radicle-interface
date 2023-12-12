@@ -278,7 +278,7 @@
   }
 
   .markdown :global(h6) {
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
   }
 
   .markdown :global(p) {
@@ -303,7 +303,7 @@
   }
 
   .markdown :global(blockquote) {
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
     border-left: 0.3rem solid var(--color-fill-ghost);
     padding: 0 0 0 1rem;
     margin: 1rem 0 1rem 0;

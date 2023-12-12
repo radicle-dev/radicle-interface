@@ -111,7 +111,7 @@
   }
   .code :global(.line-number:hover) {
     cursor: pointer;
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
   }
 
   .code :global(.content) {

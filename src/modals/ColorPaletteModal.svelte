@@ -67,7 +67,6 @@
     "--color-foreground-dim",
     "--color-foreground-disabled",
     "--color-foreground-emphasized",
-    "--color-foreground-gray",
     "--color-foreground-match",
     "--color-foreground-primary",
     "--color-foreground-red",

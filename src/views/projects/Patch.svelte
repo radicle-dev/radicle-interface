@@ -578,7 +578,7 @@
     gap: 0.5rem;
   }
   .draft {
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
   }
   .open {
     color: var(--color-fill-success);

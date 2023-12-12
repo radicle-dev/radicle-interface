@@ -23,7 +23,7 @@
   }
 
   .icon {
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
     position: relative;
     bottom: 1px;
   }

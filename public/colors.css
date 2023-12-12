@@ -3,9 +3,9 @@
   --color-background-float: #fafaff;
   --color-background-dip: #f5f5ff;
   --color-foreground-contrast: #232563;
-  --color-foreground-dim: #70718f;
-  --color-foreground-emphasized: #7070ff;
-  --color-foreground-emphasized-hover: #8585ff;
+  --color-foreground-dim: #6a6a81;
+  --color-foreground-emphasized: #8585ff;
+  --color-foreground-emphasized-hover: #7070ff;
   --color-foreground-match-background: #f5f5ff;
   --color-foreground-white: #ffffff;
   --color-foreground-black: #000000;
@@ -13,9 +13,8 @@
   --color-foreground-primary-hover: #ff80ff;
   --color-foreground-success: #4fa877;
   --color-foreground-red: #aa5078;
-  --color-foreground-gray: #9494b8;
   --color-foreground-yellow: #e5c001;
-  --color-foreground-disabled: #b2b2cc;
+  --color-foreground-disabled: #9b9bb1;
   --color-border-hint: #dbdbff;
   --color-border-default: #dbdbff;
   --color-border-focus: #7070ff;
@@ -56,7 +55,7 @@
   --color-background-float: #14151a;
   --color-background-dip: #000000;
   --color-foreground-contrast: #f9f9fb;
-  --color-foreground-dim: #9494b8;
+  --color-foreground-dim: #9b9bb1;
   --color-foreground-emphasized: #7070ff;
   --color-foreground-emphasized-hover: #8585ff;
   --color-foreground-match-background: #0a0d10;
@@ -66,9 +65,8 @@
   --color-foreground-primary-hover: #ff80ff;
   --color-foreground-success: #4fa877;
   --color-foreground-red: #aa5078;
-  --color-foreground-gray: #9494b8;
   --color-foreground-yellow: #e5c001;
-  --color-foreground-disabled: #494a5a;
+  --color-foreground-disabled: #6a6a81;
   --color-border-hint: #24252d;
   --color-border-default: #2e2f38;
   --color-border-focus: #7070ff;

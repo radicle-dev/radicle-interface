@@ -96,7 +96,7 @@
     text-overflow: ellipsis;
   }
   .draft {
-    color: var(--color-foreground-gray);
+    color: var(--color-foreground-dim);
   }
   .open {
     color: var(--color-fill-success);

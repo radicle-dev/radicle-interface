@@ -77,13 +77,13 @@
       case "reject":
         return "var(--color-foreground-red)";
       default:
-        return "var(--color-foreground-gray)";
+        return "var(--color-fill-gray)";
     }
   }
 
   function badgeColor({ status }: PatchState): string | undefined {
     if (status === "draft") {
-      return "var(--color-foreground-gray)";
+      return "var(--color-fill-gray)";
     } else if (status === "open") {
       return "var(--color-foreground-success)";
     } else if (status === "archived") {

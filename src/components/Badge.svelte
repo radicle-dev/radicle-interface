@@ -36,7 +36,7 @@
   }
   .foreground {
     color: var(--color-foreground-match-background);
-    background: var(--color-foreground-gray);
+    background: var(--color-fill-gray);
   }
   .neutral {
     color: var(--color-foreground-contrast);
