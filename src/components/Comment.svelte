@@ -27,8 +27,6 @@
   export let timestamp: number;
   export let isReply: boolean = false;
   export let isLastReply: boolean = false;
-  //  TODO: Remove flag once `radicle-httpd` fixes embed editing
-  export let disableEdit: boolean = false;
 
   let state: "read" | "edit" | "submit" = "read";
 
@@ -126,7 +124,7 @@
       <NodeId nodeId={authorId} alias={authorAlias} />
       {caption}
       <div class="header-right">
-        {#if id && editComment && state === "read" && !disableEdit}
+        {#if id && editComment && state === "read"}
           <div class="edit-buttons">
             <IconButton title="edit comment" on:click={() => (state = "edit")}>
               <IconSmall name={"edit"} />
