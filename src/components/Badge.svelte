@@ -3,12 +3,14 @@
     | "caution"
     | "foreground"
     | "background"
+    | "outline"
     | "yellowOutline"
     | "neutral"
     | "negative"
     | "positive"
     | "primary"
     | "secondary";
+  export let round: boolean = false;
   export let style: string | undefined = undefined;
   export let size: "tiny" | "small" | "medium" = "tiny";
   export let title: string | undefined = undefined;
@@ -25,7 +27,8 @@
     white-space: nowrap;
     align-items: center;
     gap: 0.25rem;
-    max-width: 13.5rem;
+    /* This is aprox. a DID assignee */
+    max-width: 16rem;
   }
   .background {
     color: currentColor;
@@ -51,6 +54,13 @@
     border: 1px solid var(--color-foreground-yellow);
     color: var(--color-foreground-yellow);
     background-color: transparent;
+  }
+  .outline {
+    border: 1px solid var(--color-border-hint);
+    background-color: transparent;
+  }
+  .outline:hover {
+    border-color: var(--color-fill-secondary);
   }
   .negative {
     color: var(--color-foreground-match-background);
@@ -80,21 +90,30 @@
     font-size: var(--font-size-small);
     padding: 0.75rem 1rem;
   }
+  .round {
+    aspect-ratio: 1/1;
+    justify-content: center;
+    padding: unset;
+  }
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <span
   role="button"
   tabindex="0"
+  on:click
   on:mouseenter
   on:mouseleave
   class="badge"
   {style}
   {title}
+  class:round
   class:tiny={size === "tiny"}
   class:small={size === "small"}
   class:medium={size === "medium"}
   class:caution={variant === "caution"}
   class:yellow-outline={variant === "yellowOutline"}
+  class:outline={variant === "outline"}
   class:background={variant === "background"}
   class:foreground={variant === "foreground"}
   class:neutral={variant === "neutral"}

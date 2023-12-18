@@ -8,16 +8,18 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let mode: "readCreate" | "readEdit" | "readOnly" = "readOnly";
   export let locallyAuthenticated: boolean = false;
   export let labels: string[] = [];
   export let submitInProgress: boolean = false;
 
+  let showInput: boolean = false;
   let updatedLabels: string[] = labels;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
   let valid: boolean = false;
   let sanitizedValue: string | undefined = undefined;
+
+  const removeToggles: Record<string, boolean> = {};
 
   $: {
     sanitizedValue = inputValue.trim();
@@ -42,110 +44,87 @@
     if (valid && sanitizedValue) {
       updatedLabels = [...updatedLabels, sanitizedValue];
       inputValue = "";
-      if (mode === "readCreate") {
-        dispatch("save", updatedLabels);
-      }
+      dispatch("save", updatedLabels);
+      showInput = false;
     }
   }
 
   function removeLabel(label: string) {
     updatedLabels = updatedLabels.filter(x => x !== label);
-    if (mode === "readCreate") {
-      dispatch("save", updatedLabels);
-    }
+    dispatch("save", updatedLabels);
+    showInput = false;
   }
 </script>
 
 <style>
   .metadata-section-header {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
   }
   .metadata-section-body {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
-    gap: 0.5rem;
-  }
-  .actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 0.5rem;
   }
 </style>
 
 <div>
-  <div class="metadata-section-header">
-    <span>Labels</span>
+  <div class="metadata-section-header">Labels</div>
+  <div class="metadata-section-body">
     {#if locallyAuthenticated}
-      <div class="actions">
-        {#if mode === "readEdit"}
+      {#each updatedLabels as label}
+        <Badge
+          variant="neutral"
+          size="small"
+          style="cursor: pointer;"
+          on:click={() => (removeToggles[label] = !removeToggles[label])}>
+          <div aria-label="chip" class="label">{label}</div>
+          {#if removeToggles[label]}
+            <IconButton title="remove label">
+              <IconSmall name="cross" on:click={() => removeLabel(label)} />
+            </IconButton>
+          {/if}
+        </Badge>
+      {/each}
+      {#if showInput}
+        <div style="width:100%; display: flex; align-items: center;">
+          <TextInput
+            autofocus
+            {valid}
+            {validationMessage}
+            disabled={submitInProgress}
+            size="small"
+            placeholder="Add label"
+            bind:value={inputValue}
+            on:submit={addLabel} />
           <IconButton
-            loading={submitInProgress}
-            title="save labels"
             on:click={() => {
-              dispatch("save", updatedLabels);
-              mode = "readOnly";
-            }}>
-            <IconSmall name="checkmark" />
-          </IconButton>
-          <IconButton
-            loading={submitInProgress}
-            title="dismiss changes"
-            on:click={() => {
-              updatedLabels = labels;
               inputValue = "";
-              mode = "readOnly";
+              showInput = false;
             }}>
             <IconSmall name="cross" />
           </IconButton>
-        {:else if mode !== "readCreate"}
-          <IconButton
-            loading={submitInProgress}
-            title="edit labels"
-            on:click={() => (mode = "readEdit")}>
-            <IconSmall name="edit" />
+          <IconButton on:click={addLabel}>
+            <IconSmall name="checkmark" />
           </IconButton>
-        {/if}
-      </div>
-    {/if}
-  </div>
-  <div class="metadata-section-body">
-    {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
-      {#each updatedLabels as label}
-        <Badge variant="neutral">
-          <div aria-label="chip" class="label">{label}</div>
-          <IconButton title="remove label">
-            <IconSmall name="cross" on:click={() => removeLabel(label)} />
-          </IconButton>
-        </Badge>
+        </div>
       {:else}
-        <div class="txt-missing">No labels</div>
-      {/each}
+        <Badge
+          variant="outline"
+          size="small"
+          round
+          on:click={() => (showInput = true)}>
+          <IconSmall name="plus"></IconSmall>
+        </Badge>
+      {/if}
     {:else}
       {#each updatedLabels as label}
-        <Badge variant="neutral">
+        <Badge variant="neutral" size="small">
           {label}
         </Badge>
-      {:else}
-        <div class="txt-missing">No labels</div>
       {/each}
     {/if}
   </div>
-  {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
-    <div style:margin-bottom="2rem" style:margin-top="1rem">
-      <TextInput
-        {valid}
-        {validationMessage}
-        disabled={submitInProgress}
-        bind:value={inputValue}
-        placeholder="Add label"
-        on:submit={addLabel} />
-    </div>
-  {/if}
 </div>

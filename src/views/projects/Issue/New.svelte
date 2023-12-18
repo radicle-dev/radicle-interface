@@ -232,12 +232,10 @@
         </div>
         <div class="metadata">
           <AssigneeInput
-            mode="readCreate"
             locallyAuthenticated={Boolean(session)}
             on:save={({ detail: updatedAssignees }) =>
               (assignees = updatedAssignees)} />
           <LabelInput
-            mode="readCreate"
             locallyAuthenticated={Boolean(session)}
             on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
         </div>

@@ -11,16 +11,18 @@
 
   const dispatch = createEventDispatcher<{ save: string[] }>();
 
-  export let mode: "readCreate" | "readEdit" | "readOnly" = "readOnly";
   export let locallyAuthenticated: boolean = false;
   export let assignees: string[] = [];
   export let submitInProgress: boolean = false;
 
+  let showInput: boolean = false;
   let updatedAssignees: string[] = assignees;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
   let valid: boolean = false;
   let assignee: string | undefined = undefined;
+
+  const removeToggles: Record<string, boolean> = {};
 
   $: {
     if (inputValue !== "") {
@@ -48,34 +50,22 @@
     if (valid && assignee) {
       updatedAssignees = [...updatedAssignees, assignee];
       inputValue = "";
-      if (mode === "readCreate") {
-        dispatch("save", updatedAssignees);
-      }
+      dispatch("save", updatedAssignees);
+      showInput = false;
     }
   }
 
   function removeAssignee(assignee: string) {
     updatedAssignees = updatedAssignees.filter(x => x !== assignee);
-    if (mode === "readCreate") {
-      dispatch("save", updatedAssignees);
-    }
+    dispatch("save", updatedAssignees);
+    showInput = false;
   }
 </script>
 
 <style>
   .header {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
-  }
-  .actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
   }
   .body {
     display: flex;
@@ -92,61 +82,61 @@
 </style>
 
 <div>
-  <div class="header">
-    <span>Assignees</span>
+  <div class="header">Assignees</div>
+  <div class="body">
     {#if locallyAuthenticated}
-      <div class="actions">
-        {#if mode === "readEdit"}
+      {#each updatedAssignees as assignee}
+        <Badge
+          variant="neutral"
+          size="small"
+          style="cursor: pointer;"
+          on:click={() => (removeToggles[assignee] = !removeToggles[assignee])}>
+          <div class="assignee">
+            <Avatar inline nodeId={assignee} />
+            <span>{formatNodeId(assignee)}</span>
+            {#if removeToggles[assignee]}
+              <IconButton title="remove assignee">
+                <IconSmall
+                  name="cross"
+                  on:click={() => removeAssignee(assignee)} />
+              </IconButton>
+            {/if}
+          </div>
+        </Badge>
+      {/each}
+      {#if showInput}
+        <div style="width:100%; display: flex; align-items: center;">
+          <TextInput
+            {valid}
+            {validationMessage}
+            autofocus
+            disabled={submitInProgress}
+            bind:value={inputValue}
+            placeholder="Add assignee"
+            on:submit={addAssignee} />
           <IconButton
-            title="save assignees"
-            loading={submitInProgress}
             on:click={() => {
-              dispatch("save", updatedAssignees);
-              mode = "readOnly";
-            }}>
-            <IconSmall name="checkmark" />
-          </IconButton>
-          <IconButton
-            title="dismiss changes"
-            loading={submitInProgress}
-            on:click={() => {
-              updatedAssignees = assignees;
               inputValue = "";
-              mode = "readOnly";
+              showInput = false;
             }}>
             <IconSmall name="cross" />
           </IconButton>
-        {:else if mode !== "readCreate"}
-          <IconButton
-            title="edit assignees"
-            loading={submitInProgress}
-            on:click={() => (mode = "readEdit")}>
-            <IconSmall name="edit" />
+          <IconButton on:click={addAssignee}>
+            <IconSmall name="checkmark" />
           </IconButton>
-        {/if}
-      </div>
-    {/if}
-  </div>
-  <div class="body">
-    {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
-      {#each updatedAssignees as assignee}
-        <Badge variant="neutral">
-          <div class="assignee">
-            <Avatar inline nodeId={assignee} />
-            <span>{formatNodeId(assignee)}</span>
-            <IconButton title="remove assignee">
-              <IconSmall
-                name="cross"
-                on:click={() => removeAssignee(assignee)} />
-            </IconButton>
-          </div>
-        </Badge>
+        </div>
       {:else}
-        <div class="txt-missing">No assignees</div>
-      {/each}
+        <Badge
+          variant="outline"
+          size="small"
+          round
+          on:click={() => (showInput = true)}>
+          <IconSmall name="plus" />
+        </Badge>
+      {/if}
     {:else}
       {#each updatedAssignees as assignee}
-        <Badge variant="neutral">
+        <Badge variant="neutral" size="small">
           <div class="assignee">
             <Avatar inline nodeId={assignee} />
             <span>{formatNodeId(assignee)}</span>
@@ -157,15 +147,4 @@
       {/each}
     {/if}
   </div>
-  {#if locallyAuthenticated && (mode === "readCreate" || mode === "readEdit")}
-    <div style:margin-bottom="1rem" style:margin-top="1rem">
-      <TextInput
-        {valid}
-        {validationMessage}
-        disabled={submitInProgress}
-        bind:value={inputValue}
-        placeholder="Add assignee"
-        on:submit={addAssignee} />
-    </div>
-  {/if}
 </div>
