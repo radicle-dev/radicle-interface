@@ -48,7 +48,9 @@
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
   export let canEdit: (author: string) => true | undefined;
-  export let editRevision: ((description: string) => Promise<void>) | undefined;
+  export let editRevision:
+    | ((description: string, embeds: Embed[]) => Promise<void>)
+    | undefined;
   export let editComment:
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
@@ -245,11 +247,7 @@
   <div class="revision-box" class:expanded>
     <div class="revision-header">
       <div class="revision-name">
-        <ExpandButton
-          {expanded}
-          on:toggle={() => {
-            expanded = !expanded;
-          }} />
+        <ExpandButton {expanded} on:toggle={() => (expanded = !expanded)} />
         <span>
           Revision
           <span class="global-hash">{utils.formatObjectId(revisionId)}</span>
@@ -410,10 +408,10 @@
               submitInProgress={revisionState === "submit"}
               placeholder="Leave a description"
               on:close={() => (revisionState = "read")}
-              on:submit={async ({ detail: { comment } }) => {
+              on:submit={async ({ detail: { comment, embeds } }) => {
                 revisionState = "submit";
                 try {
-                  await editRevision_(comment);
+                  await editRevision_(comment, Array.from(embeds.values()));
                 } finally {
                   revisionState = "read";
                 }

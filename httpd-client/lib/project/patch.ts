@@ -1,4 +1,4 @@
-import type { Comment, Embed } from "./comment.js";
+import type { Embed } from "./comment.js";
 import type { ZodSchema, z } from "zod";
 
 import { commentSchema } from "./comment.js";
@@ -71,29 +71,27 @@ const reviewSchema = object({
   timestamp: number(),
 }) satisfies ZodSchema<Review>;
 
-export interface Revision {
-  id: string;
-  author: { id: string; alias?: string };
-  description: string;
-  base: string;
-  oid: string;
-  refs: string[];
-  discussions: Comment[];
-  reviews: Review[];
-  timestamp: number;
-}
+export type Revision = z.infer<typeof revisionSchema>;
 
 const revisionSchema = object({
   id: string(),
   author: object({ id: string(), alias: string().optional() }),
   description: string(),
+  edits: array(
+    object({
+      author: object({ id: string(), alias: string().optional() }),
+      body: string(),
+      embeds: array(object({ name: string(), content: string() })),
+      timestamp: number(),
+    }),
+  ),
   base: string(),
   oid: string(),
   refs: array(string()),
   discussions: array(commentSchema),
   reviews: array(reviewSchema),
   timestamp: number(),
-}) satisfies ZodSchema<Revision>;
+});
 
 export interface Patch {
   id: string;
@@ -185,7 +183,12 @@ export type PatchUpdateAction =
       active: boolean;
     }
   | { type: "revision"; description: string; base: string; oid: string }
-  | { type: "revision.edit"; revision: string; description: string }
+  | {
+      type: "revision.edit";
+      revision: string;
+      description: string;
+      embeds?: Embed[];
+    }
   | { type: "revision.redact"; revision: string }
   | {
       type: "revision.comment";

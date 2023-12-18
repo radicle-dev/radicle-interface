@@ -50,6 +50,7 @@
   import uniqBy from "lodash/uniqBy";
   import { HttpdClient } from "@httpd-client";
   import { httpdStore, type Session } from "@app/lib/httpd";
+  import { parseEmbedIntoMap } from "@app/lib/file";
 
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
@@ -125,12 +126,13 @@
     sessionId: string,
     revisionId: string,
     description: string,
+    embeds: Embed[],
   ) {
     try {
       await api.project.updatePatch(
         project.id,
         patch.id,
-        { type: "revision.edit", revision: revisionId, description },
+        { type: "revision.edit", revision: revisionId, description, embeds },
         sessionId,
       );
     } catch (error) {
@@ -693,20 +695,28 @@
         <svelte:fragment slot="description">
           <div class="revision-description">
             {#if session && patchState !== "read"}
+              {@const latestEdit = patch.revisions[0].edits.pop()}
               <ExtendedTextarea
                 validateBody={false}
+                enableAttachments
+                embeds={latestEdit && parseEmbedIntoMap(latestEdit.embeds)}
                 rawPath={rawPath(patch.revisions[0].id)}
                 body={newDescription}
                 submitCaption="Save"
                 submitInProgress={patchState === "submit"}
                 placeholder="Leave a description"
                 on:close={() => (patchState = "read")}
-                on:submit={async ({ detail: { comment } }) => {
+                on:submit={async ({ detail: { comment, embeds } }) => {
                   patchState = "submit";
                   if (session) {
                     try {
                       await editPatch(session.id, patch.title);
-                      await editRevision(session.id, patch.id, comment);
+                      await editRevision(
+                        session.id,
+                        patch.id,
+                        comment,
+                        Array.from(embeds.values()),
+                      );
                     } finally {
                       patchState = "read";
                     }
