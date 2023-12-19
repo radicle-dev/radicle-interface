@@ -17,7 +17,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    min-width: 18rem;
+    width: 18rem;
   }
   .status {
     font-size: var(--font-size-tiny);
@@ -28,20 +28,20 @@
     display: flex;
     font-family: var(--font-family-monospace);
   }
-  .indicator {
-    width: 0.75rem;
-    height: 0.75rem;
-    background-color: var(--color-fill-secondary);
-    border-radius: var(--border-radius-round);
-    position: absolute;
-    top: -0.375rem;
-    right: -0.375rem;
-  }
   .user {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+  }
+  .connect-popover {
+    max-width: 20rem;
+  }
+  .label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: 0.75rem;
   }
 </style>
 
@@ -87,13 +87,12 @@
       variant="secondary-toggle-off">
       <IconSmall name="key" />
       Authenticate
-      <div class="indicator" />
     </Button>
     <div slot="popover" class="connect-popover">
-      <div style:margin-bottom="1em">
-        Authenticate with your local backend to make changes
+      <div class="label">
+        Authenticate with your local node to make changes.
       </div>
-      <Command fullWidth command={`rad-web ${window.origin} --connect`} />
+      <Command fullWidth command={`rad web ${window.origin} --connect`} />
     </div>
   </Popover>
 {/if}

@@ -8,7 +8,6 @@
   import * as httpd from "@app/lib/httpd";
   import Loading from "@app/components/Loading.svelte";
 
-  import AuthenticatedModal from "@app/modals/AuthenticatedModal.svelte";
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
 
   export let activeRoute: Extract<Route, { resource: "session" }>;
@@ -21,7 +20,7 @@
     const isAuthenticated = await httpd.authenticate(activeRoute.params);
 
     if (isAuthenticated) {
-      modal.show({ component: AuthenticatedModal, props: {} });
+      // TODO: Show toast.
     } else {
       modal.show({
         component: AuthenticationErrorModal,
