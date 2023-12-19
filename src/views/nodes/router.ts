@@ -1,4 +1,4 @@
-import type { BaseUrl, CommitHeader, Project } from "@httpd-client";
+import type { BaseUrl, Project } from "@httpd-client";
 import type {
   LoadErrorRoute,
   NotFoundRoute,
@@ -16,7 +16,6 @@ export interface NodesRouteParams {
 
 export interface ProjectActivity {
   project: Project;
-  latestCommitHeader: CommitHeader;
   activity: WeeklyActivity[];
 }
 
@@ -56,28 +55,26 @@ export async function loadProjects(
 
   const results = await Promise.all(
     projects.map(async project => {
-      const activity = await loadProjectActivity(project.id, baseUrl);
-      const { commit: latestCommitHeader } = await api.project.getCommitBySha(
-        project.id,
-        project.head,
-      );
+      let activity: WeeklyActivity[] = [];
+      try {
+        activity = await loadProjectActivity(project.id, baseUrl);
+      } catch (error) {
+        console.error(
+          `Failed to obtain project activity for: ${project.id}`,
+          error,
+        );
+      }
+
       return {
         project,
-        latestCommitHeader,
         activity,
       };
     }),
   );
 
-  // Sorts projects by most recent commit descending.
-  const sortedProjects = results.sort(
-    (a, b) =>
-      b.latestCommitHeader.committer.time - a.latestCommitHeader.committer.time,
-  );
-
   return {
     total: nodeStats.projects.count,
-    projects: sortedProjects,
+    projects: results,
   };
 }
 
