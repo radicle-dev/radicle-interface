@@ -454,6 +454,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "I'll review the patch",
       "--quiet",
+      "--no-announce",
     ],
     createOptions(projectFolder, 1),
   );
@@ -491,6 +492,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "Looking good so far",
       "--quiet",
+      "--no-announce",
     ],
     createOptions(projectFolder, 4),
   );
