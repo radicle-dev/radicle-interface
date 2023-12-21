@@ -66,7 +66,7 @@ test("navigate to project", async ({ page }) => {
   await expect(page.getByText("Git test repository")).toBeVisible();
 
   // Number of nodes seeding this project.
-  await expect(page.getByText("Seeding 3")).toBeVisible();
+  await expect(page.getByText("Seed 3")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {
@@ -411,7 +411,7 @@ test.describe("browser error handling", () => {
     const sourceTree = page.locator(".source-tree");
     await sourceTree.getByText("src").click();
 
-    await expect(page.getByText("File not found")).toBeVisible();
+    await expect(page.getByText("No README found.")).toBeVisible();
   });
   test("error appears when file can't be loaded", async ({ page }) => {
     await page.route(
@@ -431,7 +431,7 @@ test.describe("browser error handling", () => {
     );
 
     await page.goto(sourceBrowsingUrl);
-    await expect(page.getByText("File not found")).toBeVisible();
+    await expect(page.getByText("No README found.")).toBeVisible();
   });
   test("error appears when navigating to missing file", async ({ page }) => {
     await page.route(

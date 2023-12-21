@@ -92,17 +92,14 @@ export async function expectThreadCommentingToWork(page: Page) {
 }
 
 export async function expectLabelEditingToWork(page: Page) {
-  await expect(page.getByText("No labels")).toBeVisible();
-
-  await page.getByRole("button", { name: "edit labels" }).click();
+  await page.getByRole("button", { name: "add labels" }).click();
   await page.getByPlaceholder("Add label").fill("bug");
-  await page.getByRole("button", { name: "dismiss changes" }).click();
-  await expect(page.getByText("No labels")).toBeVisible();
-  await page.getByRole("button", { name: "edit labels" }).click();
-  await expect(page.getByPlaceholder("Add label")).toHaveValue("");
+  await page.getByRole("button", { name: "discard label" }).click();
 
+  await page.getByRole("button", { name: "add labels" }).click();
   await page.getByPlaceholder("Add label").fill("bug");
   await page.keyboard.press("Enter");
+  await page.getByRole("button", { name: "add labels" }).click();
   await page.getByPlaceholder("Add label").fill("bug");
   await expect(page.getByText("This label is already added")).toBeVisible();
   await page.getByPlaceholder("Add label").clear();
@@ -110,22 +107,17 @@ export async function expectLabelEditingToWork(page: Page) {
 
   await page.getByPlaceholder("Add label").fill("documentation");
   await page.keyboard.press("Enter");
-  await page.getByRole("button", { name: "save labels" }).click();
-  await expect(page.getByRole("button", { name: "save labels" })).toBeHidden();
   await expect(page.getByRole("button", { name: "bug" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "documentation" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit labels" }).click();
-  await page
-    .locator("span")
-    .filter({ hasText: "documentation" })
-    .getByTitle("remove label")
-    .click();
-  await page.getByRole("button", { name: "save labels" }).click();
-  await expect(page.getByRole("button", { name: "save labels" })).toBeHidden();
+  await page.getByRole("button", { name: "documentation" }).click();
+  await page.getByRole("button", { name: "remove label", exact: true }).click();
   await expect(page.getByRole("button", { name: "bug" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "documentation" }),
+  ).toBeHidden();
 }
 
 export async function expectReactionsToWork(page: Page) {

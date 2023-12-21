@@ -115,13 +115,14 @@
             placeholder="Add assignee"
             on:submit={addAssignee} />
           <IconButton
+            title="discard assignee"
             on:click={() => {
               inputValue = "";
               showInput = false;
             }}>
             <IconSmall name="cross" />
           </IconButton>
-          <IconButton on:click={addAssignee}>
+          <IconButton title="save assignee" on:click={addAssignee}>
             <IconSmall name="checkmark" />
           </IconButton>
         </div>
@@ -129,6 +130,7 @@
         <Badge
           variant="outline"
           size="small"
+          title="add assignee"
           round
           on:click={() => (showInput = true)}>
           <IconSmall name="plus" />

@@ -24,21 +24,18 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
     })
     .click();
 
-  await expect(page.getByText("No assignees")).toBeVisible();
-
-  await page.getByRole("button", { name: "edit assignees" }).click();
+  await page.getByRole("button", { name: "add assignee" }).click();
   await page
     .getByPlaceholder("Add assignee")
     .fill("z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S");
-  await page.getByRole("button", { name: "dismiss changes" }).click();
-  await expect(page.getByText("No assignees")).toBeVisible();
-  await page.getByRole("button", { name: "edit assignees" }).click();
-  await expect(page.getByPlaceholder("Add assignee")).toHaveValue("");
+  await page.getByRole("button", { name: "discard assignee" }).click();
 
+  await page.getByRole("button", { name: "add assignee" }).click();
   await page
     .getByPlaceholder("Add assignee")
     .fill("z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S");
   await page.keyboard.press("Enter");
+  await page.getByRole("button", { name: "add assignee" }).click();
   await page
     .getByPlaceholder("Add assignee")
     .fill("z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S");
@@ -50,10 +47,6 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
     .getByPlaceholder("Add assignee")
     .fill("z6MkkfM3tPXNPrPevKr3uSiQtHPuwnNhu2yUVjgd2jXVsVz5");
   await page.keyboard.press("Enter");
-  await page.getByRole("button", { name: "save assignees" }).click();
-  await expect(
-    page.getByRole("button", { name: "save assignees" }),
-  ).toBeHidden();
   await expect(
     page.getByRole("button", { name: "avatar did:key:z6MktU…1xB22S" }),
   ).toBeVisible();
@@ -61,18 +54,16 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
     page.getByRole("button", { name: "avatar did:key:z6Mkkf…XVsVz5" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit assignees" }).click();
   await page
-    .getByRole("button", {
-      name: "avatar did:key:z6MktU…1xB22S remove assignee",
-    })
-    .getByTitle("remove assignee")
+    .getByRole("button", { name: "avatar did:key:z6MktU…1xB22S" })
     .click();
-  await page.getByRole("button", { name: "save assignees" }).click();
-  await expect(
-    page.getByRole("button", { name: "save assignees" }),
-  ).toBeHidden();
+  await page
+    .getByRole("button", { name: "remove assignee", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "avatar did:key:z6Mkkf…XVsVz5" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "avatar did:key:z6MktU…1xB22S" }),
+  ).toBeHidden();
 });

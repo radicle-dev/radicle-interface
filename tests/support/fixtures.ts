@@ -168,7 +168,7 @@ export const test = base.extend<{
       `Failed to get authentication URL from: ${stdout}`,
     );
     await page.goto(match[1]);
-    await page.getByText("Successfully authenticated").waitFor();
+    await page.getByRole("button", { name: "avatar httpd" }).waitFor();
 
     await use(peer);
   },

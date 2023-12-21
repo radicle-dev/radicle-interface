@@ -68,13 +68,18 @@ test("create a new issue", async ({ page, authenticatedPeer }) => {
     .getByPlaceholder("Write a description")
     .fill("This is a description");
 
+  await page.getByRole("button", { name: "add assignee" }).click();
   await page.getByPlaceholder("Add assignee").fill(authenticatedPeer.nodeId);
-  await page.getByPlaceholder("Add assignee").press("Enter");
+  await page.keyboard.press("Enter");
 
+  await page.getByRole("button", { name: "add label" }).click();
   await page.getByPlaceholder("Add label").fill("bug");
-  await page.getByPlaceholder("Add label").press("Enter");
+  await page.keyboard.press("Enter");
+
+  await page.getByRole("button", { name: "add label" }).click();
   await page.getByPlaceholder("Add label").fill("documentation");
-  await page.getByPlaceholder("Add label").press("Enter");
+  await page.keyboard.press("Enter");
+
   await page.getByRole("button", { name: "Submit" }).click();
 
   await expect(page.getByText("This is a title")).toBeVisible();
@@ -88,7 +93,7 @@ test("create a new issue", async ({ page, authenticatedPeer }) => {
     ),
   ).toBeVisible();
   await expect(
-    page.locator(".badge").filter({ hasText: "documentation" }),
+    page.getByRole("button", { name: "documentation" }),
   ).toBeVisible();
-  await expect(page.locator(".badge").filter({ hasText: "bug" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "bug" })).toBeVisible();
 });

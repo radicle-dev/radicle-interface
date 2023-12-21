@@ -80,7 +80,7 @@
           size="small"
           style="cursor: pointer;"
           on:click={() => (removeToggles[label] = !removeToggles[label])}>
-          <div aria-label="chip" class="label">{label}</div>
+          <div class="label">{label}</div>
           {#if removeToggles[label]}
             <IconButton title="remove label">
               <IconSmall name="cross" on:click={() => removeLabel(label)} />
@@ -100,13 +100,14 @@
             bind:value={inputValue}
             on:submit={addLabel} />
           <IconButton
+            title="discard label"
             on:click={() => {
               inputValue = "";
               showInput = false;
             }}>
             <IconSmall name="cross" />
           </IconButton>
-          <IconButton on:click={addLabel}>
+          <IconButton title="save label" on:click={addLabel}>
             <IconSmall name="checkmark" />
           </IconButton>
         </div>
@@ -114,6 +115,7 @@
         <Badge
           variant="outline"
           size="small"
+          title="add labels"
           round
           on:click={() => (showInput = true)}>
           <IconSmall name="plus"></IconSmall>
