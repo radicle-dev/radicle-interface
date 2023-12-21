@@ -21,7 +21,6 @@ export function killAllProcesses(): void {
       process.kill("SIGKILL");
     }
   }
-  process.exit();
 }
 
 // Spawn a process with `execa` and register it.
