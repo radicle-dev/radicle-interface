@@ -226,3 +226,54 @@ test("edit patch", async ({ page, authenticatedPeer }) => {
     page.getByText("This is a modified patch description"),
   ).toBeVisible();
 });
+
+test("edit revision", async ({ page, authenticatedPeer }) => {
+  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+    name: "edit-revision",
+  });
+  await authenticatedPeer.git(["switch", "-c", "edit-revision"], {
+    cwd: projectFolder,
+  });
+  await authenticatedPeer.git(
+    [
+      "commit",
+      "--allow-empty",
+      "-m",
+      "Some patch title",
+      "-m",
+      "This should be a description",
+    ],
+    {
+      cwd: projectFolder,
+    },
+  );
+  const patchId = extractPatchId(
+    await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+      cwd: projectFolder,
+    }),
+  );
+  await authenticatedPeer.git(
+    [
+      "commit",
+      "--allow-empty",
+      "-m",
+      "Let's create a new revision",
+      "-m",
+      "More descriptions",
+    ],
+    {
+      cwd: projectFolder,
+    },
+  );
+  await authenticatedPeer.git(["push", "rad"], { cwd: projectFolder });
+
+  await page.goto(`${authenticatedPeer.ridUrl(rid)}/patches/${patchId}`);
+  await page.getByRole("button", { name: "edit revision" }).click();
+  await page
+    .getByPlaceholder("Leave a description")
+    .fill("This is an edited second revision");
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(
+    page.getByText("This is an edited second revision"),
+  ).toBeVisible();
+});

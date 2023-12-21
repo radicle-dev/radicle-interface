@@ -19,6 +19,7 @@
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
+  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -46,7 +47,8 @@
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
-  export let canEditComment: (author: string) => true | undefined;
+  export let canEdit: (author: string) => true | undefined;
+  export let editRevision: ((description: string) => Promise<void>) | undefined;
   export let editComment:
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
@@ -95,9 +97,12 @@
     }
   }
 
+  type State = "read" | "submit" | "edit";
+
   let response: DiffResponse | undefined = undefined;
   let error: any | undefined = undefined;
   let loading: boolean = false;
+  let revisionState: State = "read";
 
   onMount(async () => {
     try {
@@ -194,7 +199,6 @@
     font-size: var(--font-size-small);
   }
   .timestamp {
-    margin-left: auto;
     font-size: var(--font-size-small);
     color: var(--color-fill-gray);
   }
@@ -382,14 +386,39 @@
                 {utils.formatObjectId(revisionId)}
               </span>
             {/if}
-
-            <div
-              class="timestamp"
-              title={utils.absoluteTimestamp(revisionTimestamp)}>
-              {utils.formatTimestamp(revisionTimestamp)}
+            <div style="display: flex; gap: 0.5rem; margin-left: auto;">
+              {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
+                <IconButton
+                  title="edit revision"
+                  on:click={() => (revisionState = "edit")}>
+                  <IconSmall name="edit" />
+                </IconButton>
+              {/if}
+              <div
+                class="timestamp"
+                title={utils.absoluteTimestamp(revisionTimestamp)}>
+                {utils.formatTimestamp(revisionTimestamp)}
+              </div>
             </div>
           </div>
-          {#if revisionDescription && !first}
+          {#if editRevision && revisionState !== "read"}
+            {@const editRevision_ = editRevision}
+            <ExtendedTextarea
+              rawPath={rawPath(revisionId)}
+              body={revisionDescription}
+              submitCaption="Save"
+              submitInProgress={revisionState === "submit"}
+              placeholder="Leave a description"
+              on:close={() => (revisionState = "read")}
+              on:submit={async ({ detail: { comment } }) => {
+                revisionState = "submit";
+                try {
+                  await editRevision_(comment);
+                } finally {
+                  revisionState = "read";
+                }
+              }} />
+          {:else if revisionDescription && !first}
             <div class="revision-description txt-small">
               <Markdown
                 rawPath={rawPath(projectHead)}
@@ -433,7 +462,7 @@
             enableAttachments
             thread={element.inner}
             rawPath={rawPath(projectHead)}
-            {canEditComment}
+            canEditComment={canEdit}
             {editComment}
             {createReply}
             {handleReaction} />
@@ -460,6 +489,7 @@
               </span>
 
               <div
+                style="margin-left: auto"
                 class="timestamp"
                 title={utils.absoluteTimestamp(revisionTimestamp)}>
                 {utils.formatTimestamp(revisionTimestamp)}

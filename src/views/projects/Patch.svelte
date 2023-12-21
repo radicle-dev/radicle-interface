@@ -93,22 +93,8 @@
     ["Convert to draft", { status: "draft" }],
   ];
 
-  async function editPatch(
-    sessionId: string,
-    title: string,
-    description: string,
-  ) {
+  async function editPatch(sessionId: string, title: string) {
     try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.edit",
-          revision: patch.id,
-          description,
-        },
-        sessionId,
-      );
       await api.project.updatePatch(
         project.id,
         patch.id,
@@ -120,9 +106,43 @@
         modal.show({
           component: ErrorModal,
           props: {
-            title: "Patch editing failed",
+            title: "Patch title editing failed",
             subtitle: [
-              "There was an error while updating the patch.",
+              "There was an error while updating the title of this patch.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      await refreshPatch();
+    }
+  }
+
+  async function editRevision(
+    sessionId: string,
+    revisionId: string,
+    description: string,
+  ) {
+    try {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        { type: "revision.edit", revision: revisionId, description },
+        sessionId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Revision editing failed",
+            subtitle: [
+              "There was an error while updating the revision.",
               "Check your radicle-httpd logs for details.",
             ],
             error: {
@@ -693,15 +713,13 @@
                 submitCaption="Save"
                 submitInProgress={patchState === "submit"}
                 placeholder="Leave a description"
-                on:close={() => {
-                  patchState = "read";
-                  void refreshPatch();
-                }}
+                on:close={() => (patchState = "read")}
                 on:submit={async ({ detail: { comment } }) => {
                   patchState = "submit";
                   if (session) {
                     try {
-                      await editPatch(session.id, patch.title, comment);
+                      await editPatch(session.id, patch.title);
+                      await editRevision(session.id, patch.id, comment);
                     } finally {
                       patchState = "read";
                     }
@@ -850,11 +868,13 @@
             projectHead={project.head}
             {...revision}
             first={index === 0}
-            canEditComment={partial(
+            canEdit={partial(
               role.isDelegateOrAuthor,
               session?.publicKey,
               project.delegates,
             )}
+            editRevision={session &&
+              partial(editRevision, session.id, revision.revisionId)}
             editComment={session &&
               partial(editComment, session.id, revision.revisionId)}
             handleReaction={session &&
