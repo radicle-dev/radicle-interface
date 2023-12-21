@@ -162,9 +162,7 @@ export const test = base.extend<{
       "--listen",
       `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
     ]);
-    const match = stdout.match(
-      /Open the following URL to connect: (http:\/\/\S+)/,
-    );
+    const match = stdout.match(/Visit (http:\/\/\S+) to connect/);
     assert(
       match !== null && match[1],
       `Failed to get authentication URL from: ${stdout}`,
