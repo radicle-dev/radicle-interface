@@ -17,7 +17,6 @@
   export let disabled: boolean = false;
   export let loading: boolean = false;
   export let valid: boolean = true;
-  export let validationMessage: string | undefined = undefined;
   export let showKeyHint: boolean = true;
 
   const dispatch = createEventDispatcher<{
@@ -27,7 +26,6 @@
   }>();
 
   let rightContainerWidth: number;
-  let leftContainerWidth: number;
   let inputElement: HTMLInputElement | undefined = undefined;
   let isFocused = false;
   let success = false;
@@ -116,18 +114,6 @@
   input[disabled] {
     cursor: not-allowed;
   }
-  .left-container {
-    color: var(--color-fill-secondary);
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-    gap: 0.5rem;
-    height: 100%;
-  }
   .right-container {
     border: 1px solid transparent;
     color: var(--color-fill-gray);
@@ -138,16 +124,6 @@
     align-items: center;
     padding-left: 0.5rem;
     overflow: hidden;
-    height: 100%;
-  }
-  .validation-message {
-    color: var(--color-foreground-red);
-    position: relative;
-    margin-top: 0.5rem;
-  }
-  .validation-wrapper {
-    position: absolute;
-    width: 100%;
     height: 100%;
   }
   .invalid {
@@ -184,61 +160,38 @@
   class="wrapper"
   class:small={size === "small"}
   class:regular={size === "regular"}>
-  <div class="validation-wrapper">
-    {#if $$slots.left}
-      <div class="left-container" bind:clientWidth={leftContainerWidth}>
-        <slot name="left" />
-      </div>
+  <input
+    class:invalid={!valid && value}
+    style:padding-right={rightContainerWidth
+      ? `${rightContainerWidth}px`
+      : "auto"}
+    bind:this={inputElement}
+    type="text"
+    {name}
+    {placeholder}
+    {disabled}
+    bind:value
+    on:input
+    on:focus={handleFocusEvent}
+    on:blur={handleFocusEvent}
+    on:keydown|stopPropagation={handleKeydown}
+    on:click
+    on:change />
+
+  <div
+    class="right-container"
+    class:small={size === "small"}
+    bind:clientWidth={rightContainerWidth}>
+    {#if loading}
+      <Loading small noDelay />
     {/if}
 
-    <input
-      class:invalid={!valid && value}
-      style:padding-left={leftContainerWidth
-        ? `${leftContainerWidth}px`
-        : "auto"}
-      style:padding-right={rightContainerWidth
-        ? `${rightContainerWidth}px`
-        : "auto"}
-      bind:this={inputElement}
-      type="text"
-      {name}
-      {placeholder}
-      {disabled}
-      bind:value
-      on:input
-      on:focus={handleFocusEvent}
-      on:blur={handleFocusEvent}
-      on:keydown|stopPropagation={handleKeydown}
-      on:click
-      on:change />
-
-    <div
-      class="right-container"
-      class:small={size === "small"}
-      bind:clientWidth={rightContainerWidth}>
-      {#if loading}
-        <Loading small noDelay />
+    {#if valid && !loading && isFocused && showKeyHint}
+      {#if success}
+        <IconSmall name="checkmark" />
+      {:else}
+        <KeyHint>⏎</KeyHint>
       {/if}
-
-      {#if valid && !loading && isFocused && showKeyHint}
-        {#if success}
-          <IconSmall name="checkmark" />
-        {:else}
-          <KeyHint>⏎</KeyHint>
-        {/if}
-      {/if}
-
-      {#if $$slots.right}
-        <slot name="right" />
-      {/if}
-    </div>
-
-    {#if !valid && validationMessage}
-      <div class="validation-message">
-        <div style="display: flex; align-items: center; gap: 0.25rem;">
-          <IconSmall name="exclamation-circle" />{validationMessage}
-        </div>
-      </div>
     {/if}
   </div>
 </div>

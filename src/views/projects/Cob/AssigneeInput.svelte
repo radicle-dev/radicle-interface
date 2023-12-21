@@ -79,6 +79,14 @@
     width: 100%;
     gap: 0.25rem;
   }
+  .validation-message {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-foreground-red);
+    position: relative;
+    margin-top: 0.5rem;
+  }
 </style>
 
 <div>
@@ -108,7 +116,6 @@
         <div style="width:100%; display: flex; align-items: center;">
           <TextInput
             {valid}
-            {validationMessage}
             autofocus
             disabled={submitInProgress}
             bind:value={inputValue}
@@ -126,6 +133,11 @@
             <IconSmall name="checkmark" />
           </IconButton>
         </div>
+        {#if !valid && validationMessage}
+          <div class="validation-message">
+            <IconSmall name="exclamation-circle" />{validationMessage}
+          </div>
+        {/if}
       {:else}
         <Badge
           variant="outline"
