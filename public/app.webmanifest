@@ -4,7 +4,6 @@
   "short_name": "Radicle",
   "description": "Interact with Radicle.",
   "start_url": "/",
-  "theme_color": "#0e171f",
   "icons": [
     {
       "src": "/images/apple-touch-icon.png",
