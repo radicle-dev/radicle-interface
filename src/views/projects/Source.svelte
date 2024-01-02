@@ -88,7 +88,6 @@
   .column-right {
     display: flex;
     flex-direction: column;
-    min-width: var(--content-min-width);
     width: 100%;
   }
   .placeholder {
@@ -104,15 +103,15 @@
   }
   .sticky {
     position: sticky;
-    top: 4.5rem;
+    top: 0rem;
     max-height: calc(100vh - 5.5rem);
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="source" styleRightContentPadding="0">
+<Layout {baseUrl} {project} activeTab="source">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-  <div style:margin-top="1rem" style:margin-left="1rem" slot="subheader">
+  <div style:margin="1rem 0 1rem 1rem" slot="subheader">
     <Header
       node={baseUrl}
       {project}

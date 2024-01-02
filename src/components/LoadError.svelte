@@ -40,7 +40,7 @@
       </div>
       <div class="help">
         If you need help resolving this issue, copy the error message
-        <br />
+        <br class="global-hide-on-mobile" />
         below and send it to us on
         <ExternalLink href="https://radicle.zulipchat.com">
           radicle.zulipchat.com

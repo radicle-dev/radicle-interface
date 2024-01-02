@@ -4,7 +4,7 @@
   import KeyHint from "@app/components/KeyHint.svelte";
   import Popover from "@app/components/Popover.svelte";
   import RadworksLogo from "@app/components/RadworksLogo.svelte";
-  import ThemeSettings from "./Header/ThemeSettings.svelte";
+  import Settings from "./Settings.svelte";
 </script>
 
 <style>
@@ -66,9 +66,7 @@
         Settings
       </IconButton>
 
-      <div slot="popover" style:width="19rem">
-        <ThemeSettings />
-      </div>
+      <Settings slot="popover" />
     </Popover>
 
     <a

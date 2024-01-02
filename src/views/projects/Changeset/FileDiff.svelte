@@ -239,7 +239,7 @@
 </script>
 
 <style>
-  main {
+  .container {
     font-size: var(--font-size-small);
     background: var(--color-background-float);
     border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
@@ -420,7 +420,7 @@
     {/if}
   </svelte:fragment>
 
-  <main>
+  <div class="container">
     {#if fileDiff.type === "plain"}
       {#if fileDiff.hunks.length > 0}
         <table class="diff" data-file-diff-select>
@@ -494,5 +494,5 @@
         <Placeholder iconName="binary-file" caption="Binary file" inline />
       </div>
     {/if}
-  </main>
+  </div>
 </File>

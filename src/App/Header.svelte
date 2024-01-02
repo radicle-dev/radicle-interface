@@ -61,7 +61,7 @@
   }
 </style>
 
-<header class="global-hide-on-mobile">
+<header>
   <div class="left">
     <Link
       style="display: flex; align-items: center;"

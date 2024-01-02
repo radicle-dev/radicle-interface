@@ -90,6 +90,26 @@
     align-items: center;
     justify-content: center;
   }
+
+  @media (max-width: 720px) {
+    .projects {
+      gap: 1.5rem;
+    }
+    .wrapper {
+      width: 100%;
+      padding: 1rem 1.5rem 1.5rem 1.5rem;
+      gap: 2rem;
+    }
+    .layout {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+    .info {
+      flex-direction: column;
+    }
+  }
 </style>
 
 <AppLayout>
@@ -127,13 +147,25 @@
               project: project.id,
               node: baseUrl,
             }}>
-            <ProjectCard
-              {activity}
-              id={project.id}
-              name={project.name}
-              visibility={project.visibility?.type}
-              description={project.description}
-              head={project.head} />
+            <div class="global-hide-on-mobile">
+              <ProjectCard
+                {activity}
+                id={project.id}
+                name={project.name}
+                visibility={project.visibility?.type}
+                description={project.description}
+                head={project.head} />
+            </div>
+            <div class="global-hide-on-desktop">
+              <ProjectCard
+                compact
+                {activity}
+                id={project.id}
+                name={project.name}
+                visibility={project.visibility?.type}
+                description={project.description}
+                head={project.head} />
+            </div>
           </Link>
         {/each}
       </div>

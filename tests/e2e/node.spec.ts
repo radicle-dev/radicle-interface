@@ -34,7 +34,9 @@ test("node metadata", async ({ page, peerManager }) => {
 
 test("node projects", async ({ page }) => {
   await page.goto("/nodes/radicle.local");
-  const project = page.locator(".project", { hasText: "source-browsing" });
+  const project = page
+    .locator(".project", { hasText: "source-browsing" })
+    .nth(0);
 
   // Project metadata.
   {

@@ -131,17 +131,19 @@
     </Link>
   </div>
 
-  <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
-    <Button disabled notAllowed={false} variant="tab" slot="toggle">
-      <IconSmall name="user" />
-      <div class="title-counter">
-        Contributors
-        <div class="counter">{tree.stats.contributors}</div>
+  <div class="global-hide-on-mobile">
+    <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
+      <Button disabled notAllowed={false} variant="tab" slot="toggle">
+        <IconSmall name="user" />
+        <div class="title-counter">
+          Contributors
+          <div class="counter">{tree.stats.contributors}</div>
+        </div>
+      </Button>
+      <div class="txt-small" slot="popover">
+        <div style:margin-bottom="1rem">Coming soon.</div>
+        <div>Listing contributors is not implemented yet.</div>
       </div>
-    </Button>
-    <div class="txt-small" slot="popover">
-      <div style:margin-bottom="1rem">Coming soon.</div>
-      <div>Listing contributors is not implemented yet.</div>
-    </div>
-  </HoverPopover>
+    </HoverPopover>
+  </div>
 </div>

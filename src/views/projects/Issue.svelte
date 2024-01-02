@@ -402,6 +402,7 @@
   .issue {
     display: flex;
     flex: 1;
+    padding: 1rem;
   }
   .metadata {
     display: flex;
@@ -463,7 +464,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues" styleContentMargin="0">
+<Layout {baseUrl} {project} activeTab="issues">
   <div class="issue">
     <div style="display: flex; flex: 1; flex-direction: column; gap: 1.5rem;">
       <CobHeader id={issue.id}>

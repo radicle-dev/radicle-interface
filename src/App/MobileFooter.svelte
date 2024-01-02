@@ -1,11 +1,11 @@
 <script lang="ts">
   import Button from "@app/components/Button.svelte";
-  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import RadworksLogo from "@app/components/RadworksLogo.svelte";
-  import ThemeSettings from "./Header/ThemeSettings.svelte";
+
+  import Help from "./Help.svelte";
+  import Settings from "./Settings.svelte";
 </script>
 
 <style>
@@ -14,8 +14,6 @@
     display: flex;
     justify-content: space-between;
     padding: 0.5rem;
-    position: fixed;
-    bottom: 0;
     z-index: 1;
     gap: 0.5rem;
     border-top: 1px solid var(--color-fill-separator);
@@ -24,21 +22,6 @@
   .divider {
     border-bottom: 1px solid var(--color-fill-separator);
     margin: 1.5rem 0;
-  }
-  .help {
-    font-size: var(--font-size-small);
-    color: var(--color-foreground-dim);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  a:hover {
-    color: var(--color-fill-secondary);
-  }
-  .help-item {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
   }
 </style>
 
@@ -68,25 +51,10 @@
         <IconSmall name="menu" />
       </Button>
 
-      <div slot="popover" style:width="18.5rem">
-        <div class="help">
-          <div class="help-item">
-            Supported by
-            <a
-              class="logo"
-              target="_blank"
-              rel="noreferrer"
-              href="https://radworks.org">
-              <RadworksLogo />
-            </a>
-          </div>
-          <div class="help-item">
-            About
-            <ExternalLink href="https://radicle.xyz">radicle.xyz</ExternalLink>
-          </div>
-        </div>
+      <div slot="popover">
+        <Help hideShortcuts />
         <div class="divider" />
-        <ThemeSettings />
+        <Settings />
       </div>
     </Popover>
   </div>

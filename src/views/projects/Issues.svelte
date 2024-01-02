@@ -17,9 +17,10 @@
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
+  import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import Popover from "@app/components/Popover.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
@@ -91,8 +92,8 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues" styleRightContentPadding="0">
-  <div slot="header" style:display="flex" style:padding="1rem 1rem 0 1rem">
+<Layout {baseUrl} {project} activeTab="issues">
+  <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"
       popoverPositionTop="2.5rem"
@@ -160,12 +161,14 @@
     {/if}
   </div>
 
-  {#if allIssues.length > 0}
-    <div style:border-top="1px solid var(--color-fill-separator)" />
-  {/if}
-  {#each allIssues as issue}
-    <IssueTeaser {baseUrl} projectId={project.id} {issue} />
-  {/each}
+  <List items={allIssues}>
+    <IssueTeaser
+      slot="item"
+      let:item
+      {baseUrl}
+      projectId={project.id}
+      issue={item} />
+  </List>
 
   {#if error}
     <ErrorMessage message="Couldn't load issues" {error} />
@@ -173,7 +176,7 @@
 
   {#if project.issues[state] === 0}
     <div
-      style="height: calc(100vh - 7.5rem); display: flex; align-items: center; justify-content: center;">
+      style="height: calc(100% - 4rem); display: flex; align-items: center; justify-content: center;">
       <Placeholder iconName="no-issues" caption={`No ${state} issues`} />
     </div>
   {/if}

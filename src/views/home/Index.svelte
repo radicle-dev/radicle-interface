@@ -31,7 +31,6 @@
     flex-wrap: wrap;
     gap: 2.5rem;
     width: 100%;
-    max-width: var(--content-max-width);
   }
   .project {
     width: 16rem;
@@ -48,7 +47,7 @@
       width: 100%;
     }
     .projects {
-      margin-bottom: 4.5rem;
+      margin-bottom: 1.5rem;
       gap: 1.5rem;
     }
     .wrapper {

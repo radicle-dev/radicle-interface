@@ -102,6 +102,7 @@
   .form {
     display: flex;
     flex: 1;
+    padding: 1rem;
   }
   .actions {
     display: flex;
@@ -134,7 +135,7 @@
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">
-  <main>
+  <div>
     {#if session}
       <div class="form">
         <div class="editor">
@@ -233,5 +234,5 @@
       <ErrorMessage
         message="Couldn't access issue creation. Make sure you're authenticated." />
     {/if}
-  </main>
+  </div>
 </Layout>

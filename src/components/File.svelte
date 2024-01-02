@@ -24,7 +24,7 @@
 
   .sticky {
     position: sticky;
-    top: 3.5rem;
+    top: 0;
   }
 
   .collapsed {
@@ -54,11 +54,6 @@
     background: var(--color-background-float);
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
-  }
-  @media (max-width: 720px) {
-    .sticky {
-      top: 0rem;
-    }
   }
 </style>
 

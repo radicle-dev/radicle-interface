@@ -13,7 +13,8 @@
 </script>
 
 <style>
-  .container {
+  .settings {
+    width: 18.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,7 +34,7 @@
   }
 </style>
 
-<div class="container">
+<div class="settings">
   <div class="item">
     <div>Theme</div>
     <div class="right">

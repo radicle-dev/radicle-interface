@@ -555,6 +555,7 @@
   .patch {
     display: flex;
     flex: 1;
+    padding: 1rem;
   }
   .metadata {
     display: flex;
@@ -643,7 +644,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches" styleContentMargin="0">
+<Layout {baseUrl} {project} activeTab="patches">
   <div class="patch">
     <div style="display: flex; flex: 1; flex-direction: column;">
       <CobHeader id={patch.id}>

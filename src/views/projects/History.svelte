@@ -108,10 +108,10 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="source" styleRightContentPadding="0">
+<Layout {baseUrl} {project} activeTab="source">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-  <div style:margin-top="1rem" style:margin-left="1rem" slot="subheader">
+  <div style:margin="1rem 0 1rem 1rem" slot="subheader">
     <Header
       node={baseUrl}
       {project}
@@ -123,17 +123,19 @@
       historyLinkActive={true} />
   </div>
 
-  {#each groupCommits(allCommitHeaders) as group (group.time)}
-    <div class="group-header">{group.date}</div>
-    <List items={group.commits}>
-      <CommitTeaser
-        slot="item"
-        let:item
-        projectId={project.id}
-        {baseUrl}
-        commit={item} />
-    </List>
-  {/each}
+  <div>
+    {#each groupCommits(allCommitHeaders) as group (group.time)}
+      <div class="group-header">{group.date}</div>
+      <List items={group.commits}>
+        <CommitTeaser
+          slot="item"
+          let:item
+          projectId={project.id}
+          {baseUrl}
+          commit={item} />
+      </List>
+    {/each}
+  </div>
 
   {#if loading || allCommitHeaders.length < totalCommitCount}
     <div class="more">

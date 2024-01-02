@@ -29,7 +29,6 @@
     display: flex;
     padding: 1.25rem;
     background-color: var(--color-background-float);
-    border-bottom: 1px solid var(--color-fill-separator);
   }
   .issue-teaser:hover {
     background-color: var(--color-fill-float-hover);

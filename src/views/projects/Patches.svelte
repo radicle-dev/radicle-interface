@@ -13,10 +13,11 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
+  import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Popover, { closeFocused } from "@app/components/Popover.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -96,8 +97,8 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches" styleRightContentPadding="0">
-  <div slot="header" style:display="flex" style:padding="1rem 1rem 0 1rem">
+<Layout {baseUrl} {project} activeTab="patches">
+  <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"
       popoverPositionTop="2.5rem"
@@ -148,12 +149,14 @@
     </Popover>
   </div>
 
-  {#if allPatches.length > 0}
-    <div style:border-top="1px solid var(--color-fill-separator)" />
-  {/if}
-  {#each allPatches as patch}
-    <PatchTeaser {baseUrl} projectId={project.id} {patch} />
-  {/each}
+  <List items={allPatches}>
+    <PatchTeaser
+      slot="item"
+      let:item
+      {baseUrl}
+      projectId={project.id}
+      patch={item} />
+  </List>
 
   {#if error}
     <ErrorMessage message="Couldn't load patches" {error} />
@@ -161,7 +164,7 @@
 
   {#if project.patches[state] === 0}
     <div
-      style="height: calc(100vh - 7.5rem); display: flex; align-items: center; justify-content: center;">
+      style="height: calc(100% - 4rem); display: flex; align-items: center; justify-content: center;">
       <Placeholder iconName="no-patches" caption={`No ${state} patches`} />
     </div>
   {/if}

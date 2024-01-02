@@ -201,6 +201,9 @@
   :global(html) {
     scroll-padding-top: 4rem;
   }
+  .markdown {
+    max-width: 1024px;
+  }
   .front-matter {
     font-size: var(--font-size-tiny);
     font-family: var(--font-family-monospace);

@@ -10,11 +10,28 @@
     flex-direction: column;
     height: 100%;
   }
+  .content {
+    height: 100%;
+  }
+  @media (max-width: 720px) {
+    .app {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      height: 100%;
+    }
+    .content {
+      overflow-y: scroll;
+    }
+  }
 </style>
 
 <div class="app">
-  <Header />
-  <slot />
+  <div class="global-hide-on-mobile">
+    <Header />
+  </div>
+  <div class="content">
+    <slot />
+  </div>
   <div style:margin-top="auto">
     <div class="global-hide-on-mobile">
       <Footer />

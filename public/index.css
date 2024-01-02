@@ -9,9 +9,6 @@
   --border-radius-regular: 8px;
   --border-radius-round: 10rem;
 
-  --content-max-width: 1920px;
-  --content-min-width: 400px;
-
   --scrollbar-width: 0.5rem;
 
   --button-regular-height: 2.5rem;
@@ -21,13 +18,11 @@
 
 html {
   height: 100%;
-  overflow-y: scroll;
   -ms-overflow-style: scrollbar;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  min-width: var(--content-min-width);
   height: 100%;
   margin: 0;
   padding: 0;
@@ -62,10 +57,6 @@ body {
 *:hover::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
   background-color: var(--color-fill-separator);
-}
-
-main {
-  display: block;
 }
 
 a {

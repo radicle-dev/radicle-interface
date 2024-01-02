@@ -16,6 +16,9 @@
 </script>
 
 <style>
+  .commit {
+    padding: 1rem;
+  }
   .header {
     margin-bottom: 3rem;
     border-radius: var(--border-radius-small);
@@ -27,18 +30,20 @@
   }
 </style>
 
-<Layout {baseUrl} {project} styleContentMargin="0">
-  <div class="header">
-    <InlineMarkdown fontSize="large" content={header.summary} />
-    <pre class="description txt-small">{header.description}</pre>
-    <CommitAuthorship {header}>
-      <span class="global-hash">{formatCommit(header.id)}</span>
-    </CommitAuthorship>
+<Layout {baseUrl} {project}>
+  <div class="commit">
+    <div class="header">
+      <InlineMarkdown fontSize="large" content={header.summary} />
+      <pre class="description txt-small">{header.description}</pre>
+      <CommitAuthorship {header}>
+        <span class="global-hash">{formatCommit(header.id)}</span>
+      </CommitAuthorship>
+    </div>
+    <Changeset
+      {baseUrl}
+      projectId={project.id}
+      files={commit.files}
+      diff={commit.diff}
+      revision={commit.commit.id} />
   </div>
-  <Changeset
-    {baseUrl}
-    projectId={project.id}
-    files={commit.files}
-    diff={commit.diff}
-    revision={commit.commit.id} />
 </Layout>
