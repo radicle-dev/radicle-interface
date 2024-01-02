@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { CodeFont, Theme } from "@app/lib/appearance";
-
   import {
     codeFont,
     codeFonts,
@@ -12,19 +10,6 @@
   import Icon from "@app/components/Icon.svelte";
   import Radio from "@app/components/Radio.svelte";
   import Button from "@app/components/Button.svelte";
-
-  $: document.documentElement.setAttribute("data-codefont", $codeFont);
-  $: document.documentElement.setAttribute("data-theme", $theme);
-
-  function switchFont(font: CodeFont) {
-    codeFont.set(font);
-    storeCodeFont(font);
-  }
-
-  function switchTheme(newTheme: Theme) {
-    theme.set(newTheme);
-    storeTheme(newTheme);
-  }
 </script>
 
 <style>
@@ -57,14 +42,14 @@
           ariaLabel="Light Mode"
           styleBorderRadius="0"
           variant={$theme === "light" ? "gray-white" : "dim"}
-          on:click={() => switchTheme("light")}>
+          on:click={() => storeTheme("light")}>
           <Icon name="sun" />
         </Button>
         <Button
           ariaLabel="Dark Mode"
           styleBorderRadius="0"
           variant={$theme === "dark" ? "gray-white" : "dim"}
-          on:click={() => switchTheme("dark")}>
+          on:click={() => storeTheme("dark")}>
           <Icon name="moon" />
         </Button>
       </Radio>
@@ -78,7 +63,7 @@
           <Button
             styleBorderRadius="0"
             styleFontFamily={font.fontFamily}
-            on:click={() => switchFont(font.storedName)}
+            on:click={() => storeCodeFont(font.storedName)}
             variant={$codeFont === font.storedName ? "gray-white" : "dim"}>
             {font.displayName}
           </Button>

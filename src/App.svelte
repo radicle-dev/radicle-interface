@@ -5,6 +5,8 @@
   import * as httpd from "@app/lib/httpd";
   import { unreachable } from "@app/lib/utils";
 
+  import { codeFont, theme } from "@app/lib/appearance";
+
   import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
   import LoadingBar from "./App/LoadingBar.svelte";
@@ -37,6 +39,9 @@
 
     plausible.enableAutoPageviews();
   }
+
+  $: document.documentElement.setAttribute("data-codefont", $codeFont);
+  $: document.documentElement.setAttribute("data-theme", $theme);
 </script>
 
 <style>
