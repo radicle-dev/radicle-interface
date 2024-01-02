@@ -27,12 +27,6 @@
   export let seeding: boolean;
 
   let mobileFileTree = false;
-  let treeElement: HTMLElement | undefined = undefined;
-  let treeOverflow: boolean = false;
-
-  $: if (treeElement) {
-    treeOverflow = treeElement.scrollHeight > treeElement.offsetHeight;
-  }
 
   const api = new HttpdClient(baseUrl);
 
@@ -108,10 +102,6 @@
     width: 17.5rem;
     padding-right: 0.25rem;
   }
-  .source-tree-overflow {
-    border-bottom: 1px solid var(--color-fill-separator);
-    border-top: 1px solid var(--color-fill-separator);
-  }
   .sticky {
     position: sticky;
     top: 4.5rem;
@@ -168,10 +158,7 @@
   <div class="container center-content">
     {#if tree.entries.length > 0}
       <div class="column-left global-hide-on-mobile">
-        <div
-          bind:this={treeElement}
-          class="source-tree sticky"
-          class:source-tree-overflow={treeOverflow}>
+        <div class="source-tree sticky">
           <TreeComponent
             projectId={project.id}
             {revision}
