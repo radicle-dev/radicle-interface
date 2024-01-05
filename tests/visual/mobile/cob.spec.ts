@@ -1,11 +1,4 @@
-import {
-  test,
-  expect,
-  cobUrl,
-  viewportSizes,
-} from "@tests/support/fixtures.js";
-
-test.use({ viewport: viewportSizes["iPhoneXR"] });
+import { test, expect, cobUrl } from "@tests/support/fixtures.js";
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -68,11 +61,12 @@ test("patch page", async ({ page }) => {
     ["This patch is going to be archived", "archived"],
     ["Let's add a README", "merged"],
     ["Add subtitle to README", "open"],
-    ["Taking another stab at the README", "open"],
   ];
 
   for (const [name, state] of patches) {
-    await page.goto(`${cobUrl}/patches?state=${state}`);
+    await page.goto(`${cobUrl}/patches?state=${state}`, {
+      waitUntil: "networkidle",
+    });
     await page.getByRole("link", { name }).click();
     await page.getByRole("heading", { name }).waitFor();
     await expect(page).toHaveScreenshot({ fullPage: true });

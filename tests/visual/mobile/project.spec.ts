@@ -3,10 +3,7 @@ import {
   expect,
   sourceBrowsingUrl,
   test,
-  viewportSizes,
 } from "@tests/support/fixtures.js";
-
-test.use({ viewport: viewportSizes["iPhoneXR"] });
 
 test("source tree page", async ({ page }) => {
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });

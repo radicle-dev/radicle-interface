@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium
+        run: npx playwright install chromium webkit --with-deps
 
       - name: Install Radicle binaries
         run: |
@@ -57,9 +57,9 @@ jobs:
       - name: Run Playwright tests
         run: |
           if [ ${{ github.ref }} = "refs/heads/master" ]; then
-            npm run test:e2e -- --project visual --update-snapshots || true;
+            npm run test:e2e -- --project visual-desktop visual-mobile --update-snapshots || true;
           else
-            npm run test:e2e -- --project visual;
+            npm run test:e2e -- --project visual-desktop visual-mobile;
           fi
 
       # We don't care about logs in visual snapshot tests, only the images.

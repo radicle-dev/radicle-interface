@@ -3,7 +3,7 @@ import type * as Stream from "node:stream";
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
 import assert from "node:assert";
-import { test as base, expect, type ViewportSize } from "@playwright/test";
+import { test as base, expect } from "@playwright/test";
 
 import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
@@ -17,13 +17,6 @@ import type { PeerManager, RadiclePeer } from "./peerManager.js";
 export { expect };
 
 const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
-
-type ViewportTypes = "iPhoneXR" | "Desktop";
-
-export const viewportSizes: Record<ViewportTypes, ViewportSize> = {
-  iPhoneXR: { width: 414, height: 896 },
-  Desktop: { width: 1280, height: 720 },
-};
 
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type

@@ -41,7 +41,7 @@ const config: PlaywrightTestConfig = {
       },
     },
     {
-      name: "visual",
+      name: "visual-desktop",
       timeout: 60_000,
       expect: {
         timeout: 30_000,
@@ -51,13 +51,32 @@ const config: PlaywrightTestConfig = {
           animations: "disabled",
         },
       },
-      testDir: "./tests/visual",
-      snapshotDir: "./tests/visual/snapshots",
+      testDir: "./tests/visual/desktop",
+      snapshotDir: "./tests/visual/snapshots/desktop",
       retries: 0,
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices["Desktop Chrome HiDPI"],
         actionTimeout: 0,
-        deviceScaleFactor: 2,
+        trace: "off",
+      },
+    },
+    {
+      name: "visual-mobile",
+      timeout: 60_000,
+      expect: {
+        timeout: 30_000,
+        toHaveScreenshot: {
+          threshold: 0.01,
+          scale: "device",
+          animations: "disabled",
+        },
+      },
+      testDir: "./tests/visual/mobile",
+      snapshotDir: "./tests/visual/snapshots/mobile",
+      retries: 0,
+      use: {
+        ...devices["iPhone 13 Mini"],
+        actionTimeout: 0,
         trace: "off",
       },
     },
