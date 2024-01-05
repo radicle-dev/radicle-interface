@@ -10,8 +10,12 @@
     flex-direction: column;
     height: 100%;
   }
+  .header {
+    border-bottom: 1px solid var(--color-fill-separator);
+  }
   .content {
     height: 100%;
+    overflow-y: scroll;
   }
   @media (max-width: 720px) {
     .app {
@@ -26,7 +30,7 @@
 </style>
 
 <div class="app">
-  <div class="global-hide-on-mobile">
+  <div class="global-hide-on-mobile header">
     <Header />
   </div>
   <div class="content">
