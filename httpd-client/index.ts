@@ -84,6 +84,7 @@ const nodeSchema = object({
     ]),
     connect: array(string()),
     externalAddresses: array(string()),
+    listen: array(string()),
     network: union([literal("main"), literal("test")]),
     relay: boolean(),
     limits: object({
