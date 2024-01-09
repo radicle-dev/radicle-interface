@@ -10,13 +10,13 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    gap: 0.5rem;
-    padding: 0.5rem;
+    gap: 0.375rem;
+    padding: 1.25rem 0.625rem;
     white-space: nowrap;
     border-radius: var(--border-radius-tiny);
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-foreground-dim);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-foreground-contrast);
     height: 2rem;
   }
   .item.disabled {
@@ -27,6 +27,7 @@
     background-color: var(--color-fill-ghost);
   }
   .selected {
+    font-weight: var(--font-weight-semibold);
     color: var(--color-foreground-contrast);
     background-color: var(--color-fill-ghost);
   }

@@ -43,9 +43,10 @@
         stylePopoverPositionLeft="0"
         stylePopoverPositionTop="0.5rem">
         <Button
+          size="large"
           ariaLabel="canonical-branch"
           variant="gray-white"
-          styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
+          styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
           slot="toggle"
           disabled
           notAllowed={false}>
@@ -63,15 +64,16 @@
     {:else}
       <Popover
         popoverPadding="0"
-        popoverPositionTop="2.5rem"
+        popoverPositionTop="3rem"
         popoverBorderRadius="var(--border-radius-small)">
         <Button
+          size="large"
           variant="gray-white"
           let:expanded
           let:toggle
           on:click={toggle}
           slot="toggle"
-          styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
+          styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
           title="Change branch">
           <IconSmall name="branch" />
           <div class="identifier">{selectedBranch}</div>
@@ -97,11 +99,12 @@
   {/if}
 
   <Button
+    size="large"
     title="Current HEAD"
     variant="not-selected"
     styleBorderRadius={selectedBranch
-      ? "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
-      : "var(--border-radius-tiny)"}>
+      ? "0 var(--border-radius-small) var(--border-radius-small) 0"
+      : "var(--border-radius-small)"}>
     <Link
       route={{
         resource: "project.commit",

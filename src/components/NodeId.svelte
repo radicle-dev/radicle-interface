@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
     height: 1rem;
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-semibold);
