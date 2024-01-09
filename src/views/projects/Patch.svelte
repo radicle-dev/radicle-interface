@@ -694,6 +694,7 @@
           <div class="revision-description">
             {#if session && patchState !== "read"}
               <ExtendedTextarea
+                validateBody={false}
                 rawPath={rawPath(patch.revisions[0].id)}
                 body={newDescription}
                 submitCaption="Save"
