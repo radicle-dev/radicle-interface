@@ -82,7 +82,7 @@
   .column-left {
     display: flex;
     flex-direction: column;
-    padding-right: 1.5rem;
+    padding-right: 0.5rem;
   }
 
   .column-right {

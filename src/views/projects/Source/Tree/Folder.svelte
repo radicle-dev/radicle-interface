@@ -7,7 +7,7 @@
   import Link from "@app/components/Link.svelte";
 
   import File from "./File.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let baseUrl: BaseUrl;
   export let currentPath: string;
@@ -42,7 +42,7 @@
   .folder {
     display: flex;
     cursor: pointer;
-    padding: 0.25rem;
+    padding: 0.25rem 0.875rem;
     margin: 0.25rem 0;
     user-select: none;
     line-height: 1.5rem;
@@ -55,7 +55,7 @@
 
   .folder-name {
     margin-left: 0.25rem;
-    font-size: var(--font-size-regular);
+    font-size: var(--font-size-small);
     font-weight: var(--font-weight-medium);
   }
 
@@ -73,6 +73,7 @@
     justify-content: center;
     align-items: center;
     color: var(--color-fill-secondary);
+    margin-right: 0.125rem;
   }
 </style>
 
@@ -80,9 +81,9 @@
 <div role="button" tabindex="0" class="folder" on:click={onClick}>
   <div class="icon-container">
     {#if expanded}
-      <Icon name="folder-open" />
+      <IconSmall name="folder-open" />
     {:else}
-      <Icon name="folder" />
+      <IconSmall name="folder" />
     {/if}
   </div>
   <span class="folder-name">{name}</span>

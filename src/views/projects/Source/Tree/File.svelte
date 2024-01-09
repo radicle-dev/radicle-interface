@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Icon from "@app/components/Icon.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
 
   export let active: boolean;
   export let name: string;
@@ -12,7 +12,7 @@
     display: flex;
     line-height: 1.5em;
     margin: 0.25rem 0;
-    padding: 0.25rem;
+    padding: 0.25rem 0.875rem;
     width: 100%;
   }
 
@@ -36,7 +36,7 @@
     white-space: nowrap;
     text-overflow: ellipsis !important;
     overflow: hidden;
-    font-size: var(--font-size-regular);
+    font-size: var(--font-size-small);
     font-weight: var(--font-weight-medium);
   }
   .icon-container {
@@ -44,6 +44,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 0.125rem;
   }
   .active .icon-container {
     color: var(--color-foreground-match-background);
@@ -52,7 +53,7 @@
 
 <div class="file" class:active>
   <div class="icon-container">
-    <Icon name="file" />
+    <IconSmall name="file" />
   </div>
   <span class="name">{name}</span>
 </div>
