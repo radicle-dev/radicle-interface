@@ -4,6 +4,7 @@
     DiffResponse,
     Embed,
     PatchState,
+    Revision,
     Verdict,
   } from "@httpd-client";
   import type { Timeline } from "@app/views/projects/Patch.svelte";
@@ -11,6 +12,7 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { onMount } from "svelte";
+  import { parseEmbedIntoMap } from "@app/lib/file";
 
   import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
@@ -39,6 +41,7 @@
   export let projectId: string;
   export let revisionBase: string;
   export let revisionId: string;
+  export let revisionEdits: Revision["edits"];
   export let revisionOid: string;
   export let revisionTimestamp: number;
   export let revisionAuthor: { id: string; alias?: string | undefined };
@@ -62,6 +65,7 @@
     | undefined;
 
   const api = new HttpdClient(baseUrl);
+  const latestEdit = revisionEdits.pop();
 
   function formatVerdict(verdict?: Verdict | null) {
     switch (verdict) {
@@ -399,9 +403,11 @@
               </div>
             </div>
           </div>
-          {#if editRevision && revisionState !== "read"}
+          {#if editRevision && latestEdit && revisionState !== "read"}
             {@const editRevision_ = editRevision}
             <ExtendedTextarea
+              enableAttachments
+              embeds={parseEmbedIntoMap(latestEdit.embeds)}
               rawPath={rawPath(revisionId)}
               body={revisionDescription}
               submitCaption="Save"

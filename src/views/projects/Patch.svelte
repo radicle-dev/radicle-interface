@@ -6,6 +6,7 @@
     Project,
     LifecycleState,
     PatchState,
+    Revision,
   } from "@httpd-client";
 
   interface Thread {
@@ -91,6 +92,7 @@
     ["Archive patch", { status: "archived" }],
     ["Convert to draft", { status: "draft" }],
   ];
+  const latestEdit = patch.revisions[0].edits.pop();
 
   async function editPatch(sessionId: string, title: string) {
     try {
@@ -506,6 +508,7 @@
         revisionTimestamp: number;
         revisionBase: string;
         revisionOid: string;
+        revisionEdits: Revision["edits"];
         revisionAuthor: { id: string; alias?: string | undefined };
         revisionDescription: string;
       },
@@ -517,6 +520,7 @@
       revisionTimestamp: rev.timestamp,
       revisionBase: rev.base,
       revisionOid: rev.oid,
+      revisionEdits: rev.edits,
       revisionAuthor: rev.author,
       revisionDescription: rev.description,
     },
@@ -694,29 +698,33 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if session && patchState !== "read"}
-              {@const latestEdit = patch.revisions[0].edits.pop()}
+            {#if session && patchState !== "read" && latestEdit}
               <ExtendedTextarea
                 validateBody={false}
                 enableAttachments
-                embeds={latestEdit && parseEmbedIntoMap(latestEdit.embeds)}
+                embeds={parseEmbedIntoMap(latestEdit.embeds)}
                 rawPath={rawPath(patch.revisions[0].id)}
                 body={newDescription}
                 submitCaption="Save"
                 submitInProgress={patchState === "submit"}
                 placeholder="Leave a description"
-                on:close={() => (patchState = "read")}
+                on:close={() => {
+                  patchState = "read";
+                  void refreshPatch();
+                }}
                 on:submit={async ({ detail: { comment, embeds } }) => {
                   patchState = "submit";
                   if (session) {
                     try {
-                      await editPatch(session.id, patch.title);
-                      await editRevision(
-                        session.id,
-                        patch.id,
-                        comment,
-                        Array.from(embeds.values()),
-                      );
+                      await Promise.all([
+                        editPatch(session.id, patch.title),
+                        editRevision(
+                          session.id,
+                          patch.id,
+                          comment,
+                          Array.from(embeds.values()),
+                        ),
+                      ]);
                     } finally {
                       patchState = "read";
                     }
