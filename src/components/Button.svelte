@@ -198,7 +198,7 @@
 
   .secondary-toggle-off {
     background-color: transparent;
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
     border: 1px solid var(--color-border-hint);
   }
   .secondary-toggle-off[disabled] {
@@ -208,7 +208,6 @@
   .secondary-toggle-off:not([disabled]):hover {
     background-color: transparent;
     border: 1px solid var(--color-fill-secondary);
-    color: var(--color-foreground-dim);
   }
 
   .secondary-toggle-on {
@@ -223,12 +222,11 @@
   .secondary-toggle-on:not([disabled]):hover {
     background-color: var(--color-fill-selected);
     border: 1px solid var(--color-border-focus);
-    color: var(--color-foreground-emphasized);
   }
 
   .naked-toggle-off {
     background-color: transparent;
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
     border: 1px solid transparent;
   }
   .naked-toggle-off[disabled] {
@@ -252,7 +250,6 @@
   .naked-toggle-on:not([disabled]):hover {
     background-color: transparent;
     border: 1px solid var(--color-border-focus);
-    color: var(--color-foreground-emphasized-hover);
   }
 
   .secondary {
