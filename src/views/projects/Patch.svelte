@@ -585,6 +585,12 @@
     font-size: var(--font-size-large);
     height: 2.5rem;
   }
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 25rem;
+  }
   .tabs {
     display: flex;
     margin: 3rem 0 1rem 0;
@@ -639,7 +645,7 @@
 
 <Layout {baseUrl} {project} activeTab="patches">
   <div class="patch">
-    <div style="display: flex; flex: 1; flex-direction: column;">
+    <div class="content">
       <CobHeader id={patch.id}>
         <svelte:fragment slot="title">
           {#if patchState !== "read"}

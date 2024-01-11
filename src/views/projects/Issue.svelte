@@ -417,6 +417,13 @@
     gap: 1.5rem;
     width: 20rem;
   }
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 25rem;
+  }
 
   .threads {
     display: flex;
@@ -460,7 +467,7 @@
 
 <Layout {baseUrl} {project} activeTab="issues">
   <div class="issue">
-    <div style="display: flex; flex: 1; flex-direction: column; gap: 1.5rem;">
+    <div class="content">
       <CobHeader id={issue.id}>
         <svelte:fragment slot="title">
           {#if issueState !== "read"}
