@@ -89,6 +89,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    /* To allow pre elements to shrink when overflowing */
+    min-width: 0;
   }
   .placeholder {
     padding: 4rem 0;
