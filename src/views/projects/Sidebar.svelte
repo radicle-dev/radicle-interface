@@ -121,8 +121,8 @@
             styleWidth="100%"
             styleJustifyContent={"flex-start"}
             variant={activeTab === "source" ? "gray" : "background"}>
-            <IconSmall name="home" />
-            Home
+            <IconSmall name="chevron-left-right" />
+            Source
           </Button>
         </Link>
         <Link
