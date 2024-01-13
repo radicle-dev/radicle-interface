@@ -38,10 +38,9 @@
 
 <Popover
   popoverPadding="0"
-  popoverPositionTop="3rem"
+  popoverPositionTop="2.5rem"
   popoverBorderRadius="var(--border-radius-small)">
   <Button
-    size="large"
     slot="toggle"
     let:expanded
     let:toggle

@@ -43,7 +43,7 @@
   }
 </style>
 
-<Popover popoverPositionTop="3rem" popoverPositionRight="0">
+<Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button
     {disabled}
     slot="toggle"
@@ -55,7 +55,6 @@
         toggle();
       }
     }}
-    size="large"
     variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="network" />
     <span class="title-counter">

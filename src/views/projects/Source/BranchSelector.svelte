@@ -43,7 +43,6 @@
         stylePopoverPositionLeft="0"
         stylePopoverPositionTop="0.5rem">
         <Button
-          size="large"
           ariaLabel="canonical-branch"
           variant="gray-white"
           styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
@@ -64,10 +63,9 @@
     {:else}
       <Popover
         popoverPadding="0"
-        popoverPositionTop="3rem"
+        popoverPositionTop="2.5rem"
         popoverBorderRadius="var(--border-radius-small)">
         <Button
-          size="large"
           variant="gray-white"
           let:expanded
           let:toggle
@@ -99,7 +97,6 @@
   {/if}
 
   <Button
-    size="large"
     title="Current HEAD"
     variant="not-selected"
     styleBorderRadius={selectedBranch

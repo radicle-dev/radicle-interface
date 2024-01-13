@@ -84,7 +84,6 @@
           let:toggle
           on:click={toggle}
           title={buttonTitle[$httpdStore.state]}
-          size="large"
           variant="naked-toggle-off">
           <IconSmall name="device" />
           Connect

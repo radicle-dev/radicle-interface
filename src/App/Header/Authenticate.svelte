@@ -51,7 +51,6 @@
       slot="toggle"
       let:toggle
       on:click={toggle}
-      size="large"
       variant="naked-toggle-on">
       <div class="peer-info">
         <div style:height="1.25rem" style:margin-right="0.5rem">
@@ -83,7 +82,6 @@
       slot="toggle"
       let:toggle
       on:click={toggle}
-      size="large"
       variant="naked-toggle-off">
       <IconSmall name="key" />
       Authenticate

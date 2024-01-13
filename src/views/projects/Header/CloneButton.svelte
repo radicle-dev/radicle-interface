@@ -34,13 +34,8 @@
   }
 </style>
 
-<Popover popoverPositionTop="3rem" popoverPositionRight="0">
-  <Button
-    slot="toggle"
-    let:toggle
-    on:click={toggle}
-    size="large"
-    variant="secondary">
+<Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
+  <Button slot="toggle" let:toggle on:click={toggle} variant="secondary">
     Clone
     <Icon name="download" />
   </Button>

@@ -22,7 +22,6 @@
     slot="toggle"
     let:toggle
     on:click={toggle}
-    size="large"
     variant={running ? "naked-toggle-on" : "naked-toggle-off"}>
     <IconSmall name="broadcasting" />
     {#if running}
