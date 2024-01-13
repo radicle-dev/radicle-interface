@@ -17,6 +17,7 @@
 
 <span class="segment">
   <Link
+    title={isLocal(baseUrl.hostname) ? "Local Node" : undefined}
     style="display: flex; align-items: center; gap: 0.25rem;"
     route={{
       resource: "nodes",
@@ -27,7 +28,6 @@
     }}>
     {#if isLocal(baseUrl.hostname)}
       <IconSmall name="device" />
-      Local Node
     {:else}
       <IconSmall name="globe" />
       {baseUrl.hostname}
