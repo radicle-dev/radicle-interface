@@ -1,14 +1,10 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
-  import type { SvelteComponent } from "svelte";
 
   import { onMount } from "svelte";
 
   import Button from "@app/components/Button.svelte";
-  import Clipboard from "@app/components/Clipboard.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -49,8 +45,6 @@
   onMount(() => {
     expanded = loadSidebarState();
   });
-
-  let clipboard: SvelteComponent;
 </script>
 
 <style>
@@ -60,13 +54,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-  }
-  .id {
-    border-radius: var(--border-radius-small);
-    border: 1px solid var(--color-border-hint);
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   .project-navigation {
     display: flex;
@@ -97,19 +84,15 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 0.25rem;
   }
 </style>
 
 <div class="sidebar">
   {#if expanded}
     <div style="display: flex; flex-direction: column; gap: 1rem;">
-      <div class="id" style:padding="0.5rem 0.75rem">
-        <CopyableId id={project.id} />
-      </div>
       <div class="project-navigation">
         <Link
-          title="Home"
+          title="Source"
           route={{
             resource: "project.source",
             project: project.id,
@@ -117,6 +100,7 @@
             path: "/",
           }}>
           <Button
+            stylePadding="0.5rem 0.75rem"
             size="large"
             styleWidth="100%"
             styleJustifyContent={"flex-start"}
@@ -133,6 +117,7 @@
             node: baseUrl,
           }}>
           <Button
+            stylePadding="0.5rem 0.75rem"
             let:hover
             size="large"
             styleJustifyContent={"flex-start"}
@@ -159,6 +144,7 @@
             node: baseUrl,
           }}>
           <Button
+            stylePadding="0.5rem 0.75rem"
             let:hover
             size="large"
             styleWidth="100%"
@@ -180,47 +166,43 @@
     </div>
 
     <div class="sidebar-footer" style:flex-direction="row">
-      <IconButton title={"Collapse"} on:click={toggleSidebar}>
-        <IconSmall name="chevron-left" /> Collapse
-      </IconButton>
+      <Button title={"Collapse"} on:click={toggleSidebar} variant="background">
+        <IconSmall name="chevron-left" />
+      </Button>
+      <div style:width="1.5rem" />
 
-      <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
-        <IconButton title="Settings" slot="toggle" let:toggle on:click={toggle}>
+      <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+        <Button
+          variant="background"
+          title="Settings"
+          slot="toggle"
+          let:toggle
+          on:click={toggle}>
           <IconSmall name="settings" />
           Settings
-        </IconButton>
+        </Button>
 
         <Settings slot="popover" />
       </Popover>
-
-      <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
-        <IconButton title="Help" slot="toggle" let:toggle on:click={toggle}>
+      <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+        <Button
+          variant="background"
+          title="Help"
+          slot="toggle"
+          let:toggle
+          on:click={toggle}>
           <IconSmall name="help" />
           Help
-        </IconButton>
+        </Button>
 
         <Help slot="popover" />
       </Popover>
     </div>
   {:else}
     <div style="display: flex; flex-direction: column; gap: 1rem;">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        title="Copy RID to clipboard"
-        class="id"
-        style:color="var(--color-fill-secondary)"
-        style:cursor="pointer"
-        style:padding="0.5rem 0"
-        role="button"
-        tabindex="0"
-        on:click={() => {
-          clipboard.copy();
-        }}>
-        <Clipboard bind:this={clipboard} text={project.id} />
-      </div>
       <div class="project-navigation">
         <Link
-          title="Home"
+          title="Source"
           route={{
             resource: "project.source",
             project: project.id,
@@ -231,7 +213,7 @@
             size="large"
             stylePadding="0 0.75rem"
             variant={activeTab === "source" ? "gray" : "background"}>
-            <IconSmall name="home" />
+            <IconSmall name="chevron-left-right" />
           </Button>
         </Link>
         <Link
@@ -266,9 +248,11 @@
       </div>
     </div>
 
-    <div class="sidebar-footer" style:flex-direction="column-reverse">
+    <div
+      class="sidebar-footer"
+      style:flex-direction="column-reverse"
+      style:gap="0.5rem">
       <Button
-        size="large"
         stylePadding="0 0.75rem"
         variant="background"
         title={"Expand"}
@@ -278,7 +262,6 @@
 
       <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
         <Button
-          size="large"
           stylePadding="0 0.75rem"
           variant="background"
           title="Settings"
@@ -293,7 +276,6 @@
 
       <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
         <Button
-          size="large"
           stylePadding="0 0.75rem"
           variant="background"
           title="Help"

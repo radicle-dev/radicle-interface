@@ -12,6 +12,7 @@
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "../Header/SeedButton.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
 
   export let project: Project;
   export let baseUrl: BaseUrl;
@@ -68,7 +69,6 @@
     display: flex;
     font-size: var(--font-size-large);
     justify-content: left;
-    margin-bottom: 0.5rem;
     text-align: left;
     text-overflow: ellipsis;
     padding: 1rem 1rem 0 1rem;
@@ -82,37 +82,50 @@
   .description :global(a) {
     border-bottom: 1px solid var(--color-foreground-contrast);
   }
+  .id {
+    padding-left: 1rem;
+  }
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    margin-bottom: 1rem;
+  }
 </style>
 
-<div class="title">
-  <span class="txt-overflow">
-    <Link
-      route={{
-        resource: "project.source",
-        project: project.id,
-        node: baseUrl,
-      }}>
-      <span class="project-name">
-        {project.name}
-      </span>
-    </Link>
-  </span>
-  {#if project.visibility && project.visibility.type === "private"}
-    <Badge variant="yellowOutline" size="tiny">
-      {capitalize(project.visibility.type)}
-    </Badge>
-  {/if}
-
-  <div
-    class="global-hide-on-mobile"
-    style="margin-left: auto; display: flex; gap: 0.5rem;">
-    <SeedButton
-      {seeding}
-      disabled={editSeedingInProgress}
-      editSeeding={session && editSeeding}
-      seedCount={project.seeding}
-      projectId={project.id} />
-    <CloneButton {baseUrl} id={project.id} name={project.name} />
+<div class="title-container">
+  <div class="title">
+    <span class="txt-overflow">
+      <Link
+        route={{
+          resource: "project.source",
+          project: project.id,
+          node: baseUrl,
+        }}>
+        <span class="project-name">
+          {project.name}
+        </span>
+      </Link>
+    </span>
+    {#if project.visibility && project.visibility.type === "private"}
+      <Badge variant="yellowOutline" size="tiny">
+        {capitalize(project.visibility.type)}
+      </Badge>
+    {/if}
+    <div
+      class="global-hide-on-mobile"
+      style="margin-left: auto; display: flex; gap: 0.5rem;">
+      <SeedButton
+        {seeding}
+        disabled={editSeedingInProgress}
+        editSeeding={session && editSeeding}
+        seedCount={project.seeding}
+        projectId={project.id} />
+      <CloneButton {baseUrl} id={project.id} name={project.name} />
+    </div>
+  </div>
+  <div class="id">
+    <CopyableId id={project.id} />
   </div>
 </div>
 <div class="description" use:twemoji>
