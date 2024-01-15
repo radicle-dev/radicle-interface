@@ -30,7 +30,7 @@ test("relative timestamps", async ({ page }) => {
     };
   });
   await page.goto(commitUrl);
-  await expect(page.getByText("Bob Belcher committed now")).toBeVisible();
+  await expect(page.getByText("Bob Belcher committed 28f3710")).toBeVisible();
 });
 
 test("modified file", async ({ page }) => {

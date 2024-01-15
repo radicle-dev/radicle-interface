@@ -1,9 +1,3 @@
-<script lang="ts">
-  import * as utils from "@app/lib/utils";
-
-  export let id: string | undefined = undefined;
-</script>
-
 <style>
   .header {
     display: flex;
@@ -39,11 +33,6 @@
   </div>
   <div class="subtitle">
     <slot name="state" />
-    {#if id}
-      <div class="global-hash">
-        {utils.formatObjectId(id)}
-      </div>
-    {/if}
     <slot name="author" />
   </div>
   <div class="description">

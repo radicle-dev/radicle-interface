@@ -153,10 +153,17 @@
     </div>
     <div class="summary">
       <span class="subtitle">
-        <span class="global-hash">{formatObjectId(patch.id)}</span>
-        {patch.revisions.length > 1 ? "updated" : "opened"}
-        {formatTimestamp(latestRevision.timestamp)} by
         <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+        {patch.revisions.length > 1 ? "updated" : "opened"}
+        <span class="global-hash">{formatObjectId(patch.id)}</span>
+        {#if patch.revisions.length > 1}
+          to <span class="global-hash">
+            {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
+          </span>
+        {/if}
+        <span style:color="var(--color-foreground-dim)">
+          {formatTimestamp(latestRevision.timestamp)}
+        </span>
       </span>
     </div>
   </div>

@@ -468,7 +468,7 @@
 <Layout {baseUrl} {project} activeTab="issues">
   <div class="issue">
     <div class="content">
-      <CobHeader id={issue.id}>
+      <CobHeader>
         <svelte:fragment slot="title">
           {#if issueState !== "read"}
             <TextInput
@@ -562,10 +562,12 @@
           </div>
         </div>
         <div class="author" slot="author">
-          opened by <NodeId
-            nodeId={issue.author.id}
-            alias={issue.author.alias} />
-          {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
+          opened
+          <span class="global-hash">{utils.formatObjectId(issue.id)}</span>
+          <span style:color="var(--color-foreground-dim)">
+            {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          </span>
           {#if lastDescriptionEdit}
             <div class="author-metadata">•</div>
             <div

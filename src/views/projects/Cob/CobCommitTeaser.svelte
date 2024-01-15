@@ -39,7 +39,6 @@
     align-items: flex-start;
     gap: 1rem;
     margin-left: auto;
-    color: var(--color-foreground-dim);
   }
   .summary:hover {
     text-decoration: underline;
@@ -53,7 +52,6 @@
 <div class="teaser" aria-label="commit-teaser">
   <div class="left">
     <div class="message">
-      <span class="global-hash">{formatCommit(commit.id)}</span>
       <Link
         route={{
           resource: "project.commit",
@@ -82,7 +80,13 @@
   <div class="right">
     <div style:display="flex" style:gap="1rem" style:height="1.5rem">
       <div style:margin-bottom="1rem">
-        <CommitAuthorship header={commit} />
+        <CommitAuthorship header={commit}>
+          <span
+            class="global-hash"
+            style:color="var(--color-foreground-yellow)">
+            {formatCommit(commit.id)}
+          </span>
+        </CommitAuthorship>
       </div>
       <IconButton title="Browse the repository at this point in the history">
         <Link

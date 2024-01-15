@@ -19,6 +19,8 @@
     flex-wrap: nowrap;
     white-space: nowrap;
     gap: 0.5rem;
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
   }
   .avatar {
     width: 1rem;
@@ -28,7 +30,6 @@
 </style>
 
 <span class="authorship">
-  <slot />
   {#if header.author.email === header.committer.email}
     <div class="person">
       <img
@@ -38,7 +39,10 @@
       {header.committer.name}
     </div>
     committed
-    {formatTimestamp(header.committer.time)}
+    <slot />
+    <span style:color="var(--color-foreground-dim)">
+      {formatTimestamp(header.committer.time)}
+    </span>
   {:else}
     <div class="person">
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
@@ -53,6 +57,9 @@
       {header.committer.name}
     </div>
     committed
-    {formatTimestamp(header.committer.time)}
+    <slot />
+    <span style:color="var(--color-foreground-dim)">
+      {formatTimestamp(header.committer.time)}
+    </span>
   {/if}
 </span>

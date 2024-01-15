@@ -74,7 +74,7 @@
       case "reject":
         return "rejected revision";
       default:
-        return "left a review";
+        return "reviewed revision";
     }
   }
 
@@ -384,10 +384,14 @@
             {#if patchId === revisionId}
               opened this patch
             {:else}
-              updated to <span class="global-hash">
+              updated to
+              <span class="global-hash">
                 {utils.formatObjectId(revisionId)}
               </span>
             {/if}
+            <span style:color="var(--color-foreground-dim)">
+              {utils.formatTimestamp(revisionTimestamp)}
+            </span>
             <div style="display: flex; gap: 0.5rem; margin-left: auto;">
               {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
                 <IconButton
@@ -396,11 +400,6 @@
                   <IconSmall name="edit" />
                 </IconButton>
               {/if}
-              <div
-                class="timestamp"
-                title={utils.absoluteTimestamp(revisionTimestamp)}>
-                {utils.formatTimestamp(revisionTimestamp)}
-              </div>
             </div>
           </div>
           {#if editRevision && latestEdit && revisionState !== "read"}
@@ -491,13 +490,11 @@
               <span class="global-hash">
                 {utils.formatCommit(element.inner.commit)}
               </span>
-
-              <div
-                style="margin-left: auto"
+              <span
                 class="timestamp"
                 title={utils.absoluteTimestamp(revisionTimestamp)}>
                 {utils.formatTimestamp(revisionTimestamp)}
-              </div>
+              </span>
             </div>
           </div>
         {:else if element.type === "review"}
@@ -510,11 +507,16 @@
             class:negative-review={review.verdict === "reject"}>
             <CommentComponent
               rawPath={rawPath(projectHead)}
-              caption={formatVerdict(review.verdict)}
               authorId={author}
               authorAlias={review.author.alias}
               timestamp={review.timestamp}
               body={review.summary ?? ""}>
+              <div slot="caption">
+                {formatVerdict(review.verdict)}
+                <span class="global-hash">
+                  {utils.formatObjectId(revisionId)}
+                </span>
+              </div>
               <div slot="icon" style:color={verdictIconColor(review.verdict)}>
                 {#if review.verdict === "accept"}
                   <IconSmall name="checkmark" />

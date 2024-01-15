@@ -646,7 +646,7 @@
 <Layout {baseUrl} {project} activeTab="patches">
   <div class="patch">
     <div class="content">
-      <CobHeader id={patch.id}>
+      <CobHeader>
         <svelte:fragment slot="title">
           {#if patchState !== "read"}
             <TextInput
@@ -718,10 +718,12 @@
           </div>
         </svelte:fragment>
         <div class="author" slot="author">
-          opened by <NodeId
-            nodeId={patch.author.id}
-            alias={patch.author.alias} />
-          {utils.formatTimestamp(patch.revisions[0].timestamp)}
+          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+          opened
+          <span class="global-hash">{utils.formatObjectId(patch.id)}</span>
+          <span style:color="var(--color-foreground-dim)">
+            {utils.formatTimestamp(patch.revisions[0].timestamp)}
+          </span>
         </div>
       </CobHeader>
 

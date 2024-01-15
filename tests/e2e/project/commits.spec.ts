@@ -117,11 +117,11 @@ test("relative timestamps", async ({ page }) => {
   await page.getByRole("link", { name: "bob" }).click();
   await expect(page.getByTitle("Change peer")).toHaveText("bob");
   const latestCommit = page.locator(".teaser").first();
-  await expect(latestCommit).toContainText("Bob Belcher committed now");
+  await expect(latestCommit).toContainText("Bob Belcher committed 28f3710 now");
   await expect(latestCommit).toContainText("28f3710");
   const earliestCommit = page.locator(".teaser").last();
   await expect(earliestCommit).toContainText(
-    "Alice Liddell committed last month",
+    "Alice Liddell committed 36d5bbe last month",
   );
 });
 

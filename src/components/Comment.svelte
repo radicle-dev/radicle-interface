@@ -123,7 +123,10 @@
         <slot name="icon" />
       </div>
       <NodeId nodeId={authorId} alias={authorAlias} />
-      {caption}
+      <slot name="caption">{caption}</slot>
+      <span class="card-metadata">
+        {utils.formatTimestamp(timestamp)}
+      </span>
       {#if lastEdit}
         <div class="card-metadata">•</div>
         <div class="card-metadata" title={utils.formatEditedCaption(lastEdit)}>
@@ -138,9 +141,6 @@
             </IconButton>
           </div>
         {/if}
-        <div class="card-metadata" title={utils.absoluteTimestamp(timestamp)}>
-          {utils.formatTimestamp(timestamp)}
-        </div>
       </div>
     </div>
   </div>
