@@ -25,14 +25,14 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     height: 3.5rem;
   }
   .left,
   .right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .logo {

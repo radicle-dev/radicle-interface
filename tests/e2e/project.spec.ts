@@ -113,7 +113,7 @@ test("navigate line numbers", async ({ page }) => {
   // file.
   await page.getByRole("link", { name: "footnotes.md" }).click();
   await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
-    /gray-white/,
+    /selected/,
   );
 });
 
@@ -239,17 +239,17 @@ test("markdown files", async ({ page }) => {
   // Switch between raw and rendered modes.
   {
     await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
-      /gray-white/,
+      /selected/,
     );
-    await expect(page.getByRole("button", { name: "Plain" })).not.toHaveClass(
-      /gray-white/,
+    await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
+      /not-selected/,
     );
     await page.getByRole("button", { name: "Plain" }).click();
-    await expect(
-      page.getByRole("button", { name: "Markdown" }),
-    ).not.toHaveClass(/gray-white/);
+    await expect(page.getByRole("button", { name: "Markdown" })).toHaveClass(
+      /not-selected/,
+    );
     await expect(page.getByRole("button", { name: "Plain" })).toHaveClass(
-      /gray-white/,
+      /selected/,
     );
     await expect(page.getByText("##### Table of Contents")).toBeVisible();
     await page.getByRole("button", { name: "Markdown" }).click();

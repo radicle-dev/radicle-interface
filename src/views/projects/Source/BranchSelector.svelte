@@ -98,7 +98,7 @@
 
   <Button
     title="Current HEAD"
-    variant="dim"
+    variant="not-selected"
     styleBorderRadius={selectedBranch
       ? "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"
       : "var(--border-radius-tiny)"}>

@@ -754,7 +754,7 @@
               <Button
                 styleBorderRadius="0"
                 size="regular"
-                variant={name === view.name ? "gray-white" : "dim"}>
+                variant={name === view.name ? "selected" : "not-selected"}>
                 <IconSmall name={icon} />
                 {capitalize(name)}
               </Button>

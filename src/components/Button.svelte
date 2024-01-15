@@ -3,9 +3,10 @@
   export let title: string | undefined = undefined;
   export let variant:
     | "background"
-    | "dim"
+    | "not-selected"
     | "gray"
     | "gray-white"
+    | "selected"
     | "none"
     | "outline"
     | "primary-toggle-off"
@@ -75,29 +76,33 @@
   }
 
   .background {
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
     background-color: var(--color-background-default);
+    font-weight: var(--font-weight-regular);
   }
   .background[disabled] {
     color: var(--color-foreground-disabled);
     background-color: var(--color-background-default);
+    font-weight: var(--font-weight-regular);
   }
   .background:not([disabled]):hover {
     color: var(--color-foreground-contrast);
     background-color: var(--color-fill-ghost);
   }
 
-  .dim {
+  .not-selected {
     background-color: var(--color-fill-float-hover);
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
+    font-weight: var(--font-weight-normal);
   }
-  .dim[disabled] {
+  .not-selected[disabled] {
     background-color: var(--color-fill-float-hover);
     color: var(--color-fill-secondary);
+    font-weight: var(--font-weight-normal);
   }
-  .dim:not([disabled]):hover {
+  .not-selected:not([disabled]):hover {
     background-color: var(--color-fill-ghost-hover);
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
   }
 
   .gray {
@@ -124,6 +129,15 @@
   .gray-white:not([disabled]):hover {
     background-color: var(--color-fill-ghost-hover);
     color: var(--color-foreground-contrast);
+  }
+  .selected {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-contrast);
+    cursor: default;
+  }
+  .selected[disabled] {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
   }
 
   .none {
@@ -342,8 +356,9 @@
   class:regular={size === "regular"}
   class:large={size === "large"}
   class:background={variant === "background"}
-  class:dim={variant === "dim"}
+  class:not-selected={variant === "not-selected"}
   class:gray-white={variant === "gray-white"}
+  class:selected={variant === "selected"}
   class:gray={variant === "gray"}
   class:none={variant === "none"}
   class:outline={variant === "outline"}

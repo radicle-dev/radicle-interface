@@ -204,7 +204,7 @@
         <Radio ariaLabel="Toggle render method">
           <Button
             styleBorderRadius="0"
-            variant={showMarkdown ? "gray-white" : "dim"}
+            variant={showMarkdown ? "selected" : "not-selected"}
             on:click={() => {
               window.location.hash = "";
               showMarkdown = true;
@@ -213,7 +213,7 @@
           </Button>
           <Button
             styleBorderRadius="0"
-            variant={!showMarkdown ? "gray-white" : "dim"}
+            variant={!showMarkdown ? "selected" : "not-selected"}
             on:click={() => {
               showMarkdown = false;
             }}>

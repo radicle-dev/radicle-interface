@@ -68,11 +68,11 @@ test("change code font", async ({ page }) => {
   await page.getByRole("button", { name: "Settings" }).first().click();
 
   await page.getByText("System").click();
-  await expect(page.getByText("System")).toHaveClass(/gray-white/);
+  await expect(page.getByText("System")).toHaveClass(/selected/);
   await expect(page.locator("html")).toHaveAttribute("data-codefont", "system");
 
   await page.getByText("JetBrains Mono").click();
-  await expect(page.getByText("JetBrains Mono")).toHaveClass(/gray-white/);
+  await expect(page.getByText("JetBrains Mono")).toHaveClass(/selected/);
   await expect(page.locator("html")).toHaveAttribute(
     "data-codefont",
     "jetbrains",

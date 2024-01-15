@@ -104,6 +104,7 @@
       }}>
       <Button
         styleBorderRadius="0"
+        size="large"
         variant={filesLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="file" />Files
       </Button>
@@ -119,6 +120,7 @@
       }}>
       <Button
         styleBorderRadius="0"
+        size="large"
         variant={historyLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="commit" />
         <div class="title-counter">
@@ -133,7 +135,12 @@
 
   <div class="global-hide-on-mobile">
     <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
-      <Button disabled notAllowed={false} variant="tab" slot="toggle">
+      <Button
+        disabled
+        notAllowed={false}
+        variant="tab"
+        slot="toggle"
+        size="large">
         <IconSmall name="user" />
         <div class="title-counter">
           Contributors
