@@ -30,7 +30,6 @@
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
-  import Icon from "@app/components/Icon.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
@@ -450,12 +449,6 @@
     height: 22px;
     margin-top: 1rem;
   }
-  .open {
-    color: var(--color-fill-success);
-  }
-  .closed {
-    color: var(--color-foreground-red);
-  }
 
   @media (max-width: 720px) {
     .issue {
@@ -470,12 +463,6 @@
       <CobHeader id={issue.id}>
         <svelte:fragment slot="title">
           {#if issueState !== "read"}
-            <div
-              class="state"
-              class:closed={issue.state.status === "closed"}
-              class:open={issue.state.status === "open"}>
-              <Icon name="issue" />
-            </div>
             <TextInput
               placeholder="Title"
               bind:value={issue.title}
@@ -484,12 +471,6 @@
             <span class="txt-missing">No title</span>
           {:else}
             <div class="title">
-              <div
-                class="state"
-                class:closed={issue.state.status === "closed"}
-                class:open={issue.state.status === "open"}>
-                <Icon name="issue" />
-              </div>
               <InlineMarkdown fontSize="large" content={issue.title} />
             </div>
           {/if}
@@ -504,10 +485,12 @@
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
             <Badge size="tiny" variant="positive">
+              <IconSmall name="issue" />
               {issue.state.status}
             </Badge>
           {:else}
             <Badge size="tiny" variant="negative">
+              <IconSmall name="issue" />
               {issue.state.status} as
               {issue.state.reason}
             </Badge>

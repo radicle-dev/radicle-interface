@@ -64,7 +64,6 @@
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
-  import Icon from "@app/components/Icon.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
@@ -596,18 +595,6 @@
     flex-wrap: nowrap;
     gap: 0.5rem;
   }
-  .draft {
-    color: var(--color-foreground-dim);
-  }
-  .open {
-    color: var(--color-fill-success);
-  }
-  .archived {
-    color: var(--color-foreground-yellow);
-  }
-  .merged {
-    color: var(--color-fill-primary);
-  }
   .metadata-section-header {
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
@@ -656,14 +643,6 @@
       <CobHeader id={patch.id}>
         <svelte:fragment slot="title">
           {#if patchState !== "read"}
-            <div
-              class="state"
-              class:draft={patch.state.status === "draft"}
-              class:open={patch.state.status === "open"}
-              class:merged={patch.state.status === "merged"}
-              class:archived={patch.state.status === "archived"}>
-              <Icon name="patch" />
-            </div>
             <TextInput
               placeholder="Title"
               bind:value={patch.title}
@@ -672,14 +651,6 @@
             <span class="txt-missing">No title</span>
           {:else}
             <div class="title">
-              <div
-                class="state"
-                class:draft={patch.state.status === "draft"}
-                class:open={patch.state.status === "open"}
-                class:merged={patch.state.status === "merged"}
-                class:archived={patch.state.status === "archived"}>
-                <Icon name="patch" />
-              </div>
               <InlineMarkdown fontSize="large" content={patch.title} />
             </div>
           {/if}
@@ -693,6 +664,7 @@
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>
+            <IconSmall name="patch" />
             {patch.state.status}
           </Badge>
         </svelte:fragment>
