@@ -7,6 +7,7 @@
   import Link from "@app/components/Link.svelte";
 
   export let baseUrl: BaseUrl;
+  export let showLocalNode: boolean = false;
 </script>
 
 <style>
@@ -28,6 +29,9 @@
     }}>
     {#if isLocal(baseUrl.hostname)}
       <IconSmall name="device" />
+      {#if showLocalNode}
+        Local Node
+      {/if}
     {:else}
       <IconSmall name="globe" />
       {baseUrl.hostname}

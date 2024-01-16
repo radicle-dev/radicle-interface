@@ -38,7 +38,7 @@
     }
   }
 
-  $: hostname = isLocal(baseUrl.hostname) ? "radicle.local" : baseUrl.hostname;
+  $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: showMoreButton =
     !loadingProjects &&
     !error &&

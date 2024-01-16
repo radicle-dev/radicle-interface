@@ -21,9 +21,7 @@ test("node metadata", async ({ page, peerManager }) => {
 
   await page.goto(peer.uiUrl());
 
-  await expect(
-    page.locator(".header").getByText("radicle.local"),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Local Node" })).toBeVisible();
   await expect(
     page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
   ).toBeVisible();
