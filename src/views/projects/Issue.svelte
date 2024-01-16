@@ -8,6 +8,7 @@
   } from "@httpd-client";
   import type { Session } from "@app/lib/httpd";
 
+  import capitalize from "lodash/capitalize";
   import isEqual from "lodash/isEqual";
   import uniqBy from "lodash/uniqBy";
   import partial from "lodash/partial";
@@ -486,12 +487,12 @@
           {#if issue.state.status === "open"}
             <Badge size="tiny" variant="positive">
               <IconSmall name="issue" />
-              {issue.state.status}
+              {capitalize(issue.state.status)}
             </Badge>
           {:else}
             <Badge size="tiny" variant="negative">
               <IconSmall name="issue" />
-              {issue.state.status} as
+              {capitalize(issue.state.status)} as
               {issue.state.reason}
             </Badge>
           {/if}

@@ -665,7 +665,7 @@
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>
             <IconSmall name="patch" />
-            {patch.state.status}
+            {capitalize(patch.state.status)}
           </Badge>
         </svelte:fragment>
         <svelte:fragment slot="description">
