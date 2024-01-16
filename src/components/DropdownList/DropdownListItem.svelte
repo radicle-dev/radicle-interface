@@ -11,7 +11,7 @@
     align-items: center;
     flex-direction: row;
     gap: 0.375rem;
-    padding: 0.5rem 0.625rem;
+    padding: 0.5rem 0.375rem;
     white-space: nowrap;
     border-radius: var(--border-radius-tiny);
     font-size: var(--font-size-small);
