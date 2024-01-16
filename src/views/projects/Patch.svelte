@@ -592,8 +592,23 @@
     min-width: 25rem;
   }
   .tabs {
+    font-size: var(--font-size-tiny);
     display: flex;
-    margin: 3rem 0 1rem 0;
+    align-items: center;
+    justify-content: left;
+    flex-wrap: wrap;
+    position: relative;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .tabs::after {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    bottom: 0;
+    border-bottom: 1px solid var(--color-fill-separator);
+    width: calc(100% + 1rem);
+    z-index: -1;
   }
   .author {
     display: flex;
@@ -733,8 +748,8 @@
             <Link {route}>
               <Button
                 styleBorderRadius="0"
-                size="regular"
-                variant={name === view.name ? "selected" : "not-selected"}>
+                size="large"
+                variant={name === view.name ? "tab-active" : "tab"}>
                 <IconSmall name={icon} />
                 {capitalize(name)}
               </Button>
@@ -753,7 +768,7 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <Button styleBorderRadius="0" size="regular" variant="gray-white">
+              <Button styleBorderRadius="0" size="large" variant="tab-active">
                 Compare <span class="diff-button-range">
                   {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
                     0,

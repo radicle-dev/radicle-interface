@@ -6,6 +6,7 @@
 <style>
   .radio {
     display: flex;
+    gap: 0.25rem;
     border-radius: var(--border-radius-tiny);
     justify-content: center;
     align-items: center;
