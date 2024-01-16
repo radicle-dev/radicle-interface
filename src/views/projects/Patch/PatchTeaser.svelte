@@ -7,7 +7,6 @@
 
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
-  import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
@@ -75,7 +74,8 @@
   .state {
     justify-self: center;
     align-self: flex-start;
-    margin-right: 1.5rem;
+    margin-right: 0.5rem;
+    padding: 0.25rem 0;
   }
   .labels {
     display: flex;
@@ -119,7 +119,7 @@
     class:open={patch.state.status === "open"}
     class:merged={patch.state.status === "merged"}
     class:archived={patch.state.status === "archived"}>
-    <Icon name="patch" />
+    <IconSmall name="patch" />
   </div>
   <div class="content">
     <div class="summary">
