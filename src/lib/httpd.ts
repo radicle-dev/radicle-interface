@@ -121,6 +121,11 @@ async function checkState() {
     .runExclusive(async () => {
       try {
         const { state: node } = await api.getNode();
+
+        if (httpdState && httpdState.state !== "stopped") {
+          httpdState.node = node;
+        }
+
         if (httpdState && httpdState.state === "authenticated") {
           const sess = await api.session.getById(httpdState.session.id);
           const unixTimeInSeconds = Math.floor(Date.now() / 1000);
@@ -130,7 +135,7 @@ async function checkState() {
           ) {
             update({ state: "running", node });
           } else {
-            update({ ...httpdState, node });
+            update(httpdState);
           }
         } else {
           update({ state: "running", node });

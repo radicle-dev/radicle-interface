@@ -8,7 +8,7 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
-  import Sidebar from "./Sidebar.svelte";
+  import Sidebar from "@app/views/projects/Sidebar.svelte";
 
   export let activeTab: ActiveTab | undefined = undefined;
   export let baseUrl: BaseUrl;

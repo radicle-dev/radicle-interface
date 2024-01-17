@@ -1,16 +1,13 @@
 <script lang="ts">
   import type { ProjectBaseUrlActivity } from "./router";
 
-  import { api } from "@app/lib/httpd";
-  import { twemoji } from "@app/lib/utils";
+  import { isLocal, twemoji } from "@app/lib/utils";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import Link from "@app/components/Link.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
   export let projects: ProjectBaseUrlActivity[];
-
-  $: localProjects = projects[0]?.baseUrl === api.baseUrl;
 </script>
 
 <style>
@@ -69,7 +66,7 @@
 
     {#if projects.length > 0}
       <div class="heading">
-        {#if localProjects}
+        {#if isLocal(projects[0].baseUrl.hostname)}
           <!-- prettier-ignore -->
           <span>Explore projects on your <span class="txt-bold">local node</span>.</span>
         {:else}
