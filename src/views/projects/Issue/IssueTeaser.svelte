@@ -128,9 +128,7 @@
       <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
       opened
       <span class="global-oid">{formatObjectId(issue.id)}</span>
-      <span style:color="var(--color-foreground-dim)">
-        {formatTimestamp(issue.discussion[0].timestamp)}
-      </span>
+      {formatTimestamp(issue.discussion[0].timestamp)}
     </div>
   </div>
   <div class="right">

@@ -161,9 +161,7 @@
             {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
           </span>
         {/if}
-        <span style:color="var(--color-foreground-dim)">
-          {formatTimestamp(latestRevision.timestamp)}
-        </span>
+        {formatTimestamp(latestRevision.timestamp)}
       </span>
     </div>
   </div>

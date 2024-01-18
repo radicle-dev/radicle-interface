@@ -389,9 +389,7 @@
                 {utils.formatObjectId(revisionId)}
               </span>
             {/if}
-            <span style:color="var(--color-foreground-dim)">
-              {utils.formatTimestamp(revisionTimestamp)}
-            </span>
+            {utils.formatTimestamp(revisionTimestamp)}
             <div style="display: flex; gap: 0.5rem; margin-left: auto;">
               {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
                 <IconButton

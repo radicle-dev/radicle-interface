@@ -40,9 +40,7 @@
     </div>
     committed
     <slot />
-    <span style:color="var(--color-foreground-dim)">
-      {formatTimestamp(header.committer.time)}
-    </span>
+    {formatTimestamp(header.committer.time)}
   {:else}
     <div class="person">
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
@@ -58,8 +56,6 @@
     </div>
     committed
     <slot />
-    <span style:color="var(--color-foreground-dim)">
-      {formatTimestamp(header.committer.time)}
-    </span>
+    {formatTimestamp(header.committer.time)}
   {/if}
 </span>
