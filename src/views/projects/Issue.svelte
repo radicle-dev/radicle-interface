@@ -412,13 +412,16 @@
     background-color: var(--color-background-float);
   }
   .bottom {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    padding: 0 1rem 1rem 1rem;
     background-color: var(--color-background-default);
+    height: 100%;
   }
-
+  .connector {
+    width: 1px;
+    height: 1.5rem;
+    margin-left: 1rem;
+    background-color: var(--color-fill-separator);
+  }
   .metadata {
     display: flex;
     flex-direction: column;
@@ -428,18 +431,10 @@
     gap: 1.5rem;
     width: 20rem;
   }
-  .content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-width: 25rem;
-  }
 
   .threads {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
   .author {
@@ -589,6 +584,7 @@
       </CobHeader>
       <div class="bottom">
         {#if threads.length > 0}
+          <div class="connector" />
           <div class="threads">
             {#each threads as thread (thread.root.id)}
               <ThreadComponent
@@ -603,17 +599,22 @@
                 editComment={session && partial(editComment, session.id)}
                 createReply={session && partial(createReply, session.id)}
                 handleReaction={session && partial(handleReaction, session)} />
+              <div class="connector" />
             {/each}
           </div>
         {/if}
         {#if session}
+          {#if threads.length === 0}
+            <div class="connector" />{/if}
           <CommentToggleInput
             rawPath={rawPath(project.head)}
             placeholder="Leave your comment"
             enableAttachments
             submit={partial(createComment, session.id)} />
-          <div style:display="flex">
+          <div
+            style="display:flex; flex-direction: column; align-items: flex-start;">
             {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+              <div class="connector" />
               <CobStateButton
                 items={items.filter(
                   ([, state]) => !isEqual(state, issue.state),
