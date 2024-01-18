@@ -109,9 +109,7 @@
         node,
         commit: selectedCommitId,
       }}>
-      <div
-        class="identifier global-hash"
-        style:font-weight="var(--font-weight-bold)">
+      <div class="identifier global-commit">
         {#if !selectedBranch}
           <IconSmall name="branch" />
         {/if}

@@ -63,7 +63,7 @@
         {/if}
       </div>
 
-      <CopyableId id={nodeId}>
+      <CopyableId id={nodeId} style="oid">
         {formatNodeId(nodeId)}
       </CopyableId>
     </div>

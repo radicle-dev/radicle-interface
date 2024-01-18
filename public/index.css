@@ -68,11 +68,18 @@ pre {
   margin: 0;
 }
 
-.global-hash {
+.global-oid {
   color: var(--color-foreground-emphasized);
   font-size: var(--font-size-small);
   font-family: var(--font-family-monospace);
   font-weight: var(--font-weight-regular);
+}
+
+.global-commit {
+  color: var(--color-foreground);
+  font-size: var(--font-size-small);
+  font-family: var(--font-family-monospace);
+  font-weight: var(--font-weight-semibold);
 }
 
 .global-counter {

@@ -155,9 +155,9 @@
       <span class="subtitle">
         <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
         {patch.revisions.length > 1 ? "updated" : "opened"}
-        <span class="global-hash">{formatObjectId(patch.id)}</span>
+        <span class="global-oid">{formatObjectId(patch.id)}</span>
         {#if patch.revisions.length > 1}
-          to <span class="global-hash">
+          to <span class="global-oid">
             {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
           </span>
         {/if}

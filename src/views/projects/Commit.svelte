@@ -36,7 +36,7 @@
       <InlineMarkdown fontSize="large" content={header.summary} />
       <pre class="description txt-small">{header.description}</pre>
       <CommitAuthorship {header}>
-        <span class="global-hash">{formatCommit(header.id)}</span>
+        <span class="global-commit">{formatCommit(header.id)}</span>
       </CommitAuthorship>
     </div>
     <Changeset

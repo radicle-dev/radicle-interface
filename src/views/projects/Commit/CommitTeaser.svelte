@@ -86,7 +86,7 @@
       </div>
     {/if}
     <CommitAuthorship header={commit}>
-      <span class="global-hash">{formatCommit(commit.id)}</span>
+      <span class="global-commit">{formatCommit(commit.id)}</span>
     </CommitAuthorship>
   </div>
   <div class="right">

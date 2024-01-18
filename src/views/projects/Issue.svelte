@@ -564,7 +564,7 @@
         <div class="author" slot="author">
           <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
           opened
-          <span class="global-hash">{utils.formatObjectId(issue.id)}</span>
+          <span class="global-oid">{utils.formatObjectId(issue.id)}</span>
           <span style:color="var(--color-foreground-dim)">
             {utils.formatTimestamp(issue.discussion[0].timestamp)}
           </span>

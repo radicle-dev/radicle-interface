@@ -123,7 +123,7 @@
         {/if}
       </div>
       <div class="description" use:twemoji>{description}</div>
-      <div class="global-hash">
+      <div class="global-commit">
         {#if compact}
           {formatCommit(head)}
         {:else}

@@ -254,7 +254,7 @@
         <ExpandButton {expanded} on:toggle={() => (expanded = !expanded)} />
         <span>
           Revision
-          <span class="global-hash">{utils.formatObjectId(revisionId)}</span>
+          <span class="global-oid">{utils.formatObjectId(revisionId)}</span>
         </span>
       </div>
       <div class="revision-data">
@@ -385,7 +385,7 @@
               opened this patch
             {:else}
               updated to
-              <span class="global-hash">
+              <span class="global-oid">
                 {utils.formatObjectId(revisionId)}
               </span>
             {/if}
@@ -483,11 +483,11 @@
               </NodeId>
 
               merged revision
-              <span class="global-hash">
+              <span class="global-oid">
                 {utils.formatObjectId(element.inner.revision)}
               </span>
               at commit
-              <span class="global-hash">
+              <span class="global-commit">
                 {utils.formatCommit(element.inner.commit)}
               </span>
               <span
@@ -513,7 +513,7 @@
               body={review.summary ?? ""}>
               <div slot="caption">
                 {formatVerdict(review.verdict)}
-                <span class="global-hash">
+                <span class="global-oid">
                   {utils.formatObjectId(revisionId)}
                 </span>
               </div>

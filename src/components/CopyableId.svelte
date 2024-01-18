@@ -3,6 +3,8 @@
   import Clipboard from "@app/components/Clipboard.svelte";
 
   export let id: string;
+  export let style: "commit" | "oid";
+
   let clipboard: SvelteComponent;
 </script>
 
@@ -26,7 +28,10 @@
     clipboard.copy();
   }}
   class="id">
-  <span class="txt-overflow global-hash">
+  <span
+    class="txt-overflow"
+    class:global-commit={style === "commit"}
+    class:global-oid={style === "oid"}>
     <slot>{id}</slot>
   </span>
   <Clipboard bind:this={clipboard} text={id} />

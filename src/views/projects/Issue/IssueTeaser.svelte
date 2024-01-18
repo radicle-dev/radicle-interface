@@ -127,7 +127,7 @@
     <div class="summary subtitle">
       <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
       opened
-      <span class="global-hash">{formatObjectId(issue.id)}</span>
+      <span class="global-oid">{formatObjectId(issue.id)}</span>
       <span style:color="var(--color-foreground-dim)">
         {formatTimestamp(issue.discussion[0].timestamp)}
       </span>

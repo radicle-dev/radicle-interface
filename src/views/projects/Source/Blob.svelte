@@ -187,9 +187,7 @@
             commit: lastCommit.id,
           }}>
           <Button variant="gray" styleBorderRadius="0">
-            <span
-              class="global-hash"
-              style:font-weight="var(--font-weight-bold)">
+            <span class="global-commit">
               {lastCommit.id.slice(0, 7)}
             </span>
           </Button>

@@ -124,13 +124,13 @@
             {#each externalAddresses as address}
               <!-- If there are externalAddresses this is probably a remote node -->
               <!-- in that case, we show all the defined externalAddresses as a listing -->
-              <CopyableId id={`${nid}@${address}`}>
+              <CopyableId id={`${nid}@${address}`} style="oid">
                 {truncateId(nid)}@{address}
               </CopyableId>
             {:else}
               <!-- else this is probably a local node -->
               <!-- So we show only the nid -->
-              <CopyableId id={nid} />
+              <CopyableId id={nid} style="oid" />
             {/each}
           </div>
           <div class="version">

@@ -40,6 +40,10 @@
     gap: 1rem;
     margin-left: auto;
   }
+  .commit {
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-semibold);
+  }
   .summary:hover {
     text-decoration: underline;
   }
@@ -81,9 +85,7 @@
     <div style:display="flex" style:gap="1rem" style:height="1.5rem">
       <div style:margin-bottom="1rem">
         <CommitAuthorship header={commit}>
-          <span
-            class="global-hash"
-            style:color="var(--color-foreground-yellow)">
+          <span class="commit txt-monospace">
             {formatCommit(commit.id)}
           </span>
         </CommitAuthorship>

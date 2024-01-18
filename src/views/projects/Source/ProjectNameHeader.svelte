@@ -125,7 +125,7 @@
     </div>
   </div>
   <div class="id">
-    <CopyableId id={project.id} />
+    <CopyableId id={project.id} style="oid" />
   </div>
 </div>
 <div class="description" use:twemoji>

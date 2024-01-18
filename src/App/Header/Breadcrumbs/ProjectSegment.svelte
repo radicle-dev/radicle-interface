@@ -93,17 +93,17 @@
 
 {#if activeRoute.resource === "project.commit"}
   <Separator />
-  <CopyableId id={activeRoute.params.commit.commit.id}>
+  <CopyableId id={activeRoute.params.commit.commit.id} style="commit">
     {utils.formatCommit(activeRoute.params.commit.commit.id)}
   </CopyableId>
 {:else if activeRoute.resource === "project.issue"}
   <Separator />
-  <CopyableId id={activeRoute.params.issue.id}>
+  <CopyableId id={activeRoute.params.issue.id} style="oid">
     {utils.formatObjectId(activeRoute.params.issue.id)}
   </CopyableId>
 {:else if activeRoute.resource === "project.patch"}
   <Separator />
-  <CopyableId id={activeRoute.params.patch.id}>
+  <CopyableId id={activeRoute.params.patch.id} style="oid">
     {utils.formatObjectId(activeRoute.params.patch.id)}
   </CopyableId>
 {/if}
