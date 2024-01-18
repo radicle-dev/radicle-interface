@@ -561,7 +561,12 @@
     display: flex;
     flex: 1;
     min-height: 100%;
-    min-height: 100%;
+  }
+  .main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: var(--color-background-float);
   }
   .metadata {
     display: flex;
@@ -583,11 +588,10 @@
     font-size: var(--font-size-large);
     height: 2.5rem;
   }
-  .content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    min-width: 25rem;
+  .bottom {
+    background-color: var(--color-background-default);
+    padding: 1rem;
+    height: 100%;
   }
   .tabs {
     font-size: var(--font-size-tiny);
@@ -596,18 +600,12 @@
     justify-content: left;
     flex-wrap: wrap;
     position: relative;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: inset 0 -1px 0 var(--color-border-hint);
   }
-  .tabs::after {
-    content: "";
-    position: absolute;
-    left: -1rem;
-    bottom: 0;
-    border-bottom: 1px solid var(--color-fill-separator);
-    width: calc(100% + 2rem);
-    width: calc(100% + 2rem);
-    z-index: -1;
+  .tabs-spacer {
+    width: 1rem;
+    height: 100%;
   }
   .author {
     display: flex;
@@ -659,7 +657,7 @@
 
 <Layout {baseUrl} {project} activeTab="patches">
   <div class="patch">
-    <div class="content">
+    <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
           {#if patchState !== "read"}
@@ -740,11 +738,11 @@
       </CobHeader>
 
       <div class="tabs">
+        <div class="tabs-spacer" />
         <Radio>
           {#each Object.entries(tabs) as [name, { route, icon }]}
             <Link {route}>
               <Button
-                styleBorderRadius="0"
                 size="large"
                 variant={name === view.name ? "tab-active" : "tab"}>
                 <IconSmall name={icon} />
@@ -765,7 +763,7 @@
                   toCommit: view.toCommit,
                 },
               }}>
-              <Button styleBorderRadius="0" size="large" variant="tab-active">
+              <Button size="large" variant="tab-active">
                 Compare <span class="diff-button-range">
                   {view.fromCommit.substring(0, 6)}..{view.toCommit.substring(
                     0,
@@ -842,93 +840,96 @@
             </div>
           {/if}
         </div>
+        <div class="tabs-spacer" />
       </div>
-      {#if view.name === "diff"}
-        <div style:margin-top="1rem">
-          <Changeset
-            {baseUrl}
-            projectId={project.id}
-            revision={view.toCommit}
-            files={view.files}
-            diff={view.diff} />
-        </div>
-      {:else if view.name === "activity"}
-        {#each timelineTuple as [revision, timelines], index}
-          {@const previousRevision =
-            index > 0 ? patch.revisions[index - 1] : undefined}
-          <RevisionComponent
-            {baseUrl}
-            {rawPath}
-            projectId={project.id}
-            {timelines}
-            projectDefaultBranch={project.defaultBranch}
-            projectHead={project.head}
-            {...revision}
-            first={index === 0}
-            canEdit={partial(
-              role.isDelegateOrAuthor,
-              session?.publicKey,
-              project.delegates,
-            )}
-            editRevision={session &&
-              partial(editRevision, session.id, revision.revisionId)}
-            editComment={session &&
-              partial(editComment, session.id, revision.revisionId)}
-            handleReaction={session &&
-              partial(handleReaction, session, revision.revisionId)}
-            createReply={session &&
-              partial(createReply, session.id, revision.revisionId)}
-            patchId={patch.id}
-            patchState={patch.state}
-            expanded={index === patch.revisions.length - 1}
-            previousRevId={previousRevision?.id}
-            previousRevOid={previousRevision?.oid}>
-            {#if index === patch.revisions.length - 1}
-              {#if session && view.name === "activity"}
-                <div class="connector" />
-                <CommentToggleInput
-                  rawPath={rawPath(patch.revisions[0].id)}
-                  enableAttachments
-                  placeholder="Leave your comment"
-                  submit={partial(
-                    createComment,
-                    session.id,
-                    revision.revisionId,
-                  )} />
-                {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+      <div class="bottom">
+        {#if view.name === "diff"}
+          <div style:margin-top="1rem">
+            <Changeset
+              {baseUrl}
+              projectId={project.id}
+              revision={view.toCommit}
+              files={view.files}
+              diff={view.diff} />
+          </div>
+        {:else if view.name === "activity"}
+          {#each timelineTuple as [revision, timelines], index}
+            {@const previousRevision =
+              index > 0 ? patch.revisions[index - 1] : undefined}
+            <RevisionComponent
+              {baseUrl}
+              {rawPath}
+              projectId={project.id}
+              {timelines}
+              projectDefaultBranch={project.defaultBranch}
+              projectHead={project.head}
+              {...revision}
+              first={index === 0}
+              canEdit={partial(
+                role.isDelegateOrAuthor,
+                session?.publicKey,
+                project.delegates,
+              )}
+              editRevision={session &&
+                partial(editRevision, session.id, revision.revisionId)}
+              editComment={session &&
+                partial(editComment, session.id, revision.revisionId)}
+              handleReaction={session &&
+                partial(handleReaction, session, revision.revisionId)}
+              createReply={session &&
+                partial(createReply, session.id, revision.revisionId)}
+              patchId={patch.id}
+              patchState={patch.state}
+              expanded={index === patch.revisions.length - 1}
+              previousRevId={previousRevision?.id}
+              previousRevOid={previousRevision?.oid}>
+              {#if index === patch.revisions.length - 1}
+                {#if session && view.name === "activity"}
                   <div class="connector" />
-                  <div style="display: flex;">
-                    <CobStateButton
-                      items={items.filter(
-                        ([, state]) => !isEqual(state, patch.state),
-                      )}
-                      {selectedItem}
-                      state={patch.state}
-                      save={partial(saveStatus, session.id)} />
-                  </div>
+                  <CommentToggleInput
+                    rawPath={rawPath(patch.revisions[0].id)}
+                    enableAttachments
+                    placeholder="Leave your comment"
+                    submit={partial(
+                      createComment,
+                      session.id,
+                      revision.revisionId,
+                    )} />
+                  {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+                    <div class="connector" />
+                    <div style="display: flex;">
+                      <CobStateButton
+                        items={items.filter(
+                          ([, state]) => !isEqual(state, patch.state),
+                        )}
+                        {selectedItem}
+                        state={patch.state}
+                        save={partial(saveStatus, session.id)} />
+                    </div>
+                  {/if}
                 {/if}
               {/if}
-            {/if}
-          </RevisionComponent>
-        {:else}
-          <div style:margin="4rem 0">
-            <Placeholder
-              iconName="no-patches"
-              caption="No activity on this patch yet" />
+            </RevisionComponent>
+          {:else}
+            <div style:margin="4rem 0">
+              <Placeholder
+                iconName="no-patches"
+                caption="No activity on this patch yet" />
+            </div>
+          {/each}
+        {:else if view.name === "changes"}
+          <div style:margin-top="1rem">
+            <Changeset
+              {baseUrl}
+              projectId={project.id}
+              revision={view.oid}
+              files={view.files}
+              diff={view.diff} />
           </div>
-        {/each}
-      {:else if view.name === "changes"}
-        <div style:margin-top="1rem">
-          <Changeset
-            {baseUrl}
-            projectId={project.id}
-            revision={view.oid}
-            files={view.files}
-            diff={view.diff} />
-        </div>
-      {:else}
-        {utils.unreachable(view)}
-      {/if}
+        {:else}
+          {utils.unreachable(view)}
+        {/if}
+      </div>
     </div>
 
     <div class="metadata global-hide-on-mobile">

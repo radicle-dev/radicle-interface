@@ -404,6 +404,21 @@
     flex: 1;
     min-height: 100%;
   }
+  .main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--color-background-float);
+  }
+  .bottom {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--color-background-default);
+  }
+
   .metadata {
     display: flex;
     flex-direction: column;
@@ -463,7 +478,7 @@
 
 <Layout {baseUrl} {project} activeTab="issues">
   <div class="issue">
-    <div class="content">
+    <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
           {#if issueState !== "read"}
@@ -572,40 +587,44 @@
           {/if}
         </div>
       </CobHeader>
-      {#if threads.length > 0}
-        <div class="threads">
-          {#each threads as thread (thread.root.id)}
-            <ThreadComponent
-              enableAttachments
-              {thread}
-              rawPath={rawPath(project.head)}
-              canEditComment={partial(
-                role.isDelegateOrAuthor,
-                session?.publicKey,
-                project.delegates,
-              )}
-              editComment={session && partial(editComment, session.id)}
-              createReply={session && partial(createReply, session.id)}
-              handleReaction={session && partial(handleReaction, session)} />
-          {/each}
-        </div>
-      {/if}
-      {#if session}
-        <CommentToggleInput
-          rawPath={rawPath(project.head)}
-          placeholder="Leave your comment"
-          enableAttachments
-          submit={partial(createComment, session.id)} />
-        <div style:display="flex">
-          {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, issue.state))}
-              {selectedItem}
-              state={issue.state}
-              save={partial(saveStatus, session.id)} />
-          {/if}
-        </div>
-      {/if}
+      <div class="bottom">
+        {#if threads.length > 0}
+          <div class="threads">
+            {#each threads as thread (thread.root.id)}
+              <ThreadComponent
+                enableAttachments
+                {thread}
+                rawPath={rawPath(project.head)}
+                canEditComment={partial(
+                  role.isDelegateOrAuthor,
+                  session?.publicKey,
+                  project.delegates,
+                )}
+                editComment={session && partial(editComment, session.id)}
+                createReply={session && partial(createReply, session.id)}
+                handleReaction={session && partial(handleReaction, session)} />
+            {/each}
+          </div>
+        {/if}
+        {#if session}
+          <CommentToggleInput
+            rawPath={rawPath(project.head)}
+            placeholder="Leave your comment"
+            enableAttachments
+            submit={partial(createComment, session.id)} />
+          <div style:display="flex">
+            {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+              <CobStateButton
+                items={items.filter(
+                  ([, state]) => !isEqual(state, issue.state),
+                )}
+                {selectedItem}
+                state={issue.state}
+                save={partial(saveStatus, session.id)} />
+            {/if}
+          </div>
+        {/if}
+      </div>
     </div>
     <div class="metadata global-hide-on-mobile">
       <AssigneeInput

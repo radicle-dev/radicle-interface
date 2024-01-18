@@ -1,6 +1,7 @@
 <style>
   .header {
     display: flex;
+    padding: 1rem;
     flex-direction: column;
     border-radius: var(--border-radius-small);
   }
@@ -18,11 +19,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .description {
     font-size: var(--font-size-small);
-    margin-top: 1rem;
+    margin-top: 2rem;
     word-break: break-word;
   }
 </style>

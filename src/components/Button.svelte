@@ -292,30 +292,29 @@
   }
 
   .tab {
-    background-color: var(--color-background-default);
+    background-color: transparent;
     color: var(--color-foreground-contrast);
-    border: 1px solid transparent;
-    border-bottom: 1px solid var(--color-fill-separator);
+    border: 1px solid var(--color-border-hint);
+    border-radius: 4px 4px 0 0;
   }
 
   .tab[disabled] {
     background-color: var(--color-background-default);
     color: var(--color-foreground-disabled);
+    border: none;
+    border-bottom: 1px solid var(--color-border-hint);
   }
 
   .tab:not([disabled]):hover {
     background-color: var(--color-fill-float-hover);
-    border-top-right-radius: var(--border-radius-tiny) !important;
-    border-top-left-radius: var(--border-radius-tiny) !important;
   }
 
   .tab-active {
     background-color: var(--color-background-default);
     border: 1px solid var(--color-fill-separator);
     border-bottom: 1px solid var(--color-background-default);
+    border-radius: 4px 4px 0 0;
     color: var(--color-foreground-contrast);
-    border-top-right-radius: var(--border-radius-tiny) !important;
-    border-top-left-radius: var(--border-radius-tiny) !important;
   }
 
   .tab-active[disabled] {

@@ -46,6 +46,7 @@
   .header {
     font-size: var(--font-size-tiny);
     display: flex;
+    gap: 0.375rem;
     align-items: center;
     justify-content: left;
     flex-wrap: wrap;
@@ -93,7 +94,7 @@
 </div>
 
 <div class="header">
-  <div style="display: flex; gap: 0.25rem;">
+  <div style="display: flex; gap: 0.375rem;">
     <Link
       route={{
         resource: "project.source",
@@ -102,10 +103,7 @@
         peer,
         revision,
       }}>
-      <Button
-        styleBorderRadius="0"
-        size="large"
-        variant={filesLinkActive ? "tab-active" : "tab"}>
+      <Button size="large" variant={filesLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="file" />Files
       </Button>
     </Link>
@@ -118,10 +116,7 @@
         peer,
         revision,
       }}>
-      <Button
-        styleBorderRadius="0"
-        size="large"
-        variant={historyLinkActive ? "tab-active" : "tab"}>
+      <Button size="large" variant={historyLinkActive ? "tab-active" : "tab"}>
         <IconSmall name="commit" />
         <div class="title-counter">
           Commits
