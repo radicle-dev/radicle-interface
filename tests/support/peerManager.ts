@@ -136,6 +136,7 @@ export const NodeConfigSchema = object({
       routingMaxAge: number(),
       fetchConcurrency: number(),
       gossipMaxAge: number(),
+      maxOpenFiles: number(),
       rate: object({
         inbound: object({ fillRate: number(), capacity: number() }),
         outbound: object({ fillRate: number(), capacity: number() }),
@@ -307,6 +308,7 @@ export class RadiclePeer {
         routingMaxAge: 604800,
         fetchConcurrency: 1,
         gossipMaxAge: 1209600,
+        maxOpenFiles: 4096,
         rate: {
           inbound: { fillRate: 0.2, capacity: 32 },
           outbound: { fillRate: 1.0, capacity: 64 },

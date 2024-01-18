@@ -11,7 +11,6 @@ export async function authenticate(
     "http://localhost:3001",
     "--no-open",
     "--connect",
-    "--listen",
     `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
   ]);
   const match = stdout.match(/Visit (http:\/\/\S+) to connect/);

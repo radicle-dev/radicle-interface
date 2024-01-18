@@ -76,6 +76,7 @@ export type Node = z.infer<typeof nodeSchema>;
 
 const nodeSchema = object({
   id: string(),
+  version: string(),
   config: object({
     alias: string(),
     peers: union([
@@ -91,6 +92,8 @@ const nodeSchema = object({
       routingMaxSize: number(),
       routingMaxAge: number(),
       fetchConcurrency: number(),
+      gossipMaxAge: number(),
+      maxOpenFiles: number(),
       rate: object({
         inbound: object({
           fillRate: number(),
@@ -114,7 +117,7 @@ const nodeInfoSchema = object({
   message: string(),
   service: string(),
   version: string(),
-  node: nodeSchema.pick({ id: true }),
+  nid: string(),
   path: string(),
   links: array(
     object({

@@ -94,8 +94,7 @@ export async function loadNodeRoute(
   const api = new HttpdClient(params.baseUrl);
   try {
     const projectPageIndex = 0;
-    const [nodeInfo, node, { projects, total }] = await Promise.all([
-      api.getNodeInfo(),
+    const [node, { projects, total }] = await Promise.all([
       api.getNode(),
       loadProjects(projectPageIndex, params.baseUrl),
     ]);
@@ -104,9 +103,9 @@ export async function loadNodeRoute(
       params: {
         projectPageIndex: projectPageIndex + 1,
         baseUrl: params.baseUrl,
-        nid: nodeInfo.node.id,
+        nid: node.id,
         externalAddresses: node.config?.externalAddresses ?? [],
-        version: nodeInfo.version,
+        version: node.version,
         projects: projects,
         projectCount: total,
       },
