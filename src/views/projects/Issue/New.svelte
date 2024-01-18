@@ -101,8 +101,7 @@
 <style>
   .form {
     display: flex;
-    flex: 1;
-    padding: 1rem;
+    min-height: 100%;
   }
   .actions {
     display: flex;
@@ -116,11 +115,7 @@
     flex-direction: column;
     font-size: var(--font-size-small);
     padding: 1rem;
-    margin-left: 3rem;
-    border: 1px solid var(--color-border-hint);
-    background-color: var(--color-background-float);
-    border-radius: var(--border-radius-small);
-    height: fit-content;
+    border-left: 1px solid var(--color-border-hint);
     gap: 1.5rem;
     width: 20rem;
   }
@@ -135,104 +130,102 @@
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">
-  <div>
-    {#if session}
-      <div class="form">
-        <div class="editor">
-          <CobHeader>
-            <svelte:fragment slot="title">
-              {#if !preview}
-                <TextInput
-                  placeholder="Title"
-                  bind:value={issueTitle}
-                  showKeyHint={false} />
-              {:else if issueTitle}
-                <InlineMarkdown fontSize="medium" content={issueTitle} />
-              {:else}
-                <span class="txt-missing">No title</span>
-              {/if}
-            </svelte:fragment>
-            <svelte:fragment slot="state">
-              {#if preview}
-                <Badge size="small" variant="positive">open</Badge>
-              {/if}
-            </svelte:fragment>
-            <svelte:fragment slot="description">
-              {#if !preview}
-                <Textarea
-                  bind:selectionStart
-                  bind:selectionEnd
-                  on:drop={handleFileDrop}
-                  bind:value={issueText}
-                  on:submit={async () => {
-                    if (valid && session) {
-                      creatingIssue = true;
-                      try {
-                        await createIssue(session.id);
-                      } finally {
-                        creatingIssue = false;
-                      }
+  {#if session}
+    <div class="form">
+      <div class="editor" style="padding: 1rem;">
+        <CobHeader>
+          <svelte:fragment slot="title">
+            {#if !preview}
+              <TextInput
+                placeholder="Title"
+                bind:value={issueTitle}
+                showKeyHint={false} />
+            {:else if issueTitle}
+              <InlineMarkdown fontSize="medium" content={issueTitle} />
+            {:else}
+              <span class="txt-missing">No title</span>
+            {/if}
+          </svelte:fragment>
+          <svelte:fragment slot="state">
+            {#if preview}
+              <Badge size="small" variant="positive">open</Badge>
+            {/if}
+          </svelte:fragment>
+          <svelte:fragment slot="description">
+            {#if !preview}
+              <Textarea
+                bind:selectionStart
+                bind:selectionEnd
+                on:drop={handleFileDrop}
+                bind:value={issueText}
+                on:submit={async () => {
+                  if (valid && session) {
+                    creatingIssue = true;
+                    try {
+                      await createIssue(session.id);
+                    } finally {
+                      creatingIssue = false;
                     }
-                  }}
-                  placeholder="Write a description" />
-              {:else if !issueText}
-                <p class="txt-missing">No description</p>
-              {:else}
-                <Markdown
-                  rawPath={rawPath(project.head)}
-                  embeds={newEmbeds}
-                  content={issueText} />
-              {/if}
-            </svelte:fragment>
-            <div class="author" slot="author">
-              {#if preview}
-                opened by <NodeId
-                  nodeId={session.publicKey}
-                  alias={session.alias} /> now
-              {/if}
-            </div>
-          </CobHeader>
-          <div class="actions">
-            <Button
-              disabled={creatingIssue}
-              variant="none"
-              on:click={() => (preview = !preview)}>
-              {#if preview}
-                Resume editing
-              {:else}
-                Preview
-              {/if}
-            </Button>
-            <Button
-              disabled={!valid || creatingIssue}
-              variant="secondary"
-              on:click={async () => {
-                if (session) {
-                  creatingIssue = true;
-                  try {
-                    await createIssue(session.id);
-                  } finally {
-                    creatingIssue = false;
                   }
-                }
-              }}>
-              Submit
-            </Button>
+                }}
+                placeholder="Write a description" />
+            {:else if !issueText}
+              <p class="txt-missing">No description</p>
+            {:else}
+              <Markdown
+                rawPath={rawPath(project.head)}
+                embeds={newEmbeds}
+                content={issueText} />
+            {/if}
+          </svelte:fragment>
+          <div class="author" slot="author">
+            {#if preview}
+              opened by <NodeId
+                nodeId={session.publicKey}
+                alias={session.alias} /> now
+            {/if}
           </div>
-        </div>
-        <div class="metadata">
-          <AssigneeInput
-            locallyAuthenticated={Boolean(session)}
-            on:save={({ detail: updatedAssignees }) =>
-              (assignees = updatedAssignees)} />
-          <LabelInput
-            locallyAuthenticated={Boolean(session)}
-            on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
+        </CobHeader>
+        <div class="actions">
+          <Button
+            disabled={creatingIssue}
+            variant="none"
+            on:click={() => (preview = !preview)}>
+            {#if preview}
+              Resume editing
+            {:else}
+              Preview
+            {/if}
+          </Button>
+          <Button
+            disabled={!valid || creatingIssue}
+            variant="secondary"
+            on:click={async () => {
+              if (session) {
+                creatingIssue = true;
+                try {
+                  await createIssue(session.id);
+                } finally {
+                  creatingIssue = false;
+                }
+              }
+            }}>
+            Submit
+          </Button>
         </div>
       </div>
-    {:else}
-      <ErrorMessage
-        message="Couldn't access issue creation. Make sure you're authenticated." />
-    {/if}
-  </div>
+      <div class="metadata">
+        <AssigneeInput
+          locallyAuthenticated={Boolean(session)}
+          on:save={({ detail: updatedAssignees }) =>
+            (assignees = updatedAssignees)} />
+        <LabelInput
+          locallyAuthenticated={Boolean(session)}
+          on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
+      </div>
+    </div>
+  {:else}
+    <ErrorMessage
+      message="Couldn't access issue creation. Make sure you're authenticated." />
+  {/if}
 </Layout>

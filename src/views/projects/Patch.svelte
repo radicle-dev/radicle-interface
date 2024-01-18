@@ -560,7 +560,8 @@
   .patch {
     display: flex;
     flex: 1;
-    padding: 1rem;
+    min-height: 100%;
+    min-height: 100%;
   }
   .metadata {
     display: flex;
@@ -568,11 +569,8 @@
     gap: 1.5rem;
     font-size: var(--font-size-small);
     padding: 1rem;
-    margin-left: 3rem;
-    border: 1px solid var(--color-border-hint);
-    background-color: var(--color-background-float);
-    border-radius: var(--border-radius-small);
-    height: fit-content;
+    border-left: 1px solid var(--color-border-hint);
+    border-left: 1px solid var(--color-border-hint);
     width: 20rem;
   }
   .title {
@@ -607,7 +605,8 @@
     left: -1rem;
     bottom: 0;
     border-bottom: 1px solid var(--color-fill-separator);
-    width: calc(100% + 1rem);
+    width: calc(100% + 2rem);
+    width: calc(100% + 2rem);
     z-index: -1;
   }
   .author {
@@ -778,7 +777,7 @@
           {/if}
         </Radio>
 
-        <div style:margin-left="auto">
+        <div style="margin-left: auto; margin-top: -0.5rem;">
           {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && view.name === "activity"}
             <CobStateButton
               items={items.filter(([, state]) => !isEqual(state, patch.state))}
@@ -787,7 +786,7 @@
               save={partial(saveStatus, session.id)} />
           {/if}
           {#if view.name === "changes"}
-            <div style="margin-left: auto;">
+            <div style="margin-left: auto; ">
               <Popover
                 popoverPadding="0"
                 popoverPositionTop="2.5rem"

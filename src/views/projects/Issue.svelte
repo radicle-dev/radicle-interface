@@ -402,18 +402,14 @@
   .issue {
     display: flex;
     flex: 1;
-    padding: 1rem;
+    min-height: 100%;
   }
   .metadata {
     display: flex;
     flex-direction: column;
     font-size: var(--font-size-small);
     padding: 1rem;
-    margin-left: 3rem;
-    border: 1px solid var(--color-border-hint);
-    background-color: var(--color-background-float);
-    border-radius: var(--border-radius-small);
-    height: fit-content;
+    border-left: 1px solid var(--color-border-hint);
     gap: 1.5rem;
     width: 20rem;
   }
