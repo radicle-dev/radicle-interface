@@ -5,7 +5,7 @@ async function goToSection(section: string, page: Page) {
   await page.goto(`${markdownUrl}/tree/main/cheatsheet.md`, {
     waitUntil: "networkidle",
   });
-  await page.getByText("Collapse").click();
+  await page.getByRole("button", { name: "Collapse" }).click();
   await page.locator(`[href="${section}"]`).click();
 }
 
@@ -19,7 +19,7 @@ test.describe("markdown rendering basics", async () => {
         waitUntil: "networkidle",
       },
     );
-    await page.getByText("Collapse").click();
+    await page.getByRole("button", { name: "Collapse" }).click();
     await expect(page.getByText("Table of Contents")).toBeVisible();
     await expect(page).toHaveScreenshot();
   });
@@ -106,7 +106,7 @@ test("footnotes", async ({ page }) => {
       "text=This is an example footnote[0]. And some radicle[1] examples.",
     ),
   ).toBeVisible();
-  await page.getByText("Collapse").click();
+  await page.getByRole("button", { name: "Collapse" }).click();
   await expect(page.getByText("0. https://example.com ↩")).toBeVisible();
   await expect(page.getByText("1. https://radicle.xyz ↩")).toBeVisible();
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -126,7 +126,7 @@ test("math", async ({ page }) => {
     waitUntil: "networkidle",
   });
   await expect(page.getByText("The Cauchy-Schwarz Inequality")).toBeVisible();
-  await page.getByText("Collapse").click();
+  await page.getByRole("button", { name: "Collapse" }).click();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
 
@@ -134,7 +134,7 @@ test("relative image not able to being loaded", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/loading-image.md`, {
     waitUntil: "networkidle",
   });
-  await page.getByText("Collapse").click();
+  await page.getByRole("button", { name: "Collapse" }).click();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
 
@@ -142,7 +142,7 @@ test("markdown in issues is not overflowing", async ({ page }) => {
   await page.goto(`${markdownUrl}/issues`, {
     waitUntil: "networkidle",
   });
-  await page.getByText("Collapse").click();
+  await page.getByRole("button", { name: "Collapse" }).click();
   await page.getByRole("link", { name: "This title has markdown" }).click();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
