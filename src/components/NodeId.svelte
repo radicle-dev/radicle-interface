@@ -8,6 +8,7 @@
   export let nodeId: string;
   export let alias: string | undefined = undefined;
   export let large: boolean = false;
+  export let stylePopoverPositionLeft = "-4.5rem";
 </script>
 
 <style>
@@ -42,7 +43,7 @@
 </style>
 
 <HoverPopover
-  stylePopoverPositionLeft="-4.5rem"
+  {stylePopoverPositionLeft}
   stylePopoverPadding="0.5rem 0.5rem 0.5rem 0.75rem"
   stylePopoverPositionTop="-4.5rem">
   <div slot="toggle" class="avatar-alias" class:large>

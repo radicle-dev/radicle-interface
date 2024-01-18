@@ -52,7 +52,10 @@
     {/if}
 
     {#if selectedPeer}
-      <NodeId nodeId={selectedPeer.id} alias={selectedPeer.alias} />
+      <NodeId
+        nodeId={selectedPeer.id}
+        alias={selectedPeer.alias}
+        stylePopoverPositionLeft="-0.75rem" />
       {#if selectedPeer.delegate}
         <Badge size="tiny" variant="secondary">delegate</Badge>
       {/if}
