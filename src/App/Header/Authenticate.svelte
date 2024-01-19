@@ -90,7 +90,9 @@
       <div class="label">
         Authenticate with your local node to make changes.
       </div>
-      <Command fullWidth command={`rad web ${window.origin} --connect`} />
+      <Command
+        fullWidth
+        command={`rad web ${window.origin} --connect ${httpd.api.hostname}:${httpd.api.port}`} />
     </div>
   </Popover>
 {/if}
