@@ -408,7 +408,6 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 1.5rem;
     background-color: var(--color-background-float);
   }
   .bottom {
@@ -460,8 +459,8 @@
   .reactions {
     display: flex;
     gap: 0.5rem;
-    height: 22px;
-    margin-top: 1rem;
+    align-items: center;
+    margin-left: -0.25rem;
   }
 
   @media (max-width: 720px) {

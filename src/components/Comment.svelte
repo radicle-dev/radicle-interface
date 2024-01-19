@@ -90,7 +90,7 @@
     align-items: center;
     gap: 0.5rem;
     padding-left: 2rem;
-    height: 22px;
+    margin-left: -0.25rem;
   }
   .edit-buttons {
     display: flex;

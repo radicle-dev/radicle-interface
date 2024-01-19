@@ -5,6 +5,7 @@
   export let inline: boolean = false;
   export let loading: boolean = false;
   export let title: string | undefined = undefined;
+  export let stylePadding: string | undefined = undefined;
 </script>
 
 <style>
@@ -35,6 +36,7 @@
 {:else}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
+    style:padding={stylePadding}
     role="button"
     tabindex="0"
     aria-label={ariaLabel}

@@ -40,29 +40,32 @@
   }
 </style>
 
-<Popover
-  popoverPositionBottom="2rem"
-  popoverPositionLeft="0"
-  popoverPadding="0">
-  <IconButton
-    slot="toggle"
-    let:toggle
-    on:click={toggle}
-    title="toggle-reaction-popover">
-    <IconSmall name="face" />
-  </IconButton>
+<div style="margin-top: 0.875rem;">
+  <Popover
+    popoverPositionBottom="2rem"
+    popoverPositionLeft="0"
+    popoverPadding="0">
+    <IconButton
+      stylePadding="4px"
+      slot="toggle"
+      let:toggle
+      on:click={toggle}
+      title="toggle-reaction-popover">
+      <IconSmall name="face" />
+    </IconButton>
 
-  <div class="selector" slot="popover">
-    {#each config.reactions as reaction}
-      <button
-        class:active={Boolean(reactions?.get(reaction)?.self)}
-        on:click={() =>
-          dispatch("select", {
-            nids: reactions?.get(reaction)?.all ?? [],
-            reaction,
-          })}>
-        {reaction}
-      </button>
-    {/each}
-  </div>
-</Popover>
+    <div class="selector" slot="popover">
+      {#each config.reactions as reaction}
+        <button
+          class:active={Boolean(reactions?.get(reaction)?.self)}
+          on:click={() =>
+            dispatch("select", {
+              nids: reactions?.get(reaction)?.all ?? [],
+              reaction,
+            })}>
+          {reaction}
+        </button>
+      {/each}
+    </div>
+  </Popover>
+</div>
