@@ -88,15 +88,19 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: 150ms ease-in-out;
+    width: 4.5rem;
   }
-  .expanded {
+  .sidebar.expanded {
     width: 22.5rem;
   }
   .project-navigation {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    flex: 1;
   }
+
   .counter {
     border-radius: var(--border-radius-tiny);
     background-color: var(--color-fill-ghost);
@@ -116,100 +120,149 @@
     gap: 0.5rem;
     justify-content: space-between;
     width: 100%;
+    opacity: 0;
+    transition: 150ms ease-in-out;
+  }
+  .title-counter.expanded {
+    opacity: 1;
   }
   .sidebar-footer {
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
+  .help {
+    z-index: 10;
+    opacity: 0;
+  }
+  .help.expanded {
+    opacity: 1;
+    transition: 150ms;
+    transition-delay: 150ms;
+  }
   .help-box {
+    width: 20.5rem;
     padding: 1rem;
+    margin-bottom: 0.5rem;
     background-color: var(--color-background-float);
     border: 1px solid var(--color-border-hint);
     font-size: var(--font-size-small);
     border-radius: var(--border-radius-small);
   }
+  .vertical-buttons {
+    opacity: 1;
+    height: fit-content;
+    display: flex;
+    flex-direction: column-reverse;
+    transition: 150ms ease-in-out;
+    transition-delay: 60ms;
+    margin-bottom: 0.5rem;
+  }
+  .vertical-buttons.expanded {
+    opacity: 0;
+    height: 0;
+  }
+  .horizontal-buttons {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: 30ms ease-in-out;
+  }
+  .horizontal-buttons.expanded {
+    opacity: 1;
+    transition: 150ms ease-in-out;
+  }
+  .icon {
+    transform: rotate(180deg);
+    transition: 150ms ease-in-out;
+  }
+  .icon.expanded {
+    transform: rotate(0deg);
+  }
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    justify-items: flex-end;
+  }
 </style>
 
 <div class="sidebar" class:expanded>
-  {#if expanded}
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
-      <div class="project-navigation">
-        <Link
-          title="Source"
-          route={{
-            resource: "project.source",
-            project: project.id,
-            node: baseUrl,
-            path: "/",
-          }}>
-          <Button
-            stylePadding="0.5rem 0.75rem"
-            size="large"
-            styleWidth="100%"
-            styleJustifyContent={"flex-start"}
-            variant={activeTab === "source" ? "gray" : "background"}>
-            <IconSmall name="chevron-left-right" />
-            Source
-          </Button>
-        </Link>
-        <Link
-          title={`${project.issues.open} Issues`}
-          route={{
-            resource: "project.issues",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <Button
-            stylePadding="0.5rem 0.75rem"
-            let:hover
-            size="large"
-            styleJustifyContent={"flex-start"}
-            styleWidth="100%"
-            variant={activeTab === "issues" ? "gray" : "background"}>
-            <IconSmall name="issue" />
-            <div class="title-counter">
-              Issues
-              <span
-                class="counter"
-                class:selected={activeTab === "issues"}
-                class:hover={hover && activeTab !== "issues"}>
-                {project.issues.open}
-              </span>
-            </div>
-          </Button>
-        </Link>
+  <div class="project-navigation">
+    <Link
+      title="Source"
+      route={{
+        resource: "project.source",
+        project: project.id,
+        node: baseUrl,
+        path: "/",
+      }}>
+      <Button
+        stylePadding="0.5rem 0.75rem"
+        size="large"
+        styleWidth="100%"
+        styleJustifyContent={"flex-start"}
+        variant={activeTab === "source" ? "gray" : "background"}>
+        <IconSmall name="chevron-left-right" />
+        <span class="title-counter" class:expanded>Source</span>
+      </Button>
+    </Link>
+    <Link
+      title={`${project.issues.open} Issues`}
+      route={{
+        resource: "project.issues",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <Button
+        stylePadding="0.5rem 0.75rem"
+        let:hover
+        size="large"
+        styleJustifyContent={"flex-start"}
+        styleWidth="100%"
+        variant={activeTab === "issues" ? "gray" : "background"}>
+        <IconSmall name="issue" />
+        <div class="title-counter" class:expanded>
+          Issues
+          <span
+            class="counter"
+            class:selected={activeTab === "issues"}
+            class:hover={hover && activeTab !== "issues"}>
+            {project.issues.open}
+          </span>
+        </div>
+      </Button>
+    </Link>
 
-        <Link
-          title={`${project.patches.open} Patches`}
-          route={{
-            resource: "project.patches",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <Button
-            stylePadding="0.5rem 0.75rem"
-            let:hover
-            size="large"
-            styleWidth="100%"
-            styleJustifyContent={"flex-start"}
-            variant={activeTab === "patches" ? "gray" : "background"}>
-            <IconSmall name="patch" />
-            <div class="title-counter">
-              Patches
-              <span
-                class="counter"
-                class:hover={hover && activeTab !== "patches"}
-                class:selected={activeTab === "patches"}>
-                {project.patches.open}
-              </span>
-            </div>
-          </Button>
-        </Link>
-      </div>
-    </div>
-    <div style="display: flex; flex-direction:column; gap: 1rem;">
-      {#if !hideContextHelp}
+    <Link
+      title={`${project.patches.open} Patches`}
+      route={{
+        resource: "project.patches",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      <Button
+        stylePadding="0.5rem 0.75rem"
+        let:hover
+        size="large"
+        styleWidth="100%"
+        styleJustifyContent={"flex-start"}
+        variant={activeTab === "patches" ? "gray" : "background"}>
+        <IconSmall name="patch" />
+        <div class="title-counter" class:expanded>
+          Patches
+          <span
+            class="counter"
+            class:hover={hover && activeTab !== "patches"}
+            class:selected={activeTab === "patches"}>
+            {project.patches.open}
+          </span>
+        </div>
+      </Button>
+    </Link>
+  </div>
+  <div class="bottom">
+    <div class="help" class:expanded>
+      {#if !hideContextHelp && expanded}
         {#if loadingContextHelp}
           <div
             style="display: flex; justify-content: center; align-items: center; height: 2rem;">
@@ -227,106 +280,8 @@
           </div>
         {/if}
       {/if}
-
-      <div class="sidebar-footer" style:flex-direction="row">
-        <Button
-          title={"Collapse"}
-          on:click={toggleSidebar}
-          variant="background">
-          <IconSmall name="chevron-left" />
-        </Button>
-        <div style:width="1.5rem" />
-
-        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-          <Button
-            variant="background"
-            title="Settings"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="settings" />
-            Settings
-          </Button>
-
-          <Settings slot="popover" />
-        </Popover>
-        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-          <Button
-            variant="background"
-            title="Help"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="help" />
-            Help
-          </Button>
-
-          <Help slot="popover" />
-        </Popover>
-      </div>
     </div>
-  {:else}
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
-      <div class="project-navigation">
-        <Link
-          title="Source"
-          route={{
-            resource: "project.source",
-            project: project.id,
-            node: baseUrl,
-            path: "/",
-          }}>
-          <Button
-            size="large"
-            stylePadding="0 0.75rem"
-            variant={activeTab === "source" ? "gray" : "background"}>
-            <IconSmall name="chevron-left-right" />
-          </Button>
-        </Link>
-        <Link
-          title={`${project.issues.open} Issues`}
-          route={{
-            resource: "project.issues",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <Button
-            size="large"
-            stylePadding="0 0.75rem"
-            variant={activeTab === "issues" ? "gray" : "background"}>
-            <IconSmall name="issue" />
-          </Button>
-        </Link>
-
-        <Link
-          title={`${project.patches.open} Patches`}
-          route={{
-            resource: "project.patches",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <Button
-            size="large"
-            stylePadding="0 0.75rem"
-            variant={activeTab === "patches" ? "gray" : "background"}>
-            <IconSmall name="patch" />
-          </Button>
-        </Link>
-      </div>
-    </div>
-
-    <div
-      class="sidebar-footer"
-      style:flex-direction="column-reverse"
-      style:gap="0.5rem">
-      <Button
-        stylePadding="0 0.75rem"
-        variant="background"
-        title={"Expand"}
-        on:click={toggleSidebar}>
-        <IconSmall name="chevron-right" />
-      </Button>
-
+    <div class="vertical-buttons" class:expanded style:gap="0.5rem">
       <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
         <Button
           stylePadding="0 0.75rem"
@@ -370,7 +325,7 @@
               slot="toggle"
               let:toggle
               on:click={toggle}>
-              <IconSmall name="globe" />
+              <IconSmall name="device" />
             </Button>
 
             <ContextHelp
@@ -386,5 +341,40 @@
         {/if}
       {/if}
     </div>
-  {/if}
+    <div class="sidebar-footer" style:flex-direction="row">
+      <Button title={"Collapse"} on:click={toggleSidebar} variant="background">
+        <div class="icon" class:expanded>
+          <IconSmall name="chevron-left" />
+        </div>
+      </Button>
+      <div style:width="1.5rem" />
+      <div class="horizontal-buttons" class:expanded>
+        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+          <Button
+            variant="background"
+            title="Settings"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="settings" />
+            Settings
+          </Button>
+
+          <Settings slot="popover" />
+        </Popover>
+        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+          <Button
+            variant="background"
+            title="Help"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="help" />
+            Help
+          </Button>
+          <Help slot="popover" />
+        </Popover>
+      </div>
+    </div>
+  </div>
 </div>
