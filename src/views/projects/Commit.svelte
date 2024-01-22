@@ -23,6 +23,9 @@
     margin-bottom: 3rem;
     border-radius: var(--border-radius-small);
   }
+  .title {
+    font-weight: var(--font-weight-semibold);
+  }
   .description {
     font-family: var(--font-family-monospace);
     margin: 1rem 0;
@@ -33,7 +36,12 @@
 <Layout {baseUrl} {project}>
   <div class="commit">
     <div class="header">
-      <InlineMarkdown fontSize="large" content={header.summary} />
+      <span class="title">
+        <InlineMarkdown
+          stripEmphasizedStyling
+          fontSize="large"
+          content={header.summary} />
+      </span>
       <pre class="description txt-small">{header.description}</pre>
       <CommitAuthorship {header}>
         <span class="global-commit">{formatCommit(header.id)}</span>

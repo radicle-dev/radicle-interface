@@ -141,7 +141,10 @@
                 bind:value={issueTitle}
                 showKeyHint={false} />
             {:else if issueTitle}
-              <InlineMarkdown fontSize="medium" content={issueTitle} />
+              <InlineMarkdown
+                stripEmphasizedStyling
+                fontSize="medium"
+                content={issueTitle} />
             {:else}
               <span class="txt-missing">No title</span>
             {/if}

@@ -3,13 +3,19 @@
 
   import markdown from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
+  import { Renderer } from "@app/lib/markdown";
 
   export let content: string;
+  export let stripEmphasizedStyling: boolean = false;
   export let fontSize: "tiny" | "small" | "regular" | "medium" | "large" =
     "small";
 
   const render = (content: string): string =>
-    dompurify.sanitize(markdown.parseInline(content) as string);
+    dompurify.sanitize(
+      markdown.parseInline(content, {
+        renderer: new Renderer(undefined, stripEmphasizedStyling),
+      }) as string,
+    );
 </script>
 
 <style>

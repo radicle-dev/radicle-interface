@@ -92,7 +92,7 @@
   function render(content: string): string {
     return dompurify.sanitize(
       markdown.parse(content, {
-        renderer: new Renderer(linkBaseUrl),
+        renderer: new Renderer(linkBaseUrl, false),
       }) as string,
     );
   }

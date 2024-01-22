@@ -83,9 +83,7 @@
     font-weight: var(--font-weight-medium);
   }
   .name {
-    white-space: nowrap;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
+    font-weight: var(--font-weight-semibold);
   }
   .rid {
     visibility: hidden;
@@ -107,7 +105,7 @@
   <div class="left">
     <div class="text">
       <div class="title">
-        <span class="name" title={name}>
+        <span class="name txt-overflow" title={name}>
           {name}
         </span>
         {#if visibility === "private"}

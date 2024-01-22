@@ -453,6 +453,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-large);
     height: 2.5rem;
   }
@@ -484,7 +485,10 @@
             <span class="txt-missing">No title</span>
           {:else}
             <div class="title">
-              <InlineMarkdown fontSize="large" content={issue.title} />
+              <InlineMarkdown
+                stripEmphasizedStyling
+                fontSize="large"
+                content={issue.title} />
             </div>
           {/if}
           {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}

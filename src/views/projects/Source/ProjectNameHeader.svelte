@@ -76,6 +76,9 @@
   .description {
     padding: 0 1rem 1rem 1rem;
   }
+  .project-name {
+    font-weight: var(--font-weight-semibold);
+  }
   .project-name:hover {
     color: inherit;
   }
