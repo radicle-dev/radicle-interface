@@ -414,6 +414,7 @@
     padding: 0 1rem 1rem 1rem;
     background-color: var(--color-background-default);
     height: 100%;
+    border-top: 1px solid var(--color-border-hint);
   }
   .connector {
     width: 1px;

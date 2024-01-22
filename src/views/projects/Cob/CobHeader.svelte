@@ -3,7 +3,6 @@
     display: flex;
     padding: 1rem;
     flex-direction: column;
-    border-radius: var(--border-radius-small);
   }
   .subtitle {
     display: flex;
