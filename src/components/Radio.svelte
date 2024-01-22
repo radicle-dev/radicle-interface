@@ -1,12 +1,12 @@
 <script lang="ts">
   export let ariaLabel: string | undefined = undefined;
   export let outline: boolean = false;
+  export let styleGap: string | undefined = undefined;
 </script>
 
 <style>
   .radio {
     display: flex;
-    gap: 0.375rem;
     border-radius: var(--border-radius-tiny);
     justify-content: center;
     align-items: center;
@@ -21,6 +21,6 @@
   }
 </style>
 
-<div aria-label={ariaLabel} class="radio" class:outline>
+<div aria-label={ariaLabel} class="radio" class:outline style:gap={styleGap}>
   <slot />
 </div>

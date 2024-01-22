@@ -743,7 +743,7 @@
 
       <div class="tabs">
         <div class="tabs-spacer" />
-        <Radio>
+        <Radio styleGap="0.375rem">
           {#each Object.entries(tabs) as [name, { route, icon }]}
             <Link {route}>
               <Button
