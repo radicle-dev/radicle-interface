@@ -848,14 +848,12 @@
       </div>
       <div class="bottom">
         {#if view.name === "diff"}
-          <div style:margin-top="1rem">
-            <Changeset
-              {baseUrl}
-              projectId={project.id}
-              revision={view.toCommit}
-              files={view.files}
-              diff={view.diff} />
-          </div>
+          <Changeset
+            {baseUrl}
+            projectId={project.id}
+            revision={view.toCommit}
+            files={view.files}
+            diff={view.diff} />
         {:else if view.name === "activity"}
           {#each timelineTuple as [revision, timelines], index}
             {@const previousRevision =
@@ -922,14 +920,12 @@
             </div>
           {/each}
         {:else if view.name === "changes"}
-          <div style:margin-top="1rem">
-            <Changeset
-              {baseUrl}
-              projectId={project.id}
-              revision={view.oid}
-              files={view.files}
-              diff={view.diff} />
-          </div>
+          <Changeset
+            {baseUrl}
+            projectId={project.id}
+            revision={view.oid}
+            files={view.files}
+            diff={view.diff} />
         {:else}
           {utils.unreachable(view)}
         {/if}

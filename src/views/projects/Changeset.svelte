@@ -69,7 +69,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 1rem;
+    padding: 1rem 1rem 0.5rem 1rem;
+    background-color: var(--color-background-default);
   }
   .additions {
     color: var(--color-foreground-success);
@@ -81,6 +82,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    background-color: var(--color-background-default);
+    padding: 1rem;
   }
   .summary {
     font-size: var(--font-size-small);

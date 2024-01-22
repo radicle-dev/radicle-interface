@@ -17,35 +17,31 @@
 
 <style>
   .commit {
-    padding: 1rem;
+    background-color: var(--color-background-float);
   }
   .header {
-    margin-bottom: 3rem;
+    padding: 0 1rem 1rem 1rem;
     border-radius: var(--border-radius-small);
-  }
-  .title {
-    font-weight: var(--font-weight-semibold);
+    border-bottom: 1px solid var(--color-border-hint);
   }
   .description {
     font-family: var(--font-family-monospace);
-    margin: 1rem 0;
     white-space: pre-wrap;
+    margin-top: 1.5rem;
   }
 </style>
 
 <Layout {baseUrl} {project}>
   <div class="commit">
     <div class="header">
-      <span class="title">
-        <InlineMarkdown
-          stripEmphasizedStyling
-          fontSize="large"
-          content={header.summary} />
-      </span>
-      <pre class="description txt-small">{header.description}</pre>
-      <CommitAuthorship {header}>
-        <span class="global-commit">{formatCommit(header.id)}</span>
-      </CommitAuthorship>
+      <div style="display:flex; flex-direction: column; gap: 0.5rem;">
+        <InlineMarkdown fontSize="large" content={header.summary} />
+        <CommitAuthorship {header}>
+          <span class="global-commit">{formatCommit(header.id)}</span>
+        </CommitAuthorship>
+      </div>
+      {#if header.description}
+        <pre class="description txt-small">{header.description}</pre>{/if}
     </div>
     <Changeset
       {baseUrl}
