@@ -710,15 +710,13 @@
                   patchState = "submit";
                   if (session) {
                     try {
-                      await Promise.all([
-                        editPatch(session.id, patch.title),
-                        editRevision(
-                          session.id,
-                          patch.id,
-                          comment,
-                          Array.from(embeds.values()),
-                        ),
-                      ]);
+                      await editPatch(session.id, patch.title);
+                      await editRevision(
+                        session.id,
+                        patch.id,
+                        comment,
+                        Array.from(embeds.values()),
+                      );
                     } finally {
                       patchState = "read";
                     }
