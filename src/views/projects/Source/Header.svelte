@@ -6,7 +6,6 @@
   import PeerSelector from "./PeerSelector.svelte";
 
   import Button from "@app/components/Button.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -126,26 +125,5 @@
         </div>
       </Button>
     </Link>
-  </div>
-
-  <div class="global-hide-on-mobile">
-    <HoverPopover stylePopoverPositionLeft="0" stylePopoverPositionTop="0.5rem">
-      <Button
-        disabled
-        notAllowed={false}
-        variant="tab"
-        slot="toggle"
-        size="large">
-        <IconSmall name="user" />
-        <div class="title-counter">
-          Contributors
-          <div class="counter">{tree.stats.contributors}</div>
-        </div>
-      </Button>
-      <div class="txt-small" slot="popover">
-        <div style:margin-bottom="1rem">Coming soon.</div>
-        <div>Listing contributors is not implemented yet.</div>
-      </div>
-    </HoverPopover>
   </div>
 </div>

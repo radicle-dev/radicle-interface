@@ -1,5 +1,3 @@
-import type { Page } from "@playwright/test";
-
 import {
   aliceMainHead,
   bobHead,
@@ -11,21 +9,6 @@ import {
   test,
 } from "@tests/support/fixtures.js";
 import { expectUrlPersistsReload } from "@tests/support/router";
-
-async function expectCounts(
-  params: { commits: number; contributors: number },
-  page: Page,
-) {
-  await expect(
-    page.getByRole("link", {
-      name: `Commits ${params.commits}`,
-    }),
-  ).toBeVisible();
-
-  await expect(
-    page.getByText(`Contributors ${params.contributors}`),
-  ).toBeVisible();
-}
 
 test("navigate to project", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
@@ -49,7 +32,11 @@ test("navigate to project", async ({ page }) => {
     await expect(page.getByTitle("Current HEAD")).toHaveText(
       aliceMainHead.substring(0, 7),
     );
-    await expectCounts({ commits: 6, contributors: 1 }, page);
+    await expect(
+      page.getByRole("link", {
+        name: "Commits 6",
+      }),
+    ).toBeVisible();
   }
 
   // Navigate to the project README.md by default.
@@ -78,7 +65,11 @@ test("show source tree at specific revision", async ({ page }) => {
 
   await expect(page.getByTitle("Current HEAD")).toContainText("335dd6d");
   await expect(page.locator(".source-tree")).toHaveText("bin src");
-  await expectCounts({ commits: 2, contributors: 1 }, page);
+  await expect(
+    page.getByRole("link", {
+      name: "Commits 2",
+    }),
+  ).toBeVisible();
 });
 
 test("source file highlighting", async ({ page }) => {
@@ -295,7 +286,11 @@ test("peer and branch switching", async ({ page }) => {
       await expect(page.getByTitle("Current HEAD")).toHaveText(
         aliceMainHead.substring(0, 7),
       );
-      await expectCounts({ commits: 6, contributors: 1 }, page);
+      await expect(
+        page.getByRole("link", {
+          name: "Commits 6",
+        }),
+      ).toBeVisible();
     }
 
     // Feature branch with a slash in the name.
@@ -307,7 +302,11 @@ test("peer and branch switching", async ({ page }) => {
         page.getByRole("button", { name: "feature/branch" }),
       ).toBeVisible();
       await expect(page.getByTitle("Current HEAD")).toHaveText("1aded56");
-      await expectCounts({ commits: 9, contributors: 1 }, page);
+      await expect(
+        page.getByRole("link", {
+          name: "Commits 9",
+        }),
+      ).toBeVisible();
     }
 
     // Branch without a history or files in it.
@@ -319,7 +318,11 @@ test("peer and branch switching", async ({ page }) => {
         page.getByRole("button", { name: "orphaned-branch" }),
       ).toBeVisible();
       await expect(page.getByTitle("Current HEAD")).toHaveText("af3641c");
-      await expectCounts({ commits: 1, contributors: 1 }, page);
+      await expect(
+        page.getByRole("link", {
+          name: "Commits 1",
+        }),
+      ).toBeVisible();
 
       await expect(page.getByText("No files at this revision")).toBeVisible();
     }
@@ -352,7 +355,11 @@ test("peer and branch switching", async ({ page }) => {
       await expect(page.getByTitle("Current HEAD")).toHaveText(
         bobHead.substring(0, 7),
       );
-      await expectCounts({ commits: 7, contributors: 2 }, page);
+      await expect(
+        page.getByRole("link", {
+          name: "Commits 7",
+        }),
+      ).toBeVisible();
       await expect(
         page.getByText(`${bobHead.substring(0, 7)} Update readme`),
       ).toBeVisible();
