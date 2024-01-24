@@ -34,12 +34,13 @@ import type {
 import type { RequestOptions } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
-import { z, array, boolean, literal, number, object, string, union } from "zod";
+import { z, array, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
+import * as profile from "./lib/profile.js";
 import * as session from "./lib/session.js";
 import { Fetcher } from "./lib/fetcher.js";
-import { successResponseSchema } from "./lib/shared.js";
+import { nodeConfigSchema, successResponseSchema } from "./lib/shared.js";
 
 export type {
   BaseUrl,
@@ -77,37 +78,7 @@ export type Node = z.infer<typeof nodeSchema>;
 const nodeSchema = object({
   id: string(),
   version: string(),
-  config: object({
-    alias: string(),
-    peers: union([
-      object({ type: literal("static") }),
-      object({ type: literal("dynamic"), target: number() }),
-    ]),
-    connect: array(string()),
-    externalAddresses: array(string()),
-    listen: array(string()),
-    network: union([literal("main"), literal("test")]),
-    relay: boolean(),
-    limits: object({
-      routingMaxSize: number(),
-      routingMaxAge: number(),
-      fetchConcurrency: number(),
-      gossipMaxAge: number(),
-      maxOpenFiles: number(),
-      rate: object({
-        inbound: object({
-          fillRate: number(),
-          capacity: number(),
-        }),
-        outbound: object({
-          fillRate: number(),
-          capacity: number(),
-        }),
-      }),
-    }),
-    policy: union([literal("allow"), literal("block")]),
-    scope: union([literal("followed"), literal("all")]),
-  }).nullable(),
+  config: nodeConfigSchema.nullable(),
   state: union([literal("running"), literal("stopped")]),
 });
 
@@ -158,6 +129,7 @@ export class HttpdClient {
 
   public baseUrl: BaseUrl;
   public project: project.Client;
+  public profile: profile.Client;
   public session: session.Client;
 
   public constructor(baseUrl: BaseUrl) {
@@ -165,6 +137,7 @@ export class HttpdClient {
     this.#fetcher = new Fetcher(this.baseUrl);
 
     this.project = new project.Client(this.#fetcher);
+    this.profile = new profile.Client(this.#fetcher);
     this.session = new session.Client(this.#fetcher);
   }
 

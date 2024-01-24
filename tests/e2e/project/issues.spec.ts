@@ -49,7 +49,10 @@ test("issue counters", async ({ page, authenticatedPeer }) => {
   await page
     .getByRole("link", { name: "First issue to test counters" })
     .click();
-  await page.getByRole("button", { name: "Close issue as solved" }).click();
+  await page
+    .getByRole("button", { name: "Close issue as solved" })
+    .first()
+    .click();
   await expect(page.getByRole("button", { name: "Issues 1" })).toBeVisible();
 });
 

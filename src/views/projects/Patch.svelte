@@ -77,12 +77,15 @@
   import Radio from "@app/components/Radio.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import TextInput from "@app/components/TextInput.svelte";
+  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -661,27 +664,37 @@
     <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
-          {#if patchState !== "read"}
-            <TextInput
-              placeholder="Title"
-              bind:value={patch.title}
-              showKeyHint={false} />
-          {:else if !patch.title}
-            <span class="txt-missing">No title</span>
-          {:else}
-            <div class="title">
-              <InlineMarkdown
-                stripEmphasizedStyling
-                fontSize="large"
-                content={patch.title} />
-            </div>
-          {/if}
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
-            <IconButton
-              title="edit patch"
-              on:click={() => (patchState = "edit")}>
-              <IconSmall name={"edit"} />
-            </IconButton>
+          <div style="display: flex; gap: 1rem; width: 100%;">
+            {#if patchState !== "read"}
+              <TextInput
+                placeholder="Title"
+                bind:value={patch.title}
+                showKeyHint={false} />
+            {:else if !patch.title}
+              <span class="txt-missing">No title</span>
+            {:else}
+              <div class="title">
+                <InlineMarkdown
+                  stripEmphasizedStyling
+                  fontSize="large"
+                  content={patch.title} />
+              </div>
+            {/if}
+            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
+              <IconButton
+                title="edit patch"
+                on:click={() => (patchState = "edit")}>
+                <IconSmall name={"edit"} />
+              </IconButton>
+            {/if}
+          </div>
+          <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && view.name === "activity"}
+            <CobStateButton
+              items={items.filter(([, state]) => !isEqual(state, patch.state))}
+              {selectedItem}
+              state={patch.state}
+              save={partial(saveStatus, session.id)} />
           {/if}
         </svelte:fragment>
         <svelte:fragment slot="state">
@@ -778,13 +791,6 @@
         </Radio>
 
         <div style="margin-left: auto; margin-top: -0.5rem;">
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && view.name === "activity"}
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, patch.state))}
-              {selectedItem}
-              state={patch.state}
-              save={partial(saveStatus, session.id)} />
-          {/if}
           {#if view.name === "changes"}
             <div style="margin-left: auto; ">
               <Popover

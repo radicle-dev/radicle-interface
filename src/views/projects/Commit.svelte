@@ -7,10 +7,13 @@
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
+  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let commit: Commit;
   export let project: Project;
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
 
   $: header = commit.commit;
 </script>
@@ -20,9 +23,14 @@
     background-color: var(--color-background-float);
   }
   .header {
-    padding: 0 1rem 1rem 1rem;
+    padding: 1rem;
     border-radius: var(--border-radius-small);
     border-bottom: 1px solid var(--color-border-hint);
+  }
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .description {
     font-family: var(--font-family-monospace);
@@ -35,13 +43,20 @@
   <div class="commit">
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">
-        <InlineMarkdown fontSize="large" content={header.summary} />
+        <span class="title">
+          <InlineMarkdown
+            stripEmphasizedStyling
+            fontSize="large"
+            content={header.summary} />
+          <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+        </span>
         <CommitAuthorship {header}>
           <span class="global-commit">{formatCommit(header.id)}</span>
         </CommitAuthorship>
       </div>
       {#if header.description}
-        <pre class="description txt-small">{header.description}</pre>{/if}
+        <pre class="description txt-small">{header.description}</pre>
+      {/if}
     </div>
     <Changeset
       {baseUrl}

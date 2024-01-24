@@ -2,9 +2,8 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import { ResponseError } from "@httpd-client/lib/fetcher";
-
-  import { api, httpdStore } from "@app/lib/httpd";
+  import { cacheQueryProject } from "@app/lib/projects";
+  import { httpdStore } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
   import { onMount } from "svelte";
 
@@ -43,7 +42,7 @@
 
   httpdStore.subscribe(async () => {
     if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
-      await detectLocalProject();
+      await cacheQueryProject(baseUrl, project.id);
     }
   });
 
@@ -64,14 +63,7 @@
 
   async function detectLocalProject(): Promise<void> {
     queryingLocalProject = true;
-    localProject = await api.project
-      .getById(project.id)
-      .then<"found">(() => "found")
-      .catch((error: unknown) =>
-        error instanceof ResponseError && error.status === 404
-          ? "notFound"
-          : undefined,
-      );
+    localProject = await cacheQueryProject(baseUrl, project.id);
     queryingLocalProject = false;
   }
 

@@ -59,6 +59,7 @@
     "hast-util-to-dom": "^4.0.0",
     "hast-util-to-html": "^9.0.0",
     "lodash": "^4.17.21",
+    "lru-cache": "^10.1.0",
     "marked": "^10.0.0",
     "marked-katex-extension": "^4.0.4",
     "marked-linkify-it": "^3.1.6",

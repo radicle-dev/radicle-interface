@@ -189,7 +189,7 @@ function extractBaseUrl(hostAndPort: string): BaseUrl {
   }
 }
 
-function urlToRoute(url: URL): Route | null {
+export function urlToRoute(url: URL): Route | null {
   const segments = url.pathname.substring(1).split("/");
 
   const resource = segments.shift();

@@ -71,6 +71,8 @@ export const test = base.extend<{
         await page.addInitScript(() => {
           window.APP_CONFIG = {
             nodes: {
+              fallbackPublicExplorer:
+                "https://app.radicle.xyz/nodes/$host/$rid$path",
               defaultHttpdPort: 8081,
               defaultLocalHttpdPort: 8081,
               defaultHttpdScheme: "http",
@@ -196,6 +198,7 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
 export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
   window.APP_CONFIG = {
     nodes: {
+      fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
       defaultHttpdPort: 8081,
       defaultLocalHttpdPort: defaultLocalHttpdPort,
       defaultHttpdScheme: "http",

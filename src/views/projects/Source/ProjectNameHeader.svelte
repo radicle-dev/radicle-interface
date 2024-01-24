@@ -3,20 +3,23 @@
 
   import * as modal from "@app/lib/modal";
   import capitalize from "lodash/capitalize";
-  import { twemoji } from "@app/lib/utils";
   import { httpdStore, api } from "@app/lib/httpd";
+  import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "../Header/CloneButton.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "../Header/SeedButton.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
+  import Share from "@app/views/projects/Share.svelte";
 
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let seeding: boolean;
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
 
   let editSeedingInProgress = false;
 
@@ -118,6 +121,7 @@
     <div
       class="global-hide-on-mobile"
       style="margin-left: auto; display: flex; gap: 0.5rem;">
+      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
       <SeedButton
         {seeding}
         disabled={editSeedingInProgress}

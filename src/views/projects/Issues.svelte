@@ -20,11 +20,14 @@
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let issues: Issue[];
   export let project: Project;
   export let state: IssueState["status"];
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
 
   let loading = false;
   let page = 0;
@@ -143,8 +146,9 @@
       </DropdownList>
     </Popover>
 
-    {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
-      <div style="margin-left: auto;">
+    <div style="margin-left: auto; display: flex; gap: 1rem;">
+      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
         <Link
           route={{
             resource: "project.newIssue",
@@ -156,8 +160,8 @@
             New Issue
           </Button>
         </Link>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 
   <List items={allIssues}>

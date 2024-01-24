@@ -2,6 +2,7 @@ import type { BaseUrl, Project } from "@httpd-client";
 
 import { HttpdClient } from "@httpd-client";
 import { isFulfilled } from "@app/lib/utils";
+import { cached } from "./cache";
 
 export interface ProjectBaseUrl {
   project: Project;
@@ -22,4 +23,22 @@ export async function getProjectsFromNodes(
 
   const results = await Promise.allSettled(projectPromises);
   return results.filter(isFulfilled).map(r => r.value);
+}
+
+export const cacheQueryProject = cached(
+  queryProject,
+  (baseUrl: BaseUrl, projectId: string) =>
+    JSON.stringify({ baseUrl, projectId }),
+  { max: 200, ttl: 60 * 60 * 1000 },
+);
+
+async function queryProject(
+  baseUrl: BaseUrl,
+  projectId: string,
+): Promise<"found" | "notFound"> {
+  const httpd = new HttpdClient(baseUrl);
+  return await httpd.project
+    .getById(projectId)
+    .then<"found">(() => "found")
+    .catch(() => "notFound");
 }

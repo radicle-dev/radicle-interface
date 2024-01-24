@@ -17,11 +17,14 @@
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
+  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
   export let project: Project;
   export let state: PatchState["status"];
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
 
   let loading = false;
   let page = 0;
@@ -146,6 +149,10 @@
         </Link>
       </DropdownList>
     </Popover>
+
+    <div style="margin-left: auto; display: flex; gap: 1rem;">
+      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+    </div>
   </div>
 
   <List items={allPatches}>

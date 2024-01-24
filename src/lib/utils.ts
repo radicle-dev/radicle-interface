@@ -93,6 +93,19 @@ export function formatEditedCaption(lastEdit: Comment["edits"][0]) {
   } edited ${formatTimestamp(lastEdit.timestamp / 1000)}`;
 }
 
+// Generates a publicly shareable link.
+export function formatPublicExplorer(
+  publicExplorer: string,
+  host: string,
+  rid: string,
+  fullPath: string,
+) {
+  return publicExplorer
+    .replace("$host", host)
+    .replace("$rid", rid)
+    .replace("$path", fullPath.replace(`/nodes/${host}/${rid}`, ""));
+}
+
 // Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
 // Returns the resolved path.
 export function canonicalize(

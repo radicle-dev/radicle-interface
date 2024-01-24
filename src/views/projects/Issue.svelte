@@ -42,10 +42,13 @@
   import Reactions from "@app/components/Reactions.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
+  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
   export let project: Project;
+  export let preferredSeeds: string[];
+  export let publicExplorer: string;
   export let rawPath: (commit?: string) => string;
 
   const api = new HttpdClient(baseUrl);
@@ -477,28 +480,42 @@
     <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
-          {#if issueState !== "read"}
-            <TextInput
-              placeholder="Title"
-              bind:value={issue.title}
-              showKeyHint={false} />
-          {:else if !issue.title}
-            <span class="txt-missing">No title</span>
-          {:else}
-            <div class="title">
-              <InlineMarkdown
-                stripEmphasizedStyling
-                fontSize="large"
-                content={issue.title} />
-            </div>
-          {/if}
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
-            <IconButton
-              title="edit issue"
-              on:click={() => (issueState = "edit")}>
-              <IconSmall name={"edit"} />
-            </IconButton>
-          {/if}
+          <div style="display: flex; gap: 1rem; width: 100%;">
+            {#if issueState !== "read"}
+              <TextInput
+                placeholder="Title"
+                bind:value={issue.title}
+                showKeyHint={false} />
+            {:else if !issue.title}
+              <span class="txt-missing">No title</span>
+            {:else}
+              <div class="title">
+                <InlineMarkdown
+                  stripEmphasizedStyling
+                  fontSize="large"
+                  content={issue.title} />
+              </div>
+            {/if}
+            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
+              <IconButton
+                title="edit issue"
+                on:click={() => (issueState = "edit")}>
+                <IconSmall name={"edit"} />
+              </IconButton>
+            {/if}
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+              <CobStateButton
+                items={items.filter(
+                  ([, state]) => !isEqual(state, issue.state),
+                )}
+                {selectedItem}
+                state={issue.state}
+                save={partial(saveStatus, session.id)} />
+            {/if}
+          </div>
         </svelte:fragment>
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}

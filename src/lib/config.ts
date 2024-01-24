@@ -4,6 +4,7 @@ import configJson from "@app/config.json";
 
 export interface Config {
   nodes: {
+    fallbackPublicExplorer: string;
     defaultHttpdPort: number;
     defaultLocalHttpdPort: number;
     defaultNodePort: number;
@@ -23,6 +24,7 @@ function getConfig(): Config {
   if (window.VITEST) {
     return {
       nodes: {
+        fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
         defaultHttpdPort: 8081,
         defaultLocalHttpdPort: 8081,
         defaultHttpdScheme: "http",
