@@ -689,7 +689,7 @@
             {/if}
           </div>
           <Share {preferredSeeds} {publicExplorer} {baseUrl} />
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && view.name === "activity"}
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
             <CobStateButton
               items={items.filter(([, state]) => !isEqual(state, patch.state))}
               {selectedItem}
