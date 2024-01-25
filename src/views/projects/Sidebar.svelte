@@ -23,7 +23,7 @@
   export let baseUrl: BaseUrl;
   export let project: Project;
 
-  let expanded = true;
+  let expanded = loadSidebarState();
 
   export function storeSidebarState(expanded: boolean): void {
     window.localStorage.setItem(
@@ -67,10 +67,7 @@
     queryingLocalProject = false;
   }
 
-  onMount(async () => {
-    expanded = loadSidebarState();
-    await detectLocalProject();
-  });
+  onMount(async () => await detectLocalProject());
 </script>
 
 <style>
