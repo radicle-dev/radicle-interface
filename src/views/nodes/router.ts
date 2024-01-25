@@ -50,7 +50,7 @@ export async function loadProjects(
 
   const [nodeStats, projects] = await Promise.all([
     api.getStats(),
-    api.project.getAll({ page, perPage: PROJECTS_PER_PAGE }),
+    api.project.getAll({ page, perPage: PROJECTS_PER_PAGE, show: "all" }),
   ]);
 
   const results = await Promise.all(

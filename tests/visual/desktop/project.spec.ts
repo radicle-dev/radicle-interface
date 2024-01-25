@@ -64,9 +64,23 @@ test("diff selection", async ({ page }) => {
     };
   });
 
-  await page.goto(
-    `${cobUrl}/patches/a27a6b77246e6ada5e81bc8764b5f5c593be80a5?tab=changes#README.md:H0L0H0L3`,
-  );
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
+  await page.getByRole("link", { name: "Changes" }).click();
+  await page
+    .getByRole("row", { name: "- # Cobs Repo" })
+    .locator("div")
+    .first()
+    .click();
+  await page.keyboard.down("Shift");
+  await page
+    .getByRole("row", { name: "+ ## Better?" })
+    .locator("div")
+    .first()
+    .click();
+  await page.keyboard.up("Shift");
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
 

@@ -49,7 +49,7 @@ test("navigate to project", async ({ page }) => {
   await expect(page.getByText("Git test repository")).toBeVisible();
 
   // Number of nodes seeding this project.
-  await expect(page.getByText("Seed 3")).toBeVisible();
+  await expect(page.getByText("Seed 4")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {
@@ -475,11 +475,20 @@ test("internal file markdown link", async ({ page }) => {
 });
 
 test("diff selection de-select", async ({ page }) => {
-  await page.goto(
-    `${cobUrl}/patches/7db70f2ed80235db7f0ab9e5537e76572a304991?tab=changes#README.md:H0L0H0L3`,
-  );
-  await page.getByText("Add subtitle to README").click();
-  await expect(page).toHaveURL(
-    `${cobUrl}/patches/7db70f2ed80235db7f0ab9e5537e76572a304991?tab=changes`,
-  );
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
+  await page.getByRole("link", { name: "Changes" }).click();
+  await page
+    .getByRole("row", { name: "+ # Cobs Repo" })
+    .locator("div")
+    .first()
+    .click();
+  await expect(page).toHaveURL(new RegExp("tab=changes#README.md:H0L1$"));
+  // Click outside.
+  await page
+    .getByText("1 file changed with 5 insertions and 1 deletion")
+    .click();
+  await expect(page).toHaveURL(new RegExp("tab=changes$"));
 });

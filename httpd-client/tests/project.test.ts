@@ -210,7 +210,7 @@ describe("project", () => {
   test("#getPatchById(id, patchId)", async () => {
     await api.project.getPatchById(
       cobRid,
-      "7db70f2ed80235db7f0ab9e5537e76572a304991",
+      "59aa91a1d63a3a1d05292abe6292356a34ea1480",
     );
   });
 

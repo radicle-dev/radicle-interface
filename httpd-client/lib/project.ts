@@ -172,7 +172,7 @@ export class Client {
   }
 
   public async getAll(
-    query?: { page?: number; perPage?: number },
+    query?: { page?: number; perPage?: number; show?: "pinned" | "all" },
     options?: RequestOptions,
   ): Promise<Project[]> {
     return this.#fetcher.fetchOk(
