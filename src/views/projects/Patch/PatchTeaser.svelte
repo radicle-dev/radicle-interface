@@ -3,7 +3,11 @@
   import type { Patch } from "@httpd-client";
 
   import { HttpdClient } from "@httpd-client";
-  import { formatObjectId, formatTimestamp } from "@app/lib/utils";
+  import {
+    absoluteTimestamp,
+    formatObjectId,
+    formatTimestamp,
+  } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
@@ -161,7 +165,9 @@
             {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
           </span>
         {/if}
-        {formatTimestamp(latestRevision.timestamp)}
+        <span title={absoluteTimestamp(latestRevision.timestamp)}>
+          {formatTimestamp(latestRevision.timestamp)}
+        </span>
       </span>
     </div>
   </div>

@@ -592,7 +592,9 @@
           <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
           opened
           <span class="global-oid">{utils.formatObjectId(issue.id)}</span>
-          {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
+            {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          </span>
           {#if lastDescriptionEdit}
             <div class="author-metadata">•</div>
             <div

@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { CommitHeader } from "@httpd-client";
 
-  import { formatTimestamp, gravatarURL } from "@app/lib/utils";
+  import {
+    absoluteTimestamp,
+    formatTimestamp,
+    gravatarURL,
+  } from "@app/lib/utils";
 
   export let header: CommitHeader;
 </script>
@@ -40,7 +44,9 @@
     </div>
     committed
     <slot />
-    {formatTimestamp(header.committer.time)}
+    <span title={absoluteTimestamp(header.committer.time)}>
+      {formatTimestamp(header.committer.time)}
+    </span>
   {:else}
     <div class="person">
       <img class="avatar" alt="avatar" src={gravatarURL(header.author.email)} />
@@ -56,6 +62,8 @@
     </div>
     committed
     <slot />
-    {formatTimestamp(header.committer.time)}
+    <span title={absoluteTimestamp(header.committer.time)}>
+      {formatTimestamp(header.committer.time)}
+    </span>
   {/if}
 </span>

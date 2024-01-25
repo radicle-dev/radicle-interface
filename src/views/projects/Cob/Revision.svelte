@@ -258,7 +258,9 @@
         </span>
       </div>
       <div class="revision-data">
-        {utils.formatTimestamp(revisionTimestamp)}
+        <span title={utils.absoluteTimestamp(revisionTimestamp)}>
+          {utils.formatTimestamp(revisionTimestamp)}
+        </span>
         {#if loading}
           <Loading small />
         {/if}
@@ -389,7 +391,9 @@
                 {utils.formatObjectId(revisionId)}
               </span>
             {/if}
-            {utils.formatTimestamp(revisionTimestamp)}
+            <span title={utils.absoluteTimestamp(revisionTimestamp)}>
+              {utils.formatTimestamp(revisionTimestamp)}
+            </span>
             <div style="display: flex; gap: 0.5rem; margin-left: auto;">
               {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
                 <IconButton

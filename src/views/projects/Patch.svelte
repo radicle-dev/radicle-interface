@@ -748,7 +748,9 @@
           <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
           opened
           <span class="global-oid">{utils.formatObjectId(patch.id)}</span>
-          {utils.formatTimestamp(patch.revisions[0].timestamp)}
+          <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
+            {utils.formatTimestamp(patch.revisions[0].timestamp)}
+          </span>
         </div>
       </CobHeader>
 

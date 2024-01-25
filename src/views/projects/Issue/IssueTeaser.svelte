@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { BaseUrl, Issue } from "@httpd-client";
 
-  import { formatObjectId, formatTimestamp } from "@app/lib/utils";
+  import {
+    absoluteTimestamp,
+    formatObjectId,
+    formatTimestamp,
+  } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -128,7 +132,9 @@
       <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
       opened
       <span class="global-oid">{formatObjectId(issue.id)}</span>
-      {formatTimestamp(issue.discussion[0].timestamp)}
+      <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>
+        {formatTimestamp(issue.discussion[0].timestamp)}
+      </span>
     </div>
   </div>
   <div class="right">

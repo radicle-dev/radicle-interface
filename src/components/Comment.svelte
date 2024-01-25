@@ -124,7 +124,7 @@
       </div>
       <NodeId nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
-      <span class="card-metadata">
+      <span class="card-metadata" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}
       </span>
       {#if lastEdit}
