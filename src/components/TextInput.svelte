@@ -73,12 +73,11 @@
     align-items: center;
     height: var(--button-regular-height);
     background: var(--color-background-dip);
-    font-size: var(--font-size-small);
   }
   input {
     background: var(--color-background-dip);
+    font-size: var(--font-size-small);
     color: var(--color-foreground-contrast);
-    font-family: var(--font-family-monospace);
     border: 1px solid var(--color-border-hint);
     line-height: 1.6;
     outline: none;
