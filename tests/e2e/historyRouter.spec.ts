@@ -6,6 +6,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
+import { createProject } from "@tests/support/project";
 import {
   expectBackAndForwardNavigationWorks,
   expectUrlPersistsReload,
@@ -110,6 +111,30 @@ test.describe("project page navigation", () => {
       page,
     );
     await expectUrlPersistsReload(page);
+  });
+
+  test("page title", async ({ page }) => {
+    await page.goto(sourceBrowsingUrl, {
+      waitUntil: "networkidle",
+    });
+    const title = await page.title();
+    expect(title).toBe(
+      "source-browsing · Git repository for source browsing tests",
+    );
+  });
+
+  test("page title on project with empty description", async ({
+    page,
+    authenticatedPeer,
+  }) => {
+    const { rid } = await createProject(authenticatedPeer, {
+      name: "ProjectWithNoDescription",
+    });
+    await page.goto(authenticatedPeer.ridUrl(rid), {
+      waitUntil: "networkidle",
+    });
+    const title = await page.title();
+    expect(title).toBe("ProjectWithNoDescription");
   });
 
   test("navigate project paths with an explicitly selected peer", async ({

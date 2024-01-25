@@ -943,7 +943,9 @@ export function projectTitle(loadedRoute: ProjectLoadedRoute) {
 
   if (loadedRoute.resource === "project.source") {
     title.push(loadedRoute.params.project.name);
-    title.push(loadedRoute.params.project.description);
+    if (loadedRoute.params.project.description.length > 0) {
+      title.push(loadedRoute.params.project.description);
+    }
   } else if (loadedRoute.resource === "project.commit") {
     title.push(loadedRoute.params.commit.commit.summary);
     title.push("commit");
