@@ -6,8 +6,8 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20.9.0"
       - name: Install dependencies
@@ -19,7 +19,7 @@ jobs:
       - name: Run Playwright build smoke test
         run: npm run test:e2e -- --project chromium --config playwright.buildSmoke.config.ts
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-artifacts-${{ runner.os }}

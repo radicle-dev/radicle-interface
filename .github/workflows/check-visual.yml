@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Evict playwright snapshot cache when pushing to master
         run: |
@@ -23,7 +23,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: "20.9.0"
 
@@ -31,14 +31,14 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: playwright-dep-cache
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
 
       - name: Cache Playwright visual snapshots
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: playwright-snapshot-cache
         with:
           path: tests/visual/snapshots/**/*
@@ -71,7 +71,7 @@ jobs:
 
       - name: Upload artifacts
         id: artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-artifacts-${{ runner.os }}
