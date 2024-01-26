@@ -48,6 +48,10 @@ jobs:
         if: steps.playwright-dep-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium webkit --with-deps
 
+      - name: Install Playwright dependencies
+        if: steps.playwright-dep-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
+
       - name: Install Radicle binaries
         run: |
           mkdir -p tests/artifacts;
