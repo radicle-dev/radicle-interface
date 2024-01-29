@@ -57,12 +57,14 @@ export const test = base.extend<{
         log(msg.text(), browserLabel, outputLog);
       });
 
-      page.on("pageerror", msg => {
-        expect(
-          false,
-          `Test failed because there was a console error in the app: ${msg}`,
-        ).toBeTruthy();
-      });
+      if (!process.env.CONTINUE_ON_ERRORS) {
+        page.on("pageerror", msg => {
+          expect(
+            false,
+            `Test failed because there was a console error in the app: ${msg}`,
+          ).toBeTruthy();
+        });
+      }
 
       if (!customAppConfig) {
         // Remember: `page.addInitScript()` is run in the browser which
