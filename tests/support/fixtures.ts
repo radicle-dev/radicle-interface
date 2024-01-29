@@ -88,7 +88,11 @@ export const test = base.extend<{
                 },
               ],
             },
-            projects: { pinned: [] },
+            fallbackPreferredSeed: {
+              hostname: "seed.radicle.garden",
+              port: 443,
+              scheme: "https",
+            },
           };
         });
       }
@@ -215,36 +219,10 @@ export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
         },
       ],
     },
-    projects: {
-      pinned: [
-        {
-          name: "cobs",
-          id: "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe",
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8081,
-            scheme: "http",
-          },
-        },
-        {
-          name: "markdown",
-          id: "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg",
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8081,
-            scheme: "http",
-          },
-        },
-        {
-          name: "source-browsing",
-          id: "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8081,
-            scheme: "http",
-          },
-        },
-      ],
+    fallbackPreferredSeed: {
+      hostname: "seed.radicle.garden",
+      port: 443,
+      scheme: "https",
     },
   };
 }

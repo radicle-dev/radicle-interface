@@ -1,10 +1,4 @@
-import {
-  aliceMainHead,
-  expect,
-  shortNodeRemote,
-  sourceBrowsingRid,
-  test,
-} from "@tests/support/fixtures.js";
+import { expect, shortNodeRemote, test } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
 
 test("node metadata", async ({ page, peerManager }) => {
@@ -33,7 +27,7 @@ test("node metadata", async ({ page, peerManager }) => {
 test("node projects", async ({ page }) => {
   await page.goto("/nodes/radicle.local");
   const project = page
-    .locator(".project", { hasText: "source-browsing" })
+    .locator(".project-card", { hasText: "source-browsing" })
     .nth(0);
 
   // Project metadata.
@@ -42,14 +36,6 @@ test("node projects", async ({ page }) => {
     await expect(
       project.getByText("Git repository for source browsing tests"),
     ).toBeVisible();
-    await expect(project.getByText(aliceMainHead)).toBeVisible();
-  }
-
-  // Show project ID on hover.
-  {
-    await expect(project.getByText(sourceBrowsingRid)).not.toBeVisible();
-    await project.hover();
-    await expect(project.getByText(sourceBrowsingRid)).toBeVisible();
   }
 });
 

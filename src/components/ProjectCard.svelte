@@ -1,162 +1,205 @@
 <script lang="ts">
-  import type { WeeklyActivity } from "@app/lib/commit";
+  import type { BaseUrl } from "@httpd-client";
 
-  import capitalize from "lodash/capitalize";
-  import { formatCommit, twemoji } from "@app/lib/utils";
+  import type { WeeklyActivity } from "@app/lib/commit";
+  import { formatTimestamp, twemoji } from "@app/lib/utils";
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
-  import Badge from "@app/components/Badge.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Link from "@app/components/Link.svelte";
+
+  export let compact = false;
 
   export let activity: WeeklyActivity[];
-  export let compact = false;
   export let description: string;
-  export let head: string;
-  export let visibility: "public" | "private" = "public";
+  export let baseUrl: BaseUrl;
+
+  export let numberOfIssues: number;
+  export let numberOfPatches: number;
+
+  export let isDelegate: boolean;
+  export let isSeeding: boolean;
+  export let isPrivate: boolean;
+
+  export let lastUpdatedTimestamp: number;
+
+  $: lastUpdated = formatTimestamp(lastUpdatedTimestamp);
+
   export let id: string;
   export let name: string;
 </script>
 
 <style>
-  .project {
+  .project-card {
+    height: 10rem;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background-float);
+    padding: 0.75rem 1rem;
     position: relative;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 1rem;
-    box-shadow: 0 0 0 1px var(--color-border-hint);
-    border-radius: var(--border-radius-small);
-    min-width: 36rem;
-    cursor: pointer;
-    background: var(--color-background-float);
-  }
-  .right {
-    display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: flex-end;
+    overflow: hidden;
   }
-  .left {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
+
+  .project-card.compact {
+    height: 8rem;
   }
-  .description {
-    overflow-x: hidden;
-    overflow-y: hidden;
-    text-overflow: ellipsis;
+
+  .project-card:hover {
+    background-color: var(--color-fill-float-hover);
   }
-  .compact {
-    min-width: 16rem;
-    height: 9rem;
-  }
-  .compact .left {
-    width: 100%;
-  }
-  .compact .right {
-    display: none;
-  }
-  .compact .description {
-    white-space: nowrap;
-  }
+
   .activity {
-    width: 100%;
-    max-width: 14rem;
-    margin-top: 0.5rem;
+    position: absolute;
+    bottom: 1.5rem;
+    right: 0;
+    width: calc(100% - 3rem);
+    max-width: 24rem;
   }
-  .compact .activity {
+
+  .activity > .fadeout-overlay {
     position: absolute;
     bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      var(--color-background-float) 20%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
-  .project:hover {
-    box-shadow: 0 0 0 2px var(--color-border-focus);
+
+  .project-card:hover .fadeout-overlay {
+    background: linear-gradient(
+      to right,
+      var(--color-fill-float-hover) 20%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
-  .description {
-    font-size: var(--font-size-small);
-  }
+
   .title {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    align-items: center;
-    font-size: var(--font-size-medium);
-    font-weight: var(--font-weight-medium);
+    flex-direction: column;
+    gap: 0.125rem;
+    position: relative;
   }
-  .name {
-    font-weight: var(--font-weight-semibold);
+
+  .title * {
+    line-clamp: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .rid {
-    visibility: hidden;
-    color: var(--color-fill-secondary);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-tiny);
+
+  .title p {
+    color: var(--color-foreground-dim);
   }
-  .project:hover .rid {
-    visibility: visible;
+
+  .headline-and-badges {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
-  .text {
+
+  .badges {
     display: flex;
     gap: 0.25rem;
-    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .badge-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    opacity: 0.25;
+  }
+
+  h4,
+  p {
+    margin: 0;
+  }
+
+  .stats-row {
+    position: relative;
+    display: flex;
+    gap: 0.25rem;
+    height: 1.5rem;
+    align-items: center;
+    white-space: nowrap;
   }
 </style>
 
-<div class="project" class:compact>
-  <div class="left">
-    <div class="text">
-      <div class="title">
-        <span class="name txt-overflow" title={name}>
-          {name}
-        </span>
-        {#if visibility === "private"}
-          {#if compact}
-            <div title="Private" style:color="var(--color-foreground-yellow)">
+<Link
+  route={{
+    resource: "project.source",
+    project: id,
+    node: baseUrl,
+  }}>
+  <div class="project-card" class:compact>
+    <div class="activity">
+      <div class="fadeout-overlay" />
+      <ActivityDiagram
+        {id}
+        viewBoxHeight={200}
+        styleColor="var(--color-foreground-primary"
+        {activity} />
+    </div>
+    <div class="title">
+      <div class="headline-and-badges">
+        <h4 use:twemoji>{name}</h4>
+        <div class="badges">
+          {#if isPrivate}
+            <div title="Private" class="badge">
+              <div
+                class="badge-background"
+                style:background-color="var(--color-fill-yellow)" />
               <IconSmall name="lock" />
             </div>
-          {:else}
-            <Badge variant="yellowOutline" size="tiny">
-              {capitalize(visibility)}
-            </Badge>
           {/if}
-        {/if}
+          {#if isDelegate}
+            <div title="Delegate" class="badge">
+              <div
+                class="badge-background"
+                style:background-color="var(--color-foreground-primary)" />
+              <IconSmall name="badge" />
+            </div>
+          {/if}
+          {#if isSeeding}
+            <div title="Seeding" class="badge">
+              <div
+                class="badge-background"
+                style:background-color="var(--color-fill-secondary)" />
+              <IconSmall name="network" />
+            </div>
+          {/if}
+        </div>
       </div>
-      <div class="description" use:twemoji>{description}</div>
-      <div class="global-commit">
-        {#if compact}
-          {formatCommit(head)}
-        {:else}
-          {head}
-        {/if}
-      </div>
+      <p class="txt-small" use:twemoji>{description}</p>
     </div>
-
-    {#if compact}
-      <div class="activity">
-        <ActivityDiagram
-          {id}
-          {activity}
-          viewBoxHeight={70}
-          styleColor={visibility === "private"
-            ? "var(--color-foreground-yellow)"
-            : "var(--color-foreground-primary)"} />
-      </div>
-    {/if}
+    <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
+      <IconSmall name="issue" />
+      {numberOfIssues} ·
+      <IconSmall name="patch" />
+      <span style:overflow="hidden" style:text-overflow="ellipsis">
+        {numberOfPatches} · Updated {lastUpdated}
+      </span>
+    </div>
   </div>
-
-  {#if !compact}
-    <div class="right">
-      <div class="id">
-        <span class="rid">{id}</span>
-      </div>
-      <div class="activity">
-        <ActivityDiagram
-          {id}
-          {activity}
-          viewBoxHeight={100}
-          styleColor={visibility === "private"
-            ? "var(--color-foreground-yellow)"
-            : "var(--color-foreground-primary)"} />
-      </div>
-    </div>
-  {/if}
-</div>
+</Link>

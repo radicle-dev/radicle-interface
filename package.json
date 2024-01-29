@@ -49,6 +49,7 @@
     "wait-on": "^7.2.0"
   },
   "dependencies": {
+    "@efstajas/svelte-stored-writable": "^0.2.0",
     "@radicle/gray-matter": "4.1.0",
     "@wooorm/starry-night": "^3.2.0",
     "async-mutex": "^0.4.1",

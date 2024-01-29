@@ -5,11 +5,11 @@
 
   import Avatar from "@app/components/Avatar.svelte";
   import Button from "@app/components/Button.svelte";
-  import Command from "@app/components/Command.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
 </script>
 
 <style>
@@ -36,12 +36,6 @@
   }
   .connect-popover {
     max-width: 20rem;
-  }
-  .label {
-    display: block;
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-regular);
-    margin-bottom: 0.75rem;
   }
 </style>
 
@@ -87,12 +81,7 @@
       Authenticate
     </Button>
     <div slot="popover" class="connect-popover">
-      <div class="label">
-        Authenticate with your local node to make changes.
-      </div>
-      <Command
-        fullWidth
-        command={`rad web ${window.origin} --connect ${httpd.api.hostname}:${httpd.api.port}`} />
+      <ConnectInstructions />
     </div>
   </Popover>
 {/if}

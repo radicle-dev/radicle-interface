@@ -1,24 +1,23 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
-  import type { ProjectActivity } from "@app/views/nodes/router";
-
   import { isLocal, truncateId } from "@app/lib/utils";
   import { loadProjects } from "@app/views/nodes/router";
-
   import AppLayout from "@app/App/AppLayout.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
   import Button from "@app/components/Button.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import { isDelegate } from "@app/lib/roles";
+  import { api, httpdStore } from "@app/lib/httpd";
+  import type { ProjectWithListingData } from "@app/lib/projects";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
   export let externalAddresses: string[];
   export let projectCount: number;
   export let projectPageIndex: number;
-  export let projects: ProjectActivity[] = [];
+  export let projects: ProjectWithListingData[] = [];
   export let version: string;
 
   let error: any;
@@ -44,6 +43,11 @@
     !error &&
     projectCount &&
     projects.length < projectCount;
+
+  $: session =
+    $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
+      ? $httpdStore.session
+      : undefined;
 </script>
 
 <style>
@@ -81,7 +85,7 @@
   }
   .projects {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     flex-direction: column;
   }
   .more {
@@ -140,33 +144,21 @@
       </div>
 
       <div class="projects">
-        {#each projects as { project, activity } (project.id)}
-          <Link
-            route={{
-              resource: "project.source",
-              project: project.id,
-              node: baseUrl,
-            }}>
-            <div class="global-hide-on-mobile">
-              <ProjectCard
-                {activity}
-                id={project.id}
-                name={project.name}
-                visibility={project.visibility?.type}
-                description={project.description}
-                head={project.head} />
-            </div>
-            <div class="global-hide-on-desktop">
-              <ProjectCard
-                compact
-                {activity}
-                id={project.id}
-                name={project.name}
-                visibility={project.visibility?.type}
-                description={project.description}
-                head={project.head} />
-            </div>
-          </Link>
+        {#each projects as { project, activity, lastCommit } (project.id)}
+          <ProjectCard
+            compact
+            id={project.id}
+            name={project.name}
+            description={project.description}
+            {activity}
+            {baseUrl}
+            numberOfIssues={project.issues.open}
+            numberOfPatches={project.patches.open}
+            lastUpdatedTimestamp={lastCommit.commit.committer.time}
+            isPrivate={project.visibility?.type === "private"}
+            isSeeding={false}
+            isDelegate={isDelegate(session?.publicKey, project.delegates) ??
+              false} />
         {/each}
       </div>
 

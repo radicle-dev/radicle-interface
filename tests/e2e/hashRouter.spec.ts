@@ -28,7 +28,7 @@ test("navigation between node and project pages", async ({ page }) => {
   await page.goto("/#/nodes/radicle.local");
 
   const project = page
-    .locator(".project", { hasText: "source-browsing" })
+    .locator(".project-card", { hasText: "source-browsing" })
     .nth(0);
   await project.click();
   await expect(page).toHaveURL(`/#${sourceBrowsingUrl}`);

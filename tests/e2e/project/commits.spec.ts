@@ -20,7 +20,7 @@ test("peer and branch switching", async ({ page }) => {
       })
       .click();
 
-    await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
+    await expect(page.getByTitle("Change peer")).toHaveText("alice Delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(page.locator(".list .teaser")).toHaveCount(6);

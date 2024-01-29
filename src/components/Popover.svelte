@@ -15,7 +15,7 @@
   export let popoverPositionRight: string | undefined = undefined;
   export let popoverPositionTop: string | undefined = undefined;
 
-  let expanded = false;
+  export let expanded = false;
   let thisComponent: HTMLDivElement;
 
   function clickOutside(ev: MouseEvent | TouchEvent) {

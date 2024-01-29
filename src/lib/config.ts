@@ -12,13 +12,7 @@ export interface Config {
     defaultHttpdScheme: string;
     pinned: { baseUrl: BaseUrl }[];
   };
-  projects: {
-    pinned: {
-      name: string;
-      id: string;
-      baseUrl: BaseUrl;
-    }[];
-  };
+  fallbackPreferredSeed: BaseUrl;
 }
 
 function getConfig(): Config {
@@ -33,7 +27,11 @@ function getConfig(): Config {
         defaultNodePort: 8776,
         pinned: [],
       },
-      projects: { pinned: [] },
+      fallbackPreferredSeed: {
+        hostname: "seed.radicle.garden",
+        port: 443,
+        scheme: "https",
+      },
     };
   } else if (window.PLAYWRIGHT) {
     return window.APP_CONFIG;

@@ -5,9 +5,5 @@ test("exceptions in production build", async ({ page }) => {
   // Wait for scripts to finish executing, there might be exceptions that
   // happen after the page has been painted.
   await page.waitForTimeout(2000);
-  await expect(
-    page.getByText(
-      "Radicle enables developers to securely collaborate on software over a peer-to-peer network built on Git.",
-    ),
-  ).toBeVisible();
+  await expect(page.getByText("Local projects")).toBeVisible();
 });

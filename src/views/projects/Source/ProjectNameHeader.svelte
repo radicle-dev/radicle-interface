@@ -2,7 +2,6 @@
   import type { BaseUrl, Project } from "@httpd-client";
 
   import * as modal from "@app/lib/modal";
-  import capitalize from "lodash/capitalize";
   import { httpdStore, api } from "@app/lib/httpd";
   import { twemoji } from "@app/lib/utils";
 
@@ -12,6 +11,7 @@
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import SeedButton from "../Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
@@ -114,8 +114,9 @@
       </Link>
     </span>
     {#if project.visibility && project.visibility.type === "private"}
-      <Badge variant="yellowOutline" size="tiny">
-        {capitalize(project.visibility.type)}
+      <Badge variant="yellow" size="tiny">
+        <IconSmall name="lock" />
+        Private
       </Badge>
     {/if}
     <div

@@ -17,7 +17,6 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
     color: var(--color-foreground-contrast);
-    height: 2rem;
   }
   .item.disabled {
     color: var(--color-foreground-disabled);

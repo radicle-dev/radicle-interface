@@ -57,7 +57,10 @@
         alias={selectedPeer.alias}
         stylePopoverPositionLeft="-0.75rem" />
       {#if selectedPeer.delegate}
-        <Badge size="tiny" variant="secondary">delegate</Badge>
+        <Badge size="tiny" variant="primary">
+          <IconSmall name="badge" />
+          Delegate
+        </Badge>
       {/if}
     {:else}
       Remotes
@@ -74,13 +77,16 @@
         <DropdownListItem
           selected={item.selected}
           title={createTitle(item.remote)}>
-          <Avatar nodeId={item.remote.id} />
+          <div style:height="1rem"><Avatar nodeId={item.remote.id} /></div>
           <span style:font-family="var(--font-family-monospace)">
             {item.remote.alias || formatNodeId(item.remote.id)}
           </span>
           {#if item.remote.delegate}
             <div style:color="var(--color-fill-secondary)">
-              <Badge size="tiny" variant="secondary">delegate</Badge>
+              <Badge size="tiny" variant="primary">
+                <IconSmall name="badge" />
+                Delegate
+              </Badge>
             </div>
           {/if}
         </DropdownListItem>

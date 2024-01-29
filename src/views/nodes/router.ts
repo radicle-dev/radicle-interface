@@ -1,22 +1,17 @@
-import type { BaseUrl, Project } from "@httpd-client";
+import type { BaseUrl } from "@httpd-client";
 import type {
   LoadErrorRoute,
   NotFoundRoute,
 } from "@app/lib/router/definitions";
-import type { WeeklyActivity } from "@app/lib/commit";
+import type { ProjectWithListingData } from "@app/lib/projects";
 
 import { HttpdClient } from "@httpd-client";
-import { loadProjectActivity } from "@app/lib/commit";
 import { config } from "@app/lib/config";
+import { getProjectsListingData } from "@app/lib/projects";
 
 export interface NodesRouteParams {
   baseUrl: BaseUrl;
   projectPageIndex: number;
-}
-
-export interface ProjectActivity {
-  project: Project;
-  activity: WeeklyActivity[];
 }
 
 export interface NodesRoute {
@@ -32,7 +27,7 @@ export interface NodesLoadedRoute {
     version: string;
     externalAddresses: string[];
     nid: string;
-    projects: ProjectActivity[];
+    projects: ProjectWithListingData[];
     projectCount: number;
   };
 }
@@ -44,7 +39,7 @@ export async function loadProjects(
   baseUrl: BaseUrl,
 ): Promise<{
   total: number;
-  projects: ProjectActivity[];
+  projects: ProjectWithListingData[];
 }> {
   const api = new HttpdClient(baseUrl);
 
@@ -53,23 +48,8 @@ export async function loadProjects(
     api.project.getAll({ page, perPage: PROJECTS_PER_PAGE, show: "all" }),
   ]);
 
-  const results = await Promise.all(
-    projects.map(async project => {
-      let activity: WeeklyActivity[] = [];
-      try {
-        activity = await loadProjectActivity(project.id, baseUrl);
-      } catch (error) {
-        console.error(
-          `Failed to obtain project activity for: ${project.id}`,
-          error,
-        );
-      }
-
-      return {
-        project,
-        activity,
-      };
-    }),
+  const results = await getProjectsListingData(
+    projects.map(p => ({ project: p, baseUrl })),
   );
 
   return {

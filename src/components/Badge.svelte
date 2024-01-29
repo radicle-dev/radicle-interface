@@ -4,7 +4,7 @@
     | "foreground"
     | "background"
     | "outline"
-    | "yellowOutline"
+    | "yellow"
     | "neutral"
     | "negative"
     | "positive"
@@ -50,10 +50,9 @@
     color: var(--color-foreground-match-background);
     background-color: var(--color-fill-secondary);
   }
-  .yellow-outline {
-    border: 1px solid var(--color-foreground-yellow);
-    color: var(--color-foreground-yellow);
-    background-color: transparent;
+  .yellow {
+    color: var(--color-foreground-black);
+    background-color: var(--color-fill-yellow);
   }
   .outline {
     border: 1px solid var(--color-border-hint);
@@ -112,7 +111,7 @@
   class:small={size === "small"}
   class:medium={size === "medium"}
   class:caution={variant === "caution"}
-  class:yellow-outline={variant === "yellowOutline"}
+  class:yellow={variant === "yellow"}
   class:outline={variant === "outline"}
   class:background={variant === "background"}
   class:foreground={variant === "foreground"}

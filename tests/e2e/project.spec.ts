@@ -278,7 +278,7 @@ test("peer and branch switching", async ({ page }) => {
         name: "alice delegate",
       })
       .click();
-    await expect(page.getByTitle("Change peer")).toHaveText("alice delegate");
+    await expect(page.getByTitle("Change peer")).toHaveText("alice Delegate");
 
     // Default `main` branch.
     {
