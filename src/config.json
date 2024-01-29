@@ -3,6 +3,7 @@
     "fallbackPublicExplorer": "https://app.radicle.xyz/nodes/$host/$rid$path",
     "defaultHttpdPort": 443,
     "defaultLocalHttpdPort": 8080,
+    "defaultHttpdHostname": "seed.radicle.garden",
     "defaultHttpdScheme": "https",
     "defaultNodePort": 8776,
     "pinned": [

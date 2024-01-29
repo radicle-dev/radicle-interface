@@ -36,7 +36,7 @@
     seedRoutes.push({
       ...route,
       node: {
-        hostname: "seed.radicle.garden",
+        hostname: config.nodes.defaultHttpdHostname,
         port: config.nodes.defaultHttpdPort,
         scheme: config.nodes.defaultHttpdScheme,
       },

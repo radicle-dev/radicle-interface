@@ -11,13 +11,13 @@ test("node metadata", async ({ page, peerManager }) => {
   const peer = await peerManager.createPeer({
     name: "node-metadata-peer",
   });
-  await peer.startHttpd();
   await peer.startNode({
     policy: "allow",
     scope: "all",
     alias: "palm",
     externalAddresses: ["seed.radicle.test:8123"],
   });
+  await peer.startHttpd();
 
   await page.goto(peer.uiUrl());
 

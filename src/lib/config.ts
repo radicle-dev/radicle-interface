@@ -6,6 +6,7 @@ export interface Config {
   nodes: {
     fallbackPublicExplorer: string;
     defaultHttpdPort: number;
+    defaultHttpdHostname: string;
     defaultLocalHttpdPort: number;
     defaultNodePort: number;
     defaultHttpdScheme: string;
@@ -25,6 +26,7 @@ function getConfig(): Config {
     return {
       nodes: {
         fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
+        defaultHttpdHostname: "127.0.0.1",
         defaultHttpdPort: 8081,
         defaultLocalHttpdPort: 8081,
         defaultHttpdScheme: "http",

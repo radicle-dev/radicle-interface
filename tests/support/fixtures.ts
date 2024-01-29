@@ -74,6 +74,7 @@ export const test = base.extend<{
               fallbackPublicExplorer:
                 "https://app.radicle.xyz/nodes/$host/$rid$path",
               defaultHttpdPort: 8081,
+              defaultHttpdHostname: "127.0.0.1",
               defaultLocalHttpdPort: 8081,
               defaultHttpdScheme: "http",
               defaultNodePort: 8776,
@@ -148,8 +149,8 @@ export const test = base.extend<{
       gitOptions: gitOptions["bob"],
     });
 
-    await peer.startHttpd();
     await peer.startNode();
+    await peer.startHttpd();
     const { stdout } = await peer.spawn("rad-web", [
       "http://localhost:3001",
       "--no-open",
@@ -200,7 +201,8 @@ export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
     nodes: {
       fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
       defaultHttpdPort: 8081,
-      defaultLocalHttpdPort: defaultLocalHttpdPort,
+      defaultHttpdHostname: "127.0.0.1",
+      defaultLocalHttpdPort,
       defaultHttpdScheme: "http",
       defaultNodePort: 8776,
       pinned: [

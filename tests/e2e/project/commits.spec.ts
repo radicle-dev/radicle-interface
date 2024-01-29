@@ -130,8 +130,8 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
     name: "alice",
     gitOptions: gitOptions["alice"],
   });
-  await alice.startHttpd();
   await alice.startNode();
+  await alice.startHttpd();
   const { rid, projectFolder } = await createProject(alice, {
     name: "alice-project",
   });

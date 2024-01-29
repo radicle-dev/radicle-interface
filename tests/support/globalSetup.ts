@@ -50,11 +50,9 @@ export default async function globalSetup(): Promise<() => void> {
     gitOptions: gitOptions["alice"],
   });
 
-  await palm.startHttpd(defaultHttpdPort);
-
   if (!process.env.SKIP_FIXTURE_CREATION) {
-    await palm.startHttpd(defaultHttpdPort);
     await palm.startNode({ policy: "allow", scope: "all", alias: "palm" });
+    await palm.startHttpd(defaultHttpdPort);
 
     try {
       console.log("Creating source-browsing fixture");
@@ -74,6 +72,8 @@ export default async function globalSetup(): Promise<() => void> {
       process.exit(1);
     }
     await palm.stopNode();
+  } else {
+    await palm.startHttpd(defaultHttpdPort);
   }
 
   return async () => {

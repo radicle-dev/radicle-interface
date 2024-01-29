@@ -121,6 +121,8 @@ export async function createPeerManager(createParams: {
 }
 
 export const NodeConfigSchema = object({
+  publicExplorer: string(),
+  preferredSeeds: array(string()),
   node: object({
     alias: string(),
     peers: union([
@@ -134,8 +136,8 @@ export const NodeConfigSchema = object({
     limits: object({
       routingMaxSize: number(),
       routingMaxAge: number(),
-      fetchConcurrency: number(),
       gossipMaxAge: number(),
+      fetchConcurrency: number(),
       maxOpenFiles: number(),
       rate: object({
         inbound: object({ fillRate: number(), capacity: number() }),
@@ -300,22 +302,6 @@ export class RadiclePeer {
 
     await updateNodeConfig(this.#radHome, nodeParams);
 
-    // Because of a bug in `radicle-node`, `limits.gossipMaxAge` is not included
-    // in the default config. We add it manually.
-    await updateNodeConfig(this.#radHome, {
-      limits: {
-        routingMaxSize: 1000,
-        routingMaxAge: 604800,
-        fetchConcurrency: 1,
-        gossipMaxAge: 1209600,
-        maxOpenFiles: 4096,
-        rate: {
-          inbound: { fillRate: 0.2, capacity: 32 },
-          outbound: { fillRate: 1.0, capacity: 64 },
-        },
-      },
-    });
-
     this.#nodeProcess = this.spawn("radicle-node", [
       "--listen",
       this.#listenSocketAddr,
@@ -453,12 +439,13 @@ async function updateNodeConfig(
   nodeParams: Partial<NodeConfig["node"]>,
 ) {
   const configPath = Path.join(radHome, "config.json");
-  const config = await Fs.readFile(configPath, "utf-8");
-  const nodeConfig = NodeConfigSchema.parse(JSON.parse(config));
-  nodeConfig.node = {
-    ...nodeConfig.node,
+  const configFile = await Fs.readFile(configPath, "utf-8");
+  const config = NodeConfigSchema.parse(JSON.parse(configFile));
+  config.preferredSeeds = [];
+  config.node = {
+    ...config.node,
     network: "test",
     ...nodeParams,
   };
-  await Fs.writeFile(configPath, JSON.stringify(nodeConfig), "utf-8");
+  await Fs.writeFile(configPath, JSON.stringify(config), "utf-8");
 }
