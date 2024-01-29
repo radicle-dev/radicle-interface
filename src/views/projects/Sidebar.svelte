@@ -3,7 +3,7 @@
   import type { BaseUrl, Project } from "@httpd-client";
 
   import { cacheQueryProject } from "@app/lib/projects";
-  import { httpdStore } from "@app/lib/httpd";
+  import { httpdStore, api } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
   import { onMount } from "svelte";
 
@@ -37,12 +37,10 @@
   let localProject: "notFound" | "found" | undefined = undefined;
   $: hideContextHelp =
     isLocal(baseUrl.hostname) && $httpdStore.state === "authenticated";
-  $: loadingContextHelp =
-    $httpdStore.state !== "stopped" && localProject === undefined;
 
   httpdStore.subscribe(async () => {
     if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
-      await cacheQueryProject(baseUrl, project.id);
+      await cacheQueryProject(api.baseUrl, project.id);
     }
   });
 
@@ -63,7 +61,7 @@
 
   async function detectLocalProject(): Promise<void> {
     queryingLocalProject = true;
-    localProject = await cacheQueryProject(baseUrl, project.id);
+    localProject = await cacheQueryProject(api.baseUrl, project.id);
     queryingLocalProject = false;
   }
 
@@ -252,7 +250,7 @@
   <div class="bottom">
     <div class="help" class:expanded>
       {#if !hideContextHelp && expanded}
-        {#if loadingContextHelp}
+        {#if !localProject}
           <div
             style="display: flex; justify-content: center; align-items: center; height: 2rem;">
             <Loading small />
@@ -263,9 +261,9 @@
               {localProject}
               {baseUrl}
               projectId={project.id}
-              hideLocalButton={isLocal(baseUrl.hostname)}
-              disableLocalButton={$httpdStore.state !== "authenticated" ||
-                localProject !== "found"} />
+              hideLocalButton={isLocal(baseUrl.hostname) ||
+                localProject !== "found"}
+              disableLocalButton={$httpdStore.state !== "authenticated"} />
           </div>
         {/if}
       {/if}
@@ -300,7 +298,7 @@
       </Popover>
 
       {#if !hideContextHelp}
-        {#if loadingContextHelp}
+        {#if !localProject}
           <div
             style="display: flex; justify-content: center; align-items: center; height: 2rem;">
             <Loading small condensed />
@@ -322,9 +320,9 @@
               {baseUrl}
               popover
               projectId={project.id}
-              hideLocalButton={isLocal(baseUrl.hostname)}
-              disableLocalButton={$httpdStore.state !== "authenticated" ||
+              hideLocalButton={isLocal(baseUrl.hostname) ||
                 localProject !== "found"}
+              disableLocalButton={$httpdStore.state !== "authenticated"}
               slot="popover" />
           </Popover>
         {/if}

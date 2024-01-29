@@ -5,6 +5,7 @@
   import { isLocal } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
+  import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -35,10 +36,11 @@
     <div>Click the Connect button in the top right corner to get started.</div>
   {:else if localProject === "notFound"}
     <div class="title txt-bold">Project not available locally</div>
-    <div>
-      This project hasn't been found on your local node. Click the Clone button
-      in the top right corner to get a local copy.
+    <div style:padding-bottom="0.5rem">
+      This project hasn't been found on your local node. To get a local copy
+      start seeding it using the following command.
     </div>
+    <Command command={`rad seed ${projectId}`} />
   {:else if $httpdStore.state === "running" && localProject === "found"}
     <div class="title txt-bold">Not authenticated</div>
     <div>To make changes you need to authenticate yourself.</div>
