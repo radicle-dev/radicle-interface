@@ -1,6 +1,9 @@
 <script>
   import { api, httpdStore } from "@app/lib/httpd";
   import Command from "./Command.svelte";
+
+  $: path = window.location.href.replace(window.location.origin, "");
+  $: pathParam = path === "/" ? "" : `--path "${path}"`;
 </script>
 
 <style>
@@ -31,14 +34,14 @@
     <div class="label">Authenticate with your local node to make changes.</div>
     <Command
       fullWidth
-      command={`rad web ${window.origin} --connect ${api.hostname}:${api.port}`} />
+      command={`rad web ${window.origin} --connect ${api.hostname}:${api.port} ${pathParam}`} />
   {:else}
     <div class="heading">Connect & Authenticate</div>
     <div class="label">
       Connect to your local node to browse projects on your local machine,
       create issues, and participate in discussions.
     </div>
-    <Command fullWidth command={`rad web ${window.origin}`} />
+    <Command fullWidth command={`rad web ${window.origin} ${pathParam}`} />
 
     <div class="divider" />
     <div class="heading">New to Radicle?</div>

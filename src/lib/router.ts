@@ -221,6 +221,7 @@ export function urlToRoute(url: URL): Route | null {
             signature: url.searchParams.get("sig") ?? "",
             publicKey: url.searchParams.get("pk") ?? "",
             apiAddr: url.searchParams.get("addr") ?? "127.0.0.1:8080",
+            path: url.searchParams.get("path") || undefined,
           },
         };
       }

@@ -20,7 +20,13 @@ export interface NotFoundRoute {
 
 interface SessionRoute {
   resource: "session";
-  params: { id: string; signature: string; publicKey: string; apiAddr: string };
+  params: {
+    id: string;
+    signature: string;
+    publicKey: string;
+    apiAddr: string;
+    path?: string;
+  };
 }
 
 export interface LoadErrorRoute {

@@ -35,7 +35,14 @@
         },
       });
     }
-    void router.push({ resource: "home" });
+    const route = router.urlToRoute(
+      new URL(activeRoute.params.path || "", window.location.origin),
+    );
+    if (route) {
+      void router.push(route);
+    } else {
+      void router.push({ resource: "home" });
+    }
   });
 </script>
 
