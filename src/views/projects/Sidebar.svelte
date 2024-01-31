@@ -77,7 +77,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: 150ms ease-in-out;
+    transition: width 150ms ease-in-out;
     width: 4.5rem;
   }
   .sidebar.expanded {
@@ -110,7 +110,7 @@
     justify-content: space-between;
     width: 100%;
     opacity: 0;
-    transition: 150ms ease-in-out;
+    transition: opacity 150ms ease-in-out;
   }
   .title-counter.expanded {
     opacity: 1;
@@ -126,7 +126,7 @@
   }
   .help.expanded {
     opacity: 1;
-    transition: 150ms;
+    transition: opacity 150ms;
     transition-delay: 150ms;
   }
   .help-box {
@@ -143,7 +143,7 @@
     height: fit-content;
     display: flex;
     flex-direction: column-reverse;
-    transition: 150ms ease-in-out;
+    transition: opacity 150ms ease-in-out;
     transition-delay: 60ms;
     margin-bottom: 0.5rem;
   }
@@ -155,15 +155,15 @@
     display: flex;
     gap: 0.5rem;
     opacity: 0;
-    transition: 30ms ease-in-out;
+    transition: opacity 30ms ease-in-out;
   }
   .horizontal-buttons.expanded {
     opacity: 1;
-    transition: 150ms ease-in-out;
+    transition: opacity 150ms ease-in-out;
   }
   .icon {
     transform: rotate(180deg);
-    transition: 150ms ease-in-out;
+    transition: transform 150ms ease-in-out;
   }
   .icon.expanded {
     transform: rotate(0deg);
