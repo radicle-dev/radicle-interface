@@ -888,7 +888,7 @@
                 partial(createReply, session.id, revision.revisionId)}
               patchId={patch.id}
               patchState={patch.state}
-              expanded={index === patch.revisions.length - 1}
+              initialExpanded={index === patch.revisions.length - 1}
               previousRevId={previousRevision?.id}
               previousRevOid={previousRevision?.oid}>
               {#if index === patch.revisions.length - 1}

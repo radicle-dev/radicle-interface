@@ -32,7 +32,7 @@
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
-  export let expanded: boolean = false;
+  export let initialExpanded: boolean = false;
   export let rawPath: (commit?: string) => string;
   export let patchId: string;
   export let patchState: PatchState;
@@ -64,6 +64,7 @@
     | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
     | undefined;
 
+  let expanded = initialExpanded;
   const api = new HttpdClient(baseUrl);
   const latestEdit = revisionEdits.pop();
 
