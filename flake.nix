@@ -6,7 +6,7 @@
     heartwood = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=49584f4e732fb0039d2089f3c39fd56fc34a2ee3";
+      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=15d17098315469bb180157d1c20344faa10f4f73";
     };
   };
 
