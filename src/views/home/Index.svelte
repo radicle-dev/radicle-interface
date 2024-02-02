@@ -122,7 +122,7 @@
         <svelte:fragment slot="empty">
           <div class="empty-state">
             {#if !nodeId}
-              <div style:text-align="left">
+              <div style="text-align: left; width: 100%;">
                 <ConnectInstructions />
               </div>
             {:else if localProjects === "error"}

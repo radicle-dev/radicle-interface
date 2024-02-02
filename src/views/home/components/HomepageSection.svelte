@@ -44,7 +44,7 @@
   }
 
   .empty-container > .inner {
-    max-width: 32rem;
+    max-width: 36rem;
     min-height: 12rem;
     display: flex;
     flex-direction: column;

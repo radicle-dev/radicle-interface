@@ -23,11 +23,8 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-semibold);
-    overflow: hidden;
     padding: 0 2rem 0 0.75rem;
     position: relative;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     border: 1px solid var(--color-border-hint);
     color: var(--color-foreground-dim);
     user-select: none;
@@ -58,7 +55,7 @@
   <div
     role="button"
     tabindex="0"
-    class="cmd"
+    class="cmd txt-overflow"
     class:full-width={fullWidth}
     on:click={() => {
       clipboard.copy();
