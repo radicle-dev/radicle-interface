@@ -40,6 +40,7 @@
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { ComponentProps } from "svelte";
+  import type { Session } from "@app/lib/httpd";
 
   import * as modal from "@app/lib/modal";
   import * as role from "@app/lib/roles";
@@ -50,7 +51,7 @@
   import partial from "lodash/partial";
   import uniqBy from "lodash/uniqBy";
   import { HttpdClient } from "@httpd-client";
-  import { httpdStore, type Session } from "@app/lib/httpd";
+  import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";
 
   import Badge from "@app/components/Badge.svelte";
@@ -75,6 +76,8 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
+  import ReactionSelector from "@app/components/ReactionSelector.svelte";
+  import Reactions from "@app/components/Reactions.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import Share from "./Share.svelte";
@@ -203,11 +206,11 @@
     }
   }
 
-  async function handleReaction(
+  async function reactOnComment(
     session: Session,
     revisionId: string,
     commentId: string,
-    nids: string[],
+    authors: string[],
     reaction: string,
   ) {
     try {
@@ -219,7 +222,7 @@
           revision: revisionId,
           comment: commentId,
           reaction,
-          active: nids.includes(session.publicKey) ? false : true,
+          active: authors.includes(session.publicKey) ? false : true,
         },
         session.id,
       );
@@ -360,6 +363,46 @@
         node: baseUrl,
         patch: patch.id,
       });
+    }
+  }
+
+  async function reactOnRevision(
+    session: Session,
+    revisionId: string,
+    authors: string[],
+    reaction: string,
+  ) {
+    try {
+      await api.project.updatePatch(
+        project.id,
+        patch.id,
+        {
+          type: "revision.react",
+          revision: revisionId,
+          reaction,
+          active: authors.includes(session.publicKey) ? false : true,
+        },
+        session.id,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Reacting on revision failed",
+            subtitle: [
+              "There was an error while trying to react to a revision.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      }
+    } finally {
+      await refreshPatch();
     }
   }
 
@@ -511,6 +554,7 @@
         revisionBase: string;
         revisionOid: string;
         revisionEdits: Revision["edits"];
+        revisionReactions: Revision["reactions"];
         revisionAuthor: { id: string; alias?: string | undefined };
         revisionDescription: string;
       },
@@ -523,6 +567,7 @@
       revisionBase: rev.base,
       revisionOid: rev.oid,
       revisionEdits: rev.edits,
+      revisionReactions: rev.reactions,
       revisionAuthor: rev.author,
       revisionDescription: rev.description,
     },
@@ -553,6 +598,7 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
+  $: firstRevision = timelineTuple[0][0];
   $: session =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? $httpdStore.session
@@ -597,6 +643,12 @@
     padding: 1rem;
     height: 100%;
   }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
   .tabs {
     font-size: var(--font-size-tiny);
     display: flex;
@@ -640,6 +692,7 @@
   }
   .revision-description {
     display: flex;
+    flex-direction: column;
     width: 100%;
   }
   .diff-button-range {
@@ -736,11 +789,37 @@
                   }
                 }} />
             {:else if description}
-              <Markdown
-                content={description}
-                rawPath={rawPath(patch.revisions[0].id)} />
+              <Markdown content={description} rawPath={rawPath(patch.id)} />
             {:else}
               <span class="txt-missing">No description available</span>
+            {/if}
+            {#if session || (firstRevision.revisionReactions && firstRevision.revisionReactions.length > 0)}
+              <div class="actions">
+                {#if session}
+                  <ReactionSelector
+                    reactions={firstRevision.revisionReactions}
+                    on:select={async ({ detail: { emoji, authors } }) => {
+                      if (session) {
+                        try {
+                          await reactOnRevision(
+                            session,
+                            patch.id,
+                            authors,
+                            emoji,
+                          );
+                        } finally {
+                          closeFocused();
+                        }
+                      }
+                    }} />
+                {/if}
+                {#if firstRevision.revisionReactions.length > 0}
+                  <Reactions
+                    handleReaction={session &&
+                      partial(reactOnRevision, session, patch.id)}
+                    reactions={firstRevision.revisionReactions} />
+                {/if}
+              </div>
             {/if}
           </div>
         </svelte:fragment>
@@ -882,13 +961,15 @@
                 partial(editRevision, session.id, revision.revisionId)}
               editComment={session &&
                 partial(editComment, session.id, revision.revisionId)}
-              handleReaction={session &&
-                partial(handleReaction, session, revision.revisionId)}
+              reactOnComment={session &&
+                partial(reactOnComment, session, revision.revisionId)}
+              reactOnRevision={session &&
+                partial(reactOnRevision, session, revision.revisionId)}
               createReply={session &&
                 partial(createReply, session.id, revision.revisionId)}
               patchId={patch.id}
               patchState={patch.state}
-              initialExpanded={index === patch.revisions.length - 1}
+              initiallyExpanded={index === patch.revisions.length - 1}
               previousRevId={previousRevision?.id}
               previousRevOid={previousRevision?.oid}>
               {#if index === patch.revisions.length - 1}

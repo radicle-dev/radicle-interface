@@ -19,7 +19,6 @@
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
   import { closeFocused } from "@app/components/Popover.svelte";
-  import { groupReactions } from "@app/lib/reactions";
   import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";
 
@@ -164,7 +163,7 @@
     }
   }
 
-  async function handleReaction(
+  async function reactOnComment(
     session: Session,
     commentId: string,
     nids: string[],
@@ -569,11 +568,11 @@
           <div class="reactions">
             {#if session}
               <ReactionSelector
-                reactions={groupReactions(issue.discussion[0].reactions)}
-                on:select={async ({ detail: { nids, reaction } }) => {
+                reactions={issue.discussion[0].reactions}
+                on:select={async ({ detail: { authors, emoji } }) => {
                   try {
                     if (session) {
-                      await handleReaction(session, issue.id, nids, reaction);
+                      await reactOnComment(session, issue.id, authors, emoji);
                     }
                   } finally {
                     closeFocused();
@@ -582,9 +581,9 @@
             {/if}
             {#if issue.discussion[0].reactions.length > 0}
               <Reactions
-                reactions={groupReactions(issue.discussion[0].reactions)}
+                reactions={issue.discussion[0].reactions}
                 handleReaction={session &&
-                  partial(handleReaction, session, issue.id)} />
+                  partial(reactOnComment, session, issue.id)} />
             {/if}
           </div>
         </div>
@@ -621,7 +620,7 @@
                 )}
                 editComment={session && partial(editComment, session.id)}
                 createReply={session && partial(createReply, session.id)}
-                handleReaction={session && partial(handleReaction, session)} />
+                reactOnComment={session && partial(reactOnComment, session)} />
               <div class="connector" />
             {/each}
           </div>

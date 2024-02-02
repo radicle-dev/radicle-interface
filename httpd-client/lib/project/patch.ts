@@ -1,5 +1,6 @@
 import type { Embed } from "./comment.js";
 import type { ZodSchema, z } from "zod";
+import type { CodeLocation } from "../shared.js";
 
 import { commentSchema } from "./comment.js";
 
@@ -14,6 +15,7 @@ import {
   tuple,
   union,
 } from "zod";
+import { codeLocationSchema } from "../shared.js";
 
 export type PatchState =
   | { status: "draft" }
@@ -55,23 +57,15 @@ const mergeSchema = object({
 
 export type Verdict = "accept" | "reject";
 
-export interface Review {
-  author: { id: string; alias?: string };
-  verdict?: Verdict | null;
-  summary: string | null;
-  comments: string[];
-  timestamp: number;
-}
-
 const reviewSchema = object({
   author: object({ id: string(), alias: string().optional() }),
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
-  comments: array(string()),
+  comments: array(commentSchema),
   summary: string().nullable(),
   timestamp: number(),
-}) satisfies ZodSchema<Review>;
+});
 
-export type Revision = z.infer<typeof revisionSchema>;
+export type Review = z.infer<typeof reviewSchema>;
 
 const revisionSchema = object({
   id: string(),
@@ -85,6 +79,13 @@ const revisionSchema = object({
       timestamp: number(),
     }),
   ),
+  reactions: array(
+    object({
+      emoji: string(),
+      location: codeLocationSchema.nullable(),
+      authors: array(string()),
+    }),
+  ),
   base: string(),
   oid: string(),
   refs: array(string()),
@@ -93,17 +94,7 @@ const revisionSchema = object({
   timestamp: number(),
 });
 
-export interface Patch {
-  id: string;
-  author: { id: string; alias?: string };
-  title: string;
-  state: PatchState;
-  target: string;
-  labels: string[];
-  merges: Merge[];
-  assignees: string[];
-  revisions: Revision[];
-}
+export type Revision = z.infer<typeof revisionSchema>;
 
 export const patchSchema = object({
   id: string(),
@@ -115,7 +106,9 @@ export const patchSchema = object({
   merges: array(mergeSchema),
   assignees: array(string()),
   revisions: array(revisionSchema),
-}) satisfies ZodSchema<Patch>;
+});
+
+export type Patch = z.infer<typeof patchSchema>;
 
 export const patchesSchema = array(patchSchema) satisfies ZodSchema<Patch[]>;
 
@@ -123,23 +116,6 @@ export type LifecycleState =
   | { status: "draft" }
   | { status: "open" }
   | { status: "archived" };
-
-export type Range =
-  | {
-      type: "lines";
-      range: { start: number; end: number };
-    }
-  | {
-      type: "chars";
-      line: number;
-      range: { start: number; end: number };
-    };
-
-export type CodeLocation = {
-  path: string;
-  old?: Range;
-  new?: Range;
-};
 
 export type PatchUpdateAction =
   | { type: "edit"; title: string; target: "delegates" }
@@ -188,6 +164,13 @@ export type PatchUpdateAction =
       revision: string;
       description: string;
       embeds?: Embed[];
+    }
+  | {
+      type: "revision.react";
+      revision: string;
+      reaction: string;
+      location?: CodeLocation;
+      active: boolean;
     }
   | { type: "revision.redact"; revision: string }
   | {

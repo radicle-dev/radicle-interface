@@ -1,5 +1,5 @@
-import type { Comment, Embed } from "./comment.js";
-import type { ZodSchema } from "zod";
+import type { Embed } from "./comment.js";
+import type { ZodSchema, z } from "zod";
 import { array, boolean, literal, object, string, union } from "zod";
 
 import { commentSchema } from "./comment.js";
@@ -16,16 +16,6 @@ const issueStateSchema = union([
   }),
 ]) satisfies ZodSchema<IssueState>;
 
-export interface Issue {
-  id: string;
-  author: { id: string; alias?: string };
-  title: string;
-  state: IssueState;
-  discussion: Comment[];
-  labels: string[];
-  assignees: string[];
-}
-
 export const issueSchema = object({
   id: string(),
   author: object({ id: string(), alias: string().optional() }),
@@ -34,7 +24,9 @@ export const issueSchema = object({
   discussion: array(commentSchema),
   labels: array(string()),
   assignees: array(string()),
-}) satisfies ZodSchema<Issue>;
+});
+
+export type Issue = z.infer<typeof issueSchema>;
 
 export interface IssueCreated {
   success: boolean;

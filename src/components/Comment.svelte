@@ -1,6 +1,5 @@
 <script lang="ts" strictEvents>
   import type { Comment, Embed } from "@httpd-client";
-  import type { GroupedReactions } from "@app/lib/reactions";
 
   import { tick } from "svelte";
 
@@ -20,7 +19,7 @@
   export let authorAlias: string | undefined = undefined;
   export let body: string;
   export let enableAttachments: boolean = false;
-  export let reactions: GroupedReactions | undefined = undefined;
+  export let reactions: Comment["reactions"] | undefined = undefined;
   export let embeds: Map<string, Embed> | undefined = undefined;
   export let caption = "commented";
   export let rawPath: string;
@@ -34,7 +33,7 @@
   export let editComment:
     | ((body: string, embeds: Embed[]) => Promise<void>)
     | undefined = undefined;
-  export let handleReaction:
+  export let reactOnComment:
     | ((nids: string[], reaction: string) => Promise<void>)
     | undefined = undefined;
 </script>
@@ -175,22 +174,22 @@
       <Markdown {rawPath} content={body} />
     {/if}
   </div>
-  {#if (id && handleReaction) || (id && reactions && reactions.size > 0)}
+  {#if (id && reactOnComment) || (id && reactions && reactions.length > 0)}
     <div class="actions">
-      {#if id && handleReaction}
-        {@const handleReaction_ = handleReaction}
+      {#if id && reactOnComment}
+        {@const reactOnComment_ = reactOnComment}
         <ReactionSelector
           {reactions}
-          on:select={async ({ detail: { nids, reaction } }) => {
+          on:select={async ({ detail: { authors, emoji } }) => {
             try {
-              await handleReaction_(nids, reaction);
+              await reactOnComment_(authors, emoji);
             } finally {
               closeFocused();
             }
           }} />
       {/if}
-      {#if id && reactions && reactions.size > 0}
-        <Reactions {handleReaction} {reactions} />
+      {#if id && reactions && reactions.length > 0}
+        <Reactions handleReaction={reactOnComment} {reactions} />
       {/if}
     </div>
   {/if}

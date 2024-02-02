@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GroupedReactions } from "@app/lib/reactions";
+  import type { Comment } from "@httpd-client";
 
   import { createEventDispatcher } from "svelte";
 
@@ -9,10 +9,10 @@
   import IconSmall from "./IconSmall.svelte";
   import Popover from "./Popover.svelte";
 
-  export let reactions: GroupedReactions | undefined;
+  export let reactions: Comment["reactions"] | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
-    select: { nids: string[]; reaction: string };
+    select: { emoji: string; authors: string[] };
   }>();
 </script>
 
@@ -56,13 +56,17 @@
 
     <div class="selector" slot="popover">
       {#each config.reactions as reaction}
+        {@const lookedUpReaction = reactions?.find(
+          ({ emoji }) => emoji === reaction,
+        )}
         <button
-          class:active={Boolean(reactions?.get(reaction)?.self)}
-          on:click={() =>
-            dispatch("select", {
-              nids: reactions?.get(reaction)?.all ?? [],
-              reaction,
-            })}>
+          class:active={Boolean(lookedUpReaction)}
+          on:click={() => {
+            dispatch(
+              "select",
+              lookedUpReaction || { emoji: reaction, authors: [] },
+            );
+          }}>
           {reaction}
         </button>
       {/each}

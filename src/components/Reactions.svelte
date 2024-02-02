@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { GroupedReactions } from "@app/lib/reactions";
+  import type { Comment } from "@httpd-client";
 
   import IconButton from "./IconButton.svelte";
 
-  export let reactions: GroupedReactions;
+  export let reactions: Comment["reactions"];
   export let handleReaction:
-    | ((nids: string[], reaction: string) => Promise<void>)
+    | ((authors: string[], reaction: string) => Promise<void>)
     | undefined;
 </script>
 
@@ -24,16 +24,16 @@
 </style>
 
 <div class="reactions">
-  {#each reactions as [reaction, { all: nids }]}
+  {#each reactions as { emoji, authors }}
     <IconButton
       on:click={async () => {
         if (handleReaction) {
-          await handleReaction(nids, reaction);
+          await handleReaction(authors, emoji);
         }
       }}>
       <div class="reaction txt-tiny">
-        <span>{reaction}</span>
-        <span title={nids.join("\n")}>{nids.length}</span>
+        <span>{emoji}</span>
+        <span title={authors.join("\n")}>{authors.length}</span>
       </div>
     </IconButton>
   {/each}

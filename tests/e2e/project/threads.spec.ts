@@ -67,7 +67,8 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
     }),
   );
   await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches/${patchId}`);
-  await expectReactionsToWork(page);
+  const reactionsLocator = page.locator(".actions").first();
+  await expectReactionsToWork(page, reactionsLocator);
 });
 
 test("handling embeds", async ({ page, authenticatedPeer }) => {

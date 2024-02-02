@@ -1,4 +1,4 @@
-import type { ZodSchema } from "zod";
+import type { ZodSchema, z } from "zod";
 
 import { array, boolean, literal, number, object, string, union } from "zod";
 
@@ -41,3 +41,25 @@ export const nodeConfigSchema = object({
   policy: union([literal("allow"), literal("block")]),
   scope: union([literal("followed"), literal("all")]),
 });
+
+export const rangeSchema = union([
+  object({
+    type: literal("lines"),
+    range: object({ start: number(), end: number() }),
+  }),
+  object({
+    type: literal("chars"),
+    line: number(),
+    range: object({ start: number(), end: number() }),
+  }),
+]);
+
+export type Range = z.infer<typeof rangeSchema>;
+
+export const codeLocationSchema = object({
+  path: string(),
+  old: rangeSchema.optional(),
+  new: rangeSchema.optional(),
+});
+
+export type CodeLocation = z.infer<typeof codeLocationSchema>;

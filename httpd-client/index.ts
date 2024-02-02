@@ -6,7 +6,7 @@ import type {
   Tree,
   DiffResponse,
 } from "./lib/project.js";
-import type { SuccessResponse } from "./lib/shared.js";
+import type { SuccessResponse, CodeLocation, Range } from "./lib/shared.js";
 import type { Comment, Embed } from "./lib/project/comment.js";
 import type {
   Commit,
@@ -20,13 +20,11 @@ import type {
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
 import type {
-  CodeLocation,
   LifecycleState,
   Merge,
   Patch,
   PatchState,
   PatchUpdateAction,
-  Range,
   Review,
   Revision,
   Verdict,

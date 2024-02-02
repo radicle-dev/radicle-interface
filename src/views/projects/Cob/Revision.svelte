@@ -1,6 +1,7 @@
 <script lang="ts">
   import type {
     BaseUrl,
+    Comment,
     DiffResponse,
     Embed,
     PatchState,
@@ -11,6 +12,7 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@httpd-client";
+  import { closeFocused } from "@app/components/Popover.svelte";
   import { onMount } from "svelte";
   import { parseEmbedIntoMap } from "@app/lib/file";
 
@@ -29,10 +31,12 @@
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import ReactionSelector from "@app/components/ReactionSelector.svelte";
+  import Reactions from "@app/components/Reactions.svelte";
   import Thread from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
-  export let initialExpanded: boolean = false;
+  export let initiallyExpanded: boolean = false;
   export let rawPath: (commit?: string) => string;
   export let patchId: string;
   export let patchState: PatchState;
@@ -44,6 +48,7 @@
   export let revisionEdits: Revision["edits"];
   export let revisionOid: string;
   export let revisionTimestamp: number;
+  export let revisionReactions: Comment["reactions"];
   export let revisionAuthor: { id: string; alias?: string | undefined };
   export let revisionDescription: string;
   export let timelines: Timeline[];
@@ -57,14 +62,21 @@
   export let editComment:
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
-  export let handleReaction:
-    | ((commentId: string, nids: string[], reaction: string) => Promise<void>)
+  export let reactOnRevision:
+    | ((authors: string[], reaction: string) => Promise<void>)
+    | undefined;
+  export let reactOnComment:
+    | ((
+        commentId: string,
+        authors: string[],
+        reaction: string,
+      ) => Promise<void>)
     | undefined;
   export let createReply:
     | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
     | undefined;
 
-  let expanded = initialExpanded;
+  let expanded = initiallyExpanded;
   const api = new HttpdClient(baseUrl);
   const latestEdit = revisionEdits.pop();
 
@@ -184,7 +196,6 @@
     color: var(--color-foreground-dim);
   }
   .revision-description {
-    margin-bottom: 1rem;
     margin-left: 2rem;
   }
   .compare-dropdown-item {
@@ -208,6 +219,14 @@
   .timestamp {
     font-size: var(--font-size-small);
     color: var(--color-fill-gray);
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 2rem;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
   }
   .commits {
     position: relative;
@@ -431,6 +450,27 @@
                 content={revisionDescription} />
             </div>
           {/if}
+          {#if reactOnRevision || revisionReactions.length > 0}
+            <div class="actions">
+              {#if reactOnRevision}
+                {@const reactOnRevision_ = reactOnRevision}
+                <ReactionSelector
+                  reactions={revisionReactions}
+                  on:select={async ({ detail: { emoji, authors } }) => {
+                    try {
+                      await reactOnRevision_(authors, emoji);
+                    } finally {
+                      closeFocused();
+                    }
+                  }} />
+              {/if}
+              {#if revisionReactions && revisionReactions.length > 0}
+                <Reactions
+                  handleReaction={reactOnRevision}
+                  reactions={revisionReactions} />
+              {/if}
+            </div>
+          {/if}
         </div>
         {#if loading}
           <div style:height="3.5rem">
@@ -471,7 +511,7 @@
             canEditComment={canEdit}
             {editComment}
             {createReply}
-            {handleReaction} />
+            {reactOnComment} />
         {:else if element.type === "merge"}
           <div class="connector" />
           <div class="action merge">

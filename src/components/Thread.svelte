@@ -1,26 +1,6 @@
-<script lang="ts" context="module">
-  import type { Comment } from "@httpd-client";
-  import { groupReactions } from "@app/lib/reactions";
-
-  function groupReactionsInThread(thread: {
-    root: Comment;
-    replies: Comment[];
-  }) {
-    return {
-      root: {
-        ...thread.root,
-        reactions: groupReactions(thread.root.reactions),
-      },
-      replies: thread.replies.map(reply => ({
-        ...reply,
-        reactions: groupReactions(reply.reactions),
-      })),
-    };
-  }
-</script>
-
 <script lang="ts" strictEvents>
   import type { Embed } from "@httpd-client";
+  import type { Comment } from "@httpd-client";
 
   import * as utils from "@app/lib/utils";
   import partial from "lodash/partial";
@@ -44,7 +24,7 @@
   export let createReply:
     | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
     | undefined;
-  export let handleReaction:
+  export let reactOnComment:
     | ((commentId: string, nids: string[], reaction: string) => Promise<void>)
     | undefined;
 
@@ -57,9 +37,8 @@
     });
   }
 
-  $: threadWithReactions = groupReactionsInThread(thread);
-  $: root = threadWithReactions.root;
-  $: replies = threadWithReactions.replies;
+  $: root = thread.root;
+  $: replies = thread.replies;
 </script>
 
 <style>
@@ -102,7 +81,7 @@
       editComment={editComment &&
         canEditComment(root.author.id) &&
         partial(editComment, root.id)}
-      handleReaction={handleReaction && partial(handleReaction, root.id)}>
+      reactOnComment={reactOnComment && partial(reactOnComment, root.id)}>
       <IconSmall name="chat" slot="icon" />
     </CommentComponent>
   </div>
@@ -126,8 +105,8 @@
           editComment={editComment &&
             canEditComment(reply.author.id) &&
             partial(editComment, reply.id)}
-          handleReaction={handleReaction &&
-            partial(handleReaction, reply.id)} />
+          reactOnComment={reactOnComment &&
+            partial(reactOnComment, reply.id)} />
       {/each}
     </div>
   {/if}

@@ -126,7 +126,8 @@ test("add and remove reactions", async ({ page, authenticatedPeer }) => {
   await page
     .getByRole("link", { name: "This is an issue to test reactions" })
     .click();
-  await expectReactionsToWork(page);
+  const reactionsLocator = page.locator(".actions").first();
+  await expectReactionsToWork(page, reactionsLocator);
 });
 
 test("handling embeds", async ({ page, authenticatedPeer }) => {

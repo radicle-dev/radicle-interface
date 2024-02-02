@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import type { RadiclePeer } from "@tests/support/peerManager";
 import type { ExecaReturnValue } from "execa";
 
@@ -120,28 +120,43 @@ export async function expectLabelEditingToWork(page: Page) {
   ).toBeHidden();
 }
 
-export async function expectReactionsToWork(page: Page) {
+export async function expectReactionsToWork(
+  page: Page,
+  reactionsLocator: Locator,
+) {
   await page.getByRole("button", { name: "Leave your comment" }).click();
   await page.getByPlaceholder("Leave your comment").fill("This is a comment");
   await page.getByRole("button", { name: "Comment" }).click();
-  const commentReactionToggle = page.getByTitle("toggle-reaction").first();
-  await commentReactionToggle.click();
-  await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.getByRole("button", { name: "👍 1" })).toBeVisible();
+  const reactionsToggleBtn = reactionsLocator.getByRole("button", {
+    name: "toggle-reaction-popover",
+  });
+  await reactionsToggleBtn.click();
+  await reactionsLocator.getByRole("button", { name: "👍" }).click();
+  await expect(
+    reactionsLocator.getByRole("button", { name: "👍 1" }),
+  ).toBeVisible();
 
-  await commentReactionToggle.click();
-  await page.getByRole("button", { name: "🎉" }).click();
-  await expect(page.getByRole("button", { name: "🎉 1" })).toBeVisible();
-  await expect(page.locator(".reaction")).toHaveCount(2);
+  await reactionsToggleBtn.click();
+  await reactionsLocator.getByRole("button", { name: "🎉" }).click();
+  await expect(
+    reactionsLocator.getByRole("button", { name: "🎉 1" }),
+  ).toBeVisible();
+  await expect(reactionsLocator.locator(".reaction")).toHaveCount(2);
 
-  await page.getByRole("button", { name: "👍" }).click();
-  await expect(page.locator("span").filter({ hasText: "👍 1" })).toBeHidden();
-  await expect(page.locator(".reaction")).toHaveCount(1);
+  await reactionsLocator.getByRole("button", { name: "👍" }).click();
+  await expect(
+    reactionsLocator.locator("span").filter({ hasText: "👍 1" }),
+  ).toBeHidden();
+  await expect(reactionsLocator.locator(".reaction")).toHaveCount(1);
 
-  await commentReactionToggle.click();
-  await page.getByRole("button", { name: "🎉" }).first().click();
-  await expect(page.getByRole("button", { name: "🎉 1" })).toBeHidden();
-  await expect(page.locator(".reaction")).toHaveCount(0);
+  await reactionsToggleBtn.click();
+  await reactionsLocator
+    .getByRole("button", { name: "🎉", exact: true })
+    .click();
+  await expect(
+    reactionsLocator.getByRole("button", { name: "🎉 1" }),
+  ).toBeHidden();
+  await expect(reactionsLocator.locator(".reaction")).toHaveCount(0);
 }
 
 export async function addEmbed(
