@@ -91,7 +91,7 @@
     <div class="add-seed-node-instructions txt-small">
       <div class="" style:font-weight="bold">Add a different seed node</div>
       <div class="">Update your preferred seeds in your radicle config.</div>
-      <Command fullWidth command="rad self --config" />
+      <Command fullWidth command="rad config edit" />
     </div>
   </svelte:fragment>
 </Popover>
