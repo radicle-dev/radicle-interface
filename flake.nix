@@ -1,11 +1,9 @@
 {
   description = "Radicle web frontend";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-23.11";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.follows = "heartwood/nixpkgs";
+    flake-utils.follows = "heartwood/flake-utils";
     heartwood = {
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
       url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=15d17098315469bb180157d1c20344faa10f4f73";
     };
   };
@@ -75,7 +73,7 @@
           pname = "radicle-interface";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-WBX+S67Y7SnXLfc202eNxM355Q0nTH4G7fMY5eEDIio=";
+          npmDepsHash = "sha256-QHDQO37EnXpIdHlkHvkojvYJxy9jG4HGQ6KHbVdch0s=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
