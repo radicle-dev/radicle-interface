@@ -206,6 +206,7 @@
     border-bottom: 1px solid var(--color-fill-separator);
     display: flex;
     flex-direction: column;
+    padding-bottom: 1rem;
     font-size: var(--font-size-small);
   }
   .authorship-header {
@@ -226,7 +227,6 @@
     align-items: center;
     padding-left: 2rem;
     gap: 0.5rem;
-    padding-bottom: 1rem;
   }
   .commits {
     position: relative;
