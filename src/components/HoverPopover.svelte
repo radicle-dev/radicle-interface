@@ -13,7 +13,7 @@
     if (visible) {
       onShow();
     }
-  }, 150);
+  }, 500);
 </script>
 
 <style>
