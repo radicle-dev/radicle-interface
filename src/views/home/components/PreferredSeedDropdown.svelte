@@ -5,6 +5,7 @@
     prefferedSeeds as preferredSeedsStore,
     selectPreferredSeed,
   } from "@app/lib/seeds";
+  import { closeFocused } from "@app/components/Popover.svelte";
 
   import Popover from "@app/components/Popover.svelte";
   import Button from "@app/components/Button.svelte";
@@ -76,7 +77,7 @@
             let:item
             on:click={() => {
               selectPreferredSeed(item);
-              window.location.reload();
+              closeFocused();
             }}
             slot="item"
             selected={item.hostname === preferredSeed.hostname}>

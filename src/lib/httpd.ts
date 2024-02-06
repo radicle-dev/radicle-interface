@@ -1,8 +1,11 @@
-import { derived, get, writable } from "svelte/store";
+import type { Node } from "@httpd-client";
+
+import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
+import { deduplicateStore } from "@app/lib/deduplicateStore";
 
 export interface Session {
   id: string;
@@ -12,18 +15,18 @@ export interface Session {
 
 export type HttpdState =
   | { state: "stopped" }
-  | { state: "running"; node: "running" | "stopped" }
+  | { state: "running"; node: Node }
   | {
       state: "authenticated";
       session: Session;
-      node: "running" | "stopped";
+      node: Node;
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
 const HTTPD_CUSTOM_PORT_KEY = "httpdCustomPort";
 
 const store = writable<HttpdState>({ state: "stopped" });
-export const httpdStore = derived(store, s => s);
+export const httpdStore = deduplicateStore(store);
 
 export const api = new HttpdClient({
   hostname: "127.0.0.1",
@@ -57,7 +60,7 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
-      const { state: node } = await api.getNode();
+      const node = await api.getNode();
       const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
@@ -88,7 +91,7 @@ export async function disconnect() {
 
       try {
         await api.session.delete(httpd.session.id);
-        const { state: node } = await api.getNode();
+        const node = await api.getNode();
         update({ state: "running", node });
       } catch (error) {
         console.error(error);
@@ -120,7 +123,7 @@ async function checkState() {
   await stateMutex
     .runExclusive(async () => {
       try {
-        const { state: node } = await api.getNode();
+        const node = await api.getNode();
 
         if (httpdState && httpdState.state !== "stopped") {
           httpdState.node = node;

@@ -1,8 +1,10 @@
 <script lang="ts">
+  import Loading from "@app/components/Loading.svelte";
   import TransitionedHeight from "@app/components/TransitionedHeight.svelte";
 
   export let title: string;
   export let subtitle: string;
+  export let loading = false;
 
   export let empty: boolean = false;
 </script>
@@ -45,7 +47,7 @@
 
   .empty-container > .inner {
     max-width: 36rem;
-    min-height: 12rem;
+    min-height: 14rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -64,7 +66,13 @@
   </div>
 
   <TransitionedHeight transitionHeightChanges>
-    {#if empty}
+    {#if loading}
+      <div class="empty-container">
+        <div class="inner">
+          <Loading small />
+        </div>
+      </div>
+    {:else if empty}
       <div class="empty-container">
         <div class="inner">
           <slot name="empty" />

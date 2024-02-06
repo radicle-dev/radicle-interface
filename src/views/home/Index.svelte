@@ -2,61 +2,90 @@
   import type { ProjectWithListingData } from "@app/lib/projects";
   import type { BaseUrl } from "@httpd-client";
 
-  import { z } from "zod";
   import storedWritable from "@efstajas/svelte-stored-writable";
+  import { HttpdClient } from "@httpd-client";
+  import { derived } from "svelte/store";
+  import { literal, union } from "zod";
 
-  import { httpdStore } from "@app/lib/httpd";
+  import { api, httpdStore } from "@app/lib/httpd";
+  import { deduplicateStore } from "@app/lib/deduplicateStore";
+  import { getProjectsListingData } from "@app/lib/projects";
   import { isDelegate } from "@app/lib/roles";
+  import { prefferedSeeds } from "@app/lib/seeds";
 
   import AppLayout from "@app/App/AppLayout.svelte";
+  import Button from "@app/components/Button.svelte";
   import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import Button from "@app/components/Button.svelte";
 
   import FilterButton from "./components/FilterButton.svelte";
+  import HomepageSection from "./components/HomepageSection.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
-  import HomepageSection from "./components/HomepageSection.svelte";
 
-  export let localProjects: ProjectWithListingData[] | "error";
-  export let preferredSeedProjects: ProjectWithListingData[] | "error";
-  export let preferredSeed: BaseUrl;
-  export let nodeId: string | undefined;
-
-  const localProjectsFilterSchema = z.union([
-    z.literal("all"),
-    z.literal("delegating"),
+  const selectedSeed = deduplicateStore(
+    derived(prefferedSeeds, $ => $?.selected),
+  );
+  const localProjectsFilterSchema = union([
+    literal("all"),
+    literal("delegating"),
   ]);
-
   const localProjectsFilter = storedWritable(
     "localProjectsFilter",
     localProjectsFilterSchema,
     "all",
   );
 
-  $: filteredLocalProjects =
-    $localProjectsFilter === "all" || localProjects === "error"
-      ? localProjects
-      : localProjects.filter(p => isDelegate(nodeId, p.project.delegates));
+  let localProjects: ProjectWithListingData[] | "error" | undefined;
+  let preferredSeedProjects: ProjectWithListingData[] | "error" | undefined;
+
+  async function fetchProjects(baseUrl: BaseUrl, show: "all" | "pinned") {
+    const api = new HttpdClient(baseUrl);
+
+    const projects = (await api.project.getAll({ perPage: 30, show })).map(
+      project => ({
+        project,
+        baseUrl,
+      }),
+    );
+
+    return await getProjectsListingData(projects);
+  }
+
+  function handleProjectLoadError(): "error" {
+    return "error";
+  }
+
+  async function loadLocalProjects() {
+    localProjects = undefined;
+    localProjects = await fetchProjects(api.baseUrl, "all").catch(
+      handleProjectLoadError,
+    );
+  }
+
+  async function loadPreferredSeedProjects() {
+    preferredSeedProjects = undefined;
+
+    if (!$selectedSeed) return;
+    preferredSeedProjects = await fetchProjects($selectedSeed, "pinned").catch(
+      handleProjectLoadError,
+    );
+  }
 
   function isSeeding(projectId: string) {
     if (localProjects === "error") return false;
-    return localProjects.some(p => p.project.id === projectId);
+    return localProjects?.some(p => p.project.id === projectId) ?? false;
   }
 
-  let prevHttpdState = $httpdStore.state;
-
-  function handleHttpdStateChange(newState: (typeof $httpdStore)["state"]) {
-    if (prevHttpdState === newState) return;
-
-    if (newState === "stopped" || newState === "authenticated") {
-      window.location.reload();
-    }
-
-    prevHttpdState = newState;
-  }
-
-  $: handleHttpdStateChange($httpdStore.state);
+  $: nodeId = $httpdStore.state !== "stopped" ? $httpdStore.node.id : undefined;
+  $: nodeId && void loadLocalProjects();
+  $: $selectedSeed && void loadPreferredSeedProjects();
+  $: filteredLocalProjects =
+    $localProjectsFilter === "all" ||
+    localProjects === "error" ||
+    localProjects === undefined
+      ? localProjects
+      : localProjects.filter(p => isDelegate(nodeId, p.project.delegates));
 </script>
 
 <style>
@@ -110,9 +139,10 @@
   <div class="wrapper">
     <div class="global-hide-on-mobile">
       <HomepageSection
+        loading={$httpdStore.state !== "stopped" && localProjects === undefined}
         empty={localProjects === "error" ||
-          !nodeId ||
-          !filteredLocalProjects.length}
+          $httpdStore.state === "stopped" ||
+          !filteredLocalProjects?.length}
         title="Local projects"
         subtitle="Projects you’re seeding with your local node">
         <svelte:fragment slot="actions">
@@ -131,7 +161,7 @@
                 There was an error loading projects from your local node.
               </div>
               <div class="action"><Button>Learn more</Button></div>
-            {:else if !localProjects.length}
+            {:else if !localProjects?.length}
               <div class="heading">No local projects</div>
               <div class="label">
                 Seed or check out a project to work with it on your local node.
@@ -145,7 +175,7 @@
           </div>
         </svelte:fragment>
         <div class="project-grid">
-          {#if filteredLocalProjects !== "error"}
+          {#if filteredLocalProjects && filteredLocalProjects !== "error"}
             {#each filteredLocalProjects as { project, baseUrl, activity, lastCommit }}
               <ProjectCard
                 id={project.id}
@@ -166,13 +196,18 @@
     </div>
 
     <HomepageSection
+      loading={preferredSeedProjects === undefined}
       empty={preferredSeedProjects === "error" ||
-        preferredSeedProjects.length === 0}
+        preferredSeedProjects?.length === 0}
       title="Explore"
       subtitle="Pinned projects on your selected seed node">
       <svelte:fragment slot="actions">
         <div class="seed-dropdown">
-          <PreferredSeedDropdown disabled={!nodeId} {preferredSeed} />
+          {#if $prefferedSeeds}
+            <PreferredSeedDropdown
+              disabled={!nodeId || preferredSeedProjects === undefined}
+              preferredSeed={$prefferedSeeds?.selected} />
+          {/if}
         </div>
       </svelte:fragment>
       <svelte:fragment slot="empty">
@@ -191,7 +226,7 @@
         </div>
       </svelte:fragment>
       <div class="project-grid">
-        {#if preferredSeedProjects !== "error"}
+        {#if preferredSeedProjects && preferredSeedProjects !== "error"}
           {#each preferredSeedProjects as { project, baseUrl, activity, lastCommit }}
             <ProjectCard
               id={project.id}

@@ -1,17 +1,17 @@
-import storedWritable from "@efstajas/svelte-stored-writable";
 import type { BaseUrl } from "@httpd-client";
-import { z } from "zod";
-import { api, httpdStore, type HttpdState } from "./httpd";
+
+import storedWritable from "@efstajas/svelte-stored-writable";
 import { writable, derived, get } from "svelte/store";
+import { number, string, object } from "zod";
+
+import { api, httpdStore, type HttpdState } from "./httpd";
 import { config } from "./config";
 
-const preferredSeedSchema = z
-  .object({
-    hostname: z.string(),
-    port: z.number(),
-    scheme: z.string(),
-  })
-  .optional();
+const preferredSeedSchema = object({
+  hostname: string(),
+  port: number(),
+  scheme: string(),
+}).optional();
 
 const configuredPreferredSeeds = writable<BaseUrl[] | undefined>(undefined);
 const storedPreferredSeed = storedWritable<BaseUrl | undefined>(
