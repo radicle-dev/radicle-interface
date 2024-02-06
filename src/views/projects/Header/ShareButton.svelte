@@ -10,6 +10,7 @@
   import Command from "@app/components/Command.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
 
   export let preferredSeeds: string[];
   export let publicExplorer: string;
@@ -72,6 +73,7 @@
     gap: 0.5rem;
     width: 100%;
     min-width: 0;
+    margin-right: 0.5rem;
   }
 
   .help {
@@ -122,21 +124,33 @@
               {path.replace("/nodes/", "")}
             </span>
           </div>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <div style="display: flex; align-items: center;">
             {#if state === "found"}
-              <Clipboard
-                text={formatPublicExplorer(
-                  publicExplorer,
-                  seed.node.hostname,
-                  seed.project,
-                  path,
-                )} />
-              <a href={path} target="_blank">
-                <IconSmall name="arrow-box-up-right" />
-              </a>
+              <IconButton>
+                <Clipboard
+                  text={formatPublicExplorer(
+                    publicExplorer,
+                    seed.node.hostname,
+                    seed.project,
+                    path,
+                  )} />
+              </IconButton>
+              <IconButton>
+                <a
+                  href={path}
+                  target="_blank"
+                  style=" width: 1.5rem;
+                height: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                  <IconSmall name="arrow-box-up-right" />
+                </a>
+              </IconButton>
             {:else}
-              <IconSmall name="clipboard" />
-              <IconSmall name="arrow-box-up-right" />
+              <IconButton>
+                <IconSmall name="clipboard" />
+              </IconButton>
+              <IconButton>
+                <IconSmall name="arrow-box-up-right" />
+              </IconButton>
             {/if}
           </div>
         </li>

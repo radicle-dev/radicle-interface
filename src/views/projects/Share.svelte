@@ -15,15 +15,18 @@
   export let baseUrl: BaseUrl;
 
   const caption = "Link to seed";
-  let icon: "link" | "checkmark" = "link";
+  let linkIcon: "link" | "checkmark" = "link";
+  let shareIcon: "share" | "checkmark" = "share";
 
   const restoreIcon = debounce(() => {
-    icon = "link";
+    linkIcon = "link";
+    shareIcon = "share";
   }, 800);
 
   async function copy(text: string) {
     await toClipboard(text);
-    icon = "checkmark";
+    linkIcon = "checkmark";
+    shareIcon = "checkmark";
     restoreIcon();
   }
 </script>
@@ -39,7 +42,7 @@
       slot="toggle"
       let:toggle
       on:click={toggle}>
-      <IconSmall name={icon} />
+      <IconSmall name={linkIcon} />
       {caption}
     </Button>
     <ShareButton {publicExplorer} {preferredSeeds} slot="popover" />
@@ -52,7 +55,7 @@
       void copy(
         new URL(publicExplorer).origin.concat(window.location.pathname),
       )}>
-    <IconSmall name={icon} />
-    {caption}
+    <IconSmall name={shareIcon} />
+    {shareIcon === "share" ? "Share" : "Link copied"}
   </Button>
 {/if}
