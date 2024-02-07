@@ -28,14 +28,6 @@
   const dispatch = createEventDispatcher<{ select: string }>();
   const onSelectFile = ({ detail: path }: { detail: string }) =>
     dispatch("select", path);
-
-  const onClick = () => {
-    expanded = !expanded;
-
-    tree = fetchTree(prefix).then(tree => {
-      if (expanded) return tree;
-    });
-  };
 </script>
 
 <style>
@@ -78,7 +70,13 @@
 </style>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div role="button" tabindex="0" class="folder" on:click={onClick}>
+<div
+  role="button"
+  tabindex="0"
+  class="folder"
+  on:click={() => {
+    expanded = !expanded;
+  }}>
   <div class="icon-container">
     {#if expanded}
       <IconSmall name="folder-open" />
