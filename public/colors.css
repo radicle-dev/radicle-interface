@@ -13,7 +13,7 @@
   --color-foreground-primary-hover: #ff80ff;
   --color-foreground-success: #4fa877;
   --color-foreground-red: #aa5078;
-  --color-foreground-yellow: #e5c001;
+  --color-foreground-yellow: #b29401;
   --color-foreground-disabled: #9b9bb1;
   --color-border-hint: #dbdbff;
   --color-border-default: #dbdbff;
@@ -50,6 +50,8 @@
   --color-fill-warning: #ffffe5;
   --color-fill-counter: #dbdbff;
   --color-fill-counter-emphasized: #dbdbff;
+  --color-fill-delegate: #ffe5ff;
+  --color-fill-private: #fff5d6;
 }
 
 :root[data-theme="dark"] {
@@ -104,4 +106,6 @@
   --color-fill-warning: #191500;
   --color-fill-counter: #393a46;
   --color-fill-counter-emphasized: #232563;
+  --color-fill-delegate: #3d003d;
+  --color-fill-private: #4c4000;
 }

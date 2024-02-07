@@ -114,21 +114,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-  }
-
-  .badge-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    opacity: 0.25;
+    padding: 0.25rem;
   }
 
   h4,
@@ -166,26 +155,26 @@
         <h4 use:twemoji>{name}</h4>
         <div class="badges">
           {#if isPrivate}
-            <div title="Private" class="badge">
-              <div
-                class="badge-background"
-                style:background-color="var(--color-fill-yellow)" />
+            <div
+              title="Private"
+              class="badge"
+              style="background-color: var(--color-fill-private); color: var(--color-foreground-yellow)">
               <IconSmall name="lock" />
             </div>
           {/if}
           {#if isDelegate}
-            <div title="Delegate" class="badge">
-              <div
-                class="badge-background"
-                style:background-color="var(--color-foreground-primary)" />
+            <div
+              title="Delegate"
+              class="badge"
+              style="background-color: var(--color-fill-delegate); color: var(--color-foreground-primary)">
               <IconSmall name="badge" />
             </div>
           {/if}
           {#if isSeeding}
-            <div title="Seeding" class="badge">
-              <div
-                class="badge-background"
-                style:background-color="var(--color-fill-secondary)" />
+            <div
+              title="Seeding"
+              class="badge"
+              style="background-color: var(--color-fill-counter-emphasized); color: var(--color-foreground-emphasized)">
               <IconSmall name="network" />
             </div>
           {/if}
