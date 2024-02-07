@@ -296,6 +296,8 @@
     color: var(--color-foreground-contrast);
     border: 1px solid var(--color-border-hint);
     border-radius: 4px 4px 0 0;
+    font-weight: normal;
+    letter-spacing: 0.3px;
   }
 
   .tab[disabled] {
