@@ -62,7 +62,7 @@ export function selectPreferredSeed(seed: BaseUrl) {
   storedPreferredSeed.set(seed);
 }
 
-export const prefferedSeeds = derived(
+export const preferredSeeds = derived(
   [configuredPreferredSeeds, storedPreferredSeed],
   ([configuredPreferredSeeds, storedPreferredSeed]) => {
     // Not loaded yet
@@ -106,7 +106,7 @@ export async function waitForLoad(): Promise<{
 }> {
   if (!get(configuredPreferredSeeds)) {
     await new Promise<void>(resolve => {
-      const unsubscribe = prefferedSeeds.subscribe(v => {
+      const unsubscribe = preferredSeeds.subscribe(v => {
         if (v) {
           unsubscribe();
           resolve();
@@ -115,7 +115,7 @@ export async function waitForLoad(): Promise<{
     });
   }
 
-  const seeds = get(prefferedSeeds);
+  const seeds = get(preferredSeeds);
   if (!seeds) throw new Error("Preferred seed undefined after loading");
 
   return seeds;

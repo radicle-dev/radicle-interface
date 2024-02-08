@@ -2,7 +2,7 @@
   import type { BaseUrl } from "@httpd-client";
 
   import {
-    prefferedSeeds as preferredSeedsStore,
+    preferredSeeds as preferredSeedsStore,
     selectPreferredSeed,
   } from "@app/lib/seeds";
   import { closeFocused } from "@app/components/Popover.svelte";

@@ -11,7 +11,7 @@
   import { deduplicateStore } from "@app/lib/deduplicateStore";
   import { getProjectsListingData } from "@app/lib/projects";
   import { isDelegate } from "@app/lib/roles";
-  import { prefferedSeeds } from "@app/lib/seeds";
+  import { preferredSeeds } from "@app/lib/seeds";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import Button from "@app/components/Button.svelte";
@@ -24,7 +24,7 @@
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
 
   const selectedSeed = deduplicateStore(
-    derived(prefferedSeeds, $ => $?.selected),
+    derived(preferredSeeds, $ => $?.selected),
   );
   const localProjectsFilterSchema = union([
     literal("all"),
@@ -203,10 +203,10 @@
       subtitle="Pinned projects on your selected seed node">
       <svelte:fragment slot="actions">
         <div class="seed-dropdown">
-          {#if $prefferedSeeds}
+          {#if $preferredSeeds}
             <PreferredSeedDropdown
               disabled={!nodeId || preferredSeedProjects === undefined}
-              preferredSeed={$prefferedSeeds?.selected} />
+              preferredSeed={$preferredSeeds?.selected} />
           {/if}
         </div>
       </svelte:fragment>
