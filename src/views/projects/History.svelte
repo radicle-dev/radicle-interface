@@ -8,9 +8,10 @@
   } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
-  import { HttpdClient } from "@httpd-client";
-  import { groupCommits } from "@app/lib/commit";
   import { COMMITS_PER_PAGE } from "./router";
+  import { HttpdClient } from "@httpd-client";
+  import { baseUrlToUrl } from "@app/lib/utils";
+  import { groupCommits } from "@app/lib/commit";
 
   import Button from "@app/components/Button.svelte";
   import CommitTeaser from "./Commit/CommitTeaser.svelte";
@@ -157,7 +158,12 @@
 
   {#if error}
     <div class="message">
-      <ErrorMessage message="Couldn't load commits" {error} />
+      <ErrorMessage
+        title="Couldn't load commits"
+        description="Make sure you are able to connect to the seed <code>${baseUrlToUrl(
+          api.baseUrl,
+        ).toString()}</code>"
+        {error} />
     </div>
   {/if}
 </Layout>

@@ -1,13 +1,12 @@
 import type { BaseUrl } from "@httpd-client";
-import type {
-  LoadErrorRoute,
-  NotFoundRoute,
-} from "@app/lib/router/definitions";
+import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectWithListingData } from "@app/lib/projects";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
+import { baseUrlToUrl } from "@app/lib/utils";
 import { getProjectsListingData } from "@app/lib/projects";
+import { handleError } from "@app/views/nodes/error";
 
 export interface NodesRouteParams {
   baseUrl: BaseUrl;
@@ -70,7 +69,7 @@ export function nodePath(baseUrl: BaseUrl) {
 
 export async function loadNodeRoute(
   params: NodesRouteParams,
-): Promise<NodesLoadedRoute | NotFoundRoute | LoadErrorRoute> {
+): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
     const projectPageIndex = 0;
@@ -91,22 +90,6 @@ export async function loadNodeRoute(
       },
     };
   } catch (error: any) {
-    if (error.message === "Failed to fetch") {
-      return {
-        resource: "notFound",
-        params: {
-          title: "Node not found",
-        },
-      };
-    } else {
-      return {
-        resource: "loadError",
-        params: {
-          title: "Not able to load this node",
-          errorMessage: error.message,
-          stackTrace: error.stackTrace,
-        },
-      };
-    }
+    return handleError(error, baseUrlToUrl(api.baseUrl).toString());
   }
 }

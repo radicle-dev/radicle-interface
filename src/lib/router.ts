@@ -122,8 +122,8 @@ function setTitle(loadedRoute: LoadedRoute) {
 
   if (loadedRoute.resource === "booting" || loadedRoute.resource === "home") {
     title.push("Radicle");
-  } else if (loadedRoute.resource === "loadError") {
-    title.push("Load error");
+  } else if (loadedRoute.resource === "error") {
+    title.push("Error");
     title.push("Radicle");
   } else if (loadedRoute.resource === "notFound") {
     title.push("Page not found");
@@ -259,7 +259,7 @@ export function routeToPath(route: Route): string {
   } else if (
     route.resource === "booting" ||
     route.resource === "notFound" ||
-    route.resource === "loadError"
+    route.resource === "error"
   ) {
     return "";
   } else {

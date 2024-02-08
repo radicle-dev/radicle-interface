@@ -37,3 +37,29 @@ test("node not found", async ({ page }) => {
   });
   await expect(page).toHaveScreenshot();
 });
+
+test("response parse error", async ({ page }) => {
+  await page.route("*/**/v1/projects*", route => {
+    return route.fulfill({
+      json: [{ name: 1337 }],
+    });
+  });
+
+  await page.goto("/nodes/radicle.local", {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot();
+});
+
+test("response error", async ({ page }) => {
+  await page.route("*/**/v1/projects*", route => {
+    return route.fulfill({
+      status: 500,
+    });
+  });
+
+  await page.goto("/nodes/radicle.local", {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot();
+});

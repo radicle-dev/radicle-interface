@@ -20,7 +20,7 @@
   }
 </style>
 
-{#if $activeRouteStore.resource === "booting" || $activeRouteStore.resource === "home" || $activeRouteStore.resource === "session" || $activeRouteStore.resource === "loadError" || $activeRouteStore.resource === "notFound"}
+{#if $activeRouteStore.resource === "booting" || $activeRouteStore.resource === "home" || $activeRouteStore.resource === "session" || $activeRouteStore.resource === "error" || $activeRouteStore.resource === "notFound"}
   <!-- Don't render breadcrumbs for these routes. -->
 {:else if $activeRouteStore.resource === "nodes"}
   <div class="breadcrumbs">

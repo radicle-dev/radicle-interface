@@ -127,6 +127,7 @@
     </div>
   {:else}
     <ErrorMessage
-      message="Couldn't access issue creation. Make sure you're authenticated." />
+      title="Not able to create a new issue"
+      description="Couldn't access issue creation. Make sure you're authenticated." />
   {/if}
 </Layout>

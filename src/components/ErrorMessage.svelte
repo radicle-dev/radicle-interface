@@ -1,10 +1,20 @@
 <script lang="ts">
+  import type {
+    ResponseError,
+    ResponseParseError,
+  } from "@httpd-client/lib/fetcher";
+  import type { ComponentProps } from "svelte";
+
+  import { config } from "@app/lib/config";
   import Command from "./Command.svelte";
   import ExternalLink from "./ExternalLink.svelte";
   import Icon from "./Icon.svelte";
 
-  export let message: string;
-  export let error: any | undefined = undefined;
+  export let title: string;
+  export let description: string;
+  export let error: Error | ResponseParseError | ResponseError | undefined =
+    undefined;
+  export let icon: ComponentProps<Icon>["name"] = "alert";
 </script>
 
 <style>
@@ -19,6 +29,18 @@
     border-radius: var(--border-radius-small);
     gap: 1rem;
   }
+  .label {
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    max-width: 36rem;
+  }
+  .error :global(code) {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
+    padding: 0.125rem 0.25rem;
+  }
 
   .help {
     font-size: var(--font-size-small);
@@ -27,8 +49,12 @@
 </style>
 
 <div class="error">
-  <Icon name="alert" size="48" />
-  {message}
+  <Icon name={icon} size="48" />
+  <div class="txt-medium txt-bold">
+    {title}
+  </div>
+  <!-- This @html is secure since we don't allow user input -->
+  <div class="label">{@html description}</div>
   {#if error}
     <div class="help">
       If you need help resolving this issue, copy the error message
@@ -40,11 +66,7 @@
     </div>
     <div style:max-width="25rem">
       <Command
-        command={JSON.stringify({
-          message: error.message,
-          stack: error.stack,
-          ...error,
-        })}
+        command={JSON.stringify(error, Object.getOwnPropertyNames(error))}
         fullWidth
         showPrompt={false} />
     </div>

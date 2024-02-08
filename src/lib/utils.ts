@@ -1,4 +1,4 @@
-import type { Comment } from "@httpd-client";
+import type { BaseUrl, Comment } from "@httpd-client";
 
 import md5 from "md5";
 import bs58 from "bs58";
@@ -91,6 +91,10 @@ export function formatEditedCaption(lastEdit: Comment["edits"][0]) {
       ? lastEdit.author.alias
       : formatNodeId(lastEdit.author.id)
   } edited ${formatTimestamp(lastEdit.timestamp / 1000)}`;
+}
+
+export function baseUrlToUrl(baseUrl: BaseUrl): URL {
+  return new URL(`${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}`);
 }
 
 // Generates a publicly shareable link.

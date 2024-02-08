@@ -5,6 +5,7 @@ import {
   sourceBrowsingUrl,
   aliceRemote,
   markdownUrl,
+  sourceBrowsingRid,
 } from "@tests/support/fixtures.js";
 
 test("source page", async ({ page }) => {
@@ -96,6 +97,26 @@ test("project not found", async ({ page }) => {
   await page.goto(`/nodes/127.0.0.1/rad:z4Vzzzzzzzzzzzzzzzzzzzzzzzzzz`, {
     waitUntil: "networkidle",
   });
+  await expect(page).toHaveScreenshot();
+});
+
+test("response parse error", async ({ page }) => {
+  await page.route(`*/**/v1/projects/${sourceBrowsingRid}`, route => {
+    return route.fulfill({
+      json: [{ name: 1337 }],
+    });
+  });
+  await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
+  await expect(page).toHaveScreenshot();
+});
+
+test("response error", async ({ page }) => {
+  await page.route(`*/**/v1/projects/${sourceBrowsingRid}`, route => {
+    return route.fulfill({
+      status: 500,
+    });
+  });
+  await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
 

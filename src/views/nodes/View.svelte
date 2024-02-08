@@ -178,7 +178,8 @@
 
       {#if error}
         <ErrorMessage
-          message="Not able to load more projects from this node"
+          title="Not able to load more projects from this node"
+          description="You either loaded all remaining projects, or there was a network issue with this seed"
           {error} />
       {/if}
     </div>

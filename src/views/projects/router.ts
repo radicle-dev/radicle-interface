@@ -1,7 +1,4 @@
-import type {
-  LoadErrorRoute,
-  NotFoundRoute,
-} from "@app/lib/router/definitions";
+import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type {
   BaseUrl,
   Blob,
@@ -21,9 +18,10 @@ import type {
 
 import * as Syntax from "@app/lib/syntax";
 import * as httpd from "@app/lib/httpd";
-import { config } from "@app/lib/config";
 import { HttpdClient } from "@httpd-client";
 import { ResponseError } from "@httpd-client/lib/fetcher";
+import { config } from "@app/lib/config";
+import { handleError } from "@app/views/projects/error";
 import { nodePath } from "@app/views/nodes/router";
 import { unreachable } from "@app/lib/utils";
 
@@ -271,7 +269,7 @@ async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
 
 export async function loadProjectRoute(
   route: ProjectRoute,
-): Promise<ProjectLoadedRoute | LoadErrorRoute | NotFoundRoute> {
+): Promise<ProjectLoadedRoute | ErrorRoute | NotFoundRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
@@ -341,35 +339,7 @@ export async function loadProjectRoute(
       return unreachable(route);
     }
   } catch (error: any) {
-    if (error?.status === 404) {
-      let subject;
-
-      if (route.resource === "project.commit") {
-        subject = "Commit";
-      } else if (route.resource === "project.issue") {
-        subject = "Issue";
-      } else if (route.resource === "project.patch") {
-        subject = "Patch";
-      } else {
-        subject = "Project";
-      }
-
-      return {
-        resource: "notFound",
-        params: {
-          title: `${subject} not found`,
-        },
-      };
-    } else {
-      return {
-        resource: "loadError",
-        params: {
-          title: "Could not load this project",
-          errorMessage: error.message,
-          stackTrace: error.stack,
-        },
-      };
-    }
+    return handleError(error, route);
   }
 }
 

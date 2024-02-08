@@ -1,5 +1,9 @@
 import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
 import type {
+  ResponseParseError,
+  ResponseError,
+} from "@httpd-client/lib/fetcher";
+import type {
   ProjectLoadedRoute,
   ProjectRoute,
 } from "@app/views/projects/router";
@@ -29,19 +33,19 @@ interface SessionRoute {
   };
 }
 
-export interface LoadErrorRoute {
-  resource: "loadError";
+export interface ErrorRoute {
+  resource: "error";
   params: {
     title: string;
-    errorMessage: string;
-    stackTrace: string;
+    description: string;
+    error: Error | ResponseError | ResponseParseError;
   };
 }
 
 export type Route =
   | BootingRoute
   | HomeRoute
-  | LoadErrorRoute
+  | ErrorRoute
   | NotFoundRoute
   | ProjectRoute
   | NodesRoute
@@ -50,7 +54,7 @@ export type Route =
 export type LoadedRoute =
   | BootingRoute
   | HomeLoadedRoute
-  | LoadErrorRoute
+  | ErrorRoute
   | NotFoundRoute
   | ProjectLoadedRoute
   | NodesLoadedRoute

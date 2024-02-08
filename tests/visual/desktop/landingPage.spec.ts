@@ -40,3 +40,26 @@ test("load error", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
+
+test("response parse error", async ({ page }) => {
+  await page.addInitScript(appConfigWithFixture);
+  await page.route("*/**/v1/projects*", route => {
+    return route.fulfill({
+      json: [{ name: 1337 }],
+    });
+  });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page).toHaveScreenshot();
+});
+
+test("response error", async ({ page }) => {
+  await page.addInitScript(appConfigWithFixture);
+  await page.route("*/**/v1/projects*", route => {
+    return route.fulfill({
+      status: 500,
+      body: "There is an error in the response",
+    });
+  });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page).toHaveScreenshot();
+});

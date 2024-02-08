@@ -1,6 +1,7 @@
 <script lang="ts">
-  import type { ProjectWithListingData } from "@app/lib/projects";
   import type { BaseUrl } from "@httpd-client";
+  import type { ProjectWithListingData } from "@app/lib/projects";
+  import type { ComponentProps } from "svelte";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
   import { HttpdClient } from "@httpd-client";
@@ -9,15 +10,17 @@
 
   import { api, httpdStore } from "@app/lib/httpd";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
+  import { baseUrlToUrl } from "@app/lib/utils";
   import { getProjectsListingData } from "@app/lib/projects";
+  import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
   import { preferredSeeds } from "@app/lib/seeds";
 
   import AppLayout from "@app/App/AppLayout.svelte";
-  import Button from "@app/components/Button.svelte";
   import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
+  import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import FilterButton from "./components/FilterButton.svelte";
   import HomepageSection from "./components/HomepageSection.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
@@ -36,8 +39,14 @@
     "all",
   );
 
-  let localProjects: ProjectWithListingData[] | "error" | undefined;
-  let preferredSeedProjects: ProjectWithListingData[] | "error" | undefined;
+  let localProjects:
+    | ProjectWithListingData[]
+    | ComponentProps<ErrorMessage>["error"]
+    | undefined;
+  let preferredSeedProjects:
+    | ProjectWithListingData[]
+    | ComponentProps<ErrorMessage>["error"]
+    | undefined;
 
   async function fetchProjects(baseUrl: BaseUrl, show: "all" | "pinned") {
     const api = new HttpdClient(baseUrl);
@@ -52,14 +61,10 @@
     return await getProjectsListingData(projects);
   }
 
-  function handleProjectLoadError(): "error" {
-    return "error";
-  }
-
   async function loadLocalProjects() {
     localProjects = undefined;
     localProjects = await fetchProjects(api.baseUrl, "all").catch(
-      handleProjectLoadError,
+      error => error,
     );
   }
 
@@ -68,12 +73,12 @@
 
     if (!$selectedSeed) return;
     preferredSeedProjects = await fetchProjects($selectedSeed, "pinned").catch(
-      handleProjectLoadError,
+      error => error,
     );
   }
 
   function isSeeding(projectId: string) {
-    if (localProjects === "error") return false;
+    if (localProjects instanceof Error) return false;
     return localProjects?.some(p => p.project.id === projectId) ?? false;
   }
 
@@ -82,7 +87,7 @@
   $: $selectedSeed && void loadPreferredSeedProjects();
   $: filteredLocalProjects =
     $localProjectsFilter === "all" ||
-    localProjects === "error" ||
+    localProjects instanceof Error ||
     localProjects === undefined
       ? localProjects
       : localProjects.filter(p => isDelegate(nodeId, p.project.delegates));
@@ -114,9 +119,6 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
   }
-  .empty-state .action {
-    margin-top: 0.5rem;
-  }
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
@@ -140,11 +142,12 @@
     <div class="global-hide-on-mobile">
       <HomepageSection
         loading={$httpdStore.state !== "stopped" && localProjects === undefined}
-        empty={localProjects === "error" ||
-          $httpdStore.state === "stopped" ||
-          !filteredLocalProjects?.length}
+        empty={$httpdStore.state === "stopped" ||
+          (filteredLocalProjects instanceof Array &&
+            !filteredLocalProjects.length) ||
+          localProjects instanceof Error}
         title="Local projects"
-        subtitle="Projects you’re seeding with your local node">
+        subtitle="Projects you're seeding with your local node">
         <svelte:fragment slot="actions">
           <FilterButton disabled={!nodeId} bind:value={$localProjectsFilter} />
           <NewProjectButton disabled={!nodeId} />
@@ -155,12 +158,12 @@
               <div style="text-align: left; width: 100%;">
                 <ConnectInstructions />
               </div>
-            {:else if localProjects === "error"}
-              <div class="heading">Error loading projects</div>
-              <div class="label">
-                There was an error loading projects from your local node.
-              </div>
-              <div class="action"><Button>Learn more</Button></div>
+            {:else if localProjects instanceof Error}
+              <ErrorMessage
+                {...handleError(
+                  localProjects,
+                  baseUrlToUrl(api.baseUrl).toString(),
+                )} />
             {:else if !localProjects?.length}
               <div class="heading">No local projects</div>
               <div class="label">
@@ -175,7 +178,7 @@
           </div>
         </svelte:fragment>
         <div class="project-grid">
-          {#if filteredLocalProjects && filteredLocalProjects !== "error"}
+          {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
             {#each filteredLocalProjects as { project, baseUrl, activity, lastCommit }}
               <ProjectCard
                 id={project.id}
@@ -197,7 +200,7 @@
 
     <HomepageSection
       loading={preferredSeedProjects === undefined}
-      empty={preferredSeedProjects === "error" ||
+      empty={preferredSeedProjects instanceof Error ||
         preferredSeedProjects?.length === 0}
       title="Explore"
       subtitle="Pinned projects on your selected seed node">
@@ -212,11 +215,12 @@
       </svelte:fragment>
       <svelte:fragment slot="empty">
         <div class="empty-state">
-          {#if preferredSeedProjects === "error"}
-            <div class="heading">Something went wrong</div>
-            <div class="label">
-              There was an error loading projects from your preferred seed node.
-            </div>
+          {#if preferredSeedProjects instanceof Error}
+            <ErrorMessage
+              {...handleError(
+                preferredSeedProjects,
+                baseUrlToUrl(api.baseUrl).toString(),
+              )} />
           {:else}
             <div class="heading">Nothing to see here</div>
             <div class="label">
@@ -226,7 +230,7 @@
         </div>
       </svelte:fragment>
       <div class="project-grid">
-        {#if preferredSeedProjects && preferredSeedProjects !== "error"}
+        {#if preferredSeedProjects && !(preferredSeedProjects instanceof Error)}
           {#each preferredSeedProjects as { project, baseUrl, activity, lastCommit }}
             <ProjectCard
               id={project.id}

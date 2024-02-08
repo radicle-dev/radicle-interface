@@ -493,7 +493,10 @@
           class="diff-error txt-monospace txt-small"
           style:border-radius="var(--border-radius-small">
           <ErrorMessage
-            message="Failed to load diff for this revision"
+            title="Failed to load diff for this revision"
+            description="Make sure you are able to connect to the seed <code>${utils
+              .baseUrlToUrl(api.baseUrl)
+              .toString()}</code>"
             {error} />
         </div>
       {/if}
