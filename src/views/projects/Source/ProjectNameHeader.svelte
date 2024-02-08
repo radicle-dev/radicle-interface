@@ -21,6 +21,11 @@
   export let preferredSeeds: string[];
   export let publicExplorer: string;
 
+  $: canEditSeeding =
+    session &&
+    $httpdStore.state === "authenticated" &&
+    $httpdStore.node.state === "running";
+
   let editSeedingInProgress = false;
 
   async function editSeeding() {
@@ -126,7 +131,7 @@
       <SeedButton
         {seeding}
         disabled={editSeedingInProgress}
-        editSeeding={session && editSeeding}
+        editSeeding={canEditSeeding ? editSeeding : undefined}
         seedCount={project.seeding}
         projectId={project.id} />
       <CloneButton {baseUrl} id={project.id} name={project.name} />
