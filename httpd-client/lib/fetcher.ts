@@ -17,7 +17,6 @@ export class ResponseError extends Error {
   public body: unknown;
 
   public constructor(method: string, response: Response, body_: unknown) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: any = body_;
     if (
       typeof body === "object" &&
