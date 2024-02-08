@@ -1,8 +1,9 @@
 <script>
-  import { api, httpdStore } from "@app/lib/httpd";
   import Command from "./Command.svelte";
+  import { api, httpdStore } from "@app/lib/httpd";
+  import { routeToPath, activeUnloadedRouteStore } from "@app/lib/router";
 
-  $: path = window.location.href.replace(window.location.origin, "");
+  $: path = routeToPath($activeUnloadedRouteStore);
   $: pathParam = path === "/" ? "" : `--path "${path}"`;
 </script>
 

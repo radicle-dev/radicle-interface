@@ -4,7 +4,7 @@
   import { queryProject } from "@app/lib/projects";
   import { config } from "@app/lib/config";
   import { formatPublicExplorer } from "@app/lib/utils";
-  import { routeToPath, urlToRoute } from "@app/lib/router";
+  import { activeUnloadedRouteStore, routeToPath } from "@app/lib/router";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import Command from "@app/components/Command.svelte";
@@ -17,7 +17,7 @@
 
   let usedFallbackSeed = false;
 
-  const route = urlToRoute(new URL(window.location.href)) as ProjectRoute;
+  const route = $activeUnloadedRouteStore as ProjectRoute;
   const seedRoutes = preferredSeeds.reduce<ProjectRoute[]>((acc, seed) => {
     const [, address] = seed.split("@");
     acc.push({

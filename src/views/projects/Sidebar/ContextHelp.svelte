@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
+  import type { Route } from "@app/lib/router/definitions";
 
+  import { activeUnloadedRouteStore } from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
 
@@ -16,6 +18,15 @@
   export let localProject: "notFound" | "found" | undefined;
   export let projectId: string;
   export let popover: boolean = false;
+
+  let route: Route;
+
+  $: {
+    route = $activeUnloadedRouteStore;
+    if ("node" in route) {
+      route.node = api.baseUrl;
+    }
+  }
 </script>
 
 <style>
@@ -56,13 +67,7 @@
 
   {#if !hideLocalButton}
     <div style:padding-top="1rem">
-      <Link
-        disabled={disableLocalButton}
-        route={{
-          resource: "project.source",
-          node: api.baseUrl,
-          project: projectId,
-        }}>
+      <Link {route} disabled={disableLocalButton}>
         <Button size="large" styleWidth="100%" disabled={disableLocalButton}>
           <IconSmall name="device" />Make changes on your local node
         </Button>

@@ -16,10 +16,11 @@ import { nodePath } from "@app/views/nodes/router";
 
 export { type Route };
 
+const InitialStore = { resource: "booting" as const };
+
 export const isLoading = writable<boolean>(true);
-export const activeRouteStore = writable<LoadedRoute>({
-  resource: "booting",
-});
+export const activeRouteStore = writable<LoadedRoute>(InitialStore);
+export const activeUnloadedRouteStore = writable<Route>(InitialStore);
 
 let currentUrl: URL | undefined;
 
@@ -112,6 +113,7 @@ async function navigate(
 
   setTitle(loadedRoute);
   activeRouteStore.set(loadedRoute);
+  activeUnloadedRouteStore.set(newRoute);
   isLoading.set(false);
 }
 
@@ -189,7 +191,7 @@ function extractBaseUrl(hostAndPort: string): BaseUrl {
   }
 }
 
-export function urlToRoute(url: URL): Route | null {
+function urlToRoute(url: URL): Route | null {
   const segments = url.pathname.substring(1).split("/");
 
   const resource = segments.shift();
