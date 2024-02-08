@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { config } from "@app/lib/config";
+
   import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -21,8 +23,8 @@
     If you need help resolving this issue, copy the error message
     <br />
     below and send it to us on
-    <ExternalLink href="https://radicle.zulipchat.com">
-      radicle.zulipchat.com
+    <ExternalLink href={config.supportWebsite}>
+      {config.supportWebsite}
     </ExternalLink>
   </div>
 

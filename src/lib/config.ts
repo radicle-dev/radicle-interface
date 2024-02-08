@@ -12,6 +12,7 @@ export interface Config {
     defaultHttpdScheme: string;
     pinned: { baseUrl: BaseUrl }[];
   };
+  supportWebsite: string;
   fallbackPreferredSeed: BaseUrl;
 }
 
@@ -27,6 +28,7 @@ function getConfig(): Config {
         defaultNodePort: 8776,
         pinned: [],
       },
+      supportWebsite: "https://radicle.zulipchat.com",
       fallbackPreferredSeed: {
         hostname: "seed.radicle.garden",
         port: 443,

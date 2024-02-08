@@ -16,6 +16,7 @@
       }
     ]
   },
+  "supportWebsite": "https://radicle.zulipchat.com",
   "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "fallbackPreferredSeed": {
     "hostname": "seed.radicle.garden",

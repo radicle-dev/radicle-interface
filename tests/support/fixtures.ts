@@ -90,6 +90,7 @@ export const test = base.extend<{
                 },
               ],
             },
+            supportWebsite: "https://radicle.zulipchat.com",
             fallbackPreferredSeed: {
               hostname: "seed.radicle.garden",
               port: 443,
@@ -221,6 +222,7 @@ export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
         },
       ],
     },
+    supportWebsite: "https://radicle.zulipchat.com",
     fallbackPreferredSeed: {
       hostname: "seed.radicle.garden",
       port: 443,
