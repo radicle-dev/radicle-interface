@@ -2,7 +2,6 @@ import type { BaseUrl, Project } from "@httpd-client";
 
 import { HttpdClient } from "@httpd-client";
 import { isFulfilled } from "@app/lib/utils";
-import { cached } from "./cache";
 import {
   fetchLastCommit,
   loadProjectActivity,
@@ -61,14 +60,7 @@ export async function getProjectsListingData(projects: ProjectBaseUrl[]) {
   });
 }
 
-export const cacheQueryProject = cached(
-  queryProject,
-  (baseUrl: BaseUrl, projectId: string) =>
-    JSON.stringify({ baseUrl, projectId }),
-  { max: 200, ttl: 60 * 60 * 1000 },
-);
-
-async function queryProject(
+export async function queryProject(
   baseUrl: BaseUrl,
   projectId: string,
 ): Promise<"found" | "notFound"> {

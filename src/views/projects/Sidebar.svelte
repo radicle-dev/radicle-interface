@@ -2,7 +2,7 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import { cacheQueryProject } from "@app/lib/projects";
+  import { queryProject } from "@app/lib/projects";
   import { httpdStore, api } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
   import { onMount } from "svelte";
@@ -40,7 +40,7 @@
 
   httpdStore.subscribe(async () => {
     if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
-      await cacheQueryProject(api.baseUrl, project.id);
+      await detectLocalProject();
     }
   });
 
@@ -61,7 +61,7 @@
 
   async function detectLocalProject(): Promise<void> {
     queryingLocalProject = true;
-    localProject = await cacheQueryProject(api.baseUrl, project.id);
+    localProject = await queryProject(api.baseUrl, project.id);
     queryingLocalProject = false;
   }
 

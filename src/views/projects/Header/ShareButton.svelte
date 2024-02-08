@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ProjectRoute } from "@app/views/projects/router";
 
-  import { cacheQueryProject } from "@app/lib/projects";
+  import { queryProject } from "@app/lib/projects";
   import { config } from "@app/lib/config";
   import { formatPublicExplorer } from "@app/lib/utils";
   import { routeToPath, urlToRoute } from "@app/lib/router";
@@ -98,7 +98,7 @@
   </div>
   <ul class="seed-list">
     {#each seedRoutes as seed}
-      {#await cacheQueryProject(seed.node, seed.project)}
+      {#await queryProject(seed.node, seed.project)}
         <li class="seed-item">
           <span class="seed txt-bold">
             <IconSmall name="globe" />
