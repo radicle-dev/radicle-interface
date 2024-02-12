@@ -110,7 +110,11 @@
           issue: issue.id,
         }}>
         <span class="issue-title">
-          <InlineMarkdown fontSize="regular" content={issue.title} />
+          {#if !issue.title}
+            <span class="txt-missing">No title</span>
+          {:else}
+            <InlineMarkdown fontSize="regular" content={issue.title} />
+          {/if}
         </span>
       </Link>
       <span class="labels">

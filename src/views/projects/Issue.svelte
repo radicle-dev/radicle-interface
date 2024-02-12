@@ -560,10 +560,12 @@
                   }
                 }
               }} />
-          {:else}
+          {:else if issue.discussion[0].body}
             <Markdown
               content={issue.discussion[0].body}
               rawPath={rawPath(project.head)} />
+          {:else}
+            <span class="txt-missing">No description</span>
           {/if}
           <div class="reactions">
             {#if session}
