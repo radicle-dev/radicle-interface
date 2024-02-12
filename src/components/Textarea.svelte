@@ -41,7 +41,7 @@
   });
 
   afterUpdate(() => {
-    if (textareaElement) {
+    if (textareaElement && focus) {
       textareaElement.setSelectionRange(selectionStart, selectionEnd);
       textareaElement.focus();
     }

@@ -631,6 +631,7 @@
           {#if threads.length === 0}
             <div class="connector" />{/if}
           <CommentToggleInput
+            focus
             rawPath={rawPath(project.head)}
             placeholder="Leave your comment"
             enableAttachments

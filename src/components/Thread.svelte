@@ -114,6 +114,7 @@
     <div id={`reply-${root.id}`} class="reply">
       <CommentToggleInput
         {rawPath}
+        focus
         inline
         placeholder="Reply to comment"
         on:click={toggleReply}

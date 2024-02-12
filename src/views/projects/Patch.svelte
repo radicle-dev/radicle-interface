@@ -977,6 +977,7 @@
                   <div class="connector" />
                   <CommentToggleInput
                     rawPath={rawPath(patch.revisions[0].id)}
+                    focus
                     enableAttachments
                     placeholder="Leave your comment"
                     submit={partial(
