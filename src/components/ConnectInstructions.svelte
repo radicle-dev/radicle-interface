@@ -49,6 +49,6 @@
       Run the following command and follow the instructions to install Radicle
       and get started.
     </div>
-    <Command fullWidth command="sh <(curl -sSf https://radicle.xyz/install)" />
+    <Command fullWidth command="curl -sSf https://radicle.xyz/install | sh" />
   {/if}
 </div>
