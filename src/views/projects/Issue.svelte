@@ -30,7 +30,7 @@
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
+  import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
@@ -495,15 +495,17 @@
                   content={issue.title} />
               </div>
             {/if}
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
             {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
-              <IconButton
+              <Button
+                variant="outline"
                 title="edit issue"
                 on:click={() => (issueState = "edit")}>
                 <IconSmall name={"edit"} />
-              </IconButton>
+                Edit
+              </Button>
             {/if}
-          </div>
-          <div style="display: flex; gap: 1rem;">
             <Share {preferredSeeds} {publicExplorer} {baseUrl} />
             {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
               <CobStateButton

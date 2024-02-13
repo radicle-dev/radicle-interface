@@ -717,7 +717,8 @@
     <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
-          <div style="display: flex; gap: 1rem; width: 100%;">
+          <div
+            style="display: flex; align-items: center; gap: 1rem; width: 100%;">
             {#if patchState !== "read"}
               <TextInput
                 placeholder="Title"
@@ -733,14 +734,16 @@
                   content={patch.title} />
               </div>
             {/if}
-            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
-              <IconButton
-                title="edit patch"
-                on:click={() => (patchState = "edit")}>
-                <IconSmall name={"edit"} />
-              </IconButton>
-            {/if}
           </div>
+          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
+            <Button
+              variant="outline"
+              title="edit patch"
+              on:click={() => (patchState = "edit")}>
+              <IconSmall name={"edit"} />
+              Edit
+            </Button>
+          {/if}
           <Share {preferredSeeds} {publicExplorer} {baseUrl} />
           {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
             <CobStateButton
