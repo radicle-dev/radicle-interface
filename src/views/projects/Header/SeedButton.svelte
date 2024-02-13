@@ -33,13 +33,18 @@
   .counter {
     font-weight: var(--font-weight-regular);
     border-radius: var(--border-radius-tiny);
-    background-color: var(--color-fill-ghost);
-    color: var(--color-foreground-dim);
+    background-color: var(--color-fill-secondary-counter);
+    border: 1px solid var(--color-border-secondary-counter);
+    color: var(--color-foreground-match-background);
     padding: 0 0.25rem;
   }
   .seeding {
     background-color: var(--color-fill-counter-emphasized);
     color: var(--color-foreground-emphasized);
+  }
+  .disabled {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-foreground-dim);
   }
 </style>
 
@@ -62,6 +67,7 @@
       <span
         class="counter"
         class:seeding
+        class:disabled
         style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>

@@ -198,7 +198,7 @@ test("edit patch", async ({ page, authenticatedPeer }) => {
   await expect(page.getByPlaceholder("Title")).toBeHidden();
   await expect(page.getByPlaceholder("Leave a description")).toBeHidden();
 
-  await page.getByRole("button", { name: "edit patch" }).click();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page
     .getByPlaceholder("Title")
     .fill("This is a modified patch title to be dismissed");
@@ -209,7 +209,7 @@ test("edit patch", async ({ page, authenticatedPeer }) => {
   await expect(titleLocator).toBeVisible();
   await expect(descriptionLocator).toBeVisible();
 
-  await page.getByRole("button", { name: "edit patch" }).click();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page.getByPlaceholder("Title").fill("This is a modified patch title");
   await page
     .getByPlaceholder("Leave a description")

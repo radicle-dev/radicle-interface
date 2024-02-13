@@ -74,7 +74,7 @@ test("edit issue", async ({ page, authenticatedPeer }) => {
   ).toBeVisible();
   await expect(page.getByPlaceholder("Leave a description")).toBeHidden();
 
-  await page.getByRole("button", { name: "edit issue" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
   await page
     .getByPlaceholder("Title")
     .fill("This is a modified issue title to be dismissed");
@@ -89,7 +89,7 @@ test("edit issue", async ({ page, authenticatedPeer }) => {
     page.getByText("We'll give it a description and edit it."),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit issue" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
   await page.getByPlaceholder("Title").fill("This is a modified issue title");
   await page
     .getByPlaceholder("Leave a description")
@@ -180,7 +180,7 @@ test("handling embeds", async ({ page, authenticatedPeer }) => {
     page.locator(".badge").filter({ hasText: "radicle-228x228.png" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "edit issue" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
   await page
     .getByPlaceholder("Leave a description")
     .fill(

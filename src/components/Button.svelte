@@ -153,7 +153,7 @@
 
   .outline {
     background-color: transparent;
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-contrast);
     border: 1px solid var(--color-border-hint);
   }
   .outline[disabled] {
@@ -196,27 +196,25 @@
   }
 
   .secondary-toggle-off {
-    background-color: transparent;
-    color: var(--color-foreground-contrast);
-    border: 1px solid var(--color-border-hint);
+    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-match-background);
   }
   .secondary-toggle-off[disabled] {
-    background-color: transparent;
-    color: var(--color-fill-gray);
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-disabled);
   }
   .secondary-toggle-off:not([disabled]):hover {
-    background-color: transparent;
-    border: 1px solid var(--color-fill-secondary);
+    background-color: var(--color-fill-secondary-hover);
   }
-
   .secondary-toggle-on {
     background-color: var(--color-fill-selected);
     color: var(--color-foreground-emphasized);
     border: 1px solid var(--color-border-selected);
   }
   .secondary-toggle-on[disabled] {
-    background-color: var(--color-fill-selected);
+    background-color: var(--color-fill-ghost);
     color: var(--color-fill-gray);
+    border: none;
   }
   .secondary-toggle-on:not([disabled]):hover {
     background-color: var(--color-fill-selected);

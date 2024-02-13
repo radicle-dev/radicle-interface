@@ -35,7 +35,7 @@
 </style>
 
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
-  <Button slot="toggle" let:toggle on:click={toggle} variant="secondary">
+  <Button slot="toggle" let:toggle on:click={toggle} variant="outline">
     Clone
     <Icon name="download" />
   </Button>

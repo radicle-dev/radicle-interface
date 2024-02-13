@@ -128,13 +128,13 @@
       class="global-hide-on-mobile"
       style="margin-left: auto; display: flex; gap: 0.5rem;">
       <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      <CloneButton {baseUrl} id={project.id} name={project.name} />
       <SeedButton
         {seeding}
         disabled={editSeedingInProgress}
         editSeeding={canEditSeeding ? editSeeding : undefined}
         seedCount={project.seeding}
         projectId={project.id} />
-      <CloneButton {baseUrl} id={project.id} name={project.name} />
     </div>
   </div>
   <div class="id">

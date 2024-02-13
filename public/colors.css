@@ -29,6 +29,7 @@
   --color-border-success: #97ceb0;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
+  --color-fill-secondary-counter: #7a7aff;
   --color-fill-ghost: #ebebff;
   --color-fill-ghost-hover: #f5f5ff;
   --color-fill-separator: #dbdbff;
@@ -85,6 +86,7 @@
   --color-border-success: #2a5a40;
   --color-fill-secondary: #7070ff;
   --color-fill-secondary-hover: #8585ff;
+  --color-fill-secondary-counter: #7a7aff;
   --color-fill-ghost: #24252d;
   --color-fill-ghost-hover: #2e2f38;
   --color-fill-separator: #24252d;
