@@ -97,7 +97,7 @@
   }
   .not-selected[disabled] {
     background-color: var(--color-fill-float-hover);
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-disabled);
     font-weight: var(--font-weight-normal);
   }
   .not-selected:not([disabled]):hover {
