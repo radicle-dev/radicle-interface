@@ -220,7 +220,7 @@
           </label>
           or pasting them.
         {/if}
-        Markdown supported. Press {utils.isMac() ? "⌘" : "ctrl"}↵ to submit.
+        Markdown supported. Press {utils.modifierKey()}↵ to submit.
       </div>
     {/if}
     <div class="buttons">
