@@ -41,11 +41,7 @@
 
 {#if $httpdStore.state === "authenticated"}
   <Popover popoverPositionTop="3rem" popoverPositionRight="0">
-    <Button
-      slot="toggle"
-      let:toggle
-      on:click={toggle}
-      variant="naked-toggle-on">
+    <Button slot="toggle" let:toggle on:click={toggle} variant="naked-toggle">
       <div class="peer-info">
         <div style:height="1.25rem" style:margin-right="0.5rem">
           <Avatar nodeId={$httpdStore.session.publicKey} />
@@ -72,11 +68,7 @@
   </Popover>
 {:else}
   <Popover popoverPositionTop="3rem" popoverPositionRight="0">
-    <Button
-      slot="toggle"
-      let:toggle
-      on:click={toggle}
-      variant="naked-toggle-off">
+    <Button slot="toggle" let:toggle on:click={toggle} variant="naked-toggle">
       <IconSmall name="key" />
       Authenticate
     </Button>

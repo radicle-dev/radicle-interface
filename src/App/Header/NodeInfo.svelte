@@ -1,7 +1,6 @@
 <script lang="ts">
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
-  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
 
@@ -18,32 +17,29 @@
 </style>
 
 <Popover popoverPositionTop="3rem" popoverPositionRight="0">
-  <Button
-    slot="toggle"
-    let:toggle
-    on:click={toggle}
-    variant={running ? "naked-toggle-on" : "naked-toggle-off"}>
-    <IconSmall name="broadcasting" />
+  <Button slot="toggle" let:toggle on:click={toggle} variant={"naked-toggle"}>
     {#if running}
-      Syncing
+      <IconSmall name="online" />
+      Online
     {:else}
-      Sync
+      <IconSmall name="offline" />
+      Offline
     {/if}
   </Button>
 
   <div slot="popover" style:width="18rem">
     {#if running}
       <div class="label">
-        Use the
-        <ExternalLink href="https://radicle.xyz/#try">Radicle CLI</ExternalLink>
-        to stop your node.
+        Your node is running and syncing with the network.
+      </div>
+      <div class="label">
+        Shut down your node if you want to stop sharing and receiving updates.
       </div>
       <Command command="rad node stop" fullWidth />
     {:else}
+      <div class="label">Your node is not running.</div>
       <div class="label">
-        Use the
-        <ExternalLink href="https://radicle.xyz/#try">Radicle CLI</ExternalLink>
-        to start your node.
+        Start your node to seed, clone or share your changes.
       </div>
       <Command command="rad node start" fullWidth />
     {/if}

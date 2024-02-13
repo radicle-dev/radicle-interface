@@ -16,8 +16,7 @@
     | "secondary-toggle-on"
     | "secondary-mobile"
     | "secondary-mobile-toggle"
-    | "naked-toggle-off"
-    | "naked-toggle-on"
+    | "naked-toggle"
     | "tab"
     | "tab-active" = "gray";
   export let size: "small" | "regular" | "large" = "regular";
@@ -224,32 +223,18 @@
     border: 1px solid var(--color-border-focus);
   }
 
-  .naked-toggle-off {
+  .naked-toggle {
     background-color: transparent;
     color: var(--color-foreground-contrast);
     border: 1px solid transparent;
   }
-  .naked-toggle-off[disabled] {
+  .naked-toggle[disabled] {
     background-color: transparent;
     color: var(--color-fill-gray);
   }
-  .naked-toggle-off:not([disabled]):hover {
+  .naked-toggle:not([disabled]):hover {
     background-color: transparent;
     border: 1px solid var(--color-fill-secondary);
-  }
-
-  .naked-toggle-on {
-    background-color: transparent;
-    color: var(--color-foreground-emphasized);
-    border: 1px solid transparent;
-  }
-  .naked-toggle-on[disabled] {
-    background-color: transparent;
-    color: var(--color-fill-gray);
-  }
-  .naked-toggle-on:not([disabled]):hover {
-    background-color: transparent;
-    border: 1px solid var(--color-border-focus);
   }
 
   .secondary {
@@ -364,8 +349,7 @@
   class:primary-toggle-on={variant === "primary-toggle-on"}
   class:secondary-toggle-off={variant === "secondary-toggle-off"}
   class:secondary-toggle-on={variant === "secondary-toggle-on"}
-  class:naked-toggle-off={variant === "naked-toggle-off"}
-  class:naked-toggle-on={variant === "naked-toggle-on"}
+  class:naked-toggle={variant === "naked-toggle"}
   class:secondary={variant === "secondary"}
   class:secondary-mobile={variant === "secondary-mobile"}
   class:secondary-mobile-toggle={variant === "secondary-mobile-toggle"}
