@@ -2,8 +2,11 @@
   import type { BaseUrl, Patch, PatchState, Project } from "@httpd-client";
 
   import { HttpdClient } from "@httpd-client";
-  import { PATCHES_PER_PAGE } from "./router";
   import capitalize from "lodash/capitalize";
+
+  import { PATCHES_PER_PAGE } from "./router";
+  import { httpdStore } from "@app/lib/httpd";
+  import { isLocal } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -18,6 +21,7 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Share from "./Share.svelte";
+  import Command from "@app/components/Command.svelte";
 
   export let baseUrl: BaseUrl;
   export let patches: Patch[];
@@ -97,6 +101,12 @@
     background-color: var(--color-fill-counter);
     color: var(--color-foreground-dim);
   }
+  .popover {
+    min-width: 16rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
@@ -152,6 +162,24 @@
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
+        <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
+          <Button
+            slot="toggle"
+            let:toggle
+            on:click={toggle}
+            variant="secondary">
+            <IconSmall name="plus" />
+            New Patch
+          </Button>
+
+          <div slot="popover" class="popover txt-small">
+            To create a patch, first checkout a new branch and commit your
+            changes, then run the following command.
+            <Command command="git push rad HEAD:refs/patches" />
+          </div>
+        </Popover>
+      {/if}
     </div>
   </div>
 
