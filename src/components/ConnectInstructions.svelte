@@ -18,7 +18,7 @@
   .heading {
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .label {
@@ -26,7 +26,6 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
     margin-bottom: 0.75rem;
-    margin-top: 0.75rem;
   }
 </style>
 
