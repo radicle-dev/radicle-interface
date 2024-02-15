@@ -104,6 +104,7 @@
   }
   .title-counter {
     display: flex;
+    overflow: hidden;
     gap: 0.5rem;
     justify-content: space-between;
     width: 100%;
