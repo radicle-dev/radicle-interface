@@ -46,6 +46,7 @@ test("seeding projects", async ({ page, authenticatedPeer }) => {
 
   await page.goto(authenticatedPeer.ridUrl(rid));
   await page.getByRole("button", { name: "Seeding" }).click();
+  await page.getByRole("button", { name: "Stop seeding" }).click();
   await expect(page.getByRole("button", { name: "Seed 1" })).toBeVisible();
 
   await page.getByRole("button", { name: "Seed 1" }).click();

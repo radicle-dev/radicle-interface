@@ -62,7 +62,7 @@
       style:top={popoverPositionTop}
       style:padding={popoverPadding}
       style:border-radius={popoverBorderRadius}>
-      <slot name="popover" />
+      <slot name="popover" {toggle} />
     </div>
   {/if}
 </div>
