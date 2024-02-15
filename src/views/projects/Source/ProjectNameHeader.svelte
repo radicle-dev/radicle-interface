@@ -1,14 +1,11 @@
 <script lang="ts">
   import type { BaseUrl, Project } from "@httpd-client";
 
-  import * as modal from "@app/lib/modal";
-  import { httpdStore, api } from "@app/lib/httpd";
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "../Header/CloneButton.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
-  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -20,53 +17,6 @@
   export let seeding: boolean;
   export let preferredSeeds: string[];
   export let publicExplorer: string;
-
-  $: canEditSeeding =
-    session &&
-    $httpdStore.state === "authenticated" &&
-    $httpdStore.node.state === "running";
-
-  let editSeedingInProgress = false;
-
-  async function editSeeding() {
-    if ($httpdStore.state === "authenticated") {
-      try {
-        editSeedingInProgress = true;
-        if (seeding) {
-          await api.stopSeedingById(project.id, $httpdStore.session.id);
-        } else {
-          await api.seedById(project.id, $httpdStore.session.id);
-        }
-        seeding = !seeding;
-      } catch (error) {
-        if (error instanceof Error) {
-          modal.show({
-            component: ErrorModal,
-            props: {
-              title: seeding
-                ? "Stop seeding project failed"
-                : "Seeding project failed",
-              subtitle: [
-                `There was an error while trying to ${
-                  seeding ? "stop seeding" : "seed"
-                } this project.`,
-                "Check your radicle-httpd logs for details.",
-              ],
-              error: {
-                message: error.message,
-                stack: error.stack,
-              },
-            },
-          });
-        }
-      } finally {
-        editSeedingInProgress = false;
-      }
-    }
-  }
-
-  $: session =
-    $httpdStore.state === "authenticated" ? $httpdStore.session : undefined;
 </script>
 
 <style>
@@ -131,8 +81,6 @@
       <CloneButton {baseUrl} id={project.id} name={project.name} />
       <SeedButton
         {seeding}
-        disabled={editSeedingInProgress}
-        editSeeding={canEditSeeding ? editSeeding : undefined}
         seedCount={project.seeding}
         projectId={project.id} />
     </div>
