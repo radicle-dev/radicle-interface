@@ -1,8 +1,8 @@
-import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
 import type {
-  ResponseParseError,
   ResponseError,
+  ResponseParseError,
 } from "@httpd-client/lib/fetcher";
+import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
 import type {
   ProjectLoadedRoute,
   ProjectRoute,
@@ -33,12 +33,14 @@ interface SessionRoute {
   };
 }
 
+export type ErrorParam = Error | ResponseParseError | ResponseError | undefined;
+
 export interface ErrorRoute {
   resource: "error";
   params: {
     title: string;
     description: string;
-    error: Error | ResponseError | ResponseParseError;
+    error: ErrorParam;
   };
 }
 

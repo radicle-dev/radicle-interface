@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { ComponentProps } from "svelte";
+  import type { ErrorParam } from "@app/lib/router/definitions";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
   export let title: string;
   export let description: string;
-  export let error: ComponentProps<ErrorMessage>["error"];
+  export let error: ErrorParam = undefined;
 </script>
 
 <style>

@@ -1,9 +1,6 @@
 <script lang="ts">
-  import type {
-    ResponseError,
-    ResponseParseError,
-  } from "@httpd-client/lib/fetcher";
   import type { ComponentProps } from "svelte";
+  import type { ErrorParam } from "@app/lib/router/definitions";
 
   import { config } from "@app/lib/config";
   import Command from "./Command.svelte";
@@ -12,8 +9,7 @@
 
   export let title: string;
   export let description: string;
-  export let error: Error | ResponseParseError | ResponseError | undefined =
-    undefined;
+  export let error: ErrorParam = undefined;
   export let icon: ComponentProps<Icon>["name"] = "alert";
 </script>
 

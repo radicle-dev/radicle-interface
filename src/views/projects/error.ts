@@ -1,8 +1,10 @@
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectRoute } from "@app/views/projects/router";
 
-import { baseUrlToUrl } from "@app/lib/utils";
+import { baseUrlToUrl, isLocal } from "@app/lib/utils";
 import { ResponseParseError, ResponseError } from "@httpd-client/lib/fetcher";
+import { httpdStore } from "@app/lib/httpd";
+import { get } from "svelte/store";
 
 export function handleError(
   error: Error | ResponseParseError | ResponseError,
@@ -43,6 +45,21 @@ export function handleError(
         title: "Could not parse the request",
         description:
           "The response received from the seed does not match the expected schema, this is usually due to a version mismatch between the seed and the web interface.",
+      },
+    };
+  } else if (
+    error instanceof TypeError &&
+    error.message === "Failed to fetch" &&
+    isLocal(route.node.hostname) &&
+    get(httpdStore).state === "stopped"
+  ) {
+    return {
+      resource: "error",
+      params: {
+        title: "Could not load this project",
+        description:
+          "You're trying to access a project on your local node but the app is not connected to it. Click the Connect button in the top right corner to connect.",
+        error: undefined,
       },
     };
   } else {
