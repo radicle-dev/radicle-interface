@@ -99,6 +99,8 @@
           <svelte:fragment slot="description">
             <ExtendedTextarea
               rawPath={rawPath(project.head)}
+              disallowEmptyBody
+              isValid={() => issueTitle.length > 0}
               enableAttachments
               submitCaption="Submit"
               placeholder="Write a description"

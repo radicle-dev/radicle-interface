@@ -542,6 +542,8 @@
         <div slot="description">
           {#if issueState !== "read"}
             <ExtendedTextarea
+              isValid={() => newTitle.length > 0}
+              disallowEmptyBody
               rawPath={rawPath(project.head)}
               enableAttachments
               embeds={parseEmbedIntoMap(issue.discussion[0].embeds)}

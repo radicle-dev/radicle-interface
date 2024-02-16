@@ -766,7 +766,7 @@
           <div class="revision-description">
             {#if session && patchState !== "read" && latestEdit}
               <ExtendedTextarea
-                validateBody={false}
+                isValid={() => patch.title.length > 0}
                 enableAttachments
                 embeds={parseEmbedIntoMap(latestEdit.embeds)}
                 rawPath={rawPath(patch.revisions[0].id)}

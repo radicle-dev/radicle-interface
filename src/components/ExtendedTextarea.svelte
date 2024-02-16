@@ -25,7 +25,10 @@
   export let body: string = "";
   export let embeds: Map<string, Embed> = new Map();
   export let submitInProgress: boolean = false;
-  export let validateBody: boolean = true;
+  export let disallowEmptyBody: boolean = false;
+  export let isValid: () => boolean = () => {
+    return true;
+  };
 
   let preview: boolean = false;
   let selectionStart = 0;
@@ -178,7 +181,7 @@
     </Button>
     <Button
       styleBorderRadius="0"
-      disabled={validateBody && !body}
+      disabled={!isValid()}
       variant={preview ? "selected" : "not-selected"}
       on:click={() => {
         preview = true;
@@ -235,7 +238,9 @@
       </Button>
       <Button
         variant="secondary"
-        disabled={(validateBody && !body) || submitInProgress}
+        disabled={!isValid() ||
+          submitInProgress ||
+          (disallowEmptyBody && body.length === 0)}
         on:click={submit}>
         {#if submitInProgress}
           <Loading small noDelay />
