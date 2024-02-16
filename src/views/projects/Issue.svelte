@@ -365,6 +365,9 @@
     }
   }
 
+  let newTitle = issue.title;
+  let newDescription = issue.discussion[0].body;
+
   $: uniqueEmbeds = uniqBy(
     issue.discussion.flatMap(comment => comment.embeds),
     "content",
@@ -485,7 +488,7 @@
             {#if issueState !== "read"}
               <TextInput
                 placeholder="Title"
-                bind:value={issue.title}
+                bind:value={newTitle}
                 showKeyHint={false} />
             {:else if !issue.title}
               <span class="txt-missing">No title</span>
@@ -494,7 +497,7 @@
                 <InlineMarkdown
                   stripEmphasizedStyling
                   fontSize="large"
-                  content={issue.title} />
+                  content={newTitle} />
               </div>
             {/if}
           </div>
@@ -542,13 +545,14 @@
               rawPath={rawPath(project.head)}
               enableAttachments
               embeds={parseEmbedIntoMap(issue.discussion[0].embeds)}
-              body={issue.discussion[0].body}
+              body={newDescription}
               submitCaption="Save"
               submitInProgress={issueState === "submit"}
               placeholder="Leave a description"
               on:close={() => {
                 issueState = "read";
-                void refreshIssue();
+                newTitle = issue.title;
+                newDescription = issue.discussion[0].body;
               }}
               on:submit={async ({ detail: { comment, embeds } }) => {
                 if (session) {
@@ -556,11 +560,12 @@
                     issueState = "submit";
                     await editIssue(
                       session.id,
-                      issue.title,
+                      newTitle,
                       issue.id,
                       comment,
                       Array.from(embeds.values()),
                     );
+                    newDescription = comment;
                   } finally {
                     issueState = "read";
                   }
