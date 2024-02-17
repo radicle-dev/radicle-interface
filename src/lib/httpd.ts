@@ -1,5 +1,3 @@
-import type { Node } from "@httpd-client";
-
 import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
@@ -13,13 +11,15 @@ export interface Session {
   alias: string;
 }
 
+type NodeState = { state: "running" | "stopped"; id: string };
+
 export type HttpdState =
   | { state: "stopped" }
-  | { state: "running"; node: Node }
+  | { state: "running"; node: NodeState }
   | {
       state: "authenticated";
       session: Session;
-      node: Node;
+      node: NodeState;
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
@@ -60,7 +60,7 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
-      const node = await api.getNode();
+      const { id, state } = await api.getNode();
       const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
@@ -69,7 +69,7 @@ export async function authenticate(params: {
           publicKey: params.publicKey,
           alias: sess.alias,
         },
-        node,
+        node: { state, id },
       });
       return true;
     } catch (error) {
@@ -91,8 +91,11 @@ export async function disconnect() {
 
       try {
         await api.session.delete(httpd.session.id);
-        const node = await api.getNode();
-        update({ state: "running", node });
+        const { id, state } = await api.getNode();
+        update({
+          state: "running",
+          node: { state, id },
+        });
       } catch (error) {
         console.error(error);
         update({ state: "stopped" });
@@ -123,10 +126,10 @@ async function checkState() {
   await stateMutex
     .runExclusive(async () => {
       try {
-        const node = await api.getNode();
+        const { id, state } = await api.getNode();
 
         if (httpdState && httpdState.state !== "stopped") {
-          httpdState.node = node;
+          httpdState.node = { state, id };
         }
 
         if (httpdState && httpdState.state === "authenticated") {
@@ -136,12 +139,18 @@ async function checkState() {
             sess.status === "unauthorized" ||
             sess.expiresAt < unixTimeInSeconds
           ) {
-            update({ state: "running", node });
+            update({
+              state: "running",
+              node: { state, id },
+            });
           } else {
             update(httpdState);
           }
         } else {
-          update({ state: "running", node });
+          update({
+            state: "running",
+            node: { state, id },
+          });
         }
       } catch (error) {
         if (error instanceof TypeError && error.message !== "Failed to fetch") {
@@ -157,12 +166,22 @@ async function checkState() {
     });
 }
 
+let windowFocus: boolean = false;
+window.addEventListener("focus", () => (windowFocus = true));
+window.addEventListener("blur", () => (windowFocus = false));
+
 function pollSession() {
   if (pollHttpdStateHandle) {
     return;
   }
 
-  pollHttpdStateHandle = window.setInterval(() => checkState(), 10_000);
+  pollHttpdStateHandle = window.setInterval(() => {
+    // We only want to poll for the active browser instance & tab.
+    // The other instances and tabs should only react to the storage event.
+    if (!document.hidden && windowFocus) {
+      void checkState();
+    }
+  }, 10_000);
 }
 
 export async function initialize() {
