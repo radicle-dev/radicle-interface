@@ -12,7 +12,6 @@
   import Button from "@app/components/Button.svelte";
   import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
@@ -220,10 +219,7 @@
         </Radio>
       {/if}
       <a href="{rawPath}/{blob.path}">
-        <Button variant="gray-white">
-          Raw
-          <IconSmall name="arrow-box-up-right" />
-        </Button>
+        <Button variant="gray-white">Raw</Button>
       </a>
     </div>
   </svelte:fragment>
