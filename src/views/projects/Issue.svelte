@@ -444,6 +444,8 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.5rem;
+    font-family: var(--font-family-sans-serif);
+    font-size: var(--font-size-small);
   }
   .author-metadata {
     color: var(--color-fill-gray);
