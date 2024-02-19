@@ -86,11 +86,11 @@ export function formatCommit(oid: string): string {
 }
 
 export function formatEditedCaption(lastEdit: Comment["edits"][0]) {
-  return ` ${
+  return `${
     lastEdit.author.alias
       ? lastEdit.author.alias
       : formatNodeId(lastEdit.author.id)
-  } edited ${formatTimestamp(lastEdit.timestamp / 1000)}`;
+  } edited ${absoluteTimestamp(lastEdit.timestamp)}`;
 }
 
 export function baseUrlToUrl(baseUrl: BaseUrl): URL {
