@@ -743,13 +743,17 @@
               Edit
             </Button>
           {/if}
-          <Share {preferredSeeds} {publicExplorer} {baseUrl} />
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
-            <CobStateButton
-              items={items.filter(([, state]) => !isEqual(state, patch.state))}
-              {selectedItem}
-              state={patch.state}
-              save={partial(saveStatus, session.id)} />
+          {#if patchState === "read"}
+            <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+              <CobStateButton
+                items={items.filter(
+                  ([, state]) => !isEqual(state, patch.state),
+                )}
+                {selectedItem}
+                state={patch.state}
+                save={partial(saveStatus, session.id)} />
+            {/if}
           {/if}
         </svelte:fragment>
         <svelte:fragment slot="state">

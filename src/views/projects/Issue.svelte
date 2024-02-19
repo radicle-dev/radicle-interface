@@ -508,15 +508,17 @@
                 Edit
               </Button>
             {/if}
-            <Share {preferredSeeds} {publicExplorer} {baseUrl} />
-            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
-              <CobStateButton
-                items={items.filter(
-                  ([, state]) => !isEqual(state, issue.state),
-                )}
-                {selectedItem}
-                state={issue.state}
-                save={partial(saveStatus, session.id)} />
+            {#if issueState === "read"}
+              <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+              {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+                <CobStateButton
+                  items={items.filter(
+                    ([, state]) => !isEqual(state, issue.state),
+                  )}
+                  {selectedItem}
+                  state={issue.state}
+                  save={partial(saveStatus, session.id)} />
+              {/if}
             {/if}
           </div>
         </svelte:fragment>
