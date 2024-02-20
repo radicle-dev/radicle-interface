@@ -1,49 +1,28 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-  import { isLocal, truncateId } from "@app/lib/utils";
-  import { loadProjects } from "@app/views/nodes/router";
-  import AppLayout from "@app/App/AppLayout.svelte";
-  import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import Loading from "@app/components/Loading.svelte";
-  import ProjectCard from "@app/components/ProjectCard.svelte";
-  import Button from "@app/components/Button.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
-  import { isDelegate } from "@app/lib/roles";
-  import { api, httpdStore } from "@app/lib/httpd";
+  import type { BaseUrl, Policy, Scope } from "@httpd-client";
   import type { ProjectWithListingData } from "@app/lib/projects";
+
+  import capitalize from "lodash/capitalize";
+
+  import { api, httpdStore } from "@app/lib/httpd";
+  import { isDelegate } from "@app/lib/roles";
+  import { isLocal, truncateId } from "@app/lib/utils";
+
+  import AppLayout from "@app/App/AppLayout.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import ProjectCard from "@app/components/ProjectCard.svelte";
+  import HoverPopover from "@app/components/HoverPopover.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
   export let externalAddresses: string[];
-  export let projectCount: number;
-  export let projectPageIndex: number;
   export let projects: ProjectWithListingData[] = [];
   export let version: string;
-
-  let error: any;
-  let loadingProjects = false;
-
-  async function loadMore(): Promise<void> {
-    loadingProjects = true;
-    try {
-      const result = await loadProjects(projectPageIndex, baseUrl);
-      projectCount = result.total;
-      projects = [...projects, ...result.projects];
-      projectPageIndex += 1;
-    } catch (err) {
-      error = err;
-    } finally {
-      loadingProjects = false;
-    }
-  }
+  export let policy: Policy | undefined = undefined;
+  export let scope: Scope | undefined = undefined;
 
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
-  $: showMoreButton =
-    !loadingProjects &&
-    !error &&
-    projectCount &&
-    projects.length < projectCount;
-
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
       ? $httpdStore.session
@@ -57,22 +36,44 @@
     justify-content: center;
     padding: 3rem 0 5rem 0;
   }
-  .wrapper {
-    width: 720px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 3.5rem;
-  }
   .header {
     display: flex;
+    gap: 0.5rem;
     flex-direction: column;
-    gap: 1rem;
+    margin-bottom: 2rem;
   }
-  .title {
+  .wrapper {
+    padding: 3rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    width: 100%;
     display: flex;
-    font-size: var(--font-size-x-large);
-    font-weight: var(--font-weight-bold);
+    flex-direction: column;
+  }
+
+  .separator {
+    width: 1px;
+    background-color: var(--color-fill-separator);
+    display: flex;
+    height: 1rem;
+  }
+  .subtitle {
+    font-size: var(--font-size-small);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  .pinned {
+    display: flex;
+    align-items: center;
+  }
+  .right {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
   .info {
     display: flex;
@@ -83,27 +84,17 @@
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
   }
-  .projects {
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-  }
-  .more {
-    min-height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1rem;
+  }
+  .popover {
+    width: 18rem;
+    color: var(--color-foreground-contrast);
+  }
   @media (max-width: 720px) {
-    .projects {
-      gap: 1.5rem;
-    }
-    .wrapper {
-      width: 100%;
-      padding: 1rem 1.5rem 1.5rem 1.5rem;
-      gap: 2rem;
-    }
     .layout {
       width: 100%;
       display: flex;
@@ -120,9 +111,7 @@
   <div class="layout">
     <div class="wrapper">
       <div class="header">
-        <div class="title">
-          {hostname}
-        </div>
+        <div class="txt-large txt-bold">{hostname}</div>
         <div class="info">
           <div>
             {#each externalAddresses as address}
@@ -143,45 +132,88 @@
         </div>
       </div>
 
-      <div class="projects">
-        {#each projects as { project, activity, lastCommit } (project.id)}
+      <div class="subtitle">
+        <div class="pinned txt-semibold">
+          {projects.length}
+          {isLocal(baseUrl.hostname) ? "" : "pinned"} projects
+        </div>
+
+        {#if !isLocal(baseUrl.hostname)}
+          <HoverPopover
+            stylePopoverPositionLeft="-8rem"
+            stylePopoverPositionBottom="1.5rem">
+            <div slot="toggle">
+              <span style:color="var(--color-fill-gray)">
+                <IconSmall name="info" />
+              </span>
+            </div>
+
+            <div slot="popover" class="popover">
+              These are pinned projects that were configured to be highlighted
+              on this node.
+            </div>
+          </HoverPopover>
+        {/if}
+
+        {#if policy && scope}
+          <div class="right">
+            <span>
+              Seeding Policy: <span class="txt-semibold">
+                {capitalize(policy)}
+              </span>
+            </span>
+            <span class="separator" />
+            <span>
+              Scope:
+              <span class="txt-semibold">{capitalize(scope)}</span>
+            </span>
+            <span style:color="var(--color-fill-gray)">
+              <HoverPopover
+                stylePopoverPositionRight="-1rem"
+                stylePopoverPositionBottom="1.5rem">
+                <div slot="toggle">
+                  <span style:color="var(--color-fill-gray)">
+                    <IconSmall name="info" />
+                  </span>
+                </div>
+
+                <div slot="popover" class="popover">
+                  {#if policy === "allow"}
+                    All discovered repositories will get seeded,
+                  {:else if policy === "block"}
+                    Only repositories marked as such will get seeded,
+                  {/if}
+                  {#if scope === "all"}
+                    and all changes in those repos, made by any peer, will be
+                    synced.
+                  {:else if scope === "followed"}
+                    and only changes made by explicitly followed peers will be
+                    synced.
+                  {/if}
+                </div>
+              </HoverPopover>
+            </span>
+          </div>
+        {/if}
+      </div>
+
+      <div class="project-grid">
+        {#each projects as { project, baseUrl, activity, lastCommit }}
           <ProjectCard
-            compact
             id={project.id}
             name={project.name}
             description={project.description}
-            {activity}
-            {baseUrl}
             numberOfIssues={project.issues.open}
             numberOfPatches={project.patches.open}
-            lastUpdatedTimestamp={lastCommit.commit.committer.time}
             isPrivate={project.visibility?.type === "private"}
             isSeeding={false}
             isDelegate={isDelegate(session?.publicKey, project.delegates) ??
-              false} />
+              false}
+            lastUpdatedTimestamp={lastCommit.commit.committer.time}
+            {activity}
+            {baseUrl} />
         {/each}
       </div>
-
-      {#if loadingProjects}
-        <div class="more">
-          <Loading noDelay small />
-        </div>
-      {/if}
-
-      {#if showMoreButton}
-        <div class="more">
-          <Button size="large" variant="outline" on:click={loadMore}>
-            More
-          </Button>
-        </div>
-      {/if}
-
-      {#if error}
-        <ErrorMessage
-          title="Not able to load more projects from this node"
-          description="You either loaded all remaining projects, or there was a network issue with this seed"
-          {error} />
-      {/if}
     </div>
   </div>
 </AppLayout>

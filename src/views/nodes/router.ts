@@ -1,10 +1,10 @@
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl, Policy, Scope } from "@httpd-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectWithListingData } from "@app/lib/projects";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
-import { baseUrlToUrl } from "@app/lib/utils";
+import { baseUrlToUrl, isLocal } from "@app/lib/utils";
 import { getProjectsListingData } from "@app/lib/projects";
 import { handleError } from "@app/views/nodes/error";
 
@@ -22,39 +22,27 @@ export interface NodesLoadedRoute {
   resource: "nodes";
   params: {
     baseUrl: BaseUrl;
-    projectPageIndex: number;
     version: string;
     externalAddresses: string[];
     nid: string;
     projects: ProjectWithListingData[];
-    projectCount: number;
+    policy?: Policy;
+    scope?: Scope;
   };
 }
 
-const PROJECTS_PER_PAGE = 10;
-
-export async function loadProjects(
-  page: number,
+async function loadProjects(
   baseUrl: BaseUrl,
-): Promise<{
-  total: number;
-  projects: ProjectWithListingData[];
-}> {
+): Promise<ProjectWithListingData[]> {
   const api = new HttpdClient(baseUrl);
-
-  const [nodeStats, projects] = await Promise.all([
-    api.getStats(),
-    api.project.getAll({ page, perPage: PROJECTS_PER_PAGE, show: "all" }),
-  ]);
-
+  const projects = await api.project.getAll({
+    show: isLocal(baseUrl.hostname) ? "all" : "pinned",
+  });
   const results = await getProjectsListingData(
     projects.map(p => ({ project: p, baseUrl })),
   );
 
-  return {
-    total: nodeStats.projects.count,
-    projects: results,
-  };
+  return results;
 }
 
 export function nodePath(baseUrl: BaseUrl) {
@@ -72,21 +60,20 @@ export async function loadNodeRoute(
 ): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
-    const projectPageIndex = 0;
-    const [node, { projects, total }] = await Promise.all([
+    const [node, projects] = await Promise.all([
       api.getNode(),
-      loadProjects(projectPageIndex, params.baseUrl),
+      loadProjects(params.baseUrl),
     ]);
     return {
       resource: "nodes",
       params: {
-        projectPageIndex: projectPageIndex + 1,
         baseUrl: params.baseUrl,
         nid: node.id,
         externalAddresses: node.config?.externalAddresses ?? [],
         version: node.version,
         projects: projects,
-        projectCount: total,
+        policy: node.config?.policy,
+        scope: node.config?.scope,
       },
     };
   } catch (error: any) {

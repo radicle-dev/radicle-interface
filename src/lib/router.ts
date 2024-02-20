@@ -140,7 +140,11 @@ function setTitle(loadedRoute: LoadedRoute) {
   ) {
     title.push(...projectTitle(loadedRoute));
   } else if (loadedRoute.resource === "nodes") {
-    title.push(loadedRoute.params.baseUrl.hostname);
+    title.push(
+      utils.isLocal(loadedRoute.params.baseUrl.hostname)
+        ? "Local Node"
+        : loadedRoute.params.baseUrl.hostname,
+    );
   } else if (loadedRoute.resource === "session") {
     title.push("Authenticating");
     title.push("Radicle");

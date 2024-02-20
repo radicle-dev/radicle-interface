@@ -6,7 +6,13 @@ import type {
   Tree,
   DiffResponse,
 } from "./lib/project.js";
-import type { SuccessResponse, CodeLocation, Range } from "./lib/shared.js";
+import type {
+  SuccessResponse,
+  CodeLocation,
+  Range,
+  Policy,
+  Scope,
+} from "./lib/shared.js";
 import type { Comment, Embed } from "./lib/project/comment.js";
 import type {
   Commit,
@@ -62,11 +68,13 @@ export type {
   Patch,
   PatchState,
   PatchUpdateAction,
+  Policy,
   Project,
   Range,
   Remote,
   Review,
   Revision,
+  Scope,
   Tree,
   Verdict,
 };

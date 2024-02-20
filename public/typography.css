@@ -125,6 +125,9 @@ p {
 .txt-bold {
   font-weight: var(--font-weight-bold) !important;
 }
+.txt-semibold {
+  font-weight: var(--font-weight-semibold) !important;
+}
 .txt-missing {
   color: var(--color-foreground-dim);
 }

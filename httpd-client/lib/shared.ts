@@ -10,6 +10,9 @@ export const successResponseSchema = object({
   success: literal(true),
 }) satisfies ZodSchema<SuccessResponse>;
 
+const policySchema = union([literal("allow"), literal("block")]);
+const scopeSchema = union([literal("followed"), literal("all")]);
+
 export const nodeConfigSchema = object({
   alias: string(),
   peers: union([
@@ -38,9 +41,12 @@ export const nodeConfigSchema = object({
       }),
     }),
   }),
-  policy: union([literal("allow"), literal("block")]),
-  scope: union([literal("followed"), literal("all")]),
+  policy: policySchema,
+  scope: scopeSchema,
 });
+
+export type Policy = z.infer<typeof policySchema>;
+export type Scope = z.infer<typeof scopeSchema>;
 
 export const rangeSchema = union([
   object({
