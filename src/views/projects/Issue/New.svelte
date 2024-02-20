@@ -119,11 +119,13 @@
       </div>
       <div class="metadata">
         <AssigneeInput
-          locallyAuthenticated={Boolean(session)}
+          locallyAuthenticated={session &&
+            project.delegates.includes(`did:key:${session.publicKey}`)}
           on:save={({ detail: updatedAssignees }) =>
             (assignees = updatedAssignees)} />
         <LabelInput
-          locallyAuthenticated={Boolean(session)}
+          locallyAuthenticated={session &&
+            project.delegates.includes(`did:key:${session.publicKey}`)}
           on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
       </div>
     </div>
