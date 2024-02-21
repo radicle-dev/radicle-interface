@@ -37,6 +37,9 @@
 </script>
 
 <style>
+  .container {
+    position: relative;
+  }
   .popover {
     background: var(--color-background-float);
     border-radius: var(--border-radius-regular);
@@ -50,7 +53,7 @@
 
 <svelte:window on:click={clickOutside} on:touchstart={clickOutside} />
 
-<div bind:this={thisComponent} style:position="relative">
+<div bind:this={thisComponent} class="container">
   <slot name="toggle" {expanded} {toggle} />
 
   {#if expanded}
