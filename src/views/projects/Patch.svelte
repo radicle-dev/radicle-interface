@@ -96,7 +96,6 @@
     ["Archive patch", { status: "archived" }],
     ["Convert to draft", { status: "draft" }],
   ];
-  const latestEdit = patch.revisions[0].edits.pop();
 
   async function editPatch(sessionId: string, title: string) {
     try {
@@ -542,6 +541,7 @@
     "content",
   );
   $: description = patch.revisions[0].description;
+  $: lastEdit = patch.revisions[0].edits.at(-1);
   $: newDescription = description;
   $: patchReviews = computeReviews(patch);
   $: selectedItem = patch.state.status === "open" ? items[1] : items[0];
@@ -677,6 +677,10 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+  .author-metadata {
+    color: var(--color-fill-gray);
+    font-size: var(--font-size-small);
+  }
   .review {
     color: var(--color-fill-gray);
     display: inline-flex;
@@ -764,11 +768,11 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if session && patchState !== "read" && latestEdit}
+            {#if session && patchState !== "read" && lastEdit}
               <ExtendedTextarea
                 isValid={() => patch.title.length > 0}
                 enableAttachments
-                embeds={parseEmbedIntoMap(latestEdit.embeds)}
+                embeds={parseEmbedIntoMap(lastEdit.embeds)}
                 rawPath={rawPath(patch.revisions[0].id)}
                 body={newDescription}
                 submitCaption="Save"
@@ -836,6 +840,17 @@
           <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
             {utils.formatTimestamp(patch.revisions[0].timestamp)}
           </span>
+          {#if lastEdit}
+            <div class="author-metadata">•</div>
+            <div
+              class="author-metadata"
+              title={utils.formatEditedCaption(
+                lastEdit.author,
+                lastEdit.timestamp,
+              )}>
+              edited
+            </div>
+          {/if}
         </div>
       </CobHeader>
 

@@ -78,7 +78,7 @@
 
   let expanded = initiallyExpanded;
   const api = new HttpdClient(baseUrl);
-  const latestEdit = revisionEdits.pop();
+  const lastEdit = revisionEdits.at(-1);
 
   function formatVerdict(verdict?: Verdict | null) {
     switch (verdict) {
@@ -197,6 +197,10 @@
   }
   .revision-description {
     margin-left: 2rem;
+  }
+  .author-metadata {
+    color: var(--color-fill-gray);
+    font-size: var(--font-size-small);
   }
   .compare-dropdown-item {
     font-weight: var(--font-weight-regular);
@@ -414,6 +418,17 @@
             <span title={utils.absoluteTimestamp(revisionTimestamp)}>
               {utils.formatTimestamp(revisionTimestamp)}
             </span>
+            {#if lastEdit}
+              <div class="author-metadata">•</div>
+              <div
+                class="author-metadata"
+                title={utils.formatEditedCaption(
+                  lastEdit.author,
+                  lastEdit.timestamp,
+                )}>
+                edited
+              </div>
+            {/if}
             <div style="display: flex; gap: 0.5rem; margin-left: auto;">
               {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
                 <IconButton
@@ -424,11 +439,11 @@
               {/if}
             </div>
           </div>
-          {#if editRevision && latestEdit && revisionState !== "read"}
+          {#if editRevision && lastEdit && revisionState !== "read"}
             {@const editRevision_ = editRevision}
             <ExtendedTextarea
               enableAttachments
-              embeds={parseEmbedIntoMap(latestEdit.embeds)}
+              embeds={parseEmbedIntoMap(lastEdit.embeds)}
               rawPath={rawPath(revisionId)}
               body={revisionDescription}
               submitCaption="Save"

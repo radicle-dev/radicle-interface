@@ -1,4 +1,4 @@
-import type { BaseUrl, Comment } from "@httpd-client";
+import type { BaseUrl } from "@httpd-client";
 
 import md5 from "md5";
 import bs58 from "bs58";
@@ -85,12 +85,13 @@ export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
 }
 
-export function formatEditedCaption(lastEdit: Comment["edits"][0]) {
+export function formatEditedCaption(
+  author: { id: string; alias?: string },
+  timestamp: number,
+) {
   return `${
-    lastEdit.author.alias
-      ? lastEdit.author.alias
-      : formatNodeId(lastEdit.author.id)
-  } edited ${absoluteTimestamp(lastEdit.timestamp)}`;
+    author.alias ? author.alias : formatNodeId(author.id)
+  } edited ${absoluteTimestamp(timestamp)}`;
 }
 
 export function baseUrlToUrl(baseUrl: BaseUrl): URL {

@@ -613,7 +613,10 @@
             <div class="author-metadata">•</div>
             <div
               class="author-metadata"
-              title={utils.formatEditedCaption(lastDescriptionEdit)}>
+              title={utils.formatEditedCaption(
+                lastDescriptionEdit.author,
+                lastDescriptionEdit.timestamp,
+              )}>
               edited
             </div>
           {/if}

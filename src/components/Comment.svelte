@@ -128,7 +128,12 @@
       </span>
       {#if lastEdit}
         <div class="card-metadata">•</div>
-        <div class="card-metadata" title={utils.formatEditedCaption(lastEdit)}>
+        <div
+          class="card-metadata"
+          title={utils.formatEditedCaption(
+            lastEdit.author,
+            lastEdit.timestamp,
+          )}>
           edited
         </div>
       {/if}
