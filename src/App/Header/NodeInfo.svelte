@@ -1,10 +1,15 @@
 <script lang="ts">
+  import type { Node } from "@httpd-client";
+
+  import { capitalize } from "lodash";
+
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
-  export let running: boolean = false;
+  export let node: Node;
 </script>
 
 <style>
@@ -14,11 +19,19 @@
     font-weight: var(--font-weight-regular);
     margin-bottom: 0.75rem;
   }
+  .scope-policy {
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-fill-separator);
+    border-bottom: 1px solid var(--color-fill-separator);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: 1rem;
+  }
 </style>
 
 <Popover popoverPositionTop="3rem" popoverPositionRight="0">
   <Button slot="toggle" let:toggle on:click={toggle} variant={"naked-toggle"}>
-    {#if running}
+    {#if node.state === "running"}
       <IconSmall name="online" />
       Online
     {:else}
@@ -28,10 +41,30 @@
   </Button>
 
   <div slot="popover" style:width="18rem">
-    {#if running}
+    {#if node.state === "running"}
       <div class="label">
         Your node is running and syncing with the network.
       </div>
+
+      {#if node.config?.scope && node.config?.policy}
+        <div class="scope-policy">
+          <div style:display="flex">
+            Seeding Policy: <span style:margin-left="auto" class="txt-semibold">
+              {capitalize(node.config.policy)}
+            </span>
+          </div>
+          <div style:display="flex" style:margin-bottom="1rem">
+            Scope:
+            <span style:margin-left="auto" class="txt-semibold">
+              {capitalize(node.config.scope)}
+            </span>
+          </div>
+
+          <ScopePolicyExplainer
+            scope={node.config.scope}
+            policy={node.config.policy} />
+        </div>
+      {/if}
       <div class="label">
         Shut down your node if you want to stop sharing and receiving updates.
       </div>

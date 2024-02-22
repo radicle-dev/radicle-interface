@@ -76,7 +76,7 @@
         </div>
       </Popover>
     {:else}
-      <NodeInfo running={$httpdStore.node.state === "running"} />
+      <NodeInfo node={$httpdStore.node} />
       <Authenticate />
     {/if}
   </div>

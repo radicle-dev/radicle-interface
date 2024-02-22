@@ -1,3 +1,5 @@
+import type { Node } from "@httpd-client";
+
 import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
@@ -11,15 +13,13 @@ export interface Session {
   alias: string;
 }
 
-type NodeState = { state: "running" | "stopped"; id: string };
-
 export type HttpdState =
   | { state: "stopped" }
-  | { state: "running"; node: NodeState }
+  | { state: "running"; node: Node }
   | {
       state: "authenticated";
       session: Session;
-      node: NodeState;
+      node: Node;
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
@@ -60,7 +60,7 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
-      const { id, state } = await api.getNode();
+      const node = await api.getNode();
       const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
@@ -69,7 +69,7 @@ export async function authenticate(params: {
           publicKey: params.publicKey,
           alias: sess.alias,
         },
-        node: { state, id },
+        node,
       });
       return true;
     } catch (error) {
@@ -91,10 +91,10 @@ export async function disconnect() {
 
       try {
         await api.session.delete(httpd.session.id);
-        const { id, state } = await api.getNode();
+        const node = await api.getNode();
         update({
           state: "running",
-          node: { state, id },
+          node,
         });
       } catch (error) {
         console.error(error);
@@ -126,10 +126,10 @@ async function checkState() {
   await stateMutex
     .runExclusive(async () => {
       try {
-        const { id, state } = await api.getNode();
+        const node = await api.getNode();
 
         if (httpdState && httpdState.state !== "stopped") {
-          httpdState.node = { state, id };
+          httpdState.node = node;
         }
 
         if (httpdState && httpdState.state === "authenticated") {
@@ -141,7 +141,7 @@ async function checkState() {
           ) {
             update({
               state: "running",
-              node: { state, id },
+              node,
             });
           } else {
             update(httpdState);
@@ -149,7 +149,7 @@ async function checkState() {
         } else {
           update({
             state: "running",
-            node: { state, id },
+            node,
           });
         }
       } catch (error) {

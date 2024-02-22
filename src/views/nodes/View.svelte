@@ -12,6 +12,7 @@
   import CopyableId from "@app/components/CopyableId.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
+  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
   import HoverPopover from "@app/components/HoverPopover.svelte";
 
   export let baseUrl: BaseUrl;
@@ -178,18 +179,7 @@
                 </div>
 
                 <div slot="popover" class="popover">
-                  {#if policy === "allow"}
-                    All discovered repositories will get seeded,
-                  {:else if policy === "block"}
-                    Only repositories marked as such will get seeded,
-                  {/if}
-                  {#if scope === "all"}
-                    and all changes in those repos, made by any peer, will be
-                    synced.
-                  {:else if scope === "followed"}
-                    and only changes made by explicitly followed peers will be
-                    synced.
-                  {/if}
+                  <ScopePolicyExplainer {scope} {policy} />
                 </div>
               </HoverPopover>
             </span>
