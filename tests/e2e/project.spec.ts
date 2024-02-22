@@ -258,8 +258,9 @@ test("markdown files", async ({ page }) => {
 test("clone modal", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByText("Clone").click();
+  await page.getByRole("button", { name: "Clone" }).click();
   await expect(page.getByText(`rad clone ${sourceBrowsingRid}`)).toBeVisible();
+  await page.getByRole("button", { name: "Git" }).click();
   await expect(
     page.getByText(
       `http://127.0.0.1/${sourceBrowsingRid.replace("rad:", "")}.git`,

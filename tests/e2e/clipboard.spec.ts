@@ -49,6 +49,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
 
   // `git clone` URL.
   {
+    await page.getByRole("button", { name: "Git" }).click();
     await page.getByText("git clone").locator(".clipboard").first().click();
     await expectClipboard(
       `git clone http://127.0.0.1/${sourceBrowsingRid.replace(
