@@ -10,7 +10,7 @@
 
   import { COMMITS_PER_PAGE } from "./router";
   import { HttpdClient } from "@httpd-client";
-  import { baseUrlToUrl } from "@app/lib/utils";
+  import { baseUrlToString } from "@app/lib/utils";
   import { groupCommits } from "@app/lib/commit";
 
   import Button from "@app/components/Button.svelte";
@@ -160,9 +160,9 @@
     <div class="message">
       <ErrorMessage
         title="Couldn't load commits"
-        description="Make sure you are able to connect to the seed <code>${baseUrlToUrl(
+        description="Make sure you are able to connect to the seed <code>${baseUrlToString(
           api.baseUrl,
-        ).toString()}</code>"
+        )}</code>"
         {error} />
     </div>
   {/if}

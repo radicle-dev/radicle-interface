@@ -10,7 +10,7 @@
 
   import { api, httpdStore } from "@app/lib/httpd";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
-  import { baseUrlToUrl } from "@app/lib/utils";
+  import { baseUrlToString } from "@app/lib/utils";
   import { getProjectsListingData } from "@app/lib/projects";
   import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
@@ -160,10 +160,7 @@
               </div>
             {:else if localProjects instanceof Error}
               <ErrorMessage
-                {...handleError(
-                  localProjects,
-                  baseUrlToUrl(api.baseUrl).toString(),
-                )} />
+                {...handleError(localProjects, baseUrlToString(api.baseUrl))} />
             {:else if !localProjects?.length}
               <div class="heading">No local projects</div>
               <div class="label">
@@ -219,7 +216,7 @@
             <ErrorMessage
               {...handleError(
                 preferredSeedProjects,
-                baseUrlToUrl(api.baseUrl).toString(),
+                baseUrlToString(api.baseUrl),
               )} />
           {:else}
             <div class="heading">Nothing to see here</div>

@@ -4,7 +4,7 @@ import type { ProjectWithListingData } from "@app/lib/projects";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
-import { baseUrlToUrl, isLocal } from "@app/lib/utils";
+import { baseUrlToString, isLocal } from "@app/lib/utils";
 import { getProjectsListingData } from "@app/lib/projects";
 import { handleError } from "@app/views/nodes/error";
 
@@ -77,6 +77,6 @@ export async function loadNodeRoute(
       },
     };
   } catch (error: any) {
-    return handleError(error, baseUrlToUrl(api.baseUrl).toString());
+    return handleError(error, baseUrlToString(api.baseUrl));
   }
 }

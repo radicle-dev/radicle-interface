@@ -5,7 +5,7 @@
   import { ISSUES_PER_PAGE } from "./router";
   import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
-  import { baseUrlToUrl, isLocal } from "@app/lib/utils";
+  import { baseUrlToString, isLocal } from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
 
   import Button from "@app/components/Button.svelte";
@@ -176,9 +176,9 @@
   {#if error}
     <ErrorMessage
       title="Couldn't load issues"
-      description="Please make sure you are able to connect to the seed <code>${baseUrlToUrl(
+      description="Please make sure you are able to connect to the seed <code>${baseUrlToString(
         api.baseUrl,
-      ).toString()}</code>"
+      )}</code>"
       {error} />
   {/if}
 

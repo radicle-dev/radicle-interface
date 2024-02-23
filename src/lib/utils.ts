@@ -94,8 +94,8 @@ export function formatEditedCaption(
   } edited ${absoluteTimestamp(timestamp)}`;
 }
 
-export function baseUrlToUrl(baseUrl: BaseUrl): URL {
-  return new URL(`${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}`);
+export function baseUrlToString(baseUrl: BaseUrl): string {
+  return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}`;
 }
 
 // Generates a publicly shareable link.

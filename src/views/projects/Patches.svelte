@@ -6,7 +6,7 @@
 
   import { PATCHES_PER_PAGE } from "./router";
   import { httpdStore } from "@app/lib/httpd";
-  import { baseUrlToUrl, isLocal } from "@app/lib/utils";
+  import { baseUrlToString, isLocal } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -195,9 +195,9 @@
   {#if error}
     <ErrorMessage
       title="Couldn't load patches"
-      description="Please make sure you are able to connect to the seed <code>${baseUrlToUrl(
+      description="Please make sure you are able to connect to the seed <code>${baseUrlToString(
         api.baseUrl,
-      ).toString()}</code>"
+      )}</code>"
       {error} />
   {/if}
 

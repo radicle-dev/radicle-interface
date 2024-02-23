@@ -1,7 +1,7 @@
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectRoute } from "@app/views/projects/router";
 
-import { baseUrlToUrl, isLocal } from "@app/lib/utils";
+import { baseUrlToString, isLocal } from "@app/lib/utils";
 import { ResponseParseError, ResponseError } from "@httpd-client/lib/fetcher";
 import { httpdStore } from "@app/lib/httpd";
 import { get } from "svelte/store";
@@ -10,7 +10,7 @@ export function handleError(
   error: Error | ResponseParseError | ResponseError,
   route: ProjectRoute,
 ): NotFoundRoute | ErrorRoute {
-  const url = baseUrlToUrl(route.node);
+  const url = baseUrlToString(route.node);
   if (error instanceof ResponseError && error.status === 404) {
     let subject;
 
