@@ -1,7 +1,6 @@
 <script lang="ts">
   import ExternalLink from "@app/components/ExternalLink.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
-  import RadworksLogo from "@app/components/RadworksLogo.svelte";
 
   export let hideShortcuts: boolean = false;
 </script>
@@ -23,25 +22,9 @@
   .divider {
     border-bottom: 1px solid var(--color-fill-separator);
   }
-  .logo {
-    color: var(--color-foreground-contrast);
-  }
-  .logo:hover {
-    color: var(--color-fill-secondary);
-  }
 </style>
 
 <div class="help">
-  <div class="item">
-    Supported by
-    <a
-      class="logo"
-      target="_blank"
-      rel="noreferrer"
-      href="https://radworks.org">
-      <RadworksLogo />
-    </a>
-  </div>
   <div class="item">
     About
     <ExternalLink href="https://radicle.xyz">radicle.xyz</ExternalLink>

@@ -3,7 +3,6 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import RadworksLogo from "@app/components/RadworksLogo.svelte";
   import Settings from "./Settings.svelte";
 </script>
 
@@ -30,10 +29,6 @@
     gap: 1.5rem;
   }
 
-  .logo {
-    color: var(--color-foreground-contrast);
-  }
-
   a {
     display: flex;
   }
@@ -45,13 +40,15 @@
 
 <div class="footer">
   <div class="left">
-    Supported by
     <a
-      class="logo"
+      style:display="flex"
+      style:align-items="center"
+      style:gap="0.25rem"
       target="_blank"
       rel="noreferrer"
-      href="https://radworks.org">
-      <RadworksLogo />
+      href="https://radicle.xyz">
+      radicle.xyz
+      <IconSmall name="arrow-box-up-right" />
     </a>
   </div>
 
@@ -68,16 +65,5 @@
 
       <Settings slot="popover" />
     </Popover>
-
-    <a
-      style:display="flex"
-      style:align-items="center"
-      style:gap="0.25rem"
-      target="_blank"
-      rel="noreferrer"
-      href="https://radicle.xyz">
-      radicle.xyz
-      <IconSmall name="arrow-box-up-right" />
-    </a>
   </div>
 </div>
