@@ -53,12 +53,12 @@
           <IconSmall name="branch" />
           <div class="identifier">{project.defaultBranch}</div>
         </Button>
-        <div class="txt-small" slot="popover">
+        <div class="txt-small" slot="popover" style:width="13.5rem">
           <div style:margin-bottom="1rem">
             You are currently browsing the canonical branch.
           </div>
-          <div>If you want to browse a specific branch,</div>
-          <div>you need to select the desired remote first.</div>
+          If you want to browse a specific branch, you need to select the desired
+          remote first.
         </div>
       </HoverPopover>
     {:else}
