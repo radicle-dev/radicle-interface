@@ -8,7 +8,7 @@
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
-  import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
+  import ErrorModal from "@app/modals/ErrorModal.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
@@ -45,16 +45,26 @@
         node: baseUrl,
         issue: result.id,
       });
-    } catch {
-      modal.show({
-        component: AuthenticationErrorModal,
-        props: {
-          title: "Authentication failed",
-          subtitle: [
-            "Could not create the issue. Make sure you're still logged in.",
-          ],
-        },
-      });
+    } catch (error) {
+      if (error instanceof Error) {
+        modal.show({
+          component: ErrorModal,
+          props: {
+            title: "Coult not create issue",
+            subtitle: [
+              "There was an error while updating the issue.",
+              "Make sure you're authenticated.",
+              "Check your radicle-httpd logs for details.",
+            ],
+            error: {
+              message: error.message,
+              stack: error.stack,
+            },
+          },
+        });
+      } else {
+        console.error(error);
+      }
     }
   }
 

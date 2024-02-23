@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Route } from "@app/lib/router/definitions";
+  import type { SessionRoute } from "@app/lib/router/definitions";
 
   import { onMount } from "svelte";
 
@@ -12,7 +12,7 @@
 
   import AuthenticationErrorModal from "@app/modals/AuthenticationErrorModal.svelte";
 
-  export let activeRoute: Extract<Route, { resource: "session" }>;
+  export let activeRoute: SessionRoute;
 
   onMount(async () => {
     const port = Number.parseInt(activeRoute.params.apiAddr.split(":")[1]);
@@ -21,18 +21,10 @@
     }
     const isAuthenticated = await httpd.authenticate(activeRoute.params);
 
-    if (isAuthenticated) {
-      // TODO: Show toast.
-    } else {
+    if (!isAuthenticated) {
       modal.show({
         component: AuthenticationErrorModal,
-        props: {
-          title: "Authentication failed",
-          subtitle: [
-            "There was an error while authenticating.",
-            "Check your radicle-httpd logs for details.",
-          ],
-        },
+        props: {},
       });
     }
     void router.navigateToUrl(

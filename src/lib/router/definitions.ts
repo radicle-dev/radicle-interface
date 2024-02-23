@@ -22,7 +22,7 @@ export interface NotFoundRoute {
   params: { title: string };
 }
 
-interface SessionRoute {
+export interface SessionRoute {
   resource: "session";
   params: {
     id: string;
