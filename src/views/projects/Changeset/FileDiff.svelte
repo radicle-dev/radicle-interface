@@ -5,6 +5,7 @@
   import { toHtml } from "hast-util-to-html";
 
   import * as Syntax from "@app/lib/syntax";
+  import { isImagePath, isSvgPath } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import File from "@app/components/File.svelte";
@@ -14,6 +15,8 @@
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
+  import Radio from "@app/components/Radio.svelte";
+  import Button from "@app/components/Button.svelte";
 
   export let filePath: string;
   export let oldContent: string | undefined = undefined;
@@ -35,6 +38,8 @@
   let selection: Selection | undefined = undefined;
   let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
   let syntaxHighlightingLoading: boolean = false;
+  let preview = false;
+  $: extension = filePath.split(".").pop();
 
   onMount(() => {
     window.addEventListener("click", deselectHandler);
@@ -400,29 +405,52 @@
     {/if}
   </svelte:fragment>
 
-  <svelte:fragment slot="right-header">
+  <svelte:fragment slot="right-header" let:expanded>
     {#if revision}
       {#if syntaxHighlightingLoading}
         <Loading small />
       {/if}
-      <Link
-        route={{
-          resource: "project.source",
-          project: projectId,
-          node: baseUrl,
-          path: filePath,
-          revision,
-        }}>
-        <IconButton title="View file">
-          <IconSmall name="chevron-left-right" />
-        </IconButton>
-      </Link>
+      <div style:display="flex" style:align-items="center" style:gap="0.5rem">
+        {#if isSvgPath(filePath) && expanded}
+          <Radio ariaLabel="Toggle render method">
+            <Button
+              styleBorderRadius="0"
+              variant={!preview ? "selected" : "not-selected"}
+              on:click={() => {
+                preview = false;
+              }}>
+              <IconSmall name="chevron-left-right" />Code
+            </Button>
+            <Button
+              styleBorderRadius="0"
+              variant={preview ? "selected" : "not-selected"}
+              on:click={() => {
+                window.location.hash = "";
+                preview = true;
+              }}>
+              <IconSmall name="eye-open" />Preview
+            </Button>
+          </Radio>
+        {/if}
+        <Link
+          route={{
+            resource: "project.source",
+            project: projectId,
+            node: baseUrl,
+            path: filePath,
+            revision,
+          }}>
+          <IconButton title="View file">
+            <IconSmall name="chevron-left-right" />
+          </IconButton>
+        </Link>
+      </div>
     {/if}
   </svelte:fragment>
 
   <div class="container">
     {#if fileDiff.type === "plain"}
-      {#if fileDiff.hunks.length > 0}
+      {#if fileDiff.hunks.length > 0 && !preview}
         <table class="diff" data-file-diff-select>
           {#each fileDiff.hunks as hunk, hunkIdx}
             <tr
@@ -484,6 +512,18 @@
             {/each}
           {/each}
         </table>
+      {:else if isImagePath(filePath) && extension && content}
+        <div style:margin="1rem 0" style:text-align="center">
+          <img
+            src={`data:image/${extension};base64,${content}`}
+            alt={filePath} />
+        </div>
+      {:else if preview && content}
+        <div style:margin="1rem 0" style:text-align="center">
+          <img
+            src={`data:image/svg+xml;base64,${btoa(content)}`}
+            alt={filePath} />
+        </div>
       {:else}
         <div style:margin="1rem 0">
           <Placeholder iconName="empty-file" caption="Empty file" inline />

@@ -192,6 +192,16 @@ export function isCommit(input: string): boolean {
   return /^[a-f0-9]{40}$/.test(input);
 }
 
+// Check whether the given path has a valid image file extension.
+export function isImagePath(input: string): boolean {
+  return /\.(jpg|jpeg|png|gif|bmp)$/i.test(input);
+}
+
+// Check whether the given path has a valid svg file extension.
+export function isSvgPath(input: string): boolean {
+  return /\.svg$/i.test(input);
+}
+
 export function isFulfilled<T>(
   input: PromiseSettledResult<T>,
 ): input is PromiseFulfilledResult<T> {

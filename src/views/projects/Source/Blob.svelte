@@ -5,13 +5,14 @@
   import { toHtml } from "hast-util-to-html";
 
   import * as Syntax from "@app/lib/syntax";
-  import { isMarkdownPath } from "@app/lib/utils";
+  import { isImagePath, isMarkdownPath, isSvgPath } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
   import { routeToPath } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
   import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
@@ -30,6 +31,7 @@
   $: lastCommit = blob.lastCommit;
 
   $: content = highlighted ? lineNumbersGutter(highlighted) : undefined;
+  $: extension = path.split(".").pop();
 
   let selectedLineId: string | undefined = undefined;
   $: {
@@ -47,7 +49,10 @@
   }
 
   $: isMarkdown = isMarkdownPath(blob.path);
-  $: showMarkdown = isMarkdown && selectedLineId === undefined;
+  $: isImage = isImagePath(blob.path);
+  $: isSvg = isSvgPath(blob.path);
+  $: enablePreview = isMarkdown || isSvg;
+  $: preview = enablePreview && selectedLineId === undefined;
 
   let linkBaseUrl: string | undefined;
 
@@ -197,41 +202,59 @@
       </div>
     </div>
     <div class="global-hide-on-mobile teaser-buttons">
-      {#if isMarkdown}
+      {#if enablePreview}
         <Radio ariaLabel="Toggle render method">
           <Button
             styleBorderRadius="0"
-            variant={showMarkdown ? "selected" : "not-selected"}
+            variant={!preview ? "selected" : "not-selected"}
             on:click={() => {
-              window.location.hash = "";
-              showMarkdown = true;
+              preview = false;
             }}>
-            Markdown
+            <IconSmall name="chevron-left-right" />Code
           </Button>
           <Button
             styleBorderRadius="0"
-            variant={!showMarkdown ? "selected" : "not-selected"}
+            variant={preview ? "selected" : "not-selected"}
             on:click={() => {
-              showMarkdown = false;
+              window.location.hash = "";
+              preview = true;
             }}>
-            Plain
+            <IconSmall name="eye-open" />Preview
           </Button>
         </Radio>
       {/if}
-      <a href="{rawPath}/{blob.path}">
-        <Button variant="gray-white">Raw</Button>
+      <a href="{rawPath}/{blob.path}" target="_blank" rel="noreferrer">
+        <Button variant="gray-white">
+          Raw <IconSmall name="arrow-box-up-right" />
+        </Button>
       </a>
     </div>
   </svelte:fragment>
 
-  {#if blob.binary}
-    <div style:margin="4rem 0" style:width="100%">
-      <Placeholder iconName="binary-file" caption="Binary file" />
-    </div>
-  {:else if showMarkdown && blob.content}
-    <div style:padding="2rem">
-      <Markdown {linkBaseUrl} content={blob.content} {rawPath} {path} />
-    </div>
+  {#if blob.binary && blob.content}
+    {#if isImage && extension}
+      <div style:margin="1rem 0" style:text-align="center">
+        <img
+          src={`data:image/${extension};base64,${blob.content}`}
+          alt={path} />
+      </div>
+    {:else}
+      <div style:margin="4rem 0" style:width="100%">
+        <Placeholder iconName="binary-file" caption="Binary file" />
+      </div>
+    {/if}
+  {:else if preview && blob.content}
+    {#if isMarkdown}
+      <div style:padding="2rem">
+        <Markdown {linkBaseUrl} content={blob.content} {rawPath} {path} />
+      </div>
+    {:else if isSvg}
+      <div style:margin="1rem 0" style:text-align="center">
+        <img
+          src={`data:image/svg+xml;base64,${btoa(blob.content)}`}
+          alt={path} />
+      </div>
+    {/if}
   {:else if content}
     <table class="code no-scrollbar">
       {@html toHtml(content)}

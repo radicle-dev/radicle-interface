@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from "svelte";
+
   import ExpandButton from "./ExpandButton.svelte";
 
   export let collapsable: boolean = false;
@@ -74,7 +75,7 @@
   </div>
 
   <div class="right">
-    <slot name="right-header" />
+    <slot name="right-header" {expanded} />
   </div>
 </div>
 
