@@ -63,9 +63,10 @@ export const rangeSchema = union([
 export type Range = z.infer<typeof rangeSchema>;
 
 export const codeLocationSchema = object({
+  commit: string(),
   path: string(),
-  old: rangeSchema.optional(),
-  new: rangeSchema.optional(),
+  old: rangeSchema.nullable(),
+  new: rangeSchema.nullable(),
 });
 
 export type CodeLocation = z.infer<typeof codeLocationSchema>;
