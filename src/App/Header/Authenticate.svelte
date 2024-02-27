@@ -26,6 +26,7 @@
   }
   .peer-info {
     display: flex;
+    align-items: center;
     font-family: var(--font-family-monospace);
   }
   .user {
