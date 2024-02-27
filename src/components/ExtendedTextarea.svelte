@@ -181,7 +181,7 @@
     </Button>
     <Button
       styleBorderRadius="0"
-      disabled={!isValid()}
+      disabled={disallowEmptyBody && body.length === 0}
       variant={preview ? "selected" : "not-selected"}
       on:click={() => {
         preview = true;
