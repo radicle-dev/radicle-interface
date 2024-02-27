@@ -79,6 +79,8 @@
     </Popover>
   {/if}
 
+  <div class="global-spacer" />
+
   <Button
     title="Current HEAD"
     variant="not-selected"

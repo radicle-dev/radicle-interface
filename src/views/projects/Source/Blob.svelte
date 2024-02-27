@@ -221,6 +221,7 @@
             }}>
             <IconSmall name="eye-open" />Preview
           </Button>
+          <div class="global-spacer" />
         </Radio>
       {/if}
       <a href="{rawPath}/{blob.path}" target="_blank" rel="noreferrer">

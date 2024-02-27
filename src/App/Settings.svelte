@@ -46,6 +46,7 @@
           on:click={() => storeTheme("light")}>
           <Icon name="sun" />
         </Button>
+        <div class="global-spacer" />
         <Button
           ariaLabel="Dark Mode"
           styleBorderRadius="0"
@@ -70,6 +71,7 @@
               : "not-selected"}>
             {font.displayName}
           </Button>
+          <div class="global-spacer" />
         {/each}
       </Radio>
     </div>

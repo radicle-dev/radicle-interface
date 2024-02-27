@@ -89,21 +89,6 @@
     background-color: var(--color-fill-ghost);
   }
 
-  .not-selected {
-    background-color: var(--color-fill-float-hover);
-    color: var(--color-foreground-contrast);
-    font-weight: var(--font-weight-normal);
-  }
-  .not-selected[disabled] {
-    background-color: var(--color-fill-float-hover);
-    color: var(--color-foreground-disabled);
-    font-weight: var(--font-weight-normal);
-  }
-  .not-selected:not([disabled]):hover {
-    background-color: var(--color-fill-ghost-hover);
-    color: var(--color-foreground-contrast);
-  }
-
   .gray {
     background-color: var(--color-fill-ghost);
     color: var(--color-foreground-contrast);
@@ -130,13 +115,29 @@
     color: var(--color-foreground-contrast);
   }
   .selected {
-    background-color: var(--color-fill-ghost);
+    background-color: var(--color-fill-float-hover);
     color: var(--color-foreground-contrast);
     cursor: default;
   }
   .selected[disabled] {
     background-color: var(--color-fill-ghost);
     color: var(--color-foreground-disabled);
+  }
+
+  .not-selected {
+    background-color: var(--color-fill-ghost);
+    color: var(--color-foreground-contrast);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: 0.02rem;
+  }
+  .not-selected[disabled] {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-foreground-disabled);
+    font-weight: var(--font-weight-normal);
+  }
+  .not-selected:not([disabled]):hover {
+    background-color: var(--color-fill-ghost-hover);
+    color: var(--color-foreground-contrast);
   }
 
   .none {

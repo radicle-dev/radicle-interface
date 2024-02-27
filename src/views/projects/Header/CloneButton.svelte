@@ -58,6 +58,7 @@
           <IconSmall name="logo" />
           Radicle
         </Button>
+        <div class="global-spacer" />
         <Button
           styleWidth="100%"
           styleBorderRadius="0"

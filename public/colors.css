@@ -31,7 +31,7 @@
   --color-fill-secondary-hover: #8585ff;
   --color-fill-secondary-counter: #7a7aff;
   --color-fill-ghost: #ebebff;
-  --color-fill-ghost-hover: #f5f5ff;
+  --color-fill-ghost-hover: #dbdbff;
   --color-fill-separator: #dbdbff;
   --color-fill-primary: #ff70ff;
   --color-fill-primary-hover: #ff80ff;
@@ -45,7 +45,7 @@
   --color-fill-diff-green: #badeca;
   --color-fill-diff-green-light: #dcefe5;
   --color-fill-float: #fafaff;
-  --color-fill-float-hover: #ffffff;
+  --color-fill-float-hover: #dbdbff;
   --color-fill-merged: #ffeeff;
   --color-fill-selected: #ebebff;
   --color-fill-warning: #ffffe5;

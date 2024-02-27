@@ -179,6 +179,7 @@
       <IconSmall name="edit" />
       Edit
     </Button>
+    <div class="global-spacer" />
     <Button
       styleBorderRadius="0"
       disabled={disallowEmptyBody && body.length === 0}
