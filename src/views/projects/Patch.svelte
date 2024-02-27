@@ -86,8 +86,6 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -748,7 +746,7 @@
             </Button>
           {/if}
           {#if patchState === "read"}
-            <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+            <Share {baseUrl} />
             {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
               <CobStateButton
                 items={items.filter(

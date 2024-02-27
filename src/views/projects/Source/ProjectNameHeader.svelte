@@ -15,8 +15,6 @@
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let seeding: boolean;
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 </script>
 
 <style>
@@ -77,7 +75,7 @@
     <div
       class="global-hide-on-mobile"
       style="margin-left: auto; display: flex; gap: 0.5rem;">
-      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      <Share {baseUrl} />
       <CloneButton {baseUrl} id={project.id} name={project.name} />
       <SeedButton
         {seeding}

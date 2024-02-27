@@ -12,8 +12,6 @@
   export let baseUrl: BaseUrl;
   export let commit: Commit;
   export let project: Project;
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 
   $: header = commit.commit;
 </script>
@@ -48,7 +46,7 @@
             stripEmphasizedStyling
             fontSize="large"
             content={header.summary} />
-          <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+          <Share {baseUrl} />
         </span>
         <CommitAuthorship {header}>
           <span class="global-commit">{formatCommit(header.id)}</span>

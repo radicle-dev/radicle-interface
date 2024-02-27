@@ -27,8 +27,6 @@
   export let patches: Patch[];
   export let project: Project;
   export let state: PatchState["status"];
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 
   let loading = false;
   let page = 0;
@@ -161,7 +159,7 @@
     </Popover>
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
-      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      <Share {baseUrl} />
       {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
         <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
           <Button

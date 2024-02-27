@@ -20,7 +20,6 @@ import * as Syntax from "@app/lib/syntax";
 import * as httpd from "@app/lib/httpd";
 import { HttpdClient } from "@httpd-client";
 import { ResponseError } from "@httpd-client/lib/fetcher";
-import { config } from "@app/lib/config";
 import { handleError } from "@app/views/projects/error";
 import { nodePath } from "@app/views/nodes/router";
 import { unreachable } from "@app/lib/utils";
@@ -116,8 +115,6 @@ export type ProjectLoadedRoute =
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
         seeding: boolean;
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -133,8 +130,6 @@ export type ProjectLoadedRoute =
         commitHeaders: CommitHeader[];
         totalCommitCount: number;
         seeding: boolean;
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -143,8 +138,6 @@ export type ProjectLoadedRoute =
         baseUrl: BaseUrl;
         project: Project;
         commit: Commit;
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -154,8 +147,6 @@ export type ProjectLoadedRoute =
         project: Project;
         rawPath: (commit?: string) => string;
         issue: Issue;
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -165,8 +156,6 @@ export type ProjectLoadedRoute =
         project: Project;
         issues: Issue[];
         state: IssueState["status"];
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -184,8 +173,6 @@ export type ProjectLoadedRoute =
         project: Project;
         patches: Patch[];
         state: PatchState["status"];
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     }
   | {
@@ -196,8 +183,6 @@ export type ProjectLoadedRoute =
         rawPath: (commit?: string) => string;
         patch: Patch;
         view: PatchView;
-        preferredSeeds: string[];
-        publicExplorer: string;
       };
     };
 
@@ -282,8 +267,7 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.history") {
       return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
-      const [profile, project, commit] = await Promise.all([
-        api.profile.getProfile().catch(() => undefined),
+      const [project, commit] = await Promise.all([
         api.project.getById(route.project),
         api.project.getCommitBySha(route.project, route.commit),
       ]);
@@ -294,15 +278,10 @@ export async function loadProjectRoute(
           baseUrl: route.node,
           project,
           commit,
-          preferredSeeds: profile?.config.preferredSeeds || [],
-          publicExplorer:
-            profile?.config.publicExplorer ||
-            config.nodes.fallbackPublicExplorer,
         },
       };
     } else if (route.resource === "project.issue") {
-      const [profile, project, issue] = await Promise.all([
-        api.profile.getProfile().catch(() => undefined),
+      const [project, issue] = await Promise.all([
         api.project.getById(route.project),
         api.project.getIssueById(route.project, route.issue),
       ]);
@@ -313,10 +292,6 @@ export async function loadProjectRoute(
           project,
           rawPath,
           issue,
-          preferredSeeds: profile?.config.preferredSeeds || [],
-          publicExplorer:
-            profile?.config.publicExplorer ||
-            config.nodes.fallbackPublicExplorer,
         },
       };
     } else if (route.resource === "project.patch") {
@@ -350,8 +325,7 @@ async function loadPatchesView(
   const searchParams = new URLSearchParams(route.search || "");
   const state = (searchParams.get("state") as PatchState["status"]) || "open";
 
-  const [profile, project, patches] = await Promise.all([
-    api.profile.getProfile().catch(() => undefined),
+  const [project, patches] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllPatches(route.project, {
       state,
@@ -367,9 +341,6 @@ async function loadPatchesView(
       patches,
       state,
       project,
-      preferredSeeds: profile?.config.preferredSeeds || [],
-      publicExplorer:
-        profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer,
     },
   };
 }
@@ -380,8 +351,7 @@ async function loadIssuesView(
   const api = new HttpdClient(route.node);
   const state = route.state || "open";
 
-  const [profile, project, issues] = await Promise.all([
-    api.profile.getProfile().catch(() => undefined),
+  const [project, issues] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllIssues(route.project, {
       state,
@@ -398,9 +368,6 @@ async function loadIssuesView(
       issues,
       state,
       project,
-      preferredSeeds: profile?.config.preferredSeeds || [],
-      publicExplorer:
-        profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer,
     },
   };
 }
@@ -414,8 +381,7 @@ async function loadTreeView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [profile, project, peers, branchMap, seeding] = await Promise.all([
-    api.profile.getProfile().catch(() => undefined),
+  const [project, peers, branchMap, seeding] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     getPeerBranches(api, route.project, route.peer),
@@ -457,9 +423,6 @@ async function loadTreeView(
       path,
       blobResult,
       seeding,
-      preferredSeeds: profile?.config.preferredSeeds || [],
-      publicExplorer:
-        profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer,
     },
   };
 }
@@ -509,8 +472,7 @@ async function loadHistoryView(
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
 
-  const [profile, project, peers, branchMap] = await Promise.all([
-    api.profile.getProfile().catch(() => undefined),
+  const [project, peers, branchMap] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     getPeerBranches(api, route.project, route.peer),
@@ -554,9 +516,6 @@ async function loadHistoryView(
       commitHeaders: commitsResponse.commits.map(c => c.commit),
       totalCommitCount: commitsResponse.stats.commits,
       seeding,
-      preferredSeeds: profile?.config.preferredSeeds || [],
-      publicExplorer:
-        profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer,
     },
   };
 }
@@ -569,8 +528,7 @@ async function loadPatchView(
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
       route.project
     }${commit ? `/${commit}` : ""}`;
-  const [profile, project, patch] = await Promise.all([
-    api.profile.getProfile().catch(() => undefined),
+  const [project, patch] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
   ]);
@@ -627,9 +585,6 @@ async function loadPatchView(
       rawPath,
       patch,
       view,
-      preferredSeeds: profile?.config.preferredSeeds || [],
-      publicExplorer:
-        profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer,
     },
   };
 }

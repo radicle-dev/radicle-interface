@@ -46,8 +46,6 @@
   export let baseUrl: BaseUrl;
   export let issue: Issue;
   export let project: Project;
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
   export let rawPath: (commit?: string) => string;
 
   const api = new HttpdClient(baseUrl);
@@ -512,7 +510,7 @@
               </Button>
             {/if}
             {#if issueState === "read"}
-              <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+              <Share {baseUrl} />
               {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
                 <CobStateButton
                   items={items.filter(

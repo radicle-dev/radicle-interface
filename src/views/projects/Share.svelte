@@ -2,31 +2,43 @@
   import type { BaseUrl } from "@httpd-client";
 
   import debounce from "lodash/debounce";
-  import { httpdStore } from "@app/lib/httpd";
+  import { api, httpdStore } from "@app/lib/httpd";
   import { isLocal, toClipboard } from "@app/lib/utils";
+  import { config } from "@app/lib/config";
 
   import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ShareButton from "./Header/ShareButton.svelte";
+  import Loading from "@app/components/Loading.svelte";
 
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
   export let baseUrl: BaseUrl;
 
   const caption = "Link to seed";
-  let linkIcon: "link" | "checkmark" = "link";
   let shareIcon: "share" | "checkmark" = "share";
+  let loading = false;
 
   const restoreIcon = debounce(() => {
-    linkIcon = "link";
     shareIcon = "share";
-  }, 800);
+  }, 1000);
 
-  async function copy(text: string) {
-    await toClipboard(text);
-    linkIcon = "checkmark";
-    shareIcon = "checkmark";
+  async function copy() {
+    if (loading) {
+      return;
+    }
+    try {
+      loading = true;
+      const profile = await api.profile.getProfile().catch(() => undefined);
+      const publicExplorer =
+        profile?.config.publicExplorer ?? config.nodes.fallbackPublicExplorer;
+      const text = new URL(publicExplorer).origin.concat(
+        window.location.pathname,
+      );
+      await toClipboard(text);
+      shareIcon = "checkmark";
+    } finally {
+      loading = false;
+    }
     restoreIcon();
   }
 </script>
@@ -42,20 +54,18 @@
       slot="toggle"
       let:toggle
       on:click={toggle}>
-      <IconSmall name={linkIcon} />
+      <IconSmall name="link" />
       {caption}
     </Button>
-    <ShareButton {publicExplorer} {preferredSeeds} slot="popover" />
+    <ShareButton slot="popover" />
   </Popover>
 {:else}
-  <Button
-    variant="outline"
-    size="regular"
-    on:click={() =>
-      void copy(
-        new URL(publicExplorer).origin.concat(window.location.pathname),
-      )}>
-    <IconSmall name={shareIcon} />
-    {shareIcon === "share" ? "Share" : "Link copied"}
+  <Button variant="outline" size="regular" on:click={copy}>
+    {#if loading}
+      <Loading small noDelay />
+    {:else}
+      <IconSmall name={shareIcon} />
+      {shareIcon === "share" ? "Share" : "Link copied"}
+    {/if}
   </Button>
 {/if}

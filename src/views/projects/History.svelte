@@ -32,8 +32,6 @@
   export let totalCommitCount: number;
   export let tree: Tree;
   export let seeding: boolean;
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 
   const api = new HttpdClient(baseUrl);
 
@@ -112,13 +110,7 @@
 </style>
 
 <Layout {baseUrl} {project} activeTab="source">
-  <ProjectNameHeader
-    {project}
-    {baseUrl}
-    {seeding}
-    {preferredSeeds}
-    {publicExplorer}
-    slot="header" />
+  <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem 0 1rem 1rem" slot="subheader">
     <Header

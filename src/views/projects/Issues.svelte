@@ -26,8 +26,6 @@
   export let issues: Issue[];
   export let project: Project;
   export let state: IssueState["status"];
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
 
   let loading = false;
   let page = 0;
@@ -147,7 +145,7 @@
     </Popover>
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
-      <Share {preferredSeeds} {publicExplorer} {baseUrl} />
+      <Share {baseUrl} />
       {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
         <Link
           route={{

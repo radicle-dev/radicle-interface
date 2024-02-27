@@ -1,10 +1,13 @@
 <script lang="ts">
   import type { ProjectRoute } from "@app/views/projects/router";
 
-  import { queryProject } from "@app/lib/projects";
+  import { onMount } from "svelte";
+
+  import { activeUnloadedRouteStore, routeToPath } from "@app/lib/router";
+  import { api } from "@app/lib/httpd";
   import { config } from "@app/lib/config";
   import { formatPublicExplorer } from "@app/lib/utils";
-  import { activeUnloadedRouteStore, routeToPath } from "@app/lib/router";
+  import { queryProject } from "@app/lib/projects";
 
   import Clipboard from "@app/components/Clipboard.svelte";
   import Command from "@app/components/Command.svelte";
@@ -12,37 +15,42 @@
   import Loading from "@app/components/Loading.svelte";
   import IconButton from "@app/components/IconButton.svelte";
 
-  export let preferredSeeds: string[];
-  export let publicExplorer: string;
-
   let usedFallbackSeed = false;
 
-  const route = $activeUnloadedRouteStore as ProjectRoute;
-  const seedRoutes = preferredSeeds.reduce<ProjectRoute[]>((acc, seed) => {
-    const [, address] = seed.split("@");
-    acc.push({
-      ...route,
-      node: {
-        hostname: address.split(":")[0],
-        port: config.nodes.defaultHttpdPort,
-        scheme: config.nodes.defaultHttpdScheme,
-      },
-    });
-    return acc;
-  }, []);
+  let publicExplorer: string;
+  let seedRoutes: ProjectRoute[] = [];
 
-  // Set seed.radicle.garden as fallback seed.
-  $: if (preferredSeeds.length === 0) {
-    usedFallbackSeed = true;
-    seedRoutes.push({
-      ...route,
-      node: {
-        hostname: config.nodes.defaultHttpdHostname,
-        port: config.nodes.defaultHttpdPort,
-        scheme: config.nodes.defaultHttpdScheme,
-      },
+  onMount(async () => {
+    const profile = await api.profile.getProfile().catch(() => undefined);
+    const route = $activeUnloadedRouteStore as ProjectRoute;
+    publicExplorer =
+      profile?.config.publicExplorer || config.nodes.fallbackPublicExplorer;
+    const preferredSeeds = profile?.config.preferredSeeds || [];
+
+    seedRoutes = preferredSeeds.map(seed => {
+      const [, address] = seed.split("@");
+      return {
+        ...route,
+        node: {
+          hostname: address.split(":")[0],
+          port: config.nodes.defaultHttpdPort,
+          scheme: config.nodes.defaultHttpdScheme,
+        },
+      };
     });
-  }
+
+    if (preferredSeeds.length === 0) {
+      usedFallbackSeed = true;
+      seedRoutes.push({
+        ...route,
+        node: {
+          hostname: config.nodes.defaultHttpdHostname,
+          port: config.nodes.defaultHttpdPort,
+          scheme: config.nodes.defaultHttpdScheme,
+        },
+      });
+    }
+  });
 </script>
 
 <style>
@@ -137,7 +145,12 @@
               </IconButton>
               <IconButton>
                 <a
-                  href={path}
+                  href={formatPublicExplorer(
+                    publicExplorer,
+                    seed.node.hostname,
+                    seed.project,
+                    path,
+                  )}
                   target="_blank"
                   style=" width: 1.5rem;
                 height: 1.5rem; display: flex; align-items: center; justify-content: center;">
