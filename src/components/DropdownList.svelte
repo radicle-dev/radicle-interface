@@ -26,5 +26,9 @@
     <div class="dropdown-item">
       <slot name="item" {item} />
     </div>
+  {:else}
+    <div class="dropdown-item">
+      <slot name="empty" />
+    </div>
   {/each}
 </div>

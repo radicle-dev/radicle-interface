@@ -149,7 +149,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
   await expect(page.getByRole("link", { name: "Commits 2" })).toBeVisible();
 
-  await expect(page.getByLabel("canonical-branch")).toHaveText("main");
+  await expect(page.getByTitle("Change branch")).toHaveText("main");
   await expect(page.getByTitle("Current HEAD")).toHaveText("516fa74");
 
   await page
@@ -178,6 +178,6 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page.getByRole("link", { name: "Commits 3" })).toHaveText(
     "Commits 3",
   );
-  await expect(page.getByLabel("canonical-branch")).toHaveText("main");
+  await expect(page.getByTitle("Change branch")).toHaveText("main");
   await expect(page.getByTitle("Current HEAD")).toHaveText("bb9089a");
 });

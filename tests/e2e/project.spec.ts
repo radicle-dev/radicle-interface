@@ -28,7 +28,7 @@ test("navigate to project", async ({ page }) => {
 
   // Project menu shows default selected branch and commit and contributor counts.
   {
-    await expect(page.getByLabel("canonical-branch")).toBeVisible();
+    await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(page.getByTitle("Current HEAD")).toHaveText(
       aliceMainHead.substring(0, 7),
     );
@@ -336,7 +336,7 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).not.toContainText("alice");
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
 
-    await expect(page.getByLabel("canonical-branch")).toBeVisible();
+    await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(page.getByTitle("Current HEAD")).toHaveText(
       aliceMainHead.substring(0, 7),
     );

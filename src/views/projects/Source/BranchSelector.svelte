@@ -3,6 +3,7 @@
   import type { Route } from "@app/lib/router";
 
   import * as utils from "@app/lib/utils";
+  import { activeUnloadedRouteStore } from "@app/lib/router";
   import { closeFocused } from "@app/components/Popover.svelte";
 
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -11,7 +12,6 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
 
   export let branches: Array<{ name: string; route: Route }>;
   export let node: BaseUrl;
@@ -19,7 +19,6 @@
   export let selectedBranch: string | undefined;
   export let selectedCommitId: string;
 
-  $: onCanonicalBranch = branches.length === 0;
   $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
 </script>
 
@@ -39,62 +38,45 @@
 
 <div class="branch">
   {#if selectedBranch}
-    {#if onCanonicalBranch}
-      <HoverPopover
-        stylePopoverPositionLeft="0"
-        stylePopoverPositionTop="0.5rem">
-        <Button
-          ariaLabel="canonical-branch"
-          variant="gray-white"
-          styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
-          slot="toggle"
-          disabled
-          notAllowed={false}>
-          <IconSmall name="branch" />
-          <div class="identifier">{project.defaultBranch}</div>
-        </Button>
-        <div class="txt-small" slot="popover" style:width="13.5rem">
-          <div style:margin-bottom="1rem">
-            You are currently browsing the canonical branch.
-          </div>
-          If you want to browse a specific branch, you need to select the desired
-          remote first.
-        </div>
-      </HoverPopover>
-    {:else}
-      <Popover
-        popoverPadding="0"
-        popoverPositionTop="2.5rem"
-        popoverBorderRadius="var(--border-radius-small)">
-        <Button
-          variant="gray-white"
-          let:expanded
-          let:toggle
-          on:click={toggle}
-          slot="toggle"
-          styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
-          title="Change branch">
-          <IconSmall name="branch" />
-          <div class="identifier">{selectedBranch}</div>
-          {#if !onCanonicalBranch}
-            <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-          {/if}
-        </Button>
+    <Popover
+      popoverPadding="0"
+      popoverPositionTop="2.5rem"
+      popoverBorderRadius="var(--border-radius-small)">
+      <Button
+        variant="gray-white"
+        let:expanded
+        let:toggle
+        on:click={toggle}
+        slot="toggle"
+        styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
+        title="Change branch">
+        <IconSmall name="branch" />
+        <div class="identifier">{selectedBranch}</div>
+        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+      </Button>
 
-        <DropdownList
-          slot="popover"
-          styleDropdownMinWidth="12.5rem"
-          items={branches}>
-          <svelte:fragment slot="item" let:item>
-            <Link route={item.route} on:afterNavigate={() => closeFocused()}>
-              <DropdownListItem selected={item.name === selectedBranch}>
-                <div class="identifier">{item.name}</div>
-              </DropdownListItem>
-            </Link>
-          </svelte:fragment>
-        </DropdownList>
-      </Popover>
-    {/if}
+      <DropdownList
+        slot="popover"
+        styleDropdownMinWidth="7.5rem"
+        items={branches}>
+        <svelte:fragment slot="item" let:item>
+          <Link route={item.route} on:afterNavigate={() => closeFocused()}>
+            <DropdownListItem selected={item.name === selectedBranch}>
+              <div class="identifier">{item.name}</div>
+            </DropdownListItem>
+          </Link>
+        </svelte:fragment>
+        <svelte:fragment slot="empty">
+          <Link
+            route={$activeUnloadedRouteStore}
+            on:afterNavigate={() => closeFocused()}>
+            <DropdownListItem selected>
+              <div class="identifier">{project.defaultBranch}</div>
+            </DropdownListItem>
+          </Link>
+        </svelte:fragment>
+      </DropdownList>
+    </Popover>
   {/if}
 
   <Button
