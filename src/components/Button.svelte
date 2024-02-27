@@ -213,7 +213,7 @@
   }
   .secondary-toggle-on[disabled] {
     background-color: var(--color-fill-ghost);
-    color: var(--color-fill-gray);
+    color: var(--color-foreground-disabled);
     border: none;
   }
   .secondary-toggle-on:not([disabled]):hover {

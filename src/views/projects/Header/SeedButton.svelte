@@ -81,7 +81,7 @@
   }
   .disabled {
     background-color: var(--color-fill-ghost-hover);
-    color: var(--color-foreground-dim);
+    color: var(--color-foreground-disabled);
   }
 </style>
 
