@@ -1,3 +1,4 @@
+import { LRUCache } from "lru-cache";
 import type { Commit, Commits } from "./project/commit.js";
 import type { Embed } from "./project/comment.js";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
@@ -142,6 +143,13 @@ const diffResponseSchema = object({
 export class Client {
   #fetcher: Fetcher;
 
+  // We make the cache a static variable because clients are usually not
+  // persisted and new instances are frequently created.
+  static #cache = {
+    tree: new LRUCache<string, Tree>({ max: 300 }),
+    blob: new LRUCache<string, Blob>({ max: 500 }),
+  };
+
   public constructor(fetcher: Fetcher) {
     this.#fetcher = fetcher;
   }
@@ -221,7 +229,12 @@ export class Client {
     path: string,
     options?: RequestOptions,
   ): Promise<Blob> {
-    return this.#fetcher.fetchOk(
+    const cacheKey = `blob:${sha}:${path}`;
+    const cachedBlob = Client.#cache.blob.get(cacheKey);
+    if (cachedBlob) {
+      return cachedBlob;
+    }
+    const blob = await this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `projects/${id}/blob/${sha}/${path}`,
@@ -229,6 +242,8 @@ export class Client {
       },
       blobSchema,
     );
+    Client.#cache.blob.set(cacheKey, blob);
+    return blob;
   }
 
   public async getTree(
@@ -237,7 +252,12 @@ export class Client {
     path?: string,
     options?: RequestOptions,
   ): Promise<Tree> {
-    return this.#fetcher.fetchOk(
+    const cacheKey = `tree:${sha}:${path}`;
+    const cachedTree = Client.#cache.tree.get(cacheKey);
+    if (cachedTree) {
+      return cachedTree;
+    }
+    const tree = await this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `projects/${id}/tree/${sha}/${path ?? ""}`,
@@ -245,6 +265,8 @@ export class Client {
       },
       treeSchema,
     );
+    Client.#cache.tree.set(cacheKey, tree);
+    return tree;
   }
 
   public async getAllRemotes(
