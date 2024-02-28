@@ -62,7 +62,10 @@ export type LoadedRoute =
   | NodesLoadedRoute
   | SessionRoute;
 
-export async function loadRoute(route: Route): Promise<LoadedRoute> {
+export async function loadRoute(
+  route: Route,
+  previousLoaded: LoadedRoute,
+): Promise<LoadedRoute> {
   if (route.resource === "nodes") {
     return await loadNodeRoute(route.params);
   } else if (route.resource === "home") {
@@ -77,7 +80,7 @@ export async function loadRoute(route: Route): Promise<LoadedRoute> {
     route.resource === "project.patches" ||
     route.resource === "project.patch"
   ) {
-    return await loadProjectRoute(route);
+    return await loadProjectRoute(route, previousLoaded);
   } else {
     return route;
   }

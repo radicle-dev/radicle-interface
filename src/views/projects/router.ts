@@ -1,4 +1,8 @@
-import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
+import type {
+  ErrorRoute,
+  LoadedRoute,
+  NotFoundRoute,
+} from "@app/lib/router/definitions";
 import type {
   BaseUrl,
   Blob,
@@ -254,6 +258,7 @@ async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
 
 export async function loadProjectRoute(
   route: ProjectRoute,
+  previousLoaded: LoadedRoute,
 ): Promise<ProjectLoadedRoute | ErrorRoute | NotFoundRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
@@ -263,7 +268,7 @@ export async function loadProjectRoute(
 
   try {
     if (route.resource === "project.source") {
-      return await loadTreeView(route);
+      return await loadTreeView(route, previousLoaded);
     } else if (route.resource === "project.history") {
       return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
@@ -374,19 +379,48 @@ async function loadIssuesView(
 
 async function loadTreeView(
   route: ProjectTreeRoute,
-): Promise<ProjectLoadedRoute> {
+  previousLoaded: LoadedRoute,
+): Promise<ProjectLoadedRoute | NotFoundRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, peers, branchMap, seeding] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getAllRemotes(route.project),
-    getPeerBranches(api, route.project, route.peer),
+  let projectPromise: Promise<Project>;
+  let peersPromise: Promise<Remote[]>;
+  if (
+    previousLoaded.resource === "project.source" &&
+    previousLoaded.params.project.id === route.project &&
+    previousLoaded.params.peer === route.peer
+  ) {
+    projectPromise = Promise.resolve(previousLoaded.params.project);
+    peersPromise = Promise.resolve(previousLoaded.params.peers);
+  } else {
+    projectPromise = api.project.getById(route.project);
+    peersPromise = api.project.getAllRemotes(route.project);
+  }
+
+  const [project, peers, seeding] = await Promise.all([
+    projectPromise,
+    peersPromise,
     isLocalNodeSeeding(route),
   ]);
+
+  let branchMap: Record<string, string>;
+  if (route.peer) {
+    const peer = peers.find(peer => peer.id === route.peer);
+    if (!peer) {
+      return {
+        resource: "notFound",
+        params: { title: `Peer ${route.peer} could not be found` },
+      };
+    } else {
+      branchMap = peer.heads;
+    }
+  } else {
+    branchMap = { [project.defaultBranch]: project.head };
+  }
 
   if (route.route) {
     const { revision, path } = detectRevision(
@@ -400,7 +434,7 @@ async function loadTreeView(
   const commit = parseRevisionToOid(
     route.revision,
     project.defaultBranch,
-    branchMap || { [project.defaultBranch]: project.head },
+    branchMap,
   );
 
   const path = route.path || "/";
@@ -416,7 +450,7 @@ async function loadTreeView(
       project,
       peers,
       peer: route.peer,
-      branches: Object.keys(branchMap || {}),
+      branches: Object.keys(branchMap),
       rawPath,
       revision: route.revision,
       tree,

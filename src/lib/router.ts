@@ -1,7 +1,7 @@
 import type { BaseUrl } from "@httpd-client";
 import type { LoadedRoute, Route } from "@app/lib/router/definitions";
 
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 
 import * as mutexExecutor from "@app/lib/mutexExecutor";
 import * as utils from "@app/lib/utils";
@@ -101,9 +101,10 @@ async function navigate(
     window.history.replaceState(newRoute, "");
   }
   currentUrl = new URL(window.location.href);
+  const currentLoadedRoute = get(activeRouteStore);
 
   const loadedRoute = await loadExecutor.run(async () => {
-    return loadRoute(newRoute);
+    return loadRoute(newRoute, currentLoadedRoute);
   });
 
   // Only let the last request through.
