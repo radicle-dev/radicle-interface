@@ -111,7 +111,7 @@ test("footnotes", async ({ page }) => {
   await expect(page.getByText("1. https://radicle.xyz ↩")).toBeVisible();
   await expect(page).toHaveScreenshot({ fullPage: true });
 
-  await page.getByText("Plain").click();
+  await page.getByText("Code").click();
   await expect(
     page.locator(
       "text=This is an example footnote[^0]. And some radicle[^1] examples.",
