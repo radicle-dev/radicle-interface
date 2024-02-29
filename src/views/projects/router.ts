@@ -27,6 +27,8 @@ import { ResponseError } from "@httpd-client/lib/fetcher";
 import { handleError } from "@app/views/projects/error";
 import { nodePath } from "@app/views/nodes/router";
 import { unreachable } from "@app/lib/utils";
+import { get } from "svelte/store";
+import { experimental } from "@app/lib/appearance";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -242,6 +244,9 @@ function parseRevisionToOid(
 }
 
 async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
+  if (!get(experimental) && get(httpd.httpdStore).state === "stopped") {
+    return false;
+  }
   try {
     const tracking = await httpd.api.getTracking();
     return tracking.some(({ id }) => id === route.project);

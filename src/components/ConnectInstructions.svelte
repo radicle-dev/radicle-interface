@@ -1,7 +1,10 @@
 <script>
-  import Command from "./Command.svelte";
+  import { experimental } from "@app/lib/appearance";
   import { api, httpdStore } from "@app/lib/httpd";
   import { routeToPath, activeUnloadedRouteStore } from "@app/lib/router";
+
+  import Command from "@app/components/Command.svelte";
+  import ExternalLink from "./ExternalLink.svelte";
 
   $: path = routeToPath($activeUnloadedRouteStore);
   $: pathParam = path === "/" ? "" : `--path "${path}"`;
@@ -30,25 +33,41 @@
 </style>
 
 <div>
-  {#if $httpdStore.state === "running"}
-    <div class="label">Authenticate with your local node to make changes.</div>
-    <Command
-      fullWidth
-      command={`rad web ${window.origin} --connect ${api.hostname}:${api.port} ${pathParam}`} />
+  {#if $experimental}
+    {#if $httpdStore.state === "running"}
+      <div class="label">
+        Authenticate with your local node to make changes.
+      </div>
+      <Command
+        fullWidth
+        command={`rad web ${window.origin} --connect ${api.hostname}:${api.port} ${pathParam}`} />
+    {:else}
+      <div class="heading">Connect & Authenticate</div>
+      <div class="label">
+        Connect to your local node to browse projects on your local machine,
+        create issues, and participate in discussions.
+      </div>
+      <Command fullWidth command={`rad web ${window.origin} ${pathParam}`} />
+
+      <div class="divider" />
+      <div class="heading">New to Radicle?</div>
+      <div class="label">
+        Visit <ExternalLink href="https://radicle.xyz/#try" /> to download Radicle
+        and get started.
+      </div>
+    {/if}
   {:else}
-    <div class="heading">Connect & Authenticate</div>
+    <div class="heading">Browse your local projects</div>
     <div class="label">
-      Connect to your local node to browse projects on your local machine,
-      create issues, and participate in discussions.
+      To browse projects on your local node, run the following command.
     </div>
-    <Command fullWidth command={`rad web ${window.origin} ${pathParam}`} />
+    <Command fullWidth command="radicle-httpd" />
 
     <div class="divider" />
     <div class="heading">New to Radicle?</div>
     <div class="label">
-      Run the following command and follow the instructions to install Radicle
+      Visit <ExternalLink href="https://radicle.xyz/#try" /> to download Radicle
       and get started.
     </div>
-    <Command fullWidth command="curl -sSf https://radicle.xyz/install | sh" />
   {/if}
 </div>

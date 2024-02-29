@@ -11,6 +11,7 @@
   import NodeInfo from "@app/App/Header/NodeInfo.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
+  import { experimental } from "@app/lib/appearance";
 
   const buttonTitle: Record<HttpdState["state"], string> = {
     stopped: "radicle-httpd is stopped",
@@ -60,24 +61,26 @@
   </div>
 
   <div class="right">
-    {#if $httpdStore.state === "stopped"}
-      <Popover popoverPositionTop="3rem" popoverPositionRight="0">
-        <Button
-          slot="toggle"
-          let:toggle
-          on:click={toggle}
-          title={buttonTitle[$httpdStore.state]}
-          variant="naked-toggle">
-          <IconSmall name="device" />
-          Connect
-        </Button>
-        <div slot="popover" class="connect-popover">
-          <ConnectInstructions />
-        </div>
-      </Popover>
-    {:else}
-      <NodeInfo node={$httpdStore.node} />
-      <Authenticate />
+    {#if $experimental}
+      {#if $httpdStore.state === "stopped"}
+        <Popover popoverPositionTop="3rem" popoverPositionRight="0">
+          <Button
+            slot="toggle"
+            let:toggle
+            on:click={toggle}
+            title={buttonTitle[$httpdStore.state]}
+            variant="naked-toggle">
+            <IconSmall name="device" />
+            Connect
+          </Button>
+          <div slot="popover" class="connect-popover">
+            <ConnectInstructions />
+          </div>
+        </Popover>
+      {:else}
+        <NodeInfo node={$httpdStore.node} />
+        <Authenticate />
+      {/if}
     {/if}
   </div>
 </header>

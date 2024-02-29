@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
 
+  import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
   import { ISSUES_PER_PAGE } from "./router";
-  import { closeFocused } from "@app/components/Popover.svelte";
-  import { httpdStore } from "@app/lib/httpd";
   import { baseUrlToString, isLocal } from "@app/lib/utils";
-  import capitalize from "lodash/capitalize";
+  import { closeFocused } from "@app/components/Popover.svelte";
+  import { experimental } from "@app/lib/appearance";
+  import { httpdStore } from "@app/lib/httpd";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -146,7 +147,7 @@
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {baseUrl} />
-      {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
+      {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
         <Link
           route={{
             resource: "project.newIssue",

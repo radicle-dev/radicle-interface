@@ -17,6 +17,7 @@
   import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
+  import { experimental } from "@app/lib/appearance";
   import { HttpdClient } from "@httpd-client";
   import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
@@ -537,7 +538,7 @@
           {/if}
         </svelte:fragment>
         <div slot="description">
-          {#if issueState !== "read"}
+          {#if $experimental && issueState !== "read"}
             <ExtendedTextarea
               isValid={() => newTitle.length > 0}
               disallowEmptyBody
@@ -578,7 +579,7 @@
             <span class="txt-missing">No description</span>
           {/if}
           <div class="reactions">
-            {#if session}
+            {#if $experimental && session}
               <ReactionSelector
                 reactions={issue.discussion[0].reactions}
                 on:select={async ({ detail: { authors, emoji } }) => {
@@ -635,14 +636,20 @@
                   session?.publicKey,
                   project.delegates,
                 )}
-                editComment={session && partial(editComment, session.id)}
-                createReply={session && partial(createReply, session.id)}
-                reactOnComment={session && partial(reactOnComment, session)} />
+                editComment={$experimental &&
+                  session &&
+                  partial(editComment, session.id)}
+                createReply={$experimental &&
+                  session &&
+                  partial(createReply, session.id)}
+                reactOnComment={$experimental &&
+                  session &&
+                  partial(reactOnComment, session)} />
               <div class="connector" />
             {/each}
           </div>
         {/if}
-        {#if session}
+        {#if $experimental && session}
           {#if threads.length === 0}
             <div class="connector" />{/if}
           <CommentToggleInput

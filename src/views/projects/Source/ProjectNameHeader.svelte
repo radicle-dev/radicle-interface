@@ -4,12 +4,12 @@
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
-  import CloneButton from "../Header/CloneButton.svelte";
+  import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
-  import SeedButton from "../Header/SeedButton.svelte";
+  import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
   export let project: Project;

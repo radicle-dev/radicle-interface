@@ -1,8 +1,10 @@
 <script lang="ts">
   import * as modal from "@app/lib/modal";
+  import { experimental } from "@app/lib/appearance";
   import { httpdStore, api } from "@app/lib/httpd";
 
   import Button from "@app/components/Button.svelte";
+  import Command from "@app/components/Command.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -70,63 +72,80 @@
   .counter {
     font-weight: var(--font-weight-regular);
     border-radius: var(--border-radius-tiny);
-    background-color: var(--color-fill-secondary-counter);
+    background-color: var(--color-fill-ghost-hover);
     border: 1px solid var(--color-border-secondary-counter);
-    color: var(--color-foreground-match-background);
+    color: var(--color-foreground-contrast);
     padding: 0 0.25rem;
   }
   .seeding {
     background-color: var(--color-fill-counter-emphasized);
     color: var(--color-foreground-emphasized);
   }
+  .not-seeding {
+    background-color: var(--color-fill-secondary-counter);
+    color: var(--color-foreground-match-background);
+  }
   .disabled {
-    background-color: var(--color-fill-ghost-hover);
+    background-color: var(--color-fill-float-hover);
     color: var(--color-foreground-disabled);
   }
 </style>
 
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button
-    disabled={!canEditSeeding}
     slot="toggle"
+    disabled={$experimental ? !canEditSeeding : false}
     let:toggle
     on:click={async () => {
-      if (!seeding && canEditSeeding) {
+      if ($experimental && !seeding && canEditSeeding) {
         await editSeeding();
       } else {
         toggle();
       }
     }}
-    variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
+    variant={!$experimental
+      ? "outline"
+      : seeding
+        ? "secondary-toggle-on"
+        : "secondary-toggle-off"}>
     <IconSmall name="network" />
     <span class="title-counter">
       {seeding ? "Seeding" : "Seed"}
       <span
         class="counter"
-        class:seeding
-        class:disabled={!canEditSeeding}
+        class:seeding={$experimental ? seeding : false}
+        class:not-seeding={$experimental ? !seeding : false}
+        class:disabled={$experimental ? !canEditSeeding : false}
         style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>
     </span>
   </Button>
 
-  <div slot="popover" let:toggle style:width={seeding ? "19.5rem" : "30.5rem"}>
-    <div class="seed-label txt-bold">Stop seeding</div>
-    <div class="seed-label">
-      Are you sure you want to stop seeding this project? If you don't seed a
-      project it won't appear in the local projects section anymore and any
-      changes you make to it won't propagate to the network.
-    </div>
-    <Button
-      styleWidth="100%"
-      disabled={editSeedingInProgress}
-      on:click={async () => {
-        await editSeeding();
-        toggle();
-      }}>
-      <IconSmall name="network" />
-      Stop seeding
-    </Button>
+  <div
+    slot="popover"
+    style:width={$experimental ? (seeding ? "19.5rem" : "30.5rem") : "auto"}>
+    {#if $experimental && canEditSeeding && seeding}
+      <div class="seed-label txt-bold">Stop seeding</div>
+      <div class="seed-label">
+        Are you sure you want to stop seeding this project? If you don't seed a
+        project it won't appear in the local projects section anymore and any
+        changes you make to it won't propagate to the network.
+      </div>
+      <Button
+        styleWidth="100%"
+        disabled={editSeedingInProgress}
+        on:click={async () => {
+          await editSeeding();
+        }}>
+        <IconSmall name="network" />
+        Stop seeding
+      </Button>
+    {:else}
+      <span class="seed-label">
+        Use the Radicle CLI to {seeding ? "stop" : "start"} seeding this project.
+      </span>
+      <Command command={`rad ${seeding ? "unseed" : "seed"} ${projectId}`} />
+    {/if}
   </div>
 </Popover>

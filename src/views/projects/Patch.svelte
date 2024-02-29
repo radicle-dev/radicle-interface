@@ -46,6 +46,7 @@
   import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
+  import { experimental } from "@app/lib/appearance";
   import capitalize from "lodash/capitalize";
   import isEqual from "lodash/isEqual";
   import partial from "lodash/partial";
@@ -767,7 +768,7 @@
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if session && patchState !== "read" && lastEdit}
+            {#if $experimental && session && patchState !== "read" && lastEdit}
               <ExtendedTextarea
                 isValid={() => patch.title.length > 0}
                 enableAttachments
@@ -802,7 +803,7 @@
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
-            {#if session || (firstRevision.revisionReactions && firstRevision.revisionReactions.length > 0)}
+            {#if ($experimental && session) || (firstRevision.revisionReactions && firstRevision.revisionReactions.length > 0)}
               <div class="actions">
                 {#if session}
                   <ReactionSelector
@@ -979,15 +980,20 @@
                 session?.publicKey,
                 project.delegates,
               )}
-              editRevision={session &&
+              editRevision={$experimental &&
+                session &&
                 partial(editRevision, session.id, revision.revisionId)}
-              editComment={session &&
+              editComment={$experimental &&
+                session &&
                 partial(editComment, session.id, revision.revisionId)}
-              reactOnComment={session &&
+              reactOnComment={$experimental &&
+                session &&
                 partial(reactOnComment, session, revision.revisionId)}
-              reactOnRevision={session &&
+              reactOnRevision={$experimental &&
+                session &&
                 partial(reactOnRevision, session, revision.revisionId)}
-              createReply={session &&
+              createReply={$experimental &&
+                session &&
                 partial(createReply, session.id, revision.revisionId)}
               patchId={patch.id}
               patchState={patch.state}
@@ -995,7 +1001,7 @@
               previousRevId={previousRevision?.id}
               previousRevOid={previousRevision?.oid}>
               {#if index === patch.revisions.length - 1}
-                {#if session && view.name === "activity"}
+                {#if $experimental && session && view.name === "activity"}
                   <div class="connector" />
                   <CommentToggleInput
                     rawPath={rawPath(patch.revisions[0].id)}

@@ -151,6 +151,9 @@ export const test = base.extend<{
   },
 
   authenticatedPeer: async ({ page, peerManager }, use) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("experimental", "true");
+    });
     const peer = await peerManager.createPeer({
       name: "httpd",
       gitOptions: gitOptions["bob"],
@@ -161,6 +164,8 @@ export const test = base.extend<{
     const { stdout } = await peer.spawn("rad-web", [
       "http://localhost:3001",
       "--no-open",
+      "--path",
+      "/",
       "--connect",
       `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
     ]);

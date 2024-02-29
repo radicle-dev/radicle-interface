@@ -6,6 +6,7 @@ import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
 import { deduplicateStore } from "@app/lib/deduplicateStore";
+import { experimental } from "./appearance";
 
 export interface Session {
   id: string;
@@ -127,6 +128,15 @@ async function checkState() {
     .runExclusive(async () => {
       try {
         const node = await api.getNode();
+
+        // Return quickly and avoid additional fetches
+        // if experimental settings aren't updated
+        if (!get(experimental)) {
+          update({
+            state: "running",
+            node,
+          });
+        }
 
         if (httpdState && httpdState.state !== "stopped") {
           httpdState.node = node;

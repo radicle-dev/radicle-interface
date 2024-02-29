@@ -2,7 +2,9 @@
   import {
     codeFont,
     codeFonts,
+    experimental,
     storeCodeFont,
+    storeExperimental,
     storeTheme,
     theme,
   } from "@app/lib/appearance";
@@ -14,7 +16,7 @@
 
 <style>
   .settings {
-    width: 18.5rem;
+    width: 24rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,6 +75,31 @@
           </Button>
           <div class="global-spacer" />
         {/each}
+      </Radio>
+    </div>
+  </div>
+  <div class="item">
+    <div
+      style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem;">
+      Make changes on the web (experimental)
+    </div>
+    <div class="right">
+      <Radio>
+        <Button
+          styleBorderRadius="0"
+          on:click={() => storeExperimental(true)}
+          variant={$experimental ? "selected" : "not-selected"}>
+          On
+        </Button>
+        <div class="global-spacer" />
+        <Radio>
+          <Button
+            styleBorderRadius="0"
+            on:click={() => storeExperimental(undefined)}
+            variant={$experimental ? "not-selected" : "selected"}>
+            Off
+          </Button>
+        </Radio>
       </Radio>
     </div>
   </div>

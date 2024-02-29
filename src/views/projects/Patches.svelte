@@ -5,6 +5,7 @@
   import capitalize from "lodash/capitalize";
 
   import { PATCHES_PER_PAGE } from "./router";
+  import { experimental } from "@app/lib/appearance";
   import { httpdStore } from "@app/lib/httpd";
   import { baseUrlToString, isLocal } from "@app/lib/utils";
 
@@ -160,7 +161,7 @@
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {baseUrl} />
-      {#if $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
+      {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
         <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
           <Button
             slot="toggle"

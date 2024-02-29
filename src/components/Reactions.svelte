@@ -25,16 +25,23 @@
 
 <div class="reactions">
   {#each reactions as { emoji, authors }}
-    <IconButton
-      on:click={async () => {
-        if (handleReaction) {
-          await handleReaction(authors, emoji);
-        }
-      }}>
-      <div class="reaction txt-tiny">
+    {#if handleReaction}
+      <IconButton
+        on:click={async () => {
+          if (handleReaction) {
+            await handleReaction(authors, emoji);
+          }
+        }}>
+        <div class="reaction txt-tiny">
+          <span>{emoji}</span>
+          <span title={authors.join("\n")}>{authors.length}</span>
+        </div>
+      </IconButton>
+    {:else}
+      <div class="reaction txt-tiny" style="padding: 2px 4px;">
         <span>{emoji}</span>
         <span title={authors.join("\n")}>{authors.length}</span>
       </div>
-    </IconButton>
+    {/if}
   {/each}
 </div>

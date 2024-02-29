@@ -2,6 +2,7 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Project } from "@httpd-client";
 
+  import { experimental } from "@app/lib/appearance";
   import { queryProject } from "@app/lib/projects";
   import { httpdStore, api } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
@@ -36,7 +37,9 @@
   let queryingLocalProject: boolean = true;
   let localProject: "notFound" | "found" | undefined = undefined;
   $: hideContextHelp =
-    isLocal(baseUrl.hostname) && $httpdStore.state === "authenticated";
+    $experimental &&
+    isLocal(baseUrl.hostname) &&
+    $httpdStore.state === "authenticated";
 
   httpdStore.subscribe(async () => {
     if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
@@ -65,7 +68,13 @@
     queryingLocalProject = false;
   }
 
-  onMount(async () => await detectLocalProject());
+  onMount(async () => {
+    if ($httpdStore.state !== "stopped") {
+      await detectLocalProject();
+    } else {
+      localProject = "notFound";
+    }
+  });
 </script>
 
 <style>
@@ -250,7 +259,7 @@
   </div>
   <div class="bottom">
     <div class="help" class:expanded>
-      {#if !hideContextHelp && expanded}
+      {#if !hideContextHelp && expanded && $experimental}
         {#if !localProject}
           <div
             style="display: flex; justify-content: center; align-items: center; height: 2rem;">
