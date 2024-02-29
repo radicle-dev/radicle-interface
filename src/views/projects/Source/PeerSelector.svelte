@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Remote } from "@httpd-client";
-  import { type Route } from "@app/lib/router";
+  import type { Route } from "@app/lib/router";
 
   import { closeFocused } from "@app/components/Popover.svelte";
   import { formatNodeId } from "@app/lib/utils";
