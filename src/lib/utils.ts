@@ -4,8 +4,6 @@ import md5 from "md5";
 import bs58 from "bs58";
 import twemojiModule from "twemoji";
 
-import { base } from "@app/lib/router";
-
 export async function toClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
 }
@@ -278,7 +276,7 @@ export function twemoji(
         ? false
         : "".concat(options.base, options.size, "/", icon, options.ext);
     },
-    base,
+    base: "/",
     folder: "twemoji",
     ext: ".svg",
     className: `txt-emoji`,

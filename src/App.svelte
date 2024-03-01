@@ -32,10 +32,7 @@
   void httpd.initialize().finally(() => void router.loadFromLocation());
 
   if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
-    const plausible = Plausible({
-      domain: "app.radicle.xyz",
-      hashMode: import.meta.env.VITE_HASH_ROUTING,
-    });
+    const plausible = Plausible({ domain: "app.radicle.xyz" });
 
     plausible.enableAutoPageviews();
   }

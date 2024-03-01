@@ -146,11 +146,7 @@
       }
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (
-        imagePath &&
-        !isUrl(imagePath) &&
-        !imagePath.startsWith(`${router.base}twemoji`)
-      ) {
+      if (imagePath && !isUrl(imagePath) && !imagePath.startsWith("/twemoji")) {
         i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
       }
     }

@@ -34,8 +34,6 @@ export function useDefaultNavigation(event: MouseEvent) {
   );
 }
 
-export const base = import.meta.env.VITE_HASH_ROUTING ? "./" : "/";
-
 export async function loadFromLocation(): Promise<void> {
   await navigateToUrl("replace", new URL(window.location.href));
 }
@@ -44,28 +42,18 @@ export async function navigateToUrl(
   action: "push" | "replace",
   url: URL,
 ): Promise<void> {
-  let { pathname, hash } = url;
+  const { pathname, hash } = url;
 
   if (url.origin !== window.origin) {
     throw new Error("Cannot navigate to other origin");
   }
 
-  if (import.meta.env.VITE_HASH_ROUTING) {
-    if (pathname === "/" && hash && !hash.startsWith("#/")) {
-      // We land here if the user clicked an link with only a hash reference.
-      // Instead of going to the root page we stop routing here and have the
-      // browser take care of things.
-      return;
-    }
-    [pathname, hash] = hash.substring(1).split("#");
-  } else {
-    if (
-      currentUrl &&
-      currentUrl.pathname === pathname &&
-      currentUrl.search === url.search
-    ) {
-      return;
-    }
+  if (
+    currentUrl &&
+    currentUrl.pathname === pathname &&
+    currentUrl.search === url.search
+  ) {
+    return;
   }
 
   const relativeUrl = pathname + url.search + (hash || "");
@@ -91,9 +79,7 @@ async function navigate(
   newRoute: Route,
 ): Promise<void> {
   isLoading.set(true);
-  const path = import.meta.env.VITE_HASH_ROUTING
-    ? "#" + routeToPath(newRoute)
-    : routeToPath(newRoute);
+  const path = routeToPath(newRoute);
 
   if (action === "push") {
     window.history.pushState(newRoute, "", path);

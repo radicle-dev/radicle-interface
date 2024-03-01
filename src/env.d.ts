@@ -9,6 +9,5 @@ interface ImportMeta extends Readonly<Record<string, unknown>> {
     PROD: boolean;
     DEV: boolean;
     SSR: boolean;
-    VITE_HASH_ROUTING: boolean;
   };
 }

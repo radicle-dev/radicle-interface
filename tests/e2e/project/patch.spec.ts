@@ -101,7 +101,7 @@ test("navigate through revision diffs", async ({ page }) => {
       .getByRole("button")
       .click();
     await expect(
-      page.getByRole("link", { name: "Compare 88b7fd9..9e4fea" }),
+      page.getByRole("link", { name: "Compare 88b7fd..9e4fea" }),
     ).toBeVisible();
     await page.goBack();
   }

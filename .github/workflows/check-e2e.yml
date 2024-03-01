@@ -35,9 +35,7 @@ jobs:
           ./scripts/install-binaries;
 
       - name: Run Playwright tests
-        run: |
-          npm run test:e2e -- --project ${{ matrix.browser }};
-          npm run test:e2e:ipfs -- --project ${{ matrix.browser }};
+        run: npm run test:e2e -- --project ${{ matrix.browser }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
