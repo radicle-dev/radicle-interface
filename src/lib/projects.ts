@@ -2,20 +2,10 @@ import type { BaseUrl, Project } from "@httpd-client";
 
 import { HttpdClient } from "@httpd-client";
 import { isFulfilled } from "@app/lib/utils";
-import {
-  fetchLastCommit,
-  loadProjectActivity,
-  type WeeklyActivity,
-} from "./commit";
 
 export interface ProjectBaseUrl {
   project: Project;
   baseUrl: BaseUrl;
-}
-
-export interface ProjectWithListingData extends ProjectBaseUrl {
-  activity: WeeklyActivity[];
-  lastCommit: Awaited<ReturnType<typeof fetchLastCommit>>;
 }
 
 export async function getProjectsFromNodes(
@@ -32,32 +22,6 @@ export async function getProjectsFromNodes(
 
   const results = await Promise.allSettled(projectPromises);
   return results.filter(isFulfilled).map(r => r.value);
-}
-
-export async function getProjectListingData(id: string, baseUrl: BaseUrl) {
-  const activity = await loadProjectActivity(id, baseUrl);
-  const lastCommit = await fetchLastCommit(id, baseUrl);
-
-  return { activity, lastCommit };
-}
-
-export async function getProjectsListingData(projects: ProjectBaseUrl[]) {
-  const result = await Promise.all(
-    projects.map(async ({ project, baseUrl }) => {
-      const { activity, lastCommit } = await getProjectListingData(
-        project.id,
-        baseUrl,
-      );
-      return { project, activity, lastCommit, baseUrl };
-    }),
-  );
-
-  return result.sort((a, b) => {
-    const aLastCommit = a.lastCommit?.commit.committer.time ?? 0;
-    const bLastCommit = b.lastCommit?.commit.committer.time ?? 0;
-
-    return bLastCommit - aLastCommit;
-  });
 }
 
 export async function queryProject(

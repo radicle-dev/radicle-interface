@@ -116,10 +116,3 @@ export async function loadProjectActivity(id: string, baseUrl: BaseUrl) {
 
   return groupCommitsByWeek(commits.activity);
 }
-
-export async function fetchLastCommit(id: string, baseUrl: BaseUrl) {
-  const api = new HttpdClient(baseUrl);
-  const res = await api.project.getAllCommits(id, { perPage: 1 });
-
-  return res.commits[0];
-}

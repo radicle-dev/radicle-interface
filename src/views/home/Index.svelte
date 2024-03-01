@@ -1,17 +1,13 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-  import type { ProjectWithListingData } from "@app/lib/projects";
   import type { ComponentProps } from "svelte";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
-  import { HttpdClient } from "@httpd-client";
   import { derived } from "svelte/store";
   import { literal, union } from "zod";
 
   import { api, httpdStore } from "@app/lib/httpd";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
   import { baseUrlToString } from "@app/lib/utils";
-  import { getProjectsListingData } from "@app/lib/projects";
   import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
   import { preferredSeeds } from "@app/lib/seeds";
@@ -25,6 +21,10 @@
   import HomepageSection from "./components/HomepageSection.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
+  import {
+    fetchProjectInfos,
+    type ProjectInfo,
+  } from "@app/components/ProjectCard";
 
   const selectedSeed = deduplicateStore(
     derived(preferredSeeds, $ => $?.selected),
@@ -40,30 +40,17 @@
   );
 
   let localProjects:
-    | ProjectWithListingData[]
+    | ProjectInfo[]
     | ComponentProps<ErrorMessage>["error"]
     | undefined;
   let preferredSeedProjects:
-    | ProjectWithListingData[]
+    | ProjectInfo[]
     | ComponentProps<ErrorMessage>["error"]
     | undefined;
 
-  async function fetchProjects(baseUrl: BaseUrl, show: "all" | "pinned") {
-    const api = new HttpdClient(baseUrl);
-
-    const projects = (await api.project.getAll({ perPage: 30, show })).map(
-      project => ({
-        project,
-        baseUrl,
-      }),
-    );
-
-    return await getProjectsListingData(projects);
-  }
-
   async function loadLocalProjects() {
     localProjects = undefined;
-    localProjects = await fetchProjects(api.baseUrl, "all").catch(
+    localProjects = await fetchProjectInfos(api.baseUrl, "all").catch(
       error => error,
     );
   }
@@ -72,9 +59,10 @@
     preferredSeedProjects = undefined;
 
     if (!$selectedSeed) return;
-    preferredSeedProjects = await fetchProjects($selectedSeed, "pinned").catch(
-      error => error,
-    );
+    preferredSeedProjects = await fetchProjectInfos(
+      $selectedSeed,
+      "pinned",
+    ).catch(error => error);
   }
 
   function isSeeding(projectId: string) {
@@ -176,19 +164,12 @@
         </svelte:fragment>
         <div class="project-grid">
           {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
-            {#each filteredLocalProjects as { project, baseUrl, activity, lastCommit }}
+            {#each filteredLocalProjects as projectInfo}
               <ProjectCard
-                id={project.id}
-                name={project.name}
-                description={project.description}
-                numberOfIssues={project.issues.open}
-                numberOfPatches={project.patches.open}
-                isPrivate={project.visibility?.type === "private"}
+                {projectInfo}
                 isSeeding={true}
-                isDelegate={isDelegate(nodeId, project.delegates) ?? false}
-                lastUpdatedTimestamp={lastCommit.commit.committer.time}
-                {activity}
-                {baseUrl} />
+                isDelegate={isDelegate(nodeId, projectInfo.project.delegates) ??
+                  false} />
             {/each}
           {/if}
         </div>
@@ -228,19 +209,12 @@
       </svelte:fragment>
       <div class="project-grid">
         {#if preferredSeedProjects && !(preferredSeedProjects instanceof Error)}
-          {#each preferredSeedProjects as { project, baseUrl, activity, lastCommit }}
+          {#each preferredSeedProjects as projectInfo}
             <ProjectCard
-              id={project.id}
-              name={project.name}
-              description={project.description}
-              numberOfIssues={project.issues.open}
-              numberOfPatches={project.patches.open}
-              isPrivate={project.visibility?.type === "private"}
-              isSeeding={isSeeding(project.id)}
-              isDelegate={isDelegate(nodeId, project.delegates) ?? false}
-              lastUpdatedTimestamp={lastCommit.commit.committer.time}
-              {activity}
-              {baseUrl} />
+              {projectInfo}
+              isSeeding={isSeeding(projectInfo.project.id)}
+              isDelegate={isDelegate(nodeId, projectInfo.project.delegates) ??
+                false} />
           {/each}
         {/if}
       </div>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { BaseUrl, Policy, Scope } from "@httpd-client";
-  import type { ProjectWithListingData } from "@app/lib/projects";
 
   import capitalize from "lodash/capitalize";
 
@@ -14,11 +13,12 @@
   import ProjectCard from "@app/components/ProjectCard.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
   import HoverPopover from "@app/components/HoverPopover.svelte";
+  import type { ProjectInfo } from "@app/components/ProjectCard";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
   export let externalAddresses: string[];
-  export let projects: ProjectWithListingData[] = [];
+  export let projectInfos: ProjectInfo[];
   export let version: string;
   export let policy: Policy | undefined = undefined;
   export let scope: Scope | undefined = undefined;
@@ -135,7 +135,7 @@
 
       <div class="subtitle">
         <div class="pinned txt-semibold">
-          {projects.length}
+          {projectInfos.length}
           {isLocal(baseUrl.hostname) ? "" : "pinned"} projects
         </div>
 
@@ -188,20 +188,14 @@
       </div>
 
       <div class="project-grid">
-        {#each projects as { project, baseUrl, activity, lastCommit }}
+        {#each projectInfos as projectInfo}
           <ProjectCard
-            id={project.id}
-            name={project.name}
-            description={project.description}
-            numberOfIssues={project.issues.open}
-            numberOfPatches={project.patches.open}
-            isPrivate={project.visibility?.type === "private"}
+            {projectInfo}
             isSeeding={false}
-            isDelegate={isDelegate(session?.publicKey, project.delegates) ??
-              false}
-            lastUpdatedTimestamp={lastCommit.commit.committer.time}
-            {activity}
-            {baseUrl} />
+            isDelegate={isDelegate(
+              session?.publicKey,
+              projectInfo.project.delegates,
+            ) ?? false} />
         {/each}
       </div>
     </div>

@@ -1,12 +1,14 @@
 import type { BaseUrl, Policy, Scope } from "@httpd-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
-import type { ProjectWithListingData } from "@app/lib/projects";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
 import { baseUrlToString, isLocal } from "@app/lib/utils";
-import { getProjectsListingData } from "@app/lib/projects";
 import { handleError } from "@app/views/nodes/error";
+import {
+  fetchProjectInfos,
+  type ProjectInfo,
+} from "@app/components/ProjectCard";
 
 export interface NodesRouteParams {
   baseUrl: BaseUrl;
@@ -25,24 +27,10 @@ export interface NodesLoadedRoute {
     version: string;
     externalAddresses: string[];
     nid: string;
-    projects: ProjectWithListingData[];
+    projectInfos: ProjectInfo[];
     policy?: Policy;
     scope?: Scope;
   };
-}
-
-async function loadProjects(
-  baseUrl: BaseUrl,
-): Promise<ProjectWithListingData[]> {
-  const api = new HttpdClient(baseUrl);
-  const projects = await api.project.getAll({
-    show: isLocal(baseUrl.hostname) ? "all" : "pinned",
-  });
-  const results = await getProjectsListingData(
-    projects.map(p => ({ project: p, baseUrl })),
-  );
-
-  return results;
 }
 
 export function nodePath(baseUrl: BaseUrl) {
@@ -60,9 +48,12 @@ export async function loadNodeRoute(
 ): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
-    const [node, projects] = await Promise.all([
+    const [node, projectInfos] = await Promise.all([
       api.getNode(),
-      loadProjects(params.baseUrl),
+      fetchProjectInfos(
+        params.baseUrl,
+        isLocal(params.baseUrl.hostname) ? "all" : "pinned",
+      ),
     ]);
     return {
       resource: "nodes",
@@ -71,7 +62,7 @@ export async function loadNodeRoute(
         nid: node.id,
         externalAddresses: node.config?.externalAddresses ?? [],
         version: node.version,
-        projects: projects,
+        projectInfos: projectInfos,
         policy: node.config?.policy,
         scope: node.config?.scope,
       },

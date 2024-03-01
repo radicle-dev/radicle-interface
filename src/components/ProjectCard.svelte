@@ -1,32 +1,25 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-
-  import type { WeeklyActivity } from "@app/lib/commit";
   import { formatTimestamp, twemoji } from "@app/lib/utils";
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
 
+  import type { ProjectInfo } from "./ProjectCard";
+
   export let compact = false;
 
-  export let activity: WeeklyActivity[];
-  export let description: string;
-  export let baseUrl: BaseUrl;
-
-  export let numberOfIssues: number;
-  export let numberOfPatches: number;
+  export let projectInfo: ProjectInfo;
 
   export let isDelegate: boolean;
   export let isSeeding: boolean;
-  export let isPrivate: boolean;
 
-  export let lastUpdatedTimestamp: number;
-
-  $: lastUpdated = formatTimestamp(lastUpdatedTimestamp);
-
-  export let id: string;
-  export let name: string;
+  $: project = projectInfo.project;
+  $: baseUrl = projectInfo.baseUrl;
+  $: isPrivate = project.visibility?.type === "private";
+  $: lastUpdated = formatTimestamp(
+    projectInfo.lastCommit.commit.committer.time,
+  );
 </script>
 
 <style>
@@ -138,21 +131,21 @@
 <Link
   route={{
     resource: "project.source",
-    project: id,
+    project: project.id,
     node: baseUrl,
   }}>
   <div class="project-card" class:compact>
     <div class="activity">
       <div class="fadeout-overlay" />
       <ActivityDiagram
-        {id}
+        id={project.id}
         viewBoxHeight={200}
         styleColor="var(--color-foreground-primary"
-        {activity} />
+        activity={projectInfo.activity} />
     </div>
     <div class="title">
       <div class="headline-and-badges">
-        <h4 use:twemoji>{name}</h4>
+        <h4 use:twemoji>{project.name}</h4>
         <div class="badges">
           {#if isPrivate}
             <div
@@ -180,14 +173,14 @@
           {/if}
         </div>
       </div>
-      <p class="txt-small" use:twemoji>{description}</p>
+      <p class="txt-small" use:twemoji>{project.description}</p>
     </div>
     <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
       <IconSmall name="issue" />
-      {numberOfIssues} ·
+      {project.issues.open} ·
       <IconSmall name="patch" />
       <span style:overflow="hidden" style:text-overflow="ellipsis">
-        {numberOfPatches} · Updated {lastUpdated}
+        {project.patches.open} · Updated {lastUpdated}
       </span>
     </div>
   </div>
