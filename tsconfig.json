@@ -23,7 +23,7 @@
       "@httpd-client": ["./httpd-client/index.ts"],
       "@httpd-client/*": ["./httpd-client/*"],
       "@public/*": ["./public/*"],
-      "@tests/*": ["./tests/*"],
-    },
-  },
+      "@tests/*": ["./tests/*"]
+    }
+  }
 }
