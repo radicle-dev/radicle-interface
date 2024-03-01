@@ -449,13 +449,15 @@ test.describe("browser error handling", () => {
   });
 });
 
-test("external markdown link", async ({ page }) => {
+test("external markdown link", async ({ context, page }) => {
   await page.route("https://example.com/**", route => {
     return route.fulfill({ body: "hello", contentType: "text/plain" });
   });
   await page.goto(`${markdownUrl}/tree/main/footnotes.md`);
+  const pagePromise = context.waitForEvent("page");
   await page.getByRole("link", { name: "https://example.com" }).click();
-  await expect(page).toHaveURL("https://example.com");
+  const newPage = await pagePromise;
+  await expect(newPage).toHaveURL("https://example.com");
 });
 
 test("internal file markdown link", async ({ page }) => {

@@ -98,8 +98,14 @@
   }
 
   afterUpdate(async () => {
-    // Don't underline <a> tags that contain images.
     for (const e of container.querySelectorAll("a")) {
+      if (URL.canParse(e.href)) {
+        const url = new URL(e.href);
+        if (url.origin !== window.origin) {
+          e.target = "_blank";
+        }
+      }
+      // Don't underline <a> tags that contain images.
       if (e.firstElementChild instanceof HTMLImageElement) {
         e.classList.add("no-underline");
       }
