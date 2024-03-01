@@ -11,8 +11,6 @@
   export let placeholder: string | undefined = undefined;
   export let value: string | undefined = undefined;
 
-  export let size: "regular" | "small" = "regular";
-
   export let autofocus: boolean = false;
   export let disabled: boolean = false;
   export let loading: boolean = false;
@@ -71,7 +69,7 @@
     position: relative;
     flex: 1;
     align-items: center;
-    height: var(--button-regular-height);
+    height: var(--button-small-height);
     background: var(--color-background-dip);
   }
   input {
@@ -79,6 +77,7 @@
     font-size: var(--font-size-small);
     color: var(--color-foreground-contrast);
     border: 1px solid var(--color-border-hint);
+    border-radius: var(--border-radius-tiny);
     line-height: 1.6;
     outline: none;
     text-overflow: ellipsis;
@@ -124,41 +123,16 @@
     padding-left: 0.5rem;
     overflow: hidden;
     height: 100%;
-  }
-  .invalid {
-    border: 1px solid var(--color-border-error);
-  }
-
-  .small {
-    height: var(--button-small-height);
-  }
-  .small input {
-    border-radius: var(--border-radius-tiny);
-  }
-  .small .right-container {
     border-top-right-radius: var(--border-radius-tiny);
     border-bottom-right-radius: var(--border-radius-tiny);
     gap: 0.25rem;
   }
-
-  .regular {
-    height: var(--button-regular-height);
-  }
-  .regular input {
-    border-radius: var(--border-radius-small);
-  }
-  .regular .right-container {
-    border-top-right-radius: var(--border-radius-small);
-    border-bottom-right-radius: var(--border-radius-small);
-    padding-right: 0.5rem;
-    gap: 0.5rem;
+  .invalid {
+    border: 1px solid var(--color-border-error);
   }
 </style>
 
-<div
-  class="wrapper"
-  class:small={size === "small"}
-  class:regular={size === "regular"}>
+<div class="wrapper">
   <input
     class:invalid={!valid && value}
     style:padding-right={rightContainerWidth
@@ -177,10 +151,7 @@
     on:click
     on:change />
 
-  <div
-    class="right-container"
-    class:small={size === "small"}
-    bind:clientWidth={rightContainerWidth}>
+  <div class="right-container" bind:clientWidth={rightContainerWidth}>
     {#if loading}
       <Loading small noDelay />
     {/if}
