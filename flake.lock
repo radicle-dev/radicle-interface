@@ -88,17 +88,17 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1707134016,
-        "narHash": "sha256-Cu8fHlircqH6qY9fN7Q5EWFgOZN1751BTKAKUI0AVQo=",
+        "lastModified": 1708953793,
+        "narHash": "sha256-DGgH8+ibr1WspyUeKeHaW87VzYHf9jzzjyFlOeT6ZoA=",
         "ref": "master",
-        "rev": "5abd7bf55a093341231c8b71953777068eade0e2",
-        "revCount": 1667,
+        "rev": "a48081f2717f069d456ec09f31d9e639b232dbed",
+        "revCount": 1712,
         "type": "git",
         "url": "https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git"
       },
       "original": {
         "ref": "master",
-        "rev": "5abd7bf55a093341231c8b71953777068eade0e2",
+        "rev": "a48081f2717f069d456ec09f31d9e639b232dbed",
         "type": "git",
         "url": "https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git"
       }

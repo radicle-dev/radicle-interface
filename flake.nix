@@ -4,7 +4,7 @@
     nixpkgs.follows = "heartwood/nixpkgs";
     flake-utils.follows = "heartwood/flake-utils";
     heartwood = {
-      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=5abd7bf55a093341231c8b71953777068eade0e2";
+      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=a48081f2717f069d456ec09f31d9e639b232dbed";
     };
   };
 
@@ -73,7 +73,7 @@
           pname = "radicle-interface";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-qBWE4Rku9Uaz970ReDt6FjdLf+9ZckzuwWUQS1eKnDU=";
+          npmDepsHash = "sha256-fh49kEDPLGu9weFpU+sOwvpayNpp7VCF6zzkty381A=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
