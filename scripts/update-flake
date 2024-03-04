@@ -64,7 +64,7 @@ if [ -e "$root/flake.nix" ]; then
         npmDepsHash=$(nix --experimental-features 'nix-command flakes' \
             run --inputs-from "$root" nixpkgs#prefetch-npm-deps \
             -- "$root/package-lock.json")
-        sed -E -e '/npmDepsHash/s/".*"/"'"$npmDepsHash"'"/' "$root/flake.nix" >$root/flake.nix.tmp
+        sed -E -e '/npmDepsHash/s#".*"#"'"$npmDepsHash"'"#' "$root/flake.nix" >$root/flake.nix.tmp
         mv "$root/flake.nix.tmp" "$root/flake.nix"
 
         nix --experimental-features 'nix-command flakes' flake update "$root"
