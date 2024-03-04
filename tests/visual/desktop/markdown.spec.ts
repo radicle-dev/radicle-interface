@@ -60,6 +60,18 @@ test.describe("markdown rendering basics", async () => {
     await expect(page).toHaveScreenshot();
   });
 
+  test("code clipboard icon on hover", async ({ page }) => {
+    await goToSection("#code", page);
+    const codeBlock = page
+      .locator("div.pre-wrapper")
+      .filter({ hasText: "Inline `code` has `back-ticks" });
+    await expect(
+      codeBlock.locator("radicle-clipboard > .clipboard"),
+    ).toBeHidden();
+    await codeBlock.hover();
+    await expect(page).toHaveScreenshot();
+  });
+
   test("tables", async ({ page }) => {
     await goToSection("#tables", page);
     await expect(page.getByText("Tables aren't part of the")).toBeVisible();
