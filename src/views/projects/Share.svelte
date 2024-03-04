@@ -65,7 +65,7 @@
       <Loading small noDelay />
     {:else}
       <IconSmall name={shareIcon} />
-      {shareIcon === "share" ? "Share" : "Link copied"}
+      Share
     {/if}
   </Button>
 {/if}

@@ -627,13 +627,11 @@
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-large);
-    height: 2.5rem;
   }
   .bottom {
     background-color: var(--color-background-default);
@@ -664,6 +662,8 @@
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
+    font-family: var(--font-family-sans-serif);
+    font-size: var(--font-size-small);
     gap: 0.5rem;
   }
   .metadata-section-header {

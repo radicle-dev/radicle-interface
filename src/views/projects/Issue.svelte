@@ -455,13 +455,11 @@
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-large);
-    height: 2.5rem;
   }
   .reactions {
     display: flex;
