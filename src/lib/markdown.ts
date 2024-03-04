@@ -53,7 +53,7 @@ const footnoteReferenceMarkedExtension = {
   renderer: (token: Tokens.Generic): string =>
     `<sup class="txt-tiny footnote-ref" id="${referencePrefix}:${token.text}"><a href="#${footnotePrefix}:${token.text}">[${token.text}]</a></sup>`,
 };
-const footnoteMatch = /^\[\^([^\]]+)\]:\s([\S]*)/;
+const footnoteMatch = /^\[\^([^\]]+)\]:\s([\S].*)/;
 const footnoteMarkedExtension = {
   name: "footnote",
   level: "block",

@@ -103,22 +103,32 @@ test("footnotes", async ({ page }) => {
   });
   await expect(
     page.locator(
-      "text=This is an example footnote[0]. And some radicle[1] examples.",
+      "text=This is an example footnote[1]. And some radicle[2] examples.[3]",
     ),
   ).toBeVisible();
   await page.getByRole("button", { name: "Collapse" }).click();
-  await expect(page.getByText("0. https://example.com ↩")).toBeVisible();
-  await expect(page.getByText("1. https://radicle.xyz ↩")).toBeVisible();
+  await expect(page.getByText("1. https://example.com ↩")).toBeVisible();
+  await expect(page.getByText("2. https://radicle.xyz ↩")).toBeVisible();
+  await expect(
+    page.getByText(
+      "3. A corporeal grounding, though one hardly to the exclusion of the cerebral as in the erroneous sense of a mind/body dichotomy, except insofar as what is most squarely in the cerebral would land here only on the periphery of our focus. ↩",
+    ),
+  ).toBeVisible();
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   await page.getByText("Code").click();
   await expect(
     page.locator(
-      "text=This is an example footnote[^0]. And some radicle[^1] examples.",
+      "text=This is an example footnote[^1]. And some radicle[^2] examples.[^3]",
     ),
   ).toBeVisible();
-  await expect(page.getByText("[^0]: https://example.com")).toBeVisible();
-  await expect(page.getByText("[^1]: https://radicle.xyz")).toBeVisible();
+  await expect(page.getByText("[^1]: https://example.com")).toBeVisible();
+  await expect(page.getByText("[^2]: https://radicle.xyz")).toBeVisible();
+  await expect(
+    page.getByText(
+      "[^3]: A corporeal grounding, though one hardly to the exclusion of the _cerebral_ as in the erroneous sense of a mind/body dichotomy, except insofar as what is most squarely in the cerebral would land here only on the periphery of our focus.",
+    ),
+  ).toBeVisible();
 });
 
 test("math", async ({ page }) => {
