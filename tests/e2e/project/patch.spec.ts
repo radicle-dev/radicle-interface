@@ -59,7 +59,7 @@ test("navigate through revision diffs", async ({ page }) => {
     .click();
 
   const firstRevision = page.locator(".revision").first();
-  const firstRevisionId = "59aa91a";
+  const firstRevisionId = "59a0821";
   const secondRevision = page.locator(".revision").nth(1);
 
   // Second revision
