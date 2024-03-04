@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Node } from "@httpd-client";
+  import type { HttpdNodeState } from "@app/lib/httpd";
 
   import { capitalize } from "lodash";
 
@@ -9,7 +9,7 @@
   import Popover from "@app/components/Popover.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
-  export let node: Node;
+  export let node: HttpdNodeState;
 </script>
 
 <style>
@@ -46,23 +46,21 @@
         Your node is running and syncing with the network.
       </div>
 
-      {#if node.config?.scope && node.config?.policy}
+      {#if node.scope && node.policy}
         <div class="scope-policy">
           <div style:display="flex">
             Seeding Policy: <span style:margin-left="auto" class="txt-semibold">
-              {capitalize(node.config.policy)}
+              {capitalize(node.policy)}
             </span>
           </div>
           <div style:display="flex" style:margin-bottom="1rem">
             Scope:
             <span style:margin-left="auto" class="txt-semibold">
-              {capitalize(node.config.scope)}
+              {capitalize(node.scope)}
             </span>
           </div>
 
-          <ScopePolicyExplainer
-            scope={node.config.scope}
-            policy={node.config.policy} />
+          <ScopePolicyExplainer scope={node.scope} policy={node.policy} />
         </div>
       {/if}
       <div class="label">

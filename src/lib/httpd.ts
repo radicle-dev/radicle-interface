@@ -1,4 +1,4 @@
-import type { Node } from "@httpd-client";
+import type { Node, Policy, Scope } from "@httpd-client";
 
 import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
@@ -14,13 +14,23 @@ export interface Session {
   alias: string;
 }
 
+export interface HttpdNodeState {
+  id: Node["id"];
+  state: Node["state"];
+  policy: Policy | undefined;
+  scope: Scope | undefined;
+}
+
 export type HttpdState =
   | { state: "stopped" }
-  | { state: "running"; node: Node }
+  | {
+      state: "running";
+      node: HttpdNodeState;
+    }
   | {
       state: "authenticated";
       session: Session;
-      node: Node;
+      node: HttpdNodeState;
     };
 
 const HTTPD_STATE_STORAGE_KEY = "httpdState";
@@ -61,7 +71,7 @@ export async function authenticate(params: {
         sig: params.signature,
         pk: params.publicKey,
       });
-      const node = await api.getNode();
+      const { id, state, config } = await api.getNode();
       const sess = await api.session.getById(params.id);
       update({
         state: "authenticated",
@@ -70,7 +80,7 @@ export async function authenticate(params: {
           publicKey: params.publicKey,
           alias: sess.alias,
         },
-        node,
+        node: { id, state, policy: config?.policy, scope: config?.scope },
       });
       return true;
     } catch (error) {
@@ -92,10 +102,15 @@ export async function disconnect() {
 
       try {
         await api.session.delete(httpd.session.id);
-        const node = await api.getNode();
+        const { id, state, config } = await api.getNode();
         update({
           state: "running",
-          node,
+          node: {
+            id,
+            state,
+            policy: config?.policy,
+            scope: config?.scope,
+          },
         });
       } catch (error) {
         console.error(error);
@@ -127,7 +142,13 @@ async function checkState() {
   await stateMutex
     .runExclusive(async () => {
       try {
-        const node = await api.getNode();
+        const { id, state, config } = await api.getNode();
+        const node = {
+          id,
+          state,
+          policy: config?.policy,
+          scope: config?.scope,
+        };
 
         // Return quickly and avoid additional fetches
         // if experimental settings aren't updated
