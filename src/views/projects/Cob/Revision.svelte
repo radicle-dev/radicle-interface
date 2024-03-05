@@ -418,7 +418,7 @@
             <span title={utils.absoluteTimestamp(revisionTimestamp)}>
               {utils.formatTimestamp(revisionTimestamp)}
             </span>
-            {#if lastEdit}
+            {#if revisionEdits.length > 1 && lastEdit}
               <div class="author-metadata">•</div>
               <div
                 class="author-metadata"

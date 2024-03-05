@@ -393,7 +393,7 @@
       : undefined;
   $: lastDescriptionEdit =
     issue.discussion[0].edits.length > 1
-      ? issue.discussion[0].edits.pop()
+      ? issue.discussion[0].edits.at(-1)
       : undefined;
 
   type State = "read" | "edit" | "submit";

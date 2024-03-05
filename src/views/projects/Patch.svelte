@@ -842,7 +842,7 @@
           <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
             {utils.formatTimestamp(patch.revisions[0].timestamp)}
           </span>
-          {#if lastEdit}
+          {#if patch.revisions[0].edits.length > 1 && lastEdit}
             <div class="author-metadata">•</div>
             <div
               class="author-metadata"
