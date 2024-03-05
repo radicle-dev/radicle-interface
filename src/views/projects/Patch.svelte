@@ -60,6 +60,7 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
@@ -78,8 +79,8 @@
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
+  import Share from "@app/views/projects/Share.svelte";
   import TextInput from "@app/components/TextInput.svelte";
-  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
@@ -834,7 +835,9 @@
         <div class="author" slot="author">
           <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
           opened
-          <span class="global-oid">{utils.formatObjectId(patch.id)}</span>
+          <CopyableId id={patch.id} style="oid">
+            {utils.formatObjectId(patch.id)}
+          </CopyableId>
           <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
             {utils.formatTimestamp(patch.revisions[0].timestamp)}
           </span>

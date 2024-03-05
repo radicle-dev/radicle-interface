@@ -24,13 +24,14 @@
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Badge from "@app/components/Badge.svelte";
+  import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
-  import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
@@ -39,9 +40,9 @@
   import NodeId from "@app/components/NodeId.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
+  import Share from "@app/views/projects/Share.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
-  import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -601,7 +602,9 @@
         <div class="author" slot="author">
           <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
           opened
-          <span class="global-oid">{utils.formatObjectId(issue.id)}</span>
+          <CopyableId id={issue.id} style="oid">
+            {utils.formatObjectId(issue.id)}
+          </CopyableId>
           <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
             {utils.formatTimestamp(issue.discussion[0].timestamp)}
           </span>

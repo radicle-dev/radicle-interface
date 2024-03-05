@@ -5,6 +5,7 @@
 
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
+  import CopyableId from "@app/components/CopyableId.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
   import Share from "./Share.svelte";
@@ -49,7 +50,9 @@
           <Share {baseUrl} />
         </span>
         <CommitAuthorship {header}>
-          <span class="global-commit">{formatCommit(header.id)}</span>
+          <CopyableId id={header.id} style="commit">
+            {formatCommit(header.id)}
+          </CopyableId>
         </CommitAuthorship>
       </div>
       {#if header.description}

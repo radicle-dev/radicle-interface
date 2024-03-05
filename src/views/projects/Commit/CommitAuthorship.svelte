@@ -16,6 +16,7 @@
     font-size: var(--font-size-small);
     gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
   }
   .person {
     display: flex;

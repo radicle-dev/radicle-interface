@@ -1,14 +1,12 @@
 <script lang="ts">
   import type { ProjectLoadedRoute } from "@app/views/projects/router";
 
-  import * as utils from "@app/lib/utils";
   import { unreachable } from "@app/lib/utils";
 
-  import CopyableId from "@app/components/CopyableId.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Separator from "./Separator.svelte";
-  import FilePath from "@app/components/FilePath.svelte";
 
   export let activeRoute: ProjectLoadedRoute;
 </script>
@@ -21,6 +19,11 @@
   }
   .segment :global(a:hover) {
     color: var(--color-fill-secondary);
+  }
+  .id {
+    font-size: var(--font-size-small);
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
   }
 </style>
 
@@ -93,17 +96,17 @@
 
 {#if activeRoute.resource === "project.commit"}
   <Separator />
-  <CopyableId id={activeRoute.params.commit.commit.id} style="commit">
-    {utils.formatCommit(activeRoute.params.commit.commit.id)}
-  </CopyableId>
+  <span class="id">
+    {activeRoute.params.commit.commit.id}
+  </span>
 {:else if activeRoute.resource === "project.issue"}
   <Separator />
-  <CopyableId id={activeRoute.params.issue.id} style="oid">
-    {utils.formatObjectId(activeRoute.params.issue.id)}
-  </CopyableId>
+  <span class="id">
+    {activeRoute.params.issue.id}
+  </span>
 {:else if activeRoute.resource === "project.patch"}
   <Separator />
-  <CopyableId id={activeRoute.params.patch.id} style="oid">
-    {utils.formatObjectId(activeRoute.params.patch.id)}
-  </CopyableId>
+  <span class="id">
+    {activeRoute.params.patch.id}
+  </span>
 {/if}
