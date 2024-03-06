@@ -30,10 +30,11 @@ function loadCodeFont(): CodeFont {
 }
 
 function loadTheme(): Theme {
+  const { matches } = window.matchMedia("(prefers-color-scheme: dark)");
   const storedTheme = window.localStorage.getItem("theme");
 
   if (storedTheme === null) {
-    return "dark";
+    return matches ? "dark" : "light";
   } else {
     return storedTheme as Theme;
   }
