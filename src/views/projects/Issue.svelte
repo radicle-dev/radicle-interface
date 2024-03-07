@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { Reaction } from "@httpd-client/lib/project/comment";
   import type {
     BaseUrl,
+    Comment,
+    Embed,
     Issue,
     IssueState,
-    Embed,
     Project,
   } from "@httpd-client";
   import type { Session } from "@app/lib/httpd";
@@ -166,9 +168,10 @@
   async function reactOnComment(
     session: Session,
     commentId: string,
-    nids: string[],
+    authors: Comment["reactions"][0]["authors"],
     reaction: string,
   ) {
+    console.log(session.publicKey, authors);
     try {
       await api.project.updateIssue(
         project.id,
@@ -177,7 +180,9 @@
           type: "comment.react",
           id: commentId,
           reaction,
-          active: nids.includes(session.publicKey) ? false : true,
+          active: !authors.find(
+            ({ id }) => utils.parseNodeId(id)?.pubkey === session.publicKey,
+          ),
         },
         session.id,
       );
@@ -275,12 +280,15 @@
     }
   }
 
-  async function saveAssignees(sessionId: string, assignees: string[]) {
+  async function saveAssignees(
+    sessionId: string,
+    assignees: Reaction["authors"],
+  ) {
     try {
       await api.project.updateIssue(
         project.id,
         issue.id,
-        { type: "assign", assignees },
+        { type: "assign", assignees: assignees.map(({ id }) => id) },
         sessionId,
       );
     } catch (error) {

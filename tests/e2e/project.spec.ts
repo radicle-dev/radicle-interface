@@ -34,7 +34,7 @@ test("navigate to project", async ({ page }) => {
     );
     await expect(
       page.getByRole("link", {
-        name: "Commits 6",
+        name: "Commits 7",
       }),
     ).toBeVisible();
   }
@@ -54,7 +54,7 @@ test("navigate to project", async ({ page }) => {
 
 test("show source tree at specific revision", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "Commits 6" }).click();
+  await page.getByRole("link", { name: "Commits 7" }).click();
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
@@ -120,7 +120,7 @@ test("navigate deep file hierarchies", async ({ page }) => {
   await sourceTree.getByText("entirely").click();
   await sourceTree.getByText("possible").click();
   await sourceTree.getByText("in").nth(1).click();
-  await sourceTree.getByText("git").click();
+  await sourceTree.getByRole("button", { name: "git" }).click();
   await sourceTree.getByText("repositories").click();
   await sourceTree.getByText(".gitkeep").click();
   await expect(
@@ -149,6 +149,11 @@ test("navigate deep file hierarchies", async ({ page }) => {
       page.getByText("0801ace Add a deeply nested directory tree"),
     ).toBeVisible();
   }
+});
+
+test("submodules", async ({ page }) => {
+  await page.goto(sourceBrowsingUrl);
+  await expect(page.getByText("rips @ 329dee9")).toBeVisible();
 });
 
 test("files with special characters in the filename", async ({ page }) => {

@@ -1,4 +1,6 @@
 <script lang="ts" strictEvents>
+  import type { Reaction } from "@httpd-client";
+
   import { createEventDispatcher } from "svelte";
 
   import { formatNodeId, parseNodeId } from "@app/lib/utils";
@@ -9,14 +11,16 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
-  const dispatch = createEventDispatcher<{ save: string[] }>();
+  const dispatch = createEventDispatcher<{
+    save: Reaction["authors"];
+  }>();
 
   export let locallyAuthenticated: boolean = false;
-  export let assignees: string[] = [];
+  export let assignees: Reaction["authors"] = [];
   export let submitInProgress: boolean = false;
 
   let showInput: boolean = false;
-  let updatedAssignees: string[] = assignees;
+  let updatedAssignees: Reaction["authors"] = assignees;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
   let valid: boolean = false;
@@ -29,7 +33,7 @@
       const parsedNodeId = parseNodeId(inputValue);
       if (parsedNodeId) {
         assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
-        if (updatedAssignees.includes(assignee)) {
+        if (!updatedAssignees.find(({ id }) => id === assignee)) {
           valid = false;
           validationMessage = "This assignee is already added";
         } else {
@@ -48,7 +52,7 @@
 
   function addAssignee() {
     if (valid && assignee) {
-      updatedAssignees = [...updatedAssignees, assignee];
+      updatedAssignees = [...updatedAssignees, { id: assignee }];
       inputValue = "";
       dispatch("save", updatedAssignees);
       showInput = false;
@@ -56,7 +60,7 @@
   }
 
   function removeAssignee(assignee: string) {
-    updatedAssignees = updatedAssignees.filter(x => x !== assignee);
+    updatedAssignees = updatedAssignees.filter(({ id }) => id !== assignee);
     dispatch("save", updatedAssignees);
     showInput = false;
   }
@@ -98,15 +102,16 @@
           variant="neutral"
           size="small"
           style="cursor: pointer;"
-          on:click={() => (removeToggles[assignee] = !removeToggles[assignee])}>
+          on:click={() =>
+            (removeToggles[assignee.id] = !removeToggles[assignee.id])}>
           <div class="assignee">
-            <Avatar inline nodeId={assignee} />
-            <span>{formatNodeId(assignee)}</span>
-            {#if removeToggles[assignee]}
+            <Avatar inline nodeId={assignee.id} />
+            <span>{formatNodeId(assignee.id)}</span>
+            {#if removeToggles[assignee.id]}
               <IconButton title="remove assignee">
                 <IconSmall
                   name="cross"
-                  on:click={() => removeAssignee(assignee)} />
+                  on:click={() => removeAssignee(assignee.id)} />
               </IconButton>
             {/if}
           </div>
@@ -153,8 +158,8 @@
       {#each updatedAssignees as assignee}
         <Badge variant="neutral" size="small">
           <div class="assignee">
-            <Avatar inline nodeId={assignee} />
-            <span>{formatNodeId(assignee)}</span>
+            <Avatar inline nodeId={assignee.id} />
+            <span>{formatNodeId(assignee.id)}</span>
           </div>
         </Badge>
       {:else}

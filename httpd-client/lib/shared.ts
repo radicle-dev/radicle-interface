@@ -70,3 +70,8 @@ export const codeLocationSchema = object({
 });
 
 export type CodeLocation = z.infer<typeof codeLocationSchema>;
+
+export const authorSchema = object({
+  id: string(),
+  alias: string().optional(),
+});

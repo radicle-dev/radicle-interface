@@ -15,13 +15,9 @@ import {
   tuple,
   union,
 } from "zod";
-import { codeLocationSchema } from "../shared.js";
+import { authorSchema } from "../shared.js";
 
-export type PatchState =
-  | { status: "draft" }
-  | { status: "open"; conflicts?: [string, string][] }
-  | { status: "archived" }
-  | { status: "merged"; revision: string; commit: string };
+export type PatchState = z.infer<typeof patchStateSchema>;
 
 const patchStateSchema = union([
   object({
@@ -39,26 +35,21 @@ const patchStateSchema = union([
     revision: string(),
     commit: string(),
   }),
-]) satisfies ZodSchema<PatchState>;
+]);
 
-export interface Merge {
-  author: { id: string; alias?: string };
-  revision: string;
-  commit: string;
-  timestamp: number;
-}
+export type Merge = z.infer<typeof mergeSchema>;
 
 const mergeSchema = object({
-  author: object({ id: string(), alias: string().optional() }),
+  author: authorSchema,
   revision: string(),
   commit: string(),
   timestamp: number(),
-}) satisfies ZodSchema<Merge>;
+});
 
 export type Verdict = "accept" | "reject";
 
 const reviewSchema = object({
-  author: object({ id: string(), alias: string().optional() }),
+  author: authorSchema,
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
   comments: array(commentSchema),
   summary: string().nullable(),
@@ -69,11 +60,11 @@ export type Review = z.infer<typeof reviewSchema>;
 
 const revisionSchema = object({
   id: string(),
-  author: object({ id: string(), alias: string().optional() }),
+  author: authorSchema,
   description: string(),
   edits: array(
     object({
-      author: object({ id: string(), alias: string().optional() }),
+      author: authorSchema,
       body: string(),
       embeds: array(object({ name: string(), content: string() })),
       timestamp: number(),
@@ -82,8 +73,7 @@ const revisionSchema = object({
   reactions: array(
     object({
       emoji: string(),
-      location: codeLocationSchema.nullable(),
-      authors: array(string()),
+      authors: array(authorSchema),
     }),
   ),
   base: string(),
@@ -98,7 +88,7 @@ export type Revision = z.infer<typeof revisionSchema>;
 
 export const patchSchema = object({
   id: string(),
-  author: object({ id: string(), alias: string().optional() }),
+  author: authorSchema,
   title: string(),
   state: patchStateSchema,
   target: string(),

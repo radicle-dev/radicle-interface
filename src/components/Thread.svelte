@@ -25,7 +25,11 @@
     | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
     | undefined;
   export let reactOnComment:
-    | ((commentId: string, nids: string[], reaction: string) => Promise<void>)
+    | ((
+        commentId: string,
+        authors: Comment["reactions"][0]["authors"],
+        reaction: string,
+      ) => Promise<void>)
     | undefined;
 
   async function toggleReply() {

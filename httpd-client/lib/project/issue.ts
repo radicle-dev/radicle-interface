@@ -3,6 +3,7 @@ import type { ZodSchema, z } from "zod";
 import { array, boolean, literal, object, string, union } from "zod";
 
 import { commentSchema } from "./comment.js";
+import { authorSchema } from "../shared.js";
 
 export type IssueState =
   | { status: "open" }
@@ -18,12 +19,12 @@ const issueStateSchema = union([
 
 export const issueSchema = object({
   id: string(),
-  author: object({ id: string(), alias: string().optional() }),
+  author: authorSchema,
   title: string(),
   state: issueStateSchema,
   discussion: array(commentSchema),
   labels: array(string()),
-  assignees: array(string()),
+  assignees: array(authorSchema),
 });
 
 export type Issue = z.infer<typeof issueSchema>;

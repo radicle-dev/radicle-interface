@@ -6,6 +6,7 @@
   import File from "./Tree/File.svelte";
   import Folder from "./Tree/Folder.svelte";
   import Link from "@app/components/Link.svelte";
+  import Submodule from "./Tree/Submodule.svelte";
 
   export let baseUrl: BaseUrl;
   export let fetchTree: (path: string) => Promise<Tree | undefined>;
@@ -33,6 +34,8 @@
       {peer}
       {projectId}
       {revision} />
+  {:else if entry.kind === "submodule"}
+    <Submodule name={entry.name} oid={entry.oid} />
   {:else}
     <Link
       route={{

@@ -66,7 +66,7 @@ test.describe("project page navigation", () => {
       .waitFor({ state: "hidden" });
     await expect(page).toHaveURL(projectTreeURL);
 
-    await page.getByRole("link", { name: "Commits 6" }).click();
+    await page.getByRole("link", { name: "Commits 7" }).click();
     await expect(page).toHaveURL(
       `${sourceBrowsingUrl}/history/${aliceMainHead}`,
     );
@@ -89,7 +89,7 @@ test.describe("project page navigation", () => {
     await page.getByText(".hidden").click();
     await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
 
-    await page.getByRole("link", { name: "Commits 6" }).click();
+    await page.getByRole("link", { name: "Commits 7" }).click();
     await expect(page).toHaveURL(`${sourceBrowsingUrl}/history`);
   });
 

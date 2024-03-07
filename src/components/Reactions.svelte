@@ -5,7 +5,10 @@
 
   export let reactions: Comment["reactions"];
   export let handleReaction:
-    | ((authors: string[], reaction: string) => Promise<void>)
+    | ((
+        authors: Comment["reactions"][0]["authors"],
+        reaction: string,
+      ) => Promise<void>)
     | undefined;
 </script>
 

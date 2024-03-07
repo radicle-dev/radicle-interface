@@ -12,7 +12,7 @@
   export let reactions: Comment["reactions"] | undefined = undefined;
 
   const dispatch = createEventDispatcher<{
-    select: { emoji: string; authors: string[] };
+    select: Comment["reactions"][0];
   }>();
 </script>
 

@@ -13,7 +13,7 @@ import type {
   Policy,
   Scope,
 } from "./lib/shared.js";
-import type { Comment, Embed } from "./lib/project/comment.js";
+import type { Comment, Embed, Reaction } from "./lib/project/comment.js";
 import type {
   Commit,
   CommitBlob,
@@ -71,6 +71,7 @@ export type {
   Policy,
   Project,
   Range,
+  Reaction,
   Remote,
   Review,
   Revision,
@@ -121,13 +122,11 @@ const nodeTrackingSchema = array(
 );
 
 export interface NodeStats {
-  projects: { count: number };
-  users: { count: number };
+  repos: { total: number };
 }
 
 const nodeStatsSchema = object({
-  projects: object({ count: number() }),
-  users: object({ count: number() }),
+  repos: object({ total: number() }),
 }) satisfies ZodSchema<NodeStats>;
 
 export class HttpdClient {

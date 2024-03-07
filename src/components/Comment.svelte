@@ -34,7 +34,10 @@
     | ((body: string, embeds: Embed[]) => Promise<void>)
     | undefined = undefined;
   export let reactOnComment:
-    | ((nids: string[], reaction: string) => Promise<void>)
+    | ((
+        authors: Comment["reactions"][0]["authors"],
+        reaction: string,
+      ) => Promise<void>)
     | undefined = undefined;
 </script>
 

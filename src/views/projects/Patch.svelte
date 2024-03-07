@@ -208,7 +208,7 @@
     session: Session,
     revisionId: string,
     commentId: string,
-    authors: string[],
+    authors: Comment["reactions"][0]["authors"],
     reaction: string,
   ) {
     try {
@@ -220,7 +220,7 @@
           revision: revisionId,
           comment: commentId,
           reaction,
-          active: authors.includes(session.publicKey) ? false : true,
+          active: Boolean(authors.find(({ id }) => id === session.publicKey)),
         },
         session.id,
       );
@@ -367,7 +367,7 @@
   async function reactOnRevision(
     session: Session,
     revisionId: string,
-    authors: string[],
+    authors: Revision["reactions"][0]["authors"],
     reaction: string,
   ) {
     try {
@@ -378,7 +378,7 @@
           type: "revision.react",
           revision: revisionId,
           reaction,
-          active: authors.includes(session.publicKey) ? false : true,
+          active: Boolean(authors.find(({ id }) => id === session.publicKey)),
         },
         session.id,
       );

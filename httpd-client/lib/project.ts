@@ -96,7 +96,8 @@ export type Blob = z.infer<typeof blobSchema>;
 const treeEntrySchema = object({
   path: string(),
   name: string(),
-  kind: union([literal("blob"), literal("tree")]),
+  oid: string(),
+  kind: union([literal("blob"), literal("tree"), literal("submodule")]),
 });
 
 export type TreeEntry = z.infer<typeof treeEntrySchema>;

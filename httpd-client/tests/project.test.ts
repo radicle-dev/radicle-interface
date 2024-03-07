@@ -182,7 +182,18 @@ describe("project", () => {
         },
         sessionId,
       );
-      await assertIssue(issueId, { assignees: [bobRemote] }, api);
+      await assertIssue(
+        issueId,
+        {
+          assignees: [
+            {
+              id: "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5",
+              alias: "bob",
+            },
+          ],
+        },
+        api,
+      );
     },
   );
 

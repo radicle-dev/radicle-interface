@@ -13,6 +13,7 @@ import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
 import type { PeerManager, RadiclePeer } from "./peerManager.js";
+import { formatCommit } from "@app/lib/utils.js";
 
 export { expect };
 
@@ -652,13 +653,13 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
   );
 }
 
-export const aliceMainHead = "dd068e9aff9a569e597f6abaf84f120dd0cbbd70";
+export const aliceMainHead = "4a9f278344b795afaef44c0d9effb35c4d794fba";
 export const aliceRemote =
   "did:key:z6MkqGC3nWZhYieEVTVDKW5v588CiGfsDSmRVG9ZwwWTvLSK";
 export const bobRemote =
   "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
-export const bobHead = "28f37105bb78db48111e36281291ff253dd050e8";
-export const shortBobHead = "28f3710";
+export const bobHead = "ff32f18dc09d82bff329ffcd96fd5eba2d7f826c";
+export const shortBobHead = formatCommit(bobHead);
 export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
 export const cobRid = "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe";
 export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";

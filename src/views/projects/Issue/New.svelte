@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Embed, Project } from "@httpd-client";
+  import type { BaseUrl, Embed, Project, Reaction } from "@httpd-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -21,7 +21,7 @@
   export let rawPath: (commit?: string) => string;
 
   let issueTitle = "";
-  let assignees: string[] = [];
+  let assignees: Reaction["authors"] = [];
   let labels: string[] = [];
 
   const api = new HttpdClient(baseUrl);
@@ -35,7 +35,13 @@
     try {
       const result = await api.project.createIssue(
         project.id,
-        { title, description, assignees, embeds: [...embeds.values()], labels },
+        {
+          title,
+          description,
+          assignees: assignees.map(a => a.id),
+          embeds: [...embeds.values()],
+          labels,
+        },
         sessionId,
       );
 

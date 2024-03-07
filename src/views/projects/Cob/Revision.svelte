@@ -63,12 +63,15 @@
     | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
     | undefined;
   export let reactOnRevision:
-    | ((authors: string[], reaction: string) => Promise<void>)
+    | ((
+        authors: Comment["reactions"][0]["authors"],
+        reaction: string,
+      ) => Promise<void>)
     | undefined;
   export let reactOnComment:
     | ((
         commentId: string,
-        authors: string[],
+        authors: Comment["reactions"][0]["authors"],
         reaction: string,
       ) => Promise<void>)
     | undefined;
