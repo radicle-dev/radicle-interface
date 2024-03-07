@@ -1,24 +1,27 @@
 <script lang="ts">
-  import type { BaseUrl, Policy, Scope } from "@httpd-client";
+  import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 
   import capitalize from "lodash/capitalize";
 
+  import * as router from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
+  import { baseUrlToString, isLocal, truncateId } from "@app/lib/utils";
+  import { fetchProjectInfos } from "@app/components/ProjectCard";
+  import { handleError } from "@app/views/nodes/error";
   import { isDelegate } from "@app/lib/roles";
-  import { isLocal, truncateId } from "@app/lib/utils";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import HoverPopover from "@app/components/HoverPopover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
-  import type { ProjectInfo } from "@app/components/ProjectCard";
+  import Loading from "@app/components/Loading.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
+  export let stats: NodeStats;
   export let externalAddresses: string[];
-  export let projectInfos: ProjectInfo[];
   export let version: string;
   export let policy: Policy | undefined = undefined;
   export let scope: Scope | undefined = undefined;
@@ -33,6 +36,7 @@
 <style>
   .layout {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     padding: 3rem 0 5rem 0;
@@ -135,8 +139,7 @@
 
       <div class="subtitle">
         <div class="pinned txt-semibold">
-          {projectInfos.length}
-          {isLocal(baseUrl.hostname) ? "" : "pinned"} projects
+          {stats.repos.total} repositories hosted
         </div>
 
         {#if !isLocal(baseUrl.hostname)}
@@ -187,17 +190,23 @@
         {/if}
       </div>
 
-      <div class="project-grid">
-        {#each projectInfos as projectInfo}
-          <ProjectCard
-            {projectInfo}
-            isSeeding={false}
-            isDelegate={isDelegate(
-              session?.publicKey,
-              projectInfo.project.delegates,
-            ) ?? false} />
-        {/each}
-      </div>
+      {#await fetchProjectInfos(baseUrl, isLocal(baseUrl.hostname) ? "all" : "pinned")}
+        <Loading small center />
+      {:then projectInfos}
+        <div class="project-grid">
+          {#each projectInfos as projectInfo}
+            <ProjectCard
+              {projectInfo}
+              isSeeding={false}
+              isDelegate={isDelegate(
+                session?.publicKey,
+                projectInfo.project.delegates,
+              ) ?? false} />
+          {/each}
+        </div>
+      {:catch error}
+        {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
+      {/await}
     </div>
   </div>
 </AppLayout>

@@ -1,14 +1,10 @@
-import type { BaseUrl, Policy, Scope } from "@httpd-client";
+import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import { HttpdClient } from "@httpd-client";
 import { config } from "@app/lib/config";
-import { baseUrlToString, isLocal } from "@app/lib/utils";
+import { baseUrlToString } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
-import {
-  fetchProjectInfos,
-  type ProjectInfo,
-} from "@app/components/ProjectCard";
 
 export interface NodesRouteParams {
   baseUrl: BaseUrl;
@@ -27,7 +23,7 @@ export interface NodesLoadedRoute {
     version: string;
     externalAddresses: string[];
     nid: string;
-    projectInfos: ProjectInfo[];
+    stats: NodeStats;
     policy?: Policy;
     scope?: Scope;
   };
@@ -48,21 +44,16 @@ export async function loadNodeRoute(
 ): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
-    const [node, projectInfos] = await Promise.all([
-      api.getNode(),
-      fetchProjectInfos(
-        params.baseUrl,
-        isLocal(params.baseUrl.hostname) ? "all" : "pinned",
-      ),
-    ]);
+    const [node, stats] = await Promise.all([api.getNode(), api.getStats()]);
+
     return {
       resource: "nodes",
       params: {
         baseUrl: params.baseUrl,
         nid: node.id,
+        stats,
         externalAddresses: node.config?.externalAddresses ?? [],
         version: node.version,
-        projectInfos: projectInfos,
         policy: node.config?.policy,
         scope: node.config?.scope,
       },
