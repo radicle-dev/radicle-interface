@@ -43,7 +43,7 @@
 
 <div class="help" class:popover>
   {#if $httpdStore.state === "stopped"}
-    <div class="title txt-bold">Device not connected</div>
+    <div class="title txt-bold">Local node not connected</div>
     <div>Click the Connect button in the top right corner to get started.</div>
   {:else if localProject === "notFound"}
     <div class="title txt-bold">Project not available locally</div>

@@ -318,7 +318,7 @@
             <Button
               stylePadding="0 0.75rem"
               variant="background"
-              title="Help"
+              title="Local node"
               slot="toggle"
               let:toggle
               on:click={toggle}>
