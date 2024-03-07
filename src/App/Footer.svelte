@@ -40,6 +40,21 @@
 
 <div class="footer">
   <div class="left">
+    <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
+      <IconButton slot="toggle" let:toggle on:click={toggle}>
+        <IconSmall name="settings" />
+        Settings
+      </IconButton>
+
+      <Settings slot="popover" />
+    </Popover>
+  </div>
+
+  <div class="center">
+    Press <KeyHint>?</KeyHint>
+    for keyboard shortcuts
+  </div>
+  <div class="right">
     <a
       style:display="flex"
       style:align-items="center"
@@ -50,20 +65,5 @@
       radicle.xyz
       <IconSmall name="arrow-box-up-right" />
     </a>
-  </div>
-
-  <div class="center">
-    Press <KeyHint>?</KeyHint>
-    for keyboard shortcuts
-  </div>
-  <div class="right">
-    <Popover popoverPositionBottom="2rem" popoverPositionRight="0">
-      <IconButton slot="toggle" let:toggle on:click={toggle}>
-        <IconSmall name="settings" />
-        Settings
-      </IconButton>
-
-      <Settings slot="popover" />
-    </Popover>
   </div>
 </div>
