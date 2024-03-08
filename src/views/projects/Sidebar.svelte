@@ -307,7 +307,7 @@
         <Help slot="popover" />
       </Popover>
 
-      {#if !hideContextHelp}
+      {#if !hideContextHelp && $experimental}
         {#if !localProject}
           <div
             style="display: flex; justify-content: center; align-items: center; height: 2rem;">
