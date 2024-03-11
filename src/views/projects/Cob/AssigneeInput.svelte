@@ -33,7 +33,7 @@
       const parsedNodeId = parseNodeId(inputValue);
       if (parsedNodeId) {
         assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
-        if (!updatedAssignees.find(({ id }) => id === assignee)) {
+        if (updatedAssignees.find(({ id }) => id === assignee)) {
           valid = false;
           validationMessage = "This assignee is already added";
         } else {

@@ -294,7 +294,7 @@ test("peer and branch switching", async ({ page }) => {
       );
       await expect(
         page.getByRole("link", {
-          name: "Commits 6",
+          name: "Commits 7",
         }),
       ).toBeVisible();
     }
@@ -363,7 +363,7 @@ test("peer and branch switching", async ({ page }) => {
       );
       await expect(
         page.getByRole("link", {
-          name: "Commits 7",
+          name: "Commits 8",
         }),
       ).toBeVisible();
       await expect(

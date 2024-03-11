@@ -220,7 +220,9 @@
           revision: revisionId,
           comment: commentId,
           reaction,
-          active: Boolean(authors.find(({ id }) => id === session.publicKey)),
+          active: !authors.find(
+            ({ id }) => utils.parseNodeId(id)?.pubkey === session.publicKey,
+          ),
         },
         session.id,
       );
@@ -378,7 +380,9 @@
           type: "revision.react",
           revision: revisionId,
           reaction,
-          active: Boolean(authors.find(({ id }) => id === session.publicKey)),
+          active: !authors.find(
+            ({ id }) => utils.parseNodeId(id)?.pubkey === session.publicKey,
+          ),
         },
         session.id,
       );
