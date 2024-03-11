@@ -7,7 +7,8 @@
 </script>
 
 <style>
-  .file {
+  .submodule {
+    color: var(--color-foreground-dim);
     border-radius: var(--border-radius-tiny);
     display: flex;
     line-height: 1.5em;
@@ -21,13 +22,11 @@
     user-select: none;
     white-space: nowrap;
     text-overflow: ellipsis !important;
-    color: var(--color-foreground-dim);
     overflow: hidden;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-medium);
   }
   .icon-container {
-    color: var(--color-fill-secondary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,9 +34,11 @@
   }
 </style>
 
-<div class="file">
+<div
+  class="submodule"
+  title="This is a git submodule, for more information look at the nearest .gitmodules file">
   <div class="icon-container">
-    <IconSmall name="link" />
+    <IconSmall name="repo" />
   </div>
   <span class="name">{name} @ {formatCommit(oid)}</span>
 </div>

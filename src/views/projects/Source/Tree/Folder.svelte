@@ -8,6 +8,7 @@
 
   import File from "./File.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Submodule from "./Submodule.svelte";
 
   export let baseUrl: BaseUrl;
   export let currentPath: string;
@@ -107,6 +108,8 @@
               {peer}
               {projectId}
               {revision} />
+          {:else if entry.kind === "submodule"}
+            <Submodule name={entry.name} oid={entry.oid} />
           {:else}
             <Link
               route={{
