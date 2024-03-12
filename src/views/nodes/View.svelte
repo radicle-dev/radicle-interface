@@ -142,23 +142,6 @@
           {stats.repos.total} repositories hosted
         </div>
 
-        {#if !isLocal(baseUrl.hostname)}
-          <HoverPopover
-            stylePopoverPositionLeft="-8rem"
-            stylePopoverPositionBottom="1.5rem">
-            <div slot="toggle">
-              <span style:color="var(--color-fill-gray)">
-                <IconSmall name="info" />
-              </span>
-            </div>
-
-            <div slot="popover" class="popover">
-              These are pinned projects that were configured to be highlighted
-              on this node.
-            </div>
-          </HoverPopover>
-        {/if}
-
         {#if policy && scope}
           <div class="right">
             <span>
