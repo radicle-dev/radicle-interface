@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { BaseUrl, CommitHeader } from "@httpd-client";
 
-  import { formatCommit, twemoji } from "@app/lib/utils";
+  import { twemoji } from "@app/lib/utils";
 
-  import CommitAuthorship from "../Commit/CommitAuthorship.svelte";
+  import CompactCommitAuthorship from "@app/components/CompactCommitAuthorship.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -80,11 +80,7 @@
   <div class="right">
     <div style:display="flex" style:gap="1rem" style:height="1.5rem">
       <div style:margin-bottom="1rem">
-        <CommitAuthorship header={commit}>
-          <span class="global-commit">
-            {formatCommit(commit.id)}
-          </span>
-        </CommitAuthorship>
+        <CompactCommitAuthorship {commit} />
       </div>
       <IconButton title="Browse the repository at this point in the history">
         <Link

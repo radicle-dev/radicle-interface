@@ -1,0 +1,103 @@
+<script lang="ts">
+  import type { CommitHeader } from "@httpd-client";
+
+  import * as utils from "@app/lib/utils";
+  import HoverPopover from "./HoverPopover.svelte";
+
+  export let commit: CommitHeader;
+</script>
+
+<style>
+  .authorship {
+    display: flex;
+    font-size: var(--font-size-small);
+    column-gap: 0.5rem;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .person {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 0.5rem;
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
+  }
+  .label {
+    font-family: var(--font-family-sans-serif);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-foreground-dim);
+  }
+  .avatar {
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--border-radius-round);
+  }
+</style>
+
+<div class="authorship">
+  <HoverPopover
+    stylePopoverPositionLeft="-8rem"
+    stylePopoverPositionBottom="1.5rem">
+    <div slot="toggle" style="display: flex;">
+      {#if commit.author.email === commit.committer.email}
+        <div class="person">
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.committer.email)} />
+        </div>
+      {:else}
+        <div class="person">
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.author.email)} />
+        </div>
+        <div class="person">
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.committer.email)} />
+        </div>
+      {/if}
+    </div>
+
+    <div slot="popover" class="popover">
+      {#if commit.author.email === commit.committer.email}
+        <div class="person">
+          <div class="label">Author</div>
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.committer.email)} />
+          {commit.author.name}
+        </div>
+      {:else}
+        <div class="person">
+          <div class="label">Author</div>
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.author.email)} />
+          {commit.author.name}
+        </div>
+        <div class="person">
+          <div class="label">Committer</div>
+          <img
+            class="avatar"
+            alt="avatar"
+            src={utils.gravatarURL(commit.committer.email)} />
+          {commit.committer.name}
+        </div>
+      {/if}
+    </div>
+  </HoverPopover>
+  <div class="global-commit">
+    {utils.formatCommit(commit.id)}
+  </div>
+  <div title={utils.absoluteTimestamp(commit.committer.time)}>
+    {utils.formatTimestamp(commit.committer.time)}
+  </div>
+</div>
