@@ -1,10 +1,11 @@
 import type { BaseUrl } from "./lib/fetcher.js";
 import type {
   Blob,
+  DiffResponse,
   Project,
+  ProjectListQuery,
   Remote,
   Tree,
-  DiffResponse,
 } from "./lib/project.js";
 import type {
   SuccessResponse,
@@ -70,6 +71,7 @@ export type {
   PatchUpdateAction,
   Policy,
   Project,
+  ProjectListQuery,
   Range,
   Reaction,
   Remote,

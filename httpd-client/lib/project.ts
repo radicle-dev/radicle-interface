@@ -141,6 +141,11 @@ const diffResponseSchema = object({
   files: record(string(), diffBlobSchema),
 });
 
+export type ProjectListQuery = {
+  page?: number;
+  perPage?: number;
+  show?: "pinned" | "all";
+};
 export class Client {
   #fetcher: Fetcher;
 
@@ -181,7 +186,7 @@ export class Client {
   }
 
   public async getAll(
-    query?: { page?: number; perPage?: number; show?: "pinned" | "all" },
+    query?: ProjectListQuery,
     options?: RequestOptions,
   ): Promise<Project[]> {
     return this.#fetcher.fetchOk(

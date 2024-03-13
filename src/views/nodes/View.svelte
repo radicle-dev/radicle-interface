@@ -148,7 +148,7 @@
       </div>
 
       <div style:margin-top="1rem">
-        {#await fetchProjectInfos(baseUrl, isLocal(baseUrl.hostname) ? "all" : "pinned")}
+        {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned" }, )}
           <Loading small center />
         {:then projectInfos}
           <div class="project-grid">

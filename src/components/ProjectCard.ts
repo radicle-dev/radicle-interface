@@ -1,3 +1,5 @@
+import type { ProjectListQuery } from "@httpd-client";
+
 import { loadProjectActivity, type WeeklyActivity } from "@app/lib/commit";
 import {
   HttpdClient,
@@ -15,10 +17,10 @@ export interface ProjectInfo {
 
 export async function fetchProjectInfos(
   baseUrl: BaseUrl,
-  show: "all" | "pinned",
+  query?: ProjectListQuery,
 ): Promise<ProjectInfo[]> {
   const api = new HttpdClient(baseUrl);
-  const projects = await api.project.getAll({ show });
+  const projects = await api.project.getAll(query);
   const info = await Promise.all(
     projects.map(async project => {
       const [activity, lastCommit] = await Promise.all([

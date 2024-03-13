@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
+  import type { ProjectListQuery } from "@httpd-client";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
   import { derived } from "svelte/store";
@@ -50,8 +51,19 @@
     | undefined;
 
   async function loadLocalProjects() {
+    const query: ProjectListQuery = { show: "all" };
+    await api
+      .getStats()
+      .then(({ repos: { total } }) => (query.perPage = total))
+      .catch(e => {
+        console.error(
+          "Not able to query to total repo count for your local node.",
+          e,
+        );
+      });
+
     localProjects = undefined;
-    localProjects = await fetchProjectInfos(api.baseUrl, "all").catch(
+    localProjects = await fetchProjectInfos(api.baseUrl, query).catch(
       error => error,
     );
   }
@@ -60,10 +72,9 @@
     preferredSeedProjects = undefined;
 
     if (!$selectedSeed) return;
-    preferredSeedProjects = await fetchProjectInfos(
-      $selectedSeed,
-      "pinned",
-    ).catch(error => error);
+    preferredSeedProjects = await fetchProjectInfos($selectedSeed, {
+      show: "pinned",
+    }).catch(error => error);
   }
 
   function isSeeding(projectId: string) {
