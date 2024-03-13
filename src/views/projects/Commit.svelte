@@ -3,11 +3,14 @@
 
   import { formatCommit } from "@app/lib/utils";
 
+  import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
+  import Link from "@app/components/Link.svelte";
   import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
@@ -28,7 +31,6 @@
   }
   .title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
   }
   .description {
@@ -47,7 +49,21 @@
             stripEmphasizedStyling
             fontSize="large"
             content={header.summary} />
-          <Share {baseUrl} />
+          <div style:margin-left="auto" style:display="flex" style:gap="0.5rem">
+            <Link
+              route={{
+                resource: "project.source",
+                project: project.id,
+                node: baseUrl,
+                path: "/",
+                revision: commit.commit.id,
+              }}>
+              <Button variant="outline" title="View tree">
+                <IconSmall name="chevron-left-right" />
+              </Button>
+            </Link>
+            <Share {baseUrl} />
+          </div>
         </span>
         <CommitAuthorship {header}>
           <CopyableId id={header.id} style="commit">
