@@ -252,12 +252,12 @@ describe("Date Manipulation", () => {
     {
       from: new Date("2022-01-01 12:00:00"),
       to: new Date("2023-04-02 12:00:00"),
-      expected: "Sat, 01 Jan 2022 12:00:00 GMT",
+      expected: "more than a year ago",
     },
     {
       from: new Date("2022-03-05 12:00:00"),
       to: new Date("2026-04-02 12:00:00"),
-      expected: "Sat, 05 Mar 2022 12:00:00 GMT",
+      expected: "more than a year ago",
     },
   ])("formatTimestamp expected: $expected", ({ from, to, expected }) => {
     expect(utils.formatTimestamp(from.getTime() / 1000, to.getTime())).toEqual(

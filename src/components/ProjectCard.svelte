@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { formatTimestamp, twemoji } from "@app/lib/utils";
+  import {
+    absoluteTimestamp,
+    formatTimestamp,
+    formatRepositoryId,
+    twemoji,
+  } from "@app/lib/utils";
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -17,9 +22,6 @@
   $: project = projectInfo.project;
   $: baseUrl = projectInfo.baseUrl;
   $: isPrivate = project.visibility?.type === "private";
-  $: lastUpdated = formatTimestamp(
-    projectInfo.lastCommit.commit.committer.time,
-  );
 </script>
 
 <style>
@@ -175,13 +177,28 @@
       </div>
       <p class="txt-small" use:twemoji>{project.description}</p>
     </div>
-    <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
-      <IconSmall name="issue" />
-      {project.issues.open} ·
-      <IconSmall name="patch" />
-      <span style:overflow="hidden" style:text-overflow="ellipsis">
-        {project.patches.open} · Updated {lastUpdated}
-      </span>
+    <div>
+      <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
+        <IconSmall name="issue" />
+        {project.issues.open} ·
+        <IconSmall name="patch" />
+        <span
+          style:overflow="hidden"
+          style:text-overflow="ellipsis"
+          title={absoluteTimestamp(
+            projectInfo.lastCommit.commit.committer.time,
+          )}>
+          {project.patches.open} · Updated {formatTimestamp(
+            projectInfo.lastCommit.commit.committer.time,
+          )}
+        </span>
+        <span
+          title={project.id}
+          style:color="var(--color-foreground-emphasized)"
+          style:margin-left="auto">
+          {formatRepositoryId(project.id)}
+        </span>
+      </div>
     </div>
   </div>
 </Link>

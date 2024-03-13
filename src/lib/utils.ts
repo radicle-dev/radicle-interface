@@ -163,7 +163,7 @@ export const formatTimestamp = (
   const elapsed = current - timestamp;
 
   if (elapsed > units["year"]) {
-    return new Date(timestamp).toUTCString(); // If it's more than a year we return early showing a Datetime string
+    return "more than a year ago";
   } else if (elapsed < 0) {
     return "now"; // If elapsed is a negative number we are dealing with an item from the future, and we return "now"
   }

@@ -49,7 +49,7 @@
   }
   .wrapper {
     padding: 3rem;
-    max-width: 72rem;
+    max-width: 78rem;
     margin: 0 auto;
     width: 100%;
     display: flex;
@@ -69,6 +69,8 @@
     gap: 0.5rem;
     margin-bottom: 1rem;
     width: 100%;
+    white-space: nowrap;
+    flex-wrap: wrap;
   }
   .pinned {
     display: flex;
@@ -92,7 +94,7 @@
 
   .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
   }
   .popover {
