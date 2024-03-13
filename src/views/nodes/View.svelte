@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 
-  import capitalize from "lodash/capitalize";
-
   import * as router from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
   import { baseUrlToString, isLocal, truncateId } from "@app/lib/utils";
@@ -12,11 +10,9 @@
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import ScopePolicyPopover from "./ScopePolicyPopover.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -56,30 +52,15 @@
     flex-direction: column;
   }
 
-  .separator {
-    width: 1px;
-    background-color: var(--color-fill-separator);
-    display: flex;
-    height: 1rem;
-  }
   .subtitle {
     font-size: var(--font-size-small);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
     width: 100%;
-    white-space: nowrap;
-    flex-wrap: wrap;
   }
   .pinned {
     display: flex;
-    align-items: center;
-  }
-  .right {
-    margin-left: auto;
-    display: flex;
-    gap: 0.5rem;
     align-items: center;
   }
   .info {
@@ -97,19 +78,16 @@
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
   }
-  .popover {
-    width: 18rem;
-    color: var(--color-foreground-contrast);
-  }
   @media (max-width: 720px) {
-    .layout {
+    .wrapper {
       width: 100%;
-      display: flex;
-      justify-content: center;
-      padding: 0;
+      padding: 1rem;
     }
     .info {
       flex-direction: column;
+    }
+    .layout {
+      padding: 0;
     }
   }
 </style>
@@ -130,7 +108,14 @@
             {:else}
               <!-- else this is probably a local node -->
               <!-- So we show only the nid -->
-              <CopyableId id={nid} style="oid" />
+              <CopyableId id={nid} style="oid">
+                <div class="global-hide-on-desktop">
+                  {truncateId(nid)}
+                </div>
+                <div class="global-hide-on-mobile">
+                  {nid}
+                </div>
+              </CopyableId>
             {/each}
           </div>
           <div class="version">
@@ -144,54 +129,43 @@
           {stats.repos.total} repositories hosted
         </div>
 
+        <div class="global-hide-on-mobile" style:margin-left="auto">
+          {#if policy && scope}
+            <ScopePolicyPopover
+              {scope}
+              {policy}
+              stylePopoverPositionRight="-1rem" />
+          {/if}
+        </div>
+      </div>
+      <div class="subtitle global-hide-on-desktop">
         {#if policy && scope}
-          <div class="right">
-            <span>
-              Seeding Policy: <span class="txt-semibold">
-                {capitalize(policy)}
-              </span>
-            </span>
-            <span class="separator" />
-            <span>
-              Scope:
-              <span class="txt-semibold">{capitalize(scope)}</span>
-            </span>
-            <span style:color="var(--color-fill-gray)">
-              <HoverPopover
-                stylePopoverPositionRight="-1rem"
-                stylePopoverPositionBottom="1.5rem">
-                <div slot="toggle">
-                  <span style:color="var(--color-fill-gray)">
-                    <IconSmall name="info" />
-                  </span>
-                </div>
-
-                <div slot="popover" class="popover">
-                  <ScopePolicyExplainer {scope} {policy} />
-                </div>
-              </HoverPopover>
-            </span>
-          </div>
+          <ScopePolicyPopover
+            {scope}
+            {policy}
+            stylePopoverPositionLeft="-14rem" />
         {/if}
       </div>
 
-      {#await fetchProjectInfos(baseUrl, isLocal(baseUrl.hostname) ? "all" : "pinned")}
-        <Loading small center />
-      {:then projectInfos}
-        <div class="project-grid">
-          {#each projectInfos as projectInfo}
-            <ProjectCard
-              {projectInfo}
-              isSeeding={false}
-              isDelegate={isDelegate(
-                session?.publicKey,
-                projectInfo.project.delegates,
-              ) ?? false} />
-          {/each}
-        </div>
-      {:catch error}
-        {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
-      {/await}
+      <div style:margin-top="1rem">
+        {#await fetchProjectInfos(baseUrl, isLocal(baseUrl.hostname) ? "all" : "pinned")}
+          <Loading small center />
+        {:then projectInfos}
+          <div class="project-grid">
+            {#each projectInfos as projectInfo}
+              <ProjectCard
+                {projectInfo}
+                isSeeding={false}
+                isDelegate={isDelegate(
+                  session?.publicKey,
+                  projectInfo.project.delegates,
+                ) ?? false} />
+            {/each}
+          </div>
+        {:catch error}
+          {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
+        {/await}
+      </div>
     </div>
   </div>
 </AppLayout>

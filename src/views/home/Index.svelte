@@ -117,7 +117,7 @@
   @media (max-width: 720px) {
     .wrapper {
       width: 100%;
-      padding: 1rem 1.5rem 1.5rem 1.5rem;
+      padding: 1rem;
     }
 
     .seed-dropdown {
