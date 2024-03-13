@@ -135,16 +135,16 @@ export class Renderer extends BaseRenderer {
     return this.#stripEmphasizedStyling ? text : `<em>${text}</em>`;
   }
 
-  link(href: string, _title: string, text: string): string {
+  link(href: string, title: string | undefined | null, text: string): string {
     if (href.startsWith("#")) {
       // By lowercasing we avoid casing mismatches, between headings and links.
-      return `<a href="${href.toLowerCase()}">${text}</a>`;
+      return `<a ${title ? `title="${title}"` : ""} href="${href.toLowerCase()}">${text}</a>`;
     } else {
       href = URL.canParse(href, this.#baseUrl)
         ? new URL(href, this.#baseUrl).href
         : href;
 
-      return `<a href="${href}">${text}</a>`;
+      return `<a ${title ? `title="${title}"` : ""} href="${href}">${text}</a>`;
     }
   }
 }
