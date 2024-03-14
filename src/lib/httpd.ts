@@ -64,6 +64,9 @@ export async function authenticate(params: {
   signature: string;
   publicKey: string;
 }): Promise<boolean> {
+  if (!get(experimental)) {
+    return false;
+  }
   stateMutex.cancel();
   return stateMutex.runExclusive(async () => {
     try {
@@ -150,15 +153,6 @@ async function checkState() {
           scope: config?.scope,
         };
 
-        // Return quickly and avoid additional fetches
-        // if experimental settings aren't updated
-        if (!get(experimental)) {
-          update({
-            state: "running",
-            node,
-          });
-        }
-
         if (httpdState && httpdState.state !== "stopped") {
           httpdState.node = node;
         }
@@ -216,6 +210,10 @@ function pollSession() {
 }
 
 export async function initialize() {
+  if (!get(experimental)) {
+    return;
+  }
+
   // Sync session state changes with other open tabs and windows.
   addEventListener("storage", event => {
     if (
