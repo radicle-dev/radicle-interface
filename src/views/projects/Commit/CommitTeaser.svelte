@@ -49,6 +49,14 @@
   .summary {
     font-size: var(--font-size-small);
   }
+  .summary::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: 0px;
+    bottom: -10px;
+    left: -10px;
+  }
   .summary:hover {
     text-decoration: underline;
   }
@@ -68,8 +76,10 @@
           node: baseUrl,
           commit: commit.id,
         }}>
-        <div class="summary" use:twemoji>
-          <InlineMarkdown fontSize="regular" content={commit.summary} />
+        <div style="position: relative;">
+          <div class="summary" use:twemoji>
+            <InlineMarkdown fontSize="regular" content={commit.summary} />
+          </div>
         </div>
       </Link>
       {#if commit.description}
