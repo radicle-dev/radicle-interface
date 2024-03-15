@@ -99,11 +99,13 @@
 
   afterUpdate(async () => {
     for (const e of container.querySelectorAll("a")) {
-      if (URL.canParse(e.href)) {
+      try {
         const url = new URL(e.href);
         if (url.origin !== window.origin) {
           e.target = "_blank";
         }
+      } catch (e) {
+        console.warn("Not able to parse url", e);
       }
       // Don't underline <a> tags that contain images.
       if (e.firstElementChild instanceof HTMLImageElement) {

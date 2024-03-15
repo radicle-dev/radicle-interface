@@ -140,9 +140,11 @@ export class Renderer extends BaseRenderer {
       // By lowercasing we avoid casing mismatches, between headings and links.
       return `<a ${title ? `title="${title}"` : ""} href="${href.toLowerCase()}">${text}</a>`;
     } else {
-      href = URL.canParse(href, this.#baseUrl)
-        ? new URL(href, this.#baseUrl).href
-        : href;
+      try {
+        href = new URL(href, this.#baseUrl).href;
+      } catch {
+        // Use original href value
+      }
 
       return `<a ${title ? `title="${title}"` : ""} href="${href}">${text}</a>`;
     }
