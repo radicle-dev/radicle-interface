@@ -214,11 +214,21 @@ export async function initialize() {
   // Sync session state changes with other open tabs and windows.
   addEventListener("storage", event => {
     if (
-      (event.key === HTTPD_STATE_STORAGE_KEY &&
-        event.oldValue !== event.newValue) ||
-      (event.key === HTTPD_CUSTOM_PORT_KEY && event.oldValue !== event.newValue)
+      event.key === HTTPD_STATE_STORAGE_KEY &&
+      event.oldValue !== event.newValue
     ) {
-      void checkState();
+      if (!event.newValue) {
+        throw new Error("event.newValue was not set");
+      }
+      const httpdState: HttpdState = JSON.parse(event.newValue);
+      store.set(httpdState);
+    }
+
+    if (
+      event.key === HTTPD_CUSTOM_PORT_KEY &&
+      event.oldValue !== event.newValue
+    ) {
+      api.changePort(Number(event.newValue));
     }
   });
 
