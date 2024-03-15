@@ -139,6 +139,7 @@ async function checkState() {
       httpdState = JSON.parse(rawHttpdState);
     } catch (error) {
       console.error(error);
+      return;
     }
   }
 
@@ -153,10 +154,6 @@ async function checkState() {
           scope: config?.scope,
         };
 
-        if (httpdState && httpdState.state !== "stopped") {
-          httpdState.node = node;
-        }
-
         if (httpdState && httpdState.state === "authenticated") {
           const sess = await api.session.getById(httpdState.session.id);
           const unixTimeInSeconds = Math.floor(Date.now() / 1000);
@@ -169,7 +166,7 @@ async function checkState() {
               node,
             });
           } else {
-            update(httpdState);
+            update({ ...httpdState, node });
           }
         } else {
           update({
