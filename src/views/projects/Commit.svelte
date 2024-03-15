@@ -58,7 +58,7 @@
                 path: "/",
                 revision: commit.commit.id,
               }}>
-              <Button variant="outline" title="View tree">
+              <Button variant="outline" title="Browse repo at this commit">
                 <IconSmall name="chevron-left-right" />
               </Button>
             </Link>

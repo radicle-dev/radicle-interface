@@ -112,7 +112,7 @@ test("navigation to source tree at specific revision", async ({ page }) => {
   );
 
   // Go to source tree at this revision.
-  await page.getByTitle("View file").click();
+  await page.getByTitle("View file at this commit").click();
   await expect(
     page.getByText("Add a deeply nested directory tree"),
   ).toBeVisible();

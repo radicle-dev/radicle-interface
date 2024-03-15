@@ -440,7 +440,7 @@
             path: filePath,
             revision,
           }}>
-          <IconButton title="View file">
+          <IconButton title="View file at this commit">
             <IconSmall name="chevron-left-right" />
           </IconButton>
         </Link>

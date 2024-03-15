@@ -82,7 +82,7 @@
       <div style:margin-bottom="1rem">
         <CompactCommitAuthorship {commit} />
       </div>
-      <IconButton title="Browse the repository at this point in the history">
+      <IconButton title="Browse repo at this commit">
         <Link
           route={{
             resource: "project.source",

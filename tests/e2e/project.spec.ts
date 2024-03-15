@@ -59,7 +59,7 @@ test("show source tree at specific revision", async ({ page }) => {
   await page
     .locator(".teaser", { hasText: "335dd6d" })
     .getByRole("button", {
-      name: "Browse the repository at this point in the history",
+      name: "Browse repo at this commit",
     })
     .click();
 

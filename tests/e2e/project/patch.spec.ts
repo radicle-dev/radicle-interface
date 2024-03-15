@@ -128,7 +128,7 @@ test("view file navigation from changes tab", async ({ page }) => {
   await page.getByRole("link", { name: "Add subtitle to README" }).click();
   await page.getByRole("link", { name: "Changes" }).click();
   await page.getByRole("button", { name: "Changes" }).click();
-  await page.getByRole("button", { name: "View file" }).click();
+  await page.getByRole("button", { name: "View file at this commit" }).click();
   await expect(page).toHaveURL(
     `${cobUrl}/tree/8c900d6cb38811e099efb3cbbdbfaba817bcf970/README.md`,
   );

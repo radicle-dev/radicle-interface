@@ -91,7 +91,7 @@
   </div>
   <div class="right">
     <div style:display="flex" style:gap="1rem" style:height="1.5rem">
-      <IconButton title="Browse the repository at this point in the history">
+      <IconButton title="Browse repo at this commit">
         <Link
           route={{
             resource: "project.source",
