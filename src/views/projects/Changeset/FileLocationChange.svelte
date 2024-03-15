@@ -19,7 +19,6 @@
   .wrapper {
     border: 1px solid var(--color-border-default);
     border-radius: var(--border-radius-small);
-    margin-bottom: 2rem;
     line-height: 1.5rem;
   }
   .header {
