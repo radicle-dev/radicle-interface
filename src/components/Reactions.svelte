@@ -10,6 +10,10 @@
         reaction: string,
       ) => Promise<void>)
     | undefined;
+
+  function authorsToTooltip(authors: Comment["reactions"][0]["authors"]) {
+    return authors.map(a => a.alias ?? a.id).join("\n");
+  }
 </script>
 
 <style>
@@ -28,23 +32,25 @@
 
 <div class="reactions">
   {#each reactions as { emoji, authors }}
-    {#if handleReaction}
-      <IconButton
-        on:click={async () => {
-          if (handleReaction) {
-            await handleReaction(authors, emoji);
-          }
-        }}>
-        <div class="reaction txt-tiny">
+    <div title={authorsToTooltip(authors)}>
+      {#if handleReaction}
+        <IconButton
+          on:click={async () => {
+            if (handleReaction) {
+              await handleReaction(authors, emoji);
+            }
+          }}>
+          <div class="reaction txt-tiny">
+            <span>{emoji}</span>
+            <span>{authors.length}</span>
+          </div>
+        </IconButton>
+      {:else}
+        <div class="reaction txt-tiny" style="padding: 2px 4px;">
           <span>{emoji}</span>
-          <span title={authors.join("\n")}>{authors.length}</span>
+          <span>{authors.length}</span>
         </div>
-      </IconButton>
-    {:else}
-      <div class="reaction txt-tiny" style="padding: 2px 4px;">
-        <span>{emoji}</span>
-        <span title={authors.join("\n")}>{authors.length}</span>
-      </div>
-    {/if}
+      {/if}
+    </div>
   {/each}
 </div>
