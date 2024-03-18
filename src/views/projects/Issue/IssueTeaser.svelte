@@ -40,15 +40,18 @@
     gap: 0.5rem;
     display: flex;
     flex-direction: column;
+    flex: 1;
   }
   .subtitle {
     font-size: var(--font-size-small);
     flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .summary {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
   }
   .issue-title:hover {
@@ -59,6 +62,7 @@
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+    height: 1.5rem;
   }
   .labels {
     display: flex;
@@ -68,7 +72,6 @@
   }
   .right {
     display: flex;
-    align-items: flex-start;
     gap: 1rem;
     margin-left: auto;
     color: var(--color-foreground-dim);
@@ -131,8 +134,18 @@
           </Badge>
         {/if}
       </span>
+      <div class="right">
+        {#if commentCount > 0}
+          <div style:display="flex" style:gap="1rem">
+            <div class="comment-count">
+              <IconSmall name="chat" />
+              <span>{commentCount}</span>
+            </div>
+          </div>
+        {/if}
+      </div>
     </div>
-    <div class="summary subtitle">
+    <div class="subtitle">
       <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
       opened
       <span class="global-oid">{formatObjectId(issue.id)}</span>
@@ -140,15 +153,5 @@
         {formatTimestamp(issue.discussion[0].timestamp)}
       </span>
     </div>
-  </div>
-  <div class="right">
-    {#if commentCount > 0}
-      <div style:display="flex" style:gap="1rem">
-        <div class="comment-count">
-          <IconSmall name="chat" />
-          <span>{commentCount}</span>
-        </div>
-      </div>
-    {/if}
   </div>
 </div>
