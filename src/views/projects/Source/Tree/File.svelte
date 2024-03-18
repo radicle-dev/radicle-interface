@@ -14,6 +14,8 @@
     margin: 0.25rem 0;
     padding: 0.25rem 0.875rem;
     width: 100%;
+    gap: 0.25rem;
+    font-weight: var(--font-weight-regular);
   }
 
   .file:hover {
@@ -21,33 +23,31 @@
   }
 
   .file.active {
-    color: var(--color-foreground-match-background) !important;
-    background-color: var(--color-fill-secondary);
+    color: var(--color-foreground-contrast) !important;
+    background-color: var(--color-fill-ghost);
+    font-weight: var(--font-weight-medium);
   }
 
   .file.active:hover {
-    color: var(--color-foreground-match-background) !important;
-    background-color: var(--color-fill-secondary-hover);
+    background-color: var(--color-fill-ghost-hover);
   }
 
   .name {
-    margin-left: 0.25rem;
     user-select: none;
     white-space: nowrap;
     text-overflow: ellipsis !important;
     overflow: hidden;
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-medium);
   }
   .icon-container {
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-dim);
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 0.125rem;
   }
   .active .icon-container {
-    color: var(--color-foreground-match-background);
+    color: var(--color-foreground-contrast);
   }
 </style>
 

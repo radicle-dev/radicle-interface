@@ -24,7 +24,7 @@
     text-overflow: ellipsis !important;
     overflow: hidden;
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-regular);
   }
   .icon-container {
     display: flex;

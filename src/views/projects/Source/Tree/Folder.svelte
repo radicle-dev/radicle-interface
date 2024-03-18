@@ -49,7 +49,7 @@
   .folder-name {
     margin-left: 0.25rem;
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-regular);
   }
 
   .container {
@@ -65,8 +65,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--color-fill-secondary);
+    color: var(--color-foreground-dim);
     margin-right: 0.125rem;
+  }
+
+  .expanded {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground-contrast);
   }
 </style>
 
@@ -78,14 +83,14 @@
   on:click={() => {
     expanded = !expanded;
   }}>
-  <div class="icon-container">
+  <div class="icon-container" class:expanded>
     {#if expanded}
       <IconSmall name="folder-open" />
     {:else}
       <IconSmall name="folder" />
     {/if}
   </div>
-  <span class="folder-name">{name}</span>
+  <span class="folder-name" class:expanded>{name}</span>
 </div>
 
 {#if expanded}
