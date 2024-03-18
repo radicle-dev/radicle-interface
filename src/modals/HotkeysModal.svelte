@@ -47,17 +47,16 @@
       </div>
 
       <div class="pair">
-        <span>Close</span>
-        <KeyHint>ESC</KeyHint>
-      </div>
-
-      <div class="pair">
         <span>Select multiple lines</span>
         <div class="keys">
           <KeyHint>Shift</KeyHint>
           +
           <IconSmall name="cursor" />
         </div>
+      </div>
+      <div class="pair">
+        <span>Close</span>
+        <KeyHint>Esc</KeyHint>
       </div>
     </div>
   </div>
