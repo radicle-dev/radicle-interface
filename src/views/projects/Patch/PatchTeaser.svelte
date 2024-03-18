@@ -199,6 +199,7 @@
             },
           }}>
           <DiffStatBadge
+            hoverable
             insertions={diff.stats.insertions}
             deletions={diff.stats.deletions} />
         </Link>

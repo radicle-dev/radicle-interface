@@ -7,6 +7,7 @@
     LifecycleState,
     PatchState,
     Revision,
+    Diff,
   } from "@httpd-client";
 
   interface Thread {
@@ -62,6 +63,7 @@
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
@@ -85,6 +87,7 @@
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
+  export let stats: Diff["stats"];
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
@@ -602,6 +605,7 @@
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
   $: firstRevision = timelineTuple[0][0];
+  $: latestRevision = patch.revisions[patch.revisions.length - 1];
   $: session =
     $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
       ? $httpdStore.session
@@ -769,6 +773,19 @@
             <IconSmall name="patch" />
             {capitalize(patch.state.status)}
           </Badge>
+          <Link
+            route={{
+              resource: "project.patch",
+              project: project.id,
+              node: baseUrl,
+              patch: patch.id,
+              view: { name: "changes", revision: latestRevision.id },
+            }}>
+            <DiffStatBadge
+              hoverable
+              insertions={stats.insertions}
+              deletions={stats.deletions} />
+          </Link>
         </svelte:fragment>
         <svelte:fragment slot="description">
           <div class="revision-description">

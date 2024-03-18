@@ -304,7 +304,7 @@
               view: { name: "diff", fromCommit, toCommit: revisionOid },
             }}>
             {@const { insertions, deletions } = response.diff.stats}
-            <DiffStatBadge {insertions} {deletions} />
+            <DiffStatBadge hoverable {insertions} {deletions} />
           </Link>
         {/if}
         <Popover

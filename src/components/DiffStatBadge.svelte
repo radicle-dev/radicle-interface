@@ -1,6 +1,7 @@
 <script lang="ts">
   export let insertions: number;
   export let deletions: number;
+  export let hoverable: boolean = false;
 </script>
 
 <style>
@@ -14,10 +15,10 @@
     border-radius: var(--border-radius-round);
     overflow: hidden;
   }
-  .badge:hover .positive {
+  .hoverable:hover .positive {
     background-color: var(--color-fill-diff-green);
   }
-  .badge:hover .negative {
+  .hoverable:hover .negative {
     background-color: var(--color-fill-diff-red);
   }
   .positive {
@@ -36,7 +37,7 @@
   }
 </style>
 
-<div class="badge">
+<div class="badge" class:hoverable>
   <div class="positive">
     +{insertions}
   </div>
