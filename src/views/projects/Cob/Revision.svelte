@@ -145,7 +145,8 @@
 <style>
   .action {
     border-radius: var(--border-radius-small);
-    min-height: 3rem;
+    min-height: 2.5rem;
+    display: flex;
     align-items: center;
   }
   .merge {
@@ -211,17 +212,21 @@
   .patch-header {
     background-color: var(--color-fill-float);
     border-bottom: 1px solid var(--color-fill-separator);
+    border-top: 1px solid var(--color-fill-separator);
     display: flex;
     flex-direction: column;
-    padding-bottom: 1rem;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0;
     font-size: var(--font-size-small);
   }
   .authorship-header {
     display: flex;
     align-items: center;
-    min-height: 3.5rem;
+    padding: 0 0.75rem;
+    height: 1.5rem;
     gap: 0.5rem;
-    padding: 0 0.5rem;
     font-size: var(--font-size-small);
   }
   .timestamp {
@@ -240,7 +245,7 @@
     display: flex;
     flex-direction: column;
     font-size: 0.875rem;
-    margin-left: 1rem;
+    margin-left: 1.25rem;
     gap: 0.5rem;
     padding: 1rem 1rem;
     border-left: 1px solid var(--color-fill-separator);
@@ -269,7 +274,7 @@
   .connector {
     width: 1px;
     height: 1.5rem;
-    margin-left: 1rem;
+    margin-left: 1.25rem;
     background-color: var(--color-fill-separator);
   }
 </style>
@@ -382,16 +387,11 @@
     {#if expanded}
       <div>
         <div class="patch-header">
-          <div
-            class="authorship-header"
-            style:border-top="1px solid var(--color-fill-separator)">
+          <div class="authorship-header">
             <div style:color={badgeColor(patchState)}>
               <IconSmall name="patch" />
             </div>
-
-            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias}>
-            </NodeId>
-
+            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
               opened this patch on base
               <span class="global-oid">
@@ -409,7 +409,9 @@
                 </span>
               {/if}
             {/if}
-            <span title={utils.absoluteTimestamp(revisionTimestamp)}>
+            <span
+              class="timestamp"
+              title={utils.absoluteTimestamp(revisionTimestamp)}>
               {utils.formatTimestamp(revisionTimestamp)}
             </span>
             {#if revisionEdits.length > 1 && lastEdit}

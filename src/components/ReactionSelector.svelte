@@ -40,7 +40,7 @@
   }
 </style>
 
-<div style="margin-top: 0.875rem;">
+<div>
   <Popover
     popoverPositionBottom="2rem"
     popoverPositionLeft="0"

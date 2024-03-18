@@ -45,7 +45,7 @@
   .card {
     display: flex;
     flex-direction: column;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
     gap: 0.5rem;
   }
   .card:not(:last-child) {
@@ -54,7 +54,7 @@
   .card-header {
     display: flex;
     align-items: center;
-    padding: 0 0.5rem;
+    padding: 0 0.75rem;
     height: 1.5rem;
     gap: 0.5rem;
     font-size: var(--font-size-small);
@@ -81,18 +81,27 @@
     gap: 0.5rem;
   }
   .card-body {
+    display: flex;
+    align-items: center;
+    min-height: 1.625rem;
     word-wrap: break-word;
     font-size: var(--font-size-small);
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 0 2.25rem;
+  }
+  .card-empty-body {
+    padding: 0;
   }
   .actions {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
-    padding-left: 2rem;
+    padding-left: 2.25rem;
     margin-left: -0.25rem;
+  }
+  .timestamp {
+    font-size: var(--font-size-small);
+    color: var(--color-fill-gray);
   }
   .edit-buttons {
     display: flex;
@@ -104,15 +113,15 @@
   }
   .connector-line {
     width: 1px;
-    height: 28px;
+    height: 21px;
     position: absolute;
-    top: -16px;
+    top: -9px;
     left: -1px;
     background-color: var(--color-fill-separator);
   }
 </style>
 
-<div class="card" {id} class:reply={isReply}>
+<div class="card" class:card-empty-body={!body} {id} class:reply={isReply}>
   <div style:position="relative">
     {#if isReply}
       <div class="reply-dot" />
@@ -126,7 +135,7 @@
       </div>
       <NodeId nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
-      <span class="card-metadata" title={utils.absoluteTimestamp(timestamp)}>
+      <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}
       </span>
       {#if lastEdit}
@@ -152,36 +161,36 @@
     </div>
   </div>
 
-  <div class="card-body">
-    {#if editComment && state !== "read"}
-      {@const editComment_ = editComment}
-      <ExtendedTextarea
-        {rawPath}
-        {body}
-        {embeds}
-        {enableAttachments}
-        submitInProgress={state === "submit"}
-        submitCaption="Save"
-        placeholder="Leave your comment"
-        on:submit={async ({ detail: { comment, embeds } }) => {
-          state = "submit";
-          try {
-            await editComment_(comment, Array.from(embeds.values()));
-          } finally {
+  {#if body}
+    <div class="card-body">
+      {#if editComment && state !== "read"}
+        {@const editComment_ = editComment}
+        <ExtendedTextarea
+          {rawPath}
+          {body}
+          {embeds}
+          {enableAttachments}
+          submitInProgress={state === "submit"}
+          submitCaption="Save"
+          placeholder="Leave your comment"
+          on:submit={async ({ detail: { comment, embeds } }) => {
+            state = "submit";
+            try {
+              await editComment_(comment, Array.from(embeds.values()));
+            } finally {
+              state = "read";
+            }
+          }}
+          on:close={async () => {
+            body = body;
+            await tick();
             state = "read";
-          }
-        }}
-        on:close={async () => {
-          body = body;
-          await tick();
-          state = "read";
-        }} />
-    {:else if body.trim() === ""}
-      <span class="txt-missing">No description</span>
-    {:else}
-      <Markdown {rawPath} content={body} />
-    {/if}
-  </div>
+          }} />
+      {:else}
+        <Markdown {rawPath} content={body} />
+      {/if}
+    </div>
+  {/if}
   {#if (id && reactOnComment) || (id && reactions && reactions.length > 0)}
     <div class="actions">
       {#if id && reactOnComment}

@@ -21,6 +21,9 @@
     margin-bottom: 0.5rem;
   }
   .description {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     font-size: var(--font-size-small);
     margin-top: 2rem;
     word-break: break-word;

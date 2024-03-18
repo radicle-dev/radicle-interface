@@ -21,7 +21,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 0.875rem;
   }
   .reaction {
     display: inline-flex;
