@@ -21,17 +21,16 @@
   .teaser {
     display: flex;
     font-size: var(--font-size-small);
+    align-items: start;
   }
   .message {
     align-items: center;
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
   .left {
     display: flex;
-    flex-direction: column;
     gap: 0.5rem;
   }
   .right {
@@ -39,6 +38,7 @@
     align-items: flex-start;
     gap: 1rem;
     margin-left: auto;
+    margin-top: -0.25rem;
   }
   .summary:hover {
     text-decoration: underline;
@@ -78,10 +78,8 @@
     {/if}
   </div>
   <div class="right">
-    <div style:display="flex" style:gap="1rem" style:height="1.5rem">
-      <div style:margin-bottom="1rem">
-        <CompactCommitAuthorship {commit} />
-      </div>
+    <div style="display: flex; gap: 0.5rem; height: 2rem; align-items: center;">
+      <CompactCommitAuthorship {commit} />
       <IconButton title="Browse repo at this commit">
         <Link
           route={{

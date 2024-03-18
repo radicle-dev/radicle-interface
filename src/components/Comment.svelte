@@ -97,7 +97,7 @@
     align-items: center;
     gap: 0.5rem;
     padding-left: 2.25rem;
-    margin-left: -0.25rem;
+    margin-left: -0.5rem;
   }
   .timestamp {
     font-size: var(--font-size-small);

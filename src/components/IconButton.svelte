@@ -18,7 +18,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 4px;
+    padding: 8px 6px;
     gap: 0.25rem;
     font-size: var(--font-size-small);
   }

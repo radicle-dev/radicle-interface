@@ -239,6 +239,7 @@
     align-items: center;
     padding-left: 2rem;
     gap: 0.5rem;
+    margin-left: -0.5rem;
   }
   .commits {
     position: relative;
@@ -247,7 +248,7 @@
     font-size: 0.875rem;
     margin-left: 1.25rem;
     gap: 0.5rem;
-    padding: 1rem 1rem;
+    padding: 1rem 0.5rem 1rem 1rem;
     border-left: 1px solid var(--color-fill-separator);
   }
 

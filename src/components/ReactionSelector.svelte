@@ -21,11 +21,10 @@
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-tiny);
-    padding: 0.2rem;
+    padding: 0.4rem;
     gap: 0.2rem;
   }
   .selector button {
-    padding: 0.5rem;
     border: 0;
     background-color: transparent;
   }
@@ -46,14 +45,12 @@
     popoverPositionLeft="0"
     popoverPadding="0">
     <IconButton
-      stylePadding="4px"
       slot="toggle"
       let:toggle
       on:click={toggle}
       title="toggle-reaction-popover">
       <IconSmall name="face" />
     </IconButton>
-
     <div class="selector" slot="popover">
       {#each config.reactions as reaction}
         {@const lookedUpReaction = reactions?.find(
