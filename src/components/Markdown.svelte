@@ -384,9 +384,13 @@
   }
   .markdown :global(a) {
     text-decoration: underline;
+    text-decoration-color: var(--color-foreground-dim);
   }
   .markdown :global(a.no-underline) {
     text-decoration: none;
+  }
+  .markdown :global(a:hover) {
+    text-decoration-color: var(--color-foreground-contrast);
   }
 
   .markdown :global(hr) {

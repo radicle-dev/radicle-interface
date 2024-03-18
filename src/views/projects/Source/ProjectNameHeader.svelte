@@ -39,6 +39,9 @@
     color: inherit;
   }
   .description :global(a) {
+    border-bottom: 1px solid var(--color-foreground-dim);
+  }
+  .description :global(a:hover) {
     border-bottom: 1px solid var(--color-foreground-contrast);
   }
   .id {
