@@ -60,7 +60,7 @@
         alias={selectedPeer.alias}
         stylePopoverPositionLeft="-0.75rem" />
       {#if selectedPeer.delegate}
-        <Badge size="tiny" variant="primary">
+        <Badge size="tiny" variant="delegate">
           <IconSmall name="badge" />
           Delegate
         </Badge>
