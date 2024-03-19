@@ -88,7 +88,7 @@
     {branches}
     {project}
     {node}
-    selectedCommitId={commitId}
+    onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
     {selectedBranch} />
 </div>
 

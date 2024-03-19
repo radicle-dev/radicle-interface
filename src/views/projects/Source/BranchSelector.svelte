@@ -6,6 +6,7 @@
   import { activeUnloadedRouteStore } from "@app/lib/router";
   import { closeFocused } from "@app/components/Popover.svelte";
 
+  import Badge from "@app/components/Badge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -13,6 +14,7 @@
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
 
+  export let onCanonical: boolean;
   export let branches: Array<{ name: string; route: Route }>;
   export let node: BaseUrl;
   export let project: Project;
@@ -52,6 +54,11 @@
         title="Change branch">
         <IconSmall name="branch" />
         <div class="identifier">{selectedBranch}</div>
+        {#if onCanonical}
+          <Badge title="Canonical branch" variant="foreground-emphasized">
+            Canonical
+          </Badge>
+        {/if}
         <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
 
@@ -62,7 +69,11 @@
         <svelte:fragment slot="item" let:item>
           <Link route={item.route} on:afterNavigate={() => closeFocused()}>
             <DropdownListItem selected={item.name === selectedBranch}>
-              <div class="identifier">{item.name}</div>
+              {#if onCanonical}
+                <Badge title="Canonical branch" variant="foreground-emphasized">
+                  Canonical
+                </Badge>
+              {/if}
             </DropdownListItem>
           </Link>
         </svelte:fragment>
