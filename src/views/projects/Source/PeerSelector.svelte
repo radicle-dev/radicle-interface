@@ -34,6 +34,9 @@
     color: var(--color-foreground-contrast);
     padding: 0 0.25rem;
   }
+  .no-alias {
+    color: var(--color-foreground-dim);
+  }
 </style>
 
 <Popover
@@ -77,8 +80,12 @@
         <DropdownListItem
           selected={item.selected}
           title={createTitle(item.remote)}>
-          <div style:height="1rem"><Avatar nodeId={item.remote.id} /></div>
-          <span style:font-family="var(--font-family-monospace)">
+          <div style:height="1rem">
+            <Avatar nodeId={item.remote.id} />
+          </div>
+          <span
+            style:font-family="var(--font-family-monospace)"
+            class:no-alias={!item.remote.alias}>
             {item.remote.alias || formatNodeId(item.remote.id)}
           </span>
           {#if item.remote.delegate}
