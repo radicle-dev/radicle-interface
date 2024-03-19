@@ -89,12 +89,10 @@
             {item.remote.alias || formatNodeId(item.remote.id)}
           </span>
           {#if item.remote.delegate}
-            <div style:color="var(--color-fill-secondary)">
-              <Badge size="tiny" variant="primary">
-                <IconSmall name="badge" />
-                Delegate
-              </Badge>
-            </div>
+            <Badge size="tiny" variant="delegate">
+              <IconSmall name="badge" />
+              Delegate
+            </Badge>
           {/if}
         </DropdownListItem>
       </Link>
