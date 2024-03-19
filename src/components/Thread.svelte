@@ -62,7 +62,7 @@
     border-bottom-right-radius: 0;
   }
   .replies {
-    margin-left: 1rem;
+    margin-left: 1.25rem;
   }
   .reply {
     padding: 1rem;

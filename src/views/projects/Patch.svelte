@@ -714,7 +714,7 @@
   .connector {
     width: 1px;
     height: 1.5rem;
-    margin-left: 1rem;
+    margin-left: 1.25rem;
     background-color: var(--color-fill-separator);
   }
   @media (max-width: 720px) {

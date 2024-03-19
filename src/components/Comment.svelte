@@ -103,6 +103,9 @@
     font-size: var(--font-size-small);
     color: var(--color-fill-gray);
   }
+  .card-header-no-icon {
+    padding-left: 1rem;
+  }
   .edit-buttons {
     display: flex;
     gap: 0.25rem;
@@ -129,10 +132,8 @@
     {#if isLastReply}
       <div class="connector-line" />
     {/if}
-    <div class="card-header">
-      <div class="icon">
-        <slot name="icon" />
-      </div>
+    <div class="card-header" class:card-header-no-icon={isReply}>
+      <slot class="icon" name="icon" />
       <NodeId nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
