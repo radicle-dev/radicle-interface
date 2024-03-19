@@ -1,6 +1,5 @@
 import {
   aliceMainHead,
-  bobHead,
   cobUrl,
   expect,
   markdownUrl,
@@ -29,9 +28,9 @@ test("navigate to project", async ({ page }) => {
   // Project menu shows default selected branch and commit and contributor counts.
   {
     await expect(page.getByTitle("Change branch")).toBeVisible();
-    await expect(page.getByTitle("Current HEAD")).toHaveText(
-      aliceMainHead.substring(0, 7),
-    );
+    await expect(
+      page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+    ).toBeVisible();
     await expect(
       page.getByRole("link", {
         name: "Commits 7",
@@ -289,9 +288,9 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByTitle("Change branch")).toHaveText("main");
-      await expect(page.getByTitle("Current HEAD")).toHaveText(
-        aliceMainHead.substring(0, 7),
-      );
+      await expect(
+        page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+      ).toBeVisible();
       await expect(
         page.getByRole("link", {
           name: "Commits 7",
@@ -307,7 +306,9 @@ test("peer and branch switching", async ({ page }) => {
       await expect(
         page.getByRole("button", { name: "feature/branch" }),
       ).toBeVisible();
-      await expect(page.getByTitle("Current HEAD")).toHaveText("1aded56");
+      await expect(
+        page.getByRole("button", { name: "1aded56 Add subconscious file" }),
+      ).toBeVisible();
       await expect(
         page.getByRole("link", {
           name: "Commits 9",
@@ -323,7 +324,9 @@ test("peer and branch switching", async ({ page }) => {
       await expect(
         page.getByRole("button", { name: "orphaned-branch" }),
       ).toBeVisible();
-      await expect(page.getByTitle("Current HEAD")).toHaveText("af3641c");
+      await expect(
+        page.getByRole("button", { name: "af3641c Add empty orphaned" }),
+      ).toBeVisible();
       await expect(
         page.getByRole("link", {
           name: "Commits 1",
@@ -342,9 +345,9 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).not.toContainText("bob");
 
     await expect(page.getByTitle("Change branch")).toBeVisible();
-    await expect(page.getByTitle("Current HEAD")).toHaveText(
-      aliceMainHead.substring(0, 7),
-    );
+    await expect(
+      page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+    ).toBeVisible();
     await expect(page.getByText("Git test repository")).toBeVisible();
   }
 
@@ -358,16 +361,16 @@ test("peer and branch switching", async ({ page }) => {
     // Default `main` branch.
     {
       await expect(page.getByRole("button", { name: "main" })).toBeVisible();
-      await expect(page.getByTitle("Current HEAD")).toHaveText(
-        bobHead.substring(0, 7),
-      );
+      await expect(
+        page.getByRole("button", { name: "ff32f18 Update readme" }).first(),
+      ).toBeVisible();
       await expect(
         page.getByRole("link", {
           name: "Commits 8",
         }),
       ).toBeVisible();
       await expect(
-        page.getByText(`${bobHead.substring(0, 7)} Update readme`),
+        page.getByRole("button", { name: "ff32f18 Update readme" }).first(),
       ).toBeVisible();
     }
   }

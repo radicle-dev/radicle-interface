@@ -10,11 +10,10 @@
   import { routeToPath } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
+  import CommitButton from "@app/views/projects/components/CommitButton.svelte";
   import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Radio from "@app/components/Radio.svelte";
@@ -166,41 +165,12 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  .commit-teaser {
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    border-radius: var(--border-radius-tiny);
-    background-color: var(--color-fill-ghost-hover);
-    gap: 0.75rem;
-    padding-right: 0.75rem;
-    height: var(--button-small-height);
-  }
 </style>
 
 <File sticky={false}>
   <FilePath slot="left-header" filenameWithPath={blob.path} />
   <svelte:fragment slot="right-header">
-    <div class="commit-teaser">
-      <div class="hash-button">
-        <Link
-          route={{
-            resource: "project.commit",
-            project: projectId,
-            node: baseUrl,
-            commit: lastCommit.id,
-          }}>
-          <Button variant="gray" styleBorderRadius="0">
-            <span class="global-commit">
-              {lastCommit.id.slice(0, 7)}
-            </span>
-          </Button>
-        </Link>
-      </div>
-      <div style:white-space="nowrap">
-        <InlineMarkdown fontSize="small" content={lastCommit.summary} />
-      </div>
-    </div>
+    <CommitButton styleRoundBorders {projectId} {baseUrl} commit={lastCommit} />
     <div class="global-hide-on-mobile teaser-buttons">
       {#if enablePreview}
         <Radio ariaLabel="Toggle render method">

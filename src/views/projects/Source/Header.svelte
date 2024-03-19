@@ -22,13 +22,13 @@
 
   // Revision may be a commit ID, a branch name or `undefined` which means the
   // default branch. We assign `selectedBranch` accordingly.
-  $: if (revision === commitId) {
+  $: if (revision === commit.id) {
     selectedBranch = undefined;
   } else {
     selectedBranch = revision || project.defaultBranch;
   }
 
-  $: commitId = tree.lastCommit.id;
+  $: commit = tree.lastCommit;
   $: peer = peers.find(p => p.selected)?.remote.id;
 </script>
 
@@ -89,6 +89,7 @@
     {project}
     {node}
     onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
+    selectedCommit={commit}
     {selectedBranch} />
 </div>
 

@@ -153,6 +153,8 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page.getByRole("link", { name: "Commits 2" })).toBeVisible();
 
   await expect(page.getByTitle("Change branch")).toHaveText("main Canonical");
+  const branchSelectorCommitButton = page.getByTitle("Current HEAD").first();
+  await expect(branchSelectorCommitButton).toHaveText("516fa74 first change");
 
   await page
     .getByRole("banner")
@@ -182,5 +184,8 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   );
   await expect(
     page.getByRole("button", { name: "main Canonical" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "bb9089a after clicking the" }),
   ).toBeVisible();
 });

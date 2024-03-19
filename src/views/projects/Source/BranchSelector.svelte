@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Commit, Project } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
-  import * as utils from "@app/lib/utils";
   import { activeUnloadedRouteStore } from "@app/lib/router";
   import { closeFocused } from "@app/components/Popover.svelte";
 
   import Badge from "@app/components/Badge.svelte";
+  import Button from "@app/components/Button.svelte";
+  import CommitButton from "@app/views/projects/components/CommitButton.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -19,9 +20,7 @@
   export let node: BaseUrl;
   export let project: Project;
   export let selectedBranch: string | undefined;
-  export let selectedCommitId: string;
-
-  $: selectedCommitShortId = utils.formatCommit(selectedCommitId);
+  export let selectedCommit: Commit["commit"];
 </script>
 
 <style>
@@ -43,14 +42,14 @@
     <Popover
       popoverPadding="0"
       popoverPositionTop="2.5rem"
-      popoverBorderRadius="var(--border-radius-small)">
+      popoverBorderRadius="var(--border-radius-tiny)">
       <Button
         variant="gray-white"
         let:expanded
         let:toggle
         on:click={toggle}
         slot="toggle"
-        styleBorderRadius="var(--border-radius-small) 0 0 var(--border-radius-small)"
+        styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
         title="Change branch">
         <IconSmall name="branch" />
         <div class="identifier">{selectedBranch}</div>
@@ -91,27 +90,5 @@
   {/if}
 
   <div class="global-spacer" />
-
-  <Button
-    title="Current HEAD"
-    variant="not-selected"
-    styleBorderRadius={selectedBranch
-      ? "0 var(--border-radius-small) var(--border-radius-small) 0"
-      : "var(--border-radius-small)"}>
-    <Link
-      route={{
-        resource: "project.commit",
-        project: project.id,
-        node,
-        commit: selectedCommitId,
-      }}>
-      <div class="identifier global-commit">
-        {#if !selectedBranch}
-          <IconSmall name="branch" />
-        {/if}
-
-        {selectedCommitShortId}
-      </div>
-    </Link>
-  </Button>
+  <CommitButton projectId={project.id} commit={selectedCommit} baseUrl={node} />
 </div>
