@@ -10,7 +10,6 @@ simple guidelines.
 
       // Return the current UNIX time.
 
-* Sign all your comments with your public key, using `git commit -S`.
 * Follow the guidelines when proposing code changes (see below).
 * Write properly formatted git commits (see below).
 
