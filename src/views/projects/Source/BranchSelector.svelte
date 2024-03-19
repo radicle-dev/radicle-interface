@@ -10,10 +10,9 @@
   import CommitButton from "@app/views/projects/components/CommitButton.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import Popover from "@app/components/Popover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import Button from "@app/components/Button.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
   export let onCanonical: boolean;
   export let branches: Array<{ name: string; route: Route }>;
@@ -68,6 +67,10 @@
         <svelte:fragment slot="item" let:item>
           <Link route={item.route} on:afterNavigate={() => closeFocused()}>
             <DropdownListItem selected={item.name === selectedBranch}>
+              <IconSmall name="branch" />
+              <div class="identifier">
+                {item.name}
+              </div>
               {#if onCanonical}
                 <Badge title="Canonical branch" variant="foreground-emphasized">
                   Canonical
@@ -81,7 +84,10 @@
             route={$activeUnloadedRouteStore}
             on:afterNavigate={() => closeFocused()}>
             <DropdownListItem selected>
-              <div class="identifier">{project.defaultBranch}</div>
+              <IconSmall name="branch" />
+              <div class="identifier">
+                {project.defaultBranch}
+              </div>
             </DropdownListItem>
           </Link>
         </svelte:fragment>
