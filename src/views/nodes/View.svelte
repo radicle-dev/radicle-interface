@@ -99,10 +99,6 @@
     gap: 0.5rem;
     width: 100%;
   }
-  .pinned {
-    display: flex;
-    align-items: center;
-  }
   .info {
     display: flex;
     justify-content: space-between;
@@ -165,10 +161,9 @@
       </div>
 
       <div class="subtitle">
-        <div class="pinned txt-semibold">
-          {stats.repos.total} repositories hosted
+        <div class="txt-semibold">
+          {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} projects
         </div>
-
         <div class="global-hide-on-mobile" style:margin-left="auto">
           {#if policy && scope}
             <ScopePolicyPopover
