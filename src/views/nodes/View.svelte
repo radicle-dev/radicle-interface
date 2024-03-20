@@ -1,11 +1,5 @@
 <script lang="ts">
-  import type {
-    BaseUrl,
-    NodeStats,
-    Policy,
-    ProjectListQuery,
-    Scope,
-  } from "@httpd-client";
+  import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
   import type { ComponentProps } from "svelte";
   import type { ProjectInfo } from "@app/components/ProjectCard";
 
@@ -38,20 +32,10 @@
     | undefined;
 
   onMount(async () => {
-    const query: ProjectListQuery = { show: "all" };
-    await api
-      .getStats()
-      .then(({ repos: { total } }) => (query.perPage = total))
-      .catch(e => {
-        console.error(
-          "Not able to query to total repo count for your local node.",
-          e,
-        );
-      });
-
-    localProjects = await fetchProjectInfos(api.baseUrl, query).catch(
-      error => error,
-    );
+    localProjects = await fetchProjectInfos(api.baseUrl, {
+      show: "all",
+      perPage: stats.repos.total,
+    }).catch(error => error);
   });
 
   function isSeeding(projectId: string) {
@@ -183,7 +167,7 @@
       </div>
 
       <div style:margin-top="1rem">
-        {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned" }, )}
+        {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
           <Loading small center />
         {:then projectInfos}
           <div class="project-grid">
