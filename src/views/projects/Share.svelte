@@ -69,7 +69,7 @@
       <Loading small noDelay />
     {:else}
       <IconSmall name={shareIcon} />
-      Share
+      Copy link
     {/if}
   </Button>
 {/if}
