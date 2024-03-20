@@ -9,7 +9,6 @@
   import { api, httpdStore } from "@app/lib/httpd";
   import { baseUrlToString } from "@app/lib/utils";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
-  import { experimental } from "@app/lib/appearance";
   import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
   import { preferredSeeds } from "@app/lib/seeds";
@@ -139,65 +138,54 @@
 
 <AppLayout>
   <div class="wrapper">
-    {#if $experimental}
-      <div class="global-hide-on-mobile">
-        <HomepageSection
-          loading={$httpdStore.state !== "stopped" &&
-            localProjects === undefined}
-          empty={$httpdStore.state === "stopped" ||
-            (filteredLocalProjects instanceof Array &&
-              !filteredLocalProjects.length) ||
-            localProjects instanceof Error}
-          title="Local projects"
-          subtitle="Projects you're seeding with your local node">
-          <svelte:fragment slot="actions">
-            <FilterButton
-              disabled={!nodeId}
-              bind:value={$localProjectsFilter} />
-            <NewProjectButton disabled={!nodeId} />
-          </svelte:fragment>
-          <svelte:fragment slot="empty">
-            <div class="empty-state">
-              {#if !nodeId}
-                <div style="text-align: left; width: 100%;">
-                  <ConnectInstructions />
-                </div>
-              {:else if localProjects instanceof Error}
-                <ErrorMessage
-                  {...handleError(
-                    localProjects,
-                    baseUrlToString(api.baseUrl),
-                  )} />
-              {:else if !localProjects?.length}
-                <div class="heading">No local projects</div>
-                <div class="label">
-                  Seed or check out a project to work with it on your local
-                  node.
-                </div>
-              {:else}
-                <div class="heading">Nothing to see here</div>
-                <div class="label">
-                  No local projects matched your filter settings.
-                </div>
-              {/if}
-            </div>
-          </svelte:fragment>
-          <div class="project-grid">
-            {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
-              {#each filteredLocalProjects as projectInfo}
-                <ProjectCard
-                  {projectInfo}
-                  isSeeding={true}
-                  isDelegate={isDelegate(
-                    nodeId,
-                    projectInfo.project.delegates,
-                  ) ?? false} />
-              {/each}
+    <div class="global-hide-on-mobile">
+      <HomepageSection
+        loading={$httpdStore.state !== "stopped" && localProjects === undefined}
+        empty={$httpdStore.state === "stopped" ||
+          (filteredLocalProjects instanceof Array &&
+            !filteredLocalProjects.length) ||
+          localProjects instanceof Error}
+        title="Local projects"
+        subtitle="Projects you're seeding with your local node">
+        <svelte:fragment slot="actions">
+          <FilterButton disabled={!nodeId} bind:value={$localProjectsFilter} />
+          <NewProjectButton disabled={!nodeId} />
+        </svelte:fragment>
+        <svelte:fragment slot="empty">
+          <div class="empty-state">
+            {#if !nodeId}
+              <div style="text-align: left; width: 100%;">
+                <ConnectInstructions />
+              </div>
+            {:else if localProjects instanceof Error}
+              <ErrorMessage
+                {...handleError(localProjects, baseUrlToString(api.baseUrl))} />
+            {:else if !localProjects?.length}
+              <div class="heading">No local projects</div>
+              <div class="label">
+                Seed or check out a project to work with it on your local node.
+              </div>
+            {:else}
+              <div class="heading">Nothing to see here</div>
+              <div class="label">
+                No local projects matched your filter settings.
+              </div>
             {/if}
           </div>
-        </HomepageSection>
-      </div>
-    {/if}
+        </svelte:fragment>
+        <div class="project-grid">
+          {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
+            {#each filteredLocalProjects as projectInfo}
+              <ProjectCard
+                {projectInfo}
+                isSeeding={true}
+                isDelegate={isDelegate(nodeId, projectInfo.project.delegates) ??
+                  false} />
+            {/each}
+          {/if}
+        </div>
+      </HomepageSection>
+    </div>
 
     <HomepageSection
       loading={preferredSeedProjects === undefined}
