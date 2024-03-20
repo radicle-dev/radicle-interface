@@ -103,18 +103,14 @@
         toggle();
       }
     }}
-    variant={!$experimental
-      ? "outline"
-      : seeding
-        ? "secondary-toggle-on"
-        : "secondary-toggle-off"}>
+    variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="network" />
     <span class="title-counter">
       {seeding ? "Seeding" : "Seed"}
       <span
         class="counter"
-        class:seeding={$experimental ? seeding : false}
-        class:not-seeding={$experimental ? !seeding : false}
+        class:seeding
+        class:not-seeding={!seeding}
         class:disabled={$experimental ? !canEditSeeding : false}
         style:font-weight="var(--font-weight-regular)">
         {seedCount}

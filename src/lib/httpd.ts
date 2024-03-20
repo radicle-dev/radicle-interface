@@ -207,10 +207,6 @@ function pollSession() {
 }
 
 export async function initialize() {
-  if (!get(experimental)) {
-    return;
-  }
-
   // Sync session state changes with other open tabs and windows.
   addEventListener("storage", event => {
     if (
