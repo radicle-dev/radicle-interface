@@ -28,6 +28,7 @@
   export let styleFontFamily: string | undefined = undefined;
   export let stylePadding: string | undefined = undefined;
   export let styleWidth: "100%" | undefined = undefined;
+  export let styleMinWidth: string | undefined = undefined;
   export let styleBorderRadius: string | undefined = undefined;
   export let styleJustifyContent: "center" | "flex-start" = "center";
 
@@ -319,6 +320,7 @@
   style:font-family={styleFontFamily}
   style:padding={stylePadding}
   style:width={styleWidth}
+  style:min-width={styleMinWidth}
   style:border-radius={styleBorderRadius}
   style:justify-content={styleJustifyContent}
   on:blur
