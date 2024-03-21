@@ -39,6 +39,7 @@ test("add and remove assignees", async ({ page, authenticatedPeer }) => {
   await page
     .getByPlaceholder("Add assignee")
     .fill("z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S");
+  await page.getByRole("button", { name: "save assignee" }).click();
   await expect(page.getByText("This assignee is already added")).toBeVisible();
   await page.getByPlaceholder("Add assignee").clear();
   await expect(page.getByText("This assignee is already added")).toBeHidden();

@@ -23,34 +23,39 @@
   let updatedAssignees: Reaction["authors"] = assignees;
   let inputValue = "";
   let validationMessage: string | undefined = undefined;
-  let valid: boolean = false;
   let assignee: string | undefined = undefined;
 
   const removeToggles: Record<string, boolean> = {};
 
+  // Clear validationMessage if inputValue changes
   $: {
-    if (inputValue !== "") {
+    inputValue;
+    validationMessage = undefined;
+  }
+
+  function validateInput(input: string): boolean {
+    if (input !== "") {
       const parsedNodeId = parseNodeId(inputValue);
       if (parsedNodeId) {
         assignee = `${parsedNodeId.prefix}${parsedNodeId.pubkey}`;
         if (updatedAssignees.find(({ id }) => id === assignee)) {
-          valid = false;
           validationMessage = "This assignee is already added";
+          return false;
         } else {
-          valid = true;
           validationMessage = undefined;
+          return true;
         }
       } else {
-        valid = false;
         validationMessage = "This assignee is not valid";
       }
     } else {
-      valid = false;
       validationMessage = "";
     }
+    return false;
   }
 
   function addAssignee() {
+    const valid = validateInput(inputValue);
     if (valid && assignee) {
       updatedAssignees = [...updatedAssignees, { id: assignee }];
       inputValue = "";
@@ -121,7 +126,6 @@
         <div
           style="width:100%; display: flex; align-items: center; gap: 0.5rem;">
           <TextInput
-            {valid}
             autofocus
             disabled={submitInProgress}
             bind:value={inputValue}
@@ -131,6 +135,7 @@
             title="discard assignee"
             on:click={() => {
               inputValue = "";
+              validationMessage = undefined;
               showInput = false;
             }}>
             <IconSmall name="cross" />
@@ -139,7 +144,7 @@
             <IconSmall name="checkmark" />
           </IconButton>
         </div>
-        {#if !valid && validationMessage}
+        {#if validationMessage}
           <div class="validation-message">
             <IconSmall name="exclamation-circle" />{validationMessage}
           </div>

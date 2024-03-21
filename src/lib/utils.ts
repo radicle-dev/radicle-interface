@@ -18,10 +18,16 @@ export function parseNodeId(
 ): { prefix: string; pubkey: string } | undefined {
   const match = /^(did:key:)?(z[a-zA-Z0-9]+)$/.exec(nid);
   if (match) {
-    const hex = bs58.decode(match[2].substring(1));
+    let hex: Uint8Array | undefined = undefined;
+    try {
+      hex = bs58.decode(match[2].substring(1));
+    } catch (error) {
+      console.error("utils.parseNodId: Not able to decode received NID", error);
+      return undefined;
+    }
     // This checks also that the first 2 bytes are equal
     // to the ed25519 public key type used.
-    if (!(hex.byteLength === 34 && hex[0] === 0xed && hex[1] === 1)) {
+    if (hex && !(hex.byteLength === 34 && hex[0] === 0xed && hex[1] === 1)) {
       return undefined;
     }
 

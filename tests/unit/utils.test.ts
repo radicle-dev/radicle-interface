@@ -136,6 +136,10 @@ describe("Parse Functions", () => {
       expected: undefined,
     },
     {
+      input: "zlatan",
+      expected: undefined,
+    },
+    {
       input: "z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
       expected: {
         prefix: "did:key:",
