@@ -96,7 +96,7 @@
 {#if expanded}
   <div class="container">
     {#await tree}
-      <span class="loading"><Loading noDelay small margins /></span>
+      <span class="loading"><Loading grayscale noDelay small margins /></span>
     {:then tree}
       {#if tree}
         {#each tree.entries as entry (entry.path)}
