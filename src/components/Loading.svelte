@@ -1,6 +1,7 @@
 <script lang="ts">
   import debounce from "lodash/debounce";
 
+  export let grayscale = false;
   export let small = false;
   export let center = false;
   export let fadeIn = false;
@@ -48,6 +49,10 @@
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+
+  .spinner.grayscale > div {
+    background-color: var(--color-fill-ghost);
   }
 
   .spinner.condensed > div {
@@ -151,19 +156,14 @@
       class="spinner"
       class:fade-in={fadeIn}
       class:small
+      class:grayscale
       class:center
       class:margins
       class:condensed>
-      <div
-        class="bounce1"
-        style="background-color: var(--color-fill-secondary)" />
+      <div class="bounce1" style="" />
       {#if !condensed}
-        <div
-          class="bounce2"
-          style="background-color: var(--color-fill-secondary)" />
-        <div
-          class="bounce3"
-          style="background-color: var(--color-fill-secondary)" />
+        <div class="bounce2" />
+        <div class="bounce3" />
       {/if}
     </div>
   </div>
