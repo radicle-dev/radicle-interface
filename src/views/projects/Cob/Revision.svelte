@@ -391,7 +391,10 @@
             <div style:color={badgeColor(patchState)}>
               <IconSmall name="patch" />
             </div>
-            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias} />
+            <NodeId
+              stylePopoverPositionLeft="0"
+              nodeId={revisionAuthor.id}
+              alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
               opened this patch on base
               <span class="global-oid">
