@@ -146,7 +146,10 @@
       </div>
     </div>
     <div class="subtitle">
-      <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
+      <NodeId
+        stylePopoverPositionLeft="0"
+        nodeId={issue.author.id}
+        alias={issue.author.alias} />
       opened
       <span class="global-oid">{formatObjectId(issue.id)}</span>
       <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>

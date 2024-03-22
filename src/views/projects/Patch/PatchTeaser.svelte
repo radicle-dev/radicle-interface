@@ -158,7 +158,10 @@
     </div>
     <div class="summary">
       <span class="subtitle">
-        <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+        <NodeId
+          stylePopoverPositionLeft="0"
+          nodeId={patch.author.id}
+          alias={patch.author.alias} />
         {patch.revisions.length > 1 ? "updated" : "opened"}
         <span class="global-oid">{formatObjectId(patch.id)}</span>
         {#if patch.revisions.length > 1}
