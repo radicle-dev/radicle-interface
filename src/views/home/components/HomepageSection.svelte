@@ -2,7 +2,6 @@
   import Loading from "@app/components/Loading.svelte";
 
   export let title: string;
-  export let subtitle: string;
   export let loading = false;
 
   export let empty: boolean = false;
@@ -22,7 +21,10 @@
     margin: 0;
   }
 
-  .title > p {
+  .subtitle {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
     margin-top: 0.25rem;
     color: var(--color-foreground-dim);
   }
@@ -56,7 +58,9 @@
   <div class="section-header">
     <div class="title">
       <h2>{title}</h2>
-      <p>{subtitle}</p>
+      <div class="subtitle">
+        <slot name="subtitle" />
+      </div>
     </div>
     <div class="actions">
       <slot name="actions" />

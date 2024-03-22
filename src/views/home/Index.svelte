@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
+  import type { ProjectInfo } from "@app/components/ProjectCard";
   import type { ProjectListQuery } from "@httpd-client";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
@@ -9,23 +10,23 @@
   import { api, httpdStore } from "@app/lib/httpd";
   import { baseUrlToString } from "@app/lib/utils";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
+  import { experimental } from "@app/lib/appearance";
+  import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
   import { preferredSeeds } from "@app/lib/seeds";
 
   import AppLayout from "@app/App/AppLayout.svelte";
-  import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import FilterButton from "./components/FilterButton.svelte";
   import HomepageSection from "./components/HomepageSection.svelte";
+  import HoverPopover from "@app/components/HoverPopover.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
-  import {
-    fetchProjectInfos,
-    type ProjectInfo,
-  } from "@app/components/ProjectCard";
+  import Command from "@app/components/Command.svelte";
 
   const selectedSeed = deduplicateStore(
     derived(preferredSeeds, $ => $?.selected),
@@ -138,64 +139,93 @@
 
 <AppLayout>
   <div class="wrapper">
-    <div class="global-hide-on-mobile">
-      <HomepageSection
-        loading={$httpdStore.state !== "stopped" && localProjects === undefined}
-        empty={$httpdStore.state === "stopped" ||
-          (filteredLocalProjects instanceof Array &&
-            !filteredLocalProjects.length) ||
-          localProjects instanceof Error}
-        title="Local projects"
-        subtitle="Projects you're seeding with your local node">
-        <svelte:fragment slot="actions">
-          <FilterButton disabled={!nodeId} bind:value={$localProjectsFilter} />
-          <NewProjectButton disabled={!nodeId} />
-        </svelte:fragment>
-        <svelte:fragment slot="empty">
-          <div class="empty-state">
-            {#if !nodeId}
-              <div style="text-align: left; width: 100%;">
-                <ConnectInstructions />
-              </div>
-            {:else if localProjects instanceof Error}
-              <ErrorMessage
-                {...handleError(localProjects, baseUrlToString(api.baseUrl))} />
-            {:else if !localProjects?.length}
-              <div class="heading">No local projects</div>
-              <div class="label">
-                Seed or check out a project to work with it on your local node.
-              </div>
-            {:else}
-              <div class="heading">Nothing to see here</div>
-              <div class="label">
-                No local projects matched your filter settings.
-              </div>
+    {#if nodeId}
+      <div class="global-hide-on-mobile">
+        <HomepageSection
+          loading={$httpdStore.state !== "stopped" &&
+            localProjects === undefined}
+          empty={$httpdStore.state === "stopped" ||
+            (filteredLocalProjects instanceof Array &&
+              !filteredLocalProjects.length) ||
+            localProjects instanceof Error}
+          title="Local projects">
+          <svelte:fragment slot="subtitle">
+            Projects you're seeding with your local node
+          </svelte:fragment>
+          <svelte:fragment slot="actions">
+            {#if $experimental}
+              <FilterButton
+                disabled={!nodeId}
+                bind:value={$localProjectsFilter} />
+              <NewProjectButton disabled={!nodeId} />
+            {/if}
+          </svelte:fragment>
+          <svelte:fragment slot="empty">
+            <div class="empty-state">
+              {#if localProjects instanceof Error}
+                <ErrorMessage
+                  {...handleError(
+                    localProjects,
+                    baseUrlToString(api.baseUrl),
+                  )} />
+              {:else if !localProjects?.length}
+                <div class="heading">No local projects</div>
+                <div class="label">
+                  Seed or check out a project to work with it on your local
+                  node.
+                </div>
+              {:else}
+                <div class="heading">Nothing to see here</div>
+                <div class="label">
+                  No local projects matched your filter settings.
+                </div>
+              {/if}
+            </div>
+          </svelte:fragment>
+          <div class="project-grid">
+            {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
+              {#each filteredLocalProjects as projectInfo}
+                <ProjectCard
+                  {projectInfo}
+                  isSeeding={true}
+                  isDelegate={isDelegate(
+                    nodeId,
+                    projectInfo.project.delegates,
+                  ) ?? false} />
+              {/each}
             {/if}
           </div>
-        </svelte:fragment>
-        <div class="project-grid">
-          {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
-            {#each filteredLocalProjects as projectInfo}
-              <ProjectCard
-                {projectInfo}
-                isSeeding={true}
-                isDelegate={isDelegate(nodeId, projectInfo.project.delegates) ??
-                  false} />
-            {/each}
-          {/if}
-        </div>
-      </HomepageSection>
-    </div>
+        </HomepageSection>
+      </div>
+    {/if}
 
     <HomepageSection
       loading={preferredSeedProjects === undefined}
       empty={preferredSeedProjects instanceof Error ||
         preferredSeedProjects?.length === 0}
-      title="Explore"
-      subtitle="Pinned projects on your selected seed node">
+      title="Explore">
+      <svelte:fragment slot="subtitle">
+        Pinned projects on your selected seed node
+        {#if !nodeId}
+          <HoverPopover stylePopoverPositionTop="0.5rem">
+            <div slot="toggle">
+              <span style:color="var(--color-fill-gray)">
+                <IconSmall name="info" />
+              </span>
+            </div>
+
+            <div slot="popover" class="popover txt-small">
+              <div style:padding-bottom="0.5rem">
+                To browse your local projects, run:
+              </div>
+              <Command command="radicle-httpd" />
+            </div>
+          </HoverPopover>
+        {/if}
+      </svelte:fragment>
       <svelte:fragment slot="actions">
         <div class="seed-dropdown">
-          {#if $preferredSeeds}
+          {#if nodeId && $preferredSeeds}
             <PreferredSeedDropdown
               disabled={!nodeId || preferredSeedProjects === undefined}
               preferredSeed={$preferredSeeds?.selected} />
