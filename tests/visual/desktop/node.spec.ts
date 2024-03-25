@@ -31,6 +31,20 @@ test("private projects", async ({ page, authenticatedPeer }) => {
   await expect(page).toHaveScreenshot();
 });
 
+test("empty pinned projects", async ({ page }) => {
+  await page.route("**/api/v1/projects?show=pinned", async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      json: [],
+    });
+  });
+  await page.goto("/", {
+    waitUntil: "networkidle",
+  });
+  await expect(page).toHaveScreenshot();
+});
+
 test("node not found", async ({ page }) => {
   await page.goto("/nodes/this.node.does.not.exist.xyz", {
     waitUntil: "networkidle",

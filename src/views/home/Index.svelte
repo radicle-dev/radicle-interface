@@ -241,9 +241,9 @@
                 baseUrlToString(api.baseUrl),
               )} />
           {:else}
-            <div class="heading">Nothing to see here</div>
+            <div class="heading">No pinned projects</div>
             <div class="label">
-              Your preferred seed node doesn't have any pinned projects.
+              The selected seed node doesn't have any pinned projects.
             </div>
           {/if}
         </div>
