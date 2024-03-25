@@ -157,11 +157,13 @@
     {/if}
 
     {#if valid && !loading && isFocused && showKeyHint}
-      {#if success}
-        <IconSmall name="checkmark" />
-      {:else}
-        <KeyHint>⏎</KeyHint>
-      {/if}
+      <div style:padding-right="0.25rem">
+        {#if success}
+          <IconSmall name="checkmark" />
+        {:else}
+          <KeyHint>⏎</KeyHint>
+        {/if}
+      </div>
     {/if}
   </div>
 </div>
