@@ -29,6 +29,8 @@
   // If present, means we are in a preview context,
   // use this for image previews instead of /raw URLs.
   export let embeds: Map<string, Embed> | undefined = undefined;
+  // If true, add <br> on a single line break
+  export let breaks: boolean = false;
 
   let container: HTMLElement;
   let frontMatter: [string, any][] | undefined = undefined;
@@ -93,6 +95,7 @@
     return dompurify.sanitize(
       markdown.parse(content, {
         renderer: new Renderer(linkBaseUrl, false),
+        breaks,
       }) as string,
     );
   }

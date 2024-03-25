@@ -193,7 +193,7 @@
   </Radio>
   {#if preview}
     <div class="preview">
-      <Markdown {rawPath} content={body} {embeds} />
+      <Markdown breaks {rawPath} {embeds} content={body} />
     </div>
   {:else}
     <input

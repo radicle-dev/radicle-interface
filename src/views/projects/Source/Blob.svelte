@@ -217,7 +217,7 @@
   {:else if preview && blob.content}
     {#if isMarkdown}
       <div style:padding="2rem">
-        <Markdown {linkBaseUrl} content={blob.content} {rawPath} {path} />
+        <Markdown {rawPath} {path} {linkBaseUrl} content={blob.content} />
       </div>
     {:else if isSvg}
       <div style:margin="1rem 0" style:text-align="center">

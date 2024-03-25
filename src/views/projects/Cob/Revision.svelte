@@ -460,6 +460,7 @@
           {:else if revisionDescription && !first}
             <div class="revision-description txt-small">
               <Markdown
+                breaks
                 rawPath={rawPath(revisionBase)}
                 content={revisionDescription} />
             </div>

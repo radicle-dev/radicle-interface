@@ -188,7 +188,7 @@
             state = "read";
           }} />
       {:else}
-        <Markdown {rawPath} content={body} />
+        <Markdown breaks {rawPath} content={body} />
       {/if}
     </div>
   {/if}

@@ -581,6 +581,7 @@
               }} />
           {:else if issue.discussion[0].body}
             <Markdown
+              breaks
               content={issue.discussion[0].body}
               rawPath={rawPath(project.head)} />
           {:else}
