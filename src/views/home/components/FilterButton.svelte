@@ -16,9 +16,9 @@
   }[] = [
     {
       value: "all",
-      title: "All projects",
+      title: "All seeding",
       description: "Show all projects you’re seeding with your local node.",
-      iconName: "globe",
+      iconName: "seedling",
     },
     {
       value: "delegating",
@@ -71,8 +71,8 @@
     slot="toggle"
     on:click={toggle}>
     {#if value === "all"}
-      <IconSmall name="globe" />
-      All projects
+      <IconSmall name="seedling" />
+      All seeding
     {:else}
       <IconSmall name="badge" />
       Only delegating

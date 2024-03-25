@@ -108,7 +108,7 @@
       : seeding
         ? "secondary-toggle-on"
         : "secondary-toggle-off"}>
-    <IconSmall name="network" />
+    <IconSmall name="seedling" />
     <span class="title-counter">
       {seeding ? "Seeding" : "Seed"}
       <span
@@ -138,7 +138,7 @@
         on:click={async () => {
           await editSeeding();
         }}>
-        <IconSmall name="network" />
+        <IconSmall name="seedling" />
         Stop seeding
       </Button>
     {:else}

@@ -34,6 +34,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .divider {
@@ -55,7 +58,7 @@
 <Popover
   bind:expanded
   popoverPositionTop="2.5rem"
-  popoverPositionRight="0"
+  popoverPositionLeft="-0.25rem"
   popoverPadding="0.25rem"
   popoverBorderRadius="var(--border-radius-small)">
   <Button
@@ -65,6 +68,7 @@
     on:click={toggle}
     title="Change peer"
     {disabled}>
+    <IconSmall name="seedling" />
     {preferredSeed.hostname}
     <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
   </Button>
@@ -82,6 +86,7 @@
             slot="item"
             selected={item.hostname === preferredSeed.hostname}>
             <div class="label">
+              <IconSmall name="seedling" />
               {item.hostname}
             </div>
           </DropdownListItem>

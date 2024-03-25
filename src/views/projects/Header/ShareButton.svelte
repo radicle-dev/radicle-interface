@@ -109,7 +109,7 @@
       {#await queryProject(seed.node, seed.project)}
         <li class="seed-item">
           <span class="seed txt-bold">
-            <IconSmall name="globe" />
+            <IconSmall name="seedling" />
             <span class="txt-overflow">
               {seed.node.hostname}/{seed.project}
             </span>
@@ -127,7 +127,7 @@
             ? "Not available on this public seed node"
             : ""}>
           <div class="seed txt-bold">
-            <IconSmall name="globe" />
+            <IconSmall name="seedling" />
             <span class="txt-overflow">
               {path.replace("/nodes/", "")}
             </span>
