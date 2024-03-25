@@ -207,20 +207,22 @@
       <svelte:fragment slot="subtitle">
         Pinned projects on your selected seed node
         {#if !nodeId}
-          <HoverPopover stylePopoverPositionTop="0.5rem">
-            <div slot="toggle">
-              <span style:color="var(--color-fill-gray)">
-                <IconSmall name="info" />
-              </span>
-            </div>
-
-            <div slot="popover" class="popover txt-small">
-              <div style:padding-bottom="0.5rem">
-                To browse your local projects, run:
+          <div class="global-hide-on-mobile">
+            <HoverPopover stylePopoverPositionTop="0.5rem">
+              <div slot="toggle">
+                <span style:color="var(--color-fill-gray)">
+                  <IconSmall name="info" />
+                </span>
               </div>
-              <Command command="radicle-httpd" />
-            </div>
-          </HoverPopover>
+
+              <div slot="popover" class="popover txt-small">
+                <div style:padding-bottom="0.5rem">
+                  To browse your local projects, run:
+                </div>
+                <Command command="radicle-httpd" />
+              </div>
+            </HoverPopover>
+          </div>
         {/if}
       </svelte:fragment>
       <svelte:fragment slot="actions">
