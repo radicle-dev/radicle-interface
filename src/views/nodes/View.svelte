@@ -150,19 +150,13 @@
         </div>
         <div class="global-hide-on-mobile" style:margin-left="auto">
           {#if policy && scope}
-            <ScopePolicyPopover
-              {scope}
-              {policy}
-              stylePopoverPositionRight="-1rem" />
+            <ScopePolicyPopover {scope} {policy} popoverPositionRight="0" />
           {/if}
         </div>
       </div>
       <div class="subtitle global-hide-on-desktop">
         {#if policy && scope}
-          <ScopePolicyPopover
-            {scope}
-            {policy}
-            stylePopoverPositionLeft="-14rem" />
+          <ScopePolicyPopover {scope} {policy} popoverPositionLeft="-5.5rem" />
         {/if}
       </div>
 

@@ -3,14 +3,15 @@
 
   import capitalize from "lodash/capitalize";
 
-  import HoverPopover from "@app/components/HoverPopover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
   export let policy: Policy;
   export let scope: Scope;
-  export let stylePopoverPositionRight: string | undefined = undefined;
-  export let stylePopoverPositionLeft: string | undefined = undefined;
+  export let popoverPositionRight: string | undefined = undefined;
+  export let popoverPositionLeft: string | undefined = undefined;
 </script>
 
 <style>
@@ -43,19 +44,19 @@
     <span class="txt-semibold">{capitalize(scope)}</span>
   </span>
   <span style:color="var(--color-fill-gray)">
-    <HoverPopover
-      {stylePopoverPositionRight}
-      {stylePopoverPositionLeft}
-      stylePopoverPositionBottom="1.5rem">
-      <div slot="toggle">
+    <Popover
+      {popoverPositionRight}
+      {popoverPositionLeft}
+      popoverPositionBottom="1.5rem">
+      <IconButton slot="toggle" let:toggle on:click={toggle}>
         <span style:color="var(--color-fill-gray)">
           <IconSmall name="info" />
         </span>
-      </div>
+      </IconButton>
 
       <div slot="popover" class="popover">
         <ScopePolicyExplainer {scope} {policy} />
       </div>
-    </HoverPopover>
+    </Popover>
   </span>
 </div>

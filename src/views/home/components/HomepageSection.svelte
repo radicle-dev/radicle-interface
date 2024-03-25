@@ -23,7 +23,7 @@
 
   .subtitle {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     align-items: center;
     margin-top: 0.25rem;
     color: var(--color-foreground-dim);

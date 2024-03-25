@@ -19,14 +19,15 @@
   import AppLayout from "@app/App/AppLayout.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
+  import Command from "@app/components/Command.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import FilterButton from "./components/FilterButton.svelte";
   import HomepageSection from "./components/HomepageSection.svelte";
-  import HoverPopover from "@app/components/HoverPopover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
+  import Popover from "@app/components/Popover.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
-  import Command from "@app/components/Command.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
 
   const selectedSeed = deduplicateStore(
     derived(preferredSeeds, $ => $?.selected),
@@ -208,12 +209,15 @@
         Pinned projects on your selected seed node
         {#if !nodeId}
           <div class="global-hide-on-mobile">
-            <HoverPopover stylePopoverPositionTop="0.5rem">
-              <div slot="toggle">
+            <Popover
+              popoverPositionTop="1.5rem"
+              popoverPositionLeft="0"
+              popoverPositionRight="-15rem">
+              <IconButton slot="toggle" let:toggle on:click={toggle}>
                 <span style:color="var(--color-fill-gray)">
                   <IconSmall name="info" />
                 </span>
-              </div>
+              </IconButton>
 
               <div slot="popover" class="popover txt-small">
                 <div style:padding-bottom="0.5rem">
@@ -221,7 +225,7 @@
                 </div>
                 <Command command="radicle-httpd" />
               </div>
-            </HoverPopover>
+            </Popover>
           </div>
         {/if}
       </svelte:fragment>
