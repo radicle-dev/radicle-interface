@@ -53,16 +53,16 @@
     background: var(--color-fill-ghost);
   }
   .positive {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-success);
+    color: var(--color-foreground-success);
+    background-color: var(--color-fill-diff-green-light);
   }
   .secondary {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-fill-secondary);
+    color: var(--color-fill-secondary-hover);
+    background-color: var(--color-fill-counter-emphasized);
   }
   .yellow {
-    color: var(--color-foreground-black);
-    background-color: var(--color-fill-yellow);
+    color: var(--color-fill-yellow);
+    background-color: var(--color-fill-y);
   }
   .outline {
     border: 1px solid var(--color-border-hint);
