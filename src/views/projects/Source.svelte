@@ -98,6 +98,7 @@
     min-width: 0;
   }
   .placeholder {
+    width: 100%;
     padding: 4rem 0;
     border: 1px solid var(--color-border-hint);
     border-radius: var(--border-radius-small);
