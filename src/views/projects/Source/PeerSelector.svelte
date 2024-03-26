@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Remote } from "@httpd-client";
+  import type { BaseUrl, Project, Remote } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
   import { closeFocused } from "@app/components/Popover.svelte";
@@ -16,6 +16,8 @@
   import Avatar from "@app/components/Avatar.svelte";
 
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
+  export let project: Project;
+  export let node: BaseUrl;
 
   $: selectedPeer = peers.find(p => p.selected)?.remote;
 
@@ -39,63 +41,81 @@
   }
 </style>
 
-<Popover
-  popoverPadding="0"
-  popoverPositionTop="2.5rem"
-  popoverBorderRadius="var(--border-radius-small)">
-  <Button
-    slot="toggle"
-    let:expanded
-    let:toggle
-    on:click={toggle}
-    title="Change peer"
-    disabled={!peers}>
-    {#if !selectedPeer}
-      <IconSmall name="delegate" />
-    {/if}
-
-    {#if selectedPeer}
-      <NodeId
-        nodeId={selectedPeer.id}
-        alias={selectedPeer.alias}
-        stylePopoverPositionLeft="-0.75rem" />
-      {#if selectedPeer.delegate}
-        <Badge size="tiny" variant="delegate">
-          <IconSmall name="badge" />
-          Delegate
-        </Badge>
+<div style="display: flex; gap: 1px;">
+  <Popover
+    popoverPadding="0"
+    popoverPositionTop="2.5rem"
+    popoverBorderRadius="var(--border-radius-small)">
+    <Button
+      slot="toggle"
+      let:expanded
+      let:toggle
+      styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
+      on:click={toggle}
+      title="Change peer"
+      disabled={!peers}>
+      {#if !selectedPeer}
+        <IconSmall name="delegate" />
       {/if}
-    {:else}
-      Remotes
-      <div class="counter">
-        {peers.length}
-      </div>
-    {/if}
-    <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-  </Button>
 
-  <DropdownList slot="popover" items={peers}>
-    <svelte:fragment slot="item" let:item>
-      <Link on:afterNavigate={() => closeFocused()} route={item.route}>
-        <DropdownListItem
-          selected={item.selected}
-          title={createTitle(item.remote)}>
-          <div style:height="1rem">
-            <Avatar nodeId={item.remote.id} />
-          </div>
-          <span
-            style:font-family="var(--font-family-monospace)"
-            class:no-alias={!item.remote.alias}>
-            {item.remote.alias || formatNodeId(item.remote.id)}
-          </span>
-          {#if item.remote.delegate}
-            <Badge size="tiny" variant="delegate">
-              <IconSmall name="badge" />
-              Delegate
-            </Badge>
-          {/if}
-        </DropdownListItem>
-      </Link>
-    </svelte:fragment>
-  </DropdownList>
-</Popover>
+      {#if selectedPeer}
+        <NodeId
+          nodeId={selectedPeer.id}
+          alias={selectedPeer.alias}
+          stylePopoverPositionLeft="-0.75rem" />
+        {#if selectedPeer.delegate}
+          <Badge size="tiny" variant="delegate">
+            <IconSmall name="badge" />
+            Delegate
+          </Badge>
+        {/if}
+      {:else}
+        Remotes
+        <div class="counter">
+          {peers.length}
+        </div>
+      {/if}
+      <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+    </Button>
+
+    <DropdownList slot="popover" items={peers}>
+      <svelte:fragment slot="item" let:item>
+        <Link on:afterNavigate={() => closeFocused()} route={item.route}>
+          <DropdownListItem
+            selected={item.selected}
+            title={createTitle(item.remote)}>
+            <div style:height="1rem">
+              <Avatar nodeId={item.remote.id} />
+            </div>
+            <span
+              style:font-family="var(--font-family-monospace)"
+              class:no-alias={!item.remote.alias}>
+              {item.remote.alias || formatNodeId(item.remote.id)}
+            </span>
+            {#if item.remote.delegate}
+              <Badge size="tiny" variant="delegate">
+                <IconSmall name="badge" />
+                Delegate
+              </Badge>
+            {/if}
+          </DropdownListItem>
+        </Link>
+      </svelte:fragment>
+    </DropdownList>
+  </Popover>
+  {#if selectedPeer}
+    <Link
+      route={{
+        resource: "project.source",
+        project: project.id,
+        node,
+        path: "/",
+      }}>
+      <Button
+        variant="not-selected"
+        styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0">
+        <IconSmall name="cross" />
+      </Button>
+    </Link>
+  {/if}
+</div>

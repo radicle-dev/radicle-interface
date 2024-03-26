@@ -81,7 +81,7 @@
 
 <div class="top-header">
   {#if peers.length > 0}
-    <PeerSelector {peers} />
+    <PeerSelector {peers} {project} {node} />
   {/if}
 
   <BranchSelector
