@@ -1,8 +1,8 @@
 {
   "id": "radicle-interface",
-  "name": "Radicle Interface",
+  "name": "Radicle",
   "short_name": "Radicle",
-  "description": "Interact with Radicle.",
+  "description": "Sovereign code infrastructure.",
   "start_url": "/",
   "icons": [
     {
