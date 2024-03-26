@@ -8,7 +8,6 @@
 
   import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import Loading from "@app/components/Loading.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ShareButton from "./Header/ShareButton.svelte";
 
@@ -60,16 +59,8 @@
     <ShareButton slot="popover" />
   </Popover>
 {:else}
-  <Button
-    styleMinWidth="5.75rem"
-    variant="outline"
-    size="regular"
-    on:click={copy}>
-    {#if loading}
-      <Loading small noDelay />
-    {:else}
-      <IconSmall name={shareIcon} />
-      Copy link
-    {/if}
+  <Button variant="outline" size="regular" on:click={copy}>
+    <IconSmall name={shareIcon} />
+    Copy link
   </Button>
 {/if}
