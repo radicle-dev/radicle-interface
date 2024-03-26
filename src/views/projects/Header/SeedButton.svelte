@@ -94,7 +94,7 @@
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button
     slot="toggle"
-    disabled={$experimental ? !canEditSeeding : true}
+    disabled={$experimental ? !canEditSeeding : false}
     let:toggle
     on:click={async () => {
       if ($experimental && !seeding && canEditSeeding) {
@@ -103,11 +103,7 @@
         toggle();
       }
     }}
-    variant={!$experimental
-      ? "outline"
-      : seeding
-        ? "secondary-toggle-on"
-        : "secondary-toggle-off"}>
+    variant={seeding ? "secondary-toggle-on" : "secondary-toggle-off"}>
     <IconSmall name="seedling" />
     <span class="title-counter">
       {seeding ? "Seeding" : "Seed"}
@@ -115,7 +111,7 @@
         class="counter"
         class:seeding
         class:not-seeding={!seeding}
-        class:disabled={$experimental ? !canEditSeeding : true}
+        class:disabled={$experimental ? !canEditSeeding : false}
         style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>
