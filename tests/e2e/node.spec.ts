@@ -19,7 +19,7 @@ test("node metadata", async ({ page, peerManager }) => {
   await expect(
     page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
   ).toBeVisible();
-  await expect(page.getByText("0.1.0-")).toBeVisible();
+  await expect(page.getByText("vpre-release-")).toBeVisible();
   await peer.stopHttpd();
   await peer.stopNode();
 });
