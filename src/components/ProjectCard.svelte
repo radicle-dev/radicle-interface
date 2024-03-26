@@ -170,7 +170,7 @@
               title="Seeding"
               class="badge"
               style="background-color: var(--color-fill-counter-emphasized); color: var(--color-foreground-emphasized)">
-              <IconSmall name="network" />
+              <IconSmall name="seedling" />
             </div>
           {/if}
         </div>
