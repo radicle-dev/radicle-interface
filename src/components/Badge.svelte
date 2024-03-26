@@ -84,7 +84,7 @@
     background: var(--color-fill-private);
   }
   .tiny {
-    height: 1.375rem;
+    height: 1.5rem;
     font-size: var(--font-size-tiny);
     font-weight: var(--font-weight-semibold);
     padding: 0.25rem 0.5rem;
