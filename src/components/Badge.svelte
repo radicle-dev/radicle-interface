@@ -41,7 +41,7 @@
     background: var(--color-fill-gray);
   }
   .foreground-emphasized {
-    background-color: var(--color-fill-counter-emphasized);
+    background-color: var(--color-fill-selected);
     color: var(--color-foreground-emphasized);
   }
   .delegate {
