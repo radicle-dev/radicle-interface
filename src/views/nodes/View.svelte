@@ -98,6 +98,24 @@
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
   }
+  .empty-state {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 35vh;
+  }
+  .empty-state .heading {
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+  }
+  .empty-state .label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+  }
   @media (max-width: 720px) {
     .wrapper {
       width: 100%;
@@ -164,19 +182,28 @@
         {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
           <Loading small center />
         {:then projectInfos}
-          <div class="project-grid">
-            {#each projectInfos as projectInfo}
-              <ProjectCard
-                {projectInfo}
-                isSeeding={isLocal(baseUrl.hostname)
-                  ? true
-                  : isSeeding(projectInfo.project.id)}
-                isDelegate={isDelegate(
-                  session?.publicKey,
-                  projectInfo.project.delegates,
-                ) ?? false} />
-            {/each}
-          </div>
+          {#if projectInfos.length > 0}
+            <div class="project-grid">
+              {#each projectInfos as projectInfo}
+                <ProjectCard
+                  {projectInfo}
+                  isSeeding={isLocal(baseUrl.hostname)
+                    ? true
+                    : isSeeding(projectInfo.project.id)}
+                  isDelegate={isDelegate(
+                    session?.publicKey,
+                    projectInfo.project.delegates,
+                  ) ?? false} />
+              {/each}
+            </div>
+          {:else}
+            <div class="empty-state">
+              <div class="heading">No pinned projects</div>
+              <div class="label">
+                The selected seed node doesn't have any pinned projects.
+              </div>
+            </div>
+          {/if}
         {:catch error}
           {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
         {/await}
