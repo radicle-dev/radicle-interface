@@ -180,7 +180,9 @@
 
       <div style:margin-top="1rem">
         {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
-          <Loading small center />
+          <div style:height="35vh">
+            <Loading small center />
+          </div>
         {:then projectInfos}
           {#if projectInfos.length > 0}
             <div class="project-grid">
