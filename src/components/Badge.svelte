@@ -37,12 +37,12 @@
     background: var(--color-background-float);
   }
   .foreground {
-    color: var(--color-foreground-match-background);
-    background: var(--color-fill-gray);
+    color: var(--color-foreground-dim);
+    background: var(--color-fill-ghost);
   }
   .foreground-emphasized {
     background-color: var(--color-fill-selected);
-    color: var(--color-foreground-emphasized);
+    color: var(--color-foreground-emphasized-hover);
   }
   .delegate {
     color: var(--color-foreground-primary);
@@ -62,7 +62,7 @@
   }
   .yellow {
     color: var(--color-fill-yellow);
-    background-color: var(--color-fill-y);
+    background-color: var(--color-fill-yellow);
   }
   .outline {
     border: 1px solid var(--color-border-hint);
@@ -72,16 +72,16 @@
     border-color: var(--color-fill-secondary);
   }
   .negative {
-    color: var(--color-foreground-match-background);
-    background-color: var(--color-foreground-red);
+    color: var(--color-foreground-red);
+    background-color: var(--color-fill-diff-red-light);
   }
   .primary {
-    color: var(--color-foreground-match-background);
-    background: var(--color-fill-primary);
+    color: var(--color-foreground-primary);
+    background: var(--color-fill-delegate);
   }
   .caution {
-    color: var(--color-foreground-black);
-    background: var(--color-foreground-yellow);
+    color: var(--color-foreground-yellow);
+    background: var(--color-fill-private);
   }
   .tiny {
     height: 1.375rem;
