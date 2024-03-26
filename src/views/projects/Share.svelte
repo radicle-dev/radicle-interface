@@ -15,11 +15,11 @@
   export let baseUrl: BaseUrl;
 
   const caption = "Link to seed";
-  let shareIcon: "share" | "checkmark" = "share";
+  let shareIcon: "link" | "checkmark" = "link";
   let loading = false;
 
   const restoreIcon = debounce(() => {
-    shareIcon = "share";
+    shareIcon = "link";
   }, 1000);
 
   async function copy() {
