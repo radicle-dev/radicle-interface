@@ -392,7 +392,7 @@
               <IconSmall name="patch" />
             </div>
             <NodeId
-              stylePopoverPositionLeft="0"
+              stylePopoverPositionLeft="-13px"
               nodeId={revisionAuthor.id}
               alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
@@ -539,6 +539,7 @@
               </div>
 
               <NodeId
+                stylePopoverPositionLeft="-13px"
                 nodeId={element.inner.author.id}
                 alias={element.inner.author.alias}>
               </NodeId>

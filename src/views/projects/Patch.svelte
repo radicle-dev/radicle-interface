@@ -859,7 +859,10 @@
           </div>
         </svelte:fragment>
         <div class="author" slot="author">
-          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+          <NodeId
+            stylePopoverPositionLeft="-13px"
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
           opened
           <CopyableId id={patch.id} style="oid">
             {utils.formatObjectId(patch.id)}

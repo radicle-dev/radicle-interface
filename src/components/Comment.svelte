@@ -134,7 +134,10 @@
     {/if}
     <div class="card-header" class:card-header-no-icon={isReply}>
       <slot class="icon" name="icon" />
-      <NodeId nodeId={authorId} alias={authorAlias} />
+      <NodeId
+        stylePopoverPositionLeft="-13px"
+        nodeId={authorId}
+        alias={authorAlias} />
       <slot name="caption">{caption}</slot>
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}

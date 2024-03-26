@@ -147,7 +147,7 @@
     </div>
     <div class="subtitle">
       <NodeId
-        stylePopoverPositionLeft="0"
+        stylePopoverPositionLeft="-13px"
         nodeId={issue.author.id}
         alias={issue.author.alias} />
       opened

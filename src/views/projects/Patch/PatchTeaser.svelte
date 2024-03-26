@@ -159,7 +159,7 @@
     <div class="summary">
       <span class="subtitle">
         <NodeId
-          stylePopoverPositionLeft="0"
+          stylePopoverPositionLeft="-13px"
           nodeId={patch.author.id}
           alias={patch.author.alias} />
         {patch.revisions.length > 1 ? "updated" : "opened"}
