@@ -73,7 +73,7 @@
           pname = "radicle-interface";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-1riLEt0CR8ZR+8pK2t3befPS4WuloW6oL0y/lJmfdSU=";
+          npmDepsHash = "sha256-E2M1aHKxustlneEx/H+UYR45eYkYpQgUgvbAHaXzuC4=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
