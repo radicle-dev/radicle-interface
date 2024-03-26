@@ -6,6 +6,7 @@
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
 
@@ -139,7 +140,9 @@
       </Button>
     {:else}
       <span class="seed-label">
-        Use the Radicle CLI to {seeding ? "stop" : "start"} seeding this project.
+        Use the <ExternalLink href="https://radicle.xyz">
+          Radicle CLI
+        </ExternalLink> to {seeding ? "stop" : "start"} seeding this project.
       </span>
       <Command command={`rad ${seeding ? "unseed" : "seed"} ${projectId}`} />
     {/if}

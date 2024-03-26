@@ -6,6 +6,7 @@
 
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
+  import ExternalLink from "@app/components/ExternalLink.svelte";
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -74,7 +75,9 @@
 
     {#if radicle}
       <label for="rad-clone-url">
-        Use the Radicle CLI to clone this project.
+        Use the <ExternalLink href="https://radicle.xyz">
+          Radicle CLI
+        </ExternalLink> to clone this project.
       </label>
       <Command command={radCloneUrl} />
     {:else}
