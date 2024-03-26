@@ -117,7 +117,7 @@
   }
   .selected {
     background-color: var(--color-fill-float-hover);
-    color: var(--color-foreground-contrast);
+    color: var(--color-foreground-emphasized);
     cursor: default;
   }
   .selected[disabled] {
