@@ -125,9 +125,9 @@
     {#if $experimental && canEditSeeding && seeding}
       <div class="seed-label txt-bold">Stop seeding</div>
       <div class="seed-label">
-        Are you sure you want to stop seeding this repository? If you don't seed a
-        repository it won't appear in the local repositories section anymore and any
-        changes you make to it won't propagate to the network.
+        Are you sure you want to stop seeding this repository? If you don't seed
+        a repository it won't appear in the local repositories section anymore
+        and any changes you make to it won't propagate to the network.
       </div>
       <Button
         styleWidth="100%"
