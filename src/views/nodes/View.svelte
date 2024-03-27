@@ -157,7 +157,7 @@
             {/each}
           </div>
           <div class="version">
-            v{version}
+            {version}
           </div>
         </div>
       </div>

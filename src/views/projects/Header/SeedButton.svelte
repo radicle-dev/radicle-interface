@@ -32,12 +32,12 @@
             component: ErrorModal,
             props: {
               title: seeding
-                ? "Stop seeding project failed"
-                : "Seeding project failed",
+                ? "Stop seeding repository failed"
+                : "Seeding repository failed",
               subtitle: [
                 `There was an error while trying to ${
                   seeding ? "stop seeding" : "seed"
-                } this project.`,
+                } this repository.`,
                 "Check your radicle-httpd logs for details.",
               ],
               error: {
@@ -125,8 +125,8 @@
     {#if $experimental && canEditSeeding && seeding}
       <div class="seed-label txt-bold">Stop seeding</div>
       <div class="seed-label">
-        Are you sure you want to stop seeding this project? If you don't seed a
-        project it won't appear in the local projects section anymore and any
+        Are you sure you want to stop seeding this repository? If you don't seed a
+        repository it won't appear in the local repositories section anymore and any
         changes you make to it won't propagate to the network.
       </div>
       <Button
@@ -142,7 +142,7 @@
       <span class="seed-label">
         Use the <ExternalLink href="https://radicle.xyz">
           Radicle CLI
-        </ExternalLink> to {seeding ? "stop" : "start"} seeding this project.
+        </ExternalLink> to {seeding ? "stop" : "start"} seeding this repository.
       </span>
       <Command command={`rad ${seeding ? "unseed" : "seed"} ${projectId}`} />
     {/if}

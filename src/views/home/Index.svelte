@@ -206,7 +206,7 @@
         preferredSeedProjects?.length === 0}
       title="Explore">
       <svelte:fragment slot="subtitle">
-        Pinned projects on your selected seed node
+        Pinned repositories on your selected seed node
         {#if !nodeId}
           <div class="global-hide-on-mobile">
             <Popover

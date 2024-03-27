@@ -11,7 +11,7 @@
   Only repositories marked as such will get seeded,
 {/if}
 {#if scope === "all"}
-  and all changes in those repos, made by any peer, will be synced.
+  and all changes in those repositories, made by any peer, will be synced.
 {:else if scope === "followed"}
   and only changes made by explicitly followed peers will be synced.
 {/if}

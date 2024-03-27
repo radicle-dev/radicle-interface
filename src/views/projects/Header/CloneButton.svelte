@@ -77,7 +77,7 @@
       <label for="rad-clone-url">
         Use the <ExternalLink href="https://radicle.xyz">
           Radicle CLI
-        </ExternalLink> to clone this project.
+        </ExternalLink> to clone this repository.
       </label>
       <Command command={radCloneUrl} />
     {:else}
