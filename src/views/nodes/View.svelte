@@ -202,7 +202,7 @@
             <div class="empty-state">
               <div class="heading">No pinned projects</div>
               <div class="label">
-                The selected seed node doesn't have any pinned projects.
+                This node doesn't have any pinned projects.
               </div>
             </div>
           {/if}
