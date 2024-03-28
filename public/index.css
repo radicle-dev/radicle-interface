@@ -106,7 +106,13 @@ pre {
   }
 }
 
-@media (min-width: 721px) {
+@media (max-width: 1011px) {
+  .global-hide-on-small-desktop {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1012px) {
   .global-hide-on-desktop {
     display: none !important;
   }

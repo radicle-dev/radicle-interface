@@ -45,9 +45,6 @@
     .desktop-header {
       display: none;
     }
-    .sidebar {
-      display: none;
-    }
     .content {
       overflow-y: scroll;
       overflow-x: hidden;
@@ -66,8 +63,12 @@
     <AppHeader />
   </div>
 
-  <div class="sidebar">
+  <div class="sidebar global-hide-on-small-desktop global-hide-on-mobile">
     <Sidebar {activeTab} {baseUrl} {project} />
+  </div>
+
+  <div class="sidebar global-hide-on-mobile global-hide-on-desktop">
+    <Sidebar {activeTab} {baseUrl} {project} collapsedOnly />
   </div>
 
   <div class="content">

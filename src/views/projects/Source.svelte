@@ -164,7 +164,8 @@
 
   <div class="container center-content">
     {#if tree.entries.length > 0}
-      <div class="column-left global-hide-on-mobile">
+      <div
+        class="column-left global-hide-on-mobile global-hide-on-small-desktop">
         <div class="source-tree sticky">
           <TreeComponent
             projectId={project.id}
