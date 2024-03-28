@@ -567,6 +567,15 @@
           {/if}
         </div>
       </CobHeader>
+      <div
+        class="global-hide-on-desktop"
+        style="display: flex; justify-content: space-between; font-size: var(--font-size-small); gap: 1rem; padding: 0 1rem;">
+        <AssigneesLabelsAttachments
+          {baseUrl}
+          {project}
+          {issue}
+          {refreshIssue} />
+      </div>
       <div class="bottom">
         {#if threads.length > 0}
           <div class="connector" />
