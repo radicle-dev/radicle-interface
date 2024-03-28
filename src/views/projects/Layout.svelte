@@ -63,7 +63,8 @@
     <AppHeader />
   </div>
 
-  <div class="sidebar global-hide-on-small-desktop global-hide-on-mobile">
+  <div
+    class="sidebar global-hide-on-medium-desktop global-hide-on-small-desktop global-hide-on-mobile">
     <Sidebar {activeTab} {baseUrl} {project} />
   </div>
 

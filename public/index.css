@@ -112,7 +112,13 @@ pre {
   }
 }
 
-@media (min-width: 1012px) {
+@media (max-width: 1350px) {
+  .global-hide-on-medium-desktop {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1351px) {
   .global-hide-on-desktop {
     display: none !important;
   }
