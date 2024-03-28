@@ -1,5 +1,8 @@
+<script lang="ts" context="module">
+  export type State = "read" | "edit" | "submit";
+</script>
+
 <script lang="ts">
-  import type { Reaction } from "@httpd-client/lib/project/comment";
   import type {
     BaseUrl,
     Comment,
@@ -12,7 +15,6 @@
 
   import capitalize from "lodash/capitalize";
   import isEqual from "lodash/isEqual";
-  import uniqBy from "lodash/uniqBy";
   import partial from "lodash/partial";
 
   import * as modal from "@app/lib/modal";
@@ -25,19 +27,16 @@
   import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";
 
-  import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
-  import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
-  import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
@@ -46,6 +45,7 @@
   import Share from "@app/views/projects/Share.svelte";
   import TextInput from "@app/components/TextInput.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
+  import AssigneesLabelsAttachments from "./Issue/AssigneesLabelsAttachments.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -250,69 +250,6 @@
     }
   }
 
-  async function saveLabels(sessionId: string, labels: string[]) {
-    try {
-      await api.project.updateIssue(
-        project.id,
-        issue.id,
-        { type: "label", labels },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Issue labels editing failed",
-            subtitle: [
-              "There was an error while updating the issue.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshIssue();
-    }
-  }
-
-  async function saveAssignees(
-    sessionId: string,
-    assignees: Reaction["authors"],
-  ) {
-    try {
-      await api.project.updateIssue(
-        project.id,
-        issue.id,
-        { type: "assign", assignees: assignees.map(({ id }) => id) },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Issue assignees editing failed",
-            subtitle: [
-              "There was an error while updating the issue.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshIssue();
-    }
-  }
-
   async function saveStatus(sessionId: string, state: IssueState) {
     try {
       await api.project.updateIssue(
@@ -376,10 +313,6 @@
   let newTitle = issue.title;
   let newDescription = issue.discussion[0].body;
 
-  $: uniqueEmbeds = uniqBy(
-    issue.discussion.flatMap(comment => comment.embeds),
-    "content",
-  );
   $: selectedItem = issue.state.status === "closed" ? items[0] : items[1];
   $: threads = issue.discussion
     .filter(
@@ -404,10 +337,6 @@
       ? issue.discussion[0].edits.at(-1)
       : undefined;
 
-  type State = "read" | "edit" | "submit";
-
-  let assigneeState: State = "read";
-  let labelState: State = "read";
   let issueState: State = "read";
 </script>
 
@@ -691,42 +620,9 @@
         {/if}
       </div>
     </div>
-    <div class="metadata global-hide-on-mobile">
-      <AssigneeInput
-        locallyAuthenticated={Boolean(
-          role.isDelegate(session?.publicKey, project.delegates),
-        )}
-        assignees={issue.assignees}
-        submitInProgress={assigneeState === "submit"}
-        on:save={async ({ detail: newAssignees }) => {
-          if (session) {
-            assigneeState = "submit";
-            try {
-              await saveAssignees(session.id, newAssignees);
-            } finally {
-              assigneeState = "read";
-            }
-          }
-          await refreshIssue();
-        }} />
-      <LabelInput
-        locallyAuthenticated={Boolean(
-          role.isDelegate(session?.publicKey, project.delegates),
-        )}
-        labels={issue.labels}
-        submitInProgress={labelState === "submit"}
-        on:save={async ({ detail: newLabels }) => {
-          if (session) {
-            labelState = "submit";
-            try {
-              await saveLabels(session.id, newLabels);
-            } finally {
-              labelState = "read";
-            }
-          }
-          await refreshIssue();
-        }} />
-      <Embeds embeds={uniqueEmbeds} />
+    <div
+      class="metadata global-hide-on-mobile global-hide-on-small-desktop global-hide-on-medium-desktop">
+      <AssigneesLabelsAttachments {baseUrl} {project} {issue} {refreshIssue} />
     </div>
   </div>
 </Layout>
