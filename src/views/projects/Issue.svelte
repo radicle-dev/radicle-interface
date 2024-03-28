@@ -509,25 +509,29 @@
           </div>
           <div style="display: flex; gap: 0.5rem;">
             {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
-              <Button
-                variant="outline"
-                title="edit issue"
-                on:click={() => (issueState = "edit")}>
-                <IconSmall name={"edit"} />
-                Edit
-              </Button>
+              <div class="global-hide-on-mobile">
+                <Button
+                  variant="outline"
+                  title="edit issue"
+                  on:click={() => (issueState = "edit")}>
+                  <IconSmall name={"edit"} />
+                  <span class="global-hide-on-small-desktop">Edit</span>
+                </Button>
+              </div>
             {/if}
             {#if issueState === "read"}
               <Share {baseUrl} />
-              {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
-                <CobStateButton
-                  items={items.filter(
-                    ([, state]) => !isEqual(state, issue.state),
-                  )}
-                  {selectedItem}
-                  state={issue.state}
-                  save={partial(saveStatus, session.id)} />
-              {/if}
+              <div class="global-hide-on-mobile global-hide-on-small-desktop">
+                {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+                  <CobStateButton
+                    items={items.filter(
+                      ([, state]) => !isEqual(state, issue.state),
+                    )}
+                    {selectedItem}
+                    state={issue.state}
+                    save={partial(saveStatus, session.id)} />
+                {/if}
+              </div>
             {/if}
           </div>
         </svelte:fragment>

@@ -43,7 +43,9 @@
       <div class="identifier global-commit">
         {commitShortId}
       </div>
-      <span>{commit.summary}</span>
+      <span class="global-hide-on-mobile global-hide-on-small-desktop">
+        {commit.summary}
+      </span>
     </div>
   </Link>
 </Button>
