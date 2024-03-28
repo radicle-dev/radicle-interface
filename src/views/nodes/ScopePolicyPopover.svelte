@@ -47,7 +47,7 @@
     <Popover
       {popoverPositionRight}
       {popoverPositionLeft}
-      popoverPositionBottom="1.5rem">
+      popoverPositionBottom="2.5rem">
       <IconButton slot="toggle" let:toggle on:click={toggle}>
         <span style:color="var(--color-fill-gray)">
           <IconSmall name="info" />

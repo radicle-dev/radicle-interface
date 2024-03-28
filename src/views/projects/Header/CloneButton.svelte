@@ -42,7 +42,7 @@
 
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button slot="toggle" let:toggle on:click={toggle} variant="outline">
-    Clone
+    <span class="global-hide-on-small-desktop-down">Clone</span>
     <Icon name="download" />
   </Button>
 

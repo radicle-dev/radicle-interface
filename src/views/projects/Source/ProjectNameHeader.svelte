@@ -75,15 +75,18 @@
         Private
       </Badge>
     {/if}
-    <div
-      class="global-hide-on-mobile"
-      style="margin-left: auto; display: flex; gap: 0.5rem;">
+    <div style="margin-left: auto; display: flex; gap: 0.5rem;">
       <Share {baseUrl} />
-      <CloneButton {baseUrl} id={project.id} name={project.name} />
-      <SeedButton
-        {seeding}
-        seedCount={project.seeding}
-        projectId={project.id} />
+      <div
+        style:display="flex"
+        style:gap="0.5rem"
+        class="global-hide-on-mobile-down">
+        <CloneButton {baseUrl} id={project.id} name={project.name} />
+        <SeedButton
+          {seeding}
+          seedCount={project.seeding}
+          projectId={project.id} />
+      </div>
     </div>
   </div>
   <div class="id">

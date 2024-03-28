@@ -23,8 +23,9 @@
   export let activeTab: ActiveTab | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let project: Project;
+  export let collapsedOnly = false;
 
-  let expanded = loadSidebarState();
+  let expanded = collapsedOnly ? false : loadSidebarState();
 
   export function storeSidebarState(expanded: boolean): void {
     window.localStorage.setItem(
@@ -338,40 +339,45 @@
         {/if}
       {/if}
     </div>
-    <div class="sidebar-footer" style:flex-direction="row">
-      <Button title={"Collapse"} on:click={toggleSidebar} variant="background">
-        <div class="icon" class:expanded>
-          <IconSmall name="chevron-left" />
-        </div>
-      </Button>
-      <div style:width="1.5rem" />
-      <div class="horizontal-buttons" class:expanded>
-        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-          <Button
-            variant="background"
-            title="Settings"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="settings" />
-            Settings
-          </Button>
+    {#if !collapsedOnly}
+      <div class="sidebar-footer" style:flex-direction="row">
+        <Button
+          title={"Collapse"}
+          on:click={toggleSidebar}
+          variant="background">
+          <div class="icon" class:expanded>
+            <IconSmall name="chevron-left" />
+          </div>
+        </Button>
+        <div style:width="1.5rem" />
+        <div class="horizontal-buttons" class:expanded>
+          <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+            <Button
+              variant="background"
+              title="Settings"
+              slot="toggle"
+              let:toggle
+              on:click={toggle}>
+              <IconSmall name="settings" />
+              Settings
+            </Button>
 
-          <Settings slot="popover" />
-        </Popover>
-        <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-          <Button
-            variant="background"
-            title="Help"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="help" />
-            Help
-          </Button>
-          <Help slot="popover" />
-        </Popover>
+            <Settings slot="popover" />
+          </Popover>
+          <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+            <Button
+              variant="background"
+              title="Help"
+              slot="toggle"
+              let:toggle
+              on:click={toggle}>
+              <IconSmall name="help" />
+              Help
+            </Button>
+            <Help slot="popover" />
+          </Popover>
+        </div>
       </div>
-    </div>
+    {/if}
   </div>
 </div>

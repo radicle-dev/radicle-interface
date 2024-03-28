@@ -56,6 +56,19 @@
     border-bottom-left-radius: var(--border-radius-small);
     border-bottom-right-radius: var(--border-radius-small);
   }
+  @media (max-width: 719.98px) {
+    .header {
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+      padding: 0 1rem 0 1rem;
+    }
+    .container {
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+    }
+  }
 </style>
 
 <div bind:this={header} class="header" class:collapsed={!expanded} class:sticky>

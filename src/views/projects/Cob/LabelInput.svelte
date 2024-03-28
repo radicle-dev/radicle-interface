@@ -57,16 +57,17 @@
 </script>
 
 <style>
-  .metadata-section-header {
+  .header {
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
   }
-  .metadata-section-body {
+  .body {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
+    font-size: var(--font-size-small);
   }
   .validation-message {
     display: flex;
@@ -76,11 +77,30 @@
     position: relative;
     margin-top: 0.5rem;
   }
+  @media (max-width: 1349.98px) {
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .header {
+      margin-bottom: 0;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+    .no-labels {
+      height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+  }
 </style>
 
-<div>
-  <div class="metadata-section-header">Labels</div>
-  <div class="metadata-section-body">
+<div class="wrapper">
+  <div class="header">Labels</div>
+  <div class="body">
     {#if locallyAuthenticated}
       {#each updatedLabels as label}
         <Badge
@@ -124,14 +144,16 @@
           </div>
         {/if}
       {:else}
-        <Badge
-          variant="outline"
-          size="small"
-          title="add labels"
-          round
-          on:click={() => (showInput = true)}>
-          <IconSmall name="plus"></IconSmall>
-        </Badge>
+        <div class="global-hide-on-mobile-down">
+          <Badge
+            variant="outline"
+            size="small"
+            title="add labels"
+            round
+            on:click={() => (showInput = true)}>
+            <IconSmall name="plus"></IconSmall>
+          </Badge>
+        </div>
       {/if}
     {:else}
       {#each updatedLabels as label}
@@ -139,7 +161,7 @@
           {label}
         </Badge>
       {:else}
-        <div class="txt-missing">No labels</div>
+        <div class="txt-missing no-labels">No labels</div>
       {/each}
     {/if}
   </div>

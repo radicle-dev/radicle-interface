@@ -64,6 +64,10 @@
     margin: 0.5rem 0;
     font-size: var(--font-size-small);
   }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 </style>
 
 <div class="teaser">

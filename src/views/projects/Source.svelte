@@ -99,6 +99,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding-bottom: 2.5rem;
     /* To allow pre elements to shrink when overflowing */
     min-width: 0;
   }
@@ -119,9 +120,16 @@
     top: 0rem;
     max-height: calc(100vh - 5.5rem);
   }
+  @media (max-width: 719.98px) {
+    .container {
+      display: flex;
+      width: inherit;
+      padding: 0;
+    }
+  }
 </style>
 
-<Layout {baseUrl} {project} activeTab="source">
+<Layout {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem 0 1rem 1rem" slot="subheader">
@@ -136,7 +144,7 @@
       filesLinkActive={true}
       historyLinkActive={false} />
   </div>
-  <div class="global-hide-on-desktop">
+  <div class="global-hide-on-medium-desktop-up">
     {#if tree.entries.length > 0}
       <div style:margin="1rem">
         <Button
@@ -170,7 +178,7 @@
 
   <div class="container center-content">
     {#if tree.entries.length > 0}
-      <div class="column-left global-hide-on-mobile">
+      <div class="column-left global-hide-on-small-desktop-down">
         <div class="source-tree sticky">
           <TreeComponent
             projectId={project.id}

@@ -7,11 +7,13 @@
     formatTimestamp,
   } from "@app/lib/utils";
 
-  import Badge from "@app/components/Badge.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
+
+  import CommentCounter from "../CommentCounter.svelte";
+  import Labels from "../Cob/Labels.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -23,8 +25,6 @@
     }
     return acc;
   }, 0);
-
-  let hover = false;
 </script>
 
 <style>
@@ -57,25 +57,11 @@
   .issue-title:hover {
     text-decoration: underline;
   }
-  .comment-count {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-    height: 1.5rem;
-  }
-  .labels {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
   .right {
     display: flex;
-    gap: 1rem;
     margin-left: auto;
-    color: var(--color-foreground-dim);
-    font-size: var(--font-size-tiny);
+    min-height: 1.5rem;
+    align-items: center;
   }
   .state {
     justify-self: center;
@@ -91,12 +77,7 @@
   }
 </style>
 
-<div
-  role="button"
-  tabindex="0"
-  class="issue-teaser"
-  on:mouseenter={() => (hover = true)}
-  on:mouseleave={() => (hover = false)}>
+<div role="button" tabindex="0" class="issue-teaser">
   <div
     class="state"
     class:closed={issue.state.status === "closed"}
@@ -116,32 +97,20 @@
           {#if !issue.title}
             <span class="txt-missing">No title</span>
           {:else}
-            <InlineMarkdown fontSize="regular" content={issue.title} />
+            <InlineMarkdown fontSize="regular" content={issue.title}>
+              {#if issue.labels.length > 0}
+                <span
+                  style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <Labels labels={issue.labels} />
+                </span>
+              {/if}
+            </InlineMarkdown>
           {/if}
         </span>
       </Link>
-      <span class="labels">
-        {#each issue.labels.slice(0, 4) as label}
-          <Badge variant={hover ? "background" : "neutral"}>
-            {label}
-          </Badge>
-        {/each}
-        {#if issue.labels.length > 4}
-          <Badge
-            title={issue.labels.slice(4, undefined).join(" ")}
-            variant={hover ? "background" : "neutral"}>
-            +{issue.labels.length - 4} more labels
-          </Badge>
-        {/if}
-      </span>
       <div class="right">
         {#if commentCount > 0}
-          <div style:display="flex" style:gap="1rem">
-            <div class="comment-count">
-              <IconSmall name="chat" />
-              <span>{commentCount}</span>
-            </div>
-          </div>
+          <CommentCounter {commentCount} />
         {/if}
       </div>
     </div>

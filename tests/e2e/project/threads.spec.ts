@@ -134,7 +134,7 @@ test("handling embeds", async ({ page, authenticatedPeer }) => {
     `${scheme}://${hostname}:${port}/raw/rad:z2J7s48EbCBckcEmj2dm5eaFVoBsy/blobs/bae036309c2182c7304c97956969369823b5c6ad?mime=image/png`,
   );
   await expect(
-    page.locator(".badge").filter({ hasText: "radicle-228x228.png" }),
+    page.getByRole("button", { name: "radicle-228x228.png" }),
   ).toBeVisible();
 
   await page.getByRole("button", { name: "edit comment" }).click();
@@ -155,9 +155,9 @@ test("handling embeds", async ({ page, authenticatedPeer }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("button", { name: "Save" })).toBeHidden();
   await expect(
-    page.locator(".badge").filter({ hasText: "apple-touch-icon.png" }),
+    page.getByRole("button", { name: "apple-touch-icon.png" }),
   ).toBeVisible();
   await expect(
-    page.locator(".badge").filter({ hasText: "radicle-228x228.png" }),
+    page.getByRole("button", { name: "radicle-228x228.png" }),
   ).toBeVisible();
 });

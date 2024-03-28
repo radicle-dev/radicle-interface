@@ -97,17 +97,50 @@ pre {
   background-color: var(--color-fill-ghost);
 }
 
-@media (max-width: 720px) {
+/*
+  Breakpoints
+  ===========
+    mobile             0px -  719.98px
+    small desktop    720px - 1010.98px
+    medium desktop  1011px - 1349.98px
+    desktop         1350px -      ∞ px
+*/
+
+@media (max-width: 719.98px) {
   body {
     min-width: 0;
   }
-  .global-hide-on-mobile {
+  .global-hide-on-mobile-down {
     display: none !important;
   }
 }
 
-@media (min-width: 721px) {
-  .global-hide-on-desktop {
+@media (max-width: 1010.98px) {
+  .global-hide-on-small-desktop-down {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1349.98px) {
+  .global-hide-on-medium-desktop-down {
+    display: none !important;
+  }
+}
+
+@media (min-width: 720px) {
+  .global-hide-on-small-desktop-up {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1011px) {
+  .global-hide-on-medium-desktop-up {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1350px) {
+  .global-hide-on-desktop-up {
     display: none !important;
   }
 }

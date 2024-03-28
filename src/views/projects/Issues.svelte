@@ -69,7 +69,7 @@
 
 <style>
   .more {
-    margin: 2rem 0;
+    margin-top: 2rem;
     min-height: 3rem;
     display: flex;
     align-items: center;
@@ -148,17 +148,19 @@
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {baseUrl} />
       {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
-        <Link
-          route={{
-            resource: "project.newIssue",
-            project: project.id,
-            node: baseUrl,
-          }}>
-          <Button variant="secondary">
-            <IconSmall name="plus" />
-            New Issue
-          </Button>
-        </Link>
+        <div class="global-hide-on-mobile-down">
+          <Link
+            route={{
+              resource: "project.newIssue",
+              project: project.id,
+              node: baseUrl,
+            }}>
+            <Button variant="secondary">
+              <IconSmall name="plus" />
+              New Issue
+            </Button>
+          </Link>
+        </div>
       {/if}
     </div>
   </div>

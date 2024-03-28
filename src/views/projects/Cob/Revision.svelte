@@ -201,6 +201,7 @@
   }
   .revision-description {
     margin-left: 2.75rem;
+    padding-right: 0.5rem;
   }
   .author-metadata {
     color: var(--color-fill-gray);
@@ -216,16 +217,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5rem;
     min-height: 2.5rem;
     padding: 0.5rem 0;
     font-size: var(--font-size-small);
+    gap: 0.5rem;
   }
   .authorship-header {
-    display: flex;
+    display: inline-flex;
+    white-space: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     padding: 0 0.5rem;
-    height: 1.5rem;
+    min-height: 1.5rem;
     gap: 0.5rem;
     font-size: var(--font-size-small);
   }
@@ -276,6 +279,14 @@
     margin-left: 1.25rem;
     background-color: var(--color-fill-separator);
   }
+  @media (max-width: 719.98px) {
+    .revision-box {
+      border-radius: 0;
+    }
+    .action {
+      border-radius: 0;
+    }
+  }
 </style>
 
 <div class="revision" style:margin-bottom={expanded ? "2rem" : "0.5rem"}>
@@ -289,7 +300,9 @@
         </span>
       </div>
       <div class="revision-data">
-        <span title={utils.absoluteTimestamp(revisionTimestamp)}>
+        <span
+          class="global-hide-on-mobile-down"
+          title={utils.absoluteTimestamp(revisionTimestamp)}>
           {utils.formatTimestamp(revisionTimestamp)}
         </span>
         {#if loading}
@@ -313,7 +326,7 @@
         {/if}
         <Popover
           popoverPadding="0"
-          popoverPositionTop="2.5rem"
+          popoverPositionTop={expanded ? "3rem" : "2.5rem"}
           popoverPositionRight="0"
           popoverBorderRadius="var(--border-radius-small)">
           <IconButton
@@ -419,17 +432,18 @@
               {utils.formatTimestamp(revisionTimestamp)}
             </span>
             {#if revisionEdits.length > 1 && lastEdit}
-              <div class="author-metadata">•</div>
               <div
                 class="author-metadata"
                 title={utils.formatEditedCaption(
                   lastEdit.author,
                   lastEdit.timestamp,
                 )}>
-                edited
+                • edited
               </div>
             {/if}
-            <div style="display: flex; gap: 0.5rem; margin-left: auto;">
+            <div
+              class="global-hide-on-mobile-down"
+              style="display: flex; gap: 0.5rem; margin-left: auto;">
               {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
                 <IconButton
                   title="edit revision"
@@ -470,15 +484,17 @@
             <div class="actions">
               {#if reactOnRevision}
                 {@const reactOnRevision_ = reactOnRevision}
-                <ReactionSelector
-                  reactions={revisionReactions}
-                  on:select={async ({ detail: { emoji, authors } }) => {
-                    try {
-                      await reactOnRevision_(authors, emoji);
-                    } finally {
-                      closeFocused();
-                    }
-                  }} />
+                <div class="global-hide-on-mobile-down">
+                  <ReactionSelector
+                    reactions={revisionReactions}
+                    on:select={async ({ detail: { emoji, authors } }) => {
+                      try {
+                        await reactOnRevision_(authors, emoji);
+                      } finally {
+                        closeFocused();
+                      }
+                    }} />
+                </div>
               {/if}
               {#if revisionReactions && revisionReactions.length > 0}
                 <Reactions
@@ -507,7 +523,7 @@
       {#if error}
         <div
           class="diff-error txt-monospace txt-small"
-          style:border-radius="var(--border-radius-small">
+          style:border-radius="var(--border-radius-small)">
           <ErrorMessage
             title="Failed to load diff for this revision"
             description="Make sure you are able to connect to the seed <code>${utils.baseUrlToString(

@@ -1,0 +1,48 @@
+<script lang="ts">
+  import type { BaseUrl, Patch, Revision } from "@httpd-client";
+
+  import { HttpdClient } from "@httpd-client";
+  import { formatCommit } from "@app/lib/utils";
+
+  import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
+  import Link from "@app/components/Link.svelte";
+  import Loading from "@app/components/Loading.svelte";
+
+  export let projectId: string;
+  export let baseUrl: BaseUrl;
+  export let patch: Patch;
+  export let latestRevision: Revision;
+
+  $: diffPromise = api.project.getDiff(
+    projectId,
+    latestRevision.base,
+    latestRevision.oid,
+  );
+
+  const api = new HttpdClient(baseUrl);
+</script>
+
+{#await diffPromise}
+  <Loading small />
+{:then { diff }}
+  <Link
+    title="Compare {formatCommit(latestRevision.base)}..{formatCommit(
+      latestRevision.oid,
+    )}"
+    route={{
+      resource: "project.patch",
+      project: projectId,
+      node: baseUrl,
+      patch: patch.id,
+      view: {
+        name: "diff",
+        fromCommit: latestRevision.base,
+        toCommit: latestRevision.oid,
+      },
+    }}>
+    <DiffStatBadge
+      hoverable
+      insertions={diff.stats.insertions}
+      deletions={diff.stats.deletions} />
+  </Link>
+{/await}

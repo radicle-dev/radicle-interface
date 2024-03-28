@@ -34,6 +34,7 @@
     font-family: var(--font-family-monospace);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
+    white-space: nowrap;
   }
   .popover-container {
     display: flex;

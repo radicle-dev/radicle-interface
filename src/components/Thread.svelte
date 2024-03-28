@@ -67,6 +67,11 @@
   .reply {
     padding: 1rem;
   }
+  @media (max-width: 719.98px) {
+    .comments {
+      border-radius: 0;
+    }
+  }
 </style>
 
 <div class="comments">
@@ -115,7 +120,7 @@
     </div>
   {/if}
   {#if createReply}
-    <div id={`reply-${root.id}`} class="reply">
+    <div id={`reply-${root.id}`} class="reply global-hide-on-mobile-down">
       <CommentToggleInput
         {rawPath}
         focus

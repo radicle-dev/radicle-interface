@@ -116,7 +116,7 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
   }
-  @media (max-width: 720px) {
+  @media (max-width: 719.98px) {
     .wrapper {
       width: 100%;
       padding: 1rem;
@@ -147,10 +147,10 @@
               <!-- else this is probably a local node -->
               <!-- So we show only the nid -->
               <CopyableId id={nid} style="oid">
-                <div class="global-hide-on-desktop">
+                <div class="global-hide-on-small-desktop-up">
                   {truncateId(nid)}
                 </div>
-                <div class="global-hide-on-mobile">
+                <div class="global-hide-on-mobile-down">
                   {nid}
                 </div>
               </CopyableId>
@@ -166,19 +166,19 @@
         <div class="txt-semibold">
           {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} projects
         </div>
-        <div class="global-hide-on-mobile" style:margin-left="auto">
+        <div class="global-hide-on-mobile-down" style:margin-left="auto">
           {#if policy && scope}
             <ScopePolicyPopover {scope} {policy} popoverPositionRight="0" />
           {/if}
         </div>
       </div>
-      <div class="subtitle global-hide-on-desktop">
+      <div class="subtitle global-hide-on-small-desktop-up">
         {#if policy && scope}
-          <ScopePolicyPopover {scope} {policy} popoverPositionLeft="-5.5rem" />
+          <ScopePolicyPopover {scope} {policy} popoverPositionRight="-4.5rem" />
         {/if}
       </div>
 
-      <div style:margin-top="1rem">
+      <div style:margin-top="1rem" style:padding-bottom="2.5rem">
         {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
           <div style:height="35vh">
             <Loading small center />

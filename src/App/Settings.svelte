@@ -16,7 +16,6 @@
 
 <style>
   .settings {
-    width: 24rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,6 +27,8 @@
     display: flex;
     width: 100%;
     align-items: center;
+    gap: 2rem;
+    white-space: nowrap;
   }
 
   .right {
@@ -78,7 +79,7 @@
       </Radio>
     </div>
   </div>
-  <div class="item">
+  <div class="item global-hide-on-mobile-down">
     <div
       style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem;">
       Make changes on the web (experimental)

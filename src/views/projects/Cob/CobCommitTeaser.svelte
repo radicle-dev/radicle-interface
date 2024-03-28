@@ -50,6 +50,10 @@
     margin: 0.5rem 0;
     font-size: var(--font-size-tiny);
   }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 </style>
 
 <div class="teaser" aria-label="commit-teaser">
@@ -81,10 +85,15 @@
         <pre>{commit.description.trim()}</pre>
       </div>
     {/if}
+    <div class="global-hide-on-small-desktop-up">
+      <CompactCommitAuthorship {commit} />
+    </div>
   </div>
   <div class="right">
     <div style="display: flex; gap: 0.5rem; height: 21px; align-items: center;">
-      <CompactCommitAuthorship {commit} />
+      <div class="global-hide-on-mobile-down">
+        <CompactCommitAuthorship {commit} />
+      </div>
       <IconButton title="Browse repo at this commit">
         <Link
           route={{

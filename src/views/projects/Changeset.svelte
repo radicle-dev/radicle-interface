@@ -3,8 +3,9 @@
 
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
-  import Observer, { intersection } from "@app/components/Observer.svelte";
   import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import Observer, { intersection } from "@app/components/Observer.svelte";
 
   export let diff: Diff;
   export let files: Record<string, CommitBlob>;
@@ -58,12 +59,21 @@
   .summary {
     font-size: var(--font-size-small);
   }
+  @media (max-width: 719.98px) {
+    .diff-list {
+      padding: 1rem 0;
+    }
+    .header {
+      align-items: flex-start;
+    }
+  }
 </style>
 
 <div class="header">
   <div class="summary">
     <span>{diffDescription(diff.files)}</span>
     with
+    <br class="global-hide-on-small-desktop-up" />
     <span class:additions={diff.stats.insertions > 0}>
       {diff.stats.insertions}
       {pluralize("insertion", diff.stats.insertions)}
@@ -75,15 +85,15 @@
     </span>
   </div>
   {#if diff.stats.filesChanged > 1}
-    <div style:display="flex" style:gap="1rem">
-      <IconButton on:click={() => (expanded = !expanded)}>
-        {#if expanded === true}
-          Collapse all
-        {:else}
-          Expand all
-        {/if}
-      </IconButton>
-    </div>
+    <IconButton on:click={() => (expanded = !expanded)}>
+      {#if expanded === true}
+        <IconSmall name="collapse" />
+        <span class="global-hide-on-mobile-down">Collapse all</span>
+      {:else}
+        <IconSmall name="expand" />
+        <span class="global-hide-on-mobile-down">Expand all</span>
+      {/if}
+    </IconButton>
   {/if}
 </div>
 

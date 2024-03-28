@@ -143,7 +143,7 @@
     text-overflow: ellipsis;
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 719.98px) {
     .wrapper {
       width: 100%;
       padding: 1rem;
@@ -156,9 +156,9 @@
 </style>
 
 <AppLayout>
-  <div class="wrapper">
+  <div class="wrapper" style:padding-bottom="2.5rem">
     {#if nodeId}
-      <div class="global-hide-on-mobile">
+      <div class="global-hide-on-mobile-down">
         <HomepageSection
           loading={$httpdStore.state !== "stopped" &&
             localProjects === undefined}
@@ -235,18 +235,15 @@
           </div>
         {/if}
         {#if !nodeId}
-          <div class="global-hide-on-mobile">
-            <Popover
-              popoverPositionTop="1.5rem"
-              popoverPositionLeft="0"
-              popoverPositionRight="-15rem">
+          <div class="global-hide-on-mobile-down">
+            <Popover popoverPositionTop="2.5rem" popoverPositionLeft="0">
               <IconButton slot="toggle" let:toggle on:click={toggle}>
                 <span style:color="var(--color-fill-gray)">
                   <IconSmall name="info" />
                 </span>
               </IconButton>
 
-              <div slot="popover" class="popover txt-small">
+              <div slot="popover" class="popover txt-small" style:width="15rem">
                 <div style:padding-bottom="0.5rem">
                   To browse your local projects, run:
                 </div>

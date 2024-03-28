@@ -87,7 +87,7 @@
 
 <style>
   .more {
-    margin: 2rem 0;
+    margin-top: 2rem;
     min-height: 3rem;
     display: flex;
     align-items: center;

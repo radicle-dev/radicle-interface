@@ -17,7 +17,7 @@
     height: 100%;
     overflow-y: scroll;
   }
-  @media (max-width: 720px) {
+  @media (max-width: 719.98px) {
     .app {
       display: grid;
       grid-template-rows: 1fr auto;
@@ -30,17 +30,17 @@
 </style>
 
 <div class="app">
-  <div class="global-hide-on-mobile header">
+  <div class="global-hide-on-mobile-down header">
     <Header />
   </div>
   <div class="content">
     <slot />
   </div>
   <div style:margin-top="auto">
-    <div class="global-hide-on-mobile">
+    <div class="global-hide-on-mobile-down">
       <Footer />
     </div>
-    <div class="global-hide-on-desktop">
+    <div class="global-hide-on-small-desktop-up">
       <MobileFooter />
     </div>
   </div>

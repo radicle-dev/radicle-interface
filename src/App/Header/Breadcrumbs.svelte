@@ -17,6 +17,7 @@
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     white-space: nowrap;
+    flex-wrap: wrap;
   }
 </style>
 

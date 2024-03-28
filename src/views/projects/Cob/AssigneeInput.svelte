@@ -81,6 +81,7 @@
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
+    font-size: var(--font-size-small);
   }
   .assignee {
     display: flex;
@@ -96,9 +97,29 @@
     position: relative;
     margin-top: 0.5rem;
   }
+
+  @media (max-width: 1349.98px) {
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .header {
+      margin-bottom: 0;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+    .no-assignees {
+      height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+  }
 </style>
 
-<div>
+<div class="wrapper">
   <div class="header">Assignees</div>
   <div class="body">
     {#if locallyAuthenticated}
@@ -150,14 +171,16 @@
           </div>
         {/if}
       {:else}
-        <Badge
-          variant="outline"
-          size="small"
-          title="add assignee"
-          round
-          on:click={() => (showInput = true)}>
-          <IconSmall name="plus" />
-        </Badge>
+        <div class="global-hide-on-mobile-down">
+          <Badge
+            variant="outline"
+            size="small"
+            title="add assignee"
+            round
+            on:click={() => (showInput = true)}>
+            <IconSmall name="plus" />
+          </Badge>
+        </div>
       {/if}
     {:else}
       {#each updatedAssignees as assignee}
@@ -168,7 +191,7 @@
           </div>
         </Badge>
       {:else}
-        <div class="txt-missing">No assignees</div>
+        <div class="txt-missing no-assignees">No assignees</div>
       {/each}
     {/if}
   </div>

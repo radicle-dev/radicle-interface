@@ -78,7 +78,7 @@
 
 <style>
   .more {
-    margin: 2rem 0;
+    margin-top: 2rem;
     min-height: 3rem;
     display: flex;
     align-items: center;
@@ -162,22 +162,24 @@
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {baseUrl} />
       {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
-        <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
-          <Button
-            slot="toggle"
-            let:toggle
-            on:click={toggle}
-            variant="secondary">
-            <IconSmall name="plus" />
-            New Patch
-          </Button>
+        <div class="global-hide-on-mobile-down">
+          <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
+            <Button
+              slot="toggle"
+              let:toggle
+              on:click={toggle}
+              variant="secondary">
+              <IconSmall name="plus" />
+              New Patch
+            </Button>
 
-          <div slot="popover" class="popover txt-small">
-            To create a patch, first checkout a new branch and commit your
-            changes, then run the following command.
-            <Command command="git push rad HEAD:refs/patches" />
-          </div>
-        </Popover>
+            <div slot="popover" class="popover txt-small">
+              To create a patch, first checkout a new branch and commit your
+              changes, then run the following command.
+              <Command command="git push rad HEAD:refs/patches" />
+            </div>
+          </Popover>
+        </div>
       {/if}
     </div>
   </div>

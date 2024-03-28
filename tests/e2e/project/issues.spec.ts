@@ -88,12 +88,12 @@ test("create a new issue", async ({ page, authenticatedPeer }) => {
   await expect(page.getByText("This is a title")).toBeVisible();
   await expect(page.getByText("This is a description")).toBeVisible();
   await expect(
-    page.getByText(
-      `did:key:${authenticatedPeer.nodeId.substring(
+    page.getByRole("button", {
+      name: `did:key:${authenticatedPeer.nodeId.substring(
         0,
         6,
       )}…${authenticatedPeer.nodeId.slice(-6)}`,
-    ),
+    }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "documentation" }),

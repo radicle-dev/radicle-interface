@@ -54,13 +54,15 @@
       let:toggle
       on:click={toggle}>
       <IconSmall name="link" />
-      {caption}
+      <span class="global-hide-on-small-desktop-down">
+        {caption}
+      </span>
     </Button>
     <ShareButton slot="popover" />
   </Popover>
 {:else}
   <Button variant="outline" size="regular" on:click={copy}>
     <IconSmall name={shareIcon} />
-    Copy link
+    <span class="global-hide-on-small-desktop-down">Copy link</span>
   </Button>
 {/if}

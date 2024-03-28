@@ -41,7 +41,7 @@
 </style>
 
 {#if $httpdStore.state === "authenticated"}
-  <Popover popoverPositionTop="3rem" popoverPositionRight="0">
+  <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
     <Button slot="toggle" let:toggle on:click={toggle} variant="naked-toggle">
       <div class="peer-info">
         <div style:height="1.25rem" style:margin-right="0.5rem">

@@ -34,6 +34,10 @@
   }
 
   export type Timeline = TimelineMerge | TimelineReview | TimelineThread;
+  export type PatchReviews = Record<
+    string,
+    { latest: boolean; review: Review }
+  >;
 </script>
 
 <script lang="ts">
@@ -64,8 +68,6 @@
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
-  import DropdownList from "@app/components/DropdownList.svelte";
-  import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
@@ -77,13 +79,15 @@
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
-  import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
+  import Reviews from "@app/views/projects/Cob/Reviews.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
+  import RevisionSelector from "@app/views/projects/Patch/RevisionSelector.svelte";
   import Share from "@app/views/projects/Share.svelte";
   import TextInput from "@app/components/TextInput.svelte";
+  import { closeFocused } from "@app/components/Popover.svelte";
 
   export let baseUrl: BaseUrl;
   export let patch: Patch;
@@ -411,14 +415,17 @@
     }
   }
 
-  async function saveLabels(sessionId: string, labels: string[]) {
+  async function saveLabels(labels: string[]) {
     try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        { type: "label", labels },
-        sessionId,
-      );
+      if (session) {
+        labelState = "submit";
+        await api.project.updatePatch(
+          project.id,
+          patch.id,
+          { type: "label", labels },
+          session.id,
+        );
+      }
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
@@ -437,6 +444,7 @@
         });
       }
     } finally {
+      labelState = "read";
       await refreshPatch();
     }
   }
@@ -550,7 +558,7 @@
   $: description = patch.revisions[0].description;
   $: lastEdit = patch.revisions[0].edits.at(-1);
   $: newDescription = description;
-  $: patchReviews = computeReviews(patch);
+  $: reviews = computeReviews(patch);
   $: selectedItem = patch.state.status === "open" ? items[1] : items[0];
   $: timelineTuple = patch.revisions.map<
     [
@@ -646,7 +654,7 @@
   }
   .bottom {
     background-color: var(--color-background-default);
-    padding: 1rem;
+    padding: 1rem 1rem 0 1rem;
     height: 100%;
   }
   .actions {
@@ -669,38 +677,9 @@
     width: 1rem;
     height: 100%;
   }
-  .author {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    font-family: var(--font-family-sans-serif);
-    font-size: var(--font-size-small);
-    gap: 0.5rem;
-  }
-  .metadata-section-header {
-    font-size: var(--font-size-small);
-    margin-bottom: 0.75rem;
-  }
-  .metadata-section-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
   .author-metadata {
     color: var(--color-fill-gray);
     font-size: var(--font-size-small);
-  }
-  .review {
-    color: var(--color-fill-gray);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .review-accept {
-    color: var(--color-foreground-success);
-  }
-  .review-reject {
-    color: var(--color-foreground-red);
   }
   .revision-description {
     display: flex;
@@ -718,9 +697,12 @@
     margin-left: 1.25rem;
     background-color: var(--color-fill-separator);
   }
-  @media (max-width: 720px) {
+  @media (max-width: 719.98px) {
     .patch {
       display: block;
+    }
+    .bottom {
+      padding: 1rem 0 0 0;
     }
   }
 </style>
@@ -749,24 +731,28 @@
             {/if}
           </div>
           {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id) && patchState === "read"}
-            <Button
-              variant="outline"
-              title="edit patch"
-              on:click={() => (patchState = "edit")}>
-              <IconSmall name={"edit"} />
-              Edit
-            </Button>
+            <div class="global-hide-on-mobile-down">
+              <Button
+                variant="outline"
+                title="edit patch"
+                on:click={() => (patchState = "edit")}>
+                <IconSmall name={"edit"} />
+                Edit
+              </Button>
+            </div>
           {/if}
           {#if patchState === "read"}
             <Share {baseUrl} />
             {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
-              <CobStateButton
-                items={items.filter(
-                  ([, state]) => !isEqual(state, patch.state),
-                )}
-                {selectedItem}
-                state={patch.state}
-                save={partial(saveStatus, session.id)} />
+              <div class="global-hide-on-small-desktop-down">
+                <CobStateButton
+                  items={items.filter(
+                    ([, state]) => !isEqual(state, patch.state),
+                  )}
+                  {selectedItem}
+                  state={patch.state}
+                  save={partial(saveStatus, session.id)} />
+              </div>
             {/if}
           {/if}
         </svelte:fragment>
@@ -788,7 +774,46 @@
               insertions={stats.insertions}
               deletions={stats.deletions} />
           </Link>
+          <NodeId
+            stylePopoverPositionLeft="-13px"
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
+          opened
+          <CopyableId id={patch.id} style="oid">
+            {utils.formatObjectId(patch.id)}
+          </CopyableId>
+          <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
+            {utils.formatTimestamp(patch.revisions[0].timestamp)}
+          </span>
+          {#if patch.revisions[0].edits.length > 1 && lastEdit}
+            <div
+              class="author-metadata"
+              title={utils.formatEditedCaption(
+                lastEdit.author,
+                lastEdit.timestamp,
+              )}>
+              • edited
+            </div>
+          {/if}
         </svelte:fragment>
+        <div slot="subtitle" class="global-hide-on-desktop-up">
+          <div
+            style:margin-top="2rem"
+            style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <Reviews {reviews} />
+            <LabelInput
+              locallyAuthenticated={role.isDelegate(
+                session?.publicKey,
+                delegates,
+              )}
+              submitInProgress={labelState === "submit"}
+              labels={patch.labels}
+              on:save={({ detail: newLabels }) => {
+                void saveLabels(newLabels);
+              }} />
+            <Embeds embeds={uniqueEmbeds} />
+          </div>
+        </div>
         <svelte:fragment slot="description">
           <div class="revision-description">
             {#if $experimental && session && patchState !== "read" && lastEdit}
@@ -832,22 +857,24 @@
             {#if ($experimental && session) || (firstRevision.revisionReactions && firstRevision.revisionReactions.length > 0)}
               <div class="actions">
                 {#if session}
-                  <ReactionSelector
-                    reactions={firstRevision.revisionReactions}
-                    on:select={async ({ detail: { emoji, authors } }) => {
-                      if (session) {
-                        try {
-                          await reactOnRevision(
-                            session,
-                            patch.id,
-                            authors,
-                            emoji,
-                          );
-                        } finally {
-                          closeFocused();
+                  <div class="global-hide-on-mobile-down">
+                    <ReactionSelector
+                      reactions={firstRevision.revisionReactions}
+                      on:select={async ({ detail: { emoji, authors } }) => {
+                        if (session) {
+                          try {
+                            await reactOnRevision(
+                              session,
+                              patch.id,
+                              authors,
+                              emoji,
+                            );
+                          } finally {
+                            closeFocused();
+                          }
                         }
-                      }
-                    }} />
+                      }} />
+                  </div>
                 {/if}
                 {#if firstRevision.revisionReactions.length > 0}
                   <Reactions
@@ -859,30 +886,6 @@
             {/if}
           </div>
         </svelte:fragment>
-        <div class="author" slot="author">
-          <NodeId
-            stylePopoverPositionLeft="-13px"
-            nodeId={patch.author.id}
-            alias={patch.author.alias} />
-          opened
-          <CopyableId id={patch.id} style="oid">
-            {utils.formatObjectId(patch.id)}
-          </CopyableId>
-          <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
-            {utils.formatTimestamp(patch.revisions[0].timestamp)}
-          </span>
-          {#if patch.revisions[0].edits.length > 1 && lastEdit}
-            <div class="author-metadata">•</div>
-            <div
-              class="author-metadata"
-              title={utils.formatEditedCaption(
-                lastEdit.author,
-                lastEdit.timestamp,
-              )}>
-              edited
-            </div>
-          {/if}
-        </div>
       </CobHeader>
 
       <div class="tabs">
@@ -923,67 +926,27 @@
           {/if}
         </Radio>
 
-        <div style="margin-left: auto; margin-top: -0.5rem;">
-          {#if view.name === "changes"}
-            <div style="margin-left: auto; ">
-              <Popover
-                popoverPadding="0"
-                popoverPositionTop="2.5rem"
-                popoverBorderRadius="var(--border-radius-small)">
-                <Button
-                  let:expanded
-                  slot="toggle"
-                  let:toggle
-                  on:click={toggle}
-                  size="regular"
-                  disabled={patch.revisions.length === 1}>
-                  <span style:color="var(--color-foreground-contrast)">
-                    Revision
-                  </span>
-                  <span
-                    style:color="var(--color-fill-secondary)"
-                    style:font-family="var(--font-family-monospace)">
-                    {utils.formatObjectId(view.revision)}
-                  </span>
-                  <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
-                </Button>
-                <DropdownList slot="popover" items={patch.revisions}>
-                  <svelte:fragment slot="item" let:item>
-                    <Link
-                      on:afterNavigate={closeFocused}
-                      route={{
-                        resource: "project.patch",
-                        project: project.id,
-                        node: baseUrl,
-                        patch: patch.id,
-                        view: {
-                          name: view.name,
-                          revision: item.id,
-                        },
-                      }}>
-                      <DropdownListItem selected={item.id === view.revision}>
-                        <span
-                          style:color={item.id === view.revision
-                            ? "var(--color-foreground-contrast)"
-                            : "var(--color-fill-gray)"}>
-                          Revision
-                        </span>
-                        <span
-                          style:color="var(--color-fill-secondary)"
-                          style:font-family="var(--font-family-monospace)">
-                          {utils.formatObjectId(item.id)}
-                        </span>
-                      </DropdownListItem>
-                    </Link>
-                  </svelte:fragment>
-                </DropdownList>
-              </Popover>
-            </div>
-          {/if}
-        </div>
+        {#if view.name === "changes"}
+          <div
+            class="global-hide-on-mobile-down"
+            style="margin-left: auto; margin-top: -0.5rem;">
+            <RevisionSelector {view} {baseUrl} {patch} {project} />
+          </div>
+        {/if}
         <div class="tabs-spacer" />
       </div>
       <div class="bottom">
+        {#if view.name === "changes"}
+          <div
+            style:width="100%"
+            style:padding="0 1rem"
+            style:display="flex"
+            class="global-hide-on-small-desktop-up">
+            <div style:margin-left="auto">
+              <RevisionSelector {view} {baseUrl} {patch} {project} />
+            </div>
+          </div>
+        {/if}
         {#if view.name === "diff"}
           <Changeset
             {baseUrl}
@@ -1030,29 +993,31 @@
               previousRevOid={previousRevision?.oid}>
               {#if index === patch.revisions.length - 1}
                 {#if $experimental && session && view.name === "activity"}
-                  <div class="connector" />
-                  <CommentToggleInput
-                    rawPath={rawPath(patch.revisions[0].id)}
-                    focus
-                    enableAttachments
-                    placeholder="Leave your comment"
-                    submit={partial(
-                      createComment,
-                      session.id,
-                      revision.revisionId,
-                    )} />
-                  {#if role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
+                  <div class="global-hide-on-mobile-down">
                     <div class="connector" />
-                    <div style="display: flex;">
-                      <CobStateButton
-                        items={items.filter(
-                          ([, state]) => !isEqual(state, patch.state),
-                        )}
-                        {selectedItem}
-                        state={patch.state}
-                        save={partial(saveStatus, session.id)} />
-                    </div>
-                  {/if}
+                    <CommentToggleInput
+                      rawPath={rawPath(patch.revisions[0].id)}
+                      focus
+                      enableAttachments
+                      placeholder="Leave your comment"
+                      submit={partial(
+                        createComment,
+                        session.id,
+                        revision.revisionId,
+                      )} />
+                    {#if role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
+                      <div class="connector" />
+                      <div style="display: flex;">
+                        <CobStateButton
+                          items={items.filter(
+                            ([, state]) => !isEqual(state, patch.state),
+                          )}
+                          {selectedItem}
+                          state={patch.state}
+                          save={partial(saveStatus, session.id)} />
+                      </div>
+                    {/if}
+                  </div>
                 {/if}
               {/if}
             </RevisionComponent>
@@ -1076,43 +1041,14 @@
       </div>
     </div>
 
-    <div class="metadata global-hide-on-mobile">
-      <div>
-        <div class="metadata-section-header">Reviews</div>
-        <div class="metadata-section-body">
-          {#each Object.values(patchReviews) as { latest, review }}
-            <div class="review" class:txt-missing={!latest}>
-              <span
-                class:review-accept={review.verdict === "accept"}
-                class:review-reject={review.verdict === "reject"}>
-                {#if review.verdict === "accept"}
-                  <IconSmall name="checkmark" />
-                {:else if review.verdict === "reject"}
-                  <IconSmall name="cross" />
-                {:else}
-                  <IconSmall name="chat" />
-                {/if}
-              </span>
-              <NodeId nodeId={review.author.id} alias={review.author.alias} />
-            </div>
-          {:else}
-            <div class="txt-missing">No reviews</div>
-          {/each}
-        </div>
-      </div>
+    <div class="metadata global-hide-on-medium-desktop-down">
+      <Reviews {reviews} />
       <LabelInput
         locallyAuthenticated={role.isDelegate(session?.publicKey, delegates)}
         submitInProgress={labelState === "submit"}
         labels={patch.labels}
-        on:save={async ({ detail: newLabels }) => {
-          if (session) {
-            labelState = "submit";
-            try {
-              await saveLabels(session.id, newLabels);
-            } finally {
-              labelState = "read";
-            }
-          }
+        on:save={({ detail: newLabels }) => {
+          void saveLabels(newLabels);
         }} />
       <Embeds embeds={uniqueEmbeds} />
     </div>

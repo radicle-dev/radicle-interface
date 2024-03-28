@@ -40,7 +40,7 @@
 
 <div class="footer">
   <div class="left">
-    <Popover popoverPositionBottom="2rem" popoverPositionLeft="0">
+    <Popover popoverPositionBottom="3rem" popoverPositionLeft="0">
       <IconButton slot="toggle" let:toggle on:click={toggle}>
         <IconSmall name="settings" />
         Settings

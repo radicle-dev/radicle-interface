@@ -137,13 +137,21 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+  .markdown-wrapper {
+    padding: 2rem;
+  }
+  @media (max-width: 719.98px) {
+    .markdown-wrapper {
+      padding: 1rem;
+    }
+  }
 </style>
 
 <File sticky={false}>
   <FilePath slot="left-header" filenameWithPath={blob.path} />
   <svelte:fragment slot="right-header">
     <CommitButton styleRoundBorders {projectId} {baseUrl} commit={lastCommit} />
-    <div class="global-hide-on-mobile teaser-buttons">
+    <div class="global-hide-on-mobile-down teaser-buttons">
       {#if enablePreview}
         <Radio ariaLabel="Toggle render method">
           <Button
@@ -188,7 +196,7 @@
     {/if}
   {:else if preview && blob.content}
     {#if isMarkdown}
-      <div style:padding="2rem">
+      <div class="markdown-wrapper">
         <Markdown content={blob.content} {rawPath} {path} />
       </div>
     {:else if isSvg}

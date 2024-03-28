@@ -13,6 +13,7 @@
   export let activeTab: ActiveTab | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let project: Project;
+  export let stylePaddingBottom: string = "2.5rem";
 </script>
 
 <style>
@@ -41,11 +42,8 @@
     display: none;
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 719.98px) {
     .desktop-header {
-      display: none;
-    }
-    .sidebar {
       display: none;
     }
     .content {
@@ -66,11 +64,15 @@
     <AppHeader />
   </div>
 
-  <div class="sidebar">
+  <div class="sidebar global-hide-on-medium-desktop-down">
     <Sidebar {activeTab} {baseUrl} {project} />
   </div>
 
-  <div class="content">
+  <div class="sidebar global-hide-on-mobile-down global-hide-on-desktop-up">
+    <Sidebar {activeTab} {baseUrl} {project} collapsedOnly />
+  </div>
+
+  <div class="content" style:padding-bottom={stylePaddingBottom}>
     <slot name="header" />
     <slot name="subheader" />
     <slot />
@@ -90,7 +92,7 @@
           <Button
             variant={activeTab === "source" ? "secondary" : "secondary-mobile"}
             styleWidth="100%">
-            <IconSmall name="home" />
+            <IconSmall name="chevron-left-right" />
           </Button>
         </Link>
       </div>

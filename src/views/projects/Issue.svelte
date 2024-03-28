@@ -249,14 +249,17 @@
     }
   }
 
-  async function saveLabels(sessionId: string, labels: string[]) {
+  async function saveLabels(labels: string[]) {
     try {
-      await api.project.updateIssue(
-        project.id,
-        issue.id,
-        { type: "label", labels },
-        sessionId,
-      );
+      if (session) {
+        labelState = "submit";
+        await api.project.updateIssue(
+          project.id,
+          issue.id,
+          { type: "label", labels },
+          session.id,
+        );
+      }
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
@@ -275,21 +278,22 @@
         });
       }
     } finally {
+      labelState = "read";
       await refreshIssue();
     }
   }
 
-  async function saveAssignees(
-    sessionId: string,
-    assignees: Reaction["authors"],
-  ) {
+  async function saveAssignees(assignees: Reaction["authors"]) {
     try {
-      await api.project.updateIssue(
-        project.id,
-        issue.id,
-        { type: "assign", assignees: assignees.map(({ id }) => id) },
-        sessionId,
-      );
+      if (session) {
+        assigneeState = "submit";
+        await api.project.updateIssue(
+          project.id,
+          issue.id,
+          { type: "assign", assignees: assignees.map(({ id }) => id) },
+          session.id,
+        );
+      }
     } catch (error) {
       if (error instanceof Error) {
         modal.show({
@@ -308,6 +312,7 @@
         });
       }
     } finally {
+      assigneeState = "read";
       await refreshIssue();
     }
   }
@@ -438,7 +443,6 @@
   .metadata {
     display: flex;
     flex-direction: column;
-    font-size: var(--font-size-small);
     padding: 1rem;
     border-left: 1px solid var(--color-border-hint);
     gap: 1.5rem;
@@ -450,14 +454,6 @@
     flex-direction: column;
   }
 
-  .author {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    font-family: var(--font-family-sans-serif);
-    font-size: var(--font-size-small);
-  }
   .author-metadata {
     color: var(--color-fill-gray);
     font-size: var(--font-size-small);
@@ -477,10 +473,9 @@
     align-items: center;
     margin-left: -0.25rem;
   }
-
-  @media (max-width: 720px) {
-    .issue {
-      display: block;
+  @media (max-width: 719.98px) {
+    .bottom {
+      padding: 0;
     }
   }
 </style>
@@ -509,24 +504,28 @@
           </div>
           <div style="display: flex; gap: 0.5rem;">
             {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id) && issueState === "read"}
-              <Button
-                variant="outline"
-                title="edit issue"
-                on:click={() => (issueState = "edit")}>
-                <IconSmall name={"edit"} />
-                Edit
-              </Button>
+              <div class="global-hide-on-mobile-down">
+                <Button
+                  variant="outline"
+                  title="edit issue"
+                  on:click={() => (issueState = "edit")}>
+                  <IconSmall name={"edit"} />
+                  Edit
+                </Button>
+              </div>
             {/if}
             {#if issueState === "read"}
               <Share {baseUrl} />
               {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
-                <CobStateButton
-                  items={items.filter(
-                    ([, state]) => !isEqual(state, issue.state),
-                  )}
-                  {selectedItem}
-                  state={issue.state}
-                  save={partial(saveStatus, session.id)} />
+                <div class="global-hide-on-small-desktop-down">
+                  <CobStateButton
+                    items={items.filter(
+                      ([, state]) => !isEqual(state, issue.state),
+                    )}
+                    {selectedItem}
+                    state={issue.state}
+                    save={partial(saveStatus, session.id)} />
+                </div>
               {/if}
             {/if}
           </div>
@@ -544,7 +543,55 @@
               {issue.state.reason}
             </Badge>
           {/if}
+          <NodeId
+            stylePopoverPositionLeft="-13px"
+            nodeId={issue.author.id}
+            alias={issue.author.alias} />
+          opened
+          <CopyableId id={issue.id} style="oid">
+            {utils.formatObjectId(issue.id)}
+          </CopyableId>
+          <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
+            {utils.formatTimestamp(issue.discussion[0].timestamp)}
+          </span>
+          {#if lastDescriptionEdit}
+            <div
+              class="author-metadata"
+              title={utils.formatEditedCaption(
+                lastDescriptionEdit.author,
+                lastDescriptionEdit.timestamp,
+              )}>
+              • edited
+            </div>
+          {/if}
         </svelte:fragment>
+        <div slot="subtitle" class="global-hide-on-desktop-up">
+          <div
+            style:margin-top="2rem"
+            style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <AssigneeInput
+              locallyAuthenticated={role.isDelegate(
+                session?.publicKey,
+                delegates,
+              )}
+              assignees={issue.assignees}
+              submitInProgress={assigneeState === "submit"}
+              on:save={({ detail: newAssignees }) => {
+                void saveAssignees(newAssignees);
+              }} />
+            <LabelInput
+              locallyAuthenticated={role.isDelegate(
+                session?.publicKey,
+                delegates,
+              )}
+              labels={issue.labels}
+              submitInProgress={labelState === "submit"}
+              on:save={({ detail: newLabels }) => void saveLabels(newLabels)} />
+            <div class="global-hide-on-mobile-down">
+              <Embeds embeds={uniqueEmbeds} />
+            </div>
+          </div>
+        </div>
         <svelte:fragment slot="description">
           {#if $experimental && issueState !== "read"}
             <ExtendedTextarea
@@ -589,17 +636,19 @@
           {/if}
           <div class="reactions">
             {#if $experimental && session}
-              <ReactionSelector
-                reactions={issue.discussion[0].reactions}
-                on:select={async ({ detail: { authors, emoji } }) => {
-                  try {
-                    if (session) {
-                      await reactOnComment(session, issue.id, authors, emoji);
+              <div class="global-hide-on-mobile-down">
+                <ReactionSelector
+                  reactions={issue.discussion[0].reactions}
+                  on:select={async ({ detail: { authors, emoji } }) => {
+                    try {
+                      if (session) {
+                        await reactOnComment(session, issue.id, authors, emoji);
+                      }
+                    } finally {
+                      closeFocused();
                     }
-                  } finally {
-                    closeFocused();
-                  }
-                }} />
+                  }} />
+              </div>
             {/if}
             {#if issue.discussion[0].reactions.length > 0}
               <Reactions
@@ -609,30 +658,6 @@
             {/if}
           </div>
         </svelte:fragment>
-        <div class="author" slot="author">
-          <NodeId
-            stylePopoverPositionLeft="-13px"
-            nodeId={issue.author.id}
-            alias={issue.author.alias} />
-          opened
-          <CopyableId id={issue.id} style="oid">
-            {utils.formatObjectId(issue.id)}
-          </CopyableId>
-          <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
-            {utils.formatTimestamp(issue.discussion[0].timestamp)}
-          </span>
-          {#if lastDescriptionEdit}
-            <div class="author-metadata">•</div>
-            <div
-              class="author-metadata"
-              title={utils.formatEditedCaption(
-                lastDescriptionEdit.author,
-                lastDescriptionEdit.timestamp,
-              )}>
-              edited
-            </div>
-          {/if}
-        </div>
       </CobHeader>
       <div class="bottom">
         {#if threads.length > 0}
@@ -664,46 +689,40 @@
           </div>
         {/if}
         {#if $experimental && session}
-          <div class="connector" />
-          <CommentToggleInput
-            focus
-            rawPath={rawPath(project.head)}
-            placeholder="Leave your comment"
-            enableAttachments
-            submit={partial(createComment, session.id)} />
-          <div
-            style="display:flex; flex-direction: column; align-items: flex-start;">
-            {#if role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
-              <div class="connector" />
-              <CobStateButton
-                items={items.filter(
-                  ([, state]) => !isEqual(state, issue.state),
-                )}
-                {selectedItem}
-                state={issue.state}
-                save={partial(saveStatus, session.id)} />
-            {/if}
+          <div class="global-hide-on-mobile-down">
+            <div class="connector" />
+            <CommentToggleInput
+              focus
+              rawPath={rawPath(project.head)}
+              placeholder="Leave your comment"
+              enableAttachments
+              submit={partial(createComment, session.id)} />
+            <div
+              style="display:flex; flex-direction: column; align-items: flex-start;">
+              {#if role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
+                <div class="connector" />
+                <CobStateButton
+                  items={items.filter(
+                    ([, state]) => !isEqual(state, issue.state),
+                  )}
+                  {selectedItem}
+                  state={issue.state}
+                  save={partial(saveStatus, session.id)} />
+              {/if}
+            </div>
           </div>
         {/if}
       </div>
     </div>
-    <div class="metadata global-hide-on-mobile">
+    <div class="metadata global-hide-on-medium-desktop-down">
       <AssigneeInput
         locallyAuthenticated={Boolean(
           role.isDelegate(session?.publicKey, delegates),
         )}
         assignees={issue.assignees}
         submitInProgress={assigneeState === "submit"}
-        on:save={async ({ detail: newAssignees }) => {
-          if (session) {
-            assigneeState = "submit";
-            try {
-              await saveAssignees(session.id, newAssignees);
-            } finally {
-              assigneeState = "read";
-            }
-          }
-          await refreshIssue();
+        on:save={({ detail: newAssignees }) => {
+          void saveAssignees(newAssignees);
         }} />
       <LabelInput
         locallyAuthenticated={Boolean(
@@ -711,17 +730,7 @@
         )}
         labels={issue.labels}
         submitInProgress={labelState === "submit"}
-        on:save={async ({ detail: newLabels }) => {
-          if (session) {
-            labelState = "submit";
-            try {
-              await saveLabels(session.id, newLabels);
-            } finally {
-              labelState = "read";
-            }
-          }
-          await refreshIssue();
-        }} />
+        on:save={({ detail: newLabels }) => void saveLabels(newLabels)} />
       <Embeds embeds={uniqueEmbeds} />
     </div>
   </div>

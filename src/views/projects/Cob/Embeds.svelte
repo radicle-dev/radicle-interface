@@ -9,9 +9,6 @@
 
 <style>
   .header {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
     font-size: var(--font-size-small);
     margin-bottom: 0.75rem;
   }
@@ -20,14 +17,26 @@
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
+    font-size: var(--font-size-small);
+  }
+
+  @media (max-width: 1349.98px) {
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .header {
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+    }
   }
 </style>
 
-<div>
-  <div class="header">
-    <span>Attachments</span>
-  </div>
+<div class="wrapper">
+  <div class="header">Attachments</div>
   <div class="body">
     {#each embeds as embed}
       <Badge variant="neutral">

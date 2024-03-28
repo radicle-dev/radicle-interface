@@ -15,7 +15,7 @@
   }
   .summary {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
@@ -36,8 +36,8 @@
   </div>
   <div class="subtitle">
     <slot name="state" />
-    <slot name="author" />
   </div>
+  <slot name="subtitle" />
   <div class="description">
     <slot name="description" />
   </div>

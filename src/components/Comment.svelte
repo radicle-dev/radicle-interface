@@ -54,8 +54,10 @@
   .card-header {
     display: flex;
     align-items: center;
+    white-space: nowrap;
+    flex-wrap: wrap;
     padding: 0 0.75rem;
-    height: 1.5rem;
+    min-height: 1.5rem;
     gap: 0.5rem;
     font-size: var(--font-size-small);
   }
@@ -143,19 +145,18 @@
         {utils.formatTimestamp(timestamp)}
       </span>
       {#if lastEdit}
-        <div class="card-metadata">•</div>
         <div
           class="card-metadata"
           title={utils.formatEditedCaption(
             lastEdit.author,
             lastEdit.timestamp,
           )}>
-          edited
+          • edited
         </div>
       {/if}
       <div class="header-right">
         {#if id && editComment && state === "read"}
-          <div class="edit-buttons">
+          <div class="edit-buttons global-hide-on-mobile-down">
             <IconButton title="edit comment" on:click={() => (state = "edit")}>
               <IconSmall name={"edit"} />
             </IconButton>
@@ -199,15 +200,17 @@
     <div class="actions">
       {#if id && reactOnComment}
         {@const reactOnComment_ = reactOnComment}
-        <ReactionSelector
-          {reactions}
-          on:select={async ({ detail: { authors, emoji } }) => {
-            try {
-              await reactOnComment_(authors, emoji);
-            } finally {
-              closeFocused();
-            }
-          }} />
+        <div class="global-hide-on-mobile-down">
+          <ReactionSelector
+            {reactions}
+            on:select={async ({ detail: { authors, emoji } }) => {
+              try {
+                await reactOnComment_(authors, emoji);
+              } finally {
+                closeFocused();
+              }
+            }} />
+        </div>
       {/if}
       {#if id && reactions && reactions.length > 0}
         <Reactions handleReaction={reactOnComment} {reactions} />

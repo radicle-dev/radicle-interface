@@ -42,6 +42,14 @@
     font-size: var(--font-size-small);
     text-align: center;
   }
+  .command {
+    max-width: 25rem;
+  }
+  @media (max-width: 719.98px) {
+    .command {
+      max-width: 20rem;
+    }
+  }
 </style>
 
 <div class="error">
@@ -54,13 +62,13 @@
   {#if error}
     <div class="help">
       If you need help resolving this issue, copy the error message
-      <br />
+      <br class="global-hide-on-mobile-down" />
       below and send it to us on
       <ExternalLink href={config.supportWebsite}>
         {config.supportWebsite}
       </ExternalLink>
     </div>
-    <div style:max-width="25rem">
+    <div class="command">
       <Command
         command={JSON.stringify(error, Object.getOwnPropertyNames(error))}
         fullWidth

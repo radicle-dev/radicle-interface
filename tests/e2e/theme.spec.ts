@@ -19,7 +19,7 @@ test("theme persistance", async ({ page }) => {
   await expect(
     page.getByRole("banner").getByRole("link", { name: "source-browsing" }),
   ).toBeVisible();
-  await page.getByText("Settings").click();
+  await page.getByRole("button", { name: "Settings" }).click();
 
   await page.getByText("System").click();
   await page.getByRole("button", { name: "Light Mode" }).click();
@@ -38,7 +38,7 @@ test("change theme", async ({ page }) => {
   await expect(
     page.getByRole("banner").getByRole("link", { name: "source-browsing" }),
   ).toBeVisible();
-  await page.getByText("Settings").click();
+  await page.getByRole("button", { name: "Settings" }).click();
 
   await page.getByRole("button", { name: "Light Mode" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
@@ -65,7 +65,7 @@ test("change code font", async ({ page }) => {
     page.getByRole("banner").getByRole("link", { name: "source-browsing" }),
   ).toBeVisible();
 
-  await page.getByText("Settings").click();
+  await page.getByRole("button", { name: "Settings" }).click();
 
   await page.getByText("System").click();
   await expect(page.getByText("System")).toHaveClass(/selected/);

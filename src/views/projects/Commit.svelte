@@ -39,6 +39,11 @@
     white-space: pre-wrap;
     margin-top: 1.5rem;
   }
+  .button-container {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
 </style>
 
 <Layout {baseUrl} {project}>
@@ -50,7 +55,7 @@
             stripEmphasizedStyling
             fontSize="large"
             content={header.summary} />
-          <div style:margin-left="auto" style:display="flex" style:gap="0.5rem">
+          <div class="button-container">
             <Link
               route={{
                 resource: "project.source",

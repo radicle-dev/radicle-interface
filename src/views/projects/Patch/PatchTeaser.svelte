@@ -2,42 +2,32 @@
   import type { BaseUrl } from "@httpd-client";
   import type { Patch } from "@httpd-client";
 
-  import { HttpdClient } from "@httpd-client";
   import {
     absoluteTimestamp,
     formatObjectId,
     formatTimestamp,
-    formatCommit,
   } from "@app/lib/utils";
 
-  import Badge from "@app/components/Badge.svelte";
-  import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
-  import Loading from "@app/components/Loading.svelte";
+
+  import Labels from "../Cob/Labels.svelte";
+  import DiffStatBadgeLoader from "../DiffStatBadgeLoader.svelte";
+  import CommentCounter from "../CommentCounter.svelte";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
 
-  const api = new HttpdClient(baseUrl);
-
   const latestRevisionIndex = patch.revisions.length - 1;
   const latestRevision = patch.revisions[latestRevisionIndex];
-  $: diffPromise = api.project.getDiff(
-    projectId,
-    latestRevision.base,
-    latestRevision.oid,
-  );
 
-  // Counts the amount of comments in all the discussions over all revisions.
   $: commentCount = patch.revisions.reduce(
     (acc, curr) => acc + curr.discussions.reduce(acc => acc + 1, 0),
     0,
   );
-  let hover = false;
 </script>
 
 <style>
@@ -71,32 +61,15 @@
     text-decoration: underline;
   }
   .right {
+    margin-left: auto;
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    margin-left: auto;
   }
   .state {
     justify-self: center;
     align-self: flex-start;
     margin-right: 0.5rem;
     padding: 0.25rem 0;
-  }
-  .labels {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-  }
-  .comments {
-    color: var(--color-foreground-dim);
-    font-size: var(--font-size-tiny);
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  .label {
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .draft {
     color: var(--color-foreground-dim);
@@ -110,14 +83,22 @@
   .merged {
     color: var(--color-fill-primary);
   }
+  .diff-comment {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    min-height: 1.5rem;
+  }
+  @media (max-width: 719.98px) {
+    .diff-comment {
+      flex-direction: column-reverse;
+      align-items: flex-end;
+    }
+  }
 </style>
 
-<div
-  role="button"
-  tabindex="0"
-  class="patch-teaser"
-  on:mouseenter={() => (hover = true)}
-  on:mouseleave={() => (hover = false)}>
+<div role="button" tabindex="0" class="patch-teaser">
   <div
     class="state"
     class:draft={patch.state.status === "draft"}
@@ -136,25 +117,15 @@
           patch: patch.id,
         }}>
         <span class="patch-title">
-          <InlineMarkdown fontSize="regular" content={patch.title} />
+          <InlineMarkdown fontSize="regular" content={patch.title}>
+            {#if patch.labels.length > 0}
+              <span style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
+                <Labels labels={patch.labels} />
+              </span>
+            {/if}
+          </InlineMarkdown>
         </span>
       </Link>
-      <span class="labels">
-        {#each patch.labels.slice(0, 4) as label}
-          <Badge
-            style="max-width:7rem"
-            variant={hover ? "background" : "neutral"}>
-            <span class="label">{label}</span>
-          </Badge>
-        {/each}
-        {#if patch.labels.length > 4}
-          <Badge
-            title={patch.labels.slice(4, undefined).join(" ")}
-            variant={hover ? "background" : "neutral"}>
-            <span class="label">+{patch.labels.length - 4} more labels</span>
-          </Badge>
-        {/if}
-      </span>
     </div>
     <div class="summary">
       <span class="subtitle">
@@ -165,8 +136,10 @@
         {patch.revisions.length > 1 ? "updated" : "opened"}
         <span class="global-oid">{formatObjectId(patch.id)}</span>
         {#if patch.revisions.length > 1}
-          to <span class="global-oid">
-            {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
+          <span class="global-hide-on-mobile-down">
+            to <span class="global-oid">
+              {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
+            </span>
           </span>
         {/if}
         <span title={absoluteTimestamp(latestRevision.timestamp)}>
@@ -176,37 +149,11 @@
     </div>
   </div>
   <div class="right">
-    <div style:display="flex" style:gap="1rem">
+    <div class="diff-comment">
       {#if commentCount > 0}
-        <div class="comments">
-          <IconSmall name="chat" />
-          <span>{commentCount}</span>
-        </div>
+        <CommentCounter {commentCount} />
       {/if}
-      {#await diffPromise}
-        <Loading small />
-      {:then { diff }}
-        <Link
-          title="Compare {formatCommit(latestRevision.base)}..{formatCommit(
-            latestRevision.oid,
-          )}"
-          route={{
-            resource: "project.patch",
-            project: projectId,
-            node: baseUrl,
-            patch: patch.id,
-            view: {
-              name: "diff",
-              fromCommit: latestRevision.base,
-              toCommit: latestRevision.oid,
-            },
-          }}>
-          <DiffStatBadge
-            hoverable
-            insertions={diff.stats.insertions}
-            deletions={diff.stats.deletions} />
-        </Link>
-      {/await}
+      <DiffStatBadgeLoader {projectId} {baseUrl} {patch} {latestRevision} />
     </div>
   </div>
 </div>

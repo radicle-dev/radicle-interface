@@ -397,7 +397,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).not.toBeVisible();
 
-  await page.getByText("Settings").click();
+  await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
   await expect(page.getByText("bob")).not.toBeVisible();
