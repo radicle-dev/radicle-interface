@@ -1,5 +1,4 @@
 import type { Tokens } from "marked";
-import type { Route } from "@app/lib/router";
 
 import dompurify from "dompurify";
 import katexMarkedExtension from "marked-katex-extension";
@@ -7,8 +6,6 @@ import markedLinkifyIt from "marked-linkify-it";
 import { Marked, Renderer as BaseRenderer } from "marked";
 
 import emojis from "@app/lib/emojis";
-import { routeToPath } from "@app/lib/router";
-import { canonicalize, isUrl } from "@app/lib/utils";
 
 dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -104,19 +101,16 @@ const anchorMarkedExtension = {
 };
 
 export class Renderer extends BaseRenderer {
-  #route: Route;
+  #baseUrl: string | undefined;
   #stripEmphasizedStyling: boolean | undefined;
 
   /**
    * If `baseUrl` is provided, all hrefs attributes in anchor tags, except those
    * starting with `#`, are resolved with respect to `baseUrl`
    */
-  constructor(
-    activeUnloadedRoute: Route,
-    { stripEmphasizedStyling }: { stripEmphasizedStyling: boolean },
-  ) {
+  constructor(baseUrl: string | undefined, stripEmphasizedStyling: boolean) {
     super();
-    this.#route = activeUnloadedRoute;
+    this.#baseUrl = baseUrl;
     this.#stripEmphasizedStyling = stripEmphasizedStyling;
   }
   // Overwrites the rendering of heading tokens.
@@ -145,17 +139,15 @@ export class Renderer extends BaseRenderer {
     if (href.startsWith("#")) {
       // By lowercasing we avoid casing mismatches, between headings and links.
       return `<a ${title ? `title="${title}"` : ""} href="${href.toLowerCase()}">${text}</a>`;
-    }
+    } else {
+      try {
+        href = new URL(href, this.#baseUrl).href;
+      } catch {
+        // Use original href value
+      }
 
-    if ("path" in this.#route && this.#route.path && !isUrl(href)) {
-      href = routeToPath({
-        ...this.#route,
-        path: canonicalize(href, this.#route.path),
-        route: undefined,
-      });
+      return `<a ${title ? `title="${title}"` : ""} href="${href}">${text}</a>`;
     }
-
-    return `<a ${title ? `title="${title}"` : ""} href="${href}">${text}</a>`;
   }
 }
 

@@ -7,6 +7,7 @@
   import * as Syntax from "@app/lib/syntax";
   import { isImagePath, isMarkdownPath, isSvgPath } from "@app/lib/utils";
   import { lineNumbersGutter } from "@app/lib/syntax";
+  import { routeToPath } from "@app/lib/router";
 
   import Button from "@app/components/Button.svelte";
   import CommitButton from "@app/views/projects/components/CommitButton.svelte";
@@ -19,6 +20,8 @@
 
   export let baseUrl: BaseUrl;
   export let projectId: string;
+  export let peer: string | undefined;
+  export let revision: string | undefined;
   export let path: string;
   export let blob: Blob;
   export let highlighted: Syntax.Root | undefined;
@@ -49,6 +52,31 @@
   $: isSvg = isSvgPath(blob.path);
   $: enablePreview = isMarkdown || isSvg;
   $: preview = enablePreview && selectedLineId === undefined;
+
+  let linkBaseUrl: string | undefined;
+
+  $: {
+    if (!path || path === "/") {
+      // For the default root path, the `tree/<revision>` portion is omitted
+      // from the URL. This means that links cannot be resolved with respect
+      // to the current location. To work around this we provide path that
+      // results a fully expanded URL with which we can resolve all links in the
+      // Markdown.
+      linkBaseUrl = new URL(
+        routeToPath({
+          resource: "project.source",
+          project: projectId,
+          node: baseUrl,
+          peer,
+          revision,
+          path: "README.md",
+        }),
+        window.origin,
+      ).href;
+    } else {
+      linkBaseUrl = undefined;
+    }
+  }
 
   afterUpdate(() => {
     for (const item of document.getElementsByClassName("highlight")) {
@@ -189,7 +217,7 @@
   {:else if preview && blob.content}
     {#if isMarkdown}
       <div style:padding="2rem">
-        <Markdown content={blob.content} {rawPath} {path} />
+        <Markdown {rawPath} {path} {linkBaseUrl} content={blob.content} />
       </div>
     {:else if isSvg}
       <div style:margin="1rem 0" style:text-align="center">

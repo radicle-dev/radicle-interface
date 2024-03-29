@@ -167,12 +167,6 @@ describe("Path Manipulation", () => {
       expected: "assets/images/tux.png",
     },
     {
-      imagePath: "/tux.md",
-      base: "/components/assets/README.md",
-      origin: "http://localhost:3000",
-      expected: "tux.md",
-    },
-    {
       imagePath: "assets/images/tux.png",
       base: "/",
       origin: "https://app.radicle.xyz",

@@ -179,9 +179,11 @@
       <div class="column-right">
         {#if blobResult.ok}
           <BlobComponent
-            {path}
             {baseUrl}
             projectId={project.id}
+            {peer}
+            {revision}
+            {path}
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
             rawPath={rawPath(tree.lastCommit.id)} />

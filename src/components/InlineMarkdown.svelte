@@ -3,7 +3,6 @@
 
   import markdown from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
-  import { activeUnloadedRouteStore } from "@app/lib/router";
   import { Renderer } from "@app/lib/markdown";
 
   export let content: string;
@@ -14,9 +13,7 @@
   const render = (content: string): string =>
     dompurify.sanitize(
       markdown.parseInline(content, {
-        renderer: new Renderer($activeUnloadedRouteStore, {
-          stripEmphasizedStyling,
-        }),
+        renderer: new Renderer(undefined, stripEmphasizedStyling),
       }) as string,
     );
 </script>

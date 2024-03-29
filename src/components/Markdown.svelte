@@ -11,7 +11,6 @@
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import markdown from "@app/lib/markdown";
   import { Renderer } from "@app/lib/markdown";
-  import { activeUnloadedRouteStore } from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
   import {
     isUrl,
@@ -23,6 +22,8 @@
   import { mimes } from "@app/lib/file";
 
   export let content: string;
+  // If present, resolve all relative links with respect to this URL
+  export let linkBaseUrl: string | undefined = undefined;
   export let path: string = "/";
   export let rawPath: string;
   // If present, means we are in a preview context,
@@ -62,7 +63,7 @@
   }
 
   /**
-   * Do internal navigation for clicks on anchor elements if possible
+   * Do internal navigation on for clicks on anchor elements if possible
    */
   function navigateInternalOnAnchor(event: MouseEvent) {
     if (router.useDefaultNavigation(event)) {
@@ -93,9 +94,7 @@
   function render(content: string): string {
     return dompurify.sanitize(
       markdown.parse(content, {
-        renderer: new Renderer($activeUnloadedRouteStore, {
-          stripEmphasizedStyling: false,
-        }),
+        renderer: new Renderer(linkBaseUrl, false),
         breaks,
       }) as string,
     );
