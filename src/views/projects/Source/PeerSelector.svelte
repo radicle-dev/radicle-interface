@@ -4,6 +4,7 @@
 
   import { closeFocused } from "@app/components/Popover.svelte";
   import { formatNodeId } from "@app/lib/utils";
+  import { httpdStore } from "@app/lib/httpd";
 
   import NodeId from "@app/components/NodeId.svelte";
   import Badge from "@app/components/Badge.svelte";
@@ -92,6 +93,14 @@
               class:no-alias={!item.remote.alias}>
               {item.remote.alias || formatNodeId(item.remote.id)}
             </span>
+            {#if $httpdStore.state !== "stopped" && item.remote.id === $httpdStore.node.id}
+              <Badge
+                style="background-color: var(--color-fill-ghost-hover)"
+                variant="neutral"
+                size="tiny">
+                You
+              </Badge>
+            {/if}
             {#if item.remote.delegate}
               <Badge size="tiny" variant="delegate">
                 <IconSmall name="badge" />
