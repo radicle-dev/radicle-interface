@@ -111,7 +111,11 @@
         console.warn("Not able to parse url", e);
       }
       // Don't underline <a> tags that contain images.
-      if (e.firstElementChild instanceof HTMLImageElement) {
+      // Make an exception for emojis.
+      if (
+        e.firstElementChild instanceof HTMLImageElement &&
+        !e.firstElementChild.classList.contains("txt-emoji")
+      ) {
         e.classList.add("no-underline");
       }
     }
