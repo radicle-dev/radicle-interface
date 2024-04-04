@@ -115,19 +115,23 @@ export function formatPublicExplorer(
     .replace("$path", fullPath.replace(`/nodes/${host}/${rid}`, ""));
 }
 
-// Takes a path, eg. "../images/image.png", and a base from where to start resolving, e.g. "static/images/index.html".
-// Returns the resolved path.
+// Takes a path, eg. "../images/image.png", and a base from where to start
+// resolving, e.g. "static/images/index.html". Returns the resolved path.
 export function canonicalize(
   path: string,
   base: string,
   origin = document.location.origin,
 ): string {
-  path = path.replace(/^\//, ""); // Remove leading slash
-  const finalPath = base
-    .split("/")
-    .slice(0, -1) // Remove file name.
-    .concat([path]) // Add image file path.
-    .join("/");
+  let finalPath: string | undefined;
+  if (path.startsWith("/")) {
+    finalPath = new URL(path, origin).pathname;
+  } else {
+    finalPath = base
+      .split("/")
+      .slice(0, -1) // Remove file name.
+      .concat([path]) // Add image file path.
+      .join("/");
+  }
 
   // URL is used to resolve relative paths, eg. `../../assets/image.png`.
   const url = new URL(finalPath, origin);

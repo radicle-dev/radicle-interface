@@ -171,7 +171,6 @@
     authors: Comment["reactions"][0]["authors"],
     reaction: string,
   ) {
-    console.log(session.publicKey, authors);
     try {
       await api.project.updateIssue(
         project.id,

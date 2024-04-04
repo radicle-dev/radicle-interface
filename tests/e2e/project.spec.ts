@@ -468,6 +468,33 @@ test("external markdown link", async ({ context, page }) => {
   await expect(newPage).toHaveURL("https://example.com");
 });
 
+test("absolute markdown link", async ({ page }) => {
+  await page.goto(markdownUrl);
+  await page.getByRole("link", { name: "Nested Linked File" }).click();
+  await expect(page).toHaveURL(
+    `${markdownUrl}/tree/relative-files/linked-file.md`,
+  );
+  await page.goBack();
+  await expect(page).toHaveURL(markdownUrl);
+  await page.getByRole("link", { name: "Link Files" }).click();
+  await page.getByRole("link", { name: "Absolute Link" }).click();
+  await expect(page).toHaveURL(
+    `${markdownUrl}/tree/relative-files/linked-file.md`,
+  );
+  await page.getByRole("link", { name: "nested file", exact: true }).click();
+  await expect(page).toHaveURL(
+    `${markdownUrl}/tree/relative-files/nested-file.md`,
+  );
+  await page.goBack();
+  await page.getByRole("link", { name: "nested file with" }).click();
+  await expect(page).toHaveURL(
+    `${markdownUrl}/tree/relative-files/nested-file.md`,
+  );
+  await page.goBack();
+  await page.getByRole("link", { name: "Back to link-files with" }).click();
+  await expect(page).toHaveURL(`${markdownUrl}/tree/link-files.md`);
+});
+
 test("internal file markdown link", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/link-files.md`);
   await page.getByRole("link", { name: "Markdown Cheatsheet" }).click();
