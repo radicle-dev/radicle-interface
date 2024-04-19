@@ -100,6 +100,8 @@
     flex-direction: column;
     width: 100%;
     padding-bottom: 2.5rem;
+    max-width: 75rem;
+    margin: 0 auto;
     /* To allow pre elements to shrink when overflowing */
     min-width: 0;
   }
