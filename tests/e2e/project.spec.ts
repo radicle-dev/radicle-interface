@@ -526,7 +526,7 @@ test("diff selection de-select", async ({ page }) => {
   await expect(page).toHaveURL(new RegExp("tab=changes#README.md:H0L1$"));
   // Click outside.
   await page
-    .getByText("1 file changed with 5 insertions and 1 deletion")
+    .getByText("1 file modified with 5 insertions and 1 deletion")
     .click();
   await expect(page).toHaveURL(new RegExp("tab=changes$"));
 });

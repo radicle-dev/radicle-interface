@@ -54,10 +54,7 @@
         page,
         perPage: COMMITS_PER_PAGE,
       });
-      allCommitHeaders = [
-        ...allCommitHeaders,
-        ...response.commits.map(c => c.commit),
-      ];
+      allCommitHeaders = response.commits;
       totalCommitCount = response.stats.commits;
     } catch (e) {
       error = e;

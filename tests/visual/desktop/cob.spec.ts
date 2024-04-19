@@ -82,7 +82,7 @@ test("patch page", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
   await page.getByRole("button", { name: "Changes" }).click();
   await page
-    .getByText("1 file changed with 5 insertions and 1 deletion")
+    .getByText("1 file modified with 5 insertions and 1 deletion")
     .waitFor();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

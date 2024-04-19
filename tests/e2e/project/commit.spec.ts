@@ -48,7 +48,7 @@ test("modified file", async ({ page }) => {
 
   // Diff header.
   await expect(
-    page.getByText("1 file changed with 1 insertion and 4 deletions"),
+    page.getByText("1 file modified with 1 insertion and 4 deletions"),
   ).toBeVisible();
 
   // Diff.

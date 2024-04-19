@@ -1,5 +1,10 @@
 <script lang="ts">
-  import type { BaseUrl, DiffContent, HunkLine } from "@httpd-client";
+  import type {
+    BaseUrl,
+    ChangesetWithDiff,
+    DiffContent,
+    HunkLine,
+  } from "@httpd-client";
 
   import { onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";
@@ -23,13 +28,8 @@
   export let content: string | undefined = undefined;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
+  export let headerBadgeCaption: ChangesetWithDiff["state"];
   export let revision: string | undefined = undefined;
-  export let headerBadgeCaption:
-    | "added"
-    | "deleted"
-    | "moved"
-    | "copied"
-    | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let projectId: string;
   export let visible: boolean = false;

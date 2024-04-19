@@ -38,6 +38,7 @@ export const test = base.extend<{
         if (
           msg.text().startsWith("[vite] connected.") ||
           msg.text().startsWith("[vite] connecting...") ||
+          msg.text().startsWith("Not able to parse url") ||
           msg
             .text()
             .includes("Please make sure it wasn't preloaded for nothing.") ||

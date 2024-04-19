@@ -19,6 +19,8 @@ import type {
   Commit,
   CommitBlob,
   CommitHeader,
+  ChangesetWithDiff,
+  ChangesetWithoutDiff,
   Diff,
   DiffBlob,
   DiffContent,
@@ -50,6 +52,8 @@ import { nodeConfigSchema, successResponseSchema } from "./lib/shared.js";
 export type {
   BaseUrl,
   Blob,
+  ChangesetWithDiff,
+  ChangesetWithoutDiff,
   CodeLocation,
   Comment,
   Commit,

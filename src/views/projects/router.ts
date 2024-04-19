@@ -553,7 +553,7 @@ async function loadHistoryView(
       branches: Object.keys(branchMap || {}),
       revision: route.revision,
       tree,
-      commitHeaders: commitsResponse.commits.map(c => c.commit),
+      commitHeaders: commitsResponse.commits,
       totalCommitCount: commitsResponse.stats.commits,
       seeding,
     },

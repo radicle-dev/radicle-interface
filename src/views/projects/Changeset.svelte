@@ -1,11 +1,5 @@
 <script lang="ts">
-  import type {
-    BaseUrl,
-    CommitBlob,
-    Diff,
-    DiffContent,
-    DiffFile,
-  } from "@httpd-client";
+  import type { BaseUrl, CommitBlob, Diff } from "@httpd-client";
 
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
@@ -24,43 +18,19 @@
     return count === 1 ? singular : `${singular}s`;
   }
 
-  const diffDescription = ({
-    modified,
-    added,
-    deleted,
-    moved,
-    copied,
-  }: Diff): string => {
-    const s = [];
-
-    if (modified.length) {
-      s.push(
-        `${modified.length} ${pluralize("file", modified.length)} changed`,
-      );
-    }
-    if (added.length) {
-      s.push(`${added.length} ${pluralize("file", added.length)} added`);
-    }
-    if (deleted.length) {
-      s.push(`${deleted.length} ${pluralize("file", deleted.length)} deleted`);
-    }
-    if (copied.length) {
-      s.push(`${copied.length} ${pluralize("file", copied.length)} copied`);
-    }
-    if (moved.length) {
-      s.push(`${moved.length} ${pluralize("file", moved.length)} moved`);
-    }
-    return s.join(", ");
-  };
-
-  // Since libgit2 optimizes around not loading the content, when no content callbacks are configured,
-  // and we don't want to loop over all diffs in radicle-surf to get a correct answer.
-  // We assume that a `blobExecutable` file with no hunks is a binary file.
-  function getFileType(diff: DiffContent, file: DiffFile): DiffContent["type"] {
-    return file.mode === "blobExecutable" && diff.hunks.length === 0
-      ? "binary"
-      : diff.type;
-  }
+  const diffDescription = (diffFiles: Diff["files"]): string =>
+    Object.entries(
+      diffFiles.reduce(
+        (acc, { state }) => {
+          acc[state]++;
+          return acc;
+        },
+        { added: 0, modified: 0, deleted: 0, copied: 0, moved: 0 },
+      ),
+    )
+      .filter(([, count]) => count > 0)
+      .map(([state, count]) => `${count} ${pluralize("file", count)} ${state}`)
+      .join(", ");
 </script>
 
 <style>
@@ -92,7 +62,7 @@
 
 <div class="header">
   <div class="summary">
-    <span>{diffDescription(diff)}</span>
+    <span>{diffDescription(diff.files)}</span>
     with
     <span class:additions={diff.stats.insertions > 0}>
       {diff.stats.insertions}
@@ -119,99 +89,34 @@
 
 <div class="diff-list">
   <Observer let:filesVisibility let:observer>
-    {#each diff.added as file}
-      <div use:intersection={observer} id={"observer:" + file.path}>
-        <FileDiff
-          {projectId}
-          {baseUrl}
-          {revision}
-          {expanded}
-          visible={filesVisibility.has(file.path)}
-          content={files[file.new.oid]?.content}
-          filePath={file.path}
-          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
-          headerBadgeCaption="added" />
-      </div>
-    {/each}
-    {#each diff.deleted as file}
-      <div use:intersection={observer} id={"observer:" + file.path}>
-        <FileDiff
-          {projectId}
-          {baseUrl}
-          {revision}
-          {expanded}
-          visible={filesVisibility.has(file.path)}
-          oldContent={files[file.old.oid]?.content}
-          filePath={file.path}
-          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.old) }}
-          headerBadgeCaption="deleted" />
-      </div>
-    {/each}
-    {#each diff.modified as file}
-      <div use:intersection={observer} id={"observer:" + file.path}>
-        <FileDiff
-          {projectId}
-          {baseUrl}
-          {revision}
-          {expanded}
-          visible={filesVisibility.has(file.path)}
-          oldContent={files[file.old.oid]?.content}
-          content={files[file.new.oid]?.content}
-          filePath={file.path}
-          fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }} />
-      </div>
-    {/each}
-    {#each diff.moved as file}
-      {#if "diff" in file}
-        <div use:intersection={observer} id={"observer:" + file.newPath}>
+    {#each diff.files as file}
+      {@const path = "path" in file ? file.path : file.newPath}
+      <div use:intersection={observer} id={"observer:" + path}>
+        {#if "diff" in file}
           <FileDiff
             {projectId}
             {baseUrl}
             {revision}
             {expanded}
-            content={files[file.new.oid]?.content}
-            oldContent={files[file.old.oid]?.content}
-            visible={filesVisibility.has(file.newPath)}
-            filePath={file.newPath}
-            oldFilePath={file.oldPath}
-            fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
-            headerBadgeCaption="moved" />
-        </div>
-      {:else}
-        <FileLocationChange
-          {projectId}
-          {baseUrl}
-          {revision}
-          newPath={file.newPath}
-          oldPath={file.oldPath}
-          mode="moved" />
-      {/if}
-    {/each}
-    {#each diff.copied as file}
-      {#if "diff" in file}
-        <div use:intersection={observer} id={"observer:" + file.newPath}>
-          <FileDiff
+            filePath={path}
+            oldFilePath={"oldPath" in file ? file.oldPath : undefined}
+            fileDiff={file.diff}
+            headerBadgeCaption={file.state}
+            content={"new" in file ? files[file.new.oid]?.content : undefined}
+            oldContent={"old" in file
+              ? files[file.old.oid]?.content
+              : undefined}
+            visible={filesVisibility.has(path)} />
+        {:else}
+          <FileLocationChange
+            headerBadgeCaption={file.state}
+            oldPath={file.oldPath}
+            newPath={file.newPath}
             {projectId}
             {baseUrl}
-            {revision}
-            {expanded}
-            content={files[file.new.oid]?.content}
-            oldContent={files[file.old.oid]?.content}
-            visible={filesVisibility.has(file.newPath)}
-            filePath={file.newPath}
-            oldFilePath={file.oldPath}
-            fileDiff={{ ...file.diff, type: getFileType(file.diff, file.new) }}
-            headerBadgeCaption="copied" />
-        </div>
-      {:else}
-        <FileLocationChange
-          {projectId}
-          {baseUrl}
-          {revision}
-          newPath={file.newPath}
-          oldPath={file.oldPath}
-          mode="copied" />
-      {/if}
+            {revision} />
+        {/if}
+      </div>
     {/each}
   </Observer>
 </div>

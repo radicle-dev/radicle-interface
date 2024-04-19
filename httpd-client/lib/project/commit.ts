@@ -6,6 +6,8 @@ export type {
   Diff,
   DiffContent,
   DiffFile,
+  ChangesetWithDiff,
+  ChangesetWithoutDiff,
   HunkLine,
   Hunks,
 };
@@ -13,6 +15,7 @@ export type {
 import {
   array,
   boolean,
+  discriminatedUnion,
   literal,
   number,
   object,
@@ -115,35 +118,47 @@ const changesetHunkSchema = object({
 
 type DiffContent = z.infer<typeof diffContentSchema>;
 
-const diffContentSchema = object({
-  type: union([literal("plain"), literal("binary"), literal("empty")]),
-  hunks: array(changesetHunkSchema),
-  eof: union([
-    literal("noneMissing"),
-    literal("oldMissing"),
-    literal("newMissing"),
-    literal("bothMissing"),
-  ]),
-});
-
+const diffContentSchema = discriminatedUnion("type", [
+  object({
+    type: literal("plain"),
+    stats: object({
+      additions: number(),
+      deletions: number(),
+    }),
+    hunks: array(changesetHunkSchema),
+    eof: union([
+      literal("noneMissing"),
+      literal("oldMissing"),
+      literal("newMissing"),
+      literal("bothMissing"),
+    ]),
+  }),
+  object({ type: literal("binary") }),
+  object({ type: literal("empty") }),
+]);
 const diffChangesetSchema = object({
   path: string(),
   diff: diffContentSchema,
 });
 
 const diffAddedChangesetSchema = diffChangesetSchema.merge(
-  object({ new: diffFileSchema }),
+  object({ state: literal("added"), new: diffFileSchema }),
 );
 
 const diffDeletedChangesetSchema = diffChangesetSchema.merge(
-  object({ old: diffFileSchema }),
+  object({ state: literal("deleted"), old: diffFileSchema }),
 );
 
 const diffModifiedChangesetSchema = diffChangesetSchema.merge(
-  object({ new: diffFileSchema, old: diffFileSchema }),
+  object({
+    state: literal("modified"),
+    new: diffFileSchema,
+    old: diffFileSchema,
+  }),
 );
 
 const diffCopiedChangesetSchema = object({
+  state: literal("copied"),
   newPath: string(),
   oldPath: string(),
 });
@@ -158,6 +173,7 @@ const diffCopiedWithModificationsChangesetSchema =
   );
 
 const diffMovedChangesetSchema = object({
+  state: literal("moved"),
   newPath: string(),
   oldPath: string(),
   current: diffFileSchema,
@@ -175,20 +191,31 @@ const diffMovedWithModificationsChangesetSchema = diffMovedChangesetSchema
 
 type Diff = z.infer<typeof diffSchema>;
 
+type ChangesetWithDiff = z.infer<typeof changesetWithDiffSchema>;
+type ChangesetWithoutDiff = z.infer<typeof changesetWithoutDiffSchema>;
+
+const changesetWithDiffSchema = union([
+  diffAddedChangesetSchema,
+  diffDeletedChangesetSchema,
+  diffModifiedChangesetSchema,
+  diffMovedWithModificationsChangesetSchema,
+  diffCopiedWithModificationsChangesetSchema,
+]);
+const changesetWithoutDiffSchema = union([
+  diffMovedChangesetSchema,
+  diffCopiedChangesetSchema,
+]);
+
 const diffSchema = object({
-  added: array(diffAddedChangesetSchema),
-  deleted: array(diffDeletedChangesetSchema),
-  modified: array(diffModifiedChangesetSchema),
-  moved: array(
+  files: array(
     union([
+      diffAddedChangesetSchema,
+      diffDeletedChangesetSchema,
+      diffModifiedChangesetSchema,
       diffMovedChangesetSchema,
       diffMovedWithModificationsChangesetSchema,
-    ]),
-  ),
-  copied: array(
-    union([
-      diffCopiedWithModificationsChangesetSchema,
       diffCopiedChangesetSchema,
+      diffCopiedWithModificationsChangesetSchema,
     ]),
   ),
   stats: object({
@@ -210,7 +237,7 @@ const commitSchema = object({
 type Commits = z.infer<typeof commitsSchema>;
 
 const commitsSchema = object({
-  commits: array(commitSchema.omit({ files: true })),
+  commits: array(commitHeaderSchema),
   stats: object({
     commits: number(),
     branches: number(),
