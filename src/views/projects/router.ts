@@ -454,7 +454,7 @@ async function loadTreeView(
     params: {
       baseUrl: route.node,
       project,
-      peers,
+      peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
       branches: Object.keys(branchMap),
       rawPath,
@@ -548,7 +548,7 @@ async function loadHistoryView(
     params: {
       baseUrl: route.node,
       project,
-      peers,
+      peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
       branches: Object.keys(branchMap || {}),
       revision: route.revision,

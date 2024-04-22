@@ -45,21 +45,19 @@
       });
   };
 
-  $: peersWithRoute = peers
-    .filter(remote => Object.keys(remote.heads).length > 0)
-    .map(remote => ({
-      remote,
-      selected: remote.id === peer,
-      route: {
-        resource: "project.source",
-        node: baseUrl,
-        project: project.id,
-        peer: remote.id,
-        revision: remote.heads[project.defaultBranch]
-          ? undefined
-          : Object.keys(remote.heads)[0],
-      } as Route,
-    }));
+  $: peersWithRoute = peers.map(remote => ({
+    remote,
+    selected: remote.id === peer,
+    route: {
+      resource: "project.source",
+      node: baseUrl,
+      project: project.id,
+      peer: remote.id,
+      revision: remote.heads[project.defaultBranch]
+        ? undefined
+        : Object.keys(remote.heads)[0],
+    } as Route,
+  }));
 
   $: branchesWithRoute = branches.map(name => ({
     name,
