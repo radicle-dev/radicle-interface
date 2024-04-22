@@ -10,23 +10,29 @@
 <style>
   .section-header {
     display: flex;
-    gap: 1rem;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
   }
-
+  .title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
   .title > * {
     margin: 0;
   }
 
   .subtitle {
+    max-width: 100%;
     display: flex;
+    flex-wrap: wrap;
     gap: 0.25rem;
     align-items: center;
     margin-top: 0.25rem;
     color: var(--color-foreground-dim);
+    white-space: nowrap;
   }
 
   .actions {
@@ -58,12 +64,12 @@
   <div class="section-header">
     <div class="title">
       <h2>{title}</h2>
-      <div class="subtitle">
-        <slot name="subtitle" />
+      <div class="actions">
+        <slot name="actions" />
       </div>
     </div>
-    <div class="actions">
-      <slot name="actions" />
+    <div class="subtitle">
+      <slot name="subtitle" />
     </div>
   </div>
 

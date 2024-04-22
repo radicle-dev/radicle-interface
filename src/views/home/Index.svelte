@@ -130,6 +130,18 @@
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
   }
+  .seed {
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    color: var(--color-foreground-contrast);
+  }
+  .seed-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   @media (max-width: 720px) {
     .wrapper {
@@ -214,7 +226,13 @@
         {#if nodeId && $preferredSeeds}
           Pinned repositories on your selected seed node
         {:else}
-          Pinned repositories on {$selectedSeed?.hostname}
+          Pinned repositories on
+          <div class="seed">
+            <IconSmall name="seedling" />
+            <span class="seed-name">
+              {$selectedSeed?.hostname}
+            </span>
+          </div>
         {/if}
         {#if !nodeId}
           <div class="global-hide-on-mobile">
