@@ -33,7 +33,7 @@
         Local Node
       {/if}
     {:else}
-      <IconSmall name="globe" />
+      <IconSmall name="seedling" />
       {baseUrl.hostname}
     {/if}
   </Link>
