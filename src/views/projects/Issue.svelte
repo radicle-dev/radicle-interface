@@ -426,6 +426,7 @@
     display: flex;
     flex: 1;
     flex-direction: column;
+    min-width: 0;
     background-color: var(--color-background-float);
   }
   .bottom {
