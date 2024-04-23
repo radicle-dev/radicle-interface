@@ -39,6 +39,7 @@
     "happy-dom": "^14.3.8",
     "prettier": "^3.2.5",
     "prettier-plugin-svelte": "^3.2.2",
+    "sinon": "^17.0.1",
     "svelte-check": "^3.6.8",
     "typescript": "^5.4.3",
     "vite": "^5.2.6",
@@ -63,7 +64,6 @@
     "marked-linkify-it": "^3.1.9",
     "md5": "^2.3.0",
     "plausible-tracker": "^0.3.8",
-    "sinon": "^17.0.1",
     "svelte": "^4.2.12",
     "twemoji": "^14.0.2",
     "zod": "^3.22.4"
