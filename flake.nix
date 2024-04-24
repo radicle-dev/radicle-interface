@@ -4,7 +4,7 @@
     nixpkgs.follows = "heartwood/nixpkgs";
     flake-utils.follows = "heartwood/flake-utils";
     heartwood = {
-      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=77076af23c9cbbf124755f3737d523a77a5bb534";
+      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=c607619683e859fd715a23377c03fb08dc8090f4";
     };
   };
 
