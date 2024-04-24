@@ -26,24 +26,24 @@
   }
 </style>
 
-<Button
-  title="Current HEAD"
-  variant="not-selected"
-  styleBorderRadius={styleRoundBorders
-    ? "var(--border-radius-tiny)"
-    : "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"}>
-  <Link
-    route={{
-      resource: "project.commit",
-      project: projectId,
-      node: baseUrl,
-      commit: commit.id,
-    }}>
+<Link
+  route={{
+    resource: "project.commit",
+    project: projectId,
+    node: baseUrl,
+    commit: commit.id,
+  }}>
+  <Button
+    title="Current HEAD"
+    variant="not-selected"
+    styleBorderRadius={styleRoundBorders
+      ? "var(--border-radius-tiny)"
+      : "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"}>
     <div class="commit">
       <div class="identifier global-commit">
         {commitShortId}
       </div>
       <span>{commit.summary}</span>
     </div>
-  </Link>
-</Button>
+  </Button>
+</Link>
