@@ -74,6 +74,7 @@
   }
   input {
     background: var(--color-background-dip);
+    font-family: inherit;
     font-size: var(--font-size-small);
     color: var(--color-foreground-contrast);
     border: 1px solid var(--color-border-hint);

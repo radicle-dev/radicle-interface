@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { api, changeHttpdPort } from "@app/lib/httpd";
+  import { config } from "@app/lib/config";
   import {
     codeFont,
     codeFonts,
@@ -12,6 +14,9 @@
   import Icon from "@app/components/Icon.svelte";
   import Radio from "@app/components/Radio.svelte";
   import Button from "@app/components/Button.svelte";
+  import TextInput from "@app/components/TextInput.svelte";
+
+  $: customPort = api.port;
 </script>
 
 <style>
@@ -102,6 +107,17 @@
           </Button>
         </Radio>
       </Radio>
+    </div>
+  </div>
+  <div class="item">
+    <div>Radicle HTTP Daemon Port</div>
+    <div class="right txt-monospace" style:width="6rem">
+      <TextInput
+        name="httpd port"
+        bind:value={customPort}
+        placeholder={config.nodes.defaultLocalHttpdPort.toString()}
+        valid={Number(customPort) >= 1 && Number(customPort) <= 65535}
+        on:submit={() => changeHttpdPort(Number(customPort))} />
     </div>
   </div>
 </div>
