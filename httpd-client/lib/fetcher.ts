@@ -117,23 +117,6 @@ export class Fetcher {
     }
   }
 
-  // Execute a fetch and ignore the response body.
-  //
-  // Throws `ResponseError` if the response status code is not `200`.
-  public async fetchOkNoContent(params: FetchParams): Promise<void> {
-    const response = await this.fetch(params);
-
-    if (!response.ok) {
-      let responseBody = await response.text();
-      try {
-        responseBody = JSON.parse(responseBody);
-      } catch (_e: unknown) {
-        // We keep the original text response body.
-      }
-      throw new ResponseError(params.method, response, responseBody);
-    }
-  }
-
   private async fetch({
     method,
     path,
