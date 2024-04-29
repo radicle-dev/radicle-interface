@@ -91,7 +91,11 @@ export class Fetcher {
     params: FetchParams,
     schema: T,
   ): Promise<TypeOf<T>> {
-    const response = await this.fetch(params);
+    const response = await this.fetch({
+      ...params,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      query: { ...params.query, bust_cache: "1" },
+    });
 
     if (!response.ok) {
       let responseBody = await response.text();
