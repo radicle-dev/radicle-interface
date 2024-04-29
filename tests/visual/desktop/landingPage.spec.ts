@@ -32,7 +32,8 @@ test("load error", async ({ page }) => {
   });
 
   await page.route(
-    "**/api/v1/projects/rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
+    ({ pathname }) =>
+      pathname === "/api/v1/projects/rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
     route => route.fulfill({ status: 500 }),
   );
 

@@ -101,21 +101,27 @@ test("project not found", async ({ page }) => {
 });
 
 test("response parse error", async ({ page }) => {
-  await page.route(`*/**/v1/projects/${sourceBrowsingRid}`, route => {
-    return route.fulfill({
-      json: [{ name: 1337 }],
-    });
-  });
+  await page.route(
+    ({ pathname }) => pathname === `/api/v1/projects/${sourceBrowsingRid}`,
+    route => {
+      return route.fulfill({
+        json: [{ name: 1337 }],
+      });
+    },
+  );
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
 
 test("response error", async ({ page }) => {
-  await page.route(`*/**/v1/projects/${sourceBrowsingRid}`, route => {
-    return route.fulfill({
-      status: 500,
-    });
-  });
+  await page.route(
+    ({ pathname }) => pathname === `/api/v1/projects/${sourceBrowsingRid}`,
+    route => {
+      return route.fulfill({
+        status: 500,
+      });
+    },
+  );
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });

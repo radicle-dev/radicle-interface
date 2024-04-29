@@ -28,13 +28,16 @@ test("test issue editing failing", async ({ page, authenticatedPeer }) => {
     { cwd: projectFolder },
   );
 
-  await page.route(`**/v1/projects/${rid}/issues/*`, async route => {
-    if (route.request().method() === "PATCH") {
-      return route.fulfill({ status: 500 });
-    } else {
-      return route.fallback();
-    }
-  });
+  await page.route(
+    ({ pathname }) => pathname.startsWith(`/api/v1/projects/${rid}/issues/`),
+    async route => {
+      if (route.request().method() === "PATCH") {
+        return route.fulfill({ status: 500 });
+      } else {
+        return route.fallback();
+      }
+    },
+  );
 
   await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
   await page.getByRole("link", { name: "This issue is going to fail" }).click();

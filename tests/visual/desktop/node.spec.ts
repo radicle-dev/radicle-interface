@@ -16,13 +16,17 @@ test("node page", async ({ page }) => {
 });
 
 test("empty pinned projects", async ({ page }) => {
-  await page.route("**/api/v1/projects?show=pinned", async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      json: [],
-    });
-  });
+  await page.route(
+    ({ hostname, pathname }) =>
+      pathname === "/api/v1/projects" && hostname === "seed.radicle.garden",
+    async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        json: [],
+      });
+    },
+  );
   await page.goto("/", {
     waitUntil: "networkidle",
   });
