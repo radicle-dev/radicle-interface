@@ -238,7 +238,7 @@ export class RadiclePeer {
       ...gitOptions,
       RAD_HOME: radHome,
       RAD_PASSPHRASE: "asdf",
-      RAD_SEED: node,
+      RAD_KEYGEN_SEED: node,
       RAD_SOCKET: socket,
     };
 
@@ -412,8 +412,8 @@ export class RadiclePeer {
         GIT_CONFIG_NOSYSTEM: "1",
         RAD_HOME: this.#radHome,
         RAD_PASSPHRASE: "asdf",
-        RAD_COMMIT_TIME: "1671125284",
-        RAD_SEED: this.#radSeed,
+        RAD_LOCAL_TIME: "1671125284",
+        RAD_KEYGEN_SEED: this.#radSeed,
         RAD_SOCKET: this.#socket,
         ...opts?.env,
         ...this.#gitOptions,

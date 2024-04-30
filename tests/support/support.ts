@@ -15,7 +15,7 @@ export function createOptions(projectFolder: string, days: number): Options {
   return {
     cwd: projectFolder,
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    env: { RAD_COMMIT_TIME: (1671211684 + days * 86400).toString() },
+    env: { RAD_LOCAL_TIME: (1671211684 + days * 86400).toString() },
   };
 }
 

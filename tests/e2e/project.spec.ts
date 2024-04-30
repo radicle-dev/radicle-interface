@@ -3,6 +3,7 @@ import {
   cobUrl,
   expect,
   markdownUrl,
+  shortBobHead,
   sourceBrowsingRid,
   sourceBrowsingUrl,
   test,
@@ -362,7 +363,9 @@ test("peer and branch switching", async ({ page }) => {
     {
       await expect(page.getByRole("button", { name: "main" })).toBeVisible();
       await expect(
-        page.getByRole("button", { name: "ff32f18 Update readme" }).first(),
+        page
+          .getByRole("button", { name: `${shortBobHead} Update readme` })
+          .first(),
       ).toBeVisible();
       await expect(
         page.getByRole("link", {
@@ -370,7 +373,9 @@ test("peer and branch switching", async ({ page }) => {
         }),
       ).toBeVisible();
       await expect(
-        page.getByRole("button", { name: "ff32f18 Update readme" }).first(),
+        page
+          .getByRole("button", { name: `${shortBobHead} Update readme` })
+          .first(),
       ).toBeVisible();
     }
   }
