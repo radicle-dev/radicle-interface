@@ -25,11 +25,12 @@ export const tmpDir = Path.resolve(supportDir, "..", "./tmp");
 export const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 const workspacePaths = [Path.join(tmpDir, "peers"), Path.join(tmpDir, "repos")];
 
-export const heartwoodShortSha = (
-  await Fs.readFile(`${supportDir}/heartwood-version`, "utf8")
-).substring(0, 7);
+export const heartwoodRelease = await Fs.readFile(
+  `${supportDir}/heartwood-release`,
+  "utf8",
+);
 
-const binaryPath = Path.join(tmpDir, "bin", heartwoodShortSha);
+const binaryPath = Path.join(tmpDir, "bin", heartwoodRelease);
 process.env.PATH = [binaryPath, process.env.PATH].join(Path.delimiter);
 
 // Assert that the `rad` CLI is installed and has the correct version.
@@ -41,9 +42,9 @@ export async function assertRadInstalled(): Promise<void> {
     );
   }
   const { stdout: version } = await execa("rad", ["--version"]);
-  if (!version.includes(heartwoodShortSha)) {
+  if (!version.includes(heartwoodRelease)) {
     throw new Error(
-      `rad version ${version} does not satisfy ${heartwoodShortSha}`,
+      `rad version ${version} does not satisfy ${heartwoodRelease}`,
     );
   }
 }

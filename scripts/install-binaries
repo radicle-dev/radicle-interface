@@ -1,11 +1,9 @@
 #!/bin/bash
 set -e
 
-BINARIES=(rad rad-web radicle-node radicle-httpd git-remote-rad)
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
-REV=$(cat "$REPO_ROOT/tests/support/heartwood-version")
-BINARY_PATH=$REPO_ROOT/tests/tmp/bin/${REV:0:7}
-USE_LOCAL_BINARIES=false
+RELEASE=$(cat "$REPO_ROOT/tests/support/heartwood-release")
+BINARY_PATH=$REPO_ROOT/tests/tmp/bin/$RELEASE
 OS=$(uname)
 
 show_usage() {
@@ -17,68 +15,40 @@ show_usage() {
   echo
   echo "OPTIONS:"
   echo "  -s --show-path         Print the binary path, and skip installation."
-  echo "  -l --local-path        Use local path instead of fetching from radicle.xyz."
   echo "  -h --help              Print this Help."
   echo
 }
 
 while [ $# -ne 0 ]; do
   case "$1" in
-    --show-path | -s)
-      echo "$BINARY_PATH"
-      exit
-      ;;
-    --local-path | -l)
-      USE_LOCAL_BINARIES=true
-      SOURCE_PATH=$2
-      shift 2
-      ;;
-    --help | -h)
-      show_usage
-      exit
-      ;;
+  --show-path | -s)
+    echo "$BINARY_PATH"
+    exit
+    ;;
+  --help | -h)
+    show_usage
+    exit
+    ;;
   esac
-
 done
 
-echo
-echo "Using revision $REV"
-if [ "$USE_LOCAL_BINARIES" = true ]; then
-  echo "Using local binaries from $SOURCE_PATH"
+if test -d "$BINARY_PATH"; then
+  echo ✅ "Folder $BINARY_PATH exists already skipping download."
+else
+  mkdir -p "$BINARY_PATH"
+  case "$OS" in
+  Darwin)
+    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz"
+    curl -# -L "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-aarch64-apple-darwin/bin/"
+    ;;
+  Linux)
+    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz"
+    curl -# -L "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-x86_64-unknown-linux-musl/bin/"
+    ;;
+  *)
+    echo "There are no precompiled binaries for your OS: $OS, compile $RELEASE manually and make sure it's in PATH." && exit 1
+    ;;
+  esac
 fi
-echo
-
-mkdir -p "$BINARY_PATH"
-
-for BINARY_NAME in "${BINARIES[@]}"
-do
-  if [ -x "$(command -v "$BINARY_PATH/$BINARY_NAME")" ]; then
-    echo ✅ "$BINARY_NAME"
-  elif [ "$USE_LOCAL_BINARIES" = true ]; then
-    echo Copying "$BINARY_NAME" from "$SOURCE_PATH/$BINARY_NAME"
-    cp "$SOURCE_PATH/$BINARY_NAME" "$BINARY_PATH/$BINARY_NAME"
-  else
-    # To provide deterministic Node and Repo IDs, we need a rad CLI compiled with the --debug flag.
-    if [ "$BINARY_NAME" = "rad" ]; then
-      DOWNLOAD_NAME=debug/rad
-    elif [ "$BINARY_NAME" = "git-remote-rad" ]; then
-      DOWNLOAD_NAME=debug/git-remote-rad
-    else
-      DOWNLOAD_NAME=$BINARY_NAME
-    fi
-
-    case "$OS" in
-      Darwin)
-        echo Downloading "$BINARY_NAME" from "https://files.radicle.xyz/$REV/aarch64-apple-darwin/$DOWNLOAD_NAME"
-        curl --fail -s "https://files.radicle.xyz/$REV/aarch64-apple-darwin/$DOWNLOAD_NAME" --output "$BINARY_PATH/$BINARY_NAME" || (echo "Download failed" && exit 1);;
-      Linux)
-        echo Downloading "$BINARY_NAME" from "https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$DOWNLOAD_NAME"
-        curl --fail -s "https://files.radicle.xyz/$REV/x86_64-unknown-linux-musl/$DOWNLOAD_NAME" --output "$BINARY_PATH/$BINARY_NAME" || (echo "Download failed" && exit 1);;
-      *)       echo "There are no precompiled binaries for your OS: $OS, compile $BINARY_NAME manually and make sure it's in PATH." && exit 1 ;;
-    esac
-
-    chmod a+x "$BINARY_PATH/$BINARY_NAME"
-  fi
-done
 
 echo

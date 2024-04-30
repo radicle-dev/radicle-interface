@@ -3,8 +3,8 @@
 set -e
 
 usage() {
-    printf \
-        'Update flake and heartwood-version to the requested heartwood version.
+  printf \
+    'Update flake and heartwood-release to the requested heartwood version.
 When called without arguments, reads HASH from tests/support/hearwood-version.
 
 USAGE:
@@ -17,20 +17,20 @@ OPTIONS:
 }
 
 while [ $# -ne 0 ]; do
-    case $1 in
-        --help | -h)
-            usage >&2
-            exit
-            ;;
-        */*)
-            hash=$(git -C "$1" rev-parse --verify HEAD)
-            shift
-            ;;
-        *)
-            hash=$1
-            shift
-            ;;
-    esac
+  case $1 in
+  --help | -h)
+    usage >&2
+    exit
+    ;;
+  */*)
+    hash=$(git -C "$1" rev-parse --verify HEAD)
+    shift
+    ;;
+  *)
+    hash=$1
+    shift
+    ;;
+  esac
 done
 
 # Heartwood repo id
@@ -38,38 +38,41 @@ rid=z3gqcJUoA1n9HaHKufZs5FCSGazv5
 
 # Some root detection guess work...
 root=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
-if [ ! -e "$root/tests/support/heartwood-version" ]; then
-    root=$(cd .. ; pwd)
+if [ ! -e "$root/tests/support/heartwood-release" ]; then
+  root=$(
+    cd ..
+    pwd
+  )
 fi
 
 if [ -z "$hash" ]; then
-    # No hash given, take from heartwood-version
-    if [ -e "$root/tests/support/heartwood-version" ]; then
-        hash=$(cat "$root/tests/support/heartwood-version")
-        [ -n "$hash" ] || {
-            printf "Error reading heartwood-version\n" >&2
-            exit 1
-        }
-    fi
+  # No hash given, take from heartwood-release
+  if [ -e "$root/tests/support/heartwood-release" ]; then
+    hash=$(cat "$root/tests/support/heartwood-release")
+    [ -n "$hash" ] || {
+      printf "Error reading heartwood-release\n" >&2
+      exit 1
+    }
+  fi
 else
-    printf '%s\n' "$hash" >$root/tests/support/heartwood-version
+  printf '%s\n' "$hash" >$root/tests/support/heartwood-release
 fi
 
 if [ -e "$root/flake.nix" ]; then
-    sed -E -e '/url.*git\+https.*'"$rid"'/s/(rev=)[0-9a-f]{40,40}/\1'"$hash"'/' "$root/flake.nix" >$root/flake.nix.tmp
+  sed -E -e '/url.*git\+https.*'"$rid"'/s/(rev=)[0-9a-f]{40,40}/\1'"$hash"'/' "$root/flake.nix" >$root/flake.nix.tmp
+  mv "$root/flake.nix.tmp" "$root/flake.nix"
+
+  # If running on a nix-enabled system, also update npmDepsHash.
+  if type nix >/dev/null 2>&1; then
+    npmDepsHash=$(nix --experimental-features 'nix-command flakes' \
+      run --inputs-from "$root" nixpkgs#prefetch-npm-deps \
+      -- "$root/package-lock.json")
+    sed -E -e '/npmDepsHash/s#".*"#"'"$npmDepsHash"'"#' "$root/flake.nix" >$root/flake.nix.tmp
     mv "$root/flake.nix.tmp" "$root/flake.nix"
 
-    # If running on a nix-enabled system, also update npmDepsHash.
-    if type nix >/dev/null 2>&1; then
-        npmDepsHash=$(nix --experimental-features 'nix-command flakes' \
-            run --inputs-from "$root" nixpkgs#prefetch-npm-deps \
-            -- "$root/package-lock.json")
-        sed -E -e '/npmDepsHash/s#".*"#"'"$npmDepsHash"'"#' "$root/flake.nix" >$root/flake.nix.tmp
-        mv "$root/flake.nix.tmp" "$root/flake.nix"
-
-        nix --experimental-features 'nix-command flakes' flake update "$root"
-    else
-        printf >&2 'Node dependencies may be out of date!
+    nix --experimental-features 'nix-command flakes' flake update "$root"
+  else
+    printf >&2 'Node dependencies may be out of date!
 Re-run on a nix-enabled system to update npmDepsHash.\n'
-    fi
+  fi
 fi

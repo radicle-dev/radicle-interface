@@ -90,12 +90,12 @@
           checkPhase = ''
             runHook preCheck
             heartwoodRev="${heartwood.rev or "unknown"}"
-            expRev=$(cat tests/support/heartwood-version)
+            expRev=$(cat tests/support/heartwood-release)
             if [ "''${heartwoodRev#$expRev}" = "$heartwoodRev" ]; then
               printf "Error: Expecting heartwood binaries revision '%s', got '%s'" "$expRev" "$heartwoodRev" >&2
               exit 1
             fi
-            echo unknown > tests/support/heartwood-version
+            echo unknown > tests/support/heartwood-release
             scripts/install-binaries -l ${checkBins}/bin
             scripts/check
             {
