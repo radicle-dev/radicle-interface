@@ -4,7 +4,7 @@
     nixpkgs.follows = "heartwood/nixpkgs";
     flake-utils.follows = "heartwood/flake-utils";
     heartwood = {
-      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=master&rev=c607619683e859fd715a23377c03fb08dc8090f4";
+      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.6";
     };
   };
 
@@ -89,13 +89,6 @@
           ];
           checkPhase = ''
             runHook preCheck
-            heartwoodRev="${heartwood.rev or "unknown"}"
-            expRev=$(cat tests/support/heartwood-release)
-            if [ "''${heartwoodRev#$expRev}" = "$heartwoodRev" ]; then
-              printf "Error: Expecting heartwood binaries revision '%s', got '%s'" "$expRev" "$heartwoodRev" >&2
-              exit 1
-            fi
-            echo unknown > tests/support/heartwood-release
             scripts/install-binaries -l ${checkBins}/bin
             scripts/check
             {

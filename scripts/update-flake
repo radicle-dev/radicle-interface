@@ -5,14 +5,13 @@ set -e
 usage() {
   printf \
     'Update flake and heartwood-release to the requested heartwood version.
-When called without arguments, reads HASH from tests/support/hearwood-version.
+When called without arguments, reads RELEASE from tests/support/hearwood-release.
 
 USAGE:
-  update-flake [-h] [PATH|HASH]
+  update-flake [-h] [PATH|TAG]
 
 OPTIONS:
-  PATH\t\tPath to heartwood git repo; uses current HEAD.
-  HASH\t\tUpdate heartwood version to HASH.
+  RELEASE\t\tUpdate heartwood version to TAG.
   -h --help\tPrint this help.\n'
 }
 
@@ -22,12 +21,8 @@ while [ $# -ne 0 ]; do
     usage >&2
     exit
     ;;
-  */*)
-    hash=$(git -C "$1" rev-parse --verify HEAD)
-    shift
-    ;;
   *)
-    hash=$1
+    release=$1
     shift
     ;;
   esac
@@ -45,21 +40,23 @@ if [ ! -e "$root/tests/support/heartwood-release" ]; then
   )
 fi
 
-if [ -z "$hash" ]; then
-  # No hash given, take from heartwood-release
+if [ -z "$release" ]; then
+  # No release given, take from heartwood-release
   if [ -e "$root/tests/support/heartwood-release" ]; then
-    hash=$(cat "$root/tests/support/heartwood-release")
-    [ -n "$hash" ] || {
+    release=$(cat "$root/tests/support/heartwood-release")
+    [ -n "$release" ] || {
       printf "Error reading heartwood-release\n" >&2
       exit 1
     }
   fi
 else
-  printf '%s\n' "$hash" >$root/tests/support/heartwood-release
+  printf '%s\n' "$release" >$root/tests/support/heartwood-release
 fi
 
 if [ -e "$root/flake.nix" ]; then
-  sed -E -e '/url.*git\+https.*'"$rid"'/s/(rev=)[0-9a-f]{40,40}/\1'"$hash"'/' "$root/flake.nix" >$root/flake.nix.tmp
+  query="ref=refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v$release";
+
+  sed -E -e '/url.*git\+https.*'"$rid"'/s|\?.*";|?'"$query"'";|' "$root/flake.nix" >$root/flake.nix.tmp
   mv "$root/flake.nix.tmp" "$root/flake.nix"
 
   # If running on a nix-enabled system, also update npmDepsHash.
@@ -70,7 +67,7 @@ if [ -e "$root/flake.nix" ]; then
     sed -E -e '/npmDepsHash/s#".*"#"'"$npmDepsHash"'"#' "$root/flake.nix" >$root/flake.nix.tmp
     mv "$root/flake.nix.tmp" "$root/flake.nix"
 
-    nix --experimental-features 'nix-command flakes' flake update "$root"
+    nix --experimental-features 'nix-command flakes' flake update --flake git+file://"$root"
   else
     printf >&2 'Node dependencies may be out of date!
 Re-run on a nix-enabled system to update npmDepsHash.\n'
