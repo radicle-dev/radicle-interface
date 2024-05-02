@@ -3,7 +3,7 @@ import path from "node:path";
 
 export default defineConfig({
   test: {
-    environment: "node",
+    environment: "happy-dom",
     include: ["httpd-client/tests/*.test.ts"],
     reporters: "verbose",
     globalSetup: "./tests/support/globalSetup",
