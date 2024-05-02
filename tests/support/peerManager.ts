@@ -16,7 +16,7 @@ import * as readline from "node:readline/promises";
 import * as Process from "./process.js";
 import { randomTag } from "@tests/support/support.js";
 import { sleep } from "@app/lib/sleep.js";
-import { array, boolean, literal, number, object, string, union, z } from "zod";
+import { array, literal, number, object, string, union, z } from "zod";
 import { logPrefix } from "./logPrefix.js";
 
 export type RefsUpdate =
@@ -132,7 +132,7 @@ export const NodeConfigSchema = object({
     connect: array(string()),
     externalAddresses: array(string()),
     network: union([literal("main"), literal("test")]),
-    relay: boolean(),
+    relay: union([literal("always"), literal("never"), literal("auto")]),
     limits: object({
       routingMaxSize: number(),
       routingMaxAge: number(),

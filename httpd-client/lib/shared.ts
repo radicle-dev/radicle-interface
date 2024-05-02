@@ -1,6 +1,6 @@
 import type { ZodSchema, z } from "zod";
 
-import { array, boolean, literal, number, object, string, union } from "zod";
+import { array, literal, number, object, string, union } from "zod";
 
 export interface SuccessResponse {
   success: true;
@@ -23,7 +23,7 @@ export const nodeConfigSchema = object({
   connect: array(string()),
   externalAddresses: array(string()),
   network: union([literal("main"), literal("test")]),
-  relay: boolean(),
+  relay: union([literal("always"), literal("never"), literal("auto")]),
   limits: object({
     routingMaxSize: number(),
     routingMaxAge: number(),
