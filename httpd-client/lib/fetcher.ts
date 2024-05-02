@@ -3,6 +3,9 @@
 
 import type { ZodIssue, ZodType, TypeOf } from "zod";
 
+import { config } from "@app/lib/config";
+import { compare } from "compare-versions";
+
 export interface BaseUrl {
   hostname: string;
   port: number;
@@ -40,16 +43,41 @@ export class ResponseError extends Error {
 export class ResponseParseError extends Error {
   public method: string;
   public body: unknown;
+  public description: string;
+  public apiVersion: string | undefined;
   public zodIssues: ZodIssue[];
   public path?: string;
 
   public constructor(
     method: string,
     body: unknown,
+    apiVersion: string | undefined,
     zodIssues: ZodIssue[],
     path?: string,
   ) {
     super("Failed to parse response body");
+
+    let description: string;
+    if (
+      apiVersion === undefined ||
+      compare(apiVersion, config.nodes.apiVersion, "<")
+    ) {
+      description = `The node you are fetching from seems to be outdated, make sure the httpd API version is at least ${config.nodes.apiVersion} currently ${apiVersion ?? "unknown"}.`;
+    } else if (
+      config.nodes.apiVersion === undefined ||
+      compare(apiVersion, config.nodes.apiVersion, ">")
+    ) {
+      description = `The web client you are using is outdated, make sure it supports at least ${apiVersion} to interact with this node currently ${config.nodes.apiVersion ?? "unknown"}.`;
+    } else {
+      description =
+        "This is usually due to a version mismatch between the seed and the web interface.";
+    }
+    this.apiVersion = apiVersion;
+    this.description =
+      "The response received from the seed does not match the expected schema.<br/>".concat(
+        description,
+      );
+
     this.method = method;
     this.path = path;
     this.body = body;
@@ -93,8 +121,7 @@ export class Fetcher {
   ): Promise<TypeOf<T>> {
     const response = await this.fetch({
       ...params,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      query: { ...params.query, bust_cache: "1" },
+      query: { ...params.query, v: config.nodes.apiVersion },
     });
 
     if (!response.ok) {
@@ -112,9 +139,12 @@ export class Fetcher {
     if (result.success) {
       return result.data;
     } else {
+      const response = await this.fetch({ method: "GET" });
+      const info = await response.json();
       throw new ResponseParseError(
         params.method,
         responseBody,
+        info.apiVersion,
         result.error.errors,
         params.path,
       );

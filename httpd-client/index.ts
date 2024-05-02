@@ -103,6 +103,7 @@ const nodeInfoSchema = object({
   message: string(),
   service: string(),
   version: string(),
+  apiVersion: string(),
   nid: string(),
   path: string(),
   links: array(

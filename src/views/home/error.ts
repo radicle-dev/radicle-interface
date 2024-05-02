@@ -12,8 +12,7 @@ export function handleError(
     return {
       error,
       title: "Could not parse the request",
-      description:
-        "The response received from the seed does not match the expected schema, this is usually due to a version mismatch between the seed and the web interface.",
+      description: error.description,
     };
   } else if (error instanceof ResponseError) {
     return {

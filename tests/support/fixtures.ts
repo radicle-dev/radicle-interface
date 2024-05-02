@@ -77,6 +77,7 @@ export const test = base.extend<{
             nodes: {
               fallbackPublicExplorer:
                 "https://app.radicle.xyz/nodes/$host/$rid$path",
+              apiVersion: "0.1.0",
               defaultHttpdPort: 8081,
               defaultHttpdHostname: "127.0.0.1",
               defaultLocalHttpdPort: 8081,
@@ -214,6 +215,7 @@ export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
   window.APP_CONFIG = {
     nodes: {
       fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
+      apiVersion: "0.1.0",
       defaultHttpdPort: 8081,
       defaultHttpdHostname: "127.0.0.1",
       defaultLocalHttpdPort,
