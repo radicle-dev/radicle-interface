@@ -102,11 +102,13 @@ const treeEntrySchema = object({
 
 export type TreeEntry = z.infer<typeof treeEntrySchema>;
 
-export interface TreeStats {
-  commits: number;
-  branches: number;
-  contributors: number;
-}
+const treeStatsSchema = object({
+  commits: number(),
+  branches: number(),
+  contributors: number(),
+});
+
+export type TreeStats = z.infer<typeof treeStatsSchema>;
 
 export type Tree = z.infer<typeof treeSchema>;
 
@@ -115,11 +117,6 @@ const treeSchema = object({
   lastCommit: commitHeaderSchema,
   name: string(),
   path: string(),
-  stats: object({
-    commits: number(),
-    branches: number(),
-    contributors: number(),
-  }),
 });
 
 export type Remote = z.infer<typeof remoteSchema>;
@@ -153,6 +150,7 @@ export class Client {
   // persisted and new instances are frequently created.
   static #cache = {
     tree: new LRUCache<string, Tree>({ max: 300 }),
+    stats: new LRUCache<string, TreeStats>({ max: 300 }),
     blob: new LRUCache<string, Blob>({ max: 500 }),
   };
 
@@ -272,6 +270,28 @@ export class Client {
       treeSchema,
     );
     Client.#cache.tree.set(cacheKey, tree);
+    return tree;
+  }
+
+  public async getTreeStatsBySha(
+    id: string,
+    sha: string,
+    options?: RequestOptions,
+  ): Promise<TreeStats> {
+    const cacheKey = `tree:stats:${sha}`;
+    const cachedTree = Client.#cache.stats.get(cacheKey);
+    if (cachedTree) {
+      return cachedTree;
+    }
+    const tree = await this.#fetcher.fetchOk(
+      {
+        method: "GET",
+        path: `projects/${id}/stats/tree/${sha}`,
+        options,
+      },
+      treeStatsSchema,
+    );
+    Client.#cache.stats.set(cacheKey, tree);
     return tree;
   }
 

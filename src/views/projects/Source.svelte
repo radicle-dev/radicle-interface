@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type {
+    BaseUrl,
+    Project,
+    Remote,
+    Tree,
+    TreeStats,
+  } from "@httpd-client";
   import type { BlobResult } from "./router";
   import type { Route } from "@app/lib/router";
 
@@ -24,6 +30,7 @@
   export let project: Project;
   export let revision: string | undefined;
   export let tree: Tree;
+  export let stats: TreeStats;
   export let seeding: boolean;
 
   let mobileFileTree = false;
@@ -125,6 +132,7 @@
       branches={branchesWithRoute}
       {revision}
       {tree}
+      {stats}
       filesLinkActive={true}
       historyLinkActive={false} />
   </div>

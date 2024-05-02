@@ -53,6 +53,10 @@ describe("project", () => {
     await api.project.getTree(sourceBrowsingRid, aliceMainHead);
   });
 
+  test("#getTreeStats(id, sha)", async () => {
+    await api.project.getTreeStatsBySha(sourceBrowsingRid, aliceMainHead);
+  });
+
   test("#getTree(id, sha, path)", async () => {
     await api.project.getTree(sourceBrowsingRid, aliceMainHead, "src");
   });

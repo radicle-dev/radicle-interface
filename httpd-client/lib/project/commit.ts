@@ -236,11 +236,4 @@ const commitSchema = object({
 
 type Commits = z.infer<typeof commitsSchema>;
 
-const commitsSchema = object({
-  commits: array(commitHeaderSchema),
-  stats: object({
-    commits: number(),
-    branches: number(),
-    contributors: number(),
-  }),
-});
+const commitsSchema = array(commitHeaderSchema);

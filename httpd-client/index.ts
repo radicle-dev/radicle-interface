@@ -6,6 +6,7 @@ import type {
   ProjectListQuery,
   Remote,
   Tree,
+  TreeStats,
 } from "./lib/project.js";
 import type {
   SuccessResponse,
@@ -82,6 +83,7 @@ export type {
   Review,
   Revision,
   Scope,
+  TreeStats,
   Tree,
   Verdict,
 };

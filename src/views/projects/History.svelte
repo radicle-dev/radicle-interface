@@ -5,6 +5,7 @@
     Project,
     Remote,
     Tree,
+    TreeStats,
   } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
@@ -29,8 +30,8 @@
   export let peers: Remote[];
   export let project: Project;
   export let revision: string | undefined;
-  export let totalCommitCount: number;
   export let tree: Tree;
+  export let stats: TreeStats;
   export let seeding: boolean;
 
   const api = new HttpdClient(baseUrl);
@@ -54,8 +55,7 @@
         page,
         perPage: COMMITS_PER_PAGE,
       });
-      allCommitHeaders = response.commits;
-      totalCommitCount = response.stats.commits;
+      allCommitHeaders = response;
     } catch (e) {
       error = e;
     }
@@ -117,6 +117,7 @@
       branches={branchesWithRoute}
       {revision}
       {tree}
+      {stats}
       filesLinkActive={false}
       historyLinkActive={true} />
   </div>
@@ -135,11 +136,11 @@
     {/each}
   </div>
 
-  {#if loading || allCommitHeaders.length < totalCommitCount}
+  {#if loading || allCommitHeaders.length < stats.commits}
     <div class="more">
       {#if loading}
         <Loading small={page !== 0} center />
-      {:else if allCommitHeaders.length < totalCommitCount}
+      {:else if allCommitHeaders.length < stats.commits}
         <Button size="large" variant="outline" on:click={loadMore}>More</Button>
       {/if}
     </div>

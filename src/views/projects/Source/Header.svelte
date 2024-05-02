@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type {
+    BaseUrl,
+    Project,
+    Remote,
+    Tree,
+    TreeStats,
+  } from "@httpd-client";
   import { type Route } from "@app/lib/router";
 
   import BranchSelector from "./BranchSelector.svelte";
@@ -16,6 +22,7 @@
   export let historyLinkActive: boolean;
   export let revision: string | undefined;
   export let tree: Tree;
+  export let stats: TreeStats;
   export let project: Project;
 
   let selectedBranch: string | undefined;
@@ -121,7 +128,7 @@
         <div class="title-counter">
           Commits
           <div class="counter" class:selected={historyLinkActive}>
-            {tree.stats.commits}
+            {stats.commits}
           </div>
         </div>
       </Button>
