@@ -194,7 +194,7 @@
                     : isSeeding(projectInfo.project.id)}
                   isDelegate={isDelegate(
                     session?.publicKey,
-                    projectInfo.project.delegates,
+                    projectInfo.project.delegates.map(d => d.id),
                   ) ?? false} />
               {/each}
             </div>

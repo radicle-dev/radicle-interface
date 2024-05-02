@@ -402,6 +402,7 @@
     issue.discussion[0].edits.length > 1
       ? issue.discussion[0].edits.at(-1)
       : undefined;
+  $: delegates = project.delegates.map(d => d.id);
 
   type State = "read" | "edit" | "submit";
 
@@ -507,7 +508,7 @@
             {/if}
           </div>
           <div style="display: flex; gap: 0.5rem;">
-            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id) && issueState === "read"}
+            {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id) && issueState === "read"}
               <Button
                 variant="outline"
                 title="edit issue"
@@ -518,7 +519,7 @@
             {/if}
             {#if issueState === "read"}
               <Share {baseUrl} />
-              {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+              {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
                 <CobStateButton
                   items={items.filter(
                     ([, state]) => !isEqual(state, issue.state),
@@ -645,7 +646,7 @@
                 canEditComment={partial(
                   role.isDelegateOrAuthor,
                   session?.publicKey,
-                  project.delegates,
+                  delegates,
                 )}
                 editComment={$experimental &&
                   session &&
@@ -672,7 +673,7 @@
             submit={partial(createComment, session.id)} />
           <div
             style="display:flex; flex-direction: column; align-items: flex-start;">
-            {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, issue.author.id)}
+            {#if role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
               <div class="connector" />
               <CobStateButton
                 items={items.filter(
@@ -689,7 +690,7 @@
     <div class="metadata global-hide-on-mobile">
       <AssigneeInput
         locallyAuthenticated={Boolean(
-          role.isDelegate(session?.publicKey, project.delegates),
+          role.isDelegate(session?.publicKey, delegates),
         )}
         assignees={issue.assignees}
         submitInProgress={assigneeState === "submit"}
@@ -706,7 +707,7 @@
         }} />
       <LabelInput
         locallyAuthenticated={Boolean(
-          role.isDelegate(session?.publicKey, project.delegates),
+          role.isDelegate(session?.publicKey, delegates),
         )}
         labels={issue.labels}
         submitInProgress={labelState === "submit"}

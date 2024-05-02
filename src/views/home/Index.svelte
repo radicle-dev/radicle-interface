@@ -91,7 +91,12 @@
     localProjects instanceof Error ||
     localProjects === undefined
       ? localProjects
-      : localProjects.filter(p => isDelegate(nodeId, p.project.delegates));
+      : localProjects.filter(p =>
+          isDelegate(
+            nodeId,
+            p.project.delegates.map(d => d.id),
+          ),
+        );
 </script>
 
 <style>
@@ -186,13 +191,13 @@
           <div class="project-grid">
             {#if filteredLocalProjects && !(filteredLocalProjects instanceof Error)}
               {#each filteredLocalProjects as projectInfo}
+                {@const delegates = projectInfo.project.delegates.map(
+                  d => d.id,
+                )}
                 <ProjectCard
                   {projectInfo}
                   isSeeding={true}
-                  isDelegate={isDelegate(
-                    nodeId,
-                    projectInfo.project.delegates,
-                  ) ?? false} />
+                  isDelegate={isDelegate(nodeId, delegates) ?? false} />
               {/each}
             {/if}
           </div>
@@ -261,11 +266,11 @@
       <div class="project-grid">
         {#if preferredSeedProjects && !(preferredSeedProjects instanceof Error)}
           {#each preferredSeedProjects as projectInfo}
+            {@const delegates = projectInfo.project.delegates.map(d => d.id)}
             <ProjectCard
               {projectInfo}
               isSeeding={isSeeding(projectInfo.project.id)}
-              isDelegate={isDelegate(nodeId, projectInfo.project.delegates) ??
-                false} />
+              isDelegate={isDelegate(nodeId, delegates) ?? false} />
           {/each}
         {/if}
       </div>

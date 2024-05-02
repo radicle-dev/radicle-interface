@@ -55,8 +55,9 @@ const projectSchema = object({
   name: string(),
   description: string(),
   defaultBranch: string(),
-  delegates: array(string()),
+  delegates: array(object({ id: string(), alias: optional(string()) })),
   head: string(),
+  threshold: number(),
   visibility: union([
     object({ type: literal("public") }),
     object({ type: literal("private"), allow: optional(array(string())) }),

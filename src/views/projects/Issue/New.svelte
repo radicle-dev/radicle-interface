@@ -136,12 +136,16 @@
       <div class="metadata">
         <AssigneeInput
           locallyAuthenticated={session &&
-            project.delegates.includes(`did:key:${session.publicKey}`)}
+            project.delegates
+              .map(d => d.id)
+              .includes(`did:key:${session.publicKey}`)}
           on:save={({ detail: updatedAssignees }) =>
             (assignees = updatedAssignees)} />
         <LabelInput
           locallyAuthenticated={session &&
-            project.delegates.includes(`did:key:${session.publicKey}`)}
+            project.delegates
+              .map(d => d.id)
+              .includes(`did:key:${session.publicKey}`)}
           on:save={({ detail: updatedLabels }) => (labels = updatedLabels)} />
       </div>
     </div>

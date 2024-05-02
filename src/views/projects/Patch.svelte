@@ -604,6 +604,7 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
+  $: delegates = project.delegates.map(d => d.id);
   $: firstRevision = timelineTuple[0][0];
   $: latestRevision = patch.revisions[patch.revisions.length - 1];
   $: session =
@@ -747,7 +748,7 @@
               </div>
             {/if}
           </div>
-          {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id) && patchState === "read"}
+          {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id) && patchState === "read"}
             <Button
               variant="outline"
               title="edit patch"
@@ -758,7 +759,7 @@
           {/if}
           {#if patchState === "read"}
             <Share {baseUrl} />
-            {#if session && role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+            {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
               <CobStateButton
                 items={items.filter(
                   ([, state]) => !isEqual(state, patch.state),
@@ -1004,7 +1005,7 @@
               canEdit={partial(
                 role.isDelegateOrAuthor,
                 session?.publicKey,
-                project.delegates,
+                delegates,
               )}
               editRevision={$experimental &&
                 session &&
@@ -1040,7 +1041,7 @@
                       session.id,
                       revision.revisionId,
                     )} />
-                  {#if role.isDelegateOrAuthor(session.publicKey, project.delegates, patch.author.id)}
+                  {#if role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
                     <div class="connector" />
                     <div style="display: flex;">
                       <CobStateButton
@@ -1100,10 +1101,7 @@
         </div>
       </div>
       <LabelInput
-        locallyAuthenticated={role.isDelegate(
-          session?.publicKey,
-          project.delegates,
-        )}
+        locallyAuthenticated={role.isDelegate(session?.publicKey, delegates)}
         submitInProgress={labelState === "submit"}
         labels={patch.labels}
         on:save={async ({ detail: newLabels }) => {
