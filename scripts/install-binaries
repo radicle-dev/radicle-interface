@@ -39,11 +39,11 @@ else
   case "$OS" in
   Darwin)
     echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz"
-    curl -# -L "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-aarch64-apple-darwin/bin/"
+    curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-aarch64-apple-darwin/bin/" || (echo "Download failed" && exit 1)
     ;;
   Linux)
     echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz"
-    curl -# -L "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-x86_64-unknown-linux-musl/bin/"
+    curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-x86_64-unknown-linux-musl/bin/" || (echo "Download failed" && exit 1)
     ;;
   *)
     echo "There are no precompiled binaries for your OS: $OS, compile $RELEASE manually and make sure it's in PATH." && exit 1
