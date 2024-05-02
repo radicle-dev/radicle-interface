@@ -64,16 +64,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1714387799,
-        "narHash": "sha256-tjuNtf1+QvW0JBlLPV/rxD4jrSeG8amyUacNZyoTShU=",
-        "ref": "refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.6",
-        "rev": "0c610887ce36151726d56955018f1fb7a9f0a5d2",
-        "revCount": 1883,
+        "lastModified": 1714650527,
+        "narHash": "sha256-F2n7ui0EgXK8fT76M14RVhXXGeRYub+VpH+puDUJ1pQ=",
+        "ref": "refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.8",
+        "rev": "6ce4cecdf3229f4651c33839e073ff383bc40369",
+        "revCount": 1903,
         "type": "git",
         "url": "https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git"
       },
       "original": {
-        "ref": "refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.6",
+        "ref": "refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.8",
         "type": "git",
         "url": "https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git"
       }
