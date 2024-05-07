@@ -5,7 +5,6 @@
     Project,
     Remote,
     Tree,
-    TreeStats,
   } from "@httpd-client";
   import type { Route } from "@app/lib/router";
 
@@ -24,6 +23,7 @@
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
+  export let commit: string;
   export let branches: string[];
   export let commitHeaders: CommitHeader[];
   export let peer: string | undefined;
@@ -31,7 +31,6 @@
   export let project: Project;
   export let revision: string | undefined;
   export let tree: Tree;
-  export let stats: TreeStats;
   export let seeding: boolean;
 
   const api = new HttpdClient(baseUrl);
@@ -112,12 +111,12 @@
   <div style:margin="1rem 0 1rem 1rem" slot="subheader">
     <Header
       node={baseUrl}
+      {commit}
       {project}
       peers={peersWithRoute}
       branches={branchesWithRoute}
       {revision}
       {tree}
-      {stats}
       filesLinkActive={false}
       historyLinkActive={true} />
   </div>
@@ -136,24 +135,41 @@
     {/each}
   </div>
 
-  {#if loading || allCommitHeaders.length < stats.commits}
+  {#await api.project.getTreeStatsBySha(project.id, commit)}
     <div class="more">
-      {#if loading}
-        <Loading small={page !== 0} center />
-      {:else if allCommitHeaders.length < stats.commits}
-        <Button size="large" variant="outline" on:click={loadMore}>More</Button>
-      {/if}
+      <Loading small center />
     </div>
-  {/if}
+  {:then stats}
+    {#if loading || allCommitHeaders.length < stats.commits}
+      <div class="more">
+        {#if loading}
+          <Loading small={page !== 0} center />
+        {:else if allCommitHeaders.length < stats.commits}
+          <Button size="large" variant="outline" on:click={loadMore}>
+            More
+          </Button>
+        {/if}
+      </div>
+    {/if}
 
-  {#if error}
+    {#if error}
+      <div class="message">
+        <ErrorMessage
+          title="Couldn't load commits"
+          description="Make sure you are able to connect to the seed <code>${baseUrlToString(
+            api.baseUrl,
+          )}</code>"
+          {error} />
+      </div>
+    {/if}
+  {:catch error}
     <div class="message">
       <ErrorMessage
-        title="Couldn't load commits"
+        title="Couldn't load repo stats"
         description="Make sure you are able to connect to the seed <code>${baseUrlToString(
           api.baseUrl,
         )}</code>"
         {error} />
     </div>
-  {/if}
+  {/await}
 </Layout>

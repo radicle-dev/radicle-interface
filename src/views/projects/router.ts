@@ -18,7 +18,6 @@ import type {
   Project,
   Remote,
   Tree,
-  TreeStats,
 } from "@httpd-client";
 
 import * as Syntax from "@app/lib/syntax";
@@ -45,13 +44,8 @@ export type ProjectRoute =
       commit: string;
     }
   | ProjectIssuesRoute
+  | ProjectIssueRoute
   | { resource: "project.newIssue"; node: BaseUrl; project: string }
-  | {
-      resource: "project.issue";
-      node: BaseUrl;
-      project: string;
-      issue: string;
-    }
   | ProjectPatchesRoute
   | ProjectPatchRoute;
 
@@ -60,6 +54,13 @@ interface ProjectIssuesRoute {
   node: BaseUrl;
   project: string;
   state?: "open" | "closed";
+}
+
+interface ProjectIssueRoute {
+  resource: "project.issue";
+  node: BaseUrl;
+  project: string;
+  issue: string;
 }
 
 interface ProjectTreeRoute {
@@ -112,13 +113,13 @@ export type ProjectLoadedRoute =
       resource: "project.source";
       params: {
         baseUrl: BaseUrl;
+        commit: string;
         project: Project;
         peers: Remote[];
         peer: string | undefined;
         branches: string[];
         revision: string | undefined;
         tree: Tree;
-        stats: TreeStats;
         path: string;
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
@@ -129,13 +130,13 @@ export type ProjectLoadedRoute =
       resource: "project.history";
       params: {
         baseUrl: BaseUrl;
+        commit: string;
         project: Project;
         peers: Remote[];
         peer: string | undefined;
         branches: string[];
         revision: string | undefined;
         tree: Tree;
-        stats: TreeStats;
         commitHeaders: CommitHeader[];
         seeding: boolean;
       };
@@ -294,19 +295,7 @@ export async function loadProjectRoute(
         },
       };
     } else if (route.resource === "project.issue") {
-      const [project, issue] = await Promise.all([
-        api.project.getById(route.project),
-        api.project.getIssueById(route.project, route.issue),
-      ]);
-      return {
-        resource: "project.issue",
-        params: {
-          baseUrl: route.node,
-          project,
-          rawPath,
-          issue,
-        },
-      };
+      return await loadIssueView(route);
     } else if (route.resource === "project.patch") {
       return await loadPatchView(route);
     } else if (route.resource === "project.issues") {
@@ -444,11 +433,7 @@ async function loadTreeView(
     project.defaultBranch,
     branchMap,
   );
-
-  const stats = await api.project.getTreeStatsBySha(route.project, commit);
-
   const path = route.path || "/";
-
   const [tree, blobResult] = await Promise.all([
     api.project.getTree(route.project, commit),
     loadBlob(api, project.id, commit, path),
@@ -457,6 +442,7 @@ async function loadTreeView(
     resource: "project.source",
     params: {
       baseUrl: route.node,
+      commit,
       project,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
@@ -464,7 +450,6 @@ async function loadTreeView(
       rawPath,
       revision: route.revision,
       tree,
-      stats,
       path,
       blobResult,
       seeding,
@@ -538,9 +523,8 @@ async function loadHistoryView(
     );
   }
 
-  const [tree, stats, commitHeaders, seeding] = await Promise.all([
+  const [tree, commitHeaders, seeding] = await Promise.all([
     api.project.getTree(route.project, commitId),
-    api.project.getTreeStatsBySha(route.project, commitId),
     await api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
@@ -553,15 +537,39 @@ async function loadHistoryView(
     resource: "project.history",
     params: {
       baseUrl: route.node,
+      commit: commitId,
       project,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
       branches: Object.keys(branchMap || {}),
       revision: route.revision,
       tree,
-      stats,
       commitHeaders,
       seeding,
+    },
+  };
+}
+
+async function loadIssueView(
+  route: ProjectIssueRoute,
+): Promise<ProjectLoadedRoute> {
+  const api = new HttpdClient(route.node);
+  const rawPath = (commit?: string) =>
+    `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
+      route.project
+    }${commit ? `/${commit}` : ""}`;
+
+  const [project, issue] = await Promise.all([
+    api.project.getById(route.project),
+    api.project.getIssueById(route.project, route.issue),
+  ]);
+  return {
+    resource: "project.issue",
+    params: {
+      baseUrl: route.node,
+      project,
+      rawPath,
+      issue,
     },
   };
 }
@@ -574,6 +582,7 @@ async function loadPatchView(
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
       route.project
     }${commit ? `/${commit}` : ""}`;
+
   const [project, patch] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),

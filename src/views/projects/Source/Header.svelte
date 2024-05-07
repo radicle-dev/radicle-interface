@@ -1,12 +1,8 @@
 <script lang="ts">
-  import type {
-    BaseUrl,
-    Project,
-    Remote,
-    Tree,
-    TreeStats,
-  } from "@httpd-client";
-  import { type Route } from "@app/lib/router";
+  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type { Route } from "@app/lib/router";
+
+  import { HttpdClient } from "@httpd-client";
 
   import BranchSelector from "./BranchSelector.svelte";
   import PeerSelector from "./PeerSelector.svelte";
@@ -14,28 +10,30 @@
   import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
+  import Loading from "@app/components/Loading.svelte";
 
   export let node: BaseUrl;
+  export let commit: string;
   export let branches: Array<{ name: string; route: Route }>;
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
   export let filesLinkActive: boolean;
   export let historyLinkActive: boolean;
   export let revision: string | undefined;
   export let tree: Tree;
-  export let stats: TreeStats;
   export let project: Project;
 
+  const api = new HttpdClient(node);
   let selectedBranch: string | undefined;
 
   // Revision may be a commit ID, a branch name or `undefined` which means the
   // default branch. We assign `selectedBranch` accordingly.
-  $: if (revision === commit.id) {
+  $: if (revision === lastCommit.id) {
     selectedBranch = undefined;
   } else {
     selectedBranch = revision || project.defaultBranch;
   }
 
-  $: commit = tree.lastCommit;
+  $: lastCommit = tree.lastCommit;
   $: peer = peers.find(p => p.selected)?.remote.id;
 </script>
 
@@ -77,6 +75,7 @@
 
   .title-counter {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
   }
 
@@ -96,7 +95,7 @@
     {project}
     {node}
     onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
-    selectedCommit={commit}
+    selectedCommit={lastCommit}
     {selectedBranch} />
 </div>
 
@@ -127,9 +126,13 @@
         <IconSmall name="commit" />
         <div class="title-counter">
           Commits
-          <div class="counter" class:selected={historyLinkActive}>
-            {stats.commits}
-          </div>
+          {#await api.project.getTreeStatsBySha(project.id, commit)}
+            <Loading small center noDelay grayscale />
+          {:then stats}
+            <div class="counter" class:selected={historyLinkActive}>
+              {stats.commits}
+            </div>
+          {/await}
         </div>
       </Button>
     </Link>
