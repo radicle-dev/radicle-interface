@@ -13,7 +13,8 @@
   .breadcrumbs {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    column-gap: 0.25rem;
+    line-height: 1rem;
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
     white-space: nowrap;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ProjectLoadedRoute } from "@app/views/projects/router";
 
-  import { unreachable } from "@app/lib/utils";
+  import { formatObjectId, unreachable } from "@app/lib/utils";
 
   import FilePath from "@app/components/FilePath.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -97,16 +97,31 @@
 {#if activeRoute.resource === "project.commit"}
   <Separator />
   <span class="id">
-    {activeRoute.params.commit.commit.id}
+    <div class="global-hide-on-small-desktop-down">
+      {activeRoute.params.commit.commit.id}
+    </div>
+    <div class="global-hide-on-medium-desktop-up">
+      {formatObjectId(activeRoute.params.commit.commit.id)}
+    </div>
   </span>
 {:else if activeRoute.resource === "project.issue"}
   <Separator />
   <span class="id">
-    {activeRoute.params.issue.id}
+    <div class="global-hide-on-small-desktop-down">
+      {activeRoute.params.issue.id}
+    </div>
+    <div class="global-hide-on-medium-desktop-up">
+      {formatObjectId(activeRoute.params.issue.id)}
+    </div>
   </span>
 {:else if activeRoute.resource === "project.patch"}
   <Separator />
   <span class="id">
-    {activeRoute.params.patch.id}
+    <div class="global-hide-on-small-desktop-down">
+      {activeRoute.params.patch.id}
+    </div>
+    <div class="global-hide-on-medium-desktop-up">
+      {formatObjectId(activeRoute.params.patch.id)}
+    </div>
   </span>
 {/if}
