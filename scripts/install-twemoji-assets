@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -Eeou pipefail
 
 version="$(node -e 'console.log(require("twemoji/package.json").version)')"
