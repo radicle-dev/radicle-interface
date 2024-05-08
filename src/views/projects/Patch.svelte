@@ -848,10 +848,12 @@
                   }
                 }} />
             {:else if description}
-              <Markdown
-                breaks
-                content={description}
-                rawPath={rawPath(patch.id)} />
+              <div style:max-width="fit-content">
+                <Markdown
+                  breaks
+                  content={description}
+                  rawPath={rawPath(patch.id)} />
+              </div>
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}

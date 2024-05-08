@@ -192,7 +192,9 @@
             state = "read";
           }} />
       {:else}
-        <Markdown breaks {rawPath} content={body} />
+        <div style:overflow="hidden">
+          <Markdown breaks {rawPath} content={body} />
+        </div>
       {/if}
     </div>
   {/if}

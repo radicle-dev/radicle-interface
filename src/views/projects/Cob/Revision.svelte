@@ -202,6 +202,7 @@
   .revision-description {
     margin-left: 2.75rem;
     padding-right: 0.5rem;
+    max-width: fit-content;
   }
   .author-metadata {
     color: var(--color-fill-gray);
