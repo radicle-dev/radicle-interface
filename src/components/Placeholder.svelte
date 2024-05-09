@@ -12,6 +12,7 @@
 <style>
   .placeholder {
     align-items: center;
+    text-align: center;
     color: var(--color-foreground-dim);
     display: flex;
     flex-direction: column;
@@ -26,5 +27,8 @@
 
 <div class="placeholder" class:inline>
   <Icon name={iconName} size={iconSize} />
-  {caption}
+  {#each caption.split("\n") as line}
+    {line}
+    <br />
+  {/each}
 </div>
