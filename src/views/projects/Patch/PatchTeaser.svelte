@@ -40,6 +40,7 @@
     background-color: var(--color-fill-float-hover);
   }
   .content {
+    width: 100%;
     gap: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -55,7 +56,7 @@
   .summary {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 0.5rem;
   }
   .patch-title:hover {
     text-decoration: underline;
@@ -87,7 +88,6 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    margin-left: 0.5rem;
     min-height: 1.5rem;
   }
   @media (max-width: 719.98px) {
@@ -126,6 +126,14 @@
           </InlineMarkdown>
         </span>
       </Link>
+      <div class="right">
+        <div class="diff-comment">
+          {#if commentCount > 0}
+            <CommentCounter {commentCount} />
+          {/if}
+          <DiffStatBadgeLoader {projectId} {baseUrl} {patch} {latestRevision} />
+        </div>
+      </div>
     </div>
     <div class="summary">
       <span class="subtitle">
@@ -146,14 +154,6 @@
           {formatTimestamp(latestRevision.timestamp)}
         </span>
       </span>
-    </div>
-  </div>
-  <div class="right">
-    <div class="diff-comment">
-      {#if commentCount > 0}
-        <CommentCounter {commentCount} />
-      {/if}
-      <DiffStatBadgeLoader {projectId} {baseUrl} {patch} {latestRevision} />
     </div>
   </div>
 </div>
