@@ -122,6 +122,11 @@
       width: inherit;
       padding: 0;
     }
+    .placeholder {
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+    }
   }
 </style>
 
