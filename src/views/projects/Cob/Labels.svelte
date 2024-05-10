@@ -11,15 +11,15 @@
   }
 </style>
 
-{#each labels.slice(0, 4) as label}
+{#each labels.slice(0, 2) as label}
   <Badge style="max-width:7rem" variant="neutral">
     <span class="label">{label}</span>
   </Badge>
 {/each}
-{#if labels.length > 4}
-  <Badge title={labels.slice(4, undefined).join(" ")} variant="neutral">
+{#if labels.length > 2}
+  <Badge title={labels.slice(2, undefined).join(" ")} variant="neutral">
     <span class="label">
-      +{labels.length - 4} more label{labels.length > 5 ? "s" : ""}
+      +{labels.length - 2} more
     </span>
   </Badge>
 {/if}
