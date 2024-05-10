@@ -45,9 +45,11 @@
   }
   .additions {
     color: var(--color-foreground-success);
+    white-space: nowrap;
   }
   .deletions {
     color: var(--color-foreground-red);
+    white-space: nowrap;
   }
   .diff-list {
     display: flex;
@@ -63,9 +65,6 @@
     .diff-list {
       padding: 1rem 0;
     }
-    .header {
-      align-items: flex-start;
-    }
   }
 </style>
 
@@ -73,7 +72,6 @@
   <div class="summary">
     <span>{diffDescription(diff.files)}</span>
     with
-    <br class="global-hide-on-small-desktop-up" />
     <span class:additions={diff.stats.insertions > 0}>
       {diff.stats.insertions}
       {pluralize("insertion", diff.stats.insertions)}
