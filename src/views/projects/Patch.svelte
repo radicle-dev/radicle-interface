@@ -728,7 +728,7 @@
               </div>
             {/if}
           </div>
-          {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id) && patchState === "read"}
+          {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id) && patchState === "read"}
             <div class="global-hide-on-mobile-down">
               <Button
                 variant="outline"
@@ -741,7 +741,7 @@
           {/if}
           {#if patchState === "read"}
             <Share {baseUrl} />
-            {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
+            {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
               <div class="global-hide-on-small-desktop-down">
                 <CobStateButton
                   items={items.filter(

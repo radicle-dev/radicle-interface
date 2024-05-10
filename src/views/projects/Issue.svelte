@@ -504,7 +504,7 @@
             {/if}
           </div>
           <div style="display: flex; gap: 0.5rem;">
-            {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id) && issueState === "read"}
+            {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id) && issueState === "read"}
               <div class="global-hide-on-mobile-down">
                 <Button
                   variant="outline"
@@ -517,7 +517,7 @@
             {/if}
             {#if issueState === "read"}
               <Share {baseUrl} />
-              {#if session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
+              {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, issue.author.id)}
                 <div class="global-hide-on-small-desktop-down">
                   <CobStateButton
                     items={items.filter(
