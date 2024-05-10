@@ -60,6 +60,9 @@
   }
   .summary:hover {
     text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    cursor: pointer;
   }
   .commit-message {
     margin: 0.5rem 0;

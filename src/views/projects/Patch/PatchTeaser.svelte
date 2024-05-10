@@ -60,6 +60,9 @@
   }
   .patch-title:hover {
     text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    cursor: pointer;
   }
   .right {
     margin-left: auto;
@@ -109,14 +112,14 @@
   </div>
   <div class="content">
     <div class="summary">
-      <Link
-        route={{
-          resource: "project.patch",
-          project: projectId,
-          node: baseUrl,
-          patch: patch.id,
-        }}>
-        <span class="patch-title">
+      <span class="patch-title">
+        <Link
+          route={{
+            resource: "project.patch",
+            project: projectId,
+            node: baseUrl,
+            patch: patch.id,
+          }}>
           <InlineMarkdown fontSize="regular" content={patch.title}>
             {#if patch.labels.length > 0}
               <span style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -124,8 +127,8 @@
               </span>
             {/if}
           </InlineMarkdown>
-        </span>
-      </Link>
+        </Link>
+      </span>
       <div class="right">
         <div class="diff-comment">
           {#if commentCount > 0}

@@ -56,6 +56,9 @@
   }
   .issue-title:hover {
     text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    cursor: pointer;
   }
   .right {
     display: flex;
