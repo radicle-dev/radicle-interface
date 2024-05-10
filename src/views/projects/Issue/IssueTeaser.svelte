@@ -43,22 +43,16 @@
     flex: 1;
   }
   .subtitle {
-    font-size: var(--font-size-small);
-    flex-wrap: wrap;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    font-size: var(--font-size-small);
     gap: 0.5rem;
   }
   .summary {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
-  }
-  .issue-title:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 2px;
-    cursor: pointer;
   }
   .right {
     display: flex;
@@ -89,28 +83,29 @@
   </div>
   <div class="content">
     <div class="summary">
-      <Link
-        route={{
-          resource: "project.issue",
-          project: projectId,
-          node: baseUrl,
-          issue: issue.id,
-        }}>
-        <span class="issue-title">
+      <span class="issue-title">
+        <Link
+          styleHoverState
+          route={{
+            resource: "project.issue",
+            project: projectId,
+            node: baseUrl,
+            issue: issue.id,
+          }}>
           {#if !issue.title}
             <span class="txt-missing">No title</span>
           {:else}
-            <InlineMarkdown fontSize="regular" content={issue.title}>
-              {#if issue.labels.length > 0}
-                <span
-                  style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
-                  <Labels labels={issue.labels} />
-                </span>
-              {/if}
-            </InlineMarkdown>
+            <InlineMarkdown fontSize="regular" content={issue.title} />
           {/if}
+        </Link>
+      </span>
+      {#if issue.labels.length > 0}
+        <span
+          class="global-hide-on-small-desktop-down"
+          style="display: inline-flex; gap: 0.5rem;">
+          <Labels labels={issue.labels} />
         </span>
-      </Link>
+      {/if}
       <div class="right">
         {#if commentCount > 0}
           <CommentCounter {commentCount} />
@@ -118,15 +113,25 @@
       </div>
     </div>
     <div class="subtitle">
-      <NodeId
-        stylePopoverPositionLeft="-13px"
-        nodeId={issue.author.id}
-        alias={issue.author.alias} />
-      opened
-      <span class="global-oid">{formatObjectId(issue.id)}</span>
-      <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>
-        {formatTimestamp(issue.discussion[0].timestamp)}
-      </span>
+      {#if issue.labels.length > 0}
+        <div
+          class="global-hide-on-medium-desktop-up"
+          style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <Labels labels={issue.labels} />
+        </div>
+      {/if}
+      <div
+        style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <NodeId
+          stylePopoverPositionLeft="-13px"
+          nodeId={issue.author.id}
+          alias={issue.author.alias} />
+        opened
+        <span class="global-oid">{formatObjectId(issue.id)}</span>
+        <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>
+          {formatTimestamp(issue.discussion[0].timestamp)}
+        </span>
+      </div>
     </div>
   </div>
 </div>

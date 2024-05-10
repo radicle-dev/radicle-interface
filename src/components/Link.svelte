@@ -6,6 +6,7 @@
 
   export let route: Route;
   export let disabled: boolean = false;
+  export let styleHoverState: boolean = false;
   export let title: string | undefined = undefined;
   export let style: string | undefined = undefined;
 
@@ -29,6 +30,19 @@
   }
 </script>
 
-<a on:click={navigateToRoute} href={routeToPath(route)} {title} {style}>
+<style>
+  .hover-style:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<a
+  class:hover-style={styleHoverState}
+  on:click={navigateToRoute}
+  href={routeToPath(route)}
+  {title}
+  {style}>
   <slot />
 </a>

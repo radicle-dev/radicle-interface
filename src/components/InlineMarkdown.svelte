@@ -42,5 +42,4 @@
   class:txt-small={fontSize === "small"}
   class:txt-tiny={fontSize === "tiny"}>
   {@html render(content)}
-  <slot />
 </span>

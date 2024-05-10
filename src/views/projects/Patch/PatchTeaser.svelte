@@ -47,22 +47,15 @@
   }
   .subtitle {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--font-size-small);
+    flex-direction: column;
     flex-wrap: wrap;
+    font-size: var(--font-size-small);
+    gap: 0.5rem;
   }
   .summary {
     display: flex;
-    flex-direction: row;
+    align-items: flex-start;
     gap: 0.5rem;
-  }
-  .patch-title:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 2px;
-    cursor: pointer;
   }
   .right {
     margin-left: auto;
@@ -93,12 +86,6 @@
     gap: 0.5rem;
     min-height: 1.5rem;
   }
-  @media (max-width: 719.98px) {
-    .diff-comment {
-      flex-direction: column-reverse;
-      align-items: flex-end;
-    }
-  }
 </style>
 
 <div role="button" tabindex="0" class="patch-teaser">
@@ -112,23 +99,23 @@
   </div>
   <div class="content">
     <div class="summary">
-      <span class="patch-title">
-        <Link
-          route={{
-            resource: "project.patch",
-            project: projectId,
-            node: baseUrl,
-            patch: patch.id,
-          }}>
-          <InlineMarkdown fontSize="regular" content={patch.title}>
-            {#if patch.labels.length > 0}
-              <span style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap;">
-                <Labels labels={patch.labels} />
-              </span>
-            {/if}
-          </InlineMarkdown>
-        </Link>
-      </span>
+      <Link
+        styleHoverState
+        route={{
+          resource: "project.patch",
+          project: projectId,
+          node: baseUrl,
+          patch: patch.id,
+        }}>
+        <InlineMarkdown fontSize="regular" content={patch.title} />
+      </Link>
+      {#if patch.labels.length > 0}
+        <span
+          class="global-hide-on-small-desktop-down"
+          style="display: inline-flex; gap: 0.5rem;">
+          <Labels labels={patch.labels} />
+        </span>
+      {/if}
       <div class="right">
         <div class="diff-comment">
           {#if commentCount > 0}
@@ -140,22 +127,32 @@
     </div>
     <div class="summary">
       <span class="subtitle">
-        <NodeId
-          stylePopoverPositionLeft="-13px"
-          nodeId={patch.author.id}
-          alias={patch.author.alias} />
-        {patch.revisions.length > 1 ? "updated" : "opened"}
-        <span class="global-oid">{formatObjectId(patch.id)}</span>
-        {#if patch.revisions.length > 1}
-          <span class="global-hide-on-mobile-down">
-            to <span class="global-oid">
-              {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
-            </span>
-          </span>
+        {#if patch.labels.length > 0}
+          <div
+            class="global-hide-on-medium-desktop-up"
+            style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <Labels labels={patch.labels} />
+          </div>
         {/if}
-        <span title={absoluteTimestamp(latestRevision.timestamp)}>
-          {formatTimestamp(latestRevision.timestamp)}
-        </span>
+        <div
+          style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <NodeId
+            stylePopoverPositionLeft="-13px"
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
+          {patch.revisions.length > 1 ? "updated" : "opened"}
+          <span class="global-oid">{formatObjectId(patch.id)}</span>
+          {#if patch.revisions.length > 1}
+            <span class="global-hide-on-mobile-down">
+              to <span class="global-oid">
+                {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
+              </span>
+            </span>
+          {/if}
+          <span title={absoluteTimestamp(latestRevision.timestamp)}>
+            {formatTimestamp(latestRevision.timestamp)}
+          </span>
+        </div>
       </span>
     </div>
   </div>
