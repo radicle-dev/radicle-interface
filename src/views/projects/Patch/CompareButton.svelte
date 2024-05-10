@@ -7,9 +7,9 @@
 </script>
 
 <Button size="regular" disabled>
-  <span style:color="var(--color-foreground-contrast)">Compare</span>
+  <span style:color="var(--color-foregroung-disabled)">Compare</span>
   <span
-    style:color="var(--color-fill-secondary)"
+    style:color="var(--color-foregroung-disabled)"
     style:font-family="var(--font-family-monospace)">
     {fromCommit.substring(0, 6)}..{toCommit.substring(0, 6)}
   </span>

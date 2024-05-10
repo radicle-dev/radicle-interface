@@ -28,9 +28,16 @@
     on:click={toggle}
     size="regular"
     disabled={patch.revisions.length === 1}>
-    <span style:color="var(--color-foreground-contrast)">Revision</span>
     <span
-      style:color="var(--color-fill-secondary)"
+      style:color={patch.revisions.length > 1
+        ? "var(--color-foreground-contrast)"
+        : "var(--color-foregroung-disabled)"}>
+      Revision
+    </span>
+    <span
+      style:color={patch.revisions.length > 1
+        ? "var(--color-fill-secondary)"
+        : "var(--color-foregroung-disabled)"}
       style:font-family="var(--font-family-monospace)">
       {utils.formatObjectId(view.revision)}
     </span>
