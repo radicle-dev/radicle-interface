@@ -467,6 +467,7 @@
     gap: 0.5rem;
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-large);
+    word-break: break-word;
   }
   .reactions {
     display: flex;

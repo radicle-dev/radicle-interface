@@ -53,6 +53,7 @@
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
+    word-break: break-word;
   }
   .right {
     display: flex;
