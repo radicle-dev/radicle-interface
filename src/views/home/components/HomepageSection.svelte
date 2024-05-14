@@ -32,7 +32,6 @@
     align-items: center;
     margin-top: 0.25rem;
     color: var(--color-foreground-dim);
-    white-space: nowrap;
   }
 
   .actions {
