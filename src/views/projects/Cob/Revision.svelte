@@ -18,6 +18,7 @@
 
   import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
+  import CommitLink from "@app/views/projects/components/CommitLink.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
@@ -412,9 +413,7 @@
               alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
               opened this patch on base
-              <span class="global-oid">
-                {utils.formatObjectId(revisionBase)}
-              </span>
+              <CommitLink {baseUrl} {projectId} commitId={revisionBase} />
             {:else}
               updated to
               <span class="global-oid">
@@ -422,9 +421,7 @@
               </span>
               {#if previousRevBase && previousRevBase !== revisionBase}
                 with base
-                <span class="global-oid">
-                  {utils.formatObjectId(revisionBase)}
-                </span>
+                <CommitLink {baseUrl} {projectId} commitId={revisionBase} />
               {/if}
             {/if}
             <span
@@ -567,9 +564,10 @@
                 {utils.formatObjectId(element.inner.revision)}
               </span>
               at commit
-              <span class="global-commit">
-                {utils.formatCommit(element.inner.commit)}
-              </span>
+              <CommitLink
+                {baseUrl}
+                {projectId}
+                commitId={element.inner.commit} />
               <span
                 class="timestamp"
                 title={utils.absoluteTimestamp(revisionTimestamp)}>

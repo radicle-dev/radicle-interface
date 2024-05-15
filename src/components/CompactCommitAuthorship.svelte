@@ -94,9 +94,7 @@
       {/if}
     </div>
   </HoverPopover>
-  <div class="global-commit">
-    {utils.formatCommit(commit.id)}
-  </div>
+  <slot />
   <div title={utils.absoluteTimestamp(commit.committer.time)}>
     {utils.formatTimestamp(commit.committer.time)}
   </div>

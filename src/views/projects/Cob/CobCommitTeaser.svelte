@@ -3,6 +3,7 @@
 
   import { twemoji } from "@app/lib/utils";
 
+  import CommitLink from "@app/views/projects/components/CommitLink.svelte";
   import CompactCommitAuthorship from "@app/components/CompactCommitAuthorship.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
@@ -86,13 +87,17 @@
       </div>
     {/if}
     <div class="global-hide-on-small-desktop-up">
-      <CompactCommitAuthorship {commit} />
+      <CompactCommitAuthorship {commit}>
+        <CommitLink {baseUrl} {projectId} commitId={commit.id} />
+      </CompactCommitAuthorship>
     </div>
   </div>
   <div class="right">
     <div style="display: flex; gap: 0.5rem; height: 21px; align-items: center;">
       <div class="global-hide-on-mobile-down">
-        <CompactCommitAuthorship {commit} />
+        <CompactCommitAuthorship {commit}>
+          <CommitLink {baseUrl} {projectId} commitId={commit.id} />
+        </CompactCommitAuthorship>
       </div>
       <IconButton title="Browse repo at this commit">
         <Link
