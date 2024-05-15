@@ -200,7 +200,7 @@
             <Placeholder
               iconName="exclamation-circle"
               caption="This file is too big to be displayed.
-              If you want to explore this file clone this repository locally." />
+              If you want to view this file, clone this repository locally." />
           </div>
         {:else if path === "/"}
           <div class="placeholder">
