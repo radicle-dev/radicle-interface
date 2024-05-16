@@ -41,7 +41,7 @@
 
 <div>
   <Popover
-    popoverPositionBottom="2rem"
+    popoverPositionBottom="2.5rem"
     popoverPositionLeft="0"
     popoverPadding="0">
     <IconButton
