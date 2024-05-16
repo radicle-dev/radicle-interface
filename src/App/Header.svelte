@@ -63,7 +63,7 @@
   <div class="right">
     {#if $experimental}
       {#if $httpdStore.state === "stopped"}
-        <Popover popoverPositionTop="3rem" popoverPositionRight="0">
+        <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
           <Button
             slot="toggle"
             let:toggle
