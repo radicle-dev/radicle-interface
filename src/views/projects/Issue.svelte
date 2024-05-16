@@ -430,7 +430,7 @@
     background-color: var(--color-background-float);
   }
   .bottom {
-    padding: 0 1rem 1rem 1rem;
+    padding: 0 1rem 2.5rem 1rem;
     background-color: var(--color-background-default);
     height: 100%;
     border-top: 1px solid var(--color-border-hint);
@@ -482,7 +482,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {baseUrl} {project} activeTab="issues" stylePaddingBottom="0">
   <div class="issue">
     <div class="main">
       <CobHeader>

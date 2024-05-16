@@ -657,7 +657,7 @@
   }
   .bottom {
     background-color: var(--color-background-default);
-    padding: 1rem 1rem 0 1rem;
+    padding: 1rem 1rem 0.5rem 1rem;
     height: 100%;
   }
   .actions {
@@ -706,7 +706,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches">
+<Layout {baseUrl} {project} activeTab="patches" stylePaddingBottom="0">
   <div class="patch">
     <div class="main">
       <CobHeader>
