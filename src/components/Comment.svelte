@@ -141,6 +141,11 @@
         nodeId={authorId}
         alias={authorAlias} />
       <slot name="caption">{caption}</slot>
+      {#if id}
+        <span class="global-oid">
+          {utils.formatObjectId(id)}
+        </span>
+      {/if}
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}
       </span>
