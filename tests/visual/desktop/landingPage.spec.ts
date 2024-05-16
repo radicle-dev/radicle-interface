@@ -1,8 +1,4 @@
-import { test, expect, appConfigWithFixture } from "@tests/support/fixtures.js";
-
-test.use({
-  customAppConfig: true,
-});
+import { test, expect } from "@tests/support/fixtures.js";
 import sinon from "sinon";
 
 test("pinned projects", async ({ page }) => {
@@ -14,12 +10,11 @@ test("pinned projects", async ({ page }) => {
     });
   });
 
-  await page.addInitScript(appConfigWithFixture);
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
 
-test("load error", async ({ page }) => {
+test("load projects error", async ({ page }) => {
   await page.addInitScript(() => {
     sinon.useFakeTimers({
       now: new Date("November 24 2022 12:00:00").valueOf(),
@@ -29,18 +24,15 @@ test("load error", async ({ page }) => {
   });
 
   await page.route(
-    ({ pathname }) =>
-      pathname === "/api/v1/projects/rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir",
+    ({ pathname }) => pathname === "/api/v1/projects",
     route => route.fulfill({ status: 500 }),
   );
 
-  await page.addInitScript(appConfigWithFixture, 8090);
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
 
 test("response parse error", async ({ page }) => {
-  await page.addInitScript(appConfigWithFixture);
   await page.route("*/**/v1/projects*", route => {
     return route.fulfill({
       json: [{ name: 1337 }],
@@ -51,7 +43,6 @@ test("response parse error", async ({ page }) => {
 });
 
 test("response error", async ({ page }) => {
-  await page.addInitScript(appConfigWithFixture);
   await page.route("*/**/v1/projects*", route => {
     return route.fulfill({
       status: 500,

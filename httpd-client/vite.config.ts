@@ -1,7 +1,14 @@
-import { defineConfig } from "vite";
+import nodeConfig from "config";
 import path from "node:path";
+import virtual from "vite-plugin-virtual";
+import { defineConfig } from "vite";
 
 export default defineConfig({
+  plugins: [
+    virtual({
+      "virtual:config": nodeConfig.util.toObject(),
+    }),
+  ],
   test: {
     environment: "happy-dom",
     include: ["httpd-client/tests/*.test.ts"],

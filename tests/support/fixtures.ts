@@ -24,16 +24,13 @@ const fixturesDir = Path.resolve(supportDir, "..", "./fixtures");
 export const test = base.extend<{
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   forAllTests: void;
-  customAppConfig: boolean;
   stateDir: string;
   peerManager: PeerManager;
   authenticatedPeer: RadiclePeer;
   outputLog: Stream.Writable;
 }>({
-  customAppConfig: [false, { option: true }],
-
   forAllTests: [
-    async ({ customAppConfig, outputLog, page }, use) => {
+    async ({ outputLog, page }, use) => {
       const browserLabel = logLabel.logPrefix("browser");
       let sinonPath = fileURLToPath(import.meta.resolve("sinon"));
       // The exports in sinon-esm.js mess up our test pipeline
@@ -75,41 +72,6 @@ export const test = base.extend<{
             false,
             `Test failed because there was a console error in the app: ${msg}`,
           ).toBeTruthy();
-        });
-      }
-
-      if (!customAppConfig) {
-        // Remember: `page.addInitScript()` is run in the browser which
-        // is completely isolated from the test environment, so we don't have
-        // access to any variables that we have in the test.
-        await page.addInitScript(() => {
-          window.APP_CONFIG = {
-            nodes: {
-              fallbackPublicExplorer:
-                "https://app.radicle.xyz/nodes/$host/$rid$path",
-              apiVersion: "0.1.0",
-              defaultHttpdPort: 8081,
-              defaultHttpdHostname: "127.0.0.1",
-              defaultLocalHttpdPort: 8081,
-              defaultHttpdScheme: "http",
-              defaultNodePort: 8776,
-              pinned: [
-                {
-                  baseUrl: {
-                    hostname: "127.0.0.1",
-                    port: 8081,
-                    scheme: "http",
-                  },
-                },
-              ],
-            },
-            supportWebsite: "https://radicle.zulipchat.com",
-            fallbackPreferredSeed: {
-              hostname: "seed.radicle.garden",
-              port: 443,
-              scheme: "https",
-            },
-          };
         });
       }
 
@@ -219,35 +181,6 @@ function log(text: string, label: string, outputLog: Stream.Writable) {
   if (!process.env.CI) {
     console.log(output);
   }
-}
-
-export function appConfigWithFixture(defaultLocalHttpdPort = 8081) {
-  window.APP_CONFIG = {
-    nodes: {
-      fallbackPublicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
-      apiVersion: "0.1.0",
-      defaultHttpdPort: 8081,
-      defaultHttpdHostname: "127.0.0.1",
-      defaultLocalHttpdPort,
-      defaultHttpdScheme: "http",
-      defaultNodePort: 8776,
-      pinned: [
-        {
-          baseUrl: {
-            hostname: "127.0.0.1",
-            port: 8081,
-            scheme: "http",
-          },
-        },
-      ],
-    },
-    supportWebsite: "https://radicle.zulipchat.com",
-    fallbackPreferredSeed: {
-      hostname: "seed.radicle.garden",
-      port: 443,
-      scheme: "https",
-    },
-  };
 }
 
 export async function createSourceBrowsingFixture(

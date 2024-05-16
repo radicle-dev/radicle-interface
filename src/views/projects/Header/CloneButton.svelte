@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BaseUrl } from "@httpd-client";
 
-  import { config } from "@app/lib/config";
+  import config from "virtual:config";
   import { parseRepositoryId } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";

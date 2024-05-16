@@ -1,0 +1,24 @@
+{
+  "nodes": {
+    "fallbackPublicExplorer": "FALLBACK_PUBLIC_EXPLORER",
+    "apiVersion": "API_VERSION",
+    "defaultHttpdPort": "DEFAULT_HTTPD_PORT",
+    "defaultLocalHttpdPort": "DEFAULT_LOCAL_HTTPD_PORT",
+    "defaultHttpdHostname": "DEFAULT_HTTPD_HOSTNAME",
+    "defaultHttpdScheme": "DEFAULT_HTTPD_SCHEME",
+    "defaultNodePort": "DEFAULT_NODE_PORT",
+    "pinned": {
+      "__name": "PINNED_NODES",
+      "__format": "json"
+    }
+  },
+  "supportWebsite": "SUPPORT_WEBSITE",
+  "reactions": {
+    "__name": "REACTIONS",
+    "__format": "json"
+  },
+  "fallbackPreferredSeed": {
+    "__name": "FALLBACK_PREFERRED_SEED",
+    "__format": "json"
+  }
+}

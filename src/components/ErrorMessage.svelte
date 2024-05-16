@@ -2,7 +2,7 @@
   import type { ComponentProps } from "svelte";
   import type { ErrorParam } from "@app/lib/router/definitions";
 
-  import { config } from "@app/lib/config";
+  import config from "virtual:config";
   import Command from "./Command.svelte";
   import ExternalLink from "./ExternalLink.svelte";
   import Icon from "./Icon.svelte";

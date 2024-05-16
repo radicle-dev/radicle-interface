@@ -1,6 +1,6 @@
 <script lang="ts">
   import { api, changeHttpdPort } from "@app/lib/httpd";
-  import { config } from "@app/lib/config";
+  import config from "virtual:config";
   import {
     codeFont,
     codeFonts,

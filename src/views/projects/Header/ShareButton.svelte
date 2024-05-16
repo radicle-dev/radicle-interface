@@ -5,7 +5,7 @@
 
   import { activeUnloadedRouteStore, routeToPath } from "@app/lib/router";
   import { api } from "@app/lib/httpd";
-  import { config } from "@app/lib/config";
+  import config from "virtual:config";
   import { formatPublicExplorer } from "@app/lib/utils";
   import { queryProject } from "@app/lib/projects";
 

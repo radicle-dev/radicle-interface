@@ -2,7 +2,7 @@ import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import { HttpdClient } from "@httpd-client";
-import { config } from "@app/lib/config";
+import config from "virtual:config";
 import { baseUrlToString } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
 

@@ -31,7 +31,7 @@
 
   void httpd.initialize().finally(() => void router.loadFromLocation());
 
-  if (!window.VITEST && !window.PLAYWRIGHT && import.meta.env.PROD) {
+  if (import.meta.env.PROD) {
     const plausible = Plausible({ domain: "app.radicle.xyz" });
 
     plausible.enableAutoPageviews();

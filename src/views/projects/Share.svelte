@@ -4,7 +4,7 @@
   import debounce from "lodash/debounce";
   import { api, httpdStore } from "@app/lib/httpd";
   import { isLocal, toClipboard } from "@app/lib/utils";
-  import { config } from "@app/lib/config";
+  import config from "virtual:config";
 
   import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";

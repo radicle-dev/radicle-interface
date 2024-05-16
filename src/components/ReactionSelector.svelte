@@ -3,7 +3,7 @@
 
   import { createEventDispatcher } from "svelte";
 
-  import config from "@app/config.json";
+  import config from "virtual:config";
 
   import IconButton from "./IconButton.svelte";
   import IconSmall from "./IconSmall.svelte";

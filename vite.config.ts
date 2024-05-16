@@ -1,4 +1,6 @@
+import config from "config";
 import path from "node:path";
+import virtual from "vite-plugin-virtual";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
@@ -9,6 +11,9 @@ export default defineConfig({
     reporters: "verbose",
   },
   plugins: [
+    virtual({
+      "virtual:config": config.util.toObject(),
+    }),
     svelte({
       // Reference: https://github.com/sveltejs/vite-plugin-svelte/issues/270#issuecomment-1033190138
       dynamicCompileOptions({ filename }) {
@@ -55,10 +60,5 @@ export default defineConfig({
         },
       },
     },
-  },
-
-  define: {
-    VITEST: process.env.VITEST !== undefined,
-    PLAYWRIGHT: process.env.PLAYWRIGHT_TEST_BASE_URL !== undefined,
   },
 });

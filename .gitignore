@@ -1,6 +1,7 @@
 /build/
 node_modules/
 NOTES
+config/local*
 
 # KaTeX files
 *.min.css

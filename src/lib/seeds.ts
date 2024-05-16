@@ -5,7 +5,7 @@ import { writable, derived, get } from "svelte/store";
 import { number, string, object } from "zod";
 
 import { api, httpdStore, type HttpdState } from "./httpd";
-import { config } from "./config";
+import config from "virtual:config";
 
 const preferredSeedSchema = object({
   hostname: string(),

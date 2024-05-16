@@ -1,7 +1,6 @@
 import {
   aliceMainHead,
   aliceRemote,
-  appConfigWithFixture,
   expect,
   sourceBrowsingUrl,
   test,
@@ -13,8 +12,6 @@ import {
 } from "@tests/support/router.js";
 
 test("navigate between landing and project page", async ({ page }) => {
-  await page.addInitScript(appConfigWithFixture);
-
   await page.goto("/");
   await expect(page).toHaveURL("/");
 
