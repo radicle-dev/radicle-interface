@@ -91,6 +91,17 @@
     background-color: var(--color-fill-counter);
     color: var(--color-foreground-dim);
   }
+  .placeholder {
+    height: calc(100% - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 719.98px) {
+    .placeholder {
+      height: calc(100vh - 10rem);
+    }
+  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="issues">
@@ -184,8 +195,7 @@
   {/if}
 
   {#if project.issues[state] === 0}
-    <div
-      style="height: calc(100% - 4rem); display: flex; align-items: center; justify-content: center;">
+    <div class="placeholder">
       <Placeholder iconName="no-issues" caption={`No ${state} issues`} />
     </div>
   {/if}

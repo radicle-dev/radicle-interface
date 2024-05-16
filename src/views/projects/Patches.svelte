@@ -106,6 +106,17 @@
     flex-direction: column;
     gap: 1rem;
   }
+  .placeholder {
+    height: calc(100% - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 719.98px) {
+    .placeholder {
+      height: calc(100vh - 10rem);
+    }
+  }
 </style>
 
 <Layout {baseUrl} {project} activeTab="patches">
@@ -203,8 +214,7 @@
   {/if}
 
   {#if project.patches[state] === 0}
-    <div
-      style="height: calc(100% - 4rem); display: flex; align-items: center; justify-content: center;">
+    <div class="placeholder">
       <Placeholder iconName="no-patches" caption={`No ${state} patches`} />
     </div>
   {/if}
