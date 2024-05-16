@@ -6,6 +6,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
+import sinon from "sinon";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 
@@ -21,13 +22,11 @@ test("navigation from commit list", async ({ page }) => {
 
 test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("December 21 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("December 21 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
   await page.goto(commitUrl);
   await expect(

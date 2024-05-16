@@ -4,6 +4,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
+import sinon from "sinon";
 
 test("source tree page", async ({ page }) => {
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
@@ -12,13 +13,11 @@ test("source tree page", async ({ page }) => {
 
 test("commits page", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("November 24 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
 
   await page.goto(
@@ -33,13 +32,11 @@ test("commits page", async ({ page }) => {
 
 test("commit page", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("November 24 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
 
   await page.goto(

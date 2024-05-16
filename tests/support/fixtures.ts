@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type * as Stream from "node:stream";
+
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
 import assert from "node:assert";
+import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
 
 import * as Process from "./process.js";
@@ -33,6 +35,14 @@ export const test = base.extend<{
   forAllTests: [
     async ({ customAppConfig, outputLog, page }, use) => {
       const browserLabel = logLabel.logPrefix("browser");
+      let sinonPath = fileURLToPath(import.meta.resolve("sinon"));
+      // The exports in sinon-esm.js mess up our test pipeline
+      if (sinonPath.endsWith("-esm.js")) {
+        sinonPath = sinonPath.replace("-esm", "");
+      }
+      await page.addInitScript({
+        path: sinonPath,
+      });
       page.on("console", msg => {
         // Ignore common console logs that we don't care about.
         if (

@@ -3,16 +3,15 @@ import { test, expect, appConfigWithFixture } from "@tests/support/fixtures.js";
 test.use({
   customAppConfig: true,
 });
+import sinon from "sinon";
 
 test("pinned projects", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("November 24 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
 
   await page.addInitScript(appConfigWithFixture);
@@ -22,13 +21,11 @@ test("pinned projects", async ({ page }) => {
 
 test("load error", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("November 24 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("November 24 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
 
   await page.route(

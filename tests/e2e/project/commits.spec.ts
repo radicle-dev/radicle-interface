@@ -7,6 +7,7 @@ import {
   test,
 } from "@tests/support/fixtures.js";
 import { createProject } from "@tests/support/project";
+import sinon from "sinon";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
@@ -102,13 +103,11 @@ test("expand commit message", async ({ page }) => {
 
 test("relative timestamps", async ({ page }) => {
   await page.addInitScript(() => {
-    window.initializeTestStubs = () => {
-      window.e2eTestStubs.FakeTimers.install({
-        now: new Date("December 21 2022 12:00:00").valueOf(),
-        shouldClearNativeTimers: true,
-        shouldAdvanceTime: false,
-      });
-    };
+    sinon.useFakeTimers({
+      now: new Date("December 21 2022 12:00:00").valueOf(),
+      shouldClearNativeTimers: true,
+      shouldAdvanceTime: false,
+    });
   });
 
   await page.goto(sourceBrowsingUrl);
