@@ -629,12 +629,10 @@
                 }
               }} />
           {:else if issue.discussion[0].body}
-            <div style:max-width="fit-content">
-              <Markdown
-                breaks
-                content={issue.discussion[0].body}
-                rawPath={rawPath(project.head)} />
-            </div>
+            <Markdown
+              breaks
+              content={issue.discussion[0].body}
+              rawPath={rawPath(project.head)} />
           {:else}
             <span class="txt-missing">No description</span>
           {/if}
