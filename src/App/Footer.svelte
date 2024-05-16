@@ -13,9 +13,9 @@
     justify-content: space-between;
     font-size: var(--font-size-small);
     color: var(--color-foreground-dim);
-    height: 2.25rem;
+    height: 2.3125rem;
     background-color: var(--color-background-dip);
-    padding: 1rem;
+    padding: 0 1rem;
   }
 
   .left {
