@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    white-space: nowrap;
   }
 </style>
 
