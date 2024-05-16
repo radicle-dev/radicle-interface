@@ -29,8 +29,6 @@
     white-space: nowrap;
     align-items: center;
     gap: 0.25rem;
-    /* This is aprox. a DID assignee */
-    max-width: 16rem;
   }
   .background {
     color: currentColor;

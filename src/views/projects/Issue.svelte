@@ -589,9 +589,7 @@
               labels={issue.labels}
               submitInProgress={labelState === "submit"}
               on:save={({ detail: newLabels }) => void saveLabels(newLabels)} />
-            <div class="global-hide-on-mobile-down">
-              <Embeds embeds={uniqueEmbeds} />
-            </div>
+            <Embeds embeds={uniqueEmbeds} />
           </div>
         </div>
         <svelte:fragment slot="description">

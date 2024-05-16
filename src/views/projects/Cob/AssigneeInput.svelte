@@ -97,7 +97,12 @@
     position: relative;
     margin-top: 0.5rem;
   }
-
+  .input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
   @media (max-width: 1349.98px) {
     .wrapper {
       display: flex;
@@ -111,10 +116,16 @@
       display: flex;
       align-items: center;
     }
+    .body {
+      align-items: flex-start;
+    }
     .no-assignees {
       height: 2rem;
       display: flex;
       align-items: center;
+    }
+    .input {
+      width: 18rem;
     }
   }
 </style>
@@ -127,12 +138,12 @@
         <Badge
           variant="neutral"
           size="small"
-          style="cursor: pointer;"
+          style="cursor: pointer; max-width: 14rem;"
           on:click={() =>
             (removeToggles[assignee.id] = !removeToggles[assignee.id])}>
           <div class="assignee">
             <Avatar inline nodeId={assignee.id} />
-            <span>{formatNodeId(assignee.id)}</span>
+            <span class="txt-overflow">{formatNodeId(assignee.id)}</span>
             {#if removeToggles[assignee.id]}
               <IconButton title="remove assignee">
                 <IconSmall
@@ -144,32 +155,33 @@
         </Badge>
       {/each}
       {#if showInput}
-        <div
-          style="width:100%; display: flex; align-items: center; gap: 0.5rem;">
-          <TextInput
-            autofocus
-            disabled={submitInProgress}
-            bind:value={inputValue}
-            placeholder="Add assignee"
-            on:submit={addAssignee} />
-          <IconButton
-            title="discard assignee"
-            on:click={() => {
-              inputValue = "";
-              validationMessage = undefined;
-              showInput = false;
-            }}>
-            <IconSmall name="cross" />
-          </IconButton>
-          <IconButton title="save assignee" on:click={addAssignee}>
-            <IconSmall name="checkmark" />
-          </IconButton>
-        </div>
-        {#if validationMessage}
-          <div class="validation-message">
-            <IconSmall name="exclamation-circle" />{validationMessage}
+        <div>
+          <div class="input">
+            <TextInput
+              autofocus
+              disabled={submitInProgress}
+              bind:value={inputValue}
+              placeholder="Add assignee"
+              on:submit={addAssignee} />
+            <IconButton
+              title="discard assignee"
+              on:click={() => {
+                inputValue = "";
+                validationMessage = undefined;
+                showInput = false;
+              }}>
+              <IconSmall name="cross" />
+            </IconButton>
+            <IconButton title="save assignee" on:click={addAssignee}>
+              <IconSmall name="checkmark" />
+            </IconButton>
           </div>
-        {/if}
+          {#if validationMessage}
+            <div class="validation-message">
+              <IconSmall name="exclamation-circle" />{validationMessage}
+            </div>
+          {/if}
+        </div>
       {:else}
         <div class="global-hide-on-mobile-down">
           <Badge

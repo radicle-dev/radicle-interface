@@ -77,6 +77,12 @@
     position: relative;
     margin-top: 0.5rem;
   }
+  .input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
   @media (max-width: 1349.98px) {
     .wrapper {
       display: flex;
@@ -90,10 +96,16 @@
       display: flex;
       align-items: center;
     }
+    .body {
+      align-items: flex-start;
+    }
     .no-labels {
       height: 2rem;
       display: flex;
       align-items: center;
+    }
+    .input {
+      width: 18rem;
     }
   }
 </style>
@@ -106,9 +118,9 @@
         <Badge
           variant="neutral"
           size="small"
-          style="cursor: pointer;"
+          style="cursor: pointer; max-width: 14rem;"
           on:click={() => (removeToggles[label] = !removeToggles[label])}>
-          <div class="label">{label}</div>
+          <div class="label txt-overflow">{label}</div>
           {#if removeToggles[label]}
             <IconButton title="remove label">
               <IconSmall name="cross" on:click={() => removeLabel(label)} />
@@ -117,32 +129,33 @@
         </Badge>
       {/each}
       {#if showInput}
-        <div
-          style="width:100%; display: flex; align-items: center; gap: 0.5rem;">
-          <TextInput
-            autofocus
-            {valid}
-            disabled={submitInProgress}
-            placeholder="Add label"
-            bind:value={inputValue}
-            on:submit={addLabel} />
-          <IconButton
-            title="discard label"
-            on:click={() => {
-              inputValue = "";
-              showInput = false;
-            }}>
-            <IconSmall name="cross" />
-          </IconButton>
-          <IconButton title="save label" on:click={addLabel}>
-            <IconSmall name="checkmark" />
-          </IconButton>
-        </div>
-        {#if !valid && validationMessage}
-          <div class="validation-message">
-            <IconSmall name="exclamation-circle" />{validationMessage}
+        <div>
+          <div class="input">
+            <TextInput
+              autofocus
+              {valid}
+              disabled={submitInProgress}
+              placeholder="Add label"
+              bind:value={inputValue}
+              on:submit={addLabel} />
+            <IconButton
+              title="discard label"
+              on:click={() => {
+                inputValue = "";
+                showInput = false;
+              }}>
+              <IconSmall name="cross" />
+            </IconButton>
+            <IconButton title="save label" on:click={addLabel}>
+              <IconSmall name="checkmark" />
+            </IconButton>
           </div>
-        {/if}
+          {#if !valid && validationMessage}
+            <div class="validation-message">
+              <IconSmall name="exclamation-circle" />{validationMessage}
+            </div>
+          {/if}
+        </div>
       {:else}
         <div class="global-hide-on-mobile-down">
           <Badge

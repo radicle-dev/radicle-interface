@@ -25,10 +25,16 @@
       display: flex;
       flex-direction: row;
       gap: 1rem;
-      align-items: flex-start;
+      align-items: flex;
     }
     .header {
       margin-bottom: 0;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+    }
+    .no-attachments {
+      height: 2rem;
       display: flex;
       align-items: center;
     }
@@ -39,12 +45,12 @@
   <div class="header">Attachments</div>
   <div class="body">
     {#each embeds as embed}
-      <Badge variant="neutral">
+      <Badge variant="neutral" size="small" style="max-width: 14rem;">
         <span class="txt-overflow">{embed.name}</span>
         <Clipboard text={`![${embed.name}](${embed.content.substring(4)})`} />
       </Badge>
     {:else}
-      <div class="txt-missing">No attachments</div>
+      <div class="txt-missing no-attachments">No attachments</div>
     {/each}
   </div>
 </div>

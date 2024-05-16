@@ -39,6 +39,9 @@
     }
     .header {
       margin-bottom: 0;
+      height: 2rem;
+      display: flex;
+      align-items: center;
     }
     .no-reviews {
       display: flex;
