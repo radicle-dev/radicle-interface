@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="CobState">
   import IconSmall from "@app/components/IconSmall.svelte";
 
   import isEqual from "lodash/isEqual";
@@ -10,8 +10,6 @@
   import Popover from "@app/components/Popover.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Button from "@app/components/Button.svelte";
-
-  type CobState = $$Generic;
 
   export let state: CobState;
   export let selectedItem: [string, CobState];

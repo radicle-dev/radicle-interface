@@ -30,6 +30,7 @@
 
   let loading = false;
   let page = 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any;
   let allIssues: Issue[];
 

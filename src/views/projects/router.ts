@@ -23,12 +23,12 @@ import type {
 import * as Syntax from "@app/lib/syntax";
 import * as httpd from "@app/lib/httpd";
 import { HttpdClient } from "@httpd-client";
-import { ResponseError } from "@httpd-client/lib/fetcher";
-import { handleError } from "@app/views/projects/error";
+import { ResponseError, ResponseParseError } from "@httpd-client/lib/fetcher";
+import { experimental } from "@app/lib/appearance";
+import { get } from "svelte/store";
+import { handleError, unreachableError } from "@app/views/projects/error";
 import { nodePath } from "@app/views/nodes/router";
 import { unreachable } from "@app/lib/utils";
-import { get } from "svelte/store";
-import { experimental } from "@app/lib/appearance";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -315,8 +315,16 @@ export async function loadProjectRoute(
     } else {
       return unreachable(route);
     }
-  } catch (error: any) {
-    return handleError(error, route);
+  } catch (error) {
+    if (
+      error instanceof Error ||
+      error instanceof ResponseError ||
+      error instanceof ResponseParseError
+    ) {
+      return handleError(error, route);
+    } else {
+      return unreachableError();
+    }
   }
 }
 

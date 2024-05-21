@@ -286,10 +286,12 @@ export function twemoji(
   { exclude }: { exclude: string[] } = { exclude: [] },
 ) {
   twemojiModule.parse(node, {
-    callback: (icon, options: Record<string, any>) => {
-      return exclude.includes(icon)
-        ? false
-        : "".concat(options.base, options.size, "/", icon, options.ext);
+    callback: (icon, options) => {
+      const { base, size, ext } = options as Record<string, string>;
+      if (!exclude.includes(icon)) {
+        return `${base}${size}/${icon}${ext}`;
+      }
+      return false;
     },
     base: "/",
     folder: "twemoji",

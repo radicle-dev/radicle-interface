@@ -32,6 +32,7 @@
   export let breaks: boolean = false;
 
   let container: HTMLElement;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let frontMatter: [string, any][] | undefined = undefined;
 
   $: {

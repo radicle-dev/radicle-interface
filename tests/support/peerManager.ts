@@ -331,6 +331,7 @@ export class RadiclePeer {
 
   public async stopNode() {
     // Don’t leak unhandled rejections when forcefully killing the process
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.#nodeProcess?.catch(() => {});
     this.#nodeProcess?.kill("SIGTERM");
 
@@ -350,6 +351,7 @@ export class RadiclePeer {
     // processes are running anymore.
     this.#childProcesses.forEach(p => {
       // Don’t leak unhandled rejections when forcefully killing the process
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       p.catch(() => {});
       p.kill("SIGKILL");
     });

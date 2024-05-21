@@ -20,10 +20,11 @@ export class ResponseError extends Error {
   public body: unknown;
 
   public constructor(method: string, response: Response, body_: unknown) {
-    const body: any = body_;
+    const body: unknown = body_;
     if (
       typeof body === "object" &&
       body !== null &&
+      "message" in body &&
       typeof body.message === "string"
     ) {
       super(body.message);

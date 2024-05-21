@@ -73,3 +73,15 @@ export function handleError(
     };
   }
 }
+
+export function unreachableError(): NotFoundRoute | ErrorRoute {
+  return {
+    resource: "error",
+    params: {
+      error: undefined,
+      title: "Could not load this route",
+      description:
+        "You stumbled on an unknown error, we aren't exactly sure what happened.",
+    },
+  };
+}

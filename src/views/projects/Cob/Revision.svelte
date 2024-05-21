@@ -122,6 +122,7 @@
   type State = "read" | "submit" | "edit";
 
   let response: DiffResponse | undefined = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any | undefined = undefined;
   let loading: boolean = false;
   let revisionState: State = "read";
@@ -135,6 +136,7 @@
     try {
       loading = true;
       response = await api.project.getDiff(projectId, fromCommit, revisionOid);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error = err;
     } finally {

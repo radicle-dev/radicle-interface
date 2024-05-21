@@ -1,10 +1,12 @@
 import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
-import { HttpdClient } from "@httpd-client";
 import config from "virtual:config";
+import { HttpdClient } from "@httpd-client";
+import { ResponseError, ResponseParseError } from "@httpd-client/lib/fetcher";
 import { baseUrlToString } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
+import { unreachableError } from "@app/views/projects/error";
 
 export interface NodesRouteParams {
   baseUrl: BaseUrl;
@@ -58,7 +60,15 @@ export async function loadNodeRoute(
         scope: node.config?.scope,
       },
     };
-  } catch (error: any) {
-    return handleError(error, baseUrlToString(api.baseUrl));
+  } catch (error) {
+    if (
+      error instanceof Error ||
+      error instanceof ResponseError ||
+      error instanceof ResponseParseError
+    ) {
+      return handleError(error, baseUrlToString(api.baseUrl));
+    } else {
+      return unreachableError();
+    }
   }
 }

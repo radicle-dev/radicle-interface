@@ -1,6 +1,7 @@
 <script lang="ts">
   import debounce from "lodash/debounce";
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   export let onShow: () => void = () => {};
   export let stylePopoverPositionLeft: string | undefined = undefined;
   export let stylePopoverPositionRight: string | undefined = undefined;

@@ -1,6 +1,4 @@
-<script lang="ts">
-  type T = $$Generic;
-
+<script lang="ts" generics="T">
   export let items: T[];
 </script>
 

@@ -35,6 +35,7 @@
 
   const api = new HttpdClient(baseUrl);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any;
   let page = 0;
   let loading = false;

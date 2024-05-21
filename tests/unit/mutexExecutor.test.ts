@@ -95,7 +95,7 @@ describe("worker", () => {
     });
 
     const outputs: number[] = [];
-    w.output.onValue((value: any) => outputs.push(value));
+    w.output.onValue((value: never) => outputs.push(value));
 
     await w.submit(1);
     await w.submit(2);

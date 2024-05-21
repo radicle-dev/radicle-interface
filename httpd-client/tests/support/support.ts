@@ -38,7 +38,7 @@ export async function createPatchToBeModified(
 }
 export async function assertIssue(
   oid: string,
-  change: Record<string, any>,
+  change: Record<string, unknown>,
   api: HttpdClient,
 ) {
   expect(
@@ -49,7 +49,7 @@ export async function assertIssue(
 
 export async function assertPatch(
   oid: string,
-  change: Record<string, any>,
+  change: Record<string, unknown>,
   api: HttpdClient,
 ) {
   expect(
