@@ -1,17 +1,15 @@
 <script lang="ts">
   import type { BaseUrl, Commit, Node, Project } from "@http-client";
 
-  import { formatCommit } from "@app/lib/utils";
-
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Share from "./Share.svelte";
+  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let node: Node;
@@ -73,9 +71,7 @@
           </div>
         </span>
         <CommitAuthorship {header}>
-          <CopyableId id={header.id} style="commit">
-            {formatCommit(header.id)}
-          </CopyableId>
+          <Id id={header.id} style="commit" ariaLabel="commit-id" />
         </CommitAuthorship>
       </div>
       {#if header.description}

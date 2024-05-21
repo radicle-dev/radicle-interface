@@ -4,12 +4,12 @@
   import { twemoji } from "@app/lib/utils";
 
   import CommitAuthorship from "./CommitAuthorship.svelte";
-  import CommitLink from "@app/views/projects/components/CommitLink.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
+  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let commit: CommitHeader;
@@ -104,7 +104,7 @@
       </div>
     {/if}
     <CommitAuthorship header={commit}>
-      <CommitLink {baseUrl} {projectId} commitId={commit.id} />
+      <Id id={commit.id} style="commit" />
     </CommitAuthorship>
   </div>
   <div class="right">

@@ -11,9 +11,9 @@
   import { isDelegate } from "@app/lib/roles";
 
   import AppLayout from "@app/App/AppLayout.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
@@ -128,25 +128,27 @@
             {#each externalAddresses as address}
               <!-- If there are externalAddresses this is probably a remote node -->
               <!-- in that case, we show all the defined externalAddresses as a listing -->
-              <CopyableId id={`${nid}@${address}`} style="oid">
-                {truncateId(nid)}@{address}
-              </CopyableId>
+              <Id
+                ariaLabel="node-id"
+                shorten={false}
+                id="{truncateId(nid)}@{address}"
+                clipboard={`${nid}@${address}`} />
             {:else}
               <!-- else this is probably a local node -->
               <!-- So we show only the nid -->
-              <CopyableId id={nid} style="oid">
-                <div class="global-hide-on-small-desktop-up">
-                  {truncateId(nid)}
-                </div>
-                <div class="global-hide-on-mobile-down">
-                  {nid}
-                </div>
-              </CopyableId>
+              <div class="global-hide-on-small-desktop-up">
+                <Id ariaLabel="node-id" id={truncateId(nid)} shorten={false} />
+              </div>
+              <div class="global-hide-on-mobile-down">
+                <Id ariaLabel="node-id" id={nid} shorten={false} />
+              </div>
             {/each}
           </div>
-          <div class="version">
-            {version}
-          </div>
+          <Id ariaLabel="version" id={version} shorten={false} style="none">
+            <div class="version">
+              {version}
+            </div>
+          </Id>
         </div>
       </div>
 

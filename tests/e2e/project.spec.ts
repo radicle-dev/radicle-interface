@@ -288,13 +288,13 @@ test("peer and branch switching", async ({ page }) => {
 
   // Alice's peer.
   {
-    await page.getByTitle("Change peer").click();
+    await page.getByLabel("Change peer").click();
     await page
       .getByRole("link", {
         name: "alice delegate",
       })
       .click();
-    await expect(page.getByTitle("Change peer")).toHaveText("alice Delegate");
+    await expect(page.getByLabel("Change peer")).toHaveText("alice Delegate");
 
     // Default `main` branch.
     {
@@ -356,8 +356,8 @@ test("peer and branch switching", async ({ page }) => {
   {
     await page.getByRole("link", { name: "source-browsing" }).nth(1).click();
 
-    await expect(page.getByTitle("Change peer")).not.toContainText("alice");
-    await expect(page.getByTitle("Change peer")).not.toContainText("bob");
+    await expect(page.getByLabel("Change peer")).not.toContainText("alice");
+    await expect(page.getByLabel("Change peer")).not.toContainText("bob");
 
     await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(
@@ -372,10 +372,10 @@ test("peer and branch switching", async ({ page }) => {
 
   // Bob's peer.
   {
-    await page.getByTitle("Change peer").click();
+    await page.getByLabel("Change peer").click();
     await page.getByRole("link", { name: "bob" }).click();
-    await expect(page.getByTitle("Change peer")).toContainText("bob");
-    await expect(page.getByTitle("Change peer")).not.toHaveText("delegate");
+    await expect(page.getByLabel("Change peer")).toContainText("bob");
+    await expect(page.getByLabel("Change peer")).not.toHaveText("delegate");
 
     // Default `main` branch.
     {
@@ -402,7 +402,7 @@ test("peer and branch switching", async ({ page }) => {
 test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByTitle("Change peer").click();
+  await page.getByLabel("Change peer").click();
   await page
     .getByRole("link", {
       name: "alice delegate",
@@ -427,7 +427,7 @@ test("only one modal can be open at a time", async ({ page }) => {
   await expect(page.getByText("bob")).not.toBeVisible();
   await expect(page.getByText("feature/branch")).toBeVisible();
 
-  await page.getByTitle("Change peer").click();
+  await page.getByLabel("Change peer").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
   await expect(page.getByText("bob")).toBeVisible();

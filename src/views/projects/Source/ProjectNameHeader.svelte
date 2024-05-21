@@ -5,8 +5,8 @@
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
@@ -90,7 +90,7 @@
     </div>
   </div>
   <div class="id">
-    <CopyableId id={project.id} style="oid" />
+    <Id shorten={false} id={project.id} ariaLabel="project-id" />
   </div>
 </div>
 <div class="description" use:twemoji>

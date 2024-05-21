@@ -18,7 +18,6 @@
 
   import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
-  import CommitLink from "@app/views/projects/components/CommitLink.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
@@ -35,6 +34,7 @@
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
   import Thread from "@app/components/Thread.svelte";
+  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let initiallyExpanded: boolean = false;
@@ -300,7 +300,7 @@
         <ExpandButton {expanded} on:toggle={() => (expanded = !expanded)} />
         <span>
           Revision
-          <span class="global-oid">{utils.formatObjectId(revisionId)}</span>
+          <Id id={revisionId} />
         </span>
       </div>
       <div class="revision-data">
@@ -409,21 +409,16 @@
               style:padding="0 0.375rem">
               <IconSmall name="patch" />
             </div>
-            <NodeId
-              stylePopoverPositionLeft="-13px"
-              nodeId={revisionAuthor.id}
-              alias={revisionAuthor.alias} />
+            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
               opened this patch on base
-              <CommitLink {baseUrl} {projectId} commitId={revisionBase} />
+              <Id id={revisionBase} style="commit" />
             {:else}
               updated to
-              <span class="global-oid">
-                {utils.formatObjectId(revisionId)}
-              </span>
+              <Id id={revisionId} />
               {#if previousRevBase && previousRevBase !== revisionBase}
                 with base
-                <CommitLink {baseUrl} {projectId} commitId={revisionBase} />
+                <Id id={revisionBase} style="commit" />
               {/if}
             {/if}
             <span
@@ -556,20 +551,14 @@
               </div>
 
               <NodeId
-                stylePopoverPositionLeft="-13px"
                 nodeId={element.inner.author.id}
                 alias={element.inner.author.alias}>
               </NodeId>
 
               merged revision
-              <span class="global-oid">
-                {utils.formatObjectId(element.inner.revision)}
-              </span>
+              <Id id={element.inner.revision} />
               at commit
-              <CommitLink
-                {baseUrl}
-                {projectId}
-                commitId={element.inner.commit} />
+              <Id id={element.inner.commit} style="commit" />
               <span
                 class="timestamp"
                 title={utils.absoluteTimestamp(revisionTimestamp)}>
@@ -593,9 +582,7 @@
               body={review.summary ?? ""}>
               <div slot="caption">
                 {formatVerdict(review.verdict)}
-                <span class="global-oid">
-                  {utils.formatObjectId(revisionId)}
-                </span>
+                <Id id={revisionId} />
               </div>
               <div slot="icon" style:color={verdictIconColor(review.verdict)}>
                 {#if review.verdict === "accept"}

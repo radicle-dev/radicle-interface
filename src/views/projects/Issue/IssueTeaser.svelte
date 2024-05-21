@@ -1,11 +1,7 @@
 <script lang="ts">
   import type { BaseUrl, Issue } from "@http-client";
 
-  import {
-    absoluteTimestamp,
-    formatObjectId,
-    formatTimestamp,
-  } from "@app/lib/utils";
+  import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
@@ -14,6 +10,7 @@
 
   import CommentCounter from "../CommentCounter.svelte";
   import Labels from "../Cob/Labels.svelte";
+  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -123,12 +120,9 @@
       {/if}
       <div
         style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-        <NodeId
-          stylePopoverPositionLeft="-13px"
-          nodeId={issue.author.id}
-          alias={issue.author.alias} />
+        <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
         opened
-        <span class="global-oid">{formatObjectId(issue.id)}</span>
+        <Id id={issue.id} />
         <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>
           {formatTimestamp(issue.discussion[0].timestamp)}
         </span>

@@ -52,12 +52,13 @@
   import * as role from "@app/lib/roles";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { experimental } from "@app/lib/appearance";
   import capitalize from "lodash/capitalize";
   import isEqual from "lodash/isEqual";
   import partial from "lodash/partial";
   import uniqBy from "lodash/uniqBy";
   import { HttpdClient } from "@http-client";
+  import { closeFocused } from "@app/components/Popover.svelte";
+  import { experimental } from "@app/lib/appearance";
   import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";
 
@@ -68,12 +69,12 @@
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CompareButton from "@app/views/projects/Patch/CompareButton.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
@@ -89,7 +90,6 @@
   import RevisionSelector from "@app/views/projects/Patch/RevisionSelector.svelte";
   import Share from "@app/views/projects/Share.svelte";
   import TextInput from "@app/components/TextInput.svelte";
-  import { closeFocused } from "@app/components/Popover.svelte";
 
   export let baseUrl: BaseUrl;
   export let node: Node;
@@ -775,14 +775,9 @@
               insertions={stats.insertions}
               deletions={stats.deletions} />
           </Link>
-          <NodeId
-            stylePopoverPositionLeft="-13px"
-            nodeId={patch.author.id}
-            alias={patch.author.alias} />
+          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
           opened
-          <CopyableId id={patch.id} style="oid">
-            {utils.formatObjectId(patch.id)}
-          </CopyableId>
+          <Id id={patch.id} />
           <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
             {utils.formatTimestamp(patch.revisions[0].timestamp)}
           </span>

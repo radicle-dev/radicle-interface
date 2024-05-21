@@ -1,13 +1,14 @@
 <script lang="ts">
   import type { BaseUrl, Node, Project } from "@http-client";
 
+  import { capitalize } from "lodash";
+  import { isLocal } from "@app/lib/utils";
+
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
-  import { isLocal } from "@app/lib/utils";
-  import { capitalize } from "lodash";
 
   export let disablePopovers: boolean = false;
   export let project: Project;
@@ -86,7 +87,7 @@
   <div class="nids">
     {#each project.delegates as { id: nodeId, alias }}
       <div style:width="fit-content">
-        <NodeId {alias} {nodeId} stylePopoverPositionLeft="-0.8rem" />
+        <NodeId {alias} {nodeId} />
       </div>
     {/each}
   </div>
@@ -119,11 +120,5 @@
           policy={node.config.policy} />
       </div>
     {/if}
-    <div class="item txt-overflow" style:padding-top="0.5rem">
-      Radicle version
-      <span class="txt-missing txt-overflow txt-monospace" title={node.version}>
-        {node.version}
-      </span>
-    </div>
   </div>
 </div>

@@ -20,14 +20,14 @@ test("peer and branch switching", async ({ page }) => {
 
   // Alice's peer.
   {
-    await page.getByTitle("Change peer").click();
+    await page.getByLabel("Change peer").click();
     await page
       .getByRole("link", {
         name: "alice delegate",
       })
       .click();
 
-    await expect(page.getByTitle("Change peer")).toHaveText("alice Delegate");
+    await expect(page.getByLabel("Change peer")).toHaveText("alice Delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
     await expect(page.locator(".list .teaser")).toHaveCount(
@@ -65,10 +65,10 @@ test("peer and branch switching", async ({ page }) => {
 
   // Bob's peer.
   {
-    await page.getByTitle("Change peer").click();
+    await page.getByLabel("Change peer").click();
     await page.getByRole("link", { name: "bob" }).click();
 
-    await expect(page.getByTitle("Change peer")).toContainText("bob");
+    await expect(page.getByLabel("Change peer")).toContainText("bob");
 
     await expect(page.getByText("Wednesday, December 21, 2022")).toBeVisible();
     await expect(page.locator(".list").first().locator(".teaser")).toHaveCount(
@@ -155,9 +155,9 @@ test("relative timestamps", async ({ page }) => {
     .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
     .click();
 
-  await page.getByTitle("Change peer").click();
+  await page.getByLabel("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();
-  await expect(page.getByTitle("Change peer")).toHaveText("bob");
+  await expect(page.getByLabel("Change peer")).toHaveText("bob");
   const latestCommit = page.locator(".teaser").first();
   await expect(latestCommit).toContainText(
     `Bob Belcher committed ${shortBobHead} now`,

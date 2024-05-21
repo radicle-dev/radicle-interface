@@ -13,7 +13,7 @@ const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByTitle("Change peer").click();
+  await page.getByLabel("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();
   await page
     .getByRole("link", { name: `Commits ${bobMainCommitCount}` })
@@ -43,9 +43,7 @@ test("modified file", async ({ page }) => {
   // Commit header.
   {
     await expect(page.getByText("Update readme")).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: shortBobHead }),
-    ).toBeVisible();
+    await expect(page.getByLabel("commit-id")).toHaveText(shortBobHead);
   }
 
   // Diff header.

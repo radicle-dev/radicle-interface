@@ -32,11 +32,11 @@
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
   import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
-  import CopyableId from "@app/components/CopyableId.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import LabelInput from "./Cob/LabelInput.svelte";
   import Layout from "./Layout.svelte";
@@ -547,14 +547,9 @@
               {issue.state.reason}
             </Badge>
           {/if}
-          <NodeId
-            stylePopoverPositionLeft="-13px"
-            nodeId={issue.author.id}
-            alias={issue.author.alias} />
+          <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
           opened
-          <CopyableId id={issue.id} style="oid">
-            {utils.formatObjectId(issue.id)}
-          </CopyableId>
+          <Id id={issue.id} />
           <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
             {utils.formatTimestamp(issue.discussion[0].timestamp)}
           </span>

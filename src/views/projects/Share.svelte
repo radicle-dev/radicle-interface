@@ -61,7 +61,12 @@
     <ShareButton slot="popover" />
   </Popover>
 {:else}
-  <Button variant="outline" size="regular" on:click={copy}>
+  <Button
+    variant="outline"
+    size="regular"
+    on:click={async () => {
+      await copy();
+    }}>
     <IconSmall name={shareIcon} />
     <span class="global-hide-on-small-desktop-down">Copy link</span>
   </Button>

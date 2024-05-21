@@ -11,7 +11,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     font-size: var(--font-size-small);
-    font-family: var(--font-family-monospace);
   }
   .summary {
     display: flex;

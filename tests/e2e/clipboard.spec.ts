@@ -33,7 +33,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
 
   // Project ID.
   {
-    await page.locator(".id > .clipboard").click();
+    await page.getByLabel("project-id").click();
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );
@@ -63,7 +63,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   await page.goto("/nodes/radicle.local");
   // Node address.
   {
-    await page.locator(".clipboard").first().click();
+    await page.getByRole("button", { name: "node-id" }).first().click();
     await expectClipboard(`${nodeRemote}`, page);
   }
 

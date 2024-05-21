@@ -3,11 +3,11 @@
 
   import { twemoji } from "@app/lib/utils";
 
-  import CommitLink from "@app/views/projects/components/CommitLink.svelte";
   import CompactCommitAuthorship from "@app/components/CompactCommitAuthorship.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
 
@@ -88,7 +88,7 @@
     {/if}
     <div class="global-hide-on-small-desktop-up">
       <CompactCommitAuthorship {commit}>
-        <CommitLink {baseUrl} {projectId} commitId={commit.id} />
+        <Id id={commit.id} style="commit" />
       </CompactCommitAuthorship>
     </div>
   </div>
@@ -96,7 +96,7 @@
     <div style="display: flex; gap: 0.5rem; height: 21px; align-items: center;">
       <div class="global-hide-on-mobile-down">
         <CompactCommitAuthorship {commit}>
-          <CommitLink {baseUrl} {projectId} commitId={commit.id} />
+          <Id id={commit.id} style="commit" />
         </CompactCommitAuthorship>
       </div>
       <IconButton title="Browse repo at this commit">

@@ -9,6 +9,7 @@
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import ReactionSelector from "@app/components/ReactionSelector.svelte";
@@ -136,15 +137,10 @@
     {/if}
     <div class="card-header" class:card-header-no-icon={isReply}>
       <slot class="icon" name="icon" />
-      <NodeId
-        stylePopoverPositionLeft="-13px"
-        nodeId={authorId}
-        alias={authorAlias} />
+      <NodeId nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
       {#if id}
-        <span class="global-oid">
-          {utils.formatObjectId(id)}
-        </span>
+        <Id {id} />
       {/if}
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}

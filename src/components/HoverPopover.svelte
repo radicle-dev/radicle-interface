@@ -1,32 +1,26 @@
 <script lang="ts">
   import debounce from "lodash/debounce";
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  export let onShow: () => void = () => {};
-  export let stylePopoverPositionLeft: string | undefined = undefined;
-  export let stylePopoverPositionRight: string | undefined = undefined;
-  export let stylePopoverPositionTop: string | undefined = undefined;
   export let stylePopoverPositionBottom: string | undefined = undefined;
-  export let stylePopoverPadding: string | undefined = "1rem";
+  export let stylePopoverPositionLeft: string | undefined = undefined;
 
   let visible: boolean = false;
 
   const setVisible = debounce((value: boolean) => {
     visible = value;
-    if (visible) {
-      onShow();
-    }
-  }, 500);
+  }, 50);
 </script>
 
 <style>
   .container {
     position: relative;
+    display: inline-block;
   }
   .popover {
     background: var(--color-background-float);
     border-radius: var(--border-radius-regular);
     border: 1px solid var(--color-border-hint);
+    padding: 1rem;
     box-shadow: var(--elevation-low);
     position: absolute;
     z-index: 10;
@@ -42,19 +36,11 @@
     <slot name="toggle" />
 
     {#if visible}
-      <!-- If this component is used inside a button (see `NodeId`, for example)
-       we don’t want clicks in the popover to trigger button actions. So we
-       stop propagation of click events. -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div style:position="absolute" on:click|stopPropagation>
+      <div style:position="absolute">
         <div
           class="popover"
-          style:padding={stylePopoverPadding}
           style:left={stylePopoverPositionLeft}
-          style:right={stylePopoverPositionRight}
-          style:bottom={stylePopoverPositionBottom}
-          style:top={stylePopoverPositionTop}>
+          style:bottom={stylePopoverPositionBottom}>
           <slot name="popover" />
         </div>
       </div>

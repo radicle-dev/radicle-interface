@@ -6,15 +6,14 @@
   import { formatNodeId } from "@app/lib/utils";
   import { httpdStore } from "@app/lib/httpd";
 
-  import NodeId from "@app/components/NodeId.svelte";
+  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
+  import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import Popover from "@app/components/Popover.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import Button from "@app/components/Button.svelte";
-  import Avatar from "@app/components/Avatar.svelte";
+  import Popover from "@app/components/Popover.svelte";
 
   export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
   export let project: Project;
@@ -48,22 +47,27 @@
     popoverPositionTop="2.5rem"
     popoverBorderRadius="var(--border-radius-small)">
     <Button
+      ariaLabel="Change peer"
       slot="toggle"
       let:expanded
       let:toggle
       styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
       on:click={toggle}
-      title="Change peer"
+      title={selectedPeer ? formatNodeId(selectedPeer.id) : "Change peer"}
       disabled={!peers}>
       {#if !selectedPeer}
         <IconSmall name="delegate" />
       {/if}
 
       {#if selectedPeer}
-        <NodeId
-          nodeId={selectedPeer.id}
-          alias={selectedPeer.alias}
-          stylePopoverPositionLeft="-0.75rem" />
+        <div style:height="1rem">
+          <Avatar nodeId={selectedPeer.id} />
+        </div>
+        <span
+          style:font-family="var(--font-family-monospace)"
+          class:no-alias={!selectedPeer.alias}>
+          {selectedPeer.alias || formatNodeId(selectedPeer.id)}
+        </span>
         {#if selectedPeer.delegate}
           <Badge size="tiny" variant="delegate">
             <IconSmall name="badge" />

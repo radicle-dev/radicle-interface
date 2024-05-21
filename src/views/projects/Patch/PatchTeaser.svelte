@@ -2,20 +2,17 @@
   import type { BaseUrl } from "@http-client";
   import type { Patch } from "@http-client";
 
-  import {
-    absoluteTimestamp,
-    formatObjectId,
-    formatTimestamp,
-  } from "@app/lib/utils";
+  import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
-  import Labels from "../Cob/Labels.svelte";
-  import DiffStatBadgeLoader from "../DiffStatBadgeLoader.svelte";
   import CommentCounter from "../CommentCounter.svelte";
+  import DiffStatBadgeLoader from "../DiffStatBadgeLoader.svelte";
+  import Id from "@app/components/Id.svelte";
+  import Labels from "../Cob/Labels.svelte";
 
   export let projectId: string;
   export let baseUrl: BaseUrl;
@@ -137,17 +134,12 @@
         {/if}
         <div
           style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-          <NodeId
-            stylePopoverPositionLeft="-13px"
-            nodeId={patch.author.id}
-            alias={patch.author.alias} />
+          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
           {patch.revisions.length > 1 ? "updated" : "opened"}
-          <span class="global-oid">{formatObjectId(patch.id)}</span>
+          <Id id={patch.id} />
           {#if patch.revisions.length > 1}
             <span class="global-hide-on-mobile-down">
-              to <span class="global-oid">
-                {formatObjectId(patch.revisions[patch.revisions.length - 1].id)}
-              </span>
+              to <Id id={patch.revisions[patch.revisions.length - 1].id} />
             </span>
           {/if}
           <span title={absoluteTimestamp(latestRevision.timestamp)}>
