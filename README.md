@@ -1,4 +1,4 @@
-# Radicle Web UI
+# Radicle Explorer
 
 This user interface lets you interact with [Radicle][rad], a peer-to-peer code
 collaboration and publishing stack, directly from your web browser.
@@ -18,8 +18,8 @@ collaboration and publishing stack, directly from your web browser.
 
 Run the following commands to access the web UI locally:
 ```
-git clone https://seed.radicle.garden/z4V1sjrXqjvFdnCUbxPFqd5p4DtH5.git radicle-interface
-cd radicle-interface
+git clone https://seed.radicle.xyz/z4V1sjrXqjvFdnCUbxPFqd5p4DtH5.git radicle-explorer
+cd radicle-explorer
 npm install
 npm start
 ```

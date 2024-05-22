@@ -16,9 +16,9 @@
     ...
   }@inputs:
     {
-      nixosModules.radicle-interface = { config, lib, pkgs, ... }: {
-        options.services.radicle-interface.enable = lib.mkEnableOption "Local radicle web interface";
-        config = lib.mkIf config.services.radicle-interface.enable {
+      nixosModules.radicle-explorer = { config, lib, pkgs, ... }: {
+        options.services.radicle-explorer.enable = lib.mkEnableOption "Local radicle web interface";
+        config = lib.mkIf config.services.radicle-explorer.enable {
           services.nginx = {
             enable = true;
             virtualHosts.localhost = {
@@ -27,7 +27,7 @@
               locations = {
                 "/" = {
                   index = "index.html";
-                  root = self.packages.${pkgs.system}.radicle-interface;
+                  root = self.packages.${pkgs.system}.radicle-explorer;
                   extraConfig = ''
                     try_files $uri $uri/ /index.html;
                   '';
@@ -45,11 +45,11 @@
     in {
 
       checks = {
-        radicle-interface =  self.packages.${system}.radicle-interface.override { doCheck = true; };
+        radicle-explorer =  self.packages.${system}.radicle-explorer.override { doCheck = true; };
       };
 
       packages = {
-        default = self.packages.${system}.radicle-interface;
+        default = self.packages.${system}.radicle-explorer;
         twemoji-assets = pkgs.fetchFromGitHub {
           owner = "twitter";
           repo = "twemoji";
@@ -57,7 +57,7 @@
           hash = "sha256-YoOnZ5uVukzi/6bLi22Y8U5TpplPzB7ji42l+/ys5xI=";
         };
 
-        radicle-interface = pkgs.callPackage ({
+        radicle-explorer = pkgs.callPackage ({
           lib, buildNpmPackage, doCheck ? false
         }: let
           # We need rad debug binaries
@@ -70,10 +70,10 @@
             ];
           };
         in buildNpmPackage rec {
-          pname = "radicle-interface";
+          pname = "radicle-explorer";
           version = "1.0.0";
           src = ./.;
-          npmDepsHash = "sha256-E2M1aHKxustlneEx/H+UYR45eYkYpQgUgvbAHaXzuC4=";
+          npmDepsHash = "sha256-T2r9qTpXENG+uXZVa0KQW6j0BY8vrk7rPAGYPYAFF1A=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
