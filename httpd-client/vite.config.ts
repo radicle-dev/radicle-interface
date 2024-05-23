@@ -10,7 +10,7 @@ export default defineConfig({
     }),
   ],
   test: {
-    environment: "happy-dom",
+    environment: "node",
     include: ["httpd-client/tests/*.test.ts"],
     reporters: "verbose",
     globalSetup: "./tests/support/globalSetup",
