@@ -78,11 +78,6 @@
     }).catch(error => error);
   }
 
-  function isSeeding(projectId: string) {
-    if (localProjects instanceof Error) return false;
-    return localProjects?.some(p => p.project.id === projectId) ?? false;
-  }
-
   $: nodeId = $httpdStore.state !== "stopped" ? $httpdStore.node.id : undefined;
   $: nodeId && void loadLocalProjects();
   $: $selectedSeed && void loadPreferredSeedProjects();
@@ -208,7 +203,6 @@
                 )}
                 <ProjectCard
                   {projectInfo}
-                  isSeeding={true}
                   isDelegate={isDelegate(nodeId, delegates) ?? false} />
               {/each}
             {/if}
@@ -284,7 +278,6 @@
             {@const delegates = projectInfo.project.delegates.map(d => d.id)}
             <ProjectCard
               {projectInfo}
-              isSeeding={isSeeding(projectInfo.project.id)}
               isDelegate={isDelegate(nodeId, delegates) ?? false} />
           {/each}
         {/if}

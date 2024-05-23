@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { ProjectInfo } from "./ProjectCard";
+
   import {
     absoluteTimestamp,
     formatTimestamp,
@@ -7,17 +9,15 @@
   } from "@app/lib/utils";
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
+  import Badge from "@app/components/Badge.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-
-  import type { ProjectInfo } from "./ProjectCard";
 
   export let compact = false;
 
   export let projectInfo: ProjectInfo;
 
   export let isDelegate: boolean;
-  export let isSeeding: boolean;
 
   $: project = projectInfo.project;
   $: baseUrl = projectInfo.baseUrl;
@@ -165,14 +165,13 @@
               <IconSmall name="badge" />
             </div>
           {/if}
-          {#if isSeeding}
-            <div
-              title="Seeding"
-              class="badge"
-              style="background-color: var(--color-fill-counter-emphasized); color: var(--color-foreground-emphasized)">
-              <IconSmall name="seedling" />
-            </div>
-          {/if}
+          <Badge
+            variant="neutral"
+            size="tiny"
+            style="padding: 0 0.372rem; gap: 0.125rem;">
+            <IconSmall name="seedling" />
+            {projectInfo.project.seeding}
+          </Badge>
         </div>
       </div>
       <p class="txt-small" use:twemoji>{project.description}</p>
