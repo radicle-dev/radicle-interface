@@ -169,9 +169,10 @@ function extractBaseUrl(hostAndPort: string): BaseUrl {
     return {
       hostname,
       port: Number(port),
-      scheme: utils.isLocal(hostname)
-        ? "http"
-        : config.nodes.defaultHttpdScheme,
+      scheme:
+        utils.isLocal(hostname) || utils.isOnion(hostname)
+          ? "http"
+          : config.nodes.defaultHttpdScheme,
     };
   } else {
     return {

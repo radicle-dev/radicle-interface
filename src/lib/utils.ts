@@ -264,6 +264,11 @@ export function isLocal(addr: string): boolean {
   );
 }
 
+// Check whether the given domain name is an onion domain name.
+export function isOnion(addr: string): boolean {
+  return addr.endsWith(".onion");
+}
+
 // Get the gravatar URL of an email.
 export function gravatarURL(email: string): string {
   const address = email.trim().toLowerCase();
