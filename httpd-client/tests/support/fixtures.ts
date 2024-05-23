@@ -27,6 +27,6 @@ export const testFixture = test.extend<TestFixtures>({
     await peer.startHttpd();
     const api = new HttpdClient(peer.httpdBaseUrl);
     await use({ api, peer });
-    await peer.stopHttpd();
+    await peer.shutdown();
   },
 });

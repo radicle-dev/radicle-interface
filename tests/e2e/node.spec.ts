@@ -20,8 +20,6 @@ test("node metadata", async ({ page, peerManager }) => {
     page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
   ).toBeVisible();
   await expect(page.getByText("1.0.0-rc.8-")).toBeVisible();
-  await peer.stopHttpd();
-  await peer.stopNode();
 });
 
 test("node projects", async ({ page }) => {

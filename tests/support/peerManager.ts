@@ -172,7 +172,6 @@ export class RadiclePeer {
   #listenSocketAddr?: string;
   #httpdBaseUrl?: BaseUrl;
   #nodeProcess?: ExecaChildProcess;
-  #httpdProcess?: ExecaChildProcess;
   // Name for easy identification. Used on file system and in logs.
   #name: string;
   #childProcesses: ExecaChildProcess[] = [];
@@ -266,7 +265,7 @@ export class RadiclePeer {
       port,
       scheme: "http",
     };
-    this.#httpdProcess = this.spawn("radicle-httpd", [
+    void this.spawn("radicle-httpd", [
       "--listen",
       `${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
     ]);
@@ -277,23 +276,6 @@ export class RadiclePeer {
       ],
       timeout: 2000,
     });
-  }
-
-  public async stopHttpd() {
-    if (!this.#httpdBaseUrl || !this.#httpdProcess) {
-      return;
-    }
-    this.#httpdProcess.kill("SIGTERM");
-
-    await waitOn({
-      resources: [
-        `tcp:${this.#httpdBaseUrl.hostname}:${this.#httpdBaseUrl.port}`,
-      ],
-      reverse: true,
-      timeout: 2000,
-    });
-
-    this.#httpdBaseUrl = undefined;
   }
 
   public async startNode(nodeParams: Partial<NodeConfig["node"]> = {}) {
@@ -355,14 +337,13 @@ export class RadiclePeer {
   }
 
   /**
-   * Kill all child processes created with `spawn()`, the node process and the
-   * HTTP API process.
+   * Kill all child processes created with `spawn()`, including the node and
+   * httpd processes.
    */
   public async shutdown() {
     // We don’t care about proper cleanup. We just want to make sure that no
     // processes are running anymore.
     this.#childProcesses.forEach(p => p.kill("SIGKILL"));
-    await Promise.all([this.stopNode(), this.stopHttpd()]);
   }
 
   public get address(): string {
