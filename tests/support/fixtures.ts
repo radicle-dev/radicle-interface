@@ -6,8 +6,8 @@ import * as Path from "node:path";
 import assert from "node:assert";
 import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
+import { execa } from "execa";
 
-import * as Process from "./process.js";
 import * as issue from "@tests/support/cobs/issue.js";
 import * as logLabel from "@tests/support/logPrefix.js";
 import * as patch from "@tests/support/cobs/patch.js";
@@ -190,7 +190,7 @@ export async function createSourceBrowsingFixture(
   const projectName = "source-browsing";
   const sourceBrowsingDir = Path.join(tmpDir, "repos", projectName);
   await Fs.mkdir(sourceBrowsingDir, { recursive: true });
-  await Process.spawn("tar", [
+  await execa("tar", [
     "-xf",
     Path.join(fixturesDir, `repos/${projectName}.tar.bz2`),
     "-C",
@@ -568,7 +568,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
 
 export async function createMarkdownFixture(peer: RadiclePeer) {
   await Fs.mkdir(Path.join(tmpDir, "repos", "markdown"));
-  await Process.spawn("tar", [
+  await execa("tar", [
     "-xf",
     Path.join(fixturesDir, "repos", "markdown.tar.bz2"),
     "-C",

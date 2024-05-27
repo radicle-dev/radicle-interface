@@ -13,7 +13,6 @@ import {
   gitOptions,
 } from "@tests/support/fixtures.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
-import { killAllProcesses } from "@tests/support/process.js";
 
 export default async function globalSetup(): Promise<() => void> {
   try {
@@ -78,6 +77,5 @@ export default async function globalSetup(): Promise<() => void> {
 
   return async () => {
     await peerManager.shutdown();
-    killAllProcesses();
   };
 }

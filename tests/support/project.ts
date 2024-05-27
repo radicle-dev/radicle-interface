@@ -1,6 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
 import type { RadiclePeer } from "@tests/support/peerManager";
-import type { ExecaReturnValue } from "execa";
 
 import * as Path from "node:path";
 import { expect } from "@playwright/test";
@@ -52,7 +51,7 @@ export async function createProject(
   return { rid, projectFolder, defaultBranch };
 }
 
-export function extractPatchId(cmdOutput: ExecaReturnValue<string>) {
+export function extractPatchId(cmdOutput: { stderr: string }) {
   const match = cmdOutput.stderr.match(/[0-9a-f]{40}/);
   if (match) {
     return match[0];
