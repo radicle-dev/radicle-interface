@@ -8,6 +8,7 @@
 </script>
 
 <script lang="ts">
+  export let popoverContainerMinWidth: string | undefined = undefined;
   export let popoverBorderRadius: string | undefined = undefined;
   export let popoverPadding: string | undefined = undefined;
   export let popoverPositionBottom: string | undefined = undefined;
@@ -53,7 +54,10 @@
 
 <svelte:window on:click={clickOutside} on:touchstart={clickOutside} />
 
-<div bind:this={thisComponent} class="container">
+<div
+  bind:this={thisComponent}
+  class="container"
+  style:min-width={popoverContainerMinWidth}>
   <slot name="toggle" {expanded} {toggle} />
 
   {#if expanded}

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
   import type { ProjectInfo } from "@app/components/ProjectCard";
-  import type { ProjectListQuery } from "@httpd-client";
+  import type { BaseUrl, ProjectListQuery } from "@httpd-client";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
   import { derived } from "svelte/store";
@@ -23,11 +23,13 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import FilterButton from "./components/FilterButton.svelte";
   import HomepageSection from "./components/HomepageSection.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NewProjectButton from "./components/NewProjectButton.svelte";
   import Popover from "@app/components/Popover.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
+
+  export let configPreferredSeeds: BaseUrl[];
 
   const selectedSeed = deduplicateStore(
     derived(preferredSeeds, $ => $?.selected),
@@ -120,32 +122,21 @@
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
   }
+  .flex-icon-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
-  }
-  .seed {
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.125rem;
-    color: var(--color-foreground-contrast);
-  }
-  .seed-name {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   @media (max-width: 719.98px) {
     .wrapper {
       width: 100%;
       padding: 1rem;
-    }
-
-    .seed-dropdown {
-      display: none;
     }
   }
 </style>
@@ -216,18 +207,16 @@
       empty={preferredSeedProjects instanceof Error ||
         preferredSeedProjects?.length === 0}
       title="Explore">
+      <svelte:fragment slot="title">
+        <div class="flex-icon-item" style:min-width="0">
+          <span class="txt-large">Explore</span>
+          <PreferredSeedDropdown
+            initialPreferredSeeds={configPreferredSeeds}
+            selectedSeed={$preferredSeeds.selected} />
+        </div>
+      </svelte:fragment>
       <svelte:fragment slot="subtitle">
-        {#if nodeId && $preferredSeeds}
-          Pinned repositories on your selected seed node
-        {:else}
-          Pinned repositories on
-          <div class="seed">
-            <IconSmall name="seedling" />
-            <span class="seed-name">
-              {$selectedSeed?.hostname}
-            </span>
-          </div>
-        {/if}
+        Pinned repositories on your selected seed node
         {#if !nodeId}
           <div class="global-hide-on-mobile-down">
             <Popover popoverPositionTop="2.5rem" popoverPositionLeft="0">
@@ -246,15 +235,6 @@
             </Popover>
           </div>
         {/if}
-      </svelte:fragment>
-      <svelte:fragment slot="actions">
-        <div class="seed-dropdown">
-          {#if nodeId && $preferredSeeds}
-            <PreferredSeedDropdown
-              disabled={!nodeId || preferredSeedProjects === undefined}
-              preferredSeed={$preferredSeeds?.selected} />
-          {/if}
-        </div>
       </svelte:fragment>
       <svelte:fragment slot="empty">
         <div class="empty-state">

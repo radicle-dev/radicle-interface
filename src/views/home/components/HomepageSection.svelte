@@ -3,16 +3,11 @@
 
   export let title: string;
   export let loading = false;
-
   export let empty: boolean = false;
 </script>
 
 <style>
   .section-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 1.5rem;
   }
   .title {
@@ -62,7 +57,9 @@
 <section>
   <div class="section-header">
     <div class="title">
-      <h2>{title}</h2>
+      <slot name="title">
+        <h2>{title}</h2>
+      </slot>
       <div class="actions">
         <slot name="actions" />
       </div>

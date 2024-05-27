@@ -154,7 +154,9 @@
 
   <div class="right-container" bind:clientWidth={rightContainerWidth}>
     {#if loading}
-      <Loading small noDelay />
+      <div style:padding-right="0.5rem">
+        <Loading small noDelay />
+      </div>
     {/if}
 
     {#if valid && !loading && isFocused && showKeyHint}
