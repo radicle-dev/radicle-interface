@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Embed, Project, Reaction } from "@httpd-client";
+  import type { BaseUrl, Embed, Node, Project, Reaction } from "@httpd-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -17,6 +17,7 @@
   import TextInput from "@app/components/TextInput.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
 
@@ -99,7 +100,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {node} {baseUrl} {project} activeTab="issues">
   {#if session}
     {@const session_ = session}
     <div class="form">

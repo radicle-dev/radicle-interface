@@ -7,6 +7,7 @@
     Issue,
     IssueState,
     Project,
+    Node,
   } from "@httpd-client";
   import type { Session } from "@app/lib/httpd";
 
@@ -48,6 +49,7 @@
   import ThreadComponent from "@app/components/Thread.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let issue: Issue;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
@@ -482,7 +484,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues" stylePaddingBottom="0">
+<Layout {node} {baseUrl} {project} activeTab="issues" stylePaddingBottom="0">
   <div class="issue">
     <div class="main">
       <CobHeader>

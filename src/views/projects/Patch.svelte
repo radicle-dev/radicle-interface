@@ -8,6 +8,7 @@
     PatchState,
     Revision,
     Diff,
+    Node,
   } from "@httpd-client";
 
   interface Thread {
@@ -91,6 +92,7 @@
   import { closeFocused } from "@app/components/Popover.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let patch: Patch;
   export let stats: Diff["stats"];
   export let rawPath: (commit?: string) => string;
@@ -706,7 +708,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="patches" stylePaddingBottom="0">
+<Layout {node} {baseUrl} {project} activeTab="patches" stylePaddingBottom="0">
   <div class="patch">
     <div class="main">
       <CobHeader>

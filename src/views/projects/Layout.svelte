@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Node, Project } from "@httpd-client";
 
   import AppHeader from "@app/App/Header.svelte";
 
@@ -11,6 +11,7 @@
   import Sidebar from "@app/views/projects/Sidebar.svelte";
 
   export let activeTab: ActiveTab | undefined = undefined;
+  export let node: Node;
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let stylePaddingBottom: string = "2.5rem";
@@ -65,11 +66,11 @@
   </div>
 
   <div class="sidebar global-hide-on-medium-desktop-down">
-    <Sidebar {activeTab} {baseUrl} {project} />
+    <Sidebar {node} {activeTab} {baseUrl} {project} />
   </div>
 
   <div class="sidebar global-hide-on-mobile-down global-hide-on-desktop-up">
-    <Sidebar {activeTab} {baseUrl} {project} collapsedOnly />
+    <Sidebar {node} {activeTab} {baseUrl} {project} collapsedOnly />
   </div>
 
   <div class="content" style:padding-bottom={stylePaddingBottom}>

@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
 
+  import { capitalize } from "lodash";
+
   import * as router from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
   import { baseUrlToString, isLocal, truncateId } from "@app/lib/utils";
@@ -10,9 +12,12 @@
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import CopyableId from "@app/components/CopyableId.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import Popover from "@app/components/Popover.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import ScopePolicyPopover from "@app/views/nodes/ScopePolicyPopover.svelte";
+  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -22,6 +27,8 @@
   export let policy: Policy | undefined = undefined;
   export let scope: Scope | undefined = undefined;
 
+  $: shortScope =
+    scope === "all" && policy === "allow" ? "permissive" : "restrictive";
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
@@ -67,6 +74,11 @@
     color: var(--color-fill-gray);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
+  }
+  .seeding-policy {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .project-grid {
@@ -138,20 +150,27 @@
         </div>
       </div>
 
-      <div class="subtitle">
+      <div class="subtitle" style:justify-content="space-between">
         <div class="txt-semibold">
           {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} projects
         </div>
-        <div class="global-hide-on-mobile-down" style:margin-left="auto">
+        <div class="seeding-policy">
           {#if policy && scope}
-            <ScopePolicyPopover {scope} {policy} popoverPositionRight="0" />
+            <span class="txt-bold">Seeding Policy:</span>
+            {capitalize(shortScope)}
+            <div class="global-hide-on-mobile-down">
+              <Popover
+                popoverPositionBottom="0"
+                popoverPositionLeft="-17rem"
+                popoverPositionRight="2rem">
+                <IconButton slot="toggle" let:toggle on:click={toggle}>
+                  <IconSmall name="help" />
+                </IconButton>
+                <ScopePolicyExplainer slot="popover" {scope} {policy} />
+              </Popover>
+            </div>
           {/if}
         </div>
-      </div>
-      <div class="subtitle global-hide-on-small-desktop-up">
-        {#if policy && scope}
-          <ScopePolicyPopover {scope} {policy} popoverPositionRight="-4.5rem" />
-        {/if}
       </div>
 
       <div style:margin-top="1rem" style:padding-bottom="2.5rem">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type { BaseUrl, Node, Project, Remote, Tree } from "@httpd-client";
   import type { BlobResult } from "./router";
   import type { Route } from "@app/lib/router";
 
@@ -15,6 +15,7 @@
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let commit: string;
   export let rawPath: (commit?: string) => string;
   export let blobResult: BlobResult;
@@ -130,7 +131,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
+<Layout {node} {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem 0 1rem 1rem" slot="subheader">

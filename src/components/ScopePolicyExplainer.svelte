@@ -1,17 +1,41 @@
 <script lang="ts">
   import type { Scope, Policy } from "@httpd-client";
 
+  import { capitalize } from "lodash";
+
   export let scope: Scope;
   export let policy: Policy;
 </script>
 
-{#if policy === "allow"}
-  All discovered repositories will get seeded,
-{:else if policy === "block"}
-  Only repositories marked as such will get seeded,
-{/if}
-{#if scope === "all"}
-  and all changes in those repositories, made by any peer, will be synced.
-{:else if scope === "followed"}
-  and only changes made by explicitly followed peers will be synced.
-{/if}
+<style>
+  .section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+</style>
+
+<div class="section">
+  Scope:
+  <span class="txt-bold">{capitalize(scope)}</span>
+</div>
+<div class="txt-missing">
+  {#if scope === "all"}
+    All changes in seeded repositories, made by any peer, will be synced.
+  {:else if scope === "followed"}
+    Only changes made by explicitly followed peers will be synced.
+  {/if}
+</div>
+
+<div class="section">
+  Policy:
+  <span class="txt-bold">{capitalize(policy)}</span>
+</div>
+<div class="txt-missing">
+  {#if policy === "allow"}
+    All discovered repositories will get seeded.
+  {:else if policy === "block"}
+    Only repositories marked as such will get seeded.
+  {/if}
+</div>

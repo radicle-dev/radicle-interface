@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Issue, IssueState, Project } from "@httpd-client";
+  import type {
+    BaseUrl,
+    Issue,
+    IssueState,
+    Node,
+    Project,
+  } from "@httpd-client";
 
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@httpd-client";
@@ -24,6 +30,7 @@
   import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let issues: Issue[];
   export let project: Project;
   export let state: IssueState["status"];
@@ -105,7 +112,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project} activeTab="issues">
+<Layout {node} {baseUrl} {project} activeTab="issues">
   <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"

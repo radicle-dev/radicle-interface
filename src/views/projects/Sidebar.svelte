@@ -1,15 +1,17 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Node, Project } from "@httpd-client";
+
+  import { onMount } from "svelte";
 
   import { experimental } from "@app/lib/appearance";
-  import { queryProject } from "@app/lib/projects";
   import { httpdStore, api } from "@app/lib/httpd";
   import { isLocal } from "@app/lib/utils";
-  import { onMount } from "svelte";
+  import { queryProject } from "@app/lib/projects";
 
   import Button from "@app/components/Button.svelte";
   import ContextHelp from "@app/views/projects/Sidebar/ContextHelp.svelte";
+  import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -21,6 +23,7 @@
   const SIDEBAR_STATE_KEY = "sidebarState";
 
   export let activeTab: ActiveTab | undefined = undefined;
+  export let node: Node;
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let collapsedOnly = false;
@@ -129,17 +132,17 @@
     justify-content: space-between;
     width: 100%;
   }
+  .repo,
   .help {
     z-index: 10;
-    opacity: 0;
-  }
-  .help.expanded {
     opacity: 1;
-    transition: opacity 150ms;
+    transition:
+      opacity 150ms,
+      display 150ms allow-discrete;
     transition-delay: 150ms;
   }
   .help-box {
-    width: 20.5rem;
+    width: 100%;
     padding: 1rem;
     margin-bottom: 0.5rem;
     background-color: var(--color-background-float);
@@ -147,18 +150,19 @@
     font-size: var(--font-size-small);
     border-radius: var(--border-radius-small);
   }
+  .repo-box {
+    margin-bottom: 0.5rem;
+  }
   .vertical-buttons {
     opacity: 1;
     height: fit-content;
     display: flex;
     flex-direction: column-reverse;
-    transition: opacity 150ms ease-in-out;
+    transition:
+      opacity 150ms ease-in-out,
+      display 150ms ease-in-out allow-discrete;
     transition-delay: 60ms;
     margin-bottom: 0.5rem;
-  }
-  .vertical-buttons.expanded {
-    opacity: 0;
-    height: 0;
   }
   .horizontal-buttons {
     display: flex;
@@ -169,6 +173,13 @@
   .horizontal-buttons.expanded {
     opacity: 1;
     transition: opacity 150ms ease-in-out;
+  }
+  .collapse-label {
+    display: none;
+  }
+  .collapse-label.expanded {
+    display: block;
+    transition: opacity 30ms ease-in-out;
   }
   .icon {
     transform: rotate(180deg);
@@ -185,6 +196,7 @@
 </style>
 
 <div class="sidebar" class:expanded>
+  <!-- Top Navigation Items -->
   <div class="project-navigation">
     <Link
       title="Source"
@@ -258,87 +270,113 @@
       </Button>
     </Link>
   </div>
+  <!-- Context and other information section -->
   <div class="bottom">
-    <div class="help" class:expanded>
-      {#if !hideContextHelp && expanded && $experimental}
-        {#if !localProject}
-          <div
-            style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-            <Loading small />
-          </div>
-        {:else}
-          <div class="help-box">
-            <ContextHelp
-              {localProject}
-              {baseUrl}
-              projectId={project.id}
-              hideLocalButton={isLocal(baseUrl.hostname) ||
-                localProject !== "found"}
-              disableLocalButton={$httpdStore.state !== "authenticated"} />
-          </div>
+    {#if expanded}
+      <div class="help">
+        {#if !hideContextHelp && $experimental}
+          {#if !localProject}
+            <div
+              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
+              <Loading small />
+            </div>
+          {:else}
+            <div class="help-box">
+              <ContextHelp
+                {localProject}
+                {baseUrl}
+                projectId={project.id}
+                hideLocalButton={isLocal(baseUrl.hostname) ||
+                  localProject !== "found"}
+                disableLocalButton={$httpdStore.state !== "authenticated"} />
+            </div>
+          {/if}
         {/if}
-      {/if}
-    </div>
-    <div class="vertical-buttons" class:expanded style:gap="0.5rem">
-      <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-        <Button
-          stylePadding="0 0.75rem"
-          variant="background"
-          title="Settings"
-          slot="toggle"
-          let:toggle
-          on:click={toggle}>
-          <IconSmall name="settings" />
-        </Button>
+      </div>
+      <div class="repo">
+        <div class="repo-box">
+          <ContextRepo {project} {baseUrl} {node} />
+        </div>
+      </div>
+    {:else}
+      <div class="vertical-buttons" style:gap="0.5rem">
+        <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+          <Button
+            stylePadding="0 0.75rem"
+            variant="background"
+            title="Settings"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="settings" />
+          </Button>
 
-        <Settings slot="popover" />
-      </Popover>
+          <Settings slot="popover" />
+        </Popover>
 
-      <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-        <Button
-          stylePadding="0 0.75rem"
-          variant="background"
-          title="Help"
-          slot="toggle"
-          let:toggle
-          on:click={toggle}>
-          <IconSmall name="help" />
-        </Button>
+        <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+          <Button
+            stylePadding="0 0.75rem"
+            variant="background"
+            title="Help"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="help" />
+          </Button>
 
-        <Help slot="popover" />
-      </Popover>
+          <Help slot="popover" />
+        </Popover>
 
-      {#if !hideContextHelp && $experimental}
-        {#if !localProject}
-          <div
-            style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-            <Loading small condensed />
+        <Popover popoverPositionBottom="0" popoverPositionLeft="2rem">
+          <Button
+            stylePadding="0 0.75rem"
+            variant="background"
+            title="Info"
+            slot="toggle"
+            let:toggle
+            on:click={toggle}>
+            <IconSmall name="info" />
+          </Button>
+
+          <div slot="popover">
+            <ContextRepo disablePopovers {node} {baseUrl} {project} />
           </div>
-        {:else}
-          <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-            <Button
-              stylePadding="0 0.75rem"
-              variant="background"
-              title="Local node"
-              slot="toggle"
-              let:toggle
-              on:click={toggle}>
-              <IconSmall name="device" />
-            </Button>
+        </Popover>
 
-            <ContextHelp
-              {localProject}
-              {baseUrl}
-              popover
-              projectId={project.id}
-              hideLocalButton={isLocal(baseUrl.hostname) ||
-                localProject !== "found"}
-              disableLocalButton={$httpdStore.state !== "authenticated"}
-              slot="popover" />
-          </Popover>
+        {#if !hideContextHelp && $experimental}
+          {#if !localProject}
+            <div
+              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
+              <Loading small condensed />
+            </div>
+          {:else}
+            <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+              <Button
+                stylePadding="0 0.75rem"
+                variant="background"
+                title="Local node"
+                slot="toggle"
+                let:toggle
+                on:click={toggle}>
+                <IconSmall name="device" />
+              </Button>
+
+              <ContextHelp
+                {localProject}
+                {baseUrl}
+                popover
+                projectId={project.id}
+                hideLocalButton={isLocal(baseUrl.hostname) ||
+                  localProject !== "found"}
+                disableLocalButton={$httpdStore.state !== "authenticated"}
+                slot="popover" />
+            </Popover>
+          {/if}
         {/if}
-      {/if}
-    </div>
+      </div>
+    {/if}
+    <!-- Footer -->
     {#if !collapsedOnly}
       <div class="sidebar-footer" style:flex-direction="row">
         <Button
@@ -348,8 +386,8 @@
           <div class="icon" class:expanded>
             <IconSmall name="chevron-left" />
           </div>
+          <span class="collapse-label" class:expanded>Collapse</span>
         </Button>
-        <div style:width="1.5rem" />
         <div class="horizontal-buttons" class:expanded>
           <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
             <Button
@@ -364,6 +402,8 @@
 
             <Settings slot="popover" />
           </Popover>
+        </div>
+        <div class="horizontal-buttons" class:expanded>
           <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
             <Button
               variant="background"

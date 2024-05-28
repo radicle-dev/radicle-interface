@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit, Project } from "@httpd-client";
+  import type { BaseUrl, Commit, Node, Project } from "@httpd-client";
 
   import { formatCommit } from "@app/lib/utils";
 
@@ -14,6 +14,7 @@
   import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
+  export let node: Node;
   export let commit: Commit;
   export let project: Project;
 
@@ -46,7 +47,7 @@
   }
 </style>
 
-<Layout {baseUrl} {project}>
+<Layout {node} {baseUrl} {project}>
   <div class="commit">
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">
