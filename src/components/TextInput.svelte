@@ -145,6 +145,7 @@
     {placeholder}
     {disabled}
     bind:value
+    autocomplete="off"
     on:input
     on:focus={handleFocusEvent}
     on:blur={handleFocusEvent}
