@@ -9,8 +9,7 @@
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import markdown from "@app/lib/markdown";
-  import { Renderer } from "@app/lib/markdown";
+  import { Renderer, markdownWithExtensions } from "@app/lib/markdown";
   import { activeUnloadedRouteStore } from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
   import {
@@ -93,7 +92,7 @@
 
   function render(content: string): string {
     return dompurify.sanitize(
-      markdown.parse(content, {
+      markdownWithExtensions.parse(content, {
         renderer: new Renderer($activeUnloadedRouteStore, {
           stripEmphasizedStyling: false,
         }),

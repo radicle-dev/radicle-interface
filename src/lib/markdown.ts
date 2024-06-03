@@ -1,4 +1,4 @@
-import type { Tokens } from "marked";
+import type { MarkedExtension, Tokens } from "marked";
 import type { Route } from "@app/lib/router";
 
 import dompurify from "dompurify";
@@ -75,9 +75,7 @@ const footnoteMarkedExtension = {
   renderer: (token: Tokens.Generic): string =>
     `<p class="txt-small footnote" id="${footnotePrefix}:${
       token.reference
-    }"><span class="marker">${
-      token.reference
-    }.</span> ${markedInstance.parseInline(
+    }"><span class="marker">${token.reference}.</span> ${markdownWithExtensions.parseInline(
       token.text,
     )} <a class="txt-tiny ref-arrow no-underline" href="#${referencePrefix}:${
       token.reference
@@ -159,17 +157,21 @@ export class Renderer extends BaseRenderer {
   }
 }
 
-const markedInstance = new Marked(
-  katexMarkedExtension({ throwOnError: false }),
-  markedLinkifyIt({}, { fuzzyLink: false }),
-  {
+function markedCustomExtensions(): MarkedExtension {
+  return {
     extensions: [
       emojisMarkedExtension,
       footnoteMarkedExtension,
       footnoteReferenceMarkedExtension,
       anchorMarkedExtension,
     ],
-  },
-);
+  };
+}
 
-export default markedInstance;
+export default new Marked();
+
+export const markdownWithExtensions = new Marked(
+  katexMarkedExtension({ throwOnError: false }),
+  markedLinkifyIt({}, { fuzzyLink: false }),
+  markedCustomExtensions(),
+);
