@@ -1,8 +1,12 @@
 import {
+  aliceMainCommitCount,
+  aliceMainCommitMessage,
   aliceMainHead,
+  bobMainCommitCount,
   cobUrl,
   expect,
   markdownUrl,
+  shortAliceHead,
   shortBobHead,
   sourceBrowsingRid,
   sourceBrowsingUrl,
@@ -30,11 +34,15 @@ test("navigate to project", async ({ page }) => {
   {
     await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+      page
+        .getByRole("button", {
+          name: `${shortAliceHead} ${aliceMainCommitMessage}`,
+        })
+        .first(),
     ).toBeVisible();
     await expect(
       page.getByRole("link", {
-        name: "Commits 7",
+        name: `Commits ${aliceMainCommitCount}`,
       }),
     ).toBeVisible();
   }
@@ -54,7 +62,9 @@ test("navigate to project", async ({ page }) => {
 
 test("show source tree at specific revision", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "Commits 7" }).click();
+  await page
+    .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
+    .click();
 
   await page
     .locator(".teaser", { hasText: "335dd6d" })
@@ -290,11 +300,15 @@ test("peer and branch switching", async ({ page }) => {
     {
       await expect(page.getByTitle("Change branch")).toHaveText("main");
       await expect(
-        page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+        page
+          .getByRole("button", {
+            name: `${shortAliceHead} ${aliceMainCommitMessage}`,
+          })
+          .first(),
       ).toBeVisible();
       await expect(
         page.getByRole("link", {
-          name: "Commits 7",
+          name: `Commits ${aliceMainCommitCount}`,
         }),
       ).toBeVisible();
     }
@@ -347,7 +361,11 @@ test("peer and branch switching", async ({ page }) => {
 
     await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "4a9f278 Add submodule" }).first(),
+      page
+        .getByRole("button", {
+          name: `${shortAliceHead} ${aliceMainCommitMessage}`,
+        })
+        .first(),
     ).toBeVisible();
     await expect(page.getByText("Git test repository")).toBeVisible();
   }
@@ -369,7 +387,7 @@ test("peer and branch switching", async ({ page }) => {
       ).toBeVisible();
       await expect(
         page.getByRole("link", {
-          name: "Commits 8",
+          name: `Commits ${bobMainCommitCount}`,
         }),
       ).toBeVisible();
       await expect(

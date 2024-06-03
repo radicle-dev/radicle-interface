@@ -1,5 +1,8 @@
 import {
+  aliceMainCommitCount,
+  aliceMainCommitMessage,
   aliceMainHead,
+  bobMainCommitCount,
   expect,
   gitOptions,
   shortBobHead,
@@ -11,7 +14,9 @@ import sinon from "sinon";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "Commits 7" }).click();
+  await page
+    .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
+    .click();
 
   // Alice's peer.
   {
@@ -25,10 +30,12 @@ test("peer and branch switching", async ({ page }) => {
     await expect(page.getByTitle("Change peer")).toHaveText("alice Delegate");
 
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".list .teaser")).toHaveCount(7);
+    await expect(page.locator(".list .teaser")).toHaveCount(
+      aliceMainCommitCount,
+    );
 
     const latestCommit = page.locator(".teaser").first();
-    await expect(latestCommit).toContainText("Add submodule");
+    await expect(latestCommit).toContainText(aliceMainCommitMessage);
     await expect(latestCommit).toContainText(aliceMainHead.substring(0, 7));
 
     const earliestCommit = page.locator(".teaser").last();
@@ -44,7 +51,7 @@ test("peer and branch switching", async ({ page }) => {
       page.getByRole("button", { name: "feature/branch" }),
     ).toBeVisible();
     await expect(page.getByText("Thursday, November 17, 2022")).toBeVisible();
-    await expect(page.locator(".list .teaser")).toHaveCount(9);
+    await expect(page.locator(".list .teaser")).toHaveCount(bobMainCommitCount);
 
     await page.getByTitle("Change branch").click();
     await page.getByText("orphaned-branch").click();
@@ -85,14 +92,47 @@ test("peer and branch switching", async ({ page }) => {
   }
 });
 
+test("commit messages with double colon not converted into single colon", async ({
+  page,
+}) => {
+  const commitMessage = "Verify that crate::DoubleColon::should_work()";
+  const shortCommit = "7babd25";
+  await page.goto(sourceBrowsingUrl);
+  await page
+    .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
+    .click();
+
+  await expect(
+    page.getByRole("button", {
+      name: `${shortCommit} ${commitMessage}`,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: commitMessage,
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  await page
+    .getByRole("link", {
+      name: commitMessage,
+      exact: true,
+    })
+    .click();
+  await expect(page.getByText(commitMessage, { exact: true })).toBeVisible();
+});
+
 test("expand commit message", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "Commits 7" }).click();
+  await page
+    .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
+    .click();
   const commitToggle = page.getByRole("button", { name: "expand" }).first();
 
   await commitToggle.click();
   const expandedCommit = page.getByText(
-    "Signed-off-by: Alice Liddell <alice@radicle.xyz>",
+    "This shouldn't replace double colons with simple colons",
   );
 
   await expect(expandedCommit).toBeVisible();
@@ -111,7 +151,9 @@ test("relative timestamps", async ({ page }) => {
   });
 
   await page.goto(sourceBrowsingUrl);
-  await page.getByRole("link", { name: "Commits 7" }).click();
+  await page
+    .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
+    .click();
 
   await page.getByTitle("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();

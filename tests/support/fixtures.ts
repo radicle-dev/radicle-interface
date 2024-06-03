@@ -599,12 +599,17 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
   );
 }
 
-export const aliceMainHead = "4a9f278344b795afaef44c0d9effb35c4d794fba";
+export const aliceMainHead = "7babd25a74eb3752ec24672b5edf0e7ecb4daf24";
+export const aliceMainCommitMessage =
+  "Verify that crate::DoubleColon::should_work()";
+export const aliceMainCommitCount = 8;
 export const aliceRemote =
   "did:key:z6MkqGC3nWZhYieEVTVDKW5v588CiGfsDSmRVG9ZwwWTvLSK";
+export const shortAliceHead = formatCommit(aliceMainHead);
 export const bobRemote =
   "did:key:z6Mkg49NtQR2LyYRDCQFK4w1VVHqhypZSSRo7HsyuN7SV7v5";
-export const bobHead = "79b0b2522c0d406d398cb5b7b381455294e1489f";
+export const bobHead = "82f570ec909e77c7e1bb764f1429b1e01b1b4a90";
+export const bobMainCommitCount = 9;
 export const shortBobHead = formatCommit(bobHead);
 export const sourceBrowsingRid = "rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir";
 export const cobRid = "rad:z3fpY7nttPPa6MBnAv2DccHzQJnqe";

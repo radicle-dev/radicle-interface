@@ -1,6 +1,7 @@
 import {
   aliceRemote,
   bobHead,
+  bobMainCommitCount,
   expect,
   shortBobHead,
   sourceBrowsingUrl,
@@ -14,7 +15,9 @@ test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
   await page.getByTitle("Change peer").click();
   await page.getByRole("link", { name: "bob" }).click();
-  await page.getByRole("link", { name: "Commits 8" }).click();
+  await page
+    .getByRole("link", { name: `Commits ${bobMainCommitCount}` })
+    .click();
 
   await page.getByText("Update readme").first().click();
   await expect(page).toHaveURL(commitUrl);
