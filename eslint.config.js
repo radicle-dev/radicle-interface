@@ -133,6 +133,11 @@ export default [
     },
   },
   {
-    ignores: ["node_modules/**/*", "build/**/*", "public/**/*"],
+    ignores: [
+      "node_modules/**/*",
+      "build/**/*",
+      "public/**/*",
+      "http-server/**/*",
+    ],
   },
 ];

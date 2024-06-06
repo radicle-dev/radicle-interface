@@ -1,7 +1,7 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": ["src", "tests", "http-client", "./*.js", "./*.ts"],
-  "exclude": ["node_modules/*"],
+  "exclude": ["node_modules/*", "http-server/*"],
   "compilerOptions": {
     "noEmit": true,
     "target": "es2020",
