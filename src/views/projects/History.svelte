@@ -6,11 +6,11 @@
     Remote,
     Node,
     Tree,
-  } from "@httpd-client";
+  } from "@http-client";
   import type { Route } from "@app/lib/router";
 
   import { COMMITS_PER_PAGE } from "./router";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { baseUrlToString } from "@app/lib/utils";
   import { groupCommits } from "@app/lib/commit";
 

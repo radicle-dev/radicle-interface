@@ -9,7 +9,7 @@
     Revision,
     Diff,
     Node,
-  } from "@httpd-client";
+  } from "@http-client";
 
   interface Thread {
     root: Comment;
@@ -42,7 +42,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Embed, Patch } from "@httpd-client";
+  import type { BaseUrl, Embed, Patch } from "@http-client";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { ComponentProps } from "svelte";
@@ -57,7 +57,7 @@
   import isEqual from "lodash/isEqual";
   import partial from "lodash/partial";
   import uniqBy from "lodash/uniqBy";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";
 

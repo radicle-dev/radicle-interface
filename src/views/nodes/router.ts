@@ -1,9 +1,9 @@
-import type { BaseUrl, NodeStats, Policy, Scope } from "@httpd-client";
+import type { BaseUrl, NodeStats, Policy, Scope } from "@http-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import config from "virtual:config";
-import { HttpdClient } from "@httpd-client";
-import { ResponseError, ResponseParseError } from "@httpd-client/lib/fetcher";
+import { HttpdClient } from "@http-client";
+import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { baseUrlToString } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
 import { unreachableError } from "@app/views/projects/error";

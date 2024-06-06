@@ -1,4 +1,4 @@
-import type { Embed } from "@httpd-client";
+import type { Embed } from "@http-client";
 
 async function parseGitOid(bytes: Uint8Array): Promise<string> {
   // Create the header

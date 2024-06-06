@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Blob } from "@httpd-client";
+  import type { BaseUrl, Blob } from "@http-client";
 
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";

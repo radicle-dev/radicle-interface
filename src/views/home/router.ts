@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl } from "@http-client";
 import type { ErrorRoute } from "@app/lib/router/definitions";
 
 import * as seeds from "@app/lib/seeds";

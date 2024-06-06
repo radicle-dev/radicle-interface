@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Comment, Embed } from "@httpd-client";
+  import type { Comment, Embed } from "@http-client";
 
   import { tick } from "svelte";
 

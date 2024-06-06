@@ -93,7 +93,7 @@
             scripts/check
             {
               npm run test:unit
-              npm run test:httpd-api:unit
+              npm run test:http-client:unit
             } | tee /dev/null
             runHook postCheck
           '';

@@ -1,9 +1,9 @@
-import type { Node, Policy, Scope } from "@httpd-client";
+import type { Node, Policy, Scope } from "@http-client";
 
 import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
 
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 import config from "virtual:config";
 import { deduplicateStore } from "@app/lib/deduplicateStore";
 import { experimental } from "./appearance";

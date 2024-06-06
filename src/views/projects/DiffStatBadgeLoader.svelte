@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { BaseUrl, Patch, Revision } from "@httpd-client";
+  import type { BaseUrl, Patch, Revision } from "@http-client";
 
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { formatCommit } from "@app/lib/utils";
 
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";

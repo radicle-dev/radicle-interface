@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { BaseUrl, Tree } from "@httpd-client";
+  import type { BaseUrl, Tree } from "@http-client";
 
   import { createEventDispatcher } from "svelte";
 

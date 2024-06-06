@@ -1,5 +1,5 @@
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
-import { ResponseParseError, ResponseError } from "@httpd-client/lib/fetcher";
+import { ResponseParseError, ResponseError } from "@http-client/lib/fetcher";
 
 export function handleError(
   error: Error | ResponseParseError | ResponseError,

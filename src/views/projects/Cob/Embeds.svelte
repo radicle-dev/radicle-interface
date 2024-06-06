@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Embed } from "@httpd-client";
+  import type { Embed } from "@http-client";
 
   import Badge from "@app/components/Badge.svelte";
   import Clipboard from "@app/components/Clipboard.svelte";

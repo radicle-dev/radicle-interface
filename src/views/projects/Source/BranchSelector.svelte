@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit, Project } from "@httpd-client";
+  import type { BaseUrl, Commit, Project } from "@http-client";
   import type { Route } from "@app/lib/router";
 
   import { activeUnloadedRouteStore } from "@app/lib/router";

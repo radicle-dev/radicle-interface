@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit } from "@httpd-client";
+  import type { BaseUrl, Commit } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import Link from "@app/components/Link.svelte";

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Policy, Scope } from "@httpd-client";
+  import type { Policy, Scope } from "@http-client";
 
   import capitalize from "lodash/capitalize";
 

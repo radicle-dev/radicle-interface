@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Node, Project } from "@httpd-client";
+  import type { BaseUrl, Node, Project } from "@http-client";
 
   import AppHeader from "@app/App/Header.svelte";
 

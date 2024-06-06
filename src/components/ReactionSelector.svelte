@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Comment } from "@httpd-client";
+  import type { Comment } from "@http-client";
 
   import { createEventDispatcher } from "svelte";
 

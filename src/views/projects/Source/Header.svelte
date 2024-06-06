@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { BaseUrl, Project, Remote, Tree } from "@httpd-client";
+  import type { BaseUrl, Project, Remote, Tree } from "@http-client";
   import type { Route } from "@app/lib/router";
 
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
 
   import BranchSelector from "./BranchSelector.svelte";
   import PeerSelector from "./PeerSelector.svelte";

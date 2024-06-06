@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { BaseUrl, Embed, Node, Project, Reaction } from "@httpd-client";
+  import type { BaseUrl, Embed, Node, Project, Reaction } from "@http-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { httpdStore } from "@app/lib/httpd";
 
   import AssigneeInput from "@app/views/projects/Cob/AssigneeInput.svelte";

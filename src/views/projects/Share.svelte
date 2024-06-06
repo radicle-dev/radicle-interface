@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl } from "@http-client";
 
   import debounce from "lodash/debounce";
   import { api, httpdStore } from "@app/lib/httpd";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PatchView } from "../router";
-  import type { BaseUrl, Patch, Project } from "@httpd-client";
+  import type { BaseUrl, Patch, Project } from "@http-client";
   import * as utils from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";

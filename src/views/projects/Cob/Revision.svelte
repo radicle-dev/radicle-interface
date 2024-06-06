@@ -7,11 +7,11 @@
     PatchState,
     Revision,
     Verdict,
-  } from "@httpd-client";
+  } from "@http-client";
   import type { Timeline } from "@app/views/projects/Patch.svelte";
 
   import * as utils from "@app/lib/utils";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { closeFocused } from "@app/components/Popover.svelte";
   import { onMount } from "svelte";
   import { parseEmbedIntoMap } from "@app/lib/file";

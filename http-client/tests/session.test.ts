@@ -2,8 +2,8 @@ import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import { describe, test } from "vitest";
 
-import { HttpdClient } from "@httpd-client";
-import { authenticate } from "@httpd-client/tests/support/httpd.js";
+import { HttpdClient } from "@http-client";
+import { authenticate } from "@http-client/tests/support/httpd.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { gitOptions } from "@tests/support/fixtures.js";
 import { tmpDir } from "@tests/support/support.js";

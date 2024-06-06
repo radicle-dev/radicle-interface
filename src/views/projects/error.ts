@@ -2,7 +2,7 @@ import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectRoute } from "@app/views/projects/router";
 
 import { baseUrlToString, isLocal } from "@app/lib/utils";
-import { ResponseParseError, ResponseError } from "@httpd-client/lib/fetcher";
+import { ResponseParseError, ResponseError } from "@http-client/lib/fetcher";
 import { httpdStore } from "@app/lib/httpd";
 import { get } from "svelte/store";
 

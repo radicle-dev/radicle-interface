@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Issue } from "@httpd-client";
+  import type { BaseUrl, Issue } from "@http-client";
 
   import {
     absoluteTimestamp,

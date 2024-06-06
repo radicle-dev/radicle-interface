@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CommitHeader } from "@httpd-client";
+  import type { CommitHeader } from "@http-client";
 
   import * as utils from "@app/lib/utils";
   import HoverPopover from "./HoverPopover.svelte";

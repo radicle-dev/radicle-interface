@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, CommitHeader } from "@httpd-client";
+  import type { BaseUrl, CommitHeader } from "@http-client";
 
   import { twemoji } from "@app/lib/utils";
 

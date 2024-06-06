@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Project } from "@http-client";
 
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";

@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl } from "@http-client";
 import type { LoadedRoute, Route } from "@app/lib/router/definitions";
 
 import { get, writable } from "svelte/store";

@@ -1,4 +1,4 @@
-import type { HttpdClient } from "@httpd-client";
+import type { HttpdClient } from "@http-client";
 import type { RadiclePeer } from "@tests/support/peerManager.js";
 
 import assert from "node:assert";

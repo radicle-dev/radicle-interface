@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl } from "@http-client";
 
   import config from "virtual:config";
   import { parseRepositoryId } from "@app/lib/utils";

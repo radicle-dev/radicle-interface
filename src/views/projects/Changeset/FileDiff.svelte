@@ -4,7 +4,7 @@
     ChangesetWithDiff,
     DiffContent,
     HunkLine,
-  } from "@httpd-client";
+  } from "@http-client";
 
   import { onDestroy, onMount } from "svelte";
   import { toHtml } from "hast-util-to-html";

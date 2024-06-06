@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl } from "@http-client";
 
   import { isLocal } from "@app/lib/utils";
 

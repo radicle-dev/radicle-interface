@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Embed } from "@httpd-client";
+  import type { Embed } from "@http-client";
 
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
 

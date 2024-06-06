@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Project } from "@httpd-client";
+  import type { BaseUrl, Project } from "@http-client";
 
   import { twemoji } from "@app/lib/utils";
 

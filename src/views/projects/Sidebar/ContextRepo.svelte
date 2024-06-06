@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Node, Project } from "@httpd-client";
+  import type { BaseUrl, Node, Project } from "@http-client";
 
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";

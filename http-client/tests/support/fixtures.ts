@@ -2,7 +2,7 @@ import * as FsSync from "node:fs";
 import * as Path from "node:path";
 import { test } from "vitest";
 
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 import { RadiclePeer, createPeerManager } from "@tests/support/peerManager.js";
 import { gitOptions } from "@tests/support/fixtures.js";
 import { tmpDir } from "@tests/support/support.js";

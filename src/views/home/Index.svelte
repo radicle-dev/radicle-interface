@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
   import type { ProjectInfo } from "@app/components/ProjectCard";
-  import type { BaseUrl, ProjectListQuery } from "@httpd-client";
+  import type { BaseUrl, ProjectListQuery } from "@http-client";
 
   import storedWritable from "@efstajas/svelte-stored-writable";
   import { derived } from "svelte/store";

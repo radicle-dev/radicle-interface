@@ -1,4 +1,4 @@
-import type { HttpdClient } from "@httpd-client";
+import type { HttpdClient } from "@http-client";
 
 import { expect } from "vitest";
 import isMatch from "lodash/isMatch";

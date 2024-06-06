@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { BaseUrl, Node, Project, Remote, Tree } from "@httpd-client";
+  import type { BaseUrl, Node, Project, Remote, Tree } from "@http-client";
   import type { BlobResult } from "./router";
   import type { Route } from "@app/lib/router";
 
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import Header from "./Source/Header.svelte";

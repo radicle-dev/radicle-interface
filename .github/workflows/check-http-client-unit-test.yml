@@ -1,8 +1,8 @@
-name: check-httpd-api-unit-test
+name: check-http-client-unit-test
 on: push
 
 jobs:
-  check-httpd-api-unit-test:
+  check-http-client-unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
@@ -18,4 +18,4 @@ jobs:
           ./scripts/install-binaries;
           ./scripts/install-binaries --show-path >> $GITHUB_PATH;
       - run: |
-          npm run test:httpd-api:unit
+          npm run test:http-client:unit

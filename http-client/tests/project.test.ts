@@ -1,6 +1,6 @@
 import { describe, test } from "vitest";
 
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 import {
   aliceMainHead,
   aliceRemote,
@@ -14,9 +14,9 @@ import {
   assertPatch,
   createIssueToBeModified,
   createPatchToBeModified,
-} from "@httpd-client/tests/support/support";
-import { authenticate } from "@httpd-client/tests/support/httpd.js";
-import { testFixture as testWithAPI } from "@httpd-client/tests/support/fixtures.js";
+} from "@http-client/tests/support/support";
+import { authenticate } from "@http-client/tests/support/httpd.js";
+import { testFixture as testWithAPI } from "@http-client/tests/support/fixtures.js";
 
 describe("project", () => {
   const api = new HttpdClient({

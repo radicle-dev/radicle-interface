@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl } from "@http-client";
 import type * as Execa from "execa";
 import { execa } from "execa";
 import * as Fs from "node:fs/promises";

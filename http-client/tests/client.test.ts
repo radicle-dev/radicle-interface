@@ -1,6 +1,6 @@
 import { describe, test } from "vitest";
 
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 import { defaultHttpdPort } from "@tests/support/fixtures";
 
 const api = new HttpdClient({

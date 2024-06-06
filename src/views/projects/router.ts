@@ -19,12 +19,12 @@ import type {
   Project,
   Remote,
   Tree,
-} from "@httpd-client";
+} from "@http-client";
 
 import * as Syntax from "@app/lib/syntax";
 import * as httpd from "@app/lib/httpd";
-import { HttpdClient } from "@httpd-client";
-import { ResponseError, ResponseParseError } from "@httpd-client/lib/fetcher";
+import { HttpdClient } from "@http-client";
+import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { experimental } from "@app/lib/appearance";
 import { get } from "svelte/store";
 import { handleError, unreachableError } from "@app/views/projects/error";

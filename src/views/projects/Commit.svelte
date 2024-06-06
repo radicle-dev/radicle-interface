@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit, Node, Project } from "@httpd-client";
+  import type { BaseUrl, Commit, Node, Project } from "@http-client";
 
   import { formatCommit } from "@app/lib/utils";
 

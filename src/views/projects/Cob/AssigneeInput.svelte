@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import type { Reaction } from "@httpd-client";
+  import type { Reaction } from "@http-client";
 
   import { createEventDispatcher } from "svelte";
 

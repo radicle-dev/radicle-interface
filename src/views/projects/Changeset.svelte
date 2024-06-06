@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, CommitBlob, Diff } from "@httpd-client";
+  import type { BaseUrl, CommitBlob, Diff } from "@http-client";
 
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";

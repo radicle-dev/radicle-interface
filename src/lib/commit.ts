@@ -1,7 +1,7 @@
-import type { BaseUrl, CommitHeader } from "@httpd-client";
+import type { BaseUrl, CommitHeader } from "@http-client";
 
 import { getDaysPassed } from "@app/lib/utils";
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 
 // A set of commits grouped by time.
 interface CommitGroup {

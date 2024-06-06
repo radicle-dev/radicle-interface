@@ -1,7 +1,7 @@
 import type {
   ResponseError,
   ResponseParseError,
-} from "@httpd-client/lib/fetcher";
+} from "@http-client/lib/fetcher";
 import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
 import type {
   ProjectLoadedRoute,

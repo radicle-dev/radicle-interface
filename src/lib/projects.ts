@@ -1,6 +1,6 @@
-import type { BaseUrl, Project } from "@httpd-client";
+import type { BaseUrl, Project } from "@http-client";
 
-import { HttpdClient } from "@httpd-client";
+import { HttpdClient } from "@http-client";
 import { isFulfilled } from "@app/lib/utils";
 
 export interface ProjectBaseUrl {

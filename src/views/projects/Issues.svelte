@@ -1,14 +1,8 @@
 <script lang="ts">
-  import type {
-    BaseUrl,
-    Issue,
-    IssueState,
-    Node,
-    Project,
-  } from "@httpd-client";
+  import type { BaseUrl, Issue, IssueState, Node, Project } from "@http-client";
 
   import capitalize from "lodash/capitalize";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { ISSUES_PER_PAGE } from "./router";
   import { baseUrlToString, isLocal } from "@app/lib/utils";
   import { closeFocused } from "@app/components/Popover.svelte";

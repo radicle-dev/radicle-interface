@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src", "tests", "httpd-client", "./*.js", "./*.ts"],
+  "include": ["src", "tests", "http-client", "./*.js", "./*.ts"],
   "exclude": ["node_modules/*"],
   "compilerOptions": {
     "noEmit": true,
@@ -20,8 +20,8 @@
     "skipLibCheck": true,
     "paths": {
       "@app/*": ["./src/*"],
-      "@httpd-client": ["./httpd-client/index.ts"],
-      "@httpd-client/*": ["./httpd-client/*"],
+      "@http-client": ["./http-client/index.ts"],
+      "@http-client/*": ["./http-client/*"],
       "@public/*": ["./public/*"],
       "@tests/*": ["./tests/*"]
     }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, ChangesetWithoutDiff } from "@httpd-client";
+  import type { BaseUrl, ChangesetWithoutDiff } from "@http-client";
 
   import Badge from "@app/components/Badge.svelte";
   import IconButton from "@app/components/IconButton.svelte";

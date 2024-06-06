@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl } from "@http-client";
 
 import md5 from "md5";
 import bs58 from "bs58";

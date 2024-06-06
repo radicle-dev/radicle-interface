@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
+  import type { BaseUrl } from "@http-client";
   import type { Route } from "@app/lib/router/definitions";
 
   import { activeUnloadedRouteStore } from "@app/lib/router";

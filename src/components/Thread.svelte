@@ -1,6 +1,6 @@
 <script lang="ts" strictEvents>
-  import type { Embed } from "@httpd-client";
-  import type { Comment } from "@httpd-client";
+  import type { Embed } from "@http-client";
+  import type { Comment } from "@http-client";
 
   import * as utils from "@app/lib/utils";
   import partial from "lodash/partial";

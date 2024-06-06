@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Reaction } from "@httpd-client/lib/project/comment";
+  import type { Reaction } from "@http-client/lib/project/comment";
   import type {
     BaseUrl,
     Comment,
@@ -8,7 +8,7 @@
     IssueState,
     Project,
     Node,
-  } from "@httpd-client";
+  } from "@http-client";
   import type { Session } from "@app/lib/httpd";
 
   import capitalize from "lodash/capitalize";
@@ -21,7 +21,7 @@
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import { experimental } from "@app/lib/appearance";
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import { closeFocused } from "@app/components/Popover.svelte";
   import { httpdStore } from "@app/lib/httpd";
   import { parseEmbedIntoMap } from "@app/lib/file";

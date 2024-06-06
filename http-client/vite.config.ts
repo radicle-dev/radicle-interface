@@ -11,7 +11,7 @@ export default defineConfig({
   ],
   test: {
     environment: "node",
-    include: ["httpd-client/tests/*.test.ts"],
+    include: ["http-client/tests/*.test.ts"],
     reporters: "verbose",
     globalSetup: "./tests/support/globalSetup",
   },
@@ -19,7 +19,7 @@ export default defineConfig({
     alias: {
       "@tests": path.resolve("./tests"),
       "@app": path.resolve("./src"),
-      "@httpd-client": path.resolve("./httpd-client"),
+      "@http-client": path.resolve("./http-client"),
     },
   },
 });

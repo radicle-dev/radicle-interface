@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { HttpdClient, type BaseUrl } from "@httpd-client";
+  import { HttpdClient, type BaseUrl } from "@http-client";
 
   import config from "virtual:config";
   import {

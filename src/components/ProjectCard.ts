@@ -1,4 +1,4 @@
-import type { ProjectListQuery } from "@httpd-client";
+import type { ProjectListQuery } from "@http-client";
 
 import { loadProjectActivity, type WeeklyActivity } from "@app/lib/commit";
 import {
@@ -6,7 +6,7 @@ import {
   type BaseUrl,
   type Commit,
   type Project,
-} from "@httpd-client";
+} from "@http-client";
 
 export interface ProjectInfo {
   project: Project;

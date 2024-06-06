@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { BaseUrl } from "@httpd-client";
-  import type { Patch } from "@httpd-client";
+  import type { BaseUrl } from "@http-client";
+  import type { Patch } from "@http-client";
 
   import {
     absoluteTimestamp,

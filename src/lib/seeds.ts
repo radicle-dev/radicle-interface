@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@httpd-client";
+import type { BaseUrl } from "@http-client";
 
 import storedWritable from "@efstajas/svelte-stored-writable";
 import unionBy from "lodash/unionBy";

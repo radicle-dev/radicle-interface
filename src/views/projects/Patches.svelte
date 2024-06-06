@@ -1,13 +1,7 @@
 <script lang="ts">
-  import type {
-    BaseUrl,
-    Node,
-    Patch,
-    PatchState,
-    Project,
-  } from "@httpd-client";
+  import type { BaseUrl, Node, Patch, PatchState, Project } from "@http-client";
 
-  import { HttpdClient } from "@httpd-client";
+  import { HttpdClient } from "@http-client";
   import capitalize from "lodash/capitalize";
 
   import { PATCHES_PER_PAGE } from "./router";
