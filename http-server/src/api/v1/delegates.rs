@@ -118,7 +118,7 @@ mod routes {
     use axum::http::StatusCode;
     use serde_json::json;
 
-    use crate::test::{self, get, HEAD, RID};
+    use crate::test::{self, get, CONTRIBUTOR_ALIAS, DID, HEAD, RID};
 
     #[tokio::test]
     async fn test_delegates_projects() {
@@ -147,8 +147,8 @@ mod routes {
                 "defaultBranch": "master",
                 "delegates": [
                   {
-                    "id": "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi",
-                    "alias": "seed"
+                    "id": DID,
+                    "alias": CONTRIBUTOR_ALIAS
                   }
                 ],
                 "threshold": 1,
@@ -169,6 +169,34 @@ mod routes {
                 "id": RID,
                 "seeding": 0,
               },
+              {
+                "name": "again-hello-world",
+                "description": "Rad repository for sorting",
+                "defaultBranch": "master",
+                "delegates": [
+                  {
+                    "id": DID,
+                    "alias": CONTRIBUTOR_ALIAS
+                  },
+                ],
+                "threshold": 1,
+                "visibility": {
+                  "type": "public"
+                },
+                "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
+                "patches": {
+                  "open": 0,
+                  "draft": 0,
+                  "archived": 0,
+                  "merged": 0,
+                },
+                "issues": {
+                  "open": 0,
+                  "closed": 0,
+                },
+                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                "seeding": 0,
+              }
             ])
         );
 
@@ -197,8 +225,8 @@ mod routes {
                 "defaultBranch": "master",
                 "delegates": [
                   {
-                    "id": "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi",
-                    "alias": "seed"
+                    "id": DID,
+                    "alias": CONTRIBUTOR_ALIAS
                   }
                 ],
                 "threshold": 1,
@@ -217,6 +245,34 @@ mod routes {
                   "closed": 0,
                 },
                 "id": RID,
+                "seeding": 0,
+              },
+              {
+                "name": "again-hello-world",
+                "description": "Rad repository for sorting",
+                "defaultBranch": "master",
+                "delegates": [
+                  {
+                    "id": DID,
+                    "alias": CONTRIBUTOR_ALIAS
+                  },
+                ],
+                "threshold": 1,
+                "visibility": {
+                  "type": "public"
+                },
+                "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
+                "patches": {
+                  "open": 0,
+                  "draft": 0,
+                  "archived": 0,
+                  "merged": 0,
+                },
+                "issues": {
+                  "open": 0,
+                  "closed": 0,
+                },
+                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 0,
               }
             ])

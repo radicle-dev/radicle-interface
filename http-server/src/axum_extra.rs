@@ -97,3 +97,15 @@ pub fn immutable_response(data: impl serde::Serialize) -> impl IntoResponse {
         Json(data),
     )
 }
+
+/// Add a Cache-Control header that marks the response as must-revalidate and
+/// instructs clients to cache the response for `max_age_seconds` .
+pub fn cached_response(data: impl serde::Serialize, max_age_in_seconds: u64) -> impl IntoResponse {
+    (
+        [(
+            header::CACHE_CONTROL,
+            format!("public, max-age={max_age_in_seconds}, must-revalidate"),
+        )],
+        Json(data),
+    )
+}

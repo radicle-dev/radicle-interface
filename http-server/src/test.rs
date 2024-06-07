@@ -265,6 +265,49 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
         .unwrap();
     tracing::debug!(target: "test", "Contributor patch: {}", patch.id());
 
+    let workdir = dir.join("again-hello-world");
+
+    env::set_var(env::GIT_COMMITTER_DATE, TIMESTAMP.to_string());
+
+    fs::create_dir_all(&workdir).unwrap();
+
+    // add commits to workdir (repo)
+    let mut opts = git2::RepositoryInitOptions::new();
+    opts.initial_head(DEFAULT_BRANCH);
+    let repo = git2::Repository::init_opts(&workdir, &opts).unwrap();
+    let tree = radicle::git::write_tree(
+        Path::new("README"),
+        "Hello World Again!\n".as_bytes(),
+        &repo,
+    )
+    .unwrap();
+
+    let sig_time = git2::Time::new(1673001014, 0);
+    let sig = git2::Signature::new("Alice Liddell", "alice@radicle.xyz", &sig_time).unwrap();
+
+    repo.commit(Some("HEAD"), &sig, &sig, "Initial commit\n", &tree, &[])
+        .unwrap();
+
+    repo.checkout_tree(tree.as_object(), None).unwrap();
+
+    // rad init
+    let repo = git2::Repository::open(&workdir).unwrap();
+    let name = "again-hello-world".to_string();
+    let description = "Rad repository for sorting".to_string();
+    let branch = RefString::try_from(DEFAULT_BRANCH).unwrap();
+    let visibility = Visibility::default();
+    let (rid, _, _) = radicle::rad::init(
+        &repo,
+        &name,
+        &description,
+        branch,
+        visibility,
+        signer,
+        &profile.storage,
+    )
+    .unwrap();
+    policies.seed(&rid, node::policy::Scope::All).unwrap();
+
     let options = crate::Options {
         aliases: std::collections::HashMap::new(),
         listen: std::net::SocketAddr::from(([0, 0, 0, 0], 8080)),

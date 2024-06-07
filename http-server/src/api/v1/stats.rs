@@ -37,6 +37,6 @@ mod routes {
         let response = get(&app, "/stats").await;
 
         assert_eq!(response.status(), StatusCode::OK);
-        assert_eq!(response.json().await, json!({ "repos": { "total": 2 } }));
+        assert_eq!(response.json().await, json!({ "repos": { "total": 3 } }));
     }
 }

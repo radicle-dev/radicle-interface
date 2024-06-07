@@ -224,6 +224,98 @@ impl PatchState {
     }
 }
 
+mod search {
+    use std::cmp::Ordering;
+
+    use nonempty::NonEmpty;
+    use serde::{Deserialize, Serialize};
+    use serde_json::json;
+
+    use radicle::crypto::Verified;
+    use radicle::identity::{Project, RepoId};
+    use radicle::node::routing::Store;
+    use radicle::node::AliasStore;
+    use radicle::node::Database;
+    use radicle::profile::Aliases;
+    use radicle::storage::RepositoryInfo;
+
+    #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct SearchQueryString {
+        pub q: Option<String>,
+        pub page: Option<usize>,
+        pub per_page: Option<usize>,
+    }
+
+    #[derive(Serialize, Deserialize, Eq, Debug)]
+    pub struct SearchResult {
+        pub rid: RepoId,
+        #[serde(flatten)]
+        pub payload: Project,
+        pub delegates: NonEmpty<serde_json::Value>,
+        pub seeds: usize,
+        #[serde(skip)]
+        pub index: usize,
+    }
+
+    impl SearchResult {
+        pub fn new(
+            q: &str,
+            info: RepositoryInfo<Verified>,
+            db: &Database,
+            aliases: &Aliases,
+        ) -> Option<Self> {
+            if info.doc.visibility.is_private() {
+                return None;
+            }
+            let payload = info.doc.project().ok()?;
+            let index = payload.name().find(q)?;
+            let seeds = db.count(&info.rid).unwrap_or_default();
+            let delegates = info.doc.delegates.map(|did| match aliases.alias(&did) {
+                Some(alias) => json!({
+                    "id": did,
+                    "alias": alias,
+                }),
+                None => json!({
+                    "id": did,
+                }),
+            });
+
+            Some(SearchResult {
+                rid: info.rid,
+                payload,
+                delegates,
+                seeds,
+                index,
+            })
+        }
+    }
+
+    impl Ord for SearchResult {
+        fn cmp(&self, other: &Self) -> Ordering {
+            match (self.index, other.index) {
+                (0, 0) => self.seeds.cmp(&other.seeds),
+                (0, _) => std::cmp::Ordering::Less,
+                (_, 0) => std::cmp::Ordering::Greater,
+                (ai, bi) if ai == bi => self.seeds.cmp(&other.seeds),
+                (_, _) => self.seeds.cmp(&other.seeds),
+            }
+        }
+    }
+
+    impl PartialOrd for SearchResult {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.cmp(other))
+        }
+    }
+
+    impl PartialEq for SearchResult {
+        fn eq(&self, other: &Self) -> bool {
+            self.rid == other.rid
+        }
+    }
+}
+
 mod project {
     use serde::Serialize;
     use serde_json::Value;
