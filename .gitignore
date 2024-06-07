@@ -3,6 +3,7 @@ node_modules/
 NOTES
 config/local*
 http-server/target
+http-server/build/artifacts
 
 # KaTeX files
 *.min.css
