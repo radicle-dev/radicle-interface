@@ -1,51 +1,117 @@
 <script lang="ts">
-  import type { BaseUrl, DefaultSeedingPolicy, NodeStats } from "@http-client";
-
-  import { capitalize } from "lodash";
+  import type { BaseUrl, Node, NodeStats } from "@http-client";
 
   import * as router from "@app/lib/router";
-  import { baseUrlToString, formatUserAgent, truncateId } from "@app/lib/utils";
+  import { baseUrlToString } from "@app/lib/utils";
   import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
 
-  import AppLayout from "@app/App/AppLayout.svelte";
+  import Settings from "@app/App/Settings.svelte";
+
+  import Button from "@app/components/Button.svelte";
+  import Command from "@app/components/Command.svelte";
+  import Help from "@app/App/Help.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import Id from "@app/components/Id.svelte";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import MobileFooter from "@app/App/MobileFooter.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
+
+  import PolicyExplainer from "./PolicyExplainer.svelte";
+  import PreferredSeedDropdown from "./PreferredSeedDropdown.svelte";
+  import Seeding from "./Seeding.svelte";
+  import UserAgent from "./UserAgent.svelte";
+  import NodeAddress from "./NodeAddress.svelte";
 
   export let baseUrl: BaseUrl;
-  export let nid: string;
   export let stats: NodeStats;
-  export let externalAddresses: string[];
-  export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
-  export let agent: string;
+  export let node: Node;
 
-  $: shortScope =
-    seedingPolicy?.default === "allow" && seedingPolicy?.scope === "all"
-      ? "permissive"
-      : "restrictive";
+  let scrollY: number;
+  let top: number;
+
+  $: if (scrollY >= 0 && scrollY < 289) {
+    top = 288 - scrollY;
+  } else if (scrollY >= 289) {
+    top = 0;
+  }
+
+  $: background = node.bannerUrl
+    ? `url("${node.bannerUrl}")`
+    : `url("/images/default-seed-header.png")`;
 </script>
 
 <style>
-  .layout {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 3rem 0 5rem 0;
+  .below-header {
+    display: grid;
+    grid-template: auto 1fr auto / auto 1fr auto;
   }
-  .header {
+  .breadcrumbs {
     display: flex;
     gap: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+    height: 3.5rem;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-small);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    justify-content: flex-end;
+  }
+
+  .header {
+    grid-column: 1 / 4;
+    border-bottom: 1px solid var(--color-fill-separator);
+    height: 18rem;
+    display: flex;
+    justify-content: space-between;
     flex-direction: column;
-    margin-bottom: 2rem;
+    position: sticky;
+    z-index: 5;
+    background-color: var(--color-background-default);
+    background-position: center;
+    background-size: cover;
+  }
+  .sidebar {
+    grid-column: 1 / 2;
+    border-right: 1px solid var(--color-fill-separator);
+    width: 30rem;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .content {
+    grid-column: 2 / 3;
+    margin-left: 30rem;
+  }
+
+  .mobile-header {
+    height: 8rem;
+    display: flex;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--color-fill-separator);
+    background-color: var(--color-background-default);
+    background-position: center;
+    background-size: cover;
+  }
+
+  .mobile-footer {
+    display: none;
+  }
+
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   .wrapper {
-    padding: 3rem;
+    padding: 1.5rem;
     max-width: 78rem;
     margin: 0 auto;
     width: 100%;
@@ -53,148 +119,352 @@
     flex-direction: column;
   }
 
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    height: 2rem;
+  }
+
   .subtitle {
     font-size: var(--font-size-small);
+    color: var(--color-foreground-dim);
     display: flex;
     align-items: center;
     gap: 0.5rem;
     width: 100%;
+    margin-top: 1rem;
   }
-  .info {
-    display: flex;
-    justify-content: space-between;
+  .projects {
+    margin-top: 0;
   }
-  .agent {
-    color: var(--color-fill-gray);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-small);
-  }
-  .seeding-policy {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
   }
   .empty-state {
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     height: 35vh;
-  }
-  .empty-state .heading {
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-bold);
   }
-  .empty-state .label {
-    display: block;
+  .box {
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-regular);
+    line-height: 1.625rem;
+    width: 17rem;
   }
+  code {
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-size-small);
+    background-color: var(--color-fill-ghost);
+    border-radius: var(--border-radius-tiny);
+    padding: 0.125rem 0.25rem;
+  }
+  .desktop-hostname {
+    max-width: 22rem;
+  }
+  @media (max-width: 1010.98px) {
+    .wrapper {
+      padding: 1.5rem;
+    }
+    .sidebar {
+      width: 325px;
+    }
+    .content {
+      margin-left: 325px;
+    }
+    .desktop-hostname {
+      max-width: 12rem;
+    }
+  }
+
   @media (max-width: 719.98px) {
+    .title {
+      display: flex;
+      flex-direction: column;
+      margin-left: 1.5rem;
+    }
+    .layout {
+      height: 100%;
+    }
+    .below-header {
+      height: 100%;
+    }
+    .header {
+      display: none;
+    }
+    .content {
+      overflow-x: hidden;
+      margin-left: 0;
+    }
     .wrapper {
       width: 100%;
       padding: 1rem;
     }
-    .info {
-      flex-direction: column;
-    }
-    .layout {
+    .container {
       padding: 0;
+    }
+    .projects {
+      margin-top: 3rem;
+    }
+    .mobile-footer {
+      margin-top: auto;
+      display: grid;
+      grid-column: 1 / 4;
+      background-color: pink;
     }
   }
 </style>
 
-<AppLayout>
-  <div class="layout">
-    <div class="wrapper">
-      <div class="header">
-        <div class="txt-large txt-bold">{baseUrl.hostname}</div>
-        <div class="info">
-          <div>
-            {#each externalAddresses as address}
-              <!-- If there are externalAddresses this is probably a remote node -->
-              <!-- in that case, we show all the defined externalAddresses as a listing -->
-              <Id
-                ariaLabel="node-id"
-                shorten={false}
-                id="{truncateId(nid)}@{address}"
-                clipboard={`${nid}@${address}`} />
-            {:else}
-              <!-- else this is probably a local node -->
-              <!-- So we show only the nid -->
-              <div class="global-hide-on-small-desktop-up">
-                <Id ariaLabel="node-id" id={truncateId(nid)} shorten={false} />
-              </div>
-              <div class="global-hide-on-mobile-down">
-                <Id ariaLabel="node-id" id={nid} shorten={false} />
-              </div>
-            {/each}
-          </div>
-          <Id
-            ariaLabel="agent"
-            id={formatUserAgent(agent)}
-            shorten={false}
-            style="none">
-            <div class="agent">
-              {formatUserAgent(agent)}
-            </div>
-          </Id>
-        </div>
-      </div>
+<svelte:window bind:scrollY />
 
-      <div class="subtitle" style:justify-content="space-between">
-        <div class="txt-semibold">Pinned repositories</div>
-        <div class="seeding-policy">
-          {#if seedingPolicy}
-            <span class="txt-bold">Seeding Policy:</span>
-            {capitalize(shortScope)}
-            <div class="global-hide-on-mobile-down">
-              <Popover
-                popoverPositionBottom="0"
-                popoverPositionLeft="-17rem"
-                popoverPositionRight="2rem">
-                <IconButton slot="toggle" let:toggle on:click={toggle}>
-                  <IconSmall name="help" />
-                </IconButton>
-                <ScopePolicyExplainer slot="popover" {seedingPolicy} />
-              </Popover>
-            </div>
-          {/if}
+<div class="layout">
+  <div class="header" style:background-image={background}>
+    <div class="breadcrumbs">
+      <Link
+        style="display: flex; align-items: center;"
+        route={{ resource: "nodes", params: undefined }}>
+        <div
+          style="background-color: var(--color-background-default);border-radius: var(--border-radius-small); display: flex; padding: 0.5rem 0;">
+          <img
+            style:margin="0 0.5rem"
+            width="24"
+            height="24"
+            class="logo"
+            alt="Radicle logo"
+            src="/radicle.svg" />
         </div>
-      </div>
-
-      <div style:margin-top="1rem" style:padding-bottom="2.5rem">
-        {#await fetchProjectInfos( baseUrl, { show: "pinned", perPage: stats.repos.total }, )}
-          <div style:height="35vh">
-            <Loading small center />
-          </div>
-        {:then projectInfos}
-          {#if projectInfos.length > 0}
-            <div class="project-grid">
-              {#each projectInfos as projectInfo}
-                <ProjectCard {projectInfo} />
-              {/each}
-            </div>
-          {:else}
-            <div class="empty-state">
-              <div class="heading">No pinned repositories</div>
-              <div class="label">
-                This node doesn't have any pinned repositories.
-              </div>
-            </div>
-          {/if}
-        {:catch error}
-          {router.push(handleError(error, baseUrlToString(baseUrl)))}
-        {/await}
-      </div>
+      </Link>
     </div>
   </div>
-</AppLayout>
+
+  <div class="below-header">
+    <div
+      class="sidebar global-hide-on-mobile-down"
+      style:top={`${top}px`}
+      style:height={`calc(100% - ${top}px)`}>
+      <div class="title">
+        <div
+          style="display: flex; align-items: center; gap: 1rem;"
+          style:margin-bottom="1.5rem">
+          <img
+            style:border-radius="var(--border-radius-small)"
+            style:min-width="64px"
+            width="64"
+            height="64"
+            class="avatar"
+            alt="Seed avatar"
+            src={node.avatarUrl
+              ? node.avatarUrl
+              : "/images/default-seed-avatar.png"} />
+          <div>
+            <div class="global-flex-item desktop-hostname">
+              <PreferredSeedDropdown>
+                <div class="txt-medium txt-semibold txt-overflow">
+                  {baseUrl.hostname}
+                </div>
+              </PreferredSeedDropdown>
+            </div>
+            <NodeAddress {node} />
+          </div>
+        </div>
+        {#if node.description}
+          <div class="description txt-small">
+            {node.description}
+          </div>
+        {:else}
+          <div
+            class="global-flex-item txt-small txt-missing"
+            style:align-items="center"
+            style:justify-content="space-between"
+            style:gap="0.25rem">
+            No description configured.
+            <Popover popoverPositionTop="0" popoverPositionLeft="2.25rem">
+              <IconButton slot="toggle" let:toggle on:click={toggle}>
+                <IconSmall name="info" />
+              </IconButton>
+
+              <div slot="popover" class="box">
+                If you're the owner of this node, you can customize this page by
+                setting the
+                <code>avatarUrl</code>
+                ,
+                <code>bannerUrl</code>
+                and
+                <code>description</code>
+                fields under the
+                <code>web</code>
+                object in your node config.
+                <div style:margin-top="1rem">
+                  <Command command="rad config edit" fullWidth />
+                </div>
+              </div>
+            </Popover>
+          </div>
+        {/if}
+        <div
+          style:display="flex"
+          style:margin-top="1.5rem"
+          style:margin-bottom="1rem"
+          style:flex-direction="column">
+          <PolicyExplainer seedingPolicy={node.config?.seedingPolicy} />
+          <div class="sidebar-item">
+            <Seeding count={stats.repos.total}>
+              <div style:width="2rem" />
+            </Seeding>
+          </div>
+          <div class="sidebar-item">
+            <UserAgent agent={node.agent} />
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div
+          style:margin-top="1.5rem"
+          style:display="flex"
+          style:justify-content="space-between"
+          style:flex-direction="row">
+          <div class="horizontal-buttons">
+            <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+              <Button
+                variant="outline"
+                title="Settings"
+                slot="toggle"
+                let:toggle
+                on:click={toggle}>
+                <IconSmall name="settings" />
+                Settings
+              </Button>
+
+              <Settings slot="popover" />
+            </Popover>
+          </div>
+          <div class="horizontal-buttons">
+            <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+              <Button
+                variant="outline"
+                title="Help"
+                slot="toggle"
+                let:toggle
+                on:click={toggle}>
+                <IconSmall name="help" />
+                Help
+              </Button>
+              <Help slot="popover" />
+            </Popover>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="global-hide-on-small-desktop-up">
+        <div
+          class="mobile-header txt-huge txt-semibold"
+          style:background-image={background}>
+        </div>
+      </div>
+      <div class="container">
+        <div class="wrapper">
+          <div
+            class="global-hide-on-small-desktop-up"
+            style="display: flex; align-items: center; gap: 1rem;">
+            <img
+              style:min-width="64px"
+              style:border-radius="var(--border-radius-small)"
+              width="64"
+              height="64"
+              alt="Seed avatar"
+              src={node.avatarUrl
+                ? node.avatarUrl
+                : "/images/default-seed-avatar.png"} />
+            <div>
+              <div class="global-flex-item">
+                <PreferredSeedDropdown>
+                  <div class="txt-medium txt-semibold txt-overflow">
+                    {baseUrl.hostname}
+                  </div>
+                </PreferredSeedDropdown>
+              </div>
+              <NodeAddress {node} />
+            </div>
+          </div>
+          {#if node.description}
+            <div
+              class="global-hide-on-small-desktop-up"
+              style:margin-top="1.5rem"
+              style:display="flex"
+              style:flex-direction="column"
+              style:gap="0.25rem">
+              {#if node.description}
+                <div class="description txt-small">
+                  {node.description}
+                </div>
+              {/if}
+            </div>
+          {:else}
+            <div
+              class="global-flex-item txt-small txt-missing global-hide-on-small-desktop-up"
+              style:margin-top="1.5rem">
+              No description configured.
+            </div>
+          {/if}
+
+          <div class="projects">
+            {#await fetchProjectInfos( baseUrl, { show: "pinned", perPage: stats.repos.total }, )}
+              <div style:height="35vh">
+                <Loading small center />
+              </div>
+            {:then projectInfos}
+              {#if projectInfos.length > 0}
+                <div class="project-grid">
+                  {#each projectInfos as projectInfo}
+                    <ProjectCard {projectInfo} />
+                  {/each}
+                </div>
+                <div class="subtitle">
+                  {projectInfos.length}
+                  pinned {projectInfos.length === 1
+                    ? "repository"
+                    : "repositories"}
+                </div>
+              {:else}
+                <div class="empty-state">
+                  This node doesn't have any pinned repositories.
+                </div>
+              {/if}
+            {:catch error}
+              {router.push(handleError(error, baseUrlToString(baseUrl)))}
+            {/await}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-footer">
+      <MobileFooter>
+        <div style:width="100%">
+          <Popover popoverPositionBottom="3rem" popoverPositionRight="-7.5rem">
+            <Button
+              let:expanded
+              slot="toggle"
+              variant={expanded ? "secondary" : "secondary-mobile-toggle"}
+              styleWidth="100%"
+              let:toggle
+              on:click={toggle}>
+              <IconSmall name="seedling" />
+            </Button>
+
+            <div slot="popover" style:width="20rem">
+              <PolicyExplainer seedingPolicy={node.config?.seedingPolicy} />
+              <UserAgent agent={node.agent} />
+            </div>
+          </Popover>
+        </div>
+      </MobileFooter>
+    </div>
+  </div>
+</div>

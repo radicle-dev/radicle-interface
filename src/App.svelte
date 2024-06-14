@@ -12,7 +12,6 @@
 
   import Commit from "@app/views/projects/Commit.svelte";
   import History from "@app/views/projects/History.svelte";
-  import Home from "@app/views/home/Index.svelte";
   import Issue from "@app/views/projects/Issue.svelte";
   import Issues from "@app/views/projects/Issues.svelte";
   import Nodes from "@app/views/nodes/View.svelte";
@@ -59,8 +58,6 @@
   <div class="loading">
     <Loading />
   </div>
-{:else if $activeRouteStore.resource === "home"}
-  <Home />
 {:else if $activeRouteStore.resource === "nodes"}
   <Nodes {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.source"}

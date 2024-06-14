@@ -13,9 +13,6 @@ describe("route invariant when parsed", () => {
     scheme: "http",
   };
 
-  test("home", () => {
-    return expectParsingInvariant({ resource: "home" });
-  });
   test("nodes", () => {
     expectParsingInvariant({
       resource: "nodes",
@@ -211,11 +208,6 @@ describe("route invariant when parsed", () => {
 describe("pathToRoute", () => {
   test("non-existent", () => {
     expectPathToRoute("/foo/baz/bar", null);
-  });
-
-  test("home", () => {
-    expectPathToRoute("", { resource: "home" });
-    expectPathToRoute("/", { resource: "home" });
   });
 
   test("nodes", () => {

@@ -2,7 +2,6 @@ import type {
   ResponseError,
   ResponseParseError,
 } from "@http-client/lib/fetcher";
-import type { HomeRoute, HomeLoadedRoute } from "@app/views/home/router";
 import type {
   ProjectLoadedRoute,
   ProjectRoute,
@@ -37,7 +36,6 @@ export interface ErrorRoute {
 
 export type Route =
   | BootingRoute
-  | HomeRoute
   | ErrorRoute
   | NotFoundRoute
   | ProjectRoute
@@ -45,7 +43,6 @@ export type Route =
 
 export type LoadedRoute =
   | BootingRoute
-  | HomeLoadedRoute
   | ErrorRoute
   | NotFoundRoute
   | ProjectLoadedRoute
@@ -57,8 +54,6 @@ export async function loadRoute(
 ): Promise<LoadedRoute> {
   if (route.resource === "nodes") {
     return await loadNodeRoute(route.params);
-  } else if (route.resource === "home") {
-    return { resource: "home" };
   } else if (
     route.resource === "project.source" ||
     route.resource === "project.history" ||

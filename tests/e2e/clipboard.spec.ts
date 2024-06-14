@@ -4,7 +4,6 @@ import {
   expect,
   sourceBrowsingUrl,
   sourceBrowsingRid,
-  nodeRemote,
   test,
 } from "@tests/support/fixtures.js";
 
@@ -58,13 +57,6 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
       )}.git source-browsing`,
       page,
     );
-  }
-
-  await page.goto("/nodes/radicle.local");
-  // Node address.
-  {
-    await page.getByRole("button", { name: "node-id" }).first().click();
-    await expectClipboard(`${nodeRemote}`, page);
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

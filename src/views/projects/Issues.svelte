@@ -25,6 +25,7 @@
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
+  import Separator from "./Separator.svelte";
   import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
@@ -32,6 +33,7 @@
   export let issues: Issue[];
   export let project: Project;
   export let status: IssueState["status"];
+  export let nodeAvatarUrl: string | undefined;
 
   let loading = false;
   let page = 0;
@@ -115,7 +117,18 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="issues">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="issues">
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.issues",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Issues
+    </Link>
+  </svelte:fragment>
   <div slot="header" class="header">
     <Popover
       popoverPadding="0"

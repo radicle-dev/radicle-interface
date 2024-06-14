@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AppLayout from "@app/App/AppLayout.svelte";
+  import Layout from "@app/App/Layout.svelte";
   import Icon from "@app/components/Icon.svelte";
 
   export let title: string;
@@ -16,9 +16,9 @@
   }
 </style>
 
-<AppLayout>
+<Layout>
   <div class="container">
     <Icon name="desert" size="48" />
     <div class="title txt-medium txt-bold">{title}</div>
   </div>
-</AppLayout>
+</Layout>

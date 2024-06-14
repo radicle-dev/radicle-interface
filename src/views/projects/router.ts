@@ -120,6 +120,7 @@ export type ProjectLoadedRoute =
         path: string;
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -134,6 +135,7 @@ export type ProjectLoadedRoute =
         revision: string | undefined;
         tree: Tree;
         commitHeaders: CommitHeader[];
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -143,6 +145,7 @@ export type ProjectLoadedRoute =
         seedingPolicy: SeedingPolicy;
         project: Project;
         commit: Commit;
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -153,6 +156,7 @@ export type ProjectLoadedRoute =
         project: Project;
         rawPath: (commit?: string) => string;
         issue: Issue;
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -163,6 +167,7 @@ export type ProjectLoadedRoute =
         project: Project;
         issues: Issue[];
         status: IssueState["status"];
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -173,6 +178,7 @@ export type ProjectLoadedRoute =
         project: Project;
         patches: Patch[];
         status: PatchState["status"];
+        nodeAvatarUrl: string | undefined;
       };
     }
   | {
@@ -185,6 +191,7 @@ export type ProjectLoadedRoute =
         patch: Patch;
         stats: Diff["stats"];
         view: PatchView;
+        nodeAvatarUrl: string | undefined;
       };
     };
 
@@ -264,10 +271,11 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.history") {
       return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
-      const [project, commit, seedingPolicy] = await Promise.all([
+      const [project, commit, seedingPolicy, node] = await Promise.all([
         api.project.getById(route.project),
         api.project.getCommitBySha(route.project, route.commit),
         api.getPoliciesById(route.project),
+        api.getNode(),
       ]);
 
       return {
@@ -277,6 +285,7 @@ export async function loadProjectRoute(
           seedingPolicy,
           project,
           commit,
+          nodeAvatarUrl: node.avatarUrl,
         },
       };
     } else if (route.resource === "project.issue") {
@@ -310,7 +319,7 @@ async function loadPatchesView(
   const searchParams = new URLSearchParams(route.search || "");
   const status = (searchParams.get("status") as PatchState["status"]) || "open";
 
-  const [project, patches, seedingPolicy] = await Promise.all([
+  const [project, patches, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllPatches(route.project, {
       status,
@@ -318,6 +327,7 @@ async function loadPatchesView(
       perPage: PATCHES_PER_PAGE,
     }),
     api.getPoliciesById(route.project),
+    api.getNode(),
   ]);
 
   return {
@@ -328,6 +338,7 @@ async function loadPatchesView(
       patches,
       status,
       project,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
@@ -338,7 +349,7 @@ async function loadIssuesView(
   const api = new HttpdClient(route.node);
   const status = route.status || "open";
 
-  const [project, issues, seedingPolicy] = await Promise.all([
+  const [project, issues, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllIssues(route.project, {
       status,
@@ -346,6 +357,7 @@ async function loadIssuesView(
       perPage: ISSUES_PER_PAGE,
     }),
     api.getPoliciesById(route.project),
+    api.getNode(),
   ]);
 
   return {
@@ -356,6 +368,7 @@ async function loadIssuesView(
       issues,
       status,
       project,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
@@ -387,10 +400,11 @@ async function loadTreeView(
     seedingPolicyPromise = api.getPoliciesById(route.project);
   }
 
-  const [project, peers, seedingPolicy] = await Promise.all([
+  const [project, peers, seedingPolicy, node] = await Promise.all([
     projectPromise,
     peersPromise,
     seedingPolicyPromise,
+    api.getNode(),
   ]);
 
   let branchMap: Record<string, string> = {
@@ -438,6 +452,7 @@ async function loadTreeView(
       tree,
       path,
       blobResult,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
@@ -496,11 +511,12 @@ async function loadHistoryView(
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
 
-  const [project, peers, seedingPolicy, branchMap] = await Promise.all([
+  const [project, peers, seedingPolicy, branchMap, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
     api.getPoliciesById(route.project),
     getPeerBranches(api, route.project, route.peer),
+    api.getNode(),
   ]);
 
   let commitId;
@@ -539,6 +555,7 @@ async function loadHistoryView(
       revision: route.revision,
       tree,
       commitHeaders,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
@@ -552,10 +569,11 @@ async function loadIssueView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, issue, seedingPolicy] = await Promise.all([
+  const [project, issue, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getIssueById(route.project, route.issue),
     api.getPoliciesById(route.project),
+    api.getNode(),
   ]);
   return {
     resource: "project.issue",
@@ -565,6 +583,7 @@ async function loadIssueView(
       project,
       rawPath,
       issue,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
@@ -578,10 +597,11 @@ async function loadPatchView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, patch, seedingPolicy] = await Promise.all([
+  const [project, patch, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
     api.getPoliciesById(route.project),
+    api.getNode(),
   ]);
   const latestRevision = patch.revisions[patch.revisions.length - 1];
   const { diff } = await api.project.getDiff(
@@ -643,6 +663,7 @@ async function loadPatchView(
       patch,
       stats: diff.stats,
       view,
+      nodeAvatarUrl: node.avatarUrl,
     },
   };
 }

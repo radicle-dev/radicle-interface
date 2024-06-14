@@ -16,8 +16,10 @@
   import Placeholder from "@app/components/Placeholder.svelte";
 
   import BlobComponent from "./Source/Blob.svelte";
-  import TreeComponent from "./Source/Tree.svelte";
+  import FilePath from "@app/components/FilePath.svelte";
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
+  import Separator from "./Separator.svelte";
+  import TreeComponent from "./Source/Tree.svelte";
 
   export let baseUrl: BaseUrl;
   export let blobResult: BlobResult;
@@ -26,10 +28,11 @@
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
-  export let seedingPolicy: SeedingPolicy;
   export let rawPath: (commit?: string) => string;
   export let revision: string | undefined;
+  export let seedingPolicy: SeedingPolicy;
   export let tree: Tree;
+  export let nodeAvatarUrl: string | undefined;
 
   let mobileFileTree = false;
 
@@ -117,11 +120,18 @@
 </style>
 
 <Layout
-  {seedingPolicy}
   {baseUrl}
+  {nodeAvatarUrl}
   {project}
+  {seedingPolicy}
   activeTab="source"
   stylePaddingBottom="0">
+  <svelte:fragment slot="breadcrumb">
+    {#if path !== "/"}
+      <Separator />
+      <FilePath filenameWithPath={path} />
+    {/if}
+  </svelte:fragment>
   <ProjectNameHeader {project} {baseUrl} slot="header" />
 
   <div style:margin="1rem" slot="subheader">

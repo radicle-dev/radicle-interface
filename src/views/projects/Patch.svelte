@@ -71,6 +71,7 @@
   import Reviews from "@app/views/projects/Cob/Reviews.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import RevisionSelector from "@app/views/projects/Patch/RevisionSelector.svelte";
+  import Separator from "./Separator.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
   export let baseUrl: BaseUrl;
@@ -80,6 +81,7 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
+  export let nodeAvatarUrl: string | undefined;
 
   function badgeColor(status: string): ComponentProps<Badge>["variant"] {
     if (status === "draft") {
@@ -278,6 +280,11 @@
     gap: 0.5rem;
     width: 100%;
   }
+  .id {
+    font-size: var(--font-size-small);
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
+  }
   @media (max-width: 719.98px) {
     .patch {
       display: block;
@@ -289,11 +296,32 @@
 </style>
 
 <Layout
-  {seedingPolicy}
   {baseUrl}
   {project}
+  {nodeAvatarUrl}
+  {seedingPolicy}
   activeTab="patches"
   stylePaddingBottom="0">
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.patches",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Patches
+    </Link>
+    <Separator />
+    <span class="id">
+      <div class="global-hide-on-small-desktop-down">
+        {patch.id}
+      </div>
+      <div class="global-hide-on-medium-desktop-up">
+        {utils.formatObjectId(patch.id)}
+      </div>
+    </span>
+  </svelte:fragment>
   <div class="patch">
     <div class="main">
       <CobHeader>

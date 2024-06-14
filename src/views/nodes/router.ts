@@ -1,4 +1,4 @@
-import type { BaseUrl, DefaultSeedingPolicy, NodeStats } from "@http-client";
+import type { BaseUrl, Node, NodeStats } from "@http-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import config from "virtual:config";
@@ -7,11 +7,15 @@ import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { baseUrlToString, isLocal } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
 import { unreachableError } from "@app/views/projects/error";
+import { preferredSeeds } from "@app/lib/seeds";
+import { get } from "svelte/store";
 
-export interface NodesRouteParams {
-  baseUrl: BaseUrl;
-  projectPageIndex: number;
-}
+export type NodesRouteParams =
+  | {
+      baseUrl: BaseUrl;
+      projectPageIndex: number;
+    }
+  | undefined;
 
 export interface NodesRoute {
   resource: "nodes";
@@ -22,11 +26,8 @@ export interface NodesLoadedRoute {
   resource: "nodes";
   params: {
     baseUrl: BaseUrl;
-    agent: string;
-    externalAddresses: string[];
-    nid: string;
     stats: NodeStats;
-    seedingPolicy?: DefaultSeedingPolicy;
+    node: Node;
   };
 }
 
@@ -43,10 +44,17 @@ export function nodePath(baseUrl: BaseUrl) {
 export async function loadNodeRoute(
   params: NodesRouteParams,
 ): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
-  if (
-    import.meta.env.PROD &&
-    isLocal(`${params.baseUrl.hostname}:${params.baseUrl.port}`)
-  ) {
+  let baseUrl: BaseUrl;
+
+  if (params) {
+    baseUrl = params.baseUrl;
+  } else {
+    baseUrl = get(preferredSeeds).selected;
+  }
+
+  const api = new HttpdClient(baseUrl);
+
+  if (import.meta.env.PROD && isLocal(`${baseUrl.hostname}:${baseUrl.port}`)) {
     return {
       resource: "error",
       params: {
@@ -56,19 +64,16 @@ export async function loadNodeRoute(
       },
     };
   }
-  const api = new HttpdClient(params.baseUrl);
+
   try {
     const [node, stats] = await Promise.all([api.getNode(), api.getStats()]);
 
     return {
       resource: "nodes",
       params: {
-        baseUrl: params.baseUrl,
-        nid: node.id,
+        baseUrl,
+        node,
         stats,
-        externalAddresses: node.config?.externalAddresses ?? [],
-        seedingPolicy: node.config?.seedingPolicy,
-        agent: node.agent,
       },
     };
   } catch (error) {

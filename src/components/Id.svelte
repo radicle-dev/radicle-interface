@@ -53,7 +53,6 @@
     gap: 0.5rem;
     justify-content: center;
     z-index: 20;
-    bottom: 1.5rem;
     background: var(--color-fill-ghost);
     color: var(--color-fill-gray);
     border: 1px solid var(--color-border-default);
@@ -101,7 +100,7 @@
   </div>
 
   {#if visible}
-    <div style:position="absolute">
+    <div style:position="absolute" style:top="-2rem">
       <div class="popover">
         <IconSmall name={icon} />
         {tooltip}

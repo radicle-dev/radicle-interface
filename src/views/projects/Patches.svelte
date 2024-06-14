@@ -25,6 +25,7 @@
   import PatchTeaser from "./Patch/PatchTeaser.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
+  import Separator from "./Separator.svelte";
   import Share from "./Share.svelte";
 
   export let baseUrl: BaseUrl;
@@ -32,6 +33,7 @@
   export let patches: Patch[];
   export let project: Project;
   export let status: PatchState["status"];
+  export let nodeAvatarUrl: string | undefined;
 
   let loading = false;
   let page = 0;
@@ -123,7 +125,18 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="patches">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="patches">
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.patches",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Patches
+    </Link>
+  </svelte:fragment>
   <div slot="header" class="header">
     <Popover
       popoverPadding="0"

@@ -8,11 +8,6 @@ export async function toClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
 }
 
-// Removes the first and last character which are always `/`.
-export function formatUserAgent(agent: string): string {
-  return agent.slice(1, -1);
-}
-
 export function formatInlineTitle(input: string): string {
   return input.replaceAll(/`([^`]+)`/g, "<code>$1</code>");
 }

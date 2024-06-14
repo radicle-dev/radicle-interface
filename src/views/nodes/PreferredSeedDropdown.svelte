@@ -1,15 +1,19 @@
 <script lang="ts">
   import { HttpdClient, type BaseUrl } from "@http-client";
 
+  import { derived } from "svelte/store";
+
   import config from "virtual:config";
   import {
     addSeedsToConfiguredSeeds,
     configuredPreferredSeeds,
-    preferredSeeds as preferredSeedsStore,
+    preferredSeeds,
     removeSeedFromConfiguredSeeds,
     selectPreferredSeed,
   } from "@app/lib/seeds";
   import { closeFocused } from "@app/components/Popover.svelte";
+  import { deduplicateStore } from "@app/lib/deduplicateStore";
+  import { push } from "@app/lib/router";
 
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
@@ -18,7 +22,9 @@
   import Popover from "@app/components/Popover.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
-  export let selectedSeed: BaseUrl;
+  const selectedSeed = deduplicateStore(
+    derived(preferredSeeds, $ => $?.selected),
+  );
 
   const validateInput = async (seed: BaseUrl) => {
     if (stateOptions.find(s => s.hostname === seed.hostname)) {
@@ -42,7 +48,7 @@
     validationMessage = undefined;
     valid = true;
   }
-  $: stateOptions = $preferredSeedsStore.seeds;
+  $: stateOptions = $preferredSeeds.seeds;
   let valid = true;
   let submittingInput = false;
   let validationMessage: undefined | string = undefined;
@@ -75,7 +81,7 @@
   .divider {
     height: 1px;
     width: 100%;
-    margin: 0.5rem 0.25rem;
+    margin: 0.5rem 0;
     background-color: var(--color-border-default);
   }
 
@@ -90,7 +96,7 @@
   bind:expanded
   popoverContainerMinWidth="0"
   popoverPositionTop="2.5rem"
-  popoverPositionLeft="-0.25rem"
+  popoverPositionLeft="0"
   popoverPadding="0.25rem"
   popoverBorderRadius="var(--border-radius-small)">
   <div
@@ -98,7 +104,7 @@
     slot="toggle"
     title="Switch preferred seeds"
     let:toggle>
-    <div class="txt-large txt-bold txt-overflow">{selectedSeed.hostname}</div>
+    <slot />
     <IconButton on:click={toggle}>
       <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
     </IconButton>
@@ -111,7 +117,7 @@
         name="seed"
         bind:value={customSeed}
         loading={submittingInput}
-        placeholder="Navigate to seed URL"
+        placeholder="Navigate to seed"
         on:submit={async () => {
           submittingInput = true;
           const customSeedBaseUrl = {
@@ -129,6 +135,10 @@
             selectPreferredSeed(customSeedBaseUrl);
             customSeed = "";
             closeFocused();
+            void push({
+              resource: "nodes",
+              params: { baseUrl: $selectedSeed, projectPageIndex: 0 },
+            });
           } else {
             submittingInput = false;
           }
@@ -145,9 +155,13 @@
               on:click={() => {
                 selectPreferredSeed(item);
                 closeFocused();
+                void push({
+                  resource: "nodes",
+                  params: { baseUrl: $selectedSeed, projectPageIndex: 0 },
+                });
               }}
               slot="item"
-              selected={item.hostname === selectedSeed.hostname}>
+              selected={item.hostname === $selectedSeed.hostname}>
               <div class="dropdown-item">
                 <div class="icon-item" style:min-width="0">
                   <IconSmall name="seedling" />
@@ -160,6 +174,11 @@
                     on:click={() => {
                       removeSeedFromConfiguredSeeds(item.hostname);
                       selectPreferredSeed(config.fallbackPreferredSeed);
+                      closeFocused();
+                      void push({
+                        resource: "nodes",
+                        params: { baseUrl: $selectedSeed, projectPageIndex: 0 },
+                      });
                     }}>
                     <IconSmall name="cross" />
                   </IconButton>
@@ -170,6 +189,10 @@
               on:click={() => {
                 selectPreferredSeed(config.fallbackPreferredSeed);
                 closeFocused();
+                void push({
+                  resource: "nodes",
+                  params: { baseUrl: $selectedSeed, projectPageIndex: 0 },
+                });
               }}
               slot="empty"
               selected>

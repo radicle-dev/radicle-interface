@@ -15,9 +15,11 @@
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Labels from "@app/views/projects/Cob/Labels.svelte";
   import Layout from "./Layout.svelte";
+  import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Reactions from "@app/components/Reactions.svelte";
+  import Separator from "./Separator.svelte";
   import Share from "@app/views/projects/Share.svelte";
   import ThreadComponent from "@app/components/Thread.svelte";
 
@@ -26,6 +28,7 @@
   export let issue: Issue;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
+  export let nodeAvatarUrl: string | undefined;
 
   $: uniqueEmbeds = uniqBy(
     issue.discussion.flatMap(comment => comment.embeds),
@@ -110,6 +113,11 @@
     align-items: center;
     margin-left: -0.25rem;
   }
+  .id {
+    font-size: var(--font-size-small);
+    font-family: var(--font-family-monospace);
+    font-weight: var(--font-weight-semibold);
+  }
   @media (max-width: 719.98px) {
     .bottom {
       padding: 0;
@@ -118,11 +126,33 @@
 </style>
 
 <Layout
-  {seedingPolicy}
   {baseUrl}
+  {nodeAvatarUrl}
   {project}
+  {seedingPolicy}
   activeTab="issues"
   stylePaddingBottom="0">
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.issues",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Issues
+    </Link>
+    <Separator />
+    <span class="id">
+      <div class="global-hide-on-small-desktop-down">
+        {issue.id}
+      </div>
+      <div class="global-hide-on-medium-desktop-up">
+        {utils.formatObjectId(issue.id)}
+      </div>
+    </span>
+  </svelte:fragment>
+
   <div class="issue">
     <div class="main">
       <CobHeader>

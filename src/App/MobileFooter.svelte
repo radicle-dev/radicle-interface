@@ -28,7 +28,7 @@
 <div class="mobile-footer">
   <Link
     style="width: 100%; display: flex; align-items: center; justify-content: center;"
-    route={{ resource: "home" }}>
+    route={{ resource: "nodes", params: undefined }}>
     <img
       width="16"
       height="16"

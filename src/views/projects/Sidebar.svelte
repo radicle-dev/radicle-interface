@@ -139,13 +139,6 @@
     opacity: 1;
     transition: opacity 150ms ease-in-out;
   }
-  .collapse-label {
-    display: none;
-  }
-  .collapse-label.expanded {
-    display: block;
-    transition: opacity 30ms ease-in-out;
-  }
   .icon {
     transform: rotate(180deg);
     transition: transform 150ms ease-in-out;
@@ -301,36 +294,37 @@
           <div class="icon" class:expanded>
             <IconSmall name="chevron-left" />
           </div>
-          <span class="collapse-label" class:expanded>Collapse</span>
         </Button>
-        <div class="horizontal-buttons" class:expanded>
-          <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-            <Button
-              variant="background"
-              title="Settings"
-              slot="toggle"
-              let:toggle
-              on:click={toggle}>
-              <IconSmall name="settings" />
-              Settings
-            </Button>
+        <div class="global-flex-item">
+          <div class="horizontal-buttons" class:expanded>
+            <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+              <Button
+                variant="outline"
+                title="Settings"
+                slot="toggle"
+                let:toggle
+                on:click={toggle}>
+                <IconSmall name="settings" />
+                Settings
+              </Button>
 
-            <Settings slot="popover" />
-          </Popover>
-        </div>
-        <div class="horizontal-buttons" class:expanded>
-          <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
-            <Button
-              variant="background"
-              title="Help"
-              slot="toggle"
-              let:toggle
-              on:click={toggle}>
-              <IconSmall name="help" />
-              Help
-            </Button>
-            <Help slot="popover" />
-          </Popover>
+              <Settings slot="popover" />
+            </Popover>
+          </div>
+          <div class="horizontal-buttons" class:expanded>
+            <Popover popoverPositionBottom="2.5rem" popoverPositionLeft="0">
+              <Button
+                variant="outline"
+                title="Help"
+                slot="toggle"
+                let:toggle
+                on:click={toggle}>
+                <IconSmall name="help" />
+                Help
+              </Button>
+              <Help slot="popover" />
+            </Popover>
+          </div>
         </div>
       </div>
     {/if}

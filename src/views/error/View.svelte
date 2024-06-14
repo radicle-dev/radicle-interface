@@ -3,7 +3,7 @@
   import type Icon from "@app/components/Icon.svelte";
   import type { ErrorParam } from "@app/lib/router/definitions";
 
-  import AppLayout from "@app/App/AppLayout.svelte";
+  import Layout from "@app/App/Layout.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
   export let icon: ComponentProps<Icon>["name"] = "desert";
@@ -32,10 +32,10 @@
   }
 </style>
 
-<AppLayout>
+<Layout>
   <div class="wrapper">
     <div class="container">
       <ErrorMessage {icon} {title} {description} {error} />
     </div>
   </div>
-</AppLayout>
+</Layout>

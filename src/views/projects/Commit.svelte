@@ -1,20 +1,24 @@
 <script lang="ts">
   import type { BaseUrl, Commit, Project, SeedingPolicy } from "@http-client";
 
+  import { formatObjectId } from "@app/lib/utils";
+
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
+  import Separator from "./Separator.svelte";
   import Share from "./Share.svelte";
-  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
   export let commit: Commit;
   export let project: Project;
+  export let nodeAvatarUrl: string | undefined;
 
   $: header = commit.commit;
 </script>
@@ -45,7 +49,27 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project}>
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project}>
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.history",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Commits
+    </Link>
+    <Separator />
+    <span class="id">
+      <div class="global-hide-on-small-desktop-down">
+        {commit.commit.id}
+      </div>
+      <div class="global-hide-on-medium-desktop-up">
+        {formatObjectId(commit.commit.id)}
+      </div>
+    </span>
+  </svelte:fragment>
   <div class="commit">
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">

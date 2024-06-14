@@ -4,11 +4,8 @@ declare module "virtual:*" {
       apiVersion: string;
       fallbackPublicExplorer: string;
       defaultHttpdPort: number;
-      defaultHttpdHostname: string;
       defaultLocalHttpdPort: number;
-      defaultNodePort: number;
       defaultHttpdScheme: string;
-      pinned: { baseUrl: BaseUrl }[];
     };
     source: {
       commitsPerPage: number;

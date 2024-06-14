@@ -107,7 +107,7 @@ async function navigate(
 function setTitle(loadedRoute: LoadedRoute) {
   const title: string[] = [];
 
-  if (loadedRoute.resource === "booting" || loadedRoute.resource === "home") {
+  if (loadedRoute.resource === "booting") {
     title.push("Radicle");
   } else if (loadedRoute.resource === "error") {
     title.push("Error");
@@ -194,11 +194,15 @@ function urlToRoute(url: URL): Route | null {
             params: { baseUrl, projectPageIndex: 0 },
           };
         }
+      } else {
+        return {
+          resource: "nodes",
+          params: undefined,
+        };
       }
-      return null;
     }
     case "": {
-      return { resource: "home" };
+      return { resource: "nodes", params: undefined };
     }
     default: {
       return null;
@@ -207,10 +211,12 @@ function urlToRoute(url: URL): Route | null {
 }
 
 export function routeToPath(route: Route): string {
-  if (route.resource === "home") {
-    return "/";
-  } else if (route.resource === "nodes") {
-    return nodePath(route.params.baseUrl);
+  if (route.resource === "nodes") {
+    if (route.params === undefined) {
+      return "/";
+    } else {
+      return nodePath(route.params.baseUrl);
+    }
   } else if (
     route.resource === "project.source" ||
     route.resource === "project.history" ||

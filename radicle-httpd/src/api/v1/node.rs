@@ -15,7 +15,7 @@ use radicle::Node;
 
 use crate::api::error::Error;
 use crate::api::Context;
-use crate::axum_extra::Path;
+use crate::axum_extra::{cached_response, Path};
 
 pub fn router(ctx: Context) -> Router {
     Router::new()
@@ -84,13 +84,15 @@ async fn node_handler(State(ctx): State<Context>) -> impl IntoResponse {
         }
     };
 
-    Ok::<_, Error>(Json(Response::new(
+    let response = Response::new(
         node_id,
         agent,
         config,
         node_state.to_string(),
         ctx.profile.config.web.clone(),
-    )))
+    );
+
+    Ok::<_, Error>(cached_response(response, 600))
 }
 
 /// Return stored information about other nodes.

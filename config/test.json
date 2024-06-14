@@ -1,16 +1,11 @@
 {
   "nodes": {
     "defaultHttpdPort": 8081,
-    "defaultHttpdHostname": "127.0.0.1",
-    "defaultHttpdScheme": "http",
-    "pinned": [
-      {
-        "baseUrl": {
-          "hostname": "127.0.0.1",
-          "port": 8081,
-          "scheme": "http"
-        }
-      }
-    ]
+    "defaultHttpdScheme": "http"
+  },
+  "fallbackPreferredSeed": {
+    "hostname": "127.0.0.1",
+    "port": 8081,
+    "scheme": "http"
   }
 }

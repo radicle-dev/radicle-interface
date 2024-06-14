@@ -17,7 +17,7 @@ test("node page", async ({ page }) => {
 test("empty pinned projects", async ({ page }) => {
   await page.route(
     ({ hostname, pathname }) =>
-      pathname === "/api/v1/projects" && hostname === "seed.radicle.garden",
+      pathname === "/api/v1/projects" && hostname === "127.0.0.1",
     async route => {
       await route.fulfill({
         status: 200,

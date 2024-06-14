@@ -4,8 +4,8 @@
     CommitHeader,
     Project,
     Remote,
-    Tree,
     SeedingPolicy,
+    Tree,
   } from "@http-client";
   import type { ProjectRoute } from "./router";
 
@@ -19,9 +19,11 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import Header from "./Source/Header.svelte";
   import Layout from "./Layout.svelte";
+  import Link from "@app/components/Link.svelte";
   import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
+  import Separator from "./Separator.svelte";
 
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
@@ -32,6 +34,7 @@
   export let project: Project;
   export let revision: string | undefined;
   export let tree: Tree;
+  export let nodeAvatarUrl: string | undefined;
 
   const api = new HttpdClient(baseUrl);
 
@@ -89,7 +92,18 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="source">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="source">
+  <svelte:fragment slot="breadcrumb">
+    <Separator />
+    <Link
+      route={{
+        resource: "project.history",
+        project: project.id,
+        node: baseUrl,
+      }}>
+      Commits
+    </Link>
+  </svelte:fragment>
   <ProjectNameHeader {project} {baseUrl} slot="header" />
 
   <div style:margin="1rem" slot="subheader">
