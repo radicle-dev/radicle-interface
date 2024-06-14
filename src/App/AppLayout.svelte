@@ -2,6 +2,9 @@
   import Footer from "@app/App/Footer.svelte";
   import Header from "@app/App/Header.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
+
+  export let styleHeaderBorderBottom: string =
+    "1px solid var(--color-fill-separator)";
 </script>
 
 <style>
@@ -9,9 +12,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-  .header {
-    border-bottom: 1px solid var(--color-fill-separator);
   }
   .content {
     height: 100%;
@@ -30,7 +30,9 @@
 </style>
 
 <div class="app">
-  <div class="global-hide-on-mobile-down header">
+  <div
+    class="global-hide-on-mobile-down header"
+    style:border-bottom={styleHeaderBorderBottom}>
     <Header />
   </div>
   <div class="content">

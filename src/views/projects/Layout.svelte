@@ -27,6 +27,10 @@
   .desktop-header {
     grid-column: 1 / 4;
     border-bottom: 1px solid var(--color-fill-separator);
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+      url("/images/aliens.png");
+    background-position: center;
+    background-size: cover;
   }
 
   .sidebar {
