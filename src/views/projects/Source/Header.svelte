@@ -1,26 +1,29 @@
 <script lang="ts">
+  import type { ProjectRoute } from "../router";
   import type { BaseUrl, Project, Remote, Tree } from "@http-client";
-  import type { Route } from "@app/lib/router";
 
   import { HttpdClient } from "@http-client";
 
-  import BranchSelector from "./BranchSelector.svelte";
-  import PeerSelector from "./PeerSelector.svelte";
-
   import Button from "@app/components/Button.svelte";
+  import CommitButton from "../components/CommitButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import PeerBranchSelector from "./PeerBranchSelector.svelte";
 
-  export let node: BaseUrl;
   export let commit: string;
-  export let branches: Array<{ name: string; route: Route }>;
-  export let peers: Array<{ remote: Remote; selected: boolean; route: Route }>;
   export let filesLinkActive: boolean;
   export let historyLinkActive: boolean;
+  export let node: BaseUrl;
+  export let peer: string | undefined;
+  export let peers: Remote[];
+  export let project: Project;
+  export let baseRoute: Extract<
+    ProjectRoute,
+    { resource: "project.source" } | { resource: "project.history" }
+  >;
   export let revision: string | undefined;
   export let tree: Tree;
-  export let project: Project;
 
   const api = new HttpdClient(node);
   let selectedBranch: string | undefined;
@@ -34,7 +37,6 @@
   }
 
   $: lastCommit = tree.lastCommit;
-  $: peer = peers.find(p => p.selected)?.remote.id;
 </script>
 
 <style>
@@ -42,8 +44,9 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    flex-wrap: wrap;
+    row-gap: 0.5rem;
     gap: 1rem;
+    flex-wrap: wrap;
     margin-bottom: 2rem;
   }
 
@@ -86,17 +89,21 @@
 </style>
 
 <div class="top-header">
-  {#if peers.length > 0}
-    <PeerSelector {peers} {project} {node} />
-  {/if}
-
-  <BranchSelector
-    {branches}
-    {project}
-    {node}
+  <PeerBranchSelector
+    {peers}
+    {peer}
+    {baseRoute}
     onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
-    selectedCommit={lastCommit}
+    {project}
     {selectedBranch} />
+  <CommitButton
+    styleMinWidth="0"
+    styleWidth="100%"
+    hideSummaryOnMobile={false}
+    projectId={project.id}
+    commit={lastCommit}
+    baseUrl={node}
+    styleRoundBorders />
 </div>
 
 <div class="header">

@@ -1,23 +1,19 @@
 import {
   aliceRemote,
   bobHead,
-  bobMainCommitCount,
   expect,
   shortBobHead,
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
+import { changeBranch } from "@tests/support/project";
 import sinon from "sinon";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 
 test("navigation from commit list", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
-  await page.getByLabel("Change peer").click();
-  await page.getByRole("link", { name: "bob" }).click();
-  await page
-    .getByRole("link", { name: `Commits ${bobMainCommitCount}` })
-    .click();
+  await changeBranch("bob", `main ${shortBobHead}`, page);
 
   await page.getByText("Update readme").first().click();
   await expect(page).toHaveURL(commitUrl);

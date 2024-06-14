@@ -21,15 +21,15 @@ import type {
   Tree,
 } from "@http-client";
 
-import * as Syntax from "@app/lib/syntax";
+import { experimental } from "@app/lib/appearance";
 import * as httpd from "@app/lib/httpd";
+import * as Syntax from "@app/lib/syntax";
+import { unreachable } from "@app/lib/utils";
+import { nodePath } from "@app/views/nodes/router";
+import { handleError, unreachableError } from "@app/views/projects/error";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
-import { experimental } from "@app/lib/appearance";
 import { get } from "svelte/store";
-import { handleError, unreachableError } from "@app/views/projects/error";
-import { nodePath } from "@app/views/nodes/router";
-import { unreachable } from "@app/lib/utils";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -119,7 +119,6 @@ export type ProjectLoadedRoute =
         project: Project;
         peers: Remote[];
         peer: string | undefined;
-        branches: string[];
         revision: string | undefined;
         tree: Tree;
         path: string;
@@ -137,7 +136,6 @@ export type ProjectLoadedRoute =
         project: Project;
         peers: Remote[];
         peer: string | undefined;
-        branches: string[];
         revision: string | undefined;
         tree: Tree;
         commitHeaders: CommitHeader[];
@@ -438,7 +436,9 @@ async function loadTreeView(
     isLocalNodeSeeding(route),
   ]);
 
-  let branchMap: Record<string, string>;
+  let branchMap: Record<string, string> = {
+    [project.defaultBranch]: project.head,
+  };
   if (route.peer) {
     const peer = peers.find(peer => peer.id === route.peer);
     if (!peer) {
@@ -449,15 +449,10 @@ async function loadTreeView(
     } else {
       branchMap = peer.heads;
     }
-  } else {
-    branchMap = { [project.defaultBranch]: project.head };
   }
 
   if (route.route) {
-    const { revision, path } = detectRevision(
-      route.route,
-      branchMap || { [project.defaultBranch]: project.head },
-    );
+    const { revision, path } = detectRevision(route.route, branchMap);
     route.revision = revision;
     route.path = path;
   }
@@ -481,7 +476,6 @@ async function loadTreeView(
       project,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
-      branches: Object.keys(branchMap),
       rawPath,
       revision: route.revision,
       tree,
@@ -587,7 +581,6 @@ async function loadHistoryView(
       project,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
-      branches: Object.keys(branchMap || {}),
       revision: route.revision,
       tree,
       commitHeaders,

@@ -54,7 +54,7 @@
     flex-direction: row;
     gap: 0.5rem;
     justify-content: center;
-    z-index: 10;
+    z-index: 20;
     background: var(--color-background-float);
     color: var(--color-foreground-default);
     border: 1px solid var(--color-border-hint);

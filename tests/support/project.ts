@@ -1,9 +1,16 @@
 import type { Locator, Page } from "@playwright/test";
 import type { RadiclePeer } from "@tests/support/peerManager";
 
-import * as Path from "node:path";
 import { expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import * as Path from "node:path";
+
+export async function changeBranch(peer: string, branch: string, page: Page) {
+  await page.getByTitle("Change branch").click();
+  const peerLocator = page.getByLabel("peer-item").filter({ hasText: peer });
+  await peerLocator.getByTitle("Expand peer").click();
+  await page.getByRole("button", { name: branch }).click();
+}
 
 // Create a project using the rad CLI.
 export async function createProject(

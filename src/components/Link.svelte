@@ -7,6 +7,7 @@
   export let route: Route;
   export let disabled: boolean = false;
   export let styleHoverState: boolean = false;
+  export let styleTextOverflow: boolean = false;
   export let title: string | undefined = undefined;
   export let style: string | undefined = undefined;
 
@@ -39,6 +40,7 @@
 </style>
 
 <a
+  class:txt-overflow={styleTextOverflow}
   class:hover-style={styleHoverState}
   on:click={navigateToRoute}
   href={routeToPath(route)}

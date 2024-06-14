@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { BaseUrl, Node, Project, Remote, Tree } from "@http-client";
-  import type { BlobResult } from "./router";
-  import type { Route } from "@app/lib/router";
+  import type { BlobResult, ProjectRoute } from "./router";
 
   import { HttpdClient } from "@http-client";
 
@@ -15,18 +14,17 @@
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
-  export let commit: string;
-  export let rawPath: (commit?: string) => string;
   export let blobResult: BlobResult;
-  export let branches: string[];
+  export let commit: string;
+  export let node: Node;
   export let path: string;
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
+  export let rawPath: (commit?: string) => string;
   export let revision: string | undefined;
-  export let tree: Tree;
   export let seeding: boolean;
+  export let tree: Tree;
 
   let mobileFileTree = false;
 
@@ -47,30 +45,12 @@
       });
   };
 
-  $: peersWithRoute = peers.map(remote => ({
-    remote,
-    selected: remote.id === peer,
-    route: {
-      resource: "project.source",
-      node: baseUrl,
-      project: project.id,
-      peer: remote.id,
-      revision: remote.heads[project.defaultBranch]
-        ? undefined
-        : Object.keys(remote.heads)[0],
-    } as Route,
-  }));
-
-  $: branchesWithRoute = branches.map(name => ({
-    name,
-    route: {
-      resource: "project.source",
-      node: baseUrl,
-      project: project.id,
-      peer,
-      revision: name,
-    } as Route,
-  }));
+  $: baseRoute = {
+    resource: "project.source",
+    node: baseUrl,
+    project: project.id,
+    path: "/",
+  } as Extract<ProjectRoute, { resource: "project.source" }>;
 </script>
 
 <style>
@@ -134,17 +114,18 @@
 <Layout {node} {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-  <div style:margin="1rem 0 1rem 1rem" slot="subheader">
+  <div style:margin="1rem" slot="subheader">
     <Header
+      filesLinkActive={true}
+      historyLinkActive={false}
       node={baseUrl}
       {commit}
+      {baseRoute}
+      {peers}
+      {peer}
       {project}
-      peers={peersWithRoute}
-      branches={branchesWithRoute}
       {revision}
-      {tree}
-      filesLinkActive={true}
-      historyLinkActive={false} />
+      {tree} />
   </div>
   <div class="global-hide-on-medium-desktop-up">
     {#if tree.entries.length > 0}

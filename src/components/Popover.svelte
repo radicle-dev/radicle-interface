@@ -20,7 +20,7 @@
   let thisComponent: HTMLDivElement;
 
   function clickOutside(ev: MouseEvent | TouchEvent) {
-    if (!$focused?.contains(ev.target as HTMLDivElement)) {
+    if ($focused && !ev.composedPath().includes($focused)) {
       closeFocused();
     }
   }

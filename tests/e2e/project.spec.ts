@@ -12,6 +12,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
+import { changeBranch } from "@tests/support/project";
 import { expectUrlPersistsReload } from "@tests/support/router";
 
 test("navigate to project", async ({ page }) => {
@@ -288,17 +289,12 @@ test("peer and branch switching", async ({ page }) => {
 
   // Alice's peer.
   {
-    await page.getByLabel("Change peer").click();
-    await page
-      .getByRole("link", {
-        name: "alice delegate",
-      })
-      .click();
-    await expect(page.getByLabel("Change peer")).toHaveText("alice Delegate");
+    await changeBranch("alice", `main ${shortAliceHead}`, page);
+    await expect(page.getByTitle("Change branch")).toHaveText(/alice/);
 
     // Default `main` branch.
     {
-      await expect(page.getByTitle("Change branch")).toHaveText("main");
+      await expect(page.getByTitle("Change branch")).toHaveText(/main/);
       await expect(
         page
           .getByRole("button", {
@@ -315,6 +311,7 @@ test("peer and branch switching", async ({ page }) => {
 
     // Feature branch with a slash in the name.
     {
+      await changeBranch("alice", "feature/branch", page);
       await page.getByTitle("Change branch").click();
       await page.getByText("feature/branch").click();
 
@@ -333,8 +330,7 @@ test("peer and branch switching", async ({ page }) => {
 
     // Branch without a history or files in it.
     {
-      await page.getByTitle("Change branch").click();
-      await page.getByText("orphaned-branch").click();
+      await changeBranch("alice", "orphaned-branch", page);
 
       await expect(
         page.getByRole("button", { name: "orphaned-branch" }),
@@ -356,8 +352,8 @@ test("peer and branch switching", async ({ page }) => {
   {
     await page.getByRole("link", { name: "source-browsing" }).nth(1).click();
 
-    await expect(page.getByLabel("Change peer")).not.toContainText("alice");
-    await expect(page.getByLabel("Change peer")).not.toContainText("bob");
+    await expect(page.getByTitle("Change branch")).not.toContainText("alice");
+    await expect(page.getByTitle("Change branch")).not.toContainText("bob");
 
     await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(
@@ -372,10 +368,10 @@ test("peer and branch switching", async ({ page }) => {
 
   // Bob's peer.
   {
-    await page.getByLabel("Change peer").click();
-    await page.getByRole("link", { name: "bob" }).click();
-    await expect(page.getByLabel("Change peer")).toContainText("bob");
-    await expect(page.getByLabel("Change peer")).not.toHaveText("delegate");
+    await changeBranch("bob", `main ${shortBobHead}`, page);
+    await expect(
+      page.getByRole("button", { name: "avatar bob / main" }),
+    ).toBeVisible();
 
     // Default `main` branch.
     {
@@ -402,36 +398,22 @@ test("peer and branch switching", async ({ page }) => {
 test("only one modal can be open at a time", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
-  await page.getByLabel("Change peer").click();
-  await page
-    .getByRole("link", {
-      name: "alice delegate",
-    })
-    .click();
+  await changeBranch("alice", `main ${shortAliceHead}`, page);
 
   await page.getByText("Clone").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).toBeVisible();
   await expect(page.getByText("bob")).not.toBeVisible();
-  await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByText("Code font")).toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
   await expect(page.getByText("bob")).not.toBeVisible();
-  await expect(page.getByText("feature/branch")).not.toBeVisible();
 
   await page.getByTitle("Change branch").click();
   await expect(page.getByText("Code font")).not.toBeVisible();
   await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
-  await expect(page.getByText("bob")).not.toBeVisible();
-  await expect(page.getByText("feature/branch")).toBeVisible();
-
-  await page.getByLabel("Change peer").click();
-  await expect(page.getByText("Code font")).not.toBeVisible();
-  await expect(page.getByText("Use the Radicle CLI")).not.toBeVisible();
   await expect(page.getByText("bob")).toBeVisible();
-  await expect(page.getByText("feature/branch")).not.toBeVisible();
 });
 
 test.describe("browser error handling", () => {

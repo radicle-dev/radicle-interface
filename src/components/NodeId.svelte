@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { formatNodeId } from "@app/lib/utils";
+  import { formatNodeId, parseNodeId, truncateId } from "@app/lib/utils";
 
   import Avatar from "./Avatar.svelte";
   import Id from "./Id.svelte";
 
   export let nodeId: string;
   export let alias: string | undefined = undefined;
+  export let subject: string = formatNodeId(nodeId);
 </script>
 
 <style>
@@ -19,15 +20,25 @@
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-small);
   }
+  .no-alias {
+    color: var(--color-foreground-dim);
+  }
 </style>
 
-<Id id={nodeId} subject={formatNodeId(nodeId)} style="none">
+<Id id={nodeId} {subject} style="none">
   <div class="avatar-alias">
     <Avatar {nodeId} />
     {#if alias}
-      {alias}
+      <span class="txt-overflow">
+        {alias}
+      </span>
     {:else}
-      {formatNodeId(nodeId)}
+      <span class="no-alias global-hide-on-mobile-down">
+        {formatNodeId(nodeId)}
+      </span>
+      <span class="no-alias global-hide-on-small-desktop-up">
+        {truncateId(parseNodeId(nodeId)?.pubkey || "")}
+      </span>
     {/if}
   </div>
 </Id>

@@ -2,6 +2,7 @@
   export let selected: boolean;
   export let disabled: boolean = false;
   export let title: string | undefined = undefined;
+  export let style: string | undefined = undefined;
 </script>
 
 <style>
@@ -49,6 +50,7 @@
   class="item"
   class:selected
   class:disabled
+  {style}
   {title}
   on:click>
   <slot />

@@ -96,6 +96,11 @@ pre {
   height: 100%;
   background-color: var(--color-fill-ghost);
 }
+.global-flex-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
 
 /*
   Breakpoints

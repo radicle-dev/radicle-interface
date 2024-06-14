@@ -1,6 +1,7 @@
-import type { Commit, Commits } from "./project/commit.js";
-import type { Embed } from "./project/comment.js";
+import type { ZodSchema } from "zod";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
+import type { Embed } from "./project/comment.js";
+import type { Commit, Commits } from "./project/commit.js";
 import type {
   Issue,
   IssueCreated,
@@ -13,27 +14,26 @@ import type {
   PatchUpdateAction,
 } from "./project/patch.js";
 import type { SuccessResponse } from "./shared.js";
-import type { ZodSchema } from "zod";
 
-import { successResponseSchema } from "./shared.js";
 import {
   array,
   boolean,
   literal,
   number,
+  object,
   optional,
   record,
-  object,
   string,
   union,
   z,
 } from "zod";
+import { successResponseSchema } from "./shared.js";
 
 import {
-  diffBlobSchema,
   commitHeaderSchema,
   commitSchema,
   commitsSchema,
+  diffBlobSchema,
   diffSchema,
 } from "./project/commit.js";
 
@@ -44,9 +44,9 @@ import {
 } from "./project/issue.js";
 
 import {
+  patchCreatedSchema,
   patchSchema,
   patchesSchema,
-  patchCreatedSchema,
 } from "./project/patch.js";
 
 const projectSchema = object({
@@ -121,7 +121,7 @@ const treeSchema = object({
 
 export type Remote = z.infer<typeof remoteSchema>;
 
-const remoteSchema = object({
+export const remoteSchema = object({
   id: string(),
   alias: string().optional(),
   heads: record(string(), string()),

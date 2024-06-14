@@ -7,7 +7,7 @@
     Node,
     Tree,
   } from "@http-client";
-  import type { Route } from "@app/lib/router";
+  import type { ProjectRoute } from "./router";
 
   import { COMMITS_PER_PAGE } from "./router";
   import { HttpdClient } from "@http-client";
@@ -26,7 +26,6 @@
   export let baseUrl: BaseUrl;
   export let node: Node;
   export let commit: string;
-  export let branches: string[];
   export let commitHeaders: CommitHeader[];
   export let peer: string | undefined;
   export let peers: Remote[];
@@ -43,6 +42,11 @@
   let loading = false;
   let allCommitHeaders: CommitHeader[];
 
+  $: baseRoute = {
+    resource: "project.history",
+    node: baseUrl,
+    project: project.id,
+  } as Extract<ProjectRoute, { resource: "project.history" }>;
   $: {
     allCommitHeaders = commitHeaders;
     page = 0;
@@ -63,28 +67,6 @@
     }
     loading = false;
   }
-
-  $: peersWithRoute = peers.map(remote => ({
-    remote,
-    selected: remote.id === peer,
-    route: {
-      resource: "project.history",
-      node: baseUrl,
-      project: project.id,
-      peer: remote.id,
-    } as Route,
-  }));
-
-  $: branchesWithRoute = branches.map(name => ({
-    name,
-    route: {
-      resource: "project.history",
-      node: baseUrl,
-      project: project.id,
-      peer,
-      revision: name,
-    } as Route,
-  }));
 </script>
 
 <style>
@@ -111,15 +93,16 @@
 <Layout {node} {baseUrl} {project} activeTab="source">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
-  <div style:margin="1rem 0 1rem 1rem" slot="subheader">
+  <div style:margin="1rem" slot="subheader">
     <Header
-      node={baseUrl}
+      {baseRoute}
       {commit}
+      {peers}
+      {peer}
       {project}
-      peers={peersWithRoute}
-      branches={branchesWithRoute}
       {revision}
       {tree}
+      node={baseUrl}
       filesLinkActive={false}
       historyLinkActive={true} />
   </div>
