@@ -16,6 +16,7 @@ import type {
   Patch,
   PatchState,
   Project,
+  Profile,
   Remote,
   SeedingPolicy,
   Tree,
@@ -125,6 +126,7 @@ export type ProjectLoadedRoute =
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
         seeding: boolean;
+        profile: Profile;
       };
     }
   | {
@@ -140,6 +142,7 @@ export type ProjectLoadedRoute =
         tree: Tree;
         commitHeaders: CommitHeader[];
         seeding: boolean;
+        profile: Profile;
       };
     }
   | {
@@ -149,6 +152,7 @@ export type ProjectLoadedRoute =
         seedingPolicy: SeedingPolicy;
         project: Project;
         commit: Commit;
+        profile: Profile;
       };
     }
   | {
@@ -159,6 +163,7 @@ export type ProjectLoadedRoute =
         project: Project;
         rawPath: (commit?: string) => string;
         issue: Issue;
+        profile: Profile;
       };
     }
   | {
@@ -169,6 +174,7 @@ export type ProjectLoadedRoute =
         project: Project;
         issues: Issue[];
         state: IssueState["status"];
+        profile: Profile;
       };
     }
   | {
@@ -178,6 +184,7 @@ export type ProjectLoadedRoute =
         seedingPolicy: SeedingPolicy;
         project: Project;
         rawPath: (commit?: string) => string;
+        profile: Profile;
       };
     }
   | {
@@ -188,6 +195,7 @@ export type ProjectLoadedRoute =
         project: Project;
         patches: Patch[];
         state: PatchState["status"];
+        profile: Profile;
       };
     }
   | {
@@ -200,6 +208,7 @@ export type ProjectLoadedRoute =
         patch: Patch;
         stats: Diff["stats"];
         view: PatchView;
+        profile: Profile;
       };
     };
 
@@ -288,10 +297,11 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.history") {
       return await loadHistoryView(route);
     } else if (route.resource === "project.commit") {
-      const [project, commit, seedingPolicy] = await Promise.all([
+      const [project, commit, seedingPolicy, profile] = await Promise.all([
         api.project.getById(route.project),
         api.project.getCommitBySha(route.project, route.commit),
         api.getPoliciesById(route.project),
+        api.profile.getProfile(),
       ]);
 
       return {
@@ -301,6 +311,7 @@ export async function loadProjectRoute(
           seedingPolicy,
           project,
           commit,
+          profile,
         },
       };
     } else if (route.resource === "project.issue") {
@@ -310,9 +321,10 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.issues") {
       return await loadIssuesView(route);
     } else if (route.resource === "project.newIssue") {
-      const [project, seedingPolicy] = await Promise.all([
+      const [project, seedingPolicy, profile] = await Promise.all([
         api.project.getById(route.project),
         api.getPoliciesById(route.project),
+        api.profile.getProfile(),
       ]);
       return {
         resource: "project.newIssue",
@@ -321,6 +333,7 @@ export async function loadProjectRoute(
           seedingPolicy,
           project,
           rawPath,
+          profile,
         },
       };
     } else if (route.resource === "project.patches") {
@@ -348,7 +361,7 @@ async function loadPatchesView(
   const searchParams = new URLSearchParams(route.search || "");
   const state = (searchParams.get("state") as PatchState["status"]) || "open";
 
-  const [project, patches, seedingPolicy] = await Promise.all([
+  const [project, patches, seedingPolicy, profile] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllPatches(route.project, {
       state,
@@ -356,6 +369,7 @@ async function loadPatchesView(
       perPage: PATCHES_PER_PAGE,
     }),
     api.getPoliciesById(route.project),
+    api.profile.getProfile(),
   ]);
 
   return {
@@ -366,6 +380,7 @@ async function loadPatchesView(
       patches,
       state,
       project,
+      profile,
     },
   };
 }
@@ -376,7 +391,7 @@ async function loadIssuesView(
   const api = new HttpdClient(route.node);
   const state = route.state || "open";
 
-  const [project, issues, seedingPolicy] = await Promise.all([
+  const [project, issues, seedingPolicy, profile] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllIssues(route.project, {
       state,
@@ -384,6 +399,7 @@ async function loadIssuesView(
       perPage: ISSUES_PER_PAGE,
     }),
     api.getPoliciesById(route.project),
+    api.profile.getProfile(),
   ]);
 
   return {
@@ -394,6 +410,7 @@ async function loadIssuesView(
       issues,
       state,
       project,
+      profile,
     },
   };
 }
@@ -459,9 +476,10 @@ async function loadTreeView(
     branchMap,
   );
   const path = route.path || "/";
-  const [tree, blobResult] = await Promise.all([
+  const [tree, blobResult, profile] = await Promise.all([
     api.project.getTree(route.project, commit),
     loadBlob(api, project.id, commit, path),
+    api.profile.getProfile(),
   ]);
   return {
     resource: "project.source",
@@ -478,6 +496,7 @@ async function loadTreeView(
       path,
       blobResult,
       seeding,
+      profile,
     },
   };
 }
@@ -558,7 +577,7 @@ async function loadHistoryView(
     );
   }
 
-  const [tree, commitHeaders, seeding] = await Promise.all([
+  const [tree, commitHeaders, seeding, profile] = await Promise.all([
     api.project.getTree(route.project, commitId),
     await api.project.getAllCommits(project.id, {
       parent: commitId,
@@ -566,6 +585,7 @@ async function loadHistoryView(
       perPage: COMMITS_PER_PAGE,
     }),
     isLocalNodeSeeding(route),
+    api.profile.getProfile(),
   ]);
 
   return {
@@ -581,6 +601,7 @@ async function loadHistoryView(
       tree,
       commitHeaders,
       seeding,
+      profile,
     },
   };
 }
@@ -594,10 +615,11 @@ async function loadIssueView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, issue, seedingPolicy] = await Promise.all([
+  const [project, issue, seedingPolicy, profile] = await Promise.all([
     api.project.getById(route.project),
     api.project.getIssueById(route.project, route.issue),
     api.getPoliciesById(route.project),
+    api.profile.getProfile(),
   ]);
   return {
     resource: "project.issue",
@@ -607,6 +629,7 @@ async function loadIssueView(
       project,
       rawPath,
       issue,
+      profile,
     },
   };
 }
@@ -620,10 +643,11 @@ async function loadPatchView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, patch, seedingPolicy] = await Promise.all([
+  const [project, patch, seedingPolicy, profile] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
     api.getPoliciesById(route.project),
+    api.profile.getProfile(),
   ]);
   const latestRevision = patch.revisions[patch.revisions.length - 1];
   const { diff } = await api.project.getDiff(
@@ -685,6 +709,7 @@ async function loadPatchView(
       patch,
       stats: diff.stats,
       view,
+      profile,
     },
   };
 }

@@ -3,6 +3,7 @@
     BaseUrl,
     CommitHeader,
     Project,
+    Profile,
     Remote,
     Tree,
     SeedingPolicy,
@@ -33,6 +34,7 @@
   export let revision: string | undefined;
   export let tree: Tree;
   export let seeding: boolean;
+  export let profile: Profile;
 
   const api = new HttpdClient(baseUrl);
 
@@ -90,7 +92,7 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="source">
+<Layout {seedingPolicy} {baseUrl} {project} {profile} activeTab="source">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem" slot="subheader">

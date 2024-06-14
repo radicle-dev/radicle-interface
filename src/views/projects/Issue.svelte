@@ -7,6 +7,7 @@
     Issue,
     IssueState,
     Project,
+    Profile,
     SeedingPolicy,
   } from "@http-client";
   import type { Session } from "@app/lib/httpd";
@@ -53,6 +54,7 @@
   export let issue: Issue;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
+  export let profile: Profile;
 
   const api = new HttpdClient(baseUrl);
 
@@ -488,6 +490,7 @@
   {seedingPolicy}
   {baseUrl}
   {project}
+  {profile}
   activeTab="issues"
   stylePaddingBottom="0">
   <div class="issue">

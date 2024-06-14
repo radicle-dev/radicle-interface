@@ -42,7 +42,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Embed, Patch } from "@http-client";
+  import type { BaseUrl, Embed, Patch, Profile } from "@http-client";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { ComponentProps } from "svelte";
@@ -98,6 +98,7 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
+  export let profile: Profile;
 
   $: api = new HttpdClient(baseUrl);
 
@@ -712,6 +713,7 @@
   {seedingPolicy}
   {baseUrl}
   {project}
+  {profile}
   activeTab="patches"
   stylePaddingBottom="0">
   <div class="patch">

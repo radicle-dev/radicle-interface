@@ -9,6 +9,12 @@ const profileSchema = object({
     publicExplorer: string(),
     preferredSeeds: array(string()),
     cli: object({ hints: boolean() }),
+    web: object({
+      pinned: object({ repositories: array(string()) }),
+      imageUrl: string().optional(),
+      name: string().optional(),
+      description: string().optional(),
+    }),
     node: nodeConfigSchema,
   }),
   home: string(),

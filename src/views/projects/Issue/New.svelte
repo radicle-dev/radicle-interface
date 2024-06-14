@@ -3,6 +3,7 @@
     BaseUrl,
     Embed,
     Project,
+    Profile,
     Reaction,
     SeedingPolicy,
   } from "@http-client";
@@ -26,6 +27,7 @@
   export let seedingPolicy: SeedingPolicy;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
+  export let profile: Profile;
 
   let issueTitle = "";
   let assignees: Reaction["authors"] = [];
@@ -106,7 +108,7 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="issues">
+<Layout {seedingPolicy} {baseUrl} {project} {profile} activeTab="issues">
   {#if session}
     {@const session_ = session}
     <div class="form">

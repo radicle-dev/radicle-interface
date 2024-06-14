@@ -39,6 +39,7 @@ import type {
   Revision,
   Verdict,
 } from "./lib/project/patch.js";
+import type { Profile } from "./lib/profile.js";
 import type { RequestOptions } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
@@ -81,6 +82,7 @@ export type {
   PatchState,
   PatchUpdateAction,
   Project,
+  Profile,
   ProjectListQuery,
   Range,
   Reaction,

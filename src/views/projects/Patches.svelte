@@ -4,6 +4,7 @@
     Patch,
     PatchState,
     Project,
+    Profile,
     SeedingPolicy,
   } from "@http-client";
 
@@ -35,6 +36,7 @@
   export let patches: Patch[];
   export let project: Project;
   export let state: PatchState["status"];
+  export let profile: Profile;
 
   let loading = false;
   let page = 0;
@@ -127,7 +129,7 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="patches">
+<Layout {seedingPolicy} {baseUrl} {project} {profile} activeTab="patches">
   <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"

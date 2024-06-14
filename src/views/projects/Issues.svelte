@@ -4,6 +4,7 @@
     Issue,
     IssueState,
     Project,
+    Profile,
     SeedingPolicy,
   } from "@http-client";
 
@@ -34,6 +35,7 @@
   export let issues: Issue[];
   export let project: Project;
   export let state: IssueState["status"];
+  export let profile: Profile;
 
   let loading = false;
   let page = 0;
@@ -112,7 +114,7 @@
   }
 </style>
 
-<Layout {seedingPolicy} {baseUrl} {project} activeTab="issues">
+<Layout {seedingPolicy} {baseUrl} {project} {profile} activeTab="issues">
   <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"

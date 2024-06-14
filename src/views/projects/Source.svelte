@@ -2,6 +2,7 @@
   import type {
     BaseUrl,
     Project,
+    Profile,
     Remote,
     SeedingPolicy,
     Tree,
@@ -31,6 +32,7 @@
   export let revision: string | undefined;
   export let seeding: boolean;
   export let tree: Tree;
+  export let profile: Profile;
 
   let mobileFileTree = false;
 
@@ -121,6 +123,7 @@
   {seedingPolicy}
   {baseUrl}
   {project}
+  {profile}
   activeTab="source"
   stylePaddingBottom="0">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />

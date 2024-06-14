@@ -1,60 +1,124 @@
 <script lang="ts">
   import type { BaseUrl, DefaultSeedingPolicy, NodeStats } from "@http-client";
 
-  import { capitalize } from "lodash";
+  import { fade } from "svelte/transition";
 
   import * as router from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
-  import {
-    baseUrlToString,
-    formatUserAgent,
-    isLocal,
-    truncateId,
-  } from "@app/lib/utils";
+  import { baseUrlToString, isLocal, truncateId } from "@app/lib/utils";
   import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
   import { isDelegate } from "@app/lib/roles";
 
-  import AppLayout from "@app/App/AppLayout.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
+  import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
+  import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
+  import MobileFooter from "@app/App/MobileFooter.svelte";
+  import NodeInfo from "./NodeInfo.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
-  export let baseUrl: BaseUrl;
-  export let nid: string;
-  export let stats: NodeStats;
-  export let externalAddresses: string[];
-  export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
   export let agent: string;
+  export let baseUrl: BaseUrl;
+  export let description: string | undefined = undefined;
+  export let externalAddresses: string[];
+  export let imageUrl: string | undefined = undefined;
+  export let name: string | undefined = undefined;
+  export let nid: string;
+  export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
+  export let stats: NodeStats;
 
-  $: shortScope =
-    seedingPolicy?.default === "allow" && seedingPolicy?.scope === "all"
-      ? "permissive"
-      : "restrictive";
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
       ? $httpdStore.session
       : undefined;
+
+  $: background = imageUrl
+    ? `linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("${imageUrl}")`
+    : "var(--color-background-default)";
+
+  let scrollY: number;
+
+  let smallHeader = false;
+
+  let top: number;
+
+  $: if (scrollY >= 0 && scrollY < 230) {
+    top = 288 - scrollY;
+  }
+
+  $: if (scrollY > 143) {
+    smallHeader = true;
+  } else {
+    smallHeader = false;
+  }
 </script>
 
 <style>
   .layout {
-    width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 3rem 0 5rem 0;
   }
-  .header {
+
+  .bottom-part {
+    display: grid;
+    grid-template: auto 1fr auto / auto 1fr auto;
+  }
+  .breadcrumbs {
     display: flex;
     gap: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+    height: 3.5rem;
+    margin-left: 1.5rem;
+  }
+
+  .outer-header {
+    grid-column: 1 / 4;
+    border-bottom: 1px solid var(--color-fill-separator);
+    background-position: center;
+    background-size: cover;
+    height: 18rem;
+    display: flex;
+    justify-content: space-between;
     flex-direction: column;
-    margin-bottom: 2rem;
+    position: sticky;
+    top: -14.5rem;
+    z-index: 5;
+  }
+  .inner-header {
+    height: 3.5rem;
+    position: sticky;
+    top: 0;
+  }
+
+  .sidebar {
+    grid-column: 1 / 2;
+    border-right: 1px solid var(--color-fill-separator);
+    width: 20.5rem;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .content {
+    grid-column: 2 / 3;
+    margin-left: 20.5rem;
+  }
+
+  .mobile-footer {
+    display: none;
+  }
+
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   .wrapper {
     padding: 3rem;
@@ -76,17 +140,6 @@
     display: flex;
     justify-content: space-between;
   }
-  .agent {
-    color: var(--color-fill-gray);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-small);
-  }
-  .seeding-policy {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
@@ -111,6 +164,22 @@
     font-weight: var(--font-weight-regular);
   }
   @media (max-width: 719.98px) {
+    .bottom-part {
+      height: 100%;
+    }
+    .outer-header {
+      display: none;
+    }
+    .content {
+      overflow-x: hidden;
+      margin-left: 0;
+    }
+    .mobile-footer {
+      margin-top: auto;
+      display: grid;
+      grid-column: 1 / 4;
+      background-color: pink;
+    }
     .wrapper {
       width: 100%;
       padding: 1rem;
@@ -118,102 +187,167 @@
     .info {
       flex-direction: column;
     }
-    .layout {
+    .container {
       padding: 0;
+    }
+  }
+
+  @media (max-width: 1010.98px) {
+    .wrapper {
+      padding: 3rem 1.5rem;
     }
   }
 </style>
 
-<AppLayout>
-  <div class="layout">
-    <div class="wrapper">
-      <div class="header">
-        <div class="txt-large txt-bold">{hostname}</div>
-        <div class="info">
-          <div>
-            {#each externalAddresses as address}
-              <!-- If there are externalAddresses this is probably a remote node -->
-              <!-- in that case, we show all the defined externalAddresses as a listing -->
-              <Id
-                ariaLabel="node-id"
-                shorten={false}
-                id="{truncateId(nid)}@{address}"
-                clipboard={`${nid}@${address}`} />
-            {:else}
-              <!-- else this is probably a local node -->
-              <!-- So we show only the nid -->
-              <div class="global-hide-on-small-desktop-up">
-                <Id ariaLabel="node-id" id={truncateId(nid)} shorten={false} />
-              </div>
-              <div class="global-hide-on-mobile-down">
-                <Id ariaLabel="node-id" id={nid} shorten={false} />
-              </div>
-            {/each}
-          </div>
-          <Id
-            ariaLabel="agent"
-            id={formatUserAgent(agent)}
-            shorten={false}
-            style="none">
-            <div class="agent">
-              {formatUserAgent(agent)}
-            </div>
-          </Id>
-        </div>
-      </div>
+<svelte:window bind:scrollY />
 
-      <div class="subtitle" style:justify-content="space-between">
-        <div class="txt-semibold">
-          {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} repositories
-        </div>
-        <div class="seeding-policy">
-          {#if seedingPolicy}
-            <span class="txt-bold">Seeding Policy:</span>
-            {capitalize(shortScope)}
-            <div class="global-hide-on-mobile-down">
-              <Popover
-                popoverPositionBottom="0"
-                popoverPositionLeft="-17rem"
-                popoverPositionRight="2rem">
-                <IconButton slot="toggle" let:toggle on:click={toggle}>
-                  <IconSmall name="help" />
-                </IconButton>
-                <ScopePolicyExplainer slot="popover" {seedingPolicy} />
-              </Popover>
-            </div>
-          {/if}
-        </div>
-      </div>
-
-      <div style:margin-top="1rem" style:padding-bottom="2.5rem">
-        {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
-          <div style:height="35vh">
-            <Loading small center />
+<div class="layout">
+  <div
+    class="outer-header"
+    style:background
+    style:background-color="var(--color-background-default)">
+    <div class="inner-header">
+      <div class="breadcrumbs">
+        <Link
+          style="display: flex; align-items: center;"
+          route={{ resource: "home" }}>
+          <img
+            width="24"
+            height="24"
+            class="logo"
+            alt="Radicle logo"
+            src="/radicle.svg" />
+        </Link>
+        {#if smallHeader}
+          <div
+            in:fade={{ duration: 100 }}
+            style="display: flex; flex-direction: row; align-items:center; gap: 0.5rem; color: var(--color-foreground-white)">
+            <IconSmall name="seedling" />
+            {hostname}
           </div>
-        {:then projectInfos}
-          {#if projectInfos.length > 0}
-            <div class="project-grid">
-              {#each projectInfos as projectInfo}
-                <ProjectCard
-                  {projectInfo}
-                  isDelegate={isDelegate(
-                    session?.publicKey,
-                    projectInfo.project.delegates.map(d => d.id),
-                  ) ?? false} />
-              {/each}
-            </div>
-          {:else}
-            <div class="empty-state">
-              <div class="heading">No pinned repositories</div>
-              <div class="label">
-                This node doesn't have any pinned repositories.
-              </div>
-            </div>
-          {/if}
-        {:catch error}
-          {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
-        {/await}
+        {/if}
       </div>
     </div>
+    {#if !smallHeader}
+      <div in:fade={{ duration: 100 }}>
+        <div style:padding="1.5rem">
+          <div
+            class="txt-huge txt-semibold"
+            style:color="var(--color-foreground-white)">
+            {hostname}
+          </div>
+          <div class="info">
+            <div>
+              {#each externalAddresses as address}
+                <!-- If there are externalAddresses this is probably a remote node -->
+                <!-- in that case, we show all the defined externalAddresses as a listing -->
+                <Id
+                  ariaLabel="node-id"
+                  shorten={false}
+                  id="{truncateId(nid)}@{address}"
+                  clipboard={`${nid}@${address}`} />
+              {:else}
+                <!-- else this is probably a local node -->
+                <!-- So we show only the nid -->
+                <div class="global-hide-on-small-desktop-up">
+                  <Id
+                    ariaLabel="node-id"
+                    id={truncateId(nid)}
+                    shorten={false} />
+                </div>
+                <div class="global-hide-on-mobile-down">
+                  <Id ariaLabel="node-id" id={nid} shorten={false} />
+                </div>
+              {/each}
+            </div>
+          </div>
+        </div>
+      </div>
+    {/if}
   </div>
-</AppLayout>
+
+  <div class="bottom-part">
+    <div
+      class="sidebar global-hide-on-mobile-down"
+      style:top={`${top}px`}
+      style:height={`calc(100% - ${top}px)`}>
+      <div>
+        {#if name}
+          <div class="txt-medium txt-semibold">{name}</div>
+        {/if}
+        {#if description}
+          <div class="description txt-small">
+            {description}
+          </div>
+        {/if}
+      </div>
+      <div class="sidebar-footer">
+        <NodeInfo {seedingPolicy} {agent} />
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="container">
+        <div class="wrapper">
+          <div class="subtitle">
+            <div class="txt-semibold">
+              {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} repositories
+            </div>
+          </div>
+
+          <div style:margin-top="1rem">
+            {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
+              <div style:height="35vh">
+                <Loading small center />
+              </div>
+            {:then projectInfos}
+              {#if projectInfos.length > 0}
+                <div class="project-grid">
+                  {#each projectInfos as projectInfo}
+                    <ProjectCard
+                      {projectInfo}
+                      isDelegate={isDelegate(
+                        session?.publicKey,
+                        projectInfo.project.delegates.map(d => d.id),
+                      ) ?? false} />
+                  {/each}
+                </div>
+              {:else}
+                <div class="empty-state">
+                  <div class="heading">No pinned repositories</div>
+                  <div class="label">
+                    This node doesn't have any pinned repositories.
+                  </div>
+                </div>
+              {/if}
+            {:catch error}
+              {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
+            {/await}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-footer">
+      <MobileFooter>
+        <div style:width="100%">
+          <Popover popoverPositionBottom="3rem" popoverPositionRight="-4.5rem">
+            <Button
+              let:expanded
+              slot="toggle"
+              variant={expanded ? "secondary" : "secondary-mobile-toggle"}
+              styleWidth="100%"
+              let:toggle
+              on:click={toggle}>
+              <IconSmall name="seedling" />
+            </Button>
+
+            <div slot="popover">
+              <NodeInfo {seedingPolicy} {agent} />
+            </div>
+          </Popover>
+        </div>
+      </MobileFooter>
+    </div>
+  </div>
+</div>

@@ -27,6 +27,9 @@ export interface NodesLoadedRoute {
     nid: string;
     stats: NodeStats;
     seedingPolicy?: DefaultSeedingPolicy;
+    imageUrl?: string;
+    name?: string;
+    description?: string;
   };
 }
 
@@ -45,7 +48,11 @@ export async function loadNodeRoute(
 ): Promise<NodesLoadedRoute | NotFoundRoute | ErrorRoute> {
   const api = new HttpdClient(params.baseUrl);
   try {
-    const [node, stats] = await Promise.all([api.getNode(), api.getStats()]);
+    const [node, stats, profile] = await Promise.all([
+      api.getNode(),
+      api.getStats(),
+      api.profile.getProfile(),
+    ]);
 
     return {
       resource: "nodes",
@@ -56,6 +63,9 @@ export async function loadNodeRoute(
         externalAddresses: node.config?.externalAddresses ?? [],
         seedingPolicy: node.config?.seedingPolicy,
         agent: node.agent,
+        imageUrl: profile.config?.web.imageUrl,
+        name: profile.config?.web.name,
+        description: profile.config?.web.description,
       },
     };
   } catch (error) {

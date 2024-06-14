@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Project, Profile, SeedingPolicy } from "@http-client";
 
   import AppHeader from "@app/App/Header.svelte";
 
@@ -15,6 +15,11 @@
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let stylePaddingBottom: string = "2.5rem";
+  export let profile: Profile;
+
+  $: background = profile.config.web.imageUrl
+    ? `linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("${profile.config.web.imageUrl}")`
+    : "var(--color-background-default)";
 </script>
 
 <style>
@@ -27,6 +32,8 @@
   .desktop-header {
     grid-column: 1 / 4;
     border-bottom: 1px solid var(--color-fill-separator);
+    background-position: center;
+    background-size: cover;
   }
 
   .sidebar {
@@ -61,7 +68,10 @@
 </style>
 
 <div class="layout">
-  <div class="desktop-header">
+  <div
+    class="desktop-header"
+    style:background
+    style:background-color="var(--color-background-default)">
     <AppHeader />
   </div>
 
