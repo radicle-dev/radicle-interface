@@ -8,6 +8,14 @@ import sourceSolidity from "@wooorm/starry-night/source.solidity";
 import sourceSvelte from "@wooorm/starry-night/source.svelte";
 import sourceToml from "@wooorm/starry-night/source.toml";
 import sourceTsx from "@wooorm/starry-night/source.tsx";
+import vue from "@wooorm/starry-night/text.html.vue";
+import zone from "@wooorm/starry-night/text.zone_file";
+import php from "@wooorm/starry-night/text.html.php";
+import sourceNix from "@wooorm/starry-night/source.nix";
+import sourceGitconfig from "@wooorm/starry-night/source.gitconfig";
+import sourceGitignore from "@wooorm/starry-night/source.gitignore";
+import sourceGitrevlist from "@wooorm/starry-night/source.git-revlist";
+// import source from "@wooorm/starry-night/";
 import { createStarryNight, common } from "@wooorm/starry-night";
 
 export { type Root };
@@ -21,6 +29,13 @@ export const grammars = [
   sourceDockerfile,
   sourceAsciiDoc,
   sourceToml,
+  vue,
+  zone,
+  php,
+  sourceNix,
+  sourceGitconfig,
+  sourceGitignore,
+  sourceGitrevlist,
   // A grammar that doesn't do any parsing, but needed for files without a known filetype.
   {
     extensions: [""],
