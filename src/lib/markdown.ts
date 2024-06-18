@@ -1,10 +1,10 @@
-import type { MarkedExtension, Tokens } from "marked";
 import type { Route } from "@app/lib/router";
+import type { MarkedExtension, Tokens } from "marked";
 
 import dompurify from "dompurify";
+import { Renderer as BaseRenderer, Marked } from "marked";
 import katexMarkedExtension from "marked-katex-extension";
 import markedLinkifyIt from "marked-linkify-it";
-import { Marked, Renderer as BaseRenderer } from "marked";
 
 import emojis from "@app/lib/emojis";
 import { routeToPath } from "@app/lib/router";
@@ -129,6 +129,10 @@ export class Renderer extends BaseRenderer {
       .replace(/^-|-$/g, "");
 
     return `<h${level} id="${escapedText}">${text}</h${level}>`;
+  }
+
+  html(text: string) {
+    return text.replace("<", "&lt;").replace(">", "&gt;");
   }
 
   strong(text: string) {
