@@ -6,7 +6,6 @@
 
   export let nodeId: string;
   export let alias: string | undefined = undefined;
-  export let subject: string = formatNodeId(nodeId);
 </script>
 
 <style>
@@ -25,7 +24,7 @@
   }
 </style>
 
-<Id id={nodeId} {subject} style="none">
+<Id id={nodeId} style="none">
   <div class="avatar-alias">
     <Avatar {nodeId} />
     {#if alias}

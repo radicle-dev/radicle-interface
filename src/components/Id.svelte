@@ -12,11 +12,10 @@
   export let clipboard: string = id;
   export let shorten: boolean = true;
   export let style: "oid" | "commit" | "none" = "oid";
-  export let subject: string | undefined = undefined;
   export let ariaLabel: string | undefined = undefined;
 
   let icon: ComponentProps<IconSmall>["name"] = "clipboard";
-  const text = subject ? `Click to copy ${subject}` : "Click to copy";
+  const text = "Click to copy";
   let tooltip = text;
 
   const restoreIcon = debounce(() => {
@@ -47,24 +46,24 @@
   }
   .popover {
     position: absolute;
-    bottom: 1.5rem;
-    left: 0;
+    left: 1rem;
     display: flex;
     align-items: center;
     flex-direction: row;
     gap: 0.5rem;
     justify-content: center;
     z-index: 20;
-    background: var(--color-background-float);
-    color: var(--color-foreground-default);
-    border: 1px solid var(--color-border-hint);
-    border-radius: var(--border-radius-small);
+    bottom: 1.5rem;
+    background: var(--color-fill-ghost);
+    color: var(--color-fill-gray);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-tiny);
     box-shadow: var(--elevation-low);
     font-family: var(--font-family-sans-serif);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
     white-space: nowrap;
-    padding: 0.25rem 0.5rem;
+    padding: 0.125rem 0.5rem;
   }
   .target-commit:hover {
     color: var(--color-foreground-contrast);
@@ -75,42 +74,38 @@
 </style>
 
 <div class="container">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
-    role="button"
-    tabindex="0"
     on:mouseenter={() => {
       setVisible(true);
     }}
     on:mouseleave={() => {
       setVisible(false);
-    }}>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      class="target-{style} global-{style}"
-      style:cursor="pointer"
-      aria-label={ariaLabel}
-      on:click={async () => {
-        await copy();
-        setVisible(true);
-      }}
-      role="button"
-      tabindex="0">
-      <slot>
-        {#if shorten}
-          {formatObjectId(id)}
-        {:else}
-          {id}
-        {/if}
-      </slot>
-    </div>
-
-    {#if visible}
-      <div style:position="absolute">
-        <div class="popover">
-          <IconSmall name={icon} />
-          {tooltip}
-        </div>
-      </div>
-    {/if}
+    }}
+    class="target-{style} global-{style}"
+    style:cursor="copy"
+    aria-label={ariaLabel}
+    on:click={async () => {
+      await copy();
+      setVisible(true);
+    }}
+    role="button"
+    tabindex="0">
+    <slot>
+      {#if shorten}
+        {formatObjectId(id)}
+      {:else}
+        {id}
+      {/if}
+    </slot>
   </div>
+
+  {#if visible}
+    <div style:position="absolute">
+      <div class="popover">
+        <IconSmall name={icon} />
+        {tooltip}
+      </div>
+    </div>
+  {/if}
 </div>
