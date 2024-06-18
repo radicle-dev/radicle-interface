@@ -7,7 +7,6 @@
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import Id from "@app/components/Id.svelte";
 
@@ -48,7 +47,7 @@
     font-size: var(--font-size-tiny);
   }
   .summary {
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-regular);
   }
   .summary::after {
     content: "";
@@ -86,7 +85,7 @@
         }}>
         <div style="position: relative;">
           <div class="summary" use:twemoji>
-            <InlineMarkdown fontSize="regular" content={commit.summary} />
+            {commit.summary}
           </div>
         </div>
       </Link>

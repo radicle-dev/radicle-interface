@@ -5,7 +5,6 @@
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Share from "./Share.svelte";
@@ -32,6 +31,7 @@
     display: flex;
     align-items: center;
     font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-large);
   }
   .description {
     font-family: var(--font-family-monospace);
@@ -50,10 +50,7 @@
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">
         <span class="title">
-          <InlineMarkdown
-            stripEmphasizedStyling
-            fontSize="large"
-            content={header.summary} />
+          {header.summary}
           <div class="button-container">
             <Link
               route={{
