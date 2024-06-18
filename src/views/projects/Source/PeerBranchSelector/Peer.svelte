@@ -38,10 +38,7 @@
     <IconButton title="Expand peer" on:click={() => (expanded = !expanded)}>
       <IconSmall name={expanded ? "chevron-down" : "chevron-right"} />
     </IconButton>
-    <NodeId
-      subject="Node Id"
-      nodeId={peer.remote.id}
-      alias={peer.remote.alias} />
+    <NodeId nodeId={peer.remote.id} alias={peer.remote.alias} />
     {#if peer.remote.delegate}
       <Badge size="tiny" variant="delegate">
         <IconSmall name="badge" />

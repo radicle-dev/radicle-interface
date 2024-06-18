@@ -121,7 +121,7 @@
       <div
         style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
         <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
-        opened
+        opened a
         <Id id={issue.id} />
         <span title={absoluteTimestamp(issue.discussion[0].timestamp)}>
           {formatTimestamp(issue.discussion[0].timestamp)}
