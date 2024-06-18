@@ -49,12 +49,10 @@ main() {
   case "$OS" in
   Darwin)
     podman build \
-      --env SOURCE_DATE_EPOCH \
-      --env TZ \
-      --env LC_ALL \
-      --env GIT_COMMIT_TIME=$SOURCE_DATE_EPOCH \
-      --env GIT_HEAD=$rev \
-      --env RADICLE_VERSION=$version \
+      --build-arg SOURCE_DATE_EPOCH \
+      --build-arg TZ \
+      --build-arg LC_ALL \
+      --build-arg RADICLE_VERSION=$version \
       --arch aarch64 --tag $image -f ./build/Dockerfile - <$gitarchive
 
     echo "Creating container (radicle-build-container).."
@@ -62,12 +60,10 @@ main() {
     ;;
   *)
     podman --cgroup-manager=cgroupfs build \
-      --env SOURCE_DATE_EPOCH \
-      --env TZ \
-      --env LC_ALL \
-      --env GIT_COMMIT_TIME=$SOURCE_DATE_EPOCH \
-      --env GIT_HEAD=$rev \
-      --env RADICLE_VERSION=$version \
+      --build-arg SOURCE_DATE_EPOCH \
+      --build-arg TZ \
+      --build-arg LC_ALL \
+      --build-arg RADICLE_VERSION=$version \
       --arch amd64 --tag $image -f ./build/Dockerfile - <$gitarchive
 
     echo "Creating container (radicle-build-container).."
