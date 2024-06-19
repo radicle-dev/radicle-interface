@@ -63,7 +63,6 @@
   .bottom-part {
     display: grid;
     grid-template: auto 1fr auto / auto 1fr auto;
-    height: 100%;
   }
   .breadcrumbs {
     display: flex;
@@ -106,21 +105,19 @@
     height: 100%;
   }
 
-  .mobile-footer {
-    display: none;
-  }
-
   .content {
     grid-column: 2 / 3;
     margin-left: 20.5rem;
   }
 
+  .mobile-footer {
+    display: none;
+  }
+
   .container {
     width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
-    padding: 3rem 0 5rem 0;
   }
   .wrapper {
     padding: 3rem;
@@ -184,6 +181,9 @@
     gap: 0.5rem;
   }
   @media (max-width: 719.98px) {
+    .bottom-part {
+      height: 100%;
+    }
     .outer-header {
       display: none;
     }
@@ -324,7 +324,7 @@
             </div>
           </div>
 
-          <div style:margin-top="1rem" style:padding-bottom="2.5rem">
+          <div style:margin-top="1rem">
             {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
               <div style:height="35vh">
                 <Loading small center />
