@@ -69,6 +69,8 @@
     gap: 0.5rem;
     flex-direction: row;
     align-items: center;
+    height: 3.5rem;
+    margin-left: 1.5rem;
   }
 
   .outer-header {
@@ -82,7 +84,6 @@
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-
     position: sticky;
     top: -14.5rem;
     z-index: 10;
@@ -208,6 +209,12 @@
       padding: 0;
     }
   }
+
+  @media (max-width: 1010.98px) {
+    .wrapper {
+      padding: 3rem 1.5rem;
+    }
+  }
 </style>
 
 <svelte:window bind:scrollY />
@@ -215,7 +222,7 @@
 <div class="layout">
   <div class="outer-header">
     <div class="inner-header">
-      <div class="breadcrumbs" style:padding="1rem 1.5rem" style:display="flex">
+      <div class="breadcrumbs">
         <Link
           style="display: flex; align-items: center;"
           route={{ resource: "home" }}>
@@ -227,15 +234,23 @@
             src="/radicle.svg" />
         </Link>
         {#if smallHeader}
-          <IconSmall name="seedling" />
-          {hostname}
+          <div
+            in:fade={{ duration: 100 }}
+            style="display: flex; flex-direction: row; align-items:center; gap: 0.5rem; color: var(--color-foreground-white)">
+            <IconSmall name="seedling" />
+            {hostname}
+          </div>
         {/if}
       </div>
     </div>
     {#if !smallHeader}
-      <div in:fade={{ duration: 200 }}>
+      <div in:fade={{ duration: 100 }}>
         <div style:padding="1.5rem">
-          <div class="txt-huge txt-semibold">{hostname}</div>
+          <div
+            class="txt-huge txt-semibold"
+            style:color="var(--color-foreground-white)">
+            {hostname}
+          </div>
           <div class="info">
             <div>
               {#each externalAddresses as address}
