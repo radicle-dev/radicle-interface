@@ -10,15 +10,15 @@
   import { handleError } from "@app/views/nodes/error";
   import { isDelegate } from "@app/lib/roles";
 
-  import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
-  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
-  import capitalize from "lodash/capitalize";
+  import Button from "@app/components/Button.svelte";
+  import Popover from "@app/components/Popover.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import NodeInfo from "./NodeInfo.svelte";
 
   export let baseUrl: BaseUrl;
   export let nid: string;
@@ -33,10 +33,6 @@
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
       ? $httpdStore.session
       : undefined;
-  let expandedNode = false;
-
-  $: shortSeedingPolicy =
-    scope === "all" && policy === "allow" ? "permissive" : "restrictive";
 
   let scrollY: number;
 
@@ -140,11 +136,6 @@
     display: flex;
     justify-content: space-between;
   }
-  .version {
-    color: var(--color-fill-gray);
-    font-family: var(--font-family-monospace);
-    font-size: var(--font-size-small);
-  }
 
   .project-grid {
     display: grid;
@@ -168,18 +159,6 @@
     display: block;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-regular);
-  }
-  .policies {
-    font-size: var(--font-size-small);
-    display: flex;
-    flex-direction: column;
-  }
-  .item {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
   }
   @media (max-width: 719.98px) {
     .bottom-part {
@@ -295,38 +274,7 @@
         </div>
       </div>
       <div class="sidebar-footer">
-        <div class="policies">
-          <div class="item">
-            <div class="item" style="justify-content: flex-start;">
-              <span class="no-wrap">Seeding Policy</span>
-            </div>
-            <div
-              style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center;">
-              <div class="txt-bold">
-                {capitalize(shortSeedingPolicy)}
-              </div>
-              <IconButton on:click={() => (expandedNode = !expandedNode)}>
-                <IconSmall
-                  name={`chevron-${expandedNode ? "down" : "right"}`} />
-              </IconButton>
-            </div>
-          </div>
-          {#if expandedNode && scope && policy}
-            <div style:padding="0 0 1rem 1rem">
-              <ScopePolicyExplainer {scope} {policy} />
-            </div>
-          {/if}
-        </div>
-        <div
-          class="item"
-          style="justify-content: space-between; display: flex; text-wrap: nowrap; font-size: var(--font-size-small); ">
-          <span>Radicle version</span>
-          <Id id={version} ariaLabel="node-id" shorten={false}>
-            <div class="version" style="width: 10rem;">
-              <div class="txt-overflow">{version}</div>
-            </div>
-          </Id>
-        </div>
+        <NodeInfo {scope} {policy} {version} />
       </div>
     </div>
 
@@ -373,7 +321,25 @@
     </div>
 
     <div class="mobile-footer">
-      <MobileFooter />
+      <MobileFooter>
+        <div style:width="100%">
+          <Popover popoverPositionBottom="3rem" popoverPositionRight="-4.5rem">
+            <Button
+              let:expanded
+              slot="toggle"
+              variant={expanded ? "secondary" : "secondary-mobile-toggle"}
+              styleWidth="100%"
+              let:toggle
+              on:click={toggle}>
+              <IconSmall name="seedling" />
+            </Button>
+
+            <div slot="popover">
+              <NodeInfo {scope} {policy} {version} />
+            </div>
+          </Popover>
+        </div>
+      </MobileFooter>
     </div>
   </div>
 </div>
