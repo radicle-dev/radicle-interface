@@ -83,7 +83,12 @@ export async function authenticate(params: {
           publicKey: params.publicKey,
           alias: sess.alias,
         },
-        node: { id, state, policy: config?.policy, scope: config?.scope },
+        node: {
+          id,
+          state,
+          policy: config?.seedingPolicy.default,
+          scope: config?.seedingPolicy.scope,
+        },
       });
       return true;
     } catch (error) {
@@ -111,8 +116,8 @@ export async function disconnect() {
           node: {
             id,
             state,
-            policy: config?.policy,
-            scope: config?.scope,
+            policy: config?.seedingPolicy.default,
+            scope: config?.seedingPolicy.scope,
           },
         });
       } catch (error) {
@@ -150,8 +155,8 @@ async function checkState() {
         const node = {
           id,
           state,
-          policy: config?.policy,
-          scope: config?.scope,
+          policy: config?.seedingPolicy.default,
+          scope: config?.seedingPolicy.scope,
         };
 
         if (httpdState && httpdState.state === "authenticated") {

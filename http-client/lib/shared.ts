@@ -17,11 +17,26 @@ export const nodeConfigSchema = object({
   alias: string(),
   peers: union([
     object({ type: literal("static") }),
-    object({ type: literal("dynamic"), target: number() }),
+    object({ type: literal("dynamic") }),
   ]),
   listen: array(string()),
   connect: array(string()),
   externalAddresses: array(string()),
+  proxy: string().optional(),
+  onion: union([
+    object({
+      mode: literal("proxy"),
+      address: string(),
+    }),
+    object({ mode: literal("forward") }),
+  ]).optional(),
+  log: union([
+    literal("ERROR"),
+    literal("WARN"),
+    literal("INFO"),
+    literal("DEBUG"),
+    literal("TRACE"),
+  ]),
   network: union([literal("main"), literal("test")]),
   relay: union([literal("always"), literal("never"), literal("auto")]),
   limits: object({
@@ -40,9 +55,16 @@ export const nodeConfigSchema = object({
         capacity: number(),
       }),
     }),
+    connection: object({
+      inbound: number(),
+      outbound: number(),
+    }),
   }),
-  policy: policySchema,
-  scope: scopeSchema,
+  workers: number(),
+  seedingPolicy: object({
+    default: policySchema,
+    scope: scopeSchema.optional(),
+  }),
 });
 
 export type Policy = z.infer<typeof policySchema>;

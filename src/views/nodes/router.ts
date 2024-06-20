@@ -56,8 +56,8 @@ export async function loadNodeRoute(
         stats,
         externalAddresses: node.config?.externalAddresses ?? [],
         version: node.version,
-        policy: node.config?.policy,
-        scope: node.config?.scope,
+        policy: node.config?.seedingPolicy.default,
+        scope: node.config?.seedingPolicy.scope,
       },
     };
   } catch (error) {

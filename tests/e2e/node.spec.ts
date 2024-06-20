@@ -6,8 +6,7 @@ test("node metadata", async ({ page, peerManager }) => {
     name: "node-metadata-peer",
   });
   await peer.startNode({
-    policy: "allow",
-    scope: "all",
+    seedingPolicy: { default: "allow", scope: "all" },
     alias: "palm",
     externalAddresses: ["seed.radicle.test:8123"],
   });
@@ -19,7 +18,7 @@ test("node metadata", async ({ page, peerManager }) => {
   await expect(
     page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
   ).toBeVisible();
-  await expect(page.getByText("1.0.0-rc.8-")).toBeVisible();
+  await expect(page.getByText("1.0.0-rc.11-")).toBeVisible();
 });
 
 test("node projects", async ({ page }) => {

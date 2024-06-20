@@ -50,7 +50,10 @@ export default async function globalSetup(): Promise<() => void> {
   });
 
   if (!process.env.SKIP_FIXTURE_CREATION) {
-    await palm.startNode({ policy: "allow", scope: "all", alias: "palm" });
+    await palm.startNode({
+      seedingPolicy: { default: "allow", scope: "all" },
+      alias: "palm",
+    });
     await palm.startHttpd(defaultHttpdPort);
 
     try {

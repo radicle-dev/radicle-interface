@@ -3,7 +3,7 @@
 
   import { capitalize } from "lodash";
 
-  export let scope: Scope;
+  export let scope: Scope | undefined = "all";
   export let policy: Policy;
 </script>
 

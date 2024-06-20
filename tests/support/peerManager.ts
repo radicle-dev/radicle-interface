@@ -124,10 +124,25 @@ export const NodeConfigSchema = object({
     alias: string(),
     peers: union([
       object({ type: literal("static") }),
-      object({ type: literal("dynamic"), target: number() }),
+      object({ type: literal("dynamic") }),
     ]),
     connect: array(string()),
     externalAddresses: array(string()),
+    proxy: string().optional(),
+    onion: union([
+      object({
+        mode: literal("proxy"),
+        address: string(),
+      }),
+      object({ mode: literal("forward") }),
+    ]).optional(),
+    log: union([
+      literal("ERROR"),
+      literal("WARN"),
+      literal("INFO"),
+      literal("DEBUG"),
+      literal("TRACE"),
+    ]),
     network: union([literal("main"), literal("test")]),
     relay: union([literal("always"), literal("never"), literal("auto")]),
     limits: object({
@@ -140,9 +155,15 @@ export const NodeConfigSchema = object({
         inbound: object({ fillRate: number(), capacity: number() }),
         outbound: object({ fillRate: number(), capacity: number() }),
       }),
+      connection: object({
+        inbound: number(),
+        outbound: number(),
+      }),
     }),
-    policy: union([literal("allow"), literal("block")]),
-    scope: union([literal("followed"), literal("all")]),
+    seedingPolicy: object({
+      default: union([literal("allow"), literal("block")]),
+      scope: union([literal("followed"), literal("all")]).optional(),
+    }),
   }),
 });
 

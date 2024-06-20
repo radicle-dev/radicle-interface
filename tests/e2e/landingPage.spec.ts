@@ -100,7 +100,6 @@ const nodeInfo = {
     listen: [],
     peers: {
       type: "dynamic",
-      target: 0,
     },
     connect: [],
     externalAddresses: ["seed.rhizoma.dev:8776"],
@@ -132,8 +131,9 @@ const nodeInfo = {
       },
     },
     workers: 32,
-    policy: "block",
-    scope: "all",
+    seedingPolicy: {
+      default: "block",
+    },
   },
   state: "running",
 };

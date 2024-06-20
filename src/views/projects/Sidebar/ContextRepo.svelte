@@ -18,7 +18,8 @@
   let expandedNode = false;
 
   $: shortSeedingPolicy =
-    node.config?.scope === "all" && node.config?.policy === "allow"
+    node.config?.seedingPolicy.scope === "all" &&
+    node.config?.seedingPolicy.default === "allow"
       ? "permissive"
       : "restrictive";
 </script>
@@ -113,11 +114,11 @@
         {capitalize(shortSeedingPolicy)}
       </div>
     </div>
-    {#if expandedNode && node.config}
+    {#if expandedNode && node.config?.seedingPolicy}
       <div style:padding-left="2.3rem">
         <ScopePolicyExplainer
-          scope={node.config.scope}
-          policy={node.config.policy} />
+          scope={node.config.seedingPolicy.scope}
+          policy={node.config.seedingPolicy.default} />
       </div>
     {/if}
   </div>
