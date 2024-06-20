@@ -17,6 +17,7 @@ test("peer and branch switching", async ({ page }) => {
   await page
     .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
     .click();
+  await expect(page.getByText("Thursday, December 15,")).toBeVisible();
 
   // Alice's peer.
   {
@@ -114,6 +115,7 @@ test("commit messages with double colon not converted into single colon", async 
       exact: true,
     })
     .click();
+  await page.waitForLoadState("networkidle");
   await expect(page.getByText(commitMessage, { exact: true })).toBeVisible();
 });
 

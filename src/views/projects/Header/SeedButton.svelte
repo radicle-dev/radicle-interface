@@ -8,7 +8,7 @@
   import ErrorModal from "@app/modals/ErrorModal.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import Popover from "@app/components/Popover.svelte";
+  import Popover, { closeFocused } from "@app/components/Popover.svelte";
 
   export let projectId: string;
   export let seedCount: number;
@@ -100,6 +100,7 @@
     on:click={async () => {
       if ($experimental && !seeding && canEditSeeding) {
         await editSeeding();
+        closeFocused();
       } else {
         toggle();
       }
@@ -121,6 +122,7 @@
 
   <div
     slot="popover"
+    let:toggle
     style:width={$experimental ? (seeding ? "19.5rem" : "30.5rem") : "auto"}>
     {#if $experimental && canEditSeeding && seeding}
       <div class="seed-label txt-bold">Stop seeding</div>
@@ -134,6 +136,7 @@
         disabled={editSeedingInProgress}
         on:click={async () => {
           await editSeeding();
+          toggle();
         }}>
         <IconSmall name="seedling" />
         Stop seeding
