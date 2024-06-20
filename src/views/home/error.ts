@@ -17,8 +17,8 @@ export function handleError(
   } else if (error instanceof ResponseError) {
     return {
       error,
-      title: "Could not load the projects",
-      description: `You're trying to fetch projects from a node that is not reachable, make sure the address <a href="${url}">${url}</a> is correct and the right ports are exposed if its your node.`,
+      title: "Could not load the repositories",
+      description: `You're trying to fetch repositories from a node that is not reachable, make sure the address <a href="${url}">${url}</a> is correct and the right ports are exposed if its your node.`,
     };
   } else if (
     error instanceof TypeError &&

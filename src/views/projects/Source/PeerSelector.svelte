@@ -24,7 +24,7 @@
   function createTitle(p: Remote): string {
     const nodeId = formatNodeId(p.id);
     return p.delegate
-      ? `${nodeId} is a delegate of this project`
+      ? `${nodeId} is a delegate of this repository`
       : `${nodeId} is a peer followed by this node`;
   }
 </script>

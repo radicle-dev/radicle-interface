@@ -154,7 +154,7 @@
 
       <div class="subtitle" style:justify-content="space-between">
         <div class="txt-semibold">
-          {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} projects
+          {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} repositories
         </div>
         <div class="seeding-policy">
           {#if policy && scope}
@@ -194,9 +194,9 @@
             </div>
           {:else}
             <div class="empty-state">
-              <div class="heading">No pinned projects</div>
+              <div class="heading">No pinned repositories</div>
               <div class="label">
-                This node doesn't have any pinned projects.
+                This node doesn't have any pinned repositories.
               </div>
             </div>
           {/if}

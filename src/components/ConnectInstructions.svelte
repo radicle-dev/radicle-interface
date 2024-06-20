@@ -44,7 +44,7 @@
     {:else}
       <div class="heading">Connect & Authenticate</div>
       <div class="label">
-        Connect to your local node to browse projects on your local machine,
+        Connect to your local node to browse repositories on your local machine,
         create issues, and participate in discussions.
       </div>
       <Command fullWidth command={`rad web ${window.origin} ${pathParam}`} />
@@ -57,9 +57,9 @@
       </div>
     {/if}
   {:else}
-    <div class="heading">Browse your local projects</div>
+    <div class="heading">Browse your local repositories</div>
     <div class="label">
-      To browse projects on your local node, run the following command.
+      To browse repositories on your local node, run the following command.
     </div>
     <Command fullWidth command="radicle-httpd" />
 

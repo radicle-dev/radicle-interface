@@ -17,13 +17,14 @@
     {
       value: "all",
       title: "All seeding",
-      description: "Show all projects you’re seeding with your local node.",
+      description: "Show all repositories you’re seeding with your local node.",
       iconName: "seedling",
     },
     {
       value: "delegating",
       title: "Delegate only",
-      description: "Show only projects that you’re seeding and a delegate of.",
+      description:
+        "Show only repositories that you’re seeding and a delegate of.",
       iconName: "badge",
     },
   ];

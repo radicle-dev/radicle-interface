@@ -56,9 +56,9 @@
       corner to get started.
     </div>
   {:else if localProject === "notFound"}
-    <div class="title txt-bold">Project not available locally</div>
+    <div class="title txt-bold">Repository not available locally</div>
     <div class="description" style:padding-bottom="0.5rem">
-      This project hasn't been found on your local
+      This repository hasn't been found on your local
       <br />
       node. To get a local copy start seeding it
       <br />

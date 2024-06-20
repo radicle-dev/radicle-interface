@@ -152,9 +152,9 @@
             (filteredLocalProjects instanceof Array &&
               !filteredLocalProjects.length) ||
             localProjects instanceof Error}
-          title="Local projects">
+          title="Local repositories">
           <svelte:fragment slot="subtitle">
-            Projects you're seeding with your local node
+            Repositories you're seeding with your local node
           </svelte:fragment>
           <svelte:fragment slot="actions">
             {#if $experimental}
@@ -173,15 +173,15 @@
                     baseUrlToString(api.baseUrl),
                   )} />
               {:else if !localProjects?.length}
-                <div class="heading">No local projects</div>
+                <div class="heading">No local repositories</div>
                 <div class="label">
-                  Seed or check out a project to work with it on your local
+                  Seed or check out a repository to work with it on your local
                   node.
                 </div>
               {:else}
                 <div class="heading">Nothing to see here</div>
                 <div class="label">
-                  No local projects matched your filter settings.
+                  No local repositories matched your filter settings.
                 </div>
               {/if}
             </div>
@@ -228,7 +228,7 @@
 
               <div slot="popover" class="popover txt-small" style:width="15rem">
                 <div style:padding-bottom="0.5rem">
-                  To browse your local projects, run:
+                  To browse your local repositories, run:
                 </div>
                 <Command command="radicle-httpd" />
               </div>
@@ -245,9 +245,9 @@
                 baseUrlToString(api.baseUrl),
               )} />
           {:else}
-            <div class="heading">No pinned projects</div>
+            <div class="heading">No pinned repositories</div>
             <div class="label">
-              The selected seed node doesn't have any pinned projects.
+              The selected seed node doesn't have any pinned repositories.
             </div>
           {/if}
         </div>

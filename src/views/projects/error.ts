@@ -21,7 +21,7 @@ export function handleError(
     } else if (route.resource === "project.patch") {
       subject = "Patch";
     } else {
-      subject = "Project";
+      subject = "Repository";
     }
 
     return {
@@ -33,7 +33,7 @@ export function handleError(
       resource: "error",
       params: {
         error,
-        title: "Could not load this project",
+        title: "Could not load this repository",
         description: `Make sure you are able to connect to the seed <a href="${url}">${url}</a>.`,
       },
     };
@@ -55,9 +55,9 @@ export function handleError(
     return {
       resource: "error",
       params: {
-        title: "Could not load this project",
+        title: "Could not load this repository",
         description:
-          "You're trying to access a project on your local node but the app is not connected to it. Click the Connect button in the top right corner to connect.",
+          "You're trying to access a repository on your local node but the app is not connected to it. Click the Connect button in the top right corner to connect.",
         error: undefined,
       },
     };
@@ -66,7 +66,7 @@ export function handleError(
       resource: "error",
       params: {
         error,
-        title: "Could not load this project",
+        title: "Could not load this repository",
         description:
           "You stumbled on an unknown error, we aren't exactly sure what happened.",
       },

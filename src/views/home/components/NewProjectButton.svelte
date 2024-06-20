@@ -27,12 +27,12 @@
     slot="toggle"
     on:click={toggle}>
     <IconSmall name="plus" />
-    New project
+    New repository
   </Button>
 
   <div slot="popover" class="popover txt-small">
     Run the following command within an already-existing Git repository to
-    create a new Radicle project.
+    create a new Radicle repository.
     <Command fullWidth command="rad init" />
   </div>
 </Popover>
