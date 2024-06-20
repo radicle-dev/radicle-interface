@@ -137,7 +137,7 @@ export default [
       "node_modules/**/*",
       "build/**/*",
       "public/**/*",
-      "http-server/**/*",
+      "radicle-httpd/**/*",
     ],
   },
 ];

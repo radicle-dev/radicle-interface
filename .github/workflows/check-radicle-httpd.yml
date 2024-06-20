@@ -1,4 +1,4 @@
-name: check-http-server
+name: check-radicle-httpd
 on: push
 
 jobs:
@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./http-server
+        working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: http-server -> target
+          workspaces: radicle-httpd -> target
       - name: Build
         run: cargo build --all-features
       - name: Run tests
@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./http-server
+        working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: http-server -> target
+          workspaces: radicle-httpd -> target
       - name: Docs
         run: cargo doc --all --all-features
   lint:
@@ -37,13 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./http-server
+        working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: http-server -> target
+          workspaces: radicle-httpd -> target
       - name: Run clippy
         run: cargo clippy --all --tests
       - name: Check formatting

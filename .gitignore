@@ -2,8 +2,8 @@
 node_modules/
 NOTES
 config/local*
-http-server/target
-http-server/build/artifacts
+radicle-httpd/target
+radicle-httpd/build/artifacts
 
 # KaTeX files
 *.min.css
