@@ -150,6 +150,7 @@ test("relative timestamps", async ({ page }) => {
   await page
     .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
     .click();
+  await expect(page.getByText("Thursday, December 15,")).toBeVisible();
 
   await changeBranch("bob", `main ${shortBobHead}`, page);
   await expect(page.getByTitle("Change branch")).toHaveText(/bob/);
