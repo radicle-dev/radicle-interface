@@ -33,22 +33,28 @@ while [ $# -ne 0 ]; do
 done
 
 if test -d "$BINARY_PATH"; then
-  echo ✅ "Folder $BINARY_PATH exists already skipping download."
+  echo ✅ "Folder $BINARY_PATH exists already skipping download and build."
 else
   mkdir -p "$BINARY_PATH"
   case "$OS" in
   Darwin)
-    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz"
+    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz into /tests/tmp/bin/$RELEASE"
     curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-aarch64-apple-darwin/bin/" || (echo "Download failed" && exit 1)
     ;;
   Linux)
-    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz"
+    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz into /tests/tmp/bin/$RELEASE"
     curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-x86_64-unknown-linux-musl/bin/" || (echo "Download failed" && exit 1)
     ;;
   *)
     echo "There are no precompiled binaries for your OS: $OS, compile $RELEASE manually and make sure it's in PATH." && exit 1
     ;;
   esac
+
+  echo Building radicle-httpd and rad-web
+  CARGO_TERM_PROGRESS_WIDTH=80 CARGO_TERM_PROGRESS_WHEN=always cargo build --release --all --quiet --manifest-path=$REPO_ROOT/radicle-httpd/Cargo.toml
+  echo Copying radicle-httpd and rad-web into /tests/tmp/bin/$RELEASE
+  cp $REPO_ROOT/radicle-httpd/target/release/radicle-httpd $BINARY_PATH
+  cp $REPO_ROOT/radicle-httpd/target/release/rad-web $BINARY_PATH
 fi
 
 echo
