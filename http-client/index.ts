@@ -12,6 +12,7 @@ import type {
   SuccessResponse,
   CodeLocation,
   Range,
+  SeedingPolicy,
   DefaultSeedingPolicy,
 } from "./lib/shared.js";
 import type { Comment, Embed, Reaction } from "./lib/project/comment.js";
@@ -50,6 +51,7 @@ import { Fetcher } from "./lib/fetcher.js";
 import {
   nodeConfigSchema,
   scopeSchema,
+  seedingPolicySchema,
   successResponseSchema,
 } from "./lib/shared.js";
 
@@ -85,6 +87,7 @@ export type {
   Remote,
   Review,
   Revision,
+  SeedingPolicy,
   TreeStats,
   Tree,
   Verdict,
@@ -211,14 +214,14 @@ export class HttpdClient {
   public async getPoliciesById(
     id: string,
     options?: RequestOptions,
-  ): Promise<NodePolicies["policy"][]> {
+  ): Promise<SeedingPolicy> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `node/policies/repos/${id}`,
         options,
       },
-      array(nodePoliciesSchema.shape.policy),
+      seedingPolicySchema,
     );
   }
 

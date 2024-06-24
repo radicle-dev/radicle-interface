@@ -7,7 +7,6 @@
   import { api, httpdStore } from "@app/lib/httpd";
   import {
     baseUrlToString,
-    formatShortSeedingPolicy,
     formatUserAgent,
     isLocal,
     truncateId,
@@ -32,7 +31,10 @@
   export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
   export let agent: string;
 
-  $: shortScope = formatShortSeedingPolicy(seedingPolicy);
+  $: shortScope =
+    seedingPolicy?.default === "allow" && seedingPolicy?.scope === "all"
+      ? "permissive"
+      : "restrictive";
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)

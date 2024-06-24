@@ -2,22 +2,12 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Node, Project } from "@http-client";
 
-  import { onMount } from "svelte";
-
-  import { experimental } from "@app/lib/appearance";
-  import { httpdStore, api } from "@app/lib/httpd";
-  import { isLocal } from "@app/lib/utils";
-  import { queryProject } from "@app/lib/projects";
-
   import Button from "@app/components/Button.svelte";
-  import ContextHelp from "@app/views/projects/Sidebar/ContextHelp.svelte";
   import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
+  import Help from "@app/App/Help.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import Loading from "@app/components/Loading.svelte";
   import Popover from "@app/components/Popover.svelte";
-
-  import Help from "@app/App/Help.svelte";
   import Settings from "@app/App/Settings.svelte";
 
   const SIDEBAR_STATE_KEY = "sidebarState";
@@ -37,20 +27,6 @@
     );
   }
 
-  // To avoid concurrent request.
-  let queryingLocalProject: boolean = true;
-  let localProject: "notFound" | "found" | undefined = undefined;
-  $: hideContextHelp =
-    $experimental &&
-    isLocal(baseUrl.hostname) &&
-    $httpdStore.state === "authenticated";
-
-  httpdStore.subscribe(async () => {
-    if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
-      await detectLocalProject();
-    }
-  });
-
   function loadSidebarState(): boolean {
     const storedSidebarState = window.localStorage.getItem(SIDEBAR_STATE_KEY);
 
@@ -66,19 +42,7 @@
     storeSidebarState(expanded);
   }
 
-  async function detectLocalProject(): Promise<void> {
-    queryingLocalProject = true;
-    localProject = await queryProject(api.baseUrl, project.id);
-    queryingLocalProject = false;
-  }
-
-  onMount(async () => {
-    if ($httpdStore.state !== "stopped") {
-      await detectLocalProject();
-    } else {
-      localProject = "notFound";
-    }
-  });
+  $: seedingPolicy = formatShortSeedingPolicy(node.config?.seedingPolicy);
 </script>
 
 <style>
@@ -132,17 +96,13 @@
     justify-content: space-between;
     width: 100%;
   }
-  .repo,
-  .help {
+  .repo {
     z-index: 10;
-    opacity: 1;
-    transition:
-      opacity 150ms,
-      display 150ms allow-discrete;
-    transition-delay: 150ms;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
   }
-  .help-box {
-    width: 100%;
+  .box {
     padding: 1rem;
     margin-bottom: 0.5rem;
     background-color: var(--color-background-float);
@@ -150,19 +110,26 @@
     font-size: var(--font-size-small);
     border-radius: var(--border-radius-small);
   }
-  .repo-box {
-    margin-bottom: 0.5rem;
+  .repo.expanded {
+    opacity: 1;
+    height: initial;
+    overflow: initial;
+    transition: opacity 150ms;
+    transition-delay: 150ms;
   }
   .vertical-buttons {
     opacity: 1;
     height: fit-content;
     display: flex;
     flex-direction: column-reverse;
-    transition:
-      opacity 150ms ease-in-out,
-      display 150ms ease-in-out allow-discrete;
+    transition: opacity 150ms ease-in-out;
     transition-delay: 60ms;
     margin-bottom: 0.5rem;
+  }
+  .vertical-buttons.expanded {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
   }
   .horizontal-buttons {
     display: flex;
@@ -210,7 +177,7 @@
         stylePadding="0.5rem 0.75rem"
         size="large"
         styleWidth="100%"
-        styleJustifyContent={"flex-start"}
+        styleJustifyContent="flex-start"
         variant={activeTab === "source" ? "gray" : "background"}>
         <IconSmall name="chevron-left-right" />
         <span class="title-counter" class:expanded>Source</span>
@@ -227,7 +194,7 @@
         stylePadding="0.5rem 0.75rem"
         let:hover
         size="large"
-        styleJustifyContent={"flex-start"}
+        styleJustifyContent="flex-start"
         styleWidth="100%"
         variant={activeTab === "issues" ? "gray" : "background"}>
         <IconSmall name="issue" />
@@ -255,7 +222,7 @@
         let:hover
         size="large"
         styleWidth="100%"
-        styleJustifyContent={"flex-start"}
+        styleJustifyContent="flex-start"
         variant={activeTab === "patches" ? "gray" : "background"}>
         <IconSmall name="patch" />
         <div class="title-counter" class:expanded>
@@ -272,110 +239,60 @@
   </div>
   <!-- Context and other information section -->
   <div class="bottom">
-    {#if expanded}
-      <div class="help">
-        {#if !hideContextHelp && $experimental}
-          {#if !localProject}
-            <div
-              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-              <Loading small />
-            </div>
-          {:else}
-            <div class="help-box">
-              <ContextHelp
-                {localProject}
-                {baseUrl}
-                projectId={project.id}
-                hideLocalButton={isLocal(baseUrl.hostname) ||
-                  localProject !== "found"}
-                disableLocalButton={$httpdStore.state !== "authenticated"} />
-            </div>
-          {/if}
-        {/if}
-      </div>
-      <div class="repo">
-        <div class="repo-box">
-          <ContextRepo {project} {baseUrl} {node} />
+    <div class="repo box" class:expanded>
+      <ContextRepo
+        projectThreshold={project.threshold}
+        projectDelegates={project.delegates}
+        {seedingPolicy} />
+    </div>
+    <div class="vertical-buttons" class:expanded style:gap="0.5rem">
+      <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+        <Button
+          stylePadding="0 0.75rem"
+          variant="background"
+          title="Settings"
+          slot="toggle"
+          let:toggle
+          on:click={toggle}>
+          <IconSmall name="settings" />
+        </Button>
+
+        <Settings slot="popover" />
+      </Popover>
+
+      <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+        <Button
+          stylePadding="0 0.75rem"
+          variant="background"
+          title="Help"
+          slot="toggle"
+          let:toggle
+          on:click={toggle}>
+          <IconSmall name="help" />
+        </Button>
+
+        <Help slot="popover" />
+      </Popover>
+
+      <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
+        <Button
+          stylePadding="0 0.75rem"
+          variant="background"
+          title="Info"
+          slot="toggle"
+          let:toggle
+          on:click={toggle}>
+          <IconSmall name="info" />
+        </Button>
+
+        <div slot="popover" class="txt-small" style:width="18rem">
+          <ContextRepo
+            projectThreshold={project.threshold}
+            projectDelegates={project.delegates}
+            {seedingPolicy} />
         </div>
-      </div>
-    {:else}
-      <div class="vertical-buttons" style:gap="0.5rem">
-        <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-          <Button
-            stylePadding="0 0.75rem"
-            variant="background"
-            title="Settings"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="settings" />
-          </Button>
-
-          <Settings slot="popover" />
-        </Popover>
-
-        <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-          <Button
-            stylePadding="0 0.75rem"
-            variant="background"
-            title="Help"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="help" />
-          </Button>
-
-          <Help slot="popover" />
-        </Popover>
-
-        <Popover popoverPositionBottom="0" popoverPositionLeft="2rem">
-          <Button
-            stylePadding="0 0.75rem"
-            variant="background"
-            title="Info"
-            slot="toggle"
-            let:toggle
-            on:click={toggle}>
-            <IconSmall name="info" />
-          </Button>
-
-          <div slot="popover">
-            <ContextRepo disablePopovers {node} {baseUrl} {project} />
-          </div>
-        </Popover>
-
-        {#if !hideContextHelp && $experimental}
-          {#if !localProject}
-            <div
-              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-              <Loading small condensed />
-            </div>
-          {:else}
-            <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-              <Button
-                stylePadding="0 0.75rem"
-                variant="background"
-                title="Local node"
-                slot="toggle"
-                let:toggle
-                on:click={toggle}>
-                <IconSmall name="device" />
-              </Button>
-
-              <ContextHelp
-                {localProject}
-                {baseUrl}
-                popover
-                projectId={project.id}
-                hideLocalButton={isLocal(baseUrl.hostname) ||
-                  localProject !== "found"}
-                disableLocalButton={$httpdStore.state !== "authenticated"}
-                slot="popover" />
-            </Popover>
-          {/if}
-        {/if}
-      </div>
-    {/if}
+      </Popover>
+    </div>
     <!-- Footer -->
     {#if !collapsedOnly}
       <div class="sidebar-footer" style:flex-direction="row">
