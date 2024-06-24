@@ -587,6 +587,7 @@ async fn readme_handler(
         "README.markdown",
         "README.txt",
         "README.rst",
+        "README.org",
         "Readme.md",
     ];
 
