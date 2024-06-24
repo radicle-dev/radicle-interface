@@ -12,6 +12,18 @@ export const successResponseSchema = object({
 
 export const scopeSchema = union([literal("followed"), literal("all")]);
 
+export const seedingPolicySchema = union([
+  object({
+    policy: literal("block"),
+  }),
+  object({
+    policy: literal("allow"),
+    scope: scopeSchema,
+  }),
+]);
+
+export type SeedingPolicy = z.infer<typeof seedingPolicySchema>;
+
 const defaultSeedingPolicySchema = union([
   object({
     default: literal("block"),

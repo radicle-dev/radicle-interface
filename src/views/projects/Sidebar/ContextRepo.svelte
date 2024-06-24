@@ -1,119 +1,88 @@
 <script lang="ts">
-  import type { BaseUrl, Node, Project } from "@http-client";
+  import type { Project, SeedingPolicy } from "@http-client";
 
   import { capitalize } from "lodash";
-  import { formatShortSeedingPolicy, isLocal } from "@app/lib/utils";
 
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import NodeId from "@app/components/NodeId.svelte";
-  import Popover from "@app/components/Popover.svelte";
-  import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
-  export let disablePopovers: boolean = false;
-  export let project: Project;
-  export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let projectThreshold: number;
+  export let projectDelegates: Project["delegates"];
+  export let seedingPolicy: SeedingPolicy;
 
-  let expandedNode = false;
-
-  $: shortSeedingPolicy = formatShortSeedingPolicy(node.config?.seedingPolicy);
+  let delegateExpanded = false;
+  let policyExpanded = false;
 </script>
 
 <style>
-  .nids {
+  .item-header {
+    gap: 2rem;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0.5rem 0;
-  }
-
-  .node {
-    display: flex;
-    margin-top: 0.5rem;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 0.5rem;
-  }
-  .policies {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .item {
-    display: flex;
-    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
+    margin: 0.2rem 0;
   }
-  .no-wrap {
-    text-wrap: nowrap;
+  .item-header:first-child {
+    margin-top: 0;
+  }
+  .item-header:last-child {
+    margin-bottom: 0;
+  }
+  .nid {
+    margin: 0.5rem 0;
   }
 </style>
 
-<div class="delegates txt-small">
-  <div class="item" style:height="2rem">
-    <div class="item">
-      <IconSmall name="badge" />
-      <span class="txt-bold">Delegates</span>
-      <span class="txt-missing">{project.delegates.length}</span>
-    </div>
-    <div class="item">
-      <IconSmall name="quorum" />
-      <span class="txt-bold">
-        {project.threshold}/{project.delegates.length}
-      </span>
-      {#if !disablePopovers}
-        <Popover
-          popoverPositionBottom="0"
-          popoverPositionLeft="2rem"
-          popoverPositionRight="-17rem">
-          <IconButton slot="toggle" let:toggle on:click={toggle}>
-            <IconSmall name="help" />
-          </IconButton>
-
-          <div slot="popover">
-            {project.threshold} out of {project.delegates.length} delegates have
-            to accept changes to be included in the canonical branch.
-          </div>
-        </Popover>
-      {/if}
-    </div>
-  </div>
-  <div class="nids">
-    {#each project.delegates as { id: nodeId, alias }}
-      <div style:width="fit-content">
-        <NodeId {alias} {nodeId} />
-      </div>
-    {/each}
+<div class="item-header">
+  <span>Delegates</span>
+  <div class="global-flex-item">
+    <span class="txt-bold">
+      {projectThreshold}/{projectDelegates.length}
+    </span>
+    <IconButton on:click={() => (delegateExpanded = !delegateExpanded)}>
+      <IconSmall name={delegateExpanded ? "chevron-up" : "chevron-down"} />
+    </IconButton>
   </div>
 </div>
-<div class="txt-small node">
-  <div class="item no-wrap txt-bold" style="justify-content: flex-start; ">
-    {#if isLocal(baseUrl.hostname)}
-      <IconSmall name="device" />Local Node
+{#if delegateExpanded}
+  <div style:color="var(--color-foreground-dim" style:margin-bottom="1rem">
+    {#if projectDelegates.length === 1}
+      Any changes accepted by the sole delegate will be included in the
+      canonical branch.
     {:else}
-      <IconSmall name="seedling" />{baseUrl.hostname}
+      {projectThreshold} out of {projectDelegates.length} delegates have to accept
+      changes to be included in the canonical branch.
     {/if}
   </div>
-
-  <div class="policies">
-    <div class="item">
-      <div class="item" style="justify-content: flex-start;">
-        <IconButton on:click={() => (expandedNode = !expandedNode)}>
-          <IconSmall name={`chevron-${expandedNode ? "down" : "right"}`} />
-        </IconButton>
-        <span class="no-wrap">Seeding Policy</span>
-      </div>
-      <div class="txt-bold">
-        {capitalize(shortSeedingPolicy)}
-      </div>
+  {#each projectDelegates as delegate}
+    <div class="nid">
+      <NodeId nodeId={delegate.id} alias={delegate.alias} />
     </div>
-    {#if expandedNode && node.config?.seedingPolicy}
-      <div style:padding-left="2.3rem">
-        <ScopePolicyExplainer seedingPolicy={node.config.seedingPolicy} />
-      </div>
-    {/if}
+  {/each}
+{/if}
+<div class="item-header">
+  <span style:text-wrap="nowrap">Seeding Scope</span>
+  <div class="global-flex-item">
+    <span class="txt-bold">
+      {capitalize(
+        "scope" in seedingPolicy ? seedingPolicy.scope : "not defined",
+      )}
+    </span>
+    <IconButton on:click={() => (policyExpanded = !policyExpanded)}>
+      <IconSmall name={policyExpanded ? "chevron-up" : "chevron-down"} />
+    </IconButton>
   </div>
 </div>
+{#if policyExpanded}
+  <div style:color="var(--color-foreground-dim)">
+    {#if seedingPolicy.policy === "block"}
+      Seeding scope only has an effect when a repository is seeded. This repo
+      isn't seeded by the seed node.
+    {:else if seedingPolicy.scope === "all"}
+      This repository tracks changes by any peer.
+    {:else}
+      This repository tracks only peers followed by the seed node.
+    {/if}
+  </div>
+{/if}
