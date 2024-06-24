@@ -27,12 +27,19 @@
   export let version: string;
   export let policy: Policy | undefined = undefined;
   export let scope: Scope | undefined = undefined;
+  export let imageUrl: string | undefined = undefined;
+  export let title: string | undefined = undefined;
+  export let description: string | undefined = undefined;
 
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
       ? $httpdStore.session
       : undefined;
+
+  $: background = imageUrl
+    ? `linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("${imageUrl}")`
+    : "";
 
   let scrollY: number;
 
@@ -72,8 +79,6 @@
   .outer-header {
     grid-column: 1 / 4;
     border-bottom: 1px solid var(--color-fill-separator);
-    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-      url("/images/aliens.png");
     background-position: center;
     background-size: cover;
     height: 18rem;
@@ -199,7 +204,7 @@
 <svelte:window bind:scrollY />
 
 <div class="layout">
-  <div class="outer-header">
+  <div class="outer-header" style:background>
     <div class="inner-header">
       <div class="breadcrumbs">
         <Link
@@ -266,12 +271,14 @@
       style:top={`${top}px`}
       style:height={`calc(100% - ${top}px)`}>
       <div>
-        <div class="title txt-medium txt-semibold">🌱 Garden</div>
-        <div class="description txt-small">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel
-          libero mauris. In ultricies nulla ut nibh elementum fermentum.
-          Suspendisse nec arcu placerat.
-        </div>
+        {#if title}
+          <div class="title txt-medium txt-semibold">{title}</div>
+        {/if}
+        {#if description}
+          <div class="description txt-small">
+            {description}
+          </div>
+        {/if}
       </div>
       <div class="sidebar-footer">
         <NodeInfo {scope} {policy} {version} />
