@@ -40,19 +40,14 @@ const anchorMarkedExtension = {
 
 export class Renderer extends BaseRenderer {
   #route: Route;
-  #stripEmphasizedStyling: boolean | undefined;
 
   /**
    * If `baseUrl` is provided, all hrefs attributes in anchor tags, except those
    * starting with `#`, are resolved with respect to `baseUrl`
    */
-  constructor(
-    activeUnloadedRoute: Route,
-    { stripEmphasizedStyling }: { stripEmphasizedStyling: boolean },
-  ) {
+  constructor(activeUnloadedRoute: Route) {
     super();
     this.#route = activeUnloadedRoute;
-    this.#stripEmphasizedStyling = stripEmphasizedStyling;
   }
   // Overwrites the rendering of heading tokens.
   // Since there are possible non ASCII characters in headings,
@@ -67,16 +62,6 @@ export class Renderer extends BaseRenderer {
       .replace(/^-|-$/g, "");
 
     return `<h${depth} id="${escapedText}">${text}</h${depth}>`;
-  }
-
-  strong({ tokens }: Tokens.Strong) {
-    const text = this.parser.parseInline(tokens);
-    return this.#stripEmphasizedStyling ? text : `<strong>${text}</strong>`;
-  }
-
-  em({ tokens }: Tokens.Em) {
-    const text = this.parser.parseInline(tokens);
-    return this.#stripEmphasizedStyling ? text : `<em>${text}</em>`;
   }
 
   link({ href, title, tokens }: Tokens.Link): string {

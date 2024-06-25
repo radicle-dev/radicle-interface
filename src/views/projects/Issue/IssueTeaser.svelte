@@ -4,7 +4,7 @@
   import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
@@ -93,7 +93,7 @@
           {#if !issue.title}
             <span class="txt-missing">No title</span>
           {:else}
-            <InlineMarkdown fontSize="regular" content={issue.title} />
+            <InlineTitle fontSize="regular" content={issue.title} />
           {/if}
         </Link>
       </span>

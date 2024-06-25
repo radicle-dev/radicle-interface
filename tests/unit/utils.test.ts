@@ -34,6 +34,23 @@ describe("Format functions", () => {
 
   test.each([
     {
+      input: "<TR> Hello `new` world",
+      expected: "<TR> Hello <code>new</code> world",
+    },
+    { input: "Hello `new` world", expected: "Hello <code>new</code> world" },
+    {
+      input: "Hello `new` world `radicle`",
+      expected: "Hello <code>new</code> world <code>radicle</code>",
+    },
+    { input: "Hello `` world", expected: "Hello `` world" },
+    { input: "Hello `", expected: "Hello `" },
+    { input: "Hello", expected: "Hello" },
+  ])("formatInlineTitle $input => $expected", ({ input, expected }) => {
+    expect(utils.formatInlineTitle(input)).toEqual(expected);
+  });
+
+  test.each([
+    {
       id: "did:key:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",
       expected: "did:key:z6Mkmz…md6fz6",
     },

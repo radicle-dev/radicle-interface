@@ -8,7 +8,7 @@
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let baseUrl: BaseUrl;
@@ -68,7 +68,7 @@
           commit: commit.id,
         }}>
         <div class="summary" use:twemoji>
-          <InlineMarkdown fontSize="small" content={commit.summary} />
+          <InlineTitle fontSize="small" content={commit.summary} />
         </div>
       </Link>
       {#if commit.description}

@@ -26,6 +26,10 @@ export function formatUserAgent(agent: string): string {
   return agent.slice(1, -1);
 }
 
+export function formatInlineTitle(input: string): string {
+  return input.replaceAll(/`([^`]+)`/g, "<code>$1</code>");
+}
+
 export function parseNodeId(
   nid: string,
 ): { prefix: string; pubkey: string } | undefined {

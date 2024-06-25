@@ -75,7 +75,7 @@
   import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
@@ -724,10 +724,7 @@
               <span class="txt-missing">No title</span>
             {:else}
               <div class="title">
-                <InlineMarkdown
-                  stripEmphasizedStyling
-                  fontSize="large"
-                  content={patch.title} />
+                <InlineTitle fontSize="large" content={patch.title} />
               </div>
             {/if}
           </div>

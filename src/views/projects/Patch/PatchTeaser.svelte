@@ -5,7 +5,7 @@
   import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
@@ -105,7 +105,7 @@
           node: baseUrl,
           patch: patch.id,
         }}>
-        <InlineMarkdown fontSize="regular" content={patch.title} />
+        <InlineTitle fontSize="regular" content={patch.title} />
       </Link>
       {#if patch.labels.length > 0}
         <span

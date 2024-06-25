@@ -7,7 +7,7 @@
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
   import Id from "@app/components/Id.svelte";
 
@@ -86,7 +86,7 @@
         }}>
         <div style="position: relative;">
           <div class="summary" use:twemoji>
-            <InlineMarkdown fontSize="regular" content={commit.summary} />
+            <InlineTitle fontSize="regular" content={commit.summary} />
           </div>
         </div>
       </Link>

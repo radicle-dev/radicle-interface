@@ -93,9 +93,7 @@
   function render(content: string): string {
     return dompurify.sanitize(
       markdownWithExtensions.parse(content, {
-        renderer: new Renderer($activeUnloadedRouteStore, {
-          stripEmphasizedStyling: false,
-        }),
+        renderer: new Renderer($activeUnloadedRouteStore),
         breaks,
       }) as string,
     );

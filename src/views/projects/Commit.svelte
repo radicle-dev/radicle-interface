@@ -5,7 +5,7 @@
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
+  import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Share from "./Share.svelte";
@@ -50,10 +50,7 @@
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">
         <span class="title">
-          <InlineMarkdown
-            stripEmphasizedStyling
-            fontSize="large"
-            content={header.summary} />
+          <InlineTitle fontSize="large" content={header.summary} />
           <div class="button-container">
             <Link
               route={{
