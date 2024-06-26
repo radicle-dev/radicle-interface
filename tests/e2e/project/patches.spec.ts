@@ -14,31 +14,30 @@ test("navigate patch listing", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("patches counters", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder, defaultBranch } = await createProject(
-    authenticatedPeer,
-    { name: "patch-counters" },
-  );
-  await authenticatedPeer.git(["switch", "-c", "feature-1"], {
+test("patches counters", async ({ page, peer }) => {
+  const { rid, projectFolder, defaultBranch } = await createProject(peer, {
+    name: "patch-counters",
+  });
+  await peer.git(["switch", "-c", "feature-1"], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.git(["commit", "--allow-empty", "-m", "1th"], {
+  await peer.git(["commit", "--allow-empty", "-m", "1th"], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+  await peer.git(["push", "rad", "HEAD:refs/patches"], {
     cwd: projectFolder,
   });
-  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/patches`);
-  await authenticatedPeer.git(["switch", defaultBranch], {
+  await page.goto(`${peer.uiUrl()}/${rid}/patches`);
+  await peer.git(["switch", defaultBranch], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.git(["switch", "-c", "feature-2"], {
+  await peer.git(["switch", "-c", "feature-2"], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.git(["commit", "--allow-empty", "-m", "2nd"], {
+  await peer.git(["commit", "--allow-empty", "-m", "2nd"], {
     cwd: projectFolder,
   });
-  await authenticatedPeer.git(["push", "rad", "HEAD:refs/patches"], {
+  await peer.git(["push", "rad", "HEAD:refs/patches"], {
     cwd: projectFolder,
   });
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();

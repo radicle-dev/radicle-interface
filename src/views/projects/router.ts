@@ -21,15 +21,12 @@ import type {
   Tree,
 } from "@http-client";
 
-import { experimental } from "@app/lib/appearance";
-import * as httpd from "@app/lib/httpd";
 import * as Syntax from "@app/lib/syntax";
 import { unreachable } from "@app/lib/utils";
 import { nodePath } from "@app/views/nodes/router";
 import { handleError, unreachableError } from "@app/views/projects/error";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
-import { get } from "svelte/store";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -123,7 +120,6 @@ export type ProjectLoadedRoute =
         path: string;
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
-        seeding: boolean;
       };
     }
   | {
@@ -138,7 +134,6 @@ export type ProjectLoadedRoute =
         revision: string | undefined;
         tree: Tree;
         commitHeaders: CommitHeader[];
-        seeding: boolean;
       };
     }
   | {
@@ -241,24 +236,6 @@ function parseRevisionToOid(
     }
   } else {
     return branches[defaultBranch];
-  }
-}
-
-async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
-  if (!get(experimental) && get(httpd.httpdStore).state === "stopped") {
-    return false;
-  }
-  try {
-    const tracking = await httpd.api.getTracking();
-    return tracking.some(({ id }) => id === route.project);
-  } catch (error) {
-    if (error instanceof ResponseError && error.status === 404) {
-      return false;
-    }
-
-    // Either `radicle-httpd` isn't running or there was some other
-    // error.
-    return false;
   }
 }
 
@@ -365,7 +342,6 @@ async function loadIssuesView(
       page: 0,
       perPage: ISSUES_PER_PAGE,
     }),
-    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -405,11 +381,7 @@ async function loadTreeView(
     peersPromise = api.project.getAllRemotes(route.project);
   }
 
-  const [project, peers, seeding] = await Promise.all([
-    projectPromise,
-    peersPromise,
-    isLocalNodeSeeding(route),
-  ]);
+  const [project, peers] = await Promise.all([projectPromise, peersPromise]);
 
   let branchMap: Record<string, string> = {
     [project.defaultBranch]: project.head,
@@ -456,7 +428,6 @@ async function loadTreeView(
       tree,
       path,
       blobResult,
-      seeding,
     },
   };
 }
@@ -537,14 +508,13 @@ async function loadHistoryView(
     );
   }
 
-  const [tree, commitHeaders, seeding] = await Promise.all([
+  const [tree, commitHeaders] = await Promise.all([
     api.project.getTree(route.project, commitId),
     await api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
       perPage: COMMITS_PER_PAGE,
     }),
-    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -559,7 +529,6 @@ async function loadHistoryView(
       revision: route.revision,
       tree,
       commitHeaders,
-      seeding,
     },
   };
 }

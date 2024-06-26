@@ -2,19 +2,10 @@
   import type { ActiveTab } from "./Header.svelte";
   import type { BaseUrl, Node, Project } from "@http-client";
 
-  import { onMount } from "svelte";
-
-  import { experimental } from "@app/lib/appearance";
-  import { httpdStore, api } from "@app/lib/httpd";
-  import { isLocal } from "@app/lib/utils";
-  import { queryProject } from "@app/lib/projects";
-
   import Button from "@app/components/Button.svelte";
-  import ContextHelp from "@app/views/projects/Sidebar/ContextHelp.svelte";
   import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
-  import Loading from "@app/components/Loading.svelte";
   import Popover from "@app/components/Popover.svelte";
 
   import Help from "@app/App/Help.svelte";
@@ -37,20 +28,6 @@
     );
   }
 
-  // To avoid concurrent request.
-  let queryingLocalProject: boolean = true;
-  let localProject: "notFound" | "found" | undefined = undefined;
-  $: hideContextHelp =
-    $experimental &&
-    isLocal(baseUrl.hostname) &&
-    $httpdStore.state === "authenticated";
-
-  httpdStore.subscribe(async () => {
-    if ($httpdStore.state !== "stopped" && !queryingLocalProject) {
-      await detectLocalProject();
-    }
-  });
-
   function loadSidebarState(): boolean {
     const storedSidebarState = window.localStorage.getItem(SIDEBAR_STATE_KEY);
 
@@ -65,20 +42,6 @@
     expanded = !expanded;
     storeSidebarState(expanded);
   }
-
-  async function detectLocalProject(): Promise<void> {
-    queryingLocalProject = true;
-    localProject = await queryProject(api.baseUrl, project.id);
-    queryingLocalProject = false;
-  }
-
-  onMount(async () => {
-    if ($httpdStore.state !== "stopped") {
-      await detectLocalProject();
-    } else {
-      localProject = "notFound";
-    }
-  });
 </script>
 
 <style>
@@ -132,23 +95,13 @@
     justify-content: space-between;
     width: 100%;
   }
-  .repo,
-  .help {
+  .repo {
     z-index: 10;
     opacity: 1;
     transition:
       opacity 150ms,
       display 150ms allow-discrete;
     transition-delay: 150ms;
-  }
-  .help-box {
-    width: 100%;
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    background-color: var(--color-background-float);
-    border: 1px solid var(--color-border-hint);
-    font-size: var(--font-size-small);
-    border-radius: var(--border-radius-small);
   }
   .repo-box {
     margin-bottom: 0.5rem;
@@ -273,26 +226,6 @@
   <!-- Context and other information section -->
   <div class="bottom">
     {#if expanded}
-      <div class="help">
-        {#if !hideContextHelp && $experimental}
-          {#if !localProject}
-            <div
-              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-              <Loading small />
-            </div>
-          {:else}
-            <div class="help-box">
-              <ContextHelp
-                {localProject}
-                {baseUrl}
-                projectId={project.id}
-                hideLocalButton={isLocal(baseUrl.hostname) ||
-                  localProject !== "found"}
-                disableLocalButton={$httpdStore.state !== "authenticated"} />
-            </div>
-          {/if}
-        {/if}
-      </div>
       <div class="repo">
         <div class="repo-box">
           <ContextRepo {project} {baseUrl} {node} />
@@ -343,37 +276,6 @@
             <ContextRepo disablePopovers {node} {baseUrl} {project} />
           </div>
         </Popover>
-
-        {#if !hideContextHelp && $experimental}
-          {#if !localProject}
-            <div
-              style="display: flex; justify-content: center; align-items: center; height: 2rem;">
-              <Loading small condensed />
-            </div>
-          {:else}
-            <Popover popoverPositionBottom="0" popoverPositionLeft="3rem">
-              <Button
-                stylePadding="0 0.75rem"
-                variant="background"
-                title="Local node"
-                slot="toggle"
-                let:toggle
-                on:click={toggle}>
-                <IconSmall name="device" />
-              </Button>
-
-              <ContextHelp
-                {localProject}
-                {baseUrl}
-                popover
-                projectId={project.id}
-                hideLocalButton={isLocal(baseUrl.hostname) ||
-                  localProject !== "found"}
-                disableLocalButton={$httpdStore.state !== "authenticated"}
-                slot="popover" />
-            </Popover>
-          {/if}
-        {/if}
       </div>
     {/if}
     <!-- Footer -->

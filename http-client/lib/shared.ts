@@ -1,14 +1,6 @@
-import type { ZodSchema, z } from "zod";
+import type { z } from "zod";
 
 import { array, literal, number, object, string, union } from "zod";
-
-export interface SuccessResponse {
-  success: true;
-}
-
-export const successResponseSchema = object({
-  success: literal(true),
-}) satisfies ZodSchema<SuccessResponse>;
 
 const policySchema = union([literal("allow"), literal("block")]);
 const scopeSchema = union([literal("followed"), literal("all")]);

@@ -3,7 +3,6 @@
 
   import { httpdStore } from "@app/lib/httpd";
 
-  import Authenticate from "./Header/Authenticate.svelte";
   import Breadcrumbs from "./Header/Breadcrumbs.svelte";
   import Button from "@app/components/Button.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -11,12 +10,10 @@
   import NodeInfo from "@app/App/Header/NodeInfo.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ConnectInstructions from "@app/components/ConnectInstructions.svelte";
-  import { experimental } from "@app/lib/appearance";
 
   const buttonTitle: Record<HttpdState["state"], string> = {
     stopped: "radicle-httpd is stopped",
     running: "radicle-httpd is running",
-    authenticated: "radicle-httpd is running - signed in",
   };
 </script>
 
@@ -61,26 +58,23 @@
   </div>
 
   <div class="right">
-    {#if $experimental}
-      {#if $httpdStore.state === "stopped"}
-        <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
-          <Button
-            slot="toggle"
-            let:toggle
-            on:click={toggle}
-            title={buttonTitle[$httpdStore.state]}
-            variant="naked-toggle">
-            <IconSmall name="device" />
-            Connect
-          </Button>
-          <div slot="popover" class="connect-popover">
-            <ConnectInstructions />
-          </div>
-        </Popover>
-      {:else}
-        <NodeInfo node={$httpdStore.node} />
-        <Authenticate />
-      {/if}
+    {#if $httpdStore.state === "stopped"}
+      <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
+        <Button
+          slot="toggle"
+          let:toggle
+          on:click={toggle}
+          title={buttonTitle[$httpdStore.state]}
+          variant="naked-toggle">
+          <IconSmall name="device" />
+          Connect
+        </Button>
+        <div slot="popover" class="connect-popover">
+          <ConnectInstructions />
+        </div>
+      </Popover>
+    {:else}
+      <NodeInfo node={$httpdStore.node} />
     {/if}
   </div>
 </header>

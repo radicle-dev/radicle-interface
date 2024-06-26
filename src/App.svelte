@@ -20,7 +20,6 @@
   import NotFound from "@app/views/NotFound.svelte";
   import Patch from "@app/views/projects/Patch.svelte";
   import Patches from "@app/views/projects/Patches.svelte";
-  import Session from "@app/views/session/Index.svelte";
   import Source from "@app/views/projects/Source.svelte";
 
   import Error from "@app/views/error/View.svelte";
@@ -65,8 +64,6 @@
   <Home {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "nodes"}
   <Nodes {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "session"}
-  <Session activeRoute={$activeRouteStore} />
 {:else if $activeRouteStore.resource === "project.source"}
   <Source {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.history"}

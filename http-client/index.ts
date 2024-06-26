@@ -8,13 +8,7 @@ import type {
   Tree,
   TreeStats,
 } from "./lib/project.js";
-import type {
-  SuccessResponse,
-  CodeLocation,
-  Range,
-  Policy,
-  Scope,
-} from "./lib/shared.js";
+import type { CodeLocation, Range, Policy, Scope } from "./lib/shared.js";
 import type { Comment, Embed, Reaction } from "./lib/project/comment.js";
 import type {
   Commit,
@@ -44,9 +38,8 @@ import { z, array, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
 import * as profile from "./lib/profile.js";
-import * as session from "./lib/session.js";
 import { Fetcher } from "./lib/fetcher.js";
-import { nodeConfigSchema, successResponseSchema } from "./lib/shared.js";
+import { nodeConfigSchema } from "./lib/shared.js";
 
 export type {
   BaseUrl,
@@ -140,7 +133,6 @@ export class HttpdClient {
   public baseUrl: BaseUrl;
   public project: project.Client;
   public profile: profile.Client;
-  public session: session.Client;
 
   public constructor(baseUrl: BaseUrl) {
     this.baseUrl = baseUrl;
@@ -148,7 +140,6 @@ export class HttpdClient {
 
     this.project = new project.Client(this.#fetcher);
     this.profile = new profile.Client(this.#fetcher);
-    this.session = new session.Client(this.#fetcher);
   }
 
   public changePort(port: number): void {
@@ -196,38 +187,6 @@ export class HttpdClient {
         options,
       },
       nodeTrackingSchema,
-    );
-  }
-
-  public async seedById(
-    id: string,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "PUT",
-        path: `node/policies/repos/${id}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        options,
-      },
-      successResponseSchema,
-    );
-  }
-
-  public async stopSeedingById(
-    id: string,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "DELETE",
-        path: `node/policies/repos/${id}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        options,
-      },
-      successResponseSchema,
     );
   }
 

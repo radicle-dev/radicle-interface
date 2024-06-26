@@ -128,12 +128,12 @@ test.describe("project page navigation", () => {
 
   test("page title on project with empty description", async ({
     page,
-    authenticatedPeer,
+    peer,
   }) => {
-    const { rid } = await createProject(authenticatedPeer, {
+    const { rid } = await createProject(peer, {
       name: "ProjectWithNoDescription",
     });
-    await page.goto(authenticatedPeer.ridUrl(rid), {
+    await page.goto(peer.ridUrl(rid), {
       waitUntil: "networkidle",
     });
     const title = await page.title();

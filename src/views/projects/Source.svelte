@@ -23,7 +23,6 @@
   export let project: Project;
   export let rawPath: (commit?: string) => string;
   export let revision: string | undefined;
-  export let seeding: boolean;
   export let tree: Tree;
 
   let mobileFileTree = false;
@@ -112,7 +111,7 @@
 </style>
 
 <Layout {node} {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
-  <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
+  <ProjectNameHeader {project} {baseUrl} slot="header" />
 
   <div style:margin="1rem" slot="subheader">
     <Header

@@ -22,17 +22,6 @@ export interface NotFoundRoute {
   params: { title: string };
 }
 
-export interface SessionRoute {
-  resource: "session";
-  params: {
-    id: string;
-    signature: string;
-    publicKey: string;
-    apiAddr: string;
-    path?: string;
-  };
-}
-
 export type ErrorParam = Error | ResponseParseError | ResponseError | undefined;
 
 export interface ErrorRoute {
@@ -50,8 +39,7 @@ export type Route =
   | ErrorRoute
   | NotFoundRoute
   | ProjectRoute
-  | NodesRoute
-  | SessionRoute;
+  | NodesRoute;
 
 export type LoadedRoute =
   | BootingRoute
@@ -59,8 +47,7 @@ export type LoadedRoute =
   | ErrorRoute
   | NotFoundRoute
   | ProjectLoadedRoute
-  | NodesLoadedRoute
-  | SessionRoute;
+  | NodesLoadedRoute;
 
 export async function loadRoute(
   route: Route,

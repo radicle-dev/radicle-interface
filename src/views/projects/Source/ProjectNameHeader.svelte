@@ -9,12 +9,10 @@
   import Id from "@app/components/Id.svelte";
   import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
-  import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
   export let project: Project;
   export let baseUrl: BaseUrl;
-  export let seeding: boolean;
 </script>
 
 <style>
@@ -82,10 +80,13 @@
         style:gap="0.5rem"
         class="global-hide-on-mobile-down">
         <CloneButton {baseUrl} id={project.id} name={project.name} />
-        <SeedButton
-          {seeding}
-          seedCount={project.seeding}
-          projectId={project.id} />
+        <Badge
+          variant="outline"
+          size="small"
+          style="border-radius: var(--border-radius); padding: 0 0.372rem; gap: 0.125rem;">
+          <IconSmall name="seedling" />
+          {project.seeding}
+        </Badge>
       </div>
     </div>
   </div>

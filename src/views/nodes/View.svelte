@@ -30,9 +30,9 @@
   $: shortScope =
     scope === "all" && policy === "allow" ? "permissive" : "restrictive";
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
-  $: session =
-    $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
-      ? $httpdStore.session
+  $: id =
+    $httpdStore.state === "running" && isLocal(api.baseUrl.hostname)
+      ? $httpdStore.node.id
       : undefined;
 </script>
 
@@ -187,7 +187,7 @@
                 <ProjectCard
                   {projectInfo}
                   isDelegate={isDelegate(
-                    session?.publicKey,
+                    id,
                     projectInfo.project.delegates.map(d => d.id),
                   ) ?? false} />
               {/each}

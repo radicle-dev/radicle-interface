@@ -10,7 +10,6 @@
   import { api, httpdStore } from "@app/lib/httpd";
   import { baseUrlToString } from "@app/lib/utils";
   import { deduplicateStore } from "@app/lib/deduplicateStore";
-  import { experimental } from "@app/lib/appearance";
   import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/home/error";
   import { isDelegate } from "@app/lib/roles";
@@ -21,11 +20,9 @@
 
   import Command from "@app/components/Command.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import FilterButton from "./components/FilterButton.svelte";
   import HomepageSection from "./components/HomepageSection.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
-  import NewProjectButton from "./components/NewProjectButton.svelte";
   import Popover from "@app/components/Popover.svelte";
   import PreferredSeedDropdown from "./components/PreferredSeedDropdown.svelte";
 
@@ -155,14 +152,6 @@
           title="Local repositories">
           <svelte:fragment slot="subtitle">
             Repositories you're seeding with your local node
-          </svelte:fragment>
-          <svelte:fragment slot="actions">
-            {#if $experimental}
-              <FilterButton
-                disabled={!nodeId}
-                bind:value={$localProjectsFilter} />
-              <NewProjectButton disabled={!nodeId} />
-            {/if}
           </svelte:fragment>
           <svelte:fragment slot="empty">
             <div class="empty-state">

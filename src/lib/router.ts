@@ -131,9 +131,6 @@ function setTitle(loadedRoute: LoadedRoute) {
         ? "Local Node"
         : loadedRoute.params.baseUrl.hostname,
     );
-  } else if (loadedRoute.resource === "session") {
-    title.push("Authenticating");
-    title.push("Radicle");
   } else {
     utils.unreachable(loadedRoute);
   }
@@ -204,22 +201,6 @@ function urlToRoute(url: URL): Route | null {
       }
       return null;
     }
-    case "session": {
-      const id = segments.shift();
-      if (id) {
-        return {
-          resource: "session",
-          params: {
-            id,
-            signature: url.searchParams.get("sig") ?? "",
-            publicKey: url.searchParams.get("pk") ?? "",
-            apiAddr: url.searchParams.get("addr") ?? "127.0.0.1:8080",
-            path: url.searchParams.get("path") || undefined,
-          },
-        };
-      }
-      return { resource: "home" };
-    }
     case "": {
       return { resource: "home" };
     }
@@ -232,8 +213,6 @@ function urlToRoute(url: URL): Route | null {
 export function routeToPath(route: Route): string {
   if (route.resource === "home") {
     return "/";
-  } else if (route.resource === "session") {
-    return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "nodes") {
     return nodePath(route.params.baseUrl);
   } else if (

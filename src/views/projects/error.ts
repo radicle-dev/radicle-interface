@@ -1,10 +1,8 @@
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 import type { ProjectRoute } from "@app/views/projects/router";
 
-import { baseUrlToString, isLocal } from "@app/lib/utils";
+import { baseUrlToString } from "@app/lib/utils";
 import { ResponseParseError, ResponseError } from "@http-client/lib/fetcher";
-import { httpdStore } from "@app/lib/httpd";
-import { get } from "svelte/store";
 
 export function handleError(
   error: Error | ResponseParseError | ResponseError,
@@ -44,21 +42,6 @@ export function handleError(
         error,
         title: "Could not parse the request",
         description: error.description,
-      },
-    };
-  } else if (
-    error instanceof TypeError &&
-    error.message === "Failed to fetch" &&
-    isLocal(route.node.hostname) &&
-    get(httpdStore).state === "stopped"
-  ) {
-    return {
-      resource: "error",
-      params: {
-        title: "Could not load this repository",
-        description:
-          "You're trying to access a repository on your local node but the app is not connected to it. Click the Connect button in the top right corner to connect.",
-        error: undefined,
       },
     };
   } else {

@@ -11,11 +11,11 @@ test("navigate issue listing", async ({ page }) => {
   await expect(page).toHaveURL(`${cobUrl}/issues?state=closed`);
 });
 
-test("issue counters", async ({ page, authenticatedPeer }) => {
-  const { rid, projectFolder } = await createProject(authenticatedPeer, {
+test("issue counters", async ({ page, peer }) => {
+  const { rid, projectFolder } = await createProject(peer, {
     name: "issue-counters",
   });
-  await authenticatedPeer.rad(
+  await peer.rad(
     [
       "issue",
       "open",
@@ -26,8 +26,8 @@ test("issue counters", async ({ page, authenticatedPeer }) => {
     ],
     { cwd: projectFolder },
   );
-  await page.goto(`${authenticatedPeer.uiUrl()}/${rid}/issues`);
-  await authenticatedPeer.rad(
+  await page.goto(`${peer.uiUrl()}/${rid}/issues`);
+  await peer.rad(
     [
       "issue",
       "open",
