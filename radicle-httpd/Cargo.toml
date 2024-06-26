@@ -47,7 +47,7 @@ ureq = { version = "2.9", default-features = false, features = ["json"] }
 url = { version = "2.5.0" }
 
 [dependencies.radicle]
-version = "0.11.0"
+version = "0.11.1"
 
 [dependencies.radicle-term]
 version = "0.10.0"

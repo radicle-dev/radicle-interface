@@ -76,7 +76,7 @@ async fn nodes_inventory_handler(
     Path(nid): Path<NodeId>,
 ) -> impl IntoResponse {
     let db = &ctx.profile.database()?;
-    let resources = db.get_resources(&nid)?;
+    let resources = db.get_inventory(&nid)?;
 
     Ok::<_, Error>(Json(resources))
 }
