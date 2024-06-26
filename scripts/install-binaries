@@ -50,11 +50,10 @@ else
     ;;
   esac
 
-  echo Building radicle-httpd and rad-web
+  echo Building radicle-httpd
   CARGO_TERM_PROGRESS_WIDTH=80 CARGO_TERM_PROGRESS_WHEN=always cargo build --release --all --quiet --manifest-path=$REPO_ROOT/radicle-httpd/Cargo.toml
-  echo Copying radicle-httpd and rad-web into /tests/tmp/bin/$RELEASE
+  echo Copying radicle-httpd into /tests/tmp/bin/$RELEASE
   cp $REPO_ROOT/radicle-httpd/target/release/radicle-httpd $BINARY_PATH
-  cp $REPO_ROOT/radicle-httpd/target/release/rad-web $BINARY_PATH
 fi
 
 echo

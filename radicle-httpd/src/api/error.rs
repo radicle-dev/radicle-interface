@@ -97,10 +97,6 @@ pub enum Error {
     /// Node error.
     #[error(transparent)]
     Node(#[from] radicle::node::Error),
-
-    /// Invalid update to issue or patch.
-    #[error("{0}")]
-    BadRequest(String),
 }
 
 impl IntoResponse for Error {
@@ -135,7 +131,6 @@ impl IntoResponse for Error {
             Error::StorageRef(err) if err.is_not_found() => {
                 (StatusCode::NOT_FOUND, Some(err.to_string()))
             }
-            Error::BadRequest(msg) => (StatusCode::BAD_REQUEST, Some(msg)),
             other => {
                 tracing::error!("Error: {message}");
                 tracing::debug!("Error Debug: {:?}", other);
