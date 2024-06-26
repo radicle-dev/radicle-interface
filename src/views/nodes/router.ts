@@ -29,7 +29,7 @@ export interface NodesLoadedRoute {
     policy?: Policy;
     scope?: Scope;
     imageUrl?: string;
-    title?: string;
+    name?: string;
     description?: string;
   };
 }
@@ -66,7 +66,7 @@ export async function loadNodeRoute(
         policy: node.config?.seedingPolicy.default,
         scope: node.config?.seedingPolicy.scope,
         imageUrl: profile.config?.web.imageUrl,
-        title: profile.config?.web.title,
+        name: profile.config?.web.name,
         description: profile.config?.web.description,
       },
     };

@@ -12,7 +12,7 @@ const profileSchema = object({
     web: object({
       pinned: object({ repositories: array(string()) }),
       imageUrl: string().optional(),
-      title: string().optional(),
+      name: string().optional(),
       description: string().optional(),
     }),
     node: nodeConfigSchema,

@@ -28,7 +28,7 @@
   export let policy: Policy | undefined = undefined;
   export let scope: Scope | undefined = undefined;
   export let imageUrl: string | undefined = undefined;
-  export let title: string | undefined = undefined;
+  export let name: string | undefined = undefined;
   export let description: string | undefined = undefined;
 
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
@@ -271,8 +271,8 @@
       style:top={`${top}px`}
       style:height={`calc(100% - ${top}px)`}>
       <div>
-        {#if title}
-          <div class="title txt-medium txt-semibold">{title}</div>
+        {#if name}
+          <div class="txt-medium txt-semibold">{name}</div>
         {/if}
         {#if description}
           <div class="description txt-small">
