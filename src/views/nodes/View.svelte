@@ -39,7 +39,7 @@
 
   $: background = imageUrl
     ? `linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("${imageUrl}")`
-    : "";
+    : "var(--color-background-default)";
 
   let scrollY: number;
 
