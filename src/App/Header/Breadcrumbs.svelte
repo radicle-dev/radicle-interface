@@ -28,7 +28,7 @@
   <div class="breadcrumbs">
     <NodeSegment baseUrl={$activeRouteStore.params.baseUrl} showLocalNode />
   </div>
-{:else if $activeRouteStore.resource === "project.source" || $activeRouteStore.resource === "project.history" || $activeRouteStore.resource === "project.commit" || $activeRouteStore.resource === "project.issues" || $activeRouteStore.resource === "project.newIssue" || $activeRouteStore.resource === "project.issue" || $activeRouteStore.resource === "project.patches" || $activeRouteStore.resource === "project.patch"}
+{:else if $activeRouteStore.resource === "project.source" || $activeRouteStore.resource === "project.history" || $activeRouteStore.resource === "project.commit" || $activeRouteStore.resource === "project.issues" || $activeRouteStore.resource === "project.issue" || $activeRouteStore.resource === "project.patches" || $activeRouteStore.resource === "project.patch"}
   <div class="breadcrumbs">
     <NodeSegment baseUrl={$activeRouteStore.params.baseUrl} />
 

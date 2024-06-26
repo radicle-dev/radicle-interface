@@ -75,7 +75,6 @@ export async function loadRoute(
     route.resource === "project.history" ||
     route.resource === "project.commit" ||
     route.resource === "project.issues" ||
-    route.resource === "project.newIssue" ||
     route.resource === "project.issue" ||
     route.resource === "project.patches" ||
     route.resource === "project.patch"

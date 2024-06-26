@@ -16,7 +16,6 @@
   import Home from "@app/views/home/Index.svelte";
   import Issue from "@app/views/projects/Issue.svelte";
   import Issues from "@app/views/projects/Issues.svelte";
-  import NewIssue from "@app/views/projects/Issue/New.svelte";
   import Nodes from "@app/views/nodes/View.svelte";
   import NotFound from "@app/views/NotFound.svelte";
   import Patch from "@app/views/projects/Patch.svelte";
@@ -76,8 +75,6 @@
   <Commit {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.issues"}
   <Issues {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.newIssue"}
-  <NewIssue {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.issue"}
   <Issue {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.patches"}

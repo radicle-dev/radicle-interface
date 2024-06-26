@@ -4,10 +4,8 @@
   import capitalize from "lodash/capitalize";
   import { HttpdClient } from "@http-client";
   import { ISSUES_PER_PAGE } from "./router";
-  import { baseUrlToString, isLocal } from "@app/lib/utils";
+  import { baseUrlToString } from "@app/lib/utils";
   import { closeFocused } from "@app/components/Popover.svelte";
-  import { experimental } from "@app/lib/appearance";
-  import { httpdStore } from "@app/lib/httpd";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -160,21 +158,6 @@
 
     <div style="margin-left: auto; display: flex; gap: 1rem;">
       <Share {baseUrl} />
-      {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
-        <div class="global-hide-on-mobile-down">
-          <Link
-            route={{
-              resource: "project.newIssue",
-              project: project.id,
-              node: baseUrl,
-            }}>
-            <Button variant="secondary">
-              <IconSmall name="plus" />
-              New Issue
-            </Button>
-          </Link>
-        </div>
-      {/if}
     </div>
   </div>
 

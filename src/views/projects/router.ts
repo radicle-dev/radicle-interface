@@ -46,7 +46,6 @@ export type ProjectRoute =
     }
   | ProjectIssuesRoute
   | ProjectIssueRoute
-  | { resource: "project.newIssue"; node: BaseUrl; project: string }
   | ProjectPatchesRoute
   | ProjectPatchRoute;
 
@@ -172,15 +171,6 @@ export type ProjectLoadedRoute =
       };
     }
   | {
-      resource: "project.newIssue";
-      params: {
-        baseUrl: BaseUrl;
-        node: Node;
-        project: Project;
-        rawPath: (commit?: string) => string;
-      };
-    }
-  | {
       resource: "project.patches";
       params: {
         baseUrl: BaseUrl;
@@ -287,10 +277,6 @@ export async function loadProjectRoute(
   } else {
     node = await api.getNode();
   }
-  const rawPath = (commit?: string) =>
-    `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
-      route.project
-    }${commit ? `/${commit}` : ""}`;
 
   try {
     if (route.resource === "project.source") {
@@ -318,17 +304,6 @@ export async function loadProjectRoute(
       return await loadPatchView(route, node);
     } else if (route.resource === "project.issues") {
       return await loadIssuesView(route, node);
-    } else if (route.resource === "project.newIssue") {
-      const project = await api.project.getById(route.project);
-      return {
-        resource: "project.newIssue",
-        params: {
-          baseUrl: route.node,
-          node,
-          project,
-          rawPath,
-        },
-      };
     } else if (route.resource === "project.patches") {
       return await loadPatchesView(route, node);
     } else {
@@ -778,13 +753,7 @@ export function resolveProjectRoute(
     };
   } else if (content === "issues") {
     const issueOrAction = segments.shift();
-    if (issueOrAction === "new") {
-      return {
-        resource: "project.newIssue",
-        node,
-        project,
-      };
-    } else if (issueOrAction) {
+    if (issueOrAction) {
       return {
         resource: "project.issue",
         node,
@@ -909,8 +878,6 @@ export function projectRouteToPath(route: ProjectRoute): string {
     return pathSegments.join("/");
   } else if (route.resource === "project.commit") {
     return [...pathSegments, "commits", route.commit].join("/");
-  } else if (route.resource === "project.newIssue") {
-    return [...pathSegments, "issues", "new"].join("/");
   } else if (route.resource === "project.issues") {
     let url = [...pathSegments, "issues"].join("/");
     const searchParams = new URLSearchParams();
@@ -981,8 +948,6 @@ export function projectTitle(loadedRoute: ProjectLoadedRoute) {
   } else if (loadedRoute.resource === "project.history") {
     title.push(loadedRoute.params.project.name);
     title.push("history");
-  } else if (loadedRoute.resource === "project.newIssue") {
-    title.push("new issue");
   } else if (loadedRoute.resource === "project.issue") {
     title.push(loadedRoute.params.issue.title);
     title.push("issue");

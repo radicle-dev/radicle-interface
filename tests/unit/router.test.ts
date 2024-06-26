@@ -122,14 +122,6 @@ describe("route invariant when parsed", () => {
     });
   });
 
-  test("projects.newIssue", () => {
-    expectParsingInvariant({
-      resource: "project.newIssue",
-      node,
-      project: "PROJECT",
-    });
-  });
-
   test("projects.issue", () => {
     expectParsingInvariant({
       resource: "project.issue",

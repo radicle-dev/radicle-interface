@@ -30,11 +30,9 @@ import type {
 } from "./lib/project/commit.js";
 import type { Issue, IssueState } from "./lib/project/issue.js";
 import type {
-  LifecycleState,
   Merge,
   Patch,
   PatchState,
-  PatchUpdateAction,
   Review,
   Revision,
   Verdict,
@@ -69,11 +67,9 @@ export type {
   HunkLine,
   Issue,
   IssueState,
-  LifecycleState,
   Merge,
   Patch,
   PatchState,
-  PatchUpdateAction,
   Policy,
   Project,
   ProjectListQuery,

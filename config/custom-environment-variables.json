@@ -13,10 +13,6 @@
     }
   },
   "supportWebsite": "SUPPORT_WEBSITE",
-  "reactions": {
-    "__name": "REACTIONS",
-    "__format": "json"
-  },
   "fallbackPreferredSeed": {
     "__name": "FALLBACK_PREFERRED_SEED",
     "__format": "json"

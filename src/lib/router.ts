@@ -121,7 +121,6 @@ function setTitle(loadedRoute: LoadedRoute) {
     loadedRoute.resource === "project.commit" ||
     loadedRoute.resource === "project.issue" ||
     loadedRoute.resource === "project.issues" ||
-    loadedRoute.resource === "project.newIssue" ||
     loadedRoute.resource === "project.patches" ||
     loadedRoute.resource === "project.patch"
   ) {
@@ -242,7 +241,6 @@ export function routeToPath(route: Route): string {
     route.resource === "project.history" ||
     route.resource === "project.commit" ||
     route.resource === "project.issues" ||
-    route.resource === "project.newIssue" ||
     route.resource === "project.issue" ||
     route.resource === "project.patches" ||
     route.resource === "project.patch"
