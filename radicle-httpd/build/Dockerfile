@@ -60,19 +60,15 @@ ARG RADICLE_VERSION
 ARG SOURCE_DATE_EPOCH
 
 COPY --from=builder \
-    /src/target/x86_64-unknown-linux-musl/release/rad-web \
     /src/target/x86_64-unknown-linux-musl/release/radicle-httpd \
     /builds/x86_64-unknown-linux-musl/bin/
 COPY --from=builder \
-    /src/target/aarch64-unknown-linux-musl/release/rad-web \
     /src/target/aarch64-unknown-linux-musl/release/radicle-httpd \
     /builds/aarch64-unknown-linux-musl/bin/
 COPY --from=builder \
-    /src/target/aarch64-apple-darwin/release/rad-web \
     /src/target/aarch64-apple-darwin/release/radicle-httpd \
     /builds/aarch64-apple-darwin/bin/
 COPY --from=builder \
-    /src/target/x86_64-apple-darwin/release/rad-web \
     /src/target/x86_64-apple-darwin/release/radicle-httpd \
     /builds/x86_64-apple-darwin/bin/
 COPY --from=builder /src/*.1 /builds/x86_64-unknown-linux-musl/man/man1/

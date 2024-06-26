@@ -122,12 +122,30 @@ async fn session_delete_handler(
 
 #[cfg(test)]
 mod routes {
-    use crate::commands::web::{sign, SessionInfo};
     use axum::body::Body;
     use axum::http::StatusCode;
+    use serde::{Deserialize, Serialize};
+
+    use radicle::crypto::{PublicKey, Signature, Signer};
 
     use crate::api::auth::{AuthState, Session};
     use crate::test::{self, get, post, put};
+
+    #[derive(Debug, Clone, Deserialize, Serialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct SessionInfo {
+        pub session_id: String,
+        pub public_key: PublicKey,
+    }
+
+    pub fn sign(
+        signer: Box<dyn Signer>,
+        session: &SessionInfo,
+    ) -> Result<Signature, anyhow::Error> {
+        signer
+            .try_sign(format!("{}:{}", session.session_id, session.public_key).as_bytes())
+            .map_err(anyhow::Error::from)
+    }
 
     #[tokio::test]
     async fn test_session() {
