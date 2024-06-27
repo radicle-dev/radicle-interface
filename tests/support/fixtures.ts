@@ -3,7 +3,6 @@ import type * as Stream from "node:stream";
 
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
-import assert from "node:assert";
 import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
 import { execa } from "execa";
@@ -26,7 +25,7 @@ export const test = base.extend<{
   forAllTests: void;
   stateDir: string;
   peerManager: PeerManager;
-  authenticatedPeer: RadiclePeer;
+  peer: RadiclePeer;
   outputLog: Stream.Writable;
 }>({
   forAllTests: [
@@ -125,7 +124,7 @@ export const test = base.extend<{
     await peerManager.shutdown();
   },
 
-  authenticatedPeer: async ({ page, peerManager }, use) => {
+  peer: async ({ page, peerManager }, use) => {
     await page.addInitScript(() => {
       window.localStorage.setItem("experimental", "true");
     });
@@ -136,21 +135,6 @@ export const test = base.extend<{
 
     await peer.startNode();
     await peer.startHttpd();
-    const { stdout } = await peer.spawn("rad-web", [
-      "http://localhost:3001",
-      "--no-open",
-      "--path",
-      "/",
-      "--connect",
-      `${peer.httpdBaseUrl.hostname}:${peer.httpdBaseUrl.port}`,
-    ]);
-    const match = stdout.match(/Visit (http:\/\/\S+) to connect/);
-    assert(
-      match !== null && match[1],
-      `Failed to get authentication URL from: ${stdout}`,
-    );
-    await page.goto(match[1]);
-    await page.getByRole("button", { name: "avatar httpd" }).waitFor();
 
     await use(peer);
   },

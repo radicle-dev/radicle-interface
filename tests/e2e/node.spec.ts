@@ -1,5 +1,4 @@
 import { expect, shortNodeRemote, test } from "@tests/support/fixtures.js";
-import { createProject } from "@tests/support/project";
 
 test("node metadata", async ({ page, peerManager }) => {
   const peer = await peerManager.createPeer({
@@ -34,18 +33,4 @@ test("node projects", async ({ page }) => {
       project.getByText("Git repository for source browsing tests"),
     ).toBeVisible();
   }
-});
-
-test("seeding projects", async ({ page, authenticatedPeer }) => {
-  const { rid } = await createProject(authenticatedPeer, {
-    name: "seedProject",
-  });
-
-  await page.goto(authenticatedPeer.ridUrl(rid));
-  await page.getByRole("button", { name: "Seeding" }).click();
-  await page.getByRole("button", { name: "Stop seeding" }).click();
-  await expect(page.getByRole("button", { name: "Seed 1" })).toBeVisible();
-
-  await page.getByRole("button", { name: "Seed 1" }).click();
-  await expect(page.getByRole("button", { name: "Seeding" })).toBeVisible();
 });
