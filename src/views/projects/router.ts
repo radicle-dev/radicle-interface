@@ -259,8 +259,8 @@ async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
     return false;
   }
   try {
-    const tracking = await httpd.api.getTracking();
-    return tracking.some(({ id }) => id === route.project);
+    const policies = await httpd.api.getPolicies();
+    return policies.some(({ rid }) => rid === route.project);
   } catch (error) {
     if (error instanceof ResponseError && error.status === 404) {
       return false;

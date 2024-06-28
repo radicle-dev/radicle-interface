@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@http-client";
+import type { BaseUrl, DefaultSeedingPolicy } from "@http-client";
 
 import md5 from "md5";
 import bs58 from "bs58";
@@ -11,6 +11,14 @@ export async function toClipboard(text: string): Promise<void> {
 export function formatLocationHash(hash: string | null): number | null {
   if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
   return null;
+}
+
+export function formatShortSeedingPolicy(
+  policy: DefaultSeedingPolicy | undefined,
+) {
+  return policy?.default === "allow" && policy?.scope === "all"
+    ? "permissive"
+    : "restrictive";
 }
 
 export function parseNodeId(

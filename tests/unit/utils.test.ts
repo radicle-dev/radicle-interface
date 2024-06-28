@@ -11,6 +11,20 @@ describe("Format functions", () => {
 
   test.each([
     {
+      input: { default: "allow", scope: "all" },
+      expected: "permissive",
+    } as const,
+    {
+      input: { default: "allow", scope: "followed" },
+      expected: "restrictive",
+    } as const,
+    { input: { default: "block" }, expected: "restrictive" } as const,
+  ])("formatShortSeedingPolicy $input => $expected", ({ input, expected }) => {
+    expect(utils.formatShortSeedingPolicy(input)).toEqual(expected);
+  });
+
+  test.each([
+    {
       id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       expected: "rad:zKtT7D…19WzjT",
     },

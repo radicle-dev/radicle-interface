@@ -1,11 +1,16 @@
 <script lang="ts">
-  import type { BaseUrl, NodeStats, Policy, Scope } from "@http-client";
+  import type { BaseUrl, DefaultSeedingPolicy, NodeStats } from "@http-client";
 
   import { capitalize } from "lodash";
 
   import * as router from "@app/lib/router";
   import { api, httpdStore } from "@app/lib/httpd";
-  import { baseUrlToString, isLocal, truncateId } from "@app/lib/utils";
+  import {
+    baseUrlToString,
+    formatShortSeedingPolicy,
+    isLocal,
+    truncateId,
+  } from "@app/lib/utils";
   import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
   import { isDelegate } from "@app/lib/roles";
@@ -24,11 +29,9 @@
   export let stats: NodeStats;
   export let externalAddresses: string[];
   export let version: string;
-  export let policy: Policy | undefined = undefined;
-  export let scope: Scope | undefined = undefined;
+  export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
 
-  $: shortScope =
-    scope === "all" && policy === "allow" ? "permissive" : "restrictive";
+  $: shortScope = formatShortSeedingPolicy(seedingPolicy);
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
   $: session =
     $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
@@ -157,7 +160,7 @@
           {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} repositories
         </div>
         <div class="seeding-policy">
-          {#if policy && scope}
+          {#if seedingPolicy}
             <span class="txt-bold">Seeding Policy:</span>
             {capitalize(shortScope)}
             <div class="global-hide-on-mobile-down">
@@ -168,7 +171,7 @@
                 <IconButton slot="toggle" let:toggle on:click={toggle}>
                   <IconSmall name="help" />
                 </IconButton>
-                <ScopePolicyExplainer slot="popover" {scope} {policy} />
+                <ScopePolicyExplainer slot="popover" {seedingPolicy} />
               </Popover>
             </div>
           {/if}

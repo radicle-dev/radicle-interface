@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Policy, Scope } from "@http-client";
+  import type { DefaultSeedingPolicy } from "@http-client";
 
   import capitalize from "lodash/capitalize";
 
@@ -8,8 +8,7 @@
   import IconButton from "@app/components/IconButton.svelte";
   import Popover from "@app/components/Popover.svelte";
 
-  export let policy: Policy;
-  export let scope: Scope;
+  export let seedingPolicy: DefaultSeedingPolicy;
   export let popoverPositionRight: string | undefined = undefined;
   export let popoverPositionLeft: string | undefined = undefined;
 </script>
@@ -34,15 +33,17 @@
 
 <div class="container">
   <span>
-    Seeding Policy: <span class="txt-semibold">
-      {capitalize(policy)}
+    Policy: <span class="txt-semibold">
+      {capitalize(seedingPolicy.default)}
     </span>
   </span>
-  <span class="separator" />
-  <span>
-    Scope:
-    <span class="txt-semibold">{capitalize(scope)}</span>
-  </span>
+  {#if seedingPolicy.default === "allow"}
+    <span class="separator" />
+    <span>
+      Scope:
+      <span class="txt-semibold">{capitalize(seedingPolicy.scope)}</span>
+    </span>
+  {/if}
   <span style:color="var(--color-fill-gray)">
     <Popover
       {popoverPositionRight}
@@ -55,7 +56,7 @@
       </IconButton>
 
       <div slot="popover" class="popover">
-        <ScopePolicyExplainer {scope} {policy} />
+        <ScopePolicyExplainer {seedingPolicy} />
       </div>
     </Popover>
   </span>
