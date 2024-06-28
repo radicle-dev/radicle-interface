@@ -57,6 +57,7 @@
 
       checks = {
         radicle-explorer =  self.packages.${system}.radicle-explorer.override { doCheck = true; };
+        radicle-httpd = self.packages.${system}.radicle-httpd.overrideAttrs (_: { doCheck = true; });
       };
 
       packages = {
@@ -93,7 +94,7 @@
             runHook preCheck
             bins=$(scripts/install-binaries -s)
             mkdir -p "$bins"
-            cp -t "$bins" -- ${heartwood.packages.${system}.default}/bin/* ${self.packages.${system}.radicle-httpd}/bin/*
+            cp -t "$bins" -- ${heartwood.packages.${system}.default}/bin/* ${self.checks.${system}.radicle-httpd}/bin/*
             scripts/check
             {
               npm run test:unit
