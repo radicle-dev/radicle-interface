@@ -8,10 +8,7 @@ use serde_json::json;
 
 use radicle::identity::RepoId;
 use radicle::node::routing::Store;
-use radicle::node::{
-    policy::{Policy, SeedPolicy},
-    AliasStore, Handle, NodeId, DEFAULT_TIMEOUT,
-};
+use radicle::node::{AliasStore, Handle, NodeId, DEFAULT_TIMEOUT};
 use radicle::Node;
 
 use crate::api::error::Error;
@@ -24,7 +21,9 @@ pub fn router(ctx: Context) -> Router {
         .route("/node/policies/repos", get(node_policies_repos_handler))
         .route(
             "/node/policies/repos/:rid",
-            put(node_policies_seed_handler).delete(node_policies_unseed_handler),
+            put(node_policies_seed_handler)
+                .delete(node_policies_unseed_handler)
+                .get(node_policies_repo_handler),
         )
         .route("/nodes/:nid", get(nodes_handler))
         .route("/nodes/:nid/inventory", get(nodes_inventory_handler))
@@ -85,17 +84,21 @@ async fn nodes_inventory_handler(
 /// `GET /node/policies/repos`
 async fn node_policies_repos_handler(State(ctx): State<Context>) -> impl IntoResponse {
     let policies = ctx.profile.policies()?;
-    let mut repos = Vec::new();
+    let policies = policies.seed_policies()?.collect::<Vec<_>>();
 
-    for SeedPolicy { rid: id, policy } in policies.seed_policies()? {
-        repos.push(json!({
-            "id": id,
-            "scope": policy.scope().unwrap_or_default(),
-            "policy": Policy::from(policy),
-        }));
-    }
+    Ok::<_, Error>(Json(policies))
+}
 
-    Ok::<_, Error>(Json(repos))
+/// Return local repo policy information.
+/// `GET /node/policies/repos/:rid`
+async fn node_policies_repo_handler(
+    State(ctx): State<Context>,
+    Path(rid): Path<RepoId>,
+) -> impl IntoResponse {
+    let policies = ctx.profile.policies()?;
+    let policy = policies.seed_policy(&rid)?;
+
+    Ok::<_, Error>(Json(*policy))
 }
 
 /// Seed a new repo.
