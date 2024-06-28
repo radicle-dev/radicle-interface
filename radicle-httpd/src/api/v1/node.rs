@@ -7,12 +7,13 @@ use hyper::StatusCode;
 use serde_json::json;
 
 use radicle::identity::RepoId;
+use radicle::node::address::Store as AddressStore;
 use radicle::node::routing::Store;
 use radicle::node::{AliasStore, Handle, NodeId, DEFAULT_TIMEOUT};
 use radicle::Node;
 
 use crate::api::error::Error;
-use crate::api::{self, Context, PoliciesQuery, RADICLE_VERSION};
+use crate::api::{self, Context, PoliciesQuery};
 use crate::axum_extra::{Path, Query};
 
 pub fn router(ctx: Context) -> Router {
@@ -35,6 +36,10 @@ pub fn router(ctx: Context) -> Router {
 async fn node_handler(State(ctx): State<Context>) -> impl IntoResponse {
     let node = Node::new(ctx.profile.socket());
     let node_id = ctx.profile.public_key;
+    let home = ctx.profile.home.database()?;
+    let agent = AddressStore::get(&home, &node_id)
+        .unwrap_or_default()
+        .map(|node| node.agent);
     let node_state = if node.is_running() {
         "running"
     } else {
@@ -49,7 +54,7 @@ async fn node_handler(State(ctx): State<Context>) -> impl IntoResponse {
     };
     let response = json!({
         "id": node_id.to_string(),
-        "version": format!("{}-{}", RADICLE_VERSION, env!("GIT_HEAD")),
+        "agent": agent,
         "config": config,
         "state": node_state,
     });
