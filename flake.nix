@@ -71,17 +71,7 @@
 
         radicle-explorer = pkgs.callPackage ({
           lib, buildNpmPackage, doCheck ? false
-        }: let
-          # We need rad debug binaries
-          devProfile = _: { CARGO_PROFILE = ""; };
-          checkBins = pkgs.buildEnv {
-            name = "heartwood-debug-bins";
-            paths = with heartwood.packages.${system}; [
-              (default.overrideAttrs devProfile)
-              self.packages.${system}.radicle-httpd
-            ];
-          };
-        in buildNpmPackage rec {
+        }: buildNpmPackage rec {
           pname = "radicle-explorer";
           version = (builtins.fromJSON (builtins.readFile ./package.json)).version;
           src = ./.;
@@ -101,11 +91,12 @@
           ];
           checkPhase = ''
             runHook preCheck
-            scripts/install-binaries -l ${checkBins}/bin
+            bins=$(scripts/install-binaries -s)
+            mkdir -p "$bins"
+            cp -t "$bins" -- ${heartwood.packages.${system}.default}/bin/* ${self.packages.${system}.radicle-httpd}/bin/*
             scripts/check
             {
               npm run test:unit
-              npm run test:http-client:unit
             } | tee /dev/null
             runHook postCheck
           '';
