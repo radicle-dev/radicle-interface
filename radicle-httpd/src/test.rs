@@ -140,7 +140,9 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
     )
     .unwrap();
 
-    policies.seed(&rid, node::policy::Scope::All).unwrap();
+    policies
+        .set_seed_policy(&rid, node::policy::Policy::Block)
+        .unwrap();
 
     let workdir = dir.join("hello-world");
 
@@ -306,7 +308,7 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
         &profile.storage,
     )
     .unwrap();
-    policies.seed(&rid, node::policy::Scope::All).unwrap();
+    policies.seed(&rid, node::policy::Scope::Followed).unwrap();
 
     let options = crate::Options {
         aliases: std::collections::HashMap::new(),

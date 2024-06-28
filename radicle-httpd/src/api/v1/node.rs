@@ -136,3 +136,103 @@ async fn node_policies_unseed_handler(
 
     Ok::<_, Error>((StatusCode::OK, Json(json!({ "success": true }))))
 }
+
+#[cfg(test)]
+mod routes {
+    use std::net::SocketAddr;
+
+    use axum::extract::connect_info::MockConnectInfo;
+    use axum::http::StatusCode;
+    use pretty_assertions::assert_eq;
+    use serde_json::json;
+
+    use crate::test::*;
+
+    #[tokio::test]
+    async fn test_node_repos_policies() {
+        let tmp = tempfile::tempdir().unwrap();
+        let seed = seed(tmp.path());
+        let app = super::router(seed.clone())
+            .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
+        let response = get(&app, "/node/policies/repos").await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!([
+                {
+                    "rid": "rad:zLuTzcmoWMcdK37xqArS8eckp9vK",
+                    "policy": {
+                        "policy": "block",
+                    }
+                },
+                {
+                    "rid": "rad:z4FucBZHZMCsxTyQE1dfE2YR59Qbp",
+                    "policy": {
+                        "policy": "allow",
+                        "scope": "all",
+                    }
+                },
+                {
+                    "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                    "policy": {
+                        "policy": "allow",
+                        "scope" : "followed"
+                    }
+                },
+            ])
+        );
+    }
+
+    #[tokio::test]
+    async fn test_node_repo_policies() {
+        let tmp = tempfile::tempdir().unwrap();
+        let seed = seed(tmp.path());
+        let app = super::router(seed.clone())
+            .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
+        let response = get(
+            &app,
+            "/node/policies/repos/rad:zLuTzcmoWMcdK37xqArS8eckp9vK",
+        )
+        .await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!({
+                "policy": "block",
+            })
+        );
+    }
+
+    #[tokio::test]
+    async fn test_nodes() {
+        let tmp = tempfile::tempdir().unwrap();
+        let seed = seed(tmp.path());
+        let app = super::router(seed.clone())
+            .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
+        let nid = seed.profile().id();
+        let response = get(&app, format!("/nodes/{nid}")).await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!({
+                "alias": "seed",
+            })
+        );
+    }
+
+    #[tokio::test]
+    async fn test_nodes_inventory() {
+        let tmp = tempfile::tempdir().unwrap();
+        let seed = seed(tmp.path());
+        let app = super::router(seed.clone())
+            .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
+        let nid = seed.profile().public_key;
+        let response = get(&app, format!("/nodes/{nid}/inventory")).await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(response.json().await, json!([]));
+    }
+}
