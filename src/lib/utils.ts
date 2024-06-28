@@ -21,6 +21,11 @@ export function formatShortSeedingPolicy(
     : "restrictive";
 }
 
+// Removes the first and last character which are always `/`.
+export function formatUserAgent(agent: string): string {
+  return agent.slice(1, -1);
+}
+
 export function parseNodeId(
   nid: string,
 ): { prefix: string; pubkey: string } | undefined {

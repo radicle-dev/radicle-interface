@@ -22,7 +22,7 @@ export interface NodesLoadedRoute {
   resource: "nodes";
   params: {
     baseUrl: BaseUrl;
-    version: string;
+    agent: string;
     externalAddresses: string[];
     nid: string;
     stats: NodeStats;
@@ -54,8 +54,8 @@ export async function loadNodeRoute(
         nid: node.id,
         stats,
         externalAddresses: node.config?.externalAddresses ?? [],
-        version: node.version,
         seedingPolicy: node.config?.seedingPolicy,
+        agent: node.agent,
       },
     };
   } catch (error) {

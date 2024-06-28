@@ -94,7 +94,7 @@ test("stored custom preferred seeds in local storage", async ({ page }) => {
 
 const nodeInfo = {
   id: "z6MkkGfMNQmjrp66Po2n4snzcSyTFRFw1m1fbYhCURxLxZpD",
-  version: "1.0.0-rc.9-d56d619f",
+  agent: "/radicle:1.0.0-rc.11/",
   config: {
     alias: "rhizoma",
     listen: [],

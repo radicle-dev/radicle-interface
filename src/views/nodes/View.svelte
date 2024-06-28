@@ -8,6 +8,7 @@
   import {
     baseUrlToString,
     formatShortSeedingPolicy,
+    formatUserAgent,
     isLocal,
     truncateId,
   } from "@app/lib/utils";
@@ -28,8 +29,8 @@
   export let nid: string;
   export let stats: NodeStats;
   export let externalAddresses: string[];
-  export let version: string;
   export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
+  export let agent: string;
 
   $: shortScope = formatShortSeedingPolicy(seedingPolicy);
   $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
@@ -73,7 +74,7 @@
     display: flex;
     justify-content: space-between;
   }
-  .version {
+  .agent {
     color: var(--color-fill-gray);
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-small);
@@ -147,9 +148,13 @@
               </div>
             {/each}
           </div>
-          <Id ariaLabel="version" id={version} shorten={false} style="none">
-            <div class="version">
-              {version}
+          <Id
+            ariaLabel="agent"
+            id={formatUserAgent(agent)}
+            shorten={false}
+            style="none">
+            <div class="agent">
+              {formatUserAgent(agent)}
             </div>
           </Id>
         </div>
