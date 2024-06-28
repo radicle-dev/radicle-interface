@@ -40,8 +40,19 @@
     } //
 
     (flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [(import heartwood.inputs.rust-overlay)];
+      };
       inherit (pkgs) lib;
+
+      rustToolChain = pkgs.rust-bin.fromRustupToolchainFile radicle-httpd/rust-toolchain;
+      craneLib = (heartwood.inputs.crane.mkLib pkgs).overrideToolchain rustToolChain;
+      basicArgs = {
+        pname = "radicle-httpd";
+        src = ./radicle-httpd;
+        strictDeps = true;
+      };
     in {
 
       checks = {
@@ -50,6 +61,7 @@
 
       packages = {
         default = self.packages.${system}.radicle-explorer;
+
         twemoji-assets = pkgs.fetchFromGitHub {
           owner = "twitter";
           repo = "twemoji";
@@ -66,6 +78,7 @@
             name = "heartwood-debug-bins";
             paths = with heartwood.packages.${system}; [
               (default.overrideAttrs devProfile)
+              self.packages.${system}.radicle-httpd
             ];
           };
         in buildNpmPackage rec {
@@ -104,6 +117,44 @@
             runHook postInstall
           '';
         }) {};
+
+        radicle-httpd = craneLib.buildPackage (basicArgs // {
+          inherit (craneLib.crateNameFromCargoToml {cargoToml = ./radicle-httpd + "/Cargo.toml";}) pname version;
+          cargoArtifacts = craneLib.buildDepsOnly basicArgs;
+
+          nativeBuildInputs = with pkgs;
+            [
+              git
+              # Add additional build inputs here
+              asciidoctor installShellFiles
+            ]
+            ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+              # Additional darwin specific inputs can be set here
+              libiconv
+              darwin.apple_sdk.frameworks.Security
+            ]);
+
+          env =
+            {
+              RADICLE_VERSION = "nix-" + (self.shortRev or self.dirtyShortRev or "unknown");
+            }
+            // (
+              if self ? rev || self ? dirtyRev
+              then {
+                GIT_HEAD = self.rev or self.dirtyRev;
+              }
+              else {}
+            );
+
+          cargoExtraArgs = "-p radicle-httpd";
+          doCheck = false;
+          postInstall = ''
+            for page in radicle-httpd.1.adoc; do
+              asciidoctor -d manpage -b manpage $page
+              installManPage ''${page::-5}
+            done
+          '';
+        });
       };
     }));
 }
