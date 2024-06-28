@@ -4,7 +4,7 @@
     nixpkgs.follows = "heartwood/nixpkgs";
     flake-utils.follows = "heartwood/flake-utils";
     heartwood = {
-      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.8";
+      url = "git+https://seed.radicle.xyz/z3gqcJUoA1n9HaHKufZs5FCSGazv5.git?ref=refs/namespaces/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT/refs/tags/v1.0.0-rc.11";
     };
   };
 
@@ -66,14 +66,13 @@
             name = "heartwood-debug-bins";
             paths = with heartwood.packages.${system}; [
               (default.overrideAttrs devProfile)
-              (radicle-httpd.overrideAttrs devProfile)
             ];
           };
         in buildNpmPackage rec {
           pname = "radicle-explorer";
-          version = "1.0.0";
+          version = (builtins.fromJSON (builtins.readFile ./package.json)).version;
           src = ./.;
-          npmDepsHash = "sha256-T2r9qTpXENG+uXZVa0KQW6j0BY8vrk7rPAGYPYAFF1A=";
+          npmDepsHash = "sha256-JerBiY39TNsrDmdoJIZNuUhekP860q6/0ttSL/Gd7e0=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
