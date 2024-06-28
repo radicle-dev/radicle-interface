@@ -17,7 +17,7 @@ test("node metadata", async ({ page, peerManager }) => {
   await expect(
     page.getByText(`${shortNodeRemote}@seed.radicle.test:8123`),
   ).toBeVisible();
-  await expect(page.getByText("pre-release")).toBeVisible();
+  await expect(page.getByText("radicle:1.0.0-rc.11")).toBeVisible();
 });
 
 test("node projects", async ({ page }) => {
