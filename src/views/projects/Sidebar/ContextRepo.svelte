@@ -2,7 +2,7 @@
   import type { BaseUrl, Node, Project } from "@http-client";
 
   import { capitalize } from "lodash";
-  import { isLocal } from "@app/lib/utils";
+  import { formatShortSeedingPolicy, isLocal } from "@app/lib/utils";
 
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
@@ -17,11 +17,7 @@
 
   let expandedNode = false;
 
-  $: shortSeedingPolicy =
-    node.config?.seedingPolicy.scope === "all" &&
-    node.config?.seedingPolicy.default === "allow"
-      ? "permissive"
-      : "restrictive";
+  $: shortSeedingPolicy = formatShortSeedingPolicy(node.config?.seedingPolicy);
 </script>
 
 <style>
@@ -116,9 +112,7 @@
     </div>
     {#if expandedNode && node.config?.seedingPolicy}
       <div style:padding-left="2.3rem">
-        <ScopePolicyExplainer
-          scope={node.config.seedingPolicy.scope}
-          policy={node.config.seedingPolicy.default} />
+        <ScopePolicyExplainer seedingPolicy={node.config.seedingPolicy} />
       </div>
     {/if}
   </div>

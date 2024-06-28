@@ -12,8 +12,7 @@ import type {
   SuccessResponse,
   CodeLocation,
   Range,
-  Policy,
-  Scope,
+  DefaultSeedingPolicy,
 } from "./lib/shared.js";
 import type { Comment, Embed, Reaction } from "./lib/project/comment.js";
 import type {
@@ -48,7 +47,11 @@ import * as project from "./lib/project.js";
 import * as profile from "./lib/profile.js";
 import * as session from "./lib/session.js";
 import { Fetcher } from "./lib/fetcher.js";
-import { nodeConfigSchema, successResponseSchema } from "./lib/shared.js";
+import {
+  nodeConfigSchema,
+  scopeSchema,
+  successResponseSchema,
+} from "./lib/shared.js";
 
 export type {
   BaseUrl,
@@ -60,6 +63,7 @@ export type {
   Commit,
   CommitBlob,
   CommitHeader,
+  DefaultSeedingPolicy,
   Diff,
   DiffBlob,
   DiffContent,
@@ -74,7 +78,6 @@ export type {
   Patch,
   PatchState,
   PatchUpdateAction,
-  Policy,
   Project,
   ProjectListQuery,
   Range,
@@ -82,7 +85,6 @@ export type {
   Remote,
   Review,
   Revision,
-  Scope,
   TreeStats,
   Tree,
   Verdict,
@@ -120,15 +122,18 @@ const nodeInfoSchema = object({
   ),
 });
 
-export type NodeTracking = z.infer<typeof nodeTrackingSchema>;
+export type NodePolicies = z.infer<typeof nodePoliciesSchema>;
 
-const nodeTrackingSchema = array(
-  object({
-    id: string(),
-    scope: string(),
-    policy: string(),
-  }),
-);
+const nodePoliciesSchema = object({
+  rid: string(),
+  policy: union([
+    object({ policy: literal("block") }),
+    object({
+      policy: literal("allow"),
+      scope: scopeSchema,
+    }),
+  ]),
+});
 
 export interface NodeStats {
   repos: { total: number };
@@ -192,14 +197,28 @@ export class HttpdClient {
     );
   }
 
-  public async getTracking(options?: RequestOptions): Promise<NodeTracking> {
+  public async getPolicies(options?: RequestOptions): Promise<NodePolicies[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: "node/policies/repos",
         options,
       },
-      nodeTrackingSchema,
+      array(nodePoliciesSchema),
+    );
+  }
+
+  public async getPoliciesById(
+    id: string,
+    options?: RequestOptions,
+  ): Promise<NodePolicies["policy"][]> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "GET",
+        path: `node/policies/repos/${id}`,
+        options,
+      },
+      array(nodePoliciesSchema.shape.policy),
     );
   }
 

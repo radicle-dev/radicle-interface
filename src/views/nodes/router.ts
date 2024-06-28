@@ -1,4 +1,4 @@
-import type { BaseUrl, NodeStats, Policy, Scope } from "@http-client";
+import type { BaseUrl, DefaultSeedingPolicy, NodeStats } from "@http-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import config from "virtual:config";
@@ -26,8 +26,7 @@ export interface NodesLoadedRoute {
     externalAddresses: string[];
     nid: string;
     stats: NodeStats;
-    policy?: Policy;
-    scope?: Scope;
+    seedingPolicy?: DefaultSeedingPolicy;
   };
 }
 
@@ -56,8 +55,7 @@ export async function loadNodeRoute(
         stats,
         externalAddresses: node.config?.externalAddresses ?? [],
         version: node.version,
-        policy: node.config?.seedingPolicy.default,
-        scope: node.config?.seedingPolicy.scope,
+        seedingPolicy: node.config?.seedingPolicy,
       },
     };
   } catch (error) {

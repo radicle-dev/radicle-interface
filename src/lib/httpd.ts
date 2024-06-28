@@ -1,4 +1,4 @@
-import type { Node, Policy, Scope } from "@http-client";
+import type { DefaultSeedingPolicy, Node } from "@http-client";
 
 import { get, writable } from "svelte/store";
 import { withTimeout, Mutex, E_CANCELED, E_TIMEOUT } from "async-mutex";
@@ -17,8 +17,7 @@ export interface Session {
 export interface HttpdNodeState {
   id: Node["id"];
   state: Node["state"];
-  policy: Policy | undefined;
-  scope: Scope | undefined;
+  seedingPolicy: DefaultSeedingPolicy | undefined;
 }
 
 export type HttpdState =
@@ -86,8 +85,7 @@ export async function authenticate(params: {
         node: {
           id,
           state,
-          policy: config?.seedingPolicy.default,
-          scope: config?.seedingPolicy.scope,
+          seedingPolicy: config?.seedingPolicy,
         },
       });
       return true;
@@ -116,8 +114,7 @@ export async function disconnect() {
           node: {
             id,
             state,
-            policy: config?.seedingPolicy.default,
-            scope: config?.seedingPolicy.scope,
+            seedingPolicy: config?.seedingPolicy,
           },
         });
       } catch (error) {
@@ -155,8 +152,7 @@ async function checkState() {
         const node = {
           id,
           state,
-          policy: config?.seedingPolicy.default,
-          scope: config?.seedingPolicy.scope,
+          seedingPolicy: config?.seedingPolicy,
         };
 
         if (httpdState && httpdState.state === "authenticated") {

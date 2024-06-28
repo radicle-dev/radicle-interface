@@ -10,8 +10,17 @@ export const successResponseSchema = object({
   success: literal(true),
 }) satisfies ZodSchema<SuccessResponse>;
 
-const policySchema = union([literal("allow"), literal("block")]);
-const scopeSchema = union([literal("followed"), literal("all")]);
+export const scopeSchema = union([literal("followed"), literal("all")]);
+
+const defaultSeedingPolicySchema = union([
+  object({
+    default: literal("block"),
+  }),
+  object({
+    default: literal("allow"),
+    scope: scopeSchema,
+  }),
+]);
 
 export const nodeConfigSchema = object({
   alias: string(),
@@ -61,14 +70,10 @@ export const nodeConfigSchema = object({
     }),
   }),
   workers: number(),
-  seedingPolicy: object({
-    default: policySchema,
-    scope: scopeSchema.optional(),
-  }),
+  seedingPolicy: defaultSeedingPolicySchema,
 });
 
-export type Policy = z.infer<typeof policySchema>;
-export type Scope = z.infer<typeof scopeSchema>;
+export type DefaultSeedingPolicy = z.infer<typeof defaultSeedingPolicySchema>;
 
 export const rangeSchema = union([
   object({

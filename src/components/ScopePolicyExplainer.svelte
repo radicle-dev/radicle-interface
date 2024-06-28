@@ -1,10 +1,9 @@
 <script lang="ts">
-  import type { Scope, Policy } from "@http-client";
+  import type { DefaultSeedingPolicy } from "@http-client";
 
   import { capitalize } from "lodash";
 
-  export let scope: Scope | undefined = "all";
-  export let policy: Policy;
+  export let seedingPolicy: DefaultSeedingPolicy;
 </script>
 
 <style>
@@ -16,26 +15,28 @@
   }
 </style>
 
-<div class="section">
-  Scope:
-  <span class="txt-bold">{capitalize(scope)}</span>
-</div>
-<div class="txt-missing">
-  {#if scope === "all"}
-    All changes in seeded repositories, made by any peer, will be synced.
-  {:else if scope === "followed"}
-    Only changes made by explicitly followed peers will be synced.
-  {/if}
-</div>
+{#if seedingPolicy.default === "allow"}
+  <div class="section">
+    Scope:
+    <span class="txt-bold">{capitalize(seedingPolicy.scope)}</span>
+  </div>
+  <div class="txt-missing">
+    {#if seedingPolicy.scope === "all"}
+      All changes in seeded repositories, made by any peer, will be synced.
+    {:else if seedingPolicy.scope === "followed"}
+      Only changes made by explicitly followed peers will be synced.
+    {/if}
+  </div>
+{/if}
 
 <div class="section">
   Policy:
-  <span class="txt-bold">{capitalize(policy)}</span>
+  <span class="txt-bold">{capitalize(seedingPolicy.default)}</span>
 </div>
 <div class="txt-missing">
-  {#if policy === "allow"}
+  {#if seedingPolicy.default === "allow"}
     All discovered repositories will get seeded.
-  {:else if policy === "block"}
+  {:else if seedingPolicy.default === "block"}
     Only repositories marked as such will get seeded.
   {/if}
 </div>

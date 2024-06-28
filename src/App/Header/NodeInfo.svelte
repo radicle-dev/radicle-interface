@@ -46,21 +46,23 @@
         Your node is running and syncing with the network.
       </div>
 
-      {#if node.scope && node.policy}
+      {#if node.seedingPolicy}
         <div class="scope-policy">
           <div style:display="flex">
             Seeding Policy: <span style:margin-left="auto" class="txt-semibold">
-              {capitalize(node.policy)}
+              {capitalize(node.seedingPolicy.default)}
             </span>
           </div>
-          <div style:display="flex" style:margin-bottom="1rem">
-            Scope:
-            <span style:margin-left="auto" class="txt-semibold">
-              {capitalize(node.scope)}
-            </span>
-          </div>
+          {#if node.seedingPolicy.default === "allow"}
+            <div style:display="flex" style:margin-bottom="1rem">
+              Scope:
+              <span style:margin-left="auto" class="txt-semibold">
+                {capitalize(node.seedingPolicy.scope)}
+              </span>
+            </div>
+          {/if}
 
-          <ScopePolicyExplainer scope={node.scope} policy={node.policy} />
+          <ScopePolicyExplainer seedingPolicy={node.seedingPolicy} />
         </div>
       {/if}
       <div class="label">
