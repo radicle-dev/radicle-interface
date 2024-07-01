@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Node, Project, Remote, Tree } from "@http-client";
+  import type {
+    BaseUrl,
+    Project,
+    Remote,
+    SeedingPolicy,
+    Tree,
+  } from "@http-client";
   import type { BlobResult, ProjectRoute } from "./router";
 
   import { HttpdClient } from "@http-client";
@@ -16,11 +22,11 @@
   export let baseUrl: BaseUrl;
   export let blobResult: BlobResult;
   export let commit: string;
-  export let node: Node;
   export let path: string;
   export let peer: string | undefined;
   export let peers: Remote[];
   export let project: Project;
+  export let seedingPolicy: SeedingPolicy;
   export let rawPath: (commit?: string) => string;
   export let revision: string | undefined;
   export let seeding: boolean;
@@ -111,7 +117,12 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project} activeTab="source" stylePaddingBottom="0">
+<Layout
+  {seedingPolicy}
+  {baseUrl}
+  {project}
+  activeTab="source"
+  stylePaddingBottom="0">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem" slot="subheader">

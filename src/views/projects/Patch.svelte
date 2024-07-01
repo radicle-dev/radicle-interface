@@ -8,7 +8,7 @@
     PatchState,
     Revision,
     Diff,
-    Node,
+    SeedingPolicy,
   } from "@http-client";
 
   interface Thread {
@@ -92,7 +92,7 @@
   import TextInput from "@app/components/TextInput.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let patch: Patch;
   export let stats: Diff["stats"];
   export let rawPath: (commit?: string) => string;
@@ -708,7 +708,12 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project} activeTab="patches" stylePaddingBottom="0">
+<Layout
+  {seedingPolicy}
+  {baseUrl}
+  {project}
+  activeTab="patches"
+  stylePaddingBottom="0">
   <div class="patch">
     <div class="main">
       <CobHeader>

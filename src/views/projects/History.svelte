@@ -4,8 +4,8 @@
     CommitHeader,
     Project,
     Remote,
-    Node,
     Tree,
+    SeedingPolicy,
   } from "@http-client";
   import type { ProjectRoute } from "./router";
 
@@ -24,7 +24,7 @@
   import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let commit: string;
   export let commitHeaders: CommitHeader[];
   export let peer: string | undefined;
@@ -90,7 +90,7 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project} activeTab="source">
+<Layout {seedingPolicy} {baseUrl} {project} activeTab="source">
   <ProjectNameHeader {project} {baseUrl} {seeding} slot="header" />
 
   <div style:margin="1rem" slot="subheader">

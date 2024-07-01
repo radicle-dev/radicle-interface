@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Node, Project } from "@http-client";
+  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
@@ -13,7 +13,7 @@
   const SIDEBAR_STATE_KEY = "sidebarState";
 
   export let activeTab: ActiveTab | undefined = undefined;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let baseUrl: BaseUrl;
   export let project: Project;
   export let collapsedOnly = false;
@@ -41,8 +41,6 @@
     expanded = !expanded;
     storeSidebarState(expanded);
   }
-
-  $: seedingPolicy = formatShortSeedingPolicy(node.config?.seedingPolicy);
 </script>
 
 <style>

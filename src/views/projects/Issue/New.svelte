@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Embed, Node, Project, Reaction } from "@http-client";
+  import type {
+    BaseUrl,
+    Embed,
+    Project,
+    Reaction,
+    SeedingPolicy,
+  } from "@http-client";
 
   import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
@@ -17,7 +23,7 @@
   import TextInput from "@app/components/TextInput.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let project: Project;
   export let rawPath: (commit?: string) => string;
 
@@ -100,7 +106,7 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project} activeTab="issues">
+<Layout {seedingPolicy} {baseUrl} {project} activeTab="issues">
   {#if session}
     {@const session_ = session}
     <div class="form">

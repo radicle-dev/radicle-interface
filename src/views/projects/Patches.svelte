@@ -1,5 +1,11 @@
 <script lang="ts">
-  import type { BaseUrl, Node, Patch, PatchState, Project } from "@http-client";
+  import type {
+    BaseUrl,
+    Patch,
+    PatchState,
+    Project,
+    SeedingPolicy,
+  } from "@http-client";
 
   import { HttpdClient } from "@http-client";
   import capitalize from "lodash/capitalize";
@@ -25,7 +31,7 @@
   import Command from "@app/components/Command.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let patches: Patch[];
   export let project: Project;
   export let state: PatchState["status"];
@@ -121,7 +127,7 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project} activeTab="patches">
+<Layout {seedingPolicy} {baseUrl} {project} activeTab="patches">
   <div slot="header" style:display="flex" style:padding="1rem">
     <Popover
       popoverPadding="0"
