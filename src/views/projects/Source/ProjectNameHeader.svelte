@@ -1,13 +1,14 @@
 <script lang="ts">
   import type { BaseUrl, Project } from "@http-client";
 
+  import dompurify from "dompurify";
+  import { markdownWithExtensions } from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
-  import InlineMarkdown from "@app/components/InlineMarkdown.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
@@ -15,6 +16,12 @@
   export let project: Project;
   export let baseUrl: BaseUrl;
   export let seeding: boolean;
+
+  function render(content: string): string {
+    return dompurify.sanitize(
+      markdownWithExtensions.parseInline(content) as string,
+    );
+  }
 </script>
 
 <style>
@@ -94,5 +101,5 @@
   </div>
 </div>
 <div class="description" use:twemoji>
-  <InlineMarkdown fontSize="regular" content={project.description} />
+  {render(project.description)}
 </div>
