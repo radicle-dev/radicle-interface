@@ -1,9 +1,11 @@
 <script lang="ts">
-  import type { DefaultSeedingPolicy } from "@http-client";
+  import type { DefaultSeedingPolicy, SeedingPolicy } from "@http-client";
 
   import { capitalize } from "lodash";
 
-  export let seedingPolicy: DefaultSeedingPolicy;
+  export let seedingPolicy: DefaultSeedingPolicy | SeedingPolicy;
+
+  $: [policy, scope] = Object.values(seedingPolicy);
 </script>
 
 <style>
@@ -15,15 +17,15 @@
   }
 </style>
 
-{#if seedingPolicy.default === "allow"}
+{#if policy === "allow"}
   <div class="section">
     Scope:
-    <span class="txt-bold">{capitalize(seedingPolicy.scope)}</span>
+    <span class="txt-bold">{capitalize(scope)}</span>
   </div>
   <div class="txt-missing">
-    {#if seedingPolicy.scope === "all"}
+    {#if scope === "all"}
       All changes in seeded repositories, made by any peer, will be synced.
-    {:else if seedingPolicy.scope === "followed"}
+    {:else if scope === "followed"}
       Only changes made by explicitly followed peers will be synced.
     {/if}
   </div>
@@ -31,12 +33,12 @@
 
 <div class="section">
   Policy:
-  <span class="txt-bold">{capitalize(seedingPolicy.default)}</span>
+  <span class="txt-bold">{capitalize(policy)}</span>
 </div>
 <div class="txt-missing">
-  {#if seedingPolicy.default === "allow"}
+  {#if policy === "allow"}
     All discovered repositories will get seeded.
-  {:else if seedingPolicy.default === "block"}
+  {:else if policy === "block"}
     Only repositories marked as such will get seeded.
   {/if}
 </div>

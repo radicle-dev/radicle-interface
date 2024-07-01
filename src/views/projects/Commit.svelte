@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit, Node, Project } from "@http-client";
+  import type { BaseUrl, Commit, Project, SeedingPolicy } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
@@ -12,7 +12,7 @@
   import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
-  export let node: Node;
+  export let seedingPolicy: SeedingPolicy;
   export let commit: Commit;
   export let project: Project;
 
@@ -45,7 +45,7 @@
   }
 </style>
 
-<Layout {node} {baseUrl} {project}>
+<Layout {seedingPolicy} {baseUrl} {project}>
   <div class="commit">
     <div class="header">
       <div style="display:flex; flex-direction: column; gap: 0.5rem;">
