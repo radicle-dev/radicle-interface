@@ -23,7 +23,6 @@ path = "src/main.rs"
 [dependencies]
 anyhow = { version = "1" }
 axum = { version = "0.7.2", default-features = false, features = ["json", "query", "tokio", "http1"] }
-axum-auth = { version= "0.7.0", default-features = false, features = ["auth-bearer"] }
 axum-server = { version = "0.6.0", default-features = false }
 base64 = "0.21.3"
 chrono = { version = "0.4.22", default-features = false, features = ["clock"] }

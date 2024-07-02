@@ -1,6 +1,3 @@
-pub mod auth;
-
-use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -14,17 +11,15 @@ use radicle::patch::cache::Patches as _;
 use radicle::storage::git::Repository;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use tokio::sync::RwLock;
 use tower_http::cors::{self, CorsLayer};
 
 use radicle::cob::{issue, patch, Author};
 use radicle::identity::{DocAt, RepoId};
 use radicle::node::policy::Scope;
 use radicle::node::routing::Store;
-use radicle::node::AliasStore;
-use radicle::node::{Handle, NodeId};
+use radicle::node::{AliasStore, NodeId};
 use radicle::storage::{ReadRepository, ReadStorage};
-use radicle::{Node, Profile};
+use radicle::Profile;
 
 mod error;
 mod json;
@@ -38,13 +33,9 @@ pub const RADICLE_VERSION: &str = env!("RADICLE_VERSION");
 // This version has to be updated on every breaking change to the radicle-httpd API.
 pub const API_VERSION: &str = "1.2.0";
 
-/// Identifier for sessions
-type SessionId = String;
-
 #[derive(Clone)]
 pub struct Context {
     profile: Arc<Profile>,
-    sessions: Arc<RwLock<HashMap<SessionId, auth::Session>>>,
     cache: Option<Cache>,
 }
 
@@ -52,7 +43,6 @@ impl Context {
     pub fn new(profile: Arc<Profile>, options: &Options) -> Self {
         Self {
             profile,
-            sessions: Default::default(),
             cache: options.cache.map(Cache::new),
         }
     }
@@ -105,11 +95,6 @@ impl Context {
     #[cfg(test)]
     pub fn profile(&self) -> &Arc<Profile> {
         &self.profile
-    }
-
-    #[cfg(test)]
-    pub fn sessions(&self) -> &Arc<RwLock<HashMap<SessionId, auth::Session>>> {
-        &self.sessions
     }
 }
 
@@ -340,14 +325,5 @@ mod project {
         pub issues: cob::issue::IssueCounts,
         pub id: RepoId,
         pub seeding: usize,
-    }
-}
-
-/// Announce refs to the network for the given RID.
-pub fn announce_refs(mut node: Node, rid: RepoId) -> Result<(), Error> {
-    match node.announce_refs(rid) {
-        Ok(_) => Ok(()),
-        Err(e) if e.is_connection_err() => Ok(()),
-        Err(e) => Err(e.into()),
     }
 }

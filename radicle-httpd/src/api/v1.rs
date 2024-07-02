@@ -2,7 +2,6 @@ mod delegates;
 mod node;
 mod profile;
 mod projects;
-mod sessions;
 mod stats;
 
 use axum::extract::State;
@@ -22,7 +21,6 @@ pub fn router(ctx: Context) -> Router {
         .merge(root_router)
         .merge(node::router(ctx.clone()))
         .merge(profile::router(ctx.clone()))
-        .merge(sessions::router(ctx.clone()))
         .merge(delegates::router(ctx.clone()))
         .merge(projects::router(ctx.clone()))
         .merge(stats::router(ctx));

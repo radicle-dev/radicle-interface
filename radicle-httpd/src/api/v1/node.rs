@@ -1,31 +1,24 @@
 use axum::extract::State;
 use axum::response::IntoResponse;
-use axum::routing::{get, put};
+use axum::routing::get;
 use axum::{Json, Router};
-use axum_auth::AuthBearer;
-use hyper::StatusCode;
 use serde_json::json;
 
 use radicle::identity::RepoId;
 use radicle::node::address::Store as AddressStore;
 use radicle::node::routing::Store;
-use radicle::node::{AliasStore, Handle, NodeId, DEFAULT_TIMEOUT};
+use radicle::node::{AliasStore, Handle, NodeId};
 use radicle::Node;
 
 use crate::api::error::Error;
-use crate::api::{self, Context, PoliciesQuery};
-use crate::axum_extra::{Path, Query};
+use crate::api::Context;
+use crate::axum_extra::Path;
 
 pub fn router(ctx: Context) -> Router {
     Router::new()
         .route("/node", get(node_handler))
         .route("/node/policies/repos", get(node_policies_repos_handler))
-        .route(
-            "/node/policies/repos/:rid",
-            put(node_policies_seed_handler)
-                .delete(node_policies_unseed_handler)
-                .get(node_policies_repo_handler),
-        )
+        .route("/node/policies/repos/:rid", get(node_policies_repo_handler))
         .route("/nodes/:nid", get(nodes_handler))
         .route("/nodes/:nid/inventory", get(nodes_inventory_handler))
         .with_state(ctx)
@@ -104,42 +97,6 @@ async fn node_policies_repo_handler(
     let policy = policies.seed_policy(&rid)?;
 
     Ok::<_, Error>(Json(*policy))
-}
-
-/// Seed a new repo.
-/// `PUT /node/policies/repos/:rid`
-async fn node_policies_seed_handler(
-    State(ctx): State<Context>,
-    AuthBearer(token): AuthBearer,
-    Path(project): Path<RepoId>,
-    Query(qs): Query<PoliciesQuery>,
-) -> impl IntoResponse {
-    api::auth::validate(&ctx, &token).await?;
-    let mut node = Node::new(ctx.profile.socket());
-    node.seed(project, qs.scope.unwrap_or_default())?;
-
-    if let Some(from) = qs.from {
-        let results = node.fetch(project, from, DEFAULT_TIMEOUT)?;
-        return Ok::<_, Error>((
-            StatusCode::OK,
-            Json(json!({ "success": true, "results": results })),
-        ));
-    }
-    Ok::<_, Error>((StatusCode::OK, Json(json!({ "success": true }))))
-}
-
-/// Unseed a repo.
-/// `DELETE /node/policies/repos/:rid`
-async fn node_policies_unseed_handler(
-    State(ctx): State<Context>,
-    AuthBearer(token): AuthBearer,
-    Path(project): Path<RepoId>,
-) -> impl IntoResponse {
-    api::auth::validate(&ctx, &token).await?;
-    let mut node = Node::new(ctx.profile.socket());
-    node.unseed(project)?;
-
-    Ok::<_, Error>((StatusCode::OK, Json(json!({ "success": true }))))
 }
 
 #[cfg(test)]

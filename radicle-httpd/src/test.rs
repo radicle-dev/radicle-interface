@@ -8,11 +8,9 @@ use axum::body::{Body, Bytes};
 use axum::http::{Method, Request};
 use axum::Router;
 use serde_json::Value;
-use time::OffsetDateTime;
 use tower::ServiceExt;
 
 use radicle::cob::patch::MergeTarget;
-use radicle::crypto::ssh::keystore::MemorySigner;
 use radicle::crypto::ssh::Keystore;
 use radicle::crypto::{KeyPair, Seed, Signer};
 use radicle::git::{raw as git2, RefString};
@@ -23,7 +21,7 @@ use radicle::Storage;
 use radicle::{node, profile};
 use radicle_crypto::test::signer::MockSigner;
 
-use crate::api::{auth, Context};
+use crate::api::Context;
 
 pub const RID: &str = "rad:z4FucBZHZMCsxTyQE1dfE2YR59Qbp";
 pub const RID_PRIVATE: &str = "rad:zLuTzcmoWMcdK37xqArS8eckp9vK";
@@ -32,14 +30,8 @@ pub const PARENT: &str = "ee8d6a29304623a78ebfa5eeed5af674d0e58f83";
 pub const INITIAL_COMMIT: &str = "f604ce9fd5b7cc77b7609beda45ea8760bee78f7";
 pub const DID: &str = "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
 pub const ISSUE_ID: &str = "ca67d195c0b308b51810dedd93157a20764d5db5";
-pub const ISSUE_DISCUSSION_ID: &str = "41e2823caa54f1d53e375035ed4aabd0a89fa855";
-pub const ISSUE_COMMENT_ID: &str = "e9f963fab82ad875e46b29a327c5d3d51f825cdc";
-pub const SESSION_ID: &str = "u9MGAkkfkMOv0uDDB2WeUHBT7HbsO2Dy";
 pub const TIMESTAMP: u64 = 1671125284;
-pub const CONTRIBUTOR_RID: &str = "rad:z4XaCmN3jLSeiMvW15YTDpNbDHFhG";
-pub const CONTRIBUTOR_DID: &str = "did:key:z6Mkk7oqY4pPxhMmGEotDYsFo97vhCj85BLY1H256HrJmjN8";
 pub const CONTRIBUTOR_ALIAS: &str = "seed";
-pub const CONTRIBUTOR_PATCH_ID: &str = "3e3f0dc34b3eeb64cfbc7218fbd52b97246e0564";
 
 /// Create a new profile.
 pub fn profile(home: &Path, seed: [u8; 32]) -> radicle::Profile {
@@ -77,17 +69,6 @@ pub fn seed(dir: &Path) -> Context {
     let signer = Box::new(MockSigner::from_seed([0xff; 32]));
 
     crate::logger::init().ok();
-
-    seed_with_signer(dir, profile, &signer)
-}
-
-pub fn contributor(dir: &Path) -> Context {
-    let mut seed = [0xff; 32];
-    *seed.last_mut().unwrap() = 0xee;
-
-    let home = dir.join("radicle");
-    let profile = profile(home.as_path(), seed);
-    let signer = MemorySigner::load(&profile.keystore, None).unwrap();
 
     seed_with_signer(dir, profile, &signer)
 }
@@ -319,70 +300,10 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
     Context::new(Arc::new(profile), &options)
 }
 
-/// Adds an authorized session to the Context::sessions HashMap.
-pub async fn create_session(ctx: Context) {
-    let issued_at = OffsetDateTime::now_utc();
-    let mut sessions = ctx.sessions().write().await;
-    sessions.insert(
-        String::from(SESSION_ID),
-        auth::Session {
-            status: auth::AuthState::Authorized,
-            public_key: ctx.profile().public_key,
-            alias: ctx.profile().config.node.alias.clone(),
-            issued_at,
-            expires_at: issued_at
-                .checked_add(auth::AUTHORIZED_SESSIONS_EXPIRATION)
-                .unwrap(),
-        },
-    );
-}
-
 pub async fn get(app: &Router, path: impl ToString) -> Response {
     Response(
         app.clone()
             .oneshot(request(path, Method::GET, None, None))
-            .await
-            .unwrap(),
-    )
-}
-
-pub async fn post(
-    app: &Router,
-    path: impl ToString,
-    body: Option<Body>,
-    auth: Option<String>,
-) -> Response {
-    Response(
-        app.clone()
-            .oneshot(request(path, Method::POST, body, auth))
-            .await
-            .unwrap(),
-    )
-}
-
-pub async fn patch(
-    app: &Router,
-    path: impl ToString,
-    body: Option<Body>,
-    auth: Option<String>,
-) -> Response {
-    Response(
-        app.clone()
-            .oneshot(request(path, Method::PATCH, body, auth))
-            .await
-            .unwrap(),
-    )
-}
-
-pub async fn put(
-    app: &Router,
-    path: impl ToString,
-    body: Option<Body>,
-    auth: Option<String>,
-) -> Response {
-    Response(
-        app.clone()
-            .oneshot(request(path, Method::PUT, body, auth))
             .await
             .unwrap(),
     )
@@ -412,20 +333,6 @@ impl Response {
     pub async fn json(self) -> Value {
         let body = self.body().await;
         serde_json::from_slice(&body).unwrap()
-    }
-
-    pub async fn id(self) -> radicle::git::Oid {
-        let json = self.json().await;
-        let string = json["id"].as_str().unwrap();
-
-        radicle::git::Oid::from_str(string).unwrap()
-    }
-
-    pub async fn success(self) -> bool {
-        let json = self.json().await;
-        let success = json["success"].as_bool();
-
-        success.unwrap_or(false)
     }
 
     pub fn status(&self) -> axum::http::StatusCode {
