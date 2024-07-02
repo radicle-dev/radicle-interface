@@ -2,7 +2,6 @@
   import Plausible from "plausible-tracker";
 
   import * as router from "@app/lib/router";
-  import * as httpd from "@app/lib/httpd";
   import { unreachable } from "@app/lib/utils";
 
   import { codeFont, theme } from "@app/lib/appearance";
@@ -16,12 +15,10 @@
   import Home from "@app/views/home/Index.svelte";
   import Issue from "@app/views/projects/Issue.svelte";
   import Issues from "@app/views/projects/Issues.svelte";
-  import NewIssue from "@app/views/projects/Issue/New.svelte";
   import Nodes from "@app/views/nodes/View.svelte";
   import NotFound from "@app/views/NotFound.svelte";
   import Patch from "@app/views/projects/Patch.svelte";
   import Patches from "@app/views/projects/Patches.svelte";
-  import Session from "@app/views/session/Index.svelte";
   import Source from "@app/views/projects/Source.svelte";
 
   import Error from "@app/views/error/View.svelte";
@@ -29,7 +26,7 @@
 
   const activeRouteStore = router.activeRouteStore;
 
-  void httpd.initialize().finally(() => void router.loadFromLocation());
+  void router.loadFromLocation();
 
   if (import.meta.env.PROD) {
     const plausible = Plausible({ domain: "app.radicle.xyz" });
@@ -63,11 +60,9 @@
     <Loading />
   </div>
 {:else if $activeRouteStore.resource === "home"}
-  <Home {...$activeRouteStore.params} />
+  <Home />
 {:else if $activeRouteStore.resource === "nodes"}
   <Nodes {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "session"}
-  <Session activeRoute={$activeRouteStore} />
 {:else if $activeRouteStore.resource === "project.source"}
   <Source {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.history"}
@@ -76,8 +71,6 @@
   <Commit {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.issues"}
   <Issues {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.newIssue"}
-  <NewIssue {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.issue"}
   <Issue {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.patches"}

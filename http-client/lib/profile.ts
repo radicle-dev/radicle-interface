@@ -1,16 +1,11 @@
 import type { Fetcher, RequestOptions } from "./fetcher.js";
 import type { z } from "zod";
 
-import { array, boolean, object, string } from "zod";
-import { nodeConfigSchema } from "./shared.js";
+import { object, string } from "zod";
+import { configSchema } from "./shared.js";
 
 const profileSchema = object({
-  config: object({
-    publicExplorer: string(),
-    preferredSeeds: array(string()),
-    cli: object({ hints: boolean() }),
-    node: nodeConfigSchema,
-  }),
+  config: configSchema,
   home: string(),
 });
 

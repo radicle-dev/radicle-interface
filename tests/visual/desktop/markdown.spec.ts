@@ -111,33 +111,10 @@ test("footnotes", async ({ page }) => {
   await page.goto(`${markdownUrl}/tree/main/footnotes.md#footnotes`, {
     waitUntil: "networkidle",
   });
-  await expect(
-    page.locator(
-      "text=This is an example footnote[1]. And some radicle[2] examples.[3]",
-    ),
-  ).toBeVisible();
-  await expect(page.getByText("1. https://example.com ↩")).toBeVisible();
-  await expect(page.getByText("2. https://radicle.xyz ↩")).toBeVisible();
-  await expect(
-    page.getByText(
-      "3. A corporeal grounding, though one hardly to the exclusion of the cerebral as in the erroneous sense of a mind/body dichotomy, except insofar as what is most squarely in the cerebral would land here only on the periphery of our focus. ↩",
-    ),
-  ).toBeVisible();
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   await page.getByText("Code").click();
-  await expect(
-    page.locator(
-      "text=This is an example footnote[^1]. And some radicle[^2] examples.[^3]",
-    ),
-  ).toBeVisible();
-  await expect(page.getByText("[^1]: https://example.com")).toBeVisible();
-  await expect(page.getByText("[^2]: https://radicle.xyz")).toBeVisible();
-  await expect(
-    page.getByText(
-      "[^3]: A corporeal grounding, though one hardly to the exclusion of the _cerebral_ as in the erroneous sense of a mind/body dichotomy, except insofar as what is most squarely in the cerebral would land here only on the periphery of our focus.",
-    ),
-  ).toBeVisible();
+  await expect(page).toHaveScreenshot({ fullPage: true });
 });
 
 test("math", async ({ page }) => {
@@ -164,6 +141,6 @@ test("markdown in issues is not overflowing", async ({ page }) => {
   await page.goto(`${markdownUrl}/issues`, {
     waitUntil: "networkidle",
   });
-  await page.getByRole("link", { name: "This title has markdown" }).click();
+  await page.getByRole("link", { name: "This title has **markdown**" }).click();
   await expect(page).toHaveScreenshot({ fullPage: true });
 });

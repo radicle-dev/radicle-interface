@@ -11,9 +11,7 @@
   import capitalize from "lodash/capitalize";
 
   import { PATCHES_PER_PAGE } from "./router";
-  import { experimental } from "@app/lib/appearance";
-  import { httpdStore } from "@app/lib/httpd";
-  import { baseUrlToString, isLocal } from "@app/lib/utils";
+  import { baseUrlToString } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
@@ -28,7 +26,6 @@
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover, { closeFocused } from "@app/components/Popover.svelte";
   import Share from "./Share.svelte";
-  import Command from "@app/components/Command.svelte";
 
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
@@ -85,6 +82,11 @@
 </script>
 
 <style>
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+  }
   .more {
     margin-top: 2rem;
     min-height: 3rem;
@@ -108,12 +110,6 @@
     background-color: var(--color-fill-counter);
     color: var(--color-foreground-dim);
   }
-  .popover {
-    min-width: 16rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
   .placeholder {
     height: calc(100% - 4rem);
     display: flex;
@@ -128,7 +124,7 @@
 </style>
 
 <Layout {seedingPolicy} {baseUrl} {project} activeTab="patches">
-  <div slot="header" style:display="flex" style:padding="1rem">
+  <div slot="header" class="header">
     <Popover
       popoverPadding="0"
       popoverPositionTop="2.5rem"
@@ -178,29 +174,7 @@
       </DropdownList>
     </Popover>
 
-    <div style="margin-left: auto; display: flex; gap: 1rem;">
-      <Share {baseUrl} />
-      {#if $experimental && $httpdStore.state === "authenticated" && isLocal(baseUrl.hostname)}
-        <div class="global-hide-on-mobile-down">
-          <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
-            <Button
-              slot="toggle"
-              let:toggle
-              on:click={toggle}
-              variant="secondary">
-              <IconSmall name="plus" />
-              New Patch
-            </Button>
-
-            <div slot="popover" class="popover txt-small">
-              To create a patch, first checkout a new branch and commit your
-              changes, then run the following command.
-              <Command command="git push rad HEAD:refs/patches" />
-            </div>
-          </Popover>
-        </div>
-      {/if}
-    </div>
+    <Share {baseUrl} />
   </div>
 
   <List items={allPatches}>

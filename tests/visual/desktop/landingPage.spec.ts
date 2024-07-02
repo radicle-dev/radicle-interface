@@ -3,6 +3,10 @@ import sinon from "sinon";
 
 test("pinned projects", async ({ page }) => {
   await page.addInitScript(() => {
+    localStorage.setItem(
+      "configuredPreferredSeeds",
+      JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
+    );
     sinon.useFakeTimers({
       now: new Date("November 24 2022 12:00:00").valueOf(),
       shouldClearNativeTimers: true,
@@ -16,6 +20,10 @@ test("pinned projects", async ({ page }) => {
 
 test("load projects error", async ({ page }) => {
   await page.addInitScript(() => {
+    localStorage.setItem(
+      "configuredPreferredSeeds",
+      JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
+    );
     sinon.useFakeTimers({
       now: new Date("November 24 2022 12:00:00").valueOf(),
       shouldClearNativeTimers: true,
@@ -33,6 +41,12 @@ test("load projects error", async ({ page }) => {
 });
 
 test("response parse error", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "configuredPreferredSeeds",
+      JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
+    );
+  });
   await page.route("*/**/v1/projects*", route => {
     return route.fulfill({
       json: [{ name: 1337 }],
@@ -43,6 +57,12 @@ test("response parse error", async ({ page }) => {
 });
 
 test("response error", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "configuredPreferredSeeds",
+      JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
+    );
+  });
   await page.route("*/**/v1/projects*", route => {
     return route.fulfill({
       status: 500,

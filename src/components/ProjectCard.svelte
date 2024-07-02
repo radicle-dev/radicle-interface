@@ -17,8 +17,6 @@
 
   export let projectInfo: ProjectInfo;
 
-  export let isDelegate: boolean;
-
   $: project = projectInfo.project;
   $: baseUrl = projectInfo.baseUrl;
   $: isPrivate = project.visibility?.type === "private";
@@ -155,14 +153,6 @@
               class="badge"
               style="background-color: var(--color-fill-private); color: var(--color-foreground-yellow)">
               <IconSmall name="lock" />
-            </div>
-          {/if}
-          {#if isDelegate}
-            <div
-              title="Delegate"
-              class="badge"
-              style="background-color: var(--color-fill-delegate); color: var(--color-foreground-primary)">
-              <IconSmall name="badge" />
             </div>
           {/if}
           <Badge

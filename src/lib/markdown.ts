@@ -88,7 +88,7 @@ export default new Marked();
 export const markdownWithExtensions = new Marked(
   katexMarkedExtension({ throwOnError: false }),
   markedLinkifyIt({}, { fuzzyLink: false }),
-  markedFootnote(),
+  markedFootnote({ refMarkers: true }),
   markedEmoji({ emojis }),
   ((): MarkedExtension => ({
     extensions: [anchorMarkedExtension],

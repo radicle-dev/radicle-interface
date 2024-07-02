@@ -3,14 +3,13 @@
 
   import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
+  import CommentCounter from "../CommentCounter.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
+  import Id from "@app/components/Id.svelte";
+  import InlineLabels from "../Cob/InlineLabels.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
-
-  import CommentCounter from "../CommentCounter.svelte";
-  import Labels from "../Cob/Labels.svelte";
-  import Id from "@app/components/Id.svelte";
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
@@ -101,7 +100,7 @@
         <span
           class="global-hide-on-small-desktop-down"
           style="display: inline-flex; gap: 0.5rem;">
-          <Labels labels={issue.labels} />
+          <InlineLabels labels={issue.labels} />
         </span>
       {/if}
       <div class="right">
@@ -115,7 +114,7 @@
         <div
           class="global-hide-on-medium-desktop-up"
           style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <Labels labels={issue.labels} />
+          <InlineLabels labels={issue.labels} />
         </div>
       {/if}
       <div

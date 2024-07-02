@@ -1,4 +1,4 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type { Embed } from "@http-client";
 
   import Badge from "@app/components/Badge.svelte";

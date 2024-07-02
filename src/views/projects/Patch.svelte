@@ -4,8 +4,6 @@
     Review,
     Merge,
     Project,
-    LifecycleState,
-    PatchState,
     Revision,
     Diff,
     SeedingPolicy,
@@ -42,54 +40,37 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Embed, Patch } from "@http-client";
+  import type { BaseUrl, Patch } from "@http-client";
   import type { PatchView } from "./router";
   import type { Route } from "@app/lib/router";
   import type { ComponentProps } from "svelte";
-  import type { Session } from "@app/lib/httpd";
 
-  import * as modal from "@app/lib/modal";
-  import * as role from "@app/lib/roles";
-  import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
   import capitalize from "lodash/capitalize";
-  import isEqual from "lodash/isEqual";
-  import partial from "lodash/partial";
   import uniqBy from "lodash/uniqBy";
-  import { HttpdClient } from "@http-client";
-  import { closeFocused } from "@app/components/Popover.svelte";
-  import { experimental } from "@app/lib/appearance";
-  import { httpdStore } from "@app/lib/httpd";
-  import { parseEmbedIntoMap } from "@app/lib/file";
 
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
-  import CobStateButton from "@app/views/projects/Cob/CobStateButton.svelte";
-  import CommentToggleInput from "@app/components/CommentToggleInput.svelte";
   import CompareButton from "@app/views/projects/Patch/CompareButton.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
-  import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
-  import LabelInput from "@app/views/projects/Cob/LabelInput.svelte";
+  import Labels from "@app/views/projects/Cob/Labels.svelte";
   import Layout from "@app/views/projects/Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Radio from "@app/components/Radio.svelte";
-  import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
   import Reviews from "@app/views/projects/Cob/Reviews.svelte";
   import RevisionComponent from "@app/views/projects/Cob/Revision.svelte";
   import RevisionSelector from "@app/views/projects/Patch/RevisionSelector.svelte";
   import Share from "@app/views/projects/Share.svelte";
-  import TextInput from "@app/components/TextInput.svelte";
 
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
@@ -98,384 +79,6 @@
   export let rawPath: (commit?: string) => string;
   export let project: Project;
   export let view: PatchView;
-
-  $: api = new HttpdClient(baseUrl);
-
-  const items: [string, LifecycleState][] = [
-    ["Reopen patch", { status: "open" }],
-    ["Archive patch", { status: "archived" }],
-    ["Convert to draft", { status: "draft" }],
-  ];
-
-  async function editPatch(sessionId: string, title: string) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        { type: "edit", title, target: "delegates" },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch title editing failed",
-            subtitle: [
-              "There was an error while updating the title of this patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function editRevision(
-    sessionId: string,
-    revisionId: string,
-    description: string,
-    embeds: Embed[],
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        { type: "revision.edit", revision: revisionId, description, embeds },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Revision editing failed",
-            subtitle: [
-              "There was an error while updating the revision.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function createReply(
-    sessionId: string,
-    revisionId: string,
-    replyTo: string,
-    body: string,
-    embeds: Embed[],
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.comment",
-          revision: revisionId,
-          body,
-          embeds,
-          replyTo,
-        },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch comment reply creation failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function reactOnComment(
-    session: Session,
-    revisionId: string,
-    commentId: string,
-    authors: Comment["reactions"][0]["authors"],
-    reaction: string,
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.comment.react",
-          revision: revisionId,
-          comment: commentId,
-          reaction,
-          active: !authors.find(
-            ({ id }) => utils.parseNodeId(id)?.pubkey === session.publicKey,
-          ),
-        },
-        session.id,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch comment reaction editing failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-  async function createComment(
-    sessionId: string,
-    revisionId: string,
-    comment: string,
-    embeds: Embed[],
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.comment",
-          body: comment,
-          embeds,
-          revision: revisionId,
-        },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch comment creation failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function editComment(
-    sessionId: string,
-    revisionId: string,
-    id: string,
-    body: string,
-    embeds: Embed[],
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.comment.edit",
-          comment: id,
-          body,
-          revision: revisionId,
-          embeds,
-        },
-        sessionId,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch comment editing failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function saveStatus(sessionId: string, state: PatchState) {
-    try {
-      if (state.status !== "merged") {
-        await api.project.updatePatch(
-          project.id,
-          patch.id,
-          { type: "lifecycle", state },
-          sessionId,
-        );
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch status change failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      void router.push({
-        resource: "project.patch",
-        project: project.id,
-        node: baseUrl,
-        patch: patch.id,
-      });
-    }
-  }
-
-  async function reactOnRevision(
-    session: Session,
-    revisionId: string,
-    authors: Revision["reactions"][0]["authors"],
-    reaction: string,
-  ) {
-    try {
-      await api.project.updatePatch(
-        project.id,
-        patch.id,
-        {
-          type: "revision.react",
-          revision: revisionId,
-          reaction,
-          active: !authors.find(
-            ({ id }) => utils.parseNodeId(id)?.pubkey === session.publicKey,
-          ),
-        },
-        session.id,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Reacting on revision failed",
-            subtitle: [
-              "There was an error while trying to react to a revision.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      await refreshPatch();
-    }
-  }
-
-  async function saveLabels(labels: string[]) {
-    try {
-      if (session) {
-        labelState = "submit";
-        await api.project.updatePatch(
-          project.id,
-          patch.id,
-          { type: "label", labels },
-          session.id,
-        );
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Patch label change failed",
-            subtitle: [
-              "There was an error while updating the patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    } finally {
-      labelState = "read";
-      await refreshPatch();
-    }
-  }
-
-  // Refreshes the given patch by fetching it from the server.
-  // If the fetch fails, the given patch is returned.
-  async function refreshPatch() {
-    try {
-      patch = await api.project.getPatchById(project.id, patch.id);
-    } catch (error) {
-      if (error instanceof Error) {
-        modal.show({
-          component: ErrorModal,
-          props: {
-            title: "Unable to fetch patch",
-            subtitle: [
-              "There was an error while refreshing this patch.",
-              "Check your radicle-httpd logs for details.",
-            ],
-            error: {
-              message: error.message,
-              stack: error.stack,
-            },
-          },
-        });
-      }
-    }
-  }
 
   function badgeColor(status: string): ComponentProps<Badge>["variant"] {
     if (status === "draft") {
@@ -540,11 +143,6 @@
     return patchReviews;
   }
 
-  type State = "read" | "submit" | "edit";
-
-  let patchState: State = "read";
-  let labelState: State = "read";
-
   let revisionId: string;
   $: if (view.name === "diff") {
     revisionId = patch.revisions[patch.revisions.length - 1].id;
@@ -560,9 +158,7 @@
   );
   $: description = patch.revisions[0].description;
   $: lastEdit = patch.revisions[0].edits.at(-1);
-  $: newDescription = description;
   $: reviews = computeReviews(patch);
-  $: selectedItem = patch.state.status === "open" ? items[1] : items[0];
   $: timelineTuple = patch.revisions.map<
     [
       {
@@ -615,13 +211,8 @@
         })),
     ].sort((a, b) => a.timestamp - b.timestamp),
   ]);
-  $: delegates = project.delegates.map(d => d.id);
   $: firstRevision = timelineTuple[0][0];
   $: latestRevision = patch.revisions[patch.revisions.length - 1];
-  $: session =
-    $httpdStore.state === "authenticated" && utils.isLocal(baseUrl.hostname)
-      ? $httpdStore.session
-      : undefined;
 </script>
 
 <style>
@@ -662,12 +253,6 @@
     padding: 1rem 1rem 0.5rem 1rem;
     height: 100%;
   }
-  .actions {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-  }
   .tabs {
     font-size: var(--font-size-tiny);
     display: flex;
@@ -692,12 +277,6 @@
     gap: 0.5rem;
     width: 100%;
   }
-  .connector {
-    width: 1px;
-    height: 1.5rem;
-    margin-left: 1.25rem;
-    background-color: var(--color-fill-separator);
-  }
   @media (max-width: 719.98px) {
     .patch {
       display: block;
@@ -718,46 +297,14 @@
     <div class="main">
       <CobHeader>
         <svelte:fragment slot="title">
-          <div
-            style="display: flex; align-items: center; gap: 1rem; width: 100%;">
-            {#if patchState !== "read"}
-              <TextInput
-                placeholder="Title"
-                bind:value={patch.title}
-                showKeyHint={false} />
-            {:else if !patch.title}
-              <span class="txt-missing">No title</span>
-            {:else}
-              <div class="title">
-                <InlineTitle fontSize="large" content={patch.title} />
-              </div>
-            {/if}
-          </div>
-          {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id) && patchState === "read"}
-            <div class="global-hide-on-mobile-down">
-              <Button
-                variant="outline"
-                title="edit patch"
-                on:click={() => (patchState = "edit")}>
-                <IconSmall name={"edit"} />
-                Edit
-              </Button>
+          {#if patch.title}
+            <div class="title">
+              <InlineTitle fontSize="large" content={patch.title} />
             </div>
+          {:else}
+            <span class="txt-missing">No title</span>
           {/if}
-          {#if patchState === "read"}
-            <Share {baseUrl} />
-            {#if $experimental && session && role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
-              <div class="global-hide-on-small-desktop-down">
-                <CobStateButton
-                  items={items.filter(
-                    ([, state]) => !isEqual(state, patch.state),
-                  )}
-                  {selectedItem}
-                  state={patch.state}
-                  save={partial(saveStatus, session.id)} />
-              </div>
-            {/if}
-          {/if}
+          <Share {baseUrl} />
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>
@@ -799,52 +346,13 @@
             style:margin-top="2rem"
             style="display: flex; flex-direction: column; gap: 0.5rem;">
             <Reviews {reviews} />
-            <LabelInput
-              locallyAuthenticated={role.isDelegate(
-                session?.publicKey,
-                delegates,
-              )}
-              submitInProgress={labelState === "submit"}
-              labels={patch.labels}
-              on:save={({ detail: newLabels }) => {
-                void saveLabels(newLabels);
-              }} />
+            <Labels labels={patch.labels} />
             <Embeds embeds={uniqueEmbeds} />
           </div>
         </div>
         <svelte:fragment slot="description">
           <div class="revision-description">
-            {#if $experimental && session && patchState !== "read" && lastEdit}
-              <ExtendedTextarea
-                isValid={() => patch.title.length > 0}
-                enableAttachments
-                embeds={parseEmbedIntoMap(lastEdit.embeds)}
-                rawPath={rawPath(patch.revisions[0].id)}
-                body={newDescription}
-                submitCaption="Save"
-                submitInProgress={patchState === "submit"}
-                placeholder="Leave a description"
-                on:close={() => {
-                  patchState = "read";
-                  void refreshPatch();
-                }}
-                on:submit={async ({ detail: { comment, embeds } }) => {
-                  patchState = "submit";
-                  if (session) {
-                    try {
-                      await editPatch(session.id, patch.title);
-                      await editRevision(
-                        session.id,
-                        patch.id,
-                        comment,
-                        Array.from(embeds.values()),
-                      );
-                    } finally {
-                      patchState = "read";
-                    }
-                  }
-                }} />
-            {:else if description}
+            {#if description}
               <Markdown
                 breaks
                 content={description}
@@ -852,35 +360,8 @@
             {:else}
               <span class="txt-missing">No description available</span>
             {/if}
-            {#if ($experimental && session) || (firstRevision.revisionReactions && firstRevision.revisionReactions.length > 0)}
-              <div class="actions">
-                {#if session}
-                  <div class="global-hide-on-mobile-down">
-                    <ReactionSelector
-                      reactions={firstRevision.revisionReactions}
-                      on:select={async ({ detail: { emoji, authors } }) => {
-                        if (session) {
-                          try {
-                            await reactOnRevision(
-                              session,
-                              patch.id,
-                              authors,
-                              emoji,
-                            );
-                          } finally {
-                            closeFocused();
-                          }
-                        }
-                      }} />
-                  </div>
-                {/if}
-                {#if firstRevision.revisionReactions.length > 0}
-                  <Reactions
-                    handleReaction={session &&
-                      partial(reactOnRevision, session, patch.id)}
-                    reactions={firstRevision.revisionReactions} />
-                {/if}
-              </div>
+            {#if firstRevision.revisionReactions.length > 0}
+              <Reactions reactions={firstRevision.revisionReactions} />
             {/if}
           </div>
         </svelte:fragment>
@@ -961,62 +442,12 @@
               {timelines}
               {...revision}
               first={index === 0}
-              canEdit={partial(
-                role.isDelegateOrAuthor,
-                session?.publicKey,
-                delegates,
-              )}
-              editRevision={$experimental &&
-                session &&
-                partial(editRevision, session.id, revision.revisionId)}
-              editComment={$experimental &&
-                session &&
-                partial(editComment, session.id, revision.revisionId)}
-              reactOnComment={$experimental &&
-                session &&
-                partial(reactOnComment, session, revision.revisionId)}
-              reactOnRevision={$experimental &&
-                session &&
-                partial(reactOnRevision, session, revision.revisionId)}
-              createReply={$experimental &&
-                session &&
-                partial(createReply, session.id, revision.revisionId)}
               patchId={patch.id}
               patchState={patch.state}
               initiallyExpanded={index === patch.revisions.length - 1}
               previousRevId={previousRevision?.id}
               previousRevBase={previousRevision?.base}
-              previousRevOid={previousRevision?.oid}>
-              {#if index === patch.revisions.length - 1}
-                {#if $experimental && session && view.name === "activity"}
-                  <div class="global-hide-on-mobile-down">
-                    <div class="connector" />
-                    <CommentToggleInput
-                      rawPath={rawPath(patch.revisions[0].id)}
-                      focus
-                      enableAttachments
-                      placeholder="Leave your comment"
-                      submit={partial(
-                        createComment,
-                        session.id,
-                        revision.revisionId,
-                      )} />
-                    {#if role.isDelegateOrAuthor(session.publicKey, delegates, patch.author.id)}
-                      <div class="connector" />
-                      <div style="display: flex;">
-                        <CobStateButton
-                          items={items.filter(
-                            ([, state]) => !isEqual(state, patch.state),
-                          )}
-                          {selectedItem}
-                          state={patch.state}
-                          save={partial(saveStatus, session.id)} />
-                      </div>
-                    {/if}
-                  </div>
-                {/if}
-              {/if}
-            </RevisionComponent>
+              previousRevOid={previousRevision?.oid} />
           {:else}
             <div style:margin="4rem 0">
               <Placeholder
@@ -1039,13 +470,7 @@
 
     <div class="metadata global-hide-on-medium-desktop-down">
       <Reviews {reviews} />
-      <LabelInput
-        locallyAuthenticated={role.isDelegate(session?.publicKey, delegates)}
-        submitInProgress={labelState === "submit"}
-        labels={patch.labels}
-        on:save={({ detail: newLabels }) => {
-          void saveLabels(newLabels);
-        }} />
+      <Labels labels={patch.labels} />
       <Embeds embeds={uniqueEmbeds} />
     </div>
   </div>

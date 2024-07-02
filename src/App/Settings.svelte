@@ -1,12 +1,8 @@
 <script lang="ts">
-  import { api, changeHttpdPort } from "@app/lib/httpd";
-  import config from "virtual:config";
   import {
     codeFont,
     codeFonts,
-    experimental,
     storeCodeFont,
-    storeExperimental,
     storeTheme,
     theme,
   } from "@app/lib/appearance";
@@ -14,9 +10,6 @@
   import Icon from "@app/components/Icon.svelte";
   import Radio from "@app/components/Radio.svelte";
   import Button from "@app/components/Button.svelte";
-  import TextInput from "@app/components/TextInput.svelte";
-
-  $: customPort = api.port;
 </script>
 
 <style>
@@ -82,42 +75,6 @@
           <div class="global-spacer" />
         {/each}
       </Radio>
-    </div>
-  </div>
-  <div class="item global-hide-on-mobile-down">
-    <div
-      style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem;">
-      Make changes on the web (experimental)
-    </div>
-    <div class="right">
-      <Radio>
-        <Button
-          styleBorderRadius="0"
-          on:click={() => storeExperimental(true)}
-          variant={$experimental ? "selected" : "not-selected"}>
-          On
-        </Button>
-        <div class="global-spacer" />
-        <Radio>
-          <Button
-            styleBorderRadius="0"
-            on:click={() => storeExperimental(undefined)}
-            variant={$experimental ? "not-selected" : "selected"}>
-            Off
-          </Button>
-        </Radio>
-      </Radio>
-    </div>
-  </div>
-  <div class="item global-hide-on-mobile-down">
-    <div>Radicle HTTP Daemon Port</div>
-    <div class="right txt-monospace" style:width="6rem">
-      <TextInput
-        name="httpd port"
-        bind:value={customPort}
-        placeholder={config.nodes.defaultLocalHttpdPort.toString()}
-        valid={Number(customPort) >= 1 && Number(customPort) <= 65535}
-        on:submit={() => changeHttpdPort(Number(customPort))} />
     </div>
   </div>
 </div>

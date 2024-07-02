@@ -3,13 +3,6 @@ import * as utils from "@app/lib/utils";
 
 describe("Format functions", () => {
   test.each([
-    { hash: "#L42", expected: 42 },
-    { hash: "#ETH", expected: null },
-  ])("formatLocationHash $hash => $expected", ({ hash, expected }) => {
-    expect(utils.formatLocationHash(hash)).toEqual(expected);
-  });
-
-  test.each([
     {
       id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       expected: "rad:zKtT7D…19WzjT",
@@ -71,57 +64,12 @@ describe("Format functions", () => {
 
 describe("String Assertions", () => {
   test.each([
-    { domain: "alt-clients.radicle.xyz", expected: true },
-    { domain: "0.0.0.0", expected: true }, // Pass as true since we are not in production
-    { domain: "", expected: false },
-  ])("isDomain $domain => $expected", ({ domain, expected }) => {
-    expect(utils.isDomain(domain)).toEqual(expected);
-  });
-
-  test.each([
     { path: "README.md", expected: true },
     { path: "README.mkd", expected: true },
     { path: "README.markdown", expected: true },
     { path: "", expected: false },
   ])("isMarkdownPath $path => $expected", ({ path, expected }) => {
     expect(utils.isMarkdownPath(path)).toEqual(expected);
-  });
-
-  test.each([
-    { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: true },
-    { id: "z2H9aHDurxd8Uvx2jsvW4e5mamy5S", expected: true },
-    { id: "rad:BBBBBBBBBBBBBBBBBBBBBBBBBBBB", expected: false },
-    { id: "0x1234567890123456789012345678901234567890", expected: false },
-    {
-      id: "did:key:z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
-      expected: false,
-    },
-    {
-      id: "z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
-      expected: false,
-    },
-  ])("isRepositoryId $id => $expected", ({ id, expected }) => {
-    expect(utils.isRepositoryId(id)).toEqual(expected);
-  });
-
-  test.each([
-    {
-      id: "did:key:z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
-      expected: true,
-    },
-    {
-      id: "z6MkwPUeUS2fJMfc2HZN1RQTQcTTuhw4HhPySB8JeUg2mVvx",
-      expected: true,
-    },
-    {
-      id: "did:key:CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      expected: false,
-    },
-    { id: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT", expected: false },
-    { id: "z2H9aHDurxd8Uvx2jsvW4e5mamy5S", expected: false },
-    { id: "0x1234567890123456789012345678901234567890", expected: false },
-  ])("isNodeId $id => $expected", ({ id, expected }) => {
-    expect(utils.isNodeId(id)).toEqual(expected);
   });
 
   test.each([
@@ -137,12 +85,6 @@ describe("String Assertions", () => {
 });
 
 describe("Parse Functions", () => {
-  test.each([
-    { input: "https://twitter.com/cloudhead", expected: "cloudhead" },
-    { input: "sebastinez", expected: "sebastinez" },
-  ])("parseUsername", ({ input, expected }) => {
-    expect(utils.parseUsername(input)).toEqual(expected);
-  });
   test.each([
     {
       input: "rad:z6MkmzRwg47UWQxczLLLFfkEwpBGitjzJ1vKPE8U9ymd6fz6",

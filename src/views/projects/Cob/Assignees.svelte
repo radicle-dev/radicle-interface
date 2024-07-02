@@ -1,7 +1,12 @@
 <script lang="ts">
+  import type { Reaction } from "@http-client";
+
+  import { formatNodeId } from "@app/lib/utils";
+
+  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
 
-  export let labels: string[] = [];
+  export let assignees: Reaction["authors"] = [];
 </script>
 
 <style>
@@ -11,11 +16,16 @@
   }
   .body {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 0.5rem;
     font-size: var(--font-size-small);
+  }
+  .assignee {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 0.25rem;
   }
   @media (max-width: 1349.98px) {
     .wrapper {
@@ -33,7 +43,7 @@
     .body {
       align-items: flex-start;
     }
-    .no-labels {
+    .no-assignees {
       height: 2rem;
       display: flex;
       align-items: center;
@@ -42,14 +52,17 @@
 </style>
 
 <div class="wrapper">
-  <div class="header">Labels</div>
+  <div class="header">Assignees</div>
   <div class="body">
-    {#each labels as label}
+    {#each assignees as { id }}
       <Badge variant="neutral" size="small">
-        {label}
+        <div class="assignee">
+          <Avatar inline nodeId={id} />
+          <span>{formatNodeId(id)}</span>
+        </div>
       </Badge>
     {:else}
-      <div class="txt-missing no-labels">No labels</div>
+      <div class="txt-missing no-assignees">No assignees</div>
     {/each}
   </div>
 </div>

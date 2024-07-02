@@ -1,3 +1,5 @@
+<svelte:options customElement="radicle-external-link" />
+
 <script lang="ts">
   import IconSmall from "./IconSmall.svelte";
 
@@ -7,6 +9,7 @@
 <style>
   a {
     font-weight: var(--font-weight-semibold);
+    color: inherit;
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;

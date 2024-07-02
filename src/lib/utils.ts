@@ -8,11 +8,6 @@ export async function toClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
 }
 
-export function formatLocationHash(hash: string | null): number | null {
-  if (hash && hash.match(/^#L[0-9]+$/)) return parseInt(hash.slice(2));
-  return null;
-}
-
 // Removes the first and last character which are always `/`.
 export function formatUserAgent(agent: string): string {
   return agent.slice(1, -1);
@@ -62,14 +57,6 @@ export function parseRepositoryId(
   return undefined;
 }
 
-export function isNodeId(input: string): boolean {
-  return Boolean(parseNodeId(input));
-}
-
-export function isRepositoryId(input: string): boolean {
-  return Boolean(parseRepositoryId(input));
-}
-
 export function formatNodeId(id: string): string {
   const parsedId = parseNodeId(id);
 
@@ -111,19 +98,6 @@ export function baseUrlToString(baseUrl: BaseUrl): string {
   return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}`;
 }
 
-// Generates a publicly shareable link.
-export function formatPublicExplorer(
-  publicExplorer: string,
-  host: string,
-  rid: string,
-  fullPath: string,
-) {
-  return publicExplorer
-    .replace("$host", host)
-    .replace("$rid", rid)
-    .replace("$path", fullPath.replace(`/nodes/${host}/${rid}`, ""));
-}
-
 // Takes a path, eg. "../images/image.png", and a base from where to start
 // resolving, e.g. "static/images/index.html". Returns the resolved path.
 export function canonicalize(
@@ -147,13 +121,6 @@ export function canonicalize(
   const pathname = url.pathname.replace(/^\//, "");
 
   return pathname;
-}
-
-// Takes a URL, eg. "https://twitter.com/cloudhead", and return "cloudhead".
-// Returns the original string if it was unable to extract the username.
-export function parseUsername(input: string): string {
-  const parts = input.split("/");
-  return parts[parts.length - 1];
 }
 
 export function absoluteTimestamp(time: number | undefined) {
@@ -219,12 +186,6 @@ export function isSvgPath(input: string): boolean {
   return /\.svg$/i.test(input);
 }
 
-export function isFulfilled<T>(
-  input: PromiseSettledResult<T>,
-): input is PromiseFulfilledResult<T> {
-  return input.status === "fulfilled";
-}
-
 // Get amount of days passed between two dates without including the end date
 export function getDaysPassed(from: Date, to: Date): number {
   return Math.floor((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
@@ -235,7 +196,7 @@ export function scrollIntoView(id: string, options?: ScrollIntoViewOptions) {
   if (lineElement) lineElement.scrollIntoView(options);
 }
 
-export function isMac() {
+function isMac() {
   if (
     (navigator.platform && navigator.platform.includes("Mac")) ||
     navigator.userAgent.includes("OS X")
@@ -253,15 +214,6 @@ export function modifierKey() {
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
-}
-
-// Check whether the given input string is a domain, eg. seed.radicle.xyz.
-// Also accepts in dev env 0.0.0.0 as domain.
-export function isDomain(input: string): boolean {
-  return (
-    (/^[a-z][a-z0-9.-]+$/.test(input) && /\.[a-z]+$/.test(input)) ||
-    (!import.meta.env.PROD && isLocal(input))
-  );
 }
 
 // Check whether the given address is a localhost address.

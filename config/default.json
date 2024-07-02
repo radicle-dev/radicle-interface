@@ -3,7 +3,6 @@
     "fallbackPublicExplorer": "https://app.radicle.xyz/nodes/$host/$rid$path",
     "apiVersion": "1.2.0",
     "defaultHttpdPort": 443,
-    "defaultLocalHttpdPort": 8080,
     "defaultHttpdHostname": "seed.radicle.garden",
     "defaultHttpdScheme": "https",
     "defaultNodePort": 8776,
@@ -18,7 +17,6 @@
     ]
   },
   "supportWebsite": "https://radicle.zulipchat.com",
-  "reactions": ["👍", "👎", "😄", "🎉", "🙁", "🚀", "👀"],
   "fallbackPreferredSeed": {
     "hostname": "seed.radicle.garden",
     "port": 443,

@@ -21,15 +21,13 @@ import type {
   Tree,
 } from "@http-client";
 
-import { experimental } from "@app/lib/appearance";
-import * as httpd from "@app/lib/httpd";
 import * as Syntax from "@app/lib/syntax";
-import { unreachable } from "@app/lib/utils";
+import config from "virtual:config";
+import { isLocal, unreachable } from "@app/lib/utils";
 import { nodePath } from "@app/views/nodes/router";
 import { handleError, unreachableError } from "@app/views/projects/error";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
-import { get } from "svelte/store";
 
 export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
@@ -46,7 +44,6 @@ export type ProjectRoute =
     }
   | ProjectIssuesRoute
   | ProjectIssueRoute
-  | { resource: "project.newIssue"; node: BaseUrl; project: string }
   | ProjectPatchesRoute
   | ProjectPatchRoute;
 
@@ -124,7 +121,6 @@ export type ProjectLoadedRoute =
         path: string;
         rawPath: (commit?: string) => string;
         blobResult: BlobResult;
-        seeding: boolean;
       };
     }
   | {
@@ -139,7 +135,6 @@ export type ProjectLoadedRoute =
         revision: string | undefined;
         tree: Tree;
         commitHeaders: CommitHeader[];
-        seeding: boolean;
       };
     }
   | {
@@ -169,15 +164,6 @@ export type ProjectLoadedRoute =
         project: Project;
         issues: Issue[];
         state: IssueState["status"];
-      };
-    }
-  | {
-      resource: "project.newIssue";
-      params: {
-        baseUrl: BaseUrl;
-        seedingPolicy: SeedingPolicy;
-        project: Project;
-        rawPath: (commit?: string) => string;
       };
     }
   | {
@@ -254,33 +240,24 @@ function parseRevisionToOid(
   }
 }
 
-async function isLocalNodeSeeding(route: ProjectRoute): Promise<boolean> {
-  if (!get(experimental) && get(httpd.httpdStore).state === "stopped") {
-    return false;
-  }
-  try {
-    const policies = await httpd.api.getPolicies();
-    return policies.some(({ rid }) => rid === route.project);
-  } catch (error) {
-    if (error instanceof ResponseError && error.status === 404) {
-      return false;
-    }
-
-    // Either `radicle-httpd` isn't running or there was some other
-    // error.
-    return false;
-  }
-}
-
 export async function loadProjectRoute(
   route: ProjectRoute,
   previousLoaded: LoadedRoute,
 ): Promise<ProjectLoadedRoute | ErrorRoute | NotFoundRoute> {
+  if (
+    import.meta.env.PROD &&
+    isLocal(`${route.node.hostname}:${route.node.port}`)
+  ) {
+    return {
+      resource: "error",
+      params: {
+        icon: "device",
+        title: "Local node browsing not supported",
+        description: `You're trying to access a repository on a local node from your browser, we are currently working on a desktop app specific for this use case. Join our <strong>#desktop</strong> channel on <radicle-external-link href="${config.supportWebsite}">${config.supportWebsite}</radicle-external-link> for more information.`,
+      },
+    };
+  }
   const api = new HttpdClient(route.node);
-  const rawPath = (commit?: string) =>
-    `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
-      route.project
-    }${commit ? `/${commit}` : ""}`;
 
   try {
     if (route.resource === "project.source") {
@@ -309,20 +286,6 @@ export async function loadProjectRoute(
       return await loadPatchView(route);
     } else if (route.resource === "project.issues") {
       return await loadIssuesView(route);
-    } else if (route.resource === "project.newIssue") {
-      const [project, seedingPolicy] = await Promise.all([
-        api.project.getById(route.project),
-        api.getPoliciesById(route.project),
-      ]);
-      return {
-        resource: "project.newIssue",
-        params: {
-          baseUrl: route.node,
-          seedingPolicy,
-          project,
-          rawPath,
-        },
-      };
     } else if (route.resource === "project.patches") {
       return await loadPatchesView(route);
     } else {
@@ -425,11 +388,10 @@ async function loadTreeView(
     seedingPolicyPromise = api.getPoliciesById(route.project);
   }
 
-  const [project, peers, seedingPolicy, seeding] = await Promise.all([
+  const [project, peers, seedingPolicy] = await Promise.all([
     projectPromise,
     peersPromise,
     seedingPolicyPromise,
-    isLocalNodeSeeding(route),
   ]);
 
   let branchMap: Record<string, string> = {
@@ -477,7 +439,6 @@ async function loadTreeView(
       tree,
       path,
       blobResult,
-      seeding,
     },
   };
 }
@@ -558,14 +519,13 @@ async function loadHistoryView(
     );
   }
 
-  const [tree, commitHeaders, seeding] = await Promise.all([
+  const [tree, commitHeaders] = await Promise.all([
     api.project.getTree(route.project, commitId),
     await api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
       perPage: COMMITS_PER_PAGE,
     }),
-    isLocalNodeSeeding(route),
   ]);
 
   return {
@@ -580,7 +540,6 @@ async function loadHistoryView(
       revision: route.revision,
       tree,
       commitHeaders,
-      seeding,
     },
   };
 }
@@ -774,13 +733,7 @@ export function resolveProjectRoute(
     };
   } else if (content === "issues") {
     const issueOrAction = segments.shift();
-    if (issueOrAction === "new") {
-      return {
-        resource: "project.newIssue",
-        node,
-        project,
-      };
-    } else if (issueOrAction) {
+    if (issueOrAction) {
       return {
         resource: "project.issue",
         node,
@@ -905,8 +858,6 @@ export function projectRouteToPath(route: ProjectRoute): string {
     return pathSegments.join("/");
   } else if (route.resource === "project.commit") {
     return [...pathSegments, "commits", route.commit].join("/");
-  } else if (route.resource === "project.newIssue") {
-    return [...pathSegments, "issues", "new"].join("/");
   } else if (route.resource === "project.issues") {
     let url = [...pathSegments, "issues"].join("/");
     const searchParams = new URLSearchParams();
@@ -977,8 +928,6 @@ export function projectTitle(loadedRoute: ProjectLoadedRoute) {
   } else if (loadedRoute.resource === "project.history") {
     title.push(loadedRoute.params.project.name);
     title.push("history");
-  } else if (loadedRoute.resource === "project.newIssue") {
-    title.push("new issue");
   } else if (loadedRoute.resource === "project.issue") {
     title.push(loadedRoute.params.issue.title);
     title.push("issue");

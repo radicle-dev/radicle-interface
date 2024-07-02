@@ -3,7 +3,6 @@
     BaseUrl,
     Comment,
     DiffResponse,
-    Embed,
     PatchState,
     Revision,
     Verdict,
@@ -12,9 +11,7 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@http-client";
-  import { closeFocused } from "@app/components/Popover.svelte";
   import { onMount } from "svelte";
-  import { parseEmbedIntoMap } from "@app/lib/file";
 
   import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
   import CommentComponent from "@app/components/Comment.svelte";
@@ -23,7 +20,6 @@
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
-  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
   import IconButton from "@app/components/IconButton.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import Link from "@app/components/Link.svelte";
@@ -31,7 +27,6 @@
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
   import Thread from "@app/components/Thread.svelte";
   import Id from "@app/components/Id.svelte";
@@ -55,29 +50,6 @@
   export let previousRevId: string | undefined = undefined;
   export let previousRevOid: string | undefined = undefined;
   export let first: boolean;
-  export let canEdit: (author: string) => true | undefined;
-  export let editRevision:
-    | ((description: string, embeds: Embed[]) => Promise<void>)
-    | undefined;
-  export let editComment:
-    | ((commentId: string, body: string, embeds: Embed[]) => Promise<void>)
-    | undefined;
-  export let reactOnRevision:
-    | ((
-        authors: Comment["reactions"][0]["authors"],
-        reaction: string,
-      ) => Promise<void>)
-    | undefined;
-  export let reactOnComment:
-    | ((
-        commentId: string,
-        authors: Comment["reactions"][0]["authors"],
-        reaction: string,
-      ) => Promise<void>)
-    | undefined;
-  export let createReply:
-    | ((commentId: string, comment: string, embeds: Embed[]) => Promise<void>)
-    | undefined;
 
   let expanded = initiallyExpanded;
   const api = new HttpdClient(baseUrl);
@@ -119,13 +91,10 @@
     }
   }
 
-  type State = "read" | "submit" | "edit";
-
   let response: DiffResponse | undefined = undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any | undefined = undefined;
   let loading: boolean = false;
-  let revisionState: State = "read";
 
   $: fromCommit =
     previousRevBase !== revisionBase
@@ -436,38 +405,8 @@
                 • edited
               </div>
             {/if}
-            <div
-              class="global-hide-on-mobile-down"
-              style="display: flex; gap: 0.5rem; margin-left: auto;">
-              {#if canEdit(revisionAuthor.id) && editRevision && revisionState === "read"}
-                <IconButton
-                  title="edit revision"
-                  on:click={() => (revisionState = "edit")}>
-                  <IconSmall name="edit" />
-                </IconButton>
-              {/if}
-            </div>
           </div>
-          {#if editRevision && lastEdit && revisionState !== "read"}
-            {@const editRevision_ = editRevision}
-            <ExtendedTextarea
-              enableAttachments
-              embeds={parseEmbedIntoMap(lastEdit.embeds)}
-              rawPath={rawPath(revisionId)}
-              body={revisionDescription}
-              submitCaption="Save"
-              submitInProgress={revisionState === "submit"}
-              placeholder="Leave a description"
-              on:close={() => (revisionState = "read")}
-              on:submit={async ({ detail: { comment, embeds } }) => {
-                revisionState = "submit";
-                try {
-                  await editRevision_(comment, Array.from(embeds.values()));
-                } finally {
-                  revisionState = "read";
-                }
-              }} />
-          {:else if revisionDescription && !first}
+          {#if revisionDescription && !first}
             <div class="revision-description txt-small">
               <Markdown
                 breaks
@@ -475,27 +414,9 @@
                 content={revisionDescription} />
             </div>
           {/if}
-          {#if reactOnRevision || revisionReactions.length > 0}
+          {#if revisionReactions && revisionReactions.length > 0}
             <div class="actions">
-              {#if reactOnRevision}
-                {@const reactOnRevision_ = reactOnRevision}
-                <div class="global-hide-on-mobile-down">
-                  <ReactionSelector
-                    reactions={revisionReactions}
-                    on:select={async ({ detail: { emoji, authors } }) => {
-                      try {
-                        await reactOnRevision_(authors, emoji);
-                      } finally {
-                        closeFocused();
-                      }
-                    }} />
-                </div>
-              {/if}
-              {#if revisionReactions && revisionReactions.length > 0}
-                <Reactions
-                  handleReaction={reactOnRevision}
-                  reactions={revisionReactions} />
-              {/if}
+              <Reactions reactions={revisionReactions} />
             </div>
           {/if}
         </div>
@@ -534,14 +455,7 @@
       {#each timelines as element}
         {#if element.type === "thread"}
           <div class="connector" />
-          <Thread
-            enableAttachments
-            thread={element.inner}
-            rawPath={rawPath(revisionBase)}
-            canEditComment={canEdit}
-            {editComment}
-            {createReply}
-            {reactOnComment} />
+          <Thread thread={element.inner} rawPath={rawPath(revisionBase)} />
         {:else if element.type === "merge"}
           <div class="connector" />
           <div class="action merge">
@@ -575,6 +489,7 @@
             class:positive-review={review.verdict === "accept"}
             class:negative-review={review.verdict === "reject"}>
             <CommentComponent
+              id={review.id}
               rawPath={rawPath(revisionBase)}
               authorId={author}
               authorAlias={review.author.alias}

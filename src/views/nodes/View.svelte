@@ -4,16 +4,9 @@
   import { capitalize } from "lodash";
 
   import * as router from "@app/lib/router";
-  import { api, httpdStore } from "@app/lib/httpd";
-  import {
-    baseUrlToString,
-    formatUserAgent,
-    isLocal,
-    truncateId,
-  } from "@app/lib/utils";
+  import { baseUrlToString, formatUserAgent, truncateId } from "@app/lib/utils";
   import { fetchProjectInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
-  import { isDelegate } from "@app/lib/roles";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import IconButton from "@app/components/IconButton.svelte";
@@ -35,11 +28,6 @@
     seedingPolicy?.default === "allow" && seedingPolicy?.scope === "all"
       ? "permissive"
       : "restrictive";
-  $: hostname = isLocal(baseUrl.hostname) ? "Local Node" : baseUrl.hostname;
-  $: session =
-    $httpdStore.state === "authenticated" && isLocal(api.baseUrl.hostname)
-      ? $httpdStore.session
-      : undefined;
 </script>
 
 <style>
@@ -128,7 +116,7 @@
   <div class="layout">
     <div class="wrapper">
       <div class="header">
-        <div class="txt-large txt-bold">{hostname}</div>
+        <div class="txt-large txt-bold">{baseUrl.hostname}</div>
         <div class="info">
           <div>
             {#each externalAddresses as address}
@@ -163,9 +151,7 @@
       </div>
 
       <div class="subtitle" style:justify-content="space-between">
-        <div class="txt-semibold">
-          {isLocal(baseUrl.hostname) ? "Seeded" : "Pinned"} repositories
-        </div>
+        <div class="txt-semibold">Pinned repositories</div>
         <div class="seeding-policy">
           {#if seedingPolicy}
             <span class="txt-bold">Seeding Policy:</span>
@@ -186,7 +172,7 @@
       </div>
 
       <div style:margin-top="1rem" style:padding-bottom="2.5rem">
-        {#await fetchProjectInfos( baseUrl, { show: isLocal(baseUrl.hostname) ? "all" : "pinned", perPage: stats.repos.total }, )}
+        {#await fetchProjectInfos( baseUrl, { show: "pinned", perPage: stats.repos.total }, )}
           <div style:height="35vh">
             <Loading small center />
           </div>
@@ -194,12 +180,7 @@
           {#if projectInfos.length > 0}
             <div class="project-grid">
               {#each projectInfos as projectInfo}
-                <ProjectCard
-                  {projectInfo}
-                  isDelegate={isDelegate(
-                    session?.publicKey,
-                    projectInfo.project.delegates.map(d => d.id),
-                  ) ?? false} />
+                <ProjectCard {projectInfo} />
               {/each}
             </div>
           {:else}
@@ -211,7 +192,7 @@
             </div>
           {/if}
         {:catch error}
-          {router.push(handleError(error, baseUrlToString(api.baseUrl)))}
+          {router.push(handleError(error, baseUrlToString(baseUrl)))}
         {/await}
       </div>
     </div>

@@ -9,6 +9,7 @@ import type {
   TreeStats,
 } from "./lib/project.js";
 import type {
+  Config,
   SuccessResponse,
   CodeLocation,
   Range,
@@ -65,6 +66,7 @@ export type {
   Commit,
   CommitBlob,
   CommitHeader,
+  Config,
   DefaultSeedingPolicy,
   Diff,
   DiffBlob,

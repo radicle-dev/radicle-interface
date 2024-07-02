@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import type { Config } from "@http-client";
+import type { PeerManager, RadiclePeer } from "./peerManager.js";
 import type * as Stream from "node:stream";
 
 import * as Fs from "node:fs/promises";
@@ -13,7 +15,6 @@ import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 import { createProject } from "@tests/support/project.js";
-import type { PeerManager, RadiclePeer } from "./peerManager.js";
 import { formatCommit } from "@app/lib/utils.js";
 
 export { expect };
@@ -124,10 +125,7 @@ export const test = base.extend<{
     await peerManager.shutdown();
   },
 
-  peer: async ({ page, peerManager }, use) => {
-    await page.addInitScript(() => {
-      window.localStorage.setItem("experimental", "true");
-    });
+  peer: async ({ peerManager }, use) => {
     const peer = await peerManager.createPeer({
       name: "httpd",
       gitOptions: gitOptions["bob"],
@@ -191,8 +189,16 @@ export async function createSourceBrowsingFixture(
     gitOptions: gitOptions["bob"],
   });
   const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
-  await alice.startNode({ connect: [palm.address], alias: "alice" });
-  await bob.startNode({ connect: [palm.address], alias: "bob" });
+  await alice.startNode({
+    node: {
+      ...defaultConfig.node,
+      connect: [palm.address],
+      alias: "alice",
+    },
+  });
+  await bob.startNode({
+    node: { ...defaultConfig.node, connect: [palm.address], alias: "bob" },
+  });
   await palm.waitForEvent({ type: "peerConnected", nid: alice.nodeId }, 1000);
   await palm.waitForEvent({ type: "peerConnected", nid: bob.nodeId }, 1000);
 
@@ -620,5 +626,54 @@ export const gitOptions = {
     GIT_COMMITTER_NAME: "Bob Belcher",
     GIT_COMMITTER_EMAIL: "bob@radicle.xyz",
     GIT_COMMITTER_DATE: "1671627600",
+  },
+};
+export const defaultConfig: Config = {
+  publicExplorer: "https://app.radicle.xyz/nodes/$host/$rid$path",
+  preferredSeeds: [],
+  web: {
+    pinned: {
+      repositories: ["rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir"],
+    },
+  },
+  cli: {
+    hints: true,
+  },
+  node: {
+    alias: "alice",
+    listen: [],
+    peers: {
+      type: "dynamic",
+    },
+    connect: [],
+    externalAddresses: [],
+    network: "main",
+    log: "INFO",
+    relay: "auto",
+    limits: {
+      routingMaxSize: 1000,
+      routingMaxAge: 604800,
+      gossipMaxAge: 1209600,
+      fetchConcurrency: 1,
+      maxOpenFiles: 4096,
+      rate: {
+        inbound: {
+          fillRate: 5.0,
+          capacity: 1024,
+        },
+        outbound: {
+          fillRate: 10.0,
+          capacity: 2048,
+        },
+      },
+      connection: {
+        inbound: 128,
+        outbound: 16,
+      },
+    },
+    workers: 8,
+    seedingPolicy: {
+      default: "block",
+    },
   },
 };

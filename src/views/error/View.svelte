@@ -1,9 +1,12 @@
 <script lang="ts">
+  import type { ComponentProps } from "svelte";
+  import type Icon from "@app/components/Icon.svelte";
   import type { ErrorParam } from "@app/lib/router/definitions";
 
   import AppLayout from "@app/App/AppLayout.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
 
+  export let icon: ComponentProps<Icon>["name"] = "desert";
   export let title: string;
   export let description: string;
   export let error: ErrorParam = undefined;
@@ -32,7 +35,7 @@
 <AppLayout>
   <div class="wrapper">
     <div class="container">
-      <ErrorMessage icon="desert" {title} {description} {error} />
+      <ErrorMessage {icon} {title} {description} {error} />
     </div>
   </div>
 </AppLayout>

@@ -19,6 +19,7 @@ export default defineConfig({
       dynamicCompileOptions({ filename }) {
         if (
           path.basename(filename) === "Clipboard.svelte" ||
+          path.basename(filename) === "ExternalLink.svelte" ||
           path.basename(filename) === "IconSmall.svelte"
         ) {
           return { customElement: true };

@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { BaseUrl } from "@http-client";
+import type { Config, BaseUrl } from "@http-client";
 import type * as Execa from "execa";
-import { execa } from "execa";
+
 import * as Fs from "node:fs/promises";
 import * as Os from "node:os";
 import * as Path from "node:path";
 import * as Stream from "node:stream";
 import * as Util from "node:util";
+import * as readline from "node:readline/promises";
 import getPort from "get-port";
 import matches from "lodash/matches.js";
 import waitOn from "wait-on";
-import * as readline from "node:readline/promises";
+import { configSchema } from "@http-client/lib/shared.js";
+import { defaultConfig } from "@tests/support/fixtures.js";
+import { execa } from "execa";
+import { logPrefix } from "@tests/support/logPrefix.js";
 import { randomTag } from "@tests/support/support.js";
 import { sleep } from "@app/lib/sleep.js";
-import { array, literal, number, object, string, union, z } from "zod";
-import { logPrefix } from "./logPrefix.js";
 
 export type RefsUpdate =
   | { updated: { name: string; old: string; new: string } }
@@ -116,58 +118,6 @@ export async function createPeerManager(createParams: {
     },
   };
 }
-
-export const NodeConfigSchema = object({
-  publicExplorer: string(),
-  preferredSeeds: array(string()),
-  node: object({
-    alias: string(),
-    peers: union([
-      object({ type: literal("static") }),
-      object({ type: literal("dynamic") }),
-    ]),
-    connect: array(string()),
-    externalAddresses: array(string()),
-    proxy: string().optional(),
-    onion: union([
-      object({
-        mode: literal("proxy"),
-        address: string(),
-      }),
-      object({ mode: literal("forward") }),
-    ]).optional(),
-    log: union([
-      literal("ERROR"),
-      literal("WARN"),
-      literal("INFO"),
-      literal("DEBUG"),
-      literal("TRACE"),
-    ]),
-    network: union([literal("main"), literal("test")]),
-    relay: union([literal("always"), literal("never"), literal("auto")]),
-    limits: object({
-      routingMaxSize: number(),
-      routingMaxAge: number(),
-      gossipMaxAge: number(),
-      fetchConcurrency: number(),
-      maxOpenFiles: number(),
-      rate: object({
-        inbound: object({ fillRate: number(), capacity: number() }),
-        outbound: object({ fillRate: number(), capacity: number() }),
-      }),
-      connection: object({
-        inbound: number(),
-        outbound: number(),
-      }),
-    }),
-    seedingPolicy: object({
-      default: union([literal("allow"), literal("block")]),
-      scope: union([literal("followed"), literal("all")]).optional(),
-    }),
-  }),
-});
-
-export interface NodeConfig extends z.infer<typeof NodeConfigSchema> {}
 
 // Specialize the return type of `execa()` to guarantee that `stdout` and
 // `stderr` are strings.
@@ -303,11 +253,11 @@ export class RadiclePeer {
     });
   }
 
-  public async startNode(nodeParams: Partial<NodeConfig["node"]> = {}) {
+  public async startNode(config: Partial<Config> = defaultConfig) {
     const listenPort = await getPort();
     this.#listenSocketAddr = `0.0.0.0:${listenPort}`;
 
-    await updateNodeConfig(this.#radHome, nodeParams);
+    await updateConfig(this.#radHome, config);
 
     this.#nodeProcess = this.spawn("radicle-node", [
       "--listen",
@@ -452,18 +402,19 @@ export class RadiclePeer {
   }
 }
 
-async function updateNodeConfig(
-  radHome: string,
-  nodeParams: Partial<NodeConfig["node"]>,
-) {
+async function updateConfig(radHome: string, configParams: Partial<Config>) {
   const configPath = Path.join(radHome, "config.json");
   const configFile = await Fs.readFile(configPath, "utf-8");
-  const config = NodeConfigSchema.parse(JSON.parse(configFile));
+  const config = configSchema.parse({
+    defaultConfig,
+    ...JSON.parse(configFile),
+  });
   config.preferredSeeds = [];
+  config.web = { ...config.web, ...configParams.web };
   config.node = {
     ...config.node,
+    ...configParams.node,
     network: "test",
-    ...nodeParams,
   };
   await Fs.writeFile(configPath, JSON.stringify(config), "utf-8");
 }

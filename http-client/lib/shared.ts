@@ -1,6 +1,6 @@
 import type { ZodSchema, z } from "zod";
 
-import { array, literal, number, object, string, union } from "zod";
+import { array, boolean, literal, number, object, string, union } from "zod";
 
 export interface SuccessResponse {
   success: true;
@@ -86,6 +86,23 @@ export const nodeConfigSchema = object({
 });
 
 export type DefaultSeedingPolicy = z.infer<typeof defaultSeedingPolicySchema>;
+
+export const configSchema = object({
+  publicExplorer: string(),
+  preferredSeeds: array(string()),
+  cli: object({ hints: boolean() }),
+  web: object({
+    pinned: object({
+      repositories: array(string()),
+    }),
+    imageUrl: string().optional(),
+    name: string().optional(),
+    description: string().optional(),
+  }),
+  node: nodeConfigSchema,
+});
+
+export type Config = z.infer<typeof configSchema>;
 
 export const rangeSchema = union([
   object({

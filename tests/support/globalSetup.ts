@@ -6,6 +6,7 @@ import {
   tmpDir,
 } from "@tests/support/support.js";
 import {
+  defaultConfig,
   createCobsFixture,
   createMarkdownFixture,
   createSourceBrowsingFixture,
@@ -51,8 +52,16 @@ export default async function globalSetup(): Promise<() => void> {
 
   if (!process.env.SKIP_FIXTURE_CREATION) {
     await palm.startNode({
-      seedingPolicy: { default: "allow", scope: "all" },
-      alias: "palm",
+      web: {
+        pinned: {
+          repositories: ["rad:z4BwwjPCFNVP27FwVbDFgwVwkjcir"],
+        },
+      },
+      node: {
+        ...defaultConfig.node,
+        seedingPolicy: { default: "allow", scope: "all" },
+        alias: "palm",
+      },
     });
     await palm.startHttpd(defaultHttpdPort);
 

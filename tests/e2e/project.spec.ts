@@ -56,9 +56,6 @@ test("navigate to project", async ({ page }) => {
 
   // Show rendered README.md contents.
   await expect(page.getByText("Git test repository")).toBeVisible();
-
-  // Number of nodes seeding this project.
-  await expect(page.getByText("Seed 3")).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {

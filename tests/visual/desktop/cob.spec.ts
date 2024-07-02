@@ -23,7 +23,7 @@ test("issues page", async ({ page }) => {
 
 test("issue page", async ({ page }) => {
   const issues = [
-    ["This title has markdown", "open"],
+    ["This title has **markdown**", "open"],
     ["A closed issue", "closed"],
     ["A solved issue", "closed"],
   ];

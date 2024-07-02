@@ -121,20 +121,12 @@ function setTitle(loadedRoute: LoadedRoute) {
     loadedRoute.resource === "project.commit" ||
     loadedRoute.resource === "project.issue" ||
     loadedRoute.resource === "project.issues" ||
-    loadedRoute.resource === "project.newIssue" ||
     loadedRoute.resource === "project.patches" ||
     loadedRoute.resource === "project.patch"
   ) {
     title.push(...projectTitle(loadedRoute));
   } else if (loadedRoute.resource === "nodes") {
-    title.push(
-      utils.isLocal(loadedRoute.params.baseUrl.hostname)
-        ? "Local Node"
-        : loadedRoute.params.baseUrl.hostname,
-    );
-  } else if (loadedRoute.resource === "session") {
-    title.push("Authenticating");
-    title.push("Radicle");
+    title.push(loadedRoute.params.baseUrl.hostname);
   } else {
     utils.unreachable(loadedRoute);
   }
@@ -205,22 +197,6 @@ function urlToRoute(url: URL): Route | null {
       }
       return null;
     }
-    case "session": {
-      const id = segments.shift();
-      if (id) {
-        return {
-          resource: "session",
-          params: {
-            id,
-            signature: url.searchParams.get("sig") ?? "",
-            publicKey: url.searchParams.get("pk") ?? "",
-            apiAddr: url.searchParams.get("addr") ?? "127.0.0.1:8080",
-            path: url.searchParams.get("path") || undefined,
-          },
-        };
-      }
-      return { resource: "home" };
-    }
     case "": {
       return { resource: "home" };
     }
@@ -233,8 +209,6 @@ function urlToRoute(url: URL): Route | null {
 export function routeToPath(route: Route): string {
   if (route.resource === "home") {
     return "/";
-  } else if (route.resource === "session") {
-    return `/session?id=${route.params.id}&sig=${route.params.signature}&pk=${route.params.publicKey}`;
   } else if (route.resource === "nodes") {
     return nodePath(route.params.baseUrl);
   } else if (
@@ -242,7 +216,6 @@ export function routeToPath(route: Route): string {
     route.resource === "project.history" ||
     route.resource === "project.commit" ||
     route.resource === "project.issues" ||
-    route.resource === "project.newIssue" ||
     route.resource === "project.issue" ||
     route.resource === "project.patches" ||
     route.resource === "project.patch"

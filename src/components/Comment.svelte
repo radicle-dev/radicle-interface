@@ -1,45 +1,24 @@
-<script lang="ts" strictEvents>
-  import type { Comment, Embed } from "@http-client";
+<script lang="ts">
+  import type { Comment } from "@http-client";
 
-  import { tick } from "svelte";
-
-  import { closeFocused } from "./Popover.svelte";
   import * as utils from "@app/lib/utils";
 
-  import ExtendedTextarea from "@app/components/ExtendedTextarea.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import NodeId from "@app/components/NodeId.svelte";
-  import ReactionSelector from "@app/components/ReactionSelector.svelte";
   import Reactions from "@app/components/Reactions.svelte";
 
-  export let id: string | undefined = undefined;
+  export let id: string;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
   export let body: string;
-  export let enableAttachments: boolean = false;
   export let reactions: Comment["reactions"] | undefined = undefined;
-  export let embeds: Map<string, Embed> | undefined = undefined;
   export let caption = "commented";
   export let rawPath: string;
   export let timestamp: number;
   export let isReply: boolean = false;
   export let isLastReply: boolean = false;
   export let lastEdit: Comment["edits"][0] | undefined = undefined;
-
-  let state: "read" | "edit" | "submit" = "read";
-
-  export let editComment:
-    | ((body: string, embeds: Embed[]) => Promise<void>)
-    | undefined = undefined;
-  export let reactOnComment:
-    | ((
-        authors: Comment["reactions"][0]["authors"],
-        reaction: string,
-      ) => Promise<void>)
-    | undefined = undefined;
 </script>
 
 <style>
@@ -78,11 +57,6 @@
     color: var(--color-fill-gray);
     font-size: var(--font-size-small);
   }
-  .header-right {
-    display: flex;
-    margin-left: auto;
-    gap: 0.5rem;
-  }
   .card-body {
     display: flex;
     align-items: center;
@@ -108,10 +82,6 @@
   }
   .card-header-no-icon {
     padding-left: 1rem;
-  }
-  .edit-buttons {
-    display: flex;
-    gap: 0.25rem;
   }
   .reply .card-body,
   .reply .actions {
@@ -139,9 +109,7 @@
       <slot class="icon" name="icon" />
       <NodeId nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
-      {#if id}
-        <Id {id} />
-      {/if}
+      <Id {id} />
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>
         {utils.formatTimestamp(timestamp)}
       </span>
@@ -155,69 +123,19 @@
           • edited
         </div>
       {/if}
-      <div class="header-right">
-        {#if id && editComment && state === "read"}
-          <div class="edit-buttons global-hide-on-mobile-down">
-            <IconButton title="edit comment" on:click={() => (state = "edit")}>
-              <IconSmall name={"edit"} />
-            </IconButton>
-          </div>
-        {/if}
-      </div>
     </div>
   </div>
 
   {#if body}
     <div class="card-body">
-      {#if editComment && state !== "read"}
-        {@const editComment_ = editComment}
-        <ExtendedTextarea
-          {rawPath}
-          {body}
-          {embeds}
-          {enableAttachments}
-          submitInProgress={state === "submit"}
-          submitCaption="Save"
-          placeholder="Leave your comment"
-          on:submit={async ({ detail: { comment, embeds } }) => {
-            state = "submit";
-            try {
-              await editComment_(comment, Array.from(embeds.values()));
-            } finally {
-              state = "read";
-            }
-          }}
-          on:close={async () => {
-            body = body;
-            await tick();
-            state = "read";
-          }} />
-      {:else}
-        <div style:overflow="hidden" style:width="100%">
-          <Markdown breaks {rawPath} content={body} />
-        </div>
-      {/if}
+      <div style:overflow="hidden" style:width="100%">
+        <Markdown breaks {rawPath} content={body} />
+      </div>
     </div>
   {/if}
-  {#if (id && reactOnComment) || (id && reactions && reactions.length > 0)}
+  {#if reactions && reactions.length > 0}
     <div class="actions">
-      {#if id && reactOnComment}
-        {@const reactOnComment_ = reactOnComment}
-        <div class="global-hide-on-mobile-down">
-          <ReactionSelector
-            {reactions}
-            on:select={async ({ detail: { authors, emoji } }) => {
-              try {
-                await reactOnComment_(authors, emoji);
-              } finally {
-                closeFocused();
-              }
-            }} />
-        </div>
-      {/if}
-      {#if id && reactions && reactions.length > 0}
-        <Reactions handleReaction={reactOnComment} {reactions} />
-      {/if}
+      <Reactions {reactions} />
     </div>
   {/if}
 </div>

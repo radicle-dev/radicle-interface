@@ -64,7 +64,7 @@
       }}>
       Commits
     </Link>
-  {:else if activeRoute.resource === "project.newIssue" || activeRoute.resource === "project.issue" || activeRoute.resource === "project.issues"}
+  {:else if activeRoute.resource === "project.issue" || activeRoute.resource === "project.issues"}
     <Separator />
     <Link
       route={{

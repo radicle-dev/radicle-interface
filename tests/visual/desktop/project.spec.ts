@@ -122,6 +122,16 @@ test("response error", async ({ page }) => {
 });
 
 test("readme not found", async ({ page }) => {
+  await page.route(
+    ({ pathname }) =>
+      pathname ===
+      `http://127.0.0.1:8081/api/v1/projects/${sourceBrowsingRid}/readme/f591f9c3d842fdfb9e170e0f467189c6d9e950a2`,
+    route => {
+      return route.fulfill({
+        status: 500,
+      });
+    },
+  );
   await page.goto(`${markdownUrl}/tree`, {
     waitUntil: "networkidle",
   });

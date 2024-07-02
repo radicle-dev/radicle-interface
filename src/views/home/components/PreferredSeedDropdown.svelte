@@ -10,9 +10,7 @@
     selectPreferredSeed,
   } from "@app/lib/seeds";
   import { closeFocused } from "@app/components/Popover.svelte";
-  import { httpdStore } from "@app/lib/httpd";
 
-  import Command from "@app/components/Command.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import IconButton from "@app/components/IconButton.svelte";
@@ -20,7 +18,6 @@
   import Popover from "@app/components/Popover.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
-  export let initialPreferredSeeds: BaseUrl[];
   export let selectedSeed: BaseUrl;
 
   const validateInput = async (seed: BaseUrl) => {
@@ -82,13 +79,6 @@
     background-color: var(--color-border-default);
   }
 
-  .add-seed-node-instructions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    color: var(--color-foreground-dim);
-  }
   .icon-item {
     display: flex;
     gap: 0.5rem;
@@ -195,21 +185,6 @@
           </DropdownList>
         {/if}
       </div>
-      {#if $httpdStore.state !== "stopped" && !initialPreferredSeeds.find(s => s.hostname === selectedSeed.hostname)}
-        <div class="divider" />
-        <div class="add-seed-node-instructions txt-small">
-          <div class="txt-bold">Store in config</div>
-          <div>
-            Add <code style:word-break="break-all">
-              {selectedSeed.hostname}
-            </code>
-            to your
-            <code>preferredSeeds</code>
-            in your Radicle config and restart httpd.
-          </div>
-          <Command fullWidth command="rad config edit" />
-        </div>
-      {/if}
     </div>
   </svelte:fragment>
 </Popover>

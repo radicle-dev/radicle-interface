@@ -1,10 +1,14 @@
 import { expect, test } from "@tests/support/fixtures.js";
 
-test("show pinned projects", async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem("experimental", "true"));
-  await page.goto("/");
-  await expect(page.getByText("Local repositories")).toBeVisible();
+test("show pinned repositories", async ({ context, page }) => {
+  await context.addInitScript(() => {
+    localStorage.setItem(
+      "configuredPreferredSeeds",
+      JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
+    );
+  });
 
+  await page.goto("/");
   // Shows pinned project name.
   await expect(page.getByText("source-browsing")).toBeVisible();
   //

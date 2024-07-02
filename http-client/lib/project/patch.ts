@@ -50,6 +50,7 @@ export type Verdict = "accept" | "reject";
 
 const reviewSchema = object({
   author: authorSchema,
+  id: string(),
   verdict: optional(union([literal("accept"), literal("reject")]).nullable()),
   comments: array(commentSchema),
   summary: string().nullable(),
