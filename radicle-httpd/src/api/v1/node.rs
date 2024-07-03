@@ -4,7 +4,8 @@ use axum::routing::get;
 use axum::{Json, Router};
 use serde_json::json;
 
-use radicle::identity::RepoId;
+use radicle::crypto::ssh::fmt;
+use radicle::identity::{Did, RepoId};
 use radicle::node::address::Store as AddressStore;
 use radicle::node::routing::Store;
 use radicle::node::{AliasStore, Handle, NodeId};
@@ -61,6 +62,11 @@ async fn nodes_handler(State(ctx): State<Context>, Path(nid): Path<NodeId>) -> i
     let aliases = ctx.profile.aliases();
     let response = json!({
         "alias": aliases.alias(&nid),
+        "did": Did::from(nid),
+        "ssh": {
+            "full": fmt::key(&nid),
+            "hash": fmt::fingerprint(&nid)
+        }
     });
 
     Ok::<_, Error>(Json(response))
@@ -181,6 +187,11 @@ mod routes {
             response.json().await,
             json!({
                 "alias": "seed",
+                "did": "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi",
+                "ssh": {
+                    "full": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1",
+                    "hash": "SHA256:UIedaL6Cxm6OUErh9GQUzzglSk7VpQlVTI1TAFB/HWA",
+                },
             })
         );
     }
