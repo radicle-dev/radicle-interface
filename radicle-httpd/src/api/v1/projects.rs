@@ -612,17 +612,17 @@ async fn issues_handler(
     let CobsQuery {
         page,
         per_page,
-        state,
+        status,
     } = qs;
     let page = page.unwrap_or(0);
     let per_page = per_page.unwrap_or(10);
-    let state = state.unwrap_or_default();
+    let status = status.unwrap_or_default();
     let issues = ctx.profile.issues(&repo)?;
     let mut issues: Vec<_> = issues
         .list()?
         .filter_map(|r| {
             let (id, issue) = r.ok()?;
-            (state.matches(issue.state())).then_some((id, issue))
+            (status.matches(issue.state())).then_some((id, issue))
         })
         .collect::<Vec<_>>();
 
@@ -666,17 +666,17 @@ async fn patches_handler(
     let CobsQuery {
         page,
         per_page,
-        state,
+        status,
     } = qs;
     let page = page.unwrap_or(0);
     let per_page = per_page.unwrap_or(10);
-    let state = state.unwrap_or_default();
+    let status = status.unwrap_or_default();
     let patches = ctx.profile.patches(&repo)?;
     let mut patches = patches
         .list()?
         .filter_map(|r| {
             let (id, patch) = r.ok()?;
-            (state.matches(patch.state())).then_some((id, patch))
+            (status.matches(patch.state())).then_some((id, patch))
         })
         .collect::<Vec<_>>();
     patches.sort_by(|(_, a), (_, b)| b.timestamp().cmp(&a.timestamp()));

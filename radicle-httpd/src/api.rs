@@ -160,7 +160,7 @@ pub struct RawQuery {
 pub struct CobsQuery<T> {
     pub page: Option<usize>,
     pub per_page: Option<usize>,
-    pub state: Option<T>,
+    pub status: Option<T>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
