@@ -30,6 +30,7 @@ pub const PARENT: &str = "ee8d6a29304623a78ebfa5eeed5af674d0e58f83";
 pub const INITIAL_COMMIT: &str = "f604ce9fd5b7cc77b7609beda45ea8760bee78f7";
 pub const DID: &str = "did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi";
 pub const ISSUE_ID: &str = "ca67d195c0b308b51810dedd93157a20764d5db5";
+pub const PATCH_ID: &str = "b4084412ea3644d7dd7ae075c1cbbd4d702db0ec";
 pub const TIMESTAMP: u64 = 1671125284;
 pub const CONTRIBUTOR_ALIAS: &str = "seed";
 

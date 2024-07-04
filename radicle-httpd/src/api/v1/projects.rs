@@ -1636,6 +1636,174 @@ mod routes {
     }
 
     #[tokio::test]
+    async fn test_projects_issue() {
+        let tmp = tempfile::tempdir().unwrap();
+        let app = super::router(seed(tmp.path()));
+        let response = get(&app, format!("/projects/{RID}/issues/{ISSUE_ID}")).await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!({
+                "id": ISSUE_ID,
+                "author": {
+                  "id": DID,
+                  "alias": CONTRIBUTOR_ALIAS
+                },
+                "title": "Issue #1",
+                "state": {
+                  "status": "open"
+                },
+                "assignees": [],
+                "discussion": [
+                  {
+                    "id": ISSUE_ID,
+                    "author": {
+                      "id": DID,
+                      "alias": CONTRIBUTOR_ALIAS
+                    },
+                    "body": "Change 'hello world' to 'hello everyone'",
+                    "edits": [
+                      {
+                        "author": {
+                          "id": DID,
+                          "alias": CONTRIBUTOR_ALIAS
+                        },
+                        "body": "Change 'hello world' to 'hello everyone'",
+                        "timestamp": TIMESTAMP,
+                        "embeds": [],
+                      },
+                    ],
+                    "embeds": [],
+                    "reactions": [],
+                    "timestamp": TIMESTAMP,
+                    "replyTo": null,
+                    "resolved": false,
+                  }
+                ],
+                "labels": []
+            })
+        );
+    }
+
+    #[tokio::test]
+    async fn test_projects_patches_root() {
+        let tmp = tempfile::tempdir().unwrap();
+        let app = super::router(seed(tmp.path()));
+        let response = get(&app, format!("/projects/{RID}/patches")).await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!([
+                {
+                    "id": PATCH_ID,
+                    "author": {
+                        "id": DID,
+                        "alias": CONTRIBUTOR_ALIAS,
+                    },
+                    "title": "A new `hello world`",
+                    "state": {
+                        "status": "open",
+                    },
+                    "target": "delegates",
+                    "labels": [],
+                    "merges": [],
+                    "assignees": [],
+                    "revisions": [
+                        {
+                            "id": PATCH_ID,
+                            "author": {
+                                "id": DID,
+                                "alias": CONTRIBUTOR_ALIAS,
+                            },
+                            "description": "change `hello world` in README to something else",
+                            "edits": [
+                                {
+                                    "author": {
+                                        "id": DID,
+                                        "alias": CONTRIBUTOR_ALIAS,
+                                    },
+                                    "body": "change `hello world` in README to something else",
+                                    "timestamp": TIMESTAMP,
+                                    "embeds": [],
+                                },
+                            ],
+                            "reactions": [],
+                            "base": "ee8d6a29304623a78ebfa5eeed5af674d0e58f83",
+                            "oid": "e8c676b9e3b42308dc9d218b70faa5408f8e58ca",
+                            "refs": [
+                                "refs/heads/master",
+                            ],
+                            "discussions": [],
+                            "timestamp": TIMESTAMP,
+                            "reviews": [],
+                        },
+                    ],
+                },
+                ]
+            )
+        );
+    }
+
+    #[tokio::test]
+    async fn test_projects_patch() {
+        let tmp = tempfile::tempdir().unwrap();
+        let app = super::router(seed(tmp.path()));
+        let response = get(&app, format!("/projects/{RID}/patches/{PATCH_ID}")).await;
+
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json().await,
+            json!({
+                "id": PATCH_ID,
+                "author": {
+                    "id": DID,
+                    "alias": CONTRIBUTOR_ALIAS,
+                },
+                "title": "A new `hello world`",
+                "state": {
+                    "status": "open",
+                },
+                "target": "delegates",
+                "labels": [],
+                "merges": [],
+                "assignees": [],
+                "revisions": [
+                    {
+                        "id": PATCH_ID,
+                        "author": {
+                            "id": DID,
+                            "alias": CONTRIBUTOR_ALIAS,
+                        },
+                        "description": "change `hello world` in README to something else",
+                        "edits": [
+                            {
+                                "author": {
+                                    "id": DID,
+                                    "alias": CONTRIBUTOR_ALIAS,
+                                },
+                                "body": "change `hello world` in README to something else",
+                                "timestamp": TIMESTAMP,
+                                "embeds": [],
+                            },
+                        ],
+                        "reactions": [],
+                        "base": "ee8d6a29304623a78ebfa5eeed5af674d0e58f83",
+                        "oid": "e8c676b9e3b42308dc9d218b70faa5408f8e58ca",
+                        "refs": [
+                            "refs/heads/master",
+                        ],
+                        "discussions": [],
+                        "timestamp": TIMESTAMP,
+                        "reviews": [],
+                    },
+                ],
+            })
+        );
+    }
+
+    #[tokio::test]
     async fn test_projects_private() {
         let tmp = tempfile::tempdir().unwrap();
         let ctx = seed(tmp.path());
