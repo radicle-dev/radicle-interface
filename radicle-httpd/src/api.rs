@@ -173,14 +173,14 @@ pub struct PoliciesQuery {
 
 #[derive(Default, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub enum IssueState {
+pub enum IssueStatus {
     Closed,
     #[default]
     Open,
     All,
 }
 
-impl IssueState {
+impl IssueStatus {
     pub fn matches(&self, issue: &issue::State) -> bool {
         match self {
             Self::Open => matches!(issue, issue::State::Open),
@@ -192,7 +192,7 @@ impl IssueState {
 
 #[derive(Default, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub enum PatchState {
+pub enum PatchStatus {
     #[default]
     Open,
     Draft,
@@ -201,7 +201,7 @@ pub enum PatchState {
     All,
 }
 
-impl PatchState {
+impl PatchStatus {
     pub fn matches(&self, patch: &patch::State) -> bool {
         match self {
             Self::Open => matches!(patch, patch::State::Open { .. }),

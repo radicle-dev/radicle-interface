@@ -606,7 +606,7 @@ async fn readme_handler(
 async fn issues_handler(
     State(ctx): State<Context>,
     Path(project): Path<RepoId>,
-    Query(qs): Query<CobsQuery<api::IssueState>>,
+    Query(qs): Query<CobsQuery<api::IssueStatus>>,
 ) -> impl IntoResponse {
     let (repo, _) = ctx.repo(project)?;
     let CobsQuery {
@@ -660,7 +660,7 @@ async fn issue_handler(
 async fn patches_handler(
     State(ctx): State<Context>,
     Path(rid): Path<RepoId>,
-    Query(qs): Query<CobsQuery<api::PatchState>>,
+    Query(qs): Query<CobsQuery<api::PatchStatus>>,
 ) -> impl IntoResponse {
     let (repo, _) = ctx.repo(rid)?;
     let CobsQuery {
