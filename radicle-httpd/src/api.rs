@@ -177,6 +177,7 @@ pub enum IssueState {
     Closed,
     #[default]
     Open,
+    All,
 }
 
 impl IssueState {
@@ -184,6 +185,7 @@ impl IssueState {
         match self {
             Self::Open => matches!(issue, issue::State::Open),
             Self::Closed => matches!(issue, issue::State::Closed { .. }),
+            Self::All => true,
         }
     }
 }
@@ -196,6 +198,7 @@ pub enum PatchState {
     Draft,
     Archived,
     Merged,
+    All,
 }
 
 impl PatchState {
@@ -205,6 +208,7 @@ impl PatchState {
             Self::Draft => matches!(patch, patch::State::Draft),
             Self::Archived => matches!(patch, patch::State::Archived),
             Self::Merged => matches!(patch, patch::State::Merged { .. }),
+            Self::All => true,
         }
     }
 }
