@@ -12,7 +12,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
-import { changeBranch } from "@tests/support/project";
+import { changeBranch, createProject } from "@tests/support/project";
 import { expectUrlPersistsReload } from "@tests/support/router";
 
 test("navigate to project", async ({ page }) => {
@@ -56,6 +56,17 @@ test("navigate to project", async ({ page }) => {
 
   // Show rendered README.md contents.
   await expect(page.getByText("Git test repository")).toBeVisible();
+});
+
+test("project description", async ({ page, peer }) => {
+  const { rid } = await createProject(peer, {
+    name: "heartwood",
+    description: "Radicle Heartwood Protocol & Stack",
+  });
+  await page.goto(peer.ridUrl(rid));
+  await expect(
+    page.getByText("Radicle Heartwood Protocol & Stack"),
+  ).toBeVisible();
 });
 
 test("show source tree at specific revision", async ({ page }) => {

@@ -95,5 +95,5 @@
   </div>
 </div>
 <div class="description" use:twemoji>
-  {render(project.description)}
+  {@html render(project.description)}
 </div>
