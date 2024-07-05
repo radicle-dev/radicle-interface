@@ -30,21 +30,27 @@ export const heartwoodRelease = await Fs.readFile(
   "utf8",
 );
 
-const binaryPath = Path.join(tmpDir, "bin", heartwoodRelease);
-process.env.PATH = [binaryPath, process.env.PATH].join(Path.delimiter);
+export const radicleHttpdRelease = await Fs.readFile(
+  `${supportDir}/radicle-httpd-release`,
+  "utf8",
+);
 
-// Assert that the `rad` CLI is installed and has the correct version.
-export async function assertRadInstalled(): Promise<void> {
-  const { stdout: which } = await execa("which", ["rad"]);
-  if (Path.dirname(which) !== binaryPath) {
+// Assert that binaries are installed and are the correct version.
+export async function assertBinariesInstalled(
+  binary: string,
+  expectedVersion: string,
+  expectedPath: string,
+): Promise<void> {
+  const { stdout: which } = await execa("which", [binary]);
+  if (Path.dirname(which) !== expectedPath) {
     throw new Error(
-      `rad path doesn't match used rad binary: ${binaryPath} !== ${which}`,
+      `${binary} path doesn't match used ${binary} binary: ${expectedPath} !== ${which}`,
     );
   }
-  const { stdout: version } = await execa("rad", ["--version"]);
-  if (!version.includes(heartwoodRelease)) {
+  const { stdout: version } = await execa(binary, ["--version"]);
+  if (!version.includes(expectedVersion)) {
     throw new Error(
-      `rad version ${version} does not satisfy ${heartwoodRelease}`,
+      `${binary} version ${version} does not satisfy ${expectedVersion}`,
     );
   }
 }

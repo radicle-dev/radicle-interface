@@ -3,28 +3,45 @@ set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
 RELEASE=$(cat "$REPO_ROOT/tests/support/heartwood-release")
-BINARY_PATH=$REPO_ROOT/tests/tmp/bin/$RELEASE
+HTTPD_RELEASE=$(cat "$REPO_ROOT/tests/support/radicle-httpd-release")
+BINARY_PATH=$REPO_ROOT/tests/tmp/bin
 OS=$(uname)
+
+install() {
+  if test -d "$BINARY_PATH/$1/$2"; then
+    echo ✅ "Folder $BINARY_PATH/$1/$2 exists already skipping download."
+  else
+    mkdir -p "$BINARY_PATH/$1/$2"
+    case "$OS" in
+    Darwin)
+      echo Downloading "$1" v"$2" from "https://files.radicle.xyz/releases$3/$2/radicle-aarch64-apple-darwin.tar.xz into /tests/tmp/bin/$1/$2"
+      curl --fail -s "https://files.radicle.xyz/releases$3/$2/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH/$1/$2" "radicle-$2-aarch64-apple-darwin/bin/" || (echo "Download failed" && exit 1)
+      ;;
+    Linux)
+      echo Downloading "$1" v"$2" from "https://files.radicle.xyz/releases$3/$2/radicle-x86_64-unknown-linux-musl.tar.xz into /tests/tmp/bin/$1/$2"
+      curl --fail -s "https://files.radicle.xyz/releases$3/$2/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH/$1/$2" "radicle-$2-x86_64-unknown-linux-musl/bin/" || (echo "Download failed" && exit 1)
+      ;;
+    *)
+      echo "There are no precompiled binaries for your OS: $OS, compile $1 manually and make sure it's in PATH." && exit 1
+      ;;
+    esac
+  fi
+}
 
 show_usage() {
   echo
   echo "Installs binaries required for running e2e test suite."
   echo
   echo "USAGE:"
-  echo "  install-binaries [-s|h]"
+  echo "  install-binaries [-h]"
   echo
   echo "OPTIONS:"
-  echo "  -s --show-path         Print the binary path, and skip installation."
   echo "  -h --help              Print this Help."
   echo
 }
 
 while [ $# -ne 0 ]; do
   case "$1" in
-  --show-path | -s)
-    echo "$BINARY_PATH"
-    exit
-    ;;
   --help | -h)
     show_usage
     exit
@@ -32,28 +49,7 @@ while [ $# -ne 0 ]; do
   esac
 done
 
-if test -d "$BINARY_PATH"; then
-  echo ✅ "Folder $BINARY_PATH exists already skipping download and build."
-else
-  mkdir -p "$BINARY_PATH"
-  case "$OS" in
-  Darwin)
-    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz into /tests/tmp/bin/$RELEASE"
-    curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-aarch64-apple-darwin/bin/" || (echo "Download failed" && exit 1)
-    ;;
-  Linux)
-    echo Downloading "$RELEASE" from "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz into /tests/tmp/bin/$RELEASE"
-    curl --fail -s "https://files.radicle.xyz/releases/$RELEASE/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH" "radicle-$RELEASE-x86_64-unknown-linux-musl/bin/" || (echo "Download failed" && exit 1)
-    ;;
-  *)
-    echo "There are no precompiled binaries for your OS: $OS, compile $RELEASE manually and make sure it's in PATH." && exit 1
-    ;;
-  esac
-
-  echo Building radicle-httpd
-  CARGO_TERM_PROGRESS_WIDTH=80 CARGO_TERM_PROGRESS_WHEN=always cargo build --release --all --quiet --manifest-path=$REPO_ROOT/radicle-httpd/Cargo.toml
-  echo Copying radicle-httpd into /tests/tmp/bin/$RELEASE
-  cp $REPO_ROOT/radicle-httpd/target/release/radicle-httpd $BINARY_PATH
-fi
+install "heartwood" "$RELEASE" ""
+install "httpd" "$HTTPD_RELEASE" "/radicle-httpd"
 
 echo

@@ -1,7 +1,9 @@
 import * as Fs from "node:fs";
 import * as Path from "node:path";
 import {
-  assertRadInstalled,
+  assertBinariesInstalled,
+  heartwoodRelease,
+  radicleHttpdRelease,
   removeWorkspace,
   tmpDir,
 } from "@tests/support/support.js";
@@ -15,9 +17,28 @@ import {
 } from "@tests/support/fixtures.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
 
+const heartwoodBinaryPath = Path.join(
+  tmpDir,
+  "bin",
+  "heartwood",
+  heartwoodRelease,
+);
+const httpdBinaryPath = Path.join(tmpDir, "bin", "httpd", radicleHttpdRelease);
+
+process.env.PATH = [
+  heartwoodBinaryPath,
+  httpdBinaryPath,
+  process.env.PATH,
+].join(Path.delimiter);
+
 export default async function globalSetup(): Promise<() => void> {
   try {
-    await assertRadInstalled();
+    await assertBinariesInstalled("rad", heartwoodRelease, heartwoodBinaryPath);
+    await assertBinariesInstalled(
+      "radicle-httpd",
+      radicleHttpdRelease,
+      httpdBinaryPath,
+    );
   } catch (error) {
     console.error(error);
     console.log("");

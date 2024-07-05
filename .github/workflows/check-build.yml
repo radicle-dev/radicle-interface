@@ -10,12 +10,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20.9.0"
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: radicle-httpd -> target
-      - name: Build
-        run: cargo build --all --release --manifest-path=./radicle-httpd/Cargo.toml
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
