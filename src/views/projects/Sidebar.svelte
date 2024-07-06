@@ -239,7 +239,6 @@
   <div class="bottom">
     <div class="repo box" class:expanded>
       <ContextRepo
-        projectSeeds={project.seeding}
         projectThreshold={project.threshold}
         projectDelegates={project.delegates}
         {seedingPolicy} />
@@ -286,7 +285,6 @@
 
         <div slot="popover" class="txt-small" style:width="18rem">
           <ContextRepo
-            projectSeeds={project.seeding}
             projectThreshold={project.threshold}
             projectDelegates={project.delegates}
             {seedingPolicy} />

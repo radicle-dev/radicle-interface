@@ -10,6 +10,7 @@
   import IconSmall from "@app/components/IconSmall.svelte";
   import Id from "@app/components/Id.svelte";
   import Link from "@app/components/Link.svelte";
+  import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
   export let project: Project;
@@ -87,6 +88,7 @@
         style:gap="0.5rem"
         class="global-hide-on-mobile-down">
         <CloneButton {baseUrl} id={project.id} name={project.name} />
+        <SeedButton seedCount={project.seeding} projectId={project.id} />
       </div>
     </div>
   </div>

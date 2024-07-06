@@ -9,7 +9,6 @@
 
   export let projectThreshold: number;
   export let projectDelegates: Project["delegates"];
-  export let projectSeeds: number;
   export let seedingPolicy: SeedingPolicy;
 
   let delegateExpanded = false;
@@ -35,12 +34,6 @@
   }
 </style>
 
-<div class="item-header" style:height="2rem">
-  <span>Seeds</span>
-  <div class="global-flex-item txt-bold" style:padding-right="2.25rem">
-    {projectSeeds}
-  </div>
-</div>
 <div class="item-header">
   <span>Delegates</span>
   <div class="global-flex-item">
