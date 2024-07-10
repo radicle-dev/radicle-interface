@@ -10,6 +10,8 @@ main() {
   export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
   # Define user OS for podman
   export OS=$(uname)
+  # Define architecture for podman
+  export ARCH=$(arch)
 
   if ! command -v rad >/dev/null; then
     echo "fatal: rad is not installed" >&2
@@ -54,7 +56,7 @@ main() {
       --build-arg LC_ALL \
       --build-arg RADICLE_VERSION=$version \
       --build-arg GIT_HEAD=$rev \
-      --arch aarch64 --tag $image -f ./build/Dockerfile - <$gitarchive
+      --arch $ARCH --tag $image -f ./build/Dockerfile - <$gitarchive
 
     echo "Creating container (radicle-build-container).."
     podman create --ulimit=host --replace --name radicle-build-container $image
@@ -65,7 +67,7 @@ main() {
       --build-arg TZ \
       --build-arg LC_ALL \
       --build-arg RADICLE_VERSION=$version \
-      --arch amd64 --tag $image -f ./build/Dockerfile - <$gitarchive
+      --arch $ARCH --tag $image -f ./build/Dockerfile - <$gitarchive
 
     echo "Creating container (radicle-build-container).."
     podman --cgroup-manager=cgroupfs create --ulimit=host --replace --name radicle-build-container $image
