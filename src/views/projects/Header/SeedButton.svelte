@@ -7,6 +7,7 @@
 
   export let projectId: string;
   export let seedCount: number;
+  export let disabled: boolean = false;
 </script>
 
 <style>
@@ -32,12 +33,16 @@
     background-color: var(--color-fill-secondary-counter);
     color: var(--color-foreground-match-background);
   }
+  .disabled {
+    background-color: var(--color-fill-float-hover);
+    color: var(--color-foreground-disabled);
+  }
 </style>
 
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button
     slot="toggle"
-    disabled={false}
+    {disabled}
     let:toggle
     on:click={() => {
       toggle();
@@ -45,9 +50,10 @@
     variant="secondary-toggle-off">
     <IconSmall name="seedling" />
     <span class="title-counter">
-      Seed
+      <span class="global-hide-on-mobile-down">Seed</span>
       <span
         class="counter not-seeding"
+        class:disabled
         style:font-weight="var(--font-weight-regular)">
         {seedCount}
       </span>

@@ -90,6 +90,15 @@
         <CloneButton {baseUrl} id={project.id} name={project.name} />
         <SeedButton seedCount={project.seeding} projectId={project.id} />
       </div>
+      <div
+        style:display="flex"
+        style:gap="0.5rem"
+        class="global-hide-on-small-desktop-up">
+        <SeedButton
+          disabled
+          seedCount={project.seeding}
+          projectId={project.id} />
+      </div>
     </div>
   </div>
   <div class="id">
