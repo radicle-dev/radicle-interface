@@ -1,14 +1,10 @@
-import type { ZodSchema, z } from "zod";
+import type { z } from "zod";
 
 import { array, boolean, literal, number, object, string, union } from "zod";
 
 export interface SuccessResponse {
   success: true;
 }
-
-export const successResponseSchema = object({
-  success: literal(true),
-}) satisfies ZodSchema<SuccessResponse>;
 
 export const scopeSchema = union([literal("followed"), literal("all")]);
 

@@ -10,7 +10,6 @@ import type {
 } from "./lib/project.js";
 import type {
   Config,
-  SuccessResponse,
   CodeLocation,
   Range,
   SeedingPolicy,
@@ -47,13 +46,11 @@ import { z, array, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
 import * as profile from "./lib/profile.js";
-import * as session from "./lib/session.js";
 import { Fetcher } from "./lib/fetcher.js";
 import {
   nodeConfigSchema,
   scopeSchema,
   seedingPolicySchema,
-  successResponseSchema,
 } from "./lib/shared.js";
 
 export type {
@@ -154,7 +151,6 @@ export class HttpdClient {
   public baseUrl: BaseUrl;
   public project: project.Client;
   public profile: profile.Client;
-  public session: session.Client;
 
   public constructor(baseUrl: BaseUrl) {
     this.baseUrl = baseUrl;
@@ -162,7 +158,6 @@ export class HttpdClient {
 
     this.project = new project.Client(this.#fetcher);
     this.profile = new profile.Client(this.#fetcher);
-    this.session = new session.Client(this.#fetcher);
   }
 
   public changePort(port: number): void {
@@ -224,38 +219,6 @@ export class HttpdClient {
         options,
       },
       seedingPolicySchema,
-    );
-  }
-
-  public async seedById(
-    id: string,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "PUT",
-        path: `node/policies/repos/${id}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        options,
-      },
-      successResponseSchema,
-    );
-  }
-
-  public async stopSeedingById(
-    id: string,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "DELETE",
-        path: `node/policies/repos/${id}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        options,
-      },
-      successResponseSchema,
     );
   }
 

@@ -1,19 +1,8 @@
 import type { ZodSchema } from "zod";
 import type { Fetcher, RequestOptions } from "./fetcher.js";
-import type { Embed } from "./project/comment.js";
 import type { Commit, Commits } from "./project/commit.js";
-import type {
-  Issue,
-  IssueCreated,
-  IssueUpdateAction,
-} from "./project/issue.js";
-import type {
-  Patch,
-  PatchCreate,
-  PatchCreated,
-  PatchUpdateAction,
-} from "./project/patch.js";
-import type { SuccessResponse } from "./shared.js";
+import type { Issue } from "./project/issue.js";
+import type { Patch } from "./project/patch.js";
 
 import {
   array,
@@ -27,7 +16,6 @@ import {
   union,
   z,
 } from "zod";
-import { successResponseSchema } from "./shared.js";
 
 import {
   commitHeaderSchema,
@@ -36,18 +24,8 @@ import {
   diffBlobSchema,
   diffSchema,
 } from "./project/commit.js";
-
-import {
-  issueCreatedSchema,
-  issueSchema,
-  issuesSchema,
-} from "./project/issue.js";
-
-import {
-  patchCreatedSchema,
-  patchSchema,
-  patchesSchema,
-} from "./project/patch.js";
+import { issueSchema, issuesSchema } from "./project/issue.js";
+import { patchSchema, patchesSchema } from "./project/patch.js";
 
 const projectSchema = object({
   id: string(),
@@ -386,49 +364,6 @@ export class Client {
     );
   }
 
-  public async createIssue(
-    id: string,
-    body: {
-      title: string;
-      description: string;
-      assignees: string[];
-      embeds: Embed[];
-      labels: string[];
-    },
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<IssueCreated> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "POST",
-        path: `projects/${id}/issues`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        body,
-        options,
-      },
-      issueCreatedSchema,
-    );
-  }
-
-  public async updateIssue(
-    id: string,
-    issueId: string,
-    body: IssueUpdateAction,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "PATCH",
-        path: `projects/${id}/issues/${issueId}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        body,
-        options,
-      },
-      successResponseSchema,
-    );
-  }
-
   public async getPatchById(
     id: string,
     patchId: string,
@@ -461,43 +396,6 @@ export class Client {
         options,
       },
       patchesSchema,
-    );
-  }
-
-  public async createPatch(
-    id: string,
-    body: PatchCreate,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<PatchCreated> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "POST",
-        path: `projects/${id}/patches`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        body,
-        options,
-      },
-      patchCreatedSchema,
-    );
-  }
-
-  public async updatePatch(
-    id: string,
-    patchId: string,
-    body: PatchUpdateAction,
-    authToken: string,
-    options?: RequestOptions,
-  ): Promise<SuccessResponse> {
-    return this.#fetcher.fetchOk(
-      {
-        method: "PATCH",
-        path: `projects/${id}/patches/${patchId}`,
-        headers: { Authorization: `Bearer ${authToken}` },
-        body,
-        options,
-      },
-      successResponseSchema,
     );
   }
 }
