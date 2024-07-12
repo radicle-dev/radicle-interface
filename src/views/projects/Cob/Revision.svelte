@@ -338,7 +338,7 @@
                   <span class="compare-dropdown-item">
                     Compare to base:
                     <span
-                      style:color="var(--color-fill-secondary)"
+                      style:color="var(--color-fill-gray)"
                       style:font-weight="var(--font-weight-bold)"
                       style:font-family="var(--font-family-monospace)">
                       {utils.formatObjectId(revisionBase)}
