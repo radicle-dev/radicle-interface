@@ -31,7 +31,7 @@ use crate::Options;
 
 pub const RADICLE_VERSION: &str = env!("RADICLE_VERSION");
 // This version has to be updated on every breaking change to the radicle-httpd API.
-pub const API_VERSION: &str = "2.0.0";
+pub const API_VERSION: &str = "3.0.0";
 
 #[derive(Clone)]
 pub struct Context {
