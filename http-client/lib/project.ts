@@ -349,7 +349,7 @@ export class Client {
     query?: {
       page?: number;
       perPage?: number;
-      state?: string;
+      status?: string;
     },
     options?: RequestOptions,
   ): Promise<Issue[]> {
@@ -384,7 +384,7 @@ export class Client {
     query?: {
       page?: number;
       perPage?: number;
-      state?: string;
+      status?: string;
     },
     options?: RequestOptions,
   ): Promise<Patch[]> {

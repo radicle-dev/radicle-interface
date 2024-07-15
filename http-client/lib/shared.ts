@@ -2,10 +2,6 @@ import type { z } from "zod";
 
 import { array, boolean, literal, number, object, string, union } from "zod";
 
-export interface SuccessResponse {
-  success: true;
-}
-
 export const scopeSchema = union([literal("followed"), literal("all")]);
 
 export const seedingPolicySchema = union([
@@ -120,8 +116,6 @@ export const codeLocationSchema = object({
   old: rangeSchema.nullable(),
   new: rangeSchema.nullable(),
 });
-
-export type CodeLocation = z.infer<typeof codeLocationSchema>;
 
 export const authorSchema = object({
   id: string(),

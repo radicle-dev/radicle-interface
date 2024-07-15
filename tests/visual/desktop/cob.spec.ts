@@ -15,7 +15,7 @@ test("issues page", async ({ page }) => {
   await page.goto(`${cobUrl}/issues`, { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot({ fullPage: true });
 
-  await page.goto(`${cobUrl}/issues?state=closed`, {
+  await page.goto(`${cobUrl}/issues?status=closed`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -27,8 +27,8 @@ test("issue page", async ({ page }) => {
     ["A closed issue", "closed"],
     ["A solved issue", "closed"],
   ];
-  for (const [name, state] of issues) {
-    await page.goto(`${cobUrl}/issues?state=${state}`);
+  for (const [name, status] of issues) {
+    await page.goto(`${cobUrl}/issues?status=${status}`);
     await page.getByRole("link", { name }).click();
     await page.getByRole("heading", { name }).waitFor();
     await expect(page).toHaveScreenshot({ fullPage: true });
@@ -40,15 +40,15 @@ test("patches page", async ({ page }) => {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/patches?state=draft`, {
+  await page.goto(`${cobUrl}/patches?status=draft`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/patches?state=archived`, {
+  await page.goto(`${cobUrl}/patches?status=archived`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  await page.goto(`${cobUrl}/patches?state=merged`, {
+  await page.goto(`${cobUrl}/patches?status=merged`, {
     waitUntil: "networkidle",
   });
   await expect(page).toHaveScreenshot({ fullPage: true });
@@ -63,8 +63,8 @@ test("patch page", async ({ page }) => {
     ["Taking another stab at the README", "open"],
   ];
 
-  for (const [name, state] of patches) {
-    await page.goto(`${cobUrl}/patches?state=${state}`);
+  for (const [name, status] of patches) {
+    await page.goto(`${cobUrl}/patches?status=${status}`);
     await page.getByRole("link", { name }).click();
     await page.getByRole("heading", { name }).waitFor();
     await expect(page).toHaveScreenshot({ fullPage: true });

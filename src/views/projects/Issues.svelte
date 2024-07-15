@@ -31,7 +31,7 @@
   export let seedingPolicy: SeedingPolicy;
   export let issues: Issue[];
   export let project: Project;
-  export let state: IssueState["status"];
+  export let status: IssueState["status"];
 
   let loading = false;
   let page = 0;
@@ -46,12 +46,12 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadIssues(state: IssueState["status"]): Promise<void> {
+  async function loadIssues(status: IssueState["status"]): Promise<void> {
     loading = true;
     page += 1;
     try {
       const response = await api.project.getAllIssues(project.id, {
-        state,
+        status,
         page,
         perPage: ISSUES_PER_PAGE,
       });
@@ -70,7 +70,7 @@
   };
 
   $: showMoreButton =
-    !loading && !error && allIssues.length < project.issues[state];
+    !loading && !error && allIssues.length < project.issues[status];
 </script>
 
 <style>
@@ -128,12 +128,12 @@
         on:click={toggle}
         ariaLabel="filter-dropdown"
         title="Filter issues by state">
-        <div style:color={stateColor[state]}>
+        <div style:color={stateColor[status]}>
           <IconSmall name="issue" />
         </div>
-        {capitalize(state)}
+        {capitalize(status)}
         <div class="dropdown-button-counter">
-          {project.issues[state]}
+          {project.issues[status]}
         </div>
         <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
@@ -147,9 +147,9 @@
             resource: "project.issues",
             project: project.id,
             node: baseUrl,
-            state: item,
+            status: item,
           }}>
-          <DropdownListItem selected={item === state}>
+          <DropdownListItem selected={item === status}>
             <div style:color={stateColor[item]}>
               <IconSmall name="issue" />
             </div>
@@ -158,7 +158,7 @@
               {capitalize(item)}
               <div
                 class="dropdown-list-counter"
-                class:selected={item === state}>
+                class:selected={item === status}>
                 {project.issues[item]}
               </div>
             </div>
@@ -188,9 +188,9 @@
       {error} />
   {/if}
 
-  {#if project.issues[state] === 0}
+  {#if project.issues[status] === 0}
     <div class="placeholder">
-      <Placeholder iconName="no-issues" caption={`No ${state} issues`} />
+      <Placeholder iconName="no-issues" caption={`No ${status} issues`} />
     </div>
   {/if}
 
@@ -204,7 +204,7 @@
         <Button
           size="large"
           variant="outline"
-          on:click={() => loadIssues(state)}>
+          on:click={() => loadIssues(status)}>
           More
         </Button>
       {/if}

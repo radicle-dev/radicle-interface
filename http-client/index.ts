@@ -10,8 +10,6 @@ import type {
 } from "./lib/project.js";
 import type {
   Config,
-  CodeLocation,
-  Range,
   SeedingPolicy,
   DefaultSeedingPolicy,
 } from "./lib/shared.js";
@@ -34,7 +32,6 @@ import type {
   Merge,
   Patch,
   PatchState,
-  PatchUpdateAction,
   Review,
   Revision,
   Verdict,
@@ -58,7 +55,6 @@ export type {
   Blob,
   ChangesetWithDiff,
   ChangesetWithoutDiff,
-  CodeLocation,
   Comment,
   Commit,
   CommitBlob,
@@ -78,10 +74,8 @@ export type {
   Merge,
   Patch,
   PatchState,
-  PatchUpdateAction,
   Project,
   ProjectListQuery,
-  Range,
   Reaction,
   Remote,
   Review,

@@ -51,7 +51,7 @@ interface ProjectIssuesRoute {
   resource: "project.issues";
   node: BaseUrl;
   project: string;
-  state?: "open" | "closed";
+  status?: "open" | "closed";
 }
 
 interface ProjectIssueRoute {
@@ -163,7 +163,7 @@ export type ProjectLoadedRoute =
         seedingPolicy: SeedingPolicy;
         project: Project;
         issues: Issue[];
-        state: IssueState["status"];
+        status: IssueState["status"];
       };
     }
   | {
@@ -173,7 +173,7 @@ export type ProjectLoadedRoute =
         seedingPolicy: SeedingPolicy;
         project: Project;
         patches: Patch[];
-        state: PatchState["status"];
+        status: PatchState["status"];
       };
     }
   | {
@@ -309,12 +309,12 @@ async function loadPatchesView(
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
   const searchParams = new URLSearchParams(route.search || "");
-  const state = (searchParams.get("state") as PatchState["status"]) || "open";
+  const status = (searchParams.get("status") as PatchState["status"]) || "open";
 
   const [project, patches, seedingPolicy] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllPatches(route.project, {
-      state,
+      status,
       page: 0,
       perPage: PATCHES_PER_PAGE,
     }),
@@ -327,7 +327,7 @@ async function loadPatchesView(
       baseUrl: route.node,
       seedingPolicy,
       patches,
-      state,
+      status,
       project,
     },
   };
@@ -337,12 +337,12 @@ async function loadIssuesView(
   route: ProjectIssuesRoute,
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
-  const state = route.state || "open";
+  const status = route.status || "open";
 
   const [project, issues, seedingPolicy] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllIssues(route.project, {
-      state,
+      status,
       page: 0,
       perPage: ISSUES_PER_PAGE,
     }),
@@ -355,7 +355,7 @@ async function loadIssuesView(
       baseUrl: route.node,
       seedingPolicy,
       issues,
-      state,
+      status,
       project,
     },
   };
@@ -741,18 +741,18 @@ export function resolveProjectRoute(
         issue: issueOrAction,
       };
     } else {
-      const rawState = new URLSearchParams(sanitizeQueryString(urlSearch)).get(
-        "state",
+      const rawStatus = new URLSearchParams(sanitizeQueryString(urlSearch)).get(
+        "status",
       );
-      let state: "open" | "closed" | undefined;
-      if (rawState === "open" || rawState === "closed") {
-        state = rawState;
+      let status: "open" | "closed" | undefined;
+      if (rawStatus === "open" || rawStatus === "closed") {
+        status = rawStatus;
       }
       return {
         resource: "project.issues",
         node,
         project,
-        state,
+        status,
       };
     }
   } else if (content === "patches") {
@@ -861,8 +861,8 @@ export function projectRouteToPath(route: ProjectRoute): string {
   } else if (route.resource === "project.issues") {
     let url = [...pathSegments, "issues"].join("/");
     const searchParams = new URLSearchParams();
-    if (route.state) {
-      searchParams.set("state", route.state);
+    if (route.status) {
+      searchParams.set("status", route.status);
     }
     if (searchParams.size > 0) {
       url += `?${searchParams}`;

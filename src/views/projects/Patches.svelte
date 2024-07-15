@@ -31,7 +31,7 @@
   export let seedingPolicy: SeedingPolicy;
   export let patches: Patch[];
   export let project: Project;
-  export let state: PatchState["status"];
+  export let status: PatchState["status"];
 
   let loading = false;
   let page = 0;
@@ -46,12 +46,12 @@
 
   const api = new HttpdClient(baseUrl);
 
-  async function loadMore(state: PatchState["status"]): Promise<void> {
+  async function loadMore(status: PatchState["status"]): Promise<void> {
     loading = true;
     page += 1;
     try {
       const response = await api.project.getAllPatches(project.id, {
-        state,
+        status,
         page,
         perPage: PATCHES_PER_PAGE,
       });
@@ -78,7 +78,7 @@
   };
 
   $: showMoreButton =
-    !loading && !error && allPatches.length < project.patches[state];
+    !loading && !error && allPatches.length < project.patches[status];
 </script>
 
 <style>
@@ -136,12 +136,12 @@
         on:click={toggle}
         ariaLabel="filter-dropdown"
         title="Filter patches by state">
-        <div style:color={stateColor[state]}>
+        <div style:color={stateColor[status]}>
           <IconSmall name="patch" />
         </div>
-        {capitalize(state)}
+        {capitalize(status)}
         <div class="dropdown-button-counter">
-          {project.patches[state]}
+          {project.patches[status]}
         </div>
         <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
@@ -154,9 +154,9 @@
             resource: "project.patches",
             project: project.id,
             node: baseUrl,
-            search: `state=${item}`,
+            search: `status=${item}`,
           }}>
-          <DropdownListItem selected={item === state}>
+          <DropdownListItem selected={item === status}>
             <div style:color={stateColor[item]}>
               <IconSmall name="patch" />
             </div>
@@ -165,7 +165,7 @@
               {capitalize(item)}
               <div
                 class="dropdown-list-counter"
-                class:selected={item === state}>
+                class:selected={item === status}>
                 {project.patches[item]}
               </div>
             </div>
@@ -195,9 +195,9 @@
       {error} />
   {/if}
 
-  {#if project.patches[state] === 0}
+  {#if project.patches[status] === 0}
     <div class="placeholder">
-      <Placeholder iconName="no-patches" caption={`No ${state} patches`} />
+      <Placeholder iconName="no-patches" caption={`No ${status} patches`} />
     </div>
   {/if}
 
@@ -210,7 +210,10 @@
       {/if}
 
       {#if showMoreButton}
-        <Button size="large" variant="outline" on:click={() => loadMore(state)}>
+        <Button
+          size="large"
+          variant="outline"
+          on:click={() => loadMore(status)}>
           More
         </Button>
       {/if}

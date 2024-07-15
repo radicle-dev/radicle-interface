@@ -8,7 +8,7 @@ test("navigate issue listing", async ({ page }) => {
 
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.getByRole("link", { name: "Closed 2" }).click();
-  await expect(page).toHaveURL(`${cobUrl}/issues?state=closed`);
+  await expect(page).toHaveURL(`${cobUrl}/issues?status=closed`);
 });
 
 test("issue counters", async ({ page, peer }) => {

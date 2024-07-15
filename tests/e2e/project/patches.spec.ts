@@ -8,7 +8,7 @@ test("navigate patch listing", async ({ page }) => {
 
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.getByRole("link", { name: "Merged 1" }).click();
-  await expect(page).toHaveURL(`${cobUrl}/patches?state=merged`);
+  await expect(page).toHaveURL(`${cobUrl}/patches?status=merged`);
   await expect(
     page.locator(".comments").filter({ hasText: "5" }),
   ).toBeVisible();

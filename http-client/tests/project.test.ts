@@ -101,7 +101,7 @@ describe("project", () => {
     await api.project.getAllIssues(cobRid, {
       page: 0,
       perPage: 5,
-      state: "open",
+      status: "open",
     });
   });
 
