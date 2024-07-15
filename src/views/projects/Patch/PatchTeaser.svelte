@@ -17,8 +17,8 @@
   export let baseUrl: BaseUrl;
   export let patch: Patch;
 
-  const latestRevisionIndex = patch.revisions.length - 1;
-  const latestRevision = patch.revisions[latestRevisionIndex];
+  $: latestRevisionIndex = patch.revisions.length - 1;
+  $: latestRevision = patch.revisions[latestRevisionIndex];
 
   $: commentCount = patch.revisions.reduce(
     (acc, curr) => acc + curr.discussions.reduce(acc => acc + 1, 0),
