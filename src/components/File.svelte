@@ -20,7 +20,7 @@
     border-top-left-radius: var(--border-radius-small);
     border-top-right-radius: var(--border-radius-small);
     background-color: var(--color-background-default);
-    z-index: 1;
+    z-index: 2;
   }
 
   .sticky {
