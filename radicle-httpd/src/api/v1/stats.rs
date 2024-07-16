@@ -4,7 +4,7 @@ use axum::routing::get;
 use axum::{Json, Router};
 use serde_json::json;
 
-use radicle::storage::ReadStorage;
+use radicle::node::routing::Store;
 
 use crate::api::error::Error;
 use crate::api::Context;
@@ -18,9 +18,12 @@ pub fn router(ctx: Context) -> Router {
 /// Return the stats for the node.
 /// `GET /stats`
 async fn stats_handler(State(ctx): State<Context>) -> impl IntoResponse {
-    let total = ctx.profile.storage.repositories()?.len();
+    let db = &ctx.profile.database()?;
+    let nid = ctx.profile.public_key;
 
-    Ok::<_, Error>(Json(json!({ "repos": { "total": total } })))
+    let total_seeded = db.get_inventory(&nid)?.len();
+
+    Ok::<_, Error>(Json(json!({ "repos": { "total": total_seeded } })))
 }
 
 #[cfg(test)]
@@ -37,6 +40,6 @@ mod routes {
         let response = get(&app, "/stats").await;
 
         assert_eq!(response.status(), StatusCode::OK);
-        assert_eq!(response.json().await, json!({ "repos": { "total": 3 } }));
+        assert_eq!(response.json().await, json!({ "repos": { "total": 2 } }));
     }
 }

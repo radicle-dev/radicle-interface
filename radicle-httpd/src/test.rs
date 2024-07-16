@@ -7,6 +7,7 @@ use std::sync::Arc;
 use axum::body::{Body, Bytes};
 use axum::http::{Method, Request};
 use axum::Router;
+use radicle::node::{Features, Timestamp, UserAgent};
 use serde_json::Value;
 use tower::ServiceExt;
 
@@ -17,8 +18,8 @@ use radicle::git::{raw as git2, RefString};
 use radicle::identity::Visibility;
 use radicle::profile::{env, Home};
 use radicle::storage::ReadStorage;
-use radicle::Storage;
 use radicle::{node, profile};
+use radicle::{Node, Storage};
 use radicle_crypto::test::signer::MockSigner;
 
 use crate::api::Context;
@@ -51,6 +52,18 @@ pub fn profile(home: &Path, seed: [u8; 32]) -> radicle::Profile {
 
     let mut db = home.policies_mut().unwrap();
     db.follow(&keypair.pk.into(), Some(&alias)).unwrap();
+
+    let node_db = home.database_mut().unwrap();
+    node_db
+        .init(
+            &keypair.pk.into(),
+            Features::SEED,
+            &alias,
+            &UserAgent::default(),
+            Timestamp::try_from(TIMESTAMP).unwrap(),
+            [],
+        )
+        .unwrap();
 
     radicle::storage::git::transport::local::register(storage.clone());
     keystore.store(keypair.clone(), "radicle", None).unwrap();
@@ -216,6 +229,11 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
     )
     .unwrap();
     policies.seed(&rid, node::policy::Scope::All).unwrap();
+    let node_handle = &mut Node::new(profile.socket());
+    profile
+        .seed(rid, node::policy::Scope::All, node_handle)
+        .unwrap();
+    profile.add_inventory(rid, node_handle).unwrap();
 
     let storage = &profile.storage;
     let repo = storage.repository(rid).unwrap();
@@ -291,6 +309,10 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
     )
     .unwrap();
     policies.seed(&rid, node::policy::Scope::Followed).unwrap();
+    profile
+        .seed(rid, node::policy::Scope::Followed, node_handle)
+        .unwrap();
+    profile.add_inventory(rid, node_handle).unwrap();
 
     let options = crate::Options {
         aliases: std::collections::HashMap::new(),

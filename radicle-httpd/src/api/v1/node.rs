@@ -112,7 +112,7 @@ mod routes {
     use axum::extract::connect_info::MockConnectInfo;
     use axum::http::StatusCode;
     use pretty_assertions::assert_eq;
-    use serde_json::json;
+    use serde_json::{json, Value};
 
     use crate::test::*;
 
@@ -206,6 +206,21 @@ mod routes {
         let response = get(&app, format!("/nodes/{nid}/inventory")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
-        assert_eq!(response.json().await, json!([]));
+        let json_response = response.json().await;
+
+        let mut arr = match json_response {
+            Value::Array(arr) => arr,
+            _ => panic!("Expected JSON array in response"),
+        };
+
+        arr.sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+
+        assert_eq!(
+            arr,
+            vec![
+                json!("rad:z4FucBZHZMCsxTyQE1dfE2YR59Qbp"),
+                json!("rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE"),
+            ]
+        );
     }
 }

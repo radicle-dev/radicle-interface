@@ -167,7 +167,7 @@ mod routes {
                   "closed": 0,
                 },
                 "id": RID,
-                "seeding": 0,
+                "seeding": 1,
               },
               {
                 "name": "again-hello-world",
@@ -195,7 +195,7 @@ mod routes {
                   "closed": 0,
                 },
                 "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
-                "seeding": 0,
+                "seeding": 1,
               }
             ])
         );
@@ -245,7 +245,7 @@ mod routes {
                   "closed": 0,
                 },
                 "id": RID,
-                "seeding": 0,
+                "seeding": 1,
               },
               {
                 "name": "again-hello-world",
@@ -273,7 +273,7 @@ mod routes {
                   "closed": 0,
                 },
                 "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
-                "seeding": 0,
+                "seeding": 1,
               }
             ])
         );
