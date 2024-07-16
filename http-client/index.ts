@@ -42,7 +42,6 @@ import type { ZodSchema } from "zod";
 import { z, array, literal, number, object, string, union } from "zod";
 
 import * as project from "./lib/project.js";
-import * as profile from "./lib/profile.js";
 import { Fetcher } from "./lib/fetcher.js";
 import {
   nodeConfigSchema,
@@ -93,6 +92,9 @@ const nodeSchema = object({
   agent: string(),
   config: nodeConfigSchema.nullable(),
   state: union([literal("running"), literal("stopped")]),
+  avatarUrl: string().optional(),
+  bannerUrl: string().optional(),
+  description: string().optional(),
 });
 
 export type NodeInfo = z.infer<typeof nodeInfoSchema>;
@@ -144,14 +146,12 @@ export class HttpdClient {
 
   public baseUrl: BaseUrl;
   public project: project.Client;
-  public profile: profile.Client;
 
   public constructor(baseUrl: BaseUrl) {
     this.baseUrl = baseUrl;
     this.#fetcher = new Fetcher(this.baseUrl);
 
     this.project = new project.Client(this.#fetcher);
-    this.profile = new profile.Client(this.#fetcher);
   }
 
   public changePort(port: number): void {

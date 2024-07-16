@@ -326,25 +326,17 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
 pub async fn get(app: &Router, path: impl ToString) -> Response {
     Response(
         app.clone()
-            .oneshot(request(path, Method::GET, None, None))
+            .oneshot(request(path, Method::GET, None))
             .await
             .unwrap(),
     )
 }
 
-fn request(
-    path: impl ToString,
-    method: Method,
-    body: Option<Body>,
-    auth: Option<String>,
-) -> Request<Body> {
-    let mut request = Request::builder()
+fn request(path: impl ToString, method: Method, body: Option<Body>) -> Request<Body> {
+    let request = Request::builder()
         .method(method)
         .uri(path.to_string())
         .header("Content-Type", "application/json");
-    if let Some(token) = auth {
-        request = request.header("Authorization", format!("Bearer {token}"));
-    }
 
     request.body(body.unwrap_or_else(Body::empty)).unwrap()
 }

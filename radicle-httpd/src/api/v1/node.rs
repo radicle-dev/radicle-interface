@@ -2,13 +2,15 @@ use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
+use serde::Serialize;
 use serde_json::json;
 
 use radicle::crypto::ssh::fmt;
 use radicle::identity::{Did, RepoId};
 use radicle::node::address::Store as AddressStore;
 use radicle::node::routing::Store;
-use radicle::node::{AliasStore, Handle, NodeId};
+use radicle::node::{AliasStore, Config, Handle, NodeId, UserAgent};
+use radicle::web;
 use radicle::Node;
 
 use crate::api::error::Error;
@@ -23,6 +25,41 @@ pub fn router(ctx: Context) -> Router {
         .route("/nodes/:nid", get(nodes_handler))
         .route("/nodes/:nid/inventory", get(nodes_inventory_handler))
         .with_state(ctx)
+}
+
+#[derive(Clone, Debug, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Response {
+    id: String,
+    agent: Option<UserAgent>,
+    config: Option<Config>,
+    state: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    avatar_url: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    banner_url: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
+}
+
+impl Response {
+    fn new(
+        nid: NodeId,
+        agent: Option<UserAgent>,
+        config: Option<Config>,
+        state: String,
+        web_config: web::Config,
+    ) -> Self {
+        Response {
+            id: nid.to_string(),
+            agent,
+            config,
+            state,
+            avatar_url: web_config.avatar_url,
+            banner_url: web_config.banner_url,
+            description: web_config.description,
+        }
+    }
 }
 
 /// Return local node information.
@@ -46,14 +83,14 @@ async fn node_handler(State(ctx): State<Context>) -> impl IntoResponse {
             None
         }
     };
-    let response = json!({
-        "id": node_id.to_string(),
-        "agent": agent,
-        "config": config,
-        "state": node_state,
-    });
 
-    Ok::<_, Error>(Json(response))
+    Ok::<_, Error>(Json(Response::new(
+        node_id,
+        agent,
+        config,
+        node_state.to_string(),
+        ctx.profile.config.web.clone(),
+    )))
 }
 
 /// Return stored information about other nodes.

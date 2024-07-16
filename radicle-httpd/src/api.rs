@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
+use axum::http::header::CONTENT_TYPE;
 use axum::http::Method;
 use axum::response::{IntoResponse, Json};
 use axum::routing::get;
@@ -31,7 +31,7 @@ use crate::Options;
 
 pub const RADICLE_VERSION: &str = env!("RADICLE_VERSION");
 // This version has to be updated on every breaking change to the radicle-httpd API.
-pub const API_VERSION: &str = "3.0.0";
+pub const API_VERSION: &str = "4.0.0";
 
 #[derive(Clone)]
 pub struct Context {
@@ -106,14 +106,8 @@ pub fn router(ctx: Context) -> Router {
             CorsLayer::new()
                 .max_age(Duration::from_secs(86400))
                 .allow_origin(cors::Any)
-                .allow_methods([
-                    Method::GET,
-                    Method::POST,
-                    Method::PATCH,
-                    Method::PUT,
-                    Method::DELETE,
-                ])
-                .allow_headers([CONTENT_TYPE, AUTHORIZATION]),
+                .allow_methods([Method::GET])
+                .allow_headers([CONTENT_TYPE]),
         )
 }
 

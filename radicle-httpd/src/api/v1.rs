@@ -1,6 +1,5 @@
 mod delegates;
 mod node;
-mod profile;
 mod projects;
 mod stats;
 
@@ -20,7 +19,6 @@ pub fn router(ctx: Context) -> Router {
     let routes = Router::new()
         .merge(root_router)
         .merge(node::router(ctx.clone()))
-        .merge(profile::router(ctx.clone()))
         .merge(delegates::router(ctx.clone()))
         .merge(projects::router(ctx.clone()))
         .merge(stats::router(ctx));
@@ -50,11 +48,6 @@ async fn root_handler(State(ctx): State<Context>) -> impl IntoResponse {
             {
                 "href": "/delegates/:did/projects",
                 "rel": "projects",
-                "type": "GET"
-            },
-            {
-                "href": "/profile",
-                "rel": "profile",
                 "type": "GET"
             },
             {
