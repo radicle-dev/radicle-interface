@@ -99,7 +99,7 @@
   $: fromCommit =
     previousRevBase !== revisionBase
       ? revisionBase
-      : previousRevBase ?? revisionBase;
+      : (previousRevBase ?? revisionBase);
 
   onMount(async () => {
     try {
