@@ -82,7 +82,7 @@
       </Badge>
     {/if}
     <div style="margin-left: auto; display: flex; gap: 0.5rem;">
-      <Share {baseUrl} />
+      <Share />
       <div
         style:display="flex"
         style:gap="0.5rem"

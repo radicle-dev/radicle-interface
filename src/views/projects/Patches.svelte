@@ -174,7 +174,7 @@
       </DropdownList>
     </Popover>
 
-    <Share {baseUrl} />
+    <Share />
   </div>
 
   <List items={allPatches}>

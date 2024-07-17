@@ -64,7 +64,7 @@
                 <IconSmall name="chevron-left-right" />
               </Button>
             </Link>
-            <Share {baseUrl} />
+            <Share />
           </div>
         </span>
         <CommitAuthorship {header}>

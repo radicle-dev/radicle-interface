@@ -304,7 +304,7 @@
           {:else}
             <span class="txt-missing">No title</span>
           {/if}
-          <Share {baseUrl} />
+          <Share />
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>

@@ -136,7 +136,7 @@
               <span class="txt-missing">No title</span>
             {/if}
           </div>
-          <Share {baseUrl} />
+          <Share />
         </svelte:fragment>
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
