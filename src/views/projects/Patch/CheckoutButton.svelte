@@ -1,0 +1,37 @@
+<script lang="ts">
+  import Button from "@app/components/Button.svelte";
+  import Command from "@app/components/Command.svelte";
+  import IconSmall from "@app/components/IconSmall.svelte";
+  import Popover from "@app/components/Popover.svelte";
+
+  export let id: string;
+</script>
+
+<style>
+  .label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    margin-bottom: 0.75rem;
+  }
+</style>
+
+<Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
+  <Button
+    slot="toggle"
+    let:toggle
+    variant="secondary-toggle-off"
+    on:click={() => {
+      toggle();
+    }}>
+    <IconSmall name="branch" />
+    <span class="global-hide-on-small-desktop-down">Checkout</span>
+  </Button>
+
+  <div slot="popover" style:width="20rem">
+    <span class="label">
+      Run this command from a Radicle working copy to checkout this patch.
+    </span>
+    <Command command={`rad patch checkout ${id}`} />
+  </div>
+</Popover>

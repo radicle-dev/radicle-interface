@@ -52,6 +52,7 @@
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
+  import CheckoutButton from "@app/views/projects/Patch/CheckoutButton.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import CompareButton from "@app/views/projects/Patch/CompareButton.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
@@ -304,7 +305,12 @@
           {:else}
             <span class="txt-missing">No title</span>
           {/if}
-          <Share />
+          <div class="global-flex-item">
+            <Share />
+            <div class="global-hide-on-mobile-down">
+              <CheckoutButton id={patch.id} />
+            </div>
+          </div>
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>
