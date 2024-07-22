@@ -82,7 +82,7 @@ main() {
   for target in $(cat build/TARGETS); do
     echo "Signing artifacts for $target.."
 
-    filename="radicle-$version-$target.tar.xz"
+    filename="radicle-httpd-$version-$target.tar.xz"
     filepath="$outdir/$filename"
 
     # Output SHA256 digest of archive.

@@ -14,17 +14,31 @@ install() {
     mkdir -p "$BINARY_PATH/$1/$2"
     case "$OS" in
     Darwin)
-      echo Downloading "$1" v"$2" from "https://files.radicle.xyz/releases$3/$2/radicle-aarch64-apple-darwin.tar.xz into /tests/tmp/bin/$1/$2"
-      curl --fail -s "https://files.radicle.xyz/releases$3/$2/radicle-aarch64-apple-darwin.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH/$1/$2" "radicle-$2-aarch64-apple-darwin/bin/" || (echo "Download failed" && exit 1)
+      ARCH="aarch64-apple-darwin"
       ;;
     Linux)
-      echo Downloading "$1" v"$2" from "https://files.radicle.xyz/releases$3/$2/radicle-x86_64-unknown-linux-musl.tar.xz into /tests/tmp/bin/$1/$2"
-      curl --fail -s "https://files.radicle.xyz/releases$3/$2/radicle-x86_64-unknown-linux-musl.tar.xz" | tar -xJ --strip-components=2 -C "$BINARY_PATH/$1/$2" "radicle-$2-x86_64-unknown-linux-musl/bin/" || (echo "Download failed" && exit 1)
+      ARCH="x86_64-unknown-linux-musl"
       ;;
     *)
       echo "There are no precompiled binaries for your OS: $OS, compile $1 manually and make sure it's in PATH." && exit 1
       ;;
     esac
+    case "$1" in
+    heartwood)
+      FETCH_URL="https://files.radicle.xyz/releases/$2/radicle-$ARCH.tar.xz"
+      FILENAME="radicle-$2-$ARCH"
+      ;;
+    httpd)
+      FETCH_URL="https://files.radicle.xyz/releases/radicle-httpd/$2/radicle-httpd-$ARCH.tar.xz"
+      FILENAME="radicle-httpd-$2-$ARCH"
+      ;;
+    *)
+      echo "No precompiled binary found with the name $1." && exit 1
+      ;;
+    esac
+
+    echo Downloading "$1" v"$2" from "$FETCH_URL into /tests/tmp/bin/$1/$2"
+    curl --fail -s "$FETCH_URL" | tar -xJ --strip-components=2 -C "$BINARY_PATH/$1/$2" "$FILENAME/bin/" || (echo "Download failed" && exit 1)
   fi
 }
 
@@ -49,7 +63,7 @@ while [ $# -ne 0 ]; do
   esac
 done
 
-install "heartwood" "$RELEASE" ""
-install "httpd" "$HTTPD_RELEASE" "/radicle-httpd"
+install "heartwood" "$RELEASE"
+install "httpd" "$HTTPD_RELEASE"
 
 echo
