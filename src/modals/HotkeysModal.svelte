@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { modifierKey } from "@app/lib/utils";
-
   import Icon from "@app/components/Icon.svelte";
   import IconSmall from "@app/components/IconSmall.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
@@ -36,14 +34,6 @@
       <div class="pair">
         <span>Submit</span>
         <KeyHint>⏎</KeyHint>
-      </div>
-
-      <div class="pair">
-        <span>Post comment</span>
-        <div class="keys">
-          <KeyHint>{modifierKey()}</KeyHint> +
-          <KeyHint>⏎</KeyHint>
-        </div>
       </div>
 
       <div class="pair">

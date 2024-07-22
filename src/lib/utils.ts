@@ -196,21 +196,6 @@ export function scrollIntoView(id: string, options?: ScrollIntoViewOptions) {
   if (lineElement) lineElement.scrollIntoView(options);
 }
 
-function isMac() {
-  if (
-    (navigator.platform && navigator.platform.includes("Mac")) ||
-    navigator.userAgent.includes("OS X")
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-export function modifierKey() {
-  return isMac() ? "⌘" : "ctrl";
-}
-
 // Check whether the given path has a markdown file extension.
 export function isMarkdownPath(path: string): boolean {
   return /\.(md|mkd|markdown)$/i.test(path);
