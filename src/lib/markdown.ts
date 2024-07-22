@@ -71,7 +71,7 @@ export class Renderer extends BaseRenderer {
       return `<a ${title ? `title="${title}"` : ""} href="${href.toLowerCase()}">${text}</a>`;
     }
 
-    if ("path" in this.#route && !isUrl(href)) {
+    if (this.#route.resource === "project.source" && !isUrl(href)) {
       href = routeToPath({
         ...this.#route,
         path: canonicalize(href, this.#route.path || "README.md"),
