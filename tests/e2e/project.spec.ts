@@ -523,6 +523,13 @@ test("internal file markdown link", async ({ page }) => {
   await expect(page).toHaveURL(`${markdownUrl}/tree/main/cheatsheet.md`);
   await expect(page.getByText("cheatsheet.md").nth(2)).toBeVisible();
 
+  await page.goto(markdownUrl);
+  await page.getByRole("link", { name: "Link Files" }).click();
+  await page.getByRole("button", { name: "Files", exact: true }).click();
+  await page.getByRole("link", { name: "Link Files" }).click();
+  await expect(page).toHaveURL(`${markdownUrl}/tree/link-files.md`);
+  await expect(page.getByText("link-files.md").nth(2)).toBeVisible();
+
   await page.goto(`${markdownUrl}/tree/main/link-files.md`);
   await page.getByRole("link", { name: "black square" }).click();
   await expect(page).toHaveURL(
