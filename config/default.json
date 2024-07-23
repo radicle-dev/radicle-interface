@@ -16,6 +16,9 @@
       }
     ]
   },
+  "source": {
+    "commitsPerPage": 30
+  },
   "supportWebsite": "https://radicle.zulipchat.com",
   "fallbackPreferredSeed": {
     "hostname": "seed.radicle.garden",

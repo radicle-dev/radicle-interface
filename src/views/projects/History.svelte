@@ -9,7 +9,7 @@
   } from "@http-client";
   import type { ProjectRoute } from "./router";
 
-  import { COMMITS_PER_PAGE } from "./router";
+  import config from "virtual:config";
   import { HttpdClient } from "@http-client";
   import { baseUrlToString } from "@app/lib/utils";
   import { groupCommits } from "@app/lib/commit";
@@ -58,9 +58,9 @@
       const response = await api.project.getAllCommits(project.id, {
         parent: allCommitHeaders[0].id,
         page,
-        perPage: COMMITS_PER_PAGE,
+        perPage: config.source.commitsPerPage,
       });
-      allCommitHeaders = response;
+      allCommitHeaders = [...allCommitHeaders, ...response];
     } catch (e) {
       error = e;
     }

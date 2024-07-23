@@ -11,6 +11,9 @@
       "__format": "json"
     }
   },
+  "source": {
+    "commitsPerPage": "COMMITS_PER_PAGE"
+  },
   "supportWebsite": "SUPPORT_WEBSITE",
   "fallbackPreferredSeed": {
     "__name": "FALLBACK_PREFERRED_SEED",

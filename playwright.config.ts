@@ -82,10 +82,19 @@ const config: PlaywrightTestConfig = {
     },
   ],
 
-  webServer: {
-    command: "npm run start -- --strictPort --port 3001",
-    port: 3001,
-  },
+  webServer: [
+    {
+      command: "npm run start -- --strictPort --port 3001",
+      port: 3001,
+    },
+    // Required by test tests/e2e/project/commits.spec.ts "loading more commits, adds them to the commits list"
+    {
+      command: "npm run start -- --strictPort --port 3002",
+      port: 3002,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      env: { COMMITS_PER_PAGE: "4" },
+    },
+  ],
 };
 
 export default config;

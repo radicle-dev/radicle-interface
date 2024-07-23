@@ -29,7 +29,6 @@ import { handleError, unreachableError } from "@app/views/projects/error";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 
-export const COMMITS_PER_PAGE = 30;
 export const PATCHES_PER_PAGE = 10;
 export const ISSUES_PER_PAGE = 10;
 
@@ -524,7 +523,7 @@ async function loadHistoryView(
     await api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
-      perPage: COMMITS_PER_PAGE,
+      perPage: config.source.commitsPerPage,
     }),
   ]);
 

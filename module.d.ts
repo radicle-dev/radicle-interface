@@ -10,6 +10,9 @@ declare module "virtual:*" {
       defaultHttpdScheme: string;
       pinned: { baseUrl: BaseUrl }[];
     };
+    source: {
+      commitsPerPage: number;
+    };
     reactions: string[];
     supportWebsite: string;
     fallbackPreferredSeed: BaseUrl;
