@@ -1,7 +1,7 @@
 <script lang="ts">
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 </script>
 
 <span style:color="var(--color-foreground-dim)">
-  <IconSmall name="chevron-right" />
+  <Icon name="chevron-right" />
 </span>

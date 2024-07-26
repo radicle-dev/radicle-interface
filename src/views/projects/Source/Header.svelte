@@ -6,7 +6,7 @@
 
   import Button from "@app/components/Button.svelte";
   import CommitButton from "../components/CommitButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import PeerBranchSelector from "./PeerBranchSelector.svelte";
@@ -130,7 +130,7 @@
         revision,
       }}>
       <Button size="large" variant={filesLinkActive ? "tab-active" : "tab"}>
-        <IconSmall name="file" />Files
+        <Icon name="file" />Files
       </Button>
     </Link>
 
@@ -143,7 +143,7 @@
         revision,
       }}>
       <Button size="large" variant={historyLinkActive ? "tab-active" : "tab"}>
-        <IconSmall name="commit" />
+        <Icon name="commit" />
         <div class="title-counter">
           Commits
           {#await api.project.getTreeStatsBySha(project.id, commit)}

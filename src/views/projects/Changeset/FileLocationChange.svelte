@@ -3,7 +3,7 @@
 
   import Badge from "@app/components/Badge.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import FilePath from "@app/components/FilePath.svelte";
 
@@ -61,7 +61,7 @@
           revision,
         }}>
         <IconButton title="View file at this commit">
-          <IconSmall name="chevron-left-right" />
+          <Icon name="chevron-left-right" />
         </IconButton>
       </Link>
     </div>

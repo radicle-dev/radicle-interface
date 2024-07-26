@@ -3,7 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
 
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
   import Loading from "@app/components/Loading.svelte";
 
@@ -163,7 +163,7 @@
     {#if valid && !loading && isFocused && showKeyHint}
       <div style:padding-right="0.25rem">
         {#if success}
-          <IconSmall name="checkmark" />
+          <Icon name="checkmark" />
         {:else}
           <KeyHint>⏎</KeyHint>
         {/if}

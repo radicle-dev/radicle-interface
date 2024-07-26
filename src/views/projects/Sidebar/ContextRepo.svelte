@@ -4,7 +4,7 @@
   import { capitalize } from "lodash";
 
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
   export let projectThreshold: number;
@@ -41,7 +41,7 @@
       {projectThreshold}/{projectDelegates.length}
     </span>
     <IconButton on:click={() => (delegateExpanded = !delegateExpanded)}>
-      <IconSmall name={delegateExpanded ? "chevron-up" : "chevron-down"} />
+      <Icon name={delegateExpanded ? "chevron-up" : "chevron-down"} />
     </IconButton>
   </div>
 </div>
@@ -70,7 +70,7 @@
       )}
     </span>
     <IconButton on:click={() => (policyExpanded = !policyExpanded)}>
-      <IconSmall name={policyExpanded ? "chevron-up" : "chevron-down"} />
+      <Icon name={policyExpanded ? "chevron-up" : "chevron-down"} />
     </IconButton>
   </div>
 </div>

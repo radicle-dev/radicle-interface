@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let commentCount: number;
 </script>
@@ -16,6 +16,6 @@
 </style>
 
 <div class="comments">
-  <IconSmall name="chat" />
+  <Icon name="chat" />
   <span>{commentCount}</span>
 </div>

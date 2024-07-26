@@ -17,7 +17,7 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import IssueTeaser from "@app/views/projects/Issue/IssueTeaser.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
@@ -142,13 +142,13 @@
         ariaLabel="filter-dropdown"
         title="Filter issues by state">
         <div style:color={stateColor[status]}>
-          <IconSmall name="issue" />
+          <Icon name="issue" />
         </div>
         {capitalize(status)}
         <div class="dropdown-button-counter">
           {project.issues[status]}
         </div>
-        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+        <Icon name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
 
       <DropdownList slot="popover" items={stateOptions}>
@@ -164,7 +164,7 @@
           }}>
           <DropdownListItem selected={item === status}>
             <div style:color={stateColor[item]}>
-              <IconSmall name="issue" />
+              <Icon name="issue" />
             </div>
             <div
               style="display: flex; gap: 1rem;justify-content: space-between; width: 100%;">

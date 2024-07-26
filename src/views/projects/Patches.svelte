@@ -17,7 +17,7 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Layout from "./Layout.svelte";
   import Link from "@app/components/Link.svelte";
   import List from "@app/components/List.svelte";
@@ -150,13 +150,13 @@
         ariaLabel="filter-dropdown"
         title="Filter patches by state">
         <div style:color={stateColor[status]}>
-          <IconSmall name="patch" />
+          <Icon name="patch" />
         </div>
         {capitalize(status)}
         <div class="dropdown-button-counter">
           {project.patches[status]}
         </div>
-        <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+        <Icon name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
       <DropdownList slot="popover" items={stateOptions}>
         <Link
@@ -171,7 +171,7 @@
           }}>
           <DropdownListItem selected={item === status}>
             <div style:color={stateColor[item]}>
-              <IconSmall name="patch" />
+              <Icon name="patch" />
             </div>
             <div
               style="display: flex; gap: 1rem;justify-content: space-between; width: 100%;">

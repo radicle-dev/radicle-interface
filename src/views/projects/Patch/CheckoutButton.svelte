@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Popover from "@app/components/Popover.svelte";
 
   export let id: string;
@@ -24,7 +24,7 @@
     on:click={() => {
       toggle();
     }}>
-    <IconSmall name="branch" />
+    <Icon name="branch" />
     <span class="global-hide-on-small-desktop-down">Checkout</span>
   </Button>
 

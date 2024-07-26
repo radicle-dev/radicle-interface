@@ -7,9 +7,9 @@
     theme,
   } from "@app/lib/appearance";
 
+  import Button from "@app/components/Button.svelte";
   import Icon from "@app/components/Icon.svelte";
   import Radio from "@app/components/Radio.svelte";
-  import Button from "@app/components/Button.svelte";
 </script>
 
 <style>

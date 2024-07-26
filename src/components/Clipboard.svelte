@@ -6,7 +6,7 @@
 
   import { toClipboard } from "@app/lib/utils";
 
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let text: string;
   export let tooltip: string | undefined = undefined;
@@ -46,5 +46,5 @@
   title={tooltip}
   class="clipboard"
   on:click|stopPropagation={copy}>
-  <IconSmall name={icon} />
+  <Icon name={icon} />
 </span>

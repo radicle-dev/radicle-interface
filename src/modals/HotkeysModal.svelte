@@ -1,6 +1,6 @@
 <script lang="ts">
+  import IconLarge from "@app/components/IconLarge.svelte";
   import Icon from "@app/components/Icon.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
   import Modal from "@app/components/Modal.svelte";
 </script>
@@ -27,7 +27,7 @@
 </style>
 
 <Modal title="Keyboard shortcuts">
-  <Icon name="keyboard" size="48" slot="icon" />
+  <IconLarge name="keyboard" slot="icon" />
 
   <div slot="body">
     <div class="hotkeys">
@@ -41,7 +41,7 @@
         <div class="keys">
           <KeyHint>Shift</KeyHint>
           +
-          <IconSmall name="cursor" />
+          <Icon name="cursor" />
         </div>
       </div>
       <div class="pair">

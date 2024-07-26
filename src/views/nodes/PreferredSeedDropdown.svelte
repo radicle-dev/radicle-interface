@@ -18,7 +18,7 @@
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Popover from "@app/components/Popover.svelte";
   import TextInput from "@app/components/TextInput.svelte";
 
@@ -106,7 +106,7 @@
     let:toggle>
     <slot />
     <IconButton on:click={toggle}>
-      <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+      <Icon name={expanded ? "chevron-up" : "chevron-down"} />
     </IconButton>
   </div>
 
@@ -164,7 +164,7 @@
               selected={item.hostname === $selectedSeed.hostname}>
               <div class="dropdown-item">
                 <div class="icon-item" style:min-width="0">
-                  <IconSmall name="seedling" />
+                  <Icon name="seedling" />
                   <div class="txt-overflow">
                     {item.hostname}
                   </div>
@@ -180,7 +180,7 @@
                         params: { baseUrl: $selectedSeed, projectPageIndex: 0 },
                       });
                     }}>
-                    <IconSmall name="cross" />
+                    <Icon name="cross" />
                   </IconButton>
                 {/if}
               </div>
@@ -198,7 +198,7 @@
               selected>
               <div class="dropdown-item">
                 <div class="icon-item" style:min-width="0">
-                  <IconSmall name="seedling" />
+                  <Icon name="seedling" />
                   <div class="txt-overflow">
                     {config.fallbackPreferredSeed.hostname}
                   </div>

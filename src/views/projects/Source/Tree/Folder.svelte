@@ -7,7 +7,7 @@
   import Link from "@app/components/Link.svelte";
 
   import File from "./File.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Submodule from "./Submodule.svelte";
 
   export let baseUrl: BaseUrl;
@@ -85,9 +85,9 @@
   }}>
   <div class="icon-container" class:expanded>
     {#if expanded}
-      <IconSmall name="folder-open" />
+      <Icon name="folder-open" />
     {:else}
-      <IconSmall name="folder" />
+      <Icon name="folder" />
     {/if}
   </div>
   <span class="folder-name" class:expanded>{name}</span>

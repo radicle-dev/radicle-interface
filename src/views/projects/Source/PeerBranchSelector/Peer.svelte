@@ -9,7 +9,7 @@
   import Badge from "@app/components/Badge.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
@@ -36,12 +36,12 @@
 <div class="subgrid-item" aria-label="peer-item">
   <div class="global-flex-item" style="padding: 0.5rem 0">
     <IconButton title="Expand peer" on:click={() => (expanded = !expanded)}>
-      <IconSmall name={expanded ? "chevron-down" : "chevron-right"} />
+      <Icon name={expanded ? "chevron-down" : "chevron-right"} />
     </IconButton>
     <NodeId nodeId={peer.remote.id} alias={peer.remote.alias} />
     {#if peer.remote.delegate}
       <Badge size="tiny" variant="delegate">
-        <IconSmall name="badge" />
+        <Icon name="badge" />
         <span class="global-hide-on-small-desktop-down">Delegate</span>
       </Badge>
     {/if}
@@ -67,7 +67,7 @@
           })}
         style={`${subgridStyle} padding-left: 2.3rem; gap: inherit;`}>
         <div class="global-flex-item">
-          <IconSmall name="branch" />
+          <Icon name="branch" />
           <span class="txt-overflow">
             {name}
           </span>

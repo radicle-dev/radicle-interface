@@ -16,7 +16,7 @@
   import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
@@ -419,7 +419,7 @@
               on:click={() => {
                 preview = false;
               }}>
-              <IconSmall name="chevron-left-right" />Code
+              <Icon name="chevron-left-right" />Code
             </Button>
             <Button
               styleBorderRadius="0"
@@ -428,7 +428,7 @@
                 window.location.hash = "";
                 preview = true;
               }}>
-              <IconSmall name="eye-open" />Preview
+              <Icon name="eye-open" />Preview
             </Button>
           </Radio>
         {/if}
@@ -441,7 +441,7 @@
             revision,
           }}>
           <IconButton title="View file at this commit">
-            <IconSmall name="chevron-left-right" />
+            <Icon name="chevron-left-right" />
           </IconButton>
         </Link>
       </div>

@@ -8,7 +8,7 @@ import type {
 } from "@app/views/projects/router";
 import type { NodesRoute, NodesLoadedRoute } from "@app/views/nodes/router";
 import type { ComponentProps } from "svelte";
-import type Icon from "@app/components/Icon.svelte";
+import type IconLarge from "@app/components/IconLarge.svelte";
 
 import { loadProjectRoute } from "@app/views/projects/router";
 import { loadNodeRoute } from "@app/views/nodes/router";
@@ -30,7 +30,7 @@ export interface ErrorRoute {
     title: string;
     description: string;
     error?: ErrorParam;
-    icon?: ComponentProps<Icon>["name"];
+    icon?: ComponentProps<IconLarge>["name"];
   };
 }
 

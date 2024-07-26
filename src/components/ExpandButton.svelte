@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
 
   import IconButton from "./IconButton.svelte";
-  import IconSmall from "./IconSmall.svelte";
+  import Icon from "./Icon.svelte";
 
   export let variant: "left-aligned" | "inline" = "left-aligned";
   export let expanded: boolean = true;
@@ -27,9 +27,9 @@
   }}>
   <div class="expand">
     {#if expanded}
-      <IconSmall name={variant === "inline" ? "ellipsis" : "chevron-down"} />
+      <Icon name={variant === "inline" ? "ellipsis" : "chevron-down"} />
     {:else}
-      <IconSmall name={variant === "inline" ? "ellipsis" : "chevron-right"} />
+      <Icon name={variant === "inline" ? "ellipsis" : "chevron-right"} />
     {/if}
   </div>
 </IconButton>

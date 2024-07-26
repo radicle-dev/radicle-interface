@@ -6,7 +6,7 @@
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/projects/Changeset.svelte";
   import CommitAuthorship from "@app/views/projects/Commit/CommitAuthorship.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Layout from "./Layout.svelte";
@@ -85,7 +85,7 @@
                 revision: commit.commit.id,
               }}>
               <Button variant="outline" title="Browse repo at this commit">
-                <IconSmall name="chevron-left-right" />
+                <Icon name="chevron-left-right" />
               </Button>
             </Link>
             <Share />

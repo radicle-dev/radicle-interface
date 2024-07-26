@@ -10,7 +10,7 @@
 
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
   import Badge from "@app/components/Badge.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let compact = false;
@@ -152,14 +152,14 @@
               title="Private"
               class="badge"
               style="background-color: var(--color-fill-private); color: var(--color-foreground-yellow)">
-              <IconSmall name="lock" />
+              <Icon name="lock" />
             </div>
           {/if}
           <Badge
             variant="neutral"
             size="tiny"
             style="padding: 0 0.372rem; gap: 0.125rem;">
-            <IconSmall name="seedling" />
+            <Icon name="seedling" />
             {projectInfo.project.seeding}
           </Badge>
         </div>
@@ -168,9 +168,9 @@
     </div>
     <div>
       <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
-        <IconSmall name="issue" />
+        <Icon name="issue" />
         {project.issues.open} ·
-        <IconSmall name="patch" />
+        <Icon name="patch" />
         <span
           style:overflow="hidden"
           style:text-overflow="ellipsis"

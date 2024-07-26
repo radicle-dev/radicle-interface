@@ -6,7 +6,7 @@
 
   import CommentCounter from "../CommentCounter.svelte";
   import DiffStatBadgeLoader from "../DiffStatBadgeLoader.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineLabels from "@app/views/projects/Cob/InlineLabels.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
@@ -92,7 +92,7 @@
     class:open={patch.state.status === "open"}
     class:merged={patch.state.status === "merged"}
     class:archived={patch.state.status === "archived"}>
-    <IconSmall name="patch" />
+    <Icon name="patch" />
   </div>
   <div class="content">
     <div class="summary">

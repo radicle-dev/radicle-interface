@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let active: boolean;
   export let name: string;
@@ -53,7 +53,7 @@
 
 <div class="file" class:active>
   <div class="icon-container">
-    <IconSmall name="file" />
+    <Icon name="file" />
   </div>
   <span class="name">{name}</span>
 </div>

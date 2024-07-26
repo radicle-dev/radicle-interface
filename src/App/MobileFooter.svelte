@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "@app/components/Button.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Popover from "@app/components/Popover.svelte";
 
@@ -48,7 +48,7 @@
         styleWidth="100%"
         let:toggle
         on:click={toggle}>
-        <IconSmall name="menu" />
+        <Icon name="menu" />
       </Button>
 
       <div slot="popover">

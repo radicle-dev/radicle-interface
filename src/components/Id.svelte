@@ -6,7 +6,7 @@
   import { formatObjectId } from "@app/lib/utils";
   import { toClipboard } from "@app/lib/utils";
 
-  import IconSmall from "./IconSmall.svelte";
+  import Icon from "./Icon.svelte";
 
   export let id: string;
   export let clipboard: string = id;
@@ -14,7 +14,7 @@
   export let style: "oid" | "commit" | "none" = "oid";
   export let ariaLabel: string | undefined = undefined;
 
-  let icon: ComponentProps<IconSmall>["name"] = "clipboard";
+  let icon: ComponentProps<Icon>["name"] = "clipboard";
   const text = "Click to copy";
   let tooltip = text;
 
@@ -102,7 +102,7 @@
   {#if visible}
     <div style:position="absolute" style:top="-2rem">
       <div class="popover">
-        <IconSmall name={icon} />
+        <Icon name={icon} />
         {tooltip}
       </div>
     </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import { formatCommit } from "@app/lib/utils";
 
   export let name: string;
@@ -38,7 +38,7 @@
   class="submodule"
   title="This is a git submodule, for more information look at the nearest .gitmodules file">
   <div class="icon-container">
-    <IconSmall name="repo" />
+    <Icon name="repo" />
   </div>
   <span class="name">{name} @ {formatCommit(oid)}</span>
 </div>

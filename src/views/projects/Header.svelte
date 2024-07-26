@@ -7,7 +7,7 @@
 
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   export let baseUrl: BaseUrl;
   export let activeTab: ActiveTab = undefined;
@@ -59,7 +59,7 @@
       styleWidth="100%"
       styleJustifyContent="flex-start"
       variant={activeTab === "source" ? "gray" : "background"}>
-      <IconSmall name="chevron-left-right" />
+      <Icon name="chevron-left-right" />
       Source
     </Button>
   </Link>
@@ -75,7 +75,7 @@
       styleJustifyContent="flex-start"
       styleWidth="100%"
       variant={activeTab === "issues" ? "gray" : "background"}>
-      <IconSmall name="issue" />
+      <Icon name="issue" />
       <div class="title-counter">
         Issues
         <span
@@ -100,7 +100,7 @@
       styleWidth="100%"
       styleJustifyContent="flex-start"
       variant={activeTab === "patches" ? "gray" : "background"}>
-      <IconSmall name="patch" />
+      <Icon name="patch" />
       <div class="title-counter">
         Patches
         <span

@@ -1,6 +1,6 @@
 <script lang="ts">
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import KeyHint from "@app/components/KeyHint.svelte";
   import Popover from "@app/components/Popover.svelte";
   import Settings from "./Settings.svelte";
@@ -42,7 +42,7 @@
   <div class="left">
     <Popover popoverPositionBottom="3rem" popoverPositionLeft="0">
       <IconButton slot="toggle" let:toggle on:click={toggle}>
-        <IconSmall name="settings" />
+        <Icon name="settings" />
         Settings
       </IconButton>
 
@@ -63,7 +63,7 @@
       rel="noreferrer"
       href="https://radicle.xyz">
       radicle.xyz
-      <IconSmall name="arrow-box-up-right" />
+      <Icon name="arrow-box-up-right" />
     </a>
   </div>
 </div>
