@@ -1,7 +1,7 @@
 <svelte:options customElement="radicle-external-link" />
 
 <script lang="ts">
-  import IconSmall from "./IconSmall.svelte";
+  import Icon from "./Icon.svelte";
 
   export let href: string;
 </script>
@@ -34,5 +34,5 @@
 
 <a {href} target="_blank" rel="noreferrer">
   <slot>{href}</slot>
-  <span class="icon"><IconSmall name="arrow-box-up-right" /></span>
+  <span class="icon"><Icon name="arrow-box-up-right" /></span>
 </a>

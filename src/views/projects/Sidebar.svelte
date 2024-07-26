@@ -5,7 +5,7 @@
   import Button from "@app/components/Button.svelte";
   import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
   import Help from "@app/App/Help.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Popover from "@app/components/Popover.svelte";
   import Settings from "@app/App/Settings.svelte";
@@ -170,7 +170,7 @@
         styleWidth="100%"
         styleJustifyContent="flex-start"
         variant={activeTab === "source" ? "gray" : "background"}>
-        <IconSmall name="chevron-left-right" />
+        <Icon name="chevron-left-right" />
         <span class="title-counter" class:expanded>Source</span>
       </Button>
     </Link>
@@ -188,7 +188,7 @@
         styleJustifyContent="flex-start"
         styleWidth="100%"
         variant={activeTab === "issues" ? "gray" : "background"}>
-        <IconSmall name="issue" />
+        <Icon name="issue" />
         <div class="title-counter" class:expanded>
           Issues
           <span
@@ -215,7 +215,7 @@
         styleWidth="100%"
         styleJustifyContent="flex-start"
         variant={activeTab === "patches" ? "gray" : "background"}>
-        <IconSmall name="patch" />
+        <Icon name="patch" />
         <div class="title-counter" class:expanded>
           Patches
           <span
@@ -245,7 +245,7 @@
           slot="toggle"
           let:toggle
           on:click={toggle}>
-          <IconSmall name="settings" />
+          <Icon name="settings" />
         </Button>
 
         <Settings slot="popover" />
@@ -259,7 +259,7 @@
           slot="toggle"
           let:toggle
           on:click={toggle}>
-          <IconSmall name="help" />
+          <Icon name="help" />
         </Button>
 
         <Help slot="popover" />
@@ -273,7 +273,7 @@
           slot="toggle"
           let:toggle
           on:click={toggle}>
-          <IconSmall name="info" />
+          <Icon name="info" />
         </Button>
 
         <div slot="popover" class="txt-small" style:width="18rem">
@@ -292,7 +292,7 @@
           on:click={toggleSidebar}
           variant="background">
           <div class="icon" class:expanded>
-            <IconSmall name="chevron-left" />
+            <Icon name="chevron-left" />
           </div>
         </Button>
         <div class="global-flex-item">
@@ -304,7 +304,7 @@
                 slot="toggle"
                 let:toggle
                 on:click={toggle}>
-                <IconSmall name="settings" />
+                <Icon name="settings" />
                 Settings
               </Button>
 
@@ -319,7 +319,7 @@
                 slot="toggle"
                 let:toggle
                 on:click={toggle}>
-                <IconSmall name="help" />
+                <Icon name="help" />
                 Help
               </Button>
               <Help slot="popover" />

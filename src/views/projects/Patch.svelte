@@ -57,7 +57,7 @@
   import CompareButton from "@app/views/projects/Patch/CompareButton.svelte";
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Labels from "@app/views/projects/Cob/Labels.svelte";
@@ -99,10 +99,7 @@
 
   type Tab = "activity" | "changes";
 
-  let tabs: Record<
-    Tab,
-    { icon: ComponentProps<IconSmall>["name"]; route: Route }
-  >;
+  let tabs: Record<Tab, { icon: ComponentProps<Icon>["name"]; route: Route }>;
   $: {
     const baseRoute = {
       resource: "project.patch",
@@ -342,7 +339,7 @@
         </svelte:fragment>
         <svelte:fragment slot="state">
           <Badge size="tiny" variant={badgeColor(patch.state.status)}>
-            <IconSmall name="patch" />
+            <Icon name="patch" />
             {capitalize(patch.state.status)}
           </Badge>
           <Link
@@ -412,7 +409,7 @@
                 (view.name === "diff" && name === "changes")
                   ? "tab-active"
                   : "tab"}>
-                <IconSmall name={icon} />
+                <Icon name={icon} />
                 {capitalize(name)}
               </Button>
             </Link>

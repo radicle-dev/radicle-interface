@@ -2,7 +2,7 @@
   import type { Comment } from "@http-client";
 
   import CommentComponent from "@app/components/Comment.svelte";
-  import IconSmall from "./IconSmall.svelte";
+  import Icon from "./Icon.svelte";
 
   export let thread: {
     root: Comment;
@@ -51,7 +51,7 @@
       reactions={root.reactions}
       timestamp={root.timestamp}
       body={root.body}>
-      <IconSmall name="chat" slot="icon" />
+      <Icon name="chat" slot="icon" />
     </CommentComponent>
   </div>
   {#if replies.length > 0}

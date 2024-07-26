@@ -21,7 +21,7 @@
   import ErrorMessage from "@app/components/ErrorMessage.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import Markdown from "@app/components/Markdown.svelte";
@@ -307,7 +307,7 @@
             let:toggle
             on:click={toggle}
             title="toggle-context-menu">
-            <IconSmall name="more" />
+            <Icon name="more" />
           </IconButton>
           <DropdownList
             slot="popover"
@@ -376,7 +376,7 @@
             <div
               style:color={badgeColor(patchState)}
               style:padding="0 0.375rem">
-              <IconSmall name="patch" />
+              <Icon name="patch" />
             </div>
             <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
@@ -461,7 +461,7 @@
           <div class="action merge">
             <div class="authorship-header">
               <div style:color="var(--color-fill-primary)">
-                <IconSmall name="patch" />
+                <Icon name="patch" />
               </div>
 
               <NodeId
@@ -501,11 +501,11 @@
               </div>
               <div slot="icon" style:color={verdictIconColor(review.verdict)}>
                 {#if review.verdict === "accept"}
-                  <IconSmall name="checkmark" />
+                  <Icon name="checkmark" />
                 {:else if review.verdict === "reject"}
-                  <IconSmall name="cross" />
+                  <Icon name="cross" />
                 {:else}
-                  <IconSmall name="chat" />
+                  <Icon name="chat" />
                 {/if}
               </div>
             </CommentComponent>

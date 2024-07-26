@@ -6,7 +6,7 @@
   import CommitAuthorship from "./CommitAuthorship.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
   import Id from "@app/components/Id.svelte";
@@ -117,7 +117,7 @@
             node: baseUrl,
             revision: commit.id,
           }}>
-          <IconSmall name="chevron-left-right" />
+          <Icon name="chevron-left-right" />
         </Link>
       </IconButton>
     </div>

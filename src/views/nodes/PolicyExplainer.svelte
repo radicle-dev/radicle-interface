@@ -4,7 +4,7 @@
   import { capitalize } from "lodash";
 
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import ScopePolicyExplainer from "@app/components/ScopePolicyExplainer.svelte";
 
   export let seedingPolicy: DefaultSeedingPolicy | undefined = undefined;
@@ -43,7 +43,7 @@
         {capitalize(shortScope)}
       </div>
       <IconButton on:click={() => (expandedNode = !expandedNode)}>
-        <IconSmall name={`chevron-${expandedNode ? "up" : "down"}`} />
+        <Icon name={`chevron-${expandedNode ? "up" : "down"}`} />
       </IconButton>
     </div>
   </div>

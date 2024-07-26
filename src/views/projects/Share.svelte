@@ -4,7 +4,7 @@
   import { toClipboard } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
 
   let shareIcon: "link" | "checkmark" = "link";
 
@@ -23,6 +23,6 @@
 </script>
 
 <Button variant="outline" size="regular" on:click={copy}>
-  <IconSmall name={shareIcon} />
+  <Icon name={shareIcon} />
   <span class="global-hide-on-small-desktop-down">Copy link</span>
 </Button>

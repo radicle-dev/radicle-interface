@@ -6,7 +6,7 @@
   import Button from "@app/components/Button.svelte";
   import DropdownList from "@app/components/DropdownList.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Popover from "@app/components/Popover.svelte";
   import { closeFocused } from "@app/components/Popover.svelte";
@@ -41,7 +41,7 @@
       style:font-family="var(--font-family-monospace)">
       {utils.formatObjectId(view.revision)}
     </span>
-    <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+    <Icon name={expanded ? "chevron-up" : "chevron-down"} />
   </Button>
   <DropdownList slot="popover" items={patch.revisions}>
     <svelte:fragment slot="item" let:item>

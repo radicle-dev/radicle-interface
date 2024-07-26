@@ -5,12 +5,12 @@
   import config from "virtual:config";
   import Command from "./Command.svelte";
   import ExternalLink from "./ExternalLink.svelte";
-  import Icon from "./Icon.svelte";
+  import IconLarge from "./IconLarge.svelte";
 
   export let title: string;
   export let description: string;
   export let error: ErrorParam = undefined;
-  export let icon: ComponentProps<Icon>["name"] = "alert";
+  export let icon: ComponentProps<IconLarge>["name"] = "alert";
 </script>
 
 <style>
@@ -53,7 +53,7 @@
 </style>
 
 <div class="error">
-  <Icon name={icon} size="48" />
+  <IconLarge name={icon} />
   <div class="txt-medium txt-bold">
     {title}
   </div>

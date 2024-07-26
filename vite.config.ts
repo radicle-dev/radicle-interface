@@ -20,7 +20,7 @@ export default defineConfig({
         if (
           path.basename(filename) === "Clipboard.svelte" ||
           path.basename(filename) === "ExternalLink.svelte" ||
-          path.basename(filename) === "IconSmall.svelte"
+          path.basename(filename) === "Icon.svelte"
         ) {
           return { customElement: true };
         }

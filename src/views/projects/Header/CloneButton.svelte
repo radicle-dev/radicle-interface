@@ -7,7 +7,7 @@
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Popover from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
 
@@ -41,7 +41,7 @@
 
 <Popover popoverPositionTop="2.5rem" popoverPositionRight="0">
   <Button slot="toggle" let:toggle on:click={toggle} variant="outline">
-    <IconSmall name="download" />
+    <Icon name="download" />
     <span class="global-hide-on-small-desktop-down">Clone</span>
   </Button>
 
@@ -55,7 +55,7 @@
           on:click={() => {
             radicle = true;
           }}>
-          <IconSmall name="logo" />
+          <Icon name="logo" />
           Radicle
         </Button>
         <div class="global-spacer" />
@@ -66,7 +66,7 @@
           on:click={() => {
             radicle = false;
           }}>
-          <IconSmall name="git" />
+          <Icon name="git" />
           Git
         </Button>
       </Radio>

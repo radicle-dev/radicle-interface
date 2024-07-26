@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PatchReviews } from "../Patch.svelte";
 
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
   export let reviews: PatchReviews;
@@ -62,11 +62,11 @@
           class:review-accept={review.verdict === "accept"}
           class:review-reject={review.verdict === "reject"}>
           {#if review.verdict === "accept"}
-            <IconSmall name="checkmark" />
+            <Icon name="checkmark" />
           {:else if review.verdict === "reject"}
-            <IconSmall name="cross" />
+            <Icon name="cross" />
           {:else}
-            <IconSmall name="chat" />
+            <Icon name="chat" />
           {/if}
         </span>
         <NodeId nodeId={review.author.id} alias={review.author.alias} />

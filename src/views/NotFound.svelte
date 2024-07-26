@@ -1,6 +1,6 @@
 <script lang="ts">
   import Layout from "@app/App/Layout.svelte";
-  import Icon from "@app/components/Icon.svelte";
+  import IconLarge from "@app/components/IconLarge.svelte";
 
   export let title: string;
 </script>
@@ -18,7 +18,7 @@
 
 <Layout>
   <div class="container">
-    <Icon name="desert" size="48" />
+    <IconLarge name="desert" />
     <div class="title txt-medium txt-bold">{title}</div>
   </div>
 </Layout>

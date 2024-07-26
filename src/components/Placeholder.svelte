@@ -1,10 +1,9 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
 
-  import Icon from "./Icon.svelte";
+  import IconLarge from "./IconLarge.svelte";
 
-  export let iconName: ComponentProps<Icon>["name"];
-  export let iconSize: ComponentProps<Icon>["size"] = "48";
+  export let iconName: ComponentProps<IconLarge>["name"];
   export let caption: string;
   export let inline: boolean = false;
 </script>
@@ -26,7 +25,7 @@
 </style>
 
 <div class="placeholder" class:inline>
-  <Icon name={iconName} size={iconSize} />
+  <IconLarge name={iconName} />
   {#each caption.split("\n") as line}
     {line}
     <br />

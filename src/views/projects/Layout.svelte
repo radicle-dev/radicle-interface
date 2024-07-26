@@ -3,7 +3,7 @@
   import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
   import Separator from "./Separator.svelte";
@@ -184,7 +184,7 @@
           <Button
             variant={activeTab === "source" ? "secondary" : "secondary-mobile"}
             styleWidth="100%">
-            <IconSmall name="chevron-left-right" />
+            <Icon name="chevron-left-right" />
           </Button>
         </Link>
       </div>
@@ -200,7 +200,7 @@
           <Button
             variant={activeTab === "issues" ? "secondary" : "secondary-mobile"}
             styleWidth="100%">
-            <IconSmall name="issue" />
+            <Icon name="issue" />
           </Button>
         </Link>
       </div>
@@ -216,7 +216,7 @@
           <Button
             variant={activeTab === "patches" ? "secondary" : "secondary-mobile"}
             styleWidth="100%">
-            <IconSmall name="patch" />
+            <Icon name="patch" />
           </Button>
         </Link>
       </div>

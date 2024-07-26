@@ -4,7 +4,7 @@
   import FileDiff from "@app/views/projects/Changeset/FileDiff.svelte";
   import FileLocationChange from "@app/views/projects/Changeset/FileLocationChange.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Observer, { intersection } from "@app/components/Observer.svelte";
 
   export let diff: Diff;
@@ -85,10 +85,10 @@
   {#if diff.stats.filesChanged > 1}
     <IconButton on:click={() => (expanded = !expanded)}>
       {#if expanded === true}
-        <IconSmall name="collapse" />
+        <Icon name="collapse" />
         <span class="global-hide-on-mobile-down">Collapse all</span>
       {:else}
-        <IconSmall name="expand" />
+        <Icon name="expand" />
         <span class="global-hide-on-mobile-down">Expand all</span>
       {/if}
     </IconButton>

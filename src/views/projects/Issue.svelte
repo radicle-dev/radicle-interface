@@ -10,7 +10,7 @@
   import Badge from "@app/components/Badge.svelte";
   import CobHeader from "@app/views/projects/Cob/CobHeader.svelte";
   import Embeds from "@app/views/projects/Cob/Embeds.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
   import Labels from "@app/views/projects/Cob/Labels.svelte";
@@ -171,12 +171,12 @@
         <svelte:fragment slot="state">
           {#if issue.state.status === "open"}
             <Badge size="tiny" variant="positive">
-              <IconSmall name="issue" />
+              <Icon name="issue" />
               {capitalize(issue.state.status)}
             </Badge>
           {:else}
             <Badge size="tiny" variant="negative">
-              <IconSmall name="issue" />
+              <Icon name="issue" />
               {capitalize(issue.state.status)} as
               {issue.state.reason}
             </Badge>

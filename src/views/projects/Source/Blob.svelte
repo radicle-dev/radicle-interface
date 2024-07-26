@@ -12,7 +12,7 @@
   import CommitButton from "@app/views/projects/components/CommitButton.svelte";
   import File from "@app/components/File.svelte";
   import FilePath from "@app/components/FilePath.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Markdown from "@app/components/Markdown.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Radio from "@app/components/Radio.svelte";
@@ -160,7 +160,7 @@
             on:click={() => {
               preview = false;
             }}>
-            <IconSmall name="chevron-left-right" />Code
+            <Icon name="chevron-left-right" />Code
           </Button>
           <Button
             styleBorderRadius="0"
@@ -169,14 +169,14 @@
               window.location.hash = "";
               preview = true;
             }}>
-            <IconSmall name="eye-open" />Preview
+            <Icon name="eye-open" />Preview
           </Button>
           <div class="global-spacer" />
         </Radio>
       {/if}
       <a href="{rawPath}/{blob.path}" target="_blank" rel="noreferrer">
         <Button variant="gray-white">
-          Raw <IconSmall name="arrow-box-up-right" />
+          Raw <Icon name="arrow-box-up-right" />
         </Button>
       </a>
     </div>

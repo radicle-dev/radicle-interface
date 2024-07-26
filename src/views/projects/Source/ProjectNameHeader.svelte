@@ -7,7 +7,7 @@
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/projects/Header/CloneButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import Link from "@app/components/Link.svelte";
   import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
@@ -77,7 +77,7 @@
     </span>
     {#if project.visibility && project.visibility.type === "private"}
       <Badge variant="yellow" size="tiny">
-        <IconSmall name="lock" />
+        <Icon name="lock" />
         Private
       </Badge>
     {/if}

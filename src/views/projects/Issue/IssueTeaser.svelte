@@ -4,7 +4,7 @@
   import { absoluteTimestamp, formatTimestamp } from "@app/lib/utils";
 
   import CommentCounter from "../CommentCounter.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Id from "@app/components/Id.svelte";
   import InlineLabels from "../Cob/InlineLabels.svelte";
   import InlineTitle from "@app/views/projects/components/InlineTitle.svelte";
@@ -76,7 +76,7 @@
     class="state"
     class:closed={issue.state.status === "closed"}
     class:open={issue.state.status === "open"}>
-    <IconSmall name="issue" />
+    <Icon name="issue" />
   </div>
   <div class="content">
     <div class="summary">

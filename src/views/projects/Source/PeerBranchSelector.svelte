@@ -9,7 +9,7 @@
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";
   import DropdownListItem from "@app/components/DropdownList/DropdownListItem.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Peer from "./PeerBranchSelector/Peer.svelte";
   import Popover from "@app/components/Popover.svelte";
@@ -132,7 +132,7 @@
 
           {#if selectedPeer.delegate}
             <Badge size="tiny" variant="delegate">
-              <IconSmall name="badge" />
+              <Icon name="badge" />
               <span class="global-hide-on-small-desktop-down">Delegate</span>
             </Badge>
           {/if}
@@ -142,7 +142,7 @@
         <span>/</span>
       {/if}
       {#if selectedBranch}
-        <IconSmall name="branch" />
+        <Icon name="branch" />
         <span class="txt-overflow">
           {selectedBranch}
         </span>
@@ -152,7 +152,7 @@
           </Badge>
         {/if}
       {/if}
-      <IconSmall name={expanded ? "chevron-up" : "chevron-down"} />
+      <Icon name={expanded ? "chevron-up" : "chevron-down"} />
     </Button>
 
     <div slot="popover" class="dropdown" let:toggle>
@@ -183,7 +183,7 @@
                   selectedBranch === revision}
                 style={`${subgridStyle} gap: inherit;`}>
                 <div class="global-flex-item">
-                  <IconSmall name="branch" />
+                  <Icon name="branch" />
                   <span class="txt-overflow">
                     {#if peer?.id}
                       <span class="global-flex-item">
@@ -198,7 +198,7 @@
                         {/if}
                         {#if peer.delegate}
                           <Badge variant="delegate" round>
-                            <IconSmall name="badge" />
+                            <Icon name="badge" />
                           </Badge>
                         {/if} /
                         <span class="txt-overflow">
@@ -251,7 +251,7 @@
               selected={onCanonical}
               style={`${subgridStyle} gap: inherit;`}>
               <div class="global-flex-item">
-                <IconSmall name="branch" />
+                <Icon name="branch" />
                 {project.defaultBranch}
                 <Badge title="Canonical branch" variant="foreground-emphasized">
                   Canonical
@@ -279,7 +279,7 @@
       <Button
         variant="not-selected"
         styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0">
-        <IconSmall name="cross" />
+        <Icon name="cross" />
       </Button>
     </Link>
   {/if}

@@ -2,7 +2,7 @@
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Popover from "@app/components/Popover.svelte";
 
   export let projectId: string;
@@ -48,7 +48,7 @@
       toggle();
     }}
     variant="secondary-toggle-off">
-    <IconSmall name="seedling" />
+    <Icon name="seedling" />
     <span class="title-counter">
       <span class="global-hide-on-mobile-down">Seed</span>
       <span

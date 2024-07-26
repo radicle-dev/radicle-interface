@@ -12,7 +12,7 @@
   import Command from "@app/components/Command.svelte";
   import Help from "@app/App/Help.svelte";
   import IconButton from "@app/components/IconButton.svelte";
-  import IconSmall from "@app/components/IconSmall.svelte";
+  import Icon from "@app/components/Icon.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
@@ -284,7 +284,7 @@
             No description configured.
             <Popover popoverPositionTop="0" popoverPositionLeft="2.25rem">
               <IconButton slot="toggle" let:toggle on:click={toggle}>
-                <IconSmall name="info" />
+                <Icon name="info" />
               </IconButton>
 
               <div slot="popover" class="box">
@@ -335,7 +335,7 @@
                 slot="toggle"
                 let:toggle
                 on:click={toggle}>
-                <IconSmall name="settings" />
+                <Icon name="settings" />
                 Settings
               </Button>
 
@@ -350,7 +350,7 @@
                 slot="toggle"
                 let:toggle
                 on:click={toggle}>
-                <IconSmall name="help" />
+                <Icon name="help" />
                 Help
               </Button>
               <Help slot="popover" />
@@ -455,7 +455,7 @@
               styleWidth="100%"
               let:toggle
               on:click={toggle}>
-              <IconSmall name="seedling" />
+              <Icon name="seedling" />
             </Button>
 
             <div slot="popover" style:width="20rem">
