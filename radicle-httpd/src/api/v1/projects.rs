@@ -64,7 +64,10 @@ async fn project_root_handler(
         per_page,
     } = qs;
     let page = page.unwrap_or(0);
-    let per_page = per_page.unwrap_or(10);
+    let per_page = per_page.unwrap_or_else(|| match show {
+        ProjectQuery::Pinned => ctx.profile.config.web.pinned.repositories.len(),
+        _ => 10,
+    });
     let storage = &ctx.profile.storage;
     let db = &ctx.profile.database()?;
     let pinned = &ctx.profile.config.web.pinned;
