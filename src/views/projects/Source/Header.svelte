@@ -89,21 +89,34 @@
 </style>
 
 <div class="top-header">
-  <PeerBranchSelector
-    {peers}
-    {peer}
-    {baseRoute}
-    onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
-    {project}
-    {selectedBranch} />
-  <CommitButton
-    styleMinWidth="0"
-    styleWidth="100%"
-    hideSummaryOnMobile={false}
-    projectId={project.id}
-    commit={lastCommit}
-    baseUrl={node}
-    styleRoundBorders />
+  {#if selectedBranch}
+    <PeerBranchSelector
+      {peers}
+      {peer}
+      {baseRoute}
+      onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
+      {project}
+      {selectedBranch} />
+  {/if}
+  <div class="global-flex-item txt-overflow" style:gap="1px">
+    <CommitButton
+      styleMinWidth="0"
+      styleWidth="100%"
+      hideSummaryOnMobile={false}
+      projectId={project.id}
+      commit={lastCommit}
+      styleRoundBorders={Boolean(selectedBranch)}
+      baseUrl={node} />
+    {#if !selectedBranch}
+      <Link route={baseRoute}>
+        <Button
+          variant="not-selected"
+          styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0">
+          <IconSmall name="cross" />
+        </Button>
+      </Link>
+    {/if}
+  </div>
 </div>
 
 <div class="header">

@@ -44,7 +44,7 @@
     {styleMinWidth}
     styleBorderRadius={styleRoundBorders
       ? "var(--border-radius-tiny)"
-      : "0 var(--border-radius-tiny) var(--border-radius-tiny) 0"}>
+      : "var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"}>
     <div class="txt-overflow commit">
       <div class="identifier global-commit">
         {commitShortId}
