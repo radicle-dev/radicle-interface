@@ -14,8 +14,9 @@ use std::time::Duration;
 use anyhow::Context as _;
 use axum::body::{Body, HttpBody};
 use axum::http::{Request, Response};
-use axum::middleware;
-use axum::Router;
+use axum::response::IntoResponse;
+use axum::routing::get;
+use axum::{middleware, Json, Router};
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 use tracing::Span;
@@ -115,11 +116,48 @@ fn router(options: Options, profile: Profile) -> anyhow::Result<Router> {
     let raw_router = raw::router(profile);
 
     let app = Router::new()
+        .route("/", get(root_index_handler))
         .merge(git_router)
         .nest("/api", api_router)
         .nest("/raw", raw_router);
 
     Ok(app)
+}
+
+async fn root_index_handler() -> impl IntoResponse {
+    let response = serde_json::json!({
+        "welcome": "Welcome to the radicle-httpd JSON API, this service doesn't serve the Radicle Explorer web client.",
+        "path": "/",
+        "links": [
+            {
+                "href": "/api",
+                "rel": "api",
+                "type": "GET"
+            },
+            {
+                "href": "/raw/:rid/:sha/*path",
+                "rel": "file_by_commit",
+                "type": "GET"
+            },
+            {
+                "href": "/raw/:rid/head/*path",
+                "rel": "file_by_canonical_head",
+                "type": "GET"
+            },
+            {
+                "href": "/raw/:rid/blobs/:oid",
+                "rel": "file_by_oid",
+                "type": "GET"
+            },
+            {
+                "href": "/:project/*request",
+                "rel": "git",
+                "type": "GET"
+            }
+        ]
+    });
+
+    Json(response)
 }
 
 pub mod logger {

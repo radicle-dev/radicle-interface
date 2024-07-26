@@ -46,6 +46,11 @@ async fn root_handler(State(ctx): State<Context>) -> impl IntoResponse {
                 "type": "GET"
             },
             {
+                "href": "/nodes/:nid",
+                "rel": "node",
+                "type": "GET"
+            },
+            {
                 "href": "/delegates/:did/projects",
                 "rel": "projects",
                 "type": "GET"
