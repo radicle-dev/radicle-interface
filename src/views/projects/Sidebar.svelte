@@ -21,14 +21,22 @@
   let expanded = collapsedOnly ? false : loadSidebarState();
 
   export function storeSidebarState(expanded: boolean): void {
-    window.localStorage.setItem(
-      SIDEBAR_STATE_KEY,
-      expanded ? "expanded" : "collapsed",
-    );
+    if (localStorage) {
+      localStorage.setItem(
+        SIDEBAR_STATE_KEY,
+        expanded ? "expanded" : "collapsed",
+      );
+    } else {
+      console.warn(
+        "localStorage isn't available, not able to persist the sidebar state without it.",
+      );
+    }
   }
 
   function loadSidebarState(): boolean {
-    const storedSidebarState = window.localStorage.getItem(SIDEBAR_STATE_KEY);
+    const storedSidebarState = localStorage
+      ? localStorage.getItem(SIDEBAR_STATE_KEY)
+      : null;
 
     if (storedSidebarState === null) {
       return true;

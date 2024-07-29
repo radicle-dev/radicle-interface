@@ -17,11 +17,13 @@ export const configuredPreferredSeeds = storedWritable<BaseUrl[]>(
   "configuredPreferredSeeds",
   array(preferredSeedSchema),
   [],
+  !localStorage,
 );
 const storedPreferredSeed = storedWritable<BaseUrl | undefined>(
   "preferredSeed",
   preferredSeedSchema,
   undefined,
+  !localStorage,
 );
 
 export function addSeedsToConfiguredSeeds(newSeeds: BaseUrl[]) {

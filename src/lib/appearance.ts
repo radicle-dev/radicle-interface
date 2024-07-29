@@ -20,7 +20,7 @@ export const codeFonts: {
 ];
 
 function loadCodeFont(): CodeFont {
-  const storedCodeFont = window.localStorage.getItem("codefont");
+  const storedCodeFont = localStorage ? localStorage.getItem("codefont") : null;
 
   if (storedCodeFont === null) {
     return "jetbrains";
@@ -31,7 +31,7 @@ function loadCodeFont(): CodeFont {
 
 function loadTheme(): Theme {
   const { matches } = window.matchMedia("(prefers-color-scheme: dark)");
-  const storedTheme = window.localStorage.getItem("theme");
+  const storedTheme = localStorage ? localStorage.getItem("theme") : null;
 
   if (storedTheme === null) {
     return matches ? "dark" : "light";
@@ -42,10 +42,22 @@ function loadTheme(): Theme {
 
 export function storeTheme(newTheme: Theme): void {
   theme.set(newTheme);
-  window.localStorage.setItem("theme", newTheme);
+  if (localStorage) {
+    localStorage.setItem("theme", newTheme);
+  } else {
+    console.warn(
+      "localStorage isn't available, not able to persist the selected theme without it.",
+    );
+  }
 }
 
 export function storeCodeFont(newCodeFont: CodeFont): void {
   codeFont.set(newCodeFont);
-  window.localStorage.setItem("codefont", newCodeFont);
+  if (localStorage) {
+    localStorage.setItem("codefont", newCodeFont);
+  } else {
+    console.warn(
+      "localStorage isn't available, not able to persist the selected code font without it.",
+    );
+  }
 }
