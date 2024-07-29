@@ -18,12 +18,12 @@ async function expectClipboard(content: string, page: Page) {
 // so that we don't run into race conditions, because there is no way to isolate
 // the clipboard in Playwright yet.
 test("copy to clipboard", async ({ page, browserName, context }) => {
-  // These tests only work in Chromium, because other browsers don't support
-  // changing permissions.
-  if (browserName !== "chromium") {
+  if (browserName === "chromium") {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  } else if (browserName === "webkit") {
+    // We aren't able to programatically change the permissions in webkit.
     test.skip();
   }
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await page.goto(sourceBrowsingUrl);
 
