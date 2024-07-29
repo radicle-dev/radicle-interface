@@ -112,7 +112,7 @@
         <Button
           variant="not-selected"
           styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0">
-          <IconSmall name="cross" />
+          <Icon name="cross" />
         </Button>
       </Link>
     {/if}
