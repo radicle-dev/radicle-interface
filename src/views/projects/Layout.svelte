@@ -126,7 +126,7 @@
 
         <Separator />
 
-        <span class="breadcrumb">
+        <span class="breadcrumb" title={project.id}>
           <Link
             route={{
               resource: "project.source",

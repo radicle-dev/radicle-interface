@@ -6,11 +6,13 @@ import type {
   ProjectLoadedRoute,
   ProjectRoute,
 } from "@app/views/projects/router";
+import type { UserLoadedRoute, UserRoute } from "@app/views/users/router";
 import type { NodesRoute, NodesLoadedRoute } from "@app/views/nodes/router";
 import type { ComponentProps } from "svelte";
 import type IconLarge from "@app/components/IconLarge.svelte";
 
 import { loadProjectRoute } from "@app/views/projects/router";
+import { loadUserRoute } from "@app/views/users/router";
 import { loadNodeRoute } from "@app/views/nodes/router";
 
 interface BootingRoute {
@@ -36,6 +38,7 @@ export interface ErrorRoute {
 
 export type Route =
   | BootingRoute
+  | UserRoute
   | ErrorRoute
   | NotFoundRoute
   | ProjectRoute
@@ -43,6 +46,7 @@ export type Route =
 
 export type LoadedRoute =
   | BootingRoute
+  | UserLoadedRoute
   | ErrorRoute
   | NotFoundRoute
   | ProjectLoadedRoute
@@ -54,6 +58,8 @@ export async function loadRoute(
 ): Promise<LoadedRoute> {
   if (route.resource === "nodes") {
     return await loadNodeRoute(route.params);
+  } else if (route.resource === "users") {
+    return await loadUserRoute(route);
   } else if (
     route.resource === "project.source" ||
     route.resource === "project.history" ||

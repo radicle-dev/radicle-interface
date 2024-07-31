@@ -89,6 +89,16 @@ export function formatEditedCaption(
   } edited ${absoluteTimestamp(timestamp)}`;
 }
 
+export function formatDid({
+  prefix,
+  pubkey,
+}: {
+  prefix: string;
+  pubkey: string;
+}): string {
+  return `${prefix}${pubkey}`;
+}
+
 export function baseUrlToString(baseUrl: BaseUrl): string {
   return `${baseUrl.scheme}://${baseUrl.hostname}:${baseUrl.port}`;
 }

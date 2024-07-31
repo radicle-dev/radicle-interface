@@ -130,12 +130,14 @@ export class Client {
 
   public async getByDelegate(
     delegateId: string,
+    query?: ProjectListQuery,
     options?: RequestOptions,
   ): Promise<Project[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
         path: `delegates/${delegateId}/projects`,
+        query,
         options,
       },
       projectsSchema,

@@ -181,7 +181,10 @@
               {issue.state.reason}
             </Badge>
           {/if}
-          <NodeId nodeId={issue.author.id} alias={issue.author.alias} />
+          <NodeId
+            {baseUrl}
+            nodeId={issue.author.id}
+            alias={issue.author.alias} />
           opened
           <Id id={issue.id} />
           <span title={utils.absoluteTimestamp(issue.discussion[0].timestamp)}>
@@ -228,7 +231,10 @@
           <div class="connector" />
           <div class="threads">
             {#each threads as thread, i (thread.root.id)}
-              <ThreadComponent {thread} rawPath={rawPath(project.head)} />
+              <ThreadComponent
+                {baseUrl}
+                {thread}
+                rawPath={rawPath(project.head)} />
               {#if i < threads.length - 1}
                 <div class="connector" />
               {/if}

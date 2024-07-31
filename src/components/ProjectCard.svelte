@@ -14,7 +14,6 @@
   import Link from "@app/components/Link.svelte";
 
   export let compact = false;
-
   export let projectInfo: ProjectInfo;
 
   $: project = projectInfo.project;
@@ -155,6 +154,7 @@
               <Icon name="lock" />
             </div>
           {/if}
+          <slot name="delegate" />
           <Badge
             variant="neutral"
             size="tiny"

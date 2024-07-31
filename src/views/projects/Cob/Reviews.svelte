@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { BaseUrl } from "@http-client";
   import type { PatchReviews } from "../Patch.svelte";
 
   import Icon from "@app/components/Icon.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
+  export let baseUrl: BaseUrl;
   export let reviews: PatchReviews;
 </script>
 
@@ -69,7 +71,10 @@
             <Icon name="chat" />
           {/if}
         </span>
-        <NodeId nodeId={review.author.id} alias={review.author.alias} />
+        <NodeId
+          {baseUrl}
+          nodeId={review.author.id}
+          alias={review.author.alias} />
       </div>
     {:else}
       <div class="txt-missing no-reviews">No reviews</div>

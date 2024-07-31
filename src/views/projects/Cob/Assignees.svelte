@@ -57,7 +57,7 @@
     {#each assignees as { id }}
       <Badge variant="neutral" size="small">
         <div class="assignee">
-          <Avatar inline nodeId={id} />
+          <Avatar variant="small" nodeId={id} />
           <span>{formatNodeId(id)}</span>
         </div>
       </Badge>

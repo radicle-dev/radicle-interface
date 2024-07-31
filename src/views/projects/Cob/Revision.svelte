@@ -378,7 +378,10 @@
               style:padding="0 0.375rem">
               <Icon name="patch" />
             </div>
-            <NodeId nodeId={revisionAuthor.id} alias={revisionAuthor.alias} />
+            <NodeId
+              {baseUrl}
+              nodeId={revisionAuthor.id}
+              alias={revisionAuthor.alias} />
             {#if patchId === revisionId}
               opened this patch on base
               <Id id={revisionBase} style="commit" />
@@ -455,7 +458,10 @@
       {#each timelines as element}
         {#if element.type === "thread"}
           <div class="connector" />
-          <Thread thread={element.inner} rawPath={rawPath(revisionBase)} />
+          <Thread
+            {baseUrl}
+            thread={element.inner}
+            rawPath={rawPath(revisionBase)} />
         {:else if element.type === "merge"}
           <div class="connector" />
           <div class="action merge">
@@ -465,6 +471,7 @@
               </div>
 
               <NodeId
+                {baseUrl}
                 nodeId={element.inner.author.id}
                 alias={element.inner.author.alias}>
               </NodeId>
@@ -489,6 +496,7 @@
             class:positive-review={review.verdict === "accept"}
             class:negative-review={review.verdict === "reject"}>
             <CommentComponent
+              {baseUrl}
               id={review.id}
               rawPath={rawPath(revisionBase)}
               authorId={author}

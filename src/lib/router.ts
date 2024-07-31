@@ -13,6 +13,7 @@ import {
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
 import { nodePath } from "@app/views/nodes/router";
+import { userRouteToPath, userTitle } from "@app/views/users/router";
 
 export { type Route };
 
@@ -112,6 +113,8 @@ function setTitle(loadedRoute: LoadedRoute) {
   } else if (loadedRoute.resource === "error") {
     title.push("Error");
     title.push("Radicle");
+  } else if (loadedRoute.resource === "users") {
+    title.push(...userTitle(loadedRoute));
   } else if (loadedRoute.resource === "notFound") {
     title.push("Page not found");
     title.push("Radicle");
@@ -186,7 +189,13 @@ function urlToRoute(url: URL): Route | null {
       if (hostAndPort) {
         const baseUrl = extractBaseUrl(hostAndPort);
         const id = segments.shift();
-        if (id) {
+        if (id === "users") {
+          const did = segments.shift();
+          if (did) {
+            return { resource: "users", baseUrl, did };
+          }
+          return null;
+        } else if (id) {
           return resolveProjectRoute(baseUrl, id, segments, url.search);
         } else {
           return {
@@ -217,6 +226,8 @@ export function routeToPath(route: Route): string {
     } else {
       return nodePath(route.params.baseUrl);
     }
+  } else if (route.resource === "users") {
+    return userRouteToPath(route);
   } else if (
     route.resource === "project.source" ||
     route.resource === "project.history" ||

@@ -13,6 +13,7 @@
   export let shorten: boolean = true;
   export let style: "oid" | "commit" | "none" = "oid";
   export let ariaLabel: string | undefined = undefined;
+  export let styleWidth: string | undefined = undefined;
 
   let icon: ComponentProps<Icon>["name"] = "clipboard";
   const text = "Click to copy";
@@ -72,7 +73,7 @@
   }
 </style>
 
-<div class="container">
+<div class="container" style:width={styleWidth}>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     on:mouseenter={() => {

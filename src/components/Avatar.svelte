@@ -2,7 +2,7 @@
   import { createIcon } from "@app/lib/blockies";
 
   export let nodeId: string;
-  export let inline = false;
+  export let variant: "small" | "large";
 
   function createContainer(source: string) {
     source = source.replace("did:key:", "");
@@ -19,20 +19,19 @@
 <style>
   .avatar {
     display: block;
-    border-radius: var(--border-radius-round);
     box-shadow: 0 0 0 1px var(--color-border-match-background);
-    min-width: 1rem;
-    min-height: 1rem;
-    height: 100%;
     width: inherit;
     object-fit: cover;
     background-size: cover;
     background-repeat: no-repeat;
   }
-  .inline {
-    display: inline-block !important;
+  .small {
     width: 1rem;
-    height: 1rem;
+    border-radius: var(--border-radius-round);
+  }
+  .large {
+    width: 4rem;
+    border-radius: var(--border-radius-small);
   }
 </style>
 
@@ -40,5 +39,6 @@
   title={nodeId}
   src={createContainer(nodeId)}
   class="avatar"
-  alt="avatar"
-  class:inline />
+  class:small={variant === "small"}
+  class:large={variant === "large"}
+  alt="avatar" />

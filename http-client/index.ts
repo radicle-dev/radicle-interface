@@ -97,6 +97,17 @@ const nodeSchema = object({
   description: string().optional(),
 });
 
+export type NodeIdentity = z.infer<typeof nodeIdentitySchema>;
+
+const nodeIdentitySchema = object({
+  alias: string().nullable(),
+  did: string(),
+  ssh: object({
+    full: string(),
+    hash: string(),
+  }),
+});
+
 export type NodeInfo = z.infer<typeof nodeInfoSchema>;
 
 const nodeInfoSchema = object({
@@ -202,7 +213,7 @@ export class HttpdClient {
     );
   }
 
-  public async getPoliciesById(
+  public async getPolicyById(
     id: string,
     options?: RequestOptions,
   ): Promise<SeedingPolicy> {
@@ -224,6 +235,34 @@ export class HttpdClient {
         options,
       },
       nodeSchema,
+    );
+  }
+
+  public async getNodeIdentity(
+    id: string,
+    options?: RequestOptions,
+  ): Promise<NodeIdentity> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "GET",
+        path: `nodes/${id}`,
+        options,
+      },
+      nodeIdentitySchema,
+    );
+  }
+
+  public async getNodeInventory(
+    id: string,
+    options?: RequestOptions,
+  ): Promise<string[]> {
+    return this.#fetcher.fetchOk(
+      {
+        method: "GET",
+        path: `nodes/${id}/inventory`,
+        options,
+      },
+      array(string()),
     );
   }
 }

@@ -274,7 +274,7 @@ export async function loadProjectRoute(
       const [project, commit, seedingPolicy, node] = await Promise.all([
         api.project.getById(route.project),
         api.project.getCommitBySha(route.project, route.commit),
-        api.getPoliciesById(route.project),
+        api.getPolicyById(route.project),
         api.getNode(),
       ]);
 
@@ -326,7 +326,7 @@ async function loadPatchesView(
       page: 0,
       perPage: PATCHES_PER_PAGE,
     }),
-    api.getPoliciesById(route.project),
+    api.getPolicyById(route.project),
     api.getNode(),
   ]);
 
@@ -356,7 +356,7 @@ async function loadIssuesView(
       page: 0,
       perPage: ISSUES_PER_PAGE,
     }),
-    api.getPoliciesById(route.project),
+    api.getPolicyById(route.project),
     api.getNode(),
   ]);
 
@@ -397,7 +397,7 @@ async function loadTreeView(
   } else {
     projectPromise = api.project.getById(route.project);
     peersPromise = api.project.getAllRemotes(route.project);
-    seedingPolicyPromise = api.getPoliciesById(route.project);
+    seedingPolicyPromise = api.getPolicyById(route.project);
   }
 
   const [project, peers, seedingPolicy, node] = await Promise.all([
@@ -514,7 +514,7 @@ async function loadHistoryView(
   const [project, peers, seedingPolicy, branchMap, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getAllRemotes(route.project),
-    api.getPoliciesById(route.project),
+    api.getPolicyById(route.project),
     getPeerBranches(api, route.project, route.peer),
     api.getNode(),
   ]);
@@ -572,7 +572,7 @@ async function loadIssueView(
   const [project, issue, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getIssueById(route.project, route.issue),
-    api.getPoliciesById(route.project),
+    api.getPolicyById(route.project),
     api.getNode(),
   ]);
   return {
@@ -600,7 +600,7 @@ async function loadPatchView(
   const [project, patch, seedingPolicy, node] = await Promise.all([
     api.project.getById(route.project),
     api.project.getPatchById(route.project, route.patch),
-    api.getPoliciesById(route.project),
+    api.getPolicyById(route.project),
     api.getNode(),
   ]);
   const latestRevision = patch.revisions[patch.revisions.length - 1];

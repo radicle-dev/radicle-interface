@@ -458,7 +458,7 @@
               styleWidth="100%"
               let:toggle
               on:click={toggle}>
-              <Icon name="seedling" />
+              <Icon name="info" />
             </Button>
 
             <div slot="popover" style:width="20rem">

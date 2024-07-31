@@ -18,9 +18,16 @@ export interface ProjectInfo {
 export async function fetchProjectInfos(
   baseUrl: BaseUrl,
   query?: ProjectListQuery,
+  delegate?: string,
 ): Promise<ProjectInfo[]> {
   const api = new HttpdClient(baseUrl);
-  const projects = await api.project.getAll(query);
+  let projects: Project[];
+
+  if (delegate) {
+    projects = await api.project.getByDelegate(delegate, query);
+  } else {
+    projects = await api.project.getAll(query);
+  }
   const info = await Promise.all(
     projects.map(async project => {
       const [activity, lastCommit] = await Promise.all([

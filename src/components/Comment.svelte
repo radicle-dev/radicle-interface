@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Comment } from "@http-client";
+  import type { BaseUrl, Comment } from "@http-client";
 
   import * as utils from "@app/lib/utils";
 
@@ -11,6 +11,7 @@
   export let id: string;
   export let authorId: string;
   export let authorAlias: string | undefined = undefined;
+  export let baseUrl: BaseUrl;
   export let body: string;
   export let reactions: Comment["reactions"] | undefined = undefined;
   export let caption = "commented";
@@ -107,7 +108,7 @@
     {/if}
     <div class="card-header" class:card-header-no-icon={isReply}>
       <slot class="icon" name="icon" />
-      <NodeId nodeId={authorId} alias={authorAlias} />
+      <NodeId {baseUrl} nodeId={authorId} alias={authorAlias} />
       <slot name="caption">{caption}</slot>
       <Id {id} />
       <span class="timestamp" title={utils.absoluteTimestamp(timestamp)}>

@@ -355,7 +355,10 @@
               insertions={stats.insertions}
               deletions={stats.deletions} />
           </Link>
-          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+          <NodeId
+            {baseUrl}
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
           opened
           <Id id={patch.id} />
           <span title={utils.absoluteTimestamp(patch.revisions[0].timestamp)}>
@@ -376,7 +379,7 @@
           <div
             style:margin-top="2rem"
             style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <Reviews {reviews} />
+            <Reviews {baseUrl} {reviews} />
             <Labels labels={patch.labels} />
             <Embeds embeds={uniqueEmbeds} />
           </div>
@@ -500,7 +503,7 @@
     </div>
 
     <div class="metadata global-hide-on-medium-desktop-down">
-      <Reviews {reviews} />
+      <Reviews {baseUrl} {reviews} />
       <Labels labels={patch.labels} />
       <Embeds embeds={uniqueEmbeds} />
     </div>

@@ -133,7 +133,10 @@
         {/if}
         <div
           style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-          <NodeId nodeId={patch.author.id} alias={patch.author.alias} />
+          <NodeId
+            {baseUrl}
+            nodeId={patch.author.id}
+            alias={patch.author.alias} />
           {patch.revisions.length > 1 ? "updated" : "opened"}
           <Id id={patch.id} />
           {#if patch.revisions.length > 1}

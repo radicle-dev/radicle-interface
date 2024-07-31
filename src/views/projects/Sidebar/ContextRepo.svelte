@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
 
   import { capitalize } from "lodash";
 
@@ -7,6 +7,7 @@
   import Icon from "@app/components/Icon.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
+  export let baseUrl: BaseUrl;
   export let projectThreshold: number;
   export let projectDelegates: Project["delegates"];
   export let seedingPolicy: SeedingPolicy;
@@ -30,6 +31,7 @@
     margin-bottom: 0;
   }
   .nid {
+    height: 21.5px;
     margin: 0.5rem 0;
   }
 </style>
@@ -55,11 +57,13 @@
       changes to be included in the canonical branch.
     {/if}
   </div>
-  {#each projectDelegates as delegate}
-    <div class="nid">
-      <NodeId nodeId={delegate.id} alias={delegate.alias} />
-    </div>
-  {/each}
+  <div class="delegates">
+    {#each projectDelegates as delegate}
+      <div class="nid">
+        <NodeId {baseUrl} nodeId={delegate.id} alias={delegate.alias} />
+      </div>
+    {/each}
+  </div>
 {/if}
 <div class="item-header">
   <span style:text-wrap="nowrap">Seeding Scope</span>

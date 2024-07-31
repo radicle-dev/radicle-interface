@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { BaseUrl } from "@http-client";
   import { formatNodeId, parseNodeId, truncateId } from "@app/lib/utils";
 
   import Avatar from "./Avatar.svelte";
-  import Id from "./Id.svelte";
+  import Link from "./Link.svelte";
 
+  export let baseUrl: BaseUrl;
   export let nodeId: string;
   export let alias: string | undefined = undefined;
 </script>
@@ -12,7 +14,6 @@
   .avatar-alias {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0.375rem;
     height: 1rem;
     font-family: var(--font-family-monospace);
@@ -24,9 +25,9 @@
   }
 </style>
 
-<Id id={nodeId} style="none">
-  <div class="avatar-alias">
-    <Avatar {nodeId} />
+<div class="avatar-alias">
+  <Avatar variant="small" {nodeId} />
+  <Link styleHoverState route={{ resource: "users", did: nodeId, baseUrl }}>
     {#if alias}
       <span class="txt-overflow">
         {alias}
@@ -39,5 +40,5 @@
         {truncateId(parseNodeId(nodeId)?.pubkey || "")}
       </span>
     {/if}
-  </div>
-</Id>
+  </Link>
+</div>

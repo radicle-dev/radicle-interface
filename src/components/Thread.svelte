@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Comment } from "@http-client";
+  import type { BaseUrl, Comment } from "@http-client";
 
   import CommentComponent from "@app/components/Comment.svelte";
   import Icon from "./Icon.svelte";
@@ -9,6 +9,7 @@
     replies: Comment[];
   };
   export let rawPath: string;
+  export let baseUrl: BaseUrl;
 
   $: root = thread.root;
   $: replies = thread.replies;
@@ -43,6 +44,7 @@
 <div class="comments">
   <div class="top-level-comment" class:has-replies={replies.length > 0}>
     <CommentComponent
+      {baseUrl}
       {rawPath}
       id={root.id}
       lastEdit={root.edits.length > 1 ? root.edits.pop() : undefined}
@@ -58,6 +60,7 @@
     <div class="replies">
       {#each replies as reply}
         <CommentComponent
+          {baseUrl}
           {rawPath}
           lastEdit={reply.edits.length > 1 ? reply.edits.pop() : undefined}
           id={reply.id}

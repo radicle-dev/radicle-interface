@@ -19,6 +19,7 @@
   import Patch from "@app/views/projects/Patch.svelte";
   import Patches from "@app/views/projects/Patches.svelte";
   import Source from "@app/views/projects/Source.svelte";
+  import Users from "@app/views/users/View.svelte";
 
   import Error from "@app/views/error/View.svelte";
   import Loading from "@app/components/Loading.svelte";
@@ -60,6 +61,8 @@
   </div>
 {:else if $activeRouteStore.resource === "nodes"}
   <Nodes {...$activeRouteStore.params} />
+{:else if $activeRouteStore.resource === "users"}
+  <Users {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.source"}
   <Source {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "project.history"}

@@ -128,7 +128,7 @@
       {#if selectedPeer}
         <div class="global-flex-item">
           <div class="node-id">
-            <Avatar nodeId={selectedPeer.id} inline />
+            <Avatar nodeId={selectedPeer.id} variant="small" />
             {selectedPeer.alias || formatNodeId(selectedPeer.id)}
           </div>
 
