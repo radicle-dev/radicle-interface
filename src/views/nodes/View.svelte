@@ -11,11 +11,12 @@
   import Button from "@app/components/Button.svelte";
   import Command from "@app/components/Command.svelte";
   import Help from "@app/App/Help.svelte";
-  import IconButton from "@app/components/IconButton.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import IconButton from "@app/components/IconButton.svelte";
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
   import MobileFooter from "@app/App/MobileFooter.svelte";
+  import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
@@ -433,7 +434,9 @@
                 </div>
               {:else}
                 <div class="empty-state">
-                  This node doesn't have any pinned repositories.
+                  <Placeholder
+                    iconName="desert"
+                    caption="This node doesn't have any pinned repositories." />
                 </div>
               {/if}
             {:catch error}
