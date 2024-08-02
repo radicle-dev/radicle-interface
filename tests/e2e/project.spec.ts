@@ -480,7 +480,7 @@ test.describe("browser error handling", () => {
 });
 
 test("external markdown link", async ({ context, page }) => {
-  await page.route("https://example.com/**", route => {
+  await context.route("https://example.com/**", route => {
     return route.fulfill({ body: "hello", contentType: "text/plain" });
   });
   await page.goto(`${markdownUrl}/tree/main/footnotes.md`);
