@@ -269,7 +269,7 @@ export async function loadProjectRoute(
     if (route.resource === "project.source") {
       return await loadTreeView(route, previousLoaded);
     } else if (route.resource === "project.history") {
-      return await loadHistoryView(route);
+      return await loadHistoryView(route, previousLoaded);
     } else if (route.resource === "project.commit") {
       const [project, commit, seedingPolicy, node] = await Promise.all([
         api.project.getById(route.project),
@@ -386,25 +386,31 @@ async function loadTreeView(
   let projectPromise: Promise<Project>;
   let seedingPolicyPromise: Promise<SeedingPolicy>;
   let peersPromise: Promise<Remote[]>;
+  let nodePromise: Promise<Partial<Node>>;
   if (
-    previousLoaded.resource === "project.source" &&
+    (previousLoaded.resource === "project.source" ||
+      previousLoaded.resource === "project.history") &&
     previousLoaded.params.project.id === route.project &&
     previousLoaded.params.peer === route.peer
   ) {
     projectPromise = Promise.resolve(previousLoaded.params.project);
     peersPromise = Promise.resolve(previousLoaded.params.peers);
     seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
+    nodePromise = Promise.resolve({
+      avatarUrl: previousLoaded.params.nodeAvatarUrl,
+    });
   } else {
     projectPromise = api.project.getById(route.project);
     peersPromise = api.project.getAllRemotes(route.project);
     seedingPolicyPromise = api.getPolicyById(route.project);
+    nodePromise = api.getNode();
   }
 
   const [project, peers, seedingPolicy, node] = await Promise.all([
     projectPromise,
     peersPromise,
     seedingPolicyPromise,
-    api.getNode(),
+    nodePromise,
   ]);
 
   let branchMap: Record<string, string> = {
@@ -508,15 +514,39 @@ async function loadBlob(
 }
 async function loadHistoryView(
   route: ProjectHistoryRoute,
+  previousLoaded: LoadedRoute,
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
 
+  let projectPromise: Promise<Project>;
+  let seedingPolicyPromise: Promise<SeedingPolicy>;
+  let peersPromise: Promise<Remote[]>;
+  let nodePromise: Promise<Partial<Node>>;
+  if (
+    (previousLoaded.resource === "project.source" ||
+      previousLoaded.resource === "project.history") &&
+    previousLoaded.params.project.id === route.project &&
+    previousLoaded.params.peer === route.peer
+  ) {
+    projectPromise = Promise.resolve(previousLoaded.params.project);
+    peersPromise = Promise.resolve(previousLoaded.params.peers);
+    seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
+    nodePromise = Promise.resolve({
+      avatarUrl: previousLoaded.params.nodeAvatarUrl,
+    });
+  } else {
+    projectPromise = api.project.getById(route.project);
+    peersPromise = api.project.getAllRemotes(route.project);
+    seedingPolicyPromise = api.getPolicyById(route.project);
+    nodePromise = api.getNode();
+  }
+
   const [project, peers, seedingPolicy, branchMap, node] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getAllRemotes(route.project),
-    api.getPolicyById(route.project),
+    projectPromise,
+    peersPromise,
+    seedingPolicyPromise,
     getPeerBranches(api, route.project, route.peer),
-    api.getNode(),
+    nodePromise,
   ]);
 
   let commitId;
@@ -534,9 +564,22 @@ async function loadHistoryView(
     );
   }
 
+  let treePromise: Promise<Tree>;
+
+  if (
+    (previousLoaded.resource === "project.source" ||
+      previousLoaded.resource === "project.history") &&
+    previousLoaded.params.project.id === route.project &&
+    previousLoaded.params.commit === commitId
+  ) {
+    treePromise = Promise.resolve(previousLoaded.params.tree);
+  } else {
+    treePromise = api.project.getTree(route.project, commitId);
+  }
+
   const [tree, commitHeaders] = await Promise.all([
-    api.project.getTree(route.project, commitId),
-    await api.project.getAllCommits(project.id, {
+    treePromise,
+    api.project.getAllCommits(project.id, {
       parent: commitId,
       page: 0,
       perPage: config.source.commitsPerPage,
