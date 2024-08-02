@@ -22,7 +22,7 @@ test("node metadata", async ({ page, peerManager }) => {
   await page.goto(peer.uiUrl());
 
   await expect(page.getByText(shortNodeRemote).first()).toBeVisible();
-  await expect(page.getByText("/radicle:1.0.0-rc.11/")).toBeVisible();
+  await expect(page.getByText("/radicle:1.0.0-rc.13/")).toBeVisible();
 });
 
 test("node projects", async ({ page }) => {

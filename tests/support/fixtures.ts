@@ -534,7 +534,13 @@ export async function createCobsFixture(peer: RadiclePeer) {
     { cwd: projectFolder },
   );
   await peer.rad(
-    ["patch", "review", patchFour],
+    [
+      "patch",
+      "review",
+      patchFour,
+      "-m",
+      "No review due to patch being archived.",
+    ],
     createOptions(projectFolder, 1),
   );
   await peer.rad(
