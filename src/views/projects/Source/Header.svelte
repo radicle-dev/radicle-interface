@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ProjectRoute } from "../router";
   import type { BaseUrl, Project, Remote, Tree } from "@http-client";
+  import type { ComponentProps } from "svelte";
 
   import { HttpdClient } from "@http-client";
 
@@ -27,6 +28,8 @@
 
   const api = new HttpdClient(node);
   let selectedBranch: string | undefined;
+  let commitButtonVariant: ComponentProps<CommitButton>["variant"] | undefined =
+    undefined;
 
   // Revision may be a commit ID, a branch name or `undefined` which means the
   // default branch. We assign `selectedBranch` accordingly.
@@ -37,6 +40,14 @@
   }
 
   $: lastCommit = tree.lastCommit;
+  $: onCanonical = Boolean(!peer && selectedBranch === project.defaultBranch);
+  $: if (onCanonical) {
+    commitButtonVariant = "right";
+  } else if (!selectedBranch) {
+    commitButtonVariant = "left";
+  } else {
+    commitButtonVariant = "center";
+  }
 </script>
 
 <style>
@@ -45,7 +56,7 @@
     align-items: center;
     justify-content: left;
     row-gap: 0.5rem;
-    gap: 1rem;
+    gap: 1px;
     flex-wrap: wrap;
     margin-bottom: 2rem;
   }
@@ -94,20 +105,20 @@
       {peers}
       {peer}
       {baseRoute}
-      onCanonical={Boolean(!peer && selectedBranch === project.defaultBranch)}
+      {onCanonical}
       {project}
       {selectedBranch} />
   {/if}
   <div class="global-flex-item txt-overflow" style:gap="1px">
     <CommitButton
+      variant={commitButtonVariant}
       styleMinWidth="0"
       styleWidth="100%"
       hideSummaryOnMobile={false}
       projectId={project.id}
       commit={lastCommit}
-      styleRoundBorders={Boolean(selectedBranch)}
       baseUrl={node} />
-    {#if !selectedBranch}
+    {#if !onCanonical}
       <Link route={baseRoute}>
         <Button
           variant="not-selected"

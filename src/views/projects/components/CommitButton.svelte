@@ -3,17 +3,32 @@
 
   import Button from "@app/components/Button.svelte";
   import Link from "@app/components/Link.svelte";
-  import { formatCommit } from "@app/lib/utils";
+  import { formatCommit, unreachable } from "@app/lib/utils";
 
+  export let variant: "standalone" | "right" | "center" | "left" = "standalone";
   export let styleMinWidth: string | undefined = undefined;
   export let styleWidth: "100%" | undefined = undefined;
-  export let styleRoundBorders: boolean = false;
   export let projectId: string;
   export let baseUrl: BaseUrl;
   export let hideSummaryOnMobile: boolean = true;
   export let commit: Commit["commit"];
 
+  let styleBorderRadius: string | undefined = undefined;
+
   $: commitShortId = formatCommit(commit.id);
+  $: if (variant === "right") {
+    styleBorderRadius =
+      "0 var(--border-radius-tiny) var(--border-radius-tiny) 0";
+  } else if (variant === "standalone") {
+    styleBorderRadius = "var(--border-radius-tiny)";
+  } else if (variant === "left") {
+    styleBorderRadius =
+      "var(--border-radius-tiny) 0 0 var(--border-radius-tiny)";
+  } else if (variant === "center") {
+    styleBorderRadius = "0";
+  } else {
+    unreachable(variant);
+  }
 </script>
 
 <style>
@@ -42,9 +57,7 @@
     variant="not-selected"
     {styleWidth}
     {styleMinWidth}
-    styleBorderRadius={styleRoundBorders
-      ? "var(--border-radius-tiny)"
-      : "var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"}>
+    {styleBorderRadius}>
     <div class="txt-overflow commit">
       <div class="identifier global-commit">
         {commitShortId}

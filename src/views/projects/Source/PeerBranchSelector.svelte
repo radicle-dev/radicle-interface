@@ -118,9 +118,7 @@
       slot="toggle"
       let:expanded
       let:toggle
-      styleBorderRadius={onCanonical
-        ? "var(--border-radius-tiny)"
-        : "var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"}
+      styleBorderRadius={"var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"}
       styleWidth="100%"
       on:click={toggle}
       title="Change branch"
@@ -276,13 +274,4 @@
       </div>
     </div>
   </Popover>
-  {#if selectedPeer}
-    <Link route={baseRoute}>
-      <Button
-        variant="not-selected"
-        styleBorderRadius="0 var(--border-radius-tiny) var(--border-radius-tiny) 0">
-        <Icon name="cross" />
-      </Button>
-    </Link>
-  {/if}
 </div>
