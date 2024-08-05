@@ -21,7 +21,7 @@
   import ProjectCard from "@app/components/ProjectCard.svelte";
 
   import PolicyExplainer from "./PolicyExplainer.svelte";
-  import PreferredSeedDropdown from "./PreferredSeedDropdown.svelte";
+  import SeedSelector from "./SeedSelector.svelte";
   import Seeding from "./Seeding.svelte";
   import UserAgent from "./UserAgent.svelte";
   import NodeAddress from "./NodeAddress.svelte";
@@ -261,13 +261,9 @@
             src={node.avatarUrl
               ? node.avatarUrl
               : "/images/default-seed-avatar.png"} />
-          <div>
+          <div style:width="100%">
             <div class="global-flex-item desktop-hostname">
-              <PreferredSeedDropdown>
-                <div class="txt-medium txt-semibold txt-overflow">
-                  {baseUrl.hostname}
-                </div>
-              </PreferredSeedDropdown>
+              <SeedSelector {baseUrl} />
             </div>
             <NodeAddress {node} />
           </div>
@@ -384,11 +380,7 @@
                 : "/images/default-seed-avatar.png"} />
             <div>
               <div class="global-flex-item">
-                <PreferredSeedDropdown>
-                  <div class="txt-medium txt-semibold txt-overflow">
-                    {baseUrl.hostname}
-                  </div>
-                </PreferredSeedDropdown>
+                <SeedSelector {baseUrl} />
               </div>
               <NodeAddress {node} />
             </div>

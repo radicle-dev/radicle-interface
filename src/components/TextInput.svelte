@@ -12,6 +12,7 @@
   export let value: string | undefined = undefined;
 
   export let autofocus: boolean = false;
+  export let autoselect: boolean = false;
   export let disabled: boolean = false;
   export let loading: boolean = false;
   export let valid: boolean = true;
@@ -29,9 +30,15 @@
   let success = false;
 
   onMount(() => {
-    if (autofocus && inputElement) {
+    if (inputElement === undefined) {
+      return;
+    }
+    if (autofocus) {
       // We set preventScroll to true for Svelte animations to work.
       inputElement.focus({ preventScroll: true });
+    }
+    if (autoselect) {
+      inputElement.select();
     }
   });
 
@@ -69,7 +76,7 @@
     position: relative;
     flex: 1;
     align-items: center;
-    height: var(--button-small-height);
+    height: var(--button-regular-height);
     background: var(--color-background-dip);
   }
   input {
@@ -146,6 +153,7 @@
     {disabled}
     bind:value
     autocomplete="off"
+    spellcheck="false"
     on:input
     on:focus={handleFocusEvent}
     on:blur={handleFocusEvent}

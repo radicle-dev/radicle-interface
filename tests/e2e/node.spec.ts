@@ -51,22 +51,7 @@ test("show pinned repositories", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("no duplicate entry for preferred seeds", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByText("127.0.0.1").first()).toBeVisible();
-
-  await page.getByTitle("Switch preferred seeds").getByRole("button").click();
-  await expect(page.getByRole("button", { name: "127.0.0.1" })).toBeVisible();
-
-  await page.getByPlaceholder("Navigate to seed").fill("127.0.0.1");
-  await page.getByPlaceholder("Navigate to seed").press("Enter");
-  await expect(page.getByText("Seed node already added.")).toBeVisible();
-
-  await page.getByPlaceholder("Navigate to seed").fill("");
-  await expect(page.getByText("Seed node already added.")).toBeHidden();
-});
-
-test("adding and removing a new preferred seed", async ({ page }) => {
+test("edit seed bookmarks", async ({ page }) => {
   // Proxy requests to seed.example.tld to the local test api.
   await page.route(
     url => url.hostname === "seed.example.tld",
@@ -83,29 +68,54 @@ test("adding and removing a new preferred seed", async ({ page }) => {
   );
 
   await page.goto("/");
-  await expect(page.getByText("127.0.0.1").first()).toBeVisible();
 
-  await page.getByTitle("Switch preferred seeds").getByRole("button").click();
-  await expect(page.getByRole("button", { name: "127.0.0.1" })).toBeVisible();
-
-  await page.getByPlaceholder("Navigate to seed").fill("seed.example.tld");
-  await page.getByPlaceholder("Navigate to seed").press("Enter");
-  await expect(page.getByText("seed.example.tld").first()).toBeVisible();
-
-  await page.getByTitle("Switch preferred seeds").getByRole("button").click();
+  await page
+    .getByRole("button", { name: "Toggle seed selector dropdown" })
+    .click();
+  await expect(page.getByPlaceholder("seed.radicle.example")).toHaveValue(
+    "127.0.0.1",
+  );
   await expect(
-    page.getByRole("button", { name: "seed.example.tld" }),
+    page.getByRole("button", { name: "Default seeds can't be removed" }),
+  ).toBeVisible();
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(1);
+
+  // The input box is focussed, has the text selected and ready to be overwritten.
+  await page.getByPlaceholder("seed.radicle.example").fill("seed.example.tld");
+  await page.getByPlaceholder("seed.radicle.example").press("Enter");
+
+  await expect(page).toHaveURL("/nodes/seed.example.tld");
+  await expect(
+    page.getByRole("button", { name: "Add bookmark" }),
   ).toBeVisible();
 
-  // Test that removing the selected seed doesn't end in an undefined state.
+  await page
+    .getByRole("button", { name: "Toggle seed selector dropdown" })
+    .click();
+
+  // After navigating to the seed it should not yet be added to the bookmarks.
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(1);
+
+  await page.getByRole("button", { name: "Add bookmark" }).click();
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(2);
+
+  // Test that new seed is persisted and opened when we go to the landing page.
+  await page.getByRole("link", { name: "Radicle logo" }).click();
+  await expect(page.getByText("seed.example.tld").first()).toBeVisible();
+
+  // Test removing a bookmark.
+  await page
+    .getByRole("button", { name: "Toggle seed selector dropdown" })
+    .click();
+  await page.getByRole("button", { name: "Remove bookmark" }).nth(1).click();
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(1);
+
+  // Remove the bookmark from within the dropdown.
+  await page.getByRole("button", { name: "Add bookmark" }).click();
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(2);
   await page
     .getByRole("button", { name: "seed.example.tld" })
-    .getByRole("button")
+    .getByRole("button", { name: "Remove bookmark" })
     .click();
-  await expect(page.getByText("127.0.0.1").first()).toBeVisible();
-
-  await page.getByTitle("Switch preferred seeds").getByRole("button").click();
-  await expect(
-    page.getByRole("button", { name: "seed.example.tld" }),
-  ).toBeHidden();
+  await expect(page.locator(".dropdown > .dropdown-item")).toHaveCount(1);
 });

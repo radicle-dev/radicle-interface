@@ -3,9 +3,11 @@
     "defaultHttpdPort": 8081,
     "defaultHttpdScheme": "http"
   },
-  "fallbackPreferredSeed": {
-    "hostname": "127.0.0.1",
-    "port": 8081,
-    "scheme": "http"
-  }
+  "preferredSeeds": [
+    {
+      "hostname": "127.0.0.1",
+      "port": 8081,
+      "scheme": "http"
+    }
+  ]
 }

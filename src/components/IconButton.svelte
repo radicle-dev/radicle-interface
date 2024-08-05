@@ -1,4 +1,6 @@
-<script lang="ts">
+<script lang="ts" strictEvent>
+  import { createEventDispatcher } from "svelte";
+
   import Loading from "./Loading.svelte";
 
   export let ariaLabel: string | undefined = undefined;
@@ -6,6 +8,10 @@
   export let loading: boolean = false;
   export let title: string | undefined = undefined;
   export let stylePadding: string | undefined = undefined;
+  export let disabled: boolean = false;
+  export let stopPropagation: boolean = false;
+
+  const dispatch = createEventDispatcher<{ click: MouseEvent }>();
 </script>
 
 <style>
@@ -29,6 +35,11 @@
     color: var(--color-foreground-contrast);
     background-color: var(--color-fill-ghost);
   }
+  .disabled,
+  .disabled:hover {
+    color: var(--color-fill-counter);
+    background-color: unset;
+  }
 </style>
 
 {#if loading}
@@ -36,14 +47,23 @@
 {:else}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
-    style:padding={stylePadding}
-    role="button"
-    tabindex="0"
+    class:disabled
     aria-label={ariaLabel}
-    {title}
-    class="button"
     class:inline
-    on:click>
+    class="button"
+    on:click={ev => {
+      if (stopPropagation) {
+        ev.stopPropagation();
+      }
+      if (disabled) {
+        return;
+      }
+      dispatch("click", ev);
+    }}
+    role="button"
+    style:padding={stylePadding}
+    tabindex="0"
+    {title}>
     <slot />
   </div>
 {/if}

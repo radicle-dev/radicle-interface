@@ -9,9 +9,21 @@
     "commitsPerPage": 30
   },
   "supportWebsite": "https://radicle.zulipchat.com",
-  "fallbackPreferredSeed": {
-    "hostname": "seed.radicle.garden",
-    "port": 443,
-    "scheme": "https"
-  }
+  "preferredSeeds": [
+    {
+      "hostname": "ash.radicle.garden",
+      "port": 443,
+      "scheme": "https"
+    },
+    {
+      "hostname": "seed.radicle.xyz",
+      "port": 443,
+      "scheme": "https"
+    },
+    {
+      "hostname": "seed.radicle.garden",
+      "port": 443,
+      "scheme": "https"
+    }
+  ]
 }

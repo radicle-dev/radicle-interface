@@ -12,7 +12,7 @@ declare module "virtual:*" {
     };
     reactions: string[];
     supportWebsite: string;
-    fallbackPreferredSeed: BaseUrl;
+    preferredSeeds: BaseUrl[];
   };
 
   export default config;

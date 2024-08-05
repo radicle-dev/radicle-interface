@@ -7,8 +7,7 @@ import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { baseUrlToString, isLocal } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
 import { unreachableError } from "@app/views/projects/error";
-import { preferredSeeds } from "@app/lib/seeds";
-import { get } from "svelte/store";
+import { determineSeed } from "./SeedSelector";
 
 export type NodesRouteParams =
   | {
@@ -49,7 +48,7 @@ export async function loadNodeRoute(
   if (params) {
     baseUrl = params.baseUrl;
   } else {
-    baseUrl = get(preferredSeeds).selected;
+    baseUrl = determineSeed();
   }
 
   const api = new HttpdClient(baseUrl);

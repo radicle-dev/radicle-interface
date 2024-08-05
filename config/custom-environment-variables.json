@@ -10,7 +10,7 @@
   },
   "supportWebsite": "SUPPORT_WEBSITE",
   "fallbackPreferredSeed": {
-    "__name": "FALLBACK_PREFERRED_SEED",
+    "__name": "PREFERRED_SEEDS",
     "__format": "json"
   }
 }

@@ -1,6 +1,7 @@
 <script lang="ts" generics="T">
   export let items: T[];
   export let styleDropdownMinWidth: string | undefined = undefined;
+  export let styleDropdownPadding: string = "0 0 0.25rem 0";
 </script>
 
 <style>
@@ -14,19 +15,17 @@
     padding: 0.25rem 0.25rem 0 0.25rem;
     font-size: var(--font-size-small);
   }
-  .dropdown-item:last-child {
-    padding-bottom: 0.25rem;
-  }
 </style>
 
-<div class="dropdown" style:min-width={styleDropdownMinWidth}>
-  {#each items as item}
-    <div class="dropdown-item">
-      <slot name="item" {item} />
-    </div>
-  {:else}
-    <div class="dropdown-item">
-      <slot name="empty" />
-    </div>
-  {/each}
-</div>
+{#if items.length}
+  <div
+    class="dropdown"
+    style:min-width={styleDropdownMinWidth}
+    style:padding={styleDropdownPadding}>
+    {#each items as item}
+      <div class="dropdown-item">
+        <slot name="item" {item} />
+      </div>
+    {/each}
+  </div>
+{/if}
