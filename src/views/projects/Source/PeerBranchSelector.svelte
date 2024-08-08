@@ -3,8 +3,8 @@
   import type { Project, Remote } from "@http-client";
 
   import fuzzysort from "fuzzysort";
+  import orderBy from "lodash/orderBy";
   import { formatCommit, formatNodeId } from "@app/lib/utils";
-  import { orderBy } from "lodash";
 
   import Badge from "@app/components/Badge.svelte";
   import Button from "@app/components/Button.svelte";

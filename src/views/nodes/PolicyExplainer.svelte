@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DefaultSeedingPolicy } from "@http-client";
 
-  import { capitalize } from "lodash";
+  import capitalize from "lodash/capitalize";
 
   import IconButton from "@app/components/IconButton.svelte";
   import Icon from "@app/components/Icon.svelte";

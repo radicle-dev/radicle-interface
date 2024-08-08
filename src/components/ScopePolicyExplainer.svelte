@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DefaultSeedingPolicy, SeedingPolicy } from "@http-client";
 
-  import { capitalize } from "lodash";
+  import capitalize from "lodash/capitalize";
 
   export let seedingPolicy: DefaultSeedingPolicy | SeedingPolicy;
 

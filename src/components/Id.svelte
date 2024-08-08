@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ComponentProps } from "svelte";
 
-  import { debounce } from "lodash";
+  import debounce from "lodash/debounce";
 
   import { formatObjectId } from "@app/lib/utils";
   import { toClipboard } from "@app/lib/utils";
