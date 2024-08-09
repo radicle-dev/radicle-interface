@@ -11,6 +11,7 @@
 
   import * as utils from "@app/lib/utils";
   import { HttpdClient } from "@http-client";
+  import { cachedGetDiff } from "@app/views/projects/router";
   import { onMount } from "svelte";
 
   import CobCommitTeaser from "@app/views/projects/Cob/CobCommitTeaser.svelte";
@@ -104,7 +105,12 @@
   onMount(async () => {
     try {
       loading = true;
-      response = await api.project.getDiff(projectId, fromCommit, revisionOid);
+      response = await cachedGetDiff(
+        api.baseUrl,
+        projectId,
+        fromCommit,
+        revisionOid,
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error = err;

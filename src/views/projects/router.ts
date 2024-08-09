@@ -13,21 +13,24 @@ import type {
   DiffBlob,
   Issue,
   IssueState,
+  Node,
   Patch,
   PatchState,
   Project,
   Remote,
+  Revision,
   SeedingPolicy,
   Tree,
 } from "@http-client";
 
 import * as Syntax from "@app/lib/syntax";
 import config from "virtual:config";
-import { isLocal, unreachable } from "@app/lib/utils";
-import { nodePath } from "@app/views/nodes/router";
-import { handleError, unreachableError } from "@app/views/projects/error";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
+import { cached } from "@app/lib/cache";
+import { handleError, unreachableError } from "@app/views/projects/error";
+import { isLocal, unreachable } from "@app/lib/utils";
+import { nodePath } from "@app/views/nodes/router";
 
 export const PATCHES_PER_PAGE = 10;
 export const ISSUES_PER_PAGE = 10;
@@ -225,6 +228,15 @@ function isOid(input: string): boolean {
   return /^[a-fA-F0-9]{40}$/.test(input);
 }
 
+export const cachedGetDiff = cached(
+  async (baseUrl: BaseUrl, rid: string, base: string, oid: string) => {
+    const api = new HttpdClient(baseUrl);
+    return await api.project.getDiff(rid, base, oid);
+  },
+  (...args) => JSON.stringify(args),
+  { max: 200 },
+);
+
 function parseRevisionToOid(
   revision: string | undefined,
   defaultBranch: string,
@@ -291,7 +303,7 @@ export async function loadProjectRoute(
     } else if (route.resource === "project.issue") {
       return await loadIssueView(route);
     } else if (route.resource === "project.patch") {
-      return await loadPatchView(route);
+      return await loadPatchView(route, previousLoaded);
     } else if (route.resource === "project.issues") {
       return await loadIssuesView(route);
     } else if (route.resource === "project.patches") {
@@ -633,6 +645,7 @@ async function loadIssueView(
 
 async function loadPatchView(
   route: ProjectPatchRoute,
+  previousLoaded: LoadedRoute,
 ): Promise<ProjectLoadedRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
@@ -640,14 +653,40 @@ async function loadPatchView(
       route.project
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, patch, seedingPolicy, node] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getPatchById(route.project, route.patch),
-    api.getPolicyById(route.project),
-    api.getNode(),
+  let projectPromise: Promise<Project>;
+  let patchPromise: Promise<Patch>;
+  let nodePromise: Promise<Partial<Node>>;
+  let seedingPolicyPromise: Promise<SeedingPolicy>;
+
+  if (
+    previousLoaded.resource === "project.patch" &&
+    previousLoaded.params.project.id === route.project &&
+    previousLoaded.params.patch.id === route.patch
+  ) {
+    projectPromise = Promise.resolve(previousLoaded.params.project);
+    patchPromise = Promise.resolve(previousLoaded.params.patch);
+    seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
+    nodePromise = Promise.resolve({
+      avatarUrl: previousLoaded.params.nodeAvatarUrl,
+    });
+  } else {
+    projectPromise = api.project.getById(route.project);
+    patchPromise = api.project.getPatchById(route.project, route.patch);
+    seedingPolicyPromise = api.getPolicyById(route.project);
+    nodePromise = api.getNode();
+  }
+  const [project, patch, seedingPolicy, { avatarUrl }] = await Promise.all([
+    projectPromise,
+    patchPromise,
+    seedingPolicyPromise,
+    nodePromise,
   ]);
-  const latestRevision = patch.revisions[patch.revisions.length - 1];
-  const { diff } = await api.project.getDiff(
+
+  const latestRevision = patch.revisions.at(-1) as Revision;
+  const {
+    diff: { stats },
+  } = await cachedGetDiff(
+    api.baseUrl,
     route.project,
     latestRevision.base,
     latestRevision.oid,
@@ -669,7 +708,8 @@ async function loadPatchView(
           `revision ${revisionId} of patch ${route.patch} not found`,
         );
       }
-      const { diff, commits, files } = await api.project.getDiff(
+      const { diff, commits, files } = await cachedGetDiff(
+        api.baseUrl,
         route.project,
         revision.base,
         revision.oid,
@@ -686,7 +726,8 @@ async function loadPatchView(
     }
     case "diff": {
       const { fromCommit, toCommit } = route.view;
-      const { diff, files } = await api.project.getDiff(
+      const { diff, files } = await cachedGetDiff(
+        api.baseUrl,
         route.project,
         fromCommit,
         toCommit,
@@ -704,9 +745,9 @@ async function loadPatchView(
       project,
       rawPath,
       patch,
-      stats: diff.stats,
+      stats,
       view,
-      nodeAvatarUrl: node.avatarUrl,
+      nodeAvatarUrl: avatarUrl,
     },
   };
 }

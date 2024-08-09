@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BaseUrl, Patch, Revision } from "@http-client";
 
-  import { HttpdClient } from "@http-client";
+  import { cachedGetDiff } from "@app/views/projects/router";
   import { formatCommit } from "@app/lib/utils";
 
   import DiffStatBadge from "@app/components/DiffStatBadge.svelte";
@@ -12,17 +12,9 @@
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let latestRevision: Revision;
-
-  $: diffPromise = api.project.getDiff(
-    projectId,
-    latestRevision.base,
-    latestRevision.oid,
-  );
-
-  const api = new HttpdClient(baseUrl);
 </script>
 
-{#await diffPromise}
+{#await cachedGetDiff(baseUrl, projectId, latestRevision.base, latestRevision.oid)}
   <Loading small />
 {:then { diff }}
   <Link
