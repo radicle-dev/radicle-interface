@@ -14,7 +14,7 @@ test("default theme", async ({ page }) => {
   }
 });
 
-test("theme persistance", async ({ page }) => {
+test("theme persistence", async ({ page }) => {
   await page.goto(sourceBrowsingFixture);
   await expect(
     page.getByRole("banner").getByRole("link", { name: "source-browsing" }),
