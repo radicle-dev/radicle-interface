@@ -128,14 +128,14 @@ describe("route invariant when parsed", () => {
     });
   });
 
-  test("projects.patches"),
-    () => {
-      expectParsingInvariant({
-        resource: "project.patches",
-        node,
-        project: "PROJECT",
-      });
-    };
+  test("projects.patches", () => {
+    expectParsingInvariant({
+      resource: "project.patches",
+      node,
+      project: "PROJECT",
+      search: "SEARCH",
+    });
+  });
 
   test("projects.patches with search", () => {
     expectParsingInvariant({

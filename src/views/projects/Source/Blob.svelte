@@ -31,6 +31,7 @@
 
   let selectedLineId: string | undefined = undefined;
   $: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     content;
     updateSelectedLineId();
   }

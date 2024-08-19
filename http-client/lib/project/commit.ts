@@ -194,6 +194,7 @@ type Diff = z.infer<typeof diffSchema>;
 type ChangesetWithDiff = z.infer<typeof changesetWithDiffSchema>;
 type ChangesetWithoutDiff = z.infer<typeof changesetWithoutDiffSchema>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const changesetWithDiffSchema = union([
   diffAddedChangesetSchema,
   diffDeletedChangesetSchema,
@@ -201,6 +202,7 @@ const changesetWithDiffSchema = union([
   diffMovedWithModificationsChangesetSchema,
   diffCopiedWithModificationsChangesetSchema,
 ]);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const changesetWithoutDiffSchema = union([
   diffMovedChangesetSchema,
   diffCopiedChangesetSchema,

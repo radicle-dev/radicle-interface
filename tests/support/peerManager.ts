@@ -174,7 +174,6 @@ export class RadiclePeer {
   public async waitForEvent(searchEvent: NodeEvent, timeoutInMs: number) {
     const start = new Date().getTime();
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       if (this.#eventRecords.find(matches(searchEvent))) {
         return;
@@ -286,7 +285,7 @@ export class RadiclePeer {
         let event;
         try {
           event = JSON.parse(line);
-        } catch (e) {
+        } catch {
           console.log("Error parsing event", line);
           return;
         }
