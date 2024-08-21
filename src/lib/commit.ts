@@ -110,9 +110,9 @@ function groupCommitsByWeek(commits: number[]): WeeklyActivity[] {
   return groupedCommits;
 }
 
-export async function loadProjectActivity(id: string, baseUrl: BaseUrl) {
+export async function loadRepoActivity(id: string, baseUrl: BaseUrl) {
   const api = new HttpdClient(baseUrl);
-  const commits = await api.project.getActivity(id);
+  const commits = await api.repo.getActivity(id);
 
   return groupCommitsByWeek(commits.activity);
 }

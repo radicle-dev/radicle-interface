@@ -31,7 +31,7 @@
   export let headerBadgeCaption: ChangesetWithDiff["state"];
   export let revision: string | undefined = undefined;
   export let baseUrl: BaseUrl;
-  export let projectId: string;
+  export let repoId: string;
   export let visible: boolean = false;
   export let expanded: boolean = true;
 
@@ -434,8 +434,8 @@
         {/if}
         <Link
           route={{
-            resource: "project.source",
-            project: projectId,
+            resource: "repo.source",
+            repo: repoId,
             node: baseUrl,
             path: filePath,
             revision,

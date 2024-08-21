@@ -14,10 +14,10 @@ test("node page", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-test("empty pinned projects", async ({ page }) => {
+test("empty pinned repos", async ({ page }) => {
   await page.route(
     ({ hostname, pathname }) =>
-      pathname === "/api/v1/projects" && hostname === "127.0.0.1",
+      pathname === "/api/v1/repos" && hostname === "127.0.0.1",
     async route => {
       await route.fulfill({
         status: 200,
@@ -40,7 +40,7 @@ test("node not found", async ({ page }) => {
 });
 
 test("response parse error", async ({ page }) => {
-  await page.route("*/**/v1/projects*", route => {
+  await page.route("*/**/v1/repos*", route => {
     return route.fulfill({
       json: [{ name: 1337 }],
     });
@@ -53,7 +53,7 @@ test("response parse error", async ({ page }) => {
 });
 
 test("response error", async ({ page }) => {
-  await page.route("*/**/v1/projects*", route => {
+  await page.route("*/**/v1/repos*", route => {
     return route.fulfill({
       status: 500,
     });

@@ -3,7 +3,7 @@
     BaseUrl,
     Issue,
     IssueState,
-    Project,
+    Repo,
     SeedingPolicy,
   } from "@http-client";
 
@@ -31,7 +31,7 @@
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
   export let issues: Issue[];
-  export let project: Project;
+  export let repo: Repo;
   export let status: IssueState["status"];
   export let nodeAvatarUrl: string | undefined;
 
@@ -52,7 +52,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllIssues(project.id, {
+      const response = await api.repo.getAllIssues(repo.rid, {
         status,
         page,
         perPage: ISSUES_PER_PAGE,
@@ -72,7 +72,7 @@
   };
 
   $: showMoreButton =
-    !loading && !error && allIssues.length < project.issues[status];
+    !loading && !error && allIssues.length < repo.issues[status];
 </script>
 
 <style>
@@ -117,13 +117,13 @@
   }
 </style>
 
-<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="issues">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {repo} activeTab="issues">
   <svelte:fragment slot="breadcrumb">
     <Separator />
     <Link
       route={{
-        resource: "project.issues",
-        project: project.id,
+        resource: "repo.issues",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Issues
@@ -146,7 +146,7 @@
         </div>
         {capitalize(status)}
         <div class="dropdown-button-counter">
-          {project.issues[status]}
+          {repo.issues[status]}
         </div>
         <Icon name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
@@ -157,8 +157,8 @@
           slot="item"
           let:item
           route={{
-            resource: "project.issues",
-            project: project.id,
+            resource: "repo.issues",
+            repo: repo.rid,
             node: baseUrl,
             status: item,
           }}>
@@ -172,7 +172,7 @@
               <div
                 class="dropdown-list-counter"
                 class:selected={item === status}>
-                {project.issues[item]}
+                {repo.issues[item]}
               </div>
             </div>
           </DropdownListItem>
@@ -188,7 +188,7 @@
       slot="item"
       let:item
       {baseUrl}
-      projectId={project.id}
+      repoId={repo.rid}
       issue={item} />
   </List>
 
@@ -201,7 +201,7 @@
       {error} />
   {/if}
 
-  {#if project.issues[status] === 0}
+  {#if repo.issues[status] === 0}
     <div class="placeholder">
       <Placeholder iconName="no-issues" caption={`No ${status} issues`} />
     </div>

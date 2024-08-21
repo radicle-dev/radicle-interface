@@ -87,7 +87,7 @@ const config: PlaywrightTestConfig = {
       command: "npm run start -- --strictPort --port 3001",
       port: 3001,
     },
-    // Required by test tests/e2e/project/commits.spec.ts "loading more commits, adds them to the commits list"
+    // Required by test tests/e2e/repo/commits.spec.ts "loading more commits, adds them to the commits list"
     {
       command: "npm run start -- --strictPort --port 3002",
       port: 3002,

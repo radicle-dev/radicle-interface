@@ -13,7 +13,7 @@
 
   export let baseUrl: BaseUrl;
   export let commit: CommitHeader;
-  export let projectId: string;
+  export let repoId: string;
 
   let commitMessageVisible = false;
 </script>
@@ -62,8 +62,8 @@
     <div class="message">
       <Link
         route={{
-          resource: "project.commit",
-          project: projectId,
+          resource: "repo.commit",
+          repo: repoId,
           node: baseUrl,
           commit: commit.id,
         }}>
@@ -102,8 +102,8 @@
       <IconButton title="Browse repo at this commit">
         <Link
           route={{
-            resource: "project.source",
-            project: projectId,
+            resource: "repo.source",
+            repo: repoId,
             node: baseUrl,
             revision: commit.id,
           }}>

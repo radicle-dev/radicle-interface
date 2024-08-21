@@ -59,7 +59,7 @@
       }
       void push({
         resource: "nodes",
-        params: { baseUrl: seed, projectPageIndex: 0 },
+        params: { baseUrl: seed, repoPageIndex: 0 },
       });
       selectedSeed.set(seed);
     }
@@ -72,7 +72,7 @@
     seedAddressInput = seed.hostname;
     void push({
       resource: "nodes",
-      params: { baseUrl: seed, projectPageIndex: 0 },
+      params: { baseUrl: seed, repoPageIndex: 0 },
     });
   }
 </script>

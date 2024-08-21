@@ -25,27 +25,27 @@ test("node metadata", async ({ page, peerManager }) => {
   await expect(page.getByText("/radicle:1.0.0-rc.13/")).toBeVisible();
 });
 
-test("node projects", async ({ page }) => {
+test("node repos", async ({ page }) => {
   await page.goto("/nodes/radicle.local");
-  const project = page
-    .locator(".project-card", { hasText: "source-browsing" })
+  const repo = page
+    .locator(".repo-card", { hasText: "source-browsing" })
     .nth(0);
 
-  // Project metadata.
+  // Repo metadata.
   {
-    await expect(project.getByText("source-browsing")).toBeVisible();
+    await expect(repo.getByText("source-browsing")).toBeVisible();
     await expect(
-      project.getByText("Git repository for source browsing tests"),
+      repo.getByText("Git repository for source browsing tests"),
     ).toBeVisible();
   }
 });
 
 test("show pinned repositories", async ({ page }) => {
   await page.goto("/");
-  // Shows pinned project name.
+  // Shows pinned repo name.
   await expect(page.getByText("source-browsing")).toBeVisible();
   //
-  // Shows pinned project description.
+  // Shows pinned repo description.
   await expect(
     page.getByText("Git repository for source browsing tests"),
   ).toBeVisible();

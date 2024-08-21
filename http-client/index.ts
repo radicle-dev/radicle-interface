@@ -2,9 +2,9 @@ import type { BaseUrl } from "./lib/fetcher.js";
 import type {
   Blob,
   DiffResponse,
-  Project,
-  ProjectListQuery,
   Remote,
+  Repo,
+  RepoListQuery,
   Tree,
   TreeStats,
 } from "./lib/project.js";
@@ -41,7 +41,7 @@ import type { ZodSchema } from "zod";
 
 import { z, array, literal, number, object, string, union } from "zod";
 
-import * as project from "./lib/project.js";
+import * as repo from "./lib/project.js";
 import { Fetcher } from "./lib/fetcher.js";
 import {
   nodeConfigSchema,
@@ -73,15 +73,15 @@ export type {
   Merge,
   Patch,
   PatchState,
-  Project,
-  ProjectListQuery,
   Reaction,
   Remote,
+  Repo,
+  RepoListQuery,
   Review,
   Revision,
   SeedingPolicy,
-  TreeStats,
   Tree,
+  TreeStats,
   Verdict,
 };
 
@@ -156,13 +156,13 @@ export class HttpdClient {
   #fetcher: Fetcher;
 
   public baseUrl: BaseUrl;
-  public project: project.Client;
+  public repo: repo.Client;
 
   public constructor(baseUrl: BaseUrl) {
     this.baseUrl = baseUrl;
     this.#fetcher = new Fetcher(this.baseUrl);
 
-    this.project = new project.Client(this.#fetcher);
+    this.repo = new repo.Client(this.#fetcher);
   }
 
   public changePort(port: number): void {
@@ -213,14 +213,14 @@ export class HttpdClient {
     );
   }
 
-  public async getPolicyById(
-    id: string,
+  public async getPolicyByRid(
+    rid: string,
     options?: RequestOptions,
   ): Promise<SeedingPolicy> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `node/policies/repos/${id}`,
+        path: `node/policies/repos/${rid}`,
         options,
       },
       seedingPolicySchema,
@@ -239,13 +239,13 @@ export class HttpdClient {
   }
 
   public async getNodeIdentity(
-    id: string,
+    nid: string,
     options?: RequestOptions,
   ): Promise<NodeIdentity> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `nodes/${id}`,
+        path: `nodes/${nid}`,
         options,
       },
       nodeIdentitySchema,
@@ -253,13 +253,13 @@ export class HttpdClient {
   }
 
   public async getNodeInventory(
-    id: string,
+    nid: string,
     options?: RequestOptions,
   ): Promise<string[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `nodes/${id}/inventory`,
+        path: `nodes/${nid}/inventory`,
         options,
       },
       array(string()),

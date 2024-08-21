@@ -6,13 +6,13 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
-import { createProject } from "@tests/support/project";
+import { createRepo } from "@tests/support/project";
 import {
   expectBackAndForwardNavigationWorks,
   expectUrlPersistsReload,
 } from "@tests/support/router.js";
 
-test("navigate between landing and project page", async ({ page }) => {
+test("navigate between landing and repo page", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL("/");
 
@@ -23,13 +23,13 @@ test("navigate between landing and project page", async ({ page }) => {
   await expectUrlPersistsReload(page);
 });
 
-test("navigation between node and project pages", async ({ page }) => {
+test("navigation between node and repo pages", async ({ page }) => {
   await page.goto("/nodes/radicle.local");
 
-  const project = page
-    .locator(".project-card", { hasText: "source-browsing" })
+  const repo = page
+    .locator(".repo-card", { hasText: "source-browsing" })
     .nth(0);
-  await project.click();
+  await repo.click();
   await expect(page).toHaveURL(sourceBrowsingUrl);
 
   await expectBackAndForwardNavigationWorks("/nodes/radicle.local", page);
@@ -39,30 +39,30 @@ test("navigation between node and project pages", async ({ page }) => {
   await expect(page).toHaveURL("/nodes/127.0.0.1");
 });
 
-test.describe("project page navigation", () => {
+test.describe("repo page navigation", () => {
   test("navigation between commit history and single commit", async ({
     page,
   }) => {
-    const projectHistoryURL = `${sourceBrowsingUrl}/history/${aliceMainHead}`;
-    await page.goto(projectHistoryURL);
+    const repoHistoryURL = `${sourceBrowsingUrl}/history/${aliceMainHead}`;
+    await page.goto(repoHistoryURL);
 
     await page.getByText("Add README.md").click();
     await expect(page).toHaveURL(
       `${sourceBrowsingUrl}/commits/${aliceMainHead}`,
     );
 
-    await expectBackAndForwardNavigationWorks(projectHistoryURL, page);
+    await expectBackAndForwardNavigationWorks(repoHistoryURL, page);
     await expectUrlPersistsReload(page);
   });
 
   test("navigate between tree and commit history", async ({ page }) => {
-    const projectTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
+    const repoTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
 
-    await page.goto(projectTreeURL);
+    await page.goto(repoTreeURL);
     await page
       .getByRole("progressbar", { name: "Page loading" })
       .waitFor({ state: "hidden" });
-    await expect(page).toHaveURL(projectTreeURL);
+    await expect(page).toHaveURL(repoTreeURL);
 
     await page
       .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
@@ -72,23 +72,23 @@ test.describe("project page navigation", () => {
       `${sourceBrowsingUrl}/history/${aliceMainHead}`,
     );
 
-    await expectBackAndForwardNavigationWorks(projectTreeURL, page);
+    await expectBackAndForwardNavigationWorks(repoTreeURL, page);
     await expectUrlPersistsReload(page);
   });
 
   test("navigate between tree and commit history while a file is selected", async ({
     page,
   }) => {
-    const projectTreeURL = `${sourceBrowsingUrl}`;
+    const repoTreeURL = `${sourceBrowsingUrl}`;
 
-    await page.goto(projectTreeURL);
+    await page.goto(repoTreeURL);
     await page
       .getByRole("progressbar", { name: "Page loading" })
       .waitFor({ state: "hidden" });
-    await expect(page).toHaveURL(projectTreeURL);
+    await expect(page).toHaveURL(repoTreeURL);
 
     await page.getByText(".hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
+    await expect(page).toHaveURL(`${repoTreeURL}/tree/.hidden`);
 
     await page
       .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })
@@ -96,23 +96,20 @@ test.describe("project page navigation", () => {
     await expect(page).toHaveURL(`${sourceBrowsingUrl}/history`);
   });
 
-  test("navigate project paths", async ({ page }) => {
-    const projectTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
+  test("navigate repo paths", async ({ page }) => {
+    const repoTreeURL = `${sourceBrowsingUrl}/tree/${aliceMainHead}`;
 
-    await page.goto(projectTreeURL);
-    await expect(page).toHaveURL(projectTreeURL);
+    await page.goto(repoTreeURL);
+    await expect(page).toHaveURL(repoTreeURL);
 
     await page.getByText(".hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/.hidden`);
+    await expect(page).toHaveURL(`${repoTreeURL}/.hidden`);
 
     await page.getByText("bin").click();
     await page.getByText("true").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/bin/true`);
+    await expect(page).toHaveURL(`${repoTreeURL}/bin/true`);
 
-    await expectBackAndForwardNavigationWorks(
-      `${projectTreeURL}/.hidden`,
-      page,
-    );
+    await expectBackAndForwardNavigationWorks(`${repoTreeURL}/.hidden`, page);
     await expectUrlPersistsReload(page);
   });
 
@@ -126,68 +123,62 @@ test.describe("project page navigation", () => {
     );
   });
 
-  test("page title on project with empty description", async ({
-    page,
-    peer,
-  }) => {
-    const { rid } = await createProject(peer, {
-      name: "ProjectWithNoDescription",
+  test("page title on repo with empty description", async ({ page, peer }) => {
+    const { rid } = await createRepo(peer, {
+      name: "RepoWithNoDescription",
     });
     await page.goto(peer.ridUrl(rid), {
       waitUntil: "networkidle",
     });
     const title = await page.title();
-    expect(title).toBe("ProjectWithNoDescription");
+    expect(title).toBe("RepoWithNoDescription");
   });
 
-  test("navigate project paths with an explicitly selected peer", async ({
+  test("navigate repo paths with an explicitly selected peer", async ({
     page,
   }) => {
-    // If a branch isn't explicitly specified, the code assumes the project
+    // If a branch isn't explicitly specified, the code assumes the repo
     // default branch is selected. We omit showing the default branch in the URL.
 
-    const projectTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
+    const repoTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
     )}`;
 
-    await page.goto(projectTreeURL);
-    await expect(page).toHaveURL(projectTreeURL);
+    await page.goto(repoTreeURL);
+    await expect(page).toHaveURL(repoTreeURL);
 
     await page.getByText(".hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/tree/.hidden`);
+    await expect(page).toHaveURL(`${repoTreeURL}/tree/.hidden`);
 
     await page.getByText("bin").click();
     await page.getByText("true").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/tree/bin/true`);
+    await expect(page).toHaveURL(`${repoTreeURL}/tree/bin/true`);
 
     await expectBackAndForwardNavigationWorks(
-      `${projectTreeURL}/tree/.hidden`,
+      `${repoTreeURL}/tree/.hidden`,
       page,
     );
     await expectUrlPersistsReload(page);
   });
 
-  test("navigate project paths with an explicitly selected peer and branch", async ({
+  test("navigate repo paths with an explicitly selected peer and branch", async ({
     page,
   }) => {
-    const projectTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
+    const repoTreeURL = `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
     )}/tree/main`;
 
-    await page.goto(projectTreeURL);
-    await expect(page).toHaveURL(projectTreeURL);
+    await page.goto(repoTreeURL);
+    await expect(page).toHaveURL(repoTreeURL);
 
     await page.getByText(".hidden").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/.hidden`);
+    await expect(page).toHaveURL(`${repoTreeURL}/.hidden`);
 
     await page.getByText("bin").click();
     await page.getByText("true").click();
-    await expect(page).toHaveURL(`${projectTreeURL}/bin/true`);
+    await expect(page).toHaveURL(`${repoTreeURL}/bin/true`);
 
-    await expectBackAndForwardNavigationWorks(
-      `${projectTreeURL}/.hidden`,
-      page,
-    );
+    await expectBackAndForwardNavigationWorks(`${repoTreeURL}/.hidden`, page);
     await expectUrlPersistsReload(page);
   });
 });

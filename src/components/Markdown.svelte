@@ -134,7 +134,7 @@
     }
 
     // Iterate over all images, and replace the source with a canonicalized URL
-    // pointing at the projects /raw endpoint.
+    // pointing at the repos /raw endpoint.
     for (const i of container.querySelectorAll("img")) {
       const imagePath = i.getAttribute("src");
 

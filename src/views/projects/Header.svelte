@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import type { BaseUrl, Project } from "@http-client";
+  import type { BaseUrl, Repo } from "@http-client";
 
   import Link from "@app/components/Link.svelte";
   import Button from "@app/components/Button.svelte";
@@ -11,7 +11,7 @@
 
   export let baseUrl: BaseUrl;
   export let activeTab: ActiveTab = undefined;
-  export let project: Project;
+  export let repo: Repo;
 </script>
 
 <style>
@@ -49,8 +49,8 @@
 <div class="container">
   <Link
     route={{
-      resource: "project.source",
-      project: project.id,
+      resource: "repo.source",
+      repo: repo.rid,
       node: baseUrl,
       path: "/",
     }}>
@@ -65,8 +65,8 @@
   </Link>
   <Link
     route={{
-      resource: "project.issues",
-      project: project.id,
+      resource: "repo.issues",
+      repo: repo.rid,
       node: baseUrl,
     }}>
     <Button
@@ -82,7 +82,7 @@
           class="counter"
           class:selected={activeTab === "issues"}
           class:hover={hover && activeTab !== "issues"}>
-          {project.issues.open}
+          {repo.issues.open}
         </span>
       </div>
     </Button>
@@ -90,8 +90,8 @@
 
   <Link
     route={{
-      resource: "project.patches",
-      project: project.id,
+      resource: "repo.patches",
+      repo: repo.rid,
       node: baseUrl,
     }}>
     <Button
@@ -107,7 +107,7 @@
           class="counter"
           class:hover={hover && activeTab !== "patches"}
           class:selected={activeTab === "patches"}>
-          {project.patches.open}
+          {repo.patches.open}
         </span>
       </div>
     </Button>

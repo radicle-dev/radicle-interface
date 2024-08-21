@@ -12,7 +12,7 @@
   export let oldPath: string;
   export let revision: string | undefined = undefined;
   export let baseUrl: BaseUrl;
-  export let projectId: string;
+  export let repoId: string;
 </script>
 
 <style>
@@ -54,8 +54,8 @@
     <div style:margin-left="auto">
       <Link
         route={{
-          resource: "project.source",
-          project: projectId,
+          resource: "repo.source",
+          repo: repoId,
           node: baseUrl,
           path: newPath,
           revision,

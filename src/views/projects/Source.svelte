@@ -1,12 +1,12 @@
 <script lang="ts">
   import type {
     BaseUrl,
-    Project,
+    Repo,
     Remote,
     SeedingPolicy,
     Tree,
   } from "@http-client";
-  import type { BlobResult, ProjectRoute } from "./router";
+  import type { BlobResult, RepoRoute } from "./router";
 
   import { HttpdClient } from "@http-client";
 
@@ -17,7 +17,7 @@
 
   import BlobComponent from "./Source/Blob.svelte";
   import FilePath from "@app/components/FilePath.svelte";
-  import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
+  import RepoNameHeader from "./Source/ProjectNameHeader.svelte";
   import Separator from "./Separator.svelte";
   import TreeComponent from "./Source/Tree.svelte";
 
@@ -27,7 +27,7 @@
   export let path: string;
   export let peer: string | undefined;
   export let peers: Remote[];
-  export let project: Project;
+  export let repo: Repo;
   export let rawPath: (commit?: string) => string;
   export let revision: string | undefined;
   export let seedingPolicy: SeedingPolicy;
@@ -39,26 +39,24 @@
   const api = new HttpdClient(baseUrl);
 
   const fetchTree = async (path: string) => {
-    return api.project
-      .getTree(project.id, tree.lastCommit.id, path)
-      .catch(() => {
-        blobResult = {
-          ok: false,
-          error: {
-            message: "Not able to expand directory",
-            path,
-          },
-        };
-        return undefined;
-      });
+    return api.repo.getTree(repo.rid, tree.lastCommit.id, path).catch(() => {
+      blobResult = {
+        ok: false,
+        error: {
+          message: "Not able to expand directory",
+          path,
+        },
+      };
+      return undefined;
+    });
   };
 
   $: baseRoute = {
-    resource: "project.source",
+    resource: "repo.source",
     node: baseUrl,
-    project: project.id,
+    repo: repo.rid,
     path: "/",
-  } as Extract<ProjectRoute, { resource: "project.source" }>;
+  } as Extract<RepoRoute, { resource: "repo.source" }>;
 </script>
 
 <style>
@@ -122,7 +120,7 @@
 <Layout
   {baseUrl}
   {nodeAvatarUrl}
-  {project}
+  {repo}
   {seedingPolicy}
   activeTab="source"
   stylePaddingBottom="0">
@@ -132,7 +130,7 @@
       <FilePath filenameWithPath={path} />
     {/if}
   </svelte:fragment>
-  <ProjectNameHeader {project} {baseUrl} slot="header" />
+  <RepoNameHeader {repo} {baseUrl} slot="header" />
 
   <div style:margin="1rem" slot="subheader">
     <Header
@@ -143,7 +141,7 @@
       {baseRoute}
       {peers}
       {peer}
-      {project}
+      {repo}
       {revision}
       {tree} />
   </div>
@@ -164,7 +162,7 @@
       {#if mobileFileTree}
         <div class="layout-mobile" style:margin="1rem">
           <TreeComponent
-            projectId={project.id}
+            repoId={repo.rid}
             {revision}
             {baseUrl}
             {fetchTree}
@@ -184,7 +182,7 @@
       <div class="column-left global-hide-on-small-desktop-down">
         <div class="source-tree sticky">
           <TreeComponent
-            projectId={project.id}
+            repoId={repo.rid}
             {revision}
             {baseUrl}
             {fetchTree}
@@ -198,7 +196,7 @@
           <BlobComponent
             {path}
             {baseUrl}
-            projectId={project.id}
+            repoId={repo.rid}
             blob={blobResult.blob}
             highlighted={blobResult.highlighted}
             rawPath={rawPath(tree.lastCommit.id)} />

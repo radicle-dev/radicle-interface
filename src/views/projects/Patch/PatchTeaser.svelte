@@ -13,7 +13,7 @@
   import Link from "@app/components/Link.svelte";
   import NodeId from "@app/components/NodeId.svelte";
 
-  export let projectId: string;
+  export let repoId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
 
@@ -99,8 +99,8 @@
       <Link
         styleHoverState
         route={{
-          resource: "project.patch",
-          project: projectId,
+          resource: "repo.patch",
+          repo: repoId,
           node: baseUrl,
           patch: patch.id,
         }}>
@@ -118,7 +118,7 @@
           {#if commentCount > 0}
             <CommentCounter {commentCount} />
           {/if}
-          <DiffStatBadgeLoader {projectId} {baseUrl} {patch} {latestRevision} />
+          <DiffStatBadgeLoader {repoId} {baseUrl} {patch} {latestRevision} />
         </div>
       </div>
     </div>

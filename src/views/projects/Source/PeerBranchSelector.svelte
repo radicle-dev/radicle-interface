@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ProjectRoute } from "@app/views/projects/router";
-  import type { Project, Remote } from "@http-client";
+  import type { RepoRoute } from "@app/views/projects/router";
+  import type { Repo, Remote } from "@http-client";
 
   import fuzzysort from "fuzzysort";
   import orderBy from "lodash/orderBy";
@@ -17,13 +17,13 @@
   import Avatar from "@app/components/Avatar.svelte";
 
   export let baseRoute: Extract<
-    ProjectRoute,
-    { resource: "project.source" } | { resource: "project.history" }
+    RepoRoute,
+    { resource: "repo.source" } | { resource: "repo.history" }
   >;
   export let onCanonical: boolean;
   export let peer: string | undefined;
   export let peers: Remote[];
-  export let project: Project;
+  export let repo: Repo;
   export let selectedBranch: string | undefined;
 
   const subgridStyle =
@@ -37,8 +37,8 @@
   const searchElements = [
     {
       peer: undefined,
-      revision: project.defaultBranch,
-      head: project.head,
+      revision: repo["xyz.radicle.project"].defaultBranch,
+      head: repo.head,
     },
     ...peers.flatMap(peer =>
       Object.entries(peer.heads).map(([name, head]) => ({
@@ -252,7 +252,7 @@
               style={`${subgridStyle} gap: inherit;`}>
               <div class="global-flex-item">
                 <Icon name="branch" />
-                {project.defaultBranch}
+                {repo["xyz.radicle.project"].defaultBranch}
                 <Badge title="Canonical branch" variant="foreground-emphasized">
                   Canonical
                 </Badge>
@@ -260,7 +260,7 @@
               <div
                 class="txt-monospace"
                 style="color: var(--color-foreground-dim);">
-                {formatCommit(project.head)}
+                {formatCommit(repo.head)}
               </div>
             </DropdownListItem>
           </Link>

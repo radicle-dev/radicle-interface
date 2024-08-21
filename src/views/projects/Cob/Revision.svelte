@@ -37,7 +37,7 @@
   export let rawPath: (commit?: string) => string;
   export let patchId: string;
   export let patchState: PatchState;
-  export let projectId: string;
+  export let repoId: string;
   export let revisionBase: string;
   export let revisionId: string;
   export let revisionEdits: Revision["edits"];
@@ -107,7 +107,7 @@
       loading = true;
       response = await cachedGetDiff(
         api.baseUrl,
-        projectId,
+        repoId,
         fromCommit,
         revisionOid,
       );
@@ -293,8 +293,8 @@
               fromCommit,
             )}..{utils.formatCommit(revisionOid)}"
             route={{
-              resource: "project.patch",
-              project: projectId,
+              resource: "repo.patch",
+              repo: repoId,
               node: baseUrl,
               patch: patchId,
               view: { name: "diff", fromCommit, toCommit: revisionOid },
@@ -329,8 +329,8 @@
                 revisionOid,
               )}"
               route={{
-                resource: "project.patch",
-                project: projectId,
+                resource: "repo.patch",
+                repo: repoId,
                 node: baseUrl,
                 patch: patchId,
                 view: {
@@ -439,7 +439,7 @@
             {#each response.commits.reverse() as commit}
               <div class="commit" style:position="relative">
                 <div class="commit-dot" />
-                <CobCommitTeaser {commit} {baseUrl} {projectId} />
+                <CobCommitTeaser {commit} {baseUrl} {repoId} />
               </div>
             {/each}
           </div>

@@ -2,16 +2,13 @@ import type {
   ResponseError,
   ResponseParseError,
 } from "@http-client/lib/fetcher";
-import type {
-  ProjectLoadedRoute,
-  ProjectRoute,
-} from "@app/views/projects/router";
+import type { RepoLoadedRoute, RepoRoute } from "@app/views/projects/router";
 import type { UserLoadedRoute, UserRoute } from "@app/views/users/router";
 import type { NodesRoute, NodesLoadedRoute } from "@app/views/nodes/router";
 import type { ComponentProps } from "svelte";
 import type IconLarge from "@app/components/IconLarge.svelte";
 
-import { loadProjectRoute } from "@app/views/projects/router";
+import { loadRepoRoute } from "@app/views/projects/router";
 import { loadUserRoute } from "@app/views/users/router";
 import { loadNodeRoute } from "@app/views/nodes/router";
 
@@ -41,7 +38,7 @@ export type Route =
   | UserRoute
   | ErrorRoute
   | NotFoundRoute
-  | ProjectRoute
+  | RepoRoute
   | NodesRoute;
 
 export type LoadedRoute =
@@ -49,7 +46,7 @@ export type LoadedRoute =
   | UserLoadedRoute
   | ErrorRoute
   | NotFoundRoute
-  | ProjectLoadedRoute
+  | RepoLoadedRoute
   | NodesLoadedRoute;
 
 export async function loadRoute(
@@ -61,15 +58,15 @@ export async function loadRoute(
   } else if (route.resource === "users") {
     return await loadUserRoute(route);
   } else if (
-    route.resource === "project.source" ||
-    route.resource === "project.history" ||
-    route.resource === "project.commit" ||
-    route.resource === "project.issues" ||
-    route.resource === "project.issue" ||
-    route.resource === "project.patches" ||
-    route.resource === "project.patch"
+    route.resource === "repo.source" ||
+    route.resource === "repo.history" ||
+    route.resource === "repo.commit" ||
+    route.resource === "repo.issues" ||
+    route.resource === "repo.issue" ||
+    route.resource === "repo.patches" ||
+    route.resource === "repo.patch"
   ) {
-    return await loadProjectRoute(route, previousLoaded);
+    return await loadRepoRoute(route, previousLoaded);
   } else {
     return route;
   }

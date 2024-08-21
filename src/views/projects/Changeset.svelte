@@ -10,7 +10,7 @@
   export let diff: Diff;
   export let files: Record<string, CommitBlob>;
   export let baseUrl: BaseUrl;
-  export let projectId: string;
+  export let repoId: string;
   export let revision: string;
 
   let expanded = true;
@@ -102,7 +102,7 @@
       <div use:intersection={observer} id={"observer:" + path}>
         {#if "diff" in file}
           <FileDiff
-            {projectId}
+            {repoId}
             {baseUrl}
             {revision}
             {expanded}
@@ -120,7 +120,7 @@
             headerBadgeCaption={file.state}
             oldPath={file.oldPath}
             newPath={file.newPath}
-            {projectId}
+            {repoId}
             {baseUrl}
             {revision} />
         {/if}

@@ -12,7 +12,7 @@
   export let fetchTree: (path: string) => Promise<Tree | undefined>;
   export let path: string;
   export let peer: string | undefined;
-  export let projectId: string;
+  export let repoId: string;
   export let revision: string | undefined;
   export let tree: Tree;
 
@@ -32,15 +32,15 @@
       {baseUrl}
       {fetchTree}
       {peer}
-      {projectId}
+      {repoId}
       {revision} />
   {:else if entry.kind === "submodule"}
     <Submodule name={entry.name} oid={entry.oid} />
   {:else}
     <Link
       route={{
-        resource: "project.source",
-        project: projectId,
+        resource: "repo.source",
+        repo: repoId,
         node: baseUrl,
         path: entry.path,
         peer,

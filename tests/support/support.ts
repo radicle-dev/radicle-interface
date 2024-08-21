@@ -11,9 +11,9 @@ export function randomTag(): string {
   return Crypto.randomBytes(8).toString("hex");
 }
 
-export function createOptions(projectFolder: string, days: number): Options {
+export function createOptions(repoFolder: string, days: number): Options {
   return {
-    cwd: projectFolder,
+    cwd: repoFolder,
     // eslint-disable-next-line @typescript-eslint/naming-convention
     env: { RAD_LOCAL_TIME: (1671211684 + days * 86400).toString() },
   };

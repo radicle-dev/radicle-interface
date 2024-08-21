@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ProjectRoute } from "../router";
-  import type { BaseUrl, Project, Remote, Tree } from "@http-client";
+  import type { RepoRoute } from "../router";
+  import type { BaseUrl, Repo, Remote, Tree } from "@http-client";
   import type { ComponentProps } from "svelte";
 
   import { HttpdClient } from "@http-client";
@@ -18,10 +18,10 @@
   export let node: BaseUrl;
   export let peer: string | undefined;
   export let peers: Remote[];
-  export let project: Project;
+  export let repo: Repo;
   export let baseRoute: Extract<
-    ProjectRoute,
-    { resource: "project.source" } | { resource: "project.history" }
+    RepoRoute,
+    { resource: "repo.source" } | { resource: "repo.history" }
   >;
   export let revision: string | undefined;
   export let tree: Tree;
@@ -36,11 +36,13 @@
   $: if (revision === lastCommit.id) {
     selectedBranch = undefined;
   } else {
-    selectedBranch = revision || project.defaultBranch;
+    selectedBranch = revision || repo["xyz.radicle.project"].defaultBranch;
   }
 
   $: lastCommit = tree.lastCommit;
-  $: onCanonical = Boolean(!peer && selectedBranch === project.defaultBranch);
+  $: onCanonical = Boolean(
+    !peer && selectedBranch === repo["xyz.radicle.project"].defaultBranch,
+  );
   $: if (onCanonical) {
     commitButtonVariant = "right";
   } else if (!selectedBranch) {
@@ -106,7 +108,7 @@
       {peer}
       {baseRoute}
       {onCanonical}
-      {project}
+      {repo}
       {selectedBranch} />
   {/if}
   <div class="global-flex-item txt-overflow" style:gap="1px">
@@ -115,7 +117,7 @@
       styleMinWidth="0"
       styleWidth="100%"
       hideSummaryOnMobile={false}
-      projectId={project.id}
+      repoId={repo.rid}
       commit={lastCommit}
       baseUrl={node} />
     {#if !onCanonical}
@@ -134,8 +136,8 @@
   <div style="display: flex; gap: 0.375rem;">
     <Link
       route={{
-        resource: "project.source",
-        project: project.id,
+        resource: "repo.source",
+        repo: repo.rid,
         node: node,
         peer,
         revision,
@@ -147,8 +149,8 @@
 
     <Link
       route={{
-        resource: "project.history",
-        project: project.id,
+        resource: "repo.history",
+        repo: repo.rid,
         node: node,
         peer,
         revision,
@@ -157,7 +159,7 @@
         <Icon name="commit" />
         <div class="title-counter">
           Commits
-          {#await api.project.getTreeStatsBySha(project.id, commit)}
+          {#await api.repo.getTreeStatsBySha(repo.rid, commit)}
             <Loading small center noDelay grayscale />
           {:then stats}
             <div class="counter" class:selected={historyLinkActive}>

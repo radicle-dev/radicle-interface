@@ -12,10 +12,10 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
-import { changeBranch, createProject } from "@tests/support/project";
+import { changeBranch, createRepo } from "@tests/support/project";
 import { expectUrlPersistsReload } from "@tests/support/router";
 
-test("navigate to project", async ({ page }) => {
+test("navigate to repo", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
 
   // Header.
@@ -31,7 +31,7 @@ test("navigate to project", async ({ page }) => {
     await expect(description).toBeVisible();
   }
 
-  // Project menu shows default selected branch and commit and contributor counts.
+  // Repo menu shows default selected branch and commit and contributor counts.
   {
     await expect(page.getByTitle("Change branch")).toBeVisible();
     await expect(
@@ -48,7 +48,7 @@ test("navigate to project", async ({ page }) => {
     ).toBeVisible();
   }
 
-  // Navigate to the project README.md by default.
+  // Navigate to the repo README.md by default.
   await expect(page.locator(".filename")).toContainText("README.md");
 
   // Show a commit teaser.
@@ -58,8 +58,8 @@ test("navigate to project", async ({ page }) => {
   await expect(page.getByText("Git test repository")).toBeVisible();
 });
 
-test("project description", async ({ page, peer }) => {
-  const { rid } = await createProject(peer, {
+test("repo description", async ({ page, peer }) => {
+  const { rid } = await createRepo(peer, {
     name: "heartwood",
     description: "Radicle Heartwood Protocol & Stack",
   });
@@ -356,7 +356,7 @@ test("peer and branch switching", async ({ page }) => {
     }
   }
 
-  // Reset the source browser by clicking the project title.
+  // Reset the source browser by clicking the repo title.
   {
     await page.getByRole("link", { name: "source-browsing" }).nth(1).click();
 
@@ -429,7 +429,7 @@ test.describe("browser error handling", () => {
     await page.route(
       ({ pathname }) =>
         pathname.startsWith(
-          `/api/v1/projects/${sourceBrowsingRid}/tree/${aliceMainHead}/src`,
+          `/api/v1/repos/${sourceBrowsingRid}/tree/${aliceMainHead}/src`,
         ),
       route => route.fulfill({ status: 500 }),
     );
@@ -445,7 +445,7 @@ test.describe("browser error handling", () => {
     await page.route(
       ({ pathname }) =>
         pathname ===
-        `/api/v1/projects/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
+        `/api/v1/repos/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -458,7 +458,7 @@ test.describe("browser error handling", () => {
     await page.route(
       ({ pathname }) =>
         pathname ===
-        `/api/v1/projects/${sourceBrowsingRid}/readme/${aliceMainHead}`,
+        `/api/v1/repos/${sourceBrowsingRid}/readme/${aliceMainHead}`,
       route => route.fulfill({ status: 500 }),
     );
 
@@ -469,7 +469,7 @@ test.describe("browser error handling", () => {
     await page.route(
       ({ pathname }) =>
         pathname ===
-        `/api/v1/projects/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
+        `/api/v1/repos/${sourceBrowsingRid}/blob/${aliceMainHead}/.hidden`,
       route => route.fulfill({ status: 500 }),
     );
 

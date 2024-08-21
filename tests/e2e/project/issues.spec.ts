@@ -1,5 +1,5 @@
 import { test, cobUrl, expect } from "@tests/support/fixtures.js";
-import { createProject } from "@tests/support/project";
+import { createRepo } from "@tests/support/project";
 
 test("navigate issue listing", async ({ page }) => {
   await page.goto(cobUrl);
@@ -12,7 +12,7 @@ test("navigate issue listing", async ({ page }) => {
 });
 
 test("issue counters", async ({ page, peer }) => {
-  const { rid, projectFolder } = await createProject(peer, {
+  const { rid, repoFolder } = await createRepo(peer, {
     name: "issue-counters",
   });
   await peer.rad(
@@ -24,7 +24,7 @@ test("issue counters", async ({ page, peer }) => {
       "--description",
       "Let's see",
     ],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await page.goto(`${peer.uiUrl()}/${rid}/issues`);
   await peer.rad(
@@ -36,7 +36,7 @@ test("issue counters", async ({ page, peer }) => {
       "--description",
       "Let's see",
     ],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.locator(".dropdown-item").getByText("Open 1").click();

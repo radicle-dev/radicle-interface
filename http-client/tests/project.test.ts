@@ -9,7 +9,7 @@ import {
   sourceBrowsingRid,
 } from "@tests/support/fixtures.js";
 
-describe("project", () => {
+describe("repo", () => {
   const api = new HttpdClient({
     hostname: "127.0.0.1",
     port: defaultHttpdPort,
@@ -17,59 +17,56 @@ describe("project", () => {
   });
 
   test("#getByDelegate(delegateId)", async () => {
-    await api.project.getByDelegate(aliceRemote);
+    await api.repo.getByDelegate(aliceRemote);
   });
 
   test("#getAll()", async () => {
-    await api.project.getAll();
+    await api.repo.getAll();
   });
 
-  test("#getById(id)", async () => {
-    await api.project.getById(sourceBrowsingRid);
+  test("#getByRid(rid)", async () => {
+    await api.repo.getByRid(sourceBrowsingRid);
   });
 
-  test("#getActivity(id)", async () => {
-    await api.project.getActivity(sourceBrowsingRid);
+  test("#getActivity(rid)", async () => {
+    await api.repo.getActivity(sourceBrowsingRid);
   });
 
-  test("#getReadme(id, sha)", async () => {
-    await api.project.getReadme(sourceBrowsingRid, aliceMainHead);
+  test("#getReadme(rid, sha)", async () => {
+    await api.repo.getReadme(sourceBrowsingRid, aliceMainHead);
   });
 
-  test("#getBlob(id, sha, path)", async () => {
-    await api.project.getBlob(sourceBrowsingRid, aliceMainHead, "src/true.c");
+  test("#getBlob(rid, sha, path)", async () => {
+    await api.repo.getBlob(sourceBrowsingRid, aliceMainHead, "src/true.c");
   });
 
-  test("#getTree(id, sha)", async () => {
-    await api.project.getTree(sourceBrowsingRid, aliceMainHead);
+  test("#getTree(rid, sha)", async () => {
+    await api.repo.getTree(sourceBrowsingRid, aliceMainHead);
   });
 
-  test("#getTreeStats(id, sha)", async () => {
-    await api.project.getTreeStatsBySha(sourceBrowsingRid, aliceMainHead);
+  test("#getTreeStats(rid, sha)", async () => {
+    await api.repo.getTreeStatsBySha(sourceBrowsingRid, aliceMainHead);
   });
 
-  test("#getTree(id, sha, path)", async () => {
-    await api.project.getTree(sourceBrowsingRid, aliceMainHead, "src");
+  test("#getTree(rid, sha, path)", async () => {
+    await api.repo.getTree(sourceBrowsingRid, aliceMainHead, "src");
   });
 
-  test("#getAllRemotes(id)", async () => {
-    await api.project.getAllRemotes(sourceBrowsingRid);
+  test("#getAllRemotes(rid)", async () => {
+    await api.repo.getAllRemotes(sourceBrowsingRid);
   });
 
-  test("#getRemoteByPeer(id, peer)", async () => {
-    await api.project.getRemoteByPeer(
-      sourceBrowsingRid,
-      aliceRemote.substring(8),
-    );
+  test("#getRemoteByPeer(rid, peer)", async () => {
+    await api.repo.getRemoteByPeer(sourceBrowsingRid, aliceRemote.substring(8));
   });
 
-  test("#getAllCommits(id)", async () => {
-    await api.project.getAllCommits(sourceBrowsingRid);
+  test("#getAllCommits(rid)", async () => {
+    await api.repo.getAllCommits(sourceBrowsingRid);
   });
 
   // TODO: test since/until properly.
-  test("#getAllCommits(id, {parent, since, until, page, perPage})", async () => {
-    await api.project.getAllCommits(sourceBrowsingRid, {
+  test("#getAllCommits(rid, {parent, since, until, page, perPage})", async () => {
+    await api.repo.getAllCommits(sourceBrowsingRid, {
       parent: aliceMainHead,
       since: 1679065819581,
       until: 1679065819590,
@@ -78,41 +75,41 @@ describe("project", () => {
     });
   });
 
-  test("#getCommitBySha(id, sha)", async () => {
-    await api.project.getCommitBySha(sourceBrowsingRid, aliceMainHead);
+  test("#getCommitBySha(rid, sha)", async () => {
+    await api.repo.getCommitBySha(sourceBrowsingRid, aliceMainHead);
   });
 
-  test("#getDiff(id, revisionBase, revisionOid)", async () => {
-    await api.project.getDiff(
+  test("#getDiff(rid, revisionBase, revisionOid)", async () => {
+    await api.repo.getDiff(
       sourceBrowsingRid,
       "90f6d058ece12f75f349bc7bbe88142187fe0379",
       aliceMainHead,
     );
   });
 
-  test("#getIssueById(id, issueId)", async () => {
-    await api.project.getIssueById(
+  test("#getIssueById(rid, issueId)", async () => {
+    await api.repo.getIssueById(
       cobRid,
       "d481fe6e562dd78129589d4738f171a8380fcb19",
     );
   });
 
-  test("#getAllIssues(id)", async () => {
-    await api.project.getAllIssues(cobRid, {
+  test("#getAllIssues(rid)", async () => {
+    await api.repo.getAllIssues(cobRid, {
       page: 0,
       perPage: 5,
       status: "open",
     });
   });
 
-  test("#getPatchById(id, patchId)", async () => {
-    await api.project.getPatchById(
+  test("#getPatchByOid(rid, patchId)", async () => {
+    await api.repo.getPatchById(
       cobRid,
       "59a0821edc73630bce540596cffc7854da557365",
     );
   });
 
-  test("#getAllPatches(id)", async () => {
-    await api.project.getAllPatches(cobRid);
+  test("#getAllPatches(rid)", async () => {
+    await api.repo.getAllPatches(cobRid);
   });
 });

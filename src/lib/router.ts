@@ -7,9 +7,9 @@ import * as mutexExecutor from "@app/lib/mutexExecutor";
 import * as utils from "@app/lib/utils";
 import config from "virtual:config";
 import {
-  projectRouteToPath,
-  projectTitle,
-  resolveProjectRoute,
+  repoRouteToPath,
+  repoTitle,
+  resolveRepoRoute,
 } from "@app/views/projects/router";
 import { loadRoute } from "@app/lib/router/definitions";
 import { nodePath } from "@app/views/nodes/router";
@@ -119,15 +119,15 @@ function setTitle(loadedRoute: LoadedRoute) {
     title.push("Page not found");
     title.push("Radicle");
   } else if (
-    loadedRoute.resource === "project.source" ||
-    loadedRoute.resource === "project.history" ||
-    loadedRoute.resource === "project.commit" ||
-    loadedRoute.resource === "project.issue" ||
-    loadedRoute.resource === "project.issues" ||
-    loadedRoute.resource === "project.patches" ||
-    loadedRoute.resource === "project.patch"
+    loadedRoute.resource === "repo.source" ||
+    loadedRoute.resource === "repo.history" ||
+    loadedRoute.resource === "repo.commit" ||
+    loadedRoute.resource === "repo.issue" ||
+    loadedRoute.resource === "repo.issues" ||
+    loadedRoute.resource === "repo.patches" ||
+    loadedRoute.resource === "repo.patch"
   ) {
-    title.push(...projectTitle(loadedRoute));
+    title.push(...repoTitle(loadedRoute));
   } else if (loadedRoute.resource === "nodes") {
     title.push(loadedRoute.params.baseUrl.hostname);
   } else {
@@ -196,11 +196,11 @@ function urlToRoute(url: URL): Route | null {
           }
           return null;
         } else if (id) {
-          return resolveProjectRoute(baseUrl, id, segments, url.search);
+          return resolveRepoRoute(baseUrl, id, segments, url.search);
         } else {
           return {
             resource: "nodes",
-            params: { baseUrl, projectPageIndex: 0 },
+            params: { baseUrl, repoPageIndex: 0 },
           };
         }
       } else {
@@ -229,15 +229,15 @@ export function routeToPath(route: Route): string {
   } else if (route.resource === "users") {
     return userRouteToPath(route);
   } else if (
-    route.resource === "project.source" ||
-    route.resource === "project.history" ||
-    route.resource === "project.commit" ||
-    route.resource === "project.issues" ||
-    route.resource === "project.issue" ||
-    route.resource === "project.patches" ||
-    route.resource === "project.patch"
+    route.resource === "repo.source" ||
+    route.resource === "repo.history" ||
+    route.resource === "repo.commit" ||
+    route.resource === "repo.issues" ||
+    route.resource === "repo.issue" ||
+    route.resource === "repo.patches" ||
+    route.resource === "repo.patch"
   ) {
-    return projectRouteToPath(route);
+    return repoRouteToPath(route);
   } else if (
     route.resource === "booting" ||
     route.resource === "notFound" ||

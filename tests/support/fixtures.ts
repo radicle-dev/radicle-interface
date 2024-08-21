@@ -14,7 +14,7 @@ import * as logLabel from "@tests/support/logPrefix.js";
 import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
-import { createProject } from "@tests/support/project.js";
+import { createRepo } from "@tests/support/project.js";
 import { formatCommit } from "@app/lib/utils.js";
 
 export { expect };
@@ -169,12 +169,12 @@ export async function createSourceBrowsingFixture(
   peerManager: PeerManager,
   palm: RadiclePeer,
 ) {
-  const projectName = "source-browsing";
-  const sourceBrowsingDir = Path.join(tmpDir, "repos", projectName);
+  const repoName = "source-browsing";
+  const sourceBrowsingDir = Path.join(tmpDir, "repos", repoName);
   await Fs.mkdir(sourceBrowsingDir, { recursive: true });
   await execa("tar", [
     "-xf",
-    Path.join(fixturesDir, `repos/${projectName}.tar.bz2`),
+    Path.join(fixturesDir, `repos/${repoName}.tar.bz2`),
     "-C",
     sourceBrowsingDir,
   ]);
@@ -183,12 +183,12 @@ export async function createSourceBrowsingFixture(
     name: "alice",
     gitOptions: gitOptions["alice"],
   });
-  const aliceProjectPath = Path.join(alice.checkoutPath, "source-browsing");
+  const aliceRepoPath = Path.join(alice.checkoutPath, "source-browsing");
   const bob = await peerManager.createPeer({
     name: "bob",
     gitOptions: gitOptions["bob"],
   });
-  const bobProjectPath = Path.join(bob.checkoutPath, "source-browsing");
+  const bobRepoPath = Path.join(bob.checkoutPath, "source-browsing");
   await alice.startNode({
     node: {
       ...defaultConfig.node,
@@ -203,24 +203,24 @@ export async function createSourceBrowsingFixture(
   await palm.waitForEvent({ type: "peerConnected", nid: bob.nodeId }, 1000);
 
   await alice.git(["clone", sourceBrowsingDir], { cwd: alice.checkoutPath });
-  await alice.git(["checkout", "feature/branch"], { cwd: aliceProjectPath });
+  await alice.git(["checkout", "feature/branch"], { cwd: aliceRepoPath });
   await alice.git(["checkout", "feature/move-copy-files"], {
-    cwd: aliceProjectPath,
+    cwd: aliceRepoPath,
   });
-  await alice.git(["checkout", "orphaned-branch"], { cwd: aliceProjectPath });
-  await alice.git(["checkout", "main"], { cwd: aliceProjectPath });
+  await alice.git(["checkout", "orphaned-branch"], { cwd: aliceRepoPath });
+  await alice.git(["checkout", "main"], { cwd: aliceRepoPath });
   await alice.rad(
     [
       "init",
       "--name",
-      projectName,
+      repoName,
       "--default-branch",
       "main",
       "--description",
       "Git repository for source browsing tests",
       "--public",
     ],
-    { cwd: aliceProjectPath },
+    { cwd: aliceRepoPath },
   );
   await alice.waitForEvent(
     {
@@ -232,7 +232,7 @@ export async function createSourceBrowsingFixture(
   );
 
   // Needed due to rad init not pushing all branches.
-  await alice.git(["push", "rad", "--all"], { cwd: aliceProjectPath });
+  await alice.git(["push", "rad", "--all"], { cwd: aliceRepoPath });
   await alice.stopNode();
 
   await bob.waitForEvent(
@@ -250,7 +250,7 @@ export async function createSourceBrowsingFixture(
     Path.join(bob.checkoutPath, "source-browsing", "README.md"),
     "Updated readme",
   );
-  await bob.git(["add", "README.md"], { cwd: bobProjectPath });
+  await bob.git(["add", "README.md"], { cwd: bobRepoPath });
   await bob.git(
     [
       "commit",
@@ -259,16 +259,16 @@ export async function createSourceBrowsingFixture(
       "--date",
       "Mon Dec 21 14:00 2022 +0100",
     ],
-    { cwd: bobProjectPath },
+    { cwd: bobRepoPath },
   );
-  await bob.git(["push", "rad"], { cwd: bobProjectPath });
+  await bob.git(["push", "rad"], { cwd: bobRepoPath });
   await bob.stopNode();
 }
 
 export async function createCobsFixture(peer: RadiclePeer) {
   await peer.rad(["follow", peer.nodeId, "--alias", "palm"]);
   await Fs.mkdir(Path.join(tmpDir, "repos", "cobs"));
-  const { projectFolder, defaultBranch } = await createProject(peer, {
+  const { repoFolder, defaultBranch } = await createRepo(peer, {
     name: "cobs",
   });
   const issueOne = await issue.create(
@@ -276,23 +276,23 @@ export async function createCobsFixture(peer: RadiclePeer) {
     "This `title` has **markdown**",
     "This is a description\nWith some multiline text.",
     ["bug", "feature-request"],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     ["issue", "react", issueOne, "--emoji", "👍", "--to", issueOne],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
   await peer.rad(
     ["issue", "react", issueOne, "--emoji", "🎉", "--to", issueOne],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
   await peer.rad(
     ["issue", "assign", issueOne, "--add", `did:key:${peer.nodeId}`],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
   const { stdout: commentIssueOne } = await peer.rad(
     [
@@ -303,12 +303,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "This is a multiline comment\n\nWith some more text.",
       "--quiet",
     ],
-    createOptions(projectFolder, 2),
+    createOptions(repoFolder, 2),
   );
   await peer.rad(
     ["issue", "react", issueOne, "--emoji", "🙏", "--to", commentIssueOne],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
   const { stdout: replyIssueOne } = await peer.rad(
@@ -322,12 +322,12 @@ export async function createCobsFixture(peer: RadiclePeer) {
       commentIssueOne,
       "--quiet",
     ],
-    createOptions(projectFolder, 3),
+    createOptions(repoFolder, 3),
   );
   await peer.rad(
     ["issue", "react", issueOne, "--emoji", "🚀", "--to", replyIssueOne],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
   await peer.rad(
@@ -339,7 +339,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "A root level comment after a reply, for margins sake.",
       "--quiet",
     ],
-    createOptions(projectFolder, 4),
+    createOptions(repoFolder, 4),
   );
 
   const issueTwo = await issue.create(
@@ -347,11 +347,11 @@ export async function createCobsFixture(peer: RadiclePeer) {
     "A closed issue",
     "This issue has been closed\n\nsource: [link](https://radicle.xyz)",
     [],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     ["issue", "state", issueTwo, "--closed"],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
 
   const issueThree = await issue.create(
@@ -359,20 +359,20 @@ export async function createCobsFixture(peer: RadiclePeer) {
     "A solved issue",
     "This issue has been solved\n\n```js\nconsole.log('hello world')\nconsole.log(\"\")\n```",
     [],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     ["issue", "state", issueThree, "--solved"],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
 
   const patchOne = await patch.create(
     peer,
     ["Add README", "This commit adds more information to the README"],
     "feature/add-readme",
-    () => Fs.writeFile(Path.join(projectFolder, "README.md"), "# Cobs Repo"),
+    () => Fs.writeFile(Path.join(repoFolder, "README.md"), "# Cobs Repo"),
     ["Let's add a README", "This repo needed a README"],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   const { stdout: commentPatchOne } = await peer.rad(
     [
@@ -384,7 +384,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--quiet",
       "--no-announce",
     ],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
   await peer.rad(
     [
@@ -397,7 +397,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       commentPatchOne,
       "--quiet",
     ],
-    createOptions(projectFolder, 2),
+    createOptions(repoFolder, 2),
   );
   await peer.rad(
     [
@@ -410,7 +410,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       commentPatchOne,
       "--quiet",
     ],
-    createOptions(projectFolder, 3),
+    createOptions(repoFolder, 3),
   );
   const { stdout: commentTwo } = await peer.rad(
     [
@@ -422,7 +422,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--quiet",
       "--no-announce",
     ],
-    createOptions(projectFolder, 4),
+    createOptions(repoFolder, 4),
   );
   await peer.rad(
     [
@@ -435,27 +435,26 @@ export async function createCobsFixture(peer: RadiclePeer) {
       commentTwo,
       "--quiet",
     ],
-    createOptions(projectFolder, 5),
+    createOptions(repoFolder, 5),
   );
   await peer.rad(
     ["patch", "review", patchOne, "-m", "LGTM", "--accept"],
-    createOptions(projectFolder, 6),
+    createOptions(repoFolder, 6),
   );
   await patch.merge(
     peer,
     defaultBranch,
     "feature/add-readme",
-    createOptions(projectFolder, 7),
+    createOptions(repoFolder, 7),
   );
 
   const patchTwo = await patch.create(
     peer,
     ["Add subtitle to README"],
     "feature/add-more-text",
-    () =>
-      Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Subtitle"),
+    () => Fs.appendFile(Path.join(repoFolder, "README.md"), "\n\n## Subtitle"),
     [],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     [
@@ -466,7 +465,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "Not the README we are looking for",
       "--reject",
     ],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
 
   const patchThree = await patch.create(
@@ -477,29 +476,28 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "Blazingly fast",
     ],
     "feature/better-subtitle",
-    () =>
-      Fs.appendFile(Path.join(projectFolder, "README.md"), "\n\n## Better?"),
+    () => Fs.appendFile(Path.join(repoFolder, "README.md"), "\n\n## Better?"),
     [
       "Taking another stab at the README",
       "This is a big improvement over the last one",
       "Hopefully **this** is the last time",
     ],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     ["patch", "label", patchThree, "--add", "documentation"],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
   await peer.rad(
     ["patch", "review", patchThree, "-m", "This looks better"],
-    createOptions(projectFolder, 2),
+    createOptions(repoFolder, 2),
   );
   await Fs.appendFile(
-    Path.join(projectFolder, "README.md"),
+    Path.join(repoFolder, "README.md"),
     "\n\nHad to push a new revision",
   );
-  await peer.git(["add", "."], { cwd: projectFolder });
-  await peer.git(["commit", "-m", "Add more text"], { cwd: projectFolder });
+  await peer.git(["add", "."], { cwd: repoFolder });
+  await peer.git(["commit", "-m", "Add more text"], { cwd: repoFolder });
   await peer.git(
     [
       "push",
@@ -510,7 +508,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "rad",
       "feature/better-subtitle",
     ],
-    createOptions(projectFolder, 3),
+    createOptions(repoFolder, 3),
   );
   await peer.rad(
     [
@@ -521,17 +519,16 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "No this doesn't look better",
       "--reject",
     ],
-    createOptions(projectFolder, 2),
+    createOptions(repoFolder, 2),
   );
 
   const patchFour = await patch.create(
     peer,
     ["This patch is going to be archived"],
     "feature/archived",
-    () =>
-      Fs.writeFile(Path.join(projectFolder, "CONTRIBUTING.md"), "# Archived"),
+    () => Fs.writeFile(Path.join(repoFolder, "CONTRIBUTING.md"), "# Archived"),
     [],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     [
@@ -541,24 +538,21 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "-m",
       "No review due to patch being archived.",
     ],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
-  await peer.rad(
-    ["patch", "archive", patchFour],
-    createOptions(projectFolder, 2),
-  );
+  await peer.rad(["patch", "archive", patchFour], createOptions(repoFolder, 2));
 
   const patchFive = await patch.create(
     peer,
     ["This patch is going to be reverted to draft"],
     "feature/draft",
-    () => Fs.writeFile(Path.join(projectFolder, "LICENSE"), "Draft"),
+    () => Fs.writeFile(Path.join(repoFolder, "LICENSE"), "Draft"),
     [],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
   await peer.rad(
     ["patch", "ready", patchFive, "--undo"],
-    createOptions(projectFolder, 1),
+    createOptions(repoFolder, 1),
   );
 }
 
@@ -570,12 +564,12 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
     "-C",
     Path.join(tmpDir, "repos", "markdown"),
   ]);
-  const { projectFolder } = await createProject(peer, { name: "markdown" });
-  await Fs.cp(Path.join(tmpDir, "repos", "markdown"), projectFolder, {
+  const { repoFolder } = await createRepo(peer, { name: "markdown" });
+  await Fs.cp(Path.join(tmpDir, "repos", "markdown"), repoFolder, {
     recursive: true,
   });
 
-  await peer.git(["add", "."], { cwd: projectFolder });
+  await peer.git(["add", "."], { cwd: repoFolder });
   const commitMessage = `Add Markdown cheat sheet
 
   Borrowed from [Adam Pritchard][ap].
@@ -583,15 +577,15 @@ export async function createMarkdownFixture(peer: RadiclePeer) {
 
   [ap]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet`;
   await peer.git(["commit", "-m", commitMessage], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
-  await peer.git(["push", "rad"], { cwd: projectFolder });
+  await peer.git(["push", "rad"], { cwd: repoFolder });
   await issue.create(
     peer,
     "This `title` has **markdown**",
     'This is a description\n\nWith some multiline text.\n\n```\n23-11-06 10:19 ➜  radicle-jetbrains-plugin git:(main) rad id update --title "Godify jchrist" --description "where jchrist ascends to a god of this project" --delegate did:key:z6MkpaATbhkGbSMysNomYTFVvKG5bnNKYZ2cCamfoHzX9SnL --threshold 1\n\n✓ Identity revision 029837dde8f5c49704e50a19cd709473ac66a456 created\n```',
     ["bug", "feature-request"],
-    { cwd: projectFolder },
+    { cwd: repoFolder },
   );
 }
 
@@ -613,7 +607,6 @@ export const markdownRid = "rad:z2tchH2Ti4LxRKdssPQYs6VHE5rsg";
 export const sourceBrowsingUrl = `/nodes/127.0.0.1/${sourceBrowsingRid}`;
 export const cobUrl = `/nodes/127.0.0.1/${cobRid}`;
 export const markdownUrl = `/nodes/127.0.0.1/${markdownRid}`;
-export const nodeRemote = "z6MktULudTtAsAhRegYPiZ6631RV3viv12qd4GQF8z1xB22S";
 export const shortNodeRemote = "z6MktU…1xB22S";
 export const defaultHttpdPort = 8081;
 export const gitOptions = {

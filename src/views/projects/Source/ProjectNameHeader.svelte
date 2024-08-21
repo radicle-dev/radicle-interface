@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Project } from "@http-client";
+  import type { BaseUrl, Repo } from "@http-client";
 
   import dompurify from "dompurify";
   import { markdownWithExtensions } from "@app/lib/markdown";
@@ -13,7 +13,7 @@
   import SeedButton from "@app/views/projects/Header/SeedButton.svelte";
   import Share from "@app/views/projects/Share.svelte";
 
-  export let project: Project;
+  export let repo: Repo;
   export let baseUrl: BaseUrl;
 
   function render(content: string): string {
@@ -21,6 +21,8 @@
       markdownWithExtensions.parseInline(content) as string,
     );
   }
+
+  $: project = repo["xyz.radicle.project"];
 </script>
 
 <style>
@@ -38,10 +40,10 @@
   .description {
     padding: 0 1rem 1rem 1rem;
   }
-  .project-name {
+  .repo-name {
     font-weight: var(--font-weight-semibold);
   }
-  .project-name:hover {
+  .repo-name:hover {
     color: inherit;
   }
   .description :global(a) {
@@ -66,16 +68,16 @@
     <span class="txt-overflow">
       <Link
         route={{
-          resource: "project.source",
-          project: project.id,
+          resource: "repo.source",
+          repo: repo.rid,
           node: baseUrl,
         }}>
-        <span class="project-name">
+        <span class="repo-name">
           {project.name}
         </span>
       </Link>
     </span>
-    {#if project.visibility && project.visibility.type === "private"}
+    {#if repo.visibility && repo.visibility.type === "private"}
       <Badge variant="yellow" size="tiny">
         <Icon name="lock" />
         Private
@@ -87,22 +89,19 @@
         style:display="flex"
         style:gap="0.5rem"
         class="global-hide-on-mobile-down">
-        <CloneButton {baseUrl} id={project.id} name={project.name} />
-        <SeedButton seedCount={project.seeding} projectId={project.id} />
+        <CloneButton {baseUrl} id={repo.rid} name={project.name} />
+        <SeedButton seedCount={repo.seeding} repoId={repo.rid} />
       </div>
       <div
         style:display="flex"
         style:gap="0.5rem"
         class="global-hide-on-small-desktop-up">
-        <SeedButton
-          disabled
-          seedCount={project.seeding}
-          projectId={project.id} />
+        <SeedButton disabled seedCount={repo.seeding} repoId={repo.rid} />
       </div>
     </div>
   </div>
   <div class="id">
-    <Id shorten={false} id={project.id} ariaLabel="project-id" />
+    <Id shorten={false} id={repo.rid} ariaLabel="repo-id" />
   </div>
 </div>
 <div class="description" use:twemoji>

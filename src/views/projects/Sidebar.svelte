@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Repo, SeedingPolicy } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import ContextRepo from "@app/views/projects/Sidebar/ContextRepo.svelte";
@@ -15,7 +15,7 @@
   export let activeTab: ActiveTab | undefined = undefined;
   export let seedingPolicy: SeedingPolicy;
   export let baseUrl: BaseUrl;
-  export let project: Project;
+  export let repo: Repo;
   export let collapsedOnly = false;
 
   let expanded = collapsedOnly ? false : loadSidebarState();
@@ -64,7 +64,7 @@
   .sidebar.expanded {
     width: 22.5rem;
   }
-  .project-navigation {
+  .repo-navigation {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -163,12 +163,12 @@
 
 <div class="sidebar" class:expanded>
   <!-- Top Navigation Items -->
-  <div class="project-navigation">
+  <div class="repo-navigation">
     <Link
       title="Source"
       route={{
-        resource: "project.source",
-        project: project.id,
+        resource: "repo.source",
+        repo: repo.rid,
         node: baseUrl,
         path: "/",
       }}>
@@ -183,10 +183,10 @@
       </Button>
     </Link>
     <Link
-      title={`${project.issues.open} Issues`}
+      title={`${repo.issues.open} Issues`}
       route={{
-        resource: "project.issues",
-        project: project.id,
+        resource: "repo.issues",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       <Button
@@ -203,17 +203,17 @@
             class="counter"
             class:selected={activeTab === "issues"}
             class:hover={hover && activeTab !== "issues"}>
-            {project.issues.open}
+            {repo.issues.open}
           </span>
         </div>
       </Button>
     </Link>
 
     <Link
-      title={`${project.patches.open} Patches`}
+      title={`${repo.patches.open} Patches`}
       route={{
-        resource: "project.patches",
-        project: project.id,
+        resource: "repo.patches",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       <Button
@@ -230,7 +230,7 @@
             class="counter"
             class:hover={hover && activeTab !== "patches"}
             class:selected={activeTab === "patches"}>
-            {project.patches.open}
+            {repo.patches.open}
           </span>
         </div>
       </Button>
@@ -241,8 +241,8 @@
     <div class="repo box" class:expanded>
       <ContextRepo
         {baseUrl}
-        projectThreshold={project.threshold}
-        projectDelegates={project.delegates}
+        repoThreshold={repo.threshold}
+        repoDelegates={repo.delegates}
         {seedingPolicy} />
     </div>
     <div class="vertical-buttons" class:expanded style:gap="0.5rem">
@@ -288,8 +288,8 @@
         <div slot="popover" class="txt-small" style:width="18rem">
           <ContextRepo
             {baseUrl}
-            projectThreshold={project.threshold}
-            projectDelegates={project.delegates}
+            repoThreshold={repo.threshold}
+            repoDelegates={repo.delegates}
             {seedingPolicy} />
         </div>
       </Popover>

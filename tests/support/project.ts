@@ -10,8 +10,8 @@ export async function changeBranch(peer: string, branch: string, page: Page) {
   await page.getByRole("button", { name: branch }).click();
 }
 
-// Create a project using the rad CLI.
-export async function createProject(
+// Create a repo using the rad CLI.
+export async function createRepo(
   peer: RadiclePeer,
   {
     name,
@@ -24,14 +24,14 @@ export async function createProject(
     defaultBranch?: string;
     visibility?: "public" | "private";
   },
-): Promise<{ rid: string; projectFolder: string; defaultBranch: string }> {
-  const projectFolder = Path.join(peer.checkoutPath, name);
+): Promise<{ rid: string; repoFolder: string; defaultBranch: string }> {
+  const repoFolder = Path.join(peer.checkoutPath, name);
 
   await peer.git(["init", name, "--initial-branch", defaultBranch], {
     cwd: peer.checkoutPath,
   });
   await peer.git(["commit", "--allow-empty", "--message", "initial commit"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.rad(
     [
@@ -45,15 +45,15 @@ export async function createProject(
       `--${visibility}`,
     ],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
 
   const { stdout: rid } = await peer.rad(["inspect"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
 
-  return { rid, projectFolder, defaultBranch };
+  return { rid, repoFolder, defaultBranch };
 }
 
 export function extractPatchId(cmdOutput: { stderr: string }) {

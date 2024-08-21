@@ -1,5 +1,5 @@
 import { test, cobUrl, expect } from "@tests/support/fixtures.js";
-import { createProject } from "@tests/support/project";
+import { createRepo } from "@tests/support/project";
 
 test("navigate patch listing", async ({ page }) => {
   await page.goto(cobUrl);
@@ -15,30 +15,30 @@ test("navigate patch listing", async ({ page }) => {
 });
 
 test("patches counters", async ({ page, peer }) => {
-  const { rid, projectFolder, defaultBranch } = await createProject(peer, {
+  const { rid, repoFolder, defaultBranch } = await createRepo(peer, {
     name: "patch-counters",
   });
   await peer.git(["switch", "-c", "feature-1"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.git(["commit", "--allow-empty", "-m", "1th"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.git(["push", "rad", "HEAD:refs/patches"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await page.goto(`${peer.uiUrl()}/${rid}/patches`);
   await peer.git(["switch", defaultBranch], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.git(["switch", "-c", "feature-2"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.git(["commit", "--allow-empty", "-m", "2nd"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await peer.git(["push", "rad", "HEAD:refs/patches"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await page.getByRole("button", { name: "filter-dropdown" }).first().click();
   await page.locator(".dropdown-item").getByText("Open 1").click();

@@ -3,7 +3,7 @@
     BaseUrl,
     Patch,
     PatchState,
-    Project,
+    Repo,
     SeedingPolicy,
   } from "@http-client";
 
@@ -31,7 +31,7 @@
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
   export let patches: Patch[];
-  export let project: Project;
+  export let repo: Repo;
   export let status: PatchState["status"];
   export let nodeAvatarUrl: string | undefined;
 
@@ -52,7 +52,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllPatches(project.id, {
+      const response = await api.repo.getAllPatches(repo.rid, {
         status,
         page,
         perPage: PATCHES_PER_PAGE,
@@ -80,7 +80,7 @@
   };
 
   $: showMoreButton =
-    !loading && !error && allPatches.length < project.patches[status];
+    !loading && !error && allPatches.length < repo.patches[status];
 </script>
 
 <style>
@@ -125,13 +125,13 @@
   }
 </style>
 
-<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="patches">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {repo} activeTab="patches">
   <svelte:fragment slot="breadcrumb">
     <Separator />
     <Link
       route={{
-        resource: "project.patches",
-        project: project.id,
+        resource: "repo.patches",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Patches
@@ -154,7 +154,7 @@
         </div>
         {capitalize(status)}
         <div class="dropdown-button-counter">
-          {project.patches[status]}
+          {repo.patches[status]}
         </div>
         <Icon name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
@@ -164,8 +164,8 @@
           let:item
           on:afterNavigate={() => closeFocused()}
           route={{
-            resource: "project.patches",
-            project: project.id,
+            resource: "repo.patches",
+            repo: repo.rid,
             node: baseUrl,
             search: `status=${item}`,
           }}>
@@ -179,7 +179,7 @@
               <div
                 class="dropdown-list-counter"
                 class:selected={item === status}>
-                {project.patches[item]}
+                {repo.patches[item]}
               </div>
             </div>
           </DropdownListItem>
@@ -195,7 +195,7 @@
       slot="item"
       let:item
       {baseUrl}
-      projectId={project.id}
+      repoId={repo.rid}
       patch={item} />
   </List>
 
@@ -208,7 +208,7 @@
       {error} />
   {/if}
 
-  {#if project.patches[status] === 0}
+  {#if repo.patches[status] === 0}
     <div class="placeholder">
       <Placeholder iconName="no-patches" caption={`No ${status} patches`} />
     </div>

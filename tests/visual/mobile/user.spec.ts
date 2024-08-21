@@ -21,7 +21,7 @@ test("user page", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-test("empty pinned projects", async ({ page }) => {
+test("empty pinned repos", async ({ page }) => {
   await page.goto(`/nodes/radicle.local/users/${bobRemote}`, {
     waitUntil: "networkidle",
   });

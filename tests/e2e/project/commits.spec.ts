@@ -9,7 +9,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
-import { changeBranch, createProject } from "@tests/support/project";
+import { changeBranch, createRepo } from "@tests/support/project";
 import sinon from "sinon";
 
 test("peer and branch switching", async ({ page }) => {
@@ -183,7 +183,7 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   });
   await alice.startNode();
   await alice.startHttpd();
-  const { rid, projectFolder } = await createProject(alice, {
+  const { rid, repoFolder } = await createRepo(alice, {
     name: "alice-project",
   });
   await page.goto(`${alice.uiUrl()}/${rid}`);
@@ -191,10 +191,10 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
 
   await alice.git(["commit", "--allow-empty", "--message", "first change"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await alice.git(["push", "rad", "main"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await page.reload();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);
@@ -219,11 +219,11 @@ test("pushing changes while viewing history", async ({ page, peerManager }) => {
       "after clicking the project title",
     ],
     {
-      cwd: projectFolder,
+      cwd: repoFolder,
     },
   );
   await alice.git(["push", "rad", "main"], {
-    cwd: projectFolder,
+    cwd: repoFolder,
   });
   await page.reload();
   await expect(page).toHaveURL(`${alice.uiUrl()}/${rid}/history`);

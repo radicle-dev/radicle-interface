@@ -12,7 +12,7 @@ export async function assertIssue(
 ) {
   expect(
     //@prettier-ignore looks more readable than what prettier suggests.
-    isMatch(await api.project.getIssueById(cobRid, oid), change),
+    isMatch(await api.repo.getIssueById(cobRid, oid), change),
   ).toBe(true);
 }
 
@@ -23,6 +23,6 @@ export async function assertPatch(
 ) {
   expect(
     //@prettier-ignore looks more readable than what prettier suggests.
-    isMatch(await api.project.getPatchById(cobRid, oid), change),
+    isMatch(await api.repo.getPatchById(cobRid, oid), change),
   ).toBe(true);
 }

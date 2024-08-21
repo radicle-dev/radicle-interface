@@ -1,40 +1,35 @@
-import type { ProjectListQuery } from "@http-client";
+import type { Repo, RepoListQuery } from "@http-client";
 
-import { loadProjectActivity, type WeeklyActivity } from "@app/lib/commit";
-import {
-  HttpdClient,
-  type BaseUrl,
-  type Commit,
-  type Project,
-} from "@http-client";
+import { loadRepoActivity, type WeeklyActivity } from "@app/lib/commit";
+import { HttpdClient, type BaseUrl, type Commit } from "@http-client";
 
-export interface ProjectInfo {
-  project: Project;
+export interface RepoInfo {
+  repo: Repo;
   baseUrl: BaseUrl;
   activity: WeeklyActivity[];
   lastCommit: Commit;
 }
 
-export async function fetchProjectInfos(
+export async function fetchRepoInfos(
   baseUrl: BaseUrl,
-  query?: ProjectListQuery,
+  query?: RepoListQuery,
   delegate?: string,
-): Promise<ProjectInfo[]> {
+): Promise<RepoInfo[]> {
   const api = new HttpdClient(baseUrl);
-  let projects: Project[];
+  let repos: Repo[];
 
   if (delegate) {
-    projects = await api.project.getByDelegate(delegate, query);
+    repos = await api.repo.getByDelegate(delegate, query);
   } else {
-    projects = await api.project.getAll(query);
+    repos = await api.repo.getAll(query);
   }
   const info = await Promise.all(
-    projects.map(async project => {
+    repos.map(async repo => {
       const [activity, lastCommit] = await Promise.all([
-        loadProjectActivity(project.id, baseUrl),
-        api.project.getCommitBySha(project.id, project.head),
+        loadRepoActivity(repo.rid, baseUrl),
+        api.repo.getCommitBySha(repo.rid, repo.head),
       ]);
-      return { project, activity, lastCommit, baseUrl };
+      return { repo, activity, lastCommit, baseUrl };
     }),
   );
 

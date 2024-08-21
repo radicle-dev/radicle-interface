@@ -1,7 +1,7 @@
 import { test, expect } from "@tests/support/fixtures.js";
 import sinon from "sinon";
 
-test("pinned projects", async ({ page }) => {
+test("pinned repos", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       "configuredPreferredSeeds",
@@ -18,7 +18,7 @@ test("pinned projects", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-test("load projects error", async ({ page }) => {
+test("load repos error", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       "configuredPreferredSeeds",
@@ -32,7 +32,7 @@ test("load projects error", async ({ page }) => {
   });
 
   await page.route(
-    ({ pathname }) => pathname === "/api/v1/projects",
+    ({ pathname }) => pathname === "/api/v1/repos",
     route => route.fulfill({ status: 500 }),
   );
 
@@ -47,7 +47,7 @@ test("response parse error", async ({ page }) => {
       JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
     );
   });
-  await page.route("*/**/v1/projects*", route => {
+  await page.route("*/**/v1/repos*", route => {
     return route.fulfill({
       json: [{ name: 1337 }],
     });
@@ -63,7 +63,7 @@ test("response error", async ({ page }) => {
       JSON.stringify([{ hostname: "127.0.0.1", port: 8081, scheme: "http" }]),
     );
   });
-  await page.route("*/**/v1/projects*", route => {
+  await page.route("*/**/v1/repos*", route => {
     return route.fulfill({
       status: 500,
       body: "There is an error in the response",

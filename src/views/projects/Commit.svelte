@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Commit, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Commit, Repo, SeedingPolicy } from "@http-client";
 
   import { formatObjectId } from "@app/lib/utils";
 
@@ -17,7 +17,7 @@
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
   export let commit: Commit;
-  export let project: Project;
+  export let repo: Repo;
   export let nodeAvatarUrl: string | undefined;
 
   $: header = commit.commit;
@@ -49,13 +49,13 @@
   }
 </style>
 
-<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project}>
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {repo}>
   <svelte:fragment slot="breadcrumb">
     <Separator />
     <Link
       route={{
-        resource: "project.history",
-        project: project.id,
+        resource: "repo.history",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Commits
@@ -78,8 +78,8 @@
           <div class="button-container">
             <Link
               route={{
-                resource: "project.source",
-                project: project.id,
+                resource: "repo.source",
+                repo: repo.rid,
                 node: baseUrl,
                 path: "/",
                 revision: commit.commit.id,
@@ -101,7 +101,7 @@
     </div>
     <Changeset
       {baseUrl}
-      projectId={project.id}
+      repoId={repo.rid}
       files={commit.files}
       diff={commit.diff}
       revision={commit.commit.id} />

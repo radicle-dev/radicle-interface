@@ -8,7 +8,7 @@
   export let variant: "standalone" | "right" | "center" | "left" = "standalone";
   export let styleMinWidth: string | undefined = undefined;
   export let styleWidth: "100%" | undefined = undefined;
-  export let projectId: string;
+  export let repoId: string;
   export let baseUrl: BaseUrl;
   export let hideSummaryOnMobile: boolean = true;
   export let commit: Commit["commit"];
@@ -47,8 +47,8 @@
 <Link
   styleTextOverflow
   route={{
-    resource: "project.commit",
-    project: projectId,
+    resource: "repo.commit",
+    repo: repoId,
     node: baseUrl,
     commit: commit.id,
   }}>

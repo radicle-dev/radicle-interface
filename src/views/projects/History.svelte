@@ -2,12 +2,12 @@
   import type {
     BaseUrl,
     CommitHeader,
-    Project,
+    Repo,
     Remote,
     SeedingPolicy,
     Tree,
   } from "@http-client";
-  import type { ProjectRoute } from "./router";
+  import type { RepoRoute } from "./router";
 
   import config from "virtual:config";
   import { HttpdClient } from "@http-client";
@@ -22,7 +22,7 @@
   import Link from "@app/components/Link.svelte";
   import List from "@app/components/List.svelte";
   import Loading from "@app/components/Loading.svelte";
-  import ProjectNameHeader from "./Source/ProjectNameHeader.svelte";
+  import RepoNameHeader from "./Source/ProjectNameHeader.svelte";
   import Separator from "./Separator.svelte";
 
   export let baseUrl: BaseUrl;
@@ -31,7 +31,7 @@
   export let commitHeaders: CommitHeader[];
   export let peer: string | undefined;
   export let peers: Remote[];
-  export let project: Project;
+  export let repo: Repo;
   export let revision: string | undefined;
   export let tree: Tree;
   export let nodeAvatarUrl: string | undefined;
@@ -45,10 +45,10 @@
   let allCommitHeaders: CommitHeader[];
 
   $: baseRoute = {
-    resource: "project.history",
+    resource: "repo.history",
     node: baseUrl,
-    project: project.id,
-  } as Extract<ProjectRoute, { resource: "project.history" }>;
+    repo: repo.rid,
+  } as Extract<RepoRoute, { resource: "repo.history" }>;
   $: {
     allCommitHeaders = commitHeaders;
     page = 0;
@@ -58,7 +58,7 @@
     loading = true;
     page += 1;
     try {
-      const response = await api.project.getAllCommits(project.id, {
+      const response = await api.repo.getAllCommits(repo.rid, {
         parent: allCommitHeaders[0].id,
         page,
         perPage: config.source.commitsPerPage,
@@ -92,19 +92,19 @@
   }
 </style>
 
-<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {project} activeTab="source">
+<Layout {nodeAvatarUrl} {seedingPolicy} {baseUrl} {repo} activeTab="source">
   <svelte:fragment slot="breadcrumb">
     <Separator />
     <Link
       route={{
-        resource: "project.history",
-        project: project.id,
+        resource: "repo.history",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Commits
     </Link>
   </svelte:fragment>
-  <ProjectNameHeader {project} {baseUrl} slot="header" />
+  <RepoNameHeader {repo} {baseUrl} slot="header" />
 
   <div style:margin="1rem" slot="subheader">
     <Header
@@ -112,7 +112,7 @@
       {commit}
       {peers}
       {peer}
-      {project}
+      {repo}
       {revision}
       {tree}
       node={baseUrl}
@@ -127,14 +127,14 @@
         <CommitTeaser
           slot="item"
           let:item
-          projectId={project.id}
+          repoId={repo.rid}
           {baseUrl}
           commit={item} />
       </List>
     {/each}
   </div>
 
-  {#await api.project.getTreeStatsBySha(project.id, commit)}
+  {#await api.repo.getTreeStatsBySha(repo.rid, commit)}
     <div class="more">
       <Loading small center />
     </div>

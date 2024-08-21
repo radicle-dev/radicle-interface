@@ -16,7 +16,7 @@ import type {
   Node,
   Patch,
   PatchState,
-  Project,
+  Repo,
   Remote,
   Revision,
   SeedingPolicy,
@@ -35,56 +35,56 @@ import { nodePath } from "@app/views/nodes/router";
 export const PATCHES_PER_PAGE = 10;
 export const ISSUES_PER_PAGE = 10;
 
-export type ProjectRoute =
-  | ProjectTreeRoute
-  | ProjectHistoryRoute
+export type RepoRoute =
+  | RepoTreeRoute
+  | RepoHistoryRoute
   | {
-      resource: "project.commit";
+      resource: "repo.commit";
       node: BaseUrl;
-      project: string;
+      repo: string;
       commit: string;
     }
-  | ProjectIssuesRoute
-  | ProjectIssueRoute
-  | ProjectPatchesRoute
-  | ProjectPatchRoute;
+  | RepoIssuesRoute
+  | RepoIssueRoute
+  | RepoPatchesRoute
+  | RepoPatchRoute;
 
-interface ProjectIssuesRoute {
-  resource: "project.issues";
+interface RepoIssuesRoute {
+  resource: "repo.issues";
   node: BaseUrl;
-  project: string;
+  repo: string;
   status?: "open" | "closed";
 }
 
-interface ProjectIssueRoute {
-  resource: "project.issue";
+interface RepoIssueRoute {
+  resource: "repo.issue";
   node: BaseUrl;
-  project: string;
+  repo: string;
   issue: string;
 }
 
-interface ProjectTreeRoute {
-  resource: "project.source";
+interface RepoTreeRoute {
+  resource: "repo.source";
   node: BaseUrl;
-  project: string;
+  repo: string;
   path?: string;
   peer?: string;
   revision?: string;
   route?: string;
 }
 
-interface ProjectHistoryRoute {
-  resource: "project.history";
+interface RepoHistoryRoute {
+  resource: "repo.history";
   node: BaseUrl;
-  project: string;
+  repo: string;
   peer?: string;
   revision?: string;
 }
 
-interface ProjectPatchRoute {
-  resource: "project.patch";
+interface RepoPatchRoute {
+  resource: "repo.patch";
   node: BaseUrl;
-  project: string;
+  repo: string;
   patch: string;
   view?:
     | {
@@ -101,21 +101,21 @@ interface ProjectPatchRoute {
       };
 }
 
-interface ProjectPatchesRoute {
-  resource: "project.patches";
+interface RepoPatchesRoute {
+  resource: "repo.patches";
   node: BaseUrl;
-  project: string;
+  repo: string;
   search?: string;
 }
 
-export type ProjectLoadedRoute =
+export type RepoLoadedRoute =
   | {
-      resource: "project.source";
+      resource: "repo.source";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
         commit: string;
-        project: Project;
+        repo: Repo;
         peers: Remote[];
         peer: string | undefined;
         revision: string | undefined;
@@ -127,12 +127,12 @@ export type ProjectLoadedRoute =
       };
     }
   | {
-      resource: "project.history";
+      resource: "repo.history";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
         commit: string;
-        project: Project;
+        repo: Repo;
         peers: Remote[];
         peer: string | undefined;
         revision: string | undefined;
@@ -142,54 +142,54 @@ export type ProjectLoadedRoute =
       };
     }
   | {
-      resource: "project.commit";
+      resource: "repo.commit";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
-        project: Project;
+        repo: Repo;
         commit: Commit;
         nodeAvatarUrl: string | undefined;
       };
     }
   | {
-      resource: "project.issue";
+      resource: "repo.issue";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
-        project: Project;
+        repo: Repo;
         rawPath: (commit?: string) => string;
         issue: Issue;
         nodeAvatarUrl: string | undefined;
       };
     }
   | {
-      resource: "project.issues";
+      resource: "repo.issues";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
-        project: Project;
+        repo: Repo;
         issues: Issue[];
         status: IssueState["status"];
         nodeAvatarUrl: string | undefined;
       };
     }
   | {
-      resource: "project.patches";
+      resource: "repo.patches";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
-        project: Project;
+        repo: Repo;
         patches: Patch[];
         status: PatchState["status"];
         nodeAvatarUrl: string | undefined;
       };
     }
   | {
-      resource: "project.patch";
+      resource: "repo.patch";
       params: {
         baseUrl: BaseUrl;
         seedingPolicy: SeedingPolicy;
-        project: Project;
+        repo: Repo;
         rawPath: (commit?: string) => string;
         patch: Patch;
         stats: Diff["stats"];
@@ -231,7 +231,7 @@ function isOid(input: string): boolean {
 export const cachedGetDiff = cached(
   async (baseUrl: BaseUrl, rid: string, base: string, oid: string) => {
     const api = new HttpdClient(baseUrl);
-    return await api.project.getDiff(rid, base, oid);
+    return await api.repo.getDiff(rid, base, oid);
   },
   (...args) => JSON.stringify(args),
   { max: 200 },
@@ -258,10 +258,10 @@ function parseRevisionToOid(
   }
 }
 
-export async function loadProjectRoute(
-  route: ProjectRoute,
+export async function loadRepoRoute(
+  route: RepoRoute,
   previousLoaded: LoadedRoute,
-): Promise<ProjectLoadedRoute | ErrorRoute | NotFoundRoute> {
+): Promise<RepoLoadedRoute | ErrorRoute | NotFoundRoute> {
   if (
     import.meta.env.PROD &&
     isLocal(`${route.node.hostname}:${route.node.port}`)
@@ -278,35 +278,35 @@ export async function loadProjectRoute(
   const api = new HttpdClient(route.node);
 
   try {
-    if (route.resource === "project.source") {
+    if (route.resource === "repo.source") {
       return await loadTreeView(route, previousLoaded);
-    } else if (route.resource === "project.history") {
+    } else if (route.resource === "repo.history") {
       return await loadHistoryView(route, previousLoaded);
-    } else if (route.resource === "project.commit") {
-      const [project, commit, seedingPolicy, node] = await Promise.all([
-        api.project.getById(route.project),
-        api.project.getCommitBySha(route.project, route.commit),
-        api.getPolicyById(route.project),
+    } else if (route.resource === "repo.commit") {
+      const [repo, commit, seedingPolicy, node] = await Promise.all([
+        api.repo.getByRid(route.repo),
+        api.repo.getCommitBySha(route.repo, route.commit),
+        api.getPolicyByRid(route.repo),
         api.getNode(),
       ]);
 
       return {
-        resource: "project.commit",
+        resource: "repo.commit",
         params: {
           baseUrl: route.node,
           seedingPolicy,
-          project,
+          repo,
           commit,
           nodeAvatarUrl: node.avatarUrl,
         },
       };
-    } else if (route.resource === "project.issue") {
+    } else if (route.resource === "repo.issue") {
       return await loadIssueView(route);
-    } else if (route.resource === "project.patch") {
+    } else if (route.resource === "repo.patch") {
       return await loadPatchView(route, previousLoaded);
-    } else if (route.resource === "project.issues") {
+    } else if (route.resource === "repo.issues") {
       return await loadIssuesView(route);
-    } else if (route.resource === "project.patches") {
+    } else if (route.resource === "repo.patches") {
       return await loadPatchesView(route);
     } else {
       return unreachable(route);
@@ -325,108 +325,108 @@ export async function loadProjectRoute(
 }
 
 async function loadPatchesView(
-  route: ProjectPatchesRoute,
-): Promise<ProjectLoadedRoute> {
+  route: RepoPatchesRoute,
+): Promise<RepoLoadedRoute> {
   const api = new HttpdClient(route.node);
   const searchParams = new URLSearchParams(route.search || "");
   const status = (searchParams.get("status") as PatchState["status"]) || "open";
 
-  const [project, patches, seedingPolicy, node] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getAllPatches(route.project, {
+  const [repo, patches, seedingPolicy, node] = await Promise.all([
+    api.repo.getByRid(route.repo),
+    api.repo.getAllPatches(route.repo, {
       status,
       page: 0,
       perPage: PATCHES_PER_PAGE,
     }),
-    api.getPolicyById(route.project),
+    api.getPolicyByRid(route.repo),
     api.getNode(),
   ]);
 
   return {
-    resource: "project.patches",
+    resource: "repo.patches",
     params: {
       baseUrl: route.node,
       seedingPolicy,
       patches,
       status,
-      project,
+      repo,
       nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
 
 async function loadIssuesView(
-  route: ProjectIssuesRoute,
-): Promise<ProjectLoadedRoute> {
+  route: RepoIssuesRoute,
+): Promise<RepoLoadedRoute> {
   const api = new HttpdClient(route.node);
   const status = route.status || "open";
 
-  const [project, issues, seedingPolicy, node] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getAllIssues(route.project, {
+  const [repo, issues, seedingPolicy, node] = await Promise.all([
+    api.repo.getByRid(route.repo),
+    api.repo.getAllIssues(route.repo, {
       status,
       page: 0,
       perPage: ISSUES_PER_PAGE,
     }),
-    api.getPolicyById(route.project),
+    api.getPolicyByRid(route.repo),
     api.getNode(),
   ]);
 
   return {
-    resource: "project.issues",
+    resource: "repo.issues",
     params: {
       baseUrl: route.node,
       seedingPolicy,
       issues,
       status,
-      project,
+      repo,
       nodeAvatarUrl: node.avatarUrl,
     },
   };
 }
 
 async function loadTreeView(
-  route: ProjectTreeRoute,
+  route: RepoTreeRoute,
   previousLoaded: LoadedRoute,
-): Promise<ProjectLoadedRoute | NotFoundRoute> {
+): Promise<RepoLoadedRoute | NotFoundRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
-      route.project
+      route.repo
     }${commit ? `/${commit}` : ""}`;
 
-  let projectPromise: Promise<Project>;
+  let repoPromise: Promise<Repo>;
   let seedingPolicyPromise: Promise<SeedingPolicy>;
   let peersPromise: Promise<Remote[]>;
   let nodePromise: Promise<Partial<Node>>;
   if (
-    (previousLoaded.resource === "project.source" ||
-      previousLoaded.resource === "project.history") &&
-    previousLoaded.params.project.id === route.project &&
+    (previousLoaded.resource === "repo.source" ||
+      previousLoaded.resource === "repo.history") &&
+    previousLoaded.params.repo.rid === route.repo &&
     previousLoaded.params.peer === route.peer
   ) {
-    projectPromise = Promise.resolve(previousLoaded.params.project);
+    repoPromise = Promise.resolve(previousLoaded.params.repo);
     peersPromise = Promise.resolve(previousLoaded.params.peers);
     seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
     nodePromise = Promise.resolve({
       avatarUrl: previousLoaded.params.nodeAvatarUrl,
     });
   } else {
-    projectPromise = api.project.getById(route.project);
-    peersPromise = api.project.getAllRemotes(route.project);
-    seedingPolicyPromise = api.getPolicyById(route.project);
+    repoPromise = api.repo.getByRid(route.repo);
+    peersPromise = api.repo.getAllRemotes(route.repo);
+    seedingPolicyPromise = api.getPolicyByRid(route.repo);
     nodePromise = api.getNode();
   }
 
-  const [project, peers, seedingPolicy, node] = await Promise.all([
-    projectPromise,
+  const [repo, peers, seedingPolicy, node] = await Promise.all([
+    repoPromise,
     peersPromise,
     seedingPolicyPromise,
     nodePromise,
   ]);
 
   let branchMap: Record<string, string> = {
-    [project.defaultBranch]: project.head,
+    [repo["xyz.radicle.project"].defaultBranch]: repo.head,
   };
   if (route.peer) {
     const peer = peers.find(peer => peer.id === route.peer);
@@ -448,21 +448,21 @@ async function loadTreeView(
 
   const commit = parseRevisionToOid(
     route.revision,
-    project.defaultBranch,
+    repo["xyz.radicle.project"].defaultBranch,
     branchMap,
   );
   const path = route.path || "/";
   const [tree, blobResult] = await Promise.all([
-    api.project.getTree(route.project, commit),
-    loadBlob(api, project.id, commit, path),
+    api.repo.getTree(route.repo, commit),
+    loadBlob(api, repo.rid, commit, path),
   ]);
   return {
-    resource: "project.source",
+    resource: "repo.source",
     params: {
       baseUrl: route.node,
       seedingPolicy,
       commit,
-      project,
+      repo,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
       rawPath,
@@ -477,16 +477,16 @@ async function loadTreeView(
 
 async function loadBlob(
   api: HttpdClient,
-  project: string,
+  repo: string,
   commit: string,
   path: string,
 ): Promise<BlobResult> {
   try {
     let blob: Blob;
     if (path === "" || path === "/") {
-      blob = await api.project.getReadme(project, commit);
+      blob = await api.repo.getReadme(repo, commit);
     } else {
-      blob = await api.project.getBlob(project, commit, path);
+      blob = await api.repo.getBlob(repo, commit, path);
     }
     return {
       ok: true,
@@ -525,39 +525,39 @@ async function loadBlob(
   }
 }
 async function loadHistoryView(
-  route: ProjectHistoryRoute,
+  route: RepoHistoryRoute,
   previousLoaded: LoadedRoute,
-): Promise<ProjectLoadedRoute> {
+): Promise<RepoLoadedRoute> {
   const api = new HttpdClient(route.node);
 
-  let projectPromise: Promise<Project>;
+  let repoPromise: Promise<Repo>;
   let seedingPolicyPromise: Promise<SeedingPolicy>;
   let peersPromise: Promise<Remote[]>;
   let nodePromise: Promise<Partial<Node>>;
   if (
-    (previousLoaded.resource === "project.source" ||
-      previousLoaded.resource === "project.history") &&
-    previousLoaded.params.project.id === route.project &&
+    (previousLoaded.resource === "repo.source" ||
+      previousLoaded.resource === "repo.history") &&
+    previousLoaded.params.repo.rid === route.repo &&
     previousLoaded.params.peer === route.peer
   ) {
-    projectPromise = Promise.resolve(previousLoaded.params.project);
+    repoPromise = Promise.resolve(previousLoaded.params.repo);
     peersPromise = Promise.resolve(previousLoaded.params.peers);
     seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
     nodePromise = Promise.resolve({
       avatarUrl: previousLoaded.params.nodeAvatarUrl,
     });
   } else {
-    projectPromise = api.project.getById(route.project);
-    peersPromise = api.project.getAllRemotes(route.project);
-    seedingPolicyPromise = api.getPolicyById(route.project);
+    repoPromise = api.repo.getByRid(route.repo);
+    peersPromise = api.repo.getAllRemotes(route.repo);
+    seedingPolicyPromise = api.getPolicyByRid(route.repo);
     nodePromise = api.getNode();
   }
 
-  const [project, peers, seedingPolicy, branchMap, node] = await Promise.all([
-    projectPromise,
+  const [repo, peers, seedingPolicy, branchMap, node] = await Promise.all([
+    repoPromise,
     peersPromise,
     seedingPolicyPromise,
-    getPeerBranches(api, route.project, route.peer),
+    getPeerBranches(api, route.repo, route.peer),
     nodePromise,
   ]);
 
@@ -565,33 +565,34 @@ async function loadHistoryView(
   if (route.revision && isOid(route.revision)) {
     commitId = route.revision;
   } else if (branchMap) {
-    commitId = branchMap[route.revision || project.defaultBranch];
+    commitId =
+      branchMap[route.revision || repo["xyz.radicle.project"].defaultBranch];
   } else if (!route.revision) {
-    commitId = project.head;
+    commitId = repo.head;
   }
 
   if (!commitId) {
     throw new Error(
-      `Revision ${route.revision} not found for project ${project.id}`,
+      `Revision ${route.revision} not found for repo ${repo.rid}`,
     );
   }
 
   let treePromise: Promise<Tree>;
 
   if (
-    (previousLoaded.resource === "project.source" ||
-      previousLoaded.resource === "project.history") &&
-    previousLoaded.params.project.id === route.project &&
+    (previousLoaded.resource === "repo.source" ||
+      previousLoaded.resource === "repo.history") &&
+    previousLoaded.params.repo.rid === route.repo &&
     previousLoaded.params.commit === commitId
   ) {
     treePromise = Promise.resolve(previousLoaded.params.tree);
   } else {
-    treePromise = api.project.getTree(route.project, commitId);
+    treePromise = api.repo.getTree(route.repo, commitId);
   }
 
   const [tree, commitHeaders] = await Promise.all([
     treePromise,
-    api.project.getAllCommits(project.id, {
+    api.repo.getAllCommits(repo.rid, {
       parent: commitId,
       page: 0,
       perPage: config.source.commitsPerPage,
@@ -599,12 +600,12 @@ async function loadHistoryView(
   ]);
 
   return {
-    resource: "project.history",
+    resource: "repo.history",
     params: {
       baseUrl: route.node,
       seedingPolicy,
       commit: commitId,
-      project,
+      repo,
       peers: peers.filter(remote => Object.keys(remote.heads).length > 0),
       peer: route.peer,
       revision: route.revision,
@@ -615,27 +616,25 @@ async function loadHistoryView(
   };
 }
 
-async function loadIssueView(
-  route: ProjectIssueRoute,
-): Promise<ProjectLoadedRoute> {
+async function loadIssueView(route: RepoIssueRoute): Promise<RepoLoadedRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
-      route.project
+      route.repo
     }${commit ? `/${commit}` : ""}`;
 
-  const [project, issue, seedingPolicy, node] = await Promise.all([
-    api.project.getById(route.project),
-    api.project.getIssueById(route.project, route.issue),
-    api.getPolicyById(route.project),
+  const [repo, issue, seedingPolicy, node] = await Promise.all([
+    api.repo.getByRid(route.repo),
+    api.repo.getIssueById(route.repo, route.issue),
+    api.getPolicyByRid(route.repo),
     api.getNode(),
   ]);
   return {
-    resource: "project.issue",
+    resource: "repo.issue",
     params: {
       baseUrl: route.node,
       seedingPolicy,
-      project,
+      repo,
       rawPath,
       issue,
       nodeAvatarUrl: node.avatarUrl,
@@ -644,39 +643,39 @@ async function loadIssueView(
 }
 
 async function loadPatchView(
-  route: ProjectPatchRoute,
+  route: RepoPatchRoute,
   previousLoaded: LoadedRoute,
-): Promise<ProjectLoadedRoute> {
+): Promise<RepoLoadedRoute> {
   const api = new HttpdClient(route.node);
   const rawPath = (commit?: string) =>
     `${route.node.scheme}://${route.node.hostname}:${route.node.port}/raw/${
-      route.project
+      route.repo
     }${commit ? `/${commit}` : ""}`;
 
-  let projectPromise: Promise<Project>;
+  let repoPromise: Promise<Repo>;
   let patchPromise: Promise<Patch>;
   let nodePromise: Promise<Partial<Node>>;
   let seedingPolicyPromise: Promise<SeedingPolicy>;
 
   if (
-    previousLoaded.resource === "project.patch" &&
-    previousLoaded.params.project.id === route.project &&
+    previousLoaded.resource === "repo.patch" &&
+    previousLoaded.params.repo.rid === route.repo &&
     previousLoaded.params.patch.id === route.patch
   ) {
-    projectPromise = Promise.resolve(previousLoaded.params.project);
+    repoPromise = Promise.resolve(previousLoaded.params.repo);
     patchPromise = Promise.resolve(previousLoaded.params.patch);
     seedingPolicyPromise = Promise.resolve(previousLoaded.params.seedingPolicy);
     nodePromise = Promise.resolve({
       avatarUrl: previousLoaded.params.nodeAvatarUrl,
     });
   } else {
-    projectPromise = api.project.getById(route.project);
-    patchPromise = api.project.getPatchById(route.project, route.patch);
-    seedingPolicyPromise = api.getPolicyById(route.project);
+    repoPromise = api.repo.getByRid(route.repo);
+    patchPromise = api.repo.getPatchById(route.repo, route.patch);
+    seedingPolicyPromise = api.getPolicyByRid(route.repo);
     nodePromise = api.getNode();
   }
-  const [project, patch, seedingPolicy, { avatarUrl }] = await Promise.all([
-    projectPromise,
+  const [repo, patch, seedingPolicy, { avatarUrl }] = await Promise.all([
+    repoPromise,
     patchPromise,
     seedingPolicyPromise,
     nodePromise,
@@ -687,7 +686,7 @@ async function loadPatchView(
     diff: { stats },
   } = await cachedGetDiff(
     api.baseUrl,
-    route.project,
+    route.repo,
     latestRevision.base,
     latestRevision.oid,
   );
@@ -710,7 +709,7 @@ async function loadPatchView(
       }
       const { diff, commits, files } = await cachedGetDiff(
         api.baseUrl,
-        route.project,
+        route.repo,
         revision.base,
         revision.oid,
       );
@@ -728,7 +727,7 @@ async function loadPatchView(
       const { fromCommit, toCommit } = route.view;
       const { diff, files } = await cachedGetDiff(
         api.baseUrl,
-        route.project,
+        route.repo,
         fromCommit,
         toCommit,
       );
@@ -738,11 +737,11 @@ async function loadPatchView(
     }
   }
   return {
-    resource: "project.patch",
+    resource: "repo.patch",
     params: {
       baseUrl: route.node,
       seedingPolicy,
-      project,
+      repo,
       rawPath,
       patch,
       stats,
@@ -752,13 +751,9 @@ async function loadPatchView(
   };
 }
 
-async function getPeerBranches(
-  api: HttpdClient,
-  project: string,
-  peer?: string,
-) {
+async function getPeerBranches(api: HttpdClient, repo: string, peer?: string) {
   if (peer) {
-    return (await api.project.getRemoteByPeer(project, peer)).heads;
+    return (await api.repo.getRemoteByPeer(repo, peer)).heads;
   } else {
     return undefined;
   }
@@ -797,12 +792,12 @@ function sanitizeQueryString(queryString: string): string {
   return queryString.startsWith("?") ? queryString.substring(1) : queryString;
 }
 
-export function resolveProjectRoute(
+export function resolveRepoRoute(
   node: BaseUrl,
-  project: string,
+  repo: string,
   segments: string[],
   urlSearch: string,
-): ProjectRoute | null {
+): RepoRoute | null {
   let content = segments.shift();
   let peer;
   if (content === "remotes") {
@@ -812,9 +807,9 @@ export function resolveProjectRoute(
 
   if (!content || content === "tree") {
     return {
-      resource: "project.source",
+      resource: "repo.source",
       node,
-      project,
+      repo,
       peer,
       path: undefined,
       revision: undefined,
@@ -822,26 +817,26 @@ export function resolveProjectRoute(
     };
   } else if (content === "history") {
     return {
-      resource: "project.history",
+      resource: "repo.history",
       node,
-      project,
+      repo,
       peer,
       revision: segments.join("/"),
     };
   } else if (content === "commits") {
     return {
-      resource: "project.commit",
+      resource: "repo.commit",
       node,
-      project,
+      repo,
       commit: segments[0],
     };
   } else if (content === "issues") {
     const issueOrAction = segments.shift();
     if (issueOrAction) {
       return {
-        resource: "project.issue",
+        resource: "repo.issue",
         node,
-        project,
+        repo,
         issue: issueOrAction,
       };
     } else {
@@ -853,14 +848,14 @@ export function resolveProjectRoute(
         status = rawStatus;
       }
       return {
-        resource: "project.issues",
+        resource: "repo.issues",
         node,
-        project,
+        repo,
         status,
       };
     }
   } else if (content === "patches") {
-    return resolvePatchesRoute(node, project, segments, urlSearch);
+    return resolvePatchesRoute(node, repo, segments, urlSearch);
   } else {
     return null;
   }
@@ -868,19 +863,19 @@ export function resolveProjectRoute(
 
 function resolvePatchesRoute(
   node: BaseUrl,
-  project: string,
+  repo: string,
   segments: string[],
   urlSearch: string,
-): ProjectPatchRoute | ProjectPatchesRoute {
+): RepoPatchRoute | RepoPatchesRoute {
   const patch = segments.shift();
   const revision = segments.shift();
   if (patch) {
     const searchParams = new URLSearchParams(sanitizeQueryString(urlSearch));
     const tab = searchParams.get("tab");
     const base = {
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project,
+      repo,
       patch,
     } as const;
     const diff = searchParams.get("diff");
@@ -909,20 +904,20 @@ function resolvePatchesRoute(
     }
   } else {
     return {
-      resource: "project.patches",
+      resource: "repo.patches",
       node,
-      project,
+      repo,
       search: sanitizeQueryString(urlSearch),
     };
   }
 }
 
-export function projectRouteToPath(route: ProjectRoute): string {
+export function repoRouteToPath(route: RepoRoute): string {
   const node = nodePath(route.node);
 
-  const pathSegments = [node, route.project];
+  const pathSegments = [node, route.repo];
 
-  if (route.resource === "project.source") {
+  if (route.resource === "repo.source") {
     if (route.peer) {
       pathSegments.push("remotes", route.peer);
     }
@@ -949,7 +944,7 @@ export function projectRouteToPath(route: ProjectRoute): string {
     }
 
     return pathSegments.join("/");
-  } else if (route.resource === "project.history") {
+  } else if (route.resource === "repo.history") {
     if (route.peer) {
       pathSegments.push("remotes", route.peer);
     }
@@ -960,9 +955,9 @@ export function projectRouteToPath(route: ProjectRoute): string {
       pathSegments.push(route.revision);
     }
     return pathSegments.join("/");
-  } else if (route.resource === "project.commit") {
+  } else if (route.resource === "repo.commit") {
     return [...pathSegments, "commits", route.commit].join("/");
-  } else if (route.resource === "project.issues") {
+  } else if (route.resource === "repo.issues") {
     let url = [...pathSegments, "issues"].join("/");
     const searchParams = new URLSearchParams();
     if (route.status) {
@@ -972,25 +967,25 @@ export function projectRouteToPath(route: ProjectRoute): string {
       url += `?${searchParams}`;
     }
     return url;
-  } else if (route.resource === "project.issue") {
+  } else if (route.resource === "repo.issue") {
     return [...pathSegments, "issues", route.issue].join("/");
-  } else if (route.resource === "project.patches") {
+  } else if (route.resource === "repo.patches") {
     let url = [...pathSegments, "patches"].join("/");
     if (route.search) {
       url += `?${route.search}`;
     }
     return url;
-  } else if (route.resource === "project.patch") {
+  } else if (route.resource === "repo.patch") {
     return patchRouteToPath(route);
   } else {
     return unreachable(route);
   }
 }
 
-function patchRouteToPath(route: ProjectPatchRoute): string {
+function patchRouteToPath(route: RepoPatchRoute): string {
   const node = nodePath(route.node);
 
-  const pathSegments = [node, route.project];
+  const pathSegments = [node, route.repo];
 
   pathSegments.push("patches", route.patch);
   if (route.view?.name === "changes") {
@@ -1018,31 +1013,31 @@ function patchRouteToPath(route: ProjectPatchRoute): string {
   }
 }
 
-export function projectTitle(loadedRoute: ProjectLoadedRoute) {
+export function repoTitle(loadedRoute: RepoLoadedRoute) {
   const title: string[] = [];
 
-  if (loadedRoute.resource === "project.source") {
-    title.push(loadedRoute.params.project.name);
-    if (loadedRoute.params.project.description.length > 0) {
-      title.push(loadedRoute.params.project.description);
+  if (loadedRoute.resource === "repo.source") {
+    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
+    if (loadedRoute.params.repo["xyz.radicle.project"].description.length > 0) {
+      title.push(loadedRoute.params.repo["xyz.radicle.project"].description);
     }
-  } else if (loadedRoute.resource === "project.commit") {
+  } else if (loadedRoute.resource === "repo.commit") {
     title.push(loadedRoute.params.commit.commit.summary);
     title.push("commit");
-  } else if (loadedRoute.resource === "project.history") {
-    title.push(loadedRoute.params.project.name);
+  } else if (loadedRoute.resource === "repo.history") {
+    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
     title.push("history");
-  } else if (loadedRoute.resource === "project.issue") {
+  } else if (loadedRoute.resource === "repo.issue") {
     title.push(loadedRoute.params.issue.title);
     title.push("issue");
-  } else if (loadedRoute.resource === "project.issues") {
-    title.push(loadedRoute.params.project.name);
+  } else if (loadedRoute.resource === "repo.issues") {
+    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
     title.push("issues");
-  } else if (loadedRoute.resource === "project.patch") {
+  } else if (loadedRoute.resource === "repo.patch") {
     title.push(loadedRoute.params.patch.title);
     title.push("patch");
-  } else if (loadedRoute.resource === "project.patches") {
-    title.push(loadedRoute.params.project.name);
+  } else if (loadedRoute.resource === "repo.patches") {
+    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
     title.push("patches");
   } else {
     return unreachable(loadedRoute);

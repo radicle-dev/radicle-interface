@@ -80,7 +80,7 @@ test("diff selection", async ({ page }) => {
   await expect(page).toHaveScreenshot({ fullPage: true });
 });
 
-test("project load error", async ({ page }) => {
+test("repo load error", async ({ page }) => {
   await page.goto(
     `${sourceBrowsingUrl}/remotes/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz`,
     { waitUntil: "networkidle" },
@@ -88,7 +88,7 @@ test("project load error", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-test("project not found", async ({ page }) => {
+test("repo not found", async ({ page }) => {
   await page.goto(`/nodes/127.0.0.1/rad:z4Vzzzzzzzzzzzzzzzzzzzzzzzzzz`, {
     waitUntil: "networkidle",
   });
@@ -97,7 +97,7 @@ test("project not found", async ({ page }) => {
 
 test("response parse error", async ({ page }) => {
   await page.route(
-    ({ pathname }) => pathname === `/api/v1/projects/${sourceBrowsingRid}`,
+    ({ pathname }) => pathname === `/api/v1/repos/${sourceBrowsingRid}`,
     route => {
       return route.fulfill({
         json: [{ name: 1337 }],
@@ -110,7 +110,7 @@ test("response parse error", async ({ page }) => {
 
 test("response error", async ({ page }) => {
   await page.route(
-    ({ pathname }) => pathname === `/api/v1/projects/${sourceBrowsingRid}`,
+    ({ pathname }) => pathname === `/api/v1/repos/${sourceBrowsingRid}`,
     route => {
       return route.fulfill({
         status: 500,
@@ -125,7 +125,7 @@ test("readme not found", async ({ page }) => {
   await page.route(
     ({ pathname }) =>
       pathname ===
-      `http://127.0.0.1:8081/api/v1/projects/${sourceBrowsingRid}/readme/f591f9c3d842fdfb9e170e0f467189c6d9e950a2`,
+      `http://127.0.0.1:8081/api/v1/repos/${sourceBrowsingRid}/readme/f591f9c3d842fdfb9e170e0f467189c6d9e950a2`,
     route => {
       return route.fulfill({
         status: 500,

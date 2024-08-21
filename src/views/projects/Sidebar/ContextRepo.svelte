@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Repo, SeedingPolicy } from "@http-client";
 
   import capitalize from "lodash/capitalize";
 
@@ -8,8 +8,8 @@
   import NodeId from "@app/components/NodeId.svelte";
 
   export let baseUrl: BaseUrl;
-  export let projectThreshold: number;
-  export let projectDelegates: Project["delegates"];
+  export let repoThreshold: number;
+  export let repoDelegates: Repo["delegates"];
   export let seedingPolicy: SeedingPolicy;
 
   let delegateExpanded = false;
@@ -40,7 +40,7 @@
   <span>Delegates</span>
   <div class="global-flex-item">
     <span class="txt-bold">
-      {projectThreshold}/{projectDelegates.length}
+      {repoThreshold}/{repoDelegates.length}
     </span>
     <IconButton on:click={() => (delegateExpanded = !delegateExpanded)}>
       <Icon name={delegateExpanded ? "chevron-up" : "chevron-down"} />
@@ -49,16 +49,16 @@
 </div>
 {#if delegateExpanded}
   <div style:color="var(--color-foreground-dim" style:margin-bottom="1rem">
-    {#if projectDelegates.length === 1}
+    {#if repoDelegates.length === 1}
       Any changes accepted by the sole delegate will be included in the
       canonical branch.
     {:else}
-      {projectThreshold} out of {projectDelegates.length} delegates have to accept
-      changes to be included in the canonical branch.
+      {repoThreshold} out of {repoDelegates.length} delegates have to accept changes
+      to be included in the canonical branch.
     {/if}
   </div>
   <div class="delegates">
-    {#each projectDelegates as delegate}
+    {#each repoDelegates as delegate}
       <div class="nid">
         <NodeId {baseUrl} nodeId={delegate.id} alias={delegate.alias} />
       </div>

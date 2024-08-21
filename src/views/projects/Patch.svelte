@@ -3,7 +3,7 @@
     Comment,
     Review,
     Merge,
-    Project,
+    Repo,
     Revision,
     Diff,
     SeedingPolicy,
@@ -79,7 +79,7 @@
   export let patch: Patch;
   export let stats: Diff["stats"];
   export let rawPath: (commit?: string) => string;
-  export let project: Project;
+  export let repo: Repo;
   export let view: PatchView;
   export let nodeAvatarUrl: string | undefined;
 
@@ -102,8 +102,8 @@
   let tabs: Record<Tab, { icon: ComponentProps<Icon>["name"]; route: Route }>;
   $: {
     const baseRoute = {
-      resource: "project.patch",
-      project: project.id,
+      resource: "repo.patch",
+      repo: repo.rid,
       node: baseUrl,
       patch: patch.id,
     } as const;
@@ -294,7 +294,7 @@
 
 <Layout
   {baseUrl}
-  {project}
+  {repo}
   {nodeAvatarUrl}
   {seedingPolicy}
   activeTab="patches"
@@ -303,8 +303,8 @@
     <Separator />
     <Link
       route={{
-        resource: "project.patches",
-        project: project.id,
+        resource: "repo.patches",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Patches
@@ -344,8 +344,8 @@
           </Badge>
           <Link
             route={{
-              resource: "project.patch",
-              project: project.id,
+              resource: "repo.patch",
+              repo: repo.rid,
               node: baseUrl,
               patch: patch.id,
               view: { name: "changes", revision: latestRevision.id },
@@ -423,7 +423,7 @@
           <div
             class="global-hide-on-mobile-down"
             style="margin-left: auto; margin-top: -0.5rem;">
-            <RevisionSelector {view} {baseUrl} {patch} {project} />
+            <RevisionSelector {view} {baseUrl} {patch} {repo} />
           </div>
         {/if}
         {#if view.name === "diff"}
@@ -446,7 +446,7 @@
             style:padding="0 1rem"
             style:display="flex"
             class="global-hide-on-small-desktop-up">
-            <RevisionSelector {view} {baseUrl} {patch} {project} />
+            <RevisionSelector {view} {baseUrl} {patch} {repo} />
           </div>
         {/if}
         {#if view.name === "diff"}
@@ -461,7 +461,7 @@
           </div>
           <Changeset
             {baseUrl}
-            projectId={project.id}
+            repoId={repo.rid}
             revision={view.toCommit}
             files={view.files}
             diff={view.diff} />
@@ -472,7 +472,7 @@
             <RevisionComponent
               {baseUrl}
               {rawPath}
-              projectId={project.id}
+              repoId={repo.rid}
               {timelines}
               {...revision}
               first={index === 0}
@@ -492,7 +492,7 @@
         {:else if view.name === "changes"}
           <Changeset
             {baseUrl}
-            projectId={project.id}
+            repoId={repo.rid}
             revision={view.oid}
             files={view.files}
             diff={view.diff} />

@@ -18,7 +18,7 @@
   import Radio from "@app/components/Radio.svelte";
 
   export let baseUrl: BaseUrl;
-  export let projectId: string;
+  export let repoId: string;
   export let path: string;
   export let blob: Blob;
   export let highlighted: Syntax.Root | undefined;
@@ -151,7 +151,7 @@
 <File sticky={false}>
   <FilePath slot="left-header" filenameWithPath={blob.path} />
   <svelte:fragment slot="right-header">
-    <CommitButton {projectId} {baseUrl} commit={lastCommit} />
+    <CommitButton {repoId} {baseUrl} commit={lastCommit} />
     <div class="global-hide-on-mobile-down teaser-buttons">
       {#if enablePreview}
         <Radio ariaLabel="Toggle render method">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Issue, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Issue, Repo, SeedingPolicy } from "@http-client";
 
   import capitalize from "lodash/capitalize";
   import uniqBy from "lodash/uniqBy";
@@ -26,7 +26,7 @@
   export let baseUrl: BaseUrl;
   export let seedingPolicy: SeedingPolicy;
   export let issue: Issue;
-  export let project: Project;
+  export let repo: Repo;
   export let rawPath: (commit?: string) => string;
   export let nodeAvatarUrl: string | undefined;
 
@@ -128,7 +128,7 @@
 <Layout
   {baseUrl}
   {nodeAvatarUrl}
-  {project}
+  {repo}
   {seedingPolicy}
   activeTab="issues"
   stylePaddingBottom="0">
@@ -136,8 +136,8 @@
     <Separator />
     <Link
       route={{
-        resource: "project.issues",
-        project: project.id,
+        resource: "repo.issues",
+        repo: repo.rid,
         node: baseUrl,
       }}>
       Issues
@@ -215,7 +215,7 @@
             <Markdown
               breaks
               content={issue.discussion[0].body}
-              rawPath={rawPath(project.head)} />
+              rawPath={rawPath(repo.head)} />
           {:else}
             <span class="txt-missing">No description</span>
           {/if}
@@ -234,7 +234,7 @@
               <ThreadComponent
                 {baseUrl}
                 {thread}
-                rawPath={rawPath(project.head)} />
+                rawPath={rawPath(repo.head)} />
               {#if i < threads.length - 1}
                 <div class="connector" />
               {/if}

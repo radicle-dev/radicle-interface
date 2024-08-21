@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProjectInfo } from "./ProjectCard";
+  import type { RepoInfo } from "./ProjectCard";
 
   import {
     absoluteTimestamp,
@@ -14,15 +14,16 @@
   import Link from "@app/components/Link.svelte";
 
   export let compact = false;
-  export let projectInfo: ProjectInfo;
+  export let repoInfo: RepoInfo;
 
-  $: project = projectInfo.project;
-  $: baseUrl = projectInfo.baseUrl;
-  $: isPrivate = project.visibility?.type === "private";
+  $: repo = repoInfo.repo;
+  $: project = repoInfo.repo["xyz.radicle.project"];
+  $: baseUrl = repoInfo.baseUrl;
+  $: isPrivate = repo.visibility?.type === "private";
 </script>
 
 <style>
-  .project-card {
+  .repo-card {
     height: 10rem;
     border: 1px solid var(--color-border-default);
     border-radius: var(--border-radius-small);
@@ -35,11 +36,11 @@
     overflow: hidden;
   }
 
-  .project-card.compact {
+  .repo-card.compact {
     height: 8rem;
   }
 
-  .project-card:hover {
+  .repo-card:hover {
     background-color: var(--color-fill-float-hover);
   }
 
@@ -64,7 +65,7 @@
     );
   }
 
-  .project-card:hover .fadeout-overlay {
+  .repo-card:hover .fadeout-overlay {
     background: linear-gradient(
       to right,
       var(--color-fill-float-hover) 20%,
@@ -129,18 +130,18 @@
 
 <Link
   route={{
-    resource: "project.source",
-    project: project.id,
+    resource: "repo.source",
+    repo: repo.rid,
     node: baseUrl,
   }}>
-  <div class="project-card" class:compact>
+  <div class="repo-card" class:compact>
     <div class="activity">
       <div class="fadeout-overlay" />
       <ActivityDiagram
-        id={project.id}
+        id={repo.rid}
         viewBoxHeight={200}
         styleColor="var(--color-foreground-primary"
-        activity={projectInfo.activity} />
+        activity={repoInfo.activity} />
     </div>
     <div class="title">
       <div class="headline-and-badges">
@@ -160,32 +161,32 @@
             size="tiny"
             style="padding: 0 0.372rem; gap: 0.125rem;">
             <Icon name="seedling" />
-            {projectInfo.project.seeding}
+            {repoInfo.repo.seeding}
           </Badge>
         </div>
       </div>
-      <p class="txt-small" use:twemoji>{project.description}</p>
+      <p class="txt-small" use:twemoji>
+        {project.description}
+      </p>
     </div>
     <div>
       <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
         <Icon name="issue" />
-        {project.issues.open} ·
+        {repo.issues.open} ·
         <Icon name="patch" />
         <span
           style:overflow="hidden"
           style:text-overflow="ellipsis"
-          title={absoluteTimestamp(
-            projectInfo.lastCommit.commit.committer.time,
-          )}>
-          {project.patches.open} · Updated {formatTimestamp(
-            projectInfo.lastCommit.commit.committer.time,
+          title={absoluteTimestamp(repoInfo.lastCommit.commit.committer.time)}>
+          {repo.patches.open} · Updated {formatTimestamp(
+            repoInfo.lastCommit.commit.committer.time,
           )}
         </span>
         <span
-          title={project.id}
+          title={repo.rid}
           style:color="var(--color-foreground-emphasized)"
           style:margin-left="auto">
-          {formatRepositoryId(project.id)}
+          {formatRepositoryId(repo.rid)}
         </span>
       </div>
     </div>

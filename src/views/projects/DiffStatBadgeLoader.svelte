@@ -8,13 +8,13 @@
   import Link from "@app/components/Link.svelte";
   import Loading from "@app/components/Loading.svelte";
 
-  export let projectId: string;
+  export let repoId: string;
   export let baseUrl: BaseUrl;
   export let patch: Patch;
   export let latestRevision: Revision;
 </script>
 
-{#await cachedGetDiff(baseUrl, projectId, latestRevision.base, latestRevision.oid)}
+{#await cachedGetDiff(baseUrl, repoId, latestRevision.base, latestRevision.oid)}
   <Loading small />
 {:then { diff }}
   <Link
@@ -22,8 +22,8 @@
       latestRevision.oid,
     )}"
     route={{
-      resource: "project.patch",
-      project: projectId,
+      resource: "repo.patch",
+      repo: repoId,
       node: baseUrl,
       patch: patch.id,
       view: {

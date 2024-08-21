@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ActiveTab } from "./Header.svelte";
-  import type { BaseUrl, Project, SeedingPolicy } from "@http-client";
+  import type { BaseUrl, Repo, SeedingPolicy } from "@http-client";
 
   import Button from "@app/components/Button.svelte";
   import Icon from "@app/components/Icon.svelte";
@@ -12,7 +12,7 @@
   export let activeTab: ActiveTab | undefined = undefined;
   export let seedingPolicy: SeedingPolicy;
   export let baseUrl: BaseUrl;
-  export let project: Project;
+  export let repo: Repo;
   export let stylePaddingBottom: string = "2.5rem";
   export let nodeAvatarUrl: string | undefined;
 </script>
@@ -109,7 +109,7 @@
               resource: "nodes",
               params: {
                 baseUrl,
-                projectPageIndex: 0,
+                repoPageIndex: 0,
               },
             }}>
             <img
@@ -126,15 +126,15 @@
 
         <Separator />
 
-        <span class="breadcrumb" title={project.id}>
+        <span class="breadcrumb" title={repo.rid}>
           <Link
             route={{
-              resource: "project.source",
-              project: project.id,
+              resource: "repo.source",
+              repo: repo.rid,
               node: baseUrl,
             }}>
             <div class="breadcrumb">
-              {project.name}
+              {repo["xyz.radicle.project"].name}
             </div>
           </Link>
         </span>
@@ -157,11 +157,11 @@
   </div>
 
   <div class="sidebar global-hide-on-medium-desktop-down">
-    <Sidebar {seedingPolicy} {activeTab} {baseUrl} {project} />
+    <Sidebar {seedingPolicy} {activeTab} {baseUrl} {repo} />
   </div>
 
   <div class="sidebar global-hide-on-mobile-down global-hide-on-desktop-up">
-    <Sidebar {seedingPolicy} {activeTab} {baseUrl} {project} collapsedOnly />
+    <Sidebar {seedingPolicy} {activeTab} {baseUrl} {repo} collapsedOnly />
   </div>
 
   <div class="content" style:padding-bottom={stylePaddingBottom}>
@@ -176,8 +176,8 @@
         <Link
           title="Home"
           route={{
-            resource: "project.source",
-            project: project.id,
+            resource: "repo.source",
+            repo: repo.rid,
             node: baseUrl,
             path: "/",
           }}>
@@ -191,10 +191,10 @@
 
       <div style:width="100%">
         <Link
-          title={`${project.issues.open} Issues`}
+          title={`${repo.issues.open} Issues`}
           route={{
-            resource: "project.issues",
-            project: project.id,
+            resource: "repo.issues",
+            repo: repo.rid,
             node: baseUrl,
           }}>
           <Button
@@ -207,10 +207,10 @@
 
       <div style:width="100%">
         <Link
-          title={`${project.patches.open} Patches`}
+          title={`${repo.patches.open} Patches`}
           route={{
-            resource: "project.patches",
-            project: project.id,
+            resource: "repo.patches",
+            repo: repo.rid,
             node: baseUrl,
           }}>
           <Button

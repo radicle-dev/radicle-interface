@@ -63,19 +63,19 @@
   <Nodes {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "users"}
   <Users {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.source"}
+{:else if $activeRouteStore.resource === "repo.source"}
   <Source {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.history"}
+{:else if $activeRouteStore.resource === "repo.history"}
   <History {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.commit"}
+{:else if $activeRouteStore.resource === "repo.commit"}
   <Commit {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.issues"}
+{:else if $activeRouteStore.resource === "repo.issues"}
   <Issues {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.issue"}
+{:else if $activeRouteStore.resource === "repo.issue"}
   <Issue {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.patches"}
+{:else if $activeRouteStore.resource === "repo.patches"}
   <Patches {...$activeRouteStore.params} />
-{:else if $activeRouteStore.resource === "project.patch"}
+{:else if $activeRouteStore.resource === "repo.patch"}
   <Patch {...$activeRouteStore.params} />
 {:else if $activeRouteStore.resource === "error"}
   <Error {...$activeRouteStore.params} />

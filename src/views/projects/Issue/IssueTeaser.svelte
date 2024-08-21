@@ -13,7 +13,7 @@
 
   export let baseUrl: BaseUrl;
   export let issue: Issue;
-  export let projectId: string;
+  export let repoId: string;
 
   $: commentCount = issue.discussion.reduce((acc, _curr, index) => {
     if (index !== 0) {
@@ -84,8 +84,8 @@
         <Link
           styleHoverState
           route={{
-            resource: "project.issue",
-            project: projectId,
+            resource: "repo.issue",
+            repo: repoId,
             node: baseUrl,
             issue: issue.id,
           }}>

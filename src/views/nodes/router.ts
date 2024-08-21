@@ -12,7 +12,7 @@ import { determineSeed } from "./SeedSelector";
 export type NodesRouteParams =
   | {
       baseUrl: BaseUrl;
-      projectPageIndex: number;
+      repoPageIndex: number;
     }
   | undefined;
 

@@ -27,11 +27,13 @@ import {
 import { issueSchema, issuesSchema } from "./project/issue.js";
 import { patchSchema, patchesSchema } from "./project/patch.js";
 
-const projectSchema = object({
-  id: string(),
-  name: string(),
-  description: string(),
-  defaultBranch: string(),
+const repoSchema = object({
+  rid: string(),
+  "xyz.radicle.project": object({
+    name: string(),
+    description: string(),
+    defaultBranch: string(),
+  }),
   delegates: array(object({ id: string(), alias: optional(string()) })),
   head: string(),
   threshold: number(),
@@ -51,9 +53,9 @@ const projectSchema = object({
   }),
   seeding: number(),
 });
-const projectsSchema = array(projectSchema);
+const reposSchema = array(repoSchema);
 
-export type Project = z.infer<typeof projectSchema>;
+export type Repo = z.infer<typeof repoSchema>;
 
 const activitySchema = object({
   activity: array(number()),
@@ -116,7 +118,7 @@ const diffResponseSchema = object({
   files: record(string(), diffBlobSchema),
 });
 
-export type ProjectListQuery = {
+export type RepoListQuery = {
   page?: number;
   perPage?: number;
   show?: "pinned" | "all";
@@ -130,54 +132,54 @@ export class Client {
 
   public async getByDelegate(
     delegateId: string,
-    query?: ProjectListQuery,
+    query?: RepoListQuery,
     options?: RequestOptions,
-  ): Promise<Project[]> {
+  ): Promise<Repo[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `delegates/${delegateId}/projects`,
+        path: `delegates/${delegateId}/repos`,
         query,
         options,
       },
-      projectsSchema,
+      reposSchema,
     );
   }
 
-  public async getById(id: string, options?: RequestOptions): Promise<Project> {
+  public async getByRid(rid: string, options?: RequestOptions): Promise<Repo> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}`,
+        path: `repos/${rid}`,
         options,
       },
-      projectSchema,
+      repoSchema,
     );
   }
 
   public async getAll(
-    query?: ProjectListQuery,
+    query?: RepoListQuery,
     options?: RequestOptions,
-  ): Promise<Project[]> {
+  ): Promise<Repo[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: "projects",
+        path: "repos",
         query,
         options,
       },
-      projectsSchema,
+      reposSchema,
     );
   }
 
   public async getActivity(
-    id: string,
+    rid: string,
     options?: RequestOptions,
   ): Promise<Activity> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/activity`,
+        path: `repos/${rid}/activity`,
         options,
       },
       activitySchema,
@@ -185,14 +187,14 @@ export class Client {
   }
 
   public async getReadme(
-    id: string,
+    rid: string,
     sha: string,
     options?: RequestOptions,
   ): Promise<Blob> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/readme/${sha}`,
+        path: `repos/${rid}/readme/${sha}`,
         options,
       },
       blobSchema,
@@ -200,7 +202,7 @@ export class Client {
   }
 
   public async getBlob(
-    id: string,
+    rid: string,
     sha: string,
     path: string,
     options?: RequestOptions,
@@ -208,7 +210,7 @@ export class Client {
     const blob = await this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/blob/${sha}/${path}`,
+        path: `repos/${rid}/blob/${sha}/${path}`,
         options,
       },
       blobSchema,
@@ -217,7 +219,7 @@ export class Client {
   }
 
   public async getTree(
-    id: string,
+    rid: string,
     sha: string,
     path?: string,
     options?: RequestOptions,
@@ -225,7 +227,7 @@ export class Client {
     const tree = await this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/tree/${sha}/${path ?? ""}`,
+        path: `repos/${rid}/tree/${sha}/${path ?? ""}`,
         options,
       },
       treeSchema,
@@ -234,14 +236,14 @@ export class Client {
   }
 
   public async getTreeStatsBySha(
-    id: string,
+    rid: string,
     sha: string,
     options?: RequestOptions,
   ): Promise<TreeStats> {
     const tree = await this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/stats/tree/${sha}`,
+        path: `repos/${rid}/stats/tree/${sha}`,
         options,
       },
       treeStatsSchema,
@@ -250,13 +252,13 @@ export class Client {
   }
 
   public async getAllRemotes(
-    id: string,
+    rid: string,
     options?: RequestOptions,
   ): Promise<Remote[]> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/remotes`,
+        path: `repos/${rid}/remotes`,
         options,
       },
       remotesSchema,
@@ -264,14 +266,14 @@ export class Client {
   }
 
   public async getRemoteByPeer(
-    id: string,
+    rid: string,
     peer: string,
     options?: RequestOptions,
   ): Promise<Remote> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/remotes/${peer}`,
+        path: `repos/${rid}/remotes/${peer}`,
         options,
       },
       remoteSchema,
@@ -279,7 +281,7 @@ export class Client {
   }
 
   public async getAllCommits(
-    id: string,
+    rid: string,
     query?: {
       parent?: string;
       since?: number;
@@ -292,7 +294,7 @@ export class Client {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/commits`,
+        path: `repos/${rid}/commits`,
         query,
         options,
       },
@@ -301,14 +303,14 @@ export class Client {
   }
 
   public async getCommitBySha(
-    id: string,
+    rid: string,
     sha: string,
     options?: RequestOptions,
   ): Promise<Commit> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/commits/${sha}`,
+        path: `repos/${rid}/commits/${sha}`,
         options,
       },
       commitSchema,
@@ -316,7 +318,7 @@ export class Client {
   }
 
   public async getDiff(
-    id: string,
+    rid: string,
     revisionBase: string,
     revisionOid: string,
     options?: RequestOptions,
@@ -324,7 +326,7 @@ export class Client {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/diff/${revisionBase}/${revisionOid}`,
+        path: `repos/${rid}/diff/${revisionBase}/${revisionOid}`,
         options,
       },
       diffResponseSchema,
@@ -332,14 +334,14 @@ export class Client {
   }
 
   public async getIssueById(
-    id: string,
+    rid: string,
     issueId: string,
     options?: RequestOptions,
   ): Promise<Issue> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/issues/${issueId}`,
+        path: `repos/${rid}/issues/${issueId}`,
         options,
       },
       issueSchema,
@@ -347,7 +349,7 @@ export class Client {
   }
 
   public async getAllIssues(
-    id: string,
+    rid: string,
     query?: {
       page?: number;
       perPage?: number;
@@ -358,7 +360,7 @@ export class Client {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/issues`,
+        path: `repos/${rid}/issues`,
         query,
         options,
       },
@@ -367,14 +369,14 @@ export class Client {
   }
 
   public async getPatchById(
-    id: string,
+    rid: string,
     patchId: string,
     options?: RequestOptions,
   ): Promise<Patch> {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/patches/${patchId}`,
+        path: `repos/${rid}/patches/${patchId}`,
         options,
       },
       patchSchema,
@@ -382,7 +384,7 @@ export class Client {
   }
 
   public async getAllPatches(
-    id: string,
+    rid: string,
     query?: {
       page?: number;
       perPage?: number;
@@ -393,7 +395,7 @@ export class Client {
     return this.#fetcher.fetchOk(
       {
         method: "GET",
-        path: `projects/${id}/patches`,
+        path: `repos/${rid}/patches`,
         query,
         options,
       },

@@ -16,7 +16,7 @@
   export let name: string;
   export let peer: string | undefined;
   export let prefix: string;
-  export let projectId: string;
+  export let repoId: string;
   export let revision: string | undefined;
 
   $: expanded = currentPath.indexOf(prefix) === 0;
@@ -111,15 +111,15 @@
               {currentPath}
               {fetchTree}
               {peer}
-              {projectId}
+              {repoId}
               {revision} />
           {:else if entry.kind === "submodule"}
             <Submodule name={entry.name} oid={entry.oid} />
           {:else}
             <Link
               route={{
-                resource: "project.source",
-                project: projectId,
+                resource: "repo.source",
+                repo: repoId,
                 node: baseUrl,
                 path: entry.path,
                 peer,

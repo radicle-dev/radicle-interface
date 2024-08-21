@@ -3,7 +3,7 @@
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { fetchProjectInfos } from "@app/components/ProjectCard";
+  import { fetchRepoInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
 
   import Avatar from "@app/components/Avatar.svelte";
@@ -19,7 +19,7 @@
   import MobileFooter from "@app/App/MobileFooter.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import ProjectCard from "@app/components/ProjectCard.svelte";
+  import RepoCard from "@app/components/ProjectCard.svelte";
   import Separator from "@app/views/projects/Separator.svelte";
   import Settings from "@app/App/Settings.svelte";
   import UserAddress from "@app/views/users/UserAddress.svelte";
@@ -216,7 +216,7 @@
             resource: "nodes",
             params: {
               baseUrl,
-              projectPageIndex: 0,
+              repoPageIndex: 0,
             },
           }}>
           <img
@@ -352,15 +352,15 @@
         </div>
       </div>
 
-      {#await fetchProjectInfos(baseUrl, { show: "all", perPage: stats.repos.total }, utils.formatDid(did))}
+      {#await fetchRepoInfos(baseUrl, { show: "all", perPage: stats.repos.total }, utils.formatDid(did))}
         <div class="loading">
           <Loading small center />
         </div>
       {:then repos}
         {#if repos.length > 0}
           <div class="repo-grid">
-            {#each repos as projectInfo}
-              <ProjectCard {projectInfo}>
+            {#each repos as repoInfo}
+              <RepoCard {repoInfo}>
                 <svelte:fragment slot="delegate">
                   <Badge
                     title={`${node.alias || utils.formatNodeId(did.pubkey)} is a delegate of this repository`}
@@ -371,7 +371,7 @@
                     <Icon name="badge" />
                   </Badge>
                 </svelte:fragment>
-              </ProjectCard>
+              </RepoCard>
             {/each}
           </div>
           <div class="subtitle">

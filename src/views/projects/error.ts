@@ -1,22 +1,22 @@
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
-import type { ProjectRoute } from "@app/views/projects/router";
+import type { RepoRoute } from "@app/views/projects/router";
 
 import { baseUrlToString } from "@app/lib/utils";
 import { ResponseParseError, ResponseError } from "@http-client/lib/fetcher";
 
 export function handleError(
   error: Error | ResponseParseError | ResponseError,
-  route: ProjectRoute,
+  route: RepoRoute,
 ): NotFoundRoute | ErrorRoute {
   const url = baseUrlToString(route.node);
   if (error instanceof ResponseError && error.status === 404) {
     let subject;
 
-    if (route.resource === "project.commit") {
+    if (route.resource === "repo.commit") {
       subject = "Commit";
-    } else if (route.resource === "project.issue") {
+    } else if (route.resource === "repo.issue") {
       subject = "Issue";
-    } else if (route.resource === "project.patch") {
+    } else if (route.resource === "repo.patch") {
       subject = "Patch";
     } else {
       subject = "Repository";

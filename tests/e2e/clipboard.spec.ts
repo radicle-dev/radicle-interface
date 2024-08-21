@@ -30,9 +30,9 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // Reset system clipboard to a known state.
   await page.evaluate<string>("navigator.clipboard.writeText('')");
 
-  // Project ID.
+  // Repo ID.
   {
-    await page.getByLabel("project-id").click();
+    await page.getByLabel("repo-id").click();
     const clipboardContent = await page.evaluate<string>(
       "navigator.clipboard.readText()",
     );

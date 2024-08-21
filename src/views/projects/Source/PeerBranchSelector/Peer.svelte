@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProjectRoute } from "@app/views/projects/router";
+  import type { RepoRoute } from "@app/views/projects/router";
   import type { Remote } from "@http-client";
 
   import { closeFocused } from "@app/components/Popover.svelte";
@@ -14,8 +14,8 @@
   import NodeId from "@app/components/NodeId.svelte";
 
   export let baseRoute: Extract<
-    ProjectRoute,
-    { resource: "project.source" } | { resource: "project.history" }
+    RepoRoute,
+    { resource: "repo.source" } | { resource: "repo.history" }
   >;
   export let peer: { remote: Remote; selected: boolean };
   export let revision: string | undefined = undefined;

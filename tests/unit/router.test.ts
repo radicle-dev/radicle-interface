@@ -19,35 +19,35 @@ describe("route invariant when parsed", () => {
       params: {
         // TODO: This only works with the value 0. The value is not actually
         // extract.
-        projectPageIndex: 0,
+        repoPageIndex: 0,
         baseUrl: node,
       },
     });
   });
-  test("projects.tree", () => {
+  test("repos.tree", () => {
     expectParsingInvariant({
-      resource: "project.source",
+      resource: "repo.source",
       node,
-      project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+      repo: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       route: "",
     });
   });
 
-  test("projects.tree with peer", () => {
+  test("repos.tree with peer", () => {
     expectParsingInvariant({
-      resource: "project.source",
+      resource: "repo.source",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       peer: "PEER",
       route: "",
     });
   });
 
-  test("projects.tree with peer and revision", () => {
+  test("repos.tree with peer and revision", () => {
     const route: Route = {
-      resource: "project.source",
+      resource: "repo.source",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       peer: "PEER",
       revision: "REVISION",
       route: "",
@@ -58,11 +58,11 @@ describe("route invariant when parsed", () => {
     expect(testExports.urlToRoute(new URL(path, origin))).toEqual(route);
   });
 
-  test("projects.tree with peer and revision and path", () => {
+  test("repos.tree with peer and revision and path", () => {
     const route: Route = {
-      resource: "project.source",
+      resource: "repo.source",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       peer: "PEER",
       path: "PATH",
       revision: "REVISION",
@@ -75,121 +75,121 @@ describe("route invariant when parsed", () => {
     expect(testExports.urlToRoute(new URL(path, origin))).toEqual(route);
   });
 
-  test("projects.history", () => {
+  test("repos.history", () => {
     expectParsingInvariant({
-      resource: "project.history",
+      resource: "repo.history",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       revision: "",
     });
   });
 
-  test("projects.history with revision", () => {
+  test("repos.history with revision", () => {
     expectParsingInvariant({
-      resource: "project.history",
+      resource: "repo.history",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       revision: "REVISION",
     });
   });
 
-  test("projects.commits", () => {
+  test("repos.commits", () => {
     expectParsingInvariant({
-      resource: "project.commit",
+      resource: "repo.commit",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       commit: "COMMIT",
     });
   });
 
-  test("projects.issues", () => {
+  test("repos.issues", () => {
     expectParsingInvariant({
-      resource: "project.issues",
+      resource: "repo.issues",
       node,
-      project: "PROJECT",
+      repo: "REPO",
     });
   });
 
-  test("projects.issues with status", () => {
+  test("repos.issues with status", () => {
     expectParsingInvariant({
-      resource: "project.issues",
+      resource: "repo.issues",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       status: "closed",
     });
   });
 
-  test("projects.issue", () => {
+  test("repos.issue", () => {
     expectParsingInvariant({
-      resource: "project.issue",
+      resource: "repo.issue",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       issue: "ISSUE",
     });
   });
 
-  test("projects.patches", () => {
+  test("repos.patches", () => {
     expectParsingInvariant({
-      resource: "project.patches",
+      resource: "repo.patches",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       search: "SEARCH",
     });
   });
 
-  test("projects.patches with search", () => {
+  test("repos.patches with search", () => {
     expectParsingInvariant({
-      resource: "project.patches",
+      resource: "repo.patches",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       search: "SEARCH",
     });
   });
 
-  test("projects.patch default view", () => {
+  test("repos.patch default view", () => {
     expectParsingInvariant({
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       patch: "PATCH",
     });
   });
 
-  test("projects.patch activity", () => {
+  test("repos.patch activity", () => {
     expectParsingInvariant({
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       patch: "PATCH",
       view: { name: "activity" },
     });
   });
 
-  test("projects.patch changes", () => {
+  test("repos.patch changes", () => {
     expectParsingInvariant({
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       patch: "PATCH",
       view: { name: "changes" },
     });
   });
 
-  test("projects.patch changes with revision", () => {
+  test("repos.patch changes with revision", () => {
     expectParsingInvariant({
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       patch: "PATCH",
       view: { name: "changes", revision: "REVISION" },
     });
   });
 
-  test("projects.patch diff", () => {
+  test("repos.patch diff", () => {
     expectParsingInvariant({
-      resource: "project.patch",
+      resource: "repo.patch",
       node,
-      project: "PROJECT",
+      repo: "REPO",
       patch: "PATCH",
       view: {
         name: "diff",
@@ -219,44 +219,44 @@ describe("pathToRoute", () => {
           scheme: "http",
           port: defaultHttpdPort,
         },
-        projectPageIndex: 0,
+        repoPageIndex: 0,
       },
     });
   });
 
-  test("project with trailing slash", () => {
+  test("repo with trailing slash", () => {
     expectPathToRoute(
       "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/",
       {
-        resource: "project.source",
+        resource: "repo.source",
         node: {
           hostname: "example.node.tld",
           scheme: "http",
           port: defaultHttpdPort,
         },
-        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        repo: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         route: "",
       },
     );
   });
 
-  test("project without trailing slash", () => {
+  test("repo without trailing slash", () => {
     expectPathToRoute(
       "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
       {
-        resource: "project.source",
+        resource: "repo.source",
         node: {
           hostname: "example.node.tld",
           scheme: "http",
           port: defaultHttpdPort,
         },
-        project: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
+        repo: "rad:zKtT7DmF9H34KkvcKj9PHW19WzjT",
         route: "",
       },
     );
   });
 
-  test("non-existent project route", () => {
+  test("non-existent repo route", () => {
     expectPathToRoute(
       "/nodes/example.node.tld/rad:zKtT7DmF9H34KkvcKj9PHW19WzjT/nope",
       null,

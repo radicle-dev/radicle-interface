@@ -3,7 +3,7 @@
 
   import * as router from "@app/lib/router";
   import { baseUrlToString } from "@app/lib/utils";
-  import { fetchProjectInfos } from "@app/components/ProjectCard";
+  import { fetchRepoInfos } from "@app/components/ProjectCard";
   import { handleError } from "@app/views/nodes/error";
 
   import Settings from "@app/App/Settings.svelte";
@@ -18,7 +18,7 @@
   import MobileFooter from "@app/App/MobileFooter.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import ProjectCard from "@app/components/ProjectCard.svelte";
+  import RepoCard from "@app/components/ProjectCard.svelte";
 
   import PolicyExplainer from "./PolicyExplainer.svelte";
   import SeedSelector from "./SeedSelector.svelte";
@@ -135,10 +135,10 @@
     width: 100%;
     margin-top: 1rem;
   }
-  .projects {
+  .repos {
     margin-top: 0;
   }
-  .project-grid {
+  .repo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
     gap: 1rem;
@@ -208,7 +208,7 @@
     .container {
       padding: 0;
     }
-    .projects {
+    .repos {
       margin-top: 3rem;
     }
     .mobile-footer {
@@ -406,21 +406,21 @@
             </div>
           {/if}
 
-          <div class="projects">
-            {#await fetchProjectInfos( baseUrl, { show: "pinned", perPage: stats.repos.total }, )}
+          <div class="repos">
+            {#await fetchRepoInfos( baseUrl, { show: "pinned", perPage: stats.repos.total }, )}
               <div style:height="35vh">
                 <Loading small center />
               </div>
-            {:then projectInfos}
-              {#if projectInfos.length > 0}
-                <div class="project-grid">
-                  {#each projectInfos as projectInfo}
-                    <ProjectCard {projectInfo} />
+            {:then repoInfos}
+              {#if repoInfos.length > 0}
+                <div class="repo-grid">
+                  {#each repoInfos as repoInfo}
+                    <RepoCard {repoInfo} />
                   {/each}
                 </div>
                 <div class="subtitle">
-                  {projectInfos.length}
-                  pinned {projectInfos.length === 1
+                  {repoInfos.length}
+                  pinned {repoInfos.length === 1
                     ? "repository"
                     : "repositories"}
                 </div>

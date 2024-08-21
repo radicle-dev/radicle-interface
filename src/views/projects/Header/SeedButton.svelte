@@ -5,7 +5,7 @@
   import Icon from "@app/components/Icon.svelte";
   import Popover from "@app/components/Popover.svelte";
 
-  export let projectId: string;
+  export let repoId: string;
   export let seedCount: number;
   export let disabled: boolean = false;
 </script>
@@ -66,6 +66,6 @@
         Radicle CLI
       </ExternalLink> to start seeding this repository.
     </span>
-    <Command command={`rad seed ${projectId}`} />
+    <Command command={`rad seed ${repoId}`} />
   </div>
 </Popover>
