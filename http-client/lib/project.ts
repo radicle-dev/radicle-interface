@@ -41,7 +41,7 @@ const repoSchema = object({
   visibility: union([
     object({ type: literal("public") }),
     object({ type: literal("private"), allow: optional(array(string())) }),
-  ]).optional(),
+  ]),
   patches: object({
     open: number(),
     draft: number(),

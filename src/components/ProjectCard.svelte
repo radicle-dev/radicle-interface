@@ -19,7 +19,7 @@
   $: repo = repoInfo.repo;
   $: project = repoInfo.repo["xyz.radicle.project"];
   $: baseUrl = repoInfo.baseUrl;
-  $: isPrivate = repo.visibility?.type === "private";
+  $: isPrivate = repo.visibility.type === "private";
 </script>
 
 <style>

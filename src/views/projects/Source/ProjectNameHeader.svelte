@@ -77,7 +77,7 @@
         </span>
       </Link>
     </span>
-    {#if repo.visibility && repo.visibility.type === "private"}
+    {#if repo.visibility.type === "private"}
       <Badge variant="yellow" size="tiny">
         <Icon name="lock" />
         Private
