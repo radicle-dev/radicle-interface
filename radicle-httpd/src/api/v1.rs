@@ -1,6 +1,6 @@
 mod delegates;
 mod node;
-mod projects;
+mod repos;
 mod stats;
 
 use axum::extract::State;
@@ -20,7 +20,7 @@ pub fn router(ctx: Context) -> Router {
         .merge(root_router)
         .merge(node::router(ctx.clone()))
         .merge(delegates::router(ctx.clone()))
-        .merge(projects::router(ctx.clone()))
+        .merge(repos::router(ctx.clone()))
         .merge(stats::router(ctx));
 
     Router::new().nest("/v1", routes)
