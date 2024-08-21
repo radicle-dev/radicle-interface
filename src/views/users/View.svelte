@@ -3,7 +3,7 @@
 
   import * as router from "@app/lib/router";
   import * as utils from "@app/lib/utils";
-  import { fetchRepoInfos } from "@app/components/ProjectCard";
+  import { fetchRepoInfos } from "@app/components/RepoCard";
   import { handleError } from "@app/views/nodes/error";
 
   import Avatar from "@app/components/Avatar.svelte";
@@ -19,8 +19,8 @@
   import MobileFooter from "@app/App/MobileFooter.svelte";
   import Placeholder from "@app/components/Placeholder.svelte";
   import Popover from "@app/components/Popover.svelte";
-  import RepoCard from "@app/components/ProjectCard.svelte";
-  import Separator from "@app/views/projects/Separator.svelte";
+  import RepoCard from "@app/components/RepoCard.svelte";
+  import Separator from "@app/views/repos/Separator.svelte";
   import Settings from "@app/App/Settings.svelte";
   import UserAddress from "@app/views/users/UserAddress.svelte";
 

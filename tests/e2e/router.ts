@@ -6,7 +6,7 @@ import {
   sourceBrowsingUrl,
   test,
 } from "@tests/support/fixtures.js";
-import { createRepo } from "@tests/support/project";
+import { createRepo } from "@tests/support/repo";
 import {
   expectBackAndForwardNavigationWorks,
   expectUrlPersistsReload,

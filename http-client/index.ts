@@ -7,14 +7,14 @@ import type {
   RepoListQuery,
   Tree,
   TreeStats,
-} from "./lib/project.js";
+} from "./lib/repo.js";
 import type {
   Author,
   Config,
   SeedingPolicy,
   DefaultSeedingPolicy,
 } from "./lib/shared.js";
-import type { Comment, Embed, Reaction } from "./lib/project/comment.js";
+import type { Comment, Embed, Reaction } from "./lib/repo/comment.js";
 import type {
   Commit,
   CommitBlob,
@@ -26,8 +26,8 @@ import type {
   DiffContent,
   DiffFile,
   HunkLine,
-} from "./lib/project/commit.js";
-import type { Issue, IssueState } from "./lib/project/issue.js";
+} from "./lib/repo/commit.js";
+import type { Issue, IssueState } from "./lib/repo/issue.js";
 import type {
   LifecycleState,
   Merge,
@@ -36,13 +36,13 @@ import type {
   Review,
   Revision,
   Verdict,
-} from "./lib/project/patch.js";
+} from "./lib/repo/patch.js";
 import type { RequestOptions } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
 import { z, array, literal, number, object, string, union } from "zod";
 
-import * as repo from "./lib/project.js";
+import * as repo from "./lib/repo.js";
 import { Fetcher } from "./lib/fetcher.js";
 import {
   nodeConfigSchema,

@@ -6,7 +6,7 @@ import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { baseUrlToString, isLocal } from "@app/lib/utils";
 import { handleError } from "@app/views/nodes/error";
-import { unreachableError } from "@app/views/projects/error";
+import { unreachableError } from "@app/views/repos/error";
 import { determineSeed } from "./SeedSelector";
 
 export type NodesRouteParams =

@@ -14,7 +14,7 @@ import * as logLabel from "@tests/support/logPrefix.js";
 import * as patch from "@tests/support/cobs/patch.js";
 import { createOptions, supportDir, tmpDir } from "@tests/support/support.js";
 import { createPeerManager } from "@tests/support/peerManager.js";
-import { createRepo } from "@tests/support/project.js";
+import { createRepo } from "@tests/support/repo.js";
 import { formatCommit } from "@app/lib/utils.js";
 
 export { expect };

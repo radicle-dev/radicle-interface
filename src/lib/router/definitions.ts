@@ -2,13 +2,13 @@ import type {
   ResponseError,
   ResponseParseError,
 } from "@http-client/lib/fetcher";
-import type { RepoLoadedRoute, RepoRoute } from "@app/views/projects/router";
+import type { RepoLoadedRoute, RepoRoute } from "@app/views/repos/router";
 import type { UserLoadedRoute, UserRoute } from "@app/views/users/router";
 import type { NodesRoute, NodesLoadedRoute } from "@app/views/nodes/router";
 import type { ComponentProps } from "svelte";
 import type IconLarge from "@app/components/IconLarge.svelte";
 
-import { loadRepoRoute } from "@app/views/projects/router";
+import { loadRepoRoute } from "@app/views/repos/router";
 import { loadUserRoute } from "@app/views/users/router";
 import { loadNodeRoute } from "@app/views/nodes/router";
 

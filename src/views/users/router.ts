@@ -7,7 +7,7 @@ import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { handleError } from "@app/views/nodes/error";
 import { nodePath } from "@app/views/nodes/router";
-import { unreachableError } from "@app/views/projects/error";
+import { unreachableError } from "@app/views/repos/error";
 
 export interface UserRoute {
   resource: "users";

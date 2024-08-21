@@ -10,15 +10,15 @@
   import Hotkeys from "./App/Hotkeys.svelte";
   import LoadingBar from "./App/LoadingBar.svelte";
 
-  import Commit from "@app/views/projects/Commit.svelte";
-  import History from "@app/views/projects/History.svelte";
-  import Issue from "@app/views/projects/Issue.svelte";
-  import Issues from "@app/views/projects/Issues.svelte";
+  import Commit from "@app/views/repos/Commit.svelte";
+  import History from "@app/views/repos/History.svelte";
+  import Issue from "@app/views/repos/Issue.svelte";
+  import Issues from "@app/views/repos/Issues.svelte";
   import Nodes from "@app/views/nodes/View.svelte";
   import NotFound from "@app/views/NotFound.svelte";
-  import Patch from "@app/views/projects/Patch.svelte";
-  import Patches from "@app/views/projects/Patches.svelte";
-  import Source from "@app/views/projects/Source.svelte";
+  import Patch from "@app/views/repos/Patch.svelte";
+  import Patches from "@app/views/repos/Patches.svelte";
+  import Source from "@app/views/repos/Source.svelte";
   import Users from "@app/views/users/View.svelte";
 
   import Error from "@app/views/error/View.svelte";

@@ -10,7 +10,7 @@ import {
   repoRouteToPath,
   repoTitle,
   resolveRepoRoute,
-} from "@app/views/projects/router";
+} from "@app/views/repos/router";
 import { loadRoute } from "@app/lib/router/definitions";
 import { nodePath } from "@app/views/nodes/router";
 import { userRouteToPath, userTitle } from "@app/views/users/router";
