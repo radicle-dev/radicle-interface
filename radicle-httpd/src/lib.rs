@@ -150,7 +150,7 @@ async fn root_index_handler() -> impl IntoResponse {
                 "type": "GET"
             },
             {
-                "href": "/:project/*request",
+                "href": "/:rid/*request",
                 "rel": "git",
                 "type": "GET"
             }

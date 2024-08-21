@@ -12,24 +12,19 @@ use radicle::patch::cache::Patches as _;
 use radicle::storage::{ReadRepository, ReadStorage};
 
 use crate::api::error::Error;
-use crate::api::json;
-use crate::api::project::Info;
-use crate::api::Context;
-use crate::api::{PaginationQuery, ProjectQuery};
+use crate::api::repo::Info;
+use crate::api::{json, Context, PaginationQuery, RepoQuery};
 use crate::axum_extra::{Path, Query};
 
 pub fn router(ctx: Context) -> Router {
     Router::new()
-        .route(
-            "/delegates/:delegate/projects",
-            get(delegates_projects_handler),
-        )
+        .route("/delegates/:delegate/repos", get(delegates_repos_handler))
         .with_state(ctx)
 }
 
-/// List all projects which delegate is a part of.
-/// `GET /delegates/:delegate/projects`
-async fn delegates_projects_handler(
+/// List all repos which delegate is a part of.
+/// `GET /delegates/:delegate/repos`
+async fn delegates_repos_handler(
     State(ctx): State<Context>,
     Path(delegate): Path<Did>,
     Query(qs): Query<PaginationQuery>,
@@ -44,17 +39,21 @@ async fn delegates_projects_handler(
     let storage = &ctx.profile.storage;
     let db = &ctx.profile.database()?;
     let pinned = &ctx.profile.config.web.pinned;
-    let mut projects = match show {
-        ProjectQuery::All => storage
+    let mut repos = match show {
+        RepoQuery::All => storage
             .repositories()?
             .into_iter()
             .filter(|repo| repo.doc.visibility.is_public())
             .collect::<Vec<_>>(),
-        ProjectQuery::Pinned => storage.repositories_by_id(pinned.repositories.iter())?,
+        RepoQuery::Pinned => storage
+            .repositories_by_id(pinned.repositories.iter())?
+            .into_iter()
+            .filter(|repo| repo.doc.visibility.is_public())
+            .collect::<Vec<_>>(),
     };
-    projects.sort_by_key(|p| p.rid);
+    repos.sort_by_key(|p| p.rid);
 
-    let infos = projects
+    let infos = repos
         .into_iter()
         .filter_map(|id| {
             if !id.doc.delegates.iter().any(|d| *d == delegate) {
@@ -66,7 +65,7 @@ async fn delegates_projects_handler(
             let Ok((_, head)) = repo.head() else {
                 return None;
             };
-            let Ok(payload) = id.doc.project() else {
+            let Ok(_payload) = id.doc.project() else {
                 return None;
             };
             let Ok(issues) = ctx.profile.issues(&repo) else {
@@ -92,14 +91,14 @@ async fn delegates_projects_handler(
             let seeding = db.count(&id.rid).unwrap_or_default();
 
             Some(Info {
-                payload,
+                payload: id.doc.payload,
                 delegates,
                 threshold: id.doc.threshold,
                 visibility: id.doc.visibility,
                 head,
                 issues,
                 patches,
-                id: id.rid,
+                rid: id.rid,
                 seeding,
             })
         })
@@ -121,14 +120,14 @@ mod routes {
     use crate::test::{self, get, CONTRIBUTOR_ALIAS, DID, HEAD, RID};
 
     #[tokio::test]
-    async fn test_delegates_projects() {
+    async fn test_delegates_repos() {
         let tmp = tempfile::tempdir().unwrap();
         let seed = test::seed(tmp.path());
         let app = super::router(seed.clone())
             .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
         let response = get(
             &app,
-            "/delegates/did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi/projects?show=all",
+            "/delegates/did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi/repos?show=all",
         )
         .await;
 
@@ -142,9 +141,11 @@ mod routes {
             response.json().await,
             json!([
               {
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for tests",
+                  "name": "hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -166,13 +167,15 @@ mod routes {
                   "open": 1,
                   "closed": 0,
                 },
-                "id": RID,
+                "rid": RID,
                 "seeding": 1,
               },
               {
-                "name": "again-hello-world",
-                "description": "Rad repository for sorting",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for sorting",
+                  "name": "again-hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -194,7 +197,7 @@ mod routes {
                   "open": 0,
                   "closed": 0,
                 },
-                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,
               }
             ])
@@ -206,7 +209,7 @@ mod routes {
         ))));
         let response = get(
             &app,
-            "/delegates/did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi/projects?show=all",
+            "/delegates/did:key:z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi/repos?show=all",
         )
         .await;
 
@@ -220,9 +223,11 @@ mod routes {
             response.json().await,
             json!([
               {
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for tests",
+                  "name": "hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -244,13 +249,15 @@ mod routes {
                   "open": 1,
                   "closed": 0,
                 },
-                "id": RID,
+                "rid": RID,
                 "seeding": 1,
               },
               {
-                "name": "again-hello-world",
-                "description": "Rad repository for sorting",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for sorting",
+                  "name": "again-hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -272,7 +279,7 @@ mod routes {
                   "open": 0,
                   "closed": 0,
                 },
-                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,
               }
             ])

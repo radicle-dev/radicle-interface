@@ -24,13 +24,13 @@ use crate::error::GitError as Error;
 
 pub fn router(profile: Arc<Profile>, aliases: HashMap<String, RepoId>) -> Router {
     Router::new()
-        .route("/:project/*request", any(git_handler))
+        .route("/:rid/*request", any(git_handler))
         .with_state((profile, aliases))
 }
 
 async fn git_handler(
     State((profile, aliases)): State<(Arc<Profile>, HashMap<String, RepoId>)>,
-    AxumPath((project, request)): AxumPath<(String, String)>,
+    AxumPath((repository, request)): AxumPath<(String, String)>,
     method: Method,
     headers: HeaderMap,
     ConnectInfo(remote): ConnectInfo<SocketAddr>,
@@ -38,7 +38,7 @@ async fn git_handler(
     body: Bytes,
 ) -> impl IntoResponse {
     let query = query.0.unwrap_or_default();
-    let name = project.strip_suffix(".git").unwrap_or(&project);
+    let name = repository.strip_suffix(".git").unwrap_or(&repository);
     let rid: RepoId = match name.parse() {
         Ok(rid) => rid,
         Err(_) => {

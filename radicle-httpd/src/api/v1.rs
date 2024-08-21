@@ -36,8 +36,13 @@ async fn root_handler(State(ctx): State<Context>) -> impl IntoResponse {
         "path": "/api/v1",
         "links": [
             {
-                "href": "/projects",
-                "rel": "projects",
+                "href": "/repos",
+                "rel": "repos",
+                "type": "GET"
+            },
+            {
+                "href": "/repos/:rid",
+                "rel": "repo",
                 "type": "GET"
             },
             {
@@ -51,8 +56,8 @@ async fn root_handler(State(ctx): State<Context>) -> impl IntoResponse {
                 "type": "GET"
             },
             {
-                "href": "/delegates/:did/projects",
-                "rel": "projects",
+                "href": "/delegates/:did/repos",
+                "rel": "repos",
                 "type": "GET"
             },
             {

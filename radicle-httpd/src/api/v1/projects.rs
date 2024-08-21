@@ -17,44 +17,41 @@ use radicle::node::routing::Store;
 use radicle::node::{AliasStore, NodeId};
 use radicle::storage::{ReadRepository, ReadStorage, RemoteRepository};
 
+use crate::api;
 use crate::api::error::Error;
-use crate::api::project::Info;
 use crate::api::search::{SearchQueryString, SearchResult};
-use crate::api::{self, CobsQuery, Context, PaginationQuery, ProjectQuery};
+use crate::api::{CobsQuery, Context, PaginationQuery, RepoQuery};
 use crate::axum_extra::{cached_response, immutable_response, Path, Query};
 
 const MAX_BODY_LIMIT: usize = 4_194_304;
 
 pub fn router(ctx: Context) -> Router {
     Router::new()
-        .route("/projects", get(project_root_handler))
-        .route("/projects/search", get(project_search_handler))
-        .route("/projects/:project", get(project_handler))
-        .route("/projects/:project/commits", get(history_handler))
-        .route("/projects/:project/commits/:sha", get(commit_handler))
-        .route("/projects/:project/diff/:base/:oid", get(diff_handler))
-        .route("/projects/:project/activity", get(activity_handler))
-        .route("/projects/:project/tree/:sha/", get(tree_handler_root))
-        .route("/projects/:project/tree/:sha/*path", get(tree_handler))
-        .route(
-            "/projects/:project/stats/tree/:sha",
-            get(stats_tree_handler),
-        )
-        .route("/projects/:project/remotes", get(remotes_handler))
-        .route("/projects/:project/remotes/:peer", get(remote_handler))
-        .route("/projects/:project/blob/:sha/*path", get(blob_handler))
-        .route("/projects/:project/readme/:sha", get(readme_handler))
-        .route("/projects/:project/issues", get(issues_handler))
-        .route("/projects/:project/issues/:id", get(issue_handler))
-        .route("/projects/:project/patches", get(patches_handler))
-        .route("/projects/:project/patches/:id", get(patch_handler))
+        .route("/repos", get(repo_root_handler))
+        .route("/repos/search", get(repo_search_handler))
+        .route("/repos/:rid", get(repo_handler))
+        .route("/repos/:rid/commits", get(history_handler))
+        .route("/repos/:rid/commits/:sha", get(commit_handler))
+        .route("/repos/:rid/diff/:base/:oid", get(diff_handler))
+        .route("/repos/:rid/activity", get(activity_handler))
+        .route("/repos/:rid/tree/:sha/", get(tree_handler_root))
+        .route("/repos/:rid/tree/:sha/*path", get(tree_handler))
+        .route("/repos/:rid/stats/tree/:sha", get(stats_tree_handler))
+        .route("/repos/:rid/remotes", get(remotes_handler))
+        .route("/repos/:rid/remotes/:peer", get(remote_handler))
+        .route("/repos/:rid/blob/:sha/*path", get(blob_handler))
+        .route("/repos/:rid/readme/:sha", get(readme_handler))
+        .route("/repos/:rid/issues", get(issues_handler))
+        .route("/repos/:rid/issues/:id", get(issue_handler))
+        .route("/repos/:rid/patches", get(patches_handler))
+        .route("/repos/:rid/patches/:id", get(patch_handler))
         .with_state(ctx)
         .layer(DefaultBodyLimit::max(MAX_BODY_LIMIT))
 }
 
-/// List all projects.
-/// `GET /projects`
-async fn project_root_handler(
+/// List all repos.
+/// `GET /repos`
+async fn repo_root_handler(
     State(ctx): State<Context>,
     Query(qs): Query<PaginationQuery>,
 ) -> impl IntoResponse {
@@ -65,7 +62,7 @@ async fn project_root_handler(
     } = qs;
     let page = page.unwrap_or(0);
     let per_page = per_page.unwrap_or_else(|| match show {
-        ProjectQuery::Pinned => ctx.profile.config.web.pinned.repositories.len(),
+        RepoQuery::Pinned => ctx.profile.config.web.pinned.repositories.len(),
         _ => 10,
     });
     let storage = &ctx.profile.storage;
@@ -73,21 +70,21 @@ async fn project_root_handler(
     let pinned = &ctx.profile.config.web.pinned;
     let policies = ctx.profile.policies()?;
 
-    let mut projects = match show {
-        ProjectQuery::All => storage
+    let mut repos = match show {
+        RepoQuery::All => storage
             .repositories()?
             .into_iter()
             .filter(|repo| repo.doc.visibility.is_public())
             .collect::<Vec<_>>(),
-        ProjectQuery::Pinned => storage
+        RepoQuery::Pinned => storage
             .repositories_by_id(pinned.repositories.iter())?
             .into_iter()
             .filter(|repo| repo.doc.visibility.is_public())
             .collect::<Vec<_>>(),
     };
-    projects.sort_by_key(|p| p.rid);
+    repos.sort_by_key(|p| p.rid);
 
-    let infos = projects
+    let infos = repos
         .into_iter()
         .filter_map(|info| {
             if !policies.is_seeding(&info.rid).unwrap_or_default() {
@@ -99,7 +96,7 @@ async fn project_root_handler(
             let Ok((_, head)) = repo.head() else {
                 return None;
             };
-            let Ok(payload) = info.doc.project() else {
+            let Ok(_payload) = info.doc.project() else {
                 return None;
             };
             let Ok(issues) = ctx.profile.issues(&repo) else {
@@ -123,15 +120,15 @@ async fn project_root_handler(
                 .collect::<Vec<_>>();
             let seeding = db.count(&info.rid).unwrap_or_default();
 
-            Some(Info {
-                payload,
+            Some(api::repo::Info {
+                payload: info.doc.payload,
                 delegates,
                 head,
                 threshold: info.doc.threshold,
                 visibility: info.doc.visibility,
                 issues,
                 patches,
-                id: info.rid,
+                rid: info.rid,
                 seeding,
             })
         })
@@ -143,7 +140,7 @@ async fn project_root_handler(
 }
 
 /// Search repositories by name.
-/// `GET /projects/search?q=<query>`
+/// `GET /repos/search?q=<query>`
 ///
 /// We obtain the byte index of the first character of the query that matches the repo name.
 /// And skip if the query doesn't match the repo name.
@@ -153,7 +150,7 @@ async fn project_root_handler(
 /// A repo name with a byte index of 0 should come before non-zero indices.
 /// If both indices are non-zero and equal, then compare by seeding count.
 /// If none of the above, all non-zero indices are compared by their seeding count primarily.
-async fn project_search_handler(
+async fn repo_search_handler(
     State(ctx): State<Context>,
     Query(SearchQueryString { q, per_page, page }): Query<SearchQueryString>,
 ) -> impl IntoResponse {
@@ -178,11 +175,11 @@ async fn project_search_handler(
     Ok::<_, Error>(cached_response(found_repos, 600).into_response())
 }
 
-/// Get project metadata.
-/// `GET /projects/:project`
-async fn project_handler(State(ctx): State<Context>, Path(rid): Path<RepoId>) -> impl IntoResponse {
+/// Get repo metadata.
+/// `GET /repos/:rid`
+async fn repo_handler(State(ctx): State<Context>, Path(rid): Path<RepoId>) -> impl IntoResponse {
     let (repo, doc) = ctx.repo(rid)?;
-    let info = ctx.project_info(&repo, doc)?;
+    let info = ctx.repo_info(&repo, doc)?;
 
     Ok::<_, Error>(Json(info))
 }
@@ -197,8 +194,8 @@ pub struct CommitsQueryString {
     pub per_page: Option<usize>,
 }
 
-/// Get project commit range.
-/// `GET /projects/:project/commits?parent=<sha>`
+/// Get repo commit range.
+/// `GET /repos/:rid/commits?parent=<sha>`
 async fn history_handler(
     State(ctx): State<Context>,
     Path(rid): Path<RepoId>,
@@ -220,7 +217,7 @@ async fn history_handler(
 
     let sha = match parent {
         Some(commit) => commit,
-        None => ctx.project_info(&repo, doc)?.head.to_string(),
+        None => ctx.repo_info(&repo, doc)?.head.to_string(),
     };
     let repo = Repository::open(repo.path())?;
 
@@ -257,13 +254,13 @@ async fn history_handler(
     }
 }
 
-/// Get project commit.
-/// `GET /projects/:project/commits/:sha`
+/// Get repo commit.
+/// `GET /repos/:rid/commits/:sha`
 async fn commit_handler(
     State(ctx): State<Context>,
-    Path((project, sha)): Path<(RepoId, Oid)>,
+    Path((rid, sha)): Path<(RepoId, Oid)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let repo = Repository::open(repo.path())?;
     let commit = repo.commit(sha)?;
 
@@ -324,12 +321,12 @@ async fn commit_handler(
 }
 
 /// Get diff between two commits
-/// `GET /projects/:project/diff/:base/:oid`
+/// `GET /repos/:rid/diff/:base/:oid`
 async fn diff_handler(
     State(ctx): State<Context>,
-    Path((project, base, oid)): Path<(RepoId, Oid, Oid)>,
+    Path((rid, base, oid)): Path<(RepoId, Oid, Oid)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let repo = Repository::open(repo.path())?;
     let base = repo.commit(base)?;
     let commit = repo.commit(oid)?;
@@ -390,13 +387,13 @@ async fn diff_handler(
     Ok::<_, Error>(immutable_response(response))
 }
 
-/// Get project activity for the past year.
-/// `GET /projects/:project/activity`
+/// Get repo activity for the past year.
+/// `GET /repos/:rid/activity`
 async fn activity_handler(
     State(ctx): State<Context>,
-    Path(project): Path<RepoId>,
+    Path(rid): Path<RepoId>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let current_date = chrono::Utc::now().timestamp();
     // SAFETY: The number of weeks is static and not out of bounds.
     #[allow(clippy::unwrap_used)]
@@ -419,8 +416,8 @@ async fn activity_handler(
     Ok::<_, Error>(cached_response(json!({ "activity": timestamps }), 3600))
 }
 
-/// Get project source tree for '/' path.
-/// `GET /projects/:project/tree/:sha/`
+/// Get repo source tree for '/' path.
+/// `GET /repos/:rid/tree/:sha/`
 async fn tree_handler_root(
     State(ctx): State<Context>,
     Path((rid, sha)): Path<(RepoId, Oid)>,
@@ -428,17 +425,17 @@ async fn tree_handler_root(
     tree_handler(State(ctx), Path((rid, sha, String::new()))).await
 }
 
-/// Get project source tree.
-/// `GET /projects/:project/tree/:sha/*path`
+/// Get repo source tree.
+/// `GET /repos/:rid/tree/:sha/*path`
 async fn tree_handler(
     State(ctx): State<Context>,
-    Path((project, sha, path)): Path<(RepoId, Oid, String)>,
+    Path((rid, sha, path)): Path<(RepoId, Oid, String)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
 
     if let Some(ref cache) = ctx.cache {
         let cache = &mut cache.tree.lock().await;
-        if let Some(response) = cache.get(&(project, sha, path.clone())) {
+        if let Some(response) = cache.get(&(rid, sha, path.clone())) {
             return Ok::<_, Error>(immutable_response(response.clone()));
         }
     }
@@ -449,32 +446,29 @@ async fn tree_handler(
 
     if let Some(cache) = &ctx.cache {
         let cache = &mut cache.tree.lock().await;
-        cache.put((project, sha, path.clone()), response.clone());
+        cache.put((rid, sha, path.clone()), response.clone());
     }
 
     Ok::<_, Error>(immutable_response(response))
 }
 
-/// Get project source tree stats.
-/// `GET /projects/:project/stats/tree/:sha`
+/// Get repo source tree stats.
+/// `GET /repos/:rid/stats/tree/:sha`
 async fn stats_tree_handler(
     State(ctx): State<Context>,
-    Path((project, sha)): Path<(RepoId, Oid)>,
+    Path((rid, sha)): Path<(RepoId, Oid)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let repo = Repository::open(repo.path())?;
     let stats = repo.stats_from(&sha)?;
 
     Ok::<_, Error>(immutable_response(stats))
 }
 
-/// Get all project remotes.
-/// `GET /projects/:project/remotes`
-async fn remotes_handler(
-    State(ctx): State<Context>,
-    Path(project): Path<RepoId>,
-) -> impl IntoResponse {
-    let (repo, doc) = ctx.repo(project)?;
+/// Get all repo remotes.
+/// `GET /repos/:rid/remotes`
+async fn remotes_handler(State(ctx): State<Context>, Path(rid): Path<RepoId>) -> impl IntoResponse {
+    let (repo, doc) = ctx.repo(rid)?;
     let delegates = &doc.delegates;
     let aliases = &ctx.profile.aliases();
     let remotes = repo
@@ -510,13 +504,13 @@ async fn remotes_handler(
     Ok::<_, Error>(Json(remotes))
 }
 
-/// Get project remote.
-/// `GET /projects/:project/remotes/:peer`
+/// Get repo remote.
+/// `GET /repos/:rid/remotes/:peer`
 async fn remote_handler(
     State(ctx): State<Context>,
-    Path((project, node_id)): Path<(RepoId, NodeId)>,
+    Path((rid, node_id)): Path<(RepoId, NodeId)>,
 ) -> impl IntoResponse {
-    let (repo, doc) = ctx.repo(project)?;
+    let (repo, doc) = ctx.repo(rid)?;
     let delegates = &doc.delegates;
     let remote = repo.remote(&node_id)?;
     let refs = remote
@@ -537,13 +531,13 @@ async fn remote_handler(
     Ok::<_, Error>(Json(remote))
 }
 
-/// Get project source file.
-/// `GET /projects/:project/blob/:sha/*path`
+/// Get repo source file.
+/// `GET /repos/:rid/blob/:sha/*path`
 async fn blob_handler(
     State(ctx): State<Context>,
-    Path((project, sha, path)): Path<(RepoId, Oid, String)>,
+    Path((rid, sha, path)): Path<(RepoId, Oid, String)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let repo = Repository::open(repo.path())?;
     let blob = repo.blob(sha, &path)?;
 
@@ -560,13 +554,13 @@ async fn blob_handler(
     Ok::<_, Error>(immutable_response(api::json::blob(&blob, &path)).into_response())
 }
 
-/// Get project readme.
-/// `GET /projects/:project/readme/:sha`
+/// Get repo readme.
+/// `GET /repos/:rid/readme/:sha`
 async fn readme_handler(
     State(ctx): State<Context>,
-    Path((project, sha)): Path<(RepoId, Oid)>,
+    Path((rid, sha)): Path<(RepoId, Oid)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let repo = Repository::open(repo.path())?;
     let paths = [
         "README",
@@ -604,14 +598,14 @@ async fn readme_handler(
     Err(Error::NotFound)
 }
 
-/// Get project issues list.
-/// `GET /projects/:project/issues`
+/// Get repo issues list.
+/// `GET /repos/:rid/issues`
 async fn issues_handler(
     State(ctx): State<Context>,
-    Path(project): Path<RepoId>,
+    Path(rid): Path<RepoId>,
     Query(qs): Query<CobsQuery<api::IssueStatus>>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let CobsQuery {
         page,
         per_page,
@@ -641,13 +635,13 @@ async fn issues_handler(
     Ok::<_, Error>(Json(issues))
 }
 
-/// Get project issue.
-/// `GET /projects/:project/issues/:id`
+/// Get repo issue.
+/// `GET /repos/:rid/issues/:id`
 async fn issue_handler(
     State(ctx): State<Context>,
-    Path((project, issue_id)): Path<(RepoId, Oid)>,
+    Path((rid, issue_id)): Path<(RepoId, Oid)>,
 ) -> impl IntoResponse {
-    let (repo, _) = ctx.repo(project)?;
+    let (repo, _) = ctx.repo(rid)?;
     let issue = ctx
         .profile
         .issues(&repo)?
@@ -658,8 +652,8 @@ async fn issue_handler(
     Ok::<_, Error>(Json(api::json::issue(issue_id.into(), issue, &aliases)))
 }
 
-/// Get project patches list.
-/// `GET /projects/:project/patches`
+/// Get repo patches list.
+/// `GET /repos/:rid/patches`
 async fn patches_handler(
     State(ctx): State<Context>,
     Path(rid): Path<RepoId>,
@@ -694,8 +688,8 @@ async fn patches_handler(
     Ok::<_, Error>(Json(patches))
 }
 
-/// Get project patch.
-/// `GET /projects/:project/patches/:id`
+/// Get repo patch.
+/// `GET /repos/:rid/patches/:id`
 async fn patch_handler(
     State(ctx): State<Context>,
     Path((rid, patch_id)): Path<(RepoId, Oid)>,
@@ -726,21 +720,23 @@ mod routes {
     use crate::test::*;
 
     #[tokio::test]
-    async fn test_projects_root() {
+    async fn test_repos_root() {
         let tmp = tempfile::tempdir().unwrap();
         let seed = seed(tmp.path());
         let app = super::router(seed.clone())
             .layer(MockConnectInfo(SocketAddr::from(([127, 0, 0, 1], 8080))));
-        let response = get(&app, "/projects?show=all").await;
+        let response = get(&app, "/repos?show=all").await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response.json().await,
             json!([
               {
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for tests",
+                  "name": "hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -762,13 +758,15 @@ mod routes {
                   "open": 1,
                   "closed": 0,
                 },
-                "id": RID,
+                "rid": RID,
                 "seeding": 1,
               },
               {
-                "name": "again-hello-world",
-                "description": "Rad repository for sorting",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for sorting",
+                  "name": "again-hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -790,7 +788,7 @@ mod routes {
                   "open": 0,
                   "closed": 0,
                 },
-                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,
               },
             ])
@@ -800,16 +798,18 @@ mod routes {
             [192, 168, 13, 37],
             8080,
         ))));
-        let response = get(&app, "/projects?show=all").await;
+        let response = get(&app, "/repos?show=all").await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response.json().await,
             json!([
               {
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for tests",
+                  "name": "hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -831,13 +831,15 @@ mod routes {
                   "open": 1,
                   "closed": 0,
                 },
-                "id": RID,
+                "rid": RID,
                 "seeding": 1,
               },
               {
-                "name": "again-hello-world",
-                "description": "Rad repository for sorting",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "name": "again-hello-world",
+                  "description": "Rad repository for sorting",
+                  "defaultBranch": "master",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -859,7 +861,7 @@ mod routes {
                   "open": 0,
                   "closed": 0,
                 },
-                "id": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
+                "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,
               },
             ])
@@ -867,18 +869,20 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects() {
+    async fn test_repos() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}")).await;
+        let response = get(&app, format!("/repos/{RID}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response.json().await,
             json!({
-               "name": "hello-world",
-               "description": "Rad repository for tests",
-               "defaultBranch": "master",
+                "xyz.radicle.project": {
+                 "defaultBranch": "master",
+                 "description": "Rad repository for tests",
+                 "name": "hello-world",
+                },
                "delegates": [
                  {
                    "id": DID,
@@ -900,27 +904,29 @@ mod routes {
                  "open": 1,
                  "closed": 0,
                },
-               "id": RID,
+               "rid": RID,
                "seeding": 1,
             })
         );
     }
 
     #[tokio::test]
-    async fn test_search_projects() {
+    async fn test_search_repos() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, "/projects/search?q=hello").await;
+        let response = get(&app, "/repos/search?q=hello").await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response.json().await,
             json!([
               {
+                "xyz.radicle.project": {
+                  "name": "hello-world",
+                  "description": "Rad repository for tests",
+                  "defaultBranch": "master",
+                },
                 "rid": "rad:z4FucBZHZMCsxTyQE1dfE2YR59Qbp",
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
                 "delegates": [
                   {
                     "id": DID,
@@ -930,10 +936,12 @@ mod routes {
                 "seeds": 1,
               },
               {
+                "xyz.radicle.project": {
+                  "name": "again-hello-world",
+                  "description": "Rad repository for sorting",
+                  "defaultBranch": "master",
+                },
                 "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
-                "name": "again-hello-world",
-                "description": "Rad repository for sorting",
-                "defaultBranch": "master",
                 "delegates": [
                   {
                     "id": DID,
@@ -947,10 +955,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_search_projects_pagination() {
+    async fn test_search_repos_pagination() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, "/projects/search?q=hello&perPage=1").await;
+        let response = get(&app, "/repos/search?q=hello&perPage=1").await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -958,9 +966,11 @@ mod routes {
             json!([
               {
                 "rid": "rad:z4FucBZHZMCsxTyQE1dfE2YR59Qbp",
-                "name": "hello-world",
-                "description": "Rad repository for tests",
-                "defaultBranch": "master",
+                "xyz.radicle.project": {
+                  "defaultBranch": "master",
+                  "description": "Rad repository for tests",
+                  "name": "hello-world",
+                },
                 "delegates": [
                   {
                     "id": DID,
@@ -974,19 +984,19 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_not_found() {
+    async fn test_repos_not_found() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, "/projects/rad:z2u2CP3ZJzB7ZqE8jHrau19yjcfCQ").await;
+        let response = get(&app, "/repos/rad:z2u2CP3ZJzB7ZqE8jHrau19yjcfCQ").await;
 
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
 
     #[tokio::test]
-    async fn test_projects_commits_root() {
+    async fn test_repos_commits_root() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/commits")).await;
+        let response = get(&app, format!("/repos/{RID}/commits")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1046,10 +1056,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_commits() {
+    async fn test_repos_commits() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/commits/{HEAD}")).await;
+        let response = get(&app, format!("/repos/{RID}/commits/{HEAD}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1214,12 +1224,12 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_commits_not_found() {
+    async fn test_repos_commits_not_found() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
         let response = get(
             &app,
-            format!("/projects/{RID}/commits/ffffffffffffffffffffffffffffffffffffffff"),
+            format!("/repos/{RID}/commits/ffffffffffffffffffffffffffffffffffffffff"),
         )
         .await;
 
@@ -1227,10 +1237,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_stats() {
+    async fn test_repos_stats() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/stats/tree/{HEAD}")).await;
+        let response = get(&app, format!("/repos/{RID}/stats/tree/{HEAD}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1246,10 +1256,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_tree() {
+    async fn test_repos_tree() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/tree/{HEAD}/")).await;
+        let response = get(&app, format!("/repos/{RID}/tree/{HEAD}/")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1292,7 +1302,7 @@ mod routes {
             )
         );
 
-        let response = get(&app, format!("/projects/{RID}/tree/{HEAD}/dir1")).await;
+        let response = get(&app, format!("/repos/{RID}/tree/{HEAD}/dir1")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1330,25 +1340,25 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_tree_not_found() {
+    async fn test_repos_tree_not_found() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
         let response = get(
             &app,
-            format!("/projects/{RID}/tree/ffffffffffffffffffffffffffffffffffffffff"),
+            format!("/repos/{RID}/tree/ffffffffffffffffffffffffffffffffffffffff"),
         )
         .await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
 
-        let response = get(&app, format!("/projects/{RID}/tree/{HEAD}/unknown")).await;
+        let response = get(&app, format!("/repos/{RID}/tree/{HEAD}/unknown")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
 
     #[tokio::test]
-    async fn test_projects_remotes_root() {
+    async fn test_repos_remotes_root() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/remotes")).await;
+        let response = get(&app, format!("/repos/{RID}/remotes")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1367,12 +1377,12 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_remotes() {
+    async fn test_repos_remotes() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
         let response = get(
             &app,
-            format!("/projects/{RID}/remotes/z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"),
+            format!("/repos/{RID}/remotes/z6MknSLrJoTcukLrE435hVNQT4JUhbvWLX4kUzqkEStBU8Vi"),
         )
         .await;
 
@@ -1390,12 +1400,12 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_remotes_not_found() {
+    async fn test_repos_remotes_not_found() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
         let response = get(
             &app,
-            format!("/projects/{RID}/remotes/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT"),
+            format!("/repos/{RID}/remotes/z6MksFqXN3Yhqk8pTJdUGLwATkRfQvwZXPqR2qMEhbS9wzpT"),
         )
         .await;
 
@@ -1403,10 +1413,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_blob() {
+    async fn test_repos_blob() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/blob/{HEAD}/README")).await;
+        let response = get(&app, format!("/repos/{RID}/blob/{HEAD}/README")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1438,19 +1448,19 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_blob_not_found() {
+    async fn test_repos_blob_not_found() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/blob/{HEAD}/unknown")).await;
+        let response = get(&app, format!("/repos/{RID}/blob/{HEAD}/unknown")).await;
 
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
 
     #[tokio::test]
-    async fn test_projects_readme() {
+    async fn test_repos_readme() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/readme/{INITIAL_COMMIT}")).await;
+        let response = get(&app, format!("/repos/{RID}/readme/{INITIAL_COMMIT}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1480,14 +1490,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_diff() {
+    async fn test_repos_diff() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(
-            &app,
-            format!("/projects/{RID}/diff/{INITIAL_COMMIT}/{HEAD}"),
-        )
-        .await;
+        let response = get(&app, format!("/repos/{RID}/diff/{INITIAL_COMMIT}/{HEAD}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1586,10 +1592,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_issues_root() {
+    async fn test_repos_issues_root() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/issues")).await;
+        let response = get(&app, format!("/repos/{RID}/issues")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1639,10 +1645,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_issue() {
+    async fn test_repos_issue() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/issues/{ISSUE_ID}")).await;
+        let response = get(&app, format!("/repos/{RID}/issues/{ISSUE_ID}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1690,10 +1696,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_patches_root() {
+    async fn test_repos_patches_root() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/patches")).await;
+        let response = get(&app, format!("/repos/{RID}/patches")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1750,10 +1756,10 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_patch() {
+    async fn test_repos_patch() {
         let tmp = tempfile::tempdir().unwrap();
         let app = super::router(seed(tmp.path()));
-        let response = get(&app, format!("/projects/{RID}/patches/{PATCH_ID}")).await;
+        let response = get(&app, format!("/repos/{RID}/patches/{PATCH_ID}")).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
@@ -1807,7 +1813,7 @@ mod routes {
     }
 
     #[tokio::test]
-    async fn test_projects_private() {
+    async fn test_repos_private() {
         let tmp = tempfile::tempdir().unwrap();
         let ctx = seed(tmp.path());
         let app = super::router(ctx.to_owned());
@@ -1818,19 +1824,19 @@ mod routes {
             .repository(RID_PRIVATE.parse().unwrap())
             .unwrap();
 
-        let response = get(&app, format!("/projects/{RID_PRIVATE}")).await;
+        let response = get(&app, format!("/repos/{RID_PRIVATE}")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
 
-        let response = get(&app, format!("/projects/{RID_PRIVATE}/patches")).await;
+        let response = get(&app, format!("/repos/{RID_PRIVATE}/patches")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
 
-        let response = get(&app, format!("/projects/{RID_PRIVATE}/issues")).await;
+        let response = get(&app, format!("/repos/{RID_PRIVATE}/issues")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
 
-        let response = get(&app, format!("/projects/{RID_PRIVATE}/commits")).await;
+        let response = get(&app, format!("/repos/{RID_PRIVATE}/commits")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
 
-        let response = get(&app, format!("/projects/{RID_PRIVATE}/remotes")).await;
+        let response = get(&app, format!("/repos/{RID_PRIVATE}/remotes")).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
 }

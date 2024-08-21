@@ -47,16 +47,15 @@ impl Context {
         }
     }
 
-    pub fn project_info<R: ReadRepository + radicle::cob::Store>(
+    pub fn repo_info<R: ReadRepository + radicle::cob::Store>(
         &self,
         repo: &R,
         doc: DocAt,
-    ) -> Result<project::Info, error::Error> {
+    ) -> Result<repo::Info, error::Error> {
         let (_, head) = repo.head()?;
         let DocAt { doc, .. } = doc;
-        let id = repo.id();
+        let rid = repo.id();
 
-        let payload = doc.project()?;
         let aliases = self.profile.aliases();
         let delegates = doc
             .delegates
@@ -66,17 +65,17 @@ impl Context {
         let issues = self.profile.issues(repo)?.counts()?;
         let patches = self.profile.patches(repo)?.counts()?;
         let db = &self.profile.database()?;
-        let seeding = db.count(&id).unwrap_or_default();
+        let seeding = db.count(&rid).unwrap_or_default();
 
-        Ok(project::Info {
-            payload,
+        Ok(repo::Info {
+            payload: doc.payload,
             delegates,
             threshold: doc.threshold,
             visibility: doc.visibility,
             head,
             issues,
             patches,
-            id,
+            rid,
             seeding,
         })
     }
@@ -130,14 +129,14 @@ async fn root_handler() -> impl IntoResponse {
 #[serde(rename_all = "camelCase")]
 pub struct PaginationQuery {
     #[serde(default)]
-    pub show: ProjectQuery,
+    pub show: RepoQuery,
     pub page: Option<usize>,
     pub per_page: Option<usize>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
-pub enum ProjectQuery {
+pub enum RepoQuery {
     All,
     #[default]
     Pinned,
@@ -209,16 +208,17 @@ impl PatchStatus {
 
 mod search {
     use std::cmp::Ordering;
+    use std::collections::BTreeMap;
 
     use nonempty::NonEmpty;
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
     use radicle::crypto::Verified;
-    use radicle::identity::{Project, RepoId};
+    use radicle::identity::doc::{Payload, PayloadId};
+    use radicle::identity::RepoId;
     use radicle::node::routing::Store;
-    use radicle::node::AliasStore;
-    use radicle::node::Database;
+    use radicle::node::{AliasStore, Database};
     use radicle::profile::Aliases;
     use radicle::storage::RepositoryInfo;
 
@@ -234,7 +234,7 @@ mod search {
     pub struct SearchResult {
         pub rid: RepoId,
         #[serde(flatten)]
-        pub payload: Project,
+        pub payload: BTreeMap<PayloadId, Payload>,
         pub delegates: NonEmpty<serde_json::Value>,
         pub seeds: usize,
         #[serde(skip)]
@@ -251,8 +251,9 @@ mod search {
             if info.doc.visibility.is_private() {
                 return None;
             }
-            let payload = info.doc.project().ok()?;
-            let index = payload.name().find(q)?;
+            let Ok(Some(index)) = info.doc.project().map(|p| p.name().find(q)) else {
+                return None;
+            };
             let seeds = db.count(&info.rid).unwrap_or_default();
             let delegates = info.doc.delegates.map(|did| match aliases.alias(&did) {
                 Some(alias) => json!({
@@ -266,7 +267,7 @@ mod search {
 
             Some(SearchResult {
                 rid: info.rid,
-                payload,
+                payload: info.doc.payload,
                 delegates,
                 seeds,
                 index,
@@ -299,29 +300,30 @@ mod search {
     }
 }
 
-mod project {
+mod repo {
+    use std::collections::BTreeMap;
+
     use serde::Serialize;
     use serde_json::Value;
 
     use radicle::cob;
     use radicle::git::Oid;
-    use radicle::identity::project::Project;
+    use radicle::identity::doc::{Payload, PayloadId};
     use radicle::identity::{RepoId, Visibility};
 
-    /// Project info.
+    /// Repos info.
     #[derive(Serialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Info {
-        /// Project metadata.
         #[serde(flatten)]
-        pub payload: Project,
+        pub payload: BTreeMap<PayloadId, Payload>,
         pub delegates: Vec<Value>,
         pub threshold: usize,
         pub visibility: Visibility,
         pub head: Oid,
         pub patches: cob::patch::PatchCounts,
         pub issues: cob::issue::IssueCounts,
-        pub id: RepoId,
+        pub rid: RepoId,
         pub seeding: usize,
     }
 }
