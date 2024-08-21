@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
   import type {
+    Author,
     Comment,
     Review,
     Merge,
@@ -168,7 +169,7 @@
         revisionOid: string;
         revisionEdits: Revision["edits"];
         revisionReactions: Revision["reactions"];
-        revisionAuthor: { id: string; alias?: string | undefined };
+        revisionAuthor: Author;
         revisionDescription: string;
       },
       Timeline[],

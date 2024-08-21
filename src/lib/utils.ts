@@ -1,4 +1,4 @@
-import type { BaseUrl } from "@http-client";
+import type { Author, BaseUrl } from "@http-client";
 
 import md5 from "md5";
 import bs58 from "bs58";
@@ -80,10 +80,7 @@ export function formatCommit(oid: string): string {
   return oid.substring(0, 7);
 }
 
-export function formatEditedCaption(
-  author: { id: string; alias?: string },
-  timestamp: number,
-) {
+export function formatEditedCaption(author: Author, timestamp: number) {
   return `${
     author.alias ? author.alias : formatNodeId(author.id)
   } edited ${absoluteTimestamp(timestamp)}`;

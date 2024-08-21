@@ -26,6 +26,7 @@ import {
 } from "./project/commit.js";
 import { issueSchema, issuesSchema } from "./project/issue.js";
 import { patchSchema, patchesSchema } from "./project/patch.js";
+import { authorSchema } from "./shared.js";
 
 const repoSchema = object({
   rid: string(),
@@ -34,7 +35,7 @@ const repoSchema = object({
     description: string(),
     defaultBranch: string(),
   }),
-  delegates: array(object({ id: string(), alias: optional(string()) })),
+  delegates: array(authorSchema),
   head: string(),
   threshold: number(),
   visibility: union([

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type {
+    Author,
     BaseUrl,
     Comment,
     DiffResponse,
@@ -44,7 +45,7 @@
   export let revisionOid: string;
   export let revisionTimestamp: number;
   export let revisionReactions: Comment["reactions"];
-  export let revisionAuthor: { id: string; alias?: string | undefined };
+  export let revisionAuthor: Author;
   export let revisionDescription: string;
   export let timelines: Timeline[];
   export let previousRevBase: string | undefined = undefined;

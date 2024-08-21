@@ -9,6 +9,7 @@ import type {
   TreeStats,
 } from "./lib/project.js";
 import type {
+  Author,
   Config,
   SeedingPolicy,
   DefaultSeedingPolicy,
@@ -50,6 +51,7 @@ import {
 } from "./lib/shared.js";
 
 export type {
+  Author,
   BaseUrl,
   Blob,
   ChangesetWithDiff,

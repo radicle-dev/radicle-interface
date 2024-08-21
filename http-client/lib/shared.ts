@@ -117,6 +117,8 @@ export const codeLocationSchema = object({
   new: rangeSchema.nullable(),
 });
 
+export type Author = z.infer<typeof authorSchema>;
+
 export const authorSchema = object({
   id: string(),
   alias: string().optional(),
