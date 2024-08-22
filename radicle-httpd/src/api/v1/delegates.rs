@@ -3,17 +3,11 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 
-use radicle::cob::Author;
 use radicle::identity::Did;
-use radicle::issue::cache::Issues as _;
-use radicle::node::routing::Store;
-use radicle::node::AliasStore;
-use radicle::patch::cache::Patches as _;
-use radicle::storage::{ReadRepository, ReadStorage};
+use radicle::storage::ReadStorage;
 
 use crate::api::error::Error;
-use crate::api::repo::Info;
-use crate::api::{json, Context, PaginationQuery, RepoQuery};
+use crate::api::{Context, PaginationQuery, RepoQuery};
 use crate::axum_extra::{Path, Query};
 
 pub fn router(ctx: Context) -> Router {
@@ -37,7 +31,6 @@ async fn delegates_repos_handler(
     let page = page.unwrap_or(0);
     let per_page = per_page.unwrap_or(10);
     let storage = &ctx.profile.storage;
-    let db = &ctx.profile.database()?;
     let pinned = &ctx.profile.config.web.pinned;
     let mut repos = match show {
         RepoQuery::All => storage
@@ -59,48 +52,14 @@ async fn delegates_repos_handler(
             if !id.doc.delegates.iter().any(|d| *d == delegate) {
                 return None;
             }
-            let Ok(repo) = storage.repository(id.rid) else {
+            let Ok((repo, doc)) = ctx.repo(id.rid) else {
                 return None;
             };
-            let Ok((_, head)) = repo.head() else {
-                return None;
-            };
-            let Ok(_payload) = id.doc.project() else {
-                return None;
-            };
-            let Ok(issues) = ctx.profile.issues(&repo) else {
-                return None;
-            };
-            let Ok(issues) = issues.counts() else {
-                return None;
-            };
-            let Ok(patches) = ctx.profile.patches(&repo) else {
-                return None;
-            };
-            let Ok(patches) = patches.counts() else {
+            let Ok(repo_info) = ctx.repo_info(&repo, doc) else {
                 return None;
             };
 
-            let aliases = ctx.profile.aliases();
-            let delegates = id
-                .doc
-                .delegates
-                .into_iter()
-                .map(|did| json::author(&Author::new(did), aliases.alias(did.as_key())))
-                .collect::<Vec<_>>();
-            let seeding = db.count(&id.rid).unwrap_or_default();
-
-            Some(Info {
-                payload: id.doc.payload,
-                delegates,
-                threshold: id.doc.threshold,
-                visibility: id.doc.visibility,
-                head,
-                issues,
-                patches,
-                rid: id.rid,
-                seeding,
-            })
+            Some(repo_info)
         })
         .skip(page * per_page)
         .take(per_page)
@@ -141,10 +100,27 @@ mod routes {
             response.json().await,
             json!([
               {
-                "xyz.radicle.project": {
-                  "defaultBranch": "master",
-                  "description": "Rad repository for tests",
-                  "name": "hello-world",
+                "payloads": {
+                  "xyz.radicle.project": {
+                    "data": {
+                      "defaultBranch": "master",
+                      "description": "Rad repository for tests",
+                      "name": "hello-world",
+                    },
+                    "meta": {
+                      "head": HEAD,
+                      "patches": {
+                        "open": 1,
+                        "draft": 0,
+                        "archived": 0,
+                        "merged": 0,
+                      },
+                      "issues": {
+                        "open": 1,
+                        "closed": 0,
+                      },
+                    }
+                  }
                 },
                 "delegates": [
                   {
@@ -156,25 +132,31 @@ mod routes {
                 "visibility": {
                   "type": "public"
                 },
-                "head": HEAD,
-                "patches": {
-                  "open": 1,
-                  "draft": 0,
-                  "archived": 0,
-                  "merged": 0,
-                },
-                "issues": {
-                  "open": 1,
-                  "closed": 0,
-                },
                 "rid": RID,
                 "seeding": 1,
               },
               {
-                "xyz.radicle.project": {
-                  "defaultBranch": "master",
-                  "description": "Rad repository for sorting",
-                  "name": "again-hello-world",
+                "payloads": {
+                  "xyz.radicle.project": {
+                    "data": {
+                      "defaultBranch": "master",
+                      "description": "Rad repository for sorting",
+                      "name": "again-hello-world",
+                    },
+                    "meta": {
+                      "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
+                      "patches": {
+                        "open": 0,
+                        "draft": 0,
+                        "archived": 0,
+                        "merged": 0,
+                      },
+                      "issues": {
+                        "open": 0,
+                        "closed": 0,
+                      },
+                    }
+                  }
                 },
                 "delegates": [
                   {
@@ -185,17 +167,6 @@ mod routes {
                 "threshold": 1,
                 "visibility": {
                   "type": "public"
-                },
-                "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
-                "patches": {
-                  "open": 0,
-                  "draft": 0,
-                  "archived": 0,
-                  "merged": 0,
-                },
-                "issues": {
-                  "open": 0,
-                  "closed": 0,
                 },
                 "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,
@@ -223,10 +194,27 @@ mod routes {
             response.json().await,
             json!([
               {
-                "xyz.radicle.project": {
-                  "defaultBranch": "master",
-                  "description": "Rad repository for tests",
-                  "name": "hello-world",
+                "payloads": {
+                  "xyz.radicle.project": {
+                    "data": {
+                      "defaultBranch": "master",
+                      "description": "Rad repository for tests",
+                      "name": "hello-world",
+                    },
+                    "meta": {
+                      "head": HEAD,
+                      "patches": {
+                        "open": 1,
+                        "draft": 0,
+                        "archived": 0,
+                        "merged": 0,
+                      },
+                      "issues": {
+                        "open": 1,
+                        "closed": 0,
+                      },
+                    }
+                  }
                 },
                 "delegates": [
                   {
@@ -238,25 +226,31 @@ mod routes {
                 "visibility": {
                   "type": "public"
                 },
-                "head": HEAD,
-                "patches": {
-                  "open": 1,
-                  "draft": 0,
-                  "archived": 0,
-                  "merged": 0,
-                },
-                "issues": {
-                  "open": 1,
-                  "closed": 0,
-                },
                 "rid": RID,
                 "seeding": 1,
               },
               {
-                "xyz.radicle.project": {
-                  "defaultBranch": "master",
-                  "description": "Rad repository for sorting",
-                  "name": "again-hello-world",
+                "payloads": {
+                  "xyz.radicle.project": {
+                    "data": {
+                      "defaultBranch": "master",
+                      "description": "Rad repository for sorting",
+                      "name": "again-hello-world",
+                    },
+                    "meta": {
+                      "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
+                      "patches": {
+                        "open": 0,
+                        "draft": 0,
+                        "archived": 0,
+                        "merged": 0,
+                      },
+                      "issues": {
+                        "open": 0,
+                        "closed": 0,
+                      },
+                    }
+                  }
                 },
                 "delegates": [
                   {
@@ -267,17 +261,6 @@ mod routes {
                 "threshold": 1,
                 "visibility": {
                   "type": "public"
-                },
-                "head": "344dcd184df5bf37aab6c107fa9371a1c5b3321a",
-                "patches": {
-                  "open": 0,
-                  "draft": 0,
-                  "archived": 0,
-                  "merged": 0,
-                },
-                "issues": {
-                  "open": 0,
-                  "closed": 0,
                 },
                 "rid": "rad:z4GypKmh1gkEfmkXtarcYnkvtFUfE",
                 "seeding": 1,

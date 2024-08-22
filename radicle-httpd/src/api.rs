@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -6,11 +7,12 @@ use axum::http::Method;
 use axum::response::{IntoResponse, Json};
 use axum::routing::get;
 use axum::Router;
+use radicle::identity::doc::PayloadId;
 use radicle::issue::cache::Issues as _;
 use radicle::patch::cache::Patches as _;
 use radicle::storage::git::Repository;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use serde_json::{json, Value};
 use tower_http::cors::{self, CorsLayer};
 
 use radicle::cob::{issue, patch, Author};
@@ -52,7 +54,6 @@ impl Context {
         repo: &R,
         doc: DocAt,
     ) -> Result<repo::Info, error::Error> {
-        let (_, head) = repo.head()?;
         let DocAt { doc, .. } = doc;
         let rid = repo.id();
 
@@ -62,19 +63,33 @@ impl Context {
             .into_iter()
             .map(|did| json::author(&Author::new(did), aliases.alias(did.as_key())))
             .collect::<Vec<_>>();
-        let issues = self.profile.issues(repo)?.counts()?;
-        let patches = self.profile.patches(repo)?.counts()?;
         let db = &self.profile.database()?;
         let seeding = db.count(&rid).unwrap_or_default();
 
+        let payloads: BTreeMap<PayloadId, Value> = doc.payload.into_iter()
+            .filter_map(|(id, payload)| match id  {
+                id if id == PayloadId::project() => {
+                    let Ok((_, head)) = repo.head() else {
+                        return None
+                    };
+                    let (Ok(patches), Ok(issues)) = (self.profile.patches(repo), self.profile.issues(repo)) else {
+                        return None
+                    };
+                    let (Ok(patches), Ok(issues)) = (patches.counts(), issues.counts()) else {
+                        return None
+                    };
+
+                    Some((id, json!({ "data": payload, "meta": { "head": head, "issues": issues, "patches": patches } } )))
+                },
+                _ => Some((id, json!({ "data": payload })))
+              })
+            .collect();
+
         Ok(repo::Info {
-            payload: doc.payload,
+            payloads,
             delegates,
             threshold: doc.threshold,
             visibility: doc.visibility,
-            head,
-            issues,
-            patches,
             rid,
             seeding,
         })
@@ -233,8 +248,7 @@ mod search {
     #[derive(Serialize, Deserialize, Eq, Debug)]
     pub struct SearchResult {
         pub rid: RepoId,
-        #[serde(flatten)]
-        pub payload: BTreeMap<PayloadId, Payload>,
+        pub payloads: BTreeMap<PayloadId, Payload>,
         pub delegates: NonEmpty<serde_json::Value>,
         pub seeds: usize,
         #[serde(skip)]
@@ -267,7 +281,7 @@ mod search {
 
             Some(SearchResult {
                 rid: info.rid,
-                payload: info.doc.payload,
+                payloads: info.doc.payload,
                 delegates,
                 seeds,
                 index,
@@ -306,23 +320,17 @@ mod repo {
     use serde::Serialize;
     use serde_json::Value;
 
-    use radicle::cob;
-    use radicle::git::Oid;
-    use radicle::identity::doc::{Payload, PayloadId};
+    use radicle::identity::doc::PayloadId;
     use radicle::identity::{RepoId, Visibility};
 
     /// Repos info.
     #[derive(Serialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Info {
-        #[serde(flatten)]
-        pub payload: BTreeMap<PayloadId, Payload>,
+        pub payloads: BTreeMap<PayloadId, Value>,
         pub delegates: Vec<Value>,
         pub threshold: usize,
         pub visibility: Visibility,
-        pub head: Oid,
-        pub patches: cob::patch::PatchCounts,
-        pub issues: cob::issue::IssueCounts,
         pub rid: RepoId,
         pub seeding: usize,
     }
