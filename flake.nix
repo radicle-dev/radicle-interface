@@ -76,7 +76,7 @@
           pname = "radicle-explorer";
           version = (builtins.fromJSON (builtins.readFile ./package.json)).version;
           src = ./.;
-          npmDepsHash = "sha256-JerBiY39TNsrDmdoJIZNuUhekP860q6/0ttSL/Gd7e0=";
+          npmDepsHash = "sha256-5/oMcqtkPTZHmLYTilXIKeBs+r4LTDh43OwD2yb7nbg=";
           postPatch = ''
             patchShebangs --build ./scripts
             mkdir -p "public/twemoji"
