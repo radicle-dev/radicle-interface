@@ -82,7 +82,7 @@
           class="counter"
           class:selected={activeTab === "issues"}
           class:hover={hover && activeTab !== "issues"}>
-          {repo.issues.open}
+          {repo.payloads["xyz.radicle.project"].meta.issues.open}
         </span>
       </div>
     </Button>
@@ -107,7 +107,7 @@
           class="counter"
           class:hover={hover && activeTab !== "patches"}
           class:selected={activeTab === "patches"}>
-          {repo.patches.open}
+          {repo.payloads["xyz.radicle.project"].meta.patches.open}
         </span>
       </div>
     </Button>

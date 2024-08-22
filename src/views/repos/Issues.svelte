@@ -72,7 +72,9 @@
   };
 
   $: showMoreButton =
-    !loading && !error && allIssues.length < repo.issues[status];
+    !loading &&
+    !error &&
+    allIssues.length < repo.payloads["xyz.radicle.project"].meta.issues[status];
 </script>
 
 <style>
@@ -146,7 +148,7 @@
         </div>
         {capitalize(status)}
         <div class="dropdown-button-counter">
-          {repo.issues[status]}
+          {repo.payloads["xyz.radicle.project"].meta.issues[status]}
         </div>
         <Icon name={expanded ? "chevron-up" : "chevron-down"} />
       </Button>
@@ -172,7 +174,7 @@
               <div
                 class="dropdown-list-counter"
                 class:selected={item === status}>
-                {repo.issues[item]}
+                {repo.payloads["xyz.radicle.project"].meta.issues[item]}
               </div>
             </div>
           </DropdownListItem>
@@ -201,7 +203,7 @@
       {error} />
   {/if}
 
-  {#if repo.issues[status] === 0}
+  {#if repo.payloads["xyz.radicle.project"].meta.issues[status] === 0}
     <div class="placeholder">
       <Placeholder iconName="no-issues" caption={`No ${status} issues`} />
     </div>

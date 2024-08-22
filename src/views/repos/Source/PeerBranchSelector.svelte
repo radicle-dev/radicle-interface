@@ -37,8 +37,8 @@
   const searchElements = [
     {
       peer: undefined,
-      revision: repo["xyz.radicle.project"].defaultBranch,
-      head: repo.head,
+      revision: repo.payloads["xyz.radicle.project"].data.defaultBranch,
+      head: repo.payloads["xyz.radicle.project"].meta.head,
     },
     ...peers.flatMap(peer =>
       Object.entries(peer.heads).map(([name, head]) => ({
@@ -252,7 +252,7 @@
               style={`${subgridStyle} gap: inherit;`}>
               <div class="global-flex-item">
                 <Icon name="branch" />
-                {repo["xyz.radicle.project"].defaultBranch}
+                {repo.payloads["xyz.radicle.project"].data.defaultBranch}
                 <Badge title="Canonical branch" variant="foreground-emphasized">
                   Canonical
                 </Badge>
@@ -260,7 +260,7 @@
               <div
                 class="txt-monospace"
                 style="color: var(--color-foreground-dim);">
-                {formatCommit(repo.head)}
+                {formatCommit(repo.payloads["xyz.radicle.project"].meta.head)}
               </div>
             </DropdownListItem>
           </Link>

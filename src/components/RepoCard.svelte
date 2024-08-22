@@ -17,7 +17,7 @@
   export let repoInfo: RepoInfo;
 
   $: repo = repoInfo.repo;
-  $: project = repoInfo.repo["xyz.radicle.project"];
+  $: project = repoInfo.repo.payloads["xyz.radicle.project"];
   $: baseUrl = repoInfo.baseUrl;
   $: isPrivate = repo.visibility.type === "private";
 </script>
@@ -145,7 +145,7 @@
     </div>
     <div class="title">
       <div class="headline-and-badges">
-        <h4 use:twemoji>{project.name}</h4>
+        <h4 use:twemoji>{project.data.name}</h4>
         <div class="badges">
           {#if isPrivate}
             <div
@@ -166,19 +166,19 @@
         </div>
       </div>
       <p class="txt-small" use:twemoji>
-        {project.description}
+        {project.data.description}
       </p>
     </div>
     <div>
       <div class="stats-row txt-tiny" style:color="var(--color-foreground-dim)">
         <Icon name="issue" />
-        {repo.issues.open} ·
+        {project.meta.issues.open} ·
         <Icon name="patch" />
         <span
           style:overflow="hidden"
           style:text-overflow="ellipsis"
           title={absoluteTimestamp(repoInfo.lastCommit.commit.committer.time)}>
-          {repo.patches.open} · Updated {formatTimestamp(
+          {project.meta.patches.open} · Updated {formatTimestamp(
             repoInfo.lastCommit.commit.committer.time,
           )}
         </span>

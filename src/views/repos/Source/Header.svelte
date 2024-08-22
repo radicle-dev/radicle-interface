@@ -36,12 +36,15 @@
   $: if (revision === lastCommit.id) {
     selectedBranch = undefined;
   } else {
-    selectedBranch = revision || repo["xyz.radicle.project"].defaultBranch;
+    selectedBranch =
+      revision || repo.payloads["xyz.radicle.project"].data.defaultBranch;
   }
 
   $: lastCommit = tree.lastCommit;
   $: onCanonical = Boolean(
-    !peer && selectedBranch === repo["xyz.radicle.project"].defaultBranch,
+    !peer &&
+      selectedBranch ===
+        repo.payloads["xyz.radicle.project"].data.defaultBranch,
   );
   $: if (onCanonical) {
     commitButtonVariant = "right";

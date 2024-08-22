@@ -134,7 +134,7 @@
               node: baseUrl,
             }}>
             <div class="breadcrumb">
-              {repo["xyz.radicle.project"].name}
+              {repo.payloads["xyz.radicle.project"].data.name}
             </div>
           </Link>
         </span>
@@ -191,7 +191,7 @@
 
       <div style:width="100%">
         <Link
-          title={`${repo.issues.open} Issues`}
+          title={`${repo.payloads["xyz.radicle.project"].meta.issues.open} Issues`}
           route={{
             resource: "repo.issues",
             repo: repo.rid,
@@ -207,7 +207,7 @@
 
       <div style:width="100%">
         <Link
-          title={`${repo.patches.open} Patches`}
+          title={`${repo.payloads["xyz.radicle.project"].meta.patches.open} Patches`}
           route={{
             resource: "repo.patches",
             repo: repo.rid,

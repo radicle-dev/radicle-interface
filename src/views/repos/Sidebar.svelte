@@ -183,7 +183,7 @@
       </Button>
     </Link>
     <Link
-      title={`${repo.issues.open} Issues`}
+      title={`${repo.payloads["xyz.radicle.project"].meta.issues.open} Issues`}
       route={{
         resource: "repo.issues",
         repo: repo.rid,
@@ -203,14 +203,14 @@
             class="counter"
             class:selected={activeTab === "issues"}
             class:hover={hover && activeTab !== "issues"}>
-            {repo.issues.open}
+            {repo.payloads["xyz.radicle.project"].meta.issues.open}
           </span>
         </div>
       </Button>
     </Link>
 
     <Link
-      title={`${repo.patches.open} Patches`}
+      title={`${repo.payloads["xyz.radicle.project"].meta.patches.open} Patches`}
       route={{
         resource: "repo.patches",
         repo: repo.rid,
@@ -230,7 +230,7 @@
             class="counter"
             class:hover={hover && activeTab !== "patches"}
             class:selected={activeTab === "patches"}>
-            {repo.patches.open}
+            {repo.payloads["xyz.radicle.project"].meta.patches.open}
           </span>
         </div>
       </Button>

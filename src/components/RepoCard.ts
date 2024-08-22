@@ -24,13 +24,18 @@ export async function fetchRepoInfos(
     repos = await api.repo.getAll(query);
   }
   const info = await Promise.all(
-    repos.map(async repo => {
-      const [activity, lastCommit] = await Promise.all([
-        loadRepoActivity(repo.rid, baseUrl),
-        api.repo.getCommitBySha(repo.rid, repo.head),
-      ]);
-      return { repo, activity, lastCommit, baseUrl };
-    }),
+    repos
+      .filter(r => Boolean(r.payloads["xyz.radicle.project"]))
+      .map(async repo => {
+        const [activity, lastCommit] = await Promise.all([
+          loadRepoActivity(repo.rid, baseUrl),
+          api.repo.getCommitBySha(
+            repo.rid,
+            repo["payloads"]["xyz.radicle.project"].meta.head,
+          ),
+        ]);
+        return { repo, activity, lastCommit, baseUrl };
+      }),
   );
 
   return info.sort((a, b) => {

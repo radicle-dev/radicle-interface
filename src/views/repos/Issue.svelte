@@ -215,7 +215,9 @@
             <Markdown
               breaks
               content={issue.discussion[0].body}
-              rawPath={rawPath(repo.head)} />
+              rawPath={rawPath(
+                repo.payloads["xyz.radicle.project"].meta.head,
+              )} />
           {:else}
             <span class="txt-missing">No description</span>
           {/if}
@@ -234,7 +236,9 @@
               <ThreadComponent
                 {baseUrl}
                 {thread}
-                rawPath={rawPath(repo.head)} />
+                rawPath={rawPath(
+                  repo.payloads["xyz.radicle.project"].meta.head,
+                )} />
               {#if i < threads.length - 1}
                 <div class="connector" />
               {/if}

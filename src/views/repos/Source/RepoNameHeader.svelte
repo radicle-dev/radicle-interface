@@ -22,7 +22,7 @@
     );
   }
 
-  $: project = repo["xyz.radicle.project"];
+  $: project = repo.payloads["xyz.radicle.project"];
 </script>
 
 <style>
@@ -73,7 +73,7 @@
           node: baseUrl,
         }}>
         <span class="repo-name">
-          {project.name}
+          {project.data.name}
         </span>
       </Link>
     </span>
@@ -89,7 +89,7 @@
         style:display="flex"
         style:gap="0.5rem"
         class="global-hide-on-mobile-down">
-        <CloneButton {baseUrl} id={repo.rid} name={project.name} />
+        <CloneButton {baseUrl} id={repo.rid} name={project.data.name} />
         <SeedButton seedCount={repo.seeding} repoId={repo.rid} />
       </div>
       <div
@@ -105,5 +105,5 @@
   </div>
 </div>
 <div class="description" use:twemoji>
-  {@html render(project.description)}
+  {@html render(project.data.description)}
 </div>

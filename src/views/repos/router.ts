@@ -425,8 +425,15 @@ async function loadTreeView(
     nodePromise,
   ]);
 
+  if (!repo["payloads"]["xyz.radicle.project"]) {
+    throw new Error(
+      `Repository ${repo.rid} does not have a xyz.radicle.project payload.`,
+    );
+  }
+
+  const project = repo["payloads"]["xyz.radicle.project"];
   let branchMap: Record<string, string> = {
-    [repo["xyz.radicle.project"].defaultBranch]: repo.head,
+    [project.data.defaultBranch]: project.meta.head,
   };
   if (route.peer) {
     const peer = peers.find(peer => peer.id === route.peer);
@@ -448,7 +455,7 @@ async function loadTreeView(
 
   const commit = parseRevisionToOid(
     route.revision,
-    repo["xyz.radicle.project"].defaultBranch,
+    project.data.defaultBranch,
     branchMap,
   );
   const path = route.path || "/";
@@ -561,14 +568,20 @@ async function loadHistoryView(
     nodePromise,
   ]);
 
+  if (!repo["payloads"]["xyz.radicle.project"]) {
+    throw new Error(
+      `Repository ${repo.rid} does not have a xyz.radicle.project payload.`,
+    );
+  }
+
+  const project = repo["payloads"]["xyz.radicle.project"];
   let commitId;
   if (route.revision && isOid(route.revision)) {
     commitId = route.revision;
   } else if (branchMap) {
-    commitId =
-      branchMap[route.revision || repo["xyz.radicle.project"].defaultBranch];
+    commitId = branchMap[route.revision || project.data.defaultBranch];
   } else if (!route.revision) {
-    commitId = repo.head;
+    commitId = project.meta.head;
   }
 
   if (!commitId) {
@@ -1016,28 +1029,35 @@ function patchRouteToPath(route: RepoPatchRoute): string {
 export function repoTitle(loadedRoute: RepoLoadedRoute) {
   const title: string[] = [];
 
+  if (!loadedRoute.params.repo["payloads"]["xyz.radicle.project"]) {
+    throw new Error(
+      `Repository ${loadedRoute.params.repo.rid} does not have a xyz.radicle.project payload.`,
+    );
+  }
+  const project = loadedRoute.params.repo["payloads"]["xyz.radicle.project"];
+
   if (loadedRoute.resource === "repo.source") {
-    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
-    if (loadedRoute.params.repo["xyz.radicle.project"].description.length > 0) {
-      title.push(loadedRoute.params.repo["xyz.radicle.project"].description);
+    title.push(project.data.name);
+    if (project.data.description.length > 0) {
+      title.push(project.data.description);
     }
   } else if (loadedRoute.resource === "repo.commit") {
     title.push(loadedRoute.params.commit.commit.summary);
     title.push("commit");
   } else if (loadedRoute.resource === "repo.history") {
-    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
+    title.push(project.data.name);
     title.push("history");
   } else if (loadedRoute.resource === "repo.issue") {
     title.push(loadedRoute.params.issue.title);
     title.push("issue");
   } else if (loadedRoute.resource === "repo.issues") {
-    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
+    title.push(project.data.name);
     title.push("issues");
   } else if (loadedRoute.resource === "repo.patch") {
     title.push(loadedRoute.params.patch.title);
     title.push("patch");
   } else if (loadedRoute.resource === "repo.patches") {
-    title.push(loadedRoute.params.repo["xyz.radicle.project"].name);
+    title.push(project.data.name);
     title.push("patches");
   } else {
     return unreachable(loadedRoute);

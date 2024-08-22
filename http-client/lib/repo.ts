@@ -30,28 +30,34 @@ import { authorSchema } from "./shared.js";
 
 const repoSchema = object({
   rid: string(),
-  "xyz.radicle.project": object({
-    name: string(),
-    description: string(),
-    defaultBranch: string(),
+  payloads: object({
+    "xyz.radicle.project": object({
+      data: object({
+        name: string(),
+        description: string(),
+        defaultBranch: string(),
+      }),
+      meta: object({
+        head: string(),
+        patches: object({
+          open: number(),
+          draft: number(),
+          archived: number(),
+          merged: number(),
+        }),
+        issues: object({
+          open: number(),
+          closed: number(),
+        }),
+      }),
+    }),
   }),
   delegates: array(authorSchema),
-  head: string(),
   threshold: number(),
   visibility: union([
     object({ type: literal("public") }),
     object({ type: literal("private"), allow: optional(array(string())) }),
   ]),
-  patches: object({
-    open: number(),
-    draft: number(),
-    archived: number(),
-    merged: number(),
-  }),
-  issues: object({
-    open: number(),
-    closed: number(),
-  }),
   seeding: number(),
 });
 const reposSchema = array(repoSchema);
