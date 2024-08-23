@@ -12,15 +12,15 @@ use crate::axum_extra::{Path, Query};
 
 pub fn router(ctx: Context) -> Router {
     Router::new()
-        .route("/delegates/:delegate/repos", get(delegates_repos_handler))
+        .route("/delegates/:did/repos", get(delegates_repos_handler))
         .with_state(ctx)
 }
 
 /// List all repos which delegate is a part of.
-/// `GET /delegates/:delegate/repos`
+/// `GET /delegates/:did/repos`
 async fn delegates_repos_handler(
     State(ctx): State<Context>,
-    Path(delegate): Path<Did>,
+    Path(did): Path<Did>,
     Query(qs): Query<PaginationQuery>,
 ) -> impl IntoResponse {
     let PaginationQuery {
@@ -49,7 +49,7 @@ async fn delegates_repos_handler(
     let infos = repos
         .into_iter()
         .filter_map(|id| {
-            if !id.doc.delegates.iter().any(|d| *d == delegate) {
+            if !id.doc.delegates.iter().any(|d| *d == did) {
                 return None;
             }
             let Ok((repo, doc)) = ctx.repo(id.rid) else {
