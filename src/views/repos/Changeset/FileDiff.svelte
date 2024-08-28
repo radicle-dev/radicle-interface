@@ -28,7 +28,7 @@
   export let content: string | undefined = undefined;
   export let oldFilePath: string | undefined = undefined;
   export let fileDiff: DiffContent;
-  export let headerBadgeCaption: ChangesetWithDiff["state"];
+  export let headerBadgeCaption: ChangesetWithDiff["status"];
   export let revision: string | undefined = undefined;
   export let baseUrl: BaseUrl;
   export let repoId: string;

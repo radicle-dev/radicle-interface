@@ -22,8 +22,8 @@
   const diffDescription = (diffFiles: Diff["files"]): string =>
     Object.entries(
       diffFiles.reduce(
-        (acc, { state }) => {
-          acc[state]++;
+        (acc, { status }) => {
+          acc[status]++;
           return acc;
         },
         { added: 0, modified: 0, deleted: 0, copied: 0, moved: 0 },
@@ -109,7 +109,7 @@
             filePath={path}
             oldFilePath={"oldPath" in file ? file.oldPath : undefined}
             fileDiff={file.diff}
-            headerBadgeCaption={file.state}
+            headerBadgeCaption={file.status}
             content={"new" in file ? files[file.new.oid]?.content : undefined}
             oldContent={"old" in file
               ? files[file.old.oid]?.content
@@ -117,7 +117,7 @@
             visible={filesVisibility.has(path)} />
         {:else}
           <FileLocationChange
-            headerBadgeCaption={file.state}
+            headerBadgeCaption={file.status}
             oldPath={file.oldPath}
             newPath={file.newPath}
             {repoId}

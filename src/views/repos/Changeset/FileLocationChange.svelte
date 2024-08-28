@@ -7,7 +7,7 @@
   import Link from "@app/components/Link.svelte";
   import FilePath from "@app/components/FilePath.svelte";
 
-  export let headerBadgeCaption: ChangesetWithoutDiff["state"];
+  export let headerBadgeCaption: ChangesetWithoutDiff["status"];
   export let newPath: string;
   export let oldPath: string;
   export let revision: string | undefined = undefined;

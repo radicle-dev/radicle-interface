@@ -142,23 +142,23 @@ const diffChangesetSchema = object({
 });
 
 const diffAddedChangesetSchema = diffChangesetSchema.merge(
-  object({ state: literal("added"), new: diffFileSchema }),
+  object({ status: literal("added"), new: diffFileSchema }),
 );
 
 const diffDeletedChangesetSchema = diffChangesetSchema.merge(
-  object({ state: literal("deleted"), old: diffFileSchema }),
+  object({ status: literal("deleted"), old: diffFileSchema }),
 );
 
 const diffModifiedChangesetSchema = diffChangesetSchema.merge(
   object({
-    state: literal("modified"),
+    status: literal("modified"),
     new: diffFileSchema,
     old: diffFileSchema,
   }),
 );
 
 const diffCopiedChangesetSchema = object({
-  state: literal("copied"),
+  status: literal("copied"),
   newPath: string(),
   oldPath: string(),
 });
@@ -173,7 +173,7 @@ const diffCopiedWithModificationsChangesetSchema =
   );
 
 const diffMovedChangesetSchema = object({
-  state: literal("moved"),
+  status: literal("moved"),
   newPath: string(),
   oldPath: string(),
   current: diffFileSchema,
