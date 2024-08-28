@@ -1087,7 +1087,7 @@ mod routes {
               "diff": {
                 "files": [
                   {
-                    "state": "deleted",
+                    "status": "deleted",
                     "path": "CONTRIBUTING",
                     "diff": {
                       "type": "plain",
@@ -1123,7 +1123,7 @@ mod routes {
                     },
                   },
                   {
-                    "state": "added",
+                    "status": "added",
                     "path": "README",
                     "diff": {
                       "type": "plain",
@@ -1159,7 +1159,7 @@ mod routes {
                     },
                   },
                   {
-                    "state": "added",
+                    "status": "added",
                     "path": "dir1/README",
                     "diff": {
                       "type": "plain",
@@ -1202,6 +1202,11 @@ mod routes {
                 }
               },
               "files": {
+                "1dd5654ca2d2cf9f33b14c92b5ca9e1d21a91ae1": {
+                  "id": "1dd5654ca2d2cf9f33b14c92b5ca9e1d21a91ae1",
+                  "binary": false,
+                  "content": "Hello World from dir1!\n",
+                },
                 "82eb77880c693655bce074e3dbbd9fa711dc018b": {
                   "id": "82eb77880c693655bce074e3dbbd9fa711dc018b",
                   "binary": false,
@@ -1211,11 +1216,6 @@ mod routes {
                   "id": "980a0d5f19a64b4b30a87d4206aade58726b60e3",
                   "binary": false,
                   "content": "Hello World!\n",
-                },
-                "1dd5654ca2d2cf9f33b14c92b5ca9e1d21a91ae1": {
-                  "id": "1dd5654ca2d2cf9f33b14c92b5ca9e1d21a91ae1",
-                  "binary": false,
-                  "content": "Hello World from dir1!\n",
                 },
               },
               "branches": [
@@ -1504,7 +1504,7 @@ mod routes {
                 "diff": {
                   "files": [
                     {
-                      "state": "added",
+                      "status": "added",
                       "path": "dir1/README",
                       "diff": {
                         "type": "plain",

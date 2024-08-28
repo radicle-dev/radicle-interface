@@ -15,7 +15,7 @@ use radicle::cob::patch::MergeTarget;
 use radicle::crypto::ssh::Keystore;
 use radicle::crypto::{KeyPair, Seed, Signer};
 use radicle::git::{raw as git2, RefString};
-use radicle::identity::Visibility;
+use radicle::identity::{project, Visibility};
 use radicle::profile::{env, Home};
 use radicle::storage::ReadStorage;
 use radicle::{node, profile};
@@ -118,7 +118,7 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
 
     // rad init
     let repo = git2::Repository::open(&workdir).unwrap();
-    let name = "hello-world-private".to_string();
+    let name = project::ProjectName::from_str("hello-world-private").unwrap();
     let description = "Private Rad repository for tests".to_string();
     let branch = RefString::try_from(DEFAULT_BRANCH).unwrap();
     let visibility = Visibility::Private {
@@ -126,7 +126,7 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
     };
     let (rid, _, _) = radicle::rad::init(
         &repo,
-        &name,
+        name,
         &description,
         branch,
         visibility,
@@ -214,13 +214,13 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
 
     // rad init
     let repo = git2::Repository::open(&workdir).unwrap();
-    let name = "hello-world".to_string();
+    let name = project::ProjectName::from_str("hello-world").unwrap();
     let description = "Rad repository for tests".to_string();
     let branch = RefString::try_from(DEFAULT_BRANCH).unwrap();
     let visibility = Visibility::default();
     let (rid, _, _) = radicle::rad::init(
         &repo,
-        &name,
+        name,
         &description,
         branch,
         visibility,
@@ -294,13 +294,13 @@ fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G
 
     // rad init
     let repo = git2::Repository::open(&workdir).unwrap();
-    let name = "again-hello-world".to_string();
+    let name = project::ProjectName::from_str("again-hello-world").unwrap();
     let description = "Rad repository for sorting".to_string();
     let branch = RefString::try_from(DEFAULT_BRANCH).unwrap();
     let visibility = Visibility::default();
     let (rid, _, _) = radicle::rad::init(
         &repo,
-        &name,
+        name,
         &description,
         branch,
         visibility,

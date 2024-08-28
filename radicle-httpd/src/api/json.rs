@@ -5,14 +5,12 @@ use std::path::Path;
 use std::str;
 
 use base64::prelude::{Engine, BASE64_STANDARD};
-use radicle::cob::{CodeLocation, Reaction};
-use radicle::patch::ReviewId;
 use serde_json::{json, Value};
 
 use radicle::cob::issue::{Issue, IssueId};
 use radicle::cob::patch::{Merge, Patch, PatchId, Review};
 use radicle::cob::thread::{Comment, CommentId, Edit};
-use radicle::cob::{ActorId, Author};
+use radicle::cob::{ActorId, Author, CodeLocation, Reaction};
 use radicle::git::RefString;
 use radicle::node::{Alias, AliasStore};
 use radicle::prelude::NodeId;
@@ -139,8 +137,8 @@ pub(crate) fn patch(
                     patch_comment(id, c, aliases)
                 }).collect::<Vec<_>>(),
                 "timestamp": rev.timestamp().as_secs(),
-                "reviews": patch.reviews_of(id).map(move |(id, r)| {
-                    review(id, r, aliases)
+                "reviews": rev.reviews().into_iter().map(move |(_, r)| {
+                    review(r, aliases)
                 }).collect::<Vec<_>>(),
             })
         }).collect::<Vec<_>>(),
@@ -191,10 +189,10 @@ fn merge(nid: &NodeId, merge: &Merge, aliases: &impl AliasStore) -> Value {
 }
 
 /// Returns JSON for a patch `Review` and fills in `alias` when present.
-fn review(id: &ReviewId, review: &Review, aliases: &impl AliasStore) -> Value {
+fn review(review: &Review, aliases: &impl AliasStore) -> Value {
     let a = review.author();
     json!({
-        "id": id,
+        "id": review.id(),
         "author": author(a, aliases.alias(a.id())),
         "verdict": review.verdict(),
         "summary": review.summary(),
