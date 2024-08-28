@@ -282,6 +282,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "This is a multiline comment\n\nWith some more text.",
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 2),
   );
@@ -301,6 +302,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--reply-to",
       commentIssueOne,
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 3),
   );
@@ -318,6 +320,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--message",
       "A root level comment after a reply, for margins sake.",
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 4),
   );
@@ -376,6 +379,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--reply-to",
       commentPatchOne,
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 2),
   );
@@ -389,6 +393,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--reply-to",
       commentPatchOne,
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 3),
   );
@@ -414,6 +419,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
       "--reply-to",
       commentTwo,
       "--quiet",
+      "--no-announce",
     ],
     createOptions(repoFolder, 5),
   );
