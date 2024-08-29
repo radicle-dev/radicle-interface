@@ -1,14 +1,7 @@
 import { test, expect, cobUrl } from "@tests/support/fixtures.js";
-import sinon from "sinon";
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("November 24 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
+  await page.clock.setFixedTime(new Date("November 21 2022 12:00:00"));
 });
 
 test("issues page", async ({ page }) => {

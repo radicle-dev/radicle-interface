@@ -10,7 +10,6 @@ import {
   test,
 } from "@tests/support/fixtures.js";
 import { changeBranch, createRepo } from "@tests/support/repo";
-import sinon from "sinon";
 
 test("peer and branch switching", async ({ page }) => {
   await page.goto(sourceBrowsingUrl);
@@ -149,14 +148,7 @@ test("expand commit message", async ({ page }) => {
 });
 
 test("relative timestamps", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("December 21 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
-
+  await page.clock.setFixedTime(new Date("December 21 2022 12:00:00"));
   await page.goto(sourceBrowsingUrl);
   await page
     .getByRole("link", { name: `Commits ${aliceMainCommitCount}` })

@@ -5,7 +5,6 @@ import type * as Stream from "node:stream";
 
 import * as Fs from "node:fs/promises";
 import * as Path from "node:path";
-import { fileURLToPath } from "node:url";
 import { test as base, expect } from "@playwright/test";
 import { execa } from "execa";
 
@@ -32,14 +31,6 @@ export const test = base.extend<{
   forAllTests: [
     async ({ outputLog, page }, use) => {
       const browserLabel = logLabel.logPrefix("browser");
-      let sinonPath = fileURLToPath(import.meta.resolve("sinon"));
-      // The exports in sinon-esm.js mess up our test pipeline
-      if (sinonPath.endsWith("-esm.js")) {
-        sinonPath = sinonPath.replace("-esm", "");
-      }
-      await page.addInitScript({
-        path: sinonPath,
-      });
       page.on("console", msg => {
         // Ignore common console logs that we don't care about.
         if (
@@ -48,18 +39,7 @@ export const test = base.extend<{
           msg.text().startsWith("Not able to parse url") ||
           msg
             .text()
-            .includes("Please make sure it wasn't preloaded for nothing.") ||
-          // @sinonjs/fake-timers uses a global variable called `timers` which
-          // is also used by node, so vite erronously detects this and shows a
-          // warning whenever we install fake timers in tests. We suppress the
-          // warning here to avoid clogging the logs. For more info see:
-          //
-          //   https://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility
-          msg
-            .text()
-            .startsWith(
-              'Module "timers" has been externalized for browser compatibility.',
-            )
+            .includes("Please make sure it wasn't preloaded for nothing.")
         ) {
           return;
         }

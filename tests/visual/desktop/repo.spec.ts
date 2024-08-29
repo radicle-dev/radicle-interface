@@ -7,7 +7,6 @@ import {
   markdownUrl,
   sourceBrowsingRid,
 } from "@tests/support/fixtures.js";
-import sinon from "sinon";
 
 test("source page", async ({ page }) => {
   await page.goto(sourceBrowsingUrl, { waitUntil: "networkidle" });
@@ -15,14 +14,7 @@ test("source page", async ({ page }) => {
 });
 
 test("history page", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("November 24 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
-
+  await page.clock.setFixedTime(new Date("November 24 2022 12:00:00"));
   await page.goto(
     `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(8)}/history`,
     {
@@ -34,14 +26,7 @@ test("history page", async ({ page }) => {
 });
 
 test("commit page", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("November 24 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
-
+  await page.clock.setFixedTime(new Date("November 24 2022 12:00:00"));
   await page.goto(
     `${sourceBrowsingUrl}/remotes/${aliceRemote.substring(
       8,
@@ -52,14 +37,7 @@ test("commit page", async ({ page }) => {
 });
 
 test("diff selection", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("November 24 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
-
+  await page.clock.setFixedTime(new Date("November 24 2022 12:00:00"));
   await page.goto(`${cobUrl}/patches`);
   await page
     .getByRole("link", { name: "Taking another stab at the README" })

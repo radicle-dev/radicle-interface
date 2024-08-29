@@ -1,5 +1,4 @@
-import * as sinon from "sinon";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import * as mutexExecutor from "@app/lib/mutexExecutor";
 import { sleep } from "@app/lib/sleep";
@@ -58,17 +57,17 @@ describe("executor", () => {
 
   test("triggers abort signal event", async () => {
     const e = mutexExecutor.create();
-    const abortListener = sinon.spy();
+    const abortListener = vi.fn();
 
     void e.run(async abort => {
       abort.addEventListener("abort", abortListener);
       await sleep(10);
       return "first";
     });
-    expect(abortListener.called).toBe(false);
+    expect(abortListener).not.toHaveBeenCalled();
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     void e.run(async () => {});
-    expect(abortListener.called).toBe(true);
+    expect(abortListener).toHaveBeenCalled();
   });
 
   test("don’t throw error on aborted task", async () => {

@@ -7,7 +7,6 @@ import {
   test,
 } from "@tests/support/fixtures.js";
 import { changeBranch } from "@tests/support/repo";
-import sinon from "sinon";
 
 const commitUrl = `${sourceBrowsingUrl}/commits/${bobHead}`;
 
@@ -20,13 +19,7 @@ test("navigation from commit list", async ({ page }) => {
 });
 
 test("relative timestamps", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("December 21 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
+  await page.clock.setFixedTime(new Date("December 21 2022 12:00:00"));
   await page.goto(commitUrl);
   await expect(
     page.getByText(`Bob Belcher committed ${shortBobHead}`),

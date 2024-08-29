@@ -1,15 +1,7 @@
 import { test, expect } from "@tests/support/fixtures.js";
-import sinon from "sinon";
 
 test("node page", async ({ page }) => {
-  await page.addInitScript(() => {
-    sinon.useFakeTimers({
-      now: new Date("November 24 2022 12:00:00").valueOf(),
-      shouldClearNativeTimers: true,
-      shouldAdvanceTime: false,
-    });
-  });
-
+  await page.clock.setFixedTime(new Date("November 24 2022 12:00:00"));
   await page.goto("/nodes/radicle.local", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot();
 });
