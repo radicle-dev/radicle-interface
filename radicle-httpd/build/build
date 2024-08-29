@@ -66,6 +66,7 @@ main() {
       --build-arg SOURCE_DATE_EPOCH \
       --build-arg TZ \
       --build-arg LC_ALL \
+      --build-arg GIT_HEAD=$rev \
       --build-arg RADICLE_VERSION=$version \
       --arch $ARCH --tag $image -f ./build/Dockerfile - <$gitarchive
 
