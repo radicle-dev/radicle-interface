@@ -66,23 +66,37 @@ impl Context {
         let db = &self.profile.database()?;
         let seeding = db.count(&rid).unwrap_or_default();
 
-        let payloads: BTreeMap<PayloadId, Value> = doc.payload.into_iter()
-            .filter_map(|(id, payload)| match id  {
+        let payloads: BTreeMap<PayloadId, Value> = doc
+            .payload
+            .into_iter()
+            .filter_map(|(id, payload)| match id {
                 id if id == PayloadId::project() => {
                     let Ok((_, head)) = repo.head() else {
-                        return None
+                        return None;
                     };
-                    let (Ok(patches), Ok(issues)) = (self.profile.patches(repo), self.profile.issues(repo)) else {
-                        return None
+                    let (Ok(patches), Ok(issues)) =
+                        (self.profile.patches(repo), self.profile.issues(repo))
+                    else {
+                        return None;
                     };
                     let (Ok(patches), Ok(issues)) = (patches.counts(), issues.counts()) else {
-                        return None
+                        return None;
                     };
 
-                    Some((id, json!({ "data": payload, "meta": { "head": head, "issues": issues, "patches": patches } } )))
-                },
-                _ => Some((id, json!({ "data": payload })))
-              })
+                    Some((
+                        id,
+                        json!({
+                            "data": payload,
+                            "meta": {
+                                "head": head,
+                                "issues": issues,
+                                "patches": patches
+                            }
+                        }),
+                    ))
+                }
+                _ => Some((id, json!({ "data": payload }))),
+            })
             .collect();
 
         Ok(repo::Info {
