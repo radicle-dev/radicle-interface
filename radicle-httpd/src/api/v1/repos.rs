@@ -201,7 +201,7 @@ async fn history_handler(
         .filter_map(|commit| {
             let commit = commit.ok()?;
             let time = commit.committer.time.seconds();
-            let commit = api::json::commit(&commit);
+            let commit = api::json::commit::Commit::new(&commit).as_json();
             match (since, until) {
                 (Some(since), Some(until)) if time >= since && time < until => Some(commit),
                 (Some(since), None) if time >= since => Some(commit),
@@ -279,8 +279,8 @@ async fn commit_handler(
     });
 
     let response: serde_json::Value = json!({
-      "commit": api::json::commit(&commit),
-      "diff": diff,
+      "commit": api::json::commit::Commit::new(&commit).as_json(),
+      "diff": api::json::diff::Diff::new(&diff).as_json(),
       "files": files,
       "branches": branches
     });
@@ -346,7 +346,7 @@ async fn diff_handler(
                 false
             }
         })
-        .map(|r| r.map(|c| api::json::commit(&c)))
+        .map(|r| r.map(|c| api::json::commit::Commit::new(&c).as_json()))
         .collect::<Result<Vec<_>, _>>()?;
 
     let response = json!({ "diff": diff, "files": files, "commits": commits });
@@ -409,7 +409,7 @@ async fn tree_handler(
 
     let repo = Repository::open(repo.path())?;
     let tree = repo.tree(sha, &path)?;
-    let response = api::json::tree(&tree, &path);
+    let response = api::json::commit::Tree::new(&tree).as_json(&path);
 
     if let Some(cache) = &ctx.cache {
         let cache = &mut cache.tree.lock().await;
@@ -518,7 +518,9 @@ async fn blob_handler(
                 .into_response(),
         );
     }
-    Ok::<_, Error>(immutable_response(api::json::blob(&blob, &path)).into_response())
+    Ok::<_, Error>(
+        immutable_response(api::json::commit::Blob::new(&blob).as_json(&path)).into_response(),
+    )
 }
 
 /// Get repo readme.
@@ -557,7 +559,8 @@ async fn readme_handler(
             }
 
             return Ok::<_, Error>(
-                immutable_response(api::json::blob(&blob, &path)).into_response(),
+                immutable_response(api::json::commit::Blob::new(&blob).as_json(&path))
+                    .into_response(),
             );
         }
     }
@@ -594,7 +597,7 @@ async fn issues_handler(
     let aliases = &ctx.profile.aliases();
     let issues = issues
         .into_iter()
-        .map(|(id, issue)| api::json::issue(id, issue, aliases))
+        .map(|(id, issue)| api::json::cobs::Issue::new(&issue).as_json(id, aliases))
         .skip(page * per_page)
         .take(per_page)
         .collect::<Vec<_>>();
@@ -616,7 +619,9 @@ async fn issue_handler(
         .ok_or(Error::NotFound)?;
     let aliases = ctx.profile.aliases();
 
-    Ok::<_, Error>(Json(api::json::issue(issue_id.into(), issue, &aliases)))
+    Ok::<_, Error>(Json(
+        api::json::cobs::Issue::new(&issue).as_json(issue_id.into(), &aliases),
+    ))
 }
 
 /// Get repo patches list.
@@ -647,7 +652,7 @@ async fn patches_handler(
     let aliases = ctx.profile.aliases();
     let patches = patches
         .into_iter()
-        .map(|(id, patch)| api::json::patch(id, patch, &repo, &aliases))
+        .map(|(id, patch)| api::json::cobs::Patch::new(&patch).as_json(id, &repo, &aliases))
         .skip(page * per_page)
         .take(per_page)
         .collect::<Vec<_>>();
@@ -666,9 +671,8 @@ async fn patch_handler(
     let patch = patches.get(&patch_id.into())?.ok_or(Error::NotFound)?;
     let aliases = ctx.profile.aliases();
 
-    Ok::<_, Error>(Json(api::json::patch(
+    Ok::<_, Error>(Json(api::json::cobs::Patch::new(&patch).as_json(
         patch_id.into(),
-        patch,
         &repo,
         &aliases,
     )))

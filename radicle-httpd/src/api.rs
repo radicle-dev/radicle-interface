@@ -7,19 +7,15 @@ use axum::http::Method;
 use axum::response::{IntoResponse, Json};
 use axum::routing::get;
 use axum::Router;
-use radicle::identity::doc::PayloadId;
-use radicle::issue::cache::Issues as _;
-use radicle::patch::cache::Patches as _;
-use radicle::storage::git::Repository;
-use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tower_http::cors::{self, CorsLayer};
 
-use radicle::cob::{issue, patch, Author};
+use radicle::identity::doc::PayloadId;
 use radicle::identity::{DocAt, RepoId};
-use radicle::node::policy::Scope;
+use radicle::issue::cache::Issues as _;
 use radicle::node::routing::Store;
-use radicle::node::{AliasStore, NodeId};
+use radicle::patch::cache::Patches as _;
+use radicle::storage::git::Repository;
 use radicle::storage::{ReadRepository, ReadStorage};
 use radicle::Profile;
 
@@ -62,7 +58,7 @@ impl Context {
         let delegates = doc
             .delegates
             .into_iter()
-            .map(|did| json::author(&Author::new(did), aliases.alias(did.as_key())))
+            .map(|did| json::Author::new(&did).as_json(&aliases))
             .collect::<Vec<_>>();
         let db = &self.profile.database()?;
         let seeding = db.count(&rid).unwrap_or_default();
@@ -70,19 +66,13 @@ impl Context {
         let payloads: BTreeMap<PayloadId, Value> = doc
             .payload
             .into_iter()
-            .filter_map(|(id, payload)| match id {
-                id if id == PayloadId::project() => {
-                    let Ok((_, head)) = repo.head() else {
-                        return None;
-                    };
-                    let (Ok(patches), Ok(issues)) =
-                        (self.profile.patches(repo), self.profile.issues(repo))
-                    else {
-                        return None;
-                    };
-                    let (Ok(patches), Ok(issues)) = (patches.counts(), issues.counts()) else {
-                        return None;
-                    };
+            .filter_map(|(id, payload)| {
+                if id == PayloadId::project() {
+                    let (_, head) = repo.head().ok()?;
+                    let patches = self.profile.patches(repo).ok()?;
+                    let patches = patches.counts().ok()?;
+                    let issues = self.profile.issues(repo).ok()?;
+                    let issues = issues.counts().ok()?;
 
                     Some((
                         id,
@@ -95,8 +85,9 @@ impl Context {
                             }
                         }),
                     ))
+                } else {
+                    Some((id, json!({ "data": payload })))
                 }
-                _ => Some((id, json!({ "data": payload }))),
             })
             .collect();
 
