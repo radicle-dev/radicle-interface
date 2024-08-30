@@ -7,7 +7,8 @@ use radicle::identity::Did;
 use radicle::storage::ReadStorage;
 
 use crate::api::error::Error;
-use crate::api::{Context, PaginationQuery, RepoQuery};
+use crate::api::query::{PaginationQuery, RepoQuery};
+use crate::api::Context;
 use crate::axum_extra::{Path, Query};
 
 pub fn router(ctx: Context) -> Router {

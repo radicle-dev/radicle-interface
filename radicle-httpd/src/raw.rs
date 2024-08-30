@@ -15,7 +15,7 @@ use radicle::profile::Profile;
 use radicle::storage::{ReadRepository, ReadStorage};
 use radicle_surf::{Oid, Repository};
 
-use crate::api::RawQuery;
+use crate::api::query::RawQuery;
 use crate::axum_extra::Path;
 use crate::error::RawError as Error;
 

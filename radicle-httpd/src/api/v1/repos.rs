@@ -18,8 +18,9 @@ use radicle::storage::{ReadRepository, ReadStorage, RemoteRepository};
 
 use crate::api;
 use crate::api::error::Error;
+use crate::api::query::{CobsQuery, PaginationQuery, RepoQuery};
 use crate::api::search::{SearchQueryString, SearchResult};
-use crate::api::{CobsQuery, Context, PaginationQuery, RepoQuery};
+use crate::api::Context;
 use crate::axum_extra::{cached_response, immutable_response, Path, Query};
 
 const MAX_BODY_LIMIT: usize = 4_194_304;
@@ -569,7 +570,7 @@ async fn readme_handler(
 async fn issues_handler(
     State(ctx): State<Context>,
     Path(rid): Path<RepoId>,
-    Query(qs): Query<CobsQuery<api::IssueStatus>>,
+    Query(qs): Query<CobsQuery<api::query::IssueStatus>>,
 ) -> impl IntoResponse {
     let (repo, _) = ctx.repo(rid)?;
     let CobsQuery {
@@ -623,7 +624,7 @@ async fn issue_handler(
 async fn patches_handler(
     State(ctx): State<Context>,
     Path(rid): Path<RepoId>,
-    Query(qs): Query<CobsQuery<api::PatchStatus>>,
+    Query(qs): Query<CobsQuery<api::query::PatchStatus>>,
 ) -> impl IntoResponse {
     let (repo, _) = ctx.repo(rid)?;
     let CobsQuery {
