@@ -396,7 +396,7 @@
               updated to
               <Id id={revisionId} />
               {#if previousRevBase && previousRevBase !== revisionBase}
-                with base
+                on base
                 <Id id={revisionBase} style="commit" />
               {/if}
             {/if}
