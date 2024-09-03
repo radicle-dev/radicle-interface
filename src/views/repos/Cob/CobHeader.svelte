@@ -1,3 +1,6 @@
+<script lang="ts">
+</script>
+
 <style>
   .header {
     display: flex;
