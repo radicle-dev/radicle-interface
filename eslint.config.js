@@ -94,7 +94,7 @@ export default [
           "warn",
           { default: ["field", "signature", "constructor", "method"] },
         ],
-        // Allow explict type annotations for additional clarity.
+        // Allow explicit type annotations for additional clarity.
         "@typescript-eslint/no-inferrable-types": "off",
         "@typescript-eslint/no-invalid-void-type": ["warn"],
         // Disallow Unused Variables.

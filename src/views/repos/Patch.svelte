@@ -108,7 +108,7 @@
       node: baseUrl,
       patch: patch.id,
     } as const;
-    // For cleaner URLs, we omit the the revision part when we link to the
+    // For cleaner URLs, we omit the revision part when we link to the
     // latest revision.
     const latestRevisionId = patch.revisions[patch.revisions.length - 1].id;
     const revision = latestRevisionId === revisionId ? undefined : revisionId;

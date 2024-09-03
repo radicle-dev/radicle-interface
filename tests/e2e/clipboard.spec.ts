@@ -21,7 +21,7 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   if (browserName === "chromium") {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   } else if (browserName === "webkit") {
-    // We aren't able to programatically change the permissions in webkit.
+    // We aren't able to programmatically change the permissions in webkit.
     test.skip();
   }
 
