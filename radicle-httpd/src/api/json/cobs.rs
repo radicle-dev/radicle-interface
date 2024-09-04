@@ -22,14 +22,14 @@ impl<'a> Issue<'a> {
     pub fn as_json(&self, id: issue::IssueId, aliases: &impl AliasStore) -> Value {
         json!({
             "id": id.to_string(),
-            "author": Author::new(&self.0.author().id()).as_json(aliases),
+            "author": Author::new(self.0.author().id()).as_json(aliases),
             "title": self.0.title(),
             "state": self.0.state(),
             "assignees": self.0.assignees().map(|assignee|
                 Author::new(assignee).as_json(aliases)
             ).collect::<Vec<_>>(),
             "discussion": self.0.comments().map(|(id, c)|
-                thread::Comment::Issue(&c).as_json(id, aliases)
+                thread::Comment::Issue(c).as_json(id, aliases)
             ).collect::<Vec<_>>(),
             "labels": self.0.labels().collect::<Vec<_>>(),
         })
@@ -66,7 +66,7 @@ impl<'a> Patch<'a> {
                 Author::new(&assignee).as_json(aliases)
             ).collect::<Vec<_>>(),
             "revisions": self.0.revisions().map(|(id, rev)|
-                Revision::new(&rev).as_json(id, repo, aliases)
+                Revision::new(rev).as_json(id, repo, aliases)
             ).collect::<Vec<_>>(),
         })
     }
@@ -115,11 +115,11 @@ impl<'a> Revision<'a> {
             "oid": self.0.head(),
             "refs": refs,
             "discussions": self.0.discussion().comments().map(|(id, c)|
-                thread::Comment::Patch(&c).as_json(id, aliases)
+                thread::Comment::Patch(c).as_json(id, aliases)
             ).collect::<Vec<_>>(),
             "timestamp": self.0.timestamp().as_secs(),
-            "reviews": self.0.reviews().into_iter().map(|(_, r)|
-                Review::new(&r).as_json(aliases)
+            "reviews": self.0.reviews().map(|(_, r)|
+                Review::new(r).as_json(aliases)
             ).collect::<Vec<_>>(),
         })
     }
@@ -139,7 +139,7 @@ impl<'a> Review<'a> {
             "verdict": self.0.verdict(),
             "summary": self.0.summary(),
             "comments": self.0.comments().map(|(id, c)|
-                thread::Comment::Patch(&c).as_json(id, aliases)
+                thread::Comment::Patch(c).as_json(id, aliases)
             ).collect::<Vec<_>>(),
             "timestamp": self.0.timestamp().as_secs(),
         })

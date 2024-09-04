@@ -13,7 +13,7 @@ impl<'a> Diff<'a> {
     pub fn as_json(&self) -> Value {
         let s = self.0.stats();
         json!({
-            "files": self.0.files().into_iter().map(|f| {
+            "files": self.0.files().map(|f| {
                 match f {
                     surf::diff::FileDiff::Added(added) => json!({
                         "status": "added",
@@ -142,7 +142,7 @@ impl<'a> DiffContent<'a> {
             surf::diff::DiffContent::Plain { hunks, stats, eof } => {
                 let hunks = hunks
                     .iter()
-                    .map(|h| Hunk::new(&h).as_json())
+                    .map(|h| Hunk::new(h).as_json())
                     .collect::<Vec<_>>();
 
                 json!({
@@ -233,7 +233,7 @@ impl<'a> Hunk<'a> {
             .0
             .lines
             .iter()
-            .map(|line| Modification::new(&line).as_json())
+            .map(|line| Modification::new(line).as_json())
             .collect::<Vec<_>>();
 
         json!({

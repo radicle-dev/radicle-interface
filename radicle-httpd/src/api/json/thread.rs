@@ -35,7 +35,7 @@ impl<'a> Comment<'a> {
                 "reactions": reactions(c.reactions(), None, aliases),
                 "timestamp": c.timestamp().as_secs(),
                 "replyTo": c.reply_to(),
-                "location": c.location().map(|l| diff::CodeLocation::new(&l).as_json()),
+                "location": c.location().map(|l| diff::CodeLocation::new(l).as_json()),
                 "resolved": c.is_resolved(),
             }),
         }

@@ -45,7 +45,7 @@ pub fn reactions(
 /// Returns JSON for an `Edit`.
 pub fn embeds(embeds: &[cob::Embed<cob::Uri>]) -> Vec<Value> {
     embeds
-        .into_iter()
+        .iter()
         .map(|e| {
             json!({
                 "name": e.name,
@@ -73,7 +73,7 @@ impl<'a> Author<'a> {
     }
 
     pub fn as_json(&self, aliases: &impl AliasStore) -> Value {
-        aliases.alias(&self.0).map_or(
+        aliases.alias(self.0).map_or(
             json!({ "id": self.0 }),
             |alias| json!({ "id": self.0, "alias": alias, }),
         )
