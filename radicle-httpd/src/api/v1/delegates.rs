@@ -38,11 +38,13 @@ async fn delegates_repos_handler(
             .repositories()?
             .into_iter()
             .filter(|repo| repo.doc.visibility.is_public())
+            .filter(|repo| repo.doc.delegates.iter().any(|d| *d == did))
             .collect::<Vec<_>>(),
         RepoQuery::Pinned => storage
             .repositories_by_id(pinned.repositories.iter())?
             .into_iter()
             .filter(|repo| repo.doc.visibility.is_public())
+            .filter(|repo| repo.doc.delegates.iter().any(|d| *d == did))
             .collect::<Vec<_>>(),
     };
     repos.sort_by_key(|p| p.rid);
@@ -50,9 +52,6 @@ async fn delegates_repos_handler(
     let infos = repos
         .into_iter()
         .filter_map(|id| {
-            if !id.doc.delegates.iter().any(|d| *d == did) {
-                return None;
-            }
             let Ok((repo, doc)) = ctx.repo(id.rid) else {
                 return None;
             };
