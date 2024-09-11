@@ -415,7 +415,7 @@
               {#if repoInfos.length > 0}
                 <div class="repo-grid">
                   {#each repoInfos as repoInfo}
-                    <RepoCard {repoInfo} />
+                    <RepoCard {baseUrl} {repoInfo} />
                   {/each}
                 </div>
                 <div class="subtitle">

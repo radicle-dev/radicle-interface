@@ -1,5 +1,8 @@
 <script lang="ts">
   import type { RepoInfo } from "./RepoCard";
+  import type { BaseUrl } from "@http-client";
+
+  import { HttpdClient } from "@http-client";
 
   import {
     absoluteTimestamp,
@@ -15,6 +18,9 @@
 
   export let compact = false;
   export let repoInfo: RepoInfo;
+  export let baseUrl: BaseUrl;
+
+  const api = new HttpdClient(baseUrl);
 
   $: repo = repoInfo.repo;
   $: project = repoInfo.repo.payloads["xyz.radicle.project"];
@@ -174,14 +180,15 @@
         <Icon name="issue" />
         {project.meta.issues.open} ·
         <Icon name="patch" />
-        <span
-          style:overflow="hidden"
-          style:text-overflow="ellipsis"
-          title={absoluteTimestamp(repoInfo.lastCommit.commit.committer.time)}>
-          {project.meta.patches.open} · Updated {formatTimestamp(
-            repoInfo.lastCommit.commit.committer.time,
-          )}
-        </span>
+        {project.meta.patches.open}
+        {#await api.repo.getCommitBySha(repo.rid, project.meta.head) then { commit }}
+          <span
+            style:overflow="hidden"
+            style:text-overflow="ellipsis"
+            title={absoluteTimestamp(commit.committer.time)}>
+            · Updated {formatTimestamp(commit.committer.time)}
+          </span>
+        {/await}
         <span
           title={repo.rid}
           style:color="var(--color-foreground-emphasized)"

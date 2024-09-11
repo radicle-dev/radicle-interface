@@ -360,7 +360,7 @@
         {#if repos.length > 0}
           <div class="repo-grid">
             {#each repos as repoInfo}
-              <RepoCard {repoInfo}>
+              <RepoCard {repoInfo} {baseUrl}>
                 <svelte:fragment slot="delegate">
                   <Badge
                     title={`${node.alias || utils.formatNodeId(did.pubkey)} is a delegate of this repository`}

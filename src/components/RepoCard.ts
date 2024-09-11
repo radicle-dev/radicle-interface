@@ -1,13 +1,12 @@
-import type { Repo, RepoListQuery } from "@http-client";
+import type { BaseUrl, Repo, RepoListQuery } from "@http-client";
 
 import { loadRepoActivity, type WeeklyActivity } from "@app/lib/commit";
-import { HttpdClient, type BaseUrl, type Commit } from "@http-client";
+import { HttpdClient } from "@http-client";
 
 export interface RepoInfo {
   repo: Repo;
   baseUrl: BaseUrl;
   activity: WeeklyActivity[];
-  lastCommit: Commit;
 }
 
 export async function fetchRepoInfos(
@@ -27,21 +26,20 @@ export async function fetchRepoInfos(
     repos
       .filter(r => Boolean(r.payloads["xyz.radicle.project"]))
       .map(async repo => {
-        const [activity, lastCommit] = await Promise.all([
-          loadRepoActivity(repo.rid, baseUrl),
-          api.repo.getCommitBySha(
-            repo.rid,
-            repo["payloads"]["xyz.radicle.project"].meta.head,
-          ),
-        ]);
-        return { repo, activity, lastCommit, baseUrl };
+        const activity = await loadRepoActivity(repo.rid, baseUrl);
+        return { repo, activity, baseUrl };
       }),
   );
 
   return info.sort((a, b) => {
-    const aLastCommit = a.lastCommit.commit.committer.time;
-    const bLastCommit = b.lastCommit.commit.committer.time;
-
-    return bLastCommit - aLastCommit;
+    if (a.activity.length === 0 && b.activity.length === 0) {
+      return 0;
+    } else if (a.activity.length === 0 && b.activity.length > 0) {
+      return 1;
+    } else if (b.activity.length === 0 && a.activity.length > 0) {
+      return -1;
+    } else {
+      return b.activity[0].time - a.activity[0].time;
+    }
   });
 }
