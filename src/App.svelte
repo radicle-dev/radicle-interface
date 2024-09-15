@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Plausible from "plausible-tracker";
-
   import * as router from "@app/lib/router";
   import { unreachable } from "@app/lib/utils";
 
@@ -27,12 +25,6 @@
   const activeRouteStore = router.activeRouteStore;
 
   void router.loadFromLocation();
-
-  if (import.meta.env.PROD) {
-    const plausible = Plausible({ domain: "app.radicle.xyz" });
-
-    plausible.enableAutoPageviews();
-  }
 
   $: document.documentElement.setAttribute("data-codefont", $codeFont);
   $: document.documentElement.setAttribute("data-theme", $theme);
