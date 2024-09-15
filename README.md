@@ -17,12 +17,14 @@ collaboration and publishing stack, directly from your web browser.
 * Recent versions of [Node.js][nod] (20.9.0 or higher) and [npm][npm] installed
 
 Run the following commands to access the web UI locally:
-```
+
+``` shell
 git clone https://seed.radicle.xyz/z4V1sjrXqjvFdnCUbxPFqd5p4DtH5.git radicle-explorer
 cd radicle-explorer
 npm install
 npm start
 ```
+
 Then open http://localhost:3000 in your favourite browser.
 
 
