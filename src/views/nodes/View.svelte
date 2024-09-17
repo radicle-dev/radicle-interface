@@ -61,6 +61,10 @@
     justify-content: flex-end;
   }
 
+  .description {
+    word-break: break-word;
+  }
+
   .header {
     grid-column: 1 / 4;
     border-bottom: 1px solid var(--color-fill-separator);
