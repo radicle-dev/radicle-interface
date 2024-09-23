@@ -32,6 +32,7 @@ body {
   scrollbar-width: thin;
   scrollbar-height: thin;
   scrollbar-color: var(--color-fill-separator) transparent;
+  overscroll-behavior: none;
 }
 
 ::selection {
