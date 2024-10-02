@@ -21,7 +21,6 @@
     font-size: var(--font-size-small);
   }
   .review {
-    color: var(--color-fill-gray);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -31,6 +30,10 @@
   }
   .review-reject {
     color: var(--color-foreground-red);
+  }
+  .txt-missing .review-accept,
+  .txt-missing .review-reject {
+    color: var(--color-foreground-dim);
   }
   @media (max-width: 1349.98px) {
     .wrapper {
@@ -58,8 +61,21 @@
 <div class="wrapper">
   <div class="header">Reviews</div>
   <div class="body">
-    {#each Object.values(reviews) as { latest, review }}
-      <div class="review" class:txt-missing={!latest}>
+    {#each Array.from(Object.values(reviews)).sort((a, b) => {
+      if (a.latest === b.latest) {
+        return 0;
+      } else if (b.latest) {
+        return 1;
+      } else {
+        return -1;
+      }
+    }) as { latest, review }}
+      <div
+        class="review"
+        class:txt-missing={!latest}
+        title={!latest
+          ? `This review was on a previous revision. Please ask ${review.author.alias} to re-review`
+          : ""}>
         <span
           class:review-accept={review.verdict === "accept"}
           class:review-reject={review.verdict === "reject"}>
