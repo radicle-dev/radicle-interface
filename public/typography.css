@@ -131,6 +131,9 @@ p {
 .txt-missing {
   color: var(--color-foreground-dim);
 }
+.txt-strike {
+  text-decoration: line-through;
+}
 .txt-emoji {
   height: 1em;
   width: 1em;

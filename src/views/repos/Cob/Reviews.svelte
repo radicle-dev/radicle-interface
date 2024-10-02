@@ -21,7 +21,6 @@
     font-size: var(--font-size-small);
   }
   .review {
-    color: var(--color-fill-gray);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -59,7 +58,13 @@
   <div class="header">Reviews</div>
   <div class="body">
     {#each Object.values(reviews) as { latest, review }}
-      <div class="review" class:txt-missing={!latest}>
+      <div
+        class="review"
+        class:txt-missing={!latest}
+        class:txt-strike={!latest && review.verdict !== "reject"}
+        title={!latest
+          ? `This review was on a previous revision. Please ask ${review.author.alias} to re-review`
+          : ""}>
         <span
           class:review-accept={review.verdict === "accept"}
           class:review-reject={review.verdict === "reject"}>
