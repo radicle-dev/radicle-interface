@@ -26,8 +26,11 @@
 </style>
 
 <div class="avatar-alias">
-  <Avatar variant="small" {nodeId} />
-  <Link styleHoverState route={{ resource: "users", did: nodeId, baseUrl }}>
+  <Link
+    styleHoverState
+    style="display: flex; gap: 5px; align-items: center;"
+    route={{ resource: "users", did: nodeId, baseUrl }}>
+    <Avatar variant="small" {nodeId} />
     {#if alias}
       <span class="txt-overflow">
         {alias}
