@@ -1,7 +1,5 @@
 <script lang="ts">
-  import type { BaseUrl, Reaction } from "@http-client";
-
-  import Badge from "@app/components/Badge.svelte";
+  import type { Reaction, BaseUrl } from "@http-client";
   import NodeId from "@app/components/NodeId.svelte";
 
   export let baseUrl: BaseUrl;
@@ -17,6 +15,7 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    width: 100%;
     gap: 0.5rem;
     font-size: var(--font-size-small);
   }
@@ -34,7 +33,8 @@
       align-items: center;
     }
     .body {
-      align-items: flex-start;
+      align-items: center;
+      align-self: center;
     }
     .no-assignees {
       height: 2rem;
@@ -47,10 +47,10 @@
 <div class="wrapper">
   <div class="header">Assignees</div>
   <div class="body">
-    {#each assignees as { alias, id }}
-      <Badge variant="neutral" size="small">
+    {#each assignees as { id, alias }}
+      <div>
         <NodeId {baseUrl} nodeId={id} {alias} />
-      </Badge>
+      </div>
     {:else}
       <div class="txt-missing no-assignees">No assignees</div>
     {/each}
