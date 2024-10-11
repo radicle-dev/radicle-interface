@@ -245,12 +245,24 @@ export async function createSourceBrowsingFixture(
   await bob.stopNode();
 }
 
-export async function createCobsFixture(peer: RadiclePeer) {
+export async function createCobsFixture(
+  peerManager: PeerManager,
+  peer: RadiclePeer,
+) {
   await peer.rad(["follow", peer.nodeId, "--alias", "palm"]);
   await Fs.mkdir(Path.join(tmpDir, "repos", "cobs"));
-  const { repoFolder, defaultBranch } = await createRepo(peer, {
+  const { repoFolder, rid, defaultBranch } = await createRepo(peer, {
     name: "cobs",
   });
+  const eve = await peerManager.createPeer({
+    name: "eve",
+    gitOptions: gitOptions["eve"],
+  });
+  await eve.startNode({
+    node: { ...defaultConfig.node, connect: [peer.address], alias: "eve" },
+  });
+  await eve.rad(["clone", rid], { cwd: eve.checkoutPath });
+
   const issueOne = await issue.create(
     peer,
     "This `title` has **markdown**",
@@ -474,7 +486,7 @@ export async function createCobsFixture(peer: RadiclePeer) {
     ["patch", "label", patchThree, "--add", "documentation"],
     createOptions(repoFolder, 1),
   );
-  await peer.rad(
+  await eve.rad(
     ["patch", "review", patchThree, "-m", "This looks better"],
     createOptions(repoFolder, 2),
   );
@@ -610,6 +622,15 @@ export const gitOptions = {
     GIT_AUTHOR_DATE: "1671125284",
     GIT_COMMITTER_NAME: "Bob Belcher",
     GIT_COMMITTER_EMAIL: "bob@radicle.xyz",
+    GIT_COMMITTER_DATE: "1671627600",
+  },
+
+  eve: {
+    GIT_AUTHOR_NAME: "Eve Johnson",
+    GIT_AUTHOR_EMAIL: "eve@radicle.xyz",
+    GIT_AUTHOR_DATE: "1671125284",
+    GIT_COMMITTER_NAME: "Eve Johnson",
+    GIT_COMMITTER_EMAIL: "eve@radicle.xyz",
     GIT_COMMITTER_DATE: "1671627600",
   },
 };
