@@ -92,7 +92,7 @@ export default async function globalSetup(): Promise<() => void> {
       console.log("Creating markdown fixture");
       await createMarkdownFixture(palm);
       console.log("Creating cobs fixture");
-      await createCobsFixture(palm);
+      await createCobsFixture(peerManager, palm);
       console.log("All fixtures created");
     } catch (error) {
       console.log("");
