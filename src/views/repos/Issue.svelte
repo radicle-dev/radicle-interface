@@ -205,7 +205,7 @@
           <div
             style:margin-top="2rem"
             style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <Assignees assignees={issue.assignees} />
+            <Assignees {baseUrl} assignees={issue.assignees} />
             <Labels labels={issue.labels} />
             <Embeds embeds={uniqueEmbeds} />
           </div>
@@ -248,7 +248,7 @@
       </div>
     </div>
     <div class="metadata global-hide-on-medium-desktop-down">
-      <Assignees assignees={issue.assignees} />
+      <Assignees {baseUrl} assignees={issue.assignees} />
       <Labels labels={issue.labels} />
       <Embeds embeds={uniqueEmbeds} />
     </div>

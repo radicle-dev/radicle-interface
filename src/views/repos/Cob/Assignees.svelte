@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { Reaction } from "@http-client";
+  import type { BaseUrl, Reaction } from "@http-client";
 
-  import { formatNodeId } from "@app/lib/utils";
-
-  import Avatar from "@app/components/Avatar.svelte";
   import Badge from "@app/components/Badge.svelte";
+  import NodeId from "@app/components/NodeId.svelte";
 
+  export let baseUrl: BaseUrl;
   export let assignees: Reaction["authors"] = [];
 </script>
 
@@ -20,12 +19,6 @@
     flex-direction: row;
     gap: 0.5rem;
     font-size: var(--font-size-small);
-  }
-  .assignee {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 0.25rem;
   }
   @media (max-width: 1349.98px) {
     .wrapper {
@@ -54,12 +47,9 @@
 <div class="wrapper">
   <div class="header">Assignees</div>
   <div class="body">
-    {#each assignees as { id }}
+    {#each assignees as { alias, id }}
       <Badge variant="neutral" size="small">
-        <div class="assignee">
-          <Avatar variant="small" nodeId={id} />
-          <span>{formatNodeId(id)}</span>
-        </div>
+        <NodeId {baseUrl} nodeId={id} {alias} />
       </Badge>
     {:else}
       <div class="txt-missing no-assignees">No assignees</div>
